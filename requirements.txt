@@ -1,2 +1,2 @@
 Django>=3.0
-docker-compose==1.25.4
+psycopg2>=2.8.4
