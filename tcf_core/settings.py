@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tcf_website'
 ]
 
 MIDDLEWARE = [
@@ -75,9 +76,16 @@ WSGI_APPLICATION = 'tcf_core.wsgi.application'
 
 DATABASES = {
     'default': {
+        'NAME': 'tcf_db',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'USER': 'tcf_django',
+        'PASSWORD': 's3kr1t',
+        'HOST': 'tcf_db',
+    },
+    'legacy': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'NAME': os.path.join(BASE_DIR, 'tcf.db'),
+    },
 }
 
 

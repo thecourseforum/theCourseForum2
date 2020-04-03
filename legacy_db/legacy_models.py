@@ -7,6 +7,76 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
+
+class BookRequirements(models.Model):
+    section_id = models.IntegerField()
+    book_id = models.IntegerField()
+    status = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'book_requirements'
+
+
+class Books(models.Model):
+    title = models.CharField(max_length=255, blank=True, null=True)
+    author = models.CharField(max_length=255, blank=True, null=True)
+    publisher = models.CharField(max_length=255, blank=True, null=True)
+    edition = models.CharField(max_length=255, blank=True, null=True)
+    binding = models.CharField(max_length=255, blank=True, null=True)
+    isbn = models.CharField(max_length=255, blank=True, null=True)
+    bookstore_new_price = models.TextField(blank=True, null=True)  # This field type is a guess.
+    bookstore_used_price = models.TextField(blank=True, null=True)  # This field type is a guess.
+    asin = models.TextField(blank=True, null=True)
+    small_image_link = models.TextField(blank=True, null=True)
+    medium_image_link = models.TextField(blank=True, null=True)
+    large_image_link = models.TextField(blank=True, null=True)
+    amazon_official_new_price = models.TextField(blank=True, null=True)  # This field type is a guess.
+    amazon_official_used_price = models.TextField(blank=True, null=True)  # This field type is a guess.
+    amazon_merchant_new_price = models.TextField(blank=True, null=True)  # This field type is a guess.
+    amazon_merchant_used_price = models.TextField(blank=True, null=True)  # This field type is a guess.
+    amazon_new_total = models.IntegerField(blank=True, null=True)
+    amazon_used_total = models.IntegerField(blank=True, null=True)
+    amazon_affiliate_link = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'books'
+
+
+class BooksUsers(models.Model):
+    book_id = models.IntegerField()
+    user_id = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'books_users'
+
+
+class Bugs(models.Model):
+    url = models.CharField(max_length=255, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    email = models.CharField(max_length=255, blank=True, null=True)
+    archived = models.IntegerField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'bugs'
+
+
+class CalendarSections(models.Model):
+    section_id = models.IntegerField(blank=True, null=True)
+    user_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'calendar_sections'
+
+
 class Courses(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
@@ -18,6 +88,7 @@ class Courses(models.Model):
     last_taught_semester_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'courses'
 
 
@@ -26,7 +97,30 @@ class CoursesUsers(models.Model):
     user_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'courses_users'
+
+
+class DayTimes(models.Model):
+    day = models.CharField(max_length=255, blank=True, null=True)
+    start_time = models.CharField(max_length=255, blank=True, null=True)
+    end_time = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'day_times'
+
+
+class DayTimesSections(models.Model):
+    day_time_id = models.IntegerField(blank=True, null=True)
+    section_id = models.IntegerField(blank=True, null=True)
+    location_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'day_times_sections'
 
 
 class Departments(models.Model):
@@ -36,6 +130,7 @@ class Departments(models.Model):
     updated_at = models.DateTimeField()
 
     class Meta:
+        managed = False
         db_table = 'departments'
 
 
@@ -44,6 +139,7 @@ class DepartmentsSubdepartments(models.Model):
     subdepartment_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'departments_subdepartments'
 
 
@@ -72,7 +168,19 @@ class Grades(models.Model):
     total = models.IntegerField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'grades'
+
+
+class Locations(models.Model):
+    location = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'locations'
+
 
 class Majors(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
@@ -80,7 +188,21 @@ class Majors(models.Model):
     updated_at = models.DateTimeField()
 
     class Meta:
+        managed = False
         db_table = 'majors'
+
+
+class ProfessorSalary(models.Model):
+    staff_type = models.TextField(blank=True, null=True)
+    assignment_organization = models.TextField(blank=True, null=True)
+    annual_salary = models.IntegerField(blank=True, null=True)
+    normal_hours = models.IntegerField(blank=True, null=True)
+    working_title = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'professor_salary'
+
 
 class Professors(models.Model):
     first_name = models.CharField(max_length=255, blank=True, null=True)
@@ -107,6 +229,7 @@ class Professors(models.Model):
     professor_salary_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'professors'
 
 
@@ -132,6 +255,7 @@ class Reviews(models.Model):
     deleted = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = 'reviews'
 
 
@@ -143,6 +267,7 @@ class Schedules(models.Model):
     updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'schedules'
 
 
@@ -151,6 +276,7 @@ class SchedulesSections(models.Model):
     section_id = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = 'schedules_sections'
 
 
@@ -158,6 +284,7 @@ class SchemaMigrations(models.Model):
     version = models.CharField(max_length=255)
 
     class Meta:
+        managed = False
         db_table = 'schema_migrations'
 
 
@@ -168,6 +295,7 @@ class Schools(models.Model):
     website = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'schools'
 
 
@@ -178,6 +306,7 @@ class SectionProfessors(models.Model):
     updated_at = models.DateTimeField()
 
     class Meta:
+        managed = False
         db_table = 'section_professors'
 
 
@@ -194,6 +323,7 @@ class Sections(models.Model):
     semester_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'sections'
 
 
@@ -205,6 +335,7 @@ class Semesters(models.Model):
     updated_at = models.DateTimeField()
 
     class Meta:
+        managed = False
         db_table = 'semesters'
 
 
@@ -217,6 +348,7 @@ class Settings(models.Model):
     updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'settings'
 
 
@@ -228,6 +360,7 @@ class Stats(models.Model):
     gpa = models.TextField(blank=True, null=True)  # This field type is a guess.
 
     class Meta:
+        managed = False
         db_table = 'stats'
 
 
@@ -238,6 +371,7 @@ class StudentMajors(models.Model):
     updated_at = models.DateTimeField()
 
     class Meta:
+        managed = False
         db_table = 'student_majors'
 
 
@@ -248,6 +382,7 @@ class Students(models.Model):
     updated_at = models.DateTimeField()
 
     class Meta:
+        managed = False
         db_table = 'students'
 
 
@@ -258,6 +393,7 @@ class Subdepartments(models.Model):
     updated_at = models.DateTimeField()
 
     class Meta:
+        managed = False
         db_table = 'subdepartments'
 
 
@@ -273,6 +409,7 @@ class TextbookTransactions(models.Model):
     sold_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'textbook_transactions'
 
 
@@ -302,6 +439,7 @@ class Users(models.Model):
     unconfirmed_email = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'users'
 
 
@@ -315,4 +453,5 @@ class Votes(models.Model):
     updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'votes'
