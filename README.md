@@ -1,2 +1,2 @@
-# theCourseForum2.0
+# theCourseForum2
 2020 Django rewrite of theCourseForum website
