@@ -70,7 +70,7 @@ class Course(models.Model):
     semester_last_taught = models.ForeignKey(Semester, on_delete=models.CASCADE)
 
 class Section(models.Model):
-    sis_section_number = models.IntegerField(unique=True)
+    sis_section_number = models.IntegerField() # NOTE: not unique!
     instructors = models.ManyToManyField(Instructor)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
