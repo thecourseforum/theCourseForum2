@@ -84,7 +84,11 @@ class Command(BaseCommand):
         self.votes = Votes.objects.using('legacy').all()
         self.semesters = Semesters.objects.using('legacy').all()
         
-        '''
+
+        UNKNOWN_SCHOOL, _ = School.objects.get_or_create(name='UNKNOWN')
+        UNKNOWN_DEPT, _ = Department.objects.get_or_create(name='UNKNOWN', school = UNKNOWN_SCHOOL)
+
+        
         self.migrate(
             Schools,
             School,
@@ -94,21 +98,30 @@ class Command(BaseCommand):
             {'name': 'name'},
         )
 
+        def get_school(old_dept):
+            try:
+                return School.objects.get(name=old.school.name)
+            except:
+                return UNKNOWN_SCHOOL
+
         self.migrate(
             Departments,
             Department,
             {
                 'name': lambda old: old.name,
-                'school': lambda old: School.objects.get(name=old.school.name)
+                'school': lambda old: get_school(old)
             },
             {'name': 'name'},
         )
 
-        def get_department_name(old_subdepartment):
+        def get_department(old_subdepartment):
             with connections['legacy'].cursor() as cursor:
                 cursor.execute("SELECT * FROM departments_subdepartments WHERE subdepartment_id = %s", [old_subdepartment.id])
                 row = cursor.fetchone()
-                return self.departments.get(pk=row[0]).name
+                try:
+                    return Department.get(name=old_subdepartment.name)
+                except:
+                    return UNKNOWN_DEPT
 
         # TODO: Create new subdepartments (e.g. INST and AIRS) and link
         # courses to them
@@ -118,42 +131,42 @@ class Command(BaseCommand):
             {
                 'name': lambda old: old.name,
                 'mnemonic': lambda old: old.mnemonic,
-                'department': lambda old: Department.objects.get(name=get_department_name(old))
+                'department': lambda old: get_department(old)
             },
             {'mnemonic': 'mnemonic'},
         )
 
-        self.migrate(
-            Semesters,
-            Semester,
-            {
-                'number': lambda old: old.number,
-                'year': lambda old: old.year,
-                'season': lambda old: old.season.upper(),
+        # self.migrate(
+        #     Semesters,
+        #     Semester,
+        #     {
+        #         'number': lambda old: old.number,
+        #         'year': lambda old: old.year,
+        #         'season': lambda old: old.season.upper(),
                 
-            },
-            {'number': 'number'},
-        )
+        #     },
+        #     {'number': 'number'},
+        # )
 
         
-        # Course.objects.all().delete()
-        self.migrate(
-            Courses,
-            Course,
-            {
-                'title': lambda old: old.title,
-                'description': lambda old: old.description,
-                'number': lambda old: old.course_number,
-                'subdepartment': lambda old: Subdepartment.objects.get(name=old.subdepartment.name),
-                'semester_last_taught': lambda old: Semester.objects.get(number=old.last_taught_semester.number),
+        # # Course.objects.all().delete()
+        # self.migrate(
+        #     Courses,
+        #     Course,
+        #     {
+        #         'title': lambda old: old.title,
+        #         'description': lambda old: old.description,
+        #         'number': lambda old: old.course_number,
+        #         'subdepartment': lambda old: Subdepartment.objects.get(name=old.subdepartment.name),
+        #         'semester_last_taught': lambda old: Semester.objects.get(number=old.last_taught_semester.number),
                 
-            },
-            {
-                'subdepartment__name': lambda old: old.subdepartment.name,
-                'number': 'course_number',
-            },
-            reverse=True
-        )
+        #     },
+        #     {
+        #         'subdepartment__name': lambda old: old.subdepartment.name,
+        #         'number': 'course_number',
+        #     },
+        #     reverse=True
+        # )
         
 
         # TODO: better collection of instructor emails? lous list?
@@ -210,3 +223,4 @@ class Command(BaseCommand):
         #     after_func = lambda old, new: new.instructors.add(
         #         Instructor.objects.get(**get_section_instructor(old)))
         # )
+        '''
