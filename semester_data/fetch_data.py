@@ -27,9 +27,10 @@ def download_semester(year, season):
             'Group': 'CS',
             'Semester': semester_code,
             'Description': 'Yes',
+            'Extended': 'Yes',
         }, stream=True, headers=headers) as r:
             r.raise_for_status()
-            with open(f'{year}{season}.csv', 'wb') as f:
+            with open(f'csv/{year}_{season}.csv', 'wb') as f:
                 for chunk in r.iter_content(chunk_size=8192): 
                     if chunk: # filter out keep-alive new chunks
                         f.write(chunk)
