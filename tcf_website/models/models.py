@@ -79,6 +79,8 @@ class Review(models.Model):
     text = models.TextField()
     author = models.ForeignKey(Student, on_delete=models.CASCADE)
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
     RATINGS = (
         (1, 1.0),
         (2, 2.0),
