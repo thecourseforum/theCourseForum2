@@ -51,6 +51,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='vote',
-            constraint=models.UniqueConstraint(fields=('voter', 'review'), name='unique vote per user and review'),
+            constraint=models.UniqueConstraint(fields=('user', 'review'), name='unique vote per user and review'),
         ),
     ]
