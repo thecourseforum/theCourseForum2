@@ -89,13 +89,7 @@ class Semester(models.Model):
         return f"{self.year} {self.season.title()} ({self.number})"
     
     def is_after(self, other_sem):
-        season_val = {
-            'JANUARY': 1,
-            'SPRING': 2,
-            'SUMMER': 3,
-            'FALL': 4,
-        }
-        return self.year > other_sem.year and season_val[self.season] > season_val[other_sem.season]
+        return self.number > other_sem.number
     
     class Meta:
         constraints = [

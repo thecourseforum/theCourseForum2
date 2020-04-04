@@ -22,6 +22,12 @@ class Command(BaseCommand):
             help='Verbose output',
         )
 
+        parser.add_argument(
+            'semester',
+            help='Semester to update (e.g. "2019_FALL").\nIf you wish to reload all semesters (potentially dangerous!) then put "ALL_DANGEROUS" as the value of this argument.\nMake sure that the new semester data is downloaded via `semester_data/fetch_data.py` before running this command.',
+            type=str
+        )
+
     def handle(self, *args, **options):
 
         self.verbose = options['verbose']
@@ -32,10 +38,16 @@ class Command(BaseCommand):
 
         self.data_dir = 'tcf_website/management/commands/semester_data/csv/'
 
-        for file in sorted(os.listdir(self.data_dir)):
-            self.load_semester_file(file)
-        # for file in ['2012_summer.csv']:
-        #     self.load_semester_file(file)
+        semester = options['semester']
+        
+        if semester == 'ALL_DANGEROUS':
+            for file in sorted(os.listdir(self.data_dir)):
+                self.load_semester_file(file)
+        else:
+            self.load_semester_file(f"{semester.lower()}.csv")
+        
+        print("Completed. Hooray!")
+
     
     def clean(self, df):
         return df.dropna(subset=['Mnemonic', 'ClassNumber', 'Number', 'Section'])
@@ -168,13 +180,20 @@ class Command(BaseCommand):
         return course
     
     def load_instructors(self, instructor_names):
+        if not instructor_names:
+            return [self.STAFF]
         instructors = set()
         for name in instructor_names:
-            if name == 'Staff':
+            if name in {'Staff', 'Faculty Staff', 'Faculty'} or name.isspace():
                 instructors.add(self.STAFF)
             else:
                 names = name.split()
-                first, last = names[0], names[-1]
+                try:
+                    first, last = names[0], names[-1]
+                except IndexError as e:
+                    print(f"Instructor named '{name}'")
+                    print(e)
+                    raise e
 
                 instructor, created = Instructor.objects.get_or_create(
                     first_name = first,
