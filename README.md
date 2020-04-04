@@ -17,15 +17,19 @@
 - API-centric 
 
 # Data migration plan from tCF 1.0
-1. Get latest copy of legacy db using `mysqldump`
-2. Convert to sqlite
+1. Get latest copy of legacy db using `mysqldump` from DO instance.
+2. Convert to sqlite using `legacy_db/mysql2sqlite`
+    - Then put in `settings.py` as database `legacy`
 3. `python manage.py migrate_legacy_subdepartments`
 4. `python manage.py load_all_semesters`
 5. `python manage.py migrate_legacy_reviews`
 6. Test
+    - Maybe crawl tCF and check that all viewable reviews are on the new system.
 
 # New semester update plan
 1. `python manage.py update_semester 2021 january`
     - fetches CSV from lous list
     - loads section data into database
+        - update courses with new course info if available
+        - create new instructors if needed
 
