@@ -96,7 +96,7 @@ class Section(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.course} {self.semester} {', '.join(self.instructors)}"
+        return f"{self.course} {self.semester} {', '.join(self.instructors.all())}"
 
 class Review(models.Model):
     text = models.TextField()
