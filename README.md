@@ -16,10 +16,16 @@
 
 - API-centric 
 
-# Data migration plan
+# Data migration plan from tCF 1.0
 1. Get latest copy of legacy db using `mysqldump`
 2. Convert to sqlite
-3. Use django inspectdb
-4. write a script to go through this data and add it to our new database
-    - https://docs.djangoproject.com/en/3.0/topics/db/multi-db/
+3. `python manage.py migrate_legacy_subdepartments`
+4. `python manage.py load_all_semesters`
+5. `python manage.py migrate_legacy_reviews`
+6. Test
+
+# New semester update plan
+1. `python manage.py update_semester 2021 january`
+    - fetches CSV from lous list
+    - loads section data into database
 

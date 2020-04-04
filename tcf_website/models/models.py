@@ -21,17 +21,33 @@ class Department(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'school'],
+                name='unique departments per school'
+            )
+        ]
 
 # e.g. CREO in French department or ENCW in English
 class Subdepartment(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    mnemonic = models.CharField(max_length=255)
+    mnemonic = models.CharField(max_length=255, unique=True)
 
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return f"{self.mnemonic} - {self.name}"
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['mnemonic', 'department'],
+                name='unique subdepartment mnemonics per department'
+            )
+        ]
 
 class User(AbstractUser):
     computing_id = models.CharField(max_length=10, unique=True, blank=True)
@@ -67,36 +83,68 @@ class Semester(models.Model):
         validators=[MinValueValidator(2000), MaxValueValidator(2999)])
     season = models.CharField(max_length=7, choices=SEASONS)
 
-    number = models.IntegerField(help_text="As defined in SIS/Lou's List")
+    number = models.IntegerField(help_text="As defined in SIS/Lou's List", unique=True)
 
     def __str__(self):
-        return f"{self.year} {self.season.title()}"
+        return f"{self.year} {self.season.title()} ({self.number})"
+    
+    def is_after(self, other_sem):
+        season_val = {
+            'JANUARY': 1,
+            'SPRING': 2,
+            'SUMMER': 3,
+            'FALL': 4,
+        }
+        return self.year > other_sem.year and season_val[self.season] > season_val[other_sem.season]
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['season', 'year'],
+                name='unique semesters'
+            )
+        ]
 
 class Course(models.Model):
     title = models.CharField(max_length=255)
-    topic = models.TextField(blank=True)
     description = models.TextField(blank=True)
     number = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(99999)])
-    
-    units = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(10)],
-        blank=True, null=True)
 
     subdepartment = models.ForeignKey(Subdepartment, on_delete=models.CASCADE)
     semester_last_taught = models.ForeignKey(Semester, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.subdepartment.mnemonic} {self.number}"
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['subdepartment', 'number'],
+                name='unique course subdepartment and number'
+            )
+        ]
 
 class Section(models.Model):
     sis_section_number = models.IntegerField() # NOTE: not unique!
     instructors = models.ManyToManyField(Instructor)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    topic = models.TextField(blank=True)
+
+    units = models.CharField(max_length=10, blank=True)
+    section_type = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return f"{self.course} {self.semester} {', '.join(self.instructors.all())}"
+        return f"{self.course} {self.semester} {', '.join(str(i) for i in self.instructors.all())}"
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['sis_section_number', 'semester'],
+                name='unique sections per semesters'
+            )
+        ]
 
 class Review(models.Model):
     text = models.TextField()
@@ -128,12 +176,28 @@ class Review(models.Model):
     
     def __str__(self):
         return f"Review by {self.author} for {self.section}"
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'course', 'instructor'],
+                name='unique review per author, course, and instructor',
+            )
+        ]
 
 class Vote(models.Model):
     value = models.IntegerField(
         validators=[MinValueValidator(-1), MaxValueValidator(1)])
-    voter = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     review = models.ForeignKey(Review, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Vote of value {self.value} for {self.eview} by {self.voter}"
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['voter', 'review'],
+                name='unique vote per user and review',
+            )
+        ]
