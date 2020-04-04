@@ -76,25 +76,134 @@ class CalendarSections(models.Model):
         managed = False
         db_table = 'calendar_sections'
 
+class Subdepartments(models.Model):
+    id = models.IntegerField(primary_key=True, db_column="id")
+    name = models.CharField(max_length=255, blank=True, null=True)
+    mnemonic = models.CharField(max_length=255, blank=True, null=True)
+    # created_at = models.DateTimeField()
+    # updated_at = models.DateTimeField()
+    
+    def __str__(self):
+        return f"{self.mnemonic} - {self.name}"
+
+    class Meta:
+        managed = False
+        db_table = 'subdepartments'
+
+class Semesters(models.Model):
+    number = models.IntegerField(blank=True, null=True)
+    season = models.CharField(max_length=255, blank=True, null=True)
+    year = models.DecimalField(max_digits=10, decimal_places=5, blank=True, null=True)  # max_digits and decimal_places have been guessed, as this database handles decimal fields as float
+    # created_at = models.DateTimeField()
+    # updated_at = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.year} - {self.season}"
+
+    class Meta:
+        managed = False
+        db_table = 'semesters'
+
+class Schools(models.Model):
+    name = models.CharField(max_length=255, blank=True, null=True)
+    # created_at = models.DateTimeField()
+    # updated_at = models.DateTimeField()
+    website = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'schools'
+
+class Users(models.Model):
+    email = models.CharField(max_length=255, blank=True, null=True)
+    cellphone = models.CharField(max_length=255, blank=True, null=True)
+    old_password = models.CharField(max_length=255, blank=True, null=True)
+    # student_id = models.IntegerField(blank=True, null=True)
+    student = models.ForeignKey('Students', db_column='student_id', on_delete=models.CASCADE)
+    # professor_id = models.IntegerField(blank=True, null=True)
+    professor = models.ForeignKey('Professors', db_column='professor_id', on_delete=models.CASCADE)
+    subscribed_to_email = models.IntegerField(blank=True, null=True)
+    # created_at = models.DateTimeField()
+    # updated_at = models.DateTimeField()
+    first_name = models.CharField(max_length=255, blank=True, null=True)
+    last_name = models.CharField(max_length=255, blank=True, null=True)
+    encrypted_password = models.CharField(max_length=255)
+    reset_password_token = models.CharField(max_length=255, blank=True, null=True)
+    # reset_password_sent_at = models.DateTimeField(blank=True, null=True)
+    # remember_created_at = models.DateTimeField(blank=True, null=True)
+    sign_in_count = models.IntegerField(blank=True, null=True)
+    # current_sign_in_at = models.DateTimeField(blank=True, null=True)
+    # last_sign_in_at = models.DateTimeField(blank=True, null=True)
+    current_sign_in_ip = models.CharField(max_length=255, blank=True, null=True)
+    last_sign_in_ip = models.CharField(max_length=255, blank=True, null=True)
+    confirmation_token = models.CharField(max_length=255, blank=True, null=True)
+    # confirmed_at = models.DateTimeField(blank=True, null=True)
+    # confirmation_sent_at = models.DateTimeField(blank=True, null=True)
+    unconfirmed_email = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'users'
+
+class Students(models.Model):
+    grad_year = models.DecimalField(max_digits=10, decimal_places=5, blank=True, null=True)  # max_digits and decimal_places have been guessed, as this database handles decimal fields as float
+    # user_id = models.IntegerField(blank=True, null=True)
+    user = models.ForeignKey(Users, db_column='user_id', on_delete=models.CASCADE)
+    # created_at = models.DateTimeField()
+    # updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'students'
 
 class Courses(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     course_number = models.DecimalField(max_digits=10, decimal_places=5, blank=True, null=True)  # max_digits and decimal_places have been guessed, as this database handles decimal fields as float
-    subdepartment_id = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
+    # subdepartment_id = models.IntegerField(blank=True, null=True)
+    subdepartment = models.ForeignKey(Subdepartments, db_column='subdepartment_id', on_delete=models.CASCADE)
+    # created_at = models.DateTimeField()
+    # updated_at = models.DateTimeField()
     title_changed = models.IntegerField(blank=True, null=True)
-    last_taught_semester_id = models.IntegerField(blank=True, null=True)
+    # last_taught_semester_id = models.IntegerField(blank=True, null=True)
+    last_taught_semester = models.ForeignKey(Semesters, db_column='last_taught_semester_id', on_delete=models.CASCADE)
+
+    def __str__(self):
+        try:
+            return f"{self.subdepartment.mnemonic} {self.course_number}"
+        except Exception as e:
+            return f"Error for course with number {self.course_number}: {e}"
+            
 
     class Meta:
         managed = False
         db_table = 'courses'
 
+class Sections(models.Model):
+    sis_class_number = models.IntegerField(blank=True, null=True)
+    section_number = models.IntegerField(blank=True, null=True)
+    topic = models.CharField(max_length=255, blank=True, null=True)
+    units = models.CharField(max_length=255, blank=True, null=True)
+    capacity = models.IntegerField(blank=True, null=True)
+    # created_at = models.DateTimeField()
+    # updated_at = models.DateTimeField()
+    section_type = models.CharField(max_length=255, blank=True, null=True)
+    # course_id = models.IntegerField(blank=True, null=True)
+    course = models.ForeignKey(Courses, db_column='course_id', on_delete=models.CASCADE)
+    # semester_id = models.IntegerField(blank=True, null=True)
+    semester = models.ForeignKey(Semesters, db_column='semester_id', on_delete=models.CASCADE)
+
+    class Meta:
+        managed = False
+        db_table = 'sections'
+
 
 class CoursesUsers(models.Model):
-    course_id = models.IntegerField(blank=True, null=True)
-    user_id = models.IntegerField(blank=True, null=True)
+    # course_id = models.IntegerField(blank=True, null=True)
+    # user_id = models.IntegerField(blank=True, null=True)
+
+    course = models.ForeignKey(Courses, db_column='course_id', on_delete=models.CASCADE)
+    user = models.ForeignKey(Users, db_column='user_id', on_delete=models.CASCADE)
 
     class Meta:
         managed = False
@@ -125,18 +234,25 @@ class DayTimesSections(models.Model):
 
 class Departments(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
-    school_id = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-
+    # school_id = models.IntegerField(blank=True, null=True)
+    school = models.ForeignKey(Schools, db_column='school_id', on_delete=models.CASCADE)
+    # created_at = models.DateTimeField()
+    # updated_at = models.DateTimeField()
+# 
     class Meta:
         managed = False
         db_table = 'departments'
 
+    def __str__(self):
+        return f"{self.name}"
+
 
 class DepartmentsSubdepartments(models.Model):
-    department_id = models.IntegerField(blank=True, null=True)
-    subdepartment_id = models.IntegerField(blank=True, null=True)
+    # department_id = models.IntegerField(blank=True, null=True)
+    # subdepartment_id = models.IntegerField(blank=True, null=True)
+
+    department = models.ForeignKey(Departments, db_column='department_id', on_delete=models.CASCADE)
+    subdepartment = models.ForeignKey(Subdepartments, db_column='subdepartment_id', on_delete=models.CASCADE)
 
     class Meta:
         managed = False
@@ -209,10 +325,12 @@ class Professors(models.Model):
     last_name = models.CharField(max_length=255, blank=True, null=True)
     preferred_name = models.CharField(max_length=255, blank=True, null=True)
     email_alias = models.CharField(max_length=255, blank=True, null=True)
-    department_id = models.IntegerField(blank=True, null=True)
-    user_id = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
+    # department_id = models.IntegerField(blank=True, null=True)
+    department = models.ForeignKey(Departments, db_column='department_id', on_delete=models.CASCADE)
+    # user_id = models.IntegerField(blank=True, null=True)
+    user = models.ForeignKey(Users, db_column='user_id', on_delete=models.CASCADE)
+    # created_at = models.DateTimeField()
+    # updated_at = models.DateTimeField()
     middle_name = models.CharField(max_length=255, blank=True, null=True)
     classification = models.TextField(blank=True, null=True)
     department = models.TextField(blank=True, null=True)
@@ -235,11 +353,14 @@ class Professors(models.Model):
 
 class Reviews(models.Model):
     comment = models.TextField(blank=True, null=True)
-    course_professor_id = models.IntegerField(blank=True, null=True)
-    student_id = models.IntegerField(blank=True, null=True)
-    semester_id = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
+    # course_professor_id = models.IntegerField(blank=True, null=True)
+    # course_professor = models.ForeignKey(Professors, db_column='course_professor_id', on_delete=models.CASCADE)
+    # student_id = models.IntegerField(blank=True, null=True)
+    user = models.ForeignKey(Users, db_column='student_id', on_delete=models.CASCADE)
+    # semester_id = models.IntegerField(blank=True, null=True)
+    semester = models.ForeignKey(Semesters, db_column='semester_id', on_delete=models.CASCADE)
+    # created_at = models.DateTimeField()
+    # updated_at = models.DateTimeField()
     professor_rating = models.DecimalField(max_digits=10, decimal_places=5, blank=True, null=True)  # max_digits and decimal_places have been guessed, as this database handles decimal fields as float
     enjoyability = models.IntegerField(blank=True, null=True)
     difficulty = models.IntegerField(blank=True, null=True)
@@ -250,8 +371,10 @@ class Reviews(models.Model):
     only_tests = models.IntegerField(blank=True, null=True)
     recommend = models.IntegerField(blank=True, null=True)
     ta_name = models.CharField(max_length=255, blank=True, null=True)
-    course_id = models.IntegerField(blank=True, null=True)
-    professor_id = models.IntegerField(blank=True, null=True)
+    # course_id = models.IntegerField(blank=True, null=True)
+    course = models.ForeignKey(Courses, db_column='course_id', on_delete=models.CASCADE)
+    # professor_id = models.IntegerField(blank=True, null=True)
+    professor = models.ForeignKey(Professors, db_column='professor_id', on_delete=models.CASCADE)
     deleted = models.IntegerField()
 
     class Meta:
@@ -288,55 +411,27 @@ class SchemaMigrations(models.Model):
         db_table = 'schema_migrations'
 
 
-class Schools(models.Model):
-    name = models.CharField(max_length=255, blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-    website = models.CharField(max_length=255, blank=True, null=True)
 
-    class Meta:
-        managed = False
-        db_table = 'schools'
 
 
 class SectionProfessors(models.Model):
-    section_id = models.IntegerField(blank=True, null=True)
-    professor_id = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
+    # section_id = models.IntegerField(blank=True, null=True)
+    # professor_id = models.IntegerField(blank=True, null=True)
+    # created_at = models.DateTimeField()
+    # updated_at = models.DateTimeField()
+
+    section = models.ForeignKey(Sections, db_column='section_id', on_delete=models.CASCADE)
+    professor = models.ForeignKey(Professors, db_column='professor_id', on_delete=models.CASCADE)
 
     class Meta:
         managed = False
         db_table = 'section_professors'
 
 
-class Sections(models.Model):
-    sis_class_number = models.IntegerField(blank=True, null=True)
-    section_number = models.IntegerField(blank=True, null=True)
-    topic = models.CharField(max_length=255, blank=True, null=True)
-    units = models.CharField(max_length=255, blank=True, null=True)
-    capacity = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-    section_type = models.CharField(max_length=255, blank=True, null=True)
-    course_id = models.IntegerField(blank=True, null=True)
-    semester_id = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'sections'
 
 
-class Semesters(models.Model):
-    number = models.IntegerField(blank=True, null=True)
-    season = models.CharField(max_length=255, blank=True, null=True)
-    year = models.DecimalField(max_digits=10, decimal_places=5, blank=True, null=True)  # max_digits and decimal_places have been guessed, as this database handles decimal fields as float
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
 
-    class Meta:
-        managed = False
-        db_table = 'semesters'
+
 
 
 class Settings(models.Model):
@@ -375,28 +470,6 @@ class StudentMajors(models.Model):
         db_table = 'student_majors'
 
 
-class Students(models.Model):
-    grad_year = models.DecimalField(max_digits=10, decimal_places=5, blank=True, null=True)  # max_digits and decimal_places have been guessed, as this database handles decimal fields as float
-    user_id = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'students'
-
-
-class Subdepartments(models.Model):
-    name = models.CharField(max_length=255, blank=True, null=True)
-    mnemonic = models.CharField(max_length=255, blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'subdepartments'
-
-
 class TextbookTransactions(models.Model):
     seller_id = models.IntegerField()
     buyer_id = models.IntegerField(blank=True, null=True)
@@ -413,41 +486,16 @@ class TextbookTransactions(models.Model):
         db_table = 'textbook_transactions'
 
 
-class Users(models.Model):
-    email = models.CharField(max_length=255, blank=True, null=True)
-    cellphone = models.CharField(max_length=255, blank=True, null=True)
-    old_password = models.CharField(max_length=255, blank=True, null=True)
-    student_id = models.IntegerField(blank=True, null=True)
-    professor_id = models.IntegerField(blank=True, null=True)
-    subscribed_to_email = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-    first_name = models.CharField(max_length=255, blank=True, null=True)
-    last_name = models.CharField(max_length=255, blank=True, null=True)
-    encrypted_password = models.CharField(max_length=255)
-    reset_password_token = models.CharField(max_length=255, blank=True, null=True)
-    reset_password_sent_at = models.DateTimeField(blank=True, null=True)
-    remember_created_at = models.DateTimeField(blank=True, null=True)
-    sign_in_count = models.IntegerField(blank=True, null=True)
-    current_sign_in_at = models.DateTimeField(blank=True, null=True)
-    last_sign_in_at = models.DateTimeField(blank=True, null=True)
-    current_sign_in_ip = models.CharField(max_length=255, blank=True, null=True)
-    last_sign_in_ip = models.CharField(max_length=255, blank=True, null=True)
-    confirmation_token = models.CharField(max_length=255, blank=True, null=True)
-    confirmed_at = models.DateTimeField(blank=True, null=True)
-    confirmation_sent_at = models.DateTimeField(blank=True, null=True)
-    unconfirmed_email = models.CharField(max_length=255, blank=True, null=True)
 
-    class Meta:
-        managed = False
-        db_table = 'users'
 
 
 class Votes(models.Model):
     vote = models.IntegerField()
-    voteable_id = models.IntegerField()
+    # voteable_id = models.IntegerField()
+    review = models.ForeignKey(Reviews, db_column='voteable_id', on_delete=models.CASCADE)
     voteable_type = models.CharField(max_length=255)
-    voter_id = models.IntegerField(blank=True, null=True)
+    # voter_id = models.IntegerField(blank=True, null=True)
+    user = models.ForeignKey(Users, db_column='voter_id', on_delete=models.CASCADE)
     voter_type = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
