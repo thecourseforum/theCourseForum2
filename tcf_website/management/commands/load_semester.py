@@ -22,6 +22,12 @@ class Command(BaseCommand):
             help='Verbose output',
         )
 
+        parser.add_argument(
+            'semester',
+            help='Semester to update (e.g. "2019_FALL").\nIf you wish to reload all semesters (potentially dangerous!) then put "ALL_DANGEROUS" as the value of this argument.\nMake sure that the new semester data is downloaded via `semester_data/fetch_data.py` before running this command.',
+            type=str
+        )
+
     def handle(self, *args, **options):
 
         self.verbose = options['verbose']
@@ -32,8 +38,16 @@ class Command(BaseCommand):
 
         self.data_dir = 'tcf_website/management/commands/semester_data/csv/'
 
-        for file in os.listdir(self.data_dir):
-            self.load_semester_file(file)
+        semester = options['semester']
+        
+        if semester == 'ALL_DANGEROUS':
+            for file in sorted(os.listdir(self.data_dir)):
+                self.load_semester_file(file)
+        else:
+            self.load_semester_file(f"{semester.lower()}.csv")
+        
+        print("Completed. Hooray!")
+
     
     def clean(self, df):
         return df.dropna(subset=['Mnemonic', 'ClassNumber', 'Number', 'Section'])
@@ -81,25 +95,25 @@ class Command(BaseCommand):
         return sem
     
     def load_section_row(self, semester, row):
-        # instructor_names = [row[column] for column in ['Instructor1', 'Instructor1', 'Instructor1', 'Instructor1']]
-        # print(row)
-        # print(row.index)
-        # print()
+        try:
+            mnemonic = row['Mnemonic'] # may NOT be missing
+            sis_number = row['ClassNumber'] # may NOT be missing
+            # strip out non-numeric characters.
+            course_number = re.sub('[^0-9]','', str(row['Number'])) # may NOT be missing
+            section_number = row['Section'] # may NOT be missing
+            
+            units = row['Units'] # may be empty/nan
+            title = row['Title'] # may be empty/nan
+            topic = row['Topic'] # may be empty/nan
+            description = row['Description'] # may be empty/nan
+            section_type = row['Type'] # may be empty/nan
 
-        mnemonic = row['Mnemonic'] # may NOT be missing
-        sis_number = row['ClassNumber'] # may NOT be missing
-        # strip out non-numeric characters.
-        course_number = re.sub('[^0-9]','', row['Number']) # may NOT be missing
-        section_number = row['Section'] # may NOT be missing
-        
-        units = row['Units'] # may be empty/nan
-        title = row['Title'] # may be empty/nan
-        topic = row['Topic'] # may be empty/nan
-        description = row['Description'] # may be empty/nan
-        section_type = row['Type'] # may be empty/nan
-
-        # may include staff, may be empty
-        instructor_names = row[['Instructor1', 'Instructor2', 'Instructor3', 'Instructor4']].dropna().array
+            # may include staff, may be empty
+            instructor_names = row[['Instructor1', 'Instructor2', 'Instructor3', 'Instructor4']].dropna().array
+        except TypeError as e:
+            print(row)
+            print(e)
+            raise e
 
         sd = self.load_subdepartment(mnemonic)
         course = self.load_course(title, description, semester, sd, course_number)
@@ -133,34 +147,53 @@ class Command(BaseCommand):
                 params[k] = v
 
         try:
-            course = Course.objects.get(**params)
+            course = Course.objects.get(
+                subdepartment=subdepartment,
+                number=number
+            )
             if self.verbose:
                 print(f"Retrieved {course}")
         except ObjectDoesNotExist:
+            # create new Course with title, description, subdepartment, number
             course = Course(**params)
             course.semester_last_taught = semester
             course.save()
             if self.verbose:
                 print(f"Created {course}")
-        except MultipleObjectsReturned as e:
-            # multiple returner when there should be just one.
-            print("Multiple courses returned for ")
-            print(params)
-            raise e
 
+        # fill in blank info
+        if not course.description and not pd.isnull(description):
+            course.description = description
+        if not course.title and not pd.isnull(title):
+            course.description = title
+        
+        # update with new info if possible
         if semester.is_after(course.semester_last_taught):
             course.semester_last_taught = semester
+            if not pd.isnull(description):
+                course.description = description
+            if not pd.isnull(title):
+                course.title = title
+        
+
         
         return course
     
     def load_instructors(self, instructor_names):
+        if not instructor_names:
+            return [self.STAFF]
         instructors = set()
         for name in instructor_names:
-            if name == 'Staff':
+            if name in {'Staff', 'Faculty Staff', 'Faculty'} or name.isspace():
                 instructors.add(self.STAFF)
             else:
                 names = name.split()
-                first, last = names[0], names[-1]
+                try:
+                    first, last = names[0], names[-1]
+                except IndexError as e:
+                    print(f"Instructor named '{name}'")
+                    print(e)
+                    raise e
 
                 instructor, created = Instructor.objects.get_or_create(
                     first_name = first,

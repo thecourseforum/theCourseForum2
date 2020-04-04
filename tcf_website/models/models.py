@@ -89,13 +89,7 @@ class Semester(models.Model):
         return f"{self.year} {self.season.title()} ({self.number})"
     
     def is_after(self, other_sem):
-        season_val = {
-            'JANUARY': 1,
-            'SPRING': 2,
-            'SUMMER': 3,
-            'FALL': 4,
-        }
-        return self.year > other_sem.year and season_val[self.season] > season_val[other_sem.season]
+        return self.number > other_sem.number
     
     class Meta:
         constraints = [
@@ -192,12 +186,12 @@ class Vote(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Vote of value {self.value} for {self.eview} by {self.voter}"
+        return f"Vote of value {self.value} for {self.review} by {self.user}"
     
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['voter', 'review'],
+                fields=['user', 'review'],
                 name='unique vote per user and review',
             )
         ]
