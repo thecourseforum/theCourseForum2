@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form method="POST"> 
+    {% csrf_token %}
+    <div class="form-group">
+        <div id="course-form-input" class="input-group">
+            Please enter your graduation year: {{ form.grad_year }} <br>
+            <input type="submit" value="Submit"> 
+        </div>
+    </div>
+</form> 
+
+{% endblock %}
