@@ -193,6 +193,13 @@ class Sections(models.Model):
     # semester_id = models.IntegerField(blank=True, null=True)
     semester = models.ForeignKey(Semesters, db_column='semester_id', on_delete=models.CASCADE)
 
+
+    created_at = models.IntegerField(db_column='created_at', blank=True, null=True)
+    updated_at = models.IntegerField(db_column='updated_at', blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.course} {self.semester}"
+
     class Meta:
         managed = False
         db_table = 'sections'
@@ -420,8 +427,8 @@ class SchemaMigrations(models.Model):
 class SectionProfessors(models.Model):
     # section_id = models.IntegerField(blank=True, null=True)
     # professor_id = models.IntegerField(blank=True, null=True)
-    # created_at = models.DateTimeField()
-    # updated_at = models.DateTimeField()
+    created_at = models.IntegerField(db_column='created_at', blank=True, null=True)
+    updated_at = models.IntegerField(db_column='updated_at', blank=True, null=True)
 
     section = models.ForeignKey(Sections, db_column='section_id', on_delete=models.CASCADE)
     professor = models.ForeignKey(Professors, db_column='professor_id', on_delete=models.CASCADE)
@@ -500,8 +507,8 @@ class Votes(models.Model):
     # voter_id = models.IntegerField(blank=True, null=True)
     user = models.ForeignKey(Users, db_column='voter_id', on_delete=models.CASCADE)
     voter_type = models.CharField(max_length=255, blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
+    # created_at = models.DateTimeField(blank=True, null=True)
+    # updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
