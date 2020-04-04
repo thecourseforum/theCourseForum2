@@ -3,3 +3,4 @@ __pycache__/*
 .DS_STORE
 *.sqlite3
 *.db
+legacy_db/*.sql

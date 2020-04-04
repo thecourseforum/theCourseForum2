@@ -11,6 +11,7 @@ services:
     container_name: tcf_django
     depends_on: 
       - db
+      - legacy_db
   db:
     image: postgres:12.2
     restart: always
