@@ -346,6 +346,9 @@ class Professors(models.Model):
     mobile_phone = models.TextField(blank=True, null=True)
     professor_salary_id = models.IntegerField(blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}  {self.email_alias} {self.department}"
+
     class Meta:
         managed = False
         db_table = 'professors'

@@ -11,24 +11,22 @@ TODO:
     - DONE: port subdepartments
     - DONE: port semester
     - port sections
-    - port courses
-    - port instructors --- need to figure out how that will work!
+    - DONE*: port courses
+    - DONE*: port instructors --- need to figure out how that will work!
     - port students --- need to figure out how that will work!
     - port reviews
     - port votes
 
+Done* denotes that it could be improved.
 
 '''
-
-
-
 
 
 class Command(BaseCommand):
     help = 'Imports data from legacy database into default database'
 
     
-    def migrate(self, legacy_class, new_class, field_map, unique_fields, reverse=False):
+    def migrate(self, legacy_class, new_class, field_map, unique_fields, reverse=False, after_func=None):
 
         def not_yet_created(obj):
 
@@ -51,10 +49,6 @@ class Command(BaseCommand):
 
         for obj in objects:
             if not_yet_created(obj):
-                # new_obj = new_class(**{
-                #     new_field_name: value_func(obj) for new_field_name, value_func in field_map.items()
-                # })
-                # new_obj.save()
                 try:
                     new_obj = new_class()
                     for new_field_name, value_func in field_map.items():
@@ -63,6 +57,11 @@ class Command(BaseCommand):
                             setattr(new_obj, new_field_name, value_func(obj))
                     new_obj.save()
                     print(f"Created {new_obj}")
+
+                    if after_func and callable(after_func):
+                        after_func(obj, new_obj)
+
+
                 except Exception as e:
                     print(f"Error migrating {type(obj).__name__} {obj}:")
                     print(e)
@@ -81,8 +80,8 @@ class Command(BaseCommand):
         self.reviews = Reviews.objects.using('legacy').all()
         self.votes = Votes.objects.using('legacy').all()
         self.semesters = Semesters.objects.using('legacy').all()
-
-
+        
+        '''
         self.migrate(
             Schools,
             School,
@@ -152,16 +151,46 @@ class Command(BaseCommand):
             },
             reverse=True
         )
+        '''
+
+        # TODO: better collection of instructor emails? lous list?
+        # TODO: better handling of name collisions?
+        def get_email(old):
+            if not old.email_alias:
+                return None
+            return old.email_alias if '@' in old.email_alias else f"{old.email_alias}@virginia.edu"
+        Instructor.objects.all().delete()
+        self.migrate(
+            Professors,
+            Instructor,
+            {
+                'first_name': lambda old: old.first_name,
+                'last_name': lambda old: old.last_name,
+                'email': lambda old: get_email(old),
+                'website': lambda old: old.home_page,
+            },
+            {
+                'last_name': 'last_name',
+                'first_name': 'first_name',
+                # 'email': lambda old: get_email(old),
+            },
+            # TODO: associate instructors with departments
+            # after_func = lambda old, new: new.departments.add(Department.objects.get(name=old.department.name))
+        )
 
         # self.migrate(
-        #     Courses,
-        #     Course,
+        #     Sections,
+        #     Section,
         #     {
-        #         'title': lambda old: old.title,
-        #         'description': lambda old: old.description,
-        #         'number': lambda old: old.course_number,
-
+        #         'sis_section_number': lambda old: old.sis_class_number,
+        #         'instructors': lambda old: ,
+        #         'semester': lambda old: Semester.objects.get(number=old.semester.number),
+        #         'course': lambda old: Course.objects.get(number=old.course.course_number, subdepartments=Subdepartment.objects.get(name=old.course.subdepartment.name)),
+                
         #     },
-        #     'mnemonic',
+        #     {
+        #         'subdepartment__name': lambda old: old.subdepartment.name,
+        #         'number': 'course_number',
+        #     },
+        #     after_func = lambda new: new.instructors.add()
         # )
-        

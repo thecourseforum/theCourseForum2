@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="login-container" style="width: 100%; text-align: center">
+    <h1>Browse</h1>
+    <p>{{request.user}}</p>
+    <p>{{request.user.computing_id}}</p>
+    <p>{{request.user.first_name}}</p>
+    <p>{{request.user.last_name}}</p>
+    <p>{{request.user.graduation_year}}</p>
+</div>
+{% endblock %}

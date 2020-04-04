@@ -34,28 +34,25 @@ class Subdepartment(models.Model):
         return self.name
 
 class User(AbstractUser):
-    username = None
-    # first_name = models.CharField(max_length=50)
-    # last_name = models.CharField(max_length=50)
     computing_id = models.CharField(max_length=10, unique=True, blank=True)
-
-    
-
-    class Meta:
-        abstract = True
-    
-    def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.computing_id})"
-
-class Student(User):
-    confirmed = models.BooleanField(default=False)
     graduation_year = models.IntegerField(
         validators=[MinValueValidator(2000), MaxValueValidator(2999)],
-        blank=True)
+        blank=True, null=True
+    )
+    
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.email})"
 
-class Instructor(User):
+
+class Instructor(models.Model):
+    first_name = models.CharField(max_length=255, blank=True)
+    last_name = models.CharField(max_length=255)
+    email = models.EmailField(blank=True)
     website = models.URLField(blank=True)
     departments = models.ManyToManyField(Department)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.email})"
 
 class Semester(models.Model):
 
@@ -103,7 +100,7 @@ class Section(models.Model):
 
 class Review(models.Model):
     text = models.TextField()
-    author = models.ForeignKey(Student, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
@@ -135,7 +132,7 @@ class Review(models.Model):
 class Vote(models.Model):
     value = models.IntegerField(
         validators=[MinValueValidator(-1), MaxValueValidator(1)])
-    voter = models.ForeignKey(Student, on_delete=models.CASCADE)
+    voter = models.ForeignKey(User, on_delete=models.CASCADE)
     review = models.ForeignKey(Review, on_delete=models.CASCADE)
 
     def __str__(self):

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="login-container" style="width: 100%; text-align: center">
+    <h1>Welcome to tCF!</h1>
+    {% if error %}
+        <h4 class="error">There was an error logging you in. Please make sure you're using an @virginia.edu email address.</h4>
+    {% else %}
+        <h4>Please log in to continue.</h4>
+    {% endif %}
+    <div>
+        <a href="{% url 'social:begin' 'google-oauth2' %}"><img src="{% static 'login/google-login.png' %}" alt="Sign in with Google"></a>
+    </div>
+</div>
+{% endblock %}
