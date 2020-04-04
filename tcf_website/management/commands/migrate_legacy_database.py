@@ -16,11 +16,13 @@ TODO:
     - port students --- need to figure out how that will work!
     - port reviews
     - port votes
+    - check that all courses departments + subdepartments currently
+        viewable on the website are in the migrated database
 
 Done* denotes that it could be improved.
 
 '''
-
+import traceback
 
 class Command(BaseCommand):
     help = 'Imports data from legacy database into default database'
@@ -65,6 +67,7 @@ class Command(BaseCommand):
                 except Exception as e:
                     print(f"Error migrating {type(obj).__name__} {obj}:")
                     print(e)
+                    traceback.print_exc()
 
 
     def handle(self, *args, **options):
@@ -151,7 +154,7 @@ class Command(BaseCommand):
             },
             reverse=True
         )
-        '''
+        
 
         # TODO: better collection of instructor emails? lous list?
         # TODO: better handling of name collisions?
@@ -159,7 +162,7 @@ class Command(BaseCommand):
             if not old.email_alias:
                 return None
             return old.email_alias if '@' in old.email_alias else f"{old.email_alias}@virginia.edu"
-        Instructor.objects.all().delete()
+        # Instructor.objects.all().delete()
         self.migrate(
             Professors,
             Instructor,
@@ -178,19 +181,32 @@ class Command(BaseCommand):
             # after_func = lambda old, new: new.departments.add(Department.objects.get(name=old.department.name))
         )
 
+        '''
+
+        def get_section_instructor(old_sec):
+            with connections['legacy'].cursor() as cursor:
+                cursor.execute("SELECT * FROM section_professors WHERE section_id = %s", [old_sec.id])
+                row = cursor.fetchone()
+                prof = self.professors.get(pk=row[0])
+                print(f"found instructor {prof} for {old_sec}")
+                return {
+                    'first_name': prof.first_name,
+                    'last_name': prof.last_name
+                    }
+        # Section.objects.all().delete()
         # self.migrate(
         #     Sections,
         #     Section,
         #     {
         #         'sis_section_number': lambda old: old.sis_class_number,
-        #         'instructors': lambda old: ,
         #         'semester': lambda old: Semester.objects.get(number=old.semester.number),
-        #         'course': lambda old: Course.objects.get(number=old.course.course_number, subdepartments=Subdepartment.objects.get(name=old.course.subdepartment.name)),
+        #         'course': lambda old: Course.objects.get(number=old.course.course_number, subdepartment=Subdepartment.objects.get(name=old.course.subdepartment.name)),
                 
         #     },
         #     {
-        #         'subdepartment__name': lambda old: old.subdepartment.name,
-        #         'number': 'course_number',
+        #         'course__subdepartment__name': lambda old: old.subdepartment.name,
+        #         'course__number': lambda old: old.course.course_number,
         #     },
-        #     after_func = lambda new: new.instructors.add()
+        #     after_func = lambda old, new: new.instructors.add(
+        #         Instructor.objects.get(**get_section_instructor(old)))
         # )
