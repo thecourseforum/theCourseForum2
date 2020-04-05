@@ -20,10 +20,11 @@
 1. Get latest copy of legacy db using `mysqldump` from DO instance.
 2. Convert to sqlite using `legacy_db/mysql2sqlite`
     - Then put in `settings.py` as database `legacy`
-3. `python manage.py migrate_legacy_subdepartments`
+3. `docker exec -it tcf_django bash` and then `python manage.py migrate_legacy_subdepartments`
 4. `python manage.py load_all_semesters`
 5. `python manage.py migrate_legacy_reviews`
-6. Test
+6. `docker exec tcf_db pg_dump -U tcf_django tcf_db > new_db.sql`
+7. Test
     - Maybe crawl tCF and check that all viewable reviews are on the new system.
 
 # New semester update plan
