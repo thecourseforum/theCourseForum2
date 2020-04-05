@@ -43,7 +43,6 @@ class Command(BaseCommand):
         if semester == 'ALL_DANGEROUS':
             for file in sorted(os.listdir(self.data_dir)):
                 self.load_semester_file(file)
-
         elif semester == 'FIX_LAST_TAUGHT_SEMESTERS':
             # This should be done automatically when loading a semester,
             # but run this command if you notice that it hasn't been done.
