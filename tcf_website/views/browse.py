@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.core.serializers.json import DjangoJSONEncoder
 
-from ..models import School, Department
+from ..models import School, Department, Course, Semester
 
 def browse(request):
     schools = School.objects.all()
@@ -14,5 +14,10 @@ def browse(request):
 
 def department(request, dept_id):
     dept = Department.objects.get(pk=dept_id)
-    subdepartments = dept.subdepartment_set.all()
-    return render(request, 'department/department.html', {'department': dept, 'subdepartments': subdepartments})
+    latest_semester = Semester.latest()
+    return render(request, 'department/department.html',
+        {'department': dept, 'latest_semester': latest_semester})
+
+def course(request, course_id):
+    course = Course.objects.get(pk=course_id)
+    return render(request, 'course/course.html', {'course': course})
