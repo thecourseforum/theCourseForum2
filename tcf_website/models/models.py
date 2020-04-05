@@ -40,6 +40,11 @@ class Subdepartment(models.Model):
 
     def __str__(self):
         return f"{self.mnemonic} - {self.name}"
+
+    # courses within the last 5 years.
+    def recent_courses(self):
+        latest_semester = Semester.latest()
+        return self.course_set.filter(semester_last_taught__year__gte=latest_semester.year-5).order_by("number")
     
     class Meta:
         constraints = [
@@ -85,11 +90,17 @@ class Semester(models.Model):
 
     number = models.IntegerField(help_text="As defined in SIS/Lou's List", unique=True)
 
-    def __str__(self):
+    def __repr__(self):
         return f"{self.year} {self.season.title()} ({self.number})"
+    
+    def __str__(self):
+        return f"{self.season.title()} {self.year}"
     
     def is_after(self, other_sem):
         return self.number > other_sem.number
+    
+    def latest():
+        return Semester.objects.order_by("-number").first()
     
     class Meta:
         constraints = [
@@ -109,7 +120,10 @@ class Course(models.Model):
     semester_last_taught = models.ForeignKey(Semester, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.subdepartment.mnemonic} {self.number}"
+        return f"{self.subdepartment.mnemonic} {self.number} {self.title}"
+    
+    def is_recent(self):
+        return self.semester_last_taught == Semester.latest()
     
     class Meta:
         constraints = [

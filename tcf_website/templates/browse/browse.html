@@ -13,7 +13,7 @@
         <div class="school container-lg">
             <h3>{{s.name}}</h3>
             <ul class="department-list">
-                {% for d in s.department_set.all %}
+                {% for d in s.department_set.all|dictsort:"name" %}
                     <li>
                         <a href="{% url 'department' dept_id=d.pk %}">{{d}}</a>
                     </li>
