@@ -98,7 +98,7 @@ class Semesters(models.Model):
     # updated_at = models.DateTimeField()
 
     def __str__(self):
-        return f"{self.year} - {self.season}"
+        return f"{self.year:.0f} {self.season}"
 
     class Meta:
         managed = False
@@ -141,6 +141,9 @@ class Users(models.Model):
     # confirmation_sent_at = models.DateTimeField(blank=True, null=True)
     unconfirmed_email = models.CharField(max_length=255, blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.email})"
+
     class Meta:
         managed = False
         db_table = 'users'
@@ -170,7 +173,7 @@ class Courses(models.Model):
 
     def __str__(self):
         try:
-            return f"{self.subdepartment.mnemonic} {self.course_number}"
+            return f"{self.subdepartment.mnemonic} {self.course_number:.0f}"
         except Exception as e:
             return f"Error for course with number {self.course_number}: {e}"
             
@@ -354,7 +357,7 @@ class Professors(models.Model):
     professor_salary_id = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}  {self.email_alias} {self.department}"
+        return f"{self.first_name} {self.last_name} ({self.email_alias})"
 
     class Meta:
         managed = False
@@ -368,7 +371,7 @@ class Reviews(models.Model):
     # student_id = models.IntegerField(blank=True, null=True)
     user = models.ForeignKey(Users, db_column='student_id', on_delete=models.CASCADE)
     # semester_id = models.IntegerField(blank=True, null=True)
-    semester = models.ForeignKey(Semesters, db_column='semester_id', on_delete=models.CASCADE)
+    semester = models.ForeignKey(Semesters, db_column='semester_id', on_delete=models.CASCADE, null=True)
     # created_at = models.DateTimeField()
     # updated_at = models.DateTimeField()
     professor_rating = models.DecimalField(max_digits=10, decimal_places=5, blank=True, null=True)  # max_digits and decimal_places have been guessed, as this database handles decimal fields as float
@@ -385,7 +388,10 @@ class Reviews(models.Model):
     course = models.ForeignKey(Courses, db_column='course_id', on_delete=models.CASCADE)
     # professor_id = models.IntegerField(blank=True, null=True)
     professor = models.ForeignKey(Professors, db_column='professor_id', on_delete=models.CASCADE)
-    deleted = models.IntegerField()
+    deleted = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Review by {self.user} for {self.course}, {self.professor} during {self.semester}"
 
     class Meta:
         managed = False
@@ -509,6 +515,9 @@ class Votes(models.Model):
     voter_type = models.CharField(max_length=255, blank=True, null=True)
     # created_at = models.DateTimeField(blank=True, null=True)
     # updated_at = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Vote of value {self.vote} for {self.review} by {self.user}"
 
     class Meta:
         managed = False

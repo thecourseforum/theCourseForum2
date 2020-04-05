@@ -1,8 +1,7 @@
-from datetime import timezone
-
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 class School(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -155,11 +154,11 @@ class Section(models.Model):
         ]
 
 class Review(models.Model):
-    text = models.TextField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    text = models.TextField(blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     RATINGS = (
         (1, 1.0),
         (2, 2.0),
@@ -167,7 +166,7 @@ class Review(models.Model):
         (4, 4.0),
         (5, 5.0),
     )
-    professor_rating = models.FloatField(choices=RATINGS)
+    instructor_rating = models.FloatField(choices=RATINGS)
     difficulty = models.FloatField(choices=RATINGS)
     recommendability = models.FloatField(choices=RATINGS)
     hours_per_week = models.IntegerField(
@@ -183,13 +182,13 @@ class Review(models.Model):
         return super(Review, self).save(*args, **kwargs)
     
     def __str__(self):
-        return f"Review by {self.author} for {self.section}"
+        return f"Review by {self.user} for {self.course} taught by {self.instructor}"
     
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['author', 'course', 'instructor'],
-                name='unique review per author, course, and instructor',
+                fields=['user', 'course', 'instructor'],
+                name='unique review per user, course, and instructor',
             )
         ]
 
