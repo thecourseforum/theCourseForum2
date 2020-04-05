@@ -15,19 +15,19 @@
 </head>
 <body class="body">
     {% include "base/navbar.html" %}
-    <div class="content container-fluid">
+    <div role="main" class="content container-fluid">
         {% block content %}
         <p>Base content goes here.</p>
         {% endblock %}
     </div>
-    <footer>
-        <div class="row pad">
-            <div class="col-lg-12 text-center" style="color: black;">
-                theCourseForum | 2020
+    <footer class="footer">
+        <div class="container">
+            <span class="text-muted">
+                theCourseForum &copy; 2020
                 {% if DEBUG %}
-                    <p>DEBUG Mode.</p>
+                    | Debug mode.
                 {% endif %}
-            </div>
+            </span>
         </div>
     </footer>
     <script src="{% static 'base/jquery-3.4.1.min.js' %}"></script>
