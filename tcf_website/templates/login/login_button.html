@@ -1,0 +1,7 @@
+{% load static %}
+
+<div class="login-button">
+    <a href="{% url 'social:begin' 'google-oauth2' %}">
+        <img src="{% static 'login/google-login.png' %}" alt="Sign in with Google">
+    </a>
+</div>
