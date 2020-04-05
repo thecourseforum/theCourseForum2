@@ -1,0 +1,17 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block styles %}
+{% endblock %}
+
+{% block content %}
+<div class="browse container-fluid">
+    <h2>My Profile</h2>
+    <h5>{{ user.first_name }} {{ user.last_name }}</h5>
+    <h5>{{ user.computing_id }}</h5>
+    <h5>Class of {{ user.graduation_year }}</h5>
+</div>
+
+
+
+{% endblock %}
