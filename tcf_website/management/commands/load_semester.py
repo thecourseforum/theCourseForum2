@@ -43,6 +43,16 @@ class Command(BaseCommand):
         if semester == 'ALL_DANGEROUS':
             for file in sorted(os.listdir(self.data_dir)):
                 self.load_semester_file(file)
+
+        elif semester == 'FIX_LAST_TAUGHT_SEMESTERS':
+            # This should be done automatically when loading a semester,
+            # but run this command if you notice that it hasn't been done.
+            sections = Section.objects.all()
+            for section in tqdm(sections, total=sections.count()):
+                if section.semester.is_after(section.course.semester_last_taught):
+                    section.course.semester_last_taught = section.semester
+                    section.course.save()
+                    section.save()
         else:
             self.load_semester_file(f"{semester.lower()}.csv")
         
@@ -174,8 +184,7 @@ class Command(BaseCommand):
                 course.description = description
             if not pd.isnull(title):
                 course.title = title
-        
-
+        course.save()
         
         return course
     
