@@ -35,9 +35,6 @@ def collect_extra_info(request):
 
     return render(request, "login/extra_info_form.html", {'form': form})
 
-def unauthenticated_index(request):
-    return render(request, "landing/landing.html")
-
 @login_required
 def logout(request):
     """Logs out user"""
