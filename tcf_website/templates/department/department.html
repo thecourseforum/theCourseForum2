@@ -1,0 +1,18 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<h1>{{department.name}}</h1>
+<ul>
+    {% for sd in subdepartments %}
+        <li>{{sd.name}}</li>
+
+        <ul>
+            {% for c in sd.course_set.all %}
+                <li>{{sd.mnemonic}} {{c.number}} - {{c.title}}</li>
+            {% endfor %}
+        </ul>
+
+    {% endfor %}
+</ul>
+{% endblock %}

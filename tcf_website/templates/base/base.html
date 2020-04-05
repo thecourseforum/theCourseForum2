@@ -7,36 +7,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>theCourseForum</title>
 
+    <link rel="stylesheet" href="{% static 'base/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'base/base.css' %}" />
 
     {% block styles %}
     {% endblock %}
 </head>
 <body class="body">
-    {% block navbar %}
-        <div class="navbar">
-            <a href="{% url 'browse' %}"><h1>theCourseForum</h1></a>
-            {% if request.user.is_authenticated %}
-            <h3>You're logged in!</h3>
-            {% endif %}
-        </div>
-    {% endblock %}
-    <div class="content">
+    {% include "base/navbar.html" %}
+    <div class="content container-fluid">
         {% block content %}
-        <p>Base content.</p>
+        <p>Base content goes here.</p>
         {% endblock %}
     </div>
     <footer>
         <div class="row pad">
             <div class="col-lg-12 text-center" style="color: black;">
-                {% if request.user.is_authenticated %}
-                    <a href="{% url 'logout' %}">Logout</a>
-                {% endif %}
                 theCourseForum | 2020
+                {% if DEBUG %}
+                    <p>DEBUG Mode.</p>
+                {% endif %}
             </div>
         </div>
     </footer>
+    <script src="{% static 'base/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'base/bootstrap.bundle.min.js' %}"></script>
+    {% block js %}
+    {% endblock %}
 </body>
-{% block js %}
-{% endblock %}
 </html>
