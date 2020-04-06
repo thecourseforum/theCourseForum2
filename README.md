@@ -2,13 +2,15 @@
 2020 Django rewrite of theCourseForum website
 
 # Setup
-1. Install docker and docker-compose
+1. Install git, docker, and docker-compose
+    - https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
     - https://docs.docker.com/install/
     - https://docs.docker.com/compose/install/
-2. `docker-compose up`
-3. `wget http://cs.virginia.edu/~bry4xm/april5.sql`
-4. `docker exec tcf_db psql -U tcf_django tcf_db < april5.sql`
-5. Go to http://localhost:8000 and make sure it works!
+2. `git clone https://github.com/thecourseforum/theCourseForum2.git`
+3. `docker-compose up`
+4. `wget http://cs.virginia.edu/~bry4xm/april5.sql`
+5. `docker exec tcf_db psql -U tcf_django tcf_db < april5.sql`
+6. Go to http://localhost:8000 and make sure it works!
 
 # Design Philosophies
 - Thick models, thin views, thinner templates
