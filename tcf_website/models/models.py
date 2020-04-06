@@ -183,8 +183,8 @@ class Review(models.Model):
     recommendability = models.PositiveSmallIntegerField(choices=RATINGS)
     hours_per_week = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(168)])
-    created = models.DateTimeField(editable=False)
-    modified = models.DateTimeField()
+    created = models.DateTimeField(editable=False, default=timezone.now)
+    modified = models.DateTimeField(default=timezone.now)
 
     # def save(self, *args, **kwargs):
     #     ''' On save, update timestamps '''
