@@ -8,7 +8,7 @@
     - https://docs.docker.com/compose/install/
 2. `git clone https://github.com/thecourseforum/theCourseForum2.git`
 3. `docker-compose up`
-4. `wget http://cs.virginia.edu/~bry4xm/april5.sql`
+4. Download a copy of the database from https://drive.google.com/open?id=1wEWgz_gAOd4fOnbiRw0AjOLg5DQrdj-5
 5. `docker exec tcf_db psql -U tcf_django tcf_db < april5.sql`
 6. Go to http://localhost:8000 and make sure it works!
 
