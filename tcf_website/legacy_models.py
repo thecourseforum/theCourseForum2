@@ -372,8 +372,8 @@ class Reviews(models.Model):
     user = models.ForeignKey(Users, db_column='student_id', on_delete=models.CASCADE)
     # semester_id = models.IntegerField(blank=True, null=True)
     semester = models.ForeignKey(Semesters, db_column='semester_id', on_delete=models.CASCADE, null=True)
-    # created_at = models.DateTimeField()
-    # updated_at = models.DateTimeField()
+    created_at = models.DateTimeField()
+    # updated_at = models.DateTimeField(null=True)
     professor_rating = models.DecimalField(max_digits=10, decimal_places=5, blank=True, null=True)  # max_digits and decimal_places have been guessed, as this database handles decimal fields as float
     enjoyability = models.IntegerField(blank=True, null=True)
     difficulty = models.IntegerField(blank=True, null=True)

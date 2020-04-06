@@ -45,6 +45,9 @@ class Subdepartment(models.Model):
         latest_semester = Semester.latest()
         return self.course_set.filter(semester_last_taught__year__gte=latest_semester.year-5).order_by("number")
     
+    def has_current_course(self):
+        return self.course_set.filter(section__semester=Semester.latest()).exists()
+    
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -54,7 +57,7 @@ class Subdepartment(models.Model):
         ]
 
 class User(AbstractUser):
-    computing_id = models.CharField(max_length=10, unique=True, blank=True)
+    computing_id = models.CharField(max_length=20, unique=True, blank=True)
     graduation_year = models.IntegerField(
         validators=[MinValueValidator(2000), MaxValueValidator(2999)],
         blank=True, null=True
@@ -62,6 +65,9 @@ class User(AbstractUser):
     
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
+
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
 
 
 class Instructor(models.Model):
@@ -73,6 +79,9 @@ class Instructor(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
+    
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
 
 class Semester(models.Model):
 
@@ -121,6 +130,9 @@ class Course(models.Model):
     def __str__(self):
         return f"{self.subdepartment.mnemonic} {self.number} {self.title}"
     
+    def code(self):
+        return f"{self.subdepartment.mnemonic} {self.number}"
+    
     def is_recent(self):
         return self.semester_last_taught == Semester.latest()
     
@@ -160,37 +172,37 @@ class Review(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     RATINGS = (
-        (1, 1.0),
-        (2, 2.0),
-        (3, 3.0),
-        (4, 4.0),
-        (5, 5.0),
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4),
+        (5, 5),
     )
-    instructor_rating = models.FloatField(choices=RATINGS)
-    difficulty = models.FloatField(choices=RATINGS)
-    recommendability = models.FloatField(choices=RATINGS)
-    hours_per_week = models.IntegerField(
+    instructor_rating = models.PositiveSmallIntegerField(choices=RATINGS)
+    difficulty = models.PositiveSmallIntegerField(choices=RATINGS)
+    recommendability = models.PositiveSmallIntegerField(choices=RATINGS)
+    hours_per_week = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(168)])
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField()
 
-    def save(self, *args, **kwargs):
-        ''' On save, update timestamps '''
-        if not self.id:
-            self.created = timezone.now()
-        self.modified = timezone.now()
-        return super(Review, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     ''' On save, update timestamps '''
+    #     if not self.id:
+    #         self.created = timezone.now()
+    #     self.modified = timezone.now()
+    #     return super(Review, self).save(*args, **kwargs)
     
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"
     
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'course', 'instructor'],
-                name='unique review per user, course, and instructor',
-            )
-        ]
+    # class Meta:
+    #     constraints = [
+    #         models.UniqueConstraint(
+    #             fields=['user', 'course', 'instructor'],
+    #             name='unique review per user, course, and instructor',
+    #         )
+    #     ]
 
 class Vote(models.Model):
     value = models.IntegerField(

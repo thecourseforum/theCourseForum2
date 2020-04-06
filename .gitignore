@@ -4,3 +4,4 @@ __pycache__/*
 *.sqlite3
 *.db
 legacy_db/*.sql
+*.sql
