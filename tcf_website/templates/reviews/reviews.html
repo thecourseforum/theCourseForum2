@@ -1,14 +1,32 @@
-{% extends "base/base.html" %}
-{% load static %}
+<!-- TODO: include review styles here -->
 
-{% block styles %}
-{% endblock %}
-
-{% block content %}
-<div class="browse container-fluid">
-    <h2>Your reviews</h2>
+<div class="reviews container-lg">
+    <ul class="review-list">
+    {% for r in reviews %}
+        <li>
+            <div class="review">
+                {% if profile %}
+                <div class="d-flex justify-content-between">
+                    <p>{{ r.instructor.full_name }} - {{ r.course }}</p>
+                    <a href="#">Edit</a>
+                </div>
+                {% endif %}
+                <p>{{ r.text }}</p>
+                <div class="d-flex justify-content-between">
+                <div class="row">
+                    <p class="col">{{ r.instructor_rating }} instructor rating</p>
+                    <p class="col">{{ r.difficulty }} difficulty</p>
+                    <p class="col">{{ r.recommendability }} recommendability</p>
+                    <p class="col">{{ r.hours_per_week }} hours/wk</p>
+                </div>
+                <div>
+                    <p>{{ r.semester }}</p>
+                    <p>{{ r.created|date }}</p>
+                </div>
+                </div>
+                
+            </div>
+        </li>
+    {% endfor %}
+    </ul>
 </div>
-
-
-
-{% endblock %}

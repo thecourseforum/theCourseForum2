@@ -11,3 +11,7 @@ from ..models import User
 @login_required
 def profile(request):
     return render(request, 'profile/profile.html')
+
+@login_required
+def reviews(request):
+    return render(request, 'reviews/user_reviews.html')
