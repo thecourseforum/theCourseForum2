@@ -1,0 +1,13 @@
+.rating-card-link {
+    background-color: rgb(91, 129, 182);
+    color: #EBEBEB;
+}
+
+.rating-card-link:hover {
+    background-color: rgb(57, 72, 108);
+    color: #EBEBEB;
+}
+
+.rating-card, .rating-card-link {
+    border-radius: 5px;
+}

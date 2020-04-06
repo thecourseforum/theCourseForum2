@@ -3,13 +3,15 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'department/department.css' %}" />
+<link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
 <link rel="stylesheet" href="{% static 'common/show-hide.css' %}" />
+<link rel="stylesheet" href="{% static 'common/toolbar.css' %}" />
 {% endblock %}
 
 {% block content %}
 
-<div class="department container-fluid">
-    <div class="btn-toolbar justify-content-between mb-3" role="toolbar" aria-label="Toolbar with button groups">
+<div class="department container">
+    <div class="tcf-toolbar btn-toolbar justify-content-between mb-3" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group mr-2" role="group" aria-label="First group">
             <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{% url 'browse' %}">{{ department.school.name }}</a></li>
