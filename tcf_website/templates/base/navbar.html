@@ -1,13 +1,7 @@
-<<<<<<< HEAD
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-
-    <a class="navbar-brand" href="#">
-=======
 <header>
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
 
     <a class="navbar-brand" href="/">
->>>>>>> migration
         <img src="https://thecourseforum.com/images/logo-orange-small.png" width="30" height="30" alt="tCF">
     </a>
 
@@ -19,18 +13,6 @@
   
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
-<<<<<<< HEAD
-        <li class="nav-item active">
-          <a class="nav-link" href="{% url 'browse' %}">Courses</a>
-        </li>
-        <li class="nav-item active">
-            <a class="nav-link" href="#">Review</a>
-        </li>
-      </ul>
-
-    
-    <ul class="navbar-nav ml-auto">
-=======
         <li class="nav-item {% if request.resolver_match.url_name == 'browse' %}active{% endif %}">
           <a class="nav-link" href="{% url 'browse' %}">Courses</a>
         </li>
@@ -48,20 +30,14 @@
         <li class="nav-item {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
           <a class="nav-link" href="{% url 'about' %}">About</a>
         </li>
->>>>>>> migration
         {% if user.is_authenticated %}
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Hi, {{user.first_name}}
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-<<<<<<< HEAD
-              <a class="dropdown-item" href="#">Edit profile</a>
-              <a class="dropdown-item" href="#">My reviews</a>
-=======
               <a class="dropdown-item" href="{% url 'profile' %}">Edit profile</a>
               <a class="dropdown-item" href="{% url 'reviews' %}">My reviews</a>
->>>>>>> migration
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
             </div>
@@ -75,9 +51,5 @@
     
 
     </div>
-<<<<<<< HEAD
-  </nav>
-=======
   </nav>
 </header>
->>>>>>> migration
