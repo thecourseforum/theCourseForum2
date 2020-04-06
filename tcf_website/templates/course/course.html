@@ -3,12 +3,11 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'course/course.css' %}" />
-<link rel="stylesheet" href="{% static 'base/show-hide.css' %}" />
+<link rel="stylesheet" href="{% static 'common/show-hide.css' %}" />
 {% endblock %}
 
 {% block content %}
 <div class="course container-fluid">
-
     <div class="btn-toolbar justify-content-between mb-3" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group mr-2" role="group" aria-label="First group">
             <ol class="breadcrumb mb-0">
@@ -22,25 +21,20 @@
             <button type="button" id="show-btn" onclick="showOld()" class="btn btn-outline-dark">All</button>
         </div>
       </div>
-      <h3>{{ course }}</h3>
-    <div class="instructors container-lg">
+      
+    <div class="instructors container-lg mt-3">
+        <h3>{{ course }}</h3>
         <ul class="instructor-list">
         {% for i in recent_instructors %}
             <li class="instructor">
-                <h3>
-                    <a href="{% url 'course_instructor' course_id=course.pk instructor_id=i.pk %}">
-                        {{ i.full_name }}
-                    </a>
-                </h3>
+                {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
+                {% include "common/rating_card.html" with title=i.full_name link=link last_taught=course.semester_last_taught %}
             </li>
         {% endfor %}
         {% for i in old_instructors %}
             <li class="instructor old">
-                <h3>
-                    <a href="{% url 'course_instructor' course_id=course.pk instructor_id=i.pk %}">
-                        {{ i.full_name }}
-                    </a>
-                </h3>
+                {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
+                {% include "common/rating_card.html" with title=i.full_name link=link %}
             </li>
         {% endfor %}
         </ul>
@@ -52,5 +46,5 @@
 
 
 {% block js %}
-<script src="{% static 'base/show-hide.js' %}"></script>
+<script src="{% static 'common/show-hide.js' %}"></script>
 {% endblock %}

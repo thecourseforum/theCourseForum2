@@ -192,6 +192,9 @@ class Review(models.Model):
     #         self.created = timezone.now()
     #     self.modified = timezone.now()
     #     return super(Review, self).save(*args, **kwargs)
+
+    def average(self):
+        return (self.instructor_rating + (5 - self.difficulty) + self.recommendability) / 3
     
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"

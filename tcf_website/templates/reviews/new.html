@@ -27,44 +27,44 @@
           </div>
           <div class="form-group col">
             <label for="semester">Semester</label>
-            <input type="text" placeholder="e.g. Fall 2020" class="form-control" id="semester">
+            <input type="text" placeholder="e.g. {{ LATEST_SEMESTER }}" class="form-control" id="semester">
           </div>
         </div>
         <div class="form-group mb-3">
-          <label for="validationTextarea">Tell us more about the course & instructor:</label>
-          <textarea class="form-control" id="validationTextarea" placeholder="e.g. I love CS 2150, Bloomfield is great!" required></textarea>
+          <label for="reviewText">Tell us more about the course & instructor:</label>
+          <textarea class="form-control" id="reviewText" placeholder="e.g. I love CS 2150, Bloomfield is great!" required></textarea>
         </div>
         <div class="form-row d-flex justify-content-space-around mb-3">
           <div class="form-group col mr-5">
                 <div class="mt-3">
-                    <label for="customRange3">Instructor rating</label>
+                    <label for="instructorRating">Instructor rating</label>
                     <div class="d-flex">
                         <span class="mr-2">1</span>
-                        <input type="range" class="custom-range" min="1" max="5" step="1" id="customRange3">
+                        <input type="range" class="custom-range" min="1" max="5" step="1" id="instructorRating">
                         <span class="ml-2">5</span>
                     </div>
                 </div>
                 <div class="mt-3">
-                    <label for="customRange3">Difficulty</label>
+                    <label for="difficulty">Difficulty</label>
                     <div class="d-flex">
                         <span class="mr-2">1</span>
-                        <input type="range" class="custom-range" min="1" max="5" step="1" id="customRange3">
+                        <input type="range" class="custom-range" min="1" max="5" step="1" id="difficulty">
                         <span class="ml-2">5</span>
                     </div>
                 </div>
                 <div class="mt-3">
-                    <label for="customRange3">Recommendability</label>
+                    <label for="recommendability">Recommendability</label>
                     <div class="d-flex">
                         <span class="mr-2">1</span>
-                        <input type="range" class="custom-range" min="1" max="5" step="1" id="customRange3">
+                        <input type="range" class="custom-range" min="1" max="5" step="1" id="recommendability">
                         <span class="ml-2">5</span>
                     </div>
                 </div>
           </div>
           <div class="form-group col d-flex justify-content-center align-items-center">
                 <div class="container-fluid">
-                    <label for="inputState">Hours per week of work</label>
-                    <input type="text" class="form-control" id="semester">
+                    <label for="hours">Hours per week of work</label>
+                    <input type="number" placeholder="e.g. 3" class="form-control" id="hours">
                 </div>
           </div>
         </div>

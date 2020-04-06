@@ -23,10 +23,15 @@
     <footer>
         <div class="row pad">
             <div class="col-lg-12 text-center" style="color: black;">
-                theCourseForum | 2020
-                {% if DEBUG %}
-                    <p>DEBUG Mode.</p>
-                {% endif %}
+                theCourseForum &copy; {{ LATEST_SEMESTER.year }}
+                <p>
+                    <span>
+                        <a href="mailto:support@thecourseforum.com?cc=rz5sc@virginia.edu&subject=tCF Bug Report&body=Hi there!%0D%0A%0D%0AI found a bug.%0D%0A%0D%0AWhen I <X>, <Y> happens.">Found a bug?</a>
+                    </span>
+                    {% if DEBUG %}
+                    <span> | DEBUG Mode.</span>
+                    {% endif %}
+                </p>
             </div>
         </div>
     </footer>
