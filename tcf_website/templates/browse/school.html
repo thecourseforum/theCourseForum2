@@ -1,0 +1,12 @@
+<div class="school card mb-3">
+    <div class="card-body">
+        <h3 class="card-title">{{school_name}}</h3>
+        <ul class="department-list">
+            {% for d in departments|dictsort:"name" %}
+                <li>
+                    <a href="{% url 'department' dept_id=d.pk %}">{{d}}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

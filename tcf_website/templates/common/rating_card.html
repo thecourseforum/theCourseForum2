@@ -1,0 +1,39 @@
+<div class="card mb-2">
+    <div class="row no-gutters">
+        <a class="col-md-4 pl-3 card-body d-flex align-items-center" href="{{ link }}">
+            <div>
+                <h3>{{ title }}</h3>
+                {% if subtitle %}
+                    <h5>{{ subtitle }}</h5>
+                {% endif %}
+            </div>
+        </a>
+      <div class="col-md-8">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+              <div class="row">
+                    <div class="col">
+                      <p class="mb-0">Recommendability</p>
+                      <p class="mb-0">TODO</p>
+                    </div> 
+                    <div class="col">
+                      <p class="mb-0">Difficulty</p>
+                      <p class="mb-0">TODO</p>
+                    </div>
+                    <div class="col">
+                      <p class="mb-0">GPA</p>
+                      <p class="mb-0">TODO</p>
+                    </div>
+              </div>
+              <div {% if not last_taught %}style="opacity: 0;"{% endif %}>
+                  <p class="mb-0">Last taught</p>
+                  <p class="mb-0">{{ last_taught }}</p>
+              </div>
+          </div>
+          {% if content %}
+          <p class="card-text mt-2">{{ content }}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>

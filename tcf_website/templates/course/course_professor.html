@@ -20,19 +20,6 @@
 
     <h3>{{ course }} - {{ instructor.full_name }}</h3>
     {% include "reviews/reviews.html" with reviews=reviews %}
-    <!-- <div class="reviews container-lg">
-        <ul class="review-list">
-        {% for r in reviews %}
-            <li class="review">
-                <div>
-                    <p>{{ r.text }}</p>
-                    <p>{{ r.semester }}</p>
-                    <p>{{ r.created|date }}</p>
-                </div>
-            </li>
-        {% endfor %}
-        </ul>
-    </div> -->
 </div>
 {% endblock %}
 

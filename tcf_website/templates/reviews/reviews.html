@@ -1,32 +1,56 @@
 <!-- TODO: include review styles here -->
 
 <div class="reviews container-lg">
-    <ul class="review-list">
+    <ul class="review-list pl-2" style="list-style-type: none;">
     {% for r in reviews %}
         <li>
-            <div class="review">
-                {% if profile %}
-                <div class="d-flex justify-content-between">
-                    <p>{{ r.instructor.full_name }} - {{ r.course }}</p>
-                    <a href="#">Edit</a>
+            <div class="review card">
+                <div class="card-body">
+                    {% if profile %}
+                    <div class="d-flex justify-content-between">
+                        <p>{{ r.instructor.full_name }} - {{ r.course }}</p>
+                        <a href="#">Edit</a>
+                    </div>
+                    {% endif %}
+                    <p>{{ r.text }}</p>
+                    <div class="d-flex justify-content-between">
+                        <div class="row">
+                            <div class="col">
+                                <p>Average</p>
+                                <p>{{ r.average|floatformat:2 }}</p>
+                            </div>
+                            <div class="col">
+                                <p>Instructor</p>
+                                <p>{{ r.instructor_rating }}</p>
+                            </div>
+                            <div class="col">
+                                <p>Difficulty</p>
+                                <p>{{ r.difficulty }}</p>
+                            </div>
+                            <div class="col">
+                                <p>Recommendability</p>
+                                <p>{{ r.recommendability }}</p>
+                            </div>
+                            <div class="col">
+                                <p>Hours/week</p>
+                                <p>{{ r.hours_per_week }}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p>{{ r.semester }}</p>
+                            <p>{{ r.created|date }}</p>
+                        </div>
+                    </div>
                 </div>
-                {% endif %}
-                <p>{{ r.text }}</p>
-                <div class="d-flex justify-content-between">
-                <div class="row">
-                    <p class="col">{{ r.instructor_rating }} instructor rating</p>
-                    <p class="col">{{ r.difficulty }} difficulty</p>
-                    <p class="col">{{ r.recommendability }} recommendability</p>
-                    <p class="col">{{ r.hours_per_week }} hours/wk</p>
-                </div>
-                <div>
-                    <p>{{ r.semester }}</p>
-                    <p>{{ r.created|date }}</p>
-                </div>
-                </div>
-                
             </div>
         </li>
+    {% empty %}
+        <p>
+            <p>No reviews :(</p>
+            <p>
+                Help out by <a href="{% url 'new_review' %}">writing a review!</a>
+            </p>
+        </p>
     {% endfor %}
     </ul>
 </div>

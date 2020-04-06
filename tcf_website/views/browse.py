@@ -5,12 +5,23 @@ from django.contrib.auth import logout as auth_logout, login
 from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import F
 
 from ..models import School, Department, Course, Semester, Instructor, Review
 
 def browse(request):
-    schools = School.objects.all()
-    return render(request, 'browse/browse.html', {'schools': schools})
+    CLAS = School.objects.get(name="College of Arts & Sciences")
+    SEAS = School.objects.get(name="School of Engineering & Applied Science")
+
+    other_dept_pks = School.objects.exclude(pk__in=[CLAS.pk, SEAS.pk]).values_list('department', flat=True)
+    
+    other_depts = Department.objects.filter(pk__in=other_dept_pks)
+
+    return render(request, 'browse/browse.html', {
+        'CLAS': CLAS,
+        'SEAS': SEAS,
+        'other_depts': other_depts
+        })
 
 def department(request, dept_id):
     dept = Department.objects.get(pk=dept_id)

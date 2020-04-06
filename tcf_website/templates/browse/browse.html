@@ -7,20 +7,15 @@
 
 {% block content %}
 <div class="browse container-fluid">
-    <h2>Browse courses</h2>
+    <h2>Browse by Department</h2>
     <div class="schools">
-        {% for s in schools %}
-        <div class="school container-lg">
-            <h3>{{s.name}}</h3>
-            <ul class="department-list">
-                {% for d in s.department_set.all|dictsort:"name" %}
-                    <li>
-                        <a href="{% url 'department' dept_id=d.pk %}">{{d}}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endfor %}
+
+        {% include "browse/school.html" with school_name=CLAS.name departments=CLAS.department_set.all %}
+
+        {% include "browse/school.html" with school_name=SEAS.name departments=SEAS.department_set.all %}
+
+        {% include "browse/school.html" with school_name="Other Schools at the University of Virginia" departments=other_depts %}
+
     </div>
 </div>
 
