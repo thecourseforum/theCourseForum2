@@ -6,16 +6,6 @@
 {% endblock %}
 
 {% block content %}
-<<<<<<< HEAD
-<h1>Browse courses</h1>
-<ul>
-    {% for d in departments %}
-        <li>
-            <a href="{% url 'department' dept_id=d.pk %}">{{d}}</a>
-        </li>
-    {% endfor %}
-</ul>
-=======
 <div class="browse container-fluid">
     <h2>Browse courses</h2>
     <div class="schools">
@@ -36,5 +26,4 @@
 
 
 
->>>>>>> migration
 {% endblock %}
