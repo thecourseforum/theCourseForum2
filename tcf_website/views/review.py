@@ -11,7 +11,3 @@ from ..models import Review
 @login_required
 def new_review(request):
     return render(request, 'reviews/new.html')
-
-@login_required
-def reviews(request):
-    return render(request, 'reviews/reviews.html')

@@ -19,7 +19,8 @@
       </div>
 
     <h3>{{ course }} - {{ instructor.full_name }}</h3>
-    <div class="reviews container-lg">
+    {% include "reviews/reviews.html" with reviews=reviews %}
+    <!-- <div class="reviews container-lg">
         <ul class="review-list">
         {% for r in reviews %}
             <li class="review">
@@ -31,7 +32,7 @@
             </li>
         {% endfor %}
         </ul>
-    </div>
+    </div> -->
 </div>
 {% endblock %}
 
