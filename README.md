@@ -7,7 +7,7 @@
     - https://docs.docker.com/compose/install/
 2. `docker-compose up`
 3. `wget http://cs.virginia.edu/~bry4xm/april5.sql`
-4. `docker exec tcf_db psql -U tcf_django < april5.sql`
+4. `docker exec tcf_db psql -U tcf_django tcf_db < april5.sql`
 5. Go to http://localhost:8000 and make sure it works!
 
 # Design Philosophies
