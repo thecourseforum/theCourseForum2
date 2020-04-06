@@ -6,24 +6,6 @@ from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.core.serializers.json import DjangoJSONEncoder
 
-<<<<<<< HEAD
-from ..models import Department
-
-def index(request):
-    if request.user.is_authenticated:
-        return redirect('browse')
-    return render(request, 'landing/landing.html')    
-    
-
-def browse(request):
-    departments = Department.objects.all()
-    return render(request, 'browse/browse.html', {'departments': departments})
-
-def department(request, dept_id):
-    dept = Department.objects.get(pk=dept_id)
-    subdepartments = dept.subdepartment_set.all()
-    return render(request, 'department/department.html', {'department': dept, 'subdepartments': subdepartments})
-=======
 from ..models import School, Department, Course, Semester, Instructor, Review
 
 def browse(request):
@@ -69,4 +51,3 @@ def course_instructor(request, course_id, instructor_id):
             'instructor': instructor,
             'reviews': reviews,
         })
->>>>>>> migration
