@@ -88,6 +88,11 @@ class Command(BaseCommand):
 
         computing_id = old_user.email.split("@")[0]
 
+        try:
+            return User.objects.get(computing_id=computing_id)
+        except:
+            pass
+
         user, created = User.objects.get_or_create(
             email=old_user.email,
             first_name=old_user.first_name,
@@ -99,45 +104,105 @@ class Command(BaseCommand):
         
         return user
 
+    def get_most_recent_semester(self, course, instructor, date):
+        month = min(9, date.month)
+        year = date.year % 100
+        sem_number = int(f"1{year:02d}{month}")
+
+        # sections from recent to least recent
+        sections = Section.objects.filter(
+            instructors=instructor,
+            course=course,
+        ).order_by("-semester__number")
+
+        for section in sections:
+            if section.semester.number <= sem_number:
+                return section.semester
+        
+        if sections:
+            return sections.last().semester
+        
+        return Semester.objects.order_by("number").first()
+
     def migrate_review(self, review):
         user =  self.load_user(review.user)
 
-        instructor = Instructor.objects.get(
-            last_name=review.professor.last_name,
-            first_name=review.professor.first_name,
-        )
+        try:
+            if not review.professor:
+                return
+        except:
+            return
+        
+        try:
+            if not review.course:
+                return
+        except:
+            return
+
+        try:
+            instructor = Instructor.objects.get(
+                last_name=review.professor.last_name,
+                first_name=review.professor.first_name,
+            )
+        except KeyError:
+            return
 
         course = Course.objects.get(
             number=review.course.course_number,
             subdepartment__mnemonic=review.course.subdepartment.mnemonic
         )
 
-        work_per_week = min(7*24, round(review.amount_reading + review.amount_writing + review.amount_group + review.amount_homework))
+        reading = review.amount_reading if review.amount_reading else 0
+        writing = review.amount_writing if review.amount_writing else 0
+        group = review.amount_group if review.amount_group else 0
+        homework = review.amount_homework if review.amount_homework else 0
 
-        if review.semester:
+        work_per_week = min(7*24, round(reading + writing + group + homework))
+
+        try:
             semester = Semester.objects.get(number=review.semester.number)
-        else:
-            semester = Semester.objects.order_by("number").first()
+        except Exception:
+            semester = self.get_most_recent_semester(course, instructor, review.created_at)
+        
+        instructor_rating = min(5, round(
+            review.professor_rating)) if review.professor_rating else 3
+        difficulty = min(5, round(
+            review.difficulty)) if review.difficulty else 3
+        recommendability = min(5, round(
+            review.enjoyability)) if review.enjoyability else 3
 
         r, created = Review.objects.get_or_create(
             text = review.comment,
             user = user,
             course = course,
             instructor = instructor,
-            instructor_rating = min(5, round(review.professor_rating)),
-            difficulty = min(5, round(review.difficulty)),
-            recommendability = min(5, round(review.enjoyability)),
+            instructor_rating = instructor_rating,
+            difficulty = difficulty,
+            recommendability = recommendability,
             hours_per_week = work_per_week,
-            semester=semester
+            semester=semester,
+            created=review.created_at,
+            modified=review.created_at,
         )
+
+        if not created:
+            print("Review already created.")
 
     def migrate_reviews(self):
         for i in tqdm(range(0, self.reviews.count())):
-            review = self.reviews[i]
+            try:
+                review = self.reviews[i]
+            except Exception as e:
+                print("Could not retrieve review!")
+                print(e)
+
             try:
                 self.migrate_review(review)
+            except KeyError:
+                print("WTF!?")
             except Exception as e:
-                print("Problem migrationg {review}:")
+                print(f"Problem migrationg {review}:")
+                print(review.comment)
                 print(e)
 
 
@@ -161,11 +226,19 @@ class Command(BaseCommand):
         UNKNOWN_DEPT, _ = Department.objects.get_or_create(name='UNKNOWN', school = UNKNOWN_SCHOOL)
 
 
-        # print(self.reviews.last())
-        # for review in self.reviews[:10]:
+
+        # start = 0
+        # for review in self.reviews[start:start+5]:
         #     print("===")
         #     print(review.comment)
+        #     print(review.semester)
+        #     print(review.created_at)
+        #     print(review.created_at.month)
+        #     print(review.professor_rating)
+        #     print(review.enjoyability)
+        #     print(review.difficulty)
 
+        # Review.objects.all().delete()
         self.migrate_reviews()
 
         # for vote in self.votes[:10]:
