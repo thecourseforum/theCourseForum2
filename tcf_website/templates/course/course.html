@@ -1,0 +1,56 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'course/course.css' %}" />
+<link rel="stylesheet" href="{% static 'base/show-hide.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="course container-fluid">
+
+    <div class="btn-toolbar justify-content-between mb-3" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'browse' %}">{{ course.subdepartment.department.school.name }}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'department' dept_id=course.subdepartment.department.pk %}">{{ course.subdepartment.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ course.code }}</li>
+            </ol>
+        </div>
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" id="hide-btn" onclick="hideOld()" class="btn btn-outline-dark active">{{latest_semester}}</button>
+            <button type="button" id="show-btn" onclick="showOld()" class="btn btn-outline-dark">All</button>
+        </div>
+      </div>
+      <h3>{{ course }}</h3>
+    <div class="instructors container-lg">
+        <ul class="instructor-list">
+        {% for i in recent_instructors %}
+            <li class="instructor">
+                <h3>
+                    <a href="{% url 'course_instructor' course_id=course.pk instructor_id=i.pk %}">
+                        {{ i.full_name }}
+                    </a>
+                </h3>
+            </li>
+        {% endfor %}
+        {% for i in old_instructors %}
+            <li class="instructor old">
+                <h3>
+                    <a href="{% url 'course_instructor' course_id=course.pk instructor_id=i.pk %}">
+                        {{ i.full_name }}
+                    </a>
+                </h3>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+
+
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script src="{% static 'base/show-hide.js' %}"></script>
+{% endblock %}

@@ -3,7 +3,11 @@
 
 {% block content %}
 
+<<<<<<< HEAD
 <div class="login-container" style="width: 100%; text-align: center">
+=======
+<!-- <div class="container-fluid">
+>>>>>>> migration
     <h1>Welcome to tCF!</h1>
     {% if error %}
         <h4 class="error">There was an error logging you in. Please make sure you're using an @virginia.edu email address.</h4>
@@ -11,5 +15,22 @@
         <h4>Please log in to continue.</h4>
     {% endif %}
     {% include "login/login_button.html" %}
+<<<<<<< HEAD
+=======
+</div> -->
+<div class="row justify-content-center">
+<div class="card col-3 text-center">
+    <div class="card-body">
+        <img style="width: auto; height: 100px;" src="https://thecourseforum.com/images/logo-orange-small.png" class="card-img-top" alt="tCF" width="auto">
+        <h5 class="card-title">Welcome to theCourseForum!</h5>
+        <p class="card-text">Please log in to continue.</p>
+        {% if error %}
+            <p style="color: red;" class="card-text">There was an error logging you in. Please make sure you're using an @virginia.edu email address.</p>
+        {% endif %}
+        {% include "login/login_button.html" %}
+    </div>
+  </div>
+>>>>>>> migration
 </div>
+
 {% endblock %}

@@ -1,7 +1,12 @@
 {% extends "base/base.html" %}
 {% load static %}
 
+{% block styles %}
+<link rel="stylesheet" href="{% static 'browse/browse.css' %}" />
+{% endblock %}
+
 {% block content %}
+<<<<<<< HEAD
 <h1>Browse courses</h1>
 <ul>
     {% for d in departments %}
@@ -10,4 +15,26 @@
         </li>
     {% endfor %}
 </ul>
+=======
+<div class="browse container-fluid">
+    <h2>Browse courses</h2>
+    <div class="schools">
+        {% for s in schools %}
+        <div class="school container-lg">
+            <h3>{{s.name}}</h3>
+            <ul class="department-list">
+                {% for d in s.department_set.all|dictsort:"name" %}
+                    <li>
+                        <a href="{% url 'department' dept_id=d.pk %}">{{d}}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+>>>>>>> migration
 {% endblock %}
