@@ -2,12 +2,13 @@
 {% load static %}
 
 {% block styles %}
+<link rel="stylesheet" href="{% static 'common/toolbar.css' %}" />
 {% endblock %}
 
 {% block content %}
-<div class="course-professor container-fluid">
+<div class="course-professor container">
 
-    <div class="btn-toolbar justify-content-between mb-3" role="toolbar" aria-label="Toolbar with button groups">
+    <div class="tcf-toolbar btn-toolbar justify-content-between mb-3" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group mr-2" role="group" aria-label="First group">
             <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{% url 'browse' %}">{{ course.subdepartment.department.school.name }}</a></li>

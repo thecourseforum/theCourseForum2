@@ -7,3 +7,8 @@
     list-style-type: none;
     padding: 0 0 0 10px;
 }
+
+.school > .card-header {
+    background-color: rgb(91, 129, 182);
+    color: #EBEBEB;
+}
