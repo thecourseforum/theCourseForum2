@@ -32,7 +32,7 @@
                 {% for c in sd.recent_courses|dictsort:"number" %}
                     <li class="{% if not c.is_recent %}old{% endif %}">
                         {% url 'course' course_id=c.pk as link %}
-                        {% include "common/rating_card.html" with title=c.code subtitle=c.title link=link last_taught=c.semester_last_taught content=c.description %}
+                        {% include "common/rating_card.html" with title=c.code subtitle=c.title link=link last_taught=c.semester_last_taught content=c.description prefix='course' pk=c.pk %}
                     </li>
                 {% endfor %}
             </ul>
@@ -44,4 +44,7 @@
 
 {% block js %}
 <script src="{% static 'common/show-hide.js' %}"></script>
+<!-- <script>
+    fetch(`https://vagrades.com/api/uvaclass/${{{course.sub}}{{}}}`)
+</script> -->
 {% endblock %}
