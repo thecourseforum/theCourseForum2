@@ -20,6 +20,18 @@
     - furthermore, you should avoid placing logic in templates.
         - e.g. don't filter lists in templates, filter them in the views.
 
+# How to Contribute
+1. Create a new branch to do your work in. `git checkout -B your_branch_name`
+2. Make your changes!
+3. Write unit tests and put them in `tcf_website/tests/`
+3. Stage your changes with `git add .`
+4. Commit with `git commit -m "Add X feature."`
+5. Push! `git push`
+6. Make a Pull Request.
+7. Wait for all tests to pass.
+8. Request an approver.
+9. Wait to be approved!
+
 # Data migration plan from tCF 1.0 (total downtime: 2.5 hours)
 1. Get latest copy of legacy db using `mysqldump` from DO instance.
 2. Convert to sqlite using `legacy_db/mysql2sqlite`
