@@ -1,4 +1,6 @@
 # theCourseForum2
+[![Build Status](https://travis-ci.com/thecourseforum/theCourseForum2.svg?branch=master)](https://travis-ci.com/thecourseforum/theCourseForum2)
+
 2020 Django rewrite of theCourseForum website
 
 # Setup
