@@ -23,9 +23,9 @@
 # How to Contribute
 1. Create a new branch to do your work in. `git checkout -B your_branch_name`
 2. Make your changes!
-3. Write tests and put them in `tcf_website/tests/`
-3. Stage them with `git add .`
-4. Commit with `git commit -m "Add X feature."
+3. Write unit tests and put them in `tcf_website/tests/`
+3. Stage your changes with `git add .`
+4. Commit with `git commit -m "Add X feature."`
 5. Push! `git push`
 6. Make a Pull Request.
 7. Wait for all tests to pass.
