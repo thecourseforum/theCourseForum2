@@ -5,7 +5,7 @@ services:
 
 before_install:
     - docker build .
-    - docker-compose up
+    - docker-compose run
 
 script:
     - docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core
