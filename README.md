@@ -7,10 +7,10 @@
     - https://docs.docker.com/install/
     - https://docs.docker.com/compose/install/
 2. `git clone https://github.com/thecourseforum/theCourseForum2.git`
-3. Go into the `theCourseForum2/` folder and then run `docker-compose up`
-4. Download a copy of the database from https://drive.google.com/open?id=1_FqoWjpXVFfjq-vRZElL36pk9CaTaiVl
+3. Go into the `theCourseForum2/` folder and then run `docker build .` and then `docker-compose up`
+4. Download a copy of the database from https://drive.google.com/open?id=1ubiiOj-jfzoBKaMK6pFEkFXdSqMuD-22
     - put this into the `theCourseForum2/` folder
-5. `docker exec tcf_db psql -U tcf_django tcf_db < april6.sql`
+5. `cat april7.sql | docker exec -i tcf_db psql -U tcf_django tcf_db`
 6. Go to http://localhost:8000 and make sure it works!
 
 # Design Philosophies
@@ -19,8 +19,6 @@
         - this ensures that the code can be reused easily anywhere the model is used
     - furthermore, you should avoid placing logic in templates.
         - e.g. don't filter lists in templates, filter them in the views.
-
-- API-centric 
 
 # Data migration plan from tCF 1.0 (total downtime: 2.5 hours)
 1. Get latest copy of legacy db using `mysqldump` from DO instance.
@@ -40,3 +38,6 @@
         - update courses with new course info if available
         - create new instructors if needed
 
+# Static analysis
+- `autopep8 --in-place --aggressive --aggressive -r .`
+- `pylint --load-plugins pylint_django tcf_website tcf_core`

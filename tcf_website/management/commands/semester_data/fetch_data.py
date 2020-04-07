@@ -1,5 +1,6 @@
 import requests
 
+
 def download_semester(year, season):
     # local_filename = url.split('/')[-1]
     # NOTE the stream=True parameter below
@@ -11,15 +12,14 @@ def download_semester(year, season):
         'january': 1
     }
 
-    year_code = str(year)[-2:] # 2019 -> '19'
+    year_code = str(year)[-2:]  # 2019 -> '19'
 
     semester_code = f"1{year_code}{season_numbers[season]}"
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36',
         'origin': 'https://louslist.org',
-        'referer': f'https://louslist.org/requestData.php?Semester={semester_code}&Type=Group&Group=CS'
-    }
+        'referer': f'https://louslist.org/requestData.php?Semester={semester_code}&Type=Group&Group=CS'}
 
     try:
 
@@ -31,13 +31,14 @@ def download_semester(year, season):
         }, stream=True, headers=headers) as r:
             r.raise_for_status()
             with open(f'csv/{year}_{season}.csv', 'wb') as f:
-                for chunk in r.iter_content(chunk_size=8192): 
-                    if chunk: # filter out keep-alive new chunks
+                for chunk in r.iter_content(chunk_size=8192):
+                    if chunk:  # filter out keep-alive new chunks
                         f.write(chunk)
                         # f.flush()
         # return local_filename
     except Exception as e:
         print(e)
+
 
 if __name__ == '__main__':
 

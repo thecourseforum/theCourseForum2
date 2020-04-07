@@ -5,3 +5,5 @@ __pycache__/*
 *.db
 legacy_db/*.sql
 *.sql
+.vscode/
+tcf_website/migrations/*

@@ -1,20 +1,13 @@
-{% extends "base/base.html" %}
+{% extends "login/login_base.html" %}
 {% load static %}
 
-{% block content %}
+{% block login_content %}
 
-<div class="row justify-content-center">
-<div class="card col-4 text-center">
-    <div class="card-body">
-        <img style="width: auto; height: 150px;" src="{% static 'base/img/logo-orange-small.png' %}" class="card-img-top" alt="tCF" width="auto">
-        <h2 class="card-title">Welcome to theCourseForum!</h2>
-        <h5 class="card-text mb-3">Please log in to continue.</h5>
-        {% if error %}
-            <p style="color: red;" class="card-text">There was an error logging you in. Please make sure you're using an @virginia.edu email address.</p>
-        {% endif %}
-        {% include "login/login_button.html" %}
-    </div>
-  </div>
-</div>
+<h2 class="card-title">Welcome to theCourseForum!</h2>
+<h5 class="card-text mb-3">Please log in to continue.</h5>
+{% if error %}
+    <p style="color: red;" class="card-text">There was an error logging you in. Please make sure you're using an @virginia.edu email address.</p>
+{% endif %}
+{% include "login/login_button.html" %}
 
 {% endblock %}

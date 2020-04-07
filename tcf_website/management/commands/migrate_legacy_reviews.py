@@ -7,31 +7,20 @@ import traceback
 from tcf_website.legacy_models import *
 from tcf_website.models import *
 
-'''
-TODO:
-    - DONE: port schools
-    - DONE: port departments
-    - DONE: port subdepartments
-    - DONE: port semester
-    - port sections
-    - DONE*: port courses
-    - DONE*: port instructors --- need to figure out how that will work!
-    - port students --- need to figure out how that will work!
-    - port reviews
-    - port votes
-    - check that all courses departments + subdepartments currently
-        viewable on the website are in the migrated database
-
-Done* denotes that it could be improved.
-
-'''
 import traceback
+
 
 class Command(BaseCommand):
     help = 'Imports data from legacy database into default database'
 
-    
-    def migrate(self, legacy_class, new_class, field_map, unique_fields, reverse=False, after_func=None):
+    def migrate(
+            self,
+            legacy_class,
+            new_class,
+            field_map,
+            unique_fields,
+            reverse=False,
+            after_func=None):
 
         def not_yet_created(obj):
 
@@ -39,18 +28,18 @@ class Command(BaseCommand):
                 if callable(old_field):
                     try:
                         return old_field(obj)
-                    except:
+                    except BaseException:
                         return False
                 return getattr(obj, old_field)
 
-            return len(new_class.objects.filter(**{
-                f"{new_field}__exact": get_or_call(old_field) for new_field, old_field in unique_fields.items()}
-            )) == 0
+            return len(new_class.objects.filter(**{f"{new_field}__exact": get_or_call(
+                old_field) for new_field, old_field in unique_fields.items()})) == 0
 
         if not reverse:
             objects = legacy_class.objects.using('legacy').all()
         else:
-            objects = legacy_class.objects.using('legacy').all().order_by('-pk')
+            objects = legacy_class.objects.using(
+                'legacy').all().order_by('-pk')
 
         for obj in objects:
             if not_yet_created(obj):
@@ -66,21 +55,19 @@ class Command(BaseCommand):
                     if after_func and callable(after_func):
                         after_func(obj, new_obj)
 
-
                 except Exception as e:
                     print(f"Error migrating {type(obj).__name__} {obj}:")
                     print(e)
                     traceback.print_exc()
-
 
     def load_user(self, old_user):
 
         try:
             student = old_user.student
             grad_year = student.grad_year
-        except:
+        except BaseException:
             grad_year = None
-        
+
         if not old_user.last_name:
             last_name = ""
         else:
@@ -90,7 +77,7 @@ class Command(BaseCommand):
 
         try:
             return User.objects.get(computing_id=computing_id)
-        except:
+        except BaseException:
             pass
 
         user, created = User.objects.get_or_create(
@@ -100,8 +87,8 @@ class Command(BaseCommand):
             computing_id=computing_id,
             username=computing_id,
             graduation_year=grad_year,
-            )
-        
+        )
+
         return user
 
     def get_most_recent_semester(self, course, instructor, date):
@@ -118,25 +105,25 @@ class Command(BaseCommand):
         for section in sections:
             if section.semester.number <= sem_number:
                 return section.semester
-        
+
         if sections:
             return sections.last().semester
-        
+
         return Semester.objects.order_by("number").first()
 
     def migrate_review(self, review):
-        user =  self.load_user(review.user)
+        user = self.load_user(review.user)
 
         try:
             if not review.professor:
                 return
-        except:
+        except BaseException:
             return
-        
+
         try:
             if not review.course:
                 return
-        except:
+        except BaseException:
             return
 
         try:
@@ -157,13 +144,21 @@ class Command(BaseCommand):
         group = review.amount_group if review.amount_group else 0
         homework = review.amount_homework if review.amount_homework else 0
 
-        work_per_week = min(7*24, round(reading + writing + group + homework))
+        work_per_week = min(
+            7 *
+            24,
+            round(
+                reading +
+                writing +
+                group +
+                homework))
 
         try:
             semester = Semester.objects.get(number=review.semester.number)
         except Exception:
-            semester = self.get_most_recent_semester(course, instructor, review.created_at)
-        
+            semester = self.get_most_recent_semester(
+                course, instructor, review.created_at)
+
         instructor_rating = min(5, round(
             review.professor_rating)) if review.professor_rating else 3
         difficulty = min(5, round(
@@ -172,14 +167,14 @@ class Command(BaseCommand):
             review.enjoyability)) if review.enjoyability else 3
 
         r, created = Review.objects.get_or_create(
-            text = review.comment,
-            user = user,
-            course = course,
-            instructor = instructor,
-            instructor_rating = instructor_rating,
-            difficulty = difficulty,
-            recommendability = recommendability,
-            hours_per_week = work_per_week,
+            text=review.comment,
+            user=user,
+            course=course,
+            instructor=instructor,
+            instructor_rating=instructor_rating,
+            difficulty=difficulty,
+            recommendability=recommendability,
+            hours_per_week=work_per_week,
             semester=semester,
             created=review.created_at,
             modified=review.created_at,
@@ -205,8 +200,6 @@ class Command(BaseCommand):
                 print(review.comment)
                 print(e)
 
-
-
     def handle(self, *args, **options):
 
         self.schools = Schools.objects.using('legacy').all()
@@ -220,30 +213,16 @@ class Command(BaseCommand):
         self.reviews = Reviews.objects.using('legacy').all()
         self.votes = Votes.objects.using('legacy').all()
         self.semesters = Semesters.objects.using('legacy').all()
-        
 
         UNKNOWN_SCHOOL, _ = School.objects.get_or_create(name='UNKNOWN')
-        UNKNOWN_DEPT, _ = Department.objects.get_or_create(name='UNKNOWN', school = UNKNOWN_SCHOOL)
+        UNKNOWN_DEPT, _ = Department.objects.get_or_create(
+            name='UNKNOWN', school=UNKNOWN_SCHOOL)
 
-
-
-        # start = 0
-        # for review in self.reviews[start:start+5]:
-        #     print("===")
-        #     print(review.comment)
-        #     print(review.semester)
-        #     print(review.created_at)
-        #     print(review.created_at.month)
-        #     print(review.professor_rating)
-        #     print(review.enjoyability)
-        #     print(review.difficulty)
-
-        # Review.objects.all().delete()
         self.migrate_reviews()
 
         # for vote in self.votes[:10]:
         #     print(vote)
-        
+
         # print(self.votes.filter(vote=1).count()) # num of upvotes
         # print(self.votes.filter(vote=0).count()) # num of downvotes
 

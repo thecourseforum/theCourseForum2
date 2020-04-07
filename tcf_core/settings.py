@@ -1,3 +1,4 @@
+#pylint: disable=line-too-long
 """
 Django settings for tcf_core project.
 
@@ -158,5 +159,5 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
-    
+
 )

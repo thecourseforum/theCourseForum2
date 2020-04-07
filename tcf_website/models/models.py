@@ -1,7 +1,12 @@
+# pylint: disable=missing-class-docstring, wildcard-import
+
+"""TCF Database models."""
+
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+
 
 class School(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -10,6 +15,7 @@ class School(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Department(models.Model):
     name = models.CharField(max_length=255)
@@ -20,7 +26,7 @@ class Department(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -30,6 +36,8 @@ class Department(models.Model):
         ]
 
 # e.g. CREO in French department or ENCW in English
+
+
 class Subdepartment(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
@@ -40,14 +48,18 @@ class Subdepartment(models.Model):
     def __str__(self):
         return f"{self.mnemonic} - {self.name}"
 
-    # courses within the last 5 years.
     def recent_courses(self):
+        """Return courses within last 5 years."""
         latest_semester = Semester.latest()
-        return self.course_set.filter(semester_last_taught__year__gte=latest_semester.year-5).order_by("number")
-    
+        return self.course_set.filter(
+            semester_last_taught__year__gte=latest_semester.year -
+            5).order_by("number")
+
     def has_current_course(self):
-        return self.course_set.filter(section__semester=Semester.latest()).exists()
-    
+        """Return True if subdepartment has a course in current semester."""
+        return self.course_set.filter(
+            section__semester=Semester.latest()).exists()
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -56,17 +68,19 @@ class Subdepartment(models.Model):
             )
         ]
 
+
 class User(AbstractUser):
     computing_id = models.CharField(max_length=20, unique=True, blank=True)
     graduation_year = models.IntegerField(
         validators=[MinValueValidator(2000), MaxValueValidator(2999)],
         blank=True, null=True
     )
-    
+
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
 
     def full_name(self):
+        """Return string containing user full name."""
         return f"{self.first_name} {self.last_name}"
 
 
@@ -79,9 +93,11 @@ class Instructor(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
-    
+
     def full_name(self):
+        """Return string containing instructor full name."""
         return f"{self.first_name} {self.last_name}"
+
 
 class Semester(models.Model):
 
@@ -96,20 +112,25 @@ class Semester(models.Model):
         validators=[MinValueValidator(2000), MaxValueValidator(2999)])
     season = models.CharField(max_length=7, choices=SEASONS)
 
-    number = models.IntegerField(help_text="As defined in SIS/Lou's List", unique=True)
+    number = models.IntegerField(
+        help_text="As defined in SIS/Lou's List",
+        unique=True)
 
     def __repr__(self):
         return f"{self.year} {self.season.title()} ({self.number})"
-    
+
     def __str__(self):
         return f"{self.season.title()} {self.year}"
-    
+
     def is_after(self, other_sem):
+        """Returns True if semester occurred later than other_semester."""
         return self.number > other_sem.number
-    
+
+    @staticmethod
     def latest():
+        """Returns the latest semester."""
         return Semester.objects.order_by("-number").first()
-    
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -118,6 +139,7 @@ class Semester(models.Model):
             )
         ]
 
+
 class Course(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
@@ -125,17 +147,20 @@ class Course(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(99999)])
 
     subdepartment = models.ForeignKey(Subdepartment, on_delete=models.CASCADE)
-    semester_last_taught = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    semester_last_taught = models.ForeignKey(
+        Semester, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.subdepartment.mnemonic} {self.number} {self.title}"
-    
+
     def code(self):
+        """Returns the courses code string."""
         return f"{self.subdepartment.mnemonic} {self.number}"
-    
+
     def is_recent(self):
+        """Returns True if course was taught in current semester."""
         return self.semester_last_taught == Semester.latest()
-    
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -144,8 +169,9 @@ class Course(models.Model):
             )
         ]
 
+
 class Section(models.Model):
-    sis_section_number = models.IntegerField() # NOTE: not unique!
+    sis_section_number = models.IntegerField()  # NOTE: not unique!
     instructors = models.ManyToManyField(Instructor)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -156,7 +182,7 @@ class Section(models.Model):
 
     def __str__(self):
         return f"{self.course} {self.semester} {', '.join(str(i) for i in self.instructors.all())}"
-    
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -164,6 +190,7 @@ class Section(models.Model):
                 name='unique sections per semesters'
             )
         ]
+
 
 class Review(models.Model):
     text = models.TextField(blank=True)
@@ -194,11 +221,12 @@ class Review(models.Model):
     #     return super(Review, self).save(*args, **kwargs)
 
     def average(self):
-        return (self.instructor_rating + (5 - self.difficulty) + self.recommendability) / 3
-    
+        """Average score for review."""
+        return (self.instructor_rating + self.recommendability) / 2
+
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"
-    
+
     # class Meta:
     #     constraints = [
     #         models.UniqueConstraint(
@@ -206,6 +234,7 @@ class Review(models.Model):
     #             name='unique review per user, course, and instructor',
     #         )
     #     ]
+
 
 class Vote(models.Model):
     value = models.IntegerField(
@@ -215,7 +244,7 @@ class Vote(models.Model):
 
     def __str__(self):
         return f"Vote of value {self.value} for {self.review} by {self.user}"
-    
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
