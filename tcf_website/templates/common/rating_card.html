@@ -1,7 +1,7 @@
 <div class="card rating-card mb-2">
     <div class="row no-gutters">
-        <a class="col-md-4 pl-5 card-body d-flex align-items-center rating-card-link" href="{{ link }}">
-            <div>
+        <a class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start align-items-center rating-card-link" href="{{ link }}">
+            <div class="text-center text-lg-left">
                 <h3>{{ title }}</h3>
                 {% if subtitle %}
                     <h5>{{ subtitle }}</h5>
@@ -10,22 +10,20 @@
         </a>
       <div class="col-md-8">
         <div class="card-body">
-          <div class="d-flex justify-content-between">
-              <div class="row">
-                    <div class="col">
-                      <p class="mb-0">Recommendability</p>
-                      <p class="mb-0">TODO</p>
-                    </div> 
-                    <div class="col">
-                      <p class="mb-0">Difficulty</p>
-                      <p class="mb-0">TODO</p>
-                    </div>
-                    <div class="col">
-                      <p class="mb-0">GPA</p>
-                      <p class="mb-0" id="{{prefix}}{{pk}}Grade">TODO</p>
-                    </div>
+          <div class="row justify-content-between text-center text-md-left">
+              <div class="col-4 col-lg-2">
+                <p class="mb-0">Rating</p>
+                <p class="mb-0">TODO</p>
+              </div> 
+              <div class="col-4 col-lg-2">
+                <p class="mb-0">Difficulty</p>
+                <p class="mb-0">TODO</p>
               </div>
-              <div {% if not last_taught %}style="opacity: 0;"{% endif %}>
+              <div class="col-4 col-lg-2">
+                <p class="mb-0">GPA</p>
+                <p class="mb-0" id="{{prefix}}{{pk}}Grade">TODO</p>
+              </div>
+              <div class="col-12 col-lg-3 offset-lg-3" {% if not last_taught %}style="opacity: 0;"{% endif %}>
                   <p class="mb-0">Last taught</p>
                   <p class="mb-0">{{ last_taught }}</p>
               </div>

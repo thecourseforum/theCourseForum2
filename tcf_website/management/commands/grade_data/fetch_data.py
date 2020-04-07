@@ -15,16 +15,8 @@ def download_grade_data(course=None, path='tcf_website/management/commands/grade
         course = 'all_classes'
     else:
         url = f'https://vagrades.com/api/uvaclass/{course}'
-
+    fname = f"{course}.json"
     try:
-
-        already_fetched = set(os.listdir(path))
-
-        fname = f'{course}.json'
-        if fname in already_fetched:
-            # print(f"{fname} already fetched!")
-            return
-
         with requests.get(url, stream=True, headers=headers) as r:
             r.raise_for_status()
             with open(os.path.join(path, fname), 'wb') as f:
