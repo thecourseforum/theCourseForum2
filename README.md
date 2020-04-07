@@ -26,13 +26,17 @@
 1. Create a new branch to do your work in. `git checkout -B your_branch_name`
 2. Make your changes!
 3. Write unit tests and put them in `tcf_website/tests/`
-3. Stage your changes with `git add .`
-4. Commit with `git commit -m "Add X feature."`
-5. Push! `git push`
-6. Make a Pull Request.
-7. Wait for all tests to pass.
-8. Request an approver.
-9. Wait to be approved!
+4. Lint and test locally:
+    - `docker exec tcf_django autopep8 --in-place --aggressive --aggressive -r .`
+    - `docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core`
+    - `docker exec tcf_django python3 manage.py test`
+4. Stage your changes with `git add .`
+5. Commit with `git commit -m "Add X feature."`
+6. Push! `git push`
+7. Make a Pull Request.
+8. Wait for all tests to pass.
+9. Request an approver.
+10. Wait to be approved and merged!
 
 # Data migration plan from tCF 1.0 (total downtime: 2.5 hours)
 1. Get latest copy of legacy db using `mysqldump` from DO instance.
@@ -51,7 +55,3 @@
     - loads section data into database
         - update courses with new course info if available
         - create new instructors if needed
-
-# Static analysis
-- `autopep8 --in-place --aggressive --aggressive -r .`
-- `pylint --load-plugins pylint_django tcf_website tcf_core`
