@@ -1,7 +1,9 @@
-{% extends "base.html" %}
+{% extends "login/login_base.html" %}
+{% load static %}
 
-{% block content %}
+{% block login_content %}
 
+<h2 class="card-title">Welcome to theCourseForum!</h2>
 <form method="POST"> 
     {% csrf_token %}
     <div class="form-group">

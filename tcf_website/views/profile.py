@@ -1,17 +1,16 @@
-from django.shortcuts import render, redirect
-from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout as auth_logout, login
-from django.http import JsonResponse
-from django.core.serializers import serialize
-from django.core.serializers.json import DjangoJSONEncoder
+"""Views for user profile."""
 
-from ..models import User
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
 
 @login_required
 def profile(request):
+    """User profile view."""
     return render(request, 'profile/profile.html')
+
 
 @login_required
 def reviews(request):
+    """User reviews view."""
     return render(request, 'reviews/user_reviews.html')
