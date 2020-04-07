@@ -1,4 +1,6 @@
 from time import sleep
+import os
+import json
 
 from django.core.management.base import BaseCommand, CommandError
 from tqdm import tqdm
@@ -79,9 +81,15 @@ class Command(BaseCommand):
 
         courses = Course.objects.filter(semester_last_taught__year__gte=2015)
 
+        path = 'tcf_website/management/commands/grade_data/json'
+        already_fetched = set(os.listdir(path))
+
         for c in tqdm(courses, total=courses.count()):
             course = f"{c.subdepartment.mnemonic}{c.number}"
+
+            if f'{course}.json' in already_fetched:
+                continue
             
-            download_grade_data(course)
+            download_grade_data(course, path)
 
             # sleep(random.uniform(0.5, 1.0))
