@@ -9,4 +9,4 @@ before_install:
 
 script:
     - docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core
-    - python manage.py test
+    - docker exec tcf_django python3 manage.py test
