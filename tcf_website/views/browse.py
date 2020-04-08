@@ -3,6 +3,7 @@
 """Views for Browse, department, and course/course instructor pages."""
 
 from django.shortcuts import render
+from django.urls import reverse
 
 from ..models import School, Department, Course, Semester, Instructor, Review
 
@@ -32,8 +33,18 @@ def department(request, dept_id):
     """View for department page."""
     dept = Department.objects.get(pk=dept_id)
     latest_semester = Semester.latest()
+
+    breadcrumbs = [
+        (dept.school.name, reverse('browse'), False),
+        (dept.name, None, True)
+    ]
+
     return render(request, 'department/department.html',
-                  {'department': dept, 'latest_semester': latest_semester})
+                  {
+                      'department': dept,
+                      'latest_semester': latest_semester,
+                      'breadcrumbs': breadcrumbs
+                  })
 
 
 def course_view(request, course_id):
@@ -55,12 +66,21 @@ def course_view(request, course_id):
                 flat=True).distinct()
     old_instructors = Instructor.objects.filter(pk__in=old_instructor_pks)
 
+    dept = course.subdepartment.department
+
+    breadcrumbs = [
+        (dept.school.name, reverse('browse'), False),
+        (dept.name, reverse('department', args=[dept.pk]), False),
+        (course.code, None, True),
+    ]
+
     return render(request, 'course/course.html',
                   {
                       'course': course,
                       'recent_instructors': recent_instructors,
                       'latest_semester': latest_semester,
-                      'old_instructors': old_instructors
+                      'old_instructors': old_instructors,
+                      'breadcrumbs': breadcrumbs
                   })
 
 
@@ -74,9 +94,19 @@ def course_instructor(request, course_id, instructor_id):
         course=course,
     ).exclude(text="").order_by("-created")
 
+    dept = course.subdepartment.department
+
+    breadcrumbs = [
+        (dept.school.name, reverse('browse'), False),
+        (dept.name, reverse('department', args=[dept.pk]), False),
+        (course.code, reverse('course', args=[course.pk]), False),
+        (instructor.full_name, None, True)
+    ]
+
     return render(request, 'course/course_professor.html',
                   {
                       'course': course,
                       'instructor': instructor,
                       'reviews': reviews,
+                      'breadcrumbs': breadcrumbs
                   })

@@ -3,9 +3,14 @@
 }
 
 .department-list {
-    columns: 2;
     list-style-type: none;
     padding: 0 0 0 10px;
+}
+
+@media (min-width: 768px) {
+    .department-list {
+        columns: 2;
+    }
 }
 
 .school > .card-header {

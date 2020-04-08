@@ -15,13 +15,15 @@
 </head>
 <body class="body">
     {% include "base/navbar.html" %}
-    <div class="content container-fluid">
+    <div class="content px-3 container-fluid text-center text-md-left">
+        <div class="row">
         {% block content %}
         <p>Base content goes here.</p>
         {% endblock %}
+        </div>
     </div>
-    <footer>
-        <div class="row pad">
+    <footer class="container-fluid">
+        <div class="row">
             <div class="col-lg-12 text-center" style="color: black;">
                 theCourseForum &copy; {{ LATEST_SEMESTER.year }}
                 <p>

@@ -11,18 +11,8 @@
 {% block content %}
 
 <div class="department container">
-    <div class="tcf-toolbar btn-toolbar justify-content-between mb-3" role="toolbar" aria-label="Toolbar with button groups">
-        <div class="btn-group mr-2" role="group" aria-label="First group">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{% url 'browse' %}">{{ department.school.name }}</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ department.name }}</li>
-            </ol>
-        </div>
-        <div class="btn-group" role="group" aria-label="Basic example">
-            <button type="button" id="hide-btn" onclick="hideOld()" class="btn btn-outline-dark active">{{latest_semester}}</button>
-            <button type="button" id="show-btn" onclick="showOld()" class="btn btn-outline-dark">Last 5 Years</button>
-        </div>
-      </div>
+
+    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" %}
 
     <div class="subdepartments mt-3">
         {% for sd in department.subdepartment_set.all %}

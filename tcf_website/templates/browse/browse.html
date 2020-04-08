@@ -8,7 +8,7 @@
 {% block content %}
 <div class="browse container">
     <h2>Browse by Department</h2>
-    <div class="schools">
+    <div class="schools text-left">
 
         {% include "browse/school.html" with school_name=CLAS.name departments=CLAS.department_set.all %}
 
