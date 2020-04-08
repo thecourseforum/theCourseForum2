@@ -29,7 +29,7 @@ DEBUG = os.environ.get('DEBUG', False)
 if DEBUG:
     ALLOWED_HOSTS = ['localhost', '.ngrok.io']
 else:
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ['thecourseforum-staging.herokuapp.com']
 
 
 # Application definition
