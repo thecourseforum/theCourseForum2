@@ -17,7 +17,7 @@
     <div class="subdepartments mt-3">
         {% for sd in department.subdepartment_set.all %}
         <div class="subdepartment container-lg {% if not sd.has_current_course %}old{% endif %}">
-            <h3>{{ sd.name }}</h3>
+            <h1>{{ sd.name }}</h1>
             <ul class="course-list">
                 {% for c in sd.recent_courses|dictsort:"number" %}
                     <li class="{% if not c.is_recent %}old{% endif %}">
