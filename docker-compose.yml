@@ -9,10 +9,11 @@ services:
     ports:
       - '8000:8000'
     container_name: tcf_django
-    environment:
-      DEBUG: "true"
+    env_file:
+      - .env
     depends_on:
       - db
+    restart: always
   db:
     image: postgres:12.2
     restart: always
