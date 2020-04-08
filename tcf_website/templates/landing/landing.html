@@ -1,6 +1,10 @@
 {% extends "base/base.html" %}
 {% load static %}
 
+{% block styles %}
+<link rel="stylesheet" href="{% static 'landing/landing.css' %}" />
+{% endblock %}
+
 {% block content %}
 <div class="jumbotron">
     <h1 class="display-4">Welcome to theCourseForum
