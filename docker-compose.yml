@@ -9,6 +9,8 @@ services:
     ports:
       - '8000:8000'
     container_name: tcf_django
+    environment:
+      DEBUG: "true"
     depends_on:
       - db
   db:
