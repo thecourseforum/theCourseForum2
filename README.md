@@ -1,3 +1,4 @@
+
 # theCourseForum2
 [![Build Status](https://travis-ci.com/thecourseforum/theCourseForum2.svg?branch=master)](https://travis-ci.com/thecourseforum/theCourseForum2)
 
@@ -9,14 +10,17 @@
     - https://docs.docker.com/install/
     - https://docs.docker.com/compose/install/
 2. `git clone https://github.com/thecourseforum/theCourseForum2.git`
-3. Go into the `theCourseForum2/` folder and then run these commands:
+3. Go into the `theCourseForum2/` folder and then run these commands*:
     - `cp .env.example .env`
     - `docker build .`
     - `docker-compose up`
 4. Download a copy of the database from https://drive.google.com/open?id=1ubiiOj-jfzoBKaMK6pFEkFXdSqMuD-22
     - put this into the `theCourseForum2/` folder
-5. `cat april7.sql | docker exec -i tcf_db psql -U tcf_django tcf_db`
+5. Run the following command*:
+	- `cat april7.sql | docker exec -i tcf_db psql -U tcf_django tcf_db`
 6. Go to http://localhost:8000 and make sure it works!
+
+\*If you're on Windows, you'll have to run `cp` and `cat` in Powershell because those commands don't exist in CMD.  
 
 # Design Philosophies
 - Thick models, thin views, thinner templates
