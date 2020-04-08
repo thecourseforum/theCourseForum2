@@ -164,6 +164,9 @@ SOCIAL_AUTH_PIPELINE = (
 # PROD SETTINGS
 if not DEBUG:
 
+    import django_heroku
+    django_heroku.settings(locals())
+
     HOSTNAME = os.environ.get('HOSTNAME', None)
     PUBLIC_IPV4 = os.environ.get('PUBLIC_IPV4', None)
 
@@ -171,6 +174,7 @@ if not DEBUG:
         'tcf.brianyu.dev',
         'thecourseforum.com',
         'staging.thecourseforum.com'
+        'thecourseforum-staging.herokuapp.com',
     ]
 
     if HOSTNAME:
@@ -192,6 +196,7 @@ if not DEBUG:
         'PASSWORD': DB_PASSWORD,
         'HOST': DB_HOST,
         'PORT': DB_PORT,
+        'OPTIONS': {'sslmode': 'require'},
     }
 
     print(DATABASES['default'])
