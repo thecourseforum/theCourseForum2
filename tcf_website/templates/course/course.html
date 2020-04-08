@@ -13,9 +13,9 @@
     {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="All" %}
       
     <div class="instructors container-lg mt-3">
-        <div class="d-md-flex">
+        <div class="d-md-flex align-items-baseline my-3">
             <h1 class="mr-md-3">{{ course.code }}</h1>
-            <h1>{{ course.title }}</h1>
+            <h2>{{ course.title }}</h2>
         </div>
         <ul class="instructor-list">
         {% for i in recent_instructors %}
