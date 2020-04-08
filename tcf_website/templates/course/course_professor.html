@@ -8,16 +8,7 @@
 {% block content %}
 <div class="course-professor container">
 
-    <div class="tcf-toolbar btn-toolbar justify-content-between mb-3" role="toolbar" aria-label="Toolbar with button groups">
-        <div class="btn-group mr-2" role="group" aria-label="First group">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{% url 'browse' %}">{{ course.subdepartment.department.school.name }}</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'department' dept_id=course.subdepartment.department.pk %}">{{ course.subdepartment.name }}</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'course' course_id=course.pk %}">{{ course.code }}</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ instructor.full_name }}</li>
-            </ol>
-        </div>
-      </div>
+    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
 
     <h3>{{ course }} - {{ instructor.full_name }}</h3>
     {% include "reviews/reviews.html" with reviews=reviews %}

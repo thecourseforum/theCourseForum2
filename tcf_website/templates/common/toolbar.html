@@ -1,0 +1,16 @@
+<div class="tcf-toolbar btn-toolbar justify-content-center justify-content-md-between mb-3 text-center text-md-left" role="toolbar" aria-label="Toolbar with button groups">
+    <div class="btn-group mr-2" role="group" aria-label="First group">
+        <ol class="breadcrumb mb-md-0">
+            {% for text, url, active in breadcrumbs %}
+                <li class="breadcrumb-item {% if active %}active{% endif %}">{% if not active %}<a href="{{ url }}">{{ text }}</a>{% else %}{{ text }}{% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+    {% if active_text %}
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button" id="hide-btn" onclick="hideOld()" class="btn btn-outline-dark active">{{ active_text }}</button>
+        <button type="button" id="show-btn" onclick="showOld()" class="btn btn-outline-dark"> {{ hidden_text }} </button>
+    </div>
+    {% endif %}
+</div>
