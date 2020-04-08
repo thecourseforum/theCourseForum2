@@ -10,7 +10,14 @@
 
     {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
 
-    <h3>{{ course }} - {{ instructor.full_name }}</h3>
+    <div class="d-flex flex-column align-items-center my-5">
+        <h1>{{ instructor.full_name }}</h1>
+        <div class="d-md-flex">
+            <h4 class="mr-md-3">{{ course.code }}</h4>
+            <h4 class="mr-md-3">{{ course.title }}</h4>
+        </div>
+    </div>
+
     {% include "reviews/reviews.html" with reviews=reviews %}
 </div>
 {% endblock %}
