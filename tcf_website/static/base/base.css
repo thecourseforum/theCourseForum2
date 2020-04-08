@@ -42,14 +42,3 @@ ul {
     padding: 0;
     list-style-type: none;
 }
-
-.btn-primary {
-    background-color: #db4929;
-    filter: brightness(110%);
-    border-color: #db4929;
-}
-.btn-primary:hover {
-    background-color: #db4929;
-    border-color: #db4929;
-    filter: brightness(100%);
-}

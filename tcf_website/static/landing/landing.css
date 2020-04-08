@@ -1,0 +1,11 @@
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .display-4 {
+        font-size: 2rem;
+    }
+}
