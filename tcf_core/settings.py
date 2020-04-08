@@ -193,3 +193,5 @@ if not DEBUG:
         'HOST': DB_HOST,
         'PORT': DB_PORT,
     }
+
+    print(DATABASES['default'])

@@ -58,3 +58,6 @@
     - loads section data into database
         - update courses with new course info if available
         - create new instructors if needed
+
+# TODO: Deploying to prod
+- https://docs.djangoproject.com/en/3.0/howto/deployment/
