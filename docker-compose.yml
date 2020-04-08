@@ -11,8 +11,6 @@ services:
     container_name: tcf_django
     env_file:
       - .env
-    depends_on:
-      - db
     restart: always
   db:
     image: postgres:12.2
