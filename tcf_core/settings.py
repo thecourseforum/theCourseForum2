@@ -24,13 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'oaav-5-9$f7(yssu8=t$vjqg7m*l7k!byuc+)u2b_&lt5&wso$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', False)
+DEBUG = int(os.environ.get('DEBUG', 0)) == 1
 
-if DEBUG:
-    ALLOWED_HOSTS = ['localhost', '.ngrok.io']
-else:
-    ALLOWED_HOSTS = ['thecourseforum-staging.herokuapp.com']
-
+ALLOWED_HOSTS = ['localhost', '.ngrok.io']
 
 # Application definition
 
@@ -162,12 +158,38 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
-
 )
 
+
+# PROD SETTINGS
 if not DEBUG:
-    import django_heroku
-    import dj_database_url
-    DATABASES['default'] = dj_database_url.config(
-        conn_max_age=600, ssl_require=True)
-    django_heroku.settings(locals())
+
+    HOSTNAME = os.environ.get('HOSTNAME', None)
+    PUBLIC_IPV4 = os.environ.get('PUBLIC_IPV4', None)
+
+    ALLOWED_HOSTS = [
+        'tcf.brianyu.dev',
+        'thecourseforum.com',
+        'staging.thecourseforum.com'
+    ]
+
+    if HOSTNAME:
+        ALLOWED_HOSTS.append(HOSTNAME)
+    if PUBLIC_IPV4:
+        ALLOWED_HOSTS.append(PUBLIC_IPV4)
+
+    DB_NAME = os.environ.get('DB_NAME', None)
+    DB_HOST = os.environ.get('DB_HOST', None)
+    DB_USER = os.environ.get('DB_USER', None)
+    DB_PASSWORD = os.environ.get('DB_PASSWORD', None)
+    DB_PORT = os.environ.get('DB_PORT', None)
+
+
+    DATABASES['default'] = {
+        'NAME': DB_NAME,
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
+    }

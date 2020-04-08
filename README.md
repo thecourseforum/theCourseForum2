@@ -9,7 +9,10 @@
     - https://docs.docker.com/install/
     - https://docs.docker.com/compose/install/
 2. `git clone https://github.com/thecourseforum/theCourseForum2.git`
-3. Go into the `theCourseForum2/` folder and then run `docker build .` and then `docker-compose up`
+3. Go into the `theCourseForum2/` folder and then run these commands:
+    - `cp .env.example .env`
+    - `docker build .`
+    - `docker-compose up`
 4. Download a copy of the database from https://drive.google.com/open?id=1ubiiOj-jfzoBKaMK6pFEkFXdSqMuD-22
     - put this into the `theCourseForum2/` folder
 5. `cat april7.sql | docker exec -i tcf_db psql -U tcf_django tcf_db`
