@@ -27,8 +27,8 @@
       <div id="page-content-wrapper">
 
         {% include "base/navbar.html" %}
-        <div class="content px-3 container-fluid text-center text-md-left">
-            <div class="row">
+        <div class="content p-4 container-fluid text-center text-md-left h-100">
+            <div class="row h-100">
             {% block content %}
             <p>Base content goes here.</p>
             {% endblock %}
@@ -39,25 +39,8 @@
       <!-- /#page-content-wrapper -->
 
     </div>
-  <!-- /#wrapper -->
-    <footer class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12 text-center" style="color: black;">
-                <a href="{% url 'privacy' %}">Privacy</a> |
-                <a href="{% url 'terms' %}">Terms</a> |
-                theCourseForum &copy; {{ LATEST_SEMESTER.year }}
-                <p>
-                    <span>
-                        <a href="mailto:support@thecourseforum.com?cc=rz5sc@virginia.edu&subject=tCF Bug Report&body=Hi there!%0D%0A%0D%0AI found a bug.%0D%0A%0D%0AWhen I <X>, <Y> happens.">Found a bug?</a>
-                    </span>
-                    {% if DEBUG %}
-                    <span> | DEBUG Mode.</span>
-                    {% endif %}
-                </p>
-            </div>
-        </div>
-    </footer>
-    
+    <!-- /#wrapper -->
+
     <script src="{% static 'base/jquery-3.4.1.min.js' %}"></script>
     <script src="{% static 'base/bootstrap.bundle.min.js' %}"></script>
     <!-- Menu Toggle Script -->

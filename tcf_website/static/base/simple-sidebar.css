@@ -23,6 +23,12 @@ body {
 
 #sidebar-wrapper .list-group {
   width: 15rem;
+  background-color: #1A237E;
+}
+
+#sidebar-wrapper .list-group-item.active {
+  color: #1A237E;
+  border-color: #1A237E;
 }
 
 #page-content-wrapper {

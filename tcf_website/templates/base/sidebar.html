@@ -1,8 +1,9 @@
 {% load static %}
 
 <!-- Sidebar -->
-<div class="bg-light border-secondary border-right" id="sidebar-wrapper">
-  <div class="list-group list-group-flush">
+<div class="bg-light border-secondary border-right
+d-flex align-items-end flex-column" id="sidebar-wrapper">
+  <div class="list-group list-group-flush mb-auto">
     <!-- Dashboard for saved courses, enrollment dates, major-specific info, etc -->
     <a href="{% url 'browse' %}"
        class="list-group-item list-group-item-action bg-light">
@@ -18,6 +19,24 @@
        {% if request.resolver_match.url_name == 'new_review' %}active{% endif %}">
       <i class="fa fa-pencil-square-o fa-fw"></i>&nbsp; Write Review
     </a>
+    <a href="{% url 'about' %}"
+       class="list-group-item list-group-item-action bg-light
+       {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+      <i class="fa fa-code fa-fw"></i>&nbsp; About
+    </a>
+  </div>
+  <div class="footer mt-auto w-100 text-center">
+    <a href="{% url 'privacy' %}">Privacy</a> |
+    <a href="{% url 'terms' %}">Terms</a>
+    <h6>theCourseForum &copy; {{ LATEST_SEMESTER.year }}</h6>
+    <p>
+        <span>
+            <a href="mailto:support@thecourseforum.com?cc=rz5sc@virginia.edu&subject=tCF Bug Report&body=Hi there!%0D%0A%0D%0AI found a bug.%0D%0A%0D%0AWhen I <X>, <Y> happens.">Found a bug?</a>
+        </span>
+        {% if DEBUG %}
+        <span> | DEBUG Mode</span>
+        {% endif %}
+    </p>
   </div>
 </div>
 <!-- /#sidebar-wrapper -->
