@@ -7,21 +7,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>theCourseForum</title>
 
+    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="{% static 'base/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{% static 'base/simple-sidebar.css'%}">
     <link rel="stylesheet" href="{% static 'base/base.css' %}" />
 
     {% block styles %}
     {% endblock %}
 </head>
 <body class="body">
-    {% include "base/navbar.html" %}
-    <div class="content px-3 container-fluid text-center text-md-left">
-        <div class="row">
-        {% block content %}
-        <p>Base content goes here.</p>
-        {% endblock %}
+    <div class="d-flex" id="wrapper">
+
+      {% include "base/sidebar.html" %}
+
+      <!-- Page Content -->
+      <div id="page-content-wrapper">
+
+        {% include "base/navbar.html" %}
+        <div class="content px-3 container-fluid text-center text-md-left">
+            <div class="row">
+            {% block content %}
+            <p>Base content goes here.</p>
+            {% endblock %}
+            </div>
         </div>
+
+      </div>
+      <!-- /#page-content-wrapper -->
+
     </div>
+  <!-- /#wrapper -->
     <footer class="container-fluid">
         <div class="row">
             <div class="col-lg-12 text-center" style="color: black;">
@@ -39,8 +57,16 @@
             </div>
         </div>
     </footer>
+    
     <script src="{% static 'base/jquery-3.4.1.min.js' %}"></script>
     <script src="{% static 'base/bootstrap.bundle.min.js' %}"></script>
+    <!-- Menu Toggle Script -->
+    <script>
+      $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+      });
+    </script>
     {% block js %}
     {% endblock %}
 </body>

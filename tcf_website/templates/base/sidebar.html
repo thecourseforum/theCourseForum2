@@ -1,0 +1,23 @@
+{% load static %}
+
+<!-- Sidebar -->
+<div class="bg-light border-secondary border-right" id="sidebar-wrapper">
+  <div class="list-group list-group-flush">
+    <!-- Dashboard for saved courses, enrollment dates, major-specific info, etc -->
+    <a href="{% url 'browse' %}"
+       class="list-group-item list-group-item-action bg-light">
+       <i class="fa fa-star-o fa-fw"></i>&nbsp; Dashboard
+    </a>
+    <a href="{% url 'browse' %}"
+       class="list-group-item list-group-item-action bg-light
+       {% if request.resolver_match.url_name == 'browse' %}active{% endif %}">
+       <i class="fa fa-th-large fa-fw"></i>&nbsp; Browse Courses
+    </a>
+    <a href="{% url 'new_review' %}"
+       class="list-group-item list-group-item-action bg-light
+       {% if request.resolver_match.url_name == 'new_review' %}active{% endif %}">
+      <i class="fa fa-pencil-square-o fa-fw"></i>&nbsp; Write Review
+    </a>
+  </div>
+</div>
+<!-- /#sidebar-wrapper -->
