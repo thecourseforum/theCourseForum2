@@ -1,4 +1,4 @@
-#pylint: disable=line-too-long
+#pylint: disable=line-too-long,import-error
 """
 Django settings for tcf_core project.
 
