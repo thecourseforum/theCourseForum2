@@ -26,8 +26,7 @@ body {
 
 #sidebar-wrapper .list-group {
   width: 15rem;
-  background-color: #1A237E;
-  margin-top: 2.5rem;
+  margin-top: 2rem;
 }
 
 #sidebar-wrapper .list-group-item, .footer, .footer a {
