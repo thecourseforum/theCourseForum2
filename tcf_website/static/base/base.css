@@ -6,9 +6,9 @@ html {
 
 body {
     padding-top: 70px; /* Height of fixed navbar */
-    /* margin-bottom: 70px; /* Margin bottom by footer height */ */
+    /* margin-bottom: 70px; /* Margin bottom by footer height */
     /* min-height: 100vh; */
-    background-color: #EBEBEB !important;
+    background-color: #EBEBEB;
     max-width: 100vw;
 }
 
@@ -17,7 +17,14 @@ body {
 }
 
 .content {
-  background-color: #EBEBEB !important;
+  background-color: #EBEBEB;
+}
+
+@media (min-width: 768px) {
+    .content {
+        width: calc(100vw - 240px);
+        margin-left: 240px;
+    }
 }
 
 footer {

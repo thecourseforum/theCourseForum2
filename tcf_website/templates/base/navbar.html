@@ -11,7 +11,7 @@
       <a class="navbar-brand" href="/">theCourseForum</a>
       </div>
         <!-- search not in navbar collapse -->
-      <form class="mx-2 my-auto w-100 d-inline-block order-1" action="/search" method="get">
+      <form class="d-inline-block mx-2 my-auto w-100 order-1" action="/search" method="get">
           <div class="input-group">
               <input type="search" class="form-control border border-right-0"
                      placeholder="Search..." aria-label="Search" name="q">
@@ -24,12 +24,12 @@
       </form>
     </div>
 
-    <button class="navbar-toggler order-0 ml-4" type="button" id="menu-toggle"
+    <button class="navbar-toggler d-md-none order-0 ml-4" type="button" id="menu-toggle"
       aria-controls="wrapper" aria-expanded="false" aria-label="Toggle sidebar">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="account ml-4 flex-shrink-1 flex-grow-0 order-last"
+    <div class="account d-none d-sm-inline-block ml-4 flex-shrink-1 flex-grow-0 order-last"
          id="navbarSupportedContent">
        <ul class="navbar-nav flex-shrink-1 flex-grow-0 order-last">
            {% if user.is_authenticated %}
