@@ -47,7 +47,7 @@ body {
     }
 }
 
-@media (min-width: 576px) {
+@media (min-width: 400px) {
     .navbar .search {
         width: 100%;
     }
