@@ -33,6 +33,7 @@
          id="navbarSupportedContent">
        <ul class="navbar-nav flex-shrink-1 flex-grow-0 order-last">
            {% if user.is_authenticated %}
+           <!-- KEEP IN SYNC WITH sidebar.html -->
            <li class="nav-item dropdown">
                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                    Hi, {{user.first_name}}
