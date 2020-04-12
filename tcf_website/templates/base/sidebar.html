@@ -37,6 +37,12 @@ d-flex flex-column justify-content-between" id="sidebar-wrapper">
           <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
         </div>
       </div>
+    {% else %}
+      <a href="{% url 'login' %}"
+      class="list-group-item list-group-item-action
+      {% if request.resolver_match.url_name == 'login' %}active{% endif %}">
+        <i class="fa fa-user fa-fw"></i>&nbsp; Sign In
+      </a>
     {% endif %}
   </div>
   
