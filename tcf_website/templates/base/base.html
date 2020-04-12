@@ -7,40 +7,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>theCourseForum</title>
 
+    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="{% static 'base/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{% static 'base/simple-sidebar.css'%}">
     <link rel="stylesheet" href="{% static 'base/base.css' %}" />
 
     {% block styles %}
     {% endblock %}
 </head>
 <body class="body">
-    {% include "base/navbar.html" %}
-    <div class="content px-3 container-fluid text-center text-md-left">
-        <div class="row">
-        {% block content %}
-        <p>Base content goes here.</p>
-        {% endblock %}
-        </div>
-    </div>
-    <footer class="container-fluid">
-        <div class="row">
-            <div class="col col-lg-12 text-center">
-                <a href="{% url 'privacy' %}">Privacy</a> |
-                <a href="{% url 'terms' %}">Terms</a> |
-                theCourseForum &copy; {{ LATEST_SEMESTER.year }}
-                <p>
-                    <span>
-                        <a href="mailto:support@thecourseforum.com?cc=rz5sc@virginia.edu&subject=tCF Bug Report&body=Hi there!%0D%0A%0D%0AI found a bug.%0D%0A%0D%0AWhen I <X>, <Y> happens.">Found a bug?</a>
-                    </span>
-                    {% if DEBUG %}
-                    <span> | DEBUG Mode.</span>
-                    {% endif %}
-                </p>
+    <div class="d-flex" id="wrapper">
+
+      {% include "base/sidebar.html" %}
+
+      <!-- Page Content -->
+      <div id="page-content-wrapper">
+
+        {% include "base/navbar.html" %}
+        <div class="content p-4 container-fluid text-center text-md-left h-100">
+            <div class="row h-100">
+            {% block content %}
+            <p>Base content goes here.</p>
+            {% endblock %}
             </div>
         </div>
-    </footer>
+
+      </div>
+      <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
     <script src="{% static 'base/jquery-3.4.1.min.js' %}"></script>
     <script src="{% static 'base/bootstrap.bundle.min.js' %}"></script>
+    <!-- Menu Toggle Script -->
+    <script>
+      $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+      });
+    </script>
     {% block js %}
     {% endblock %}
 </body>
