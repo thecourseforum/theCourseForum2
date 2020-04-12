@@ -36,6 +36,17 @@ body {
     height: 70px;
 }
 
+.navbar .logo-search {
+    width: 100px;
+    margin-right: 1rem;
+}
+
+@media (min-width: 400px) {
+    .navbar .logo-search {
+        width: auto;
+    }
+}
+
 @media (min-width: 576px) {
     .navbar .search {
         width: 100%;
