@@ -5,7 +5,7 @@
     {% for r in reviews %}
         <li>
             <div class="review card mb-2">
-                <div class="card-body">
+                <div class="card-body text-left">
                     {% if profile %}
                     <div class="d-flex justify-content-between">
                         <p>{{ r.instructor.full_name }} - {{ r.course }}</p>
@@ -13,30 +13,29 @@
                     </div>
                     {% endif %}
                     <p>{{ r.text }}</p>
-                    <div class="d-flex justify-content-between">
-                        <div class="row">
-                            <div class="col">
-                                <p>Average</p>
-                                <p>{{ r.average|floatformat:2 }}</p>
+                    <div class="d-flex justify-content-between align-items-end">
+                        <div class="d-flex">
+                            <div class="ml-2">
+                                <strong><p>{{ r.average|floatformat:2 }}</p></strong>
                             </div>
-                            <div class="col">
-                                <p>Instructor</p>
-                                <p>{{ r.instructor_rating }}</p>
+                            <div class="ml-4">
+                                <i class="fa fa-user fa-fw"></i>&nbsp;{{ r.instructor_rating }}
                             </div>
-                            <div class="col">
-                                <p>Difficulty</p>
-                                <p>{{ r.difficulty }}</p>
+                            <div class="ml-4">
+                                <i class="fa fa-exclamation-triangle fa-fw"></i>&nbsp;
+                                {{ r.difficulty }}
                             </div>
-                            <div class="col">
-                                <p>Recommendability</p>
-                                <p>{{ r.recommendability }}</p>
+                            <div class="ml-4">
+                                <i class="fa fa-thumbs-up fa-fw"></i>&nbsp;
+                                {{ r.recommendability }}
                             </div>
-                            <div class="col">
-                                <p>Hours/week</p>
-                                <p>{{ r.hours_per_week }}</p>
+                            <div class="ml-4">
+                                <i class="fa fa-hourglass-half fa-fw"></i>&nbsp;
+                                {{ r.hours_per_week }}
                             </div>
                         </div>
-                        <div>
+
+                        <div class="text-right">
                             <p>{{ r.semester }}</p>
                             <p>{{ r.created|date }}</p>
                         </div>
