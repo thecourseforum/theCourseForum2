@@ -4,7 +4,7 @@
 
 2020 Django rewrite of theCourseForum website
 
-# Setup
+# MacOS and Linux Setup
 1. Install git, docker, and docker-compose
     - https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
     - https://docs.docker.com/install/
@@ -22,7 +22,7 @@
 
 \*If you're on Windows, you'll have to run `cp` and `cat` in Powershell because those commands don't exist in CMD.  
 
-# Windows Setup
+# Alternative Setup (Windows and MacOS if above failed)
 0. [Install Vagrant](https://www.vagrantup.com/intro/getting-started/install.html)
 1. Run `vagrant up` to start a VM.
 2. After that's booted, run `vagrant ssh` to run commands inside the VM.
