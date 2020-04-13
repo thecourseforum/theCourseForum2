@@ -26,7 +26,7 @@
 0. [Install Vagrant](https://www.vagrantup.com/intro/getting-started/install.html)
 1. `vagrant up`
 2. `vagrant ssh`
-3. Start at step 2 in normal setup.
+3. Start at step 3 in normal setup.
 4. Go to http://127.0.0.1:8000 and make sure it works!
 
 # Design Philosophies
