@@ -27,7 +27,7 @@
 1. Run `vagrant up` to start a VM.
 2. After that's booted, run `vagrant ssh` to run commands inside the VM.
 3. `cd /vagrant`
-4. Start at step 3 in normal setup.
+4. Start at step 3 in normal setup. You may have to prefix all docker commands with `sudo` (e.g. `sudo docker-compose up`).
 5. Go to http://127.0.0.1:8000 and make sure it works!
 6. Run `vagrant` suspend when you're done to suspend the VM.
 
