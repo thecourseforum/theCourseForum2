@@ -22,6 +22,10 @@
 
 \*If you're on Windows, you'll have to run `cp` and `cat` in Powershell because those commands don't exist in CMD.  
 
+# Windows Setup
+1. `vagrant up`
+2. `vagrant ssh`
+
 # Design Philosophies
 - Thick models, thin views, thinner templates
     - most application logic should be in methods on model classes.
