@@ -35,6 +35,7 @@
 3. Write unit tests and put them in `tcf_website/tests/`
 4. Lint and test locally before commit:
     - `./precommit`
+    - Fix any problems indicated by tests or pylint.
 4. Stage your changes with `git add .`
 5. Commit with `git commit -m "Add X feature."`
 6. Push! `git push`
