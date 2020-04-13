@@ -16,7 +16,7 @@
     - `docker-compose up`
 4. Download a copy of the database from https://drive.google.com/open?id=1ubiiOj-jfzoBKaMK6pFEkFXdSqMuD-22
     - put this into the `theCourseForum2/` folder
-5. Run the following command*:
+5. Run the following command (you may need to run it 3 times)*:
 	- `cat april7.sql | docker exec -i tcf_db psql -U tcf_django tcf_db`
 6. Go to http://localhost:8000 and make sure it works!
 
