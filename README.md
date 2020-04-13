@@ -25,7 +25,7 @@
 # Design Philosophies
 - Thick models, thin views, thinner templates
     - most application logic should be in methods on model classes.
-        - this ensures that the code can be reused easily anywhere the model is used
+        - this ensures that the code can be reused easily anywhere the model is used and is way easier to test.
     - furthermore, you should avoid placing logic in templates.
         - e.g. don't filter lists in templates, filter them in the views.
 

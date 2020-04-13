@@ -11,3 +11,7 @@
 .rating-card, .rating-card-link {
     border-radius: 5px;
 }
+
+.rating-card .info {
+    font-size: 1.25rem;
+}
