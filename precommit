@@ -1,0 +1,3 @@
+docker exec tcf_django autopep8 --in-place --aggressive --aggressive -r .
+docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core
+docker exec tcf_django python3 manage.py test
