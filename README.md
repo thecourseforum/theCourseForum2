@@ -23,6 +23,7 @@
 \*If you're on Windows, you'll have to run `cp` and `cat` in Powershell because those commands don't exist in CMD.  
 
 # Windows Setup
+0. [Install Vagrant](https://www.vagrantup.com/intro/getting-started/install.html)
 1. `vagrant up`
 2. `vagrant ssh`
 
