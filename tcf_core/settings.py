@@ -1,4 +1,4 @@
-#pylint: disable=line-too-long,import-error
+# pylint: disable=line-too-long,import-error
 """
 Django settings for tcf_core project.
 
@@ -187,7 +187,6 @@ if not DEBUG:
     DB_USER = os.environ.get('DB_USER', None)
     DB_PASSWORD = os.environ.get('DB_PASSWORD', None)
     DB_PORT = os.environ.get('DB_PORT', None)
-
 
     DATABASES['default'] = {
         'NAME': DB_NAME,

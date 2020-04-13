@@ -13,9 +13,11 @@ def about(request):
     """About view."""
     return render(request, 'about/about.html')
 
+
 def privacy(request):
     """Privacy view."""
     return render(request, 'about/privacy.html')
+
 
 def terms(request):
     """Terms view."""

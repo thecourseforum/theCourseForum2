@@ -33,10 +33,8 @@
 1. Create a new branch to do your work in. `git checkout -B your_branch_name`
 2. Make your changes!
 3. Write unit tests and put them in `tcf_website/tests/`
-4. Lint and test locally:
-    - `docker exec tcf_django autopep8 --in-place --aggressive --aggressive -r .`
-    - `docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core`
-    - `docker exec tcf_django python3 manage.py test`
+4. Lint and test locally before commit:
+    - `./precommit`
 4. Stage your changes with `git add .`
 5. Commit with `git commit -m "Add X feature."`
 6. Push! `git push`
