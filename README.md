@@ -26,9 +26,10 @@
 0. [Install Vagrant](https://www.vagrantup.com/intro/getting-started/install.html)
 1. Run `vagrant up` to start a VM.
 2. After that's booted, run `vagrant ssh` to run commands inside the VM.
-3. Start at step 3 in normal setup.
-4. Go to http://127.0.0.1:8000 and make sure it works!
-5. Run `vagrant` suspend when you're done to suspend the VM.
+3. `cd /vagrant`
+4. Start at step 3 in normal setup.
+5. Go to http://127.0.0.1:8000 and make sure it works!
+6. Run `vagrant` suspend when you're done to suspend the VM.
 
 # Design Philosophies
 - Thick models, thin views, thinner templates

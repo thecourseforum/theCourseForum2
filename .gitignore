@@ -8,3 +8,4 @@ legacy_db/*.sql
 .vscode/
 tcf_website/migrations/*
 .env
+.vagrant/
