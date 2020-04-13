@@ -5,13 +5,25 @@
 {% endblock %}
 
 {% block content %}
-<div class="browse container-fluid">
-    <h2>My Profile</h2>
-    <h5>{{ user.first_name }} {{ user.last_name }}</h5>
-    <h5>{{ user.computing_id }}</h5>
-    <h5>Class of {{ user.graduation_year }}</h5>
+<div class="container-fluid">
+    <div class="row d-flex flex-column align-items-center">
+        <h2>Profile</h2>
+        <div class="card col-9 col-md-4 text-center mt-3">
+            <div class="card-body">
+                <h4 class="card-title">
+                    {{ user.full_name }}
+                </h4>
+                <p class="card-text">
+                    <i class="fas fa-at fa-fw"></i> {{ user.computing_id }}
+                </p>
+                <p class="card-text">
+                    <i class="fas fa-university fa-fw"></i> University of Virginia
+                </p>
+                <p class="card-text">
+                    <i class="fas fa-graduation-cap fa-fw"></i> Class of {{ user.graduation_year }}
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
-
-
-
 {% endblock %}

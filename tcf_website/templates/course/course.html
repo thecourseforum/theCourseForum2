@@ -21,13 +21,13 @@
         {% for i in recent_instructors %}
             <li class="instructor">
                 {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
-                {% include "common/rating_card.html" with title=i.full_name link=link last_taught=course.semester_last_taught %}
+                {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty last_taught=course.semester_last_taught %}
             </li>
         {% endfor %}
         {% for i in old_instructors %}
             <li class="instructor old">
                 {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
-                {% include "common/rating_card.html" with title=i.full_name link=link %}
+                {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty %}
             </li>
         {% endfor %}
         </ul>

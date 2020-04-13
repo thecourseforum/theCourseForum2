@@ -1,0 +1,9 @@
+.course-professor .ratings .card {
+    width: 225px;
+    margin-bottom: 10px;
+}
+
+.course-professor .ratings h5 {
+    color: rgb(219, 72, 41);
+    font-weight: 400;
+}

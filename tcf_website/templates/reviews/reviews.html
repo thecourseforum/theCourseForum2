@@ -16,20 +16,24 @@
                     <div class="d-flex justify-content-between align-items-end">
                         <div class="d-flex">
                             <div class="ml-2">
-                                <strong><p>{{ r.average|floatformat:2 }}</p></strong>
+                                <strong>
+                                    <p>
+                                        <i class="fa fa-star fa-fw"></i>&nbsp;{{ r.average|floatformat:2 }}
+                                    </p>
+                                </strong>
                             </div>
-                            <div class="ml-4">
+                            <div class="ml-4 text-muted">
                                 <i class="fa fa-user fa-fw"></i>&nbsp;{{ r.instructor_rating }}
                             </div>
-                            <div class="ml-4">
-                                <i class="fa fa-exclamation-triangle fa-fw"></i>&nbsp;
+                            <div class="ml-4 text-muted">
+                                <i class="fa fa-skull-crossbones fa-fw"></i>&nbsp;
                                 {{ r.difficulty }}
                             </div>
-                            <div class="ml-4">
+                            <div class="ml-4 text-muted">
                                 <i class="fa fa-thumbs-up fa-fw"></i>&nbsp;
                                 {{ r.recommendability }}
                             </div>
-                            <div class="ml-4">
+                            <div class="ml-4 text-muted">
                                 <i class="fa fa-hourglass-half fa-fw"></i>&nbsp;
                                 {{ r.hours_per_week }}
                             </div>
@@ -44,12 +48,18 @@
             </div>
         </li>
     {% empty %}
-        <p>
-            <p>No reviews :(</p>
-            <p>
-                Help out by <a href="{% url 'new_review' %}">writing a review!</a>
-            </p>
-        </p>
+        <div class="row d-flex justify-content-center">
+            <div class="card col-3 text-center">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        No Reviews <i class="far fa-frown-open fa-fw"></i>
+                    </h4>
+                    <p class="card-text">
+                        Help us out by <a href="{% url 'new_review' %}" style="color: dodgerblue;">writing a review!</a>
+                    </p>
+                </div>
+            </div>
+        </div>
     {% endfor %}
     </ul>
 </div>
