@@ -26,6 +26,7 @@
 0. [Install Vagrant](https://www.vagrantup.com/intro/getting-started/install.html)
 1. `vagrant up`
 2. `vagrant ssh`
+3. Start at step 2 in normal setup.
 
 # Design Philosophies
 - Thick models, thin views, thinner templates
