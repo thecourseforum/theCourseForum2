@@ -20,24 +20,36 @@
     </div>
 
     <div class="ratings row d-flex mb-3 justify-content-center">
+        {% if rating %}
         <div class="card col-lg-3 text-center">
             <div class="card-body">
-              <h5 class="card-title display-4">{{ rating|floatformat:2 }}</h5>
+              <h5 class="card-title display-4">
+                  {{ rating|floatformat:2 }}
+              </h5>
               <p class="card-text"><i class="fa fa-star fa-fw"></i>&nbsp;Rating</p>
             </div>
         </div>
+        {% endif %}
+        {% if difficulty %}
         <div class="card mx-2 col-lg-3 text-center">
             <div class="card-body">
-              <h5 class="card-title display-4">{{ difficulty|floatformat:2 }}</h5>
+              <h5 class="card-title display-4">
+                  {{ difficulty|floatformat:2 }}
+              </h5>
               <p class="card-text"><i class="fa fa-skull-crossbones fa-fw"></i>&nbsp;Difficulty</p>
             </div>
         </div>
+        {% endif %}
+        {% if hours %}
         <div class="card col-lg-3 text-center">
             <div class="card-body">
-              <h5 class="card-title display-4">{{ hours|floatformat:2 }}</h5>
+              <h5 class="card-title display-4">
+                  {{ hours|floatformat:2 }}
+              </h5>
               <p class="card-text"><i class="fa fa-hourglass-half fa-fw"></i>&nbsp;Hours/Week</p>
             </div>
         </div>
+        {% endif %}
     </div>
 
     {% include "reviews/reviews.html" with reviews=reviews %}

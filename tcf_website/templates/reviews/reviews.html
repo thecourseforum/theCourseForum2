@@ -48,12 +48,18 @@
             </div>
         </li>
     {% empty %}
-        <p>
-            <p>No reviews :(</p>
-            <p>
-                Help out by <a href="{% url 'new_review' %}">writing a review!</a>
-            </p>
-        </p>
+        <div class="row d-flex justify-content-center">
+            <div class="card col-3 text-center">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        No Reviews <i class="far fa-frown-open fa-fw"></i>
+                    </h4>
+                    <p class="card-text">
+                        Help us out by <a href="{% url 'new_review' %}" style="color: dodgerblue;">writing a review!</a>
+                    </p>
+                </div>
+            </div>
+        </div>
     {% endfor %}
     </ul>
 </div>
