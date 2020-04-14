@@ -1,5 +1,7 @@
-# pylint: disable=unused-argument,keyword-arg-before-vararg
+# pylint: disable=unused-argument
+# pylint: disable=keyword-arg-before-vararg
 # pylint: disable=inconsistent-return-statements
+# pylint: disable=line-too-long
 """Custom authentication pipeline steps."""
 
 from django.shortcuts import redirect
@@ -39,7 +41,12 @@ USER_FIELDS = ['email', 'username']
 
 
 def create_user(strategy, details, backend, user=None, *args, **kwargs):
-    """Add extra information to saved user."""
+    """
+    Add extra information to saved user.
+
+    Based on https://github.com/python-social-auth/social-core/blob/3.3.3/social_core/pipeline/user.py#L64
+    """
+    # User has registered previously.
     if user:
         return {'is_new': False}
 
@@ -48,6 +55,8 @@ def create_user(strategy, details, backend, user=None, *args, **kwargs):
     if not fields:
         return None
 
+    # Add graduation year and computing ID. This is extra info not
+    # automatically collected by python-social-auth.
     fields['graduation_year'] = strategy.session_get('grad_year', None)
     fields['computing_id'] = kwargs.get(
         'email', details.get('email')).split('@')[0]
