@@ -3,7 +3,8 @@
 [![Build Status](https://travis-ci.com/thecourseforum/theCourseForum2.svg?branch=master)](https://travis-ci.com/thecourseforum/theCourseForum2)
 
 2020 Django rewrite of theCourseForum website
-[Staging](http://thecourseforum-staging.herokuapp.com/) [Dev](http://thecourseforum-dev.herokuapp.com/)
+
+[Staging](http://thecourseforum-staging.herokuapp.com/) | [Dev](http://thecourseforum-dev.herokuapp.com/)
 
 # MacOS and Linux Setup
 1. Install git, docker, and docker-compose
