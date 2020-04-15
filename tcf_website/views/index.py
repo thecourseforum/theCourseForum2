@@ -4,7 +4,12 @@ from django.views.generic.base import TemplateView
 
 
 def index(request):
-    """Index view."""
+    """
+    Index view.
+
+    Redirect to landing page if user not authorized, otherwise show
+    browse page.
+    """
     if request.user.is_authenticated:
         return redirect('browse')
     return render(request, 'landing/landing.html')
