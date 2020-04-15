@@ -9,19 +9,37 @@ from django.utils import timezone
 
 
 class School(models.Model):
+    """School model.
+
+    Has many departments.
+    """
+    # School name. Required.
     name = models.CharField(max_length=255, unique=True)
+    # Description of school. Optional.
     description = models.TextField(blank=True)
+    # Website URL. Optional.
     website = models.URLField(blank=True)
 
     def __str__(self):
+        """String representation of School."""
         return self.name
 
 
 class Department(models.Model):
+    """Department model.
+
+    Belongs to a School.
+    Has many Subdepartments.
+    Has many Instructors.
+    """
+    # Department name. Required.
     name = models.CharField(max_length=255)
+    # Department description. Optional.
     description = models.TextField(blank=True)
+    # Website URL. Optional.
     website = models.URLField(blank=True)
 
+    # School foreign key. Required.
     school = models.ForeignKey(School, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -39,10 +57,19 @@ class Department(models.Model):
 
 
 class Subdepartment(models.Model):
+    """Subdepartment model.
+
+    Belongs to a Department.
+    Has many Courses.
+    """
+    # Subdepartment name. Required.
     name = models.CharField(max_length=255)
+    # Subdepartment description. Optional.
     description = models.TextField(blank=True)
+    # Subdepartment mnemonic. Required.
     mnemonic = models.CharField(max_length=255, unique=True)
 
+    # Department foreign key. Required.
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -70,7 +97,15 @@ class Subdepartment(models.Model):
 
 
 class User(AbstractUser):
+    """User model.
+
+    Has many Reviews.
+    """
+    # User computing ID. Not required by database schema, but is
+    # necessary. Should be created during authentication pipeline.
     computing_id = models.CharField(max_length=20, unique=True, blank=True)
+    # User graduation year. Not required by database schema, but is
+    # necessary. Should be created during authentication pipeline.
     graduation_year = models.IntegerField(
         validators=[MinValueValidator(2000), MaxValueValidator(2999)],
         blank=True, null=True
@@ -85,10 +120,22 @@ class User(AbstractUser):
 
 
 class Instructor(models.Model):
+    """Instructor model.
+
+    Belongs to many departments.
+    Has many courses.
+    Has many departments.
+    """
+
+    # Instructor first_name. Optional.
     first_name = models.CharField(max_length=255, blank=True)
+    # Instructor last_name. Required.
     last_name = models.CharField(max_length=255)
+    # Instructor email. Optional.
     email = models.EmailField(blank=True)
+    # Instructor website. Optional.
     website = models.URLField(blank=True)
+    # Instructor departments. Optional.
     departments = models.ManyToManyField(Department)
 
     def __str__(self):
@@ -108,6 +155,7 @@ class Instructor(models.Model):
         recommendability = ratings.get('recommendability__avg')
         instructor_rating = ratings.get('instructor_rating__avg')
 
+        # Return None if one component is absent.
         if not recommendability or not instructor_rating:
             return None
 
@@ -127,7 +175,13 @@ class Instructor(models.Model):
 
 
 class Semester(models.Model):
+    """Semester model.
 
+    Has many Sections.
+    Can belong to many Courses.
+    """
+
+    # Enumeration of possible seasons.
     SEASONS = (
         ('FALL', 'Fall'),
         ('JANUARY', 'January'),
@@ -135,10 +189,26 @@ class Semester(models.Model):
         ('SUMMER', 'Summer'),
     )
 
+    # Semester year. Required.
     year = models.IntegerField(
         validators=[MinValueValidator(2000), MaxValueValidator(2999)])
+    # Semester season. Required.
     season = models.CharField(max_length=7, choices=SEASONS)
 
+    """
+    Semester number as defined by SIS and Lou's List. Required.
+
+    e.g. Semester 1208
+
+    1 - Always the first digit.
+    20 - Year (2020).
+    8 - First month of season (August, so Fall).
+
+    Other examples:
+    1191 - January 2019
+    1182 - Spring 2018
+    1166 - Summer 2016.
+    """
     number = models.IntegerField(
         help_text="As defined in SIS/Lou's List",
         unique=True)
@@ -168,12 +238,24 @@ class Semester(models.Model):
 
 
 class Course(models.Model):
+    """Course model.
+
+    Belongs to a Subdepartment.
+    Has many Sections.
+    Has a Semester last taught.
+    """
+
+    # Course title. Required.
     title = models.CharField(max_length=255)
+    # Course description. Optional.
     description = models.TextField(blank=True)
+    # Course number. Required.
     number = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(99999)])
 
+    # Subdepartment foreign key. Required.
     subdepartment = models.ForeignKey(Subdepartment, on_delete=models.CASCADE)
+    # Semester that the course was most recently taught.
     semester_last_taught = models.ForeignKey(
         Semester, on_delete=models.CASCADE)
 
@@ -208,13 +290,30 @@ class Course(models.Model):
 
 
 class Section(models.Model):
+    """Section model.
+
+    Belongs to a Course.
+    Has many Instructors.
+    Has a Semester.
+    """
+
+    # Section number as listed on SIS/Lou's List. Required.
     sis_section_number = models.IntegerField()  # NOTE: not unique!
+    # Section instructors. Optional.
     instructors = models.ManyToManyField(Instructor)
+
+    # Section Semester foreign key. Required.
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    # Section Course foreign key. Required.
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    # Section topic. Optional. E.g. for CS 4501, each section has a
+    # different topic.
     topic = models.TextField(blank=True)
 
+    # Section # of units. Optional.
     units = models.CharField(max_length=10, blank=True)
+    # Section section_type. Optional. e.g. 'lec' or 'lab'.
     section_type = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
@@ -230,11 +329,26 @@ class Section(models.Model):
 
 
 class Review(models.Model):
+    """Review model.
+
+    Belongs to a User.
+    Has a Course.
+    Has an Instructor.
+    Has an Semester.
+    """
+
+    # Review text. Optional.
     text = models.TextField(blank=True)
+    # Review user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # Review course foreign key. Required.
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    # Review instructor foreign key. Required.
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    # Review semester foreign key. Required.
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+
+    # Enum of Rating options.
     RATINGS = (
         (1, 1),
         (2, 2),
@@ -242,13 +356,22 @@ class Review(models.Model):
         (4, 4),
         (5, 5),
     )
+    # Review instructor rating. Required.
     instructor_rating = models.PositiveSmallIntegerField(choices=RATINGS)
+    # Review difficulty. Required.
     difficulty = models.PositiveSmallIntegerField(choices=RATINGS)
+    # Review recommendability. Required.
     recommendability = models.PositiveSmallIntegerField(choices=RATINGS)
+    # Review hours per week. Required.
     hours_per_week = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(168)])
+    # Review created date. Required.
     created = models.DateTimeField(editable=False, default=timezone.now)
+    # Review modified date. Required.
     modified = models.DateTimeField(default=timezone.now)
+
+    # After data migration, add the following in order to automatically
+    # save created and modified dates.
 
     # def save(self, *args, **kwargs):
     #     ''' On save, update timestamps '''
@@ -264,6 +387,9 @@ class Review(models.Model):
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"
 
+    # Some of the tCF 1.0 data did not honor this constraint.
+    # Should we add it and remove duplicates from old data?
+
     # class Meta:
     #     constraints = [
     #         models.UniqueConstraint(
@@ -274,9 +400,17 @@ class Review(models.Model):
 
 
 class Vote(models.Model):
+    """Vote model.
+
+    Belongs to a User.
+    Has a review.
+    """
+    # Vote value. Required.
     value = models.IntegerField(
         validators=[MinValueValidator(-1), MaxValueValidator(1)])
+    # Vote user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # Vote review foreign key. Required.
     review = models.ForeignKey(Review, on_delete=models.CASCADE)
 
     def __str__(self):
