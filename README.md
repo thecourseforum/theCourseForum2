@@ -20,16 +20,17 @@
     - *`cat april7.sql | docker exec -i tcf_db psql -U tcf_django tcf_db`
 6. Go to http://localhost:8000 and make sure it works!
 
-\*If you're on Windows, you'll have to run `cp` and `cat` in a bash shell (ex. Powershell) because those commands don't exist in CMD.  
+\*This method can also work if you have a version of Windows that is supported by Docker Desktop — i.e. Windows 10 Pro, Enterprise, or Education, but NOT Home (the most common version). However, you'll have to run `cp` and `cat` in a bash shell (ex. Powershell) because those commands don't exist in CMD.
 
 # Alternative Setup (Windows and MacOS if above failed)
 0. [Install Vagrant](https://www.vagrantup.com/intro/getting-started/install.html)
-1. Run `vagrant up` to start a VM.
-2. After that's booted, run `vagrant ssh` to run commands inside the VM.
-3. `cd /vagrant`
-4. Start at step 3 in normal setup. You may have to prefix all docker commands with `sudo` (e.g. `sudo docker-compose up`).
-5. Go to http://127.0.0.1:8000 and make sure it works!
-6. Run `vagrant` suspend when you're done to suspend the VM.
+1. `git clone https://github.com/thecourseforum/theCourseForum2.git`
+2. Go into the `theCourseForum2/` folder and then run `vagrant up` to start a VM.
+3. After that's booted, run `vagrant ssh` to run commands inside the VM.
+4. `cd /vagrant`
+5. Start at step 3 in normal setup. You may have to prefix all docker commands with `sudo` (e.g. `sudo docker-compose up`).
+6. Go to http://127.0.0.1:8000 and make sure it works!
+7. Run `vagrant` suspend when you're done to suspend the VM.
 
 # Design Philosophies
 - Thick models, thin views, thinner templates
