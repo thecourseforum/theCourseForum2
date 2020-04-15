@@ -1,0 +1,36 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block styles %}
+{% endblock %}
+
+{% block content %}
+<div class="browse container">
+    <h2>theCourseForum</h2>
+    <h6>connecting you to the courses you love.</h6>
+    <img class="container-fluid" src="{% static 'about/banner_uva.jpg' %}"/>
+    <div class="row mt-3">
+        <div class="col">
+            <h5>Beginnings</h5>
+            <p>
+                In Fall 2005, UVa students Jeff Bordogna and Alan Webb recognized a need for an online community to help students share their class experiences, and thus developed the first version of theCourseForum. Over time, this simple tool grew and prospered as more and more students found it despite our extraordinarily small marketing budget. The site has now become a fixture of the UVA course signup season to the extent that over 80% of students use the site every year. Starting in 2012, a small elite team of skilled individuals worked to redesign the site to bring it into the modern age. After a long year of work, the new site was released, and it continues to be managed by UVa students.
+            </p>
+            <p>
+                Although this organization has members who are University of Virginia students and may have University employees associated or engaged in its activities and affairs, the organization is not a part of or an agency of the University. It is a separate and independent organization, which is responsible for and manages its own activities and affairs. The University does not direct, supervise or control the organization and is not responsible for the organization’s contracts, acts or omissions.
+            </p>
+        </div>
+        <div class="col">
+            <img src="{% static 'about/parents_fund.png' %}"/>
+            <h5>
+                Thanks to the UVA Parents Fund!
+            </h5>
+            <p>
+                The UVA Parents Fund helps us cover server costs from the large amount of traffic that we get. Their help has allowed the site to stay up and running continuously as we keep developing new features.
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
