@@ -18,6 +18,8 @@ class ReviewForm(forms.Form):
 @login_required
 def new_review(request):
     """Review creation view."""
+
+    # Collect form data into Review model instance.
     if request.method == 'POST':
         # TODO: use a proper django form.
         form = ReviewForm(request.POST)

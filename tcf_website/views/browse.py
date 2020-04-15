@@ -13,13 +13,13 @@ def browse(request):
     clas = School.objects.get(name="College of Arts & Sciences")
     seas = School.objects.get(name="School of Engineering & Applied Science")
 
+    # Other departments besides CLAS and SEAS.
     other_dept_pks = School.objects.exclude(
         pk__in=[
             clas.pk,
             seas.pk]).values_list(
                 'department',
                 flat=True)
-
     other_depts = Department.objects.filter(pk__in=other_dept_pks)
 
     return render(request, 'browse/browse.html', {
@@ -31,9 +31,13 @@ def browse(request):
 
 def department(request, dept_id):
     """View for department page."""
+
     dept = Department.objects.get(pk=dept_id)
+
+    # Get the most recent semester
     latest_semester = Semester.latest()
 
+    # Navigation breadcrimbs
     breadcrumbs = [
         (dept.school.name, reverse('browse'), False),
         (dept.name, None, True)
@@ -53,27 +57,33 @@ def course_view(request, course_id):
     course = Course.objects.get(pk=course_id)
     latest_semester = Semester.latest()
 
+    # Get instructors that have taught the course in the most recent
+    # semester.
     recent_instructor_pks = course.section_set.filter(
         semester=latest_semester).values_list(
             'instructors', flat=True).distinct()
     recent_instructors = Instructor.objects.filter(
         pk__in=recent_instructor_pks)
+    # Add ratings and difficulties
     for instr in recent_instructors:
         instr.rating = instr.average_rating_for_course(course)
         instr.difficulty = instr.average_difficulty_for_course(course)
 
+    # Get instructors that haven't taught the course this semester.
     old_instructor_pks = course.section_set.exclude(
         semester=latest_semester).exclude(
             instructors__pk__in=recent_instructor_pks).values_list(
                 'instructors',
                 flat=True).distinct()
     old_instructors = Instructor.objects.filter(pk__in=old_instructor_pks)
+    # Add ratings and difficulties
     for instr in old_instructors:
         instr.rating = instr.average_rating_for_course(course)
         instr.difficulty = instr.average_difficulty_for_course(course)
 
     dept = course.subdepartment.department
 
+    # Navigation breadcrumbs
     breadcrumbs = [
         (dept.school.name, reverse('browse'), False),
         (dept.name, reverse('department', args=[dept.pk]), False),
@@ -95,6 +105,8 @@ def course_instructor(request, course_id, instructor_id):
 
     course = Course.objects.get(pk=course_id)
     instructor = Instructor.objects.get(pk=instructor_id)
+
+    # Filter out reviews with no text.
     reviews = Review.objects.filter(
         instructor=instructor,
         course=course,
@@ -102,6 +114,7 @@ def course_instructor(request, course_id, instructor_id):
 
     dept = course.subdepartment.department
 
+    # Navigation breadcrumbs
     breadcrumbs = [
         (dept.school.name, reverse('browse'), False),
         (dept.name, reverse('department', args=[dept.pk]), False),
@@ -109,6 +122,7 @@ def course_instructor(request, course_id, instructor_id):
         (instructor.full_name, None, True)
     ]
 
+    # Get average statistics.
     rating = instructor.average_rating_for_course(course)
     difficulty = instructor.average_difficulty_for_course(course)
     hours = instructor.average_hours_for_course(course)

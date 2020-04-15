@@ -4,6 +4,8 @@
 
 2020 Django rewrite of theCourseForum website
 
+[Staging](http://thecourseforum-staging.herokuapp.com/) | [Dev](http://thecourseforum-dev.herokuapp.com/)
+
 # MacOS and Linux Setup
 1. Install git, docker, and docker-compose
     - https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
@@ -40,7 +42,10 @@
         - e.g. don't filter lists in templates, filter them in the views.
 
 # How to Contribute
-1. Create a new branch to do your work in. `git checkout -B your_branch_name`
+1. Create a new branch to do your work in off of the `dev` branch.
+    - `git pull`
+    - `git checkout dev`
+    - `git checkout -B your_branch_name`
 2. Make your changes!
 3. Write unit tests and put them in `tcf_website/tests/`
 4. Lint and test locally before commit:
@@ -49,7 +54,7 @@
 4. Stage your changes with `git add .`
 5. Commit with `git commit -m "Add X feature."`
 6. Push! `git push`
-7. Make a Pull Request.
+7. Make a Pull Request to merge your changes back into `dev`.
 8. Wait for all tests to pass.
 9. Request an approver.
 10. Wait to be approved and merged!

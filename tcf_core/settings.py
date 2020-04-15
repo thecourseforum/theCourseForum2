@@ -131,6 +131,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# python-social-auth settings.
+
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
@@ -164,8 +166,11 @@ SOCIAL_AUTH_PIPELINE = (
 # PROD SETTINGS
 if not DEBUG:
 
+    # Heroku configuration.
     import django_heroku
     django_heroku.settings(locals())
+
+    # Gather information from environment variables.
 
     HOSTNAME = os.environ.get('HOSTNAME', None)
     PUBLIC_IPV4 = os.environ.get('PUBLIC_IPV4', None)
