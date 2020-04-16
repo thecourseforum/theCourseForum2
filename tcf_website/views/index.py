@@ -79,20 +79,24 @@ class AboutView(TemplateView):
                          "class": "2021",
                          "img_filename": "ENG_Nikash_Sethi.jpg",
                          "github": "nikashs"},
-                         {"name": "Alex Shen",
-                        "role": "Developer",
-                        "class": "2023",
-                        "img_filename": "ENG_Alex_Shen.jpg",
-                        "github": "alex-shen1"
-                        }
+                        {"name": "Alex Shen",
+                         "role": "Developer",
+                         "class": "2023",
+                         "img_filename": "ENG_Alex_Shen.jpg",
+                         "github": "alex-shen1"
+                         }
                         ]
-                        
+
     marketing_team = [
         {"name": "Brian Yu", "class": "2021", "img_filename": "ENG_Brian_Yu.jpeg"},
-        {"name": "Sai Konuri", "class": "2020", "img_filename": "ENG_Sai_Konuri.jpg"},
-        {"name": "Brad Knaysi", "class": "2020", "img_filename": "ENG_Brad_Knaysi.jpg"},
-        {"name": "Jennifer Long", "class": "2021", "img_filename": "ENG_Jennifer_Long.jpg"},
-        {"name": "Davis DeLozier", "class": "2021", "img_filename": "ENG_Brian_Yu.jpeg"},
+        {"name": "Sai Konuri", "class": "2020",
+            "img_filename": "ENG_Sai_Konuri.jpg"},
+        {"name": "Brad Knaysi", "class": "2020",
+            "img_filename": "ENG_Brad_Knaysi.jpg"},
+        {"name": "Jennifer Long", "class": "2021",
+            "img_filename": "ENG_Jennifer_Long.jpg"},
+        {"name": "Davis DeLozier", "class": "2021",
+            "img_filename": "ENG_Brian_Yu.jpeg"},
     ]
 
     def get_context_data(self, **kwargs):
