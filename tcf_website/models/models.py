@@ -406,12 +406,12 @@ class Review(models.Model):
         # Improve scanning of reviews by course and instructor.
         indexes = [
             models.Index(fields=['course', 'instructor']),
-            models.Index(fields=['user',]),
+            models.Index(fields=['user', ]),
         ]
 
         # Some of the tCF 1.0 data did not honor this constraint.
         # Should we add it and remove duplicates from old data?
-        
+
     #     constraints = [
     #         models.UniqueConstraint(
     #             fields=['user', 'course', 'instructor'],
