@@ -2,20 +2,7 @@
 {% load static %}
 
 {% block styles %}
-<style>
-  .pfp {
-      overflow: hidden;
-  }
-  .pfp img{
-      transition: all 0.5s ease;
-  }
-  .pfp:hover img{
-      transform: scale(1.1);
-  }
-  .member:hover{
-      box-shadow: 2px 2px 5px #888888 !important;
-  }
-</style>
+<link rel="stylesheet" href="{% static 'about/about.css' %}" />
 {% endblock %}
 
 {% block content %}
