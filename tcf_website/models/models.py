@@ -46,6 +46,11 @@ class Department(models.Model):
         return self.name
 
     class Meta:
+
+        indexes = [
+            models.Index(fields=['school']),
+        ]
+
         constraints = [
             models.UniqueConstraint(
                 fields=['name', 'school'],
@@ -88,6 +93,11 @@ class Subdepartment(models.Model):
             section__semester=Semester.latest()).exists()
 
     class Meta:
+
+        indexes = [
+            models.Index(fields=['department']),
+        ]
+
         constraints = [
             models.UniqueConstraint(
                 fields=['mnemonic', 'department'],
@@ -281,6 +291,11 @@ class Course(models.Model):
             models.Avg('difficulty'))['difficulty__avg']
 
     class Meta:
+
+        indexes = [
+            models.Index(fields=['subdepartment', 'number']),
+        ]
+
         constraints = [
             models.UniqueConstraint(
                 fields=['subdepartment', 'number'],
@@ -387,10 +402,16 @@ class Review(models.Model):
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"
 
-    # Some of the tCF 1.0 data did not honor this constraint.
-    # Should we add it and remove duplicates from old data?
+    class Meta:
+        # Improve scanning of reviews by course and instructor.
+        indexes = [
+            models.Index(fields=['course', 'instructor']),
+            models.Index(fields=['user',]),
+        ]
 
-    # class Meta:
+        # Some of the tCF 1.0 data did not honor this constraint.
+        # Should we add it and remove duplicates from old data?
+        
     #     constraints = [
     #         models.UniqueConstraint(
     #             fields=['user', 'course', 'instructor'],
@@ -417,6 +438,11 @@ class Vote(models.Model):
         return f"Vote of value {self.value} for {self.review} by {self.user}"
 
     class Meta:
+
+        indexes = [
+            models.Index(fields=['review']),
+        ]
+
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'review'],
