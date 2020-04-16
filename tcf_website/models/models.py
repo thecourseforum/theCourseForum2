@@ -335,6 +335,12 @@ class Section(models.Model):
         return f"{self.course} {self.semester} {', '.join(str(i) for i in self.instructors.all())}"
 
     class Meta:
+
+        indexes = [
+            models.Index(fields=['semester', 'course']),
+            models.Index(fields=['course']),
+        ]
+
         constraints = [
             models.UniqueConstraint(
                 fields=['sis_section_number', 'semester'],
