@@ -79,6 +79,11 @@ class AboutView(TemplateView):
                          "class": "2021",
                          "img_filename": "ENG_Nikash_Sethi.jpg",
                          "github": "nikashs"},
+                        {"name": "Neal Patel",
+                         "role": "Developer",
+                         "class": "2021",
+                         "img_filename": "ENG_Neal_Patel.jpg",
+                         "github": "nealpatel50"},
                         ]
     marketing_team = [
         {"name": "Brian Yu", "class": "2021", "img_filename": "ENG_Brian_Yu.jpeg"},
