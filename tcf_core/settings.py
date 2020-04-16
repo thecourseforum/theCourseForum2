@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,import-error
+# pylint: disable=line-too-long,import-error,fixme
 """
 Django settings for tcf_core project.
 
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'social_django',
+    'cachalot',  # TODO: add Redis?
     'tcf_website'
 ]
 
