@@ -31,7 +31,7 @@ class AboutView(TemplateView):
     executive_team = [{"name": "Brian Yu",
                        "role": "President",
                        "class": "2021",
-                       "img_filename": "ENG_Brian_Yu.jpeg",
+                       "img_filename": "ENG_Brian_Yu.jpg",
                        "github": "brian-yu"},
                       {"name": "Sai Konuri",
                        "role": "VP of Infrastructure Engineering",
@@ -51,13 +51,13 @@ class AboutView(TemplateView):
                       {"name": "Davis DeLozier",
                        "role": "Treasurer",
                        "class": "2021",
-                       "img_filename": "ENG_Brian_Yu.jpeg",
+                       "img_filename": "ENG_Brian_Yu.jpg",
                        "github": "dpd3mr"},
                       ]
     engineering_team = [{"name": "Brian Yu",
                          "role": "President",
                          "class": "2021",
-                         "img_filename": "ENG_Brian_Yu.jpeg",
+                         "img_filename": "ENG_Brian_Yu.jpg",
                          "github": "brian-yu"},
                         {"name": "Sai Konuri",
                          "role": "VP of Infrastructure Engineering",
@@ -81,11 +81,11 @@ class AboutView(TemplateView):
                          "github": "nikashs"},
                         ]
     marketing_team = [
-        {"name": "Brian Yu", "class": "2021", "img_filename": "ENG_Brian_Yu.jpeg"},
+        {"name": "Brian Yu", "class": "2021", "img_filename": "ENG_Brian_Yu.jpg"},
         {"name": "Sai Konuri", "class": "2020", "img_filename": "ENG_Sai_Konuri.jpg"},
         {"name": "Brad Knaysi", "class": "2020", "img_filename": "ENG_Brad_Knaysi.jpg"},
         {"name": "Jennifer Long", "class": "2021", "img_filename": "ENG_Jennifer_Long.jpg"},
-        {"name": "Davis DeLozier", "class": "2021", "img_filename": "ENG_Brian_Yu.jpeg"},
+        {"name": "Davis DeLozier", "class": "2021", "img_filename": "ENG_Brian_Yu.jpg"},
     ]
 
     def get_context_data(self, **kwargs):
