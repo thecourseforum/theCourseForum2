@@ -179,7 +179,8 @@ if not DEBUG:
     ALLOWED_HOSTS = [
         'tcf.brianyu.dev',
         'thecourseforum.com',
-        'staging.thecourseforum.com'
+        'staging.thecourseforum.com',
+        'dev.thecourseforum.com',
         'thecourseforum-staging.herokuapp.com',
     ]
 
