@@ -79,6 +79,11 @@ class AboutView(TemplateView):
                          "class": "2021",
                          "img_filename": "ENG_Nikash_Sethi.jpg",
                          "github": "nikashs"},
+                        {"name": "Neal Patel",
+                         "role": "Developer",
+                         "class": "2021",
+                         "img_filename": "ENG_Neal_Patel.jpg",
+                         "github": "nealpatel50"},
                         {"name": "Alex Shen",
                          "role": "Developer",
                          "class": "2023",
@@ -87,23 +92,6 @@ class AboutView(TemplateView):
                          }
                         ]
 
-    marketing_team = [
-        {"name": "Brian Yu", "class": "2021", "img_filename": "ENG_Brian_Yu.jpeg"},
-        {"name": "Sai Konuri", "class": "2020",
-         "img_filename": "ENG_Sai_Konuri.jpg"},
-        {"name": "Brad Knaysi", "class": "2020",
-         "img_filename": "ENG_Brad_Knaysi.jpg"},
-        {"name": "Jennifer Long", "class": "2021",
-         "img_filename": "ENG_Jennifer_Long.jpg"},
-        {"name": "Davis DeLozier", "class": "2021",
-         "img_filename": "ENG_Brian_Yu.jpeg"},
-    ]
-                        {"name": "Neal Patel",
-                         "role": "Developer",
-                         "class": "2021",
-                         "img_filename": "ENG_Neal_Patel.jpg",
-                         "github": "nealpatel50"},
-                        ]
     marketing_team = [{"name": "Davis DeLozier",
                        "class": "2021", "img_filename": "blank.webp"}, ]
 
