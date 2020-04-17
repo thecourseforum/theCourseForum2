@@ -90,13 +90,13 @@ class AboutView(TemplateView):
     marketing_team = [
         {"name": "Brian Yu", "class": "2021", "img_filename": "ENG_Brian_Yu.jpeg"},
         {"name": "Sai Konuri", "class": "2020",
-            "img_filename": "ENG_Sai_Konuri.jpg"},
+         "img_filename": "ENG_Sai_Konuri.jpg"},
         {"name": "Brad Knaysi", "class": "2020",
-            "img_filename": "ENG_Brad_Knaysi.jpg"},
+         "img_filename": "ENG_Brad_Knaysi.jpg"},
         {"name": "Jennifer Long", "class": "2021",
-            "img_filename": "ENG_Jennifer_Long.jpg"},
+         "img_filename": "ENG_Jennifer_Long.jpg"},
         {"name": "Davis DeLozier", "class": "2021",
-            "img_filename": "ENG_Brian_Yu.jpeg"},
+         "img_filename": "ENG_Brian_Yu.jpeg"},
     ]
 
     def get_context_data(self, **kwargs):
