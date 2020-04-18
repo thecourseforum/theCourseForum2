@@ -4,48 +4,7 @@
     <ul class="review-list" style="list-style-type: none;">
     {% for r in reviews %}
         <li>
-            <div class="review card mb-2">
-                <div class="card-body text-left">
-                    {% if profile %}
-                    <div class="d-flex justify-content-between">
-                        <p><strong>{{ r.instructor.full_name }} - {{ r.course }}</strong></p>
-                        <a href="#">Edit</a>
-                    </div>
-                    {% endif %}
-                    <p>{{ r.text }}</p>
-                    <div class="d-flex justify-content-between align-items-end">
-                        <div class="d-flex">
-                            <div class="ml-2">
-                                <strong>
-                                    <p>
-                                        <i class="fa fa-star fa-fw"></i>&nbsp;{{ r.average|floatformat:2 }}
-                                    </p>
-                                </strong>
-                            </div>
-                            <div class="ml-4 text-muted">
-                                <i class="fa fa-user fa-fw"></i>&nbsp;{{ r.instructor_rating }}
-                            </div>
-                            <div class="ml-4 text-muted">
-                                <i class="fa fa-skull-crossbones fa-fw"></i>&nbsp;
-                                {{ r.difficulty }}
-                            </div>
-                            <div class="ml-4 text-muted">
-                                <i class="fa fa-thumbs-up fa-fw"></i>&nbsp;
-                                {{ r.recommendability }}
-                            </div>
-                            <div class="ml-4 text-muted">
-                                <i class="fa fa-hourglass-half fa-fw"></i>&nbsp;
-                                {{ r.hours_per_week }}
-                            </div>
-                        </div>
-
-                        <div class="text-right">
-                            <p>{{ r.semester }}</p>
-                            <p>{{ r.created|date }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% include "reviews/review.html" with profile=profile review=r %}
         </li>
     {% empty %}
         <div class="row d-flex justify-content-center">

@@ -145,13 +145,14 @@ class Command(BaseCommand):
         homework = review.amount_homework if review.amount_homework else 0
 
         work_per_week = min(
-            7 *
-            24,
+            7 * 24,
             round(
                 reading +
                 writing +
                 group +
-                homework))
+                homework
+            )
+        )
 
         try:
             semester = Semester.objects.get(number=review.semester.number)
@@ -182,6 +183,8 @@ class Command(BaseCommand):
 
         if not created:
             print("Review already created.")
+        
+        return r
 
     def migrate_reviews(self):
         for i in tqdm(range(0, self.reviews.count())):
@@ -199,6 +202,47 @@ class Command(BaseCommand):
                 print(f"Problem migrationg {review}:")
                 print(review.comment)
                 print(e)
+    
+    def migrate_vote(self, vote):
+        value = 0
+        if vote.vote == 1:
+            value = 1
+        elif vote.vote == 0:
+            value = -1
+
+        user = self.load_user(vote.user)
+        review_user = self.load_user(vote.review.user)
+        
+        try:
+            review = Review.objects.get(
+                user=review_user,
+                created=vote.review.created_at,
+                text=vote.review.comment,
+            )
+        except Review.DoesNotExist:
+            print("TEST")
+            review = self.migrate_review(vote.review)
+        except Exception as e:
+            print(e)
+            print("Could not get or create review...")
+            print(vote.review)
+            return
+        
+        if not review:
+            print("Could not get or create review...")
+            print(vote.review)
+            return
+
+        Vote.objects.get_or_create(
+            value = value,
+            user = user,
+            review = review,
+        )
+
+    def migrate_votes(self):
+        for vote in tqdm(self.votes, total=self.votes.count()):
+            self.migrate_vote(vote)
+            
 
     def handle(self, *args, **options):
 
@@ -220,16 +264,4 @@ class Command(BaseCommand):
 
         self.migrate_reviews()
 
-        # for vote in self.votes[:10]:
-        #     print(vote)
-
-        # print(self.votes.filter(vote=1).count()) # num of upvotes
-        # print(self.votes.filter(vote=0).count()) # num of downvotes
-
-        # for vote in self.votes.filter(user__last_name="Yu", user__first_name="Brian"):
-        #     if not vote.review:
-        #         print("NO REVIEW")
-        #     try:
-        #         print(vote)
-        #     except Exception as e:
-        #         print(f"Something went wrong looking at vote {vote}: {e}")
+        self.migrate_votes()
