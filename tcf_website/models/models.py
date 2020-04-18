@@ -128,6 +128,10 @@ class User(AbstractUser):
         """Return string containing user full name."""
         return f"{self.first_name} {self.last_name}"
 
+    def reviews(self):
+        """Return user reviews sorted by creation date."""
+        return self.review_set.order_by("-created")
+
 
 class Instructor(models.Model):
     """Instructor model.
@@ -239,6 +243,12 @@ class Semester(models.Model):
         return Semester.objects.order_by("-number").first()
 
     class Meta:
+
+        indexes = [
+            models.Index(fields=['year', 'season']),
+            models.Index(fields=['number']),
+        ]
+
         constraints = [
             models.UniqueConstraint(
                 fields=['season', 'year'],
@@ -493,7 +503,7 @@ class Review(models.Model):
         # Improve scanning of reviews by course and instructor.
         indexes = [
             models.Index(fields=['course', 'instructor']),
-            models.Index(fields=['user', ]),
+            models.Index(fields=['user', '-created']),
         ]
 
         # Some of the tCF 1.0 data did not honor this constraint.
