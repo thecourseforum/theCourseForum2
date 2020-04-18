@@ -183,7 +183,7 @@ class Command(BaseCommand):
 
         if not created:
             print("Review already created.")
-        
+
         return r
 
     def migrate_reviews(self):
@@ -202,7 +202,7 @@ class Command(BaseCommand):
                 print(f"Problem migrationg {review}:")
                 print(review.comment)
                 print(e)
-    
+
     def migrate_vote(self, vote):
         value = 0
         if vote.vote == 1:
@@ -212,7 +212,7 @@ class Command(BaseCommand):
 
         user = self.load_user(vote.user)
         review_user = self.load_user(vote.review.user)
-        
+
         try:
             review = Review.objects.get(
                 user=review_user,
@@ -227,22 +227,21 @@ class Command(BaseCommand):
             print("Could not get or create review...")
             print(vote.review)
             return
-        
+
         if not review:
             print("Could not get or create review...")
             print(vote.review)
             return
 
         Vote.objects.get_or_create(
-            value = value,
-            user = user,
-            review = review,
+            value=value,
+            user=user,
+            review=review,
         )
 
     def migrate_votes(self):
         for vote in tqdm(self.votes, total=self.votes.count()):
             self.migrate_vote(vote)
-            
 
     def handle(self, *args, **options):
 
