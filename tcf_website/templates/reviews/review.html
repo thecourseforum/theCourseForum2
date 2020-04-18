@@ -1,13 +1,13 @@
 <div id="review{{review.id}}" class="review card mb-2 d-flex flex-row align-items-center">
 
     <div class="d-none d-sm-flex vote-container ml-4 mr-2 flex-column justify-content-center align-items-center">
-        <div class="upvote {% if review.user_vote == 1 %}active{% endif %}" onclick="handleVote({{review.id}}, true)">
+        <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" {% if user.is_authenticated %}onclick="handleVote({{review.id}}, true)" href="javascript:;"{% else %}href="{% url 'login' %}"{% endif %}>
             <i class="fa fa-angle-up fa-fw"></i>
-        </div>
+        </a>
         <span class="voteCount">{{ review.count_votes }}</span>
-        <div class="downvote {% if review.user_vote == -1 %}active{% endif %}" onclick="handleVote({{review.id}}, false)">
+        <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" {% if user.is_authenticated %}onclick="handleVote({{review.id}}, false)" href="javascript:;"{% else %}href="{% url 'login' %}"{% endif %}>
             <i class="fa fa-angle-down fa-fw"></i>
-        </div>
+        </a>
     </div>
 
     <div class="card-body text-left">
