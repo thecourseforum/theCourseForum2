@@ -404,7 +404,7 @@ class Review(models.Model):
     def average(self):
         """Average score for review."""
         return (self.instructor_rating + self.recommendability) / 2
-    
+
     def count_votes(self):
         """Sum votes for review."""
         vote_sum = self.vote_set.aggregate(
@@ -412,7 +412,7 @@ class Review(models.Model):
         if not vote_sum:
             return 0
         return vote_sum
-    
+
     def upvote(self, user):
         """Create an upvote."""
 
@@ -438,7 +438,7 @@ class Review(models.Model):
             user=user,
             review=self,
         )
-    
+
     def downvote(self, user):
         """Create a downvote."""
 
@@ -464,9 +464,11 @@ class Review(models.Model):
             user=user,
             review=self,
         )
-    
+
     @staticmethod
     def display_reviews(course, instructor, user):
+        """Prepare review list for course-instructor page."""
+
         reviews = Review.objects.filter(
             instructor=instructor,
             course=course,
@@ -480,7 +482,7 @@ class Review(models.Model):
                 ).value
             except Vote.DoesNotExist:
                 review.user_vote = 0
-        
+
         return reviews
 
     def __str__(self):
