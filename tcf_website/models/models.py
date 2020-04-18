@@ -474,14 +474,15 @@ class Review(models.Model):
             course=course,
         ).exclude(text="").order_by("-created")
 
-        for review in reviews:
-            try:
-                review.user_vote = Vote.objects.get(
-                    user=user,
-                    review=review,
-                ).value
-            except Vote.DoesNotExist:
-                review.user_vote = 0
+        if user.is_authenticated:
+            for review in reviews:
+                try:
+                    review.user_vote = Vote.objects.get(
+                        user=user,
+                        review=review,
+                    ).value
+                except Vote.DoesNotExist:
+                    review.user_vote = 0
 
         return reviews
 

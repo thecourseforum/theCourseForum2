@@ -4,10 +4,10 @@
     cursor: pointer;
 }
 
-.review .upvote.active {
+.review .upvote.active, .review .upvote:hover {
     color: rgb(220, 72, 36);
 }
 
-.review .downvote.active {
+.review .downvote.active, .review .downvote:hover {
     color: dodgerblue;
 }
