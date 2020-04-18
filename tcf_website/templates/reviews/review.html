@@ -1,0 +1,61 @@
+<div id="review{{review.id}}" class="review card mb-2 d-flex flex-row align-items-center">
+
+    <div class="d-none d-sm-flex vote-container ml-4 mr-2 flex-column justify-content-center align-items-center">
+        <div class="upvote {% if review.user_vote == 1 %}active{% endif %}" onclick="handleVote({{review.id}}, true)">
+            <i class="fa fa-angle-up fa-fw"></i>
+        </div>
+        <span class="voteCount">{{ review.count_votes }}</span>
+        <div class="downvote {% if review.user_vote == -1 %}active{% endif %}" onclick="handleVote({{review.id}}, false)">
+            <i class="fa fa-angle-down fa-fw"></i>
+        </div>
+    </div>
+
+    <div class="card-body text-left">
+        
+        <div class="d-flex flex-row align-items-center">
+            <div>
+            
+                {% if profile %}
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}"><p><strong>{{ review.instructor.full_name }} - {{ review.course }}</strong></p></a>
+                    <a href="#">Edit</a>
+                </div>
+                {% endif %}
+                <p style="white-space: pre-line;">{{ review.text }}</p>
+
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-end">
+            <div class="d-flex">
+                <div>
+                    <strong>
+                        <p>
+                            <i class="fa fa-star fa-fw"></i>&nbsp;{{ review.average|floatformat:2 }}
+                        </p>
+                    </strong>
+                </div>
+                <div class="ml-4 text-muted">
+                    <i class="fa fa-user fa-fw"></i>&nbsp;{{ review.instructor_rating }}
+                </div>
+                <div class="ml-4 text-muted">
+                    <i class="fa fa-skull-crossbones fa-fw"></i>&nbsp;
+                    {{ review.difficulty }}
+                </div>
+                <div class="ml-4 text-muted">
+                    <i class="fa fa-thumbs-up fa-fw"></i>&nbsp;
+                    {{ review.recommendability }}
+                </div>
+                <div class="ml-4 text-muted">
+                    <i class="fa fa-hourglass-half fa-fw"></i>&nbsp;
+                    {{ review.hours_per_week }}
+                </div>
+            </div>
+
+            <div class="text-right">
+                <p>{{ review.semester }}</p>
+                <p>{{ review.created|date }}</p>
+            </div>
+        </div>
+    </div>
+</div>

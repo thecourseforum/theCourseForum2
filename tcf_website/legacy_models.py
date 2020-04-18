@@ -472,25 +472,25 @@ class Reviews(models.Model):
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     professor_rating = models.DecimalField(
-        max_digits=10, decimal_places=5, blank=True, null=True)
+        max_digits=11, decimal_places=2, blank=True, null=True)
     enjoyability = models.IntegerField(blank=True, null=True)
     difficulty = models.IntegerField(blank=True, null=True)
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     amount_reading = models.DecimalField(
-        max_digits=10, decimal_places=5, blank=True, null=True)
+        max_digits=11, decimal_places=2, blank=True, null=True)
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     amount_writing = models.DecimalField(
-        max_digits=10, decimal_places=5, blank=True, null=True)
+        max_digits=11, decimal_places=2, blank=True, null=True)
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     amount_group = models.DecimalField(
-        max_digits=10, decimal_places=5, blank=True, null=True)
+        max_digits=11, decimal_places=2, blank=True, null=True)
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     amount_homework = models.DecimalField(
-        max_digits=10, decimal_places=5, blank=True, null=True)
+        max_digits=11, decimal_places=2, blank=True, null=True)
     only_tests = models.IntegerField(blank=True, null=True)
     recommend = models.IntegerField(blank=True, null=True)
     ta_name = models.CharField(max_length=255, blank=True, null=True)
@@ -622,7 +622,6 @@ class TextbookTransactions(models.Model):
 
 class Votes(models.Model):
     vote = models.IntegerField()
-    # voteable_id = models.IntegerField()
     review = models.ForeignKey(
         Reviews,
         db_column='voteable_id',
@@ -632,10 +631,13 @@ class Votes(models.Model):
     user = models.ForeignKey(
         Users,
         db_column='voter_id',
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE, null=True)
     voter_type = models.CharField(max_length=255, blank=True, null=True)
     # created_at = models.DateTimeField(blank=True, null=True)
     # updated_at = models.DateTimeField(blank=True, null=True)
+
+    # def get_review(self):
+    #     return Reviews.get(pk=self.review_id)
 
     def __str__(self):
         return f"Vote of value {self.vote} for {self.review} by {self.user}"

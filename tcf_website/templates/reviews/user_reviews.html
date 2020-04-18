@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block styles %}
+<link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -9,7 +10,8 @@
     <h2>My reviews</h2>
     {% include "reviews/reviews.html" with reviews=user.review_set.all profile=True %}
 </div>
+{% endblock %}
 
-
-
+{% block js %}
+<script src="{% static 'reviews/review.js' %}"></script>
 {% endblock %}
