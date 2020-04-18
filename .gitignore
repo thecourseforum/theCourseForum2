@@ -5,6 +5,7 @@ __pycache__/*
 *.db
 legacy_db/*.sql
 *.sql
+*.pgsql
 .vscode/
 tcf_website/migrations/*
 .env
