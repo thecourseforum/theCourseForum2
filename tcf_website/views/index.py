@@ -95,6 +95,12 @@ class AboutView(TemplateView):
                          "class": "2023",
                          "img_filename": "ENG_Jack_Liu.jpg",
                          "github": "jackliu612"
+                         },
+                        {"name": "Jules Le Menestrel",
+                         "role": "Developer",
+                         "class": "2023",
+                         "img_filename": "ENG_Jules_LeMenestrel.jpg",
+                         "github": "julesfll"
                          }
                         ]
 
