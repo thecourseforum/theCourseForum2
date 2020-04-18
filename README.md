@@ -66,9 +66,12 @@
 3. `docker exec -it tcf_django bash` and then `python manage.py migrate_legacy_subdepartments`
 4. `python manage.py load_all_semesters`
 5. `python manage.py migrate_legacy_reviews`
-6. `docker exec tcf_db pg_dump -U tcf_django tcf_db > new_db.sql`
+6. `docker exec tcf_db pg_dump -U tcf_django -Fc tcf_db > dump.pgsql`
 7. Test
     - Maybe crawl tCF and check that all viewable reviews are on the new system.
+8. Upload to DigitalOcean DB.
+    - `PGPASSWORD=$DB_PASS pg_restore -U $DB_USER -h $DB_HOST -p 25060 -d $DB_NAME < dump.pgsql`
+    - You may have to run this command 3 times.
 
 # New semester update plan
 1. `python manage.py update_semester 2021 january`
