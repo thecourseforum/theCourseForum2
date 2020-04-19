@@ -27,7 +27,9 @@ class Command(BaseCommand):
 
     WARNING: This should only be done by an Executive Team member once a semester
     after new course and instructor data are added to the tcf_db. Also the Elastic AppSearch
-    portal takes like 10 minutes to fully update so be patient there.
+    portal takes like 10 minutes to fully update so be patient there. You can run this as
+    many times as you want! It updates a document in Elastic if it always exists so won't
+    double add or anything weird like that!
 
     """
 
