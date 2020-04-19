@@ -1,6 +1,7 @@
 """
 Modules used
 """
+import os
 import json
 import requests
 
@@ -29,7 +30,8 @@ class Command(BaseCommand):
     after new course and instructor data are added to the tcf_db. Also the Elastic AppSearch
     portal takes like 10 minutes to fully update so be patient there. You can run this as
     many times as you want! It updates a document in Elastic if it always exists so won't
-    double add or anything weird like that!
+    double add or anything weird like that! Additionally, this can only be run from a production
+    environment due to its reliance on production environment variables (tcf secrets).
 
     """
 
@@ -37,10 +39,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        courses_engine_endpoint = 'https://1761244fa3674318b11f8d5729ffd7a2.app-search.us-east4.gcp.elastic-cloud.com/api/as/v1/engines/uva-courses/documents'
-
-        # PRIVATE READ / WRITE KEY (need to find more secret place)
-        api_key = 'private-tw8dxda1rfxw28s7dxc6vihs'
+        courses_engine_endpoint = os.environ['ES_COURSE_ENDPOINT']
+        api_key = os.environ['ES_API_KEY']
 
         https_headers = {
             "Content-Type" : "application/json",
