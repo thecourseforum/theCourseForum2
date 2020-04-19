@@ -26,16 +26,16 @@ class Command(BaseCommand):
         $ docker exec -it tcf_django bash
         $ python3 manage.py index_elasticsearch
 
-    WARNING: This should only be done by an Executive Team member once a semester
-    after new course and instructor data are added to the tcf_db. Also the Elastic AppSearch
-    portal takes like 10 minutes to fully update so be patient there. You can run this as
-    many times as you want! It updates a document in Elastic if it always exists so won't
-    double add or anything weird like that! Additionally, this can only be run from a production
+    WARNING: This should only be done by an Executive Team member each semester
+    after new course and instructor data are added to the tcf_db. Note that the
+    Elastic portal takes 1 to 2 minutes to fully reflect changes. You can run this as
+    many times as you want! It updates a document in Elastic if it already exists and
+    adds the document if it didn't. Additionally, this can only be run from a production
     environment due to its reliance on production environment variables (tcf secrets).
 
     """
 
-    help = 'Erases and re-indexes the Elastic hosted Elasticsearch cluster'
+    help = 'Indexes / Updates the Elastic-hosted cluster'
 
     def handle(self, *args, **options):
 
