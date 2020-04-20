@@ -39,6 +39,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
+        # Set API endpoint
+        courses_engine_endpoint = os.environ['ES_COURSE_ENDPOINT']
+
         all_courses = Course.objects.all().order_by('pk')
         self.stdout.write("Number of Courses: " + str(len(all_courses)))
 
@@ -63,9 +66,6 @@ class Command(BaseCommand):
 
             # Batching requests for efficiency
             if count == batch_size:
-
-                # Set API endpoint
-                courses_engine_endpoint = os.environ['ES_COURSE_ENDPOINT']
 
                 # POST to Elastic
                 self.post(documents, courses_engine_endpoint)
