@@ -79,9 +79,6 @@ class Command(BaseCommand):
         # Handle remaining documents
         if len(documents) > 0:
 
-            # Set API endpoint
-            courses_engine_endpoint = os.environ['ES_COURSE_ENDPOINT']
-
             # POST to Elastic
             self.post(documents, courses_engine_endpoint)
 
