@@ -87,8 +87,8 @@ class Command(BaseCommand):
         """Post document to a Document API
         """
 
+        # Same for all engines
         api_key = os.environ['ES_API_KEY']
-
         https_headers = {
             "Content-Type" : "application/json",
             "Authorization" : "Bearer " + api_key
