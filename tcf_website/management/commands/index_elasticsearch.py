@@ -63,22 +63,18 @@ class Command(BaseCommand):
 
             # Batching requests for efficiency
             if count == batch_size:
-                try:
 
-                    # Set API endpoint
-                    courses_engine_endpoint = os.environ['ES_COURSE_ENDPOINT']
+                # Set API endpoint
+                courses_engine_endpoint = os.environ['ES_COURSE_ENDPOINT']
 
-                    # POST to Elastic
-                    self.post(documents, courses_engine_endpoint)
+                # POST to Elastic
+                self.post(documents, courses_engine_endpoint)
 
-                    # Prepare next batch
-                    count = 0
-                    start = end
-                    end += batch_size
-                    documents.clear()
-
-                except Exception as error:
-                    raise CommandError("Elastic indexing error: " + str(error))
+                # Prepare next batch
+                count = 0
+                start = end
+                end += batch_size
+                documents.clear()
 
         # Handle remaining documents
         if len(documents) > 0:
