@@ -113,7 +113,13 @@ class AboutView(TemplateView):
                          "class": "2023",
                          "img_filename": "ENG_Vi_Nguyen.jpg",
                          "github": "vn6"
-                         }
+                         },
+                        {"name": "Amrit Gorle",
+                         "role": "Developer",
+                         "class": "2023",
+                         "img_filename": "ENG_Amrit_Gorle.jpg",
+                         "github": "amritgorle"
+                         },
                         ]
 
     marketing_team = [{"name": "Davis DeLozier",
