@@ -48,7 +48,6 @@ class Command(BaseCommand):
         # Batch parameters
         documents = []
         batch_size = 100 # MUST NOT EXCEED 100
-        start = 0
         end = batch_size
         count = 0
         for course in all_courses:
@@ -72,7 +71,6 @@ class Command(BaseCommand):
 
                 # Prepare next batch
                 count = 0
-                start = end
                 end += batch_size
                 documents.clear()
 
