@@ -42,13 +42,14 @@ class Command(BaseCommand):
         # Set API endpoint
         courses_engine_endpoint = os.environ['ES_COURSE_ENDPOINT']
 
+        # Get courses
         all_courses = Course.objects.all().order_by('pk')
         self.stdout.write("Number of Courses: " + str(len(all_courses)))
 
-        # Batch parameters
+        # Prepare parameters
         documents = []
-        batch_size = 100 # MUST NOT EXCEED 100
         count = 0
+        batch_size = 100 # MUST NOT EXCEED 100
         for course in all_courses:
 
             document = {
