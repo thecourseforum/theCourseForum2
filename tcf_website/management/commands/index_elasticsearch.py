@@ -39,14 +39,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        courses_engine_endpoint = os.environ['ES_COURSE_ENDPOINT']
-        api_key = os.environ['ES_API_KEY']
-
-        https_headers = {
-            "Content-Type" : "application/json",
-            "Authorization" : "Bearer " + api_key
-        }
-
         all_courses = Course.objects.all().order_by('pk')
         self.stdout.write("Number of Courses: " + str(len(all_courses)))
 
@@ -73,16 +65,11 @@ class Command(BaseCommand):
             if count == batch_size:
                 try:
 
-                    # Convert list to json string
-                    json_documents = json.dumps(documents)
+                    # Set API endpoint
+                    courses_engine_endpoint = os.environ['ES_COURSE_ENDPOINT']
 
-                    # Send documents to the Elastic endpoint
-                    response = requests.post(
-                        url=courses_engine_endpoint,
-                        data=json_documents,
-                        headers=https_headers
-                    )
-                    self.stdout.write("Indexed courses: " + str(start) + " - " + str(end) + "   status_code=" + str(response.status_code))
+                    # POST to Elastic
+                    self.post(documents, courses_engine_endpoint)
 
                     # Prepare next batch
                     count = 0
@@ -95,18 +82,36 @@ class Command(BaseCommand):
 
         # Handle remaining documents
         if len(documents) > 0:
-            try:
 
-                # Convert list to json string
-                json_documents = json.dumps(documents)
+            # Set API endpoint
+            courses_engine_endpoint = os.environ['ES_COURSE_ENDPOINT']
 
-                # Send documents to the Elastic endpoint
-                response = requests.post(
-                    url=courses_engine_endpoint,
-                    data=json_documents,
-                    headers=https_headers
-                )
-                self.stdout.write("Indexed courses: " + str(start) + " - " + str(start + count) + "   status_code=" + str(response.status_code))
+            # POST to Elastic
+            self.post(documents, courses_engine_endpoint)
 
-            except Exception as error:
-                raise CommandError("Elastic indexing error: " + str(error))
+
+    def post(self, documents, api_endpoint):
+        """Post document to a Document API
+        """
+
+        api_key = os.environ['ES_API_KEY']
+
+        https_headers = {
+            "Content-Type" : "application/json",
+            "Authorization" : "Bearer " + api_key
+        }
+
+        # Convert list to json string
+        json_documents = json.dumps(documents)
+
+        try:
+            # Send documents to the Elastic endpoint
+            response = requests.post(
+                url=api_endpoint,
+                data=json_documents,
+                headers=https_headers
+            )
+            self.stdout.write("status_code = " + str(response.status_code))
+
+        except Exception as error:
+            raise CommandError("Elastic indexing error: " + str(error))
