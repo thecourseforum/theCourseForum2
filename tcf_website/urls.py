@@ -3,6 +3,8 @@
 from django.urls import path
 
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -26,4 +28,4 @@ urlpatterns = [
     path('login/collect_extra_info', views.collect_extra_info),
     path('accounts/login/', views.login),
     path('logout/', views.logout, name='logout'),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
