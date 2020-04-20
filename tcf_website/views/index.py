@@ -79,6 +79,11 @@ class AboutView(TemplateView):
                          "class": "2021",
                          "img_filename": "ENG_Nikash_Sethi.jpg",
                          "github": "nikashs"},
+                        {"name": "Mara Hart",
+                         "role": "Developer",
+                         "class": "2022",
+                         "img_filename": "ENG_Mara_Hart.jpg",
+                         "github": "maralihart"},
                         {"name": "Neal Patel",
                          "role": "Developer",
                          "class": "2021",
@@ -101,7 +106,25 @@ class AboutView(TemplateView):
                          "class": "2023",
                          "img_filename": "ENG_Jules_LeMenestrel.jpg",
                          "github": "julesfll"
-                         }
+                         },
+                        {"name": "Jasmine Dogu",
+                         "role": "Developer",
+                         "class": "2022",
+                         "img_filename": "ENG_Jasmine_Dogu.jpg",
+                         "github": "ejd5mm"
+                         },
+                        {"name": "Vi Nguyen",
+                         "role": "Developer",
+                         "class": "2023",
+                         "img_filename": "ENG_Vi_Nguyen.jpg",
+                         "github": "vn6"
+                         },
+                        {"name": "Amrit Gorle",
+                         "role": "Developer",
+                         "class": "2023",
+                         "img_filename": "ENG_Amrit_Gorle.jpg",
+                         "github": "amritgorle"
+                         },
                         ]
 
     marketing_team = [{"name": "Davis DeLozier",
