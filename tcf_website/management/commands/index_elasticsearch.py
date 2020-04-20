@@ -81,7 +81,7 @@ class Command(BaseCommand):
 
 
     def post(self, documents, api_endpoint):
-        """Post document to a Document API
+        """Posts documents to a Document API endpoint
         """
 
         # Same for all engines
