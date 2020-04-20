@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand, CommandError
 from tcf_website.models import Course, Instructor
 
 class Command(BaseCommand):
-    """Indexes the Elastic AppSearch instance w/ Course and Instructor.
+    """Indexes the Elastic AppSearch instance w/ Course and Instructor data.
 
     Author: Bradley Knaysi
 
@@ -110,4 +110,3 @@ class Command(BaseCommand):
 
             except Exception as error:
                 raise CommandError("Elastic indexing error: " + str(error))
-
