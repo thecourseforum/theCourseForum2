@@ -19,6 +19,8 @@ urlpatterns = [
          views.course_instructor, name='course_instructor'),
     path('reviews/new', views.new_review, name='new_review'),
     path('reviews', views.reviews, name='reviews'),
+    path('reviews/<int:review_id>/upvote', views.upvote),
+    path('reviews/<int:review_id>/downvote', views.downvote),
     path('profile', views.profile, name='profile'),
 
 

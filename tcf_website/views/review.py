@@ -1,9 +1,10 @@
 #pylint: disable=fixme
 """View pertaining to review creation/viewing."""
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from django import forms
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
 
 from ..models import Review, Course, Semester, Instructor
 
@@ -13,6 +14,26 @@ from ..models import Review, Course, Semester, Instructor
 
 class ReviewForm(forms.Form):
     """Form for review creation."""
+
+
+@login_required
+def upvote(request, review_id):
+    """Upvote a view."""
+    if request.method == 'POST':
+        review = Review.objects.get(pk=review_id)
+        review.upvote(request.user)
+        return JsonResponse({'ok': True})
+    return JsonResponse({'ok': False})
+
+
+@login_required
+def downvote(request, review_id):
+    """Downvote a view."""
+    if request.method == 'POST':
+        review = Review.objects.get(pk=review_id)
+        review.downvote(request.user)
+        return JsonResponse({'ok': True})
+    return JsonResponse({'ok': False})
 
 
 @login_required

@@ -128,6 +128,10 @@ class User(AbstractUser):
         """Return string containing user full name."""
         return f"{self.first_name} {self.last_name}"
 
+    def reviews(self):
+        """Return user reviews sorted by creation date."""
+        return self.review_set.order_by("-created")
+
 
 class Instructor(models.Model):
     """Instructor model.
@@ -239,6 +243,12 @@ class Semester(models.Model):
         return Semester.objects.order_by("-number").first()
 
     class Meta:
+
+        indexes = [
+            models.Index(fields=['year', 'season']),
+            models.Index(fields=['number']),
+        ]
+
         constraints = [
             models.UniqueConstraint(
                 fields=['season', 'year'],
@@ -405,6 +415,87 @@ class Review(models.Model):
         """Average score for review."""
         return (self.instructor_rating + self.recommendability) / 2
 
+    def count_votes(self):
+        """Sum votes for review."""
+        vote_sum = self.vote_set.aggregate(
+            models.Sum('value')).get('value__sum', 0)
+        if not vote_sum:
+            return 0
+        return vote_sum
+
+    def upvote(self, user):
+        """Create an upvote."""
+
+        # Check if already upvoted.
+        upvoted = Vote.objects.filter(
+            user=user,
+            review=self,
+            value=1,
+        ).exists()
+
+        # Delete all prior votes.
+        Vote.objects.filter(
+            user=user,
+            review=self,
+        ).delete()
+
+        # Don't upvote again if previously upvoted.
+        if upvoted:
+            return
+
+        Vote.objects.create(
+            value=1,
+            user=user,
+            review=self,
+        )
+
+    def downvote(self, user):
+        """Create a downvote."""
+
+        # Check if already downvoted.
+        downvoted = Vote.objects.filter(
+            user=user,
+            review=self,
+            value=-1,
+        ).exists()
+
+        # Delete all prior votes.
+        Vote.objects.filter(
+            user=user,
+            review=self,
+        ).delete()
+
+        # Don't downvote again if previously downvoted.
+        if downvoted:
+            return
+
+        Vote.objects.create(
+            value=-1,
+            user=user,
+            review=self,
+        )
+
+    @staticmethod
+    def display_reviews(course, instructor, user):
+        """Prepare review list for course-instructor page."""
+
+        reviews = Review.objects.filter(
+            instructor=instructor,
+            course=course,
+        ).exclude(text="").order_by("-created")
+
+        if user.is_authenticated:
+            for review in reviews:
+                try:
+                    review.user_vote = Vote.objects.get(
+                        user=user,
+                        review=review,
+                    ).value
+                except Vote.DoesNotExist:
+                    review.user_vote = 0
+
+        return reviews
+
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"
 
@@ -412,7 +503,7 @@ class Review(models.Model):
         # Improve scanning of reviews by course and instructor.
         indexes = [
             models.Index(fields=['course', 'instructor']),
-            models.Index(fields=['user', ]),
+            models.Index(fields=['user', '-created']),
         ]
 
         # Some of the tCF 1.0 data did not honor this constraint.

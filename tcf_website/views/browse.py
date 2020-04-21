@@ -107,10 +107,7 @@ def course_instructor(request, course_id, instructor_id):
     instructor = Instructor.objects.get(pk=instructor_id)
 
     # Filter out reviews with no text.
-    reviews = Review.objects.filter(
-        instructor=instructor,
-        course=course,
-    ).exclude(text="").order_by("-created")
+    reviews = Review.display_reviews(course, instructor, request.user)
 
     dept = course.subdepartment.department
 
