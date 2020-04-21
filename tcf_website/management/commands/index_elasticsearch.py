@@ -1,6 +1,4 @@
-"""
-Modules used
-"""
+"""Modules used"""
 import os
 import json
 import requests
@@ -35,7 +33,7 @@ class Command(BaseCommand):
 
     """
 
-    help = 'Indexes / Updates the Elastic-hosted cluster'
+    help = 'Indexes the Elastic AppSearch instance w/ Course and Instructor data.'
 
     def handle(self, *args, **options):
 
