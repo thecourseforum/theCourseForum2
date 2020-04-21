@@ -130,6 +130,12 @@ class AboutView(TemplateView):
                          "class": "2023",
                          "img_filename": "ENG_Arjun_Kumar.jpg",
                          "github": "arjunk01"
+                         },
+                        {"name": "Erick Tian",
+                         "role": "Developer",
+                         "class": "2023",
+                         "img_filename": "ENG_Erick_Tian.jpg",
+                         "github": "ericktian"
                          }
                         ]
 
