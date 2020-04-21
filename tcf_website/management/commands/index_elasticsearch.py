@@ -37,17 +37,16 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        # Set API endpoint
         courses_engine_endpoint = os.environ['ES_COURSE_ENDPOINT']
-
-        # Get courses
         all_courses = Course.objects.all().order_by('pk')
+        all_instructors = Instructor.objects.all().order_by('pk')
         self.stdout.write("Number of Courses: " + str(len(all_courses)))
+        self.stdout.write("Number of Instructors: " + str(len(all_instructors)))
 
-        # Prepare parameters
+        batch_size = 100 # MUST NOT EXCEED 100
         documents = []
         count = 0
-        batch_size = 100 # MUST NOT EXCEED 100
+
         for course in all_courses:
 
             document = {
@@ -56,33 +55,23 @@ class Command(BaseCommand):
                 "description" : course.description,
                 "number" : course.number
             }
-
-            # Add document
             documents.append(document)
             count += 1
 
-            # Batching requests for efficiency
+            # Send courses to API in groups
             if count == batch_size:
-
-                # POST to Elastic
                 self.post(documents, courses_engine_endpoint)
-
-                # Prepare next batch
                 count = 0
                 documents.clear()
 
         # Handle remaining documents
         if len(documents) > 0:
-
-            # POST to Elastic
             self.post(documents, courses_engine_endpoint)
 
 
     def post(self, documents, api_endpoint):
-        """Posts documents to a Document API endpoint
-        """
+        """Posts documents to a Document API endpoint"""
 
-        # Same for all engines
         api_key = os.environ['ES_API_KEY']
         https_headers = {
             "Content-Type" : "application/json",
@@ -93,7 +82,6 @@ class Command(BaseCommand):
         json_documents = json.dumps(documents)
 
         try:
-            # Send documents to the Elastic endpoint
             response = requests.post(
                 url=api_endpoint,
                 data=json_documents,
