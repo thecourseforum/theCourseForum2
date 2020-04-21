@@ -190,6 +190,7 @@ if not DEBUG:
         ALLOWED_HOSTS.append(PUBLIC_IPV4)
 
     ES_COURSE_ENDPOINT = os.environ.get('ES_COURSE_ENDPOINT', None)
+    ES_INSTRUCTOR_ENDPOINT = os.environ.get('ES_INSTRUCTOR_ENDPOINT', None)
     ES_API_KEY = os.environ.get('ES_API_KEY', None)
 
     DB_NAME = os.environ.get('DB_NAME', None)

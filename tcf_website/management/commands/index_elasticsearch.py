@@ -38,6 +38,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         courses_engine_endpoint = os.environ['ES_COURSE_ENDPOINT']
+        instructors_engine_endpoint = os.environ['ES_INSTRUCTOR_ENDPOINT']
         all_courses = Course.objects.all().order_by('pk')
         all_instructors = Instructor.objects.all().order_by('pk')
         self.stdout.write("Number of Courses: " + str(len(all_courses)))
@@ -46,6 +47,10 @@ class Command(BaseCommand):
         batch_size = 100 # MUST NOT EXCEED 100
         documents = []
         count = 0
+
+        # Debug variables
+        start = 0
+        end = batch_size
 
         for course in all_courses:
 
@@ -64,9 +69,49 @@ class Command(BaseCommand):
                 count = 0
                 documents.clear()
 
+                # For debug
+                self.stdout.write("Indexed Courses " + str(start) + " - " + str(end))
+                start = end
+                end += batch_size
+
         # Handle remaining documents
         if len(documents) > 0:
             self.post(documents, courses_engine_endpoint)
+            self.stdout.write("Indexed Courses " + str(start) + " - " + str(start + count))
+
+        # Reset
+        documents.clear()
+        count = 0
+        start = 0
+        end = batch_size
+
+        for instructor in all_instructors:
+
+            document = {
+                "id" : instructor.pk,
+                "first_name" : instructor.first_name,
+                "last_name" : instructor.last_name,
+                "email" : instructor.email,
+                "website" : instructor.website,
+            }
+            documents.append(document)
+            count += 1
+
+            # Send instructors to API in groups
+            if count == batch_size:
+                self.post(documents, instructors_engine_endpoint)
+                count = 0
+                documents.clear()
+
+                # For debug
+                self.stdout.write("Indexed Instructors " + str(start) + " - " + str(end))
+                start = end
+                end += batch_size
+
+        # Handle remaining documents
+        if len(documents) > 0:
+            self.post(documents, instructors_engine_endpoint)
+            self.stdout.write("Indexed Instructors " + str(start) + " - " + str(start + count))
 
 
     def post(self, documents, api_endpoint):
@@ -87,7 +132,8 @@ class Command(BaseCommand):
                 data=json_documents,
                 headers=https_headers
             )
-            self.stdout.write("status_code = " + str(response.status_code))
+            if response.status_code != 200:
+                raise CommandError("status_code = " + str(response.status_code) + " -- " + str(response.text))
 
         except Exception as error:
-            raise CommandError("Elastic indexing error: " + str(error))
+            raise CommandError("Error: " + str(error))
