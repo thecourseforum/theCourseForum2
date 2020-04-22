@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'oaav-5-9$f7(yssu8=t$vjqg7m*l7k!byuc+)u2b_&lt5&wso$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get('DEBUG', 0)) == 1
+DEBUG = int(os.environ.get('DEBUG', 0)) == "1"
 
 ALLOWED_HOSTS = ['localhost', '.ngrok.io', '127.0.0.1']
 
@@ -169,21 +169,27 @@ SOCIAL_AUTH_PIPELINE = (
 if not DEBUG:
 
     # Heroku configuration.
-    import django_heroku
-    django_heroku.settings(locals())
+    # import django_heroku
+    # django_heroku.settings(locals())
 
     # Gather information from environment variables.
 
     HOSTNAME = os.environ.get('HOSTNAME', None)
     PUBLIC_IPV4 = os.environ.get('PUBLIC_IPV4', None)
 
-    ALLOWED_HOSTS = [
-        'tcf.brianyu.dev',
-        'thecourseforum.com',
-        'staging.thecourseforum.com',
-        'dev.thecourseforum.com',
-        'thecourseforum-staging.herokuapp.com',
-    ]
+    # ALLOWED_HOSTS = [
+    #     'tcf.brianyu.dev',
+    #     'thecourseforum.com',
+    #     'staging.thecourseforum.com',
+    #     'dev.thecourseforum.com',
+    #     'thecourseforum-staging.herokuapp.com'
+    # ]
+
+    # SECURITY WARNING: App Engine's security features ensure that it is safe to
+    # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
+    # app not on App Engine, make sure to set an appropriate host here.
+    # See https://docs.djangoproject.com/en/1.10/ref/settings/ (from GCP documentation)
+    ALLOWED_HOSTS = ['*']
 
     if HOSTNAME:
         ALLOWED_HOSTS.append(HOSTNAME)
@@ -208,5 +214,3 @@ if not DEBUG:
         'PORT': DB_PORT,
         'OPTIONS': {'sslmode': 'require'},
     }
-
-    print(DATABASES['default'])

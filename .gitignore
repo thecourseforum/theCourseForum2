@@ -11,3 +11,5 @@ tcf_website/migrations/*
 .env
 .vagrant/
 static/
+predeploy.sh
+app.yaml
