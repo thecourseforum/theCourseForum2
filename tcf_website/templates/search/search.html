@@ -2,25 +2,35 @@
 {% load static %}
 
 {% block styles %}
+<link rel="stylesheet" href="{% static 'search/search.css' %}" />
 {% endblock %}
 
 {% block content %}
-
 <div class="container">
-
-    {{ query }}
-
+    <h1>Search: {{query}}</h1>
 </div>
 
+<hr>
+
 <div class="container">
-
-    {{ courses }}
-
+    <h4>Courses</h4>
+    {% for c in courses %}
+        <li>
+            <a href="{% url 'course' course_id=c.id %}">{{c.title}} - {{c.number}}</a>
+        </li>
+    {% endfor %}
 </div>
-<div class="container">
 
-    {{ instructors }}
+<hr>
 
+<div class="instructor container">
+    <h4>Instructors</h4>
+    {% for i in instructors %}
+        <li>
+            <!-- TODO: create instructor page route -->
+            {{i.first_name}} {{i.last_name}}
+        </li>
+    {% endfor %}
 </div>
 
 {% endblock %}

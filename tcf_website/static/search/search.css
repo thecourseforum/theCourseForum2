@@ -1,0 +1,8 @@
+hr {
+    border: 0;
+    clear:both;
+    display:block;
+    width: 96%;               
+    background-color:rgb(165, 165, 165);
+    height: 1px;
+  }
