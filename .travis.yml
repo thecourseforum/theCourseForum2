@@ -2,7 +2,7 @@ language: python
 services:
 - docker
 before_install:
-    - openssl aes-256-cbc -K $encrypted_859f5568b0c8_key -iv $encrypted_859f5568b0c8_iv-in gae-service-account.json.enc -out gae-service-account.json -d
+    - openssl aes-256-cbc -K $encrypted_859f5568b0c8_key -iv $encrypted_859f5568b0c8_iv -in gae-service-account.json.enc -out gae-service-account.json -d
     - cp .env.example .env
 # - docker build .
 # - docker-compose up -d
