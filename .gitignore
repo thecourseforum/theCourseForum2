@@ -12,5 +12,4 @@ tcf_website/migrations/*
 .vagrant/
 static/
 predeploy.sh
-app.yaml
 gae-service-account.json
