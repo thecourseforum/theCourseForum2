@@ -213,3 +213,5 @@ if not DEBUG:
         'PORT': DB_PORT,
         'OPTIONS': {'sslmode': 'require'},
     }
+
+    print(DATABASES['default'])
