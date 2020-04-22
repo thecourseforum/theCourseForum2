@@ -177,19 +177,18 @@ if not DEBUG:
     HOSTNAME = os.environ.get('HOSTNAME', None)
     PUBLIC_IPV4 = os.environ.get('PUBLIC_IPV4', None)
 
-    # ALLOWED_HOSTS = [
-    #     'tcf.brianyu.dev',
-    #     'thecourseforum.com',
-    #     'staging.thecourseforum.com',
-    #     'dev.thecourseforum.com',
-    #     'thecourseforum-staging.herokuapp.com'
-    # ]
-
     # SECURITY WARNING: App Engine's security features ensure that it is safe to
     # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
     # app not on App Engine, make sure to set an appropriate host here.
     # See https://docs.djangoproject.com/en/1.10/ref/settings/ (from GCP documentation)
     ALLOWED_HOSTS = ['*']
+
+    # ALLOWED_HOSTS = [
+    #     'thecourseforum.com',
+    #     'staging.thecourseforum.com',
+    #     'dev.thecourseforum.com',
+    #     'prod.thecourseforum.com',
+    # ]
 
     if HOSTNAME:
         ALLOWED_HOSTS.append(HOSTNAME)
