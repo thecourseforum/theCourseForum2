@@ -1,6 +1,6 @@
 language: python
 services:
-- docker
+    - docker
 before_install:
     - openssl aes-256-cbc -K $encrypted_859f5568b0c8_key -iv $encrypted_859f5568b0c8_iv -in gae-service-account.json.enc -out gae-service-account.json -d
     - cp .env.example .env
@@ -20,3 +20,4 @@ deploy:
   keyfile: gae-service-account.json
   project: thecourseforum-1585971713016
   on: app-engine
+  edge: true
