@@ -13,3 +13,4 @@ tcf_website/migrations/*
 static/
 predeploy.sh
 app.yaml
+gae-service-account.json
