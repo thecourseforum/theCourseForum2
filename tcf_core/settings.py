@@ -178,11 +178,10 @@ if not DEBUG:
     PUBLIC_IPV4 = os.environ.get('PUBLIC_IPV4', None)
 
     ALLOWED_HOSTS = [
-        'tcf.brianyu.dev',
         'thecourseforum.com',
         'staging.thecourseforum.com',
         'dev.thecourseforum.com',
-        'thecourseforum-staging.herokuapp.com',
+        'prod.thecourseforum.com',
     ]
 
     if HOSTNAME:
