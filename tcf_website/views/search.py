@@ -79,6 +79,7 @@ def format_courses(results):
     for result in results:
 
         course = {
+            "id" : result.get("_meta").get("id"),
             "title" : result.get("title").get("raw"),
             "description" : result.get("description").get("raw"),
             "number" : result.get("number").get("raw")
@@ -94,6 +95,7 @@ def format_instructors(results):
     for result in results:
 
         instructor = {
+            "id" : result.get("_meta").get("id"),
             "first_name" : result.get("first_name").get("raw"),
             "last_name" : result.get("last_name").get("raw"),
             "email" : result.get("email").get("raw"),
