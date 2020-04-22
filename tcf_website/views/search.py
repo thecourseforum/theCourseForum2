@@ -18,8 +18,12 @@ def search(request):
     instructors_search_endpoint = os.environ['ES_INSTRUCTOR_SEARCH_ENDPOINT']
 
     # Fetch results
-    courses = fetch(query, courses_search_endpoint)
-    instructors = fetch(query, instructors_search_endpoint)
+    response1 = fetch(query, courses_search_endpoint)
+    response2 = fetch(query, instructors_search_endpoint)
+
+    # Format results
+    courses = format_response(response1)
+    instructors = format_response(response2)
 
     # Arguments for template
     args = {
@@ -49,7 +53,52 @@ def fetch(query, api_endpoint):
             headers=https_headers,
             data=json_query
         )
-        return response.text
+        return response
 
     except Exception as error:
         return "Error: " + str(error)
+
+def format_response(response):
+    """Formats an Elastic search endpoint response"""
+
+    body = json.loads(response.text)
+    engine = body.get("meta").get("engine").get("name")
+    results = body.get("results")
+
+    if engine == "uva-courses":
+        return format_courses(results)
+    if engine == "uva-instructors":
+        return format_instructors(results)
+
+    return "Unknown engine, please verify engine exists"
+
+def format_courses(results):
+    """Formats courses engine results"""
+
+    formatted = []
+    for result in results:
+
+        course = {
+            "title" : result.get("title").get("raw"),
+            "description" : result.get("description").get("raw"),
+            "number" : result.get("number").get("raw")
+        }
+        formatted.append(course)
+
+    return formatted
+
+def format_instructors(results):
+    """Formats instructors engine results"""
+
+    formatted = []
+    for result in results:
+
+        instructor = {
+            "first_name" : result.get("first_name").get("raw"),
+            "last_name" : result.get("last_name").get("raw"),
+            "email" : result.get("email").get("raw"),
+            "website" : result.get("website").get("raw")
+        }
+        formatted.append(instructor)
+
+    return formatted
