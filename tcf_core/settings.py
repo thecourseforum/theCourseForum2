@@ -163,6 +163,9 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.user_details',
 )
 
+ES_PUBLIC_API_KEY = os.environ.get('ES_PUBLIC_API_KEY', None)
+ES_COURSE_SEARCH_ENDPOINT = os.environ.get('ES_COURSE_SEARCH_ENDPOINT', None)
+ES_INSTRUCTOR_SEARCH_ENDPOINT = os.environ.get('ES_INSTRUCTOR_SEARCH_ENDPOINT', None)
 
 # PROD SETTINGS
 if not DEBUG:
