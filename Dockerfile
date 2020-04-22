@@ -19,7 +19,5 @@ RUN apt-get update && \
 
 RUN pip3 install --upgrade setuptools pip
 RUN pip3 install -r requirements.txt
-# RUN /etc/init.d/nginx start
-# RUN ln -s /app/tcf_core/tcf_core_nginx.conf /etc/nginx/sites-enabled/
 
 WORKDIR /app
