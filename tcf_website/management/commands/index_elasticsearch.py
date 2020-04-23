@@ -8,6 +8,7 @@ import requests
 from django.core.management.base import BaseCommand, CommandError
 from tcf_website.models import Course, Instructor
 
+
 class Command(BaseCommand):
     """Indexes the Elastic AppSearch instance w/ Course and Instructor data.
 
@@ -49,14 +50,14 @@ class Command(BaseCommand):
         # Prepare parameters
         documents = []
         count = 0
-        batch_size = 100 # MUST NOT EXCEED 100
+        batch_size = 100  # MUST NOT EXCEED 100
         for course in all_courses:
 
             document = {
-                "id" : course.pk,
-                "title" : course.title,
-                "description" : course.description,
-                "number" : course.number
+                "id": course.pk,
+                "title": course.title,
+                "description": course.description,
+                "number": course.number
             }
 
             # Add document
@@ -79,7 +80,6 @@ class Command(BaseCommand):
             # POST to Elastic
             self.post(documents, courses_engine_endpoint)
 
-
     def post(self, documents, api_endpoint):
         """Posts documents to a Document API endpoint
         """
@@ -87,8 +87,8 @@ class Command(BaseCommand):
         # Same for all engines
         api_key = os.environ['ES_API_KEY']
         https_headers = {
-            "Content-Type" : "application/json",
-            "Authorization" : "Bearer " + api_key
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + api_key
         }
 
         # Convert list to json string
