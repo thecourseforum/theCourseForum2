@@ -10,7 +10,6 @@ RUN apt-get update && \
 	apt-get install -y --no-install-recommends \
 		git \
 		python3-pip \
-		nginx \
 		python3-dev \
         libpq-dev \
         build-essential \
