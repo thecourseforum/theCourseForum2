@@ -13,3 +13,5 @@ html-linter>=0.4.0
 # Heroku setup
 gunicorn
 django-heroku
+# GAE Prod
+uwsgi
