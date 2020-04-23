@@ -6,6 +6,7 @@ import requests
 from django.core.management.base import BaseCommand, CommandError
 from tcf_website.models import Course, Instructor
 
+
 class Command(BaseCommand):
     """Indexes the Elastic AppSearch instance w/ Course and Instructor data.
 
@@ -114,14 +115,13 @@ class Command(BaseCommand):
             self.post(documents, instructors_engine_endpoint)
             self.stdout.write("Indexed Instructors " + str(start) + " - " + str(start + count))
 
-
     def post(self, documents, api_endpoint):
         """Posts documents to a Document API endpoint"""
 
         api_key = os.environ['ES_PRIVATE_API_KEY']
         https_headers = {
-            "Content-Type" : "application/json",
-            "Authorization" : "Bearer " + api_key
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + api_key
         }
 
         # Convert list to json string

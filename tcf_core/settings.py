@@ -185,7 +185,8 @@ if not DEBUG:
     # SECURITY WARNING: App Engine's security features ensure that it is safe to
     # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
     # app not on App Engine, make sure to set an appropriate host here.
-    # See https://docs.djangoproject.com/en/1.10/ref/settings/ (from GCP documentation)
+    # See https://docs.djangoproject.com/en/1.10/ref/settings/ (from GCP
+    # documentation)
     ALLOWED_HOSTS = ['*']
 
     if HOSTNAME:
