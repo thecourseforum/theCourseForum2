@@ -37,8 +37,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        courses_engine_endpoint = os.environ['ES_COURSE_ENDPOINT']
-        instructors_engine_endpoint = os.environ['ES_INSTRUCTOR_ENDPOINT']
+        courses_engine_endpoint = os.environ['ES_COURSE_DOCUMENTS_ENDPOINT']
+        instructors_engine_endpoint = os.environ['ES_INSTRUCTOR_DOCUMENTS_ENDPOINT']
         all_courses = Course.objects.all().order_by('pk')
         all_instructors = Instructor.objects.all().order_by('pk')
         self.stdout.write("Number of Courses: " + str(len(all_courses)))
@@ -118,7 +118,7 @@ class Command(BaseCommand):
     def post(self, documents, api_endpoint):
         """Posts documents to a Document API endpoint"""
 
-        api_key = os.environ['ES_API_KEY']
+        api_key = os.environ['ES_PRIVATE_API_KEY']
         https_headers = {
             "Content-Type" : "application/json",
             "Authorization" : "Bearer " + api_key
