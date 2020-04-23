@@ -82,7 +82,8 @@ def format_courses(results):
             "id" : result.get("_meta").get("id"),
             "title" : result.get("title").get("raw"),
             "description" : result.get("description").get("raw"),
-            "number" : result.get("number").get("raw")
+            "number" : result.get("number").get("raw"),
+            "mnemonic" : result.get("mnemonic").get("raw")
         }
         formatted.append(course)
 

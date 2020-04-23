@@ -1,4 +1,4 @@
-"""Modules used"""
+"""Management command that loads courses and instructors into Elasticsearch"""
 import os
 import json
 import requests
@@ -58,7 +58,8 @@ class Command(BaseCommand):
                 "id" : course.pk,
                 "title" : course.title,
                 "description" : course.description,
-                "number" : course.number
+                "number" : course.number,
+                "mnemonic" : course.code()
             }
             documents.append(document)
             count += 1
