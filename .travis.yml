@@ -16,7 +16,7 @@ script:
 before_deploy:
     - envsubst < app.yaml.template > app.yaml.env
     - cp app.yaml.env app.yaml
-    - docker exec tcf_django python3 manage.py collectstatic --noinput
+    - docker exec tcf_django python3 manage.py collectstatic --noinput --clear
 
 deploy:
   provider: gae
