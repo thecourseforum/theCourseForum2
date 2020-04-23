@@ -131,7 +131,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "tcf_website/static/")
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 # python-social-auth settings.
 

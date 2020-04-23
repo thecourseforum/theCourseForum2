@@ -23,5 +23,5 @@ deploy:
   provider: gae
   keyfile: gae-service-account.json
   project: thecourseforum-1585971713016
-  on: master
+  on: app-engine
   edge: true
