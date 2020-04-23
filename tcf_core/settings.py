@@ -169,8 +169,9 @@ SOCIAL_AUTH_PIPELINE = (
 if not DEBUG:
 
     # Heroku configuration.
-    # import django_heroku
-    # django_heroku.settings(locals())
+    if os.environ.get("HEROKU", False):
+        import django_heroku
+        django_heroku.settings(locals())
 
     # Gather information from environment variables.
 
