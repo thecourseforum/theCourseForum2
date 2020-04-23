@@ -10,13 +10,13 @@ before_install:
     - docker-compose up -d
 
 script:
-    - echo testing
     - docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core
     - docker exec tcf_django python3 manage.py test
 
 before_deploy:
     - envsubst < app.yaml.template > app.yaml.env
     - cp app.yaml.env app.yaml
+    - docker exec tcf_django python3 manage.py collectstatic --noinput
 
 deploy:
   provider: gae
