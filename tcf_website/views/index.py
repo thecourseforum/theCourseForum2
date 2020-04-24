@@ -50,7 +50,7 @@ class AboutView(TemplateView):
                        "github": "saikonuri"},
                       {"name": "Davis DeLozier",
                        "role": "Treasurer",
-                       "class": "2021",
+                       "class": "2022",
                        "img_filename": "MKT_Davis_Delozier.jpg",
                        "github": "dpd3mr"},
                       ]
@@ -139,7 +139,7 @@ class AboutView(TemplateView):
                          }
                         ]
 
-    marketing_team = [{"name": "Davis DeLozier", "class": "2021",
+    marketing_team = [{"name": "Davis DeLozier", "class": "2022",
                        "img_filename": "MKT_Davis_Delozier.jpg"}, ]
 
     def get_context_data(self, **kwargs):
