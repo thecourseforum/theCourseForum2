@@ -50,11 +50,7 @@ class AboutView(TemplateView):
                        "github": "saikonuri"},
                       {"name": "Davis DeLozier",
                        "role": "Treasurer",
-<<<<<<< HEAD
                        "class": "2022",
-=======
-                       "class": "2021",
->>>>>>> master
                        "img_filename": "MKT_Davis_Delozier.jpg",
                        "github": "dpd3mr"},
                       ]
