@@ -18,8 +18,8 @@ def search(request):
     instructors_search_endpoint = os.environ['ES_INSTRUCTOR_SEARCH_ENDPOINT']
 
     # Fetch results
-    response1 = fetch(query, courses_search_endpoint)
-    response2 = fetch(query, instructors_search_endpoint)
+    response1 = fetch_elasticsearch(query, courses_search_endpoint)
+    response2 = fetch_elasticsearch(query, instructors_search_endpoint)
 
     # Format results
     courses = format_response(response1)
@@ -35,7 +35,7 @@ def search(request):
     return render(request, 'search/search.html', args)
 
 
-def fetch(query, api_endpoint):
+def fetch_elasticsearch(query, api_endpoint):
     """Fetches documents based on a query from a Document API endpoint"""
 
     api_key = os.environ['ES_PUBLIC_API_KEY']
