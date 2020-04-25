@@ -54,7 +54,7 @@ def fetch_elasticsearch(query, api_endpoint):
         )
         return response
 
-    except Exception as error:
+    except requests.RequestException as error:
         return "Error: " + str(error)
 
 def format_response(response):
