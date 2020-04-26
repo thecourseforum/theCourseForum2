@@ -2,6 +2,7 @@
 
 <div class="reviews container-lg">
     <ul class="review-list" style="list-style-type: none;">
+    console.log("test")
     {% for r in reviews %}
         <li>
             {% include "reviews/review.html" with profile=profile review=r %}

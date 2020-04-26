@@ -285,6 +285,15 @@ class Course(models.Model):
     def code(self):
         """Returns the courses code string."""
         return f"{self.subdepartment.mnemonic} {self.number}"
+    
+    def evalLink(self):
+        # returns link to student eval page for that class
+        link = "https://evals.itc.virginia.edu/course-selectionguide/pages/SGMain.jsp?cmp="
+        link += self.subdepartment.mnemonic
+        link += ","
+        link += str(self.number)
+        return link
+        # return "test"
 
     def is_recent(self):
         """Returns True if course was taught in current semester."""
