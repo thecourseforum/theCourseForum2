@@ -293,7 +293,6 @@ class Course(models.Model):
         link += ","
         link += str(self.number)
         return link
-        # return "test"
 
     def is_recent(self):
         """Returns True if course was taught in current semester."""
