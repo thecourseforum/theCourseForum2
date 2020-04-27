@@ -18,7 +18,7 @@
         <h4>Courses</h4>
         {% for c in courses %}
             <li>
-                <a href="{% url 'course' course_id=c.id %}">{{c.title}} - {{c.mnemonic}}</a>
+                <a href="{% url 'course' course_id=c.id %}">{{c.mnemonic}} - {{c.title}}</a>
             </li>
         {% endfor %}
     </div>

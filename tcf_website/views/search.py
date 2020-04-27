@@ -86,6 +86,8 @@ def format_courses(results):
         }
         formatted.append(course)
 
+    formatted.sort(key=lambda x: x["mnemonic"][0:x["mnemonic"].index(" ")])
+
     return formatted
 
 def format_instructors(results):
