@@ -164,6 +164,10 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.user_details',
 )
 
+# Read-only access to Elastic
+ES_PUBLIC_API_KEY = os.environ.get('ES_PUBLIC_API_KEY', None)
+ES_COURSE_SEARCH_ENDPOINT = os.environ.get('ES_COURSE_SEARCH_ENDPOINT', None)
+ES_INSTRUCTOR_SEARCH_ENDPOINT = os.environ.get('ES_INSTRUCTOR_SEARCH_ENDPOINT', None)
 
 # PROD SETTINGS
 if not DEBUG:
@@ -190,8 +194,10 @@ if not DEBUG:
     if PUBLIC_IPV4:
         ALLOWED_HOSTS.append(PUBLIC_IPV4)
 
-    ES_COURSE_ENDPOINT = os.environ.get('ES_COURSE_ENDPOINT', None)
-    ES_API_KEY = os.environ.get('ES_API_KEY', None)
+    # Read-write access to Elastic
+    ES_COURSE_DOCUMENTS_ENDPOINT = os.environ.get('ES_COURSE_DOCUMENTS_ENDPOINT', None)
+    ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = os.environ.get('ES_INSTRUCTOR_DOCUMENTS_ENDPOINT', None)
+    ES_PRIVATE_API_KEY = os.environ.get('ES_PRIVATE_API_KEY', None)
 
     DB_NAME = os.environ.get('DB_NAME', None)
     DB_HOST = os.environ.get('DB_HOST', None)
