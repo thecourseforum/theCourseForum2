@@ -118,7 +118,15 @@ def build_elasticsearch_query(query, api_endpoint):
 def build_courses_query(query):
     """Returns the courses search algorithm"""
 
-    return json.dumps({"query": query}) #TODO design algorithm
+    algorithm = {
+        "query": query,
+        "page": {
+            "current": 1,
+            "size": 15
+        }
+    }
+
+    return json.dumps(algorithm)
 
 def build_instructors_query(query):
     """Returns the instructors search algorithm"""
