@@ -134,6 +134,14 @@ def build_courses_query(query):
             "description": {
                 "weight": 5
             }
+        },
+        "boosts": {
+            "review_count": {
+                "type": "functional",
+                "function": "logarithmic",
+                "operation": "multiply",
+                "factor": 2
+            }
         }
     }
 
