@@ -54,9 +54,11 @@ class Command(BaseCommand):
 
         # Debug variables
         start = 0
-        end = batch_size
+        end = start
 
         for course in all_courses:
+
+            end += 1
 
             # ignore courses not taught in the last 5 years
             if course.semester_last_taught.year < (current_year - 5):
@@ -83,12 +85,11 @@ class Command(BaseCommand):
                 # For debug
                 self.stdout.write("Indexed Courses " + str(start) + " - " + str(end))
                 start = end
-                end += batch_size
 
         # Handle remaining documents
         if len(documents) > 0:
             self.post(documents, courses_engine_endpoint)
-            self.stdout.write("Indexed Courses " + str(start) + " - " + str(start + count))
+            self.stdout.write("Indexed Courses " + str(start) + " - " + str(end))
 
         # Reset
         documents.clear()
