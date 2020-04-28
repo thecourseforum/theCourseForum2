@@ -70,8 +70,7 @@ class Command(BaseCommand):
                 "description" : course.description,
                 "number" : course.number,
                 "mnemonic" : course.code(),
-                "review_count" : course.review_count(),
-                "is_recent" : course.is_recent()
+                "review_count" : course.review_count()
             }
             documents.append(document)
             count += 1
