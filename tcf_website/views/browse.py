@@ -32,7 +32,10 @@ def browse(request):
 def department(request, dept_id):
     """View for department page."""
 
-    dept = Department.objects.get(pk=dept_id)
+    # Prefetch related subdepartments and courses to improve performance.
+    # department.html loops through related subdepartments and courses.
+    # See: https://docs.djangoproject.com/en/3.0/ref/models/querysets/#django.db.models.query.QuerySet.prefetch_related
+    dept = Department.objects.prefetch_related('subdepartment_set', 'subdepartment_set__course_set').get(pk=dept_id)
 
     # Get the most recent semester
     latest_semester = Semester.latest()
