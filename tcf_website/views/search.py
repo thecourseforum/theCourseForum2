@@ -44,7 +44,7 @@ def fetch_elasticsearch(query, api_endpoint):
     }
 
     # Format API query string
-    json_query = json.dumps({"query": query})
+    json_query = build_elasticsearch_query(query, api_endpoint)
 
     try:
         response = requests.get(
@@ -104,3 +104,23 @@ def format_instructors(results):
         formatted.append(instructor)
 
     return formatted
+
+def build_elasticsearch_query(query, api_endpoint):
+    """Returns an api-specific Elastic query"""
+
+    if api_endpoint == os.environ['ES_COURSE_SEARCH_ENDPOINT']:
+        return build_courses_query(query)
+    if api_endpoint == os.environ['ES_INSTRUCTOR_SEARCH_ENDPOINT']:
+        return build_instructors_query(query)
+
+    return json.dumps({"query": query}) # MOST BASIC QUERY
+
+def build_courses_query(query):
+    """Returns the courses search algorithm"""
+
+    return json.dumps({"query": query}) #TODO design algorithm
+
+def build_instructors_query(query):
+    """Returns the instructors search algorithm"""
+
+    return json.dumps({"query": query}) #TODO design algorithm
