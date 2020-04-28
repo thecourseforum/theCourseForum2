@@ -123,6 +123,17 @@ def build_courses_query(query):
         "page": {
             "current": 1,
             "size": 15
+        },
+        "search_fields": {
+            "mnemonic": {
+                "weight": 10
+            },
+            "title": {
+                "weight": 8
+            },
+            "description": {
+                "weight": 5
+            }
         }
     }
 
