@@ -150,4 +150,4 @@ def build_courses_query(query):
 def build_instructors_query(query):
     """Returns the instructors search algorithm"""
 
-    return json.dumps({"query": query}) #TODO design algorithm
+    return json.dumps({"query": query}) #still need to design algorithm
