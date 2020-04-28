@@ -6,6 +6,7 @@ import requests
 from django.shortcuts import render
 #from django.contrib.auth.decorators import login_required
 
+
 def search(request):
     """Search results view."""
 
@@ -26,9 +27,9 @@ def search(request):
 
     # Arguments for template
     args = {
-        "courses" : courses,
-        "instructors" : instructors,
-        "query" : query
+        "courses": courses,
+        "instructors": instructors,
+        "query": query
     }
 
     return render(request, 'search/search.html', args)
@@ -39,8 +40,8 @@ def fetch_elasticsearch(query, api_endpoint):
 
     api_key = os.environ['ES_PUBLIC_API_KEY']
     https_headers = {
-        "Content-Type" : "application/json",
-        "Authorization" : "Bearer " + api_key
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + api_key
     }
 
     # Format API query string
@@ -57,6 +58,7 @@ def fetch_elasticsearch(query, api_endpoint):
     except requests.RequestException as error:
         return "Error: " + str(error)
 
+
 def format_response(response):
     """Formats an Elastic search endpoint response"""
 
@@ -71,6 +73,7 @@ def format_response(response):
 
     return "Unknown engine, please verify engine exists"
 
+
 def format_courses(results):
     """Formats courses engine results"""
 
@@ -78,15 +81,16 @@ def format_courses(results):
     for result in results:
 
         course = {
-            "id" : result.get("_meta").get("id"),
-            "title" : result.get("title").get("raw"),
-            "description" : result.get("description").get("raw"),
-            "number" : result.get("number").get("raw"),
-            "mnemonic" : result.get("mnemonic").get("raw")
+            "id": result.get("_meta").get("id"),
+            "title": result.get("title").get("raw"),
+            "description": result.get("description").get("raw"),
+            "number": result.get("number").get("raw"),
+            "mnemonic": result.get("mnemonic").get("raw")
         }
         formatted.append(course)
 
     return formatted
+
 
 def format_instructors(results):
     """Formats instructors engine results"""
@@ -95,15 +99,16 @@ def format_instructors(results):
     for result in results:
 
         instructor = {
-            "id" : result.get("_meta").get("id"),
-            "first_name" : result.get("first_name").get("raw"),
-            "last_name" : result.get("last_name").get("raw"),
-            "email" : result.get("email").get("raw"),
-            "website" : result.get("website").get("raw")
+            "id": result.get("_meta").get("id"),
+            "first_name": result.get("first_name").get("raw"),
+            "last_name": result.get("last_name").get("raw"),
+            "email": result.get("email").get("raw"),
+            "website": result.get("website").get("raw")
         }
         formatted.append(instructor)
 
     return formatted
+
 
 def build_elasticsearch_query(query, api_endpoint):
     """Returns an api-specific Elastic query"""
@@ -114,6 +119,7 @@ def build_elasticsearch_query(query, api_endpoint):
         return build_instructors_query(query)
 
     return json.dumps({"query": query}) # MOST BASIC QUERY
+
 
 def build_courses_query(query):
     """Returns the courses search algorithm"""
@@ -146,6 +152,7 @@ def build_courses_query(query):
     }
 
     return json.dumps(algorithm)
+
 
 def build_instructors_query(query):
     """Returns the instructors search algorithm"""

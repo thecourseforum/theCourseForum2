@@ -45,9 +45,10 @@ class Command(BaseCommand):
         all_courses = Course.objects.all().order_by('pk')
         all_instructors = Instructor.objects.all().order_by('pk')
         self.stdout.write("Number of Courses: " + str(len(all_courses)))
-        self.stdout.write("Number of Instructors: " + str(len(all_instructors)))
+        self.stdout.write("Number of Instructors: " +
+                          str(len(all_instructors)))
 
-        batch_size = 100 # MUST NOT EXCEED 100
+        batch_size = 100  # MUST NOT EXCEED 100
         documents = []
         count = 0
         current_year = datetime.now().year
@@ -65,12 +66,12 @@ class Command(BaseCommand):
                 continue
 
             document = {
-                "id" : course.pk,
-                "title" : course.title,
-                "description" : course.description,
-                "number" : course.number,
-                "mnemonic" : course.code(),
-                "review_count" : course.review_count()
+                "id": course.pk,
+                "title": course.title,
+                "description": course.description,
+                "number": course.number,
+                "mnemonic": course.code(),
+                "review_count": course.review_count()
             }
             documents.append(document)
             count += 1
@@ -82,13 +83,18 @@ class Command(BaseCommand):
                 documents.clear()
 
                 # For debug
-                self.stdout.write("Indexed Courses " + str(start) + " - " + str(end))
+                self.stdout.write(
+                    "Indexed Courses " +
+                    str(start) +
+                    " - " +
+                    str(end))
                 start = end
 
         # Handle remaining documents
         if len(documents) > 0:
             self.post(documents, courses_engine_endpoint)
-            self.stdout.write("Indexed Courses " + str(start) + " - " + str(end))
+            self.stdout.write("Indexed Courses " +
+                              str(start) + " - " + str(end))
 
         # Reset
         documents.clear()
@@ -99,11 +105,11 @@ class Command(BaseCommand):
         for instructor in all_instructors:
 
             document = {
-                "id" : instructor.pk,
-                "first_name" : instructor.first_name,
-                "last_name" : instructor.last_name,
-                "email" : instructor.email,
-                "website" : instructor.website,
+                "id": instructor.pk,
+                "first_name": instructor.first_name,
+                "last_name": instructor.last_name,
+                "email": instructor.email,
+                "website": instructor.website,
             }
             documents.append(document)
             count += 1
@@ -115,14 +121,19 @@ class Command(BaseCommand):
                 documents.clear()
 
                 # For debug
-                self.stdout.write("Indexed Instructors " + str(start) + " - " + str(end))
+                self.stdout.write(
+                    "Indexed Instructors " +
+                    str(start) +
+                    " - " +
+                    str(end))
                 start = end
                 end += batch_size
 
         # Handle remaining documents
         if len(documents) > 0:
             self.post(documents, instructors_engine_endpoint)
-            self.stdout.write("Indexed Instructors " + str(start) + " - " + str(start + count))
+            self.stdout.write("Indexed Instructors " +
+                              str(start) + " - " + str(start + count))
 
     def post(self, documents, api_endpoint):
         """Posts documents to a Document API endpoint"""
@@ -143,7 +154,10 @@ class Command(BaseCommand):
                 headers=https_headers
             )
             if response.status_code != 200:
-                raise CommandError("status_code = " + str(response.status_code) + " -- " + str(response.text))
+                raise CommandError("status_code = " +
+                                   str(response.status_code) +
+                                   " -- " +
+                                   str(response.text))
 
         except Exception as error:
             raise CommandError("Error: " + str(error))
