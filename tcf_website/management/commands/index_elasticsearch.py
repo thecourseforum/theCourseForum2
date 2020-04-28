@@ -60,7 +60,8 @@ class Command(BaseCommand):
                 "title" : course.title,
                 "description" : course.description,
                 "number" : course.number,
-                "mnemonic" : course.code()
+                "mnemonic" : course.code(),
+                "review_count" : course.review_count()
             }
             documents.append(document)
             count += 1
