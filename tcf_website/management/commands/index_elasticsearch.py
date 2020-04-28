@@ -99,11 +99,11 @@ class Command(BaseCommand):
         for instructor in all_instructors:
 
             document = {
-                "id": instructor.pk,
-                "first_name": instructor.first_name,
-                "last_name": instructor.last_name,
-                "email": instructor.email,
-                "website": instructor.website,
+                "id" : instructor.pk,
+                "first_name" : instructor.first_name,
+                "last_name" : instructor.last_name,
+                "email" : instructor.email,
+                "website" : instructor.website,
             }
             documents.append(document)
             count += 1
@@ -143,10 +143,7 @@ class Command(BaseCommand):
                 headers=https_headers
             )
             if response.status_code != 200:
-                raise CommandError("status_code = " +
-                                   str(response.status_code) +
-                                   " -- " +
-                                   str(response.text))
+                raise CommandError("status_code = " + str(response.status_code) + " -- " + str(response.text))
 
         except Exception as error:
             raise CommandError("Error: " + str(error))

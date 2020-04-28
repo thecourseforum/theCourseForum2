@@ -4,6 +4,7 @@ import json
 import requests
 
 from django.shortcuts import render
+#from django.contrib.auth.decorators import login_required
 
 def search(request):
     """Search results view."""
@@ -25,9 +26,9 @@ def search(request):
 
     # Arguments for template
     args = {
-        "courses": courses,
-        "instructors": instructors,
-        "query": query
+        "courses" : courses,
+        "instructors" : instructors,
+        "query" : query
     }
 
     return render(request, 'search/search.html', args)
@@ -94,11 +95,11 @@ def format_instructors(results):
     for result in results:
 
         instructor = {
-            "id": result.get("_meta").get("id"),
-            "first_name": result.get("first_name").get("raw"),
-            "last_name": result.get("last_name").get("raw"),
-            "email": result.get("email").get("raw"),
-            "website": result.get("website").get("raw")
+            "id" : result.get("_meta").get("id"),
+            "first_name" : result.get("first_name").get("raw"),
+            "last_name" : result.get("last_name").get("raw"),
+            "email" : result.get("email").get("raw"),
+            "website" : result.get("website").get("raw")
         }
         formatted.append(instructor)
 
