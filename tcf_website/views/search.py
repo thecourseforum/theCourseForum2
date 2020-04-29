@@ -20,13 +20,14 @@ def search(request):
     courses = format_response(response1)
     instructors = format_response(response2)
 
-    # Arguments for template
+    # Set arguments for template view
     args = {
         "courses": courses,
         "instructors": instructors,
         "query": query
     }
 
+    # Load template view
     return render(request, 'search/search.html', args)
 
 
@@ -45,7 +46,7 @@ def fetch_instructors(query):
 
 
 def fetch_elasticsearch(api_endpoint, algorithm):
-    """Requests a Document API using a specific search algorithm"""
+    """Requests a Document API using a specific search algorithm."""
     api_key = os.environ['ES_PUBLIC_API_KEY']
     https_headers = {
         "Content-Type": "application/json",
@@ -63,7 +64,7 @@ def fetch_elasticsearch(api_endpoint, algorithm):
 
 
 def rank_instructor(query):
-    """Returns the instructors search algorithm"""
+    """Returns the instructors search algorithm."""
     algorithm = {
         "query": query
     }
@@ -71,7 +72,7 @@ def rank_instructor(query):
 
 
 def rank_course(query):
-    """Returns the courses search algorithm"""
+    """Returns the courses search algorithm."""
     algorithm = {
         "query": query,
         "page": {
@@ -102,8 +103,7 @@ def rank_course(query):
 
 
 def format_response(response):
-    """Formats an Elastic search endpoint response"""
-
+    """Formats an Elastic search endpoint response."""
     body = json.loads(response.text)
     engine = body.get("meta").get("engine").get("name")
     results = body.get("results")
@@ -112,16 +112,13 @@ def format_response(response):
         return format_courses(results)
     if engine == "uva-instructors":
         return format_instructors(results)
-
     return "Unknown engine, please verify engine exists"
 
 
 def format_courses(results):
-    """Formats courses engine results"""
-
+    """Formats courses engine results."""
     formatted = []
     for result in results:
-
         course = {
             "id": result.get("_meta").get("id"),
             "title": result.get("title").get("raw"),
@@ -130,16 +127,13 @@ def format_courses(results):
             "mnemonic": result.get("mnemonic").get("raw")
         }
         formatted.append(course)
-
     return formatted
 
 
 def format_instructors(results):
-    """Formats instructors engine results"""
-
+    """Formats instructors engine results."""
     formatted = []
     for result in results:
-
         instructor = {
             "id": result.get("_meta").get("id"),
             "first_name": result.get("first_name").get("raw"),
@@ -148,5 +142,4 @@ def format_instructors(results):
             "website": result.get("website").get("raw")
         }
         formatted.append(instructor)
-
     return formatted
