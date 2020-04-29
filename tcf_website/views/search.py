@@ -31,21 +31,21 @@ def search(request):
 
 
 def fetch_courses(query):
-    """Gets Elasticsearch course data"""
+    """Gets Elasticsearch course data."""
     api_endpoint = os.environ['ES_COURSE_SEARCH_ENDPOINT']
     algorithm = rank_course(query)
-    return fetch_elasticsearch(algorithm, api_endpoint)
+    return fetch_elasticsearch(api_endpoint, algorithm)
 
 
 def fetch_instructors(query):
-    """Gets Elasticsearch instructor data"""
+    """Gets Elasticsearch instructor data."""
     api_endpoint = os.environ['ES_INSTRUCTOR_SEARCH_ENDPOINT']
     algorithm = rank_instructor(query)
-    return fetch_elasticsearch(algorithm, api_endpoint)
+    return fetch_elasticsearch(api_endpoint, algorithm)
 
 
-def fetch_elasticsearch(algorithm, api_endpoint):
-    """Fetches documents based on a query from a Document API endpoint"""
+def fetch_elasticsearch(api_endpoint, algorithm):
+    """Requests a Document API using a specific search algorithm"""
     api_key = os.environ['ES_PUBLIC_API_KEY']
     https_headers = {
         "Content-Type": "application/json",
