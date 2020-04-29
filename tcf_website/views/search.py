@@ -13,15 +13,11 @@ def search(request):
     # Set query
     query = request.GET.get('q', '')
 
-    # Set endpoints
-    courses_search_endpoint = os.environ['ES_COURSE_SEARCH_ENDPOINT']
-    instructors_search_endpoint = os.environ['ES_INSTRUCTOR_SEARCH_ENDPOINT']
+    # Fetch Elasticsearch data
+    response1 = fetch_courses(query)
+    response2 = fetch_instructors(query)
 
-    # Fetch results
-    response1 = fetch_elasticsearch(query, courses_search_endpoint)
-    response2 = fetch_elasticsearch(query, instructors_search_endpoint)
-
-    # Format results
+    # Format Elasticsearch data
     courses = format_response(response1)
     instructors = format_response(response2)
 
@@ -35,28 +31,75 @@ def search(request):
     return render(request, 'search/search.html', args)
 
 
-def fetch_elasticsearch(query, api_endpoint):
-    """Fetches documents based on a query from a Document API endpoint"""
+def fetch_courses(query):
+    """Gets course data from the Elasticsearch index"""
+    api_endpoint = os.environ['ES_COURSE_SEARCH_ENDPOINT']
+    algorithm = course_search_algorithm(query) 
+    return fetch_elasticsearch(algorithm, api_endpoint)
 
+
+def fetch_instructors(query):
+    """Gets instructor data from the Elasticsearch index"""
+    api_endpoint = os.environ['ES_INSTRUCTOR_SEARCH_ENDPOINT']
+    algorithm = instructor_search_algorithm(query)
+    return fetch_elasticsearch(algorithm, api_endpoint)
+
+
+def fetch_elasticsearch(algorithm, api_endpoint):
+    """Fetches documents based on a query from a Document API endpoint"""
     api_key = os.environ['ES_PUBLIC_API_KEY']
     https_headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + api_key
     }
-
-    # Format API query string
-    json_query = build_elasticsearch_query(query, api_endpoint)
-
     try:
         response = requests.get(
             url=api_endpoint,
             headers=https_headers,
-            data=json_query
+            data=algorithm
         )
         return response
-
     except requests.RequestException as error:
         return "Error: " + str(error)
+
+
+def instructor_search_algorithm(query):
+    """Returns the instructors search algorithm"""
+    algorithm = {
+        "query": query
+    }
+    return json.dumps(algorithm) # improve algorithm later
+
+
+def course_search_algorithm(query):
+    """Returns the courses search algorithm"""
+    algorithm = {
+        "query": query,
+        "page": {
+            "current": 1,
+            "size": 15
+        },
+        "search_fields": {
+            "mnemonic": {
+                "weight": 10
+            },
+            "title": {
+                "weight": 8
+            },
+            "description": {
+                "weight": 5
+            }
+        },
+        "boosts": {
+            "review_count": {
+                "type": "functional",
+                "function": "logarithmic",
+                "operation": "multiply",
+                "factor": 2
+            }
+        }
+    }
+    return json.dumps(algorithm)
 
 
 def format_response(response):
@@ -108,53 +151,3 @@ def format_instructors(results):
         formatted.append(instructor)
 
     return formatted
-
-
-def build_elasticsearch_query(query, api_endpoint):
-    """Returns an api-specific Elastic query"""
-
-    if api_endpoint == os.environ['ES_COURSE_SEARCH_ENDPOINT']:
-        return build_courses_query(query)
-    if api_endpoint == os.environ['ES_INSTRUCTOR_SEARCH_ENDPOINT']:
-        return build_instructors_query(query)
-
-    return json.dumps({"query": query}) # MOST BASIC QUERY
-
-
-def build_courses_query(query):
-    """Returns the courses search algorithm"""
-
-    algorithm = {
-        "query": query,
-        "page": {
-            "current": 1,
-            "size": 15
-        },
-        "search_fields": {
-            "mnemonic": {
-                "weight": 10
-            },
-            "title": {
-                "weight": 8
-            },
-            "description": {
-                "weight": 5
-            }
-        },
-        "boosts": {
-            "review_count": {
-                "type": "functional",
-                "function": "logarithmic",
-                "operation": "multiply",
-                "factor": 2
-            }
-        }
-    }
-
-    return json.dumps(algorithm)
-
-
-def build_instructors_query(query):
-    """Returns the instructors search algorithm"""
-
-    return json.dumps({"query": query}) #still need to design algorithm
