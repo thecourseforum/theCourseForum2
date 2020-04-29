@@ -302,7 +302,7 @@ class Course(models.Model):
 
     def review_count(self):
         """Compute total number of course reviews."""
-        return Review.objects.filter(course=self).count()
+        return self.review_set.count()
 
     class Meta:
 
