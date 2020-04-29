@@ -1,4 +1,6 @@
 """Management command that loads courses and instructors into Elasticsearch"""
+from datetime import datetime
+
 import os
 import json
 import requests
@@ -49,19 +51,27 @@ class Command(BaseCommand):
         batch_size = 100  # MUST NOT EXCEED 100
         documents = []
         count = 0
+        current_year = datetime.now().year
 
         # Debug variables
         start = 0
-        end = batch_size
+        end = start
 
         for course in all_courses:
+
+            end += 1
+
+            # ignore courses not taught in the last 5 years
+            if course.semester_last_taught.year < (current_year - 5):
+                continue
 
             document = {
                 "id": course.pk,
                 "title": course.title,
                 "description": course.description,
                 "number": course.number,
-                "mnemonic": course.code()
+                "mnemonic": course.code(),
+                "review_count": course.review_count()
             }
             documents.append(document)
             count += 1
@@ -79,13 +89,12 @@ class Command(BaseCommand):
                     " - " +
                     str(end))
                 start = end
-                end += batch_size
 
         # Handle remaining documents
         if len(documents) > 0:
             self.post(documents, courses_engine_endpoint)
             self.stdout.write("Indexed Courses " +
-                              str(start) + " - " + str(start + count))
+                              str(start) + " - " + str(end))
 
         # Reset
         documents.clear()
