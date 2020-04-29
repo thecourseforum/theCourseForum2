@@ -4,7 +4,6 @@ import json
 import requests
 
 from django.shortcuts import render
-#from django.contrib.auth.decorators import login_required
 
 
 def search(request):
@@ -32,16 +31,16 @@ def search(request):
 
 
 def fetch_courses(query):
-    """Gets course data from the Elasticsearch index"""
+    """Gets Elasticsearch course data"""
     api_endpoint = os.environ['ES_COURSE_SEARCH_ENDPOINT']
-    algorithm = course_search_algorithm(query)
+    algorithm = rank_course(query)
     return fetch_elasticsearch(algorithm, api_endpoint)
 
 
 def fetch_instructors(query):
-    """Gets instructor data from the Elasticsearch index"""
+    """Gets Elasticsearch instructor data"""
     api_endpoint = os.environ['ES_INSTRUCTOR_SEARCH_ENDPOINT']
-    algorithm = instructor_search_algorithm(query)
+    algorithm = rank_instructor(query)
     return fetch_elasticsearch(algorithm, api_endpoint)
 
 
@@ -63,7 +62,7 @@ def fetch_elasticsearch(algorithm, api_endpoint):
         return "Error: " + str(error)
 
 
-def instructor_search_algorithm(query):
+def rank_instructor(query):
     """Returns the instructors search algorithm"""
     algorithm = {
         "query": query
@@ -71,7 +70,7 @@ def instructor_search_algorithm(query):
     return json.dumps(algorithm) # improve algorithm later
 
 
-def course_search_algorithm(query):
+def rank_course(query):
     """Returns the courses search algorithm"""
     algorithm = {
         "query": query,
