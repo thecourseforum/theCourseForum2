@@ -34,7 +34,7 @@ def search(request):
 def fetch_courses(query):
     """Gets course data from the Elasticsearch index"""
     api_endpoint = os.environ['ES_COURSE_SEARCH_ENDPOINT']
-    algorithm = course_search_algorithm(query) 
+    algorithm = course_search_algorithm(query)
     return fetch_elasticsearch(algorithm, api_endpoint)
 
 
