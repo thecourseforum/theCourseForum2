@@ -1,14 +1,20 @@
 import os
 import pandas as pd
+import re
 
 from django.core.management.base import BaseCommand, CommandError
 from tcf_website.models import *
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+
 from tqdm import tqdm
 
 
 
 class Command(BaseCommand):
     help = 'Imports grade data from CSVs into PostgresSQL database'
+
+    global course_grades
+    global course_instructor_grades
 
     course_grades = {}
     course_instructor_grades = {}
@@ -43,8 +49,8 @@ class Command(BaseCommand):
             self.load_semester_file(f"{semester.lower()}.csv")
 
     def clean(self, df):
-        return df.dropna(
-            subset=['Course GPA', 'Total'])
+        return df.dropna(how="all",
+            subset=['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'])
 
     def load_semester_file(self, file):
         year, semester = file.split('.')[0].split('_')
@@ -59,12 +65,15 @@ class Command(BaseCommand):
 
         for index, row in tqdm(df.iterrows(), total=df.shape[0]):
             # print(str(row).encode('ascii', 'ignore').decode('ascii'))
-            self.load_section_row(semester, row)
+            self.load_row_into_dicts(row)
             # break
+        
+        self.load_dict_into_models()
 
-    def load_section_row(self, semester, row):
+    def load_row_into_dicts(self, row):
+
         try:
-            first_name = row['Instructor First Name']
+            first_name = row['Instructor First']
             middle_name = row['Instructor Middle Name']
             last_name = row['Instructor Last Name']
             email = row['Instructor Email']
@@ -72,31 +81,169 @@ class Command(BaseCommand):
             number = re.sub('[^0-9]', '', str(row['Course Number']))
             section_number = row['Section Number']
             title = row['Title']
-            gpa = row['Course GPA']
-            a_plus = row['A+']
-            a = row['A']
-            a_minus = row['A-']
-            b_plus = row['B+']
-            b = row['B']
-            b_minus = row['B-']
-            c_plus = row['C+']
-            c = row['C']
-            c_minus = row['C-']
-            d_plus = row['D+']
-            d = row['D']
-            d_minus = row['D-']
-            f = row['F']
-            ot = row['OT']
-            drop = row['DR']
-            withdraw = row['W']
+            gpa = float(row['Course GPA'])
+            a_plus = int(row['A+'])
+            a = int(row['A'])
+            a_minus = int(row['A-'])
+            b_plus = int(row['B+'])
+            b = int(row['B'])
+            b_minus = int(row['B-'])
+            c_plus = int(row['C+'])
+            c = int(row['C'])
+            c_minus = int(row['C-'])
+            d_plus = int(row['D+'])
+            d = int(row['D'])
+            d_minus = int(row['D-'])
+            f = int(row['F'])
+            ot = int(row['OT'])
+            drop = int(row['DR'])
+            withdraw = int(row['W'])
             # credit
             # general_credit
             # no_credit
-            total_enrolled = row['Total']
+            total_enrolled = int(row['Total'])
+
+            course_identifier = (subdepartment, number)
+            course_instructor_identifier = (subdepartment, number, first_name, middle_name, last_name, email)
+
+            if course_identifier not in course_grades:
+                course_grades[course_identifier] = [
+                    a_plus,
+                    a,
+                    a_minus,
+                    b_plus,
+                    b,
+                    b_minus,
+                    c_plus,
+                    c,
+                    c_minus,
+                    d_plus,
+                    d,
+                    d_minus,
+                    f,
+                    ot,
+                    drop,
+                    withdraw
+                ]
+            else:
+                course_grades[course_identifier] = [
+                    course_grades[course_identifier][0] + a_plus,
+                    course_grades[course_identifier][1] + a,
+                    course_grades[course_identifier][2] + a_minus,
+                    course_grades[course_identifier][3] + b_plus,
+                    course_grades[course_identifier][4] + b,
+                    course_grades[course_identifier][5] + b_minus,
+                    course_grades[course_identifier][6] + c_plus,
+                    course_grades[course_identifier][7] + c,
+                    course_grades[course_identifier][8] + c_minus,
+                    course_grades[course_identifier][9] + d_plus,
+                    course_grades[course_identifier][10] + d,
+                    course_grades[course_identifier][11] + d_minus,
+                    course_grades[course_identifier][12] + f,
+                    course_grades[course_identifier][13] + ot,
+                    course_grades[course_identifier][14] + drop,
+                    course_grades[course_identifier][15] + withdraw
+                ]
+
+            if course_instructor_identifier not in course_instructor_grades:
+                course_instructor_grades[course_instructor_identifier] = [
+                    a_plus,
+                    a,
+                    a_minus,
+                    b_plus,
+                    b,
+                    b_minus,
+                    c_plus,
+                    c,
+                    c_minus,
+                    d_plus,
+                    d,
+                    d_minus,
+                    f,
+                    ot,
+                    drop,
+                    withdraw
+                ]
+            else:
+                course_instructor_grades[course_instructor_identifier] = [
+                    course_instructor_grades[course_instructor_identifier][0] + a_plus,
+                    course_instructor_grades[course_instructor_identifier][1] + a,
+                    course_instructor_grades[course_instructor_identifier][2] + a_minus,
+                    course_instructor_grades[course_instructor_identifier][3] + b_plus,
+                    course_instructor_grades[course_instructor_identifier][4] + b,
+                    course_instructor_grades[course_instructor_identifier][5] + b_minus,
+                    course_instructor_grades[course_instructor_identifier][6] + c_plus,
+                    course_instructor_grades[course_instructor_identifier][7] + c,
+                    course_instructor_grades[course_instructor_identifier][8] + c_minus,
+                    course_instructor_grades[course_instructor_identifier][9] + d_plus,
+                    course_instructor_grades[course_instructor_identifier][10] + d,
+                    course_instructor_grades[course_instructor_identifier][11] + d_minus,
+                    course_instructor_grades[course_instructor_identifier][12] + f,
+                    course_instructor_grades[course_instructor_identifier][13] + ot,
+                    course_instructor_grades[course_instructor_identifier][14] + drop,
+                    course_instructor_grades[course_instructor_identifier][15] + withdraw
+                ]
 
         except TypeError as e:
             print(row)
             print(e)
             raise e
 
-        
+    def load_dict_into_models(self):
+
+        grade_weights = [4.0, 4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0, 0.7, 0.0, 0.0, 0.0, 0.0]
+
+        for row in course_grades:
+            total_enrolled = 0
+            total_a_plus = course_grades[row][0]
+            total_a = course_grades[row][1]
+            total_a_minus = course_grades[row][2]
+            total_b_plus = course_grades[row][3]
+            total_b = course_grades[row][4]
+            total_b_minus = course_grades[row][5]
+            total_c_plus = course_grades[row][6]
+            total_c = course_grades[row][7]
+            total_c_minus = course_grades[row][8]
+            total_d_plus = course_grades[row][9]
+            total_d = course_grades[row][10]
+            total_d_minus = course_grades[row][11]
+            total_f = course_grades[row][12]
+            total_ot = course_grades[row][13]
+            total_drop = course_grades[row][14]
+            total_withdraw = course_grades[row][15]
+
+            for grade_count in course_grades[row]:
+                total_enrolled += grade_count
+            
+            total_weight = 0
+            for i in range(len(course_grades[row])):
+                total_weight += (course_grades[row][i] * grade_weights[i])
+
+            gpa = (total_weight) / total_enrolled
+
+            course_grade_params = {
+                'subdepartment': row[0],
+                'number': row[1],
+                'average': gpa,
+                'a_plus': total_a_plus,
+                'a': total_a,
+                'a_minus': total_a_minus,
+                'b_plus': total_b_plus,
+                'b': total_b,
+                'b_minus': total_b_minus,
+                'c_plus': total_c_plus,
+                'c': total_c, 
+                'c_minus': total_c_minus,
+                'd_plus': total_d_plus, 
+                'd': total_d, 
+                'd_minus': total_d_minus, 
+                'f': total_f, 
+                'ot': total_ot, 
+                'drop': total_drop, 
+                'withdraw': total_withdraw, 
+                'total_enrolled': total_enrolled
+            }
+
+            course_grade = CourseGrade(**course_grade_params)
+
+            course_grade.save()

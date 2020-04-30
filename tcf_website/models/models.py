@@ -321,7 +321,7 @@ class CourseGrade(models.Model):
     subdepartment = models.ForeignKey(Subdepartment, on_delete=models.CASCADE)
     number = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(99999)])
-    title = models.CharField(max_length=225)
+    # title = models.CharField(max_length=225)
     average = models.FloatField()
     a_plus = models.IntegerField()
     a = models.IntegerField()
@@ -339,9 +339,9 @@ class CourseGrade(models.Model):
     ot = models.IntegerField()
     drop = models.IntegerField()
     withdraw = models.IntegerField()
-    credit = models.IntegerField()
-    general_credit = models.IntegerField()
-    no_credit = models.IntegerField()
+    # credit = models.IntegerField()
+    # general_credit = models.IntegerField()
+    # no_credit = models.IntegerField()
     total_enrolled = models.IntegerField()
 
 class CourseInstructorGrade(models.Model):
@@ -352,8 +352,8 @@ class CourseInstructorGrade(models.Model):
     subdepartment = models.ForeignKey(Subdepartment, on_delete=models.CASCADE)
     number = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(99999)])
-    section_number = models.IntegerField()
-    title = models.CharField(max_length=225)
+    # section_number = models.IntegerField()
+    # title = models.CharField(max_length=225)
     average = models.FloatField()
     a_plus = models.IntegerField()
     a = models.IntegerField()
