@@ -1,0 +1,21 @@
+/* Google Login Button CSS stylesheet */
+
+/* Normal */
+.login-button {
+    background-image: url('./login-button-frames/btn_google_signin_dark_normal_web.png');
+    border: none;
+    width: 382px;
+    height: 92px;
+}
+
+/* Hovering */
+.login-button:hover {
+    background: url('./login-button-frames/btn_google_signin_dark_focus_web.png');
+    outline: none;
+}
+
+/* Pressed */
+.login-button:active {
+    background: url('./login-button-frames/btn_google_signin_dark_pressed_web.png');
+    outline: none;
+}
