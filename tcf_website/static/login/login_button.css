@@ -2,7 +2,7 @@
 
 /* Normal */
 .login-button {
-    background-image: url('./login-button-frames/btn_google_signin_dark_normal_web.png');
+    background: url('./google_login_spritesheet.png') 764px;
     border: none;
     width: 382px;
     height: 92px;
@@ -10,12 +10,17 @@
 
 /* Hovering */
 .login-button:hover {
-    background: url('./login-button-frames/btn_google_signin_dark_focus_web.png');
+    background: url('./google_login_spritesheet.png') 1146px;
     outline: none;
 }
 
 /* Pressed */
 .login-button:active {
-    background: url('./login-button-frames/btn_google_signin_dark_pressed_web.png');
+    background: url('./google_login_spritesheet.png') 382px;
+    outline: none;
+}
+
+/* Pressed but dragged cursor away */
+.login-button:focus {
     outline: none;
 }
