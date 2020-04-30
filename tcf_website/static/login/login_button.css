@@ -1,4 +1,9 @@
-/* Google Login Button CSS stylesheet */
+/* 
+ * A spritesheet is used to eliminate CSS flickering.
+ * https://www.codeandweb.com/texturepacker/tutorials/how-to-create-a-sprite-sheet
+ * 
+ * ^ great resource from Floryan's Game Design class
+*/
 
 /* Normal */
 .login-button {
