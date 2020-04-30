@@ -5,8 +5,13 @@ from django.core.management.base import BaseCommand, CommandError
 from tcf_website.models import *
 from tqdm import tqdm
 
+
+
 class Command(BaseCommand):
     help = 'Imports grade data from CSVs into PostgresSQL database'
+
+    course_grades = {}
+    course_instructor_grades = {}
 
     def add_arguments(self, parser):
 
@@ -37,6 +42,10 @@ class Command(BaseCommand):
         else:
             self.load_semester_file(f"{semester.lower()}.csv")
 
+    def clean(self, df):
+        return df.dropna(
+            subset=['Course GPA', 'Total'])
+
     def load_semester_file(self, file):
         year, semester = file.split('.')[0].split('_')
         year = int(year)
@@ -44,11 +53,50 @@ class Command(BaseCommand):
 
         print(year, season)
 
-        df = pd.read_csv(os.path.join(self.data_dir, file))
+        df = self.clean(pd.read_csv(os.path.join(self.data_dir, file)))
 
         print(f"{df.size} sections")
 
         for index, row in tqdm(df.iterrows(), total=df.shape[0]):
-            print(str(row).encode('ascii', 'ignore').decode('ascii'))
-            # self.load_section_row(semester, row)
+            # print(str(row).encode('ascii', 'ignore').decode('ascii'))
+            self.load_section_row(semester, row)
             # break
+
+    def load_section_row(self, semester, row):
+        try:
+            first_name = row['Instructor First Name']
+            middle_name = row['Instructor Middle Name']
+            last_name = row['Instructor Last Name']
+            email = row['Instructor Email']
+            subdepartment = row['Subject']
+            number = re.sub('[^0-9]', '', str(row['Course Number']))
+            section_number = row['Section Number']
+            title = row['Title']
+            gpa = row['Course GPA']
+            a_plus = row['A+']
+            a = row['A']
+            a_minus = row['A-']
+            b_plus = row['B+']
+            b = row['B']
+            b_minus = row['B-']
+            c_plus = row['C+']
+            c = row['C']
+            c_minus = row['C-']
+            d_plus = row['D+']
+            d = row['D']
+            d_minus = row['D-']
+            f = row['F']
+            ot = row['OT']
+            drop = row['DR']
+            withdraw = row['W']
+            # credit
+            # general_credit
+            # no_credit
+            total_enrolled = row['Total']
+
+        except TypeError as e:
+            print(row)
+            print(e)
+            raise e
+
+        
