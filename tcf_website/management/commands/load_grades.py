@@ -3,7 +3,7 @@ import pandas as pd
 import re
 
 from django.core.management.base import BaseCommand, CommandError
-from tcf_website.models import *
+from tcf_website.models import CourseGrade
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from tqdm import tqdm
