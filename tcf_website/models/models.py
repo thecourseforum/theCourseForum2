@@ -320,7 +320,7 @@ class Course(models.Model):
 class CourseGrade(models.Model):
     subdepartment = models.CharField(max_length=255)
     number = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99999)], default=0)
-    # title = models.CharField(max_length=225)
+    title = models.CharField(max_length=225, default = "")
     average = models.FloatField(default=0.0)
     a_plus = models.IntegerField(default=0)
     a = models.IntegerField(default=0)
@@ -343,14 +343,16 @@ class CourseGrade(models.Model):
     # no_credit = models.IntegerField(default=0)
     total_enrolled = models.IntegerField(default=0)
 
+    def __str__(self):
+        return f"{self.subdepartment} {self.number} {self.average}"
+
 class CourseInstructorGrade(models.Model):
     first_name = models.CharField(max_length=225)
     middle_name = models.CharField(max_length=225)
     last_name = models.CharField(max_length=225)
     email = models.CharField(max_length=225)
     subdepartment = models.ForeignKey(Subdepartment, on_delete=models.CASCADE)
-    number = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(99999)])
+    number = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99999)])
     # section_number = models.IntegerField()
     # title = models.CharField(max_length=225)
     average = models.FloatField()
