@@ -300,6 +300,10 @@ class Course(models.Model):
         return Review.objects.filter(course=self).aggregate(
             models.Avg('difficulty'))['difficulty__avg']
 
+    def review_count(self):
+        """Compute total number of course reviews."""
+        return self.review_set.count()
+
     class Meta:
 
         indexes = [
