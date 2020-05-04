@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 
 class Command(BaseCommand):
-    help = 'Imports grade data from CSVs into PostgresSQL database'
+    help = 'Imports grade data from VAGrades CSVs into PostgresSQL database'
 
     global course_grades
     global course_instructor_grades
@@ -46,7 +46,7 @@ class Command(BaseCommand):
             for file in sorted(os.listdir(self.data_dir)):
                 self.load_semester_file(file)
         else:
-            self.load_semester_file(f"{semester.lower()}.csv")
+            self.load_semester_file(f"{semester.lower()}.xlsx")
 
     def clean(self, df):
         return df.dropna(how="all",
@@ -59,7 +59,7 @@ class Command(BaseCommand):
 
         print(year, season)
 
-        df = self.clean(pd.read_csv(os.path.join(self.data_dir, file)))
+        df = self.clean(pd.read_excel(os.path.join(self.data_dir, file)))
 
         print(f"{df.size} sections")
 
@@ -71,15 +71,14 @@ class Command(BaseCommand):
         self.load_dict_into_models()
 
     def load_row_into_dicts(self, row):
-
         try:
-            first_name = row['Instructor First']
+            first_name = row['Instructor First Name']
             middle_name = row['Instructor Middle Name']
             last_name = row['Instructor Last Name']
             email = row['Instructor Email']
             subdepartment = row['Subject']
             number = re.sub('[^0-9]', '', str(row['Course Number']))
-            section_number = row['Section Number']
+            section_number = row['Section Number'] # not used
             title = row['Title']
             gpa = float(row['Course GPA'])
             a_plus = int(row['A+'])
@@ -103,7 +102,7 @@ class Command(BaseCommand):
             # no_credit
             total_enrolled = int(row['Total'])
 
-            course_identifier = (subdepartment, number)
+            course_identifier = (subdepartment, number, title)
             course_instructor_identifier = (subdepartment, number, first_name, middle_name, last_name, email)
 
             if course_identifier not in course_grades:
@@ -195,23 +194,6 @@ class Command(BaseCommand):
 
         for row in course_grades:
             total_enrolled = 0
-            total_a_plus = course_grades[row][0]
-            total_a = course_grades[row][1]
-            total_a_minus = course_grades[row][2]
-            total_b_plus = course_grades[row][3]
-            total_b = course_grades[row][4]
-            total_b_minus = course_grades[row][5]
-            total_c_plus = course_grades[row][6]
-            total_c = course_grades[row][7]
-            total_c_minus = course_grades[row][8]
-            total_d_plus = course_grades[row][9]
-            total_d = course_grades[row][10]
-            total_d_minus = course_grades[row][11]
-            total_f = course_grades[row][12]
-            total_ot = course_grades[row][13]
-            total_drop = course_grades[row][14]
-            total_withdraw = course_grades[row][15]
-
             for grade_count in course_grades[row]:
                 total_enrolled += grade_count
             
@@ -224,23 +206,24 @@ class Command(BaseCommand):
             course_grade_params = {
                 'subdepartment': row[0],
                 'number': row[1],
+                'title': row[2],
                 'average': gpa,
-                'a_plus': total_a_plus,
-                'a': total_a,
-                'a_minus': total_a_minus,
-                'b_plus': total_b_plus,
-                'b': total_b,
-                'b_minus': total_b_minus,
-                'c_plus': total_c_plus,
-                'c': total_c, 
-                'c_minus': total_c_minus,
-                'd_plus': total_d_plus, 
-                'd': total_d, 
-                'd_minus': total_d_minus, 
-                'f': total_f, 
-                'ot': total_ot, 
-                'drop': total_drop, 
-                'withdraw': total_withdraw, 
+                'a_plus': course_grades[row][0],
+                'a': course_grades[row][1],
+                'a_minus': course_grades[row][2],
+                'b_plus': course_grades[row][3],
+                'b': course_grades[row][4],
+                'b_minus': course_grades[row][5],
+                'c_plus': course_grades[row][6],
+                'c': course_grades[row][7], 
+                'c_minus': course_grades[row][8],
+                'd_plus': course_grades[row][9], 
+                'd': course_grades[row][10], 
+                'd_minus': course_grades[row][11], 
+                'f': course_grades[row][12], 
+                'ot': course_grades[row][13], 
+                'drop': course_grades[row][14], 
+                'withdraw': course_grades[row][15], 
                 'total_enrolled': total_enrolled
             }
 
