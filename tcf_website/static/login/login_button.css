@@ -5,6 +5,13 @@
  * ^ great resource from Floryan's Game Design class
 */
 
+.login-button-wrapper {
+    display: grid;
+    grid-auto-columns: minmax(10px, auto);
+    grid-auto-rows: minmax(10px, auto);
+    justify-items: center;
+  }
+
 /* Normal */
 .login-button {
     background: url('./google_login_spritesheet.png') 764px;
@@ -12,6 +19,8 @@
     width: 382px;
     height: 92px;
     transform: scale(0.7);
+    grid-row: 1;
+    grid-column: 1;
 }
 
 /* Hovering */
