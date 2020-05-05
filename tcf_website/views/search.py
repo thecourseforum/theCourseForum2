@@ -68,7 +68,7 @@ def rank_instructor(query):
     algorithm = {
         "query": query
     }
-    return json.dumps(algorithm) # improve algorithm later
+    return json.dumps(algorithm)  # improve algorithm later
 
 
 def rank_course(query):
