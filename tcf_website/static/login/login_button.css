@@ -11,6 +11,7 @@
     border: none;
     width: 382px;
     height: 92px;
+    transform: scale(0.7);
 }
 
 /* Hovering */
