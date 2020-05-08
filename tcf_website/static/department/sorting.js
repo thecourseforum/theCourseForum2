@@ -1,14 +1,14 @@
-let number_A = true;
-let rating_A = false;
-let difficulty_A = true;
-let gpa_A = false;
+let sortNumberAsc = true;
+let sortRatingAsc = false;
+let sortDifficultyAsc = true;
+let sortGpaAsc = false;
 
 /*
     Each method sort_by_... is the same format as outline below
     sort_classes takes in a comparing function (defined below) and reorders the classes appropriately
     comparator needed for both ascending and decending as any classes with null values should be at the end of the list either order
 */
-const sort_by_number = () => {
+const sortByNumber = () => {
     // Updating looks and sorting order
     if (!$('#number-sort-btn').hasClass('active')) {
         $('#rating-sort-btn').removeClass('active')
@@ -16,70 +16,54 @@ const sort_by_number = () => {
         $('#gpa-sort-btn').removeClass('active')
         $('#number-sort-btn').addClass('active')
     } else {               // Already selected so simply reverse the order of sorting (ascending vs descending)
-        number_A = !number_A;
+        sortNumberAsc = !sortNumberAsc;
     }
 
     // Actual sorting
-    if (number_A) {
-        sort_classes(cmp_by_number_A)
-    } else {
-        sort_classes(cmp_by_number_D)
-    }
+    sortClasses(compareByPartial(3, sortNumberAsc));
 }
 
-const sort_by_rating = () => {
+const sortByRating = () => {
     if (!$('#rating-sort-btn').hasClass('active')) {
         $('#number-sort-btn').removeClass('active')
         $('#diff-sort-btn').removeClass('active')
         $('#gpa-sort-btn').removeClass('active')
         $('#rating-sort-btn').addClass('active')
     } else {
-        rating_A = !rating_A;
+        sortRatingAsc = !sortRatingAsc;
     }
 
-    if (rating_A) {
-        sort_classes(cmp_by_rating_A)
-    } else {
-        sort_classes(cmp_by_rating_D)
-    }
+    sortClasses(compareByPartial(0, sortRatingAsc));
 }
 
-const sort_by_difficulty = () => {
+const sortByDifficulty = () => {
     if (!$('#diff-sort-btn').hasClass('active')) {
         $('#number-sort-btn').removeClass('active')
         $('#rating-sort-btn').removeClass('active')
         $('#gpa-sort-btn').removeClass('active')
         $('#diff-sort-btn').addClass('active')
     } else {
-        difficulty_A = !difficulty_A;
+        sortDifficultyAsc = !sortDifficultyAsc;
     }
 
-    if (difficulty_A) {
-        sort_classes(cmp_by_difficulty_A)
-    } else {
-        sort_classes(cmp_by_difficulty_D)
-    }
+    sortClasses(compareByPartial(1, sortDifficultyAsc));
 }
 
-const sort_by_gpa = () => {
+const sortByGpa = () => {
     if (!$('#gpa-sort-btn').hasClass('active')) {
         $('#number-sort-btn').removeClass('active')
         $('#rating-sort-btn').removeClass('active')
         $('#diff-sort-btn').removeClass('active')
         $('#gpa-sort-btn').addClass('active')
     } else {
-        gpa_A = !gpa_A;
+        sortGpaAsc = !sortGpaAsc;
     }
 
-    if (gpa_A) {
-        sort_classes(cmp_by_gpa_A)
-    } else {
-        sort_classes(cmp_by_gpa_D)
-    }
+    sortClasses(compareByPartial(2, sortGpaAsc));
 }
 
 
-const sort_classes = (cmp) => {
+const sortClasses = (cmp) => {
     $("ul.course-list").each(function (a) {
         var li = $(this).children("li");
         li.detach().sort(cmp);
@@ -87,6 +71,47 @@ const sort_classes = (cmp) => {
     });
 }
 
+const compareByPartial = (attribute, ascending) => {
+
+    const compareByAttribute = (a, b) => {
+        let attributeA = "";
+        let attributeB = "";
+        switch (attribute) {
+            case 0:                                                                                 // Rating
+            case 1:                                                                                 // Difficulty
+            case 2:                                                                                 // GPA
+                attributeA = a.querySelectorAll(".mb-0.info")[attribute].innerHTML.trim();    // If any of these three cases,
+                attributeB = b.querySelectorAll(".mb-0.info")[attribute].innerHTML.trim();    // getting value is the same
+                break;
+            case 3:                                                                                 // Number
+                attributeA = a.getElementsByTagName("h3")[0].innerHTML.split(" ").pop();
+                attributeB = b.getElementsByTagName("h3")[0].innerHTML.split(" ").pop();
+                break;
+            default:
+                console.log('Sorting Error')            
+        }
+        
+
+        if (isNaN(attributeA)) {               // This ensures that NaN elements are at the end of the list
+            return 1;
+        } else if (isNaN(attributeB)) {
+            return -1;
+        }
+
+        if (attributeA > attributeB) {
+            return ascending ? 1 : -1;
+        } else if (attributeB > attributeA) {
+            return ascending ? -1 : 1;
+        } else {
+            return 0;
+        }
+    }
+
+    return compareByAttribute;
+}
+
+
+/*
 const cmp_by_rating_D = (a, b) => {
     ratingA = a.querySelectorAll(".mb-0.info")[0].innerHTML.trim();
     ratingB = b.querySelectorAll(".mb-0.info")[0].innerHTML.trim();
@@ -214,3 +239,4 @@ const cmp_by_number_A = (a, b) => {
         return 0;
     }
 };
+*/
