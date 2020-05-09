@@ -16,6 +16,8 @@
 .login-button-wrapper {
     grid-row: 1;
     grid-column: 1;
+    width: 382px;
+    height: 92px;
     transform: scale(0.7);
 }
 
