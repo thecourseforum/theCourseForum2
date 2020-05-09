@@ -5,7 +5,6 @@ import requests
 
 from django.shortcuts import render
 
-
 def search(request):
     """Search results view."""
 
