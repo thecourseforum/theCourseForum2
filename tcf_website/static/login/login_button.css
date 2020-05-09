@@ -34,12 +34,14 @@
 .login-button:hover {
     background: url('./google_login_spritesheet.png') 1146px;
     outline: none;
+    cursor: pointer;
 }
 
 /* Pressed */
 .login-button:active {
     background: url('./google_login_spritesheet.png') 382px;
     outline: none;
+    cursor: pointer;
 }
 
 /* Pressed but dragged cursor away */
