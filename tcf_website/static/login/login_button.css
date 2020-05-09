@@ -5,12 +5,16 @@
  * ^ great resource from Floryan's Game Design class
 */
 
-.login-button-wrapper {
+.login-button-container {
     display: grid;
     grid-auto-columns: minmax(10px, auto);
     grid-auto-rows: minmax(10px, auto);
     justify-items: center;
   }
+
+.login-button-wrapper {
+    
+}
 
 /* Normal */
 .login-button {
