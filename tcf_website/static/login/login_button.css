@@ -10,6 +10,7 @@
     grid-auto-columns: minmax(10px, auto);
     grid-auto-rows: minmax(10px, auto);
     justify-items: center;
+    margin-top: 20px;
   }
 
 .login-button-wrapper {
