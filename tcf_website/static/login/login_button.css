@@ -14,7 +14,9 @@
   }
 
 .login-button-wrapper {
-    
+    grid-row: 1;
+    grid-column: 1;
+    transform: scale(0.7);
 }
 
 /* Normal */
@@ -23,9 +25,6 @@
     border: none;
     width: 382px;
     height: 92px;
-    transform: scale(0.7);
-    grid-row: 1;
-    grid-column: 1;
 }
 
 /* Hovering */
