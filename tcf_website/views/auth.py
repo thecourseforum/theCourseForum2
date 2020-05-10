@@ -17,8 +17,6 @@ def login(request):
 
 def login_error(request):
     """Login error view."""
-    if request.user.is_authenticated:
-        return redirect('browse')
     return render(request, 'login/login.html', {'error': True})
 
 
