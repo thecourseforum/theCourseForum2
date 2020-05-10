@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
+from django.contrib import messages
 from django import forms
 
 
@@ -53,4 +54,5 @@ def unauthenticated_index(request):
 def logout(request):
     """Logs out user."""
     auth_logout(request)
+    messages.add_message(request, messages.SUCCESS, "Logged out successfully!")
     return redirect('login')
