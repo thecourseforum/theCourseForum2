@@ -19,6 +19,7 @@
     width: fit-content;
     text-align: center;
     background-color: #db4929;
+    box-shadow: 3px 3px 1.5px rgb(23, 34, 72);
     color: white;
     border-radius: 20px;
     padding: 10px;
