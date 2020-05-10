@@ -24,11 +24,11 @@
     cursor: default;
     visibility: visible;
     -webkit-animation: fadeOut 0.5s;
-    -webkit-animation-delay: 5s;
+    -webkit-animation-delay: 4s;
     -webkit-animation-iteration-count: 1;
     -webkit-animation-fill-mode: forwards;
     animation: fadeOut 0.5s;
-    animation-delay: 5s;
+    animation-delay: 4s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
 }
