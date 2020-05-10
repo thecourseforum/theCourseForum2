@@ -11,6 +11,7 @@ from django import forms
 def login(request):
     """Login view."""
     if request.user.is_authenticated:
+        messages.add_message(request, messages.ERROR, "You're already logged-in!")
         return redirect('browse')
     return render(request, 'login/login.html')
 
