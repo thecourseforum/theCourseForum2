@@ -1,0 +1,15 @@
+/* 
+    Whenever we need to notify the user, we can create a
+    Django message which displays once in the form of a small
+    popup and disappears.
+
+    https://docs.djangoproject.com/en/3.0/ref/contrib/messages/
+*/
+
+.messages {
+    display: block;
+}
+
+.messages > li {
+    text-align: center;
+}
