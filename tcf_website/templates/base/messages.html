@@ -1,9 +1,9 @@
 {% load static %}
 
 {% if messages %}
-    <ul class="messages">
+    <div class="messages">
         {% for message in messages %}
-            <li>{{ message }}</li>
+            <div class="message">{{ message }}</div>
         {% endfor %}
-    </ul>
+    </div>
 {% endif %}
