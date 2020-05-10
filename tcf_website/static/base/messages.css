@@ -25,22 +25,31 @@
     padding: 10px;
     cursor: default;
     visibility: visible;
-    -webkit-animation: fadeOut 0.5s;
-    -webkit-animation-delay: 4s;
-    -webkit-animation-iteration-count: 1;
+    opacity: 0;
+    -webkit-animation: fadeIn 2s;
+    -webkit-animation-delay: 1s;
+    -webkit-animation-iteration-count: 2;
     -webkit-animation-fill-mode: forwards;
-    animation: fadeOut 0.5s;
-    animation-delay: 4s;
-    animation-iteration-count: 1;
+    -webkit-animation-direction: alternate;
+    animation: fadeIn 2s;
+    animation-delay: 1s;
+    animation-iteration-count: 2;
     animation-fill-mode: forwards;
+    animation-direction: alternate;
 }
 
-@-webkit-keyframes fadeOut {
-    from {opacity: 1; top: 0px} 
-    to   {opacity: 0; top: -10px;}
+@-webkit-keyframes fadeIn {
+    0%   {opacity: 0; top: -10px;}
+    15%  {opacity: 1; top: 0px;}
+    50%  {opacity: 1; top: 0px;}
+    75%  {opacity: 1; top: 0px;}
+    100% {opacity: 1; top: 0px;}
 }
 
-@keyframes fadeOut {
-    from {opacity: 1; top: 0px;}
-    to   {opacity: 0; top: -10px;}
+@keyframes fadeIn {
+    0%   {opacity: 0; top: -10px;}
+    15%  {opacity: 1; top: 0px;}
+    50%  {opacity: 1; top: 0px;}
+    75%  {opacity: 1; top: 0px;}
+    100% {opacity: 1; top: 0px;}
 }
