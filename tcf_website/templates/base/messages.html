@@ -1,5 +1,9 @@
 {% load static %}
 
+{% block styles %}
+<link rel="stylesheet" href="{% static 'base/messages.css' %}" />
+{% endblock %}
+
 {% if messages %}
     <div class="messages">
         {% for message in messages %}
