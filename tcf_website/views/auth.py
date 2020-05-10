@@ -9,11 +9,15 @@ from django import forms
 
 def login(request):
     """Login view."""
+    if request.user.is_authenticated:
+        return redirect('browse')
     return render(request, 'login/login.html')
 
 
 def login_error(request):
     """Login error view."""
+    if request.user.is_authenticated:
+        return redirect('browse')
     return render(request, 'login/login.html', {'error': True})
 
 
