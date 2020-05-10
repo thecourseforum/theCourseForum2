@@ -23,22 +23,22 @@
     padding: 10px;
     cursor: default;
     visibility: visible;
-    -webkit-animation: fadeOut 2s;
-    -webkit-animation-delay: 4s;
+    -webkit-animation: fadeOut 0.5s;
+    -webkit-animation-delay: 5s;
     -webkit-animation-iteration-count: 1;
     -webkit-animation-fill-mode: forwards;
-    animation: fadeOut 2s;
-    animation-delay: 4s;
+    animation: fadeOut 0.5s;
+    animation-delay: 5s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
 }
 
 @-webkit-keyframes fadeOut {
     from {opacity: 1; top: 0px} 
-    to   {opacity: 0; top: -20px;}
+    to   {opacity: 0; top: -10px;}
 }
 
 @keyframes fadeOut {
     from {opacity: 1; top: 0px;}
-    to   {opacity: 0; top: -20px;}
+    to   {opacity: 0; top: -10px;}
 }
