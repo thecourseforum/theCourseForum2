@@ -52,6 +52,15 @@
         </div>
         {% endif %}
     </div>
+    <div class="dropdown">
+      <button id="review-sort-select" class="btn btn-secondary dropdown-toggle" type="button" id="sortOptions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+      <div class="dropdown-menu" aria-labelledby="sortOptions">
+        <button id="votes-sort-btn" onclick="sort_by_votes()" class="dropdown-item" type="button">Most Helpful</button>
+        <button id="recent-sort-btn" onclick="sort_by_recent()" class="dropdown-item" type="button">Most Recent</button>
+        <button id="highrating-sort-btn" onclick="sort_by_highrating()"class="dropdown-item" type="button">Highest Rating</button>
+        <button id="lowrating-sort-btn" onclick="sort_by_lowrating()"class="dropdown-item" type="button">Lowest Rating</button>
+      </div>
+    </div>
 
     {% include "reviews/reviews.html" with reviews=reviews %}
 </div>
@@ -59,5 +68,6 @@
 
 
 {% block js %}
+<script src="{% static 'reviews/sort_reviews.js' %}"></script>
 <script src="{% static 'reviews/review.js' %}"></script>
 {% endblock %}
