@@ -54,10 +54,6 @@ body {
     }
 }
 
-.content {
-  background-color: #EBEBEB;
-}
-
 @media (min-width: 768px) {
     .content {
         width: calc(100vw - 240px);
