@@ -11,10 +11,10 @@
     </div>
 
     <div class="card-body text-left">
-        
+
         <div class="d-flex flex-row align-items-center">
             <div>
-            
+
                 {% if profile %}
                 <div class="d-flex justify-content-between">
                     <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}"><p><strong>{{ review.instructor.full_name }} - {{ review.course }}</strong></p></a>
