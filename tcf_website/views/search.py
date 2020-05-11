@@ -16,17 +16,7 @@ def search(request):
     instructors = fetch_instructors(query)
 
     # Set arguments for template view
-    args = {
-        "query": query
-    }
-    if isinstance(courses, list):
-        args["courses"] = courses
-    elif isinstance(courses, dict):
-        args["courses_error"] = courses.get("message")
-    if isinstance(instructors, list):
-        args["instructors"] = instructors
-    elif isinstance(instructors, dict):
-        args["instructors_error"] = instructors.get("message")
+    args = set_arguments(query, courses, instructors)
 
     # Load template view
     return render(request, 'search/search.html', args)
@@ -157,3 +147,19 @@ def format_instructors(results):
         }
         formatted.append(instructor)
     return formatted
+
+
+def set_arguments(query, courses, instructors):
+    """Sets the search template arguments."""
+    args = {
+        "query": query
+    }
+    if isinstance(courses, list):
+        args["courses"] = courses
+    elif isinstance(courses, dict):
+        args["courses_error"] = courses.get("message")
+    if isinstance(instructors, list):
+        args["instructors"] = instructors
+    elif isinstance(instructors, dict):
+        args["instructors_error"] = instructors.get("message")
+    return args
