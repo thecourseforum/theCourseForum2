@@ -10,3 +10,34 @@
 .member:hover{
     box-shadow: 2px 2px 5px #888888 !important;
 }
+
+/* .memberinfo {
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  transition: all 0.5s ease;
+  will-change: transform;
+}
+
+.memberinfohover {
+  opacity: 0;
+  position: absolute;
+  bottom: -160px;
+  left: 0;
+  text-align: center;
+  width: 100%;
+  transition: all 0.5s ease;
+  will-change: transform;
+}
+
+.member:hover .memberinfohover {
+  opacity: 100;
+  -webkit-transform: translateY(-194px);
+          transform: translateY(-194px);
+}
+
+.member:hover .memberinfo {
+  opacity: 0;
+  -webkit-transform: translateY(200px);
+          transform: translateY(200px);
+} */
