@@ -54,7 +54,8 @@ def fetch_elasticsearch(api_endpoint, algorithm):
         if response.status_code != 200:
             response = {
                 "error": True,
-                "message": "GET request failed w/ status code " + str(response.status_code)
+                "message": "GET request failed w/ status code " +
+                           str(response.status_code)
             }
         return response
     except requests.RequestException as error:
