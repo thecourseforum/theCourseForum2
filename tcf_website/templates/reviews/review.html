@@ -4,7 +4,7 @@
         <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" {% if user.is_authenticated %}onclick="handleVote({{review.id}}, true)" href="javascript:;"{% else %}href="{% url 'login' %}"{% endif %}>
             <i class="fa fa-angle-up fa-fw"></i>
         </a>
-        <span class="voteCount">{{ review.count_votes }}</span>
+        <span id="vote-count" class="voteCount">{{ review.count_votes }}</span>
         <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" {% if user.is_authenticated %}onclick="handleVote({{review.id}}, false)" href="javascript:;"{% else %}href="{% url 'login' %}"{% endif %}>
             <i class="fa fa-angle-down fa-fw"></i>
         </a>
@@ -30,7 +30,7 @@
             <div class="d-flex">
                 <div>
                     <strong>
-                        <p>
+                        <p id="review-average">
                             <i class="fa fa-star fa-fw"></i>&nbsp;{{ review.average|floatformat:2 }}
                         </p>
                     </strong>
@@ -54,7 +54,7 @@
 
             <div class="text-right">
                 <p>{{ review.semester }}</p>
-                <p>{{ review.created|date }}</p>
+                <p id="date">{{ review.created|date }}</p>
             </div>
         </div>
     </div>

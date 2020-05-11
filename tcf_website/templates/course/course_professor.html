@@ -62,7 +62,7 @@
         <button id="lowrating-sort-btn" onclick="sort_by_lowrating()"class="dropdown-item" type="button">Lowest Rating</button>
       </div>
     </div>
-    
+
     {% include "reviews/reviews.html" with reviews=reviews %}
 </div>
 {% endblock %}
@@ -70,4 +70,5 @@
 
 {% block js %}
 <script src="{% static 'reviews/review.js' %}"></script>
+<script src="{% static 'reviews/sort_reviews.js' %}"></script>
 {% endblock %}
