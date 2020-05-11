@@ -1,3 +1,16 @@
+.about h2, h4 {
+  color:rgb(23, 34, 72);
+}
+
+.about-nav .about-nav-item a {
+  color:rgb(201, 93, 48);
+}
+
+.about-nav-item:hover{
+  color:rgb(23, 34, 72);
+  border-bottom:8px solid rgb(23, 34, 72);
+}
+
 .pfp {
     overflow: hidden;
 }

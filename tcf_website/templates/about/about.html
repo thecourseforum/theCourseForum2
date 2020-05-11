@@ -7,7 +7,7 @@
 
 {% block content %}
 <div class="browse container">
-  <section class="about jumbotron bg-light">
+  <section class="about jumbotron bg-light pb-5">
     <div class="d-flex flex-row">
       <img src="{% static 'base/img/logo-orange-small.png' %}" width="100" height="100" alt="tCF">
       <div class="ml-4">
@@ -16,28 +16,46 @@
       </div>
     </div>
     <hr/>
-    <p><strong>theCourseForum</strong> is a product of developers and contributors from the UVA
-    community. It's a place where students can share their academic experiences of
-    classes they've taken. We provide past grade distributions along with
-    student reviews for courses in all departments. Gain insight on which
-    professors to choose and discover whether a class is worth a spot in your
-    ideal schedule. We'll connect you to courses you'll love, and make
-    enrollment stress free.
-    </p>
-    <h5>What can you do?</h5>
-    <p> The biggest thing you can do: Submit reviews! While the website is
-        spectacular, what really makes theCourseForum is the sharing of
-        individual, personal experiences from UVA students. <a href="{% url 'new_review' %}" style="color: dodgerblue;">Write a review</a> today
-        to leave an impact on your community.
-    </p>
-    <p> Our student-run development team is always recruiting for more
-        web developers, designers, and marketing team members! If that's you,
-        contact us at support@thecourseforum.com — experience not required.
-    </p>
+    <div class="row">
+      <p><strong>theCourseForum</strong> is a product of developers and contributors from the UVA
+      community. It's a place where students can share their academic experiences of
+      classes they've taken. We provide past grade distributions along with
+      student reviews for courses in all departments. Gain insight on which
+      professors to choose and discover whether a class is worth a spot in your
+      ideal schedule. We'll connect you to courses you'll love, and make
+      enrollment stress free.
+      </p>
+      <h4>What can you do?</h4>
+      <p> The biggest thing you can do: Submit reviews! While the website is
+          spectacular, what really makes theCourseForum is the sharing of
+          individual, personal experiences from UVA students. <a href="{% url 'new_review' %}" class="text-primary"">Write a review</a> today
+          to leave an impact on your community.
+      </p>
+      <p> Our student-run development team is always recruiting for more
+          web developers, designers, and marketing team members! If that's you,
+          contact us at support@thecourseforum.com — experience not required.
+      </p>
+    </div>
+    <hr/>
+    <div class="about-nav row text-center pt-3">
+      <div class="about-nav-item col-sm-4">
+        <a href="{% url 'about_history' %}" class="display-4"><i class="fa fa-book"></i></a>
+        <h4>History</h4>
+      </div>
+      <div class="about-nav-item col-sm-4">
+        <a href="{% url 'about' %}" class="display-4"><i class="fa fa-code"></i></a>
+        <h4>Current Team</h4>
+      </div>
+      <div class="about-nav-item col-sm-4">
+        <a href="{% url 'about_contributors' %}" class="display-4"><i class="fa fa-graduation-cap"></i></a>
+        <h4>Past Contributors</h4>
+      </div>
+    </div>
   </section>
 
-  <div class="team text-center">
-    <h1>Meet Our Team</h1>
+{% block subcontent %}
+  <div id="team-members" class="team text-center">
+    <h1 class="my-5">Meet Our Team</h1>
 
     <div class="executive-team jumbotron py-5 bg-light">
       <div class="container">
@@ -112,8 +130,7 @@
     </div>
 
   </div>
+{% endblock %}
+
 </div>
-
-
-
 {% endblock %}
