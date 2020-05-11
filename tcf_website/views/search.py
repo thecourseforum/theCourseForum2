@@ -17,10 +17,16 @@ def search(request):
 
     # Set arguments for template view
     args = {
-        "courses": courses,
-        "instructors": instructors,
         "query": query
     }
+    if isinstance(courses, list):
+        args["courses"] = courses
+    elif isinstance(courses, dict):
+        args["courses_error"] = courses.get("message")
+    if isinstance(instructors, list):
+        args["instructors"] = instructors
+    elif isinstance(instructors, dict):
+        args["instructors_error"] = instructors.get("message")
 
     # Load template view
     return render(request, 'search/search.html', args)
@@ -55,9 +61,18 @@ def fetch_elasticsearch(api_endpoint, algorithm):
             headers=https_headers,
             data=algorithm
         )
+        if response.status_code != 200:
+            response = {
+                "error": True,
+                "message": "GET request failed w/ status code " + str(response.status_code)
+            }
         return response
     except requests.RequestException as error:
-        return "Error: " + str(error)
+        response = {
+            "error": True,
+            "message": "GET request failed w/ error " + str(error)
+        }
+        return response
 
 
 def rank_instructor(query):
@@ -101,6 +116,8 @@ def rank_course(query):
 
 def format_response(response):
     """Formats an Elastic search endpoint response."""
+    if "error" in response:
+        return response
     body = json.loads(response.text)
     engine = body.get("meta").get("engine").get("name")
     results = body.get("results")
