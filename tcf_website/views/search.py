@@ -12,12 +12,8 @@ def search(request):
     query = request.GET.get('q', '')
 
     # Fetch Elasticsearch data
-    response1 = fetch_courses(query)
-    response2 = fetch_instructors(query)
-
-    # Format Elasticsearch data
-    courses = format_response(response1)
-    instructors = format_response(response2)
+    courses = fetch_courses(query)
+    instructors = fetch_instructors(query)
 
     # Set arguments for template view
     args = {
@@ -34,14 +30,16 @@ def fetch_courses(query):
     """Gets Elasticsearch course data."""
     api_endpoint = os.environ['ES_COURSE_SEARCH_ENDPOINT']
     algorithm = rank_course(query)
-    return fetch_elasticsearch(api_endpoint, algorithm)
+    response = fetch_elasticsearch(api_endpoint, algorithm)
+    return format_response(response)
 
 
 def fetch_instructors(query):
     """Gets Elasticsearch instructor data."""
     api_endpoint = os.environ['ES_INSTRUCTOR_SEARCH_ENDPOINT']
     algorithm = rank_instructor(query)
-    return fetch_elasticsearch(api_endpoint, algorithm)
+    response = fetch_elasticsearch(api_endpoint, algorithm)
+    return format_response(response)
 
 
 def fetch_elasticsearch(api_endpoint, algorithm):
