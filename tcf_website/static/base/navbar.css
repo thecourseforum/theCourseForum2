@@ -14,6 +14,19 @@
     height: calc(70px - 8px - 8px);
     padding: 0px;
     margin: 0px;
+    border-radius: calc(.25rem - 1px);
+}
+
+.tCF:hover {
+    background-color: rgba(140, 151, 161, 0.2);
+}
+
+.tCF:active {
+    background-color: rgb(140, 151, 161, 0.4);
+}
+
+.tCF:focus {
+    background-color: rgb(140, 151, 161, 0.4);
 }
 
 @media (min-width: 768px) {
