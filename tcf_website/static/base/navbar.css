@@ -42,8 +42,16 @@
     alt: "tCF";
 }
 
+
+@media (min-width: 768px) {
+    .navbar-toggler.menu {
+        display: none !important;
+    }
+}
+
 .navbar-toggler.menu {
     margin-left: 16px;
+    margin-right: 8px;
     border-color: rgb(24, 35, 71);
     background-color: rgb(248, 249, 250);
 }
