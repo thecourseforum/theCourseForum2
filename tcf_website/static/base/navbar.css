@@ -11,7 +11,7 @@
     width: fit-content;
     height: calc(70px - 8px - 8px);
     padding: 0px;
-    margin: 0px;
+    margin: 0px 16px 0px 0px;
     border-radius: calc(.25rem - 1px);
 }
 
@@ -32,7 +32,7 @@
         width: calc(240px - 16px);
         height: calc(70px - 8px - 8px);
         padding: 0px;
-        margin: 0px;
+        margin: 0px 16px 0px 0px;
     }
 }
 
