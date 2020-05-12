@@ -9,6 +9,28 @@
     height: 70px;
 }
 
+.tCF {
+    width: fit-content;
+    height: calc(70px - 8px - 8px);
+    padding: 0px;
+    margin: 0px;
+}
+
+@media (min-width: 768px) {
+    .tCF {
+        width: calc(240px - 16px);
+        height: calc(70px - 8px - 8px);
+        padding: 0px;
+        margin: 0px;
+    }
+}
+
+.logo {
+    width: 64.80px;
+    height: calc(70px - 8px - 8px);
+    alt: "tCF";
+}
+
 .navbar .logo-search {
     width: 100px;
     margin-right: 1rem;
