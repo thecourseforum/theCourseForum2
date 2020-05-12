@@ -10,20 +10,18 @@
     <a class="navbar-brand tCF" href="/">
       <img class="logo" src="{% static 'base/img/new_logo.png' %}">
     </a>
-    <div class="d-flex flex-grow-1 logo-search">
-        <!-- search not in navbar collapse -->
-      <form class="search d-inline-block mx-md-2 my-auto order-1" action="/search" method="get">
-          <div class="input-group">
-              <input type="search" class="form-control border border-right-0"
-                     placeholder="Search..." aria-label="Search" name="q" value="{{query}}">
-              <div class="input-group-append">
-                  <button class="btn btn-outline-primary border border-left-0" type="submit">
-                      <i class="fa fa-search" aria-hidden="true"></i>
-                  </button>
-              </div>
-          </div>
-      </form>
-    </div>
+    <!-- tCF search -->
+    <form class="form-inline flex-grow-1" action="/search" method="get">
+      <div class="input-group flex-grow-1">
+        <input type="search" class="form-control border border-right-0"
+                placeholder="Search..." aria-label="Search" name="q" value="{{query}}">
+        <div class="input-group-append">
+          <button class="btn btn-outline-primary border border-left-0" type="submit">
+              <i class="fa fa-search" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </form>
 
     <button class="navbar-toggler d-md-none order-0 ml-sm-4" type="button" id="menu-toggle"
       aria-controls="wrapper" aria-expanded="false" aria-label="Toggle sidebar">
