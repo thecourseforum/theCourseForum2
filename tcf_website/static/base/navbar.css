@@ -41,3 +41,21 @@
     height: calc(70px - 8px - 8px);
     alt: "tCF";
 }
+
+.navbar-toggler.menu {
+    margin-left: 16px;
+    border-color: rgb(24, 35, 71);
+    background-color: rgb(248, 249, 250);
+}
+
+.navbar-toggler.menu:hover {
+    background-color: rgb(230, 230, 230);
+}
+
+.navbar-toggler.menu:active {
+    background-color: rgb(200, 200, 200);
+}
+
+.navbar-toggler.menu:focus {
+    background-color: rgb(190, 190, 190);
+}
