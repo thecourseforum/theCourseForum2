@@ -5,6 +5,9 @@
 */
 
 .tCF {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     width: fit-content;
     height: calc(70px - 8px - 8px);
     padding: 0px;
