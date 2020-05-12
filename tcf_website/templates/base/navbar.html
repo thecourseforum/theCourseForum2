@@ -1,5 +1,9 @@
 {% load static %}
 
+{% block styles %}
+<link rel="stylesheet" href="{% static 'base/navbar.css' %}" />
+{% endblock %}
+
 <header>
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top p-3">
     <!-- Main logo, search bar, collapse nav items -->
