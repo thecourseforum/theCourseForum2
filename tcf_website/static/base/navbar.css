@@ -4,6 +4,10 @@
     another, making components more maliable and maintainable.
 */
 
+.navbar {
+    flex-wrap: nowrap;
+}
+
 .tCF {
     display: flex;
     flex-direction: row;
