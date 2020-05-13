@@ -1,7 +1,7 @@
 """Views for index and about pages."""
+import json
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
-import json
 
 
 def index(request):
