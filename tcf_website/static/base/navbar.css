@@ -67,3 +67,15 @@
 .navbar-toggler.menu:focus {
     background-color: rgb(190, 190, 190);
 }
+
+@media (max-width: 768px) {
+    .account-settings {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .dropdown-menu.settings {
+        min-width: 140px !important;
+    }
+}
