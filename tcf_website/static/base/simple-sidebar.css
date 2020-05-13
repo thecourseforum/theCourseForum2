@@ -58,9 +58,5 @@ body {
     min-width: 0;
     width: 100%;
   }
-
-  #wrapper.toggled #sidebar-wrapper {
-    margin-left: -15rem;
-  }
 }
 
