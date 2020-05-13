@@ -38,7 +38,7 @@
         <hr/>
         <div class="row">
           {% for member in group.members %}
-            <div class="col-lg-2 col-sm-6 d-flex">
+            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 d-flex">
               <div class="member card mb-4 shadow-sm flex-fill">
                 <div class="pfp">
                   <img class="card-img-top" src="{% static 'about/alum-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
