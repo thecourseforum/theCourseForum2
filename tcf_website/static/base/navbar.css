@@ -11,24 +11,32 @@
 .tCF {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: flex-start;
     width: fit-content;
     height: calc(70px - 8px - 8px);
     padding: 0px;
     margin: 0px 16px 0px 0px;
     border-radius: calc(.25rem - 1px);
+
+    /* Animation */
+    transform: scale(1.0);
+    transition: padding-left .25s;
+    transition: transform .5s;
 }
 
 .tCF:hover {
     background-color: rgba(140, 151, 161, 0.2);
+    transform: scale(1.1);
 }
 
 .tCF:active {
     background-color: rgb(140, 151, 161, 0.4);
+    transform: scale(1.1);
 }
 
 .tCF:focus {
     background-color: rgb(140, 151, 161, 0.4);
+    transform: scale(1.1);
 }
 
 @media (min-width: 768px) {
@@ -37,6 +45,9 @@
         height: calc(70px - 8px - 8px);
         padding: 0px;
         margin: 0px 16px 0px 0px;
+
+        /* Animation */
+        padding-left: calc(((240px - 16px - 16px) / 2) - (64.80px / 2));
     }
 }
 
