@@ -8,7 +8,7 @@ function sortReviews(btnID){
   htmlTag = '#'.concat(btnID);
   label = "";
   prop = "";
-  asc = 1;
+  asc = -1;
   switch (btnID) {
     case "votes-sort-btn":
       label = 'Most Helpful';
@@ -25,7 +25,7 @@ function sortReviews(btnID){
     case "lowrating-sort-btn":
       label = 'Lowest Rating';
       prop = 'review-average';
-      asc = -1;
+      asc = 1;
       break;
     default:
       console.log("error");
