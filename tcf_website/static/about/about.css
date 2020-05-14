@@ -1,3 +1,16 @@
+.about h2, h4 {
+  color:rgb(23, 34, 72);
+}
+
+.about-nav .about-nav-item a {
+  color:rgb(201, 93, 48);
+}
+
+.about-nav-item:hover{
+  color:rgb(23, 34, 72);
+  border-bottom:8px solid rgb(23, 34, 72);
+}
+
 .pfp {
     overflow: hidden;
 }
@@ -9,4 +22,14 @@
 }
 .member:hover{
     box-shadow: 2px 2px 5px #888888 !important;
+}
+
+.fit-image{
+  width: 100%;
+  object-fit: cover;
+}
+
+.history-img{
+  overflow: hidden;
+  opacity: 0.8;
 }
