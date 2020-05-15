@@ -1,5 +1,7 @@
 services:
 - docker
+before_script:
+- cp .env.example .env
 before_install:
 - openssl aes-256-cbc -K $encrypted_859f5568b0c8_key -iv $encrypted_859f5568b0c8_iv
   -in gae-service-account.json.enc -out gae-service-account.json -d
