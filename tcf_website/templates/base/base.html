@@ -6,13 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>theCourseForum</title>
-    <link rel="icon" 
-      type="image/png" 
+    <link rel="icon"
+      type="image/png"
       href="{% static 'base/img/logo-orange-small.png' %}">
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="{% static 'base/bootstrap.min.css' %}" />
     <script src="https://kit.fontawesome.com/ed3998fccc.js" crossorigin="anonymous"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link rel="stylesheet" href="{% static 'base/simple-sidebar.css'%}">
@@ -72,7 +74,7 @@
     <!-- https://www.reddit.com/r/django/comments/9ccwci/django_and_turbolinks/ -->
     <!-- https://stackoverflow.com/questions/47240766/to-use-turbolinks-5-with-django-how-can-i-automate-inclusion-of-the-turbolinks -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js"></script> -->
-    
+
     {% block js %}
     {% endblock %}
 </body>
