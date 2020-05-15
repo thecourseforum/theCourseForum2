@@ -22,8 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = int(os.environ.get('DEBUG', 0)) == 1
-DEBUG = os.environ.get('DEBUG', False)
+DEBUG = int(os.environ.get('DEBUG', 0)) == 1      # Why can't debug be a bool?
+# DEBUG = os.environ.get('DEBUG', False)
 
 ALLOWED_HOSTS = ['localhost', '.ngrok.io', '127.0.0.1']
 
@@ -143,8 +143,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', None)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', None)
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['virginia.edu']
 # SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
 # LOGIN_ERROR_URL = '/'
@@ -168,9 +168,9 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 # Read-only access to Elastic
-ES_PUBLIC_API_KEY = os.environ.get('ES_PUBLIC_API_KEY')
-ES_COURSE_SEARCH_ENDPOINT = os.environ.get('ES_COURSE_SEARCH_ENDPOINT')
-ES_INSTRUCTOR_SEARCH_ENDPOINT = os.environ.get('ES_INSTRUCTOR_SEARCH_ENDPOINT')
+ES_PUBLIC_API_KEY = os.environ.get('ES_PUBLIC_API_KEY', None)
+ES_COURSE_SEARCH_ENDPOINT = os.environ.get('ES_COURSE_SEARCH_ENDPOINT', None)
+ES_INSTRUCTOR_SEARCH_ENDPOINT = os.environ.get('ES_INSTRUCTOR_SEARCH_ENDPOINT', None)
 
 # PROD SETTINGS
 if not DEBUG:
@@ -182,8 +182,8 @@ if not DEBUG:
 
     # Gather information from environment variables.
 
-    HOSTNAME = os.environ.get('HOSTNAME')
-    PUBLIC_IPV4 = os.environ.get('PUBLIC_IPV4')
+    HOSTNAME = os.environ.get('HOSTNAME', None)
+    PUBLIC_IPV4 = os.environ.get('PUBLIC_IPV4', None)
 
     # SECURITY WARNING: App Engine's security features ensure that it is safe to
     # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
@@ -198,9 +198,9 @@ if not DEBUG:
         ALLOWED_HOSTS.append(PUBLIC_IPV4)
 
     # Read-write access to Elastic
-    ES_COURSE_DOCUMENTS_ENDPOINT = os.environ.get('ES_COURSE_DOCUMENTS_ENDPOINT')
-    ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = os.environ.get('ES_INSTRUCTOR_DOCUMENTS_ENDPOINT')
-    ES_PRIVATE_API_KEY = os.environ.get('ES_PRIVATE_API_KEY')
+    ES_COURSE_DOCUMENTS_ENDPOINT = os.environ.get('ES_COURSE_DOCUMENTS_ENDPOINT', None)
+    ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = os.environ.get('ES_INSTRUCTOR_DOCUMENTS_ENDPOINT', None)
+    ES_PRIVATE_API_KEY = os.environ.get('ES_PRIVATE_API_KEY', None)
 
     DATABASES['default'] = {
         'NAME': os.environ.get('DB_NAME'),
