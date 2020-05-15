@@ -7,11 +7,8 @@ before_install:
     - openssl aes-256-cbc -K $encrypted_859f5568b0c8_key -iv $encrypted_859f5568b0c8_iv -in gae-service-account.json.enc -out gae-service-account.json -d
     - cp .env.example .env
     - docker build .
-    - docker-compose up -d
+    - docker-compose up
 
-script:
-    - docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core
-    - docker exec tcf_django python3 manage.py test
 
 before_deploy:
     - envsubst < app.yaml.template > app.yaml.env
