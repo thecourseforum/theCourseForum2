@@ -14,13 +14,13 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import environ
 
-root = environ.Path(__file__) - 3  # get root of the project
-env = environ.Env()
-environ.Env.read_env()  # reading .env file
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_DIR = root()
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+env = environ.Env(DEBUG=(bool, False))
+env_file = os.path.join(BASE_DIR, ".env")
+environ.Env.read_env(env_file)  # reading .env file
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -117,11 +117,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-# STATIC_URL = '/static/'
-# STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-public_root = root.path('public/')
-STATIC_ROOT = public_root('static')
-STATIC_URL = env.str('STATIC_URL', default='static/')
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+# STATIC_URL = env.str('STATIC_URL', default='static/')
 
 
 
