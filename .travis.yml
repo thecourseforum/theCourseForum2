@@ -6,7 +6,7 @@ before_install:
   -in gae-service-account.json.enc -out gae-service-account.json -d
 - envsubst < .env.travis > .env
 - docker build .
-- docker-compose up
+- docker-compose up -d
 
 before_deploy:
 - envsubst < app.yaml.template > app.yaml.env
