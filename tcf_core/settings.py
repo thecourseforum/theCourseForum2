@@ -143,8 +143,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', default=None)
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', default=None)
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['virginia.edu']
 # SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
 # LOGIN_ERROR_URL = '/'
@@ -168,9 +168,9 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 # Read-only access to Elastic
-ES_PUBLIC_API_KEY = env.str('ES_PUBLIC_API_KEY', default=None)
-ES_COURSE_SEARCH_ENDPOINT = env.str('ES_COURSE_SEARCH_ENDPOINT', default=None)
-ES_INSTRUCTOR_SEARCH_ENDPOINT = env.str('ES_INSTRUCTOR_SEARCH_ENDPOINT', default=None)
+ES_PUBLIC_API_KEY = env.str('ES_PUBLIC_API_KEY')
+ES_COURSE_SEARCH_ENDPOINT = env.str('ES_COURSE_SEARCH_ENDPOINT')
+ES_INSTRUCTOR_SEARCH_ENDPOINT = env.str('ES_INSTRUCTOR_SEARCH_ENDPOINT')
 
 # PROD SETTINGS
 if not DEBUG:
@@ -182,8 +182,8 @@ if not DEBUG:
 
     # Gather information from environment variables.
 
-    HOSTNAME = env.str('HOSTNAME', default=None)
-    PUBLIC_IPV4 = env.str('PUBLIC_IPV4', default=None)
+    HOSTNAME = env.str('HOSTNAME')
+    PUBLIC_IPV4 = env.str('PUBLIC_IPV4')
 
     # SECURITY WARNING: App Engine's security features ensure that it is safe to
     # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
@@ -198,9 +198,9 @@ if not DEBUG:
         ALLOWED_HOSTS.append(PUBLIC_IPV4)
 
     # Read-write access to Elastic
-    ES_COURSE_DOCUMENTS_ENDPOINT = env.str('ES_COURSE_DOCUMENTS_ENDPOINT', default=None)
-    ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = env.str('ES_INSTRUCTOR_DOCUMENTS_ENDPOINT', default=None)
-    ES_PRIVATE_API_KEY = env.str('ES_PRIVATE_API_KEY', default=None)
+    ES_COURSE_DOCUMENTS_ENDPOINT = env.str('ES_COURSE_DOCUMENTS_ENDPOINT')
+    ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = env.str('ES_INSTRUCTOR_DOCUMENTS_ENDPOINT')
+    ES_PRIVATE_API_KEY = env.str('ES_PRIVATE_API_KEY')
 
     DATABASES['default'] = {
         'NAME': env.str('DB_NAME'),
