@@ -12,23 +12,18 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import environ
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-env = environ.Env(DEBUG=(bool, False))
-env_file = os.path.join(BASE_DIR, ".env")
-environ.Env.read_env(env_file)  # reading .env file
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = int(env.str('DEBUG', 0)) == 1
-DEBUG = env.bool('DEBUG', default=False)
+# DEBUG = int(os.environ.get('DEBUG', 0)) == 1
+DEBUG = os.environ.get('DEBUG', False)
 
 ALLOWED_HOSTS = ['localhost', '.ngrok.io', '127.0.0.1']
 
@@ -119,7 +114,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-# STATIC_URL = env.str('STATIC_URL', default='static/')
+# STATIC_URL = os.environ.get('STATIC_URL', default='static/')
 
 
 
@@ -173,22 +168,22 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 # Read-only access to Elastic
-ES_PUBLIC_API_KEY = env.str('ES_PUBLIC_API_KEY')
-ES_COURSE_SEARCH_ENDPOINT = env.str('ES_COURSE_SEARCH_ENDPOINT')
-ES_INSTRUCTOR_SEARCH_ENDPOINT = env.str('ES_INSTRUCTOR_SEARCH_ENDPOINT')
+ES_PUBLIC_API_KEY = os.environ.get('ES_PUBLIC_API_KEY')
+ES_COURSE_SEARCH_ENDPOINT = os.environ.get('ES_COURSE_SEARCH_ENDPOINT')
+ES_INSTRUCTOR_SEARCH_ENDPOINT = os.environ.get('ES_INSTRUCTOR_SEARCH_ENDPOINT')
 
 # PROD SETTINGS
 if not DEBUG:
 
     # Heroku configuration.
-    if env.bool("HEROKU", default=False):
+    if os.environ.get("HEROKU", False):
         import django_heroku
         django_heroku.settings(locals())
 
     # Gather information from environment variables.
 
-    HOSTNAME = env.str('HOSTNAME')
-    PUBLIC_IPV4 = env.str('PUBLIC_IPV4')
+    HOSTNAME = os.environ.get('HOSTNAME')
+    PUBLIC_IPV4 = os.environ.get('PUBLIC_IPV4')
 
     # SECURITY WARNING: App Engine's security features ensure that it is safe to
     # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
@@ -203,17 +198,17 @@ if not DEBUG:
         ALLOWED_HOSTS.append(PUBLIC_IPV4)
 
     # Read-write access to Elastic
-    ES_COURSE_DOCUMENTS_ENDPOINT = env.str('ES_COURSE_DOCUMENTS_ENDPOINT')
-    ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = env.str('ES_INSTRUCTOR_DOCUMENTS_ENDPOINT')
-    ES_PRIVATE_API_KEY = env.str('ES_PRIVATE_API_KEY')
+    ES_COURSE_DOCUMENTS_ENDPOINT = os.environ.get('ES_COURSE_DOCUMENTS_ENDPOINT')
+    ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = os.environ.get('ES_INSTRUCTOR_DOCUMENTS_ENDPOINT')
+    ES_PRIVATE_API_KEY = os.environ.get('ES_PRIVATE_API_KEY')
 
     DATABASES['default'] = {
-        'NAME': env.str('DB_NAME'),
+        'NAME': os.environ.get('DB_NAME'),
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'USER': env.str('DB_USER'),
-        'PASSWORD': env.str('DB_PASSWORD'),
-        'HOST': env.str('DB_HOST'),
-        'PORT': env.str('DB_PORT'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
         'OPTIONS': {'sslmode': 'require'},
     }
 
