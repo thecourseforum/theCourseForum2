@@ -1,23 +1,22 @@
 language: python
-
 services:
-    - docker
-
+- docker
 before_install:
-    - openssl aes-256-cbc -K $encrypted_859f5568b0c8_key -iv $encrypted_859f5568b0c8_iv -in gae-service-account.json.enc -out gae-service-account.json -d
-    - cp .env.example .env
-    - docker build .
-    - docker-compose up
-
-
+- openssl aes-256-cbc -K $encrypted_859f5568b0c8_key -iv $encrypted_859f5568b0c8_iv
+  -in gae-service-account.json.enc -out gae-service-account.json -d
+- cp .env.example .env
+- docker build .
+- docker-compose up
 before_deploy:
-    - envsubst < app.yaml.template > app.yaml.env
-    - cp app.yaml.env app.yaml
-    - docker exec tcf_django python3 manage.py collectstatic --noinput --clear
-
+- envsubst < app.yaml.template > app.yaml.env
+- cp app.yaml.env app.yaml
+- docker exec tcf_django python3 manage.py collectstatic --noinput --clear
 deploy:
   provider: gae
   keyfile: gae-service-account.json
   project: thecourseforum-1585971713016
   on: master
   edge: true
+env:
+  global:
+    secure: hk861omekf87arJduE+Vg41ox2qn3WbK2TSBWdFBaugJaM+MsuGaNspWbSmwhJ4bbup2FXgRMIl8A0ED2YZT//yB3lxywPUKNZ0xZ6ZFQrpk5pxd+tNlEXFGh1f5PYeHEit/jsH19GdKVMDCxXbH6BMdhJ1YzQ90LD/MVnBbN02bRSUmcGif0gGpJ6JPiFhnJqMJGkIDmFYL5GEXw7IVuNdCH0WtsuRJ9qFRRA2Xs+ho8fy/DKYfDMmT+wuHKKZHQIPO4J/r6+Onksjr9UoeemcQxwNCK/w5jes4jO5DZYp5d1qsIDvPtm7/AUWBz6cytZ8F92GNplT/jEYPO9lMOFARfBJksrczVB+9R/zjZXK5odh/M7Qb8l6nr0atJimqj8IXNhgKerN9AwTLEMOE8GI6F1xOehgzp1KLzJy6njCXtUyTQQKZ1N1+A4DDcyPkW4zj/C6u+CNu9QGZSQv5xySthpP+wmLM8S/qieWACcR7H08xLn93xfEFjtK7Yby97cKVqiWk385Lbkpdg14EhoOA+VOl+BZFUVoOMNcJWRCwEOjKbRZSglSoxPkpfJszCKrhkEkZiITqQjdI7KjVuZHiSlxmzD9wfXQuLVB2OmRSaKwWC43pznwrOi7PVSQ0u4s11HR3Y+h8qkn9IE9BjA7xoHbtC/hmV27PqKKwh4Y=
