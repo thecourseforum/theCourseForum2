@@ -19,11 +19,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = env.str('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get('DEBUG', 0)) == 1      # Why can't debug be a bool?
-# DEBUG = os.environ.get('DEBUG', False)
+# DEBUG = int(env.str('DEBUG', 0)) == 1      # Why can't debug be a bool?
+DEBUG = env.str('DEBUG', default=False)
 
 ALLOWED_HOSTS = ['localhost', '.ngrok.io', '127.0.0.1']
 
@@ -114,7 +114,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-# STATIC_URL = os.environ.get('STATIC_URL', default='static/')
+# STATIC_URL = env.str('STATIC_URL', default='static/')
 
 
 
@@ -143,8 +143,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', None)
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', None)
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', default=None)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', default=None)
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['virginia.edu']
 # SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
 # LOGIN_ERROR_URL = '/'
@@ -168,22 +168,22 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 # Read-only access to Elastic
-ES_PUBLIC_API_KEY = os.environ.get('ES_PUBLIC_API_KEY', None)
-ES_COURSE_SEARCH_ENDPOINT = os.environ.get('ES_COURSE_SEARCH_ENDPOINT', None)
-ES_INSTRUCTOR_SEARCH_ENDPOINT = os.environ.get('ES_INSTRUCTOR_SEARCH_ENDPOINT', None)
+ES_PUBLIC_API_KEY = env.str('ES_PUBLIC_API_KEY', default=None)
+ES_COURSE_SEARCH_ENDPOINT = env.str('ES_COURSE_SEARCH_ENDPOINT', default=None)
+ES_INSTRUCTOR_SEARCH_ENDPOINT = env.str('ES_INSTRUCTOR_SEARCH_ENDPOINT', default=None)
 
 # PROD SETTINGS
 if not DEBUG:
 
     # Heroku configuration.
-    if os.environ.get("HEROKU", False):
+    if env.bool("HEROKU", default=False):
         import django_heroku
         django_heroku.settings(locals())
 
     # Gather information from environment variables.
 
-    HOSTNAME = os.environ.get('HOSTNAME', None)
-    PUBLIC_IPV4 = os.environ.get('PUBLIC_IPV4', None)
+    HOSTNAME = env.str('HOSTNAME', default=None)
+    PUBLIC_IPV4 = env.str('PUBLIC_IPV4', default=None)
 
     # SECURITY WARNING: App Engine's security features ensure that it is safe to
     # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
@@ -198,17 +198,17 @@ if not DEBUG:
         ALLOWED_HOSTS.append(PUBLIC_IPV4)
 
     # Read-write access to Elastic
-    ES_COURSE_DOCUMENTS_ENDPOINT = os.environ.get('ES_COURSE_DOCUMENTS_ENDPOINT', None)
-    ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = os.environ.get('ES_INSTRUCTOR_DOCUMENTS_ENDPOINT', None)
-    ES_PRIVATE_API_KEY = os.environ.get('ES_PRIVATE_API_KEY', None)
+    ES_COURSE_DOCUMENTS_ENDPOINT = env.str('ES_COURSE_DOCUMENTS_ENDPOINT', default=None)
+    ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = env.str('ES_INSTRUCTOR_DOCUMENTS_ENDPOINT', default=None)
+    ES_PRIVATE_API_KEY = env.str('ES_PRIVATE_API_KEY', default=None)
 
     DATABASES['default'] = {
-        'NAME': os.environ.get('DB_NAME'),
+        'NAME': env.str('DB_NAME'),
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT'),
+        'USER': env.str('DB_USER'),
+        'PASSWORD': env.str('DB_PASSWORD'),
+        'HOST': env.str('DB_HOST'),
+        'PORT': env.str('DB_PORT'),
         'OPTIONS': {'sslmode': 'require'},
     }
 
