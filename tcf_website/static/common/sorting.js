@@ -33,12 +33,6 @@ function cmpByProp(prop, asc) {
         }
       }
 
-      /*if (isNaN(valA)) {  // ensures that NaN elements are at the end of the list
-        return 1;
-      } else if (isNaN(valB)) {
-        return -1;
-      }*/
-
       if (valA > valB) {
         return asc;
       } else if (valA < valB) {
@@ -47,4 +41,9 @@ function cmpByProp(prop, asc) {
         return 0;
       }
     }
+}
+
+function dateToInt(date_str){
+  date = new Date(date_str);
+  return date.getTime();
 }

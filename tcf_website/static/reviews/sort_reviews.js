@@ -37,11 +37,6 @@ function sortReviews(btnID){
   }
 }
 
-function dateToInt(date_str){
-  date = new Date(date_str);
-  return date.getTime();
-}
-
 $(window).on('load', function() {
   sortReviews("votes-sort-btn");
 });
