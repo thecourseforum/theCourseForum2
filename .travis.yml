@@ -1,12 +1,10 @@
 services:
 - docker
-before_script:
-- cp .env.example .env
 before_install:
 - openssl aes-256-cbc -K $encrypted_859f5568b0c8_key -iv $encrypted_859f5568b0c8_iv
   -in gae-service-account.json.enc -out gae-service-account.json -d
 - docker build .
-- docker-compose up
+- docker-compose -f docker-compose.prod.yml up
 before_deploy:
 - envsubst < app.yaml.template > app.yaml.env
 - cp app.yaml.env app.yaml
