@@ -17,6 +17,7 @@ import environ
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Django-environ library imports .env settings
 env = environ.Env(DEBUG=(bool, False))
 env_file = os.path.join(BASE_DIR, ".env")
 environ.Env.read_env(env_file)
@@ -215,5 +216,3 @@ if not DEBUG:
         'PORT': env.str('DB_PORT'),
         'OPTIONS': {'sslmode': 'require'},
     }
-
-    print(DATABASES['default'])
