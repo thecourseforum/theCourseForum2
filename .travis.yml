@@ -8,11 +8,11 @@ before_install:
     -in gae-service-account.json.enc -out gae-service-account.json -d
   - envsubst < .env.travis > .env
   - docker build .
-  - docker-compose up
+  - docker-compose up -d
 
 script:
-  # - docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core
-  # - docker exec tcf_django python3 manage.py test
+  - docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core
+  - docker exec tcf_django python3 manage.py test
 
 before_deploy:
   - envsubst < app.yaml.template > app.yaml.env
