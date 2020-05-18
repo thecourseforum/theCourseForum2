@@ -1,0 +1,25 @@
+{% extends "browse/school.html" %}
+
+{% block department_list %}
+  <ul class="school-list">
+      {% for s in schools|dictsort:"name" %}
+          <li>
+            <h6 class="font-weight-bold">{{s}}</h6>
+            <ul class="department-list">
+              {% for d in s.department_set.all %}
+                <li>
+                  <a href="{% url 'department' dept_id=d.pk %}">{{d}}</a>
+                  <ul class="subdepartment-list">
+                    {% for d2 in d.subdepartment_set.all %}
+                      <li>
+                        <a href="#">{{d2}}</a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </li>
+              {% endfor %}
+            </ul>
+          </li>
+      {% endfor %}
+  </ul>
+{% endblock %}
