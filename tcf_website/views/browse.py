@@ -13,19 +13,20 @@ def browse(request):
     clas = School.objects.get(name="College of Arts & Sciences")
     seas = School.objects.get(name="School of Engineering & Applied Science")
 
-    # Other departments besides CLAS and SEAS.
-    other_dept_pks = School.objects.exclude(
-        pk__in=[
-            clas.pk,
-            seas.pk]).values_list(
-                'department',
-                flat=True)
-    other_depts = Department.objects.filter(pk__in=other_dept_pks)
+    # Other schools besides CLAS and SEAS.
+    # other_school_pks = School.objects.exclude(
+    #     pk__in=[
+    #         clas.pk,
+    #         seas.pk]).values_list(
+    #             'department',
+    #             flat=True)
+    # other_schools_depts = Department.objects.filter(pk__in=other_school_pks)
+    other_schools = School.objects.exclude(pk__in=[clas.pk,seas.pk])
 
     return render(request, 'browse/browse.html', {
         'CLAS': clas,
         'SEAS': seas,
-        'other_depts': other_depts
+        'other_schools': other_schools
     })
 
 
