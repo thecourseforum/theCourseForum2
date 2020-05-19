@@ -8,7 +8,7 @@
     flex-wrap: nowrap;
 }
 
-.tCF {
+.logo-container {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -23,23 +23,23 @@
     transition: padding-left .25s, transform .2s;
 }
 
-.tCF:hover {
+.logo-container:hover {
     background-color: rgba(140, 151, 161, 0.2);
     transform: scale(1.05);
 }
 
-.tCF:active {
+.logo-container:active {
     background-color: rgb(140, 151, 161, 0.4);
     transform: scale(1.05);
 }
 
-.tCF:focus {
+.logo-container:focus {
     background-color: rgb(140, 151, 161, 0.4);
     transform: scale(1.05);
 }
 
 @media (min-width: 768px) {
-    .tCF {
+    .logo-container {
         width: calc(240px - 16px - 16px);
         height: calc(70px - 8px - 8px);
         padding-top: 0px;
