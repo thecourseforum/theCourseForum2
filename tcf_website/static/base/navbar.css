@@ -59,7 +59,7 @@
 }
 
 
-@media (min-width: 768px) {
+@media (min-width: 769px) {
     .navbar-toggler.menu {
         display: none !important;
     }
