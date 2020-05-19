@@ -157,10 +157,6 @@ def set_arguments(query, courses, instructors):
     }
     if isinstance(courses, list):
         args["courses"] = courses
-    elif isinstance(courses, dict):
-        args["courses_error"] = courses.get("message")
     if isinstance(instructors, list):
         args["instructors"] = instructors
-    elif isinstance(instructors, dict):
-        args["instructors_error"] = instructors.get("message")
     return args

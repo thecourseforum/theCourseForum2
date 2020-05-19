@@ -14,13 +14,6 @@
 
     <hr>
 
-    {% if courses_error %}
-    <div class="container">
-        <h4>Searching courses is down right now!</h4>
-        <li>{{courses_error}}</li>
-    </div>
-    {% endif %}
-
     {% if courses %}
     <div class="container">
         <h4>Courses</h4>
@@ -30,16 +23,13 @@
             </li>
         {% endfor %}
     </div>
+    {% else %}
+    <div class="container">
+        <h4>Searching courses is down right now!</h4>
+    </div>
     {% endif %}
 
     <hr>
-
-    {% if instructors_error %}
-    <div class="container">
-        <h4>Searching professors is down right now!</h4>
-        <li>{{instructors_error}}</li>
-    </div>
-    {% endif %}
 
     {% if instructors %}
     <div class="container">
@@ -50,6 +40,10 @@
                 {{i.first_name}} {{i.last_name}}
             </li>
         {% endfor %}
+    </div>
+    {% else %}
+    <div class="container">
+        <h4>Searching professors is down right now!</h4>
     </div>
     {% endif %}
 
