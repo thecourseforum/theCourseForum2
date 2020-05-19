@@ -72,7 +72,7 @@ After we removed the migrations folder from the `.gitignore` file, you may exper
 
 #### Local Development:
 1. Delete everything in tcf_website/migrations EXCEPT for `__init__.py`.
-  - If you accidentally delete this file, recreate an empty file with the same name. Migrations will not update without this file.
+    - If you accidentally delete this file, recreate an empty file with the same name. Migrations will not update without this file.
 2. Delete everything in your `__pycache__` directories
 3. While your container for the Django application is running, re-run migrations commands below:
 ```

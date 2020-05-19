@@ -51,7 +51,7 @@ class AboutView(TemplateView):
                       {"name": "Davis DeLozier",
                        "role": "Treasurer",
                        "class": "2022",
-                       "img_filename": "MKT_Davis_Delozier.jpg",
+                       "img_filename": "MAD_Davis_Delozier.jpg",
                        "github": "dpd3mr"},
                       ]
     engineering_team = [{"name": "Brian Yu",
@@ -148,11 +148,30 @@ class AboutView(TemplateView):
                          "class": "2023",
                          "img_filename": "ENG_Erick_Tian.jpg",
                          "github": "ericktian"
-                         }
+                         },
                         ]
 
-    marketing_team = [{"name": "Davis DeLozier", "class": "2022",
-                       "img_filename": "MKT_Davis_Delozier.jpg"}, ]
+    marketing_team = [{"name": "Davis DeLozier",
+                       "role": "Business Lead",
+                       "class": "2022",
+                       "img_filename": "MAD_Davis_Delozier.jpg"
+                       },
+                      {"name": "Shirley Chu",
+                       "role": "Marketing/Designer",
+                       "class": "2021",
+                       "img_filename": "MAD_Shirley_Chu.jpg"
+                       },
+                      {"name": "Sierra Arnold",
+                       "role": "Marketing/Designer",
+                       "class": "2021",
+                       "img_filename": "MAD_Sierra_Arnold.jpg"
+                       },
+                      {"name": "Max von Schroeter",
+                       "role": "Marketing",
+                       "class": "2023",
+                       "img_filename": "MAD_Max_von_Schroeter.jpg"
+                       },
+                      ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
