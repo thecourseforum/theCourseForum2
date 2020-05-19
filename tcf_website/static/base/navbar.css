@@ -20,22 +20,22 @@
 
     /* Animation */
     transform: scale(1.0);
-    transition: padding-left .25s, transform .5s;
+    transition: padding-left .25s, transform .2s;
 }
 
 .tCF:hover {
     background-color: rgba(140, 151, 161, 0.2);
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .tCF:active {
     background-color: rgb(140, 151, 161, 0.4);
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .tCF:focus {
     background-color: rgb(140, 151, 161, 0.4);
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 @media (min-width: 768px) {
