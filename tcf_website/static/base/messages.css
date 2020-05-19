@@ -22,9 +22,9 @@
     position: relative;
     width: fit-content;
     text-align: center;
-    box-shadow: 3px 3px 1.5px rgb(23, 34, 72);
+    box-shadow: -2.5px -2.5px 1.5px rgb(23, 34, 72);
     background-color: #db4929;
-    border-radius: 20px;
+    border-radius: calc(.25rem - 1px);
     color: white;
     padding: 10px;
     margin-top: 15px;
