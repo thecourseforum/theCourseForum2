@@ -36,7 +36,7 @@
       {% if user.is_authenticated %}
       <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown">
-          Hey {{user.first_name}}!
+          Hey, {{user.first_name}}!
         </a>
         <div class="dropdown-menu settings" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>

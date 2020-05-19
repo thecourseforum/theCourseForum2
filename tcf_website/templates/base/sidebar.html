@@ -29,7 +29,7 @@ d-flex flex-column justify-content-between" id="sidebar-wrapper">
     {% if user.is_authenticated %}
       <div class="d-md-none list-group-item dropdown">
         <div class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fa fa-user fa-fw"></i>&nbsp; Hey {{user.first_name}}!
+        <i class="fa fa-user fa-fw"></i>&nbsp; Hey, {{user.first_name}}!
         </div>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
