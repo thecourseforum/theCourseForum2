@@ -1,4 +1,5 @@
 """Views for index and about pages."""
+import json
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 
@@ -28,154 +29,28 @@ def terms(request):
 class AboutView(TemplateView):
     """About view."""
     template_name = 'about/about.html'
-    executive_team = [{"name": "Brian Yu",
-                       "role": "President",
-                       "class": "2021",
-                       "img_filename": "ENG_Brian_Yu.jpg",
-                       "github": "brian-yu"},
-                      {"name": "Jennifer Long",
-                       "role": "VP of Product Engineering",
-                       "class": "2021",
-                       "img_filename": "ENG_Jennifer_Long.jpg",
-                       "github": "j-alicia-long"},
-                      {"name": "Brad Knaysi",
-                       "role": "VP of Product Engineering",
-                       "class": "2020",
-                       "img_filename": "ENG_Brad_Knaysi.jpg",
-                       "github": "bradknaysi"},
-                      {"name": "Sai Konuri",
-                       "role": "VP of Infrastructure Engineering",
-                       "class": "2020",
-                       "img_filename": "ENG_Sai_Konuri.jpg",
-                       "github": "saikonuri"},
-                      {"name": "Davis DeLozier",
-                       "role": "Treasurer",
-                       "class": "2022",
-                       "img_filename": "MAD_Davis_Delozier.jpg",
-                       "github": "dpd3mr"},
-                      ]
-    engineering_team = [{"name": "Brian Yu",
-                         "role": "President",
-                         "class": "2021",
-                         "img_filename": "ENG_Brian_Yu.jpg",
-                         "github": "brian-yu"
-                         },
-                        {"name": "Sai Konuri",
-                         "role": "VP of Infrastructure Engineering",
-                         "class": "2020",
-                         "img_filename": "ENG_Sai_Konuri.jpg",
-                         "github": "saikonuri"
-                         },
-                        {"name": "Brad Knaysi",
-                         "role": "VP of Product Engineering",
-                         "class": "2020",
-                         "img_filename": "ENG_Brad_Knaysi.jpg",
-                         "github": "bradknaysi"
-                         },
-                        {"name": "Jennifer Long",
-                         "role": "VP of Product Engineering",
-                         "class": "2021",
-                         "img_filename": "ENG_Jennifer_Long.jpg",
-                         "github": "j-alicia-long"
-                         },
-                        {"name": "Nikash Sethi",
-                         "role": "Developer",
-                         "class": "2021",
-                         "img_filename": "ENG_Nikash_Sethi.jpg",
-                         "github": "nikashs"
-                         },
-                        {"name": "Mara Hart",
-                         "role": "Developer",
-                         "class": "2022",
-                         "img_filename": "ENG_Mara_Hart.jpg",
-                         "github": "maralihart"
-                         },
-                        {"name": "Neal Patel",
-                         "role": "Developer",
-                         "class": "2021",
-                         "img_filename": "ENG_Neal_Patel.jpg",
-                         "github": "nealpatel50"
-                         },
-                        {"name": "Alex Shen",
-                         "role": "Developer",
-                         "class": "2023",
-                         "img_filename": "ENG_Alex_Shen.jpg",
-                         "github": "alex-shen1"
-                         },
-                        {"name": "Jack Liu",
-                         "role": "Developer",
-                         "class": "2023",
-                         "img_filename": "ENG_Jack_Liu.jpg",
-                         "github": "jackliu612"
-                         },
-                        {"name": "Jules Le Menestrel",
-                         "role": "Developer",
-                         "class": "2023",
-                         "img_filename": "ENG_Jules_LeMenestrel.jpg",
-                         "github": "julesfll"
-                         },
-                        {"name": "Jasmine Dogu",
-                         "role": "Developer",
-                         "class": "2022",
-                         "img_filename": "ENG_Jasmine_Dogu.jpg",
-                         "github": "ejd5mm"
-                         },
-                        {"name": "Vi Nguyen",
-                         "role": "Developer",
-                         "class": "2023",
-                         "img_filename": "ENG_Vi_Nguyen.jpg",
-                         "github": "vn6"
-                         },
-                        {"name": "Amrit Gorle",
-                         "role": "Developer",
-                         "class": "2023",
-                         "img_filename": "ENG_Amrit_Gorle.jpg",
-                         "github": "amritgorle"
-                         },
-                        {"name": "Mara Hart",
-                         "role": "Developer",
-                         "class": "2022",
-                         "img_filename": "ENG_Mara_Hart.jpg",
-                         "github": "maralihart"},
-                        {"name": "Arjun Kumar",
-                         "role": "Developer",
-                         "class": "2023",
-                         "img_filename": "ENG_Arjun_Kumar.jpg",
-                         "github": "arjunk01"
-                         },
-                        {"name": "Erick Tian",
-                         "role": "Developer",
-                         "class": "2023",
-                         "img_filename": "ENG_Erick_Tian.jpg",
-                         "github": "ericktian"
-                         },
-                        ]
-
-    marketing_team = [{"name": "Davis DeLozier",
-                       "role": "Business Lead",
-                       "class": "2022",
-                       "img_filename": "MAD_Davis_Delozier.jpg"
-                       },
-                      {"name": "Shirley Chu",
-                       "role": "Marketing/Designer",
-                       "class": "2021",
-                       "img_filename": "MAD_Shirley_Chu.jpg"
-                       },
-                      {"name": "Sierra Arnold",
-                       "role": "Marketing/Designer",
-                       "class": "2021",
-                       "img_filename": "MAD_Sierra_Arnold.jpg"
-                       },
-                      {"name": "Max von Schroeter",
-                       "role": "Marketing",
-                       "class": "2023",
-                       "img_filename": "MAD_Max_von_Schroeter.jpg"
-                       },
-                      ]
+    with open('tcf_website/views/team_info.json') as data_file:
+        team_info = json.loads(data_file.read())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['executive_team'] = self.executive_team
-        context['engineering_team'] = self.engineering_team
-        context['marketing_team'] = self.marketing_team
+        context['executive_team'] = self.team_info['executive_team']
+        context['engineering_team'] = self.team_info['engineering_team']
+        context['marketing_team'] = self.team_info['marketing_team']
+        return context
+
+class AboutHistoryView(TemplateView):
+    """About history view."""
+    template_name = 'about/history.html'
+
+class AboutContributorsView(TemplateView):
+    """About alumni contributors view."""
+    template_name = 'about/contributors.html'
+    with open('tcf_website/views/team_alums.json') as data_file:
+        alum_info = json.loads(data_file.read())
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['founders'] = self.alum_info['founders']
+        context['contributors'] = self.alum_info['contributors']
         return context
