@@ -14,12 +14,15 @@
     - https://docs.docker.com/compose/install/
 2. `git clone https://github.com/thecourseforum/theCourseForum2.git`
 3. Go into the `theCourseForum2/` folder and then run these commands to start your Docker container:
-    - \*`cp .env.example .env`
-    - `docker build .`
-    - `docker-compose up`
+```
+    cp .env.example .env        # See *note below
+    docker build .
+    docker-compose up
+```
 4. Download a copy of the database from https://drive.google.com/open?id=1ubiiOj-jfzoBKaMK6pFEkFXdSqMuD-22
     - put this into the `theCourseForum2/` folder
 5. While your container is still running, open a second terminal, cd into `theCourseForum2/`, and run the following command to set up your database (you may need to run it 3 times)\*:
+
     - \*`cat april7.sql | docker exec -i tcf_db psql -U tcf_django tcf_db`
 6. Go to http://localhost:8000 and make sure it works!
 
@@ -67,12 +70,28 @@ If you are part of theCourseForum engineering team, follow the instructions belo
 
 ## Common Issues & Fixes
 
+### Database Issues
+If the 'Browse Courses' page isn't loading, try the following:
+1. Check to see if postgres is running by running `ps auxwww | grep postgres` in your terminal
+    - If it outputs only one line, postgres is not running. Restart it with Homebrew: `brew services start postgresql`.
+2. There may be a Django migration issue. Exec into your container and re-migrate:
+```
+docker-compose exec web bash
+python3 manage.py makemigrations
+python3 manage.py migrate
+```
+3. If all else fails, reset the development database by dropping the table and re-running the Setup instructions.
+```
+dropdb [DEV_DB_NAME];
+createdb [DEV_DB_NAME];
+```
+
 ### Django Migration Conflicts
 After we removed the migrations folder from the `.gitignore` file, you may experience migration issues when you merge different branches where the models (database tables/columns) have been modified. Try the following to resolve the issue:
 
 #### Local Development:
 1. Delete everything in tcf_website/migrations EXCEPT for `__init__.py`.
-  - If you accidentally delete this file, recreate an empty file with the same name. Migrations will not update without this file.
+    - If you accidentally delete this file, recreate an empty file with the same name. Migrations will not update without this file.
 2. Delete everything in your `__pycache__` directories
 3. While your container for the Django application is running, re-run migrations commands below:
 ```
@@ -80,7 +99,7 @@ docker-compose exec web bash
 python3 manage.py makemigrations
 python3 manage.py migrate
 ```
-4. If all else fails, reset the development database by dropping the table and re-running the Setup instructions.
+4. If all else fails, reset the development database by dropping the table and re-running the Database Setup instructions.
 ```
 dropdb [DEV_DB_NAME];
 createdb [DEV_DB_NAME];
