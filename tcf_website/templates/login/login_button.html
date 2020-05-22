@@ -1,7 +1,11 @@
 {% load static %}
 
-<div class="login-button">
-    <a href="{% url 'social:begin' 'google-oauth2' %}">
-        <img style="width: 250px; height: auto;" src="{% static 'login/google-login.png' %}" alt="Sign in with Google">
+{% block styles %}
+<link rel="stylesheet" href="{% static 'login/login_button.css' %}" />
+{% endblock %}
+
+<div class="login-button-container">
+    <a class="login-button-wrapper" href="{% url 'social:begin' 'google-oauth2' %}">
+        <button class="login-button"></button>
     </a>
 </div>
