@@ -12,15 +12,17 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    align-items: center;
     width: fit-content;
-    height: calc(70px - 8px - 8px);
-    padding: 1px 0px 0px 0px;
+    height: auto;
+    padding: 3px 2px 1px 2px;
     margin: 0px 16px 0px 0px;
     border-radius: calc(.25rem - 1px);
 
     /* Animation */
     transform: scale(1.0);
     transition: padding-left .25s, transform .2s;
+    transition-timing-function: ease;
 }
 
 .logo-container:hover {
@@ -41,20 +43,17 @@
 @media (min-width: 768px) {
     .logo-container {
         width: calc(240px - 16px - 16px);
-        height: calc(70px - 8px - 8px);
-        padding-top: 0px;
-        padding-right: 0px;
-        padding-bottom: 0px;
-        margin: 0px 16px 0px 0px;
+        height: auto;
 
         /* Animation */
-        padding-left: calc(((240px - 16px - 16px) / 2) - (64.80px / 2));
+        padding-left: 75.09px; /* centers logo in logo-container */
+        padding-right: 0px;
     }
 }
 
 .logo {
-    width: 64.80px;
-    height: calc(70px - 8px - 8px);
+    width: auto;
+    height: calc(70px - 8px - 8px - 4px);
     alt: "tCF";
 }
 
