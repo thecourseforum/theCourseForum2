@@ -2,22 +2,22 @@
 "executive_team": [{"name": "Jennifer Long",
                      "role": "President",
                      "class": "2021",
-                     "img_filename": "ENG_Jennifer_Long.jpg",
+                     "img_filename": "ENG_Jennifer_Long.jpg"
                     },
                    {"name": "Alex Shen",
                     "role": "VP of Product Engineering",
                     "class": "2023",
-                    "img_filename": "ENG_Alex_Shen.jpg",
+                    "img_filename": "ENG_Alex_Shen.jpg"
                     },
                    {"name": "Jules Le Menestrel",
                     "role": "VP of Product Engineering",
                     "class": "2023",
-                    "img_filename": "ENG_Jules_LeMenestrel.jpg",
+                    "img_filename": "ENG_Jules_LeMenestrel.jpg"
                     },
                    {"name": "Jack Liu",
                     "role": "VP of Infrastructure Engineering",
                     "class": "2023",
-                    "img_filename": "ENG_Jack_Liu.jpg",
+                    "img_filename": "ENG_Jack_Liu.jpg"
                     },
                    {"name": "Shirley Chu",
                     "role": "VP of Marketing/Design",
@@ -27,12 +27,12 @@
                    {"name": "Vi Nguyen",
                     "role": "Secretary/Operations Lead",
                     "class": "2023",
-                    "img_filename": "ENG_Vi_Nguyen.jpg",
+                    "img_filename": "ENG_Vi_Nguyen.jpg"
                     },
                    {"name": "Davis DeLozier",
                     "role": "Treasurer",
                     "class": "2022",
-                    "img_filename": "MAD_Davis_Delozier.jpg",
+                    "img_filename": "MAD_Davis_Delozier.jpg"
                     }
                    ],
   "engineering_team": [{"name": "Brian Yu",
