@@ -12,19 +12,24 @@
     - https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
     - https://docs.docker.com/install/
     - https://docs.docker.com/compose/install/
-2. `git clone https://github.com/thecourseforum/theCourseForum2.git`
-3. Go into the `theCourseForum2/` folder and then run these commands to start your Docker container:
-```
-    cp .env.example .env        # See *note below
-    docker build .
-    docker-compose up
-```
-4. Download a copy of the database from https://drive.google.com/open?id=1ubiiOj-jfzoBKaMK6pFEkFXdSqMuD-22
-    - put this into the `theCourseForum2/` folder
-5. While your container is still running, open a second terminal, cd into `theCourseForum2/`, and run the following command to set up your database (you may need to run it 3 times)\*:
+2. Clone the git repository and cd into the project folder
+    ```
+        git clone https://github.com/thecourseforum/theCourseForum2.git
+        cd theCourseForum2
+    ```
+3. Copy the [project secret keys](https://docs.google.com/document/d/1HsuJOf-5oZljQK_k02CQhFbqw1q-pD_1-mExvyC1TV0/edit?usp=sharing) into a `.env` file in the project base directory `theCourseForum2/`
+4. In the `theCourseForum2/` directory, run these commands to start your Docker container:
+    ```
+        cp .env.example .env        # See *note below
+        docker build .
+        docker-compose up
+    ```
+5. Download a copy of the database from [Google Drive](https://drive.google.com/open?id=1ubiiOj-jfzoBKaMK6pFEkFXdSqMuD-22)
+    - put this into the base `theCourseForum2/` directory
+6. While your container is still running, open a second terminal, cd into `theCourseForum2/`, and run the following command to set up your database (you may need to run it 3 times)\*:
 
     - \*`cat april7.sql | docker exec -i tcf_db psql -U tcf_django tcf_db`
-6. Go to http://localhost:8000 and make sure it works!
+7. Go to http://localhost:8000 in your browser and make sure everything works!
 
 \*This method can also work if you have a version of Windows that is supported by Docker Desktop — i.e. Windows 10 Pro, Enterprise, or Education, but NOT Home (the most common version). However, you'll have to run `cp` and `cat` in a bash shell (ex. PowerShell, Git Bash) because those commands don't exist in CMD.
 
