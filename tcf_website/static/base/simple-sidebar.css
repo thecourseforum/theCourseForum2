@@ -10,10 +10,10 @@ body {
 #sidebar-wrapper {
   height: calc(100vh - 70px); /* Subtract height of navbar */
   margin-left: -15rem;
-  -webkit-transition: margin .25s ease-out;
-  -moz-transition: margin .25s ease-out;
-  -o-transition: margin .25s ease-out;
-  transition: margin .25s ease-out;
+  -webkit-transition: margin-left .25s;
+  -moz-transition: margin-left .25s;
+  -o-transition: margin-left .25s;
+  transition: margin-left .25s;
   background-color: rgb(23, 34, 72);
   position: fixed;
   z-index: 9999;
@@ -45,6 +45,7 @@ body {
   min-width: 100vw;
 }
 
+/* Open sidebar if toggled */
 #wrapper.toggled #sidebar-wrapper {
   margin-left: 0;
 }
@@ -57,10 +58,6 @@ body {
   #page-content-wrapper {
     min-width: 0;
     width: 100%;
-  }
-
-  #wrapper.toggled #sidebar-wrapper {
-    margin-left: -15rem;
   }
 }
 
