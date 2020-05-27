@@ -123,7 +123,7 @@ def format_response(response):
     else:
         formatted["error"] = True
         formatted["message"] = "Unknown engine, please verify engine exists"
-        
+
     return formatted
 
 
