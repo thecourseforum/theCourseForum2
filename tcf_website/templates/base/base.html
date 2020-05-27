@@ -50,6 +50,12 @@
     <script src="{% static 'base/bootstrap.bundle.min.js' %}"></script>
     <!-- Menu Toggle Script -->
     <script>
+      
+      /* 
+        This jquery function is CRITICAL to the
+        sidebar working properly when clicking
+        the navbar-toggler of the navbar.
+      */
       $("#menu-toggle").click(function(e) {
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
