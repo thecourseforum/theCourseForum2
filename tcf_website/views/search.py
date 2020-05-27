@@ -107,15 +107,17 @@ def rank_course(query):
 
 def format_response(response):
     """Formats an Elastic search endpoint response."""
-    if "error" in response:
-        return response
-    body = json.loads(response.text)
-    engine = body.get("meta").get("engine").get("name")
-    results = body.get("results")
     formatted = {
         "error": False,
         "results": []
     }
+    if "error" in response:
+        formatted["error"] = True
+        return formatted
+
+    body = json.loads(response.text)
+    engine = body.get("meta").get("engine").get("name")
+    results = body.get("results")
     if engine == "uva-courses":
         formatted["results"] = format_courses(results)
     elif engine == "uva-instructors":
