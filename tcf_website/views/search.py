@@ -112,12 +112,19 @@ def format_response(response):
     body = json.loads(response.text)
     engine = body.get("meta").get("engine").get("name")
     results = body.get("results")
-
+    formatted = {
+        "error": False,
+        "results": []
+    }
     if engine == "uva-courses":
-        return format_courses(results)
-    if engine == "uva-instructors":
-        return format_instructors(results)
-    return "Unknown engine, please verify engine exists"
+        formatted["results"] = format_courses(results)
+    elif engine == "uva-instructors":
+        formatted["results"] = format_instructors(results)
+    else:
+        formatted["error"] = True
+        formatted["message"] = "Unknown engine, please verify engine exists"
+        
+    return formatted
 
 
 def format_courses(results):
@@ -155,8 +162,8 @@ def set_arguments(query, courses, instructors):
     args = {
         "query": query
     }
-    if isinstance(courses, list):
-        args["courses"] = courses
-    if isinstance(instructors, list):
-        args["instructors"] = instructors
+    if not courses["error"]:
+        args["courses"] = courses["results"]
+    if not instructors["error"]:
+        args["instructors"] = instructors["results"]
     return args
