@@ -13,19 +13,21 @@
   ],
   "contributors": [
     {
-      "group_name": "Class of 2021",
-      "members": [{"name": "Deepak Goel",
-                  "role": "Web Developer",
-                  "class": "2021",
-                  "img_filename": "deepakgoel.png"
-                  }]
-    },
-    {
       "group_name": "Class of 2020",
-      "members": [{"name": "Chris Zion",
-                  "role": "Business Lead",
-                  "class": "2020",
-                  "img_filename": "czion.png"
+      "members": [{"name": "Brad Knaysi",
+                   "role": "VP of Product Engineering",
+                   "class": "2020",
+                   "img_filename": "bknaysi.jpg",
+                   "github": "bradknaysi"},
+                  {"name": "Sai Konuri",
+                   "role": "VP of Infrastructure Engineering",
+                   "class": "2020",
+                   "img_filename": "skonuri.jpg",
+                   "github": "saikonuri"},
+                   {"name": "Chris Zion",
+                    "role": "Business Lead",
+                    "class": "2020",
+                    "img_filename": "czion.png"
                   }]
     },
     {
