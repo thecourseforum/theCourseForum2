@@ -6,7 +6,6 @@
 
 .about-logo {
   display: flex;
-  flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -22,6 +21,27 @@
     font-size: 25pt;
     margin-left: 0px;
   }
+}
+
+.support {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.support > .card {
+  border-radius: 50%;
+  transform: scale(1.0);
+  transition: transform .2s;
+  /* transition-timing-function: ease; */
+}
+
+.support > .card:hover {
+  transform: scale(1.1);
+}
+
+.support > .card > a {
+  padding: 30px;
+  border-radius: 50%;
 }
 
 .about-nav .about-nav-item a {
