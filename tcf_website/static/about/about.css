@@ -1,5 +1,27 @@
-.about h2, h4 {
-  color:rgb(23, 34, 72);
+/*
+  This file contains all css pertaining to the
+  about page. Please keep the css isolated here
+  to improve maintainability within theCourseForum.
+*/
+
+.about-logo {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.about-logo > h1 {
+  font-size: 40pt;
+  margin-top: 23px;
+  margin-left: 25px;
+}
+
+@media (max-width: 500px) {
+  .about-logo > h1 {
+    font-size: 25pt;
+    margin-left: 0px;
+  }
 }
 
 .about-nav .about-nav-item a {
