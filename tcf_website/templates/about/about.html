@@ -44,21 +44,21 @@
   </div>
   <br>
   <div class="card">
+    <div class="tabs">
+      <button class="btn" id="tCF-history-btn" onclick="showHistory()">
+        <i class="fa fa-book"></i>
+        <p>History</p>
+      </button>
+      <button class="btn active" id="tCF-current-team-btn" onclick="showCurrentTeam()">
+        <i class="fa fa-code"></i>
+        <p>Current Team</p>
+      </button>
+      <button class="btn" id="tCF-past-contributors-btn" onclick="showPastContributors()">
+        <i class="fa fa-graduation-cap"></i>
+        <p>Past Contributors</p>
+      </button>
+    </div>
     <div class="card-body">
-      <div class="about-nav">
-        <button id="tCF-history-btn" class="btn btn-light" onclick="showHistory()">
-          <i class="fa fa-book"></i>
-          <p>History</p>
-        </button>
-        <button id="tCF-current-team-btn" class="btn btn-light active" onclick="showCurrentTeam()">
-          <i class="fa fa-code"></i>
-          <p>Current Team</p>
-        </button>
-        <button id="tCF-past-contributors-btn" class="btn btn-light" onclick="showPastContributors()">
-          <i class="fa fa-graduation-cap"></i>
-          <p>Past Contributors</p>
-        </button>
-      </div>
       <div class="about-nav-content">
         {% include "about/history.html" %}
         {% include "about/current_team.html" %}

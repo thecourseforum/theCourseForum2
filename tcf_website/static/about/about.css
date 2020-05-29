@@ -25,12 +25,12 @@
   width: 12em;
   height: 12em;
   border-radius: 50%;
-  transform: scale(1.0);
+  transform: scale3d(1.0, 1.0, 1.0);
   transition: transform .2s;
 }
 
 .about-links > .card:hover {
-  transform: scale(1.1);
+  transform: scale3d(1.1, 1.1, 1.1);
 }
 
 .about-links > .card > a {
@@ -52,26 +52,33 @@
   margin-bottom: 0px;
 }
 
-.about-nav {
+.tabs {
   display: flex;
   justify-content: space-evenly;
+  padding: 5px;
 }
 
-.about-nav > button {
+.tabs > button {
   flex: 1;
-  padding: 20px 0px 0px 0px;
-  white-space: normal;
-  border-bottom: 5px solid rgba(24, 35, 69, 0);
-  transition: border-bottom .2s;
+  border: none;
+  border-radius: 0px;
 }
 
-.about-nav > button:hover {
-  border-bottom: 5px solid rgba(24, 35, 69, 255);
+.tabs > button:hover {
   color: #db4929;
 }
 
-.about-nav > button > i {
+.tabs > button.active {
+  background-color: #ffffff;
+}
+
+.tabs > button:focus {
+  box-shadow: none;
+}
+
+.tabs > button > i {
   font-size: 3em;
+  padding: 10px 0px 5px 0px;
 }
 
 @media (max-width: 500px) {
@@ -94,12 +101,12 @@
     font-size: 10pt;
   }
 
-  .about-nav > button > i {
+  .tabs > button > i {
     font-size: 2em;
   }
 
-  .about-nav > button > p {
-    font-size: 10pt;
+  .tabs > button > p {
+    font-size: 8pt;
   }
 
 }
