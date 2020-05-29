@@ -39,6 +39,26 @@
     </div>
   </div>
   <br>
+  <div class="container">
+    <div class="card">
+      <div class="card-body">
+        <div class="about-nav">
+          <a href="{% url 'about_history' %}">
+            <i class="fa fa-book"></i>
+            <p>History</p>
+          </a>
+          <a href="{% url 'about' %}">
+            <i class="fa fa-code"></i>
+            <p>Current Team</p>
+          </a>
+          <a href="{% url 'about_contributors' %}">
+            <i class="fa fa-graduation-cap"></i>
+            <p>Past Contributors</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% block subcontent %}
