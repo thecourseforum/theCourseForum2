@@ -1,47 +1,48 @@
-{% extends "about/about.html" %}
+{% block subcontent %}
 {% load static %}
 
-{% block subcontent %}
-<section class="jumbotron bg-light py-5 text-center banner-img">
-  <h1>History</h1>
-  <hr/>
-  <div class="row text-left">
-    <div class="col-lg-4 history-img">
-      <img src="{% static 'about/2014-team.jpeg' %}"/>
+<div class="tCF-history">
+  <section class="jumbotron bg-light py-5 text-center banner-img">
+    <h1>History</h1>
+    <hr/>
+    <div class="row text-left">
+      <div class="col-lg-4 history-img">
+        <img src="{% static 'about/2014-team.jpeg' %}"/>
+      </div>
+      <div class="col-lg-8 pl-4 pt-4">
+        <h4>Beginnings</h4>
+        <p>
+            In Fall 2005, UVa students Jeff Bordogna and Alan Webb recognized a need for an online community to help students share their class experiences, and thus developed the first version of theCourseForum. Over time, this simple tool grew and prospered as more and more students found it despite our extraordinarily small marketing budget. The site has now become a fixture of the UVA course signup season to the extent that over 80% of students use the site every year.
+        </p>
+        <h4>tCF 1.0</h4>
+        <p>
+            In 2012-2013, a team of 6 student developers led by Justin Dao redesigned the site to bring it into the modern age using the Ruby on Rails framework.
+        </p>
+        <h4>tCF 2.0</h4>
+        <p>
+            In 2020, Brian Yu led a new team of students to rewrite tCF in the python Django framework to increase maintainability. After a few months of work, the new site was released, and it continues to be managed by UVa students.
+        </p>
+      </div>
     </div>
-    <div class="col-lg-8 pl-4 pt-4">
-      <h4>Beginnings</h4>
-      <p>
-          In Fall 2005, UVa students Jeff Bordogna and Alan Webb recognized a need for an online community to help students share their class experiences, and thus developed the first version of theCourseForum. Over time, this simple tool grew and prospered as more and more students found it despite our extraordinarily small marketing budget. The site has now become a fixture of the UVA course signup season to the extent that over 80% of students use the site every year.
-      </p>
-      <h4>tCF 1.0</h4>
-      <p>
-          In 2012-2013, a team of 6 student developers led by Justin Dao redesigned the site to bring it into the modern age using the Ruby on Rails framework.
-      </p>
-      <h4>tCF 2.0</h4>
-      <p>
-          In 2020, Brian Yu led a new team of students to rewrite tCF in the python Django framework to increase maintainability. After a few months of work, the new site was released, and it continues to be managed by UVa students.
-      </p>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="jumbotron bg-light py-5 text-center">
-  <h1>Thanks to our sponsors</h1>
-  <hr/>
-  <div class="row text-left">
-    <p>
-        Our sponsors help us cover server costs from the large amount of traffic that we get. Their help has allowed the site to stay up and running continuously as we keep developing new features.
-    </p>
-  </div>
-  <div class="row">
-    <div class="col">
-      <img class="img-fluid" src="{% static 'about/parents_fund.png' %}"/>
+  <section class="jumbotron bg-light py-5 text-center">
+    <h1>Thanks to our sponsors</h1>
+    <hr/>
+    <div class="row text-left">
+      <p>
+          Our sponsors help us cover server costs from the large amount of traffic that we get. Their help has allowed the site to stay up and running continuously as we keep developing new features.
+      </p>
     </div>
-    <div class="col">
-      <img class="img-fluid" src="{% static 'about/StudCo_Logo.png' %}"/>
+    <div class="row">
+      <div class="col">
+        <img class="img-fluid" src="{% static 'about/parents_fund.png' %}"/>
+      </div>
+      <div class="col">
+        <img class="img-fluid" src="{% static 'about/StudCo_Logo.png' %}"/>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+</div>
 
 {% endblock %}

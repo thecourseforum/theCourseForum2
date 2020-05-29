@@ -3,7 +3,10 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'about/about.css' %}" />
-<link rel="stylesheet" href="{% static 'about/javascript/switch-subcontent.js' %}" />
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'about/javascript/switch-subcontent.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -15,7 +18,7 @@
         <h1>theCourseForum</h1>
       </div>
       <hr>
-      <p><b>theCourseForum</b> is a place for University of Virginia students to share their academic experiences from classes
+      <p style="text-align: left;"><b>theCourseForum</b> is a place for University of Virginia students to share their academic experiences from classes
         taken at UVA. The objective being to spread wisdom and knowledge between generations of Wahoos who find themselves
         struggling to pick classes during enrollment. We see this website as an opportunity to gain a <i>student</i> perspective on
         specific courses and their professors. <br> <br>
@@ -43,101 +46,26 @@
   <div class="card">
     <div class="card-body">
       <div class="about-nav">
-        <a href="{% url 'about_history' %}">
+        <button id="tCF-history-btn" class="btn btn-light" onclick="showHistory()">
           <i class="fa fa-book"></i>
           <p>History</p>
-        </a>
-        <a href="{% url 'about' %}">
+        </button>
+        <button id="tCF-current-team-btn" class="btn btn-light active" onclick="showCurrentTeam()">
           <i class="fa fa-code"></i>
           <p>Current Team</p>
-        </a>
-        <a href="{% url 'about_contributors' %}">
+        </button>
+        <button id="tCF-past-contributors-btn" class="btn btn-light" onclick="showPastContributors()">
           <i class="fa fa-graduation-cap"></i>
           <p>Past Contributors</p>
-        </a>
+        </button>
+      </div>
+      <div class="about-nav-content">
+        {% include "about/history.html" %}
+        {% include "about/current_team.html" %}
+        {% include "about/contributors.html" %}
       </div>
     </div>
   </div>
 </div>
 
-{% block subcontent %}
-  <div id="team-members" class="team text-center">
-    <h1 class="my-5">Meet Our Team</h1>
-
-    <div class="executive-team jumbotron py-5 bg-light">
-      <div class="container">
-        <h3>Executive Team</h3>
-        <hr/>
-        <div class="row text-left">
-          {% for member in executive_team %}
-            <div class="col-lg-4 col-sm-6 d-flex">
-              <div class="member card mb-4 shadow-sm flex-fill">
-                <div class="pfp">
-                  <img class="card-img-top" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
-                </div>
-                <div class="card-body">
-                  <h5 class="card-text">{{ member.name }}</h5>
-                  <p class="card-text">{{ member.role }}</p>
-                  <p class="card-text">Class of {{ member.class }}</p>
-                </div>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-
-    <div class="executive-team jumbotron py-5 bg-light">
-      <div class="container">
-        <h3>Engineering Team</h3>
-        <hr/>
-        <div class="row text-left">
-          {% for member in engineering_team %}
-            <div class="col-lg-3 col-sm-6 d-flex">
-              <div class="member card mb-4 shadow-sm flex-fill">
-                <div class="pfp">
-                  <img class="card-img-top" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
-                </div>
-                <div class="card-body d-flex justify-content-between">
-                  <span>
-                    <h5 class="card-text">{{ member.name }}</h5>
-                    <p class="card-text">Class of {{ member.class }}</p>
-                  </span>
-                  <a class="text-secondary" href="https://github.com/{{ member.github }}">
-                    <h4><i class="fa fa-github"></i></h4>
-                  </a>
-                </div>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-
-    <div class="marketing-team jumbotron py-5 bg-light">
-      <div class="container">
-        <h3>Marketing & Design Team</h3>
-        <hr/>
-        <div class="row text-left">
-          {% for member in marketing_team %}
-            <div class="col-lg-3 col-sm-6 d-flex">
-              <div class="member card mb-4 shadow-sm flex-fill">
-                <div class="pfp">
-                  <img class="card-img-top" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
-                </div>
-                <div class="card-body">
-                  <h5 class="card-text">{{ member.name }}</h5>
-                  <p class="card-text">Class of {{ member.class }}</p>
-                </div>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-
-  </div>
-{% endblock %}
-
-</div>
 {% endblock %}

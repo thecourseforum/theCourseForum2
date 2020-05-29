@@ -57,27 +57,21 @@
   justify-content: space-evenly;
 }
 
-.about-nav > a {
-  flex: 1; /* Makes all <a> have equal width */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 10px;
+.about-nav > button {
+  flex: 1;
+  padding: 20px 0px 0px 0px;
+  white-space: normal;
   border-bottom: 5px solid rgba(24, 35, 69, 0);
   transition: border-bottom .2s;
 }
 
-.about-nav > a:hover {
+.about-nav > button:hover {
   border-bottom: 5px solid rgba(24, 35, 69, 255);
+  color: #db4929;
 }
 
-.about-nav > a > i {
+.about-nav > button > i {
   font-size: 3em;
-  margin-bottom: 10px;
-}
-
-.about-nav > a > p {
-  margin: 5px;
 }
 
 @media (max-width: 500px) {
@@ -100,11 +94,11 @@
     font-size: 10pt;
   }
 
-  .about-nav > a > i {
+  .about-nav > button > i {
     font-size: 2em;
   }
 
-  .about-nav > a > p {
+  .about-nav > button > p {
     font-size: 10pt;
   }
 
@@ -131,4 +125,26 @@
 .history-img{
   overflow: hidden;
   opacity: 0.8;
+}
+
+/*
+  CRITICAL to the about page subcontent tabs working
+*/
+.tCF-current-team {
+  display: none;
+}
+.tCF-current-team.shown {
+  display: block;
+}
+.tCF-history {
+  display: none;
+}
+.tCF-history.shown {
+  display: block;
+}
+.tCF-past-contributors {
+  display: none;
+}
+.tCF-past-contributors.shown {
+  display: block;
 }
