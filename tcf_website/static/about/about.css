@@ -48,7 +48,8 @@
 }
 
 .about-links > .card > a > p {
-  margin: 10px 0px 0px 0px;
+  margin-top: 10px;
+  margin-bottom: 0px;
 }
 
 .about-nav {
