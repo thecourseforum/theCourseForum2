@@ -16,13 +16,6 @@
   margin-left: 25px;
 }
 
-@media (max-width: 500px) {
-  .about-logo > h1 {
-    font-size: 25pt;
-    margin-left: 0px;
-  }
-}
-
 .support {
   display: flex;
   justify-content: space-evenly;
@@ -34,13 +27,6 @@
   border-radius: 50%;
   transform: scale(1.0);
   transition: transform .2s;
-}
-
-@media (max-width: 500px) {
-  .support > .card {
-    width: 8em;
-    height: 8em;
-  }
 }
 
 .support > .card:hover {
@@ -61,20 +47,8 @@
   font-size: 5em;
 }
 
-@media (max-width: 500px) {
-  .support > .card > a > i {
-    font-size: 3em;
-  }
-}
-
 .support > .card > a > p {
   margin: 10px 0px 0px 0px;
-}
-
-@media (max-width: 500px) {
-  .support > .card > a > p {
-    font-size: 10pt;
-  }
 }
 
 .about-nav {
@@ -101,20 +75,38 @@
   margin-bottom: 10px;
 }
 
-@media (max-width: 500px) {
-  .about-nav > a > i {
-    font-size: 2em;
-  }
-}
-
 .about-nav > a > p {
   margin: 5px;
 }
 
 @media (max-width: 500px) {
+
+  .about-logo > h1 {
+    font-size: 25pt;
+    margin-left: 0px;
+  }
+
+  .support > .card {
+    width: 8em;
+    height: 8em;
+  }
+
+  .support > .card > a > i {
+    font-size: 3em;
+  }
+
+  .support > .card > a > p {
+    font-size: 10pt;
+  }
+
+  .about-nav > a > i {
+    font-size: 2em;
+  }
+
   .about-nav > a > p {
     font-size: 10pt;
   }
+
 }
 
 .pfp {
