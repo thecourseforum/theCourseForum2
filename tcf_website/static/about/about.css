@@ -16,12 +16,12 @@
   margin-left: 25px;
 }
 
-.support {
+.about-links {
   display: flex;
   justify-content: space-evenly;
 }
 
-.support > .card {
+.about-links > .card {
   width: 12em;
   height: 12em;
   border-radius: 50%;
@@ -29,11 +29,11 @@
   transition: transform .2s;
 }
 
-.support > .card:hover {
+.about-links > .card:hover {
   transform: scale(1.1);
 }
 
-.support > .card > a {
+.about-links > .card > a {
   width: auto;
   height: inherit;
   border-radius: 50%;
@@ -43,11 +43,11 @@
   align-items: center;
 }
 
-.support > .card > a > i {
+.about-links > .card > a > i {
   font-size: 5em;
 }
 
-.support > .card > a > p {
+.about-links > .card > a > p {
   margin: 10px 0px 0px 0px;
 }
 
@@ -86,16 +86,16 @@
     margin-left: 0px;
   }
 
-  .support > .card {
+  .about-links > .card {
     width: 8em;
     height: 8em;
   }
 
-  .support > .card > a > i {
+  .about-links > .card > a > i {
     font-size: 3em;
   }
 
-  .support > .card > a > p {
+  .about-links > .card > a > p {
     font-size: 10pt;
   }
 
