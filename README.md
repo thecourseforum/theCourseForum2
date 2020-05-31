@@ -57,11 +57,13 @@ If you are part of theCourseForum engineering team, follow the instructions belo
 4. Lint and test locally before commit:
     - `./precommit`
     - Fix any problems indicated by tests or pylint.
+        - `python manage.py test`
+        - `docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core`
 4. Stage your changes with `git add .`
 5. Commit with `git commit -m "Add X feature."`
 6. Push! `git push`
-7. Make a Pull Request to merge your changes back into `dev`.
-8. Wait for all tests to pass.
+7. Make a PR (Pull Request) to merge your changes back into the `dev` branch.
+8. Wait for all tests to pass on Travis (indicated by green checkmark).
 9. Request an approver.
 10. Wait to be approved and merged!
 
