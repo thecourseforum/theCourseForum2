@@ -5,6 +5,7 @@ import requests
 
 from django.shortcuts import render
 
+
 def search(request):
     """Search results view."""
 
@@ -15,8 +16,10 @@ def search(request):
     courses = fetch_courses(query)
     instructors = fetch_instructors(query)
 
+    courses_first = decide_order(courses, instructors)
+
     # Set arguments for template view
-    args = set_arguments(query, courses, instructors)
+    args = set_arguments(query, courses, instructors, courses_first)
 
     # Load template view
     return render(request, 'search/search.html', args)
@@ -69,7 +72,7 @@ def fetch_elasticsearch(api_endpoint, algorithm):
 def rank_instructor(query):
     """Returns the instructors search algorithm."""
     algorithm = {
-        "query": query
+        "query": query,
     }
     return json.dumps(algorithm)  # improve algorithm later
 
@@ -109,7 +112,8 @@ def format_response(response):
     """Formats an Elastic search endpoint response."""
     formatted = {
         "error": False,
-        "results": []
+        "results": [],
+        "highest_score": 0
     }
     if "error" in response:
         formatted["error"] = True
@@ -117,6 +121,7 @@ def format_response(response):
 
     body = json.loads(response.text)
     engine = body.get("meta").get("engine").get("name")
+    print(json.dumps(body, indent=1))
     results = body.get("results")
     if engine == "uva-courses":
         formatted["results"] = format_courses(results)
@@ -125,6 +130,9 @@ def format_response(response):
     else:
         formatted["error"] = True
         formatted["message"] = "Unknown engine, please verify engine exists"
+
+    if results:  # if results is not empty, 1st element will have highest score
+        formatted["highest_score"] = results[0].get("_meta").get("score")
 
     return formatted
 
@@ -159,13 +167,19 @@ def format_instructors(results):
     return formatted
 
 
-def set_arguments(query, courses, instructors):
+def set_arguments(query, courses, instructors, courses_first):
     """Sets the search template arguments."""
     args = {
-        "query": query
+        "query": query,
+        "courses_first": courses_first
     }
     if not courses["error"]:
         args["courses"] = courses["results"]
     if not instructors["error"]:
         args["instructors"] = instructors["results"]
     return args
+
+
+def decide_order(courses, instructors):
+    """Determines whether courses or instructors should be displayed first in search page."""
+    return courses["highest_score"] > instructors["highest_score"]

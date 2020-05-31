@@ -14,22 +14,24 @@
 
     <hr>
 
-    {% if courses %}
-    <div class="container">
-        <h4>Courses</h4>
-        {% for c in courses %}
-            <li>
-                <a href="{% url 'course' course_id=c.id %}">{{c.mnemonic}} - {{c.title}}</a>
-            </li>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="container">
-        <h4>No courses matched your search.</h4>
-    </div>
-    {% endif %}
+    {% if courses_first == True %}
+        {% if courses %}
+        <div class="container">
+            <h4>Courses</h4>
+            {% for c in courses %}
+                <li>
+                    <a href="{% url 'course' course_id=c.id %}">{{c.mnemonic}} - {{c.title}}</a>
+                </li>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="container">
+            <h4>No courses matched your search.</h4>
+        </div>
+        {% endif %}
 
     <hr>
+    {% endif%}
 
     {% if instructors %}
     <div class="container">
@@ -46,6 +48,24 @@
         <h4>No professors matched your search.</h4>
     </div>
     {% endif %}
+
+    {% if courses_first == False %}
+        <hr>
+        {% if courses %}
+        <div class="container">
+            <h4>Courses</h4>
+            {% for c in courses %}
+                <li>
+                    <a href="{% url 'course' course_id=c.id %}">{{c.mnemonic}} - {{c.title}}</a>
+                </li>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="container">
+            <h4>No courses matched your search.</h4>
+        </div>
+        {% endif %}
+    {% endif%}
 
 </div>
 {% endblock %}
