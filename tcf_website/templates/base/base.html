@@ -32,6 +32,7 @@
       <div id="page-content-wrapper">
 
         {% include "base/navbar.html" %}
+        {% include "base/messages.html" %}
         <div class="content p-4 container-fluid text-center text-md-left h-100">
             <div class="row h-100">
             {% block content %}
@@ -50,6 +51,12 @@
     <script src="{% static 'base/bootstrap.bundle.min.js' %}"></script>
     <!-- Menu Toggle Script -->
     <script>
+      
+      /* 
+        This jquery function is CRITICAL to the
+        sidebar working properly when clicking
+        the navbar-toggler of the navbar.
+      */
       $("#menu-toggle").click(function(e) {
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
