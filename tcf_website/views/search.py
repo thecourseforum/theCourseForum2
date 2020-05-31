@@ -73,6 +73,21 @@ def rank_instructor(query):
     """Returns the instructors search algorithm."""
     algorithm = {
         "query": query,
+        "page": {
+            "current": 1,
+            "size": 10
+        },
+        "search_fields": {
+            "first_name": {
+                "weight": 10
+            },
+            "last_name": {
+                "weight": 10
+            },
+            "email" : {
+                "weight": 3
+            }
+        }
     }
     return json.dumps(algorithm)  # improve algorithm later
 
