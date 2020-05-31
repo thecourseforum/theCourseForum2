@@ -121,7 +121,6 @@ def format_response(response):
 
     body = json.loads(response.text)
     engine = body.get("meta").get("engine").get("name")
-    print(json.dumps(body, indent=1))
     results = body.get("results")
     if engine == "uva-courses":
         formatted["results"] = format_courses(results)
