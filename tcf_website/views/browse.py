@@ -21,7 +21,7 @@ def browse(request):
     #             'department',
     #             flat=True)
     # other_schools_depts = Department.objects.filter(pk__in=other_school_pks)
-    other_schools = School.objects.exclude(pk__in=[clas.pk,seas.pk])
+    other_schools = School.objects.exclude(pk__in=[clas.pk, seas.pk])
 
     return render(request, 'browse/browse.html', {
         'CLAS': clas,
