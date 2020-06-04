@@ -405,23 +405,21 @@ class Review(models.Model):
     # Review modified date. Required.
     modified = models.DateTimeField(default=timezone.now)
 
-
-
     # def save(self, *args, **kwargs):
     #     """On save, update average rating for course section."""
-        # course_reviewed = self.course
-        # # Change this aggregate function
-        # course_reviewed.average_rating = course_reviewed.review_set.aggregate(
-        #         rounded_avg_rating=Round(Avg('rating')))['rounded_avg_rating']
-        # course_reviewed.save()
+    # course_reviewed = self.course
+    # # Change this aggregate function
+    # course_reviewed.average_rating = course_reviewed.review_set.aggregate(
+    #         rounded_avg_rating=Round(Avg('rating')))['rounded_avg_rating']
+    # course_reviewed.save()
 
-        # ''' On save, update timestamps '''
-        # After data migration, add the following in order to automatically
-        # save created and modified dates.
-        # if not self.id:
-        #     self.created = timezone.now()
-        # self.modified = timezone.now()
-        # return super(Review, self).save(*args, **kwargs)
+    # ''' On save, update timestamps '''
+    # After data migration, add the following in order to automatically
+    # save created and modified dates.
+    # if not self.id:
+    #     self.created = timezone.now()
+    # self.modified = timezone.now()
+    # return super(Review, self).save(*args, **kwargs)
 
     def average(self):
         """Average score for review."""
