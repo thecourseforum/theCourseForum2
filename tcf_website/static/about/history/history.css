@@ -1,0 +1,200 @@
+/*
+  File: history.css
+  Description: This file contains the css for
+  the about page's history SUBCONTENT tab.
+*/
+
+.history-grid {
+
+    /* Grid */
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+        "header"
+        "row1"
+        "row2"
+        "row3"
+        "row4"
+        "footer"
+    ;
+}
+
+.subcontent-header {
+
+    /* Grid */
+    grid-area: header;
+    text-align: center;
+    padding: 40px 0px 50px 0px;
+}
+
+.founders {
+
+    /* Grid */
+    grid-area: row1;
+    padding: 50px;
+    background-color: rgba(135, 131, 209, 0.2);
+
+    /* Sub-Grid */
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "img text"
+    ;
+    column-gap: 30px;
+    text-align: left;
+}
+
+.revival {
+
+    /* Grid */
+    grid-area: row2;
+    padding: 50px;
+    background-color: rgba(204, 0, 0, 0.3);
+
+    /* Sub-Grid */
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "text img"
+    ;
+    column-gap: 30px;
+    text-align: left;
+}
+
+.cio {
+
+    /* Grid */
+    grid-area: row3;
+    padding: 50px;
+    background-color: rgba(229, 114, 0, 0.2);
+
+    /* Sub-Grid */
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "img text"
+    ;
+    column-gap: 30px;
+    text-align: left;
+}
+
+.revival2 {
+
+    /* Grid */
+    grid-area: row4;
+    padding: 50px;
+    background-color: rgba(255, 211, 67, 0.3);
+
+    /* Sub-Grid */
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "text img"
+    ;
+    column-gap: 30px;
+    text-align: left;
+}
+
+.sponsors {
+
+    /* Grid */
+    grid-area: footer;
+    padding: 50px;
+
+    /* Sub-Grid */
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "text text"
+        "img1 img2"
+    ;
+    row-gap: 30px;
+    column-gap: 30px;
+    text-align: left;
+}
+
+@media (max-width: 769px) {
+    .founders {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "img"
+            "text"
+        ;
+        row-gap: 30px;
+    }
+    .revival {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "img"
+            "text"
+        ;
+        row-gap: 30px;
+    }
+    .cio {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "img"
+            "text"
+        ;
+        row-gap: 30px;
+    }
+    .revival2 {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "img"
+            "text"
+        ;
+        row-gap: 30px;
+    }
+    .sponsors {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "text"
+            "img1"
+            "img2"
+        ;
+        row-gap: 30px;
+    }
+}
+
+.founders-img {
+    grid-area: img;
+}
+.founders-text {
+    grid-area: text;
+}
+.revival-img {
+    grid-area: img;
+}
+.revival-text {
+    grid-area: text;
+}
+.cio-img {
+    grid-area: img;
+}
+.cio-text {
+    grid-area: text;
+}
+.revival2-img {
+    grid-area: img;
+}
+.revival2-text {
+    grid-area: text;
+}
+.sponsors-text {
+    grid-area: text;
+}
+.sponsors-img1 {
+    grid-area: img1;
+    justify-self: center;
+}
+.sponsors-img2 {
+    grid-area: img2;
+    justify-self: center;
+}
