@@ -8,6 +8,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  padding: 30px 0px 20px 0px;
 }
 
 .about-logo > h1 {
@@ -55,13 +56,13 @@
 .tabs {
   display: flex;
   justify-content: space-evenly;
-  padding: 5px;
 }
 
 .tabs > button {
   flex: 1;
   border: none;
   border-radius: 0px;
+  background-color: rgb(210, 210, 210)
 }
 
 .tabs > button:hover {
