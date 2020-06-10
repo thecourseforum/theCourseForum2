@@ -12,7 +12,7 @@
 
 <div class="department container">
 
-    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" %}
+    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True%}
 
     <div class="subdepartments mt-3">
         {% for sd in department.subdepartment_set.all %}
@@ -34,4 +34,6 @@
 
 {% block js %}
 <script src="{% static 'common/show-hide.js' %}"></script>
+<script src="{% static 'common/sorting.js' %}"></script>
+<script src="{% static 'department/sortClasses.js' %}"></script>
 {% endblock %}

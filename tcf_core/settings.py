@@ -12,19 +12,23 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Django-environ library imports .env settings
+env = environ.Env(DEBUG=(bool, False))
+env_file = os.path.join(BASE_DIR, ".env")
+environ.Env.read_env(env_file)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'oaav-5-9$f7(yssu8=t$vjqg7m*l7k!byuc+)u2b_&lt5&wso$'
+SECRET_KEY = env.str('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get('DEBUG', 0)) == 1
+# DEBUG = int(env.str('DEBUG', 0)) == 1      # Why can't debug be a bool?
+DEBUG = env.str('DEBUG', default=False)
 
 ALLOWED_HOSTS = ['localhost', '.ngrok.io', '127.0.0.1']
 
@@ -76,23 +80,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'tcf_core.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'NAME': 'tcf_db',
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'USER': 'tcf_django',
-        'PASSWORD': 's3kr1t',
-        'HOST': 'tcf_db',
-    },
-    'legacy': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'tcf.db'),
-    },
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -132,6 +119,27 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+# STATIC_URL = env.str('STATIC_URL', default='static/')
+
+
+
+# Database
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'NAME': 'tcf_db',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'USER': 'tcf_django',
+        'PASSWORD': 's3kr1t',
+        'HOST': 'tcf_db',
+    },
+    'legacy': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'tcf.db'),
+    },
+}
+
 
 # python-social-auth settings.
 
@@ -140,8 +148,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '200334359492-l5u0musfs2ip67uhkkjo79avf7k9tpdj.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'eNDtsCEaXccOSIzqp6GH50Gt'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['virginia.edu']
 # SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
 # LOGIN_ERROR_URL = '/'
@@ -165,23 +173,22 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 # Read-only access to Elastic
-ES_PUBLIC_API_KEY = os.environ.get('ES_PUBLIC_API_KEY', None)
-ES_COURSE_SEARCH_ENDPOINT = os.environ.get('ES_COURSE_SEARCH_ENDPOINT', None)
-ES_INSTRUCTOR_SEARCH_ENDPOINT = os.environ.get(
-    'ES_INSTRUCTOR_SEARCH_ENDPOINT', None)
+ES_PUBLIC_API_KEY = env.str('ES_PUBLIC_API_KEY')
+ES_COURSE_SEARCH_ENDPOINT = env.str('ES_COURSE_SEARCH_ENDPOINT')
+ES_INSTRUCTOR_SEARCH_ENDPOINT = env.str('ES_INSTRUCTOR_SEARCH_ENDPOINT')
 
 # PROD SETTINGS
 if not DEBUG:
 
     # Heroku configuration.
-    if os.environ.get("HEROKU", False):
+    if env.bool("HEROKU", default=False):
         import django_heroku
         django_heroku.settings(locals())
 
     # Gather information from environment variables.
 
-    HOSTNAME = os.environ.get('HOSTNAME', None)
-    PUBLIC_IPV4 = os.environ.get('PUBLIC_IPV4', None)
+    HOSTNAME = env.str('HOSTNAME')
+    PUBLIC_IPV4 = env.str('PUBLIC_IPV4')
 
     # SECURITY WARNING: App Engine's security features ensure that it is safe to
     # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
@@ -196,26 +203,16 @@ if not DEBUG:
         ALLOWED_HOSTS.append(PUBLIC_IPV4)
 
     # Read-write access to Elastic
-    ES_COURSE_DOCUMENTS_ENDPOINT = os.environ.get(
-        'ES_COURSE_DOCUMENTS_ENDPOINT', None)
-    ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = os.environ.get(
-        'ES_INSTRUCTOR_DOCUMENTS_ENDPOINT', None)
-    ES_PRIVATE_API_KEY = os.environ.get('ES_PRIVATE_API_KEY', None)
-
-    DB_NAME = os.environ.get('DB_NAME', None)
-    DB_HOST = os.environ.get('DB_HOST', None)
-    DB_USER = os.environ.get('DB_USER', None)
-    DB_PASSWORD = os.environ.get('DB_PASSWORD', None)
-    DB_PORT = os.environ.get('DB_PORT', None)
+    ES_COURSE_DOCUMENTS_ENDPOINT = env.str('ES_COURSE_DOCUMENTS_ENDPOINT')
+    ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = env.str('ES_INSTRUCTOR_DOCUMENTS_ENDPOINT')
+    ES_PRIVATE_API_KEY = env.str('ES_PRIVATE_API_KEY')
 
     DATABASES['default'] = {
-        'NAME': DB_NAME,
+        'NAME': env.str('DB_NAME'),
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
+        'USER': env.str('DB_USER'),
+        'PASSWORD': env.str('DB_PASSWORD'),
+        'HOST': env.str('DB_HOST'),
+        'PORT': env.str('DB_PORT'),
         'OPTIONS': {'sslmode': 'require'},
     }
-
-    print(DATABASES['default'])
