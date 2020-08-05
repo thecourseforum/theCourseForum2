@@ -1,6 +1,6 @@
 
 # theCourseForum2
-[![Build Status](https://travis-ci.com/thecourseforum/theCourseForum2.svg?branch=master)](https://travis-ci.com/thecourseforum/theCourseForum2)
+![version](https://img.shields.io/badge/version-1.0.0-blue.svg) [![Build Status](https://travis-ci.com/thecourseforum/theCourseForum2.svg?branch=master)](https://travis-ci.com/thecourseforum/theCourseForum2) [![GitHub issues open](https://img.shields.io/github/issues/thecourseforum/theCourseForum2.svg?maxAge=2592000)]() [![GitHub issues closed](https://img.shields.io/github/issues-closed-raw/thecourseforum/theCourseForum2.svg?maxAge=2592000)]()
 
 2020 Django rewrite of theCourseForum website
 
