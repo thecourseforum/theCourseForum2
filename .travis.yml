@@ -9,9 +9,7 @@ before_install:
   - envsubst < .env.travis > .env
   - docker build .
   - docker-compose up -d
-
-install:
-  - docker exec tcf_django npm install -g eslint
+  - docker exec tcf_django npm link
 
 script:
   - docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core
