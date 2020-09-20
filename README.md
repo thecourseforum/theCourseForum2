@@ -56,7 +56,12 @@ If you are part of theCourseForum engineering team, follow the instructions belo
 3. Write unit tests and put them in `tcf_website/tests/`
 4. Lint and test locally before commit:
     - `./precommit`
-    - Fix any problems indicated by tests or pylint.
+    - Fix any problems indicated by tests or pylint or eslint.
+    - To fix eslint errors, you may need to do one of the following in JS files (just to give a few examples):
+      - explicitly export functions (`no-unused-vars`)
+      - explicitly import functions or declare variable with `let` (`no-undef`)
+      - replace double equals (`==`) with triple equals (`===`) (`eqeqeq`)
+      - change snake_case to to camelCase (`camelcase`)
 4. Stage your changes with `git add .`
 5. Commit with `git commit -m "Add X feature."`
 6. Push! `git push`
