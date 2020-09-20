@@ -17,7 +17,7 @@ RUN apt-get update && \
 		unattended-upgrades && \
 	curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
 	apt-get install -y --no-install-recommends nodejs && \
-	npm install -g eslint eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-standard && \
+	npm install eslint eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-standard && \
 	rm -r /var/lib/apt/lists/*
 
 RUN pip3 install --upgrade setuptools pip
