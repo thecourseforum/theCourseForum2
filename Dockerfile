@@ -11,9 +11,13 @@ RUN apt-get update && \
 		git \
 		python3-pip \
 		python3-dev \
-        libpq-dev \
-        build-essential \
+		libpq-dev \
+		build-essential \
+		curl \
 		unattended-upgrades && \
+	curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+	apt-get install -y --no-install-recommends nodejs && \
+	npm install eslint && \
 	rm -r /var/lib/apt/lists/*
 
 RUN pip3 install --upgrade setuptools pip
