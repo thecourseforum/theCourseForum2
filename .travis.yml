@@ -12,6 +12,8 @@ before_install:
 
 script:
   - docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core
+  - docker exec tcf_django npm install -g eslint
+  - docker exec tcf_django eslint --fix tcf_website/static/**/*.js
   - docker exec tcf_django python3 manage.py test
 
 before_deploy:
