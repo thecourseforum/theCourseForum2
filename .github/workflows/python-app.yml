@@ -29,4 +29,4 @@ jobs:
         pip install -r requirements.txt
     - name: Run Tests
       run: |
-        python manage.py test
+        docker exec tcf_django python3 manage.py test
