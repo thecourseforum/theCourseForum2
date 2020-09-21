@@ -48,4 +48,4 @@ const showPastContributors = () => {
     $("#tCF-past-contributors-btn").addClass("active");
 };
 
-export {showCurrentTeam, showHistory, showPastContributors};
+export { showCurrentTeam, showHistory, showPastContributors };
