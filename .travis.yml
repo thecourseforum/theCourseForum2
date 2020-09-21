@@ -9,12 +9,10 @@ before_install:
   - envsubst < .env.travis > .env
   - docker build .
   - docker-compose up -d
+  - docker exec tcf_django npm install eslint eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-standard
 
 script:
   - docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core
-  - docker exec tcf_django ls .
-  - docker exec tcf_django npm install eslint eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-standard
-  - docker exec tcf_django ls node_modules/.bin
   - docker exec tcf_django node_modules/.bin/eslint --fix tcf_website/static/**/*.js
   - docker exec tcf_django python3 manage.py test
 
