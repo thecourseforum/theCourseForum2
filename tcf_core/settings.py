@@ -80,7 +80,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'tcf_core.wsgi.application'
 
 
-
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -120,7 +119,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 # STATIC_URL = env.str('STATIC_URL', default='static/')
-
 
 
 # Database
@@ -204,7 +202,8 @@ if not DEBUG:
 
     # Read-write access to Elastic
     ES_COURSE_DOCUMENTS_ENDPOINT = env.str('ES_COURSE_DOCUMENTS_ENDPOINT')
-    ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = env.str('ES_INSTRUCTOR_DOCUMENTS_ENDPOINT')
+    ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = env.str(
+        'ES_INSTRUCTOR_DOCUMENTS_ENDPOINT')
     ES_PRIVATE_API_KEY = env.str('ES_PRIVATE_API_KEY')
 
     DATABASES['default'] = {
