@@ -216,6 +216,9 @@ if not DEBUG:
         'HOST': DB_HOST,
         'PORT': DB_PORT,
         'OPTIONS': {'sslmode': 'require'},
+        'TEST': {
+            'NAME': 'testDB',
+        },
     }
 
     print(DATABASES['default'])

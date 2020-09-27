@@ -57,4 +57,4 @@ jobs:
           docker-compose up -d
       - name: Run Tests
         run: |
-          sudo docker exec tcf_django sudo python3 manage.py test
+          docker exec tcf_django python3 manage.py test
