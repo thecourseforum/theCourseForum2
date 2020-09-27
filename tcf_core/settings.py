@@ -208,29 +208,29 @@ if not DEBUG:
     DB_PASSWORD = os.environ.get('DB_PASSWORD', None)
     DB_PORT = os.environ.get('DB_PORT', None)
 
-    if os.environ.get('GITHUB_WORKFLOW'):
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': 'github-actions',
-                'USER': 'postgres',
-                'PASSWORD': 'postgres',
-                'HOST': 'localhost',
-                'PORT': '5432'
-            }
+    # if os.environ.get('GITHUB_WORKFLOW'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'github-actions',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': 'localhost',
+            'PORT': '5432'
         }
-    else:
-        DATABASES['default'] = {
-            'NAME': DB_NAME,
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'USER': DB_USER,
-            'PASSWORD': DB_PASSWORD,
-            'HOST': DB_HOST,
-            'PORT': DB_PORT,
-            'OPTIONS': {'sslmode': 'require'},
-            'TEST': {
-                'NAME': 'testDB',
-            },
-        }
-
-        print(DATABASES['default'])
+    }
+    # else:
+    #     DATABASES['default'] = {
+    #         'NAME': DB_NAME,
+    #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #         'USER': DB_USER,
+    #         'PASSWORD': DB_PASSWORD,
+    #         'HOST': DB_HOST,
+    #         'PORT': DB_PORT,
+    #         'OPTIONS': {'sslmode': 'require'},
+    #         'TEST': {
+    #             'NAME': 'testDB',
+    #         },
+    #     }
+    #
+    #     print(DATABASES['default'])
