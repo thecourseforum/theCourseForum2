@@ -27,7 +27,7 @@ If you are part of theCourseForum engineering team, follow the instructions belo
 4. Lint and test locally before commit:
     - `./precommit`
     - Fix any problems indicated by tests or pylint.
-        - `python manage.py test`
+        - `docker exec tcf_django python3 manage.py test`
         - `docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core`
 4. Stage your changes with `git add .`
 5. Commit with `git commit -m "Add X feature."`
@@ -59,7 +59,6 @@ If you are part of theCourseForum engineering team, follow the instructions belo
 3. Copy the [project secret keys](https://docs.google.com/document/d/1HsuJOf-5oZljQK_k02CQhFbqw1q-pD_1-mExvyC1TV0/edit?usp=sharing) into a `.env` file in the project base directory `theCourseForum2/`
 4. In the `theCourseForum2/` directory, run these commands to start your Docker container:
     ```
-        cp .env.example .env        # See *note below
         docker build .
         docker-compose up
     ```
@@ -70,7 +69,7 @@ If you are part of theCourseForum engineering team, follow the instructions belo
     - \*`cat april7.sql | docker exec -i tcf_db psql -U tcf_django tcf_db`
 7. Go to http://localhost:8000 in your browser and make sure everything works!
 
-\*This method can also work if you have a version of Windows that is supported by Docker Desktop — i.e. Windows 10 Pro, Enterprise, or Education, but NOT Home (the most common version). However, you'll have to run `cp` and `cat` in a bash shell (ex. PowerShell, Git Bash) because those commands don't exist in CMD.
+\*This method can also work if you have a version of Windows that is supported by Docker Desktop — i.e. Windows 10 Pro, Enterprise, or Education, but NOT Home (the most common version). However, you'll have to run `cat` in a bash shell (ex. PowerShell, Git Bash) because that command doesn't exist in CMD.
 
 ### Alternative Setup (Windows and MacOS if above failed)
 0. [Install Vagrant](https://www.vagrantup.com/intro/getting-started/install.html)
