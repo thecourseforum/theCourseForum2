@@ -46,5 +46,5 @@ jobs:
           docker build .
           docker-compose build
       - name: Run Tests
-          run: |
-            docker exec tcf_django python3 manage.py test
+        run: |
+          docker exec tcf_django python3 manage.py test
