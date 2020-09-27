@@ -41,19 +41,19 @@ jobs:
           DB_PASSWORD: ${{secrets.DB_PASSWORD}}
           DB_PORT: ${{secrets.DB_PORT}}
         run: |
-          echo "::debug::$DB_HOST"
-          touch .env
-          echo "SECRET_KEY=$SECRET_KEY" >> .env
-          echo "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=$SOCIAL_AUTH_GOOGLE_OAUTH2_KEY" >> .env
-          echo "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=$SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET" >> .env
-          echo "ES_PUBLIC_API_KEY=$ES_PUBLIC_API_KEY" >> .env
-          echo "ES_COURSE_SEARCH_ENDPOINT=$ES_COURSE_SEARCH_ENDPOINT" >> .env
-          echo "ES_INSTRUCTOR_SEARCH_ENDPOINT=$ES_INSTRUCTOR_SEARCH_ENDPOINT" >> .env
-          echo "DB_NAME=$DB_NAME" >> .env
-          echo "DB_HOST=$DB_HOST" >> .env
-          echo "DB_USER=$DB_USER" >> .env
-          echo "DB_PASSWORD=$DB_PASSWORD" >> .env
-          echo "DB_PORT=$DB_PORT" >> .env
+          cp .env.example .env
+#          touch .env
+#          echo "SECRET_KEY=$SECRET_KEY" >> .env
+#          echo "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=$SOCIAL_AUTH_GOOGLE_OAUTH2_KEY" >> .env
+#          echo "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=$SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET" >> .env
+#          echo "ES_PUBLIC_API_KEY=$ES_PUBLIC_API_KEY" >> .env
+#          echo "ES_COURSE_SEARCH_ENDPOINT=$ES_COURSE_SEARCH_ENDPOINT" >> .env
+#          echo "ES_INSTRUCTOR_SEARCH_ENDPOINT=$ES_INSTRUCTOR_SEARCH_ENDPOINT" >> .env
+#          echo "DB_NAME=$DB_NAME" >> .env
+#          echo "DB_HOST=$DB_HOST" >> .env
+#          echo "DB_USER=$DB_USER" >> .env
+#          echo "DB_PASSWORD=$DB_PASSWORD" >> .env
+#          echo "DB_PORT=$DB_PORT" >> .env
           docker build .
           docker-compose up -d
       - name: Run Tests
