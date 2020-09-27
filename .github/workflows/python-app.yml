@@ -28,7 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run Tests
-          env:
+          env: |
             TEST_SECRET: ${{secrets.TEST_SECRET}}
         run: |
           echo $TEST_SECRET
