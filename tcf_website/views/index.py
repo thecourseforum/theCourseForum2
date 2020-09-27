@@ -39,9 +39,11 @@ class AboutView(TemplateView):
         context['marketing_team'] = self.team_info['marketing_team']
         return context
 
+
 class AboutHistoryView(TemplateView):
     """About history view."""
     template_name = 'about/history.html'
+
 
 class AboutContributorsView(TemplateView):
     """About alumni contributors view."""
