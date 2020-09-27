@@ -44,5 +44,5 @@ jobs:
           echo "ES_COURSE_SEARCH_ENDPOINT=$ES_COURSE_SEARCH_ENDPOINT" >> .env
           echo "ES_INSTRUCTOR_SEARCH_ENDPOINT=$ES_INSTRUCTOR_SEARCH_ENDPOINT" >> .env
           docker build .
-          docker-compose up
+#          docker-compose up
           docker exec tcf_django python3 manage.py test
