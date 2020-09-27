@@ -23,6 +23,11 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Tests
+        env:
+          TEST_SECRET: ${{secrets.TEST_SECRET}}
+        run: |
+          echo $TEST_SECRET
 #      - name: Install Dependencies
 #        run: |
 #          python -m pip install --upgrade pip
@@ -36,6 +41,6 @@ jobs:
 #          docker-compose up
 #          docker exec tcf_django python3 manage.py test
 #
-      - name: Tests
-          env:
-            TEST_SECRET: ${{secrets.TEST_SECRET}}
+#      - name: Tests
+#          env:
+#            TEST_SECRET: ${{secrets.TEST_SECRET}}
