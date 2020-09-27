@@ -208,7 +208,7 @@ if not DEBUG:
     DB_PASSWORD = os.environ.get('DB_PASSWORD', None)
     DB_PORT = os.environ.get('DB_PORT', None)
 
-    if os.getenv('GITHUB_WORKFLOW'):
+    if os.environ.get('GITHUB_WORKFLOW'):
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.postgresql',
