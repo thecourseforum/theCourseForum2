@@ -36,6 +36,13 @@ jobs:
           ES_COURSE_SEARCH_ENDPOINT: ${{secrets.ES_COURSE_SEARCH_ENDPOINT}}
           ES_INSTRUCTOR_SEARCH_ENDPOINT: ${{secrets.ES_INSTRUCTOR_SEARCH_ENDPOINT}}
         run: |
+          touch .env
+          echo "SECRET_KEY=$SECRET_KEY" >> .env
+          echo "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=$SOCIAL_AUTH_GOOGLE_OAUTH2_KEY" >> .env
+          echo "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=$SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET" >> .env
+          echo "ES_PUBLIC_API_KEY=$ES_PUBLIC_API_KEY" >> .env
+          echo "ES_COURSE_SEARCH_ENDPOINT=$ES_COURSE_SEARCH_ENDPOINT" >> .env
+          echo "ES_INSTRUCTOR_SEARCH_ENDPOINT=$ES_INSTRUCTOR_SEARCH_ENDPOINT" >> .env
           docker build .
           docker-compose up
           docker exec tcf_django python3 manage.py test
