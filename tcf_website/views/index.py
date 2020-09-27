@@ -40,6 +40,22 @@ class AboutView(TemplateView):
         context['executive_team'] = self.team_info['executive_team']
         context['engineering_team'] = self.team_info['engineering_team']
         context['marketing_team'] = self.team_info['marketing_team']
+        return context
+
+
+class AboutHistoryView(TemplateView):
+    """About history view."""
+    template_name = 'about/history.html'
+
+
+class AboutContributorsView(TemplateView):
+    """About alumni contributors view."""
+    template_name = 'about/contributors.html'
+    with open('tcf_website/views/team_alums.json') as data_file:
+        alum_info = json.loads(data_file.read())
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context['founders'] = self.alum_info['founders']
         context['contributors'] = self.alum_info['contributors']
         return context

@@ -1,13 +1,52 @@
 
 # theCourseForum2
-[![Build Status](https://travis-ci.com/thecourseforum/theCourseForum2.svg?branch=master)](https://travis-ci.com/thecourseforum/theCourseForum2)
+![version](https://img.shields.io/badge/version-1.0.0-blue.svg) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Build Status](https://travis-ci.com/thecourseforum/theCourseForum2.svg?branch=master)](https://travis-ci.com/thecourseforum/theCourseForum2) [![GitHub issues open](https://img.shields.io/github/issues/thecourseforum/theCourseForum2.svg?maxAge=2592000)]() [![GitHub issues closed](https://img.shields.io/github/issues-closed-raw/thecourseforum/theCourseForum2.svg?maxAge=2592000)]()
 
-2020 Django rewrite of theCourseForum website
+2020 Django rewrite of [theCourseForum 1.0](https://github.com/thecourseforum/theCourseForum) website at [thecourseforum.com](https://thecourseforum.com/).
 
 [Staging](http://thecourseforum-staging.herokuapp.com/) | [Dev](http://thecourseforum-dev.herokuapp.com/)
 
-# Setup
-## MacOS and Linux Setup
+## Table of Contents
+* [How To Contribute](#how-to-contribute)
+* [Setup](#setup)
+* [Common Issues & Fixes](#common-issues-and-fixes)
+* [Site Update Guides](#site-update-guides)
+
+
+## How to Contribute
+If you are part of theCourseForum engineering team, follow the instructions below to create a PR for your feature branch. If you are a UVA student and would like to contribute, contact one of the current contributors.
+
+### Directions
+1. Create a new branch to do your work in off of the `dev` branch.
+    - `git pull`
+    - `git checkout dev`
+    - `git checkout -B your_branch_name`
+2. Make your changes!
+3. Write unit tests and put them in `tcf_website/tests/`
+4. Lint and test locally before commit:
+    - `./precommit`
+    - Fix any problems indicated by tests or pylint.
+        - `docker exec tcf_django python3 manage.py test`
+        - `docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core`
+4. Stage your changes with `git add .`
+5. Commit with `git commit -m "Add X feature."`
+6. Push! `git push`
+7. Make a PR (Pull Request) to merge your changes back into the `dev` branch.
+8. Wait for all tests to pass on Travis (indicated by green checkmark).
+9. Request an approver.
+10. Wait to be approved and merged!
+
+### Design Philosophies
+- Thick models, thin views, thinner templates
+    - most application logic should be in methods on model classes.
+        - this ensures that the code can be reused easily anywhere the model is used and is way easier to test.
+    - furthermore, you should avoid placing logic in templates.
+        - e.g. don't filter lists in templates, filter them in the views.
+
+
+## Setup
+### MacOS and Linux Setup
 1. Install git, docker, and docker-compose
     - https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
     - https://docs.docker.com/install/
@@ -20,7 +59,6 @@
 3. Copy the [project secret keys](https://docs.google.com/document/d/1HsuJOf-5oZljQK_k02CQhFbqw1q-pD_1-mExvyC1TV0/edit?usp=sharing) into a `.env` file in the project base directory `theCourseForum2/`
 4. In the `theCourseForum2/` directory, run these commands to start your Docker container:
     ```
-        cp .env.example .env        # See *note below
         docker build .
         docker-compose up
     ```
@@ -31,9 +69,9 @@
     - \*`cat april7.sql | docker exec -i tcf_db psql -U tcf_django tcf_db`
 7. Go to http://localhost:8000 in your browser and make sure everything works!
 
-\*This method can also work if you have a version of Windows that is supported by Docker Desktop — i.e. Windows 10 Pro, Enterprise, or Education, but NOT Home (the most common version). However, you'll have to run `cp` and `cat` in a bash shell (ex. PowerShell, Git Bash) because those commands don't exist in CMD.
+\*This method can also work if you have a version of Windows that is supported by Docker Desktop — i.e. Windows 10 Pro, Enterprise, or Education, but NOT Home (the most common version). However, you'll have to run `cat` in a bash shell (ex. PowerShell, Git Bash) because that command doesn't exist in CMD.
 
-## Alternative Setup (Windows and MacOS if above failed)
+### Alternative Setup (Windows and MacOS if above failed)
 0. [Install Vagrant](https://www.vagrantup.com/intro/getting-started/install.html)
 1. `git clone https://github.com/thecourseforum/theCourseForum2.git`
 2. Go into the `theCourseForum2/` folder and then run `vagrant up` to start a VM.
@@ -44,36 +82,7 @@
 7. Run `vagrant` suspend when you're done to suspend the VM.
 
 
-# How to Contribute
-If you are part of theCourseForum engineering team, follow the instructions below to create a PR for your feature branch. If you are a UVA student and would like to contribute, contact one of the current contributors.
-
-## Directions
-1. Create a new branch to do your work in off of the `dev` branch.
-    - `git pull`
-    - `git checkout dev`
-    - `git checkout -B your_branch_name`
-2. Make your changes!
-3. Write unit tests and put them in `tcf_website/tests/`
-4. Lint and test locally before commit:
-    - `./precommit`
-    - Fix any problems indicated by tests or pylint.
-4. Stage your changes with `git add .`
-5. Commit with `git commit -m "Add X feature."`
-6. Push! `git push`
-7. Make a Pull Request to merge your changes back into `dev`.
-8. Wait for all tests to pass.
-9. Request an approver.
-10. Wait to be approved and merged!
-
-## Design Philosophies
-- Thick models, thin views, thinner templates
-    - most application logic should be in methods on model classes.
-        - this ensures that the code can be reused easily anywhere the model is used and is way easier to test.
-    - furthermore, you should avoid placing logic in templates.
-        - e.g. don't filter lists in templates, filter them in the views.
-
-
-## Common Issues & Fixes
+## Common Issues and Fixes
 
 ### Database Issues
 If the 'Browse Courses' page isn't loading, try the following:
@@ -111,9 +120,9 @@ createdb [DEV_DB_NAME];
 ```
 
 
-# Website Update Plans/Guides
+## Site Update Guides
 
-## Data migration plan from tCF 1.0 (total downtime: 2.5 hours)
+### Data migration plan from tCF 1.0 (total downtime: 2.5 hours)
 1. Get latest copy of legacy db using `mysqldump` from DO instance.
 2. Convert to sqlite using `legacy_db/mysql2sqlite`
     - Then put in `settings.py` as database `legacy`
@@ -127,12 +136,12 @@ createdb [DEV_DB_NAME];
     - `PGPASSWORD=$DB_PASS pg_restore -U $DB_USER -h $DB_HOST -p 25060 -d $DB_NAME < dump.pgsql`
     - You may have to run this command 3 times.
 
-## New semester update plan
+### New semester update plan
 1. `python manage.py update_semester 2021 january`
     - fetches CSV from lous list
     - loads section data into database
         - update courses with new course info if available
         - create new instructors if needed
 
-## TODO: Deploying to prod
+### TODO: Deploying to prod
 - https://docs.djangoproject.com/en/3.0/howto/deployment/
