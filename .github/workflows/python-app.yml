@@ -35,12 +35,13 @@ jobs:
           ES_PUBLIC_API_KEY: ${{secrets.ES_PUBLIC_API_KEY}}
           ES_COURSE_SEARCH_ENDPOINT: ${{secrets.ES_COURSE_SEARCH_ENDPOINT}}
           ES_INSTRUCTOR_SEARCH_ENDPOINT: ${{secrets.ES_INSTRUCTOR_SEARCH_ENDPOINT}}
-          DB_NAME: test
+          DB_NAME: ${{secrets.DB_NAME}}
           DB_HOST: ${{secrets.DB_HOST}}
-          DB_USER: test_user
+          DB_USER: ${{secrets.DB_USER}}
           DB_PASSWORD: ${{secrets.DB_PASSWORD}}
           DB_PORT: ${{secrets.DB_PORT}}
         run: |
+          echo $DB_HOST
           touch .env
           echo "SECRET_KEY=$SECRET_KEY" >> .env
           echo "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=$SOCIAL_AUTH_GOOGLE_OAUTH2_KEY" >> .env
