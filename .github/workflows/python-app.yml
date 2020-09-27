@@ -23,24 +23,19 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Tests
-        env:
-          TEST_SECRET: ${{secrets.TEST_SECRET}}
+      - name: Install Dependencies
         run: |
-          echo $TEST_SECRET
-#      - name: Install Dependencies
-#        run: |
-#          python -m pip install --upgrade pip
-#          pip install -r requirements.txt
-#      - name: Run Tests
-#        env:
-#          TEST_SECRET: ${{secrets.TEST_SECRET}}
-#        run: |
-#          echo $TEST_SECRET
-#          docker build .
-#          docker-compose up
-#          docker exec tcf_django python3 manage.py test
-#
-#      - name: Tests
-#          env:
-#            TEST_SECRET: ${{secrets.TEST_SECRET}}
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Tests
+        env:
+          SECRET_KEY: ${{secrets.SECRET_KEY}}
+          SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY}}
+          SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET}}
+          ES_PUBLIC_API_KEY: ${{secrets.ES_PUBLIC_API_KEY}}
+          ES_COURSE_SEARCH_ENDPOINT: ${{secrets.ES_COURSE_SEARCH_ENDPOINT}}
+          ES_INSTRUCTOR_SEARCH_ENDPOINT: ${{secrets.ES_INSTRUCTOR_SEARCH_ENDPOINT}}
+        run: |
+          docker build .
+          docker-compose up
+          docker exec tcf_django python3 manage.py test
