@@ -14,3 +14,4 @@ tcf_website/migrations/*
 predeploy.sh
 gae-service-account.json
 node_modules/
+.idea/
