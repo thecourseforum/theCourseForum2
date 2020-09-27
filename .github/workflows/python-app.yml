@@ -41,7 +41,7 @@ jobs:
           DB_PASSWORD: ${{secrets.DB_PASSWORD}}
           DB_PORT: ${{secrets.DB_PORT}}
         run: |
-          echo $DB_HOST
+          echo "::debug::$DB_HOST"
           touch .env
           echo "SECRET_KEY=$SECRET_KEY" >> .env
           echo "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=$SOCIAL_AUTH_GOOGLE_OAUTH2_KEY" >> .env
