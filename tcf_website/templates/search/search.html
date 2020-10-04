@@ -16,13 +16,20 @@
 
         {% if courses %}
             <div class="container">
-                <h4>Courses</h4> <h6>{{ courses | length }} results</h6>
-                {% for c in courses %}
-                    {#            <li>#}
+                <h3>Courses</h3>
+                <h6>15 results</h6>
+                {% for dept, dept_courses in courses.items %}
                     <hr>
-                    <a href="{% url 'course' course_id=c.id %}">{{ c.mnemonic }} - {{ c.title }}</a>
-
-                    {#            </li>#}
+                    <h4>{{ dept }} // (EXPANDED_DEPT_NAME)</h4>
+                    <hr>
+                    <div class="searched-department-courses">
+                        {% for c in dept_courses %}
+                            {% if c != dept_courses.0 %}
+                                <hr>
+                            {% endif %}
+                            <a href="{% url 'course' course_id=c.id %}">{{ c.mnemonic }} - {{ c.title }}</a>
+                        {% endfor %}
+                    </div>
                 {% endfor %}
             </div>
         {% else %}
