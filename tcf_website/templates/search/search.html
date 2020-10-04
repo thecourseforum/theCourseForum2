@@ -2,50 +2,52 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'search/search.css' %}" />
+    <link rel="stylesheet" href="{% static 'search/search.css' %}"/>
 {% endblock %}
 
 {% block content %}
-<div class="search container">
+    <div class="search container">
 
-    <div class="container">
-        <h1>Search: {{query}}</h1>
+        <div class="container">
+            <h1>Search results for: "{{ query }}"</h1>
+        </div>
+
+        <hr>
+
+        {% if courses %}
+            <div class="container">
+                <h4>Courses</h4> <h6>{{ courses | length }} results</h6>
+                {% for c in courses %}
+                    {#            <li>#}
+                    <hr>
+                    <a href="{% url 'course' course_id=c.id %}">{{ c.mnemonic }} - {{ c.title }}</a>
+
+                    {#            </li>#}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="container">
+                <h4>No courses matched your search.</h4>
+            </div>
+        {% endif %}
+
+        <hr>
+
+        {% if instructors %}
+            <div class="container">
+                <h4>Instructors</h4>
+                {% for i in instructors %}
+                    <li>
+                        <!-- TODO: create instructor page route -->
+                        {{ i.first_name }} {{ i.last_name }}
+                    </li>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="container">
+                <h4>No professors matched your search.</h4>
+            </div>
+        {% endif %}
+
     </div>
-
-    <hr>
-
-    {% if courses %}
-    <div class="container">
-        <h4>Courses</h4>
-        {% for c in courses %}
-            <li>
-                <a href="{% url 'course' course_id=c.id %}">{{c.mnemonic}} - {{c.title}}</a>
-            </li>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="container">
-        <h4>No courses matched your search.</h4>
-    </div>
-    {% endif %}
-
-    <hr>
-
-    {% if instructors %}
-    <div class="container">
-        <h4>Instructors</h4>
-        {% for i in instructors %}
-            <li>
-                <!-- TODO: create instructor page route -->
-                {{i.first_name}} {{i.last_name}}
-            </li>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="container">
-        <h4>No professors matched your search.</h4>
-    </div>
-    {% endif %}
-
-</div>
 {% endblock %}

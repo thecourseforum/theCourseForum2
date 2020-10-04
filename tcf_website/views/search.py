@@ -137,7 +137,7 @@ def format_courses(results):
         course = {
             "id": result.get("_meta").get("id"),
             "title": result.get("title").get("raw"),
-            "description": result.get("description").get("raw"),
+            # "description": result.get("description").get("raw"),
             "number": result.get("number").get("raw"),
             "mnemonic": result.get("mnemonic").get("raw")
         }
@@ -166,7 +166,23 @@ def set_arguments(query, courses, instructors):
         "query": query
     }
     if not courses["error"]:
-        args["courses"] = courses["results"]
+        args["courses"] = group_by_dept(courses['results'])
     if not instructors["error"]:
         args["instructors"] = instructors["results"]
     return args
+
+
+def group_by_dept(courses):
+    """Groups courses by their department."""
+    grouped_courses = {}
+    for course in courses:
+        course_dept = course['mnemonic'][:course['mnemonic'].index(' ')]
+        if course_dept not in grouped_courses:
+            grouped_courses[course_dept] = []
+        grouped_courses[course_dept].append(course)
+
+    ordered_courses = []
+    for dept in grouped_courses:
+        for course in grouped_courses[dept]:
+            ordered_courses.append(course)
+    return ordered_courses
