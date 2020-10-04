@@ -6,3 +6,8 @@
     background-color:rgb(165, 165, 165);
     height: 1px;
   }
+
+.searched-department-courses {
+    /*text-indent: 50px;*/
+    padding-left: 50px;
+}

@@ -181,8 +181,9 @@ def group_by_dept(courses):
             grouped_courses[course_dept] = []
         grouped_courses[course_dept].append(course)
 
-    ordered_courses = []
-    for dept in grouped_courses:
-        for course in grouped_courses[dept]:
-            ordered_courses.append(course)
-    return ordered_courses
+    return grouped_courses
+    # ordered_courses = []
+    # for dept in grouped_courses:
+    #     for course in grouped_courses[dept]:
+    #         ordered_courses.append(course)
+    # return ordered_courses
