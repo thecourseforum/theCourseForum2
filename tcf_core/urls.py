@@ -15,10 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.conf import settings
 
 urlpatterns = [
     path('', include('tcf_website.urls')),
     path('oauth/', include('social_django.urls')),
     path('admin/', admin.site.urls),
-    path('silk/', include('silk.urls', namespace='silk')) # For performance profiling
 ]
+
+# Paths available only in development
+if settings.DEBUG:
+    # For performance profiling
+    urlpatterns.append(path('silk/', include('silk.urls', namespace='silk')))
