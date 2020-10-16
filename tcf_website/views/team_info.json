@@ -111,7 +111,13 @@
                        "class": "2023",
                        "img_filename": "ENG_Erick_Tian.jpg",
                        "github": "ericktian"
-                       }
+                       },
+                       {"name": "Alexa Gomez",
+                        "role": "Developer",
+                        "class": "2021",
+                        "img_filename": "ENG_Alexa_Gomez.jpg",
+                        "github": "alexagomez"
+                        }
                      ],
 
   "marketing_team": [{"name": "Davis DeLozier",
