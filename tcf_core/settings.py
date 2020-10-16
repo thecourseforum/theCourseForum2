@@ -43,9 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_django',
     'cachalot',  # TODO: add Redis?
-    'silk',  # Performance profiling
     'tcf_website'
 ]
+# Performance profiling
+if DEBUG:
+    INSTALLED_APPS.append('silk')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -55,8 +57,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'silk.middleware.SilkyMiddleware',  # Performance profiling
 ]
+# Performance profiling
+if DEBUG:
+    MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
 
 ROOT_URLCONF = 'tcf_core.urls'
 
