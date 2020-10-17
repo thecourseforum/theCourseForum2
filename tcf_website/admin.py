@@ -51,7 +51,7 @@ class SectionAdmin(admin.ModelAdmin):
     autocomplete_fields = ['instructors']
 
     def get_queryset(self, request):
-        qs = super(SectionAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         qs = qs.prefetch_related('instructors')
         return qs
 
