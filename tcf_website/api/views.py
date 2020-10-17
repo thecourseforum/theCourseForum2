@@ -1,11 +1,12 @@
 # pylint: disable=too-many-ancestors
 """DRF Viewsets"""
 from rest_framework import viewsets
-from ..models import Course, Department, Instructor, School, Subdepartment
+from ..models import (Course, Department, Instructor, School, Semester,
+                      Subdepartment)
 from .paginations import MyPagination
 from .serializers import (CourseSerializer, DepartmentSerializer,
-                          InstructorSerializer, SchoolSerializer,
-                          SubdepartmentSerializer)
+                          InstructorSerializer, SemesterSerializer,
+                          SchoolSerializer, SubdepartmentSerializer)
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
@@ -40,3 +41,9 @@ class InstructorViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = InstructorSerializer
     pagination_class = MyPagination
     filterset_fields = ['section__course']
+
+
+class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
+    """DRF ViewSet for Semester"""
+    queryset = Semester.objects.all().order_by('number')
+    serializer_class = SemesterSerializer
