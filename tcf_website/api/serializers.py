@@ -1,6 +1,6 @@
 """DRF Serializers"""
 from rest_framework import serializers
-from ..models import Department, School
+from ..models import Department, School, Subdepartment
 
 
 class SchoolSerializer(serializers.ModelSerializer):
@@ -16,4 +16,11 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Department
+        fields = '__all__'
+
+
+class SubdepartmentSerializer(serializers.ModelSerializer):
+    """DRF Serializer for Subdepartment"""
+    class Meta:
+        model = Subdepartment
         fields = '__all__'
