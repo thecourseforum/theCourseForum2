@@ -4,9 +4,10 @@ from rest_framework import viewsets
 from ..models import (Course, Department, Instructor, School, Semester,
                       Subdepartment)
 from .paginations import MyPagination
-from .serializers import (CourseSerializer, DepartmentSerializer,
-                          InstructorSerializer, SemesterSerializer,
-                          SchoolSerializer, SubdepartmentSerializer)
+from .serializers import (CourseSerializer, CourseWithStatsSerializer,
+                          DepartmentSerializer, InstructorSerializer,
+                          SemesterSerializer, SchoolSerializer,
+                          SubdepartmentSerializer)
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
@@ -30,9 +31,14 @@ class SubdepartmentViewSet(viewsets.ReadOnlyModelViewSet):
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     """DRF ViewSet for Course"""
     queryset = Course.objects.all().order_by('number')
-    serializer_class = CourseSerializer
     pagination_class = MyPagination
     filterset_fields = ['subdepartment']
+
+    def get_serializer_class(self):
+        if 'stats' in self.request.query_params:
+            return CourseWithStatsSerializer
+        else:
+            return CourseSerializer
 
 
 class InstructorViewSet(viewsets.ReadOnlyModelViewSet):
