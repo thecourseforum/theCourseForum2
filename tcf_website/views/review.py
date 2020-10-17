@@ -3,6 +3,7 @@
 
 from django import forms
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
@@ -75,6 +76,12 @@ def new_review(request):
                     hours_per_week=int(request.POST['hours']),
                 )
 
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    'Successfully reviewed ' +
+                    str(course_code) +
+                    '!')
                 return redirect('reviews')
             except KeyError as err:
                 print(err)

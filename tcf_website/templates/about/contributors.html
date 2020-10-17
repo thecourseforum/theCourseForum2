@@ -1,8 +1,8 @@
-{% extends "about/about.html" %}
+{% block subcontent %}
 {% load static %}
 
-{% block subcontent %}
-  <div id="team-members" class="team text-center">
+  <div class="tCF-past-contributors text-center">
+
     <h1 class="my-5">Founders & Alumni</h1>
 
     <div class="jumbotron py-5 bg-light">
@@ -58,4 +58,5 @@
     {% endfor %}
 
   </div>
+
 {% endblock %}
