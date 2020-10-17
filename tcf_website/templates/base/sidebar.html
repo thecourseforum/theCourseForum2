@@ -53,7 +53,7 @@ d-flex flex-column justify-content-between" id="sidebar-wrapper">
     <h6>theCourseForum &copy; {{ LATEST_SEMESTER.year }}</h6>
     <p>
         <span>
-            <a href="#bugModal" data-toggle="modal" data-target="#bugModal"> Found a bug?</a>
+            <a href="#bugModal" data-toggle="modal" data-target="#bugModal" onclick="setUrlField()"> Found a bug?</a>
         </span>
         {% if DEBUG %}
         <span> | DEBUG Mode</span>
@@ -67,19 +67,41 @@ d-flex flex-column justify-content-between" id="sidebar-wrapper">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="bugModal">Report a Bug </h5>
+        <h5 class="modal-title center" id="bugModal">Report a Bug </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Submit</button>
+        <form class="needs-validation" novalidate>
+          <div class="form-row">
+              <label for="urlField">URL</label>
+              <input type="text" class="form-control" id="urlField" placeholder="thecourseforum.com" value="thecourseforum.com" required>
+              <div class="valid-feedback">
+                Looks good!
+              </div>
+          </div>
+          <div class="form-row">
+              <label for="emailField">Email (leave blank to remain anonymous)</label>
+              <input type="text" class="form-control" id="emailField" placeholder="example@virginia.edu">
+          </div>
+          <div class="form-row">
+              <label for="descriptionField">Description</label>
+              <textarea class="form-control" id="descriptionField" rows="3" placeholder="Please be as detailed as possible!" required></textarea>
+              <div class="valid-feedback">
+                Looks good!
+              </div>
+          </div>
+          <div class="form-row justify-content-center">
+            <button type="submit" class="btn btn-primary align-self-center">Submit</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </div>
 <!-- /#sidebar-wrapper -->
+
+{% block js %}
+<script src="{% static 'base/bugform.js' %}"></script>
+{% endblock %}
