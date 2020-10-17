@@ -32,6 +32,9 @@ class AboutView(TemplateView):
     with open('tcf_website/views/team_info.json') as data_file:
         team_info = json.loads(data_file.read())
 
+    with open('tcf_website/views/team_alums.json') as data_file:
+        alum_info = json.loads(data_file.read())
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['executive_team'] = self.team_info['executive_team']
