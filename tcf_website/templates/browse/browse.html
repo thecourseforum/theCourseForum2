@@ -7,14 +7,14 @@
 
 {% block content %}
 <div class="browse container">
-    <h2>Browse by Department</h2>
+    <h2 class="font-weight-light">Browse by Department</h2>
     <div class="schools text-left">
 
         {% include "browse/school.html" with school_name=CLAS.name departments=CLAS.department_set.all %}
 
         {% include "browse/school.html" with school_name=SEAS.name departments=SEAS.department_set.all %}
 
-        {% include "browse/school.html" with school_name="Other Schools at the University of Virginia" departments=other_depts %}
+        {% include "browse/grouped_schools.html" with school_name="Other Schools at the University of Virginia" schools=other_schools %}
 
     </div>
 </div>
