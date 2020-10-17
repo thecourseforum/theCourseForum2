@@ -9,6 +9,7 @@ requests
 django-environ
 django-silk
 djangorestframework
+django-filter
 
 # Linting
 pylint>=2.4.4
