@@ -26,9 +26,13 @@ class Command(BaseCommand):
             "UNKNOWN"]
 
         if self.verbose:
-            dash = '-'*185
+            dash = '-' * 185
             print(dash)
-            print('{:<70s}{:<70s}{:<70s}'.format('Subdepartment', 'Department', 'School'))
+            print(
+                '{:<70s}{:<70s}{:<70s}'.format(
+                    'Subdepartment',
+                    'Department',
+                    'School'))
             print(dash)
 
         # Go through all schools that are not in the list of excluded
@@ -38,8 +42,12 @@ class Command(BaseCommand):
                 # Go through all subdepartments
                 for subdepartment in department.subdepartment_set.all():
                     if self.verbose:
-                        print('{:<70s}{:<70s}{:<70s}'.format(subdepartment.name, department.name, school.name))
-                        print(dash)   
+                        print(
+                            '{:<70s}{:<70s}{:<70s}'.format(
+                                subdepartment.name,
+                                department.name,
+                                school.name))
+                        print(dash)
                     # Promote the subdepartment to a department
                     new_department = Department(
                         name=subdepartment.name,
@@ -53,15 +61,16 @@ class Command(BaseCommand):
                 # Delete old department
                 department.delete()
 
-        ## Moving Computer Science from A&S to School of Engineering
-        # Get the School of Engineering and Computer Science department instances
-        E_School = School.objects.get(name='School of Engineering & Applied Science')
+        # Moving Computer Science from A&S to School of Engineering
+        # Get the School of Engineering and Computer Science department
+        # instances
+        E_School = School.objects.get(
+            name='School of Engineering & Applied Science')
         Comp_Sci = Department.objects.get(name="Computer Science")
         # Assign school
         Comp_Sci.school = E_School
         # Save changes
         Comp_Sci.save()
-        
+
         if self.verbose:
             print('Moved Computer Science to School of Engineering')
-
