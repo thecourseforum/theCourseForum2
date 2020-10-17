@@ -37,8 +37,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     def get_serializer_class(self):
         if 'stats' in self.request.query_params:
             return CourseWithStatsSerializer
-        else:
-            return CourseSerializer
+        return CourseSerializer
 
 
 class InstructorViewSet(viewsets.ReadOnlyModelViewSet):
