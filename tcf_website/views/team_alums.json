@@ -1,0 +1,199 @@
+{
+  "founders": [
+    {"name": "Jeff Bordogna",
+    "role": "Co-Founder",
+    "class": "2007",
+    "img_filename": "jbordogna.png"
+    },
+    {"name": "Alan Webb",
+    "role": "Co-Founder",
+    "class": "2007",
+    "img_filename": "awebb.png"
+    }
+  ],
+  "contributors": [
+    {
+      "group_name": "Class of 2020",
+      "members": [{"name": "Brad Knaysi",
+                   "role": "VP of Product Engineering",
+                   "class": "2020",
+                   "img_filename": "bknaysi.jpg",
+                   "github": "bradknaysi"},
+                  {"name": "Sai Konuri",
+                   "role": "VP of Infrastructure Engineering",
+                   "class": "2020",
+                   "img_filename": "skonuri.jpg",
+                   "github": "saikonuri"},
+                   {"name": "Chris Zion",
+                    "role": "Business Lead",
+                    "class": "2020",
+                    "img_filename": "czion.png"
+                  }]
+    },
+    {
+      "group_name": "Class of 2019",
+      "members": [{"name": "Varun Patel",
+                  "role": "Web Developer",
+                  "class": "2019",
+                  "img_filename": "vpatel.png"
+                  },
+                  {"name": "Ayman Mobin",
+                  "role": "Web Developer",
+                  "class": "2019",
+                  "img_filename": "amobin.jpg"
+                  },
+                  {"name": "Rohan Raval",
+                  "role": "Web Developer",
+                  "class": "2019",
+                  "img_filename": "rraval.jpg"
+                  },
+                  {"name": "Justin Barry",
+                  "role": "Web Developer",
+                  "class": "2019",
+                  "img_filename": "jbarry.jpg"
+                  },
+                  {"name": "Henry Harris",
+                  "role": "Web Developer",
+                  "class": "2019",
+                  "img_filename": "hharris.jpg"
+                  },
+                  {"name": "Andrew Ton",
+                  "role": "Web Developer",
+                  "class": "2019",
+                  "img_filename": "aton.png"
+                  },
+                  {"name": "Jordan Farquhar",
+                  "role": "Web Developer",
+                  "class": "2019",
+                  "img_filename": "jfarquhar.png"
+                  },
+                  {"name": "Anirudh Ryali",
+                  "role": "Web Developer",
+                  "class": "2019",
+                  "img_filename": "aryali.png"
+                  },
+                  {"name": "Oliver Nicholas",
+                  "role": "Operations Lead",
+                  "class": "2019",
+                  "img_filename": "onicholas.png"
+                  }]
+    },
+    {
+      "group_name": "Class of 2018",
+      "members": [{"name": "Christine Tsou",
+                  "role": "Web Developer",
+                  "class": "2018",
+                  "img_filename": "ctsou.png"
+                  },
+                  {"name": "Candace Park",
+                  "role": "Web Developer",
+                  "class": "2018",
+                  "img_filename": "cpark.png"
+                  },
+                  {"name": "Apoorva Arunkumar",
+                  "role": "Web Developer",
+                  "class": "2018",
+                  "img_filename": "aarunkumar.png"
+                  },
+                  {"name": "Josie Chiao",
+                  "role": "Web Developer",
+                  "class": "2018",
+                  "img_filename": "jchiao.jpg"
+                  },
+                  {"name": "Ann Liu",
+                  "role": "Business",
+                  "class": "2018",
+                  "img_filename": "aliu.png"
+                  },
+                  {"name": "Lizzie Redd",
+                  "role": "Business",
+                  "class": "2018",
+                  "img_filename": "lredd.png"
+                  }]
+    },
+    {
+      "group_name": "Class of 2017",
+      "members": [{"name": "Alan Wei",
+                  "role": "Web Developer",
+                  "class": "2017",
+                  "img_filename": "awei.png"
+                  },
+                  {"name": "Atallah Hezbor",
+                  "role": "Web Developer",
+                  "class": "2017",
+                  "img_filename": "ahezbor.png"
+                  },
+                  {"name": "Robert Schmidt",
+                  "role": "Web Developer",
+                  "class": "2017",
+                  "img_filename": "rschmidt.png"
+                  },
+                  {"name": "Kienan Adams",
+                  "role": "Web Developer",
+                  "class": "2017",
+                  "img_filename": "kadams.png"
+                  },
+                  {"name": "Lawrence Hook",
+                  "role": "Web Developer",
+                  "class": "2017",
+                  "img_filename": "lhook.png"
+                  },
+                  {"name": "Mario Sukkar",
+                  "role": "Web Developer",
+                  "class": "2017",
+                  "img_filename": "msukkar.png"
+                  },
+                  {"name": "Daniel Coo",
+                  "role": "Web Developer",
+                  "class": "2017",
+                  "img_filename": "dcoo.jpg"
+                  },
+                  {"name": "Ian Zheng",
+                  "role": "Web Developer",
+                  "class": "2017",
+                  "img_filename": "izheng.png"
+                  },
+                  {"name": "Lewis Jones",
+                  "role": "Business",
+                  "class": "2017",
+                  "img_filename": "ljones.png"
+                  }]
+    },
+    {
+      "group_name": "Class of 2016",
+      "members": [{"name": "Sean Spector",
+                  "role": "Business",
+                  "class": "2016",
+                  "img_filename": "sspector.jpg"
+                  }]
+    },
+    {
+      "group_name": "Class of 2015",
+      "members": [{"name": "Justin Dao",
+                  "role": "Web Developer",
+                  "class": "2015",
+                  "img_filename": "jdao.png"
+                  },
+                  {"name": "Brian Whitlow",
+                  "role": "Web Developer",
+                  "class": "2015",
+                  "img_filename": "bwhitlow.png"
+                  },
+                  {"name": "Alex Aberman",
+                  "role": "Data Engineering",
+                  "class": "2015",
+                  "img_filename": "aaberman.jpg"
+                  },
+                  {"name": "Alex Bergman",
+                  "role": "Graphic Design",
+                  "class": "2015",
+                  "img_filename": "abergman.jpg"
+                  },
+                  {"name": "Sara Neel",
+                  "role": "Graphic Design",
+                  "class": "2015",
+                  "img_filename": "sneel.png"
+                  }]
+    }
+  ]
+}
