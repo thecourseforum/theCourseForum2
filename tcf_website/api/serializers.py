@@ -41,6 +41,17 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CourseWithStatsSerializer(serializers.ModelSerializer):
+    """DRF Serializer for Course including review statistics"""
+    semester_last_taught = SemesterSerializer(read_only=True)
+
+    class Meta:
+        model = Course
+        fields = ['id', 'title', 'description', 'number', 'subdepartment',
+                  'semester_last_taught', 'average_rating',
+                  'average_difficulty']
+
+
 class InstructorSerializer(serializers.ModelSerializer):
     """DRF Serializer for Instructor"""
     class Meta:
