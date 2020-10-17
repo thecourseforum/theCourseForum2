@@ -1,9 +1,9 @@
 # pylint: disable=too-many-ancestors
 """DRF Viewsets"""
 from rest_framework import viewsets
-from ..models import Department, School, Subdepartment
-from .serializers import (DepartmentSerializer, SchoolSerializer,
-                          SubdepartmentSerializer)
+from ..models import Course, Department, School, Subdepartment
+from .serializers import (CourseSerializer, DepartmentSerializer,
+                          SchoolSerializer, SubdepartmentSerializer)
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
@@ -22,3 +22,9 @@ class SubdepartmentViewSet(viewsets.ReadOnlyModelViewSet):
     """DRF ViewSet for Subdepartment"""
     queryset = Subdepartment.objects.all()
     serializer_class = SubdepartmentSerializer
+
+
+class CourseViewSet(viewsets.ReadOnlyModelViewSet):
+    """DRF ViewSet for Course"""
+    queryset = Course.objects.all().order_by('number')
+    serializer_class = CourseSerializer
