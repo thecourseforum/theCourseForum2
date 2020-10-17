@@ -30,3 +30,4 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Course.objects.all().order_by('number')
     serializer_class = CourseSerializer
     pagination_class = MyPagination
+    filterset_fields = ['subdepartment']
