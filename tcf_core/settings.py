@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_django',
     'cachalot',  # TODO: add Redis?
+    'rest_framework',
     'tcf_website'
 ]
 # Performance profiling
