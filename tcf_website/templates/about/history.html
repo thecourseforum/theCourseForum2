@@ -1,36 +1,61 @@
-{% extends "base/base.html" %}
+{% block subcontent %}
 {% load static %}
 
 {% block styles %}
+<link rel="stylesheet" href="{% static 'about/history/history.css' %}" />
 {% endblock %}
 
-{% block content %}
-<div class="browse container">
-    <h2>theCourseForum</h2>
-    <h6>connecting you to the courses you love.</h6>
-    <img class="container-fluid" src="{% static 'about/banner_uva.jpg' %}"/>
-    <div class="row mt-3">
-        <div class="col">
-            <h5>Beginnings</h5>
-            <p>
-                In Fall 2005, UVa students Jeff Bordogna and Alan Webb recognized a need for an online community to help students share their class experiences, and thus developed the first version of theCourseForum. Over time, this simple tool grew and prospered as more and more students found it despite our extraordinarily small marketing budget. The site has now become a fixture of the UVA course signup season to the extent that over 80% of students use the site every year. Starting in 2012, a small elite team of skilled individuals worked to redesign the site to bring it into the modern age. After a long year of work, the new site was released, and it continues to be managed by UVa students.
-            </p>
-            <p>
-                Although this organization has members who are University of Virginia students and may have University employees associated or engaged in its activities and affairs, the organization is not a part of or an agency of the University. It is a separate and independent organization, which is responsible for and manages its own activities and affairs. The University does not direct, supervise or control the organization and is not responsible for the organization’s contracts, acts or omissions.
-            </p>
-        </div>
-        <div class="col">
-            <img src="{% static 'about/parents_fund.png' %}"/>
-            <h5>
-                Thanks to the UVA Parents Fund!
-            </h5>
-            <p>
-                The UVA Parents Fund helps us cover server costs from the large amount of traffic that we get. Their help has allowed the site to stay up and running continuously as we keep developing new features.
-            </p>
-        </div>
+<div class="tCF-history">
+  <div class="grid">
+    <h1 class="grid-header">History</h1>
+    <img class="founders-img img-fluid" src="{% static 'about/history/tCF-2005-team.png' %}"/>
+    <div class="founders-text">
+      <h4>Founding</h4>
+      <p>
+        In Fall 2005, two University of Virginia students, Jeff Bordogna and
+        Alan Webb had an idea for an app that would let UVA students share
+        their classroom experiences.
+      </p>
     </div>
+    <img class="revival-img img-fluid" src="{% static 'about/history/tCF-2014-team.jpeg' %}"/>
+    <div class="revival-text">
+      <h4>Revival</h4>
+      <p>
+        In 2012-2013, a team of 6 student developers led by Justin Dao redesigned
+        the site to bring it into the modern age using the Ruby on Rails framework.
+        <br><br>
+        <i>"Same dog, new tricks..." - Justin Dao</i>
+      </p>
+    </div>
+    <img class="cio-img img-fluid" src="{% static 'about/history/tCF-2017-team.png' %}" />
+    <div class="cio-text">
+      <h4>CIO Era</h4>
+      <p>
+        In 2017, a successful year of recruitment and organizational growth
+        resulted in UVA granting theCourseForum CIO status.
+      </p>
+    </div>
+    <img class="revival2-img img-fluid" src="{% static 'about/history/tCF-2020-team.png' %}" />
+    <div class="revival2-text">
+      <h4>Revival 2.0</h4>
+      <p>
+        In Spring 2020, theCourseForum needed a fresh start. Under the
+        leadership of Brian Yu, Sai Konuri, Brad Knaysi, and Jennifer Long, theCourseForum
+        was re-build from scratch using the Python web-framework Django.
+      </p>
+    </div>
+    <div class="sponsors-text">
+      <h1 style="text-align: center;">Thanks to our sponsors</h1>
+      <p>
+        Our sponsors help us cover server costs from the large amount of traffic that we get.
+        Their help has allowed the site to stay up and running continuously as we keep developing
+        new features.
+      </p>
+      <hr>
+    </div>
+    <img class="sponsors-img1 img-fluid" src="{% static 'about/history/UVA-parents-fund-logo.png' %}"/>
+    <img class="sponsors-img2 img-fluid" src="{% static 'about/history/UVA-student-council-logo.png' %}"/>
+  </div>
 </div>
-
-
 
 {% endblock %}

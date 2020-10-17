@@ -24,11 +24,12 @@ d-flex flex-column justify-content-between" id="sidebar-wrapper">
        {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
       <i class="fa fa-code fa-fw"></i>&nbsp; About
     </a>
+
+    <!-- tCF profile dropdown when navbar collapses -->
     {% if user.is_authenticated %}
-      <!-- KEEP IN SYNC WITH navbar.html -->
-      <div class="d-sm-none list-group-item dropdown">
+      <div class="d-md-none list-group-item dropdown">
         <div class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fa fa-user fa-fw"></i>&nbsp; Hi, {{user.first_name}}
+        <i class="fa fa-user fa-fw"></i>&nbsp; Hey, {{user.first_name}}!
         </div>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
@@ -52,7 +53,7 @@ d-flex flex-column justify-content-between" id="sidebar-wrapper">
     <h6>theCourseForum &copy; {{ LATEST_SEMESTER.year }}</h6>
     <p>
         <span>
-            <a href="https://twitter.com/messages/compose?recipient_id=1959594170">Found a bug?</a>
+            <a href="https://twitter.com/messages/compose?recipient_id=1959594170" target="_blank">Found a bug?</a>
         </span>
         {% if DEBUG %}
         <span> | DEBUG Mode</span>
