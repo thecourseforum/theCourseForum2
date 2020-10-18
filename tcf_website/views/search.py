@@ -4,6 +4,7 @@ import json
 import requests
 
 from django.shortcuts import render
+from ..models import Subdepartment
 
 
 def search(request):
@@ -173,17 +174,17 @@ def set_arguments(query, courses, instructors):
 
 
 def group_by_dept(courses):
-    """Groups courses by their department."""
+    """Groups courses by their department and adds relevant metadata."""
     grouped_courses = {}
     for course in courses:
         course_dept = course['mnemonic'][:course['mnemonic'].index(' ')]
         if course_dept not in grouped_courses:
-            grouped_courses[course_dept] = []
-        grouped_courses[course_dept].append(course)
+            subdept = Subdepartment.objects.filter(mnemonic=course_dept)[0]
+            grouped_courses[course_dept] = {
+                "subdept_name": subdept.name,
+                "dept_id": subdept.department_id,
+                "courses": []
+            }
+        grouped_courses[course_dept]["courses"].append(course)
 
     return grouped_courses
-    # ordered_courses = []
-    # for dept in grouped_courses:
-    #     for course in grouped_courses[dept]:
-    #         ordered_courses.append(course)
-    # return ordered_courses

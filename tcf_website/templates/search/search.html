@@ -17,14 +17,13 @@
         {% if courses %}
             <div class="container">
                 <h3>Courses</h3>
-                <h6>15 results</h6>
-                {% for dept, dept_courses in courses.items %}
+                {% for dept, dept_data in courses.items %}
                     <hr>
-                    <h4>{{ dept }} // (EXPANDED_DEPT_NAME)</h4>
+                    <h5><a href="{% url 'department' dept_id=dept_data.dept_id %}">{{ dept }} / {{ dept_data.subdept_name }}</a></h5>
                     <hr>
                     <div class="searched-department-courses">
-                        {% for c in dept_courses %}
-                            {% if c != dept_courses.0 %}
+                        {% for c in dept_data.courses %}
+                            {% if c != dept_data.courses.0 %}
                                 <hr>
                             {% endif %}
                             <a href="{% url 'course' course_id=c.id %}">{{ c.mnemonic }} - {{ c.title }}</a>
