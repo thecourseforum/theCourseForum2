@@ -96,10 +96,19 @@ If the 'Browse Courses' page isn't loading, try the following:
     - Linux: `sudo service postgresql restart`
 2. There may be a Django migration issue. See the section below this for details.
 3. If all else fails, reset the development database by dropping the table and re-running the Setup instructions.
-```
-dropdb [DEV_DB_NAME];
-createdb [DEV_DB_NAME];
-```
+    First run `sudo docker exec -i tcf_db psql -U tcf_django tcf_db` which will put you into the Postgres terminal (no message will be given)
+    ```
+    SELECT pg_terminate_backend(pg_stat_activity.pid)
+    FROM pg_stat_activity
+    WHERE pg_stat_activity.datname = 'tcf_db'
+    AND pid <> pg_backend_pid();
+    ```
+    Exit the terminal with Ctrl-C or Ctrl-D
+    Then run the following commands to drop and recreate the database
+    ```
+    sudo docker exec -i tcf_db dropdb -U tcf_django tcf_db
+    sudo docker exec -i tcf_db createdb -U tcf_django tcf_db
+    ```
 
 ### Django Migration Conflicts
 After we removed the migrations folder from the `.gitignore` file, you may experience migration issues when you merge different branches where the models (database tables/columns) have been modified. Try the following to resolve the issue:
@@ -116,19 +125,19 @@ python3 manage.py migrate
 ```
 4. If all else fails, reset the development database by dropping the table and re-running the Database Setup instructions.
 
-First run `sudo docker exec -i tcf_db psql -U tcf_django tcf_db` which will put you into the Postgres terminal (no message will be given)
-```
-SELECT pg_terminate_backend(pg_stat_activity.pid)
-FROM pg_stat_activity
-WHERE pg_stat_activity.datname = 'tcf_db'
-  AND pid <> pg_backend_pid();
-```
-Exit the terminal with Ctrl-C or Ctrl-D
-Then run the following commands to drop and recreate the database
-```
-sudo docker exec -i tcf_db dropdb -U tcf_django tcf_db
-sudo docker exec -i tcf_db createdb -U tcf_django tcf_db
-```
+    First run `sudo docker exec -i tcf_db psql -U tcf_django tcf_db` which will put you into the Postgres terminal (no message will be given)
+    ```
+    SELECT pg_terminate_backend(pg_stat_activity.pid)
+    FROM pg_stat_activity
+    WHERE pg_stat_activity.datname = 'tcf_db'
+    AND pid <> pg_backend_pid();
+    ```
+    Exit the terminal with Ctrl-C or Ctrl-D
+    Then run the following commands to drop and recreate the database
+    ```
+    sudo docker exec -i tcf_db dropdb -U tcf_django tcf_db
+    sudo docker exec -i tcf_db createdb -U tcf_django tcf_db
+    ```
 
 ## Site Update Guides
 
