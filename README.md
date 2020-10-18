@@ -114,11 +114,20 @@ python3 manage.py makemigrations
 python3 manage.py migrate
 ```
 4. If all else fails, reset the development database by dropping the table and re-running the Database Setup instructions.
-```
-dropdb [DEV_DB_NAME];
-createdb [DEV_DB_NAME];
-```
 
+First run `sudo docker exec -i tcf_db psql -U tcf_django tcf_db` which will put you into the Postgres terminal (no message will be given)
+```
+SELECT pg_terminate_backend(pg_stat_activity.pid)
+FROM pg_stat_activity
+WHERE pg_stat_activity.datname = 'tcf_db'
+  AND pid <> pg_backend_pid();
+```
+Exit the terminal with Ctrl-C or Ctrl-D
+Then run the following commands to drop and recreate the database
+```
+sudo docker exec -i tcf_db dropdb -U tcf_django tcf_db
+sudo docker exec -i tcf_db createdb -U tcf_django tcf_db
+```
 
 ## Site Update Guides
 
