@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>theCourseForum</title>
+    <link rel="icon"
+      type="image/png"
+      href="{% static 'base/img/new_logo.png' %}">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{% static 'base/bootstrap.min.css' %}" />
+    <script src="https://kit.fontawesome.com/ed3998fccc.js" crossorigin="anonymous"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{% static 'base/simple-sidebar.css'%}">
+    <link rel="stylesheet" href="{% static 'base/base.css' %}" />
+
+    {% block styles %}
+    {% endblock %}
+</head>
+<body class="body">
+    <div class="d-flex" id="wrapper">
+
+      {% include "base/sidebar.html" %}
+
+      <!-- Page Content -->
+      <div id="page-content-wrapper">
+
+        {% include "base/navbar.html" %}
+        {% include "base/messages.html" %}
+        <div class="content p-4 container-fluid text-center text-md-left h-100">
+            <div class="row h-100">
+            {% block content %}
+            <p>Base content goes here.</p>
+            {% endblock %}
+            </div>
+        </div>
+
+      </div>
+      <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <script src="{% static 'base/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'base/bootstrap.bundle.min.js' %}"></script>
+    <!-- Menu Toggle Script -->
+    <script>
+
+      /*
+        This jquery function is CRITICAL to the
+        sidebar working properly when clicking
+        the navbar-toggler of the navbar.
+      */
+      $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+      });
+
+      function getCookie(c_name) {
+        if (document.cookie.length > 0) {
+          c_start = document.cookie.indexOf(c_name + "=");
+          if (c_start != -1) {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+          }
+        }
+        return "";
+      }
+    </script>
+
+    <!-- Turbolinks -->
+    <!-- Need to do more research. -->
+    <!-- https://www.reddit.com/r/django/comments/9ccwci/django_and_turbolinks/ -->
+    <!-- https://stackoverflow.com/questions/47240766/to-use-turbolinks-5-with-django-how-can-i-automate-inclusion-of-the-turbolinks -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js"></script> -->
+
+    {% block js %}
+    {% endblock %}
+</body>
+</html>
