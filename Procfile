@@ -1,2 +1,2 @@
-release: python manage.py collectstatic --noinput --clear && python manage.py makemigrations tcf_website && python manage.py migrate
-web: gunicorn tcf_core.wsgi
+release: python manage.py collectstatic --noinput --clear && python manage.py makemigrations && python manage.py migrate
+web: gunicorn tcf_core.wsgi --log-level debug
