@@ -11,6 +11,7 @@ function() {
           event.stopPropagation();
         }
         form.classList.add('was-validated');
+        // call bot
       }, false);
     });
   }, false);
