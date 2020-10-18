@@ -1,6 +1,7 @@
 {% extends "base/index.html" %}
 {% load static %}
 
+
 {% block styles %}
 <!-- Custom fonts for this template -->
 <link rel="stylesheet" href="{% static '_styling/fontawesome-free/css/all.min.css' %}" />
@@ -8,35 +9,64 @@
 <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
 
 <!-- Custom styles for this template -->
+<link rel="stylesheet" href="{% static 'base/navbar.css' %}" />
 <link rel="stylesheet" href="{% static 'landing/landing-page.css' %}" />
 {% endblock %}
 
+
 {% block body %}
 <!-- Navigation -->
-<nav class="navbar navbar-light bg-light static-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+
   <div class="container">
-    <a class="navbar-brand" href="#">tCF</a>
-    <a class="btn btn-primary" href="#">Login</a>
+    <!-- tCF logo -->
+    <a class="navbar-brand logo-container" href="/">
+      <img class="logo" src="{% static 'base/img/new_logo.png' %}">
+    </a>
+
+    <!-- tCF profile dropdown -->
+    <div class="account-settings">
+      {% if user.is_authenticated %}
+      <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown">
+          Hey, {{user.first_name}}!
+        </a>
+        <div class="dropdown-menu settings" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
+          <a class="dropdown-item" href="{% url 'reviews' %}">My Reviews</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+        </div>
+      </div>
+      {% else %}
+      <div class="nav-item">
+        <a class="nav-link" href="{% url 'login' %}">Sign In</a>
+      </div>
+    {% endif %}
+    </div>
   </div>
 </nav>
 
 <!-- Masthead -->
-<header class="masthead text-white text-center">
+<header class="masthead text-white text-center"
+        style="background-image: url({% static 'landing/img/team.png' %})">
   <div class="overlay"></div>
   <div class="container">
     <div class="row">
       <div class="col-xl-9 mx-auto">
         <h1 class="mb-2">theCourseForum</h1>
-        <p class="lead mb-5">A community dedicated to providing you all the information you need to plan your best semester.</p>
+        <p class="lead mb-5">A UVA student-run community that connects you to the courses you love.</p>
       </div>
       <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-        <form>
-          <div class="form-row">
-            <div class="col-12 col-md-9 mb-2 mb-md-0">
-              <input type="text" class="form-control form-control-lg" placeholder="Search a class or professor...">
-            </div>
-            <div class="col-12 col-md-3">
-              <button type="submit" class="btn btn-block btn-lg btn-primary">Search</button>
+        <!-- tCF search -->
+        <form class="form-inline flex-grow-1" action="/search" method="get">
+          <div class="input-group flex-grow-1">
+            <input type="search" class="form-control border border-right-0"
+                    placeholder="Search a class or professor..." aria-label="Search" name="q" value="{{query}}">
+            <div class="input-group-append">
+              <button class="btn btn-outline-primary border border-left-0" type="submit">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+              </button>
             </div>
           </div>
         </form>
@@ -54,26 +84,26 @@
           <div class="features-icons-icon d-flex">
             <i class="icon-screen-desktop m-auto text-primary"></i>
           </div>
-          <h3>Browse</h3>
-          <p class="lead mb-0">Search for classes by category and find what's right for you.</p>
-        </div>
-      </div>
-      <div class="col-lg-4">
-        <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
-          <div class="features-icons-icon d-flex">
-            <i class="icon-layers m-auto text-primary"></i>
-          </div>
-          <h3>Write a Review</h3>
-          <p class="lead mb-0">Help our community by telling others about your class experience.</p>
+          <h3>Browse Courses</h3>
+          <p class="lead mb-0">See what other students say about classes and professors</p>
         </div>
       </div>
       <div class="col-lg-4">
         <div class="features-icons-item mx-auto mb-0 mb-lg-3">
           <div class="features-icons-icon d-flex">
+            <i class="icon-layers m-auto text-primary"></i>
+          </div>
+          <h3>View Grades</h3>
+          <p class="lead mb-0">Check out actual grade distributions from past semesters</p>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
+          <div class="features-icons-icon d-flex">
             <i class="icon-check m-auto text-primary"></i>
           </div>
-          <h3>Schedule Classes</h3>
-          <p class="lead mb-0">Plan out your semester and fill your day with the best classes.</p>
+          <h3>Write a Review</h3>
+          <p class="lead mb-0">Help our community by telling others about your class experience</p>
         </div>
       </div>
     </div>
@@ -140,7 +170,7 @@
 </section>
 
 <!-- Footer -->
-<footer class="footer bg-light">
+<footer class="footer">
   <div class="container">
     <div class="row">
       <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
@@ -166,7 +196,7 @@
       <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
         <ul class="list-inline mb-0">
           <li class="list-inline-item mr-3">
-            Follow theCourseForum!
+            <h5>Follow theCourseForum!</h5>
           </li>
           <li class="list-inline-item mr-3">
             <a href="#">
@@ -175,12 +205,12 @@
           </li>
           <li class="list-inline-item mr-3">
             <a href="#">
-              <i class="fab fa-twitter-square fa-2x fa-fw"></i>
+              <i class="fab fa-instagram fa-2x fa-fw"></i>
             </a>
           </li>
           <li class="list-inline-item">
             <a href="#">
-              <i class="fab fa-instagram fa-2x fa-fw"></i>
+              <i class="fab fa-twitter-square fa-2x fa-fw"></i>
             </a>
           </li>
         </ul>

@@ -21,10 +21,11 @@ h6 {
 header.masthead {
   position: relative;
   background-color: #343a40;
-  background: url("../img/bg-masthead.jpg") no-repeat center center;
+  /* background: url("../about/team-pfps/bg-tCF-2017-team.png") no-repeat center center; */
   background-size: cover;
   padding-top: 8rem;
   padding-bottom: 8rem;
+  text-shadow: 2px 2px 4px #000000;
 }
 
 header.masthead .overlay {
@@ -121,6 +122,10 @@ header.masthead h1 {
 }
 
 footer.footer {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: orange;
+}
+footer.footer a, footer.footer h5{
+  color: white;
 }
