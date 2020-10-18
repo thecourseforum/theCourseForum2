@@ -1,0 +1,293 @@
+input[type=number], input[type=text], textarea {
+    -webkit-transition: all 0.10s ease-in-out;
+    -moz-transition: all 0.10s ease-in-out;
+    -ms-transition: all 0.10s ease-in-out;
+    -o-transition: all 0.10s ease-in-out;
+    outline: none;
+    border: 1px solid #DDDDDD;
+}
+   
+input[type=number]:focus, input[type=text]:focus,textarea:focus {
+    box-shadow: 0 0 5px rgb(199, 223, 255);
+    border: 1px solid rgb(199, 223, 255);
+}
+
+.select-css {
+	display: block;
+	box-sizing: border-box;
+    border: 1px solid #DDDDDD;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+    appearance: none;
+    background-color: #ededed;
+    width: 175px;
+}
+
+.select-css::-ms-expand {
+	display: none;
+}
+
+.select-css:after {
+    content: '\f078';
+    font: normal normal normal 17px/1 FontAwesome;
+    color: #0ebeff;
+    right: 11px;
+    top: 6px;
+    height: 34px;
+    padding: 15px 0px 0px 8px;
+    position: absolute;
+    pointer-events: none;
+}
+
+.select-css:focus {
+	border-color: #aaa;
+	box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
+	box-shadow: 0 0 0 3px -moz-mac-focusring;
+	color: #222;
+	outline: none;
+}
+
+.select-css option {
+	font-weight:normal;
+}
+
+.greyform{
+    height: 20px; 
+    background-color: #ebebeb;
+    border: none;
+    border-radius: 4px;
+    padding: 12px 5px;
+    width: 175px;
+}
+
+input[type="checkbox"] {
+    opacity: 0;
+}
+
+.checkbox label {
+    position: relative;
+    display: inline-block;
+
+    padding-left: 22px;
+}
+
+.checkbox label::before,
+.checkbox label::after {
+    position: absolute;
+    content: "";
+    
+
+    display: inline-block;
+}
+
+/*Outer box of the fake checkbox*/
+.checkbox label::before{
+    height: 16px;
+    width: 16px;
+    
+    border: 0.09375em solid;
+    border-radius: 3px;
+    left: 0px;
+
+    top: 4px;
+
+}
+
+/*Checkmark of the fake checkbox*/
+.checkbox label::after {
+    height: 5px;
+    width: 9px;
+    border-left: 2px solid;
+    border-bottom: 2px solid;
+    
+    transform: rotate(-45deg);
+    
+    left: 4px;
+    top: 8px;
+}
+
+/*Hide the checkmark by default*/
+.checkbox input[type="checkbox"] + label::after {
+    content: none;
+}
+
+/*Unhide on the checked state*/
+.checkbox input[type="checkbox"]:checked + label::after {
+    content: "";
+}
+
+input[type=range] {
+    /*removes default webkit styles*/
+    -webkit-appearance: none;
+    
+    /*fix for FF unable to apply focus style bug */
+    border: 1px solid white;
+    
+    /*required for proper track sizing in FF*/
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 300px;
+    height: 2px;
+    background: #8e8e8e;
+    border: none;
+    border-radius: 3px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 13px;
+    width: 5px;
+    border-radius: 3px;
+    background: #8e8e8e;
+    margin-top: -5px;
+}
+
+input[type=range]:focus {
+    outline: none;
+
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+    background: #ccc;
+}
+
+input[type=range]::-moz-range-track {
+
+    height: 2px;
+    background: #8e8e8e;
+    border: none;
+    border-radius: 3px;
+}
+
+input[type=range]::-moz-range-thumb {
+    border: none;
+    height: 13px;
+    width: 5px;
+    border-radius: 3px;
+    background: #8e8e8e;;
+}
+
+/*hide the outline behind the border*/
+input[type=range]:-moz-focusring{
+
+    outline-offset: -1px;
+}
+
+input[type=range]::-ms-track {
+    width: 200px;
+    height: 5px;
+    background: transparent;
+
+    border-color: transparent;
+    border-width: 6px 0;
+
+
+    color: transparent;
+}
+
+input[type=range]::-ms-fill-lower {
+    background: #777;
+    border-radius: 10px;
+}
+
+input[type=range]::-ms-fill-upper {
+    background: #ddd;
+    border-radius: 10px;
+}
+
+input[type=range]::-ms-thumb {
+    border: none;
+    height: 13px;
+    width: 5px;
+    border-radius: 3px;
+    background: #8e8e8e;
+}
+
+input[type=range]:focus::-ms-fill-lower {
+    background: #888;
+}
+
+input[type=range]:focus::-ms-fill-upper {
+    background: #ccc;
+}
+
+.comments-form{
+    width: 100%;
+    height: 100px;
+
+}
+
+.submit-btn{
+    color: white;
+    background: #ca5d32
+}
+
+.rev-dropdown-menu select{
+    background: #e6e6e6;
+    color: black;
+    width: 140px;
+    border: 0;
+    border-radius: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-overflow: '';
+    margin-left: -20px;
+    outline: none;
+}
+  
+.rev-dropdown-menu{
+    width: 175px;
+    overflow: hidden;
+    background:#e6e6e6;
+    border-radius: 4px;
+    position: relative;
+    border: 1px solid black;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    border: 1px solid #DDDDDD;
+
+}
+  
+.rev-dropdown-menu:before {
+    content: "";
+    position: absolute;
+    right: 8px;
+    top: 9px;
+    width: 0; 
+    height: 0; 
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #8e8e8e;
+
+}
+  
+.rev-dropdown-menu:after {
+    content: "";
+    position: absolute;
+    right: 8px;
+    top: 7px;
+    width: 0; 
+    height: 0; 
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #ebebeb;;
+}
+  
+.form-small{
+    width: 100px;
+}
+
+.form-small select {
+    margin-left: 5px;
+}
+
+.hours-label {
+    margin-right: 10px;
+}
+@media only screen and (max-width: 600px) {
+    
+   
+}

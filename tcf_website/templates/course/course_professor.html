@@ -19,7 +19,7 @@
             <h4 class="mr-md-3">{{ course.title }}</h4>
         </div>
     </div>
-
+    
     <div class="ratings row d-flex mb-3 justify-content-center">
         {% if rating %}
         <div class="card col-lg-3 text-center">
@@ -51,7 +51,27 @@
             </div>
         </div>
         {% endif %}
+        
     </div>
+
+    <div class="d-flex align-items-center justify-content-center">
+        <div class="ratings row d-inline-flex mb-3 align-items-center justify-content-center bg-white border">
+            <div style="width:650px;" class=" p-2">
+              <canvas id="myChart"></canvas>
+            </div>
+            {% if rating %}
+              <div class="card col-lg-3 text-center" style="border: none">
+                  <div class="card-body" >
+                    <h5 class="card-title display-4">
+                        {{ rating|floatformat:2 }}
+                    </h5>
+                    <p class="card-text">&nbsp;Average GPA</p>
+                  </div>
+              </div>
+              {% endif %}
+          </div>
+    </div>
+
     <div class="dropdown">
       <button id="review-sort-select" class="btn btn-secondary dropdown-toggle" type="button" id="sortOptions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
       <div class="dropdown-menu" aria-labelledby="sortOptions">
@@ -71,4 +91,7 @@
 <script src="{% static 'reviews/review.js' %}"></script>
 <script src="{% static 'reviews/sort_reviews.js' %}"></script>
 <script src="{% static 'common/sorting.js' %}"></script>
+<script src="{% static 'course/javascript/Chart.bundle.js' %}"></script>
+<script src="{% static 'course/javascript/chart.js' %}"></script>
+
 {% endblock %}
