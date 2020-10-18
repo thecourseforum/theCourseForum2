@@ -180,6 +180,7 @@ def group_by_dept(courses):
         course_dept = course['mnemonic'][:course['mnemonic'].index(' ')]
         if course_dept not in grouped_courses:
             subdept = Subdepartment.objects.filter(mnemonic=course_dept)[0]
+            # should only ever have one returned with that mnemonic
             grouped_courses[course_dept] = {
                 "subdept_name": subdept.name,
                 "dept_id": subdept.department_id,
