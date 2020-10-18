@@ -2,7 +2,7 @@
     <div class="row no-gutters">
         <a class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start align-items-center rating-card-link" href="{{ link }}">
             <div class="text-center text-lg-left">
-                <h3>{{ title }}</h3>
+                <h3 id="title">{{ title }}</h3>
                 {% if subtitle %}
                     <h5>{{ subtitle }}</h5>
                 {% endif %}
@@ -15,7 +15,7 @@
                 <small class="mb-0 text-muted text-uppercase">
                   <i class="fa fa-star fa-fw"></i>&nbsp;Rating
                 </small>
-                <p class="mb-0 info">
+                <p class="mb-0 info" id="rating">
                   {% if rating %}
                     {{ rating|floatformat:2 }}
                   {% else %}
@@ -27,7 +27,7 @@
                 <small class="mb-0 text-muted text-uppercase">
                   <i class="fa fa-skull-crossbones fa-fw"></i>&nbsp;Difficulty
                 </small>
-                <p class="mb-0 info">
+                <p class="mb-0 info" id="difficulty">
                   {% if difficulty %}
                     {{ difficulty|floatformat:2 }}
                   {% else %}
@@ -39,7 +39,7 @@
                 <small class="mb-0 text-muted text-uppercase">
                   <i class="fas fa-chart-bar"></i>&nbsp;GPA
                 </small>
-                <p class="mb-0 info">TODO</p>
+                <p class="mb-0 info" id="gpa">TODO</p>
               </div>
               <div class="col-12 col-lg-3 offset-lg-3" {% if not last_taught %}style="opacity: 0;"{% endif %}>
                 <small class="mb-0 text-muted text-uppercase">

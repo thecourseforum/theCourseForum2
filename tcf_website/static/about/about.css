@@ -1,14 +1,115 @@
-.about h2, h4 {
-  color:rgb(23, 34, 72);
+/*
+  This file contains all css pertaining to the
+  about page. Please keep the css isolated here
+  to improve maintainability within theCourseForum.
+*/
+
+.about-logo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 30px 0px 20px 0px;
 }
 
-.about-nav .about-nav-item a {
-  color:rgb(201, 93, 48);
+.about-logo > .tagline {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0px 0px 15px;
 }
 
-.about-nav-item:hover{
-  color:rgb(23, 34, 72);
-  border-bottom:8px solid rgb(23, 34, 72);
+.about-links {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.about-links > .card {
+  width: 12em;
+  height: 12em;
+  border-radius: 50%;
+  transform: scale3d(1.0, 1.0, 1.0);
+  transition: transform .2s;
+}
+
+.about-links > .card:hover {
+  transform: scale3d(1.1, 1.1, 1.1);
+}
+
+.about-links > .card > a {
+  width: auto;
+  height: inherit;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-links > .card > a > i {
+  font-size: 5em;
+}
+
+.about-links > .card > a > p {
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.tabs > button {
+  flex: 1;
+  border: none;
+  border-radius: 0px;
+  background-color: rgb(210, 210, 210)
+}
+
+.tabs > button:hover {
+  color: #db4929;
+}
+
+.tabs > button.active {
+  background-color: #ffffff;
+}
+
+.tabs > button:focus {
+  box-shadow: none;
+}
+
+.tabs > button > i {
+  font-size: 3em;
+  padding: 10px 0px 5px 0px;
+}
+
+@media (max-width: 500px) {
+
+  .about-logo > h1 {
+    font-size: 25pt;
+    margin-left: 0px;
+  }
+
+  .about-links > .card {
+    width: 8em;
+    height: 8em;
+  }
+
+  .about-links > .card > a > i {
+    font-size: 3em;
+  }
+
+  .about-links > .card > a > p {
+    font-size: 10pt;
+  }
+
+  .tabs > button > i {
+    font-size: 2em;
+  }
+
+  .tabs > button > p {
+    font-size: 8pt;
+  }
+
 }
 
 .pfp {
@@ -32,4 +133,26 @@
 .history-img{
   overflow: hidden;
   opacity: 0.8;
+}
+
+/*
+  CRITICAL to the about page subcontent tabs working
+*/
+.tCF-current-team {
+  display: none;
+}
+.tCF-current-team.shown {
+  display: block;
+}
+.tCF-history {
+  display: none;
+}
+.tCF-history.shown {
+  display: block;
+}
+.tCF-past-contributors {
+  display: none;
+}
+.tCF-past-contributors.shown {
+  display: block;
 }
