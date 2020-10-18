@@ -5,6 +5,7 @@ function submitForm(){
     event.stopPropagation();
   }else{
     postToDiscord();
+    $('#bugModal').modal('toggle');
   }
   form.classList.add('was-validated');
 }
