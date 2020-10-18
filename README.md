@@ -86,14 +86,15 @@ If you are part of theCourseForum engineering team, follow the instructions belo
 
 ### Database Issues
 If the 'Browse Courses' page isn't loading, try the following:
-1. Check to see if postgres is running by running `ps auxwww | grep postgres` in your terminal
-    - If it outputs only one line, postgres is not running. Restart it with Homebrew: `brew services start postgresql`.
-2. There may be a Django migration issue. Exec into your container and re-migrate:
-```
-docker-compose exec web bash
-python3 manage.py makemigrations
-python3 manage.py migrate
-```
+1. Check to see if postgres is running
+    ```
+    docker-compose exec web bash            # Exec into db container
+    ps auxwww | grep postgres               # Check postgres processes
+    ```
+    If it outputs only one line, postgres is not running. 
+    - MacOS: Restart it with Homebrew: `brew services start postgresql`
+    - Linux: `sudo service postgresql restart`
+2. There may be a Django migration issue. See the section below this for details.
 3. If all else fails, reset the development database by dropping the table and re-running the Setup instructions.
 ```
 dropdb [DEV_DB_NAME];
