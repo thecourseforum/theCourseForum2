@@ -1,21 +1,27 @@
-function() {
-  'use strict';
-  window.addEventListener('load', function() {
-    // Fetch all the forms we want to apply custom Bootstrap validation styles to
-    var forms = document.getElementsByClassName('needs-validation');
-    // Loop over them and prevent submission
-    var validation = Array.prototype.filter.call(forms, function(form) {
-      form.addEventListener('submit', function(event) {
-        if (form.checkValidity() === false) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        form.classList.add('was-validated');
-        // call bot
-      }, false);
-    });
-  }, false);
-}();
+function submitForm(){
+  var form = document.getElementById("bugform");
+  if (form.checkValidity() === false) {
+    event.preventDefault();
+    event.stopPropagation();
+  }else{
+    postToDiscord();
+  }
+  form.classList.add('was-validated');
+}
+
+function postToDiscord(){
+  var url = $("#urlField").val();
+  var email = $("#emailField").val();
+  var description = $("#descriptionField").val();
+  var data = {
+    "content": "Bug Found! \n**URL:** " + url + "\n**Description**: \n" + description + "\n**Email:** " + email
+  }
+
+  var discordURL = "https://discordapp.com/api/webhooks/767189878223142942/wwBQA0K4VQ0i94ku2os2tYIVpPbDtfeP1i6s5G3CBWSCI7R0t6PbhZxwgJ8Z2yYpyv-q"
+  $.post( discordURL,
+          data,
+          function(){ console.log("posted to discord") });
+}
 
 function setUrlField() {
   var urlField = document.getElementById("urlField");
