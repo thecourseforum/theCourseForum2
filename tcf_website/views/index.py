@@ -1,6 +1,6 @@
 """Views for index and about pages."""
 import json
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.views.generic.base import TemplateView
 
 
@@ -11,9 +11,6 @@ def index(request):
     Redirect to landing page if user not authorized, otherwise show
     browse page.
     """
-    # # Should logged-in users see landing page, or be redirected?
-    # if request.user.is_authenticated:
-    #     return redirect('browse')
 
     # Load "About Team" data from json file
     with open('tcf_website/views/team_info.json') as data_file:
