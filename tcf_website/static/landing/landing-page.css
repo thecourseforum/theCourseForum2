@@ -171,24 +171,11 @@ header.masthead h1 {
 
 
 /* Feedback */
-.call-to-action {
-  position: relative;
-  /* background-color: #343a40; */
-  /* background: url("../img/bg-masthead.jpg") no-repeat center center; */
-  /* background-size: cover; */
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+.feedback {
+  padding-top: 4rem;
+  padding-bottom: 8rem;
 }
 
-/* .call-to-action .overlay {
-  position: absolute;
-  background-color: #212529;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  opacity: 0.3;
-} */
 
 /* Footer */
 footer.footer {
