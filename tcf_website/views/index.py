@@ -11,8 +11,9 @@ def index(request):
     Redirect to landing page if user not authorized, otherwise show
     browse page.
     """
-    if request.user.is_authenticated:
-        return redirect('browse')
+    # # Should logged-in users see landing page, or be redirected?
+    # if request.user.is_authenticated:
+    #     return redirect('browse')
 
     # Load "About Team" data from json file
     with open('tcf_website/views/team_info.json') as data_file:
