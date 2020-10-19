@@ -16,7 +16,8 @@ def index(request):
     with open('tcf_website/views/team_info.json') as data_file:
         team_info = json.loads(data_file.read())
 
-    return render(request, 'landing/landing.html', {'executive_team' : team_info['executive_team']})
+    return render(request, 'landing/landing.html',
+                  {'executive_team': team_info['executive_team']})
 
 
 def privacy(request):
