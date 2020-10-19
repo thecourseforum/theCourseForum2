@@ -72,3 +72,10 @@ footer {
 footer > .row {
     background-color: #172248;
 }
+
+
+/* Utility classes */
+.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
+  color: inherit;
+  text-decoration: inherit;
+}

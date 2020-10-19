@@ -16,14 +16,12 @@
 
 {% block body %}
 <!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
   <div class="container">
     <!-- tCF logo -->
     <a class="navbar-brand logo-container" href="/">
       <img class="logo" src="{% static 'base/img/new_logo.png' %}">
     </a>
-
     <!-- tCF profile dropdown -->
     <div class="account-settings">
       {% if user.is_authenticated %}
@@ -48,9 +46,7 @@
 </nav>
 
 <!-- Masthead -->
-<header class="masthead text-white text-center"
-        style="background-image: url({% static 'landing/img/team.png' %})">
-  <div class="overlay"></div>
+<header class="masthead bg-light text-center">
   <div class="container">
     <div class="row">
       <div class="col-xl-9 mx-auto">
@@ -80,31 +76,45 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-4">
-        <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
-          <div class="features-icons-icon d-flex">
-            <i class="icon-screen-desktop m-auto text-primary"></i>
+        <a href="{% url 'browse' %}" class="link-unstyled">
+          <div class="card m-3">
+            <div class="card-body features-icons-item mx-auto mb-2">
+              <div class="features-icons-icon d-flex">
+                <i class="icon-list m-auto text-primary"></i>
+              </div>
+              <h4 class="card-title">Browse Courses</h4>
+              <p class="card-text font-weight-light mb-0">See what other UVA students say about classes and professors</p>
+            </div>
           </div>
-          <h3>Browse Courses</h3>
-          <p class="lead mb-0">See what other students say about classes and professors</p>
-        </div>
+        </a>
       </div>
+
       <div class="col-lg-4">
-        <div class="features-icons-item mx-auto mb-0 mb-lg-3">
-          <div class="features-icons-icon d-flex">
-            <i class="icon-layers m-auto text-primary"></i>
+        <a href="{% url 'browse' %}" class="link-unstyled">
+          <div class="card m-3">
+            <div class="card-body features-icons-item mx-auto mb-2">
+              <div class="features-icons-icon d-flex">
+                <i class="icon-layers m-auto text-primary"></i>
+              </div>
+              <h4 class="card-title">View Grades</h4>
+              <p class="card-text font-weight-light mb-0">Check out actual grade distributions from past semesters</p>
+            </div>
           </div>
-          <h3>View Grades</h3>
-          <p class="lead mb-0">Check out actual grade distributions from past semesters</p>
-        </div>
+        </a>
       </div>
+
       <div class="col-lg-4">
-        <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
-          <div class="features-icons-icon d-flex">
-            <i class="icon-check m-auto text-primary"></i>
+        <a href="{% url 'browse' %}" class="link-unstyled">
+          <div class="card m-3">
+            <div class="card-body features-icons-item mx-auto mb-2">
+              <div class="features-icons-icon d-flex">
+                <i class="icon-pencil m-auto text-primary"></i>
+              </div>
+              <h4 class="card-title">Write a Review</h4>
+              <p class="card-text font-weight-light mb-0">Help our community by telling others about your class experience</p>
+            </div>
           </div>
-          <h3>Write a Review</h3>
-          <p class="lead mb-0">Help our community by telling others about your class experience</p>
-        </div>
+        </a>
       </div>
     </div>
   </div>
@@ -176,7 +186,7 @@
       <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
         <ul class="list-inline mb-2">
           <li class="list-inline-item">
-            <a href="#">About</a>
+            <a href="{% url 'about' %}">About</a>
           </li>
           <li class="list-inline-item">&sdot;</li>
           <li class="list-inline-item">
@@ -184,11 +194,11 @@
           </li>
           <li class="list-inline-item">&sdot;</li>
           <li class="list-inline-item">
-            <a href="#">Terms of Use</a>
+            <a href="{% url 'terms' %}">Terms of Use</a>
           </li>
           <li class="list-inline-item">&sdot;</li>
           <li class="list-inline-item">
-            <a href="#">Privacy Policy</a>
+            <a href="{% url 'privacy' %}">Privacy Policy</a>
           </li>
         </ul>
         <p class="text-muted small mb-4 mb-lg-0">&copy; theCourseForum 2020. All Rights Reserved.</p>
