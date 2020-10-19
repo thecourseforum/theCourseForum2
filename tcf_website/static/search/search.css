@@ -1,13 +1,8 @@
-.search hr {
-    border: 0;
-    clear:both;
-    display:block;
-    width: 96%;               
-    background-color:rgb(165, 165, 165);
-    height: 1px;
-  }
 
-.searched-department-courses {
-    /*text-indent: 50px;*/
-    padding-left: 50px;
+.search .search-results {
+  background-color: white;
+}
+
+.search-result-header h3, .search-result-header p {
+  display: inline-block;
 }

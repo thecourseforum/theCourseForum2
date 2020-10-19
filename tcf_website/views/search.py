@@ -2,6 +2,7 @@
 import os
 import json
 import requests
+# import functools
 
 from django.shortcuts import render
 from ..models import Subdepartment
@@ -19,9 +20,15 @@ def search(request):
 
     # Set arguments for template view
     args = set_arguments(query, courses, instructors)
+    context_vars = args
+
+    # Count total number of course results
+    # Why does this not give me the correct number?
+    # total_num_courses = functools.reduce(lambda count, l: count + len(l), courses, 0)
+    # context_vars['total_num_courses'] = total_num_courses
 
     # Load template view
-    return render(request, 'search/search.html', args)
+    return render(request, 'search/search.html', context_vars)
 
 
 def fetch_courses(query):
