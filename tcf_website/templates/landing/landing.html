@@ -125,7 +125,7 @@
         <div class="row team-photos text-center">
           {% for member in executive_team %}
             <div class="col-lg-3 col-sm-4 d-flex">
-              <div class="card about-member mb-4 shadow-sm flex-fill">
+              <div class="card flex-fill about-member mb-4">
                 <div class="about-pfp">
                   <img class="card-img-top" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
                 </div>
@@ -136,6 +136,16 @@
               </div>
             </div>
           {% endfor %}
+          <div class="col-lg-3 col-sm-4">
+            <a href="{% url 'about' %}" class="link-unstyled">
+              <div class="card about-link bg-indigo text-white text-left">
+                <div class="card-body mx-auto mb-2 py-4">
+                  <h4 class="card-text">Meet the full team >></h4>
+                </div>
+              </div>
+            </a>
+            <!-- <a href="{% url 'about' %}" class="btn btn-primary bg-indigo">Meet the full team!</a> -->
+          </div>
         </div>
       </div>
       <div class="col-lg-4">
@@ -145,8 +155,9 @@
               <h3 class="card-title">About Us</h3>
               <p class="card-text font-weight-light mb-2">
                 theCourseForum is a product of volunteer developers and contributors from the UVA community.
+                We are a student-run nonprofit CIO, and we keep our servers running through university grants and your donations.
               </p>
-              <a href="{% url 'about' %}" class="btn btn-primary bg-indigo">Meet the full team!</a>
+              <a href="https://gf.me/u/yvhyfa" class="btn btn-primary bg-indigo">Donate $4 today</a>
             </div>
           </div>
         </a>
@@ -264,17 +275,17 @@
             <h5>Follow theCourseForum!</h5>
           </li>
           <li class="list-inline-item mr-3">
-            <a href="#">
+            <a href="https://www.facebook.com/thecourseforum">
               <i class="fab fa-facebook fa-2x fa-fw"></i>
             </a>
           </li>
           <li class="list-inline-item mr-3">
-            <a href="#">
+            <a href="https://www.instagram.com/thecourseforum_uva/">
               <i class="fab fa-instagram fa-2x fa-fw"></i>
             </a>
           </li>
           <li class="list-inline-item">
-            <a href="#">
+            <a href="https://twitter.com/thecourseforum">
               <i class="fab fa-twitter-square fa-2x fa-fw"></i>
             </a>
           </li>

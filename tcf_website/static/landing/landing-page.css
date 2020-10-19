@@ -144,6 +144,10 @@ header.masthead h1 {
     border: 0px;
     /* box-shadow: 2px 2px 5px var(--secondary-color); */
 }
+.about-team .about-link:hover{
+  box-shadow: 2px 2px 5px var(--main-color);
+}
+
 /* About info box */
 .about-team .about-info {
   border: 3px solid var(--secondary-color);
