@@ -4,6 +4,25 @@
  * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-landing-page/blob/master/LICENSE)
  */
 
+ /* tCF Style Classes */
+:root {
+ --main-color: #254aa1;
+ --secondary-color: #db6b1a;
+}
+.text-indigo {
+ color: #254aa1;
+}
+.bg-indigo {
+ background-color: #254aa1;
+}
+
+/* Utility classes */
+.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
+ color: inherit;
+ text-decoration: inherit;
+}
+
+/* Html Classes */
 body {
   font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -18,10 +37,12 @@ h6 {
   font-weight: 700;
 }
 
+/* Navbar */
 nav.navbar {
   background-color: white;
 }
 
+/* Masthead */
 header.masthead {
   position: relative;
   /* background-color: #343a40; */
@@ -56,6 +77,7 @@ header.masthead h1 {
   }
 }
 
+/* Showcase */
 .showcase .showcase-text {
   padding: 3rem;
 }
@@ -71,9 +93,10 @@ header.masthead h1 {
   }
 }
 
+/* Features */
 .features-icons {
-  padding-top: 7rem;
-  padding-bottom: 7rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .features-icons .card {
@@ -89,7 +112,8 @@ header.masthead h1 {
 
 .features-icons .features-icons-item .features-icons-icon {
   height: 7rem;
-  text-shadow: 10px 10px 25px orange;
+  color: var(--main-color);
+  text-shadow: 10px 10px 25px var(--secondary-color);
 }
 
 .features-icons .features-icons-item .features-icons-icon i {
@@ -100,30 +124,63 @@ header.masthead h1 {
   font-size: 5rem;
 }
 
+
+/* About team */
+.about-team {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+/* About member photo hover animation */
+.about-team .about-pfp {
+    overflow: hidden;
+}
+.about-team .about-pfp img{
+    transition: all 0.5s ease;
+}
+.about-team .about-pfp:hover img{
+    transform: scale(1.1);
+}
+.about-team .about-member{
+    border: 0px;
+    /* box-shadow: 2px 2px 5px var(--secondary-color); */
+}
+/* About info box */
+.about-team .about-info {
+  border: 3px solid var(--secondary-color);
+  border-radius: 0%;
+}
+.about-team .about-info:hover {
+  box-shadow: 4px 4px 10px var(--secondary-color);
+}
+
+
+/* Testimonials */
 .testimonials {
-  padding-top: 7rem;
-  padding-bottom: 7rem;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
 }
 
 .testimonials .testimonial-item {
   max-width: 18rem;
 }
 
-.testimonials .testimonial-item img {
+/* .testimonials .testimonial-item img {
   max-width: 12rem;
   box-shadow: 0px 5px 5px 0px #adb5bd;
-}
+} */
 
+
+/* Feedback */
 .call-to-action {
   position: relative;
-  background-color: #343a40;
-  background: url("../img/bg-masthead.jpg") no-repeat center center;
-  background-size: cover;
-  padding-top: 7rem;
-  padding-bottom: 7rem;
+  /* background-color: #343a40; */
+  /* background: url("../img/bg-masthead.jpg") no-repeat center center; */
+  /* background-size: cover; */
+  padding-top: 5rem;
+  padding-bottom: 5rem;
 }
 
-.call-to-action .overlay {
+/* .call-to-action .overlay {
   position: absolute;
   background-color: #212529;
   height: 100%;
@@ -131,19 +188,14 @@ header.masthead h1 {
   top: 0;
   left: 0;
   opacity: 0.3;
-}
+} */
 
+/* Footer */
 footer.footer {
   padding-top: 1rem;
   padding-bottom: 1rem;
-  background-color: orange;
+  background-color: var(--secondary-color);
 }
 footer.footer a, footer.footer h5{
   color: white;
-}
-
-/* Utility classes */
-.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
-  color: inherit;
-  text-decoration: inherit;
 }

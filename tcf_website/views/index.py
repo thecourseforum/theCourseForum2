@@ -13,7 +13,12 @@ def index(request):
     """
     if request.user.is_authenticated:
         return redirect('browse')
-    return render(request, 'landing/landing.html')
+
+    # Load "About Team" data from json file
+    with open('tcf_website/views/team_info.json') as data_file:
+        team_info = json.loads(data_file.read())
+
+    return render(request, 'landing/landing.html', {'executive_team' : team_info['executive_team']})
 
 
 def privacy(request):
@@ -29,6 +34,8 @@ def terms(request):
 class AboutView(TemplateView):
     """About view."""
     template_name = 'about/about.html'
+
+    # Load data from json files
     with open('tcf_website/views/team_info.json') as data_file:
         team_info = json.loads(data_file.read())
 
