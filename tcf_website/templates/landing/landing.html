@@ -54,18 +54,7 @@
         <p class="lead mb-5">A UVA student-run community that connects you to the courses you love.</p>
       </div>
       <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-        <!-- tCF search -->
-        <form class="form-inline flex-grow-1" action="/search" method="get">
-          <div class="input-group flex-grow-1">
-            <input type="search" class="form-control border border-right-0"
-                    placeholder="Search a class or professor..." aria-label="Search" name="q" value="{{query}}">
-            <div class="input-group-append">
-              <button class="btn btn-outline-primary border border-left-0" type="submit">
-                  <i class="fa fa-search" aria-hidden="true"></i>
-              </button>
-            </div>
-          </div>
-        </form>
+        {% include "base/searchbar.html" %}
       </div>
     </div>
   </div>
