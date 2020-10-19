@@ -6,54 +6,76 @@
 {% endblock %}
 
 {% block content %}
-    <div class="search container">
+    <div class="search container px-5">
 
-        <div class="container">
-            <h1>Search results for: "{{ query }}"</h1>
+      <div class="search-title row p-4">
+        <h2>Search results for "{{ query }}"</h2>
+      </div>
+
+      <div class="search-results container p-5">
+
+        <div class="row mb-5">
+          <div class="col-12">
+            <div class="search-result-header">
+              <h3>Courses</h3>
+              &nbsp;&nbsp;&nbsp;
+              <p class="text-muted">{{ courses|length }} departments</p>
+            </div>
+            {% if courses %}
+              {% for dept, dept_data in courses.items %}
+              <div class="row mt-5">
+                <div class="col-12">
+                  <h5><a href="{% url 'department' dept_id=dept_data.dept_id %}">{{ dept }} / {{ dept_data.subdept_name }}</a></h5>
+                  <ul class="list-group searched-department-courses">
+                      {% for c in dept_data.courses %}
+                          {% if c != dept_data.courses.0 %}
+                          {% endif %}
+                          <li class="list-group-item p-2">
+                            <a href="{% url 'course' course_id=c.id %}">
+                            <div class="row p-0">
+                              <div class="col-md-3">{{ c.mnemonic }}</div>
+                              <div class="col-md-9">{{ c.title }}</div>
+                            </div>
+                            </a>
+                          </li>
+                      {% endfor %}
+                  </ul>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <h4>No courses matched your search.</h4>
+            {% endif %}
+          </div>
         </div>
 
         <hr>
 
-        {% if courses %}
-            <div class="container">
-                <h3>Courses</h3>
-                {% for dept, dept_data in courses.items %}
-                    <hr>
-                    <h5><a href="{% url 'department' dept_id=dept_data.dept_id %}">{{ dept }} / {{ dept_data.subdept_name }}</a></h5>
-                    <hr>
-                    <div class="searched-department-courses">
-                        {% for c in dept_data.courses %}
-                            {% if c != dept_data.courses.0 %}
-                                <hr>
-                            {% endif %}
-                            <a href="{% url 'course' course_id=c.id %}">{{ c.mnemonic }} - {{ c.title }}</a>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
+        <div class="row my-5">
+          <div class="col-12">
+            <div class="search-result-header">
+              <h3>Instructors</h3>
+              &nbsp;&nbsp;&nbsp;
+              <p class="text-muted">{{ instructors|length }} results</p>
             </div>
-        {% else %}
-            <div class="container">
-                <h4>No courses matched your search.</h4>
-            </div>
-        {% endif %}
-
-        <hr>
-
-        {% if instructors %}
-            <div class="container">
-                <h4>Instructors</h4>
-                {% for i in instructors %}
-                    <li>
-                        <!-- TODO: create instructor page route -->
-                        {{ i.first_name }} {{ i.last_name }}
-                    </li>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="container">
+            {% if instructors %}
+              <ul class="list-group searched-instructors mt-4">
+              {% for i in instructors %}
+                <li class="list-group-item p-2">
+                  <!-- TODO: create instructor page route -->
+                  <a>
+                      {{ i.first_name }} {{ i.last_name }}
+                  </a>
+                </li>
+              {% endfor %}
+              </ul>
+            {% else %}
                 <h4>No professors matched your search.</h4>
-            </div>
-        {% endif %}
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
 
     </div>
 {% endblock %}
