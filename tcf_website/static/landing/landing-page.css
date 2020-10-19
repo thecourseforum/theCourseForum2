@@ -18,17 +18,21 @@ h6 {
   font-weight: 700;
 }
 
-header.masthead {
-  position: relative;
-  background-color: #343a40;
-  /* background: url("../about/team-pfps/bg-tCF-2017-team.png") no-repeat center center; */
-  background-size: cover;
-  padding-top: 8rem;
-  padding-bottom: 8rem;
-  text-shadow: 2px 2px 4px #000000;
+nav.navbar {
+  background-color: white;
 }
 
-header.masthead .overlay {
+header.masthead {
+  position: relative;
+  /* background-color: #343a40; */
+  /* background: url("../about/team-pfps/bg-tCF-2017-team.png") no-repeat center center; */
+  /* background-size: cover; */
+  padding-top: 8rem;
+  padding-bottom: 0rem;
+}
+
+/* Black translucent overlay */
+/* header.masthead .overlay {
   position: absolute;
   background-color: #212529;
   height: 100%;
@@ -36,7 +40,7 @@ header.masthead .overlay {
   top: 0;
   left: 0;
   opacity: 0.3;
-}
+} */
 
 header.masthead h1 {
   font-size: 2rem;
@@ -44,8 +48,8 @@ header.masthead h1 {
 
 @media (min-width: 768px) {
   header.masthead {
-    padding-top: 12rem;
-    padding-bottom: 12rem;
+    padding-top: 8rem;
+    padding-bottom: 0rem;
   }
   header.masthead h1 {
     font-size: 3rem;
@@ -72,12 +76,20 @@ header.masthead h1 {
   padding-bottom: 7rem;
 }
 
+.features-icons .card {
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+}
+.features-icons .card:hover {
+  box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+}
+
 .features-icons .features-icons-item {
   max-width: 20rem;
 }
 
 .features-icons .features-icons-item .features-icons-icon {
   height: 7rem;
+  text-shadow: 10px 10px 25px orange;
 }
 
 .features-icons .features-icons-item .features-icons-icon i {
@@ -128,4 +140,10 @@ footer.footer {
 }
 footer.footer a, footer.footer h5{
   color: white;
+}
+
+/* Utility classes */
+.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
+  color: inherit;
+  text-decoration: inherit;
 }
