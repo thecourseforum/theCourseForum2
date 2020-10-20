@@ -72,3 +72,7 @@ footer {
 footer > .row {
     background-color: #172248;
 }
+
+.btn-primary {
+  background-color: #D75626;
+}
