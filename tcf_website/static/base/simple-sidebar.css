@@ -61,6 +61,6 @@ body {
   }
 }
 
-.form-row{
-  margin: 0.5rem;
+.modal {
+  z-index: 1000;
 }
