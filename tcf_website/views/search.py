@@ -22,11 +22,6 @@ def search(request):
     args = set_arguments(query, courses, instructors)
     context_vars = args
 
-    # Count total number of course results
-    # Why does this not give me the correct number?
-    # total_num_courses = functools.reduce(lambda count, l: count + len(l), courses, 0)
-    # context_vars['total_num_courses'] = total_num_courses
-
     # Load template view
     return render(request, 'search/search.html', context_vars)
 
@@ -177,6 +172,8 @@ def set_arguments(query, courses, instructors):
         args["courses"] = group_by_dept(courses['results'])
     if not instructors["error"]:
         args["instructors"] = instructors["results"]
+
+    args["displayed_query"] = query[:30] + "..." if len(query) > 30 else query
     return args
 
 
