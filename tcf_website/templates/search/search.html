@@ -9,28 +9,76 @@
     <div class="search container px-5">
 
       <div class="search-title row p-4">
-        <h2>Search results for "{{ query }}"</h2>
+        <h2>
+          Search results - <b><i>{{ query }}</i></b>
+        </h2>
       </div>
 
       <div class="search-results container p-5">
 
-        <div class="row mb-5">
+        <div id="result-nav" class="result-nav row mb-5">
           <div class="col-12">
-            <div class="search-result-header">
-              <h3>Courses</h3>
+            <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+              <a class="btn bg-indigo text-white" disabled>See results for</a>
+              <a href="#departments" type="button" class="btn btn-light">Departments</a>
+              <a href="#courses" type="button" class="btn btn-light">Courses</a>
+              <a href="#instructors" type="button" class="btn btn-light">Instructors</a>
+            </div>
+          </div>
+        </div>
+
+        <div id="departments" class="row mb-5">
+          <div class="col-12">
+
+            <div class="search-result-header mb-3">
+              <h3>Departments</h3>
               &nbsp;&nbsp;&nbsp;
-              <p class="text-muted">{{ courses|length }} departments</p>
+              <p class="text-muted">{{ courses|length }} results</p>
             </div>
             {% if courses %}
+              <ul class="list-unstyled searched-instructors">
               {% for dept, dept_data in courses.items %}
-              <div class="row mt-5">
+                <li class="my-2">
+                  <a href="{% url 'department' dept_id=dept_data.dept_id %}">
+                    <div class="row p-0 text-left">
+                      <div class="col-sm-3">{{ dept }}</div>
+                      <div class="col-sm-9">{{ dept_data.subdept_name }}</div>
+                    </div>
+                  </a>
+                </li>
+              {% endfor %}
+              </ul>
+            {% else %}
+            <p>No departments matched your search.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <hr>
+
+        <div id="courses" class="row mb-5">
+          <div class="col-12">
+
+            <div class="search-result-header my-3">
+              <h3>Courses</h3>
+              &nbsp;&nbsp;&nbsp;
+              {% if courses %}
+              <p class="text-muted">15 results</p>
+              {% else %}
+              <p class="text-muted">0 results</p>
+              {% endif %}
+            </div>
+
+            {% if courses %}
+              {% for dept, dept_data in courses.items %}
+              <div class="row mb-5">
                 <div class="col-12">
                   <h5><a href="{% url 'department' dept_id=dept_data.dept_id %}">{{ dept }} / {{ dept_data.subdept_name }}</a></h5>
                   <ul class="list-group searched-department-courses">
                       {% for c in dept_data.courses %}
                           {% if c != dept_data.courses.0 %}
                           {% endif %}
-                          <li class="list-group-item p-2">
+                          <li class="list-group-item list-group-item-light text-dark p-2">
                             <a href="{% url 'course' course_id=c.id %}">
                             <div class="row p-0">
                               <div class="col-md-3">{{ c.mnemonic }}</div>
@@ -44,33 +92,32 @@
               </div>
               {% endfor %}
             {% else %}
-              <h4>No courses matched your search.</h4>
+            <p>No courses matched your search.</p>
             {% endif %}
           </div>
         </div>
 
         <hr>
 
-        <div class="row my-5">
+        <div id="instructors" class="row mb-5">
           <div class="col-12">
-            <div class="search-result-header">
+            <div class="search-result-header my-3">
               <h3>Instructors</h3>
               &nbsp;&nbsp;&nbsp;
               <p class="text-muted">{{ instructors|length }} results</p>
             </div>
             {% if instructors %}
-              <ul class="list-group searched-instructors mt-4">
+              <ul class="list-unstyled searched-instructors text-left">
               {% for i in instructors %}
-                <li class="list-group-item p-2">
-                  <!-- TODO: create instructor page route -->
-                  <a>
+                <li class="my-2">
+                  <a> <!-- TODO: create instructor page route -->
                       {{ i.first_name }} {{ i.last_name }}
                   </a>
                 </li>
               {% endfor %}
               </ul>
             {% else %}
-                <h4>No professors matched your search.</h4>
+                <p>No professors matched your search.</p>
             {% endif %}
           </div>
         </div>

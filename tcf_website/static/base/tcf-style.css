@@ -1,0 +1,17 @@
+/* tCF Style Classes */
+:root {
+--main-color: #254aa1;
+--secondary-color: #db6b1a;
+}
+.text-indigo {
+color: #254aa1;
+}
+.bg-indigo {
+background-color: #254aa1;
+}
+
+/* Utility classes */
+.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
+ color: inherit;
+ text-decoration: inherit;
+}
