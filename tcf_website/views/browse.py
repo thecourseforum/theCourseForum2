@@ -14,13 +14,6 @@ def browse(request):
     seas = School.objects.get(name="School of Engineering & Applied Science")
 
     # Other schools besides CLAS and SEAS.
-    # other_school_pks = School.objects.exclude(
-    #     pk__in=[
-    #         clas.pk,
-    #         seas.pk]).values_list(
-    #             'department',
-    #             flat=True)
-    # other_schools_depts = Department.objects.filter(pk__in=other_school_pks)
     other_schools = School.objects.exclude(pk__in=[clas.pk, seas.pk])
 
     return render(request, 'browse/browse.html', {
