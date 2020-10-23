@@ -1,13 +1,14 @@
 function submitForm(){
   var form = document.getElementById("bugform");
-  if (form.checkValidity() === false) {
-    event.preventDefault();
-    event.stopPropagation();
-  }else{
+  var valid = validateForm(form);
+  if (valid === true) {
     postToDiscord();
+    // reset form after submit
     $('#bugModal').modal('toggle');
+    form.classList.remove('was-validated');
+    var descriptionField = document.getElementById("descriptionField");
+    descriptionField.value = "";
   }
-  form.classList.add('was-validated');
 }
 
 function postToDiscord(){
