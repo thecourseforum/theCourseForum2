@@ -34,6 +34,14 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = MyPagination
     filterset_fields = ['subdepartment']
 
+    def get_queryset(self):
+        if 'recent5years' in self.request.query_params:
+            latest_semester = Semester.latest()
+            return Course.objects.filter(
+                semester_last_taught__year__gte=latest_semester.year - 5
+            ).order_by('number')
+        return self.queryset
+
     def get_serializer_class(self):
         if 'stats' in self.request.query_params:
             return CourseWithStatsSerializer
