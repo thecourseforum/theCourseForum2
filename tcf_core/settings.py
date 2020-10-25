@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 # Performance profiling
 if DEBUG:
     INSTALLED_APPS.append('silk')
+    SILKY_INTERCEPT_FUNC = lambda request: not request.path.startswith('/api')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
