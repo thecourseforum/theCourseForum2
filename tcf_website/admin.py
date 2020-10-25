@@ -56,6 +56,16 @@ class SectionAdmin(admin.ModelAdmin):
         return qs
 
 
+class CourseGradeAdmin(admin.ModelAdmin):
+    ordering = ['subdepartment', 'number', 'title']
+    search_fields = ['subdepartment', 'number']
+
+
+class CourseInstructorGradeAdmin(admin.ModelAdmin):
+    ordering = ['last_name', 'first_name']
+    search_fields = ['first_name', 'last_name']
+
+
 admin.site.register(Section, SectionAdmin)
 admin.site.register(Instructor, InstructorAdmin)
 admin.site.register(Course, CourseAdmin)
@@ -63,3 +73,5 @@ admin.site.register(School, SchoolAdmin)
 admin.site.register(Department, DepartmentAdmin)
 admin.site.register(Subdepartment, SubdepartmentAdmin)
 admin.site.register(Semester, SemesterAdmin)
+admin.site.register(CourseGrade, CourseGradeAdmin)
+admin.site.register(CourseInstructorGrade, CourseInstructorGradeAdmin)
