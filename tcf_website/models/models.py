@@ -317,10 +317,15 @@ class Course(models.Model):
             )
         ]
 
+
 class CourseGrade(models.Model):
     subdepartment = models.CharField(max_length=255)
-    number = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99999)], default=0)
-    title = models.CharField(max_length=225, default = "")
+    number = models.IntegerField(
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(99999)],
+        default=0)
+    title = models.CharField(max_length=225, default="")
     average = models.FloatField(default=0.0)
     a_plus = models.IntegerField(default=0)
     a = models.IntegerField(default=0)
@@ -346,15 +351,20 @@ class CourseGrade(models.Model):
     def __str__(self):
         return f"{self.subdepartment} {self.number} {self.average}"
 
+
 class CourseInstructorGrade(models.Model):
     first_name = models.CharField(max_length=225)
     middle_name = models.CharField(max_length=225)
     last_name = models.CharField(max_length=225)
     email = models.CharField(max_length=225)
     subdepartment = models.CharField(max_length=255)
-    number = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99999)], default=0)
+    number = models.IntegerField(
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(99999)],
+        default=0)
     # section_number = models.IntegerField()
-    title = models.CharField(max_length=225, default = "")
+    title = models.CharField(max_length=225, default="")
     average = models.FloatField(default=0.0)
     a_plus = models.IntegerField(default=0)
     a = models.IntegerField(default=0)
@@ -378,7 +388,9 @@ class CourseInstructorGrade(models.Model):
     total_enrolled = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} {self.subdepartment} {self.number} {self.average}"
+        return f"{self.first_name} {self.last_name} \
+            {self.subdepartment} {self.number} {self.average}"
+
 
 class Section(models.Model):
     """Section model.
