@@ -64,13 +64,13 @@ If you are part of theCourseForum engineering team, follow the instructions belo
     ```
 5. Download a copy of the database from [Google Drive](https://drive.google.com/open?id=1ubiiOj-jfzoBKaMK6pFEkFXdSqMuD-22)
     - put this into the base `theCourseForum2/` directory
-6. While your container is still running, open a second terminal, cd into `theCourseForum2/`, and run this script to set up your database:
+6. While your container is still running, open a second terminal, cd into `theCourseForum2/`, and run this script to set up your database*:
 
-    - `./load_data april7.sql` where `april7.sql` should be replaced with the latest DB file
+    - `./load_data ${DB}` 
+    - where `${DB}` should be replaced with the latest DB file (e.g. `./load_data april7.sql`)
 7. Go to http://localhost:8000 in your browser and make sure everything works!
 
-\*This method can also work if you have a version of Windows that is supported by Docker Desktop — i.e. Windows 10 Pro, Enterprise, or Education, but NOT Home (the most common version). However, you'll have to run `cat` in a bash shell (ex. PowerShell, Git Bash) because that command doesn't exist in CMD.
-
+\* If you're on Windows, you'll specifically need to use a bash shell (e.g. PowerShell or Git Bash) as normal CMD doesn't have the `cat` command which is used by the script.
 ### Alternative Setup (Windows and MacOS if above failed)
 0. [Install Vagrant](https://www.vagrantup.com/intro/getting-started/install.html)
 1. `git clone https://github.com/thecourseforum/theCourseForum2.git`
