@@ -1,23 +1,4 @@
-/*!
- * Start Bootstrap - Landing Page v5.0.8 (https://startbootstrap.com/themes/landing-page)
- * Copyright 2013-2020 Start Bootstrap
- * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-landing-page/blob/master/LICENSE)
- */
-
 /* Html Classes */
-body {
-  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-weight: 700;
-}
 
 /* Navbar */
 nav.navbar {
@@ -123,17 +104,6 @@ header.masthead h1 {
 }
 .about-team .about-info:hover {
   box-shadow: 4px 4px 10px var(--accent-color);
-}
-
-
-/* Testimonials */
-.testimonials {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
-}
-
-.testimonials .testimonial-item {
-  max-width: 18rem;
 }
 
 

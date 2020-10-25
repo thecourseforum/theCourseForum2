@@ -8,8 +8,7 @@ def index(request):
     """
     Index view.
 
-    Redirect to landing page if user not authorized, otherwise show
-    browse page.
+    Redirect to landing page if user not authorized.
     """
 
     # Load "About Team" data from json file
