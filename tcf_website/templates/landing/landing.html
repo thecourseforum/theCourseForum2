@@ -113,8 +113,8 @@
 <!-- About Team -->
 <section class="about-team bg-light">
   <div class="row about-header">
-    <div class="col-lg-8 p-4 bg-tcf-indigo text-white">
-      <h3 class="font-weight-light pl-5">We'll connect you to courses you'll love, and make enrollment stress free.</h3>
+    <div class="col-lg-8 p-4 bg-tcf-indigo text-white text-right">
+      <h3 class="font-weight-light px-4">We'll connect you to courses you'll love, and make enrollment stress free.</h3>
     </div>
     <div class="col-lg-4">
     </div>
@@ -126,21 +126,21 @@
         <div class="row team-photos text-center">
           {% for member in executive_team %}
             <div class="col-lg-3 col-sm-4 d-flex">
-              <div class="card flex-fill about-member mb-4">
-                <div class="about-pfp">
-                  <img class="card-img-top" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
+              <div class="about-member card flex-fill bg-light mb-4">
+                <div class="about-pfp p-2">
+                  <img class="card-img-top rounded-circle" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
                 </div>
                 <div class="card-body px-1 py-2">
                   <h6 class="card-text">{{ member.name }}</h6>
-                  <!-- <p class="card-text">{{ member.role }}</p> -->
+                  <p class="card-text">{{ member.role }}</p>
                 </div>
               </div>
             </div>
           {% endfor %}
           <div class="col-lg-3 col-sm-4">
             <a href="{% url 'about' %}" class="link-unstyled">
-              <div class="card about-link bg-tcf-indigo text-white text-left">
-                <div class="card-body mx-auto mb-2 py-4">
+              <div class="card about-link bg-tcf-chalkboard text-white text-left mt-2 mx-1">
+                <div class="card-body mx-auto py-5">
                   <h4 class="card-text">Meet the full team >></h4>
                 </div>
               </div>
@@ -156,7 +156,10 @@
               <h3 class="card-title">About Us</h3>
               <p class="card-text font-weight-light mb-2">
                 theCourseForum is a product of volunteer developers and contributors from the UVA community.
-                We are a student-run nonprofit CIO, and we keep our servers running through university grants and your donations.
+                Founded in 2005 by two UVA Alumni, we are a student-run nonprofit CIO.
+                <br/><br/>
+                We keep our servers running through university grants and your donations.
+                Just $4 keeps our servers up for a day, so we can keep serving you the best content.
               </p>
               <a href="https://gf.me/u/yvhyfa" class="btn btn-primary bg-tcf-indigo">Donate $4 today</a>
             </div>
@@ -237,7 +240,7 @@
             <a href="{% url 'privacy' %}">Privacy Policy</a>
           </li>
         </ul>
-        <p class="text-tcf-indigo small mb-4 mb-lg-0">&copy; theCourseForum 2020. All Rights Reserved.</p>
+        <p class="text-black small mb-4 mb-lg-0">&copy; theCourseForum 2020. All Rights Reserved.</p>
       </div>
       <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
         <ul class="list-inline mb-0">

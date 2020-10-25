@@ -7,7 +7,7 @@
 --main-color: #274F97;        /* Indigo/Dark blue */
 --secondary-color: #476eb5;   /* Light blue */
 --accent-color: #D75626;      /* Orange */
---dark-color: #D75626;        /* Dark grey, for headers/buttons */
+--dark-color: #545454;        /* Dark grey, for headers/buttons */
 --shadow-color: #a6a6a6;      /* Medium grey, used for shadows */
 --background-color: #EBEBEB;  /* Light grey, used for backgrounds */
 /* Note: Can use Bootstrap "light" color and white color */
