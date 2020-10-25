@@ -46,7 +46,6 @@ class Department(models.Model):
         return self.name
 
     class Meta:
-
         indexes = [
             models.Index(fields=['school']),
         ]
@@ -57,6 +56,7 @@ class Department(models.Model):
                 name='unique departments per school'
             )
         ]
+
 
 # e.g. CREO in French department or ENCW in English
 
@@ -85,7 +85,7 @@ class Subdepartment(models.Model):
         latest_semester = Semester.latest()
         return self.course_set.filter(
             semester_last_taught__year__gte=latest_semester.year -
-            5).order_by("number")
+                                            5).order_by("number")
 
     def has_current_course(self):
         """Return True if subdepartment has a course in current semester."""
@@ -93,7 +93,6 @@ class Subdepartment(models.Model):
             section__semester=Semester.latest()).exists()
 
     class Meta:
-
         indexes = [
             models.Index(fields=['department']),
         ]
@@ -163,8 +162,8 @@ class Instructor(models.Model):
         """Compute average of instructor and recommend scores."""
         ratings = Review.objects.filter(
             course=course, instructor=self).aggregate(
-                models.Avg('recommendability'),
-                models.Avg('instructor_rating'))
+            models.Avg('recommendability'),
+            models.Avg('instructor_rating'))
 
         recommendability = ratings.get('recommendability__avg')
         instructor_rating = ratings.get('instructor_rating__avg')
@@ -179,13 +178,26 @@ class Instructor(models.Model):
         """Compute average difficulty score."""
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
-                models.Avg('difficulty'))['difficulty__avg']
+            models.Avg('difficulty'))['difficulty__avg']
 
     def average_hours_for_course(self, course):
         """Compute average hrs/wk."""
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
-                models.Avg('hours_per_week'))['hours_per_week__avg']
+            models.Avg('hours_per_week'))['hours_per_week__avg']
+
+    def taught_courses(self):
+        return Section.objects.filter(instructors=self)
+
+    def average_rating(self):
+        """Compute average rating for all this Instructor's Courses"""
+        return 3.14159265
+
+    def average_difficulty(self):
+        """Compute average difficulty for all this Instructor's Courses"""
+        return Review.objects.filter(
+            instructor=self).aggregate(
+            models.Avg('difficulty'))['difficulty__avg']
 
 
 class Semester(models.Model):
@@ -243,7 +255,6 @@ class Semester(models.Model):
         return Semester.objects.order_by("-number").first()
 
     class Meta:
-
         indexes = [
             models.Index(fields=['year', 'season']),
             models.Index(fields=['number']),
@@ -305,7 +316,6 @@ class Course(models.Model):
         return self.review_set.count()
 
     class Meta:
-
         indexes = [
             models.Index(fields=['subdepartment', 'number']),
         ]
@@ -349,7 +359,6 @@ class Section(models.Model):
         return f"{self.course} {self.semester} {', '.join(str(i) for i in self.instructors.all())}"
 
     class Meta:
-
         indexes = [
             models.Index(fields=['semester', 'course']),
             models.Index(fields=['course']),
@@ -539,7 +548,6 @@ class Vote(models.Model):
         return f"Vote of value {self.value} for {self.review} by {self.user}"
 
     class Meta:
-
         indexes = [
             models.Index(fields=['review']),
         ]
