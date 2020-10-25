@@ -1,9 +1,5 @@
 {% load static %}
 
-{% block styles %}
-<link rel="stylesheet" href="{% static 'common/form.css' %}" />
-{% endblock %}
-
 <!-- found a bug form pop up (modal) -->
 <div class="modal fade" id="bugModal" tabindex="-1" role="dialog" aria-labelledby="bugModal" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -17,15 +13,11 @@
       <div class="modal-body">
         <form class="needs-validation" id="bugform" novalidate>
           <div class="form-row">
-              <label for="urlField">URL</label>
-              <input type="text" class="form-control" id="urlField" placeholder="thecourseforum.com" value="thecourseforum.com" required>
-              <div class="valid-feedback">
-                Looks good!
-              </div>
-          </div>
-          <div class="form-row">
               <label for="emailField">Email (leave blank to remain anonymous)</label>
-              <input type="text" class="form-control" id="emailField" placeholder="example@virginia.edu" value="">
+              <input type="email" class="form-control" id="emailField" placeholder="example@virginia.edu" value="">
+              <div class="invalid-feedback">
+                Invalid Email
+              </div>
           </div>
           <div class="form-row">
               <label for="descriptionField">Description</label>
