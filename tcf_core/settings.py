@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_django',
     'cachalot',  # TODO: add Redis?
+    'rest_framework',
+    'django_filters',
     'tcf_website'
 ]
 # Performance profiling
@@ -241,4 +243,10 @@ LOGGING = {
             'propagate': False,
         },
     },
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
 }
