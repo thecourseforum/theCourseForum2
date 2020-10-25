@@ -64,9 +64,9 @@ If you are part of theCourseForum engineering team, follow the instructions belo
     ```
 5. Download a copy of the database from [Google Drive](https://drive.google.com/open?id=1ubiiOj-jfzoBKaMK6pFEkFXdSqMuD-22)
     - put this into the base `theCourseForum2/` directory
-6. While your container is still running, open a second terminal, cd into `theCourseForum2/`, and run the following command to set up your database (you may need to run it 3 times if you see errors, and you may still see errors after that, but it'll work)\*:
+6. While your container is still running, open a second terminal, cd into `theCourseForum2/`, and run this script to set up your database:
 
-    - \*`cat april7.sql | docker exec -i tcf_db psql -U tcf_django tcf_db`
+    - `./load_data april7.sql` where `april7.sql` should be replaced with the latest DB file
 7. Go to http://localhost:8000 in your browser and make sure everything works!
 
 \*This method can also work if you have a version of Windows that is supported by Docker Desktop — i.e. Windows 10 Pro, Enterprise, or Education, but NOT Home (the most common version). However, you'll have to run `cat` in a bash shell (ex. PowerShell, Git Bash) because that command doesn't exist in CMD.
