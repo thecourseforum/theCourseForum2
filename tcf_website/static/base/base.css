@@ -77,3 +77,18 @@ footer > .row {
   background-color: #D75626;
   border-color: #D75626;
 }
+
+.btn-primary :hover {
+  background-color: #D75626;
+  border-color: #D75626;
+}
+
+.form-control {
+  background-color: #EBEBEB;
+  color: #000000;
+  border-color: #EBEBEB;
+}
+
+.form-row {
+  margin: 0.5rem;
+}

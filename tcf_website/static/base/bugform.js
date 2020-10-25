@@ -3,16 +3,22 @@ function submitForm(){
   var valid = validateForm(form);
   if (valid === true) {
     postToDiscord();
-    // reset form after submit
+    // close form after submit
     $('#bugModal').modal('toggle');
-    form.classList.remove('was-validated');
-    var descriptionField = document.getElementById("descriptionField");
-    descriptionField.value = "";
   }
 }
 
+function resetForm(){
+  var form = document.getElementById("bugform");
+  form.classList.remove('was-validated');
+  var emailField = document.getElementById("emailField");
+  emailField.value = "";
+  var descriptionField = document.getElementById("descriptionField");
+  descriptionField.value = "";
+}
+
 function postToDiscord(){
-  var url = $("#urlField").val();
+  var url = window.location.href;
   var email = $("#emailField").val();
   var description = $("#descriptionField").val();
   var data = {
@@ -22,10 +28,5 @@ function postToDiscord(){
   var discordURL = "https://discordapp.com/api/webhooks/767189878223142942/wwBQA0K4VQ0i94ku2os2tYIVpPbDtfeP1i6s5G3CBWSCI7R0t6PbhZxwgJ8Z2yYpyv-q"
   $.post( discordURL,
           data,
-          function(){ console.log("posted to discord") });
-}
-
-function setUrlField() {
-  var urlField = document.getElementById("urlField");
-  urlField.value = window.location.href;
+          function(){ });
 }
