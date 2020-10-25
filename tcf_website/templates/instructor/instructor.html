@@ -1,0 +1,22 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{#{% block styles %}#}
+{#{% endblock %}#}
+
+{% block content %}
+    <div>
+    <h1>{{ instructor.full_name}}</h1>
+
+    <h2>{{ instructor.email }}</h2>
+
+    <h4>Average rating: {{ avg_rating }} </h4>
+
+    <h4>Average difficulty: {{ avg_difficulty }} </h4>
+    </div>
+{% endblock %}
+
+
+{% block js %}
+
+{% endblock %}
