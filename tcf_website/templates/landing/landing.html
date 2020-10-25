@@ -11,6 +11,7 @@
 <!-- Custom styles for this template -->
 <link rel="stylesheet" href="{% static 'base/navbar.css' %}" />
 <link rel="stylesheet" href="{% static 'landing/landing-page.css' %}" />
+<link rel="stylesheet" href="{% static 'base/tcf-style.css' %}" />
 {% endblock %}
 
 
@@ -69,7 +70,7 @@
           <div class="card m-3">
             <div class="card-body features-icons-item mx-auto mb-2">
               <div class="features-icons-icon d-flex">
-                <i class="icon-list m-auto text-indigo"></i>
+                <i class="icon-list m-auto text-tcf-indigo"></i>
               </div>
               <h4 class="card-title">Browse Courses</h4>
               <p class="card-text font-weight-light mb-0">See what other UVA students say about classes and professors</p>
@@ -83,7 +84,7 @@
           <div class="card m-3">
             <div class="card-body features-icons-item mx-auto mb-2">
               <div class="features-icons-icon d-flex">
-                <i class="icon-layers m-auto text-indigo"></i>
+                <i class="icon-chart m-auto text-tcf-indigo"></i>
               </div>
               <h4 class="card-title">View Grades</h4>
               <p class="card-text font-weight-light mb-0">Check out actual grade distributions from past semesters</p>
@@ -97,7 +98,7 @@
           <div class="card m-3">
             <div class="card-body features-icons-item mx-auto mb-2">
               <div class="features-icons-icon d-flex">
-                <i class="icon-pencil m-auto text-indigo"></i>
+                <i class="icon-pencil m-auto text-tcf-indigo"></i>
               </div>
               <h4 class="card-title">Write a Review</h4>
               <p class="card-text font-weight-light mb-0">Help our community by telling others about your class experience</p>
@@ -112,7 +113,7 @@
 <!-- About Team -->
 <section class="about-team bg-light">
   <div class="row about-header">
-    <div class="col-lg-8 p-4 bg-indigo text-white">
+    <div class="col-lg-8 p-4 bg-tcf-indigo text-white">
       <h3 class="font-weight-light pl-5">We'll connect you to courses you'll love, and make enrollment stress free.</h3>
     </div>
     <div class="col-lg-4">
@@ -138,13 +139,13 @@
           {% endfor %}
           <div class="col-lg-3 col-sm-4">
             <a href="{% url 'about' %}" class="link-unstyled">
-              <div class="card about-link bg-indigo text-white text-left">
+              <div class="card about-link bg-tcf-indigo text-white text-left">
                 <div class="card-body mx-auto mb-2 py-4">
                   <h4 class="card-text">Meet the full team >></h4>
                 </div>
               </div>
             </a>
-            <!-- <a href="{% url 'about' %}" class="btn btn-primary bg-indigo">Meet the full team!</a> -->
+            <!-- <a href="{% url 'about' %}" class="btn btn-primary bg-tcf-indigo">Meet the full team!</a> -->
           </div>
         </div>
       </div>
@@ -157,7 +158,7 @@
                 theCourseForum is a product of volunteer developers and contributors from the UVA community.
                 We are a student-run nonprofit CIO, and we keep our servers running through university grants and your donations.
               </p>
-              <a href="https://gf.me/u/yvhyfa" class="btn btn-primary bg-indigo">Donate $4 today</a>
+              <a href="https://gf.me/u/yvhyfa" class="btn btn-primary bg-tcf-indigo">Donate $4 today</a>
             </div>
           </div>
         </a>
@@ -206,44 +207,13 @@
             </div>
           </div>
           <div class="text-right">
-            <button type="submit" class="btn btn-primary bg-indigo">Submit Feedback</button>
+            <button type="submit" class="btn btn-primary bg-tcf-indigo">Submit Feedback</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </section>
-
-
-<!-- Testimonials (Add later with real feedback?)-->
-<!-- <section class="testimonials text-center bg-light">
-  <div class="container">
-    <h2 class="mb-5">What people are saying...</h2>
-    <div class="row">
-      <div class="col-lg-4">
-        <div class="testimonial-item mx-auto mb-5 mb-lg-0">
-          <img class="img-fluid rounded-circle mb-3" src="img/testimonials-1.jpg" alt="">
-          <h5>Margaret E., CLAS '19</h5>
-          <p class="font-weight-light mb-0">"This is fantastic! Thanks so much guys!"</p>
-        </div>
-      </div>
-      <div class="col-lg-4">
-        <div class="testimonial-item mx-auto mb-5 mb-lg-0">
-          <img class="img-fluid rounded-circle mb-3" src="img/testimonials-2.jpg" alt="">
-          <h5>Fred S., SEAS '21</h5>
-          <p class="font-weight-light mb-0">"theCourseForum is amazing. I've been using it to choose all my classes."</p>
-        </div>
-      </div>
-      <div class="col-lg-4">
-        <div class="testimonial-item mx-auto mb-5 mb-lg-0">
-          <img class="img-fluid rounded-circle mb-3" src="img/testimonials-3.jpg" alt="">
-          <h5>Sarah W., CLAS '22</h5>
-          <p class="font-weight-light mb-0">"Thanks so much for making these reviews available to us!"</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section> -->
 
 <!-- Footer -->
 <footer class="footer">
@@ -267,7 +237,7 @@
             <a href="{% url 'privacy' %}">Privacy Policy</a>
           </li>
         </ul>
-        <p class="text-indigo small mb-4 mb-lg-0">&copy; theCourseForum 2020. All Rights Reserved.</p>
+        <p class="text-tcf-indigo small mb-4 mb-lg-0">&copy; theCourseForum 2020. All Rights Reserved.</p>
       </div>
       <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
         <ul class="list-inline mb-0">

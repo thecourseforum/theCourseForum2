@@ -4,24 +4,6 @@
  * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-landing-page/blob/master/LICENSE)
  */
 
- /* tCF Style Classes */
-:root {
- --main-color: #254aa1;
- --secondary-color: #db6b1a;
-}
-.text-indigo {
- color: #254aa1;
-}
-.bg-indigo {
- background-color: #254aa1;
-}
-
-/* Utility classes */
-.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
- color: inherit;
- text-decoration: inherit;
-}
-
 /* Html Classes */
 body {
   font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -45,23 +27,9 @@ nav.navbar {
 /* Masthead */
 header.masthead {
   position: relative;
-  /* background-color: #343a40; */
-  /* background: url("../about/team-pfps/bg-tCF-2017-team.png") no-repeat center center; */
-  /* background-size: cover; */
   padding-top: 8rem;
   padding-bottom: 0rem;
 }
-
-/* Black translucent overlay */
-/* header.masthead .overlay {
-  position: absolute;
-  background-color: #212529;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  opacity: 0.3;
-} */
 
 header.masthead h1 {
   font-size: 2rem;
@@ -113,7 +81,7 @@ header.masthead h1 {
 .features-icons .features-icons-item .features-icons-icon {
   height: 7rem;
   color: var(--main-color);
-  text-shadow: 10px 10px 25px var(--secondary-color);
+  text-shadow: 10px 10px 25px var(--accent-color);
 }
 
 .features-icons .features-icons-item .features-icons-icon i {
@@ -150,11 +118,11 @@ header.masthead h1 {
 
 /* About info box */
 .about-team .about-info {
-  border: 3px solid var(--secondary-color);
+  border: 3px solid var(--accent-color);
   border-radius: 0%;
 }
 .about-team .about-info:hover {
-  box-shadow: 4px 4px 10px var(--secondary-color);
+  box-shadow: 4px 4px 10px var(--accent-color);
 }
 
 
@@ -168,11 +136,6 @@ header.masthead h1 {
   max-width: 18rem;
 }
 
-/* .testimonials .testimonial-item img {
-  max-width: 12rem;
-  box-shadow: 0px 5px 5px 0px #adb5bd;
-} */
-
 
 /* Feedback */
 .feedback {
@@ -185,7 +148,7 @@ header.masthead h1 {
 footer.footer {
   padding-top: 1rem;
   padding-bottom: 1rem;
-  background-color: var(--secondary-color);
+  background-color: var(--accent-color);
 }
 footer.footer a, footer.footer h5{
   color: white;
