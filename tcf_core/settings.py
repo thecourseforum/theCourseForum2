@@ -43,11 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_django',
     'cachalot',  # TODO: add Redis?
+    'rest_framework',
+    'django_filters',
     'tcf_website'
 ]
 # Performance profiling
 if DEBUG:
     INSTALLED_APPS.append('silk')
+    SILKY_INTERCEPT_FUNC = lambda request: not request.path.startswith('/api')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -241,4 +244,10 @@ LOGGING = {
             'propagate': False,
         },
     },
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
 }
