@@ -144,10 +144,10 @@ def course_instructor(request, course_id, instructor_id):
 
 
 def instructor_view(request, instructor_id):
+    """View for instructor page, showing all their courses taught."""
     instructor = Instructor.objects.get(pk=instructor_id)
-    return render(request, 'instructor/instructor.html',
-                  {
-                      'instructor': instructor,
-                      'avg_rating': round(instructor.average_rating(), 2),
-                      'avg_difficulty': round(instructor.average_difficulty(), 2)
-                  })
+    return render(
+        request, 'instructor/instructor.html', {
+            'instructor': instructor, 'avg_rating': round(
+                instructor.average_rating(), 2), 'avg_difficulty': round(
+                instructor.average_difficulty(), 2)})

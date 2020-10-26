@@ -85,7 +85,7 @@ class Subdepartment(models.Model):
         latest_semester = Semester.latest()
         return self.course_set.filter(
             semester_last_taught__year__gte=latest_semester.year -
-                                            5).order_by("number")
+            5).order_by("number")
 
     def has_current_course(self):
         """Return True if subdepartment has a course in current semester."""
@@ -187,6 +187,9 @@ class Instructor(models.Model):
             models.Avg('hours_per_week'))['hours_per_week__avg']
 
     def taught_courses(self):
+        """Returns all sections taught by Instructor."""
+        # this method is very inefficient and doesn't actually do what the name
+        # implies (collecting Sections instead of Courses); work in progress
         return Section.objects.filter(instructors=self)
 
     def average_rating(self):
