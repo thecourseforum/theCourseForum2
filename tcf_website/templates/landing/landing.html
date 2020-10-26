@@ -3,20 +3,17 @@
 
 
 {% block styles %}
-<!-- Custom fonts for this template -->
-<link rel="stylesheet" href="{% static '_styling/fontawesome-free/css/all.min.css' %}" />
-<link rel="stylesheet" href="{% static '_styling/simple-line-icons/css/simple-line-icons.css' %}" />
-<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+<!-- Simple line icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.5.5/css/simple-line-icons.min.css" integrity="sha512-QKC1UZ/ZHNgFzVKSAhV5v5j73eeL9EEN289eKAEFaAjgAiobVAnVv/AGuPbXsKl1dNoel3kNr6PYnSiTzVVBCw==" crossorigin="anonymous" />
 
 <!-- Custom styles for this template -->
 <link rel="stylesheet" href="{% static 'base/navbar.css' %}" />
 <link rel="stylesheet" href="{% static 'landing/landing-page.css' %}" />
-<link rel="stylesheet" href="{% static 'base/tcf-style.css' %}" />
 {% endblock %}
 
 
 {% block body %}
-<!-- Navigation -->
+<!-- Custom Landing Page Navigation -->
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
   <div class="container">
     <!-- tCF logo -->
@@ -52,7 +49,7 @@
     <div class="row">
       <div class="col-xl-9 mx-auto">
         <h1 class="mb-2">theCourseForum</h1>
-        <p class="lead mb-5">A UVA student-run community that connects you to the courses you love.</p>
+        <p class="lead mb-5">A UVA student community, connecting you to the courses you love.</p>
       </div>
       <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
         {% include "base/searchbar.html" %}
@@ -132,7 +129,7 @@
                 </div>
                 <div class="card-body px-1 py-2">
                   <h6 class="card-text">{{ member.name }}</h6>
-                  <p class="card-text">{{ member.role }}</p>
+                  <p class="card-text small">{{ member.role }}</p>
                 </div>
               </div>
             </div>
@@ -156,7 +153,7 @@
               <h3 class="card-title">About Us</h3>
               <p class="card-text font-weight-light mb-2">
                 theCourseForum is a product of volunteer developers and contributors from the UVA community.
-                Founded in 2005 by two UVA Alumni, we are a student-run nonprofit CIO.
+                Founded in 2005 by two alumni, we are a student-run nonprofit CIO at the University of Virginia.
                 <br/><br/>
                 We keep our servers running through university grants and your donations.
                 Just $4 keeps our servers up for a day, so we can keep serving you the best content.
