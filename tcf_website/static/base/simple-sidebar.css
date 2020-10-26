@@ -14,9 +14,10 @@ body {
   -moz-transition: margin-left .25s;
   -o-transition: margin-left .25s;
   transition: margin-left .25s;
-  background-color: rgb(23, 34, 72);
+  background-color: var(--main-color);
   position: fixed;
   z-index: 9999;
+  filter: brightness(75%);
 }
 
 #sidebar-wrapper .sidebar-heading {
@@ -30,15 +31,15 @@ body {
 }
 
 #sidebar-wrapper .list-group-item, .footer, .footer a {
-  background-color: rgb(23, 34, 72);
-  color: gray;
+  background-color: var(--main-color);
+  color: var(--background-color);
 }
 
 #sidebar-wrapper .list-group-item.active,
 #sidebar-wrapper .list-group-item:hover {
   color: white;
-  border-color: rgb(23, 34, 72);
-  filter: brightness(150%);
+  border-color: var(--main-color);
+  filter: brightness(125%);
 }
 
 #page-content-wrapper {
@@ -60,4 +61,3 @@ body {
     width: 100%;
   }
 }
-
