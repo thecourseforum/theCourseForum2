@@ -48,4 +48,4 @@ function dateToInt(dateStr) {
     return date.getTime();
 }
 
-export { sortHTML };
+export { cmpByProp, sortHTML };
