@@ -35,7 +35,7 @@
 <script src="{% static 'common/show-hide.js' %}"></script>
 <script src="{% static 'common/sorting.js' %}"></script>
 <script src="{% static 'department/sortClasses.js' %}"></script>
-<script src="{% static 'department/loadMoreCourses.js' %}"></script>
+<script type="module" src="{% static 'department/loadMoreCourses.js' %}"></script>
 <script>
     {% for sd in department.subdepartment_set.all %}
         loadPage("{{sd.id}}", `/api/courses/?page=1&page_size=30&subdepartment={{sd.id}}&stats&recent5years`);
