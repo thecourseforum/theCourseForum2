@@ -33,7 +33,6 @@
 {% endblock %}
 
 {% block js %}
-<script src="{% static 'common/show-hide.js' %}"></script>
-<script src="{% static 'common/sorting.js' %}"></script>
-<script src="{% static 'department/sortClasses.js' %}"></script>
+<script type="module" src="{% static 'common/bind-show-hide.js' %}"></script>
+<script type="module" src="{% static 'department/bind-sort.js' %}"></script>
 {% endblock %}

@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block js %}
-<script src="{% static 'about/javascript/switch-subcontent.js' %}"></script>
+<script type="module" src="{% static 'about/javascript/about.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -51,15 +51,15 @@
   <br>
   <div class="card">
     <div class="tabs">
-      <button class="btn" id="tCF-history-btn" onclick="showHistory()">
+      <button class="btn" id="tCF-history-btn">
         <i class="fa fa-book"></i>
         <p>History</p>
       </button>
-      <button class="btn active" id="tCF-current-team-btn" onclick="showCurrentTeam()">
+      <button class="btn active" id="tCF-current-team-btn">
         <i class="fa fa-code"></i>
         <p>Current Team</p>
       </button>
-      <button class="btn" id="tCF-past-contributors-btn" onclick="showPastContributors()">
+      <button class="btn" id="tCF-past-contributors-btn">
         <i class="fa fa-graduation-cap"></i>
         <p>Past Contributors</p>
       </button>
