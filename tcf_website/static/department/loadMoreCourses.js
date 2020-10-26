@@ -82,3 +82,5 @@ function emdashOrTwoDecimals(number){
 function hideSpinner(subdepartmentId){
     document.getElementById(`spinner-sd-${subdepartmentId}`).remove();
 }
+
+export { loadPage };
