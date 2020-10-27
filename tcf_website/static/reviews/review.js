@@ -1,4 +1,4 @@
-function handleVote(reviewID, is_upvote) {
+function handleVote(reviewID, isUpvote) {
     const voteCountElem = $(`#review${reviewID} .voteCount`);
     const voteCount = parseInt(voteCountElem.text());
 
@@ -7,7 +7,7 @@ function handleVote(reviewID, is_upvote) {
     let endpoint;
     let newVoteCount;
 
-    if (is_upvote) {
+    if (isUpvote) {
         elem = $(`#review${reviewID} .upvote`);
         otherElem = $(`#review${reviewID} .downvote`);
         endpoint = `/reviews/${reviewID}/upvote`;
@@ -15,7 +15,7 @@ function handleVote(reviewID, is_upvote) {
         // If already upvoted, subtract 1.
         if (elem.hasClass("active")) {
             newVoteCount = voteCount - 1;
-        // If already downvoted, add 2.    
+        // If already downvoted, add 2.
         } else if (otherElem.hasClass("active")) {
             newVoteCount = voteCount + 2;
         // Otherwise add 1.
@@ -30,7 +30,7 @@ function handleVote(reviewID, is_upvote) {
         // If already downvoted, add 1.
         if (elem.hasClass("active")) {
             newVoteCount = voteCount + 1;
-        // If already upvoted, subtract 2.  
+        // If already upvoted, subtract 2.
         } else if (otherElem.hasClass("active")) {
             newVoteCount = voteCount - 2;
         // Otherwise subtract 1.
@@ -41,9 +41,9 @@ function handleVote(reviewID, is_upvote) {
 
     // POST to upvote or downvote endpoint.
     fetch(endpoint, {
-        method: 'post',
-        headers: { "X-CSRFToken": getCookie("csrftoken") },
-    })
+        method: "post",
+        headers: { "X-CSRFToken": getCookie("csrftoken") }
+    });
 
     // Update vote text.
     voteCountElem.text(newVoteCount);
@@ -55,5 +55,6 @@ function handleVote(reviewID, is_upvote) {
         elem.addClass("active");
         otherElem.removeClass("active");
     }
-
 }
+
+export { handleVote };

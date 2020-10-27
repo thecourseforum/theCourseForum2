@@ -1,6 +1,6 @@
 """Routes URLs to views"""
 
-from django.urls import path
+from django.urls import include, path
 
 from . import views
 
@@ -33,6 +33,8 @@ urlpatterns = [
     path('profile', views.profile, name='profile'),
     path('search', views.search, name='search'),
 
+    # API URLs
+    path('api/', include('tcf_website.api.urls'), name='api'),
 
     # AUTH URLS
     path('accounts/profile/', views.browse),
