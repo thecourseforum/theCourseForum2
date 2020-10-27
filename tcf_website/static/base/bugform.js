@@ -29,17 +29,11 @@ function postToDiscord(){
   var email = $("#emailField").val();
   var description = $("#descriptionField").val();
   var categories = ""
-  if($('#category1').is(':checked')){
-    categories += "[" + category1.value + "]"
-  }
-  if($('#category2').is(':checked')){
-    categories += "[" + category2.value + "]"
-  }
-  if($('#category3').is(':checked')){
-    categories += "[" + category3.value + "]"
-  }
-  if($('#category4').is(':checked')){
-    categories += "[" + category4.value + "]"
+  for(var i=1; i<=4; i++){
+    var id = "#category" + i
+    if($(id).is(':checked')){
+      categories += "[" + $(id).val() + "]"
+    }
   }
   var data = {
     "content": "Bug Found! \n**URL:** " + url +
