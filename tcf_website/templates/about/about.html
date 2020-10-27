@@ -5,105 +5,73 @@
 <link rel="stylesheet" href="{% static 'about/about.css' %}" />
 {% endblock %}
 
+{% block js %}
+<script type="module" src="{% static 'about/javascript/about.js' %}"></script>
+{% endblock %}
+
 {% block content %}
-<div class="browse container">
-  <section class="about jumbotron bg-light">
-    <h2 class="display-4">theCourseForum</h2>
-    <h6 class="lead">connecting you to the courses you love.</h6>
-    <hr/>
-    <p><strong>theCourseForum</strong> is a product of developers and contributors from the UVA
-    community. It's a place where students can share their academic experiences of
-    classes they've taken. We provide past grade distributions along with
-    student reviews for courses in all departments. Gain insight on which
-    professors to choose and discover whether a class is worth a spot in your
-    ideal schedule. We'll connect you to courses you'll love, and make
-    enrollment stress free.
-    </p>
-    <h5>What can you do?</h5>
-    <p> The biggest thing you can do: Submit reviews! While the website is
-        spectacular, what really makes theCourseForum is the sharing of
-        individual, personal experiences from UVA students. <a href="{% url 'new_review' %}" style="color: dodgerblue;">Write a review</a> today
-        to leave an impact on your community.
-    </p>
-    <p> Our student-run development team is always recruiting for more
-        web developers, designers, and marketing team members! If that's you,
-        contact us at support@thecourseforum.com — experience not required.
-    </p>
-  </section>
-
-  <div class="team text-center">
-    <h1>Meet Our Team</h1>
-
-    <div class="executive-team jumbotron py-5 bg-light">
-      <div class="container">
-        <h3>Executive Team</h3>
-        <hr/>
-        <div class="row text-left">
-          {% for member in executive_team %}
-            <div class="col-lg-4 col-sm-6 d-flex">
-              <div class="member card mb-4 shadow-sm flex-fill">
-                <div class="pfp">
-                  <img class="card-img-top" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
-                </div>
-                <div class="card-body">
-                  <h5 class="card-text">{{ member.name }}</h5>
-                  <p class="card-text">{{ member.role }}</p>
-                  <p class="card-text">Class of {{ member.class }}</p>
-                </div>
-              </div>
-            </div>
-          {% endfor %}
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <div class="about-logo">
+        <img src="{% static 'base/img/new_logo.png' %}" height="150px">
+        <div class="tagline">
+          <h1>theCourseForum</h1>
+          <p>connecting you to the courses you love.</p>
         </div>
       </div>
+      <hr>
+      <p style="text-align: left;"><b>theCourseForum</b> is a place for
+        University of Virginia students to share their academic experiences.
+        These are captured in the form of course reviews, which provide insight,
+        advice, and caution to students before course enrollment. We believe
+        that reading <i>student</i> reflections is the best way to understand a class and
+        its professor without actually experiencing it.
+        <br> <br>
+        <i>Of the students, by the students, for the students...</i>
+      </p>
     </div>
-
-    <div class="executive-team jumbotron py-5 bg-light">
-      <div class="container">
-        <h3>Engineering Team</h3>
-        <hr/>
-        <div class="row text-left">
-          {% for member in engineering_team %}
-            <div class="col-lg-3 col-sm-6 d-flex">
-              <div class="member card mb-4 shadow-sm flex-fill">
-                <div class="pfp">
-                  <img class="card-img-top" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
-                </div>
-                <div class="card-body">
-                  <h5 class="card-text">{{ member.name }}</h5>
-                  <p class="card-text">Class of {{ member.class }}</p>
-                </div>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
+  </div>
+  <br>
+  <div class="about-links">
+    <div class="card">
+      <!-- TODO: Create modal for application (sends to Slack) -->
+      <a href="#">
+        <i class="fas fa-users"></i>
+        <p>Apply to tCF!</p>
+      </a>
+    </div>
+    <div class="card">
+      <a href="{% url 'new_review' %}">
+        <i class="far fa-edit"></i>
+        <p>Write a Review!</p>
+      </a>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="tabs">
+      <button class="btn" id="tCF-history-btn">
+        <i class="fa fa-book"></i>
+        <p>History</p>
+      </button>
+      <button class="btn active" id="tCF-current-team-btn">
+        <i class="fa fa-code"></i>
+        <p>Current Team</p>
+      </button>
+      <button class="btn" id="tCF-past-contributors-btn">
+        <i class="fa fa-graduation-cap"></i>
+        <p>Past Contributors</p>
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="about-nav-content">
+        {% include "about/history.html" %}
+        {% include "about/current_team.html" %}
+        {% include "about/contributors.html" %}
       </div>
     </div>
-
-    <div class="marketing-team jumbotron py-5 bg-light">
-      <div class="container">
-        <h3>Marketing & Design Team</h3>
-        <hr/>
-        <div class="row text-left">
-          {% for member in marketing_team %}
-            <div class="col-lg-3 col-sm-6 d-flex">
-              <div class="member card mb-4 shadow-sm flex-fill">
-                <div class="pfp">
-                  <img class="card-img-top" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
-                </div>
-                <div class="card-body">
-                  <h5 class="card-text">{{ member.name }}</h5>
-                  <p class="card-text">Class of {{ member.class }}</p>
-                </div>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
-
-
 
 {% endblock %}

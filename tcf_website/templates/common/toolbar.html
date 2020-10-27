@@ -7,10 +7,18 @@
             {% endfor %}
         </ol>
     </div>
+    {% if sorting %}
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button" id="number-sort-btn" class="btn btn-outline-dark active">Number</button>
+        <button type="button" id="rating-sort-btn" class="btn btn-outline-dark">Rating</button>
+        <button type="button" id="diff-sort-btn" class="btn btn-outline-dark">Difficulty</button>
+        <button type="button" id="gpa-sort-btn" class="btn btn-outline-dark">GPA</button>
+    </div>
+    {% endif %}
     {% if active_text %}
     <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" id="hide-btn" onclick="hideOld()" class="btn btn-outline-dark active">{{ active_text }}</button>
-        <button type="button" id="show-btn" onclick="showOld()" class="btn btn-outline-dark"> {{ hidden_text }} </button>
+        <button type="button" id="hide-btn" class="btn btn-outline-dark active">{{ active_text }}</button>
+        <button type="button" id="show-btn" class="btn btn-outline-dark"> {{ hidden_text }} </button>
     </div>
     {% endif %}
 </div>

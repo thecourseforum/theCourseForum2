@@ -1,20 +1,21 @@
 <div id="review{{review.id}}" class="review card mb-2 d-flex flex-row align-items-center">
 
     <div class="d-none d-sm-flex vote-container ml-4 mr-2 flex-column justify-content-center align-items-center">
-        <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" {% if user.is_authenticated %}onclick="handleVote({{review.id}}, true)" href="javascript:;"{% else %}href="{% url 'login' %}"{% endif %}>
+        <!--Voting logic is implemented in the <script> tag of reviews.html-->
+        <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}">
             <i class="fa fa-angle-up fa-fw"></i>
         </a>
-        <span class="voteCount">{{ review.count_votes }}</span>
-        <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" {% if user.is_authenticated %}onclick="handleVote({{review.id}}, false)" href="javascript:;"{% else %}href="{% url 'login' %}"{% endif %}>
+        <span id="vote-count" class="voteCount">{{ review.count_votes }}</span>
+        <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}">
             <i class="fa fa-angle-down fa-fw"></i>
         </a>
     </div>
 
     <div class="card-body text-left">
-        
+
         <div class="d-flex flex-row align-items-center">
             <div>
-            
+
                 {% if profile %}
                 <div class="d-flex justify-content-between">
                     <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}"><p><strong>{{ review.instructor.full_name }} - {{ review.course }}</strong></p></a>
@@ -30,7 +31,7 @@
             <div class="d-flex">
                 <div>
                     <strong>
-                        <p>
+                        <p id="review-average">
                             <i class="fa fa-star fa-fw"></i>&nbsp;{{ review.average|floatformat:2 }}
                         </p>
                     </strong>
@@ -54,7 +55,7 @@
 
             <div class="text-right">
                 <p>{{ review.semester }}</p>
-                <p>{{ review.created|date }}</p>
+                <p id="date">{{ review.created|date }}</p>
             </div>
         </div>
     </div>
