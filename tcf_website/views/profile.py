@@ -8,8 +8,9 @@ from django.forms import ModelForm
 from ..models import User
 
 
-import logging
-logger = logging.getLogger(__name__)
+# import logging
+# logger = logging.getLogger(__name__)
+
 
 class ProfileForm(ModelForm):
     """Form updating user profile."""
@@ -19,20 +20,26 @@ class ProfileForm(ModelForm):
 
         # Add the form-control class to make the form work with Bootstrap
         widgets = {
-            'first_name': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'last_name': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'graduation_year': forms.NumberInput(attrs={ 'class': 'form-control' })
-        }
-
-from django.core.exceptions import ValidationError
+            'first_name': forms.TextInput(
+                attrs={
+                    'class': 'form-control'}),
+            'last_name': forms.TextInput(
+                attrs={
+                    'class': 'form-control'}),
+            'graduation_year': forms.NumberInput(
+                attrs={
+                    'class': 'form-control'})}
 
 
 @login_required
 def profile(request):
     """User profile view."""
-    logger.error(request.user.graduation_year)
+    # logger.error(request.user.graduation_year)
     if request.method == 'POST':
-        form = ProfileForm(request.POST, label_suffix='', instance=request.user)
+        form = ProfileForm(
+            request.POST,
+            label_suffix='',
+            instance=request.user)
 
         if form.is_valid():
             form.save()

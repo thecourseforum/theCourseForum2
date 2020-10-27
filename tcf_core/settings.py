@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from django.contrib.messages import constants as messages
 import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -244,7 +245,6 @@ LOGGING = {
 }
 
 # Use Bootstrap class names for Django message tags
-from django.contrib.messages import constants as messages
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info',
