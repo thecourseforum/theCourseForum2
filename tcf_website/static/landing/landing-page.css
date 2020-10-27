@@ -8,14 +8,11 @@ nav.navbar {
 /* Masthead */
 header.masthead {
   position: relative;
-  padding-top: 8rem;
-  padding-bottom: 0rem;
 }
 
 header.masthead h1 {
   font-size: 2rem;
 }
-
 @media (min-width: 768px) {
   header.masthead {
     padding-top: 8rem;
@@ -26,28 +23,8 @@ header.masthead h1 {
   }
 }
 
-/* Showcase */
-.showcase .showcase-text {
-  padding: 3rem;
-}
-
-.showcase .showcase-img {
-  min-height: 30rem;
-  background-size: cover;
-}
-
-@media (min-width: 768px) {
-  .showcase .showcase-text {
-    padding: 7rem;
-  }
-}
 
 /* Features */
-.features-icons {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
 .features-icons .card {
   box-shadow: 1px 1px 2px rgba(0,0,0,0.4);
 }
@@ -75,28 +52,23 @@ header.masthead h1 {
 
 
 /* About team */
-.about-team {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
-}
 /* About member photo hover animation */
 .about-team .about-pfp {
     overflow: hidden;
 }
 .about-team .about-pfp img{
     transition: all 0.5s ease;
+    box-shadow: 4px 4px 0px var(--accent-color);
 }
 .about-team .about-pfp:hover img{
     transform: scale(1.1);
 }
 .about-team .about-member{
     border: 0px;
-    /* box-shadow: 2px 2px 5px var(--secondary-color); */
 }
 .about-team .about-link:hover{
   box-shadow: 2px 2px 5px var(--main-color);
 }
-
 /* About info box */
 .about-team .about-info {
   border: 3px solid var(--accent-color);
@@ -104,22 +76,4 @@ header.masthead h1 {
 }
 .about-team .about-info:hover {
   box-shadow: 4px 4px 10px var(--accent-color);
-}
-
-
-/* Feedback */
-.feedback {
-  padding-top: 4rem;
-  padding-bottom: 8rem;
-}
-
-
-/* Footer */
-footer.footer {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  background-color: var(--accent-color);
-}
-footer.footer a, footer.footer h5{
-  color: white;
 }
