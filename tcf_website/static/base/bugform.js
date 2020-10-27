@@ -23,8 +23,24 @@ function postToDiscord(){
   var url = window.location.href;
   var email = $("#emailField").val();
   var description = $("#descriptionField").val();
+  var categories = ""
+  if($('#category1').is(':checked')){
+    categories += category1.value + " "
+  }
+  if($('#category2').is(':checked')){
+    categories += category2.value + " "
+  }
+  if($('#category3').is(':checked')){
+    categories += category3.value + " "
+  }
+  if($('#category4').is(':checked')){
+    categories += category4.value
+  }
   var data = {
-    "content": "Bug Found! \n**URL:** " + url + "\n**Description**: \n" + description + "\n**Email:** " + email
+    "content": "Bug Found! \n**URL:** " + url +
+                "\n**Description**: \n" + description +
+                "\n**Categories: **"+ categories  +
+                "\n**Email:** " + email
   }
 
   var discordURL = "https://discordapp.com/api/webhooks/767189878223142942/wwBQA0K4VQ0i94ku2os2tYIVpPbDtfeP1i6s5G3CBWSCI7R0t6PbhZxwgJ8Z2yYpyv-q"
