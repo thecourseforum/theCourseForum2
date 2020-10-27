@@ -18,6 +18,10 @@ function resetForm(){
   emailField.value = "";
   var descriptionField = document.getElementById("descriptionField");
   descriptionField.value = "";
+  $("#category1").prop("checked", false);
+  $("#category2").prop("checked", false);
+  $("#category3").prop("checked", false);
+  $("#category4").prop("checked", false);
 }
 
 function postToDiscord(){
