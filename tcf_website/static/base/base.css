@@ -78,7 +78,7 @@ footer > .row {
   border-color: #D75626;
 }
 
-.btn-primary :hover {
+button.btn-primary:hover {
   background-color: #D75626;
   border-color: #D75626;
 }
