@@ -1,3 +1,5 @@
+import { validateForm } from "../common/form.js";
+
 function submitForm(){
   var form = document.getElementById("bugform");
   var valid = validateForm(form);
@@ -30,3 +32,6 @@ function postToDiscord(){
           data,
           function(){ });
 }
+
+document.getElementById("bugSubmitBtn").addEventListener("click", submitForm, false);
+document.getElementById("bugFormOpen").addEventListener("click", resetForm, false);
