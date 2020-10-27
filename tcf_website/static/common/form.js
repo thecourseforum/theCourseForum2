@@ -7,6 +7,8 @@ function validateForm(form){
     event.stopPropagation();
   }
   form.classList.add('was-validated');
-  
+
   return valid;
 }
+
+export { validateForm };
