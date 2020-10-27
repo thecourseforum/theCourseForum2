@@ -1,12 +1,20 @@
 """Routes URLs to views"""
 
-from django.urls import path
+from django.urls import include, path
 
 from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
     path('about', views.AboutView.as_view(), name='about'),
+    path(
+        'about/history',
+        views.AboutHistoryView.as_view(),
+        name='about_history'),
+    path(
+        'about/contributors',
+        views.AboutContributorsView.as_view(),
+        name='about_contributors'),
     path('privacy', views.privacy, name='privacy'),
     path('terms', views.terms, name='terms'),
     path('browse', views.browse, name='browse'),
@@ -19,7 +27,10 @@ urlpatterns = [
     path('reviews/<int:review_id>/upvote', views.upvote),
     path('reviews/<int:review_id>/downvote', views.downvote),
     path('profile', views.profile, name='profile'),
+    path('search', views.search, name='search'),
 
+    # API URLs
+    path('api/', include('tcf_website.api.urls'), name='api'),
 
     # AUTH URLS
     path('accounts/profile/', views.browse),

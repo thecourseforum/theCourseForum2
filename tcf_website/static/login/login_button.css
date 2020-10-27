@@ -1,0 +1,50 @@
+/* 
+ * A spritesheet is used to eliminate CSS flickering.
+ * https://www.codeandweb.com/texturepacker/tutorials/how-to-create-a-sprite-sheet
+ * 
+ * ^ great resource from Floryan's Game Design class
+*/
+
+.login-button-container {
+    display: grid;
+    grid-auto-columns: minmax(10px, auto);
+    grid-auto-rows: minmax(10px, auto);
+    justify-items: center;
+    margin-top: 20px;
+  }
+
+.login-button-wrapper {
+    grid-row: 1;
+    grid-column: 1;
+    width: 382px;
+    height: 92px;
+    transform: scale(0.7);
+}
+
+/* Normal */
+.login-button {
+    background: url('./google_login_spritesheet.png') 764px;
+    border: none;
+    width: 382px;
+    height: 92px;
+    padding: 0px;
+}
+
+/* Hovering */
+.login-button:hover {
+    background: url('./google_login_spritesheet.png') 1146px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Pressed */
+.login-button:active {
+    background: url('./google_login_spritesheet.png') 382px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Pressed but dragged cursor away */
+.login-button:focus {
+    outline: none;
+}
