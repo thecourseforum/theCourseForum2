@@ -53,6 +53,29 @@
   </div>
 </div>
 
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModal" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <div class="container">
+          <div class="row justify-content-center">
+            <h5>Thanks for your help!</h5>
+          </div>
+          <div class="row justify-content-center">
+            <p> Your feedback has been recorded. </p>
+          </div>
+          <div class="row justify-content-center">
+            <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% block js %}
 <script type="module" src="{% static 'base/bugform.js' %}"></script>
 {% endblock %}
