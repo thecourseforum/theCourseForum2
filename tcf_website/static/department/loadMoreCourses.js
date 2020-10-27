@@ -1,18 +1,16 @@
 async function loadPage(subdepartmentId, url) {
-    if(url === null) {
+    if (url === null) {
         hideSpinner(subdepartmentId);
         return;
     };
     const courses = await fetch(url).then(res => res.json());
-    if(courses.detail === "Invalid page."){
+    if (courses.detail === "Invalid page.") {
         hideSpinner(subdepartmentId);
-        return;
-    }
-    else{
+    } else {
         courses.results.forEach((course) => {
-            let element = document.getElementById(`courses-sd-${subdepartmentId}`);
+            const element = document.getElementById(`courses-sd-${subdepartmentId}`);
             const html = generateCourseCardHTML(course);
-            element.insertAdjacentHTML('beforeend', html);
+            element.insertAdjacentHTML("beforeend", html);
         });
         loadPage(subdepartmentId, courses.next);
     }
@@ -24,7 +22,7 @@ function generateCourseCardHTML(course) {
     const seasonAllCaps = course.semester_last_taught.season;
     const seasonTitleCase = seasonAllCaps.charAt(0) + seasonAllCaps.substr(1).toLowerCase();
     return `
-        <li class="${course.is_recent ? '' : 'old'}">
+        <li class="${course.is_recent ? "" : "old"}">
             <div class="card rating-card mb-2">
                 <div class="row no-gutters">
                     <a class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start align-items-center rating-card-link" href="/course/${course.id}">
@@ -74,12 +72,12 @@ function generateCourseCardHTML(course) {
     `;
 }
 
-function emdashOrTwoDecimals(number){
+function emdashOrTwoDecimals(number) {
     // \u2014 is an em-dash
-    return number === null ? '\u2014' : (Math.round(number * 100) / 100).toFixed(2);
+    return number === null ? "\u2014" : (Math.round(number * 100) / 100).toFixed(2);
 }
 
-function hideSpinner(subdepartmentId){
+function hideSpinner(subdepartmentId) {
     document.getElementById(`spinner-sd-${subdepartmentId}`).remove();
 }
 
