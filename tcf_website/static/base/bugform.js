@@ -7,6 +7,7 @@ function submitForm(){
     postToDiscord();
     // close form after submit
     $('#bugModal').modal('toggle');
+    $('#confirmationModal').modal('toggle');
   }
 }
 
@@ -25,16 +26,16 @@ function postToDiscord(){
   var description = $("#descriptionField").val();
   var categories = ""
   if($('#category1').is(':checked')){
-    categories += category1.value + " "
+    categories += "[" + category1.value + "]"
   }
   if($('#category2').is(':checked')){
-    categories += category2.value + " "
+    categories += "[" + category2.value + "]"
   }
   if($('#category3').is(':checked')){
-    categories += category3.value + " "
+    categories += "[" + category3.value + "]"
   }
   if($('#category4').is(':checked')){
-    categories += category4.value
+    categories += "[" + category4.value + "]"
   }
   var data = {
     "content": "Bug Found! \n**URL:** " + url +
