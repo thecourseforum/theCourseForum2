@@ -110,7 +110,7 @@
               <ul class="list-unstyled searched-instructors text-left">
               {% for i in instructors %}
                 <li class="my-2">
-                  <a> <!-- TODO: create instructor page route -->
+                  <a href="{% url 'instructor' instructor_id=i.id %}">
                       {{ i.first_name }} {{ i.last_name }}
                   </a>
                 </li>
