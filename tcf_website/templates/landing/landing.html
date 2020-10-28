@@ -111,7 +111,7 @@
 
   <!-- About Team -->
   <section class="about-team py-5 my-5">
-    <div class="row about-header">
+    <div class="about-header row">
       <div class="col-lg-8 p-4 bg-tcf-indigo text-white text-right">
         <h3 class="font-weight-light px-4">We'll connect you to courses you'll love, and make enrollment stress free.</h3>
       </div>
@@ -119,12 +119,12 @@
       </div>
     </div>
 
-    <div class="container">
-      <div class="row about-content pt-5 px-0">
+    <div class="about-content container">
+      <div class="row pt-5 px-0">
         <div class="col-lg-8">
-          <div class="row team-photos text-center mr-4">
+          <div class="team-photos row text-center mr-4 mb-4">
             {% for member in executive_team %}
-              <div class="col-lg-3 col-sm-4 d-flex px-0">
+              <div class="col-md-3 col-sm-6 d-flex px-0">
                 <div class="about-member card flex-fill bg-light">
                   <div class="about-pfp px-4 py-3">
                     <img class="card-img-top rounded-circle" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
@@ -136,15 +136,14 @@
                 </div>
               </div>
             {% endfor %}
-            <div class="col-lg-3 col-sm-4">
+            <div class="col-md-3 col-sm-6">
               <a href="{% url 'about' %}" class="link-unstyled">
-                <div class="card about-link bg-tcf-orange text-white text-left mt-3 mx-1">
+                <div class="about-link card bg-tcf-orange mt-3 mx-1">
                   <div class="card-body mx-auto py-5">
-                    <h4 class="card-text">Meet the full team >></h4>
+                    <h4 class="card-text text-white text-left">Meet the full team >></h4>
                   </div>
                 </div>
               </a>
-              <!-- <a href="{% url 'about' %}" class="btn btn-primary bg-tcf-indigo">Meet the full team!</a> -->
             </div>
           </div>
         </div>

@@ -54,17 +54,17 @@ header.masthead h1 {
 /* About team */
 /* About member photo hover animation */
 .about-team .about-pfp {
-    overflow: hidden;
+  overflow: hidden;
 }
 .about-team .about-pfp img{
-    transition: all 0.5s ease;
-    box-shadow: 4px 4px 0px var(--accent-color);
+  transition: all 0.5s ease;
+  box-shadow: 5px 5px 0px var(--accent-color);
 }
 .about-team .about-pfp:hover img{
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 .about-team .about-member{
-    border: 0px;
+  border: 0px;
 }
 .about-team .about-link:hover{
   box-shadow: 2px 2px 5px var(--main-color);
