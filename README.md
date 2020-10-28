@@ -64,7 +64,7 @@ If you are part of theCourseForum engineering team, follow the instructions belo
     ```
 5. Download a copy of the database from [Google Drive](https://drive.google.com/open?id=1ubiiOj-jfzoBKaMK6pFEkFXdSqMuD-22)
     - put this into the base `theCourseForum2/` directory
-6. While your container is still running, open a second terminal, cd into `theCourseForum2/`, and run the following command to set up your database (you may need to run it 3 times)\*:
+6. While your container is still running, open a second terminal, cd into `theCourseForum2/`, and run the following command to set up your database (you may need to run it 3 times if you see errors, and you may still see errors after that, but it'll work)\*:
 
     - \*`cat april7.sql | docker exec -i tcf_db psql -U tcf_django tcf_db`
 7. Go to http://localhost:8000 in your browser and make sure everything works!
