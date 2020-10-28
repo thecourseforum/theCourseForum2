@@ -9,10 +9,10 @@
     <div class="row d-flex flex-column align-items-center">
         <h2>Profile</h2>
         <div class="card col-12 col-sm-9 col-md-9 col-xl-6 mt-3 px-0">
-            <img class="card-img-top bg-dark p-4" src="{% static 'base/img/full_logo.png' %}" style="filter: brightness(150%) contrast(75%)">
+            <img class="card-img-top bg-dark" src="{% static 'base/img/alderman-and-peabody.jpg' %}" style="filter: brightness(150%) contrast(75%)">
             <div class="card-body">
                 <h4 class="card-title"><i class="far fa-edit"></i> My Details</h4>
-                <form method="POST">
+                <form method="POST" action="{% url 'profile' %}" id="ProfileForm">
                     {% csrf_token %}
                     <div class="form-row">
                         <div class="col-12 col-lg-4 ">
@@ -36,3 +36,4 @@
     </div>
 </div>
 {% endblock %}
+

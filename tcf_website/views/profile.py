@@ -5,11 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django import forms
 from django.forms import ModelForm
+from django.http import HttpResponseRedirect
 from ..models import User
-
-
-# import logging
-# logger = logging.getLogger(__name__)
 
 
 class ProfileForm(ModelForm):
@@ -34,7 +31,6 @@ class ProfileForm(ModelForm):
 @login_required
 def profile(request):
     """User profile view."""
-    # logger.error(request.user.graduation_year)
     if request.method == 'POST':
         form = ProfileForm(
             request.POST,
@@ -46,8 +42,9 @@ def profile(request):
             messages.success(request, 'Your profile was updated succesfully!')
         else:
             messages.error(request, form.errors)
-    else:
-        form = ProfileForm(label_suffix='', instance=request.user)
+        return HttpResponseRedirect('/profile')
+
+    form = ProfileForm(label_suffix='', instance=request.user)
     return render(request, 'profile/profile.html', {'form': form})
 
 
