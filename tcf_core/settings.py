@@ -250,3 +250,5 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
 }
+
+DISCORD_URL_BUG = env.str('DISCORD_URL_BUG')
