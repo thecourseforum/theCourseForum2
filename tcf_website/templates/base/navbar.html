@@ -6,24 +6,14 @@
 
 <header>
   <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    
+
     <!-- tCF logo -->
     <a class="navbar-brand logo-container" href="/">
       <img class="logo" src="{% static 'base/img/new_logo.png' %}">
     </a>
 
     <!-- tCF search -->
-    <form class="form-inline flex-grow-1" action="/search" method="get">
-      <div class="input-group flex-grow-1">
-        <input type="search" class="form-control border border-right-0"
-                placeholder="Search..." aria-label="Search" name="q" value="{{query}}">
-        <div class="input-group-append">
-          <button class="btn btn-outline-primary border border-left-0" type="submit">
-              <i class="fa fa-search" aria-hidden="true"></i>
-          </button>
-        </div>
-      </div>
-    </form>
+    {% include "base/searchbar.html" %}
 
     <!-- tCF navbar toggler -->
     <button class="navbar-toggler menu" id="menu-toggle">
