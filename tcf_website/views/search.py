@@ -140,7 +140,6 @@ def format_courses(results):
         course = {
             "id": result.get("_meta").get("id"),
             "title": result.get("title").get("raw"),
-            # "description": result.get("description").get("raw"),
             "number": result.get("number").get("raw"),
             "mnemonic": result.get("mnemonic").get("raw")
         }
