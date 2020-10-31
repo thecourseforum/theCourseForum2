@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from tcf_website.models import *
 
-
 class Command(BaseCommand):
 
     # Run this coomand using `sudo docker exec -it tcf_django python3 manage.py other_schools_department_fix`
@@ -32,11 +31,18 @@ class Command(BaseCommand):
             "School of Engineering & Applied Science",
             "UNKNOWN"]
 
+        # Check if this script has already been run
+        if School.objects.get(
+                name='Curry School of Education').department_set.count() > 1:
+            print('Already split! Aborting script...')
+            return
+
         if self.verbose:
-            dash = '-' * 185
+            print('Splitting all other schools...')
+            dash = '-' * 155
             print(dash)
             print(
-                '{:<70s}{:<70s}{:<70s}'.format(
+                '{:<50s}{:<50s}{:<50s}'.format(
                     'Subdepartment',
                     'Department',
                     'School'))
@@ -50,7 +56,7 @@ class Command(BaseCommand):
                 for subdepartment in department.subdepartment_set.all():
                     if self.verbose:
                         print(
-                            '{:<70s}{:<70s}{:<70s}'.format(
+                            '{:<50s}{:<50s}{:<50s}'.format(
                                 subdepartment.name,
                                 department.name,
                                 school.name))
@@ -72,13 +78,40 @@ class Command(BaseCommand):
         # Moving Computer Science from A&S to School of Engineering
         # Get the School of Engineering and Computer Science department
         # instances
-        e_school = School.objects.get(
-            name='School of Engineering & Applied Science')
-        comp_sci = Department.objects.get(name="Computer Science")
-        # Assign school
-        comp_sci.school = e_school
-        # Save changes
-        comp_sci.save()
+        if self.verbose:
+            print('Moving Computer Science to School of Engineering...')
+
+        try:
+            e_school = School.objects.get(
+                name='School of Engineering & Applied Science')
+            comp_sci = Department.objects.get(name="Computer Science")
+            # Assign school
+            comp_sci.school = e_school
+            # Save changes
+            comp_sci.save()
+        except BaseException:
+            print('Could not move CS to E-school')
 
         if self.verbose:
-            print('Moved Computer Science to School of Engineering')
+            print('Done!')
+            print(dash)
+
+        if self.verbose:
+            print('Renaming UNKNOWN to Miscellaneous...')
+        try:
+            unknown_school = School.objects.get(name='UNKNOWN')
+            unknown_school.name = 'Miscellaneous'
+            unknown_school.save()
+        except BaseException:
+            print('Could not find UNKNOWN school')
+
+        try:
+            unknown_department = Department.objects.get(name='UNKNOWN')
+            unknown_department.name = 'Miscellaneous'
+            unknown_department.save()
+        except BaseException:
+            print('Could not find UNKNOWN department')
+
+        if self.verbose:
+            print('Done!')
+            print(dash)
