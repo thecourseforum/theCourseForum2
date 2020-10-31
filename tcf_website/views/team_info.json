@@ -1,36 +1,36 @@
 {
 "executive_team": [{"name": "Jennifer Long",
-                     "role": "President",
+                     "role": "President\u00a0|\u00a0Product Lead",
                      "class": "2021",
                      "img_filename": "ENG_Jennifer_Long.jpg"
                     },
                    {"name": "Alex Shen",
-                    "role": "VP of Product Engineering",
+                    "role": "VP\u00a0|\u00a0Product Engineering",
                     "class": "2023",
                     "img_filename": "ENG_Alex_Shen.jpg"
                     },
                    {"name": "Jules Le Menestrel",
-                    "role": "VP of Product Engineering",
+                    "role": "VP\u00a0|\u00a0Product Engineering",
                     "class": "2023",
                     "img_filename": "ENG_Jules_LeMenestrel.jpg"
                     },
                    {"name": "Jack Liu",
-                    "role": "VP of Infrastructure Engineering",
+                    "role": "VP\u00a0|\u00a0Infrastructure Engineering",
                     "class": "2023",
                     "img_filename": "ENG_Jack_Liu.jpg"
                     },
                    {"name": "Shirley Chu",
-                    "role": "VP of Marketing/Design",
+                    "role": "VP\u00a0|\u00a0Marketing & Design",
                     "class": "2021",
                     "img_filename": "MAD_Shirley_Chu.jpg"
                     },
                    {"name": "Vi Nguyen",
-                    "role": "Secretary/Operations Lead",
+                    "role": "Secretary\u00a0|\u00a0Operations Lead",
                     "class": "2023",
                     "img_filename": "ENG_Vi_Nguyen.jpg"
                     },
                    {"name": "Davis DeLozier",
-                    "role": "Treasurer",
+                    "role": "Treasurer\u00a0|\u00a0Business Lead",
                     "class": "2022",
                     "img_filename": "MAD_Davis_Delozier.jpg"
                     }
