@@ -14,7 +14,7 @@
 
         {% include "browse/school.html" with school_name=SEAS.name departments=SEAS.department_set.all %}
 
-        {% include "browse/grouped_schools.html" with school_name="Other Schools at the University of Virginia" schools=other_schools %}
+        {% include "browse/grouped_schools.html" with school_name="Other Schools at the University of Virginia" schools=other_schools misc=misc_school%}
 
     </div>
 </div>
