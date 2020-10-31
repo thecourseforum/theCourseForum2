@@ -1,0 +1,119 @@
+/* tCF Style Classes */
+
+/*************COLORS VARS**************/
+
+/* Use these variables in CSS stylesheets */
+:root {
+--main-color: #274F97;        /* Indigo/Dark blue */
+--secondary-color: #476eb5;   /* Light blue */
+--accent-color: #D75626;      /* Orange */
+--dark-color: #545454;        /* Dark grey, for headers/buttons */
+--shadow-color: #a6a6a6;      /* Medium grey, used for shadows */
+--background-color: #EBEBEB;  /* Light grey, used for backgrounds */
+/* Note: Can use Bootstrap "light" color and white color */
+}
+
+/*************DEFAULT STYLES**************/
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  /* Default heading font: Lato (others are fallbacks) */
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 700;
+}
+
+body {
+  /* Body text font: Open Sans */
+  font-family: 'Open Sans', 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 500;
+}
+
+a {
+    color: inherit;
+}
+a:hover {
+  color: var(--accent-color);
+}
+ul {
+    padding: 0;
+    list-style-type: none;
+}
+
+/*************UTILITY CLASSES**************/
+
+/* To remove auto blue underline formatting from an anchor tag */
+.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
+ color: inherit;
+ text-decoration: inherit;
+}
+
+
+/*************COLOR CLASSES**************/
+/* Use these utility classes in HTML tag class styling  */
+
+/* Main color: Indigo/Dark blue */
+.text-tcf-indigo {
+color: var(--main-color);
+}
+.bg-tcf-indigo {
+background-color: var(--main-color);
+}
+.border-tcf-indigo {
+border-color: var(--main-color);
+}
+
+/* Secondary color: Light blue */
+.text-tcf-blue {
+color: var(--secondary-color);
+}
+.bg-tcf-blue {
+background-color: var(--secondary-color);
+}
+
+/* Accent color: Orange */
+.text-tcf-orange {
+color: var(--secondary-color);
+}
+.bg-tcf-orange {
+background-color: var(--accent-color);
+}
+
+/* Dark accent color: Chalkboard */
+.text-tcf-chalkboard {
+color: var(--dark-color);
+}
+.bg-tcf-chalkboard {
+background-color: var(--dark-color);
+}
+.border-tcf-chalkboard {
+border-color: var(--dark-color);
+}
+
+.text-tcf-shadow {
+color: var(--shadow-color);
+}
+.bg-tcf-shadow {
+background-color: var(--shadow-color);
+}
+.border-tcf-shadow {
+border-color: var(--shadow-color);
+}
+
+.text-tcf-background {
+color: var(--background-color);
+}
+.bg-tcf-background {
+background-color: var(--background-color);
+}
+.border-tcf-background {
+border-color: var(--background-color);
+}
+
+/* Note: Can use Bootstrap "light" color
+  .text-light
+  .bg-light
+  .border-light
+*/
