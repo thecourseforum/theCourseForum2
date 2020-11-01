@@ -46,6 +46,8 @@ class CourseSerializer(serializers.ModelSerializer):
 class CourseWithStatsSerializer(CourseSerializer):
     """DRF Serializer for Course including review statistics"""
     semester_last_taught = SemesterSerializer(read_only=True)
+    average_rating = serializers.FloatField(allow_null=True)
+    average_difficulty = serializers.FloatField(allow_null=True)
 
     class Meta:
         model = Course

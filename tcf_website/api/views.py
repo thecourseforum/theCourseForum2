@@ -1,5 +1,6 @@
 # pylint: disable=too-many-ancestors
 """DRF Viewsets"""
+from django.db.models import Avg
 from rest_framework import viewsets
 from ..models import (Course, Department, Instructor, School, Semester,
                       Subdepartment)
@@ -30,17 +31,24 @@ class SubdepartmentViewSet(viewsets.ReadOnlyModelViewSet):
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     """DRF ViewSet for Course"""
-    queryset = Course.objects.all().order_by('number')
+    queryset = Course.objects\
+        .select_related('subdepartment', 'semester_last_taught')
     pagination_class = MyPagination
     filterset_fields = ['subdepartment']
 
     def get_queryset(self):
+        queryset = self.queryset
+        if 'stats' in self.request.query_params:
+            queryset = queryset\
+                .prefetch_related('review_set')\
+                .annotate(average_rating=Avg('review__recommendability'))\
+                .annotate(average_difficulty=Avg('review__difficulty'))
         if 'recent5years' in self.request.query_params:
             latest_semester = Semester.latest()
-            return Course.objects.filter(
+            queryset = queryset.filter(
                 semester_last_taught__year__gte=latest_semester.year - 5
-            ).order_by('number')
-        return self.queryset
+            )
+        return queryset.order_by('number')
 
     def get_serializer_class(self):
         if 'stats' in self.request.query_params:
