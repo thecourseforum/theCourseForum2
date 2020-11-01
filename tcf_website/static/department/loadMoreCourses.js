@@ -7,11 +7,13 @@ async function loadPage(subdepartmentId, url) {
     if (courses.detail === "Invalid page.") {
         hideSpinner(subdepartmentId);
     } else {
+        const element = document.getElementById(`courses-sd-${subdepartmentId}`);
+        const htmlArray = [];
         courses.results.forEach((course) => {
-            const element = document.getElementById(`courses-sd-${subdepartmentId}`);
             const html = generateCourseCardHTML(course);
-            element.insertAdjacentHTML("beforeend", html);
+            htmlArray.push(html);
         });
+        element.insertAdjacentHTML("beforeend", htmlArray.join(""));
         loadPage(subdepartmentId, courses.next);
     }
 }
