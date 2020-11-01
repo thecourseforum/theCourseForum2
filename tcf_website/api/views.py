@@ -19,7 +19,7 @@ class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
 
 class DepartmentViewSet(viewsets.ReadOnlyModelViewSet):
     """DRF ViewSet for Department"""
-    queryset = Department.objects.all()
+    queryset = Department.objects.prefetch_related('school')
     serializer_class = DepartmentSerializer
 
 
