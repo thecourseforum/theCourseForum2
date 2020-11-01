@@ -34,7 +34,8 @@ class CourseTestCase(TestCase):
         self.assertFalse(self.course.is_recent())
 
     def test_get_queryset_recent5years_with_stats(self):
-        """Test CourseViewSet.get_queryset() with recent5years parameter and stats parameters"""
+        """Test CourseViewSet.get_queryset() with recent5years parameter
+        and stats parameters"""
         client = Client()
         response = client.get(path=reverse('course-list'),
                               data={'stats': '', 'recent5years': ''})
@@ -46,7 +47,8 @@ class CourseTestCase(TestCase):
         self.assertFalse(serializer.is_valid())
 
     def test_get_queryset_recent5years_without_stats(self):
-        """Test CourseViewSet.get_queryset() with recent5years parameter but without stats parameters"""
+        """Test CourseViewSet.get_queryset() with recent5years parameter
+        but without stats parameters"""
         client = Client()
         response = client.get(path=reverse('course-list'),
                               data={'recent5years': ''})
@@ -58,7 +60,8 @@ class CourseTestCase(TestCase):
         self.assertTrue(serializer.is_valid())
 
     def test_get_queryset_all_with_stats(self):
-        """Test CourseViewSet.get_queryset() with stats parameter but without recent5years parameters"""
+        """Test CourseViewSet.get_queryset() with stats parameter
+        but without recent5years parameters"""
         client = Client()
         response = client.get(
             path=reverse('course-list'),
@@ -72,7 +75,8 @@ class CourseTestCase(TestCase):
         self.assertFalse(serializer.is_valid())
 
     def test_get_queryset_all_without_stats(self):
-        """Test CourseViewSet.get_queryset() without recent5years parameter or stats parameters"""
+        """Test CourseViewSet.get_queryset() without recent5years parameter
+        or stats parameters"""
         client = Client()
         response = client.get(path=reverse('course-list'))
         courses = response.json()['results']
