@@ -8,7 +8,11 @@
 {% block js %}
 <script type="module" src="{% static 'about/javascript/about.js' %}"></script>
 {% endblock %}
-
+{% comment %} -Removed apply to TCF and write a review buttons
+-Apply to TCF possibly added as link below "Found a bug?"
+- Removed Color blocks in the history tab
+- Added sponsors tab and handshake logo
+- Used apply to TCF logo for current team logo {% endcomment %}
 {% block content %}
 <div class="container">
   <div class="card">
@@ -20,7 +24,6 @@
           <p>connecting you to the courses you love.</p>
         </div>
       </div>
-      <hr>
       <p style="text-align: left;"><b>theCourseForum</b> is a place for
         University of Virginia students to share their academic experiences.
         These are captured in the form of course reviews, which provide insight,
@@ -31,37 +34,22 @@
         <i>Of the students, by the students, for the students...</i>
       </p>
     </div>
-  </div>
-  <br>
-  <div class="about-links">
-    <div class="card">
-      <!-- TODO: Create modal for application (sends to Slack) -->
-      <a href="#">
-        <i class="fas fa-users"></i>
-        <p>Apply to tCF!</p>
-      </a>
-    </div>
-    <div class="card">
-      <a href="{% url 'new_review' %}">
-        <i class="far fa-edit"></i>
-        <p>Write a Review!</p>
-      </a>
-    </div>
-  </div>
-  <br>
-  <div class="card">
     <div class="tabs">
       <button class="btn" id="tCF-history-btn">
         <i class="fa fa-book"></i>
         <p>History</p>
       </button>
       <button class="btn active" id="tCF-current-team-btn">
-        <i class="fa fa-code"></i>
+        <i class="fa fa-users"></i>
         <p>Current Team</p>
       </button>
       <button class="btn" id="tCF-past-contributors-btn">
         <i class="fa fa-graduation-cap"></i>
         <p>Past Contributors</p>
+      </button>
+      <button class="btn" id="tCF-sponsors-btn">
+        <i class="fa fa-handshake"></i>
+        <p>Sponsors</p>
       </button>
     </div>
     <div class="card-body">
@@ -69,6 +57,7 @@
         {% include "about/history.html" %}
         {% include "about/current_team.html" %}
         {% include "about/contributors.html" %}
+        {% include "about/sponsors.html" %}
       </div>
     </div>
   </div>

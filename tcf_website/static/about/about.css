@@ -17,42 +17,6 @@
   margin: 15px 0px 0px 15px;
 }
 
-.about-links {
-  display: flex;
-  justify-content: space-evenly;
-}
-
-.about-links > .card {
-  width: 12em;
-  height: 12em;
-  border-radius: 50%;
-  transform: scale3d(1.0, 1.0, 1.0);
-  transition: transform .2s;
-}
-
-.about-links > .card:hover {
-  transform: scale3d(1.1, 1.1, 1.1);
-}
-
-.about-links > .card > a {
-  width: auto;
-  height: inherit;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.about-links > .card > a > i {
-  font-size: 5em;
-}
-
-.about-links > .card > a > p {
-  margin-top: 10px;
-  margin-bottom: 0px;
-}
-
 .tabs {
   display: flex;
   justify-content: space-evenly;
@@ -87,19 +51,6 @@
   .about-logo > h1 {
     font-size: 25pt;
     margin-left: 0px;
-  }
-
-  .about-links > .card {
-    width: 8em;
-    height: 8em;
-  }
-
-  .about-links > .card > a > i {
-    font-size: 3em;
-  }
-
-  .about-links > .card > a > p {
-    font-size: 10pt;
   }
 
   .tabs > button > i {
@@ -154,5 +105,11 @@
   display: none;
 }
 .tCF-past-contributors.shown {
+  display: block;
+}
+.tCF-sponsors {
+  display: none;
+}
+.tCF-sponsors.shown {
   display: block;
 }
