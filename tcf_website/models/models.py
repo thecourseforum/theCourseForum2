@@ -120,6 +120,8 @@ class User(AbstractUser):
         validators=[MinValueValidator(2000), MaxValueValidator(2999)],
         blank=True, null=True
     )
+    first_major = models.CharField(max_length=150, blank=True, null=True)
+    second_major = models.CharField(max_length=150, blank=True, null=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"

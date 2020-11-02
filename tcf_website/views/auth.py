@@ -33,7 +33,8 @@ def collect_extra_info(request):
             # because of FIELDS_STORED_IN_SESSION, this will get copied
             # to the request dictionary when the pipeline is resumed
             request.session['grad_year'] = form.cleaned_data['grad_year']
-
+            request.session['first_major'] = form.cleaned_data['first_major']
+            request.session['second_major'] = form.cleaned_data['second_major']
             # once we have the grad_year stashed in the session, we can
             # tell the pipeline to resume by using the "complete" endpoint
             return redirect(reverse('social:complete', args=["google-oauth2"]))
