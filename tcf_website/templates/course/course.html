@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
     <link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
     <link rel="stylesheet" href="{% static 'common/toolbar.css' %}"/>
+    <link rel="stylesheet" href="{% static 'base/tcf-style.css' %}"/>
 {% endblock %}
 
 
@@ -20,15 +21,17 @@
                 <h1 class="mr-md-3">{{ course.code }}</h1>
                 <h2>{{ course.title }}</h2>
             </div>
-            {#            <button type="button" >#}
-            <a target="_blank"
-               data-toggle="tooltip"
+
+            <a data-toggle="tooltip"
                data-placement="top"
                title="Requires NetBadge Login"
+               class="text-tcf-blue font-weight-bold"
+               target="_blank"
                href={{ course.eval_link }}>
                 Official UVA Student Evaluations
-                <img src="{% static 'course/expand.png' %}">
+                <i class="fa fa-external-link" aria-hidden="true"></i>
             </a>
+
             <br/>
             <br/>
 
@@ -47,16 +50,13 @@
                 {% endfor %}
             </ul>
         </div>
-
-
     </div>
 {% endblock %}
-
 
 {% block js %}
     <script type="module" src="{% static 'common/bind-show-hide.js' %}"></script>
 
-    {#initializes Bootstrap tooltips#}
+    {#initializes Bootstrap tooltip#}
     <script>
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
