@@ -42,6 +42,7 @@ ul {
     list-style-type: none;
 }
 
+
 /*************UTILITY CLASSES**************/
 
 /* To remove auto blue underline formatting from an anchor tag */
@@ -75,7 +76,7 @@ background-color: var(--secondary-color);
 
 /* Accent color: Orange */
 .text-tcf-orange {
-color: var(--secondary-color);
+color: var(--accent-color);
 }
 .bg-tcf-orange {
 background-color: var(--accent-color);
