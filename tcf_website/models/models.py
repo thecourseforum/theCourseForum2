@@ -1,4 +1,4 @@
-# pylint: disable=missing-class-docstring, wildcard-import
+# pylint: disable=missing-class-docstring, wildcard-import, fixme
 
 """TCF Database models."""
 
@@ -186,12 +186,6 @@ class Instructor(models.Model):
             course=course, instructor=self).aggregate(
             models.Avg('hours_per_week'))['hours_per_week__avg']
 
-    def taught_courses(self):
-        """Returns all sections taught by Instructor."""
-        # this method is very inefficient and doesn't actually do what the name
-        # implies (collecting Sections instead of Courses); work in progress
-        return Section.objects.filter(instructors=self)
-
     def average_rating(self):
         """Compute average rating for all this Instructor's Courses"""
         ratings = Review.objects.filter(instructor=self).aggregate(
@@ -212,6 +206,21 @@ class Instructor(models.Model):
         return Review.objects.filter(
             instructor=self).aggregate(
             models.Avg('difficulty'))['difficulty__avg']
+
+    def get_courses(self):
+        """Gets all Courses taught by a given Instructor"""
+        # More specifically, all Courses where this Instructor has taught a Section
+        # Might be good to store this data as a many-to-many field in
+        # Instructor instead of computing?
+        course_ids = list(
+            Section.objects.filter(
+                instructors=self).distinct().values_list(
+                'course_id', flat=True))
+        # TODO: remove old courses that haven't been taught in 5+ years;
+        #  current heuristic just removes all from old 3-digit system
+        return Course.objects.filter(
+            pk__in=course_ids).filter(
+            number__gte=1000).order_by('number')
 
 
 class Semester(models.Model):

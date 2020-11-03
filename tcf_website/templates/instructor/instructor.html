@@ -1,18 +1,34 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-{#{% block styles %}#}
-{#{% endblock %}#}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
+    <link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
+    <link rel="stylesheet" href="{% static 'common/toolbar.css' %}"/>
+{% endblock %}
 
 {% block content %}
     <div>
-    <h1>{{ instructor.full_name}}</h1>
+        <div>
+            <h1>{{ instructor.full_name }}</h1>
 
-    <h2>{{ instructor.email }}</h2>
+            <h2>{{ instructor.email }}</h2>
 
-    <h4>Average rating: {{ avg_rating }} </h4>
+            <h4>Average rating: {{ avg_rating }} </h4>
 
-    <h4>Average difficulty: {{ avg_difficulty }} </h4>
+            <h4>Average difficulty: {{ avg_difficulty }} </h4>
+        </div>
+
+        <br>
+
+        <div>
+            {% for course in courses %}
+                <div>
+                <a href="{% url 'course' course_id=course.id %}">{{ course }}</a>
+
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
 
