@@ -39,7 +39,7 @@ def profile(request):
 
         if form.is_valid():
             form.save()
-            messages.success(request, 'Your profile was updated succesfully!')
+            messages.success(request, 'Your profile was updated successfully!')
         else:
             messages.error(request, form.errors)
         return HttpResponseRedirect('/profile')
