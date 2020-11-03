@@ -313,10 +313,8 @@ class Course(models.Model):
 
     def eval_link(self):
         """Returns link to student eval page for that class"""
-        link = "https://evals.itc.virginia.edu/course-selectionguide/pages/SGMain.jsp?cmp="
-        link += self.subdepartment.mnemonic
-        link += ","
-        link += str(self.number)
+        link = f"https://evals.itc.virginia.edu/course-selectionguide/pages/SGMain.jsp?cmp=" \
+               f"{self.subdepartment.mnemonic},{self.number}"
         return link
 
     def is_recent(self):
