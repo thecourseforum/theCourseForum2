@@ -152,8 +152,11 @@ def instructor_view(request, instructor_id):
     avg_difficulty = instructor.average_difficulty()
     if avg_difficulty is not None:
         avg_difficulty = round(avg_difficulty, 2)
+    courses = instructor.get_courses()
     return render(
         request, 'instructor/instructor.html', {
             'instructor': instructor,
             'avg_rating': avg_rating,
-            'avg_difficulty': avg_difficulty})
+            'avg_difficulty': avg_difficulty,
+            'courses': courses
+        })
