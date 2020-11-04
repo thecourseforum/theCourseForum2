@@ -5,7 +5,7 @@
 from django.shortcuts import render
 from django.urls import reverse
 
-from ..models import School, Department, Course, Semester, Instructor, Review
+from ..models import School, Department, Course, Semester, Instructor, Review, Subdepartment
 
 
 def browse(request):
@@ -146,13 +146,11 @@ def course_instructor(request, course_id, instructor_id):
 def instructor_view(request, instructor_id):
     """View for instructor page, showing all their courses taught."""
     instructor = Instructor.objects.get(pk=instructor_id)
-    avg_rating = instructor.average_rating()
-    if avg_rating is not None:
-        avg_rating = round(avg_rating, 2)
-    avg_difficulty = instructor.average_difficulty()
-    if avg_difficulty is not None:
-        avg_difficulty = round(avg_difficulty, 2)
-    courses = instructor.get_courses()
+
+    avg_rating = safe_round(instructor.average_rating())
+    avg_difficulty = safe_round(instructor.average_difficulty())
+
+    courses = group_by_dept(instructor, instructor.get_courses())
     return render(
         request, 'instructor/instructor.html', {
             'instructor': instructor,
@@ -160,3 +158,58 @@ def instructor_view(request, instructor_id):
             'avg_difficulty': avg_difficulty,
             'courses': courses
         })
+
+
+def group_by_dept(instructor, courses):
+    """ Group instructor's courses by subdepartment.
+
+        Returns a dictionary mapping subdepartment names to ids and
+        lists of Course metadata.
+    """
+    subdept_ids = list(
+        set(courses.values_list('subdepartment', flat=True)))
+
+    # Contains IDs and names of all subdepartments for Instructor's Courses
+    subdepts = sorted(
+        list(
+            map(
+                lambda subdept_id: [
+                    subdept_id,
+                    Subdepartment.objects.get(
+                        pk=subdept_id).name],
+                subdept_ids)),
+        key=lambda x: x[1])
+
+    # Create dictionary corresponding dept to courses
+    grouped_courses = {}
+    for subdept in subdepts:
+        grouped_courses[subdept[1]] = {
+            "id": subdept[0],
+            "courses": []
+        }
+
+    for course in courses:
+        course_subdept = course.subdepartment.name
+        course_data = {
+            'name': str(course), 'id': course.id, 'avg_rating': safe_round(
+                Instructor.average_rating_for_course(
+                    instructor, course)), 'avg_difficulty': safe_round(
+                Instructor.average_difficulty_for_course(
+                    instructor, course)), 'avg_hours': (
+                        lambda x: int(x) if x is not None else '--')(
+                            Instructor.average_hours_for_course(
+                                instructor, course)), 'last_taught': str(
+                                    course.semester_last_taught)}
+        grouped_courses[course_subdept]['courses'].append(course_data)
+
+    return grouped_courses
+
+
+def safe_round(num):
+    """Helper function to reduce syntax repetitions for null checking rounding.
+
+    Returns -- if None is passed because that's what appears on the site when there's no data.
+    """
+    if num is not None:
+        return round(num, 2)
+    return '--'

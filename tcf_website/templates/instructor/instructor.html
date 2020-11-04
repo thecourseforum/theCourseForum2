@@ -39,15 +39,16 @@
                     <div class="card mt-3">
                         <a href="{% url 'course' course_id=course.id %}">
                             <div class="card-header py-4">
-                                {{ course }}
+                                {{ course.name }}
                             </div>
                         </a>
                         <div class="card-body">
-                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star">{{ course.avg_rating }}</i>
                             <i class="fas fa-user"></i>
-                            <i class="fas fa-skull-crossbones"></i>
+                            <i class="fas fa-skull-crossbones"> {{ course.avg_difficulty }}</i>
                             <i class="fas fa-thumbs-up"></i>
-                            <i class="fas fa-hourglass-half"></i>
+                            <i class="fas fa-hourglass-half"> {{ course.avg_hours }}</i>
+                            Last taught {{ course.last_taught }}
                         </div>
                     </div>
                 {% endfor %}

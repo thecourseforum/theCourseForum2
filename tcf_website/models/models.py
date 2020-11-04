@@ -218,37 +218,9 @@ class Instructor(models.Model):
                 'course_id', flat=True))
         # TODO: remove old courses that haven't been taught in 5+ years;
         #  current heuristic just removes all from old 3-digit system
-        courses = Course.objects.filter(
+        return Course.objects.filter(
             pk__in=course_ids).filter(
             number__gte=1000).order_by('number')
-
-        subdept_ids = list(
-            set(courses.values_list('subdepartment', flat=True)))
-
-        # Contains IDs and names of all subdepartments for Instructor's Courses
-        subdepts = sorted(
-            list(
-                map(
-                    lambda subdept_id: [
-                        subdept_id,
-                        Subdepartment.objects.get(
-                            pk=subdept_id).name],
-                    subdept_ids)),
-            key=lambda x: x[1])
-
-        # Create dictionary corresponding dept to courses
-        grouped_courses = {}
-        for subdept in subdepts:
-            grouped_courses[subdept[1]] = {
-                "id": subdept[0],
-                "courses": []
-            }
-
-        for course in courses:
-            course_subdept = course.subdepartment.name
-            grouped_courses[course_subdept]['courses'].append(course)
-
-        return grouped_courses
 
 
 class Semester(models.Model):
