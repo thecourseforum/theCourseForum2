@@ -164,7 +164,7 @@ def group_by_dept(instructor, courses):
     """ Group instructor's courses by subdepartment.
 
         Returns a dictionary mapping subdepartment names to ids and
-        lists of Course metadata.
+        lists of Course data.
     """
     subdept_ids = list(
         set(courses.values_list('subdepartment', flat=True)))
