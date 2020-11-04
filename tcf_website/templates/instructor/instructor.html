@@ -28,21 +28,33 @@
                 </div>
             </div>
         </div>
-        <h3>[Department]</h3>
-        {% for course in courses %}
-            <div class="card mt-3">
-                <a href="{% url 'course' course_id=course.id %}">
-                    <div class="card-header py-4">
-                        {{ course }}
+        {#        <h3>[Department]</h3>#}
+        {#        {% for course in courses %}#}
+
+        {#        {% endfor %}#}
+        {% if courses %}
+            {% for dept, dept_data in courses.items %}
+                <h3>{{ dept }}</h3>
+                {% for course in dept_data.courses %}
+                    <div class="card mt-3">
+                        <a href="{% url 'course' course_id=course.id %}">
+                            <div class="card-header py-4">
+                                {{ course }}
+                            </div>
+                        </a>
+                        <div class="card-body">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-user"></i>
+                            <i class="fas fa-skull-crossbones"></i>
+                            <i class="fas fa-thumbs-up"></i>
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
                     </div>
-                </a>
-                <div class="card-body">
-                    [Course Info]
-                </div>
-            </div>
-        {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
     </div>
-    
+
 {% endblock %}
 
 
