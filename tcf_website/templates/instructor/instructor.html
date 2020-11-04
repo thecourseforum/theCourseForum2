@@ -8,28 +8,41 @@
 {% endblock %}
 
 {% block content %}
-    <div>
-        <div>
-            <h1>{{ instructor.full_name }}</h1>
-
-            <h2>{{ instructor.email }}</h2>
-
-            <h4>Average rating: {{ avg_rating }} </h4>
-
-            <h4>Average difficulty: {{ avg_difficulty }} </h4>
-        </div>
-
-        <br>
-
-        <div>
-            {% for course in courses %}
-                <div>
-                <a href="{% url 'course' course_id=course.id %}">{{ course }}</a>
-
+    <div class="container text-center">
+        <div class="card mb-5">
+            <div class="card-header py-4">
+                <h3 class="card-title">
+                    {{ instructor.full_name }}
+                </h3>
+                {{ instructor.email }}
+            </div>
+            <div class="card-body">
+                Average Ratings
+                <div class="row">
+                    <div class="col">
+                        Average rating: {{ avg_rating }}
+                    </div>
+                    <div class="col">
+                        Average difficulty: {{ avg_difficulty }}
+                    </div>
                 </div>
-            {% endfor %}
+            </div>
         </div>
+        <h3>[Department]</h3>
+        {% for course in courses %}
+            <div class="card mt-3">
+                <a href="{% url 'course' course_id=course.id %}">
+                    <div class="card-header py-4">
+                        {{ course }}
+                    </div>
+                </a>
+                <div class="card-body">
+                    [Course Info]
+                </div>
+            </div>
+        {% endfor %}
     </div>
+    
 {% endblock %}
 
 
