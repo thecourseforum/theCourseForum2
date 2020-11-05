@@ -63,7 +63,7 @@ class CourseTestCase(TestCase):
         self.review2.delete()
 
         self.assertTrue(self.course.average_difficulty() is None)
-        
+
     def test_get_queryset_recent5years_with_stats(self):
         """Test CourseViewSet.get_queryset() with recent5years parameter
         and stats parameters"""
