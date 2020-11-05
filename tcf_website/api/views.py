@@ -4,7 +4,7 @@ from django.db.models import Avg
 from rest_framework import viewsets
 from ..models import (Course, Department, Instructor, School, Semester,
                       Subdepartment)
-from .paginations import MyPagination
+from .paginations import FlexiblePagination
 from .serializers import (CourseSerializer, CourseWithStatsSerializer,
                           DepartmentSerializer, InstructorSerializer,
                           SemesterSerializer, SchoolSerializer,
@@ -33,7 +33,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     """DRF ViewSet for Course"""
     queryset = Course.objects\
         .select_related('subdepartment', 'semester_last_taught')
-    pagination_class = MyPagination
+    pagination_class = FlexiblePagination
     filterset_fields = ['subdepartment']
 
     def get_queryset(self):
@@ -60,7 +60,7 @@ class InstructorViewSet(viewsets.ReadOnlyModelViewSet):
     """DRF ViewSet for Instructor"""
     queryset = Instructor.objects.all()
     serializer_class = InstructorSerializer
-    pagination_class = MyPagination
+    pagination_class = FlexiblePagination
     filterset_fields = ['section__course']
 
 
