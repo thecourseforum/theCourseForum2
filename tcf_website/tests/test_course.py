@@ -116,3 +116,11 @@ class CourseTestCase(TestCase):
         self.assertFalse(serializer.is_valid())
         serializer = CourseSerializer(data=courses, many=True)
         self.assertTrue(serializer.is_valid())
+
+    def test_student_eval_link(self):
+        """Test if a student eval link matches up with a real link."""
+        eval_link = "https://evals.itc.virginia.edu/" + \
+            "course-selectionguide/pages/SGMain.jsp?cmp=CS,420"
+        # need to break into 2 lines because otherwise pylint gets mad
+        # this link doesn't actually work because CS 420 is not a real class
+        self.assertTrue(eval_link == self.course.eval_link())
