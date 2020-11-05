@@ -33,6 +33,37 @@ class CourseTestCase(TestCase):
 
         self.assertFalse(self.course.is_recent())
 
+    def test_average_rating(self):
+        """Test average rating."""
+
+        rating = (self.review1.recommendability +
+                  self.review2.recommendability) / 2
+
+        self.assertTrue(self.course.average_rating() == rating)
+
+    def test_average_difficulty(self):
+        """Test average difficulty."""
+
+        difficulty = (self.review1.difficulty +
+                      self.review2.difficulty) / 2
+
+        self.assertTrue(self.course.average_difficulty() == difficulty)
+
+    def test_average_rating_no_reviews(self):
+        """Test average rating no reviews."""
+        self.review1.delete()
+        self.review2.delete()
+
+        self.assertTrue(self.course.average_rating() is None)
+
+    def test_average_difficulty_no_reviews(self):
+        """Test average difficulty no reviews."""
+
+        self.review1.delete()
+        self.review2.delete()
+
+        self.assertTrue(self.course.average_difficulty() is None)
+        
     def test_get_queryset_recent5years_with_stats(self):
         """Test CourseViewSet.get_queryset() with recent5years parameter
         and stats parameters"""
