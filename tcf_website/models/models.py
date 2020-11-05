@@ -321,16 +321,16 @@ class Course(models.Model):
         """Returns True if course was taught in current semester."""
         return self.semester_last_taught == Semester.latest()
 
-    def average_rating(self):	
-        """Compute average rating."""	
-        return Review.objects.filter(course=self).aggregate(	
-            models.Avg('recommendability'))['recommendability__avg']	
+    def average_rating(self):
+        """Compute average rating."""
+        return Review.objects.filter(course=self).aggregate(
+            models.Avg('recommendability'))['recommendability__avg']
 
-    def average_difficulty(self):	
-        """Compute average difficulty score."""	
-        return Review.objects.filter(course=self).aggregate(	
+    def average_difficulty(self):
+        """Compute average difficulty score."""
+        return Review.objects.filter(course=self).aggregate(
             models.Avg('difficulty'))['difficulty__avg']
-            
+
     def review_count(self):
         """Compute total number of course reviews."""
         return self.review_set.count()
