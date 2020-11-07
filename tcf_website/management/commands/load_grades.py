@@ -65,20 +65,12 @@ class Command(BaseCommand):
         CourseInstructorGrade.objects.all().delete()
         return df.dropna(
             how="all",
-            subset=[
-                'A+',
-                'A',
-                'A-',
-                'B+',
-                'B',
-                'B-',
-                'C+',
-                'C',
-                'C-',
-                'D+',
-                'D',
-                'D-',
-                'F'])
+            subset=['A+', 'A', 'A-',
+                    'B+', 'B', 'B-',
+                    'C+', 'C', 'C-',
+                    'D+', 'D', 'D-',
+                    'F']
+        )
 
     def load_semester_file(self, file):
         year, semester = file.split('.')[0].split('_')
@@ -139,23 +131,12 @@ class Command(BaseCommand):
 
             # value of dictionaries (incremented onto value if key already
             # exists)
-            this_semesters_grades = [
-                a_plus,
-                a,
-                a_minus,
-                b_plus,
-                b,
-                b_minus,
-                c_plus,
-                c,
-                c_minus,
-                d_plus,
-                d,
-                d_minus,
-                f,
-                ot,
-                drop,
-                withdraw]
+            this_semesters_grades = [a_plus, a, a_minus,
+                                     b_plus, b, b_minus,
+                                     c_plus, c, c_minus,
+                                     d_plus, d, d_minus,
+                                     f,
+                                     ot, drop, withdraw]
 
             # load this semester into course dictionary
             if course_identifier not in course_grades:
@@ -179,23 +160,12 @@ class Command(BaseCommand):
 
     def load_dict_into_models(self):
         # used for gpa calculation
-        grade_weights = [
-            4.0,
-            4.0,
-            3.7,
-            3.3,
-            3.0,
-            2.7,
-            2.3,
-            2.0,
-            1.7,
-            1.3,
-            1.0,
-            0.7,
-            0.0,
-            0.0,
-            0.0,
-            0.0]
+        grade_weights = [4.0, 4.0, 3.7,
+                         3.3, 3.0, 2.7,
+                         2.3, 2.0, 1.7,
+                         1.3, 1.0, 0.7,
+                         0.0,
+                         0.0, 0.0, 0.0]
 
         # load course grades
         for row in course_grades:
