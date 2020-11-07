@@ -23,7 +23,6 @@ class Command(BaseCommand):
     course_grades = {}
     course_instructor_grades = {}
 
-    '''
     def add_arguments(self, parser):
 
         # Named (optional) arguments
@@ -33,6 +32,7 @@ class Command(BaseCommand):
             help='Verbose output',
         )
 
+    '''
         parser.add_argument(
             'semester',
             help='Semester to update grades (e.g. "2019_FALL").\nIf you wish to reload all semesters (potentially dangerous!) then put "ALL_DANGEROUS" as the value of this argument.',
@@ -42,7 +42,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        # self.verbose = options['verbose']
+        self.verbose = options['verbose']
 
         self.data_dir = 'tcf_website/management/commands/grade_data/excel/'
 
@@ -77,14 +77,17 @@ class Command(BaseCommand):
         year = int(year)
         season = semester.upper()
 
-        print(year, season)
+        if self.verbose:
+            print(year, season)
 
         df = self.clean(pd.read_excel(os.path.join(self.data_dir, file)))
 
-        print(f"{df.size} sections")
+        if self.verbose:
+            print(f"{df.size} sections")
 
         for index, row in tqdm(df.iterrows(), total=df.shape[0]):
-            # print(str(row).encode('ascii', 'ignore').decode('ascii'))
+            if self.verbose:
+                print(str(row).encode('ascii', 'ignore').decode('ascii'))
             self.load_row_into_dict(row)
             # break
 
@@ -151,8 +154,9 @@ class Command(BaseCommand):
                     course_instructor_grades[course_instructor_identifier][i] += this_semesters_grades[i]
 
         except TypeError as e:
-            print(row)
-            print(e)
+            if self.verbose:
+                print(row)
+                print(e)
             raise e
 
     def load_dict_into_models(self):
