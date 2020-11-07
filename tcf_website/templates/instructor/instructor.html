@@ -12,13 +12,13 @@
     <div class="container text-center">
         <div class="card">
             <div class="card-header py-4">
-                <h3 class="card-title">
+                <h1 class="card-title">
                     {{ instructor.full_name }}
-                </h3>
+                </h1>
                 {{ instructor.email }}
             </div>
             <div class="card-body">
-                <h6>Average Ratings</h6>
+                <h2 class="h6">Average Ratings</h2>
                 <div class="mt-4 d-flex justify-content-around">
                     <p><i class="fas fa-user"></i> {{ avg_rating }}</p>
                     <p><i class="fas fa-dumbbell"></i> {{ avg_difficulty }}</p>
@@ -29,7 +29,7 @@
         </div>
         {% if courses %}
             {% for dept, dept_data in courses.items %}
-                <h3 class="mt-5">{{ dept }}</h3>
+                <h2 class="mt-5 h3">{{ dept }}</h2>
                 {% for course in dept_data.courses %}
                     <div class="card mt-3">
                         <a href="{% url 'course' course_id=course.id %}">
