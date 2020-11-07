@@ -119,9 +119,6 @@ class Command(BaseCommand):
             ot = int(row['OT'])
             drop = int(row['DR'])
             withdraw = int(row['W'])
-            # credit
-            # general_credit
-            # no_credit
             total_enrolled = int(row['Total'])
 
             # identifiers are tuple keys to dictionaries
