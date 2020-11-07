@@ -184,9 +184,9 @@ class Command(BaseCommand):
                 course_grades[row][13] - course_grades[row][14] - course_grades[row][15]
             # check divide by 0
             if total_enrolled_filtered != 0:
-                gpa = (total_weight) / (total_enrolled_filtered)
+                total_enrolled_gpa = (total_weight) / (total_enrolled_filtered)
             else:
-                gpa = 0.0
+                total_enrolled_gpa = 0.0
 
             try:
                 # check if the course is already in CourseGrade
@@ -240,7 +240,7 @@ class Command(BaseCommand):
                     'subdepartment': row[0],
                     'number': row[1],
                     'title': row[2],
-                    'average': gpa,
+                    'average': total_enrolled_gpa,
                     'a_plus': course_grades[row][0],
                     'a': course_grades[row][1],
                     'a_minus': course_grades[row][2],
@@ -281,9 +281,9 @@ class Command(BaseCommand):
             total_enrolled_filtered = total_enrolled - \
                 course_instructor_grades[row][13] - course_instructor_grades[row][14] - course_instructor_grades[row][15]
             if total_enrolled_filtered != 0:
-                gpa = (total_weight) / (total_enrolled_filtered)
+                total_enrolled_gpa = (total_weight) / (total_enrolled_filtered)
             else:
-                gpa = 0.0
+                total_enrolled_gpa = 0.0
 
             try:
                 # check if the course instructor is already in CourseInstructorGrade
@@ -343,7 +343,7 @@ class Command(BaseCommand):
                     'middle_name': row[3],
                     'last_name': row[4],
                     'email': row[5],
-                    'average': gpa,
+                    'average': total_enrolled_gpa,
                     'a_plus': course_instructor_grades[row][0],
                     'a': course_instructor_grades[row][1],
                     'a_minus': course_instructor_grades[row][2],
