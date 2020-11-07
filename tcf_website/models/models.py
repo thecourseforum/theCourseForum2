@@ -343,9 +343,6 @@ class CourseGrade(models.Model):
     ot = models.IntegerField(default=0)
     drop = models.IntegerField(default=0)
     withdraw = models.IntegerField(default=0)
-    # credit = models.IntegerField(default=0)
-    # general_credit = models.IntegerField(default=0)
-    # no_credit = models.IntegerField(default=0)
     total_enrolled = models.IntegerField(default=0)
 
     def __str__(self):
@@ -382,9 +379,6 @@ class CourseInstructorGrade(models.Model):
     ot = models.IntegerField(default=0)
     drop = models.IntegerField(default=0)
     withdraw = models.IntegerField(default=0)
-    # credit = models.IntegerField(default=0)
-    # general_credit = models.IntegerField(default=0)
-    # no_credit = models.IntegerField(default=0)
     total_enrolled = models.IntegerField(default=0)
 
     def __str__(self):
