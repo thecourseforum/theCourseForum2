@@ -12,10 +12,10 @@ from tqdm import tqdm
 class Command(BaseCommand):
     """
     How To Use: Run python3 manage.py load_grades to load all grades
-    in the tcf_website/management/commands/grade_data/excel/ directory.
+    in the tcf_website/management/commands/grade_data/csv/ directory.
     This should take ~20 min to run to load all the grades
     """
-    help = 'Imports grade data from VAGrades Excel Spreadsheets into PostgresSQL database'
+    help = 'Imports grade data from VAGrades CSV files into PostgresSQL database'
 
     global course_grades
     global course_instructor_grades
@@ -45,7 +45,7 @@ class Command(BaseCommand):
 
         self.verbose = options['verbose']
 
-        self.data_dir = 'tcf_website/management/commands/grade_data/excel/'
+        self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
 
         semester = options['semester']
 
@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 if file[0] not in ('.', '~'):
                     self.load_semester_file(file)
         else:
-            self.load_semester_file(f"{semester.lower()}.xlsx")
+            self.load_semester_file(f"{semester.lower()}.csv")
 
     def clean(self, df):
         CourseGrade.objects.all().delete()  # deletes CourseGrade table
@@ -78,7 +78,7 @@ class Command(BaseCommand):
         if self.verbose:
             print(year, season)
 
-        df = self.clean(pd.read_excel(os.path.join(self.data_dir, file)))
+        df = self.clean(pd.read_csv(os.path.join(self.data_dir, file)))
 
         if self.verbose:
             print(f"{df.size} sections")
@@ -93,7 +93,7 @@ class Command(BaseCommand):
 
     def load_row_into_dict(self, row):
         try:
-            # parsing fields of excel
+            # parsing fields of the CSV file
 
             first_name = row['Instructor First Name']
             middle_name = row['Instructor Middle Name']
