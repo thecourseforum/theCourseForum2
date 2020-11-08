@@ -37,7 +37,7 @@ function generateCourseCardHTML(course) {
                     <div class="card-body">
                         <div class="row justify-content-between text-center text-md-left">
                             <div class="col-4 col-lg-2 text-nowrap">
-                                <small class="mb-0 text-muted text-uppercase">
+                                <small class="mb-0 text-uppercase">
                                     <i class="fa fa-star fa-fw" aria-hidden="true"></i>&nbsp;Rating
                                 </small>
                                 <p class="mb-0 info" id="rating">
@@ -45,7 +45,7 @@ function generateCourseCardHTML(course) {
                                 </p>
                             </div> 
                             <div class="col-4 col-lg-2 text-nowrap">
-                                <small class="mb-0 text-muted text-uppercase">
+                                <small class="mb-0 text-uppercase">
                                     <i class="fa fa-dumbbell fa-fw" aria-hidden="true"></i>&nbsp;Difficulty
                                 </small>
                                 <p class="mb-0 info" id="difficulty">
@@ -53,13 +53,13 @@ function generateCourseCardHTML(course) {
                                 </p>
                             </div>
                             <div class="col-4 col-lg-2 text-nowrap">
-                                <small class="mb-0 text-muted text-uppercase">
+                                <small class="mb-0 text-uppercase">
                                     <i class="fas fa-chart-bar" aria-hidden="true"></i>&nbsp;GPA
                                 </small>
                                 <p class="mb-0 info" id="gpa">TODO</p>
                             </div>
                             <div class="col-12 col-lg-3 offset-lg-3">
-                                <small class="mb-0 text-muted text-uppercase">
+                                <small class="mb-0 text-uppercase">
                                     Last Taught
                                 </small>
                                 <p class="mb-0 info">${seasonTitleCase} ${course.semester_last_taught.year}</p>

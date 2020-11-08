@@ -194,7 +194,7 @@ def group_by_dept(instructor, courses):
                     instructor, course)), 'avg_difficulty': safe_round(
                 Instructor.average_difficulty_for_course(
                     instructor, course)), 'avg_hours': (
-                        lambda x: int(x) if x is not None else '--')(
+                        lambda x: safe_round(x) if x is not None else '—')(
                             Instructor.average_hours_for_course(
                                 instructor, course)), 'last_taught': str(
                                     course.semester_last_taught)}
@@ -206,8 +206,8 @@ def group_by_dept(instructor, courses):
 def safe_round(num):
     """Helper function to reduce syntax repetitions for null checking rounding.
 
-    Returns -- if None is passed because that's what appears on the site when there's no data.
+    Returns — if None is passed because that's what appears on the site when there's no data.
     """
     if num is not None:
         return round(num, 2)
-    return '--'
+    return '—'
