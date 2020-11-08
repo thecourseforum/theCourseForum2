@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     'django_filters',
     'tcf_website'
 ]
+# Performance profiling
+if DEBUG:
+    INSTALLED_APPS.append('silk')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,6 +60,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+# Performance profiling
+if DEBUG:
+    MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
 
 ROOT_URLCONF = 'tcf_core.urls'
 
@@ -245,19 +251,4 @@ REST_FRAMEWORK = {
     ),
 }
 
-<<<<<<< HEAD
 DISCORD_URL_BUG = env.str('DISCORD_URL_BUG')
-=======
-
-def custom_recording_logic(request):
-    """Exclude API views for django-silk"""
-    return not request.path.startswith('/api')
-
-
-# Performance profiling for non-API views during development
-SILKY_INTERCEPT_FUNC = custom_recording_logic
-if DEBUG:
-    INSTALLED_APPS.append('silk')
-    MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
-    SILKY_INTERCEPT_FUNC = custom_recording_logic
->>>>>>> dev

@@ -1,10 +1,10 @@
 .rating-card-link {
-    background-color: var(--secondary-color);
+    background-color: rgb(91, 129, 182);
     color: #EBEBEB;
 }
 
 .rating-card-link:hover {
-    background-color: var(--main-color);
+    background-color: rgb(57, 72, 108);
     color: #EBEBEB;
 }
 

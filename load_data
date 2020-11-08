@@ -1,7 +1,0 @@
-echo "Loading in data from $1"
-# needs to be run 3 times because reasons
-cat $1 | docker exec -i tcf_db psql -U tcf_django tcf_db
-cat $1 | docker exec -i tcf_db psql -U tcf_django tcf_db
-cat $1 | docker exec -i tcf_db psql -U tcf_django tcf_db
-
-docker exec -it tcf_django python3 manage.py other_schools_department_fix --verbose
