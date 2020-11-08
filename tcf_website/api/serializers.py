@@ -48,12 +48,13 @@ class CourseWithStatsSerializer(CourseSerializer):
     semester_last_taught = SemesterSerializer(read_only=True)
     average_rating = serializers.FloatField(allow_null=True)
     average_difficulty = serializers.FloatField(allow_null=True)
+    average_gpa = serializers.FloatField(allow_null=True)
 
     class Meta:
         model = Course
         fields = ['id', 'title', 'description', 'number', 'subdepartment',
                   'semester_last_taught', 'average_rating',
-                  'average_difficulty', 'is_recent']
+                  'average_difficulty', 'average_gpa', 'is_recent']
 
 
 class InstructorSerializer(serializers.ModelSerializer):
