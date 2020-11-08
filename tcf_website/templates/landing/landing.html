@@ -45,9 +45,27 @@
     </div>
   </nav>
 
+  <!-- <div class="header-img row pt-5">
+    {% with ''|center:4 as range %}
+    {% for _ in range %}
+      <div class="col pt-5 px-1">
+        <img class="logo w-100 h-100" src="{% static 'landing/UVA_rotunda_logo.png' %}">
+      </div>
+      <div class="col pt-5 px-1">
+        <img class="logo w-100 h-100" src="{% static 'landing/UVA_rotunda_logo_blue.png' %}">
+      </div>
+    {% endfor %}
+    {% endwith %}
+  </div> -->
+
   <!-- Masthead -->
-  <header class="masthead container text-center pt-5 mt-5">
-    <div class="row pt-5">
+  <header class="masthead text-center p-5">
+    <div class="header-img row my-4">
+      <div class="col-md-4 offset-md-4">
+        <img class="w-100 h-100" src="{% static 'landing/UVA_rotunda_logo.png' %}">
+      </div>
+    </div>
+    <div class="row">
       <div class="col-xl-9 mx-auto">
         <h1 class="mb-2">theCourseForum</h1>
         <p class="lead mb-5">A UVA student community, connecting you to the courses you love.</p>
@@ -59,8 +77,8 @@
   </header>
 
   <!-- Icons Grid -->
-  <section class="features-icons container p-5">
-      <div class="row p-4 text-center">
+  <section class="features-icons container px-5 pb-5">
+      <div class="row px-4 text-center">
         <div class="col-lg-4">
           <a href="{% url 'browse' %}" class="link-unstyled">
             <div class="card m-3">
@@ -105,6 +123,7 @@
       </div>
   </section>
 
+
   <!-- About Team -->
   <section class="about-team py-5 my-5">
     <div class="about-header row">
@@ -118,9 +137,9 @@
     <div class="about-content container">
       <div class="row pt-5 px-0">
         <div class="col-lg-8">
-          <div class="team-photos row text-center mr-4 mb-4">
+          <div class="team-photos row text-center pr-4 mb-4">
             {% for member in executive_team %}
-              <div class="col-md-3 col-sm-6 d-flex px-0">
+              <div class="col-md-3 col-xs-6 px-0">
                 <div class="about-member card flex-fill bg-light">
                   <div class="about-pfp px-4 py-3">
                     <img class="card-img-top rounded-circle" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
@@ -132,7 +151,7 @@
                 </div>
               </div>
             {% endfor %}
-            <div class="col-md-3 col-sm-6">
+            <div class="col-md-3 col-xs-6">
               <a href="{% url 'about' %}" class="link-unstyled">
                 <div class="about-link card bg-tcf-orange mt-3 mx-1">
                   <div class="card-body mx-auto py-5">
