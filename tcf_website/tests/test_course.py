@@ -34,8 +34,8 @@ class CourseTestCase(TestCase):
     def test_average_rating(self):
         """Test average rating."""
 
-        rating = (self.review1.recommendability +
-                  self.review2.recommendability) / 2
+        rating = (self.review1.average() +
+                  self.review2.average()) / 2
 
         self.assertTrue(self.course.average_rating() == rating)
 

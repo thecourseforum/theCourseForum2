@@ -234,7 +234,7 @@ class Command(BaseCommand):
                     raise e
                 if self.verbose:
                     print(first, last)
-                    
+
                 instructor, created = Instructor.objects.get_or_create(
                     first_name=first,
                     last_name=last,
