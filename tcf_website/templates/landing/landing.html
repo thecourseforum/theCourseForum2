@@ -20,7 +20,8 @@
     <div class="container">
       <!-- tCF logo -->
       <a class="navbar-brand logo-container" href="/">
-        <img class="logo" src="{% static 'base/img/new_logo.png' %}">
+        <img class="logo" src="{% static 'base/img/new_logo.png' %}">&nbsp;
+        <h4 class="text-tcf-indigo">theCourseForum</h4>
       </a>
       <!-- tCF profile dropdown -->
       <div class="account-settings">
@@ -47,15 +48,18 @@
 
   <!-- Masthead -->
   <header class="masthead text-center p-5">
-    <div class="header-img row my-4">
-      <div class="col-sm-2 offset-sm-5">
-        <img class="w-100 h-100" src="{% static 'landing/UVA_rotunda_logo_blue.png' %}">
-      </div>
-    </div>
+    <!-- For extra padding -->
+    <div class="row py-5"></div>
+
     <div class="row">
-      <div class="col-xl-9 mx-auto">
-        <h1 class="mb-2">theCourseForum</h1>
-        <p class="lead mb-5">A UVA student community, connecting you to the courses you love.</p>
+      <div class="col-xl-8 mx-auto py-4">
+        <div class="about-logo row justify-content-center">
+          <img src="{% static 'base/img/new_logo.png' %}" class="mr-4" height="150px">
+          <div class="tagline text-left">
+            <h1>theCourseForum</h1>
+            <p>connecting you to the courses you love.</p>
+          </div>
+        </div>
       </div>
       <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
         {% include "base/searchbar.html" %}
@@ -159,7 +163,7 @@
                 <h3 class="card-title">About Us</h3>
                 <p class="card-text font-weight-light mb-2">
                   theCourseForum is a product of volunteer developers and contributors from the UVA community.
-                  Founded in 2005 by two alumni, we are a student-run nonprofit CIO at the University of Virginia.
+                  We are a student-run nonprofit CIO, founded in 2005 at the University of Virginia.
                   <br/><br/>
                   We keep our servers running through university grants and your donations.
                   Just $4 keeps our servers up for a day, so we can keep serving you the best content.

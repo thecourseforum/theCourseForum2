@@ -8,6 +8,11 @@
 nav.navbar {
   background-color: white;
 }
+nav.navbar img.logo{
+  height: 2rem;
+  weight: auto;
+  opacity: 0.75;
+}
 
 /* Masthead */
 .header-img img {
