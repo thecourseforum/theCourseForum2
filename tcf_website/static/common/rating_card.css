@@ -15,3 +15,7 @@
 .rating-card .info {
     font-size: 1.25rem;
 }
+
+small {
+    color: var(--accent-color);
+}

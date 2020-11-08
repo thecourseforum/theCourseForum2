@@ -1,5 +1,5 @@
 <div class="tcf-toolbar btn-toolbar justify-content-center justify-content-md-between mb-3 text-center text-md-left" role="toolbar" aria-label="Toolbar with button groups">
-    <div class="btn-group mr-2" role="group" aria-label="First group">
+    <div class="btn-group mr-2" role="toolbar" aria-label="First group">
         <ol class="breadcrumb mb-md-0">
             {% for text, url, active in breadcrumbs %}
                 <li class="breadcrumb-item {% if active %}active{% endif %}">{% if not active %}<a href="{{ url }}">{{ text }}</a>{% else %}{{ text }}{% endif %}
@@ -8,7 +8,7 @@
         </ol>
     </div>
     {% if sorting %}
-    <div class="btn-group" role="group" aria-label="Basic example">
+    <div class="btn-group" role="toolbar" aria-label="Basic example">
         <button type="button" id="number-sort-btn" class="btn btn-outline-dark active">Number</button>
         <button type="button" id="rating-sort-btn" class="btn btn-outline-dark">Rating</button>
         <button type="button" id="diff-sort-btn" class="btn btn-outline-dark">Difficulty</button>
@@ -16,7 +16,7 @@
     </div>
     {% endif %}
     {% if active_text %}
-    <div class="btn-group" role="group" aria-label="Basic example">
+    <div class="btn-group" role="toolbar" aria-label="Basic example">
         <button type="button" id="hide-btn" class="btn btn-outline-dark active">{{ active_text }}</button>
         <button type="button" id="show-btn" class="btn btn-outline-dark"> {{ hidden_text }} </button>
     </div>
