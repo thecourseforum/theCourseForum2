@@ -112,7 +112,7 @@
                      },
                     {"name": "Shirley Chu",
                      "role": "VP of Marketing/Design",
-                     "class": "2021",
+                     "class": "2022",
                      "img_filename": "MAD_Shirley_Chu.jpg"
                      },
                     {"name": "Sierra Arnold",
@@ -124,6 +124,16 @@
                      "role": "Marketing",
                      "class": "2023",
                      "img_filename": "MAD_Max_von_Schroeter.jpg"
+                     },
+                    {"name": "Kimberly Vo",
+                     "role": "Marketing",
+                     "class": "2022",
+                     "img_filename": "MAD_Kimberly_Vo.jpg"
+                     },
+                    {"name": "Tina Wang",
+                     "role": "Marketing",
+                     "class": "2021",
+                     "img_filename": "MAD_Tina_Wang.jpg"
                      }
                    ]
 }
