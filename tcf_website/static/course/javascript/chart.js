@@ -1,38 +1,44 @@
-var ctx = document.getElementById('myChart').getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "Drop"],
-        datasets: [{
-            label: 'count',
-            data: [1, 2, 2, 3, 3, 1, 5, 1, 2, 2, 5, 1, 12, 12],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        legend: {
-            display: false
-        },
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
+
+let data = {
+  datasets: [{
+    data: [4, 3, 4, 5, 6, 7, 7, 3, 3, 4, 1, 5, 3, 6],
+    backgroundColor: [
+      '#57679D',
+      '#56669C',
+      '#55659B',
+      '#384676',
+      '#384676',
+      '#374575',
+      "#364474",
+      "#18244B",
+      "#17234A",
+      "#162249",
+      "#E06A45",
+      "#DE6843",
+      "#C95F36",
+      "#B45133"
+    ],
+  }],
+  labels: [
+    "A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "Drop"
+  ]
+}
+var ctx2 = document.getElementById("myChart2");
+var myChart2 = new Chart(ctx2, {
+  type: 'pie',
+  data: data,
+  options: {
+    cutoutPercentage: 65,
+    responsive: false,
+    legend: {
+      display: false
     }
+  }
 });
+
+// 57679D
+// 56669C
+// 55659B
+// 384676
+// 384676
+// 374575

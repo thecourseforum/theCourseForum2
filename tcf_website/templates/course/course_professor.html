@@ -10,79 +10,166 @@
 {% block content %}
 <div class="course-professor container">
 
-    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
+  {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
 
-    <div class="d-flex flex-column align-items-center my-3 mt-md-5">
-        <h1>{{ instructor.full_name }}</h1>
-        <div class="d-md-flex">
-            <h4 class="mr-md-3">{{ course.code }}</h4>
-            <h4 class="mr-md-3">{{ course.title }}</h4>
-        </div>
+  <div class="d-flex flex-column align-items-center my-3 mt-md-5">
+    <h1>{{ instructor.full_name }}</h1>
+    <div class="d-md-flex">
+      <h4 class="mr-md-3">{{ course.code }}</h4>
+      <h4 class="mr-md-3">{{ course.title }}</h4>
     </div>
-    
-    <div class="ratings row d-flex mb-3 justify-content-center">
-        {% if rating %}
-        <div class="card col-lg-3 text-center">
-            <div class="card-body">
-              <h5 class="card-title display-4">
-                  {{ rating|floatformat:2 }}
-              </h5>
-              <p class="card-text"><i class="fa fa-star fa-fw"></i>&nbsp;Rating</p>
-            </div>
-        </div>
-        {% endif %}
-        {% if difficulty %}
-        <div class="card mx-2 col-lg-3 text-center">
-            <div class="card-body">
-              <h5 class="card-title display-4">
-                  {{ difficulty|floatformat:2 }}
-              </h5>
-              <p class="card-text"><i class="fa fa-skull-crossbones fa-fw"></i>&nbsp;Difficulty</p>
-            </div>
-        </div>
-        {% endif %}
-        {% if hours %}
-        <div class="card col-lg-3 text-center">
-            <div class="card-body">
-              <h5 class="card-title display-4">
-                  {{ hours|floatformat:2 }}
-              </h5>
-              <p class="card-text"><i class="fa fa-hourglass-half fa-fw"></i>&nbsp;Hours/Week</p>
-            </div>
-        </div>
-        {% endif %}
-        
-    </div>
+  </div>
 
-    <div class="d-flex align-items-center justify-content-center">
-        <div class="ratings row d-inline-flex mb-3 align-items-center justify-content-center bg-white border">
-            <div style="width:650px;" class=" p-2">
-              <canvas id="myChart"></canvas>
+  <div class="grades_ratings_container">
+    <div class="ratings_container">
+      <div class="ratings_row">
+        <div class="rating_card">
+          <span class="rating_card_num ">{{ rating|floatformat:2 }}</span>
+          <p class="rating_card_desc"><i class="fa fa-star fa-fw"></i>&nbsp;Rating</p>
+        </div>
+        <div class="info_container">
+          <div class="info_row">
+            <div class="info_title">
+              Professor
             </div>
-            {% if rating %}
-              <div class="card col-lg-3 text-center" style="border: none">
-                  <div class="card-body" >
-                    <h5 class="card-title display-4">
-                        {{ rating|floatformat:2 }}
-                    </h5>
-                    <p class="card-text">&nbsp;Average GPA</p>
-                  </div>
+            <div class="info_bar">
+              <div class="progress  p-0 m-0">
+                <div class="progress-bar p-0 m-0" style="width:70%"></div>
               </div>
-              {% endif %}
+            </div>
+            <div class="info_num">
+              3.29
+            </div>
           </div>
+          <div class="info_row">
+            <div class="info_title">
+              Fun
+            </div>
+            <div class="info_bar">
+              <div class="progress  p-0 m-0">
+                <div class="progress-bar p-0 m-0" style="width:70%"></div>
+              </div>
+            </div>
+            <div class="info_num">
+              3.29
+            </div>
+          </div>
+          <div class="info_row">
+            <div class="info_title">
+              Difficulty
+            </div>
+            <div class="info_bar">
+              <div class="progress  p-0 m-0">
+                <div class="progress-bar p-0 m-0" style="width:70%"></div>
+              </div>
+            </div>
+            <div class="info_num">
+              3.29
+            </div>
+          </div>
+          <div class="info_row">
+            <div class="info_title">
+              Recommend
+            </div>
+            <div class="info_bar">
+              <div class="progress  p-0 m-0">
+                <div class="progress-bar p-0 m-0" style="width:70%"></div>
+              </div>
+            </div>
+            <div class="info_num">
+              3.29
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ratings_row" style="align-items: flex-end">
+        <div class="rating_card">
+          <span class="rating_card_num ">{{ hours|floatformat:2 }}</span>
+          <p class="rating_card_desc"><i class="fa fa-hourglass-half fa-fw"></i>&nbsp;Hours/Week</p>
+        </div>
+        <div class="info_container">
+            <div class="info_row">
+              <div class="info_title">
+                Reading
+              </div>
+              <div class="info_bar">
+                <div class="progress  p-0 m-0">
+                  <div class="progress-bar p-0 m-0" style="width:70%"></div>
+                </div>
+              </div>
+              <div class="info_num">
+                3.29
+              </div>
+            </div>
+            <div class="info_row">
+              <div class="info_title">
+                Writing
+              </div>
+              <div class="info_bar">
+                <div class="progress  p-0 m-0">
+                  <div class="progress-bar p-0 m-0" style="width:70%"></div>
+                </div>
+              </div>
+              <div class="info_num">
+                3.29
+              </div>
+            </div>
+            <div class="info_row">
+              <div class="info_title">
+                Group
+              </div>
+              <div class="info_bar">
+                <div class="progress  p-0 m-0">
+                  <div class="progress-bar p-0 m-0" style="width:70%"></div>
+                </div>
+              </div>
+              <div class="info_num">
+                3.29
+              </div>
+            </div>
+            <div class="info_row">
+              <div class="info_title">
+                Other
+              </div>
+              <div class="info_bar">
+                <div class="progress  p-0 m-0">
+                  <div class="progress-bar p-0 m-0" style="width:70%"></div>
+                </div>
+              </div>
+              <div class="info_num">
+                3.29
+              </div>
+            </div>
+          </div>
+      </div>
     </div>
-
-    <div class="dropdown">
-      <button id="review-sort-select" class="btn btn-secondary dropdown-toggle" type="button" id="sortOptions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-      <div class="dropdown-menu" aria-labelledby="sortOptions">
-        <button id="votes-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">Most Helpful</button>
-        <button id="recent-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">Most Recent</button>
-        <button id="highrating-sort-btn" onclick="sortReviews(this.id)"class="dropdown-item" type="button">Highest Rating</button>
-        <button id="lowrating-sort-btn" onclick="sortReviews(this.id)"class="dropdown-item" type="button">Lowest Rating</button>
+    <div class="grades_container">
+      <canvas id="myChart2" class="pie-chart"></canvas>
+      <div class="Absolute-Center">
+        <p class="gpa-text">3.50 GPA</p>
+        <p class="students-text">217 Students</p>
       </div>
     </div>
 
-    {% include "reviews/reviews.html" with reviews=reviews %}
+  </div>
+
+
+  <div class="dropdown">
+    <button id="review-sort-select" class="btn btn-secondary dropdown-toggle" type="button" id="sortOptions"
+      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+    <div class="dropdown-menu" aria-labelledby="sortOptions">
+      <button id="votes-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">Most
+        Helpful</button>
+      <button id="recent-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">Most
+        Recent</button>
+      <button id="highrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">Highest
+        Rating</button>
+      <button id="lowrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">Lowest
+        Rating</button>
+    </div>
+  </div>
+
+  {% include "reviews/reviews.html" with reviews=reviews %}
 </div>
 {% endblock %}
 
