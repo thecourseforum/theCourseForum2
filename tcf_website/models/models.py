@@ -46,7 +46,6 @@ class Department(models.Model):
         return self.name
 
     class Meta:
-
         indexes = [
             models.Index(fields=['school']),
         ]
@@ -57,6 +56,7 @@ class Department(models.Model):
                 name='unique departments per school'
             )
         ]
+
 
 # e.g. CREO in French department or ENCW in English
 
@@ -93,7 +93,6 @@ class Subdepartment(models.Model):
             section__semester=Semester.latest()).exists()
 
     class Meta:
-
         indexes = [
             models.Index(fields=['department']),
         ]
@@ -159,33 +158,40 @@ class Instructor(models.Model):
         """Return string containing instructor full name."""
         return f"{self.first_name} {self.last_name}"
 
+    # this implementation is the same as average_rating in Course
+    # except with an extra
     def average_rating_for_course(self, course):
-        """Compute average of instructor and recommend scores."""
+        """Compute average rating for course.
+
+        Rating is defined as the average of recommendability,
+        instructor rating, and enjoyability."""
         ratings = Review.objects.filter(
             course=course, instructor=self).aggregate(
-                models.Avg('recommendability'),
-                models.Avg('instructor_rating'))
+            models.Avg('recommendability'),
+            models.Avg('instructor_rating'),
+            models.Avg('enjoyability'))
 
         recommendability = ratings.get('recommendability__avg')
         instructor_rating = ratings.get('instructor_rating__avg')
+        enjoyability = ratings.get('enjoyability__avg')
 
         # Return None if one component is absent.
-        if not recommendability or not instructor_rating:
+        if not recommendability or not instructor_rating or not enjoyability:
             return None
 
-        return (recommendability + instructor_rating) / 2
+        return (recommendability + instructor_rating + enjoyability) / 3
 
     def average_difficulty_for_course(self, course):
         """Compute average difficulty score."""
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
-                models.Avg('difficulty'))['difficulty__avg']
+            models.Avg('difficulty'))['difficulty__avg']
 
     def average_hours_for_course(self, course):
         """Compute average hrs/wk."""
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
-                models.Avg('hours_per_week'))['hours_per_week__avg']
+            models.Avg('hours_per_week'))['hours_per_week__avg']
 
 
 class Semester(models.Model):
@@ -243,7 +249,6 @@ class Semester(models.Model):
         return Semester.objects.order_by("-number").first()
 
     class Meta:
-
         indexes = [
             models.Index(fields=['year', 'season']),
             models.Index(fields=['number']),
@@ -291,9 +296,24 @@ class Course(models.Model):
         return self.semester_last_taught == Semester.latest()
 
     def average_rating(self):
-        """Compute average rating."""
-        return Review.objects.filter(course=self).aggregate(
-            models.Avg('recommendability'))['recommendability__avg']
+        """Compute average rating.
+
+        Rating is defined as the average of recommendability,
+        instructor rating, and enjoyability."""
+        ratings = Review.objects.filter(course=self).aggregate(
+            models.Avg('recommendability'),
+            models.Avg('instructor_rating'),
+            models.Avg('enjoyability'))
+
+        recommendability = ratings.get('recommendability__avg')
+        instructor_rating = ratings.get('instructor_rating__avg')
+        enjoyability = ratings.get('enjoyability__avg')
+
+        # Return None if one component is absent.
+        if not recommendability or not instructor_rating or not enjoyability:
+            return None
+
+        return (recommendability + instructor_rating + enjoyability) / 3
 
     def average_difficulty(self):
         """Compute average difficulty score."""
@@ -305,7 +325,6 @@ class Course(models.Model):
         return self.review_set.count()
 
     class Meta:
-
         indexes = [
             models.Index(fields=['subdepartment', 'number']),
         ]
@@ -349,7 +368,6 @@ class Section(models.Model):
         return f"{self.course} {self.semester} {', '.join(str(i) for i in self.instructors.all())}"
 
     class Meta:
-
         indexes = [
             models.Index(fields=['semester', 'course']),
             models.Index(fields=['course']),
@@ -397,6 +415,8 @@ class Review(models.Model):
     difficulty = models.PositiveSmallIntegerField(choices=RATINGS)
     # Review recommendability. Required.
     recommendability = models.PositiveSmallIntegerField(choices=RATINGS)
+    # Review enjoyability. Required.
+    enjoyability = models.PositiveSmallIntegerField(choices=RATINGS)
     # Review hours per week. Required.
     hours_per_week = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(168)])
@@ -405,10 +425,13 @@ class Review(models.Model):
     # Review modified date. Required.
     modified = models.DateTimeField(default=timezone.now)
 
+    # does this get used anywhere? not sure
     def average(self):
         """Average score for review."""
-        return (self.instructor_rating + self.recommendability) / 2
+        return (self.instructor_rating +
+                self.recommendability + self.enjoyability) / 3
 
+    # not sure if this gets used anywhere either
     def count_votes(self):
         """Sum votes for review."""
         vote_sum = self.vote_set.aggregate(
@@ -530,7 +553,6 @@ class Vote(models.Model):
         return f"Vote of value {self.value} for {self.review} by {self.user}"
 
     class Meta:
-
         indexes = [
             models.Index(fields=['review']),
         ]

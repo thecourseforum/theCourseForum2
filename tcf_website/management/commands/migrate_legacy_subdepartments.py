@@ -53,7 +53,8 @@ class Command(BaseCommand):
                         after_func(obj, new_obj)
 
                 except Exception as e:
-                    print(f"Error migrating {type(obj).__name__} {obj}:".encode('utf-8'))
+                    print(
+                        f"Error migrating {type(obj).__name__} {obj}:".encode('utf-8'))
                     print(e)
                     traceback.print_exc()
 

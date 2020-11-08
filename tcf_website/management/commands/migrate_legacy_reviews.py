@@ -165,6 +165,8 @@ class Command(BaseCommand):
         difficulty = min(5, round(
             review.difficulty)) if review.difficulty else 3
         recommendability = min(5, round(
+            review.recommend)) if review.recommend else 3
+        enjoyability = min(5, round(
             review.enjoyability)) if review.enjoyability else 3
 
         r, created = Review.objects.get_or_create(
@@ -175,6 +177,7 @@ class Command(BaseCommand):
             instructor_rating=instructor_rating,
             difficulty=difficulty,
             recommendability=recommendability,
+            enjoyability=enjoyability,
             hours_per_week=work_per_week,
             semester=semester,
             created=review.created_at,
