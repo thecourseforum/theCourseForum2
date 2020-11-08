@@ -2,8 +2,10 @@
 import os
 import json
 import requests
+# import functools
 
 from django.shortcuts import render
+from ..models import Subdepartment
 
 
 def search(request):
@@ -18,9 +20,10 @@ def search(request):
 
     # Set arguments for template view
     args = set_arguments(query, courses, instructors)
+    context_vars = args
 
     # Load template view
-    return render(request, 'search/search.html', args)
+    return render(request, 'search/search.html', context_vars)
 
 
 def fetch_courses(query):
@@ -137,7 +140,6 @@ def format_courses(results):
         course = {
             "id": result.get("_meta").get("id"),
             "title": result.get("title").get("raw"),
-            "description": result.get("description").get("raw"),
             "number": result.get("number").get("raw"),
             "mnemonic": result.get("mnemonic").get("raw")
         }
@@ -166,7 +168,27 @@ def set_arguments(query, courses, instructors):
         "query": query
     }
     if not courses["error"]:
-        args["courses"] = courses["results"]
+        args["courses"] = group_by_dept(courses['results'])
     if not instructors["error"]:
         args["instructors"] = instructors["results"]
+
+    args["displayed_query"] = query[:30] + "..." if len(query) > 30 else query
     return args
+
+
+def group_by_dept(courses):
+    """Groups courses by their department and adds relevant metadata."""
+    grouped_courses = {}
+    for course in courses:
+        course_dept = course['mnemonic'][:course['mnemonic'].index(' ')]
+        if course_dept not in grouped_courses:
+            subdept = Subdepartment.objects.filter(mnemonic=course_dept)[0]
+            # should only ever have one returned with that mnemonic
+            grouped_courses[course_dept] = {
+                "subdept_name": subdept.name,
+                "dept_id": subdept.department_id,
+                "courses": []
+            }
+        grouped_courses[course_dept]["courses"].append(course)
+
+    return grouped_courses

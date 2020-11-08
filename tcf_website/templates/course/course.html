@@ -2,42 +2,63 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'course/course.css' %}" />
-<link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
-<link rel="stylesheet" href="{% static 'common/show-hide.css' %}" />
-<link rel="stylesheet" href="{% static 'common/toolbar.css' %}" />
+    <link rel="stylesheet" href="{% static 'course/course.css' %}"/>
+    <link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
+    <link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
+    <link rel="stylesheet" href="{% static 'common/toolbar.css' %}"/>
 {% endblock %}
+
+
 
 {% block content %}
-<div class="course container">
-    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="All" %}
-      
-    <div class="instructors container-lg mt-3">
-        <div class="d-md-flex align-items-baseline my-3">
-            <h1 class="mr-md-3">{{ course.code }}</h1>
-            <h2>{{ course.title }}</h2>
+
+    <div class="course container">
+        {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="All" %}
+
+        <div class="instructors container-lg mt-3">
+            <div class="d-md-flex align-items-baseline my-3">
+                <h1 class="mr-md-3">{{ course.code }}</h1>
+                <h2>{{ course.title }}</h2>
+            </div>
+
+            <a data-toggle="tooltip"
+               data-placement="top"
+               title="Requires NetBadge Login"
+               class="text-tcf-blue font-weight-bold"
+               target="_blank"
+               href={{ course.eval_link }}>
+                Official UVA Student Evaluations
+                <i class="fa fa-external-link" aria-hidden="true"></i>
+            </a>
+
+            <br/>
+            <br/>
+
+            <ul class="instructor-list">
+                {% for i in recent_instructors %}
+                    <li class="instructor">
+                        {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
+                        {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty last_taught=course.semester_last_taught %}
+                    </li>
+                {% endfor %}
+                {% for i in old_instructors %}
+                    <li class="instructor old">
+                        {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
+                        {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty %}
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
-        <ul class="instructor-list">
-        {% for i in recent_instructors %}
-            <li class="instructor">
-                {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
-                {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty last_taught=course.semester_last_taught %}
-            </li>
-        {% endfor %}
-        {% for i in old_instructors %}
-            <li class="instructor old">
-                {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
-                {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty %}
-            </li>
-        {% endfor %}
-        </ul>
     </div>
-
-
-</div>
 {% endblock %}
 
-
 {% block js %}
-<script src="{% static 'common/show-hide.js' %}"></script>
+    <script type="module" src="{% static 'common/bind-show-hide.js' %}"></script>
+
+    {#initializes Bootstrap tooltip#}
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
 {% endblock %}

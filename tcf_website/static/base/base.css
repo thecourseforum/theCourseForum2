@@ -26,14 +26,13 @@ html {
 }
 
 body {
-    font-family: 'Lato', sans-serif;
     padding-top: 70px; /* Height of fixed navbar */
-    background-color: #EBEBEB;
+    background-color: var(--background-color);
     max-width: 100vw;
 }
 
 .content {
-  background-color: #EBEBEB;
+  background-color: var(--background-color);
 }
 
 @media (min-width: 768px) {
@@ -41,19 +40,6 @@ body {
         width: calc(100vw - 240px);
         margin-left: 240px;
     }
-}
-
-a {
-    color: inherit;
-}
-a:hover {
-    text-decoration: none;
-    color: #db4929;
-}
-
-ul {
-    padding: 0;
-    list-style-type: none;
 }
 
 footer {
