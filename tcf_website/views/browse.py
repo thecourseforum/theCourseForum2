@@ -4,7 +4,6 @@
 
 from django.shortcuts import render
 from django.urls import reverse
-from django.core.exceptions import ObjectDoesNotExist
 
 from ..models import School, Department, Course, Semester, Instructor, Review
 
@@ -14,22 +13,19 @@ def browse(request):
     clas = School.objects.get(name="College of Arts & Sciences")
     seas = School.objects.get(name="School of Engineering & Applied Science")
 
-    excluded_list = [clas.pk, seas.pk]
-    # Get the Misc category so it can be appended at the end (if it exists)
-    try:
-        misc_school = School.objects.get(name="Miscellaneous")
-        excluded_list.append(misc_school.pk)
-    except ObjectDoesNotExist:
-        misc_school = None
-
-    # Other schools besides CLAS, SEAS, and Misc.
-    other_schools = School.objects.exclude(pk__in=excluded_list)
+    # Other departments besides CLAS and SEAS.
+    other_dept_pks = School.objects.exclude(
+        pk__in=[
+            clas.pk,
+            seas.pk]).values_list(
+                'department',
+                flat=True)
+    other_depts = Department.objects.filter(pk__in=other_dept_pks)
 
     return render(request, 'browse/browse.html', {
         'CLAS': clas,
         'SEAS': seas,
-        'other_schools': other_schools,
-        'misc_school': misc_school
+        'other_depts': other_depts
     })
 
 
@@ -41,7 +37,9 @@ def department(request, dept_id):
     # See:
     # https://docs.djangoproject.com/en/3.0/ref/models/querysets/#django.db.models.query.QuerySet.prefetch_related
     dept = Department.objects.prefetch_related(
-        'subdepartment_set').get(pk=dept_id)
+        'subdepartment_set',
+        'subdepartment_set__course_set').get(
+            pk=dept_id)
 
     # Get the most recent semester
     latest_semester = Semester.latest()
@@ -54,7 +52,7 @@ def department(request, dept_id):
 
     return render(request, 'department/department.html',
                   {
-                      'subdepartments': dept.subdepartment_set.all(),
+                      'department': dept,
                       'latest_semester': latest_semester,
                       'breadcrumbs': breadcrumbs
                   })
@@ -70,7 +68,7 @@ def course_view(request, course_id):
     # semester.
     recent_instructor_pks = course.section_set.filter(
         semester=latest_semester).values_list(
-        'instructors', flat=True).distinct()
+            'instructors', flat=True).distinct()
     recent_instructors = Instructor.objects.filter(
         pk__in=recent_instructor_pks)
     # Add ratings and difficulties
@@ -81,9 +79,9 @@ def course_view(request, course_id):
     # Get instructors that haven't taught the course this semester.
     old_instructor_pks = course.section_set.exclude(
         semester=latest_semester).exclude(
-        instructors__pk__in=recent_instructor_pks).values_list(
-        'instructors',
-        flat=True).distinct()
+            instructors__pk__in=recent_instructor_pks).values_list(
+                'instructors',
+                flat=True).distinct()
     old_instructors = Instructor.objects.filter(pk__in=old_instructor_pks)
     # Add ratings and difficulties
     for instr in old_instructors:
@@ -143,19 +141,3 @@ def course_instructor(request, course_id, instructor_id):
                       'difficulty': difficulty,
                       'hours': hours,
                   })
-
-
-def instructor_view(request, instructor_id):
-    """View for instructor page, showing all their courses taught."""
-    instructor = Instructor.objects.get(pk=instructor_id)
-    avg_rating = instructor.average_rating()
-    if avg_rating is not None:
-        avg_rating = round(avg_rating, 2)
-    avg_difficulty = instructor.average_difficulty()
-    if avg_difficulty is not None:
-        avg_difficulty = round(avg_difficulty, 2)
-    return render(
-        request, 'instructor/instructor.html', {
-            'instructor': instructor,
-            'avg_rating': avg_rating,
-            'avg_difficulty': avg_difficulty})

@@ -1,6 +1,6 @@
 """Views for index and about pages."""
 import json
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 
 
@@ -8,15 +8,12 @@ def index(request):
     """
     Index view.
 
-    Redirect to landing page if user not authorized.
+    Redirect to landing page if user not authorized, otherwise show
+    browse page.
     """
-
-    # Load "About Team" data from json file
-    with open('tcf_website/views/team_info.json') as data_file:
-        team_info = json.load(data_file)
-
-    return render(request, 'landing/landing.html',
-                  {'executive_team': team_info['executive_team']})
+    if request.user.is_authenticated:
+        return redirect('browse')
+    return render(request, 'landing/landing.html')
 
 
 def privacy(request):
@@ -32,13 +29,11 @@ def terms(request):
 class AboutView(TemplateView):
     """About view."""
     template_name = 'about/about.html'
-
-    # Load data from json files
     with open('tcf_website/views/team_info.json') as data_file:
-        team_info = json.load(data_file)
+        team_info = json.loads(data_file.read())
 
     with open('tcf_website/views/team_alums.json') as data_file:
-        alum_info = json.load(data_file)
+        alum_info = json.loads(data_file.read())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -57,7 +52,7 @@ class AboutContributorsView(TemplateView):
     """About alumni contributors view."""
     template_name = 'about/contributors.html'
     with open('tcf_website/views/team_alums.json') as data_file:
-        alum_info = json.load(data_file)
+        alum_info = json.loads(data_file.read())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
