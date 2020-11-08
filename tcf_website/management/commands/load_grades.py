@@ -38,6 +38,18 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        if self.verbosity > 0:
+            print('Fetch Course and Instructor data for later use')
+        self.courses = {
+            (obj['subdepartment__mnemonic'], obj['number']): obj['id']
+            for obj in Course.objects.values('id', 'number',
+                                             'subdepartment__mnemonic')
+        }
+        self.instructors = {
+            (obj['first_name'], obj['last_name'], obj['email']): obj['id']
+            for obj in Instructor.objects.values('id', 'first_name',
+                                                 'last_name', 'email')
+        }
         self.verbosity = options['verbosity']
         self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
         semester = options['semester']
@@ -87,10 +99,10 @@ class Command(BaseCommand):
         last_name = row['Instructor Last Name']
         email = row['Instructor Email']
         subdepartment = row['Subject']
-        number = re.sub('[^0-9]', '', str(row['Course Number']))
         # row['Section Number'] is not used
         title = row['Title']
         try:
+            number = int(re.sub('[^0-9]', '', str(row['Course Number'])))
             gpa = float(row['Course GPA'])
             a_plus = int(row['A+'])
             a = int(row['A'])
@@ -169,6 +181,7 @@ class Command(BaseCommand):
                 total_enrolled_gpa = total_weight / total_enrolled_filtered
 
             course_grade_params = {
+                'course_id': self.courses.get(row[:2]),
                 'subdepartment': row[0],
                 'number': row[1],
                 'title': row[2],
@@ -225,6 +238,8 @@ class Command(BaseCommand):
                 'middle_name': row[3],
                 'last_name': row[4],
                 'email': row[5],
+                'course_id': self.courses.get(row[:2]),
+                'instructor_id': self.instructors.get((row[2], row[4], row[5])),
                 'average': total_enrolled_gpa,
                 'a_plus': course_instructor_grades[row][0],
                 'a': course_instructor_grades[row][1],
