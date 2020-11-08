@@ -48,6 +48,7 @@ class Command(BaseCommand):
                     self.load_semester_file(file)
         else:
             self.load_semester_file(f"{semester.lower()}.csv")
+        self.load_dict_into_models()
 
     def clean(self, df):
         # Truncate existing tables
@@ -78,8 +79,6 @@ class Command(BaseCommand):
             self.load_row_into_dict(row)
         if self.verbosity > 0:
             print('Done with loading CSV files')
-
-        self.load_dict_into_models()
 
     def load_row_into_dict(self, row):
         # parsing fields of the CSV file
@@ -154,6 +153,7 @@ class Command(BaseCommand):
                          0, 0, 0]
 
         # load course grades
+        unsaved_course_grade_instances = []
         for row in tqdm(course_grades):
             total_enrolled = sum(course_grades[row])
             total_weight = sum(a*b for a, b in
@@ -168,81 +168,37 @@ class Command(BaseCommand):
             else:
                 total_enrolled_gpa = (total_weight) / (total_enrolled_filtered)
 
-            try:
-                # check if the course is already in CourseGrade
-                # if so, calculate weighted average with new gpa, and add that
-                # into the model
-                existing_course_grade = CourseGrade.objects.get(
-                    subdepartment=row[0],
-                    number=row[1],
-                    title=row[2],
-                )
-            except ObjectDoesNotExist:
-                # if course not in CourseGrade, create a new object
-                course_grade_params = {
-                    'subdepartment': row[0],
-                    'number': row[1],
-                    'title': row[2],
-                    'average': total_enrolled_gpa,
-                    'a_plus': course_grades[row][0],
-                    'a': course_grades[row][1],
-                    'a_minus': course_grades[row][2],
-                    'b_plus': course_grades[row][3],
-                    'b': course_grades[row][4],
-                    'b_minus': course_grades[row][5],
-                    'c_plus': course_grades[row][6],
-                    'c': course_grades[row][7],
-                    'c_minus': course_grades[row][8],
-                    'd_plus': course_grades[row][9],
-                    'd': course_grades[row][10],
-                    'd_minus': course_grades[row][11],
-                    'f': course_grades[row][12],
-                    'ot': course_grades[row][13],
-                    'drop': course_grades[row][14],
-                    'withdraw': course_grades[row][15],
-                    'total_enrolled': total_enrolled
-                }
-                CourseGrade.objects.create(**course_grade_params)
-            else:
-                # Did find a relevant CourseInstructorGrade model, so continue
-                # disregard ot/drop/withdraw
-                existing_total_enrolled_filtered = existing_course_grade.total_enrolled - \
-                    existing_course_grade.ot - existing_course_grade.drop - existing_course_grade.withdraw
-                # check divide by 0
-                if total_enrolled_gpa == 0 or existing_total_enrolled_filtered == 0:
-                    gpa = 0
-                else:
-                    gpa = (
-                        (gpa * total_enrolled_filtered) + (
-                            existing_course_grade.average * existing_total_enrolled_filtered)) / (
-                        total_enrolled_filtered + existing_total_enrolled_filtered)
-
-                # set gpa field
-                existing_course_grade.average = gpa
-                # increment counts for grades and total enrolled
-                existing_course_grade.a_plus += course_grades[row][0]
-                existing_course_grade.a += course_grades[row][1]
-                existing_course_grade.a_minus += course_grades[row][2]
-                existing_course_grade.b_plus += course_grades[row][3]
-                existing_course_grade.b += course_grades[row][4]
-                existing_course_grade.b_minus += course_grades[row][5]
-                existing_course_grade.c_plus += course_grades[row][6]
-                existing_course_grade.c += course_grades[row][7]
-                existing_course_grade.c_minus += course_grades[row][8]
-                existing_course_grade.d_plus += course_grades[row][9]
-                existing_course_grade.d += course_grades[row][10]
-                existing_course_grade.d_minus += course_grades[row][11]
-                existing_course_grade.f += course_grades[row][12]
-                existing_course_grade.ot += course_grades[row][13]
-                existing_course_grade.drop += course_grades[row][14]
-                existing_course_grade.withdraw += course_grades[row][15]
-                existing_course_grade.total_enrolled += total_enrolled
-
-                existing_course_grade.save()
+            course_grade_params = {
+                'subdepartment': row[0],
+                'number': row[1],
+                'title': row[2],
+                'average': total_enrolled_gpa,
+                'a_plus': course_grades[row][0],
+                'a': course_grades[row][1],
+                'a_minus': course_grades[row][2],
+                'b_plus': course_grades[row][3],
+                'b': course_grades[row][4],
+                'b_minus': course_grades[row][5],
+                'c_plus': course_grades[row][6],
+                'c': course_grades[row][7],
+                'c_minus': course_grades[row][8],
+                'd_plus': course_grades[row][9],
+                'd': course_grades[row][10],
+                'd_minus': course_grades[row][11],
+                'f': course_grades[row][12],
+                'ot': course_grades[row][13],
+                'drop': course_grades[row][14],
+                'withdraw': course_grades[row][15],
+                'total_enrolled': total_enrolled
+            }
+            unsaved_course_grade = CourseGrade(**course_grade_params)
+            unsaved_course_grade_instances.append(unsaved_course_grade)
+        CourseGrade.objects.bulk_create(unsaved_course_grade_instances)
         if self.verbosity > 0:
             print('Done loading CourseGrade models')
 
         # load course instructor grades
+        unsaved_course_instructor_grade_instances = []
         for row in tqdm(course_instructor_grades):
             total_enrolled = 0
             for grade_count in course_instructor_grades[row]:
@@ -263,83 +219,36 @@ class Command(BaseCommand):
             else:
                 total_enrolled_gpa = (total_weight) / (total_enrolled_filtered)
 
-            try:
-                # check if the course instructor is already in CourseInstructorGrade
-                # if so, calculate weighted average with new gpa, and add that
-                # into the model
-                existing_instructor_grade = CourseInstructorGrade.objects.get(
-                    subdepartment=row[0],
-                    number=row[1],
-                    first_name=row[2],
-                    middle_name=row[3],
-                    last_name=row[4],
-                    email=row[5],
-                )
-            except ObjectDoesNotExist:
-                # if course not in CourseInstructorGrade, create a new object
-                course_instructor_grade_params = {
-                    'subdepartment': row[0],
-                    'number': row[1],
-                    'first_name': row[2],
-                    'middle_name': row[3],
-                    'last_name': row[4],
-                    'email': row[5],
-                    'average': total_enrolled_gpa,
-                    'a_plus': course_instructor_grades[row][0],
-                    'a': course_instructor_grades[row][1],
-                    'a_minus': course_instructor_grades[row][2],
-                    'b_plus': course_instructor_grades[row][3],
-                    'b': course_instructor_grades[row][4],
-                    'b_minus': course_instructor_grades[row][5],
-                    'c_plus': course_instructor_grades[row][6],
-                    'c': course_instructor_grades[row][7],
-                    'c_minus': course_instructor_grades[row][8],
-                    'd_plus': course_instructor_grades[row][9],
-                    'd': course_instructor_grades[row][10],
-                    'd_minus': course_instructor_grades[row][11],
-                    'f': course_instructor_grades[row][12],
-                    'ot': course_instructor_grades[row][13],
-                    'drop': course_instructor_grades[row][14],
-                    'withdraw': course_instructor_grades[row][15],
-                    'total_enrolled': total_enrolled
-                }
-                CourseInstructorGrade.objects.create(
-                    **course_instructor_grade_params)
-            else:
-                # Did find a relevant CourseInstructorGrade model, so continue
-                # disregard ot/drop/withdraw
-                existing_total_enrolled_filtered = existing_instructor_grade.total_enrolled - \
-                    existing_instructor_grade.ot - existing_instructor_grade.drop - existing_instructor_grade.withdraw
-                # check divide by 0
-                if total_enrolled_gpa == 0 or existing_total_enrolled_filtered == 0:
-                    gpa = 0
-                else:
-                    gpa = (
-                        (gpa * total_enrolled_filtered) + (
-                            existing_instructor_grade.average * existing_total_enrolled_filtered)) / (
-                        total_enrolled_filtered + existing_total_enrolled_filtered)
-
-                # set gpa field
-                existing_instructor_grade.average = gpa
-                # increment counts for grades and total enrolled
-                existing_instructor_grade.a_plus += course_instructor_grades[row][0]
-                existing_instructor_grade.a += course_instructor_grades[row][1]
-                existing_instructor_grade.a_minus += course_instructor_grades[row][2]
-                existing_instructor_grade.b_plus += course_instructor_grades[row][3]
-                existing_instructor_grade.b += course_instructor_grades[row][4]
-                existing_instructor_grade.b_minus += course_instructor_grades[row][5]
-                existing_instructor_grade.c_plus += course_instructor_grades[row][6]
-                existing_instructor_grade.c += course_instructor_grades[row][7]
-                existing_instructor_grade.c_minus += course_instructor_grades[row][8]
-                existing_instructor_grade.d_plus += course_instructor_grades[row][9]
-                existing_instructor_grade.d += course_instructor_grades[row][10]
-                existing_instructor_grade.d_minus += course_instructor_grades[row][11]
-                existing_instructor_grade.f += course_instructor_grades[row][12]
-                existing_instructor_grade.ot += course_instructor_grades[row][13]
-                existing_instructor_grade.drop += course_instructor_grades[row][14]
-                existing_instructor_grade.withdraw += course_instructor_grades[row][15]
-                existing_instructor_grade.total_enrolled += total_enrolled
-
-                existing_instructor_grade.save()
+            course_instructor_grade_params = {
+                'subdepartment': row[0],
+                'number': row[1],
+                'first_name': row[2],
+                'middle_name': row[3],
+                'last_name': row[4],
+                'email': row[5],
+                'average': total_enrolled_gpa,
+                'a_plus': course_instructor_grades[row][0],
+                'a': course_instructor_grades[row][1],
+                'a_minus': course_instructor_grades[row][2],
+                'b_plus': course_instructor_grades[row][3],
+                'b': course_instructor_grades[row][4],
+                'b_minus': course_instructor_grades[row][5],
+                'c_plus': course_instructor_grades[row][6],
+                'c': course_instructor_grades[row][7],
+                'c_minus': course_instructor_grades[row][8],
+                'd_plus': course_instructor_grades[row][9],
+                'd': course_instructor_grades[row][10],
+                'd_minus': course_instructor_grades[row][11],
+                'f': course_instructor_grades[row][12],
+                'ot': course_instructor_grades[row][13],
+                'drop': course_instructor_grades[row][14],
+                'withdraw': course_instructor_grades[row][15],
+                'total_enrolled': total_enrolled
+            }
+            unsaved_course_instructor_grade = CourseInstructorGrade(**course_grade_params)
+            unsaved_course_instructor_grade_instances.append(
+                unsaved_course_instructor_grade)
+        CourseInstructorGrade.objects.bulk_create(
+            unsaved_course_instructor_grade_instances)
         if self.verbosity > 0:
             print('Done loading CourseInstructorGrade models')
