@@ -25,13 +25,6 @@ class Command(BaseCommand):
     course_instructor_grades = {}
 
     def add_arguments(self, parser):
-        # Named (optional) argument
-        parser.add_argument(
-            '--verbose',
-            action='store_true',
-            help='Verbose output',
-        )
-
         # The only required argument at the moment
         # A previous author wrote that reloading all semesters can be dangerous
         # Not sure why, but requiring `ALL_DANGEROUS` to honor the help text
@@ -45,7 +38,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        self.verbose = options['verbose']
+        self.verbosity = options['verbosity']
         self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
         semester = options['semester']
         if semester == 'ALL_DANGEROUS':
@@ -74,17 +67,17 @@ class Command(BaseCommand):
         year, semester = file.split('.')[0].split('_')
         year = int(year)
         season = semester.upper()
-        if self.verbose:
-            print(year, season)
 
         df = self.clean(pd.read_csv(os.path.join(self.data_dir, file)))
-        if self.verbose:
-            print(f"{df.size} sections")
+        if self.verbosity > 0:
+            print(f"Found {df.size} sections in {file}")
 
         for index, row in tqdm(df.iterrows(), total=df.shape[0]):
-            if self.verbose:
+            if self.verbosity == 3:
                 print(str(row).encode('ascii', 'ignore').decode('ascii'))
             self.load_row_into_dict(row)
+        if self.verbosity > 0:
+            print('Done with loading CSV files')
 
         self.load_dict_into_models()
 
@@ -148,7 +141,7 @@ class Command(BaseCommand):
                 course_instructor_grades[course_instructor_identifier] = this_semesters_grades
 
         except TypeError as e:
-            if self.verbose:
+            if self.verbosity > 0:
                 print(row)
                 print(e)
             raise e
@@ -163,7 +156,7 @@ class Command(BaseCommand):
                          0, 0, 0]
 
         # load course grades
-        for row in course_grades:
+        for row in tqdm(course_grades):
             total_enrolled = sum(course_grades[row])
             total_weight = sum(a*b for a, b in
                                zip(course_grades[row], grade_weights))
@@ -247,9 +240,11 @@ class Command(BaseCommand):
                     'total_enrolled': total_enrolled
                 }
                 CourseGrade.objects.create(**course_grade_params)
+        if self.verbosity > 0:
+            print('Done loading CourseGrade models')
 
         # load course instructor grades
-        for row in course_instructor_grades:
+        for row in tqdm(course_instructor_grades):
             total_enrolled = 0
             for grade_count in course_instructor_grades[row]:
                 total_enrolled += grade_count
@@ -346,3 +341,5 @@ class Command(BaseCommand):
                 }
                 CourseInstructorGrade.objects.create(
                     **course_instructor_grade_params)
+        if self.verbosity > 0:
+            print('Done loading CourseInstructorGrade models')
