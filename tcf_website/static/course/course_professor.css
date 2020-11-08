@@ -119,22 +119,30 @@
 @media (max-width: 1100px) {
     .grades_ratings_container {
       flex-direction: column;
-      margin-bottom: 350px
+      margin-bottom: 400px
     }
     .grades_container{
         width: 100%;
         margin-top: 20px;
         padding-top: 15px;
-        padding-bottom: 15px;
-        
+        padding-bottom: 20px;
+
     }
     .pie-chart{
-        width: 100%
+        width: 400px
     }
 
     .info_container{
         margin-right: 0
     }
+
+    .gpa-text{
+        font-size: 24px
+    }
+    .students-text{
+        font-size: 14
+    }
+
   }
 
   @media(max-width: 500px){
@@ -156,6 +164,10 @@
       .progress{
           height: 14px
       }
+      .grades_container{
+          margin-bottom: 2013
+      }
+
   }
 
   @media(max-width: 400px){
@@ -197,7 +209,7 @@
         margin-bottom: 0
     }
     .grades_ratings_container{
-        margin-bottom: 150px
+        margin-bottom: 100px
     }
 
   }
@@ -209,7 +221,7 @@
         flex-shrink: 1 
     } 
     .info_title{
-        width: 65px
+        width: 70px
     }
     .info_bar{
         width: 50%;
@@ -223,5 +235,5 @@
     .info_num{
         margin-left: 2
     }
-    
+
   }

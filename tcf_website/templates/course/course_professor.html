@@ -1,6 +1,7 @@
 {% extends "base/base.html" %}
 {% load static %}
 
+
 {% block styles %}
 <link rel="stylesheet" href="{% static 'common/toolbar.css' %}" />
 <link rel="stylesheet" href="{% static 'course/course_professor.css' %}" />
@@ -23,7 +24,7 @@
     </div>
   </div>
 
-  <div class="grades_ratings_container">
+  <div class="grades_ratings_container ">
     <div class="ratings_container">
       <div class="ratings_row">
         <div class="rating_card">
@@ -37,7 +38,7 @@
             </div>
             <div class="info_bar">
               <div class="progress p-0 m-0">
-                <div class="progress-bar p-bar p-0 m-0" style="width: 0%"></div>
+                <div class="progress-bar professor-bar p-0 m-0" style="width: 0%"></div>
               </div>
             </div>
             <div class="info_num">
@@ -50,7 +51,7 @@
             </div>
             <div class="info_bar">
               <div class="progress p-0 m-0">
-                <div class="progress-bar p-0 m-0" style="width:0%"></div>
+                <div class="progress-bar fun-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
             <div class="info_num">
@@ -63,7 +64,7 @@
             </div>
             <div class="info_bar">
               <div class="progress  p-0 m-0">
-                <div class="progress-bar p-0 m-0" style="width:0%"></div>
+                <div class="progress-bar difficulty-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
             <div class="info_num">
@@ -76,7 +77,7 @@
             </div>
             <div class="info_bar">
               <div class="progress  p-0 m-0">
-                <div class="progress-bar p-0 m-0" style="width:0%"></div>
+                <div class="progress-bar recommend-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
             <div class="info_num">
@@ -97,7 +98,7 @@
             </div>
             <div class="info_bar">
               <div class="progress  p-0 m-0">
-                <div class="progress-bar p-0 m-0" style="width:0%"></div>
+                <div class="progress-bar reading-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
             <div class="info_num">
@@ -110,7 +111,7 @@
             </div>
             <div class="info_bar">
               <div class="progress  p-0 m-0">
-                <div class="progress-bar p-0 m-0" style="width:0%"></div>
+                <div class="progress-bar writing-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
             <div class="info_num">
@@ -123,7 +124,7 @@
             </div>
             <div class="info_bar">
               <div class="progress  p-0 m-0">
-                <div class="progress-bar p-0 m-0" style="width:0%"></div>
+                <div class="progress-bar group-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
             <div class="info_num">
@@ -135,8 +136,8 @@
               Other
             </div>
             <div class="info_bar">
-              <div class="progress  p-0 m-0">
-                <div class="progress-bar p-0 m-0" style="width:0%"></div>
+              <div class="progress p-0 m-0">
+                <div class="progress-bar other-bar p-0 m-0 {{rating}}" style="width: 0%"></div>
               </div>
             </div>
             <div class="info_num">
@@ -147,7 +148,7 @@
       </div>
     </div>
     <div class="grades_container">
-      <canvas id="myChart2" class="pie-chart"></canvas>
+      <canvas id="myChart2" class="pie-chart "></canvas>
       <div class="Absolute-Center">
         <p class="gpa-text">3.50 GPA</p>
         <p class="students-text">217 Students</p>
@@ -185,7 +186,29 @@
 <script src="{% static 'course/javascript/chart.js' %}"></script>
 <script>
     $(document).ready(function () {
-      $(".progress-bar").width("50%");
+      var professor_percent = "{{rating}}"
+      $(".professor-bar").width(professor_percent+"%");
+
+      var fun_percent = "{{rating}}"
+      $(".fun-bar").width(fun_percent+"%");
+
+      var difficulty_percent = "{{rating}}"
+      $(".difficulty-bar").width(difficulty_percent+"%");
+
+      var recommend_percent = "{{rating}}"
+      $(".recommend-bar").width(recommend_percent+"%");
+
+      var reading_percent = "{{rating}}"
+      $(".reading-bar").width(reading_percent+"%");
+
+      var writing_percent = "{{rating}}"
+      $(".writing-bar").width(writing_percent+"%");
+
+      var group_percent = "{{rating}}"
+      $(".group-bar").width(group_percent+"%");
+
+      var other_percent = "{{rating}}"
+      $(".other-bar").width(other_percent+"%");
     });
     
   </script>
