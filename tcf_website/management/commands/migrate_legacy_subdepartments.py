@@ -47,13 +47,13 @@ class Command(BaseCommand):
                         if old_val:
                             setattr(new_obj, new_field_name, value_func(obj))
                     new_obj.save()
-                    print(f"Created {new_obj}")
+                    print(f"Created {new_obj}".encode('utf-8'))
 
                     if after_func and callable(after_func):
                         after_func(obj, new_obj)
 
                 except Exception as e:
-                    print(f"Error migrating {type(obj).__name__} {obj}:")
+                    print(f"Error migrating {type(obj).__name__} {obj}:".encode('utf-8'))
                     print(e)
                     traceback.print_exc()
 
@@ -108,8 +108,12 @@ class Command(BaseCommand):
                 row = cursor.fetchone()
                 try:
                     old_department = self.departments.get(pk=row[0])
+                    print('1*')
+                    print(old_department)
+                    print('2**')
                     return Department.objects.get(name=old_department.name)
                 except BaseException as e:
+                    print('3***')
                     print(e)
                     return UNKNOWN_DEPT
 

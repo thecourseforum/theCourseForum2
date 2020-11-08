@@ -128,6 +128,13 @@ class Command(BaseCommand):
                                     'Instructor2',
                                     'Instructor3',
                                     'Instructor4']].dropna().array
+
+            if mnemonic == 'BIOL' and course_number == '2040':
+                print(instructor_names)
+                self.verbose = True
+            else:
+                self.verbose = False
+
         except TypeError as e:
             print(row)
             print(e)
@@ -207,7 +214,14 @@ class Command(BaseCommand):
         if not instructor_names:
             return [self.STAFF]
         instructors = set()
+
+        # In some old data files, multiple professors are in a single column
+        fixed_instructor_names = []
         for name in instructor_names:
+            for split_name in name.split(', '):
+                fixed_instructor_names.append(split_name)
+
+        for name in fixed_instructor_names:
             if name in {'Staff', 'Faculty Staff', 'Faculty'} or name.isspace():
                 instructors.add(self.STAFF)
             else:
@@ -218,7 +232,9 @@ class Command(BaseCommand):
                     print(f"Instructor named '{name}'")
                     print(e)
                     raise e
-
+                if self.verbose:
+                    print(first, last)
+                    
                 instructor, created = Instructor.objects.get_or_create(
                     first_name=first,
                     last_name=last,
