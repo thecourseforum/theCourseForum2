@@ -57,15 +57,10 @@ If you are part of theCourseForum engineering team, follow the instructions belo
         cd theCourseForum2
     ```
 3. Copy the [project secret keys](https://docs.google.com/document/d/1HsuJOf-5oZljQK_k02CQhFbqw1q-pD_1-mExvyC1TV0/edit?usp=sharing) into a `.env` file in the project base directory `theCourseForum2/`
-4. In the `theCourseForum2/` directory, run these commands to start your Docker container:
-    ```
-        docker build .
-        docker-compose up
-    ```
+4. In the `theCourseForum2/` directory, run `docker-compose up` to start your Docker containers (tCF Django app and database)
 5. Download a copy of the database from [Google Drive](https://drive.google.com/open?id=1ubiiOj-jfzoBKaMK6pFEkFXdSqMuD-22)
     - put this into the base `theCourseForum2/` directory
 6. While your container is still running, open a second terminal, cd into `theCourseForum2/`, and run this script to set up your database*:
-
     - `./load_data ${DB}` 
     - where `${DB}` should be replaced with the latest DB file (e.g. `./load_data april7.sql`)
 7. Go to http://localhost:8000 in your browser and make sure everything works!
@@ -86,19 +81,29 @@ If you are part of theCourseForum engineering team, follow the instructions belo
 
 ### Database Issues
 If the 'Browse Courses' page isn't loading, try the following:
-1. Check to see if postgres is running by running `ps auxwww | grep postgres` in your terminal
-    - If it outputs only one line, postgres is not running. Restart it with Homebrew: `brew services start postgresql`.
-2. There may be a Django migration issue. Exec into your container and re-migrate:
-```
-docker-compose exec web bash
-python3 manage.py makemigrations
-python3 manage.py migrate
-```
+1. Check to see if postgres is running
+    ```
+    docker-compose exec web bash            # Exec into db container
+    ps auxwww | grep postgres               # Check postgres processes
+    ```
+    If it outputs only one line, postgres is not running. 
+    - MacOS: Restart it with Homebrew: `brew services start postgresql`
+    - Linux: `sudo service postgresql restart`
+2. There may be a Django migration issue. See the section below this for details.
 3. If all else fails, reset the development database by dropping the table and re-running the Setup instructions.
-```
-dropdb [DEV_DB_NAME];
-createdb [DEV_DB_NAME];
-```
+    First run `sudo docker exec -i tcf_db psql -U tcf_django tcf_db` which will put you into the Postgres terminal (no message will be given)
+    ```
+    SELECT pg_terminate_backend(pg_stat_activity.pid)
+    FROM pg_stat_activity
+    WHERE pg_stat_activity.datname = 'tcf_db'
+    AND pid <> pg_backend_pid();
+    ```
+    Exit the terminal with Ctrl-C or Ctrl-D
+    Then run the following commands to drop and recreate the database
+    ```
+    sudo docker exec -i tcf_db dropdb -U tcf_django tcf_db
+    sudo docker exec -i tcf_db createdb -U tcf_django tcf_db
+    ```
 
 ### Django Migration Conflicts
 After we removed the migrations folder from the `.gitignore` file, you may experience migration issues when you merge different branches where the models (database tables/columns) have been modified. Try the following to resolve the issue:
@@ -114,11 +119,20 @@ python3 manage.py makemigrations
 python3 manage.py migrate
 ```
 4. If all else fails, reset the development database by dropping the table and re-running the Database Setup instructions.
-```
-dropdb [DEV_DB_NAME];
-createdb [DEV_DB_NAME];
-```
 
+    First run `sudo docker exec -i tcf_db psql -U tcf_django tcf_db` which will put you into the Postgres terminal (no message will be given)
+    ```
+    SELECT pg_terminate_backend(pg_stat_activity.pid)
+    FROM pg_stat_activity
+    WHERE pg_stat_activity.datname = 'tcf_db'
+    AND pid <> pg_backend_pid();
+    ```
+    Exit the terminal with Ctrl-C or Ctrl-D
+    Then run the following commands to drop and recreate the database
+    ```
+    sudo docker exec -i tcf_db dropdb -U tcf_django tcf_db
+    sudo docker exec -i tcf_db createdb -U tcf_django tcf_db
+    ```
 
 ## Site Update Guides
 

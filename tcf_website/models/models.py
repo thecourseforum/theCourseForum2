@@ -193,6 +193,33 @@ class Instructor(models.Model):
             course=course, instructor=self).aggregate(
             models.Avg('hours_per_week'))['hours_per_week__avg']
 
+    def taught_courses(self):
+        """Returns all sections taught by Instructor."""
+        # this method is very inefficient and doesn't actually do what the name
+        # implies (collecting Sections instead of Courses); work in progress
+        return Section.objects.filter(instructors=self)
+
+    def average_rating(self):
+        """Compute average rating for all this Instructor's Courses"""
+        ratings = Review.objects.filter(instructor=self).aggregate(
+            models.Avg('recommendability'),
+            models.Avg('instructor_rating'))
+
+        recommendability = ratings.get('recommendability__avg')
+        instructor_rating = ratings.get('instructor_rating__avg')
+
+        # Return None if one component is absent.
+        if not recommendability or not instructor_rating:
+            return None
+
+        return (recommendability + instructor_rating) / 2
+
+    def average_difficulty(self):
+        """Compute average difficulty for all this Instructor's Courses"""
+        return Review.objects.filter(
+            instructor=self).aggregate(
+            models.Avg('difficulty'))['difficulty__avg']
+
 
 class Semester(models.Model):
     """Semester model.
@@ -290,6 +317,12 @@ class Course(models.Model):
     def code(self):
         """Returns the courses code string."""
         return f"{self.subdepartment.mnemonic} {self.number}"
+
+    def eval_link(self):
+        """Returns link to student eval page for that class"""
+        link = f"https://evals.itc.virginia.edu/course-selectionguide/pages/SGMain.jsp?cmp=" \
+               f"{self.subdepartment.mnemonic},{self.number}"
+        return link
 
     def is_recent(self):
         """Returns True if course was taught in current semester."""
