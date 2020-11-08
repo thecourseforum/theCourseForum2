@@ -17,6 +17,7 @@ class Command(BaseCommand):
     """
     help = 'Imports grade data from VAGrades CSV files into PostgresSQL database'
 
+    # Not a good practice but declared as global for readability & convenience?
     global course_grades
     global course_instructor_grades
 
@@ -24,14 +25,16 @@ class Command(BaseCommand):
     course_instructor_grades = {}
 
     def add_arguments(self, parser):
-
-        # Named (optional) arguments
+        # Named (optional) argument
         parser.add_argument(
             '--verbose',
             action='store_true',
             help='Verbose output',
         )
 
+        # The only required argument at the moment
+        # A previous author wrote that reloading all semesters can be dangerous
+        # Not sure why, but requiring `ALL_DANGEROUS` to honor the help text
         parser.add_argument(
             'semester',
             help=('Semester to update grades (e.g. "2019_FALL").\nIf you wish'
@@ -42,13 +45,9 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-
         self.verbose = options['verbose']
-
         self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
-
         semester = options['semester']
-
         if semester == 'ALL_DANGEROUS':
             # ignores temporary files ('~' on Windows, '.' otherwise)
             for file in sorted(os.listdir(self.data_dir)):
@@ -58,9 +57,10 @@ class Command(BaseCommand):
             self.load_semester_file(f"{semester.lower()}.csv")
 
     def clean(self, df):
-        CourseGrade.objects.all().delete()  # deletes CourseGrade table
-        # deletes CourseInstructorGrade table
+        # Truncate existing tables
+        CourseGrade.objects.all().delete()
         CourseInstructorGrade.objects.all().delete()
+        
         return df.dropna(
             how="all",
             subset=['A+', 'A', 'A-',
@@ -74,12 +74,10 @@ class Command(BaseCommand):
         year, semester = file.split('.')[0].split('_')
         year = int(year)
         season = semester.upper()
-
         if self.verbose:
             print(year, season)
 
         df = self.clean(pd.read_csv(os.path.join(self.data_dir, file)))
-
         if self.verbose:
             print(f"{df.size} sections")
 
@@ -87,21 +85,19 @@ class Command(BaseCommand):
             if self.verbose:
                 print(str(row).encode('ascii', 'ignore').decode('ascii'))
             self.load_row_into_dict(row)
-            # break
 
         self.load_dict_into_models()
 
     def load_row_into_dict(self, row):
         try:
             # parsing fields of the CSV file
-
             first_name = row['Instructor First Name']
             middle_name = row['Instructor Middle Name']
             last_name = row['Instructor Last Name']
             email = row['Instructor Email']
             subdepartment = row['Subject']
             number = re.sub('[^0-9]', '', str(row['Course Number']))
-            section_number = row['Section Number']  # not used
+            # row['Section Number'] is not used
             title = row['Title']
             gpa = float(row['Course GPA'])
             a_plus = int(row['A+'])
@@ -176,8 +172,7 @@ class Command(BaseCommand):
             for i in range(len(course_grades[row])):
                 total_weight += (course_grades[row][i] * grade_weights[i])
 
-            # calculate gpa without including ot/drop/withdraw in
-            # total_enrolled
+            # calculate gpa excluding ot/drop/withdraw in total_enrolled
             total_enrolled_filtered = total_enrolled - \
                 course_grades[row][13] - course_grades[row][14] - course_grades[row][15]
             # check divide by 0
@@ -190,7 +185,6 @@ class Command(BaseCommand):
                 # check if the course is already in CourseGrade
                 # if so, calculate weighted average with new gpa, and add that
                 # into the model
-
                 existing_course_grade = CourseGrade.objects.get(
                     subdepartment=row[0],
                     number=row[1],
@@ -231,7 +225,6 @@ class Command(BaseCommand):
                 existing_course_grade.total_enrolled += total_enrolled
 
                 existing_course_grade.save()
-
             except ObjectDoesNotExist:
                 # if course not in CourseGrade, create a new object
                 course_grade_params = {
@@ -257,9 +250,7 @@ class Command(BaseCommand):
                     'withdraw': course_grades[row][15],
                     'total_enrolled': total_enrolled
                 }
-
                 course_grade = CourseGrade(**course_grade_params)
-
                 course_grade.save()
 
         # load course instructor grades
@@ -287,7 +278,6 @@ class Command(BaseCommand):
                 # check if the course instructor is already in CourseInstructorGrade
                 # if so, calculate weighted average with new gpa, and add that
                 # into the model
-
                 existing_instructor_grade = CourseInstructorGrade.objects.get(
                     subdepartment=row[0],
                     number=row[1],
@@ -331,7 +321,6 @@ class Command(BaseCommand):
                 existing_instructor_grade.total_enrolled += total_enrolled
 
                 existing_instructor_grade.save()
-
             except ObjectDoesNotExist:
                 # if course not in CourseInstructorGrade, create a new object
                 course_instructor_grade_params = {
@@ -360,8 +349,6 @@ class Command(BaseCommand):
                     'withdraw': course_instructor_grades[row][15],
                     'total_enrolled': total_enrolled
                 }
-
                 course_instructor_grade = CourseInstructorGrade(
                     **course_instructor_grade_params)
-
                 course_instructor_grade.save()
