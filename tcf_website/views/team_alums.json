@@ -13,17 +13,58 @@
   ],
   "contributors": [
     {
+      "group_name": "Class of 2022",
+      "members": [
+                  {"name": "Harshita Pathipati",
+                  "role": "Developer",
+                  "class": "2022",
+                  "img_filename": "hpathipati.jpg",
+                  "github": ""
+                  }
+                 ]
+    },
+    {
+      "group_name": "Class of 2021",
+      "members": [
+                  {"name": "Brian Yu",
+                   "role": "19-20 President",
+                   "class": "2021",
+                   "img_filename": "byu.jpg",
+                   "github": "brian-yu"
+                  },
+                  {"name": "Nikash Sethi",
+                  "role": "Developer",
+                  "class": "2021",
+                  "img_filename": "nsethi.png",
+                  "github": "nikashs"
+                  },
+                  {"name": "Neal Patel",
+                  "role": "Developer",
+                  "class": "2021",
+                  "img_filename": "npatel.jpg",
+                  "github": "nealpatel50"
+                  },
+                  {"name": "Dale Wilson",
+                  "role": "Developer",
+                  "class": "2021",
+                  "img_filename": "dwilson.png"
+                  }
+                 ]
+    },
+    {
       "group_name": "Class of 2020",
       "members": [{"name": "Brad Knaysi",
                    "role": "VP of Product Engineering",
                    "class": "2020",
                    "img_filename": "bknaysi.jpg",
-                   "github": "bradknaysi"},
+                   "github": "bradknaysi"
+                  },
                   {"name": "Sai Konuri",
                    "role": "VP of Infrastructure Engineering",
                    "class": "2020",
                    "img_filename": "skonuri.jpg",
-                   "github": "saikonuri"},
+                   "github": "saikonuri"
+                  },
                    {"name": "Chris Zion",
                     "role": "Business Lead",
                     "class": "2020",
