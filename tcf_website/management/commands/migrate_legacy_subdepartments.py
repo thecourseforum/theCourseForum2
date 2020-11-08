@@ -108,12 +108,9 @@ class Command(BaseCommand):
                 row = cursor.fetchone()
                 try:
                     old_department = self.departments.get(pk=row[0])
-                    print('1*')
                     print(old_department)
-                    print('2**')
                     return Department.objects.get(name=old_department.name)
                 except BaseException as e:
-                    print('3***')
                     print(e)
                     return UNKNOWN_DEPT
 
