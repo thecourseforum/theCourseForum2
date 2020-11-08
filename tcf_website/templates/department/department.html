@@ -15,17 +15,16 @@
     {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True%}
 
     <div class="subdepartments mt-3">
-        {% for sd in department.subdepartment_set.all %}
+        {% for sd in subdepartments %}
         <div class="subdepartment container-lg {% if not sd.has_current_course %}old{% endif %}">
             <h1 class="my-3">{{ sd.name }}</h1>
-            <ul class="course-list">
-                {% for c in sd.recent_courses|dictsort:"number" %}
-                    <li class="{% if not c.is_recent %}old{% endif %}">
-                        {% url 'course' course_id=c.pk as link %}
-                        {% include "common/rating_card.html" with title=c.code subtitle=c.title link=link rating=c.average_rating difficulty=c.average_difficulty last_taught=c.semester_last_taught content=c.description prefix='course' pk=c.pk %}
-                    </li>
-                {% endfor %}
+            <ul class="course-list" id="courses-sd-{{sd.id}}">
             </ul>
+            <div class="text-center" id="spinner-sd-{{sd.id}}">
+                <div class="spinner-border" role="status" >
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
         </div>
         {% endfor %}
     </div>
@@ -35,4 +34,11 @@
 {% block js %}
 <script type="module" src="{% static 'common/bind-show-hide.js' %}"></script>
 <script type="module" src="{% static 'department/bind-sort.js' %}"></script>
+<script type="module">
+    import { loadPage } from "{% static 'department/loadMoreCourses.js' %}";
+
+    {% for sd in subdepartments %}
+        loadPage("{{sd.id}}", "/api/courses/?page=1&page_size=30&subdepartment={{sd.id}}&stats&recent5years");
+    {% endfor %}
+</script>
 {% endblock %}
