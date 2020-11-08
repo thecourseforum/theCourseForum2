@@ -39,7 +39,7 @@ function postToDiscord() {
     var data = {
         content: "Bug Found! \n**URL:** " + url +
         "\n**Description**: \n" + description +
-        "\n**Categories: **"+ categories +
+        "\n**Categories: **" + categories +
         "\n**Email:** " + email
     };
 
