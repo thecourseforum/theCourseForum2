@@ -54,7 +54,7 @@ class Command(BaseCommand):
         # Truncate existing tables
         CourseGrade.objects.all().delete()
         CourseInstructorGrade.objects.all().delete()
-        
+
         return df.dropna(
             how="all",
             subset=['A+', 'A', 'A-',
@@ -122,11 +122,11 @@ class Command(BaseCommand):
 
         # value of dictionaries (incremented onto value if key already exists)
         this_semesters_grades = [a_plus, a, a_minus,
-                                    b_plus, b, b_minus,
-                                    c_plus, c, c_minus,
-                                    d_plus, d, d_minus,
-                                    f,
-                                    ot, drop, withdraw]
+                                 b_plus, b, b_minus,
+                                 c_plus, c, c_minus,
+                                 d_plus, d, d_minus,
+                                 f,
+                                 ot, drop, withdraw]
 
         # load this semester into course dictionary
         if course_identifier in course_grades:
@@ -156,7 +156,7 @@ class Command(BaseCommand):
         unsaved_course_grade_instances = []
         for row in tqdm(course_grades):
             total_enrolled = sum(course_grades[row])
-            total_weight = sum(a*b for a, b in
+            total_weight = sum(a * b for a, b in
                                zip(course_grades[row], grade_weights))
 
             # calculate gpa excluding ot/drop/withdraw in total_enrolled
@@ -245,7 +245,8 @@ class Command(BaseCommand):
                 'withdraw': course_instructor_grades[row][15],
                 'total_enrolled': total_enrolled
             }
-            unsaved_course_instructor_grade = CourseInstructorGrade(**course_grade_params)
+            unsaved_course_instructor_grade = CourseInstructorGrade(
+                **course_grade_params)
             unsaved_course_instructor_grade_instances.append(
                 unsaved_course_instructor_grade)
         CourseInstructorGrade.objects.bulk_create(
