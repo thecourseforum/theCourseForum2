@@ -9,3 +9,4 @@ from .browse import browse, department, course_view, course_instructor
 from .review import new_review, upvote, downvote
 from .profile import profile, reviews
 from .search import search
+from .discord import post_bug

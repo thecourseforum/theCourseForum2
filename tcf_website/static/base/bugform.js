@@ -18,10 +18,11 @@ function resetForm(){
   emailField.value = "";
   var descriptionField = document.getElementById("descriptionField");
   descriptionField.value = "";
-  $("#category1").prop("checked", false);
-  $("#category2").prop("checked", false);
-  $("#category3").prop("checked", false);
-  $("#category4").prop("checked", false);
+
+  for(var i=1; i<=4; i++){
+    var id = "#category" + i
+    $(id).prop("checked", false);
+  }
 }
 
 function postToDiscord(){
@@ -35,17 +36,18 @@ function postToDiscord(){
       categories += "[" + $(id).val() + "]"
     }
   }
-  var data = {
-    "content": "Bug Found! \n**URL:** " + url +
+  var content = {
+    'content': "Bug Found! \n**URL:** " + url +
                 "\n**Description**: \n" + description +
                 "\n**Categories: **"+ categories  +
-                "\n**Email:** " + email
+                "\n**Email:** " + email,
   }
 
-  var discordURL = "https://discordapp.com/api/webhooks/767189878223142942/wwBQA0K4VQ0i94ku2os2tYIVpPbDtfeP1i6s5G3CBWSCI7R0t6PbhZxwgJ8Z2yYpyv-q"
-  $.post( discordURL,
-          data,
-          function(){ });
+  $.ajax({
+        type: "GET",
+        url: "/discord/",
+        data: content,
+      });
 }
 
 document.getElementById("bugSubmitBtn").addEventListener("click", submitForm, false);
