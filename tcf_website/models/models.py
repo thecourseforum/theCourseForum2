@@ -320,6 +320,12 @@ class Course(models.Model):
         """Returns the courses code string."""
         return f"{self.subdepartment.mnemonic} {self.number}"
 
+    def eval_link(self):
+        """Returns link to student eval page for that class"""
+        link = f"https://evals.itc.virginia.edu/course-selectionguide/pages/SGMain.jsp?cmp=" \
+               f"{self.subdepartment.mnemonic},{self.number}"
+        return link
+
     def is_recent(self):
         """Returns True if course was taught in current semester."""
         return self.semester_last_taught == Semester.latest()
