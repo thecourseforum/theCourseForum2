@@ -32,7 +32,7 @@ urlpatterns = [
     # API URLs
     path('api/', include('tcf_website.api.urls'), name='api'),
 
-    #DISCORD URLS
+    # DISCORD URLS
     path('discord/', views.post_bug, name='discord'),
 
     # AUTH URLS
