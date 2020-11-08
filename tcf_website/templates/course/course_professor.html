@@ -7,7 +7,10 @@
 <link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
 {% endblock %}
 
+
 {% block content %}
+
+
 <div class="course-professor container">
 
   {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
@@ -33,8 +36,8 @@
               Professor
             </div>
             <div class="info_bar">
-              <div class="progress  p-0 m-0">
-                <div class="progress-bar p-0 m-0" style="width:70%"></div>
+              <div class="progress p-0 m-0">
+                <div class="progress-bar p-bar p-0 m-0" style="width: 0%"></div>
               </div>
             </div>
             <div class="info_num">
@@ -46,8 +49,8 @@
               Fun
             </div>
             <div class="info_bar">
-              <div class="progress  p-0 m-0">
-                <div class="progress-bar p-0 m-0" style="width:70%"></div>
+              <div class="progress p-0 m-0">
+                <div class="progress-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
             <div class="info_num">
@@ -60,7 +63,7 @@
             </div>
             <div class="info_bar">
               <div class="progress  p-0 m-0">
-                <div class="progress-bar p-0 m-0" style="width:70%"></div>
+                <div class="progress-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
             <div class="info_num">
@@ -73,7 +76,7 @@
             </div>
             <div class="info_bar">
               <div class="progress  p-0 m-0">
-                <div class="progress-bar p-0 m-0" style="width:70%"></div>
+                <div class="progress-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
             <div class="info_num">
@@ -88,59 +91,59 @@
           <p class="rating_card_desc"><i class="fa fa-hourglass-half fa-fw"></i>&nbsp;Hours/Week</p>
         </div>
         <div class="info_container">
-            <div class="info_row">
-              <div class="info_title">
-                Reading
-              </div>
-              <div class="info_bar">
-                <div class="progress  p-0 m-0">
-                  <div class="progress-bar p-0 m-0" style="width:70%"></div>
-                </div>
-              </div>
-              <div class="info_num">
-                3.29
+          <div class="info_row">
+            <div class="info_title">
+              Reading
+            </div>
+            <div class="info_bar">
+              <div class="progress  p-0 m-0">
+                <div class="progress-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
-            <div class="info_row">
-              <div class="info_title">
-                Writing
-              </div>
-              <div class="info_bar">
-                <div class="progress  p-0 m-0">
-                  <div class="progress-bar p-0 m-0" style="width:70%"></div>
-                </div>
-              </div>
-              <div class="info_num">
-                3.29
-              </div>
-            </div>
-            <div class="info_row">
-              <div class="info_title">
-                Group
-              </div>
-              <div class="info_bar">
-                <div class="progress  p-0 m-0">
-                  <div class="progress-bar p-0 m-0" style="width:70%"></div>
-                </div>
-              </div>
-              <div class="info_num">
-                3.29
-              </div>
-            </div>
-            <div class="info_row">
-              <div class="info_title">
-                Other
-              </div>
-              <div class="info_bar">
-                <div class="progress  p-0 m-0">
-                  <div class="progress-bar p-0 m-0" style="width:70%"></div>
-                </div>
-              </div>
-              <div class="info_num">
-                3.29
-              </div>
+            <div class="info_num">
+              3.29
             </div>
           </div>
+          <div class="info_row">
+            <div class="info_title">
+              Writing
+            </div>
+            <div class="info_bar">
+              <div class="progress  p-0 m-0">
+                <div class="progress-bar p-0 m-0" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="info_num">
+              3.29
+            </div>
+          </div>
+          <div class="info_row">
+            <div class="info_title">
+              Group
+            </div>
+            <div class="info_bar">
+              <div class="progress  p-0 m-0">
+                <div class="progress-bar p-0 m-0" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="info_num">
+              3.29
+            </div>
+          </div>
+          <div class="info_row">
+            <div class="info_title">
+              Other
+            </div>
+            <div class="info_bar">
+              <div class="progress  p-0 m-0">
+                <div class="progress-bar p-0 m-0" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="info_num">
+              3.29
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="grades_container">
@@ -180,5 +183,11 @@
 <script src="{% static 'common/sorting.js' %}"></script>
 <script src="{% static 'course/javascript/Chart.bundle.js' %}"></script>
 <script src="{% static 'course/javascript/chart.js' %}"></script>
+<script>
+    $(document).ready(function () {
+      $(".progress-bar").width("50%");
+    });
+    
+  </script>
 
 {% endblock %}

@@ -128,7 +128,6 @@
         padding-bottom: 15px;
         
     }
-
     .pie-chart{
         width: 100%
     }
@@ -182,7 +181,7 @@
         height: 1700px
     }
     .gpa-text{
-        font-size: 20px
+        font-size: 18px
     }
     .students-text{
         font-size: 12px
@@ -204,13 +203,25 @@
   }
 
   @media(max-width: 380px){
-    
     .rating_card{
-        width: 300px;
+        min-width: 80px;
         flex-grow: 1;
         flex-shrink: 1 
     } 
     .info_title{
-        width: 60px
+        width: 65px
     }
+    .info_bar{
+        width: 50%;
+        flex-shrink:2;
+        margin-right: 0;
+        padding-right: 0
+    }
+    .info_container{
+        min-width: 0;
+    }
+    .info_num{
+        margin-left: 2
+    }
+    
   }
