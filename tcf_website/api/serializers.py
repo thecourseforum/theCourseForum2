@@ -36,20 +36,24 @@ class SubdepartmentSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     """DRF Serializer for Course"""
+    subdepartment = SubdepartmentSerializer(read_only=True)
+
     class Meta:
         model = Course
         fields = '__all__'
 
 
-class CourseWithStatsSerializer(serializers.ModelSerializer):
+class CourseWithStatsSerializer(CourseSerializer):
     """DRF Serializer for Course including review statistics"""
     semester_last_taught = SemesterSerializer(read_only=True)
+    average_rating = serializers.FloatField(allow_null=True)
+    average_difficulty = serializers.FloatField(allow_null=True)
 
     class Meta:
         model = Course
         fields = ['id', 'title', 'description', 'number', 'subdepartment',
                   'semester_last_taught', 'average_rating',
-                  'average_difficulty']
+                  'average_difficulty', 'is_recent']
 
 
 class InstructorSerializer(serializers.ModelSerializer):
