@@ -57,11 +57,7 @@ If you are part of theCourseForum engineering team, follow the instructions belo
         cd theCourseForum2
     ```
 3. Copy the [project secret keys](https://docs.google.com/document/d/1HsuJOf-5oZljQK_k02CQhFbqw1q-pD_1-mExvyC1TV0/edit?usp=sharing) into a `.env` file in the project base directory `theCourseForum2/`
-4. In the `theCourseForum2/` directory, run these commands to start your Docker container:
-    ```
-        docker build .
-        docker-compose up
-    ```
+4. In the `theCourseForum2/` directory, run `docker-compose up` to start your Docker containers (tCF Django app and database)
 5. Download a copy of the database from [Google Drive](https://drive.google.com/open?id=1ubiiOj-jfzoBKaMK6pFEkFXdSqMuD-22)
     - put this into the base `theCourseForum2/` directory
 6. While your container is still running, open a second terminal, cd into `theCourseForum2/`, and run the following command to set up your database (you may need to run it 3 times if you see errors, and you may still see errors after that, but it'll work)\*:
