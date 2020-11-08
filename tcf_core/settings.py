@@ -245,9 +245,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-<<<<<<< HEAD
 DISCORD_URL_BUG = env.str('DISCORD_URL_BUG')
-=======
 
 def custom_recording_logic(request):
     """Exclude API views for django-silk"""
@@ -260,4 +258,3 @@ if DEBUG:
     INSTALLED_APPS.append('silk')
     MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
     SILKY_INTERCEPT_FUNC = custom_recording_logic
->>>>>>> dev
