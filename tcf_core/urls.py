@@ -24,6 +24,8 @@ urlpatterns = [
 ]
 
 # Paths available only in development
-if settings.DEBUG:
-    # For performance profiling
-    urlpatterns.append(path('silk/', include('silk.urls', namespace='silk')))
+# https://github.com/jazzband/django-silk/issues/306#issuecomment-438292478
+if 'silk' in settings.INSTALLED_APPS:
+    urlpatterns = [
+        path('silk/', include('silk.urls', namespace='silk')),
+    ] + urlpatterns
