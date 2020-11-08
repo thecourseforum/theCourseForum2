@@ -137,19 +137,19 @@ class Command(BaseCommand):
                                      ot, drop, withdraw]
 
             # load this semester into course dictionary
-            if course_identifier not in course_grades:
-                course_grades[course_identifier] = this_semesters_grades
-            else:
+            if course_identifier in course_grades:
                 for i in range(len(course_grades[course_identifier])):
                     course_grades[course_identifier][i] += this_semesters_grades[i]
+            else:
+                course_grades[course_identifier] = this_semesters_grades
 
             # load this semester into course instructor dictionary
-            if course_instructor_identifier not in course_instructor_grades:
-                course_instructor_grades[course_instructor_identifier] = this_semesters_grades
-            else:
+            if course_instructor_identifier in course_instructor_grades:
                 for i in range(
                         len(course_instructor_grades[course_instructor_identifier])):
                     course_instructor_grades[course_instructor_identifier][i] += this_semesters_grades[i]
+            else:
+                course_instructor_grades[course_instructor_identifier] = this_semesters_grades
 
         except TypeError as e:
             if self.verbose:
@@ -181,10 +181,10 @@ class Command(BaseCommand):
             total_enrolled_filtered = total_enrolled - \
                 course_grades[row][13] - course_grades[row][14] - course_grades[row][15]
             # check divide by 0
-            if total_enrolled_filtered != 0:
-                total_enrolled_gpa = (total_weight) / (total_enrolled_filtered)
-            else:
+            if total_enrolled_filtered == 0:
                 total_enrolled_gpa = 0.0
+            else:
+                total_enrolled_gpa = (total_weight) / (total_enrolled_filtered)
 
             try:
                 # check if the course is already in CourseGrade
@@ -201,13 +201,13 @@ class Command(BaseCommand):
                 existing_total_enrolled_filtered = existing_course_grade.total_enrolled - \
                     existing_course_grade.ot - existing_course_grade.drop - existing_course_grade.withdraw
                 # check divide by 0
-                if total_enrolled_gpa != 0 and existing_total_enrolled_filtered != 0:
+                if total_enrolled_gpa == 0 or existing_total_enrolled_filtered == 0:
+                    gpa = 0.0
+                else:
                     gpa = (
                         (gpa * total_enrolled_filtered) + (
                             existing_course_grade.average * existing_total_enrolled_filtered)) / (
                         total_enrolled_filtered + existing_total_enrolled_filtered)
-                else:
-                    gpa = 0.0
 
                 # set gpa field
                 existing_course_grade.average = gpa
@@ -278,10 +278,10 @@ class Command(BaseCommand):
             # total_enrolled
             total_enrolled_filtered = total_enrolled - \
                 course_instructor_grades[row][13] - course_instructor_grades[row][14] - course_instructor_grades[row][15]
-            if total_enrolled_filtered != 0:
-                total_enrolled_gpa = (total_weight) / (total_enrolled_filtered)
-            else:
+            if total_enrolled_filtered == 0:
                 total_enrolled_gpa = 0.0
+            else:
+                total_enrolled_gpa = (total_weight) / (total_enrolled_filtered)
 
             try:
                 # check if the course instructor is already in CourseInstructorGrade
@@ -301,13 +301,13 @@ class Command(BaseCommand):
                 existing_total_enrolled_filtered = existing_instructor_grade.total_enrolled - \
                     existing_instructor_grade.ot - existing_instructor_grade.drop - existing_instructor_grade.withdraw
                 # check divide by 0
-                if total_enrolled_gpa != 0 and existing_total_enrolled_filtered != 0:
+                if total_enrolled_gpa == 0 or existing_total_enrolled_filtered == 0:
+                    gpa = 0.0
+                else:
                     gpa = (
                         (gpa * total_enrolled_filtered) + (
                             existing_instructor_grade.average * existing_total_enrolled_filtered)) / (
                         total_enrolled_filtered + existing_total_enrolled_filtered)
-                else:
-                    gpa = 0.0
 
                 # set gpa field
                 existing_instructor_grade.average = gpa
