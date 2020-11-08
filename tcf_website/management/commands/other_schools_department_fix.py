@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from tcf_website.models import *
 
+
 class Command(BaseCommand):
 
     # Run this coomand using `sudo docker exec -it tcf_django python3 manage.py other_schools_department_fix`
