@@ -10,5 +10,7 @@ def post_bug(query):
     url = os.environ['DISCORD_URL_BUG']
     content = {'content': query.GET.get('content', '')}
     json_data = json.dumps(content)
-    requests.post( url, data=json_data, headers={"Content-Type": "application/json"})
+    requests.post(
+        url, data=json_data, headers={
+            "Content-Type": "application/json"})
     return JsonResponse(content)
