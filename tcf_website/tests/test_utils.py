@@ -116,6 +116,7 @@ def setup(obj):
         instructor_rating=4,
         difficulty=4,
         recommendability=5,
+        enjoyability=4,
         hours_per_week=6,
     )
 
@@ -128,6 +129,7 @@ def setup(obj):
         instructor_rating=5,
         difficulty=2,
         recommendability=5,
+        enjoyability=4,
         hours_per_week=5,
     )
 
@@ -140,6 +142,7 @@ def setup(obj):
         instructor_rating=3,
         difficulty=3,
         recommendability=3,
+        enjoyability=4,
         hours_per_week=2,
     )
 
@@ -152,5 +155,6 @@ def setup(obj):
         instructor_rating=2,
         difficulty=1,
         recommendability=1,
+        enjoyability=4,
         hours_per_week=4,
     )
