@@ -2,10 +2,12 @@
 
 """Views for Browse, department, and course/course instructor pages."""
 
+from django.db.models import Avg
 from django.shortcuts import render
 from django.urls import reverse
 
-from ..models import School, Department, Course, Semester, Instructor, Review
+from ..models import (School, Department, Course, Semester, Instructor, Review,
+                      CourseInstructorGrade)
 
 
 def browse(request):
@@ -73,6 +75,9 @@ def course_view(request, course_id):
     for instr in recent_instructors:
         instr.rating = instr.average_rating_for_course(course)
         instr.difficulty = instr.average_difficulty_for_course(course)
+        instr.gpa = CourseInstructorGrade.objects.filter(
+            course=course, instructor=instr).aggregate(
+            Avg('average')).get('average__avg')
 
     # Get instructors that haven't taught the course this semester.
     old_instructor_pks = course.section_set.exclude(
@@ -85,6 +90,9 @@ def course_view(request, course_id):
     for instr in old_instructors:
         instr.rating = instr.average_rating_for_course(course)
         instr.difficulty = instr.average_difficulty_for_course(course)
+        instr.gpa = CourseInstructorGrade.objects.filter(
+            course=course, instructor=instr).aggregate(
+            Avg('average'))['average__avg']
 
     dept = course.subdepartment.department
 
