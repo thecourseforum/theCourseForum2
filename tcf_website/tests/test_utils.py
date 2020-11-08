@@ -24,12 +24,45 @@ def setup(obj):
         season='FALL',
         number=1208
     )
+    obj.past_semester = Semester.objects.create(
+        year=2010,
+        season='FALL',
+        number=1108
+    )
     obj.course = Course.objects.create(
         title="Software Testing",
         description="Super advanced and smart tests.",
         number=420,
         subdepartment=obj.subdepartment,
         semester_last_taught=obj.semester
+    )
+    obj.course2 = Course.objects.create(
+        title="Algorithms",
+        description="Super hard algorithms.",
+        number=421,
+        subdepartment=obj.subdepartment,
+        semester_last_taught=obj.semester
+    )
+    obj.course3 = Course.objects.create(
+        title="Program & Data Structures",
+        description="Many complicated data structures.",
+        number=422,
+        subdepartment=obj.subdepartment,
+        semester_last_taught=obj.past_semester
+    )
+    obj.course4 = Course.objects.create(
+        title="Operating Systems",
+        description="Very low-level stuff.",
+        number=423,
+        subdepartment=obj.subdepartment,
+        semester_last_taught=obj.past_semester
+    )
+    obj.course5 = Course.objects.create(
+        title="Introduction to Programming",
+        description="Intro.",
+        number=424,
+        subdepartment=obj.subdepartment,
+        semester_last_taught=obj.past_semester
     )
 
     obj.user1 = User.objects.create(
@@ -72,4 +105,52 @@ def setup(obj):
         recommendability=5,
         enjoyability=4,
         hours_per_week=3,
+    )
+
+    obj.review3 = Review.objects.create(
+        user=obj.user1,
+        course=obj.course2,
+        semester=obj.semester,
+        instructor=obj.instructor,
+        text="Awesome.",
+        instructor_rating=4,
+        difficulty=4,
+        recommendability=5,
+        hours_per_week=6,
+    )
+
+    obj.review4 = Review.objects.create(
+        user=obj.user2,
+        course=obj.course2,
+        semester=obj.semester,
+        instructor=obj.instructor,
+        text="Brilliant.",
+        instructor_rating=5,
+        difficulty=2,
+        recommendability=5,
+        hours_per_week=5,
+    )
+
+    obj.review5 = Review.objects.create(
+        user=obj.user2,
+        course=obj.course3,
+        semester=obj.semester,
+        instructor=obj.instructor,
+        text="Cool.",
+        instructor_rating=3,
+        difficulty=3,
+        recommendability=3,
+        hours_per_week=2,
+    )
+
+    obj.review6 = Review.objects.create(
+        user=obj.user2,
+        course=obj.course4,
+        semester=obj.semester,
+        instructor=obj.instructor,
+        text="Damn easy.",
+        instructor_rating=2,
+        difficulty=1,
+        recommendability=1,
+        hours_per_week=4,
     )

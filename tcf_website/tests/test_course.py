@@ -1,8 +1,10 @@
 # pylint: disable=no-member
 """Tests for Course model."""
 
-from django.test import TestCase
+from django.test import Client, TestCase
+from django.urls import reverse
 
+from ..api.serializers import CourseSerializer, CourseWithStatsSerializer
 from ..models import Semester
 from .test_utils import setup
 
@@ -61,3 +63,64 @@ class CourseTestCase(TestCase):
         self.review2.delete()
 
         self.assertTrue(self.course.average_difficulty() is None)
+
+    def test_get_queryset_recent5years_with_stats(self):
+        """Test CourseViewSet.get_queryset() with recent5years parameter
+        and stats parameters"""
+        client = Client()
+        response = client.get(path=reverse('course-list'),
+                              data={'stats': '', 'recent5years': ''})
+        courses = response.json()['results']
+        self.assertTrue(len(courses) == 2)
+        serializer = CourseWithStatsSerializer(data=courses, many=True)
+        self.assertTrue(serializer.is_valid())
+        serializer = CourseSerializer(data=courses, many=True)
+        self.assertFalse(serializer.is_valid())
+
+    def test_get_queryset_recent5years_without_stats(self):
+        """Test CourseViewSet.get_queryset() with recent5years parameter
+        but without stats parameters"""
+        client = Client()
+        response = client.get(path=reverse('course-list'),
+                              data={'recent5years': ''})
+        courses = response.json()['results']
+        self.assertTrue(len(courses) == 2)
+        serializer = CourseWithStatsSerializer(data=courses, many=True)
+        self.assertFalse(serializer.is_valid())
+        serializer = CourseSerializer(data=courses, many=True)
+        self.assertTrue(serializer.is_valid())
+
+    def test_get_queryset_all_with_stats(self):
+        """Test CourseViewSet.get_queryset() with stats parameter
+        but without recent5years parameters"""
+        client = Client()
+        response = client.get(
+            path=reverse('course-list'),
+            data={'stats': ''},
+        )
+        courses = response.json()['results']
+        self.assertTrue(len(courses) == 5)
+        serializer = CourseWithStatsSerializer(data=courses, many=True)
+        self.assertTrue(serializer.is_valid())
+        serializer = CourseSerializer(data=courses, many=True)
+        self.assertFalse(serializer.is_valid())
+
+    def test_get_queryset_all_without_stats(self):
+        """Test CourseViewSet.get_queryset() without recent5years parameter
+        or stats parameters"""
+        client = Client()
+        response = client.get(path=reverse('course-list'))
+        courses = response.json()['results']
+        self.assertTrue(len(courses) == 5)
+        serializer = CourseWithStatsSerializer(data=courses, many=True)
+        self.assertFalse(serializer.is_valid())
+        serializer = CourseSerializer(data=courses, many=True)
+        self.assertTrue(serializer.is_valid())
+
+    def test_student_eval_link(self):
+        """Test if a student eval link matches up with a real link."""
+        eval_link = "https://evals.itc.virginia.edu/" + \
+            "course-selectionguide/pages/SGMain.jsp?cmp=CS,420"
+        # need to break into 2 lines because otherwise pylint gets mad
+        # this link doesn't actually work because CS 420 is not a real class
+        self.assertTrue(eval_link == self.course.eval_link())
