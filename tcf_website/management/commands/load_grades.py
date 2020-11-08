@@ -82,16 +82,16 @@ class Command(BaseCommand):
         self.load_dict_into_models()
 
     def load_row_into_dict(self, row):
+        # parsing fields of the CSV file
+        first_name = row['Instructor First Name']
+        middle_name = row['Instructor Middle Name']
+        last_name = row['Instructor Last Name']
+        email = row['Instructor Email']
+        subdepartment = row['Subject']
+        number = re.sub('[^0-9]', '', str(row['Course Number']))
+        # row['Section Number'] is not used
+        title = row['Title']
         try:
-            # parsing fields of the CSV file
-            first_name = row['Instructor First Name']
-            middle_name = row['Instructor Middle Name']
-            last_name = row['Instructor Last Name']
-            email = row['Instructor Email']
-            subdepartment = row['Subject']
-            number = re.sub('[^0-9]', '', str(row['Course Number']))
-            # row['Section Number'] is not used
-            title = row['Title']
             gpa = float(row['Course GPA'])
             a_plus = int(row['A+'])
             a = int(row['A'])
@@ -110,41 +110,39 @@ class Command(BaseCommand):
             drop = int(row['DR'])
             withdraw = int(row['W'])
             total_enrolled = int(row['Total'])
-
-            # identifiers are tuple keys to dictionaries
-            course_identifier = (subdepartment, number, title)
-            course_instructor_identifier = (
-                subdepartment, number, first_name, middle_name, last_name, email)
-
-            # value of dictionaries (incremented onto value if key already
-            # exists)
-            this_semesters_grades = [a_plus, a, a_minus,
-                                     b_plus, b, b_minus,
-                                     c_plus, c, c_minus,
-                                     d_plus, d, d_minus,
-                                     f,
-                                     ot, drop, withdraw]
-
-            # load this semester into course dictionary
-            if course_identifier in course_grades:
-                for i in range(len(course_grades[course_identifier])):
-                    course_grades[course_identifier][i] += this_semesters_grades[i]
-            else:
-                course_grades[course_identifier] = this_semesters_grades
-
-            # load this semester into course instructor dictionary
-            if course_instructor_identifier in course_instructor_grades:
-                for i in range(
-                        len(course_instructor_grades[course_instructor_identifier])):
-                    course_instructor_grades[course_instructor_identifier][i] += this_semesters_grades[i]
-            else:
-                course_instructor_grades[course_instructor_identifier] = this_semesters_grades
-
-        except TypeError as e:
+        except (TypeError, ValueError) as e:
             if self.verbosity > 0:
                 print(row)
                 print(e)
             raise e
+        # No error casting values to float/int, so continue
+        # identifiers are tuple keys to dictionaries
+        course_identifier = (subdepartment, number, title)
+        course_instructor_identifier = (
+            subdepartment, number, first_name, middle_name, last_name, email)
+
+        # value of dictionaries (incremented onto value if key already exists)
+        this_semesters_grades = [a_plus, a, a_minus,
+                                    b_plus, b, b_minus,
+                                    c_plus, c, c_minus,
+                                    d_plus, d, d_minus,
+                                    f,
+                                    ot, drop, withdraw]
+
+        # load this semester into course dictionary
+        if course_identifier in course_grades:
+            for i in range(len(course_grades[course_identifier])):
+                course_grades[course_identifier][i] += this_semesters_grades[i]
+        else:
+            course_grades[course_identifier] = this_semesters_grades
+
+        # load this semester into course instructor dictionary
+        if course_instructor_identifier in course_instructor_grades:
+            for i in range(
+                    len(course_instructor_grades[course_instructor_identifier])):
+                course_instructor_grades[course_instructor_identifier][i] += this_semesters_grades[i]
+        else:
+            course_instructor_grades[course_instructor_identifier] = this_semesters_grades
 
     def load_dict_into_models(self):
         # used for gpa calculation
@@ -179,7 +177,34 @@ class Command(BaseCommand):
                     number=row[1],
                     title=row[2],
                 )
-
+            except ObjectDoesNotExist:
+                # if course not in CourseGrade, create a new object
+                course_grade_params = {
+                    'subdepartment': row[0],
+                    'number': row[1],
+                    'title': row[2],
+                    'average': total_enrolled_gpa,
+                    'a_plus': course_grades[row][0],
+                    'a': course_grades[row][1],
+                    'a_minus': course_grades[row][2],
+                    'b_plus': course_grades[row][3],
+                    'b': course_grades[row][4],
+                    'b_minus': course_grades[row][5],
+                    'c_plus': course_grades[row][6],
+                    'c': course_grades[row][7],
+                    'c_minus': course_grades[row][8],
+                    'd_plus': course_grades[row][9],
+                    'd': course_grades[row][10],
+                    'd_minus': course_grades[row][11],
+                    'f': course_grades[row][12],
+                    'ot': course_grades[row][13],
+                    'drop': course_grades[row][14],
+                    'withdraw': course_grades[row][15],
+                    'total_enrolled': total_enrolled
+                }
+                CourseGrade.objects.create(**course_grade_params)
+            else:
+                # Did find a relevant CourseInstructorGrade model, so continue
                 # disregard ot/drop/withdraw
                 existing_total_enrolled_filtered = existing_course_grade.total_enrolled - \
                     existing_course_grade.ot - existing_course_grade.drop - existing_course_grade.withdraw
@@ -214,32 +239,6 @@ class Command(BaseCommand):
                 existing_course_grade.total_enrolled += total_enrolled
 
                 existing_course_grade.save()
-            except ObjectDoesNotExist:
-                # if course not in CourseGrade, create a new object
-                course_grade_params = {
-                    'subdepartment': row[0],
-                    'number': row[1],
-                    'title': row[2],
-                    'average': total_enrolled_gpa,
-                    'a_plus': course_grades[row][0],
-                    'a': course_grades[row][1],
-                    'a_minus': course_grades[row][2],
-                    'b_plus': course_grades[row][3],
-                    'b': course_grades[row][4],
-                    'b_minus': course_grades[row][5],
-                    'c_plus': course_grades[row][6],
-                    'c': course_grades[row][7],
-                    'c_minus': course_grades[row][8],
-                    'd_plus': course_grades[row][9],
-                    'd': course_grades[row][10],
-                    'd_minus': course_grades[row][11],
-                    'f': course_grades[row][12],
-                    'ot': course_grades[row][13],
-                    'drop': course_grades[row][14],
-                    'withdraw': course_grades[row][15],
-                    'total_enrolled': total_enrolled
-                }
-                CourseGrade.objects.create(**course_grade_params)
         if self.verbosity > 0:
             print('Done loading CourseGrade models')
 
@@ -276,7 +275,38 @@ class Command(BaseCommand):
                     last_name=row[4],
                     email=row[5],
                 )
-
+            except ObjectDoesNotExist:
+                # if course not in CourseInstructorGrade, create a new object
+                course_instructor_grade_params = {
+                    'subdepartment': row[0],
+                    'number': row[1],
+                    'first_name': row[2],
+                    'middle_name': row[3],
+                    'last_name': row[4],
+                    'email': row[5],
+                    'average': total_enrolled_gpa,
+                    'a_plus': course_instructor_grades[row][0],
+                    'a': course_instructor_grades[row][1],
+                    'a_minus': course_instructor_grades[row][2],
+                    'b_plus': course_instructor_grades[row][3],
+                    'b': course_instructor_grades[row][4],
+                    'b_minus': course_instructor_grades[row][5],
+                    'c_plus': course_instructor_grades[row][6],
+                    'c': course_instructor_grades[row][7],
+                    'c_minus': course_instructor_grades[row][8],
+                    'd_plus': course_instructor_grades[row][9],
+                    'd': course_instructor_grades[row][10],
+                    'd_minus': course_instructor_grades[row][11],
+                    'f': course_instructor_grades[row][12],
+                    'ot': course_instructor_grades[row][13],
+                    'drop': course_instructor_grades[row][14],
+                    'withdraw': course_instructor_grades[row][15],
+                    'total_enrolled': total_enrolled
+                }
+                CourseInstructorGrade.objects.create(
+                    **course_instructor_grade_params)
+            else:
+                # Did find a relevant CourseInstructorGrade model, so continue
                 # disregard ot/drop/withdraw
                 existing_total_enrolled_filtered = existing_instructor_grade.total_enrolled - \
                     existing_instructor_grade.ot - existing_instructor_grade.drop - existing_instructor_grade.withdraw
@@ -311,35 +341,5 @@ class Command(BaseCommand):
                 existing_instructor_grade.total_enrolled += total_enrolled
 
                 existing_instructor_grade.save()
-            except ObjectDoesNotExist:
-                # if course not in CourseInstructorGrade, create a new object
-                course_instructor_grade_params = {
-                    'subdepartment': row[0],
-                    'number': row[1],
-                    'first_name': row[2],
-                    'middle_name': row[3],
-                    'last_name': row[4],
-                    'email': row[5],
-                    'average': total_enrolled_gpa,
-                    'a_plus': course_instructor_grades[row][0],
-                    'a': course_instructor_grades[row][1],
-                    'a_minus': course_instructor_grades[row][2],
-                    'b_plus': course_instructor_grades[row][3],
-                    'b': course_instructor_grades[row][4],
-                    'b_minus': course_instructor_grades[row][5],
-                    'c_plus': course_instructor_grades[row][6],
-                    'c': course_instructor_grades[row][7],
-                    'c_minus': course_instructor_grades[row][8],
-                    'd_plus': course_instructor_grades[row][9],
-                    'd': course_instructor_grades[row][10],
-                    'd_minus': course_instructor_grades[row][11],
-                    'f': course_instructor_grades[row][12],
-                    'ot': course_instructor_grades[row][13],
-                    'drop': course_instructor_grades[row][14],
-                    'withdraw': course_instructor_grades[row][15],
-                    'total_enrolled': total_enrolled
-                }
-                CourseInstructorGrade.objects.create(
-                    **course_instructor_grade_params)
         if self.verbosity > 0:
             print('Done loading CourseInstructorGrade models')
