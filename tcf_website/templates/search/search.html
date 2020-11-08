@@ -135,3 +135,15 @@
 
     </div>
 {% endblock %}
+
+{% block js %}
+  <script>
+    $('[data-toggle=collapse]').on('click', function (e) {
+        e.preventDefault();
+        if(! $(this).hasClass('collapsed')){
+            e.stopPropagation();
+            return false;
+        }
+    });
+  </script>
+{% endblock %}
