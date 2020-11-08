@@ -349,6 +349,7 @@ class Course(models.Model):
 
 
 class CourseGrade(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     subdepartment = models.CharField(max_length=255)
     number = models.IntegerField(
         validators=[
@@ -380,10 +381,13 @@ class CourseGrade(models.Model):
 
 
 class CourseInstructorGrade(models.Model):
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=225)
     middle_name = models.CharField(max_length=225)
     last_name = models.CharField(max_length=225)
     email = models.CharField(max_length=225)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     subdepartment = models.CharField(max_length=255)
     number = models.IntegerField(
         validators=[
