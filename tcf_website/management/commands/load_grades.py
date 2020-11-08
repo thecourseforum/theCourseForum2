@@ -2,9 +2,9 @@ import os
 import pandas as pd
 import re
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from tcf_website.models import *
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.core.exceptions import ObjectDoesNotExist
 
 from tqdm import tqdm
 
@@ -159,25 +159,21 @@ class Command(BaseCommand):
                          3.3, 3.0, 2.7,
                          2.3, 2.0, 1.7,
                          1.3, 1.0, 0.7,
-                         0.0,
-                         0.0, 0.0, 0.0]
+                         0,
+                         0, 0, 0]
 
         # load course grades
         for row in course_grades:
-            total_enrolled = 0
-            for grade_count in course_grades[row]:
-                total_enrolled += grade_count
-
-            total_weight = 0
-            for i in range(len(course_grades[row])):
-                total_weight += (course_grades[row][i] * grade_weights[i])
+            total_enrolled = sum(course_grades[row])
+            total_weight = sum(a*b for a, b in
+                               zip(course_grades[row], grade_weights))
 
             # calculate gpa excluding ot/drop/withdraw in total_enrolled
             total_enrolled_filtered = total_enrolled - \
-                course_grades[row][13] - course_grades[row][14] - course_grades[row][15]
+                sum(course_grades[row][i] for i in (13, 14, 15))
             # check divide by 0
             if total_enrolled_filtered == 0:
-                total_enrolled_gpa = 0.0
+                total_enrolled_gpa = 0
             else:
                 total_enrolled_gpa = (total_weight) / (total_enrolled_filtered)
 
@@ -196,7 +192,7 @@ class Command(BaseCommand):
                     existing_course_grade.ot - existing_course_grade.drop - existing_course_grade.withdraw
                 # check divide by 0
                 if total_enrolled_gpa == 0 or existing_total_enrolled_filtered == 0:
-                    gpa = 0.0
+                    gpa = 0
                 else:
                     gpa = (
                         (gpa * total_enrolled_filtered) + (
@@ -250,8 +246,7 @@ class Command(BaseCommand):
                     'withdraw': course_grades[row][15],
                     'total_enrolled': total_enrolled
                 }
-                course_grade = CourseGrade(**course_grade_params)
-                course_grade.save()
+                CourseGrade.objects.create(**course_grade_params)
 
         # load course instructor grades
         for row in course_instructor_grades:
@@ -270,7 +265,7 @@ class Command(BaseCommand):
             total_enrolled_filtered = total_enrolled - \
                 course_instructor_grades[row][13] - course_instructor_grades[row][14] - course_instructor_grades[row][15]
             if total_enrolled_filtered == 0:
-                total_enrolled_gpa = 0.0
+                total_enrolled_gpa = 0
             else:
                 total_enrolled_gpa = (total_weight) / (total_enrolled_filtered)
 
@@ -292,7 +287,7 @@ class Command(BaseCommand):
                     existing_instructor_grade.ot - existing_instructor_grade.drop - existing_instructor_grade.withdraw
                 # check divide by 0
                 if total_enrolled_gpa == 0 or existing_total_enrolled_filtered == 0:
-                    gpa = 0.0
+                    gpa = 0
                 else:
                     gpa = (
                         (gpa * total_enrolled_filtered) + (
@@ -349,6 +344,5 @@ class Command(BaseCommand):
                     'withdraw': course_instructor_grades[row][15],
                     'total_enrolled': total_enrolled
                 }
-                course_instructor_grade = CourseInstructorGrade(
+                CourseInstructorGrade.objects.create(
                     **course_instructor_grade_params)
-                course_instructor_grade.save()
