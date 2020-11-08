@@ -17,50 +17,19 @@
   margin: 15px 0px 0px 15px;
 }
 
-.tabs {
-  display: flex;
-  justify-content: space-evenly;
+.tabs .about-tab {
+  padding: 0rem;
+  background-color: var(--dark-color);
 }
-
-.tabs > button {
-  flex: 1;
-  border: none;
-  border-radius: 0px;
-  background-color: rgb(210, 210, 210)
+.tabs .about-tab:hover {
+  background-color: var(--background-color);
 }
-
-.tabs > button:hover {
-  color: #db4929;
+.tabs .about-tab a {
+  color: white;
+  width: 100%;
 }
-
-.tabs > button.active {
-  background-color: #ffffff;
-}
-
-.tabs > button:focus {
-  box-shadow: none;
-}
-
-.tabs > button > i {
-  font-size: 3em;
-  padding: 10px 0px 5px 0px;
-}
-
-@media (max-width: 500px) {
-
-  .about-logo > h1 {
-    font-size: 25pt;
-    margin-left: 0px;
-  }
-
-  .tabs > button > i {
-    font-size: 2em;
-  }
-
-  .tabs > button > p {
-    font-size: 8pt;
-  }
-
+.tabs .about-tab a:hover {
+  color: black;
 }
 
 .pfp {
@@ -84,32 +53,4 @@
 .history-img{
   overflow: hidden;
   opacity: 0.8;
-}
-
-/*
-  CRITICAL to the about page subcontent tabs working
-*/
-.tCF-current-team {
-  display: none;
-}
-.tCF-current-team.shown {
-  display: block;
-}
-.tCF-history {
-  display: none;
-}
-.tCF-history.shown {
-  display: block;
-}
-.tCF-past-contributors {
-  display: none;
-}
-.tCF-past-contributors.shown {
-  display: block;
-}
-.tCF-sponsors {
-  display: none;
-}
-.tCF-sponsors.shown {
-  display: block;
 }

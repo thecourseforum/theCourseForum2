@@ -21,7 +21,7 @@
                     },
                    {"name": "Shirley Chu",
                     "role": "VP\u00a0|\u00a0Marketing & Design",
-                    "class": "2021",
+                    "class": "2022",
                     "img_filename": "MAD_Shirley_Chu.jpg"
                     },
                    {"name": "Vi Nguyen",
@@ -35,11 +35,7 @@
                     "img_filename": "MAD_Davis_Delozier.jpg"
                     }
                    ],
-  "engineering_team": [{"name": "Brian Yu",
-                       "role": "19-20 President",
-                       "class": "2021",
-                       "img_filename": "ENG_Brian_Yu.jpg",
-                       "github": "brian-yu"},
+  "engineering_team": [
                       {"name": "Jennifer Long",
                        "role": "President",
                        "class": "2021",
@@ -64,18 +60,7 @@
                        "img_filename": "ENG_Jack_Liu.jpg",
                        "github": "jackliu612"
                        },
-                      {"name": "Nikash Sethi",
-                       "role": "Developer",
-                       "class": "2021",
-                       "img_filename": "ENG_Nikash_Sethi.jpg",
-                       "github": "nikashs"
-                      },
-                      {"name": "Neal Patel",
-                       "role": "Developer",
-                       "class": "2021",
-                       "img_filename": "ENG_Neal_Patel.jpg",
-                       "github": "nealpatel50"
-                      },
+
                       {"name": "Jasmine Dogu",
                        "role": "Developer",
                        "class": "2022",

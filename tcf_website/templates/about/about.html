@@ -5,14 +5,7 @@
 <link rel="stylesheet" href="{% static 'about/about.css' %}" />
 {% endblock %}
 
-{% block js %}
-<script type="module" src="{% static 'about/javascript/about.js' %}"></script>
-{% endblock %}
-{% comment %} -Removed apply to TCF and write a review buttons
--Apply to TCF possibly added as link below "Found a bug?"
-- Removed Color blocks in the history tab
-- Added sponsors tab and handshake logo
-- Used apply to TCF logo for current team logo {% endcomment %}
+
 {% block content %}
 <div class="container">
   <div class="card">
@@ -34,33 +27,65 @@
         <i>Of the students, by the students, for the students...</i>
       </p>
     </div>
-    <div class="tabs">
-      <button class="btn" id="tCF-history-btn">
-        <i class="fa fa-book"></i>
-        <p>History</p>
-      </button>
-      <button class="btn active" id="tCF-current-team-btn">
-        <i class="fa fa-users"></i>
-        <p>Current Team</p>
-      </button>
-      <button class="btn" id="tCF-past-contributors-btn">
-        <i class="fa fa-graduation-cap"></i>
-        <p>Past Contributors</p>
-      </button>
-      <button class="btn" id="tCF-sponsors-btn">
-        <i class="fa fa-handshake"></i>
-        <p>Sponsors</p>
-      </button>
-    </div>
-    <div class="card-body">
-      <div class="about-nav-content">
-        {% include "about/history.html" %}
-        {% include "about/current_team.html" %}
-        {% include "about/contributors.html" %}
-        {% include "about/sponsors.html" %}
+  </div>
+
+  <div class="card">
+    <div class="container">
+      <div class="tabs row text-center text-white p-0">
+        <div class="about-tab col">
+          <a href="#history" id="history-tab" class="btn collapsed" role="button"
+             data-toggle="collapse" aria-expanded="true" aria-controls="history">
+             <h4><i class="fa fa-book"></i></h4>
+             History
+          </a>
+        </div>
+
+        <div class="about-tab col">
+          <a href="#team" id="team-tab" class="btn collapsed" role="button"
+             data-toggle="collapse" aria-expanded="true" aria-controls="team">
+             <h4><i class="fa fa-users"></i></h4>
+             theTeam
+          </a>
+        </div>
+
+        <div class="about-tab col">
+          <a href="#contributors" id="contributors-tab" class="btn collapsed" role="button"
+             data-toggle="collapse" aria-expanded="false" aria-controls="contributors">
+             <h4><i class="fa fa-graduation-cap"></i></h4>
+             Contributors
+          </a>
+        </div>
+
+        <div class="about-tab col">
+          <a href="#sponsors" id="sponsors-tab" class="btn collapsed" role="button"
+             data-toggle="collapse" aria-expanded="false" aria-controls="sponsors">
+             <h4><i class="fa fa-handshake"></i></h4>
+             Sponsors
+          </a>
+        </div>
+
       </div>
     </div>
+
+    <div class="card-body">
+      <div id="about-content" class="about-content">
+        <div id="history" class="collapse" aria-labelledby="history-tab" data-parent="#about-content">
+          {% include "about/history.html" %}
+        </div>
+        <div id="team" class="collapse show" aria-labelledby="team-tab" data-parent="#about-content">
+          {% include "about/current_team.html" %}
+        </div>
+        <div id="contributors" class="collapse" aria-labelledby="contributors-tab" data-parent="#about-content">
+          {% include "about/contributors.html"%}
+        </div>
+        <div id="sponsors" class="collapse" aria-labelledby="sponsors-tab" data-parent="#about-content">
+          {% include "about/sponsors.html" %}
+        </div>
+      </div>
+    </div>
+
   </div>
+
 </div>
 
 {% endblock %}
