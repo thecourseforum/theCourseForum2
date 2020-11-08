@@ -1,0 +1,31 @@
+{% extends "browse/school.html" %}
+
+{% block department_list %}
+  <ul class="school-list">
+      {% for s in schools|dictsort:"name" %}
+          <li>
+            <h6 class="font-weight-bold">{{s}}</h6>
+            <ul class="department-list">
+              {% for d in s.department_set.all %}
+                <li>
+                  <a href="{% url 'department' dept_id=d.pk %}">{{d}}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </li>
+      {% endfor %}
+      <!-- Adding Miscellaneous schools at the end -->
+      {% if misc_school != None %}
+        <li>
+          <h6 class="font-weight-bold">{{misc_school}}</h6>
+          <ul class="department-list">
+            {% for d in misc_school.department_set.all %}
+              <li>
+                <a href="{% url 'department' dept_id=d.pk %}">{{d}}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endif %}
+  </ul>
+{% endblock %}
