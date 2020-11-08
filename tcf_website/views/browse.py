@@ -5,6 +5,7 @@
 from django.db.models import Avg
 from django.shortcuts import render
 from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist
 
 from ..models import (School, Department, Course, Semester, Instructor, Review,
                       CourseInstructorGrade)
@@ -15,19 +16,22 @@ def browse(request):
     clas = School.objects.get(name="College of Arts & Sciences")
     seas = School.objects.get(name="School of Engineering & Applied Science")
 
-    # Other departments besides CLAS and SEAS.
-    other_dept_pks = School.objects.exclude(
-        pk__in=[
-            clas.pk,
-            seas.pk]).values_list(
-        'department',
-        flat=True)
-    other_depts = Department.objects.filter(pk__in=other_dept_pks)
+    excluded_list = [clas.pk, seas.pk]
+    # Get the Misc category so it can be appended at the end (if it exists)
+    try:
+        misc_school = School.objects.get(name="Miscellaneous")
+        excluded_list.append(misc_school.pk)
+    except ObjectDoesNotExist:
+        misc_school = None
+
+    # Other schools besides CLAS, SEAS, and Misc.
+    other_schools = School.objects.exclude(pk__in=excluded_list)
 
     return render(request, 'browse/browse.html', {
         'CLAS': clas,
         'SEAS': seas,
-        'other_depts': other_depts
+        'other_schools': other_schools,
+        'misc_school': misc_school
     })
 
 
