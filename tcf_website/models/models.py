@@ -382,8 +382,8 @@ class CourseInstructorGrade(models.Model):
     total_enrolled = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} \
-            {self.subdepartment} {self.number} {self.average}"
+        return (f"{self.first_name} {self.last_name} "
+                f"{self.subdepartment} {self.number} {self.average}")
 
 
 class Section(models.Model):
