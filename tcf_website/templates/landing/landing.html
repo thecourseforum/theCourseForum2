@@ -8,12 +8,12 @@
 
 <!-- Custom styles for this template -->
 <link rel="stylesheet" href="{% static 'base/navbar.css' %}" />
-<link rel="stylesheet" href="{% static 'landing/landing-page.css' %}" />
+<link rel="stylesheet" href="{% static 'landing/landing.css' %}" />
 {% endblock %}
 
 
 {% block body %}
-<div class="bg-light">
+<div class="container-fluid px-0 bg-light">
 
   <!-- Custom Landing Page Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top">
@@ -46,24 +46,21 @@
   </nav>
 
   <!-- Masthead -->
-  <header class="masthead text-center">
-    <div class="container mt-5 pt-5">
-      <div class="row pt-5">
-        <div class="col-xl-9 mx-auto">
-          <h1 class="mb-2">theCourseForum</h1>
-          <p class="lead mb-5">A UVA student community, connecting you to the courses you love.</p>
-        </div>
-        <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-          {% include "base/searchbar.html" %}
-        </div>
+  <header class="masthead container text-center pt-5 mt-5">
+    <div class="row pt-5">
+      <div class="col-xl-9 mx-auto">
+        <h1 class="mb-2">theCourseForum</h1>
+        <p class="lead mb-5">A UVA student community, connecting you to the courses you love.</p>
+      </div>
+      <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+        {% include "base/searchbar.html" %}
       </div>
     </div>
   </header>
 
   <!-- Icons Grid -->
-  <section class="features-icons py-5 text-center">
-    <div class="container">
-      <div class="row">
+  <section class="features-icons container p-5">
+      <div class="row p-4 text-center">
         <div class="col-lg-4">
           <a href="{% url 'browse' %}" class="link-unstyled">
             <div class="card m-3">
@@ -106,7 +103,6 @@
           </a>
         </div>
       </div>
-    </div>
   </section>
 
   <!-- About Team -->
@@ -140,7 +136,10 @@
               <a href="{% url 'about' %}" class="link-unstyled">
                 <div class="about-link card bg-tcf-orange mt-3 mx-1">
                   <div class="card-body mx-auto py-5">
-                    <h4 class="card-text text-white text-left">Meet the full team >></h4>
+                    <p class="card-text text-white text-left">
+                      Meet the full team
+                      <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                    </p>
                   </div>
                 </div>
               </a>
@@ -170,9 +169,8 @@
   </section>
 
   <!-- Feedback Form -->
-  <section class="feedback py-5 mb-5 text-center">
-    <div class="container">
-      <div class="row">
+  <section class="feedback container py-5 mb-5">
+      <div class="row text-center">
         <div class="col-md-10 mx-auto">
           <h2 class="mb-4">Tell us about your experience</h2>
           <p class="lead mb-5">Keep in touch! We would love to hear about your experience with the site and areas where you think we can improve.</p>
@@ -213,15 +211,14 @@
           </form>
         </div>
       </div>
-    </div>
   </section>
 
 <div>
 
 <!-- Footer -->
-<footer class="footer py-3 bg-tcf-indigo text-white link-white">
+<footer class="footer bg-tcf-indigo">
   <div class="container">
-    <div class="row">
+    <div class="row py-3 text-white link-white">
       <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
         <ul class="list-inline mb-2">
           <li class="list-inline-item">
