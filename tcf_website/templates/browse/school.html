@@ -3,6 +3,7 @@
         <h3 class="card-title mb-0">{{school_name}}</h3>
     </div>
     <div class="card-body">
+      {% block department_list %}
         <ul class="department-list">
             {% for d in departments|dictsort:"name" %}
                 <li>
@@ -10,5 +11,6 @@
                 </li>
             {% endfor %}
         </ul>
+      {% endblock %}      
     </div>
 </div>
