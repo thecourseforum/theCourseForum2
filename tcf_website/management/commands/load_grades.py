@@ -153,7 +153,7 @@ class Command(BaseCommand):
                          0, 0, 0]
 
         # load course grades
-        unsaved_course_grade_instances = []
+        unsaved_cg_instances = []
         for row in tqdm(course_grades):
             total_enrolled = sum(course_grades[row])
             total_weight = sum(a * b for a, b in
@@ -166,7 +166,7 @@ class Command(BaseCommand):
             if total_enrolled_filtered == 0:
                 total_enrolled_gpa = 0
             else:
-                total_enrolled_gpa = (total_weight) / (total_enrolled_filtered)
+                total_enrolled_gpa = total_weight / total_enrolled_filtered
 
             course_grade_params = {
                 'subdepartment': row[0],
@@ -191,14 +191,14 @@ class Command(BaseCommand):
                 'withdraw': course_grades[row][15],
                 'total_enrolled': total_enrolled
             }
-            unsaved_course_grade = CourseGrade(**course_grade_params)
-            unsaved_course_grade_instances.append(unsaved_course_grade)
-        CourseGrade.objects.bulk_create(unsaved_course_grade_instances)
+            unsaved_cg_instance = CourseGrade(**course_grade_params)
+            unsaved_cg_instances.append(unsaved_cg_instance)
+        CourseGrade.objects.bulk_create(unsaved_cg_instances)
         if self.verbosity > 0:
             print('Done loading CourseGrade models')
 
         # load course instructor grades
-        unsaved_course_instructor_grade_instances = []
+        unsaved_cig_instances = []
         for row in tqdm(course_instructor_grades):
             total_enrolled = 0
             for grade_count in course_instructor_grades[row]:
@@ -207,17 +207,16 @@ class Command(BaseCommand):
             total_weight = 0
             for i in range(len(course_instructor_grades[row])):
                 total_weight += (
-                    course_instructor_grades[row][i] *
-                    grade_weights[i])
+                    course_instructor_grades[row][i] * grade_weights[i])
 
             # calculate gpa without including ot/drop/withdraw in
             # total_enrolled
             total_enrolled_filtered = total_enrolled - \
-                course_instructor_grades[row][13] - course_instructor_grades[row][14] - course_instructor_grades[row][15]
+                sum(course_instructor_grades[row][i] for i in (13, 14, 15))
             if total_enrolled_filtered == 0:
                 total_enrolled_gpa = 0
             else:
-                total_enrolled_gpa = (total_weight) / (total_enrolled_filtered)
+                total_enrolled_gpa = total_weight / total_enrolled_filtered
 
             course_instructor_grade_params = {
                 'subdepartment': row[0],
@@ -245,11 +244,9 @@ class Command(BaseCommand):
                 'withdraw': course_instructor_grades[row][15],
                 'total_enrolled': total_enrolled
             }
-            unsaved_course_instructor_grade = CourseInstructorGrade(
-                **course_grade_params)
-            unsaved_course_instructor_grade_instances.append(
-                unsaved_course_instructor_grade)
-        CourseInstructorGrade.objects.bulk_create(
-            unsaved_course_instructor_grade_instances)
+            unsaved_cig_instance = CourseInstructorGrade(
+                **course_instructor_grade_params)
+            unsaved_cig_instances.append(unsaved_cig_instance)
+        CourseInstructorGrade.objects.bulk_create(unsaved_cig_instances)
         if self.verbosity > 0:
             print('Done loading CourseInstructorGrade models')
