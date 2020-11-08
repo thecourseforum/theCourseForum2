@@ -434,16 +434,6 @@ class Review(models.Model):
     # Review modified date. Required.
     modified = models.DateTimeField(default=timezone.now)
 
-    # After data migration, add the following in order to automatically
-    # save created and modified dates.
-
-    # def save(self, *args, **kwargs):
-    #     ''' On save, update timestamps '''
-    #     if not self.id:
-    #         self.created = timezone.now()
-    #     self.modified = timezone.now()
-    #     return super(Review, self).save(*args, **kwargs)
-
     def average(self):
         """Average score for review."""
         return (self.instructor_rating + self.recommendability) / 2
@@ -541,6 +531,7 @@ class Review(models.Model):
 
         # Some of the tCF 1.0 data did not honor this constraint.
         # Should we add it and remove duplicates from old data?
+        # - Sounds good, just keep the newer review - Jennifer
 
     #     constraints = [
     #         models.UniqueConstraint(
