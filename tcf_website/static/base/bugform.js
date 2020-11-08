@@ -19,35 +19,35 @@ function resetForm() {
     var descriptionField = document.getElementById("descriptionField");
     descriptionField.value = "";
 
-    for(var i = 1; i <= 4; i++) {
+    for (var i = 1; i <= 4; i++) {
         var id = "#category" + i
         $(id).prop("checked", false);
     }
 }
 
 function postToDiscord() {
-  var url = window.location.href;
-  var email = $("#emailField").val();
-  var description = $("#descriptionField").val();
-  var categories = ""
-  for(var i=1; i<=4; i++) {
-    var id = "#category" + i
-    if($(id).is(':checked')){
-      categories += "[" + $(id).val() + "]"
+    var url = window.location.href;
+    var email = $("#emailField").val();
+    var description = $("#descriptionField").val();
+    var categories = ""
+    for (var i = 1; i <= 4; i++) {
+        var id = "#category" + i
+        if ($(id).is(':checked')) {
+            categories += "[" + $(id).val() + "]"
+        }
     }
-  }
-  var content = {
-    'content': "Bug Found! \n**URL:** " + url +
-                "\n**Description**: \n" + description +
-                "\n**Categories: **"+ categories  +
-                "\n**Email:** " + email
-  }
+    var content = {
+        'content': "Bug Found! \n**URL:** " + url +
+        "\n**Description**: \n" + description +
+        "\n**Categories: **"+ categories  +
+        "\n**Email:** " + email
+    }
 
-  $.ajax({
+    $.ajax({
         type: "GET",
         url: "/discord/",
         data: content
-      });
+    });
 }
 
 document.getElementById("bugSubmitBtn").addEventListener("click", submitForm, false);
