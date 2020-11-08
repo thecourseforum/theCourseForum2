@@ -21,6 +21,3 @@ django-heroku
 
 # GAE Prod
 uwsgi
-
-# Grades data
-xlrd
