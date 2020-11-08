@@ -1,6 +1,6 @@
-# pylint: disable=too-many-ancestors
+# pylint: disable=too-many-ancestors,fixme
 """DRF Viewsets"""
-from django.db.models import Avg, Sum
+from django.db.models import Avg
 from rest_framework import viewsets
 from ..models import (Course, Department, Instructor, School, Semester,
                       Subdepartment)
