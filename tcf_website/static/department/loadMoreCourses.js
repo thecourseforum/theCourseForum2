@@ -46,7 +46,7 @@ function generateCourseCardHTML(course) {
                             </div> 
                             <div class="col-4 col-lg-2 text-nowrap">
                                 <small class="mb-0 text-muted text-uppercase">
-                                    <i class="fa fa-skull-crossbones fa-fw" aria-hidden="true"></i>&nbsp;Difficulty
+                                    <i class="fa fa-dumbbell fa-fw" aria-hidden="true"></i>&nbsp;Difficulty
                                 </small>
                                 <p class="mb-0 info" id="difficulty">
                                     ${difficulty}

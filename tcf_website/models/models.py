@@ -314,7 +314,7 @@ class Course(models.Model):
         Semester, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.subdepartment.mnemonic} {self.number} {self.title}"
+        return f"{self.subdepartment.mnemonic} {self.number} | {self.title}"
 
     def code(self):
         """Returns the courses code string."""

@@ -2,53 +2,99 @@
 {% load static %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
-    <link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
-    <link rel="stylesheet" href="{% static 'common/toolbar.css' %}"/>
-    <link rel="stylesheet" href="{% static 'instructor/instructor.css' %}"/>
+<link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
+<link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
+<link rel="stylesheet" href="{% static 'common/toolbar.css' %}"/>
+<link rel="stylesheet" href="{% static 'instructor/instructor.css' %}"/>
 {% endblock %}
 
 {% block content %}
-    <div class="container text-center">
-        <div class="card">
-            <div class="card-header py-4">
-                <h1 class="card-title">
-                    {{ instructor.full_name }}
-                </h1>
-                {{ instructor.email }}
+<div class="container text-left">
+    <div class="card">
+        <div class="row">
+            <div class="col">
+                <div class="card-header py-5">
+                    <h1 class="card-title">
+                        {{ instructor.full_name }}
+                    </h1>
+                    {{ instructor.email }}
+                </div>
             </div>
-            <div class="card-body">
-                <h2 class="h6">Average Ratings</h2>
-                <div class="mt-4 d-flex justify-content-around">
-                    <p><i class="fas fa-user"></i> {{ avg_rating }}</p>
-                    <p><i class="fas fa-dumbbell"></i> {{ avg_difficulty }}</p>
-                    <p><i class="fas fa-thumbs-up"></i></p>
-                    <p><i class="fas fa-hourglass-half"></i> {{ avg_hours }}</p>
+            <div class="col ">
+                <div class="card-body">
+                    <h2 class="h4 mt-4 mb-3">Average Ratings</h2>
+                    <ul class="row">
+                        <li class="col text-nowrap">
+                            <small class="text-uppercase">
+                                <i class="fa fa-star"></i> Rating
+                            </small>
+                            <p class="h3" id="rating">
+                                {% if avg_rating %}
+                                    {{ avg_rating }}
+                                {% else %}
+                                    &mdash;
+                                {% endif %}
+                            </p>
+                        </li>
+                        <li class="col text-nowrap">
+                            <small class="text-uppercase">
+                                <i class="fa fa-dumbbell"></i> Difficulty
+                            </small>
+                            <p class="h3" id="difficulty">
+                                {% if avg_difficulty %}
+                                    {{ avg_difficulty }}
+                                {% else %}
+                                    &mdash;
+                                {% endif %}
+                            </p>
+                        </li>
+                        <li class="col text-nowrap">
+                            <small class="text-uppercase">
+                                <i class="fa fa-hourglass-half"></i> Hours
+                            </small>
+                            <p class="h3" id="hours">
+                                {% if avg_hours %}
+                                    {{ avg_hours }}
+                                {% else %}
+                                    &mdash;
+                                {% endif %}
+                            </p>
+                        </li>
+                        <li class="col text-nowrap">
+                            <small class="text-uppercase">
+                                <i class="fa fa-chart-bar"></i> GPA
+                            </small>
+                            <p class="h3" id="gpa">
+                                TODO
+                            </p>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
-        {% if courses %}
-            {% for dept, dept_data in courses.items %}
-                <h2 class="mt-5 h3">{{ dept }}</h2>
-                {% for course in dept_data.courses %}
-                    <div class="card mt-3">
-                        <a href="{% url 'course' course_id=course.id %}">
-                            <div class="card-header py-4">
-                                {{ course.name }}
-                            </div>
-                        </a>
-                        <div class="card-body d-flex justify-content-around">
-                            <p><i class="fas fa-star"></i> {{ course.avg_rating }}</p>
-                            <p><i class="fas fa-dumbbell"></i> {{ course.avg_difficulty }}</p>
-                            <p><i class="fas fa-thumbs-up"></i></p>
-                            <p><i class="fas fa-hourglass-half"></i> {{ course.avg_hours }}</p>
-                            <p>Last taught {{ course.last_taught }}</p>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endfor %}
-        {% endif %}
     </div>
+    {% if courses %}
+    {% for dept, dept_data in courses.items %}
+        <h2 class="mt-5 h3">{{ dept }}</h2>
+        {% for course in dept_data.courses %}
+        <div class="card mt-3">
+            <a href="{% url 'course' course_id=course.id %}">
+                <div class="card-header py-4">
+                    {{ course.name }}
+                </div>
+            </a>
+            <div class="card-body d-flex justify-content-around">
+                <p><i class="fas fa-star"></i> {{ course.avg_rating }}</p>
+                <p><i class="fas fa-dumbbell"></i> {{ course.avg_difficulty }}</p>
+                <p><i class="fas fa-thumbs-up"></i></p>
+                <p><i class="fas fa-hourglass-half"></i> {{ course.avg_hours }}</p>
+                <p>Last taught {{ course.last_taught }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    {% endfor %}
+    {% endif %}
+</div>
 
 {% endblock %}
 
