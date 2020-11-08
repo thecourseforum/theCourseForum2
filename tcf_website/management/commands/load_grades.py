@@ -32,13 +32,14 @@ class Command(BaseCommand):
             help='Verbose output',
         )
 
-    '''
         parser.add_argument(
             'semester',
-            help='Semester to update grades (e.g. "2019_FALL").\nIf you wish to reload all semesters (potentially dangerous!) then put "ALL_DANGEROUS" as the value of this argument.',
+            help=('Semester to update grades (e.g. "2019_FALL").\nIf you wish'
+                  ' to reload all semesters (potentially dangerous!) then put '
+                  '"ALL_DANGEROUS" as the value of this argument.\nNote that '
+                  'only a single semester is allowed.'),
             type=str
         )
-    '''
 
     def handle(self, *args, **options):
 
@@ -46,18 +47,15 @@ class Command(BaseCommand):
 
         self.data_dir = 'tcf_website/management/commands/grade_data/excel/'
 
-        # semester = options['semester']
+        semester = options['semester']
 
-        [self.load_semester_file(file) for file in sorted(
-            os.listdir(self.data_dir)) if not file.startswith('.')]
-
-        '''
         if semester == 'ALL_DANGEROUS':
-            # ignores temporary files
-            [self.load_semester_file(file) for file in sorted(os.listdir(self.data_dir)) if not file.startswith('.')]
+            # ignores temporary files ('~' on Windows, '.' otherwise)
+            for file in sorted(os.listdir(self.data_dir)):
+                if file[0] not in ('.', '~'):
+                    self.load_semester_file(file)
         else:
             self.load_semester_file(f"{semester.lower()}.xlsx")
-        '''
 
     def clean(self, df):
         CourseGrade.objects.all().delete()  # deletes CourseGrade table
