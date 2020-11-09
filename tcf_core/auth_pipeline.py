@@ -30,6 +30,8 @@ def collect_extra_info(
     # session 'grad_year' is set by the pipeline infrastructure
     # because it exists in FIELDS_STORED_IN_SESSION
     grad_year = strategy.session_get('grad_year', None)
+    first_major = strategy.session_get('first_major', None)
+    second_major = strategy.session_get('second_major', None)
     if not grad_year:
         # if we return something besides a dict or None, then that is
         # returned to the user -- in this case we will redirect to a

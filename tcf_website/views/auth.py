@@ -23,6 +23,8 @@ def login_error(request):
 class ExtraUserInfoForm(forms.Form):
     """Form to collect extra user info on sign up."""
     grad_year = forms.IntegerField()
+    first_major = forms.CharField()
+    second_major = forms.CharField(required=False)
 
 
 def collect_extra_info(request):
