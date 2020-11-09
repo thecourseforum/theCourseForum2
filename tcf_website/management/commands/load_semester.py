@@ -129,12 +129,6 @@ class Command(BaseCommand):
                                     'Instructor3',
                                     'Instructor4']].dropna().array
 
-            if mnemonic == 'BIOL' and course_number == '2040':
-                print(instructor_names)
-                self.verbose = True
-            else:
-                self.verbose = False
-
         except TypeError as e:
             print(row)
             print(e)
@@ -219,7 +213,8 @@ class Command(BaseCommand):
         fixed_instructor_names = []
         for name in instructor_names:
             for split_name in name.split(', '):
-                fixed_instructor_names.append(split_name)
+                if split_name != '':
+                    fixed_instructor_names.append(split_name)
 
         for name in fixed_instructor_names:
             if name in {'Staff', 'Faculty Staff', 'Faculty'} or name.isspace():
