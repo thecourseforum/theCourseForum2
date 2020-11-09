@@ -52,23 +52,22 @@
         </div>
         {% endif %}
     </div>
+    {% if reviews %}
     <div class="dropdown">
       <button id="review-sort-select" class="btn btn-secondary dropdown-toggle" type="button" id="sortOptions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
       <div class="dropdown-menu" aria-labelledby="sortOptions">
-        <button id="votes-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">Most Helpful</button>
-        <button id="recent-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">Most Recent</button>
-        <button id="highrating-sort-btn" onclick="sortReviews(this.id)"class="dropdown-item" type="button">Highest Rating</button>
-        <button id="lowrating-sort-btn" onclick="sortReviews(this.id)"class="dropdown-item" type="button">Lowest Rating</button>
+        <button id="votes-sort-btn" class="dropdown-item" type="button">Most Helpful</button>
+        <button id="recent-sort-btn" class="dropdown-item" type="button">Most Recent</button>
+        <button id="highrating-sort-btn"class="dropdown-item" type="button">Highest Rating</button>
+        <button id="lowrating-sort-btn"class="dropdown-item" type="button">Lowest Rating</button>
       </div>
     </div>
+    {% endif %}
 
     {% include "reviews/reviews.html" with reviews=reviews %}
-</div>
+    </div>
 {% endblock %}
 
-
 {% block js %}
-<script src="{% static 'reviews/review.js' %}"></script>
-<script src="{% static 'reviews/sort_reviews.js' %}"></script>
-<script src="{% static 'common/sorting.js' %}"></script>
+<script type="module" src="{% static 'reviews/review.js' %}"></script>
 {% endblock %}

@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_django',
     'cachalot',  # TODO: add Redis?
-    'silk',  # Performance profiling
+    'rest_framework',
+    'django_filters',
     'tcf_website'
 ]
 
@@ -55,7 +56,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'silk.middleware.SilkyMiddleware',  # Performance profiling
 ]
 
 ROOT_URLCONF = 'tcf_core.urls'
@@ -217,3 +217,43 @@ if not DEBUG:
         'PORT': env.str('DB_PORT'),
         'OPTIONS': {'sslmode': 'require'},
     }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+}
+
+
+def custom_recording_logic(request):
+    """Exclude API views for django-silk"""
+    return not request.path.startswith('/api')
+
+
+# Performance profiling for non-API views during development
+SILKY_INTERCEPT_FUNC = custom_recording_logic
+if DEBUG:
+    INSTALLED_APPS.append('silk')
+    MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
+    SILKY_INTERCEPT_FUNC = custom_recording_logic
