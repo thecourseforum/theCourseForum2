@@ -139,20 +139,12 @@ class Command(BaseCommand):
             subdepartment__mnemonic=review.course.subdepartment.mnemonic
         )
 
-        reading = review.amount_reading if review.amount_reading else 0
-        writing = review.amount_writing if review.amount_writing else 0
-        group = review.amount_group if review.amount_group else 0
-        homework = review.amount_homework if review.amount_homework else 0
+        amount_reading = min(20, review.amount_reading) if review.amount_reading else 0
+        amount_writing = min(20, review.amount_writing) if review.amount_writing else 0
+        amount_group = min(20, review.amount_group) if review.amount_group else 0
+        amount_homework = min(20, review.amount_homework) if review.amount_homework else 0
 
-        work_per_week = min(
-            7 * 24,
-            round(
-                reading +
-                writing +
-                group +
-                homework
-            )
-        )
+        hours_per_week = amount_reading + amount_writing + amount_group + amount_homework
 
         try:
             semester = Semester.objects.get(number=review.semester.number)
@@ -178,7 +170,11 @@ class Command(BaseCommand):
             difficulty=difficulty,
             recommendability=recommendability,
             enjoyability=enjoyability,
-            hours_per_week=work_per_week,
+            hours_per_week=hours_per_week,
+            amount_reading=amount_reading,
+            amount_writing=amount_writing,
+            amount_group=amount_group,
+            amount_homework=amount_homework,
             semester=semester,
             created=review.created_at,
             modified=review.created_at,

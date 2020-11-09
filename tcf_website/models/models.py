@@ -450,9 +450,28 @@ class Review(models.Model):
     recommendability = models.PositiveSmallIntegerField(choices=RATINGS)
     # Review enjoyability. Required.
     enjoyability = models.PositiveSmallIntegerField(choices=RATINGS)
+
     # Review hours per week. Required.
+    # hours_per_week used to be the only thing, but we also brought back the
+    # subcategories. This is just a sum, but I'm keeping it because other parts
+    # of the codebase depend on this model field existing and I'm not fixing them.
+    # TODO: make validators/tests to ensure hours_per_week is the sum, or just
+    #  remove it entirely from the model and replace w/ function
     hours_per_week = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(168)])
+        validators=[MinValueValidator(0), MaxValueValidator(80)])
+    # Review hours of reading per week. Required.
+    amount_reading = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(20)])
+    # Review hours of writing per week. Required.
+    amount_writing = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(20)])
+    # Review hours of group work per week. Required.
+    amount_group = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(20)])
+    # Review hours of homework per week. Required.
+    amount_homework = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(20)])
+
     # Review created date. Required.
     created = models.DateTimeField(editable=False, default=timezone.now)
     # Review modified date. Required.
