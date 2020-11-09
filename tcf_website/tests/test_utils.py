@@ -91,7 +91,11 @@ def setup(obj):
         difficulty=5,
         recommendability=1,
         enjoyability=1,
-        hours_per_week=168,
+        hours_per_week=80,
+        amount_group=20,
+        amount_reading=20,
+        amount_writing=20,
+        amount_homework=20
     )
 
     obj.review2 = Review.objects.create(
@@ -105,6 +109,10 @@ def setup(obj):
         recommendability=5,
         enjoyability=4,
         hours_per_week=3,
+        amount_group=1,
+        amount_reading=2,
+        amount_writing=0,
+        amount_homework=0
     )
 
     obj.review3 = Review.objects.create(
@@ -118,6 +126,10 @@ def setup(obj):
         recommendability=5,
         enjoyability=4,
         hours_per_week=6,
+        amount_group=1,
+        amount_reading=2,
+        amount_writing=3,
+        amount_homework=0
     )
 
     obj.review4 = Review.objects.create(
@@ -131,6 +143,10 @@ def setup(obj):
         recommendability=5,
         enjoyability=4,
         hours_per_week=5,
+        amount_group=1,
+        amount_reading=2,
+        amount_writing=0,
+        amount_homework=2
     )
 
     obj.review5 = Review.objects.create(
@@ -144,6 +160,10 @@ def setup(obj):
         recommendability=3,
         enjoyability=4,
         hours_per_week=2,
+        amount_group=0,
+        amount_reading=2,
+        amount_writing=0,
+        amount_homework=0
     )
 
     obj.review6 = Review.objects.create(
@@ -157,4 +177,8 @@ def setup(obj):
         recommendability=1,
         enjoyability=4,
         hours_per_week=4,
+        amount_group=1,
+        amount_reading=2,
+        amount_writing=1,
+        amount_homework=0
     )
