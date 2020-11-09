@@ -40,8 +40,13 @@ def download_semester(year, season):
         print(e)
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-    for year in range(2009, 2020 + 1):
-        for season in ['january', 'spring', 'summer', 'fall']:
-            download_semester(year, season)
+#     for year in range(2009, 2020 + 1):
+#         for season in ['january', 'spring', 'summer', 'fall']:
+#             download_semester(year, season)
+
+print('hi')
+download_semester(2021, 'january')
+download_semester(2021, 'spring')
+print('bye')
