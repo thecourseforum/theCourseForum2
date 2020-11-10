@@ -39,10 +39,8 @@ function sortReviews(btnID) {
     }
 }
 
-$(window).on("load", function() {
-    sortReviews("votes-sort-btn");
-    document.getElementById("votes-sort-btn").addEventListener("click", () => sortReviews("votes-sort-btn"), false);
-    document.getElementById("recent-sort-btn").addEventListener("click", () => sortReviews("recent-sort-btn"), false);
-    document.getElementById("highrating-sort-btn").addEventListener("click", () => sortReviews("highrating-sort-btn"), false);
-    document.getElementById("lowrating-sort-btn").addEventListener("click", () => sortReviews("lowrating-sort-btn"), false);
-});
+sortReviews("votes-sort-btn");
+document.getElementById("votes-sort-btn").addEventListener("click", () => sortReviews("votes-sort-btn"), false);
+document.getElementById("recent-sort-btn").addEventListener("click", () => sortReviews("recent-sort-btn"), false);
+document.getElementById("highrating-sort-btn").addEventListener("click", () => sortReviews("highrating-sort-btn"), false);
+document.getElementById("lowrating-sort-btn").addEventListener("click", () => sortReviews("lowrating-sort-btn"), false);

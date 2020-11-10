@@ -24,6 +24,9 @@
     </ul>
 </div>
 
+{% if reviews %}
+<script type="module" src="{% static 'reviews/sort_reviews.js' %}"></script>
+{% endif %}
 <script type="module" src="{% static 'reviews/review.js' %}"></script>
 <script>
     {% if user.is_authenticated %}
