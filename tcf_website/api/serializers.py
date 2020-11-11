@@ -56,6 +56,33 @@ class CourseSimpleStatsSerializer(CourseSerializer):
                   'average_difficulty', 'is_recent']
 
 
+class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
+    """DRF Serializer for Course including all review statistics"""
+    # ratings
+    average_instructor = serializers.FloatField(allow_null=True)
+    average_fun = serializers.FloatField(allow_null=True)
+    average_recommendability = serializers.FloatField(allow_null=True)
+    # workload
+    average_hours_per_week = serializers.FloatField(allow_null=True)
+    average_amount_reading = serializers.FloatField(allow_null=True)
+    average_amount_writing = serializers.FloatField(allow_null=True)
+    average_amount_group = serializers.FloatField(allow_null=True)
+    average_amount_homework = serializers.FloatField(allow_null=True)
+
+    class Meta:
+        model = Course
+        fields = ['id', 'title', 'description', 'number', 'subdepartment',
+                  'semester_last_taught', 'is_recent',
+                  # ratings
+                  'average_rating', 'average_instructor', 'average_fun',
+                  'average_recommendability', 'average_difficulty',
+                  # workload
+                  'average_hours_per_week', 'average_amount_reading',
+                  'average_amount_writing', 'average_amount_group',
+                  'average_amount_homework',
+                  ]
+
+
 class InstructorSerializer(serializers.ModelSerializer):
     """DRF Serializer for Instructor"""
     class Meta:
