@@ -27,7 +27,7 @@ function cmpByProp(prop, asc) {
                 return 1;
             }
             try {
-                valB = valB.match(/^-?[0-9]\d*(\.\d+)?$/)[0];
+                valB = valB.match(/-?[0-9]\d*(\.\d+)?/)[0];
             } catch (err) {
                 return -1;
             }
