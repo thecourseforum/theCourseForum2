@@ -65,6 +65,7 @@ class CourseWithStatsSerializer(CourseSerializer):
     ot = serializers.IntegerField(allow_null=True)
     drop = serializers.IntegerField(allow_null=True)
     withdraw = serializers.IntegerField(allow_null=True)
+    total_enrolled = serializers.IntegerField(allow_null=True)
 
     class Meta:
         model = Course
@@ -72,7 +73,7 @@ class CourseWithStatsSerializer(CourseSerializer):
                   'semester_last_taught', 'average_rating',
                   'a_plus', 'a', 'a_minus', 'b_plus', 'b', 'b_minus',
                   'c_plus', 'c', 'c_minus', 'd_plus', 'd', 'd_minus',
-                  'f', 'ot', 'drop', 'withdraw',
+                  'f', 'ot', 'drop', 'withdraw', 'total_enrolled',
                   'average_difficulty', 'average_gpa', 'is_recent']
 
 
