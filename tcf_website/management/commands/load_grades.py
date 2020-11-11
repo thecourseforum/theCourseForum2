@@ -38,6 +38,8 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        self.verbosity = options['verbosity']
+        self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
         if self.verbosity > 0:
             print('Fetch Course and Instructor data for later use')
         self.courses = {
@@ -50,8 +52,6 @@ class Command(BaseCommand):
             for obj in Instructor.objects.values('id', 'first_name',
                                                  'last_name', 'email')
         }
-        self.verbosity = options['verbosity']
-        self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
         semester = options['semester']
         if semester == 'ALL_DANGEROUS':
             # ignores temporary files ('~' on Windows, '.' otherwise)
