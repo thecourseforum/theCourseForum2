@@ -203,16 +203,18 @@ class Instructor(models.Model):
         """Compute average rating for all this Instructor's Courses"""
         ratings = Review.objects.filter(instructor=self).aggregate(
             models.Avg('recommendability'),
-            models.Avg('instructor_rating'))
+            models.Avg('instructor_rating'),
+            models.Avg('enjoyability'))
 
         recommendability = ratings.get('recommendability__avg')
         instructor_rating = ratings.get('instructor_rating__avg')
+        enjoyability = ratings.get('enjoyability__avg')
 
         # Return None if one component is absent.
-        if not recommendability or not instructor_rating:
+        if not recommendability or not instructor_rating or not enjoyability:
             return None
 
-        return (recommendability + instructor_rating) / 2
+        return (recommendability + instructor_rating + enjoyability) / 3
 
     def average_difficulty(self):
         """Compute average difficulty for all this Instructor's Courses"""
