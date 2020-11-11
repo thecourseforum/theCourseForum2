@@ -60,6 +60,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                     ot=Sum('coursegrade__ot'),
                     drop=Sum('coursegrade__drop'),
                     withdraw=Sum('coursegrade__withdraw'),
+                    total_enrolled=Sum('coursegrade__total_enrolled'),
                 )\
                 .annotate(average_gpa=Avg('coursegrade__average'))
             # TODO: average_gpa should be fixed
