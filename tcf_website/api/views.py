@@ -6,6 +6,7 @@ from ..models import (Course, Department, Instructor, School, Semester,
                       Subdepartment)
 from .paginations import FlexiblePagination
 from .serializers import (CourseSerializer, CourseSimpleStatsSerializer,
+                          CourseAllStatsSerializer,
                           DepartmentSerializer, InstructorSerializer,
                           SemesterSerializer, SchoolSerializer,
                           SubdepartmentSerializer)
@@ -38,7 +39,28 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
-        if 'simplestats' in self.request.query_params:
+        if 'allstats' in self.request.query_params:
+            queryset = queryset\
+                .prefetch_related('review_set')\
+                .annotate(
+                    # ratings
+                    average_instructor=Avg('review__instructor_rating'),
+                    average_fun=Avg('review__enjoyability'),
+                    average_recommendability=Avg('review__recommendability'),
+                    average_difficulty=Avg('review__difficulty'),
+                    average_rating=(
+                        Avg('review__instructor_rating') +
+                        Avg('review__enjoyability') +
+                        Avg('review__recommendability')
+                    ) / 3,
+                    # workload
+                    average_hours_per_week=Avg('review__hours_per_week'),
+                    average_amount_reading=Avg('review__amount_reading'),
+                    average_amount_writing=Avg('review__amount_writing'),
+                    average_amount_group=Avg('review__amount_group'),
+                    average_amount_homework=Avg('review__amount_homework'),
+                )
+        elif 'simplestats' in self.request.query_params:
             queryset = queryset\
                 .prefetch_related('review_set')\
                 .annotate(
@@ -56,6 +78,8 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset.order_by('number')
 
     def get_serializer_class(self):
+        if 'allstats' in self.request.query_params:
+            return CourseAllStatsSerializer
         if 'simplestats' in self.request.query_params:
             return CourseSimpleStatsSerializer
         return CourseSerializer
