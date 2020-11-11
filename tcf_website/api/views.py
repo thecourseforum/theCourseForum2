@@ -41,8 +41,13 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         if 'simplestats' in self.request.query_params:
             queryset = queryset\
                 .prefetch_related('review_set')\
-                .annotate(average_rating=Avg('review__recommendability'))\
-                .annotate(average_difficulty=Avg('review__difficulty'))
+                .annotate(
+                    average_difficulty=Avg('review__difficulty'),
+                    average_rating=(
+                        Avg('review__instructor_rating') +
+                        Avg('review__enjoyability') +
+                        Avg('review__recommendability')
+                    ) / 3)
         if 'recent5years' in self.request.query_params:
             latest_semester = Semester.latest()
             queryset = queryset.filter(
