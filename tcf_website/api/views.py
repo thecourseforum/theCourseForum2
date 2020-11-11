@@ -5,7 +5,7 @@ from rest_framework import viewsets
 from ..models import (Course, Department, Instructor, School, Semester,
                       Subdepartment)
 from .paginations import FlexiblePagination
-from .serializers import (CourseSerializer, CourseWithStatsSerializer,
+from .serializers import (CourseSerializer, CourseSimpleStatsSerializer,
                           DepartmentSerializer, InstructorSerializer,
                           SemesterSerializer, SchoolSerializer,
                           SubdepartmentSerializer)
@@ -38,7 +38,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
-        if 'stats' in self.request.query_params:
+        if 'simplestats' in self.request.query_params:
             queryset = queryset\
                 .prefetch_related('review_set')\
                 .annotate(average_rating=Avg('review__recommendability'))\
@@ -51,8 +51,8 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset.order_by('number')
 
     def get_serializer_class(self):
-        if 'stats' in self.request.query_params:
-            return CourseWithStatsSerializer
+        if 'simplestats' in self.request.query_params:
+            return CourseSimpleStatsSerializer
         return CourseSerializer
 
 
