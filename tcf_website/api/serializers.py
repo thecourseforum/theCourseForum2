@@ -49,11 +49,30 @@ class CourseWithStatsSerializer(CourseSerializer):
     average_rating = serializers.FloatField(allow_null=True)
     average_difficulty = serializers.FloatField(allow_null=True)
     average_gpa = serializers.FloatField(allow_null=True)
+    a_plus = serializers.IntegerField(allow_null=True)
+    a = serializers.IntegerField(allow_null=True)
+    a_minus = serializers.IntegerField(allow_null=True)
+    b_plus = serializers.IntegerField(allow_null=True)
+    b = serializers.IntegerField(allow_null=True)
+    b_minus = serializers.IntegerField(allow_null=True)
+    c_plus = serializers.IntegerField(allow_null=True)
+    c = serializers.IntegerField(allow_null=True)
+    c_minus = serializers.IntegerField(allow_null=True)
+    d_plus = serializers.IntegerField(allow_null=True)
+    d = serializers.IntegerField(allow_null=True)
+    d_minus = serializers.IntegerField(allow_null=True)
+    f = serializers.IntegerField(allow_null=True)
+    ot = serializers.IntegerField(allow_null=True)
+    drop = serializers.IntegerField(allow_null=True)
+    withdraw = serializers.IntegerField(allow_null=True)
 
     class Meta:
         model = Course
         fields = ['id', 'title', 'description', 'number', 'subdepartment',
                   'semester_last_taught', 'average_rating',
+                  'a_plus', 'a', 'a_minus', 'b_plus', 'b', 'b_minus',
+                  'c_plus', 'c', 'c_minus', 'd_plus', 'd', 'd_minus',
+                  'f', 'ot', 'drop', 'withdraw',
                   'average_difficulty', 'average_gpa', 'is_recent']
 
 
