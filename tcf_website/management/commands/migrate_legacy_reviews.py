@@ -139,10 +139,14 @@ class Command(BaseCommand):
             subdepartment__mnemonic=review.course.subdepartment.mnemonic
         )
 
-        amount_reading = min(20, review.amount_reading) if review.amount_reading else 0
-        amount_writing = min(20, review.amount_writing) if review.amount_writing else 0
-        amount_group = min(20, review.amount_group) if review.amount_group else 0
-        amount_homework = min(20, review.amount_homework) if review.amount_homework else 0
+        amount_reading = min(
+            20, review.amount_reading) if review.amount_reading else 0
+        amount_writing = min(
+            20, review.amount_writing) if review.amount_writing else 0
+        amount_group = min(
+            20, review.amount_group) if review.amount_group else 0
+        amount_homework = min(
+            20, review.amount_homework) if review.amount_homework else 0
 
         hours_per_week = amount_reading + amount_writing + amount_group + amount_homework
 
