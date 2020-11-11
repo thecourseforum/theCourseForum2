@@ -1,6 +1,6 @@
 # pylint: disable=too-many-ancestors,fixme
 """DRF Viewsets"""
-from django.db.models import Avg
+from django.db.models import Avg, Sum
 from rest_framework import viewsets
 from ..models import (Course, Department, Instructor, School, Semester,
                       Subdepartment)
@@ -43,6 +43,24 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 .prefetch_related('review_set')\
                 .annotate(average_rating=Avg('review__recommendability'))\
                 .annotate(average_difficulty=Avg('review__difficulty'))\
+                .annotate(
+                    a_plus=Sum('coursegrade__a_plus'),
+                    a=Sum('coursegrade__a'),
+                    a_minus=Sum('coursegrade__a_minus'),
+                    b_plus=Sum('coursegrade__b_plus'),
+                    b=Sum('coursegrade__b'),
+                    b_minus=Sum('coursegrade__b_minus'),
+                    c_plus=Sum('coursegrade__c_plus'),
+                    c=Sum('coursegrade__c'),
+                    c_minus=Sum('coursegrade__c_minus'),
+                    d_plus=Sum('coursegrade__d_plus'),
+                    d=Sum('coursegrade__d'),
+                    d_minus=Sum('coursegrade__d_minus'),
+                    f=Sum('coursegrade__f'),
+                    ot=Sum('coursegrade__ot'),
+                    drop=Sum('coursegrade__drop'),
+                    withdraw=Sum('coursegrade__withdraw'),
+                )\
                 .annotate(average_gpa=Avg('coursegrade__average'))
             # TODO: average_gpa should be fixed
         if 'recent5years' in self.request.query_params:
