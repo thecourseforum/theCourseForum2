@@ -22,7 +22,7 @@ function cmpByProp(prop, asc) {
             valB = dateToInt(valB);
         } else { // extract number from string
             try {
-                valA = valA.match(/^-?[0-9]\d*(\.\d+)?$/)[0];
+                valA = valA.match(/-?[0-9]\d*(\.\d+)?/)[0];
             } catch (err) {
                 return 1;
             }
