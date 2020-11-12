@@ -47,13 +47,17 @@ d-flex flex-column justify-content-between" id="sidebar-wrapper">
     {% endif %}
   </div>
 
+<<<<<<< HEAD
+  <div class="footer text-center">
+=======
   <div class="footer text-center small">
+>>>>>>> dev
     <a href="{% url 'privacy' %}">Privacy</a> |
     <a href="{% url 'terms' %}">Terms</a>
     <h6>theCourseForum &copy; {{ LATEST_SEMESTER.year }}</h6>
     <p>
         <span>
-            <a href="https://twitter.com/messages/compose?recipient_id=1959594170" target="_blank">Found a bug?</a>
+            <a href="#bugModal" data-toggle="modal" data-target="#bugModal" id="bugFormOpen"> Found a bug?</a>
         </span>
         {% if DEBUG %}
         <span> | DEBUG Mode</span>
@@ -61,4 +65,7 @@ d-flex flex-column justify-content-between" id="sidebar-wrapper">
     </p>
   </div>
 </div>
+
+{% include "base/bugform.html" %}
+
 <!-- /#sidebar-wrapper -->
