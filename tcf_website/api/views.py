@@ -84,6 +84,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset\
                 .prefetch_related('review_set')\
                 .annotate(
+                    average_gpa=Avg('coursegrade__average'),
                     average_difficulty=Avg('review__difficulty'),
                     average_rating=(
                         Avg('review__instructor_rating') +
