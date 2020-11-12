@@ -246,6 +246,8 @@ REST_FRAMEWORK = {
     ),
 }
 
+DISCORD_URL_BUG = env.str('DISCORD_URL_BUG')
+
 # Use Bootstrap class names for Django message tags
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info',
