@@ -5,7 +5,8 @@ from rest_framework import viewsets
 from ..models import (Course, Department, Instructor, School, Semester,
                       Subdepartment)
 from .paginations import FlexiblePagination
-from .serializers import (CourseSerializer, CourseWithStatsSerializer,
+from .serializers import (CourseSerializer, CourseSimpleStatsSerializer,
+                          CourseAllStatsSerializer,
                           DepartmentSerializer, InstructorSerializer,
                           SemesterSerializer, SchoolSerializer,
                           SubdepartmentSerializer)
@@ -38,12 +39,29 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
-        if 'stats' in self.request.query_params:
+        if 'allstats' in self.request.query_params:
             queryset = queryset\
                 .prefetch_related('review_set')\
-                .annotate(average_rating=Avg('review__recommendability'))\
-                .annotate(average_difficulty=Avg('review__difficulty'))\
                 .annotate(
+                    # ratings
+                    average_instructor=Avg('review__instructor_rating'),
+                    average_fun=Avg('review__enjoyability'),
+                    average_recommendability=Avg('review__recommendability'),
+                    average_difficulty=Avg('review__difficulty'),
+                    average_rating=(
+                        Avg('review__instructor_rating') +
+                        Avg('review__enjoyability') +
+                        Avg('review__recommendability')
+                    ) / 3,
+                    # workload
+                    average_hours_per_week=Avg('review__hours_per_week'),
+                    average_amount_reading=Avg('review__amount_reading'),
+                    average_amount_writing=Avg('review__amount_writing'),
+                    average_amount_group=Avg('review__amount_group'),
+                    average_amount_homework=Avg('review__amount_homework'),
+                    # grades
+                    # TODO: average_gpa should be fixed
+                    average_gpa=Avg('coursegrade__average'),
                     a_plus=Sum('coursegrade__a_plus'),
                     a=Sum('coursegrade__a'),
                     a_minus=Sum('coursegrade__a_minus'),
@@ -61,9 +79,17 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                     drop=Sum('coursegrade__drop'),
                     withdraw=Sum('coursegrade__withdraw'),
                     total_enrolled=Sum('coursegrade__total_enrolled'),
-                )\
-                .annotate(average_gpa=Avg('coursegrade__average'))
-            # TODO: average_gpa should be fixed
+                )
+        elif 'simplestats' in self.request.query_params:
+            queryset = queryset\
+                .prefetch_related('review_set')\
+                .annotate(
+                    average_difficulty=Avg('review__difficulty'),
+                    average_rating=(
+                        Avg('review__instructor_rating') +
+                        Avg('review__enjoyability') +
+                        Avg('review__recommendability')
+                    ) / 3)
         if 'recent5years' in self.request.query_params:
             latest_semester = Semester.latest()
             queryset = queryset.filter(
@@ -72,8 +98,10 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset.order_by('number')
 
     def get_serializer_class(self):
-        if 'stats' in self.request.query_params:
-            return CourseWithStatsSerializer
+        if 'allstats' in self.request.query_params:
+            return CourseAllStatsSerializer
+        if 'simplestats' in self.request.query_params:
+            return CourseSimpleStatsSerializer
         return CourseSerializer
 
 
