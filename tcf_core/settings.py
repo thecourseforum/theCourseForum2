@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from django.contrib.messages import constants as messages
 import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -249,6 +250,14 @@ REST_FRAMEWORK = {
     ),
 }
 
+# Use Bootstrap class names for Django message tags
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
 
 def custom_recording_logic(request):
     """Exclude API views for django-silk"""
