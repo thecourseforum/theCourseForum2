@@ -108,7 +108,6 @@ class Command(BaseCommand):
                 row = cursor.fetchone()
                 try:
                     old_department = self.departments.get(pk=row[0])
-                    print(old_department)
                     return Department.objects.get(name=old_department.name)
                 except BaseException as e:
                     print(e)
