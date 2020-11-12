@@ -49,6 +49,27 @@ class CourseSimpleStatsSerializer(CourseSerializer):
     average_rating = serializers.FloatField(allow_null=True)
     average_difficulty = serializers.FloatField(allow_null=True)
     average_gpa = serializers.FloatField(allow_null=True)
+
+    class Meta:
+        model = Course
+        fields = ['id', 'title', 'description', 'number', 'subdepartment',
+                  'semester_last_taught', 'average_rating',
+                  'average_difficulty', 'average_gpa', 'is_recent']
+
+
+class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
+    """DRF Serializer for Course including all review statistics"""
+    # ratings
+    average_instructor = serializers.FloatField(allow_null=True)
+    average_fun = serializers.FloatField(allow_null=True)
+    average_recommendability = serializers.FloatField(allow_null=True)
+    # workload
+    average_hours_per_week = serializers.FloatField(allow_null=True)
+    average_amount_reading = serializers.FloatField(allow_null=True)
+    average_amount_writing = serializers.FloatField(allow_null=True)
+    average_amount_group = serializers.FloatField(allow_null=True)
+    average_amount_homework = serializers.FloatField(allow_null=True)
+    # grades
     a_plus = serializers.IntegerField(allow_null=True)
     a = serializers.IntegerField(allow_null=True)
     a_minus = serializers.IntegerField(allow_null=True)
@@ -70,29 +91,6 @@ class CourseSimpleStatsSerializer(CourseSerializer):
     class Meta:
         model = Course
         fields = ['id', 'title', 'description', 'number', 'subdepartment',
-                  'semester_last_taught', 'average_rating',
-                  'a_plus', 'a', 'a_minus', 'b_plus', 'b', 'b_minus',
-                  'c_plus', 'c', 'c_minus', 'd_plus', 'd', 'd_minus',
-                  'f', 'ot', 'drop', 'withdraw', 'total_enrolled',
-                  'average_difficulty', 'average_gpa', 'is_recent']
-
-
-class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
-    """DRF Serializer for Course including all review statistics"""
-    # ratings
-    average_instructor = serializers.FloatField(allow_null=True)
-    average_fun = serializers.FloatField(allow_null=True)
-    average_recommendability = serializers.FloatField(allow_null=True)
-    # workload
-    average_hours_per_week = serializers.FloatField(allow_null=True)
-    average_amount_reading = serializers.FloatField(allow_null=True)
-    average_amount_writing = serializers.FloatField(allow_null=True)
-    average_amount_group = serializers.FloatField(allow_null=True)
-    average_amount_homework = serializers.FloatField(allow_null=True)
-
-    class Meta:
-        model = Course
-        fields = ['id', 'title', 'description', 'number', 'subdepartment',
                   'semester_last_taught', 'is_recent',
                   # ratings
                   'average_rating', 'average_instructor', 'average_fun',
@@ -101,7 +99,11 @@ class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
                   'average_hours_per_week', 'average_amount_reading',
                   'average_amount_writing', 'average_amount_group',
                   'average_amount_homework',
-                  ]
+                  # grades
+                  'a_plus', 'a', 'a_minus', 'b_plus', 'b', 'b_minus',
+                  'c_plus', 'c', 'c_minus', 'd_plus', 'd', 'd_minus',
+                  'f', 'ot', 'drop', 'withdraw', 'total_enrolled',
+                  'average_gpa']
 
 
 class InstructorSerializer(serializers.ModelSerializer):
