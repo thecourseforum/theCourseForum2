@@ -56,3 +56,7 @@ body {
     width: 100%;
   }
 }
+
+.modal {
+  z-index: 10000;
+}
