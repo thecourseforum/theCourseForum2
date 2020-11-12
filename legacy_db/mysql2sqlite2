@@ -4,6 +4,8 @@
 
 # FIXME detect empty input file and issue a warning
 
+# Used to convert mysql from tcf1 to sqlite for djnago
+
 function printerr( s ){ print s | "cat >&2" }
 
 BEGIN {

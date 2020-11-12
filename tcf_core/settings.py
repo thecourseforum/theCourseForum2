@@ -135,10 +135,6 @@ DATABASES = {
         'PASSWORD': 's3kr1t',
         'HOST': 'tcf_db',
     },
-    # 'legacy': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'dump_sqlite.sql'),
-    # },
     'legacy': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'tcf.db'),
