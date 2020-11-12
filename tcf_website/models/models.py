@@ -1,4 +1,4 @@
-# pylint: disable=missing-class-docstring, wildcard-import
+# pylint: disable=missing-class-docstring, wildcard-import, fixme
 
 """TCF Database models."""
 
@@ -158,21 +158,28 @@ class Instructor(models.Model):
         """Return string containing instructor full name."""
         return f"{self.first_name} {self.last_name}"
 
+    # this implementation is the same as average_rating in Course
+    # except with an extra
     def average_rating_for_course(self, course):
-        """Compute average of instructor and recommend scores."""
+        """Compute average rating for course.
+
+        Rating is defined as the average of recommendability,
+        instructor rating, and enjoyability."""
         ratings = Review.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('recommendability'),
-            models.Avg('instructor_rating'))
+            models.Avg('instructor_rating'),
+            models.Avg('enjoyability'))
 
         recommendability = ratings.get('recommendability__avg')
         instructor_rating = ratings.get('instructor_rating__avg')
+        enjoyability = ratings.get('enjoyability__avg')
 
         # Return None if one component is absent.
-        if not recommendability or not instructor_rating:
+        if not recommendability or not instructor_rating or not enjoyability:
             return None
 
-        return (recommendability + instructor_rating) / 2
+        return (recommendability + instructor_rating + enjoyability) / 3
 
     def average_difficulty_for_course(self, course):
         """Compute average difficulty score."""
@@ -196,16 +203,18 @@ class Instructor(models.Model):
         """Compute average rating for all this Instructor's Courses"""
         ratings = Review.objects.filter(instructor=self).aggregate(
             models.Avg('recommendability'),
-            models.Avg('instructor_rating'))
+            models.Avg('instructor_rating'),
+            models.Avg('enjoyability'))
 
         recommendability = ratings.get('recommendability__avg')
         instructor_rating = ratings.get('instructor_rating__avg')
+        enjoyability = ratings.get('enjoyability__avg')
 
         # Return None if one component is absent.
-        if not recommendability or not instructor_rating:
+        if not recommendability or not instructor_rating or not enjoyability:
             return None
 
-        return (recommendability + instructor_rating) / 2
+        return (recommendability + instructor_rating + enjoyability) / 3
 
     def average_difficulty(self):
         """Compute average difficulty for all this Instructor's Courses"""
@@ -322,9 +331,24 @@ class Course(models.Model):
         return self.semester_last_taught == Semester.latest()
 
     def average_rating(self):
-        """Compute average rating."""
-        return Review.objects.filter(course=self).aggregate(
-            models.Avg('recommendability'))['recommendability__avg']
+        """Compute average rating.
+
+        Rating is defined as the average of recommendability,
+        instructor rating, and enjoyability."""
+        ratings = Review.objects.filter(course=self).aggregate(
+            models.Avg('recommendability'),
+            models.Avg('instructor_rating'),
+            models.Avg('enjoyability'))
+
+        recommendability = ratings.get('recommendability__avg')
+        instructor_rating = ratings.get('instructor_rating__avg')
+        enjoyability = ratings.get('enjoyability__avg')
+
+        # Return None if one component is absent.
+        if not recommendability or not instructor_rating or not enjoyability:
+            return None
+
+        return (recommendability + instructor_rating + enjoyability) / 3
 
     def average_difficulty(self):
         """Compute average difficulty score."""
@@ -498,18 +522,42 @@ class Review(models.Model):
     difficulty = models.PositiveSmallIntegerField(choices=RATINGS)
     # Review recommendability. Required.
     recommendability = models.PositiveSmallIntegerField(choices=RATINGS)
+    # Review enjoyability. Required.
+    enjoyability = models.PositiveSmallIntegerField(choices=RATINGS)
+
     # Review hours per week. Required.
+    # hours_per_week used to be the only thing, but we also brought back the
+    # subcategories. This is just a sum, but I'm keeping it because other parts
+    # of the codebase depend on this model field existing and I'm not fixing them.
+    # TODO: make validators/tests to ensure hours_per_week is the sum, or just
+    #  remove it entirely from the model and replace w/ function
     hours_per_week = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(168)])
+        validators=[MinValueValidator(0), MaxValueValidator(80)])
+    # Review hours of reading per week. Required.
+    amount_reading = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(20)])
+    # Review hours of writing per week. Required.
+    amount_writing = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(20)])
+    # Review hours of group work per week. Required.
+    amount_group = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(20)])
+    # Review hours of homework per week. Required.
+    amount_homework = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(20)])
+
     # Review created date. Required.
     created = models.DateTimeField(editable=False, default=timezone.now)
     # Review modified date. Required.
     modified = models.DateTimeField(default=timezone.now)
 
+    # does this get used anywhere? not sure
     def average(self):
         """Average score for review."""
-        return (self.instructor_rating + self.recommendability) / 2
+        return (self.instructor_rating +
+                self.recommendability + self.enjoyability) / 3
 
+    # not sure if this gets used anywhere either
     def count_votes(self):
         """Sum votes for review."""
         vote_sum = self.vote_set.aggregate(
