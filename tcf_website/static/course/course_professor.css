@@ -1,9 +1,239 @@
-.course-professor .ratings .card {
-    width: 225px;
-    margin-bottom: 10px;
+.grades_ratings_container {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    margin-bottom: 50px;
+    margin-top: 30px
 }
 
-.course-professor .ratings h5 {
-    color: rgb(219, 72, 41);
-    font-weight: 400;
+.grades_container {
+    width: 40%;
+    height: 100%;
+    flex-shrink: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
 }
+
+.ratings_container {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.ratings_row {
+    display: flex;
+    height: 50%
+}
+.rating_card {
+    height: 95%;
+    background-color: white;
+    width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+    padding-top: 40px;
+    padding-bottom: 40px
+}
+
+.rating_card_num {
+    font-size: 42px;
+    color: #D75626
+}
+
+.rating_card_desc {
+    font-size: 18px;
+}
+.info_container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    background-color: white;
+    height: 95%;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 8px;
+    justify-content: space-around;
+    min-width: 250px
+}
+
+.Absolute-Center {
+    position: absolute;
+    top: auto; left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.pie-chart {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.gpa-text {
+    color: #384676;
+    font-size: 28px;
+    z-index: 1;
+    margin: 0
+}
+
+.students-text {
+    color: #56679d;
+    font-size: 16px;
+    z-index: 1;
+    margin: 0
+}
+
+.progress-bar {
+    background-color: #56679d
+}
+
+.info_row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between
+}
+
+.info_title{
+    width: 102px;
+    padding-left: 5px;
+    display: flex;
+    justify-content: flex-start;
+}
+.info_num {
+    padding-left: 20px;
+    padding-right: 10px;
+}
+.info_bar{ 
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+@media (max-width: 1100px) {
+    .grades_ratings_container {
+      flex-direction: column;
+      margin-bottom: 400px
+    }
+    .grades_container{
+        width: 100%;
+        margin-top: 20px;
+        padding-top: 15px;
+        padding-bottom: 20px;
+
+    }
+    .pie-chart{
+        width: 400px
+    }
+
+    .info_container{
+        margin-right: 0
+    }
+
+    .gpa-text{
+        font-size: 24px
+    }
+    .students-text{
+        font-size: 14
+    }
+
+  }
+
+  @media(max-width: 500px){
+      .ratings_container{
+          height: 225px
+      }
+      .rating_card_num{
+          font-size: 24px
+      }
+      .rating_card_desc{
+          font-size: 14px
+      }
+      .info_title {
+          font-size: 14px
+      }
+      .info_num{
+          font-size: 14px
+      }
+      .progress{
+          height: 14px
+      }
+      .grades_container{
+          margin-bottom: 2013
+      }
+
+  }
+
+  @media(max-width: 400px){
+    .ratings_container{
+        height: 175px
+    }
+    .rating_card_num{
+        font-size: 16px
+    }
+    .rating_card_desc{
+        font-size: 10px
+    }
+    .info_title {
+        font-size: 10px
+    }
+    .info_num{
+        font-size: 10px
+    }
+    .progress{
+        height: 10px
+    }
+    .grades_container{
+        height: 1700px
+    }
+    .gpa-text{
+        font-size: 18px
+    }
+    .students-text{
+        font-size: 12px
+    }
+    .info_container {
+        width: 250px;
+        flex-shrink: 1
+    }
+    .rating_card{
+        width: 70px
+    }
+    .grades_container{
+        margin-bottom: 0
+    }
+    .grades_ratings_container{
+        margin-bottom: 100px
+    }
+
+  }
+
+  @media(max-width: 380px){
+    .rating_card{
+        min-width: 80px;
+        flex-grow: 1;
+        flex-shrink: 1 
+    } 
+    .info_title{
+        width: 70px
+    }
+    .info_bar{
+        width: 50%;
+        flex-shrink:2;
+        margin-right: 0;
+        padding-right: 0
+    }
+    .info_container{
+        min-width: 0;
+    }
+    .info_num{
+        margin-left: 2
+    }
+
+  }
