@@ -47,13 +47,14 @@ class Command(BaseCommand):
                         if old_val:
                             setattr(new_obj, new_field_name, value_func(obj))
                     new_obj.save()
-                    print(f"Created {new_obj}")
+                    print(f"Created {new_obj}".encode('utf-8'))
 
                     if after_func and callable(after_func):
                         after_func(obj, new_obj)
 
                 except Exception as e:
-                    print(f"Error migrating {type(obj).__name__} {obj}:")
+                    print(
+                        f"Error migrating {type(obj).__name__} {obj}:".encode('utf-8'))
                     print(e)
                     traceback.print_exc()
 

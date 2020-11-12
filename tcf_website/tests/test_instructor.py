@@ -22,7 +22,9 @@ class InstructorTestCase(TestCase):
         rating = (self.review1.recommendability +
                   self.review2.recommendability +
                   self.review1.instructor_rating +
-                  self.review2.instructor_rating) / 4
+                  self.review2.instructor_rating +
+                  self.review1.enjoyability +
+                  self.review2.enjoyability) / 6
 
         self.assertTrue(
             self.instructor.average_rating_for_course(self.course) ==
@@ -35,7 +37,7 @@ class InstructorTestCase(TestCase):
                       self.review2.difficulty) / 2
 
         self.assertTrue(
-            self.instructor.average_rating_for_course(self.course) ==
+            self.instructor.average_difficulty_for_course(self.course) ==
             difficulty)
 
     def test_average_rating_no_reviews(self):
