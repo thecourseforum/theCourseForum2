@@ -216,8 +216,9 @@ class Instructor(models.Model):
             Section.objects.filter(
                 instructors=self).distinct().values_list(
                 'course_id', flat=True))
-        # TODO: remove old courses that haven't been taught in 5+ years;
-        #  current heuristic just removes all from old 3-digit system
+
+        # <1000 course IDs are from super old classes...
+        # should we bother keeping the data at that point?
         return Course.objects.filter(
             pk__in=course_ids).filter(
             number__gte=1000).order_by('number')
