@@ -37,15 +37,20 @@
                     </strong>
                 </div>
                 <div class="ml-4 text-muted">
-                    <i class="fa fa-user fa-fw"></i>&nbsp;{{ review.instructor_rating }}
+                    <i class="fas fa-comment"></i>
+                    {{ review.recommendability }}
+                </div>
+                <div class="ml-4 text-muted">
+                    <i class="fa fa-user fa-fw"></i>&nbsp;
+                    {{ review.instructor_rating }}
+                </div>
+                <div class="ml-4 text-muted">
+                    <i class="far fa-grin"></i>
+                    {{ review.enjoyability }}
                 </div>
                 <div class="ml-4 text-muted">
                     <i class="fa fa-skull-crossbones fa-fw"></i>&nbsp;
                     {{ review.difficulty }}
-                </div>
-                <div class="ml-4 text-muted">
-                    <i class="fa fa-thumbs-up fa-fw"></i>&nbsp;
-                    {{ review.recommendability }}
                 </div>
                 <div class="ml-4 text-muted">
                     <i class="fa fa-hourglass-half fa-fw"></i>&nbsp;
