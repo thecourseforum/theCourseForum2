@@ -151,7 +151,6 @@ def course_instructor(request, course_id, instructor_id):
                       'rating': rating,
                       'difficulty': difficulty,
                       'hours': hours,
-                      
                   })
 
 
