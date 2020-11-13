@@ -5,10 +5,15 @@ import requests
 from django.http import JsonResponse
 
 
-def post_bug(query):
+def post_message(query):
     """Post message to discord server"""
+    type = query.GET.get("type", "bug")
     url = os.environ['DISCORD_URL_BUG']
-    content = {'content': query.GET.get('content', '')}
+    if (type == "feedback") {
+        url = os.environ['DISCORD_URL_FEEDBACK']
+    }
+
+    content = {'content': query.GET.get("content", "")}
     json_data = json.dumps(content)
     requests.post(
         url, data=json_data, headers={
