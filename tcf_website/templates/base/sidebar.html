@@ -3,44 +3,47 @@
 <!-- Sidebar -->
 <div id="sidebar-wrapper" class="border-right pb-0
      d-flex flex-column justify-content-between text-center">
-  <div class="list-group list-group-flush">
-    <!-- TODO: dashboard for saved courses, enrollment dates, major-specific info, etc -->
-    <!-- <a href="{% url 'browse' %}"
-       class="list-group-item list-group-item-action">
-       <i class="fa fa-star-o fa-fw"></i>&nbsp; Dashboard
-    </a> -->
-    <a href="{% url 'browse' %}"
-       class="list-group-item list-group-item-action pb-0
-       {% if request.resolver_match.url_name == 'browse' %}active{% endif %}">
-       <h4><i class="fa fa-th-large fa-fw"></i></h4>
-       <p>Browse</p>
-       <hr>
-    </a>
-    <a href="{% url 'new_review' %}"
-       class="list-group-item list-group-item-action pb-0
-       {% if request.resolver_match.url_name == 'new_review' %}active{% endif %}">
-      <h4><i class="fa fa-pencil-square-o fa-fw"></i></h4>
-      <p>+Review</p>
-      <hr>
-    </a>
-    <a href="{% url 'about' %}"
-       class="list-group-item list-group-item-action pb-0
-       {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
-      <h4><i class="fa fa-code fa-fw"></i></h4>
-      <p>About</p>
-      <hr>
-    </a>
-    <a href="#feedback"
-       class="list-group-item list-group-item-action pb-0
-       {% if request.resolver_match.url_name == 'feedback' %}active{% endif %}">
-      <h4><i class="fa fa-thumbs-up fa-fw"></i></h4>
-      <p>Feedback</p>
-      <hr>
-    </a>
-
+  <ul class="list-group list-group-flush mt-3">
+    <li>
+      <a href="{% url 'browse' %}"
+         class="list-group-item list-group-item-action pb-0
+         {% if request.resolver_match.url_name == 'browse' %}active{% endif %}">
+         <h4><i class="fa fa-list fa-fw"></i></h4>
+         <p>Browse</p>
+         <hr>
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'new_review' %}"
+         class="list-group-item list-group-item-action pb-0
+         {% if request.resolver_match.url_name == 'new_review' %}active{% endif %}">
+        <h4><i class="fa fa-pencil-square-o fa-fw"></i></h4>
+        <p>Review</p>
+        <hr>
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'about' %}"
+         class="list-group-item list-group-item-action pb-0
+         {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+        <h4><i class="fa fa-code fa-fw"></i></h4>
+        <p>About</p>
+        <hr>
+      </a>
+    </li>
+    <li>
+      <a href="#feedback"
+         class="list-group-item list-group-item-action pb-0
+         {% if request.resolver_match.url_name == 'feedback' %}active{% endif %}">
+        <h4><i class="fa fa-thumbs-up fa-fw"></i></h4>
+        <p>Feedback</p>
+        <hr>
+      </a>
+    </li>
     <!-- tCF profile dropdown when navbar collapses -->
+    <li>
     {% if user.is_authenticated %}
-      <div class="d-md-none list-group-item dropdown">
+      <div class="list-group-item d-md-none dropdown">
         <div class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <h4><i class="fa fa-user fa-fw"></i></h4>
           <p class="mb-0">Account</p>
@@ -57,10 +60,11 @@
       class="list-group-item list-group-item-action
       {% if request.resolver_match.url_name == 'login' %}active{% endif %}">
         <h4><i class="fa fa-user fa-fw"></i></h4>
+        <p>Sign In</p>
       </a>
-      <p>Sign In</p>
     {% endif %}
-  </div>
+    </li>
+  </ul>
 
   <div class="footer text-center small">
     <a href="{% url 'privacy' %}">Privacy</a> |
@@ -74,4 +78,3 @@
     {% endif %}
   </div>
 </div>
-<!-- /#sidebar-wrapper -->
