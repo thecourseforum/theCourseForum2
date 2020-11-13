@@ -9,9 +9,8 @@ def post_message(query):
     """Post message to discord server"""
     type = query.GET.get("type", "bug")
     url = os.environ['DISCORD_URL_BUG']
-    if (type == "feedback") {
+    if type == "feedback":
         url = os.environ['DISCORD_URL_FEEDBACK']
-    }
 
     content = {'content': query.GET.get("content", "")}
     json_data = json.dumps(content)

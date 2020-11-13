@@ -1,4 +1,4 @@
-function submitForm() {
+function submit(event) {
     var fname = $("#inputFname").val();
     var lname = $("#inputLname").val();
     var email = $("#inputEmail").val();
@@ -21,4 +21,5 @@ function submitForm() {
     });
 }
 
-document.getElementById("submitFeedbackBtn").addEventListener("submit", submitForm, false);
+const form = document.getElementById("feedbackform");
+form.onsubmit = submit;
