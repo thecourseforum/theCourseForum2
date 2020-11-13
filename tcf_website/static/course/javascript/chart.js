@@ -26,14 +26,14 @@ let loadData = async url => {
       document.getElementsByClassName("group-num")[0].innerHTML = data.average_amount_group.toFixed(2)
       document.getElementsByClassName("homework-num")[0].innerHTML = data.average_amount_homework.toFixed(2)
 
-      document.getElementsByClassName("professor-bar")[0].style.width = 100*data.average_instructor/5+"%"
-      document.getElementsByClassName("fun-bar")[0].style.width = 100*data.average_fun/5+"%"
-      document.getElementsByClassName("difficulty-bar")[0].style.width = 100*data.average_difficulty/5+"%"
-      document.getElementsByClassName("recommend-bar")[0].style.width = 100*data.average_recommendability/5+"%"
-      document.getElementsByClassName("reading-bar")[0].style.width = 100*data.average_amount_reading/(data.average_hours_per_week)+"%"
-      document.getElementsByClassName("writing-bar")[0].style.width = 100*data.average_amount_writing/data.average_hours_per_week+"%"
-      document.getElementsByClassName("group-bar")[0].style.width = 100*data.average_amount_group/data.average_hours_per_week+"%"
-      document.getElementsByClassName("homeword-bar")[0].style.width = 100*data.average_amount_homework/data.average_hours_per_week+"%"
+      document.getElementsByClassName("professor-bar")[0].style.width = 100 * data.average_instructor / 5 + "%"
+      document.getElementsByClassName("fun-bar")[0].style.width = 100 * data.average_fun / 5 + "%"
+      document.getElementsByClassName("difficulty-bar")[0].style.width = 100 * data.average_difficulty / 5 + "%"
+      document.getElementsByClassName("recommend-bar")[0].style.width = 100 * data.average_recommendability / 5 + "%"
+      document.getElementsByClassName("reading-bar")[0].style.width = 100 * data.average_amount_reading / (data.average_hours_per_week) + "%"
+      document.getElementsByClassName("writing-bar")[0].style.width = 100 * data.average_amount_writing / data.average_hours_per_week + "%"
+      document.getElementsByClassName("group-bar")[0].style.width = 100 * data.average_amount_group / data.average_hours_per_week + "%"
+      document.getElementsByClassName("homework-bar")[0].style.width = 100 * data.average_amount_homework / data.average_hours_per_week + "%"
     }
   }
 }
@@ -73,9 +73,41 @@ let createChart = grades_data => {
       responsive: false,
       legend: {
         display: false
+      },
+      plugins: {
+        labels: {
+          // render 'label', 'value', 'percentage', 'image' or custom function, default is 'percentage'
+          render: 'label',
+
+          // font size, default is defaultFontSize
+          fontSize: 14,
+
+          // font color, can be color array for each data or function for dynamic color, default is defaultFontColor
+          fontColor: '#fff',
+
+          // font style, default is defaultFontStyle
+          fontStyle: 'normal',
+
+          // draw label in arc, default is false
+          // bar chart ignores this
+          arc: true,
+
+          // position to draw label, available value is 'default', 'border' and 'outside'
+          // bar chart ignores this
+          // default is 'default'
+          position: 'default',
+
+          // draw label even it's overlap, default is true
+          // bar chart ignores this
+          overlap: false,
+
+          // add margin of text when position is `outside` or `border`
+          // default is 2
+          textMargin: 4
+        }
       }
     }
   });
 }
 
-export {loadData}
+export { loadData }

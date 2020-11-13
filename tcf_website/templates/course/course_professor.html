@@ -134,7 +134,7 @@
             </div>
             <div class="info_bar">
               <div class="progress p-0 m-0">
-                <div class="progress-bar homeword-bar p-0 m-0 {{rating}}" style="width: 0%"></div>
+                <div class="progress-bar homework-bar p-0 m-0 {{rating}}" style="width: 0%"></div>
               </div>
             </div>
             <div class="info_num homework-num">
@@ -177,6 +177,7 @@
 {% block js %}
 <script type="module" src="{% static 'reviews/review.js' %}"></script>
 <script type="module" src="{% static 'course/javascript/Chart.bundle.js' %}"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
 <script type="module" src="{% static 'course/javascript/chart.js' %}"></script>
 <script type="module">
 
