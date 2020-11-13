@@ -29,7 +29,7 @@ const form = document.getElementById("feedbackform");
 form.onsubmit = submit;
 
 // Show confirmation modal on form submit
-$("#feedbackform").submit(function(e){
-    $('#confirmationModal').modal('show');
+$("#feedbackform").submit(function(e) {
+    $("#confirmationModal").modal("show");
     return false;
 });
