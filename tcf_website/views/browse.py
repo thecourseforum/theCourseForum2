@@ -144,12 +144,14 @@ def course_instructor(request, course_id, instructor_id):
     return render(request, 'course/course_professor.html',
                   {
                       'course': course,
+                      'course_id': course_id,
                       'instructor': instructor,
                       'reviews': reviews,
                       'breadcrumbs': breadcrumbs,
                       'rating': rating,
                       'difficulty': difficulty,
                       'hours': hours,
+                      
                   })
 
 

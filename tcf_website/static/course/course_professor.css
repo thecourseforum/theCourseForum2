@@ -7,13 +7,14 @@
 }
 
 .grades_container {
-    width: 40%;
+    width: 50%;
     height: 100%;
     flex-shrink: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: white;
+    z-index: 0;
 }
 
 .ratings_container {
@@ -68,6 +69,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    z-index: inherit;
 }
 
 .pie-chart {
@@ -75,19 +77,18 @@
     margin: 0;
     height: 100%;
     width: 100%;
+    z-index: 1;
 }
 
 .gpa-text {
     color: #384676;
     font-size: 28px;
-    z-index: 1;
     margin: 0
 }
 
 .students-text {
     color: #56679d;
     font-size: 16px;
-    z-index: 1;
     margin: 0
 }
 
@@ -102,7 +103,7 @@
 }
 
 .info_title{
-    width: 102px;
+    width: 110px;
     padding-left: 5px;
     display: flex;
     justify-content: flex-start;
@@ -126,10 +127,9 @@
         margin-top: 20px;
         padding-top: 15px;
         padding-bottom: 20px;
-
     }
     .pie-chart{
-        width: 400px
+        width: 400px;
     }
 
     .info_container{

@@ -25,7 +25,7 @@
     <div class="ratings_container">
       <div class="ratings_row">
         <div class="rating_card">
-          <span class="rating_card_num ">{{ rating|floatformat:2 }}</span>
+          <span class="rating_card_num rating_num">--</span>
           <p class="rating_card_desc"><i class="fa fa-star fa-fw"></i>&nbsp;Rating</p>
         </div>
         <div class="info_container">
@@ -38,8 +38,8 @@
                 <div class="progress-bar professor-bar p-0 m-0" style="width: 0%"></div>
               </div>
             </div>
-            <div class="info_num">
-              3.29
+            <div class="info_num professor-num">
+              --
             </div>
           </div>
           <div class="info_row">
@@ -51,8 +51,8 @@
                 <div class="progress-bar fun-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
-            <div class="info_num">
-              3.29
+            <div class="info_num fun-num">
+              --
             </div>
           </div>
           <div class="info_row">
@@ -64,8 +64,8 @@
                 <div class="progress-bar difficulty-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
-            <div class="info_num">
-              3.29
+            <div class="info_num difficulty-num">
+              --
             </div>
           </div>
           <div class="info_row">
@@ -77,15 +77,15 @@
                 <div class="progress-bar recommend-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
-            <div class="info_num">
-              3.29
+            <div class="info_num recommend-num">
+              --
             </div>
           </div>
         </div>
       </div>
       <div class="ratings_row" style="align-items: flex-end">
         <div class="rating_card">
-          <span class="rating_card_num ">{{ hours|floatformat:2 }}</span>
+          <span class="rating_card_num hours_num">--</span>
           <p class="rating_card_desc"><i class="fa fa-hourglass-half fa-fw"></i>&nbsp;Hours/Week</p>
         </div>
         <div class="info_container">
@@ -98,8 +98,8 @@
                 <div class="progress-bar reading-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
-            <div class="info_num">
-              3.29
+            <div class="info_num reading-num">
+              --
             </div>
           </div>
           <div class="info_row">
@@ -111,8 +111,8 @@
                 <div class="progress-bar writing-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
-            <div class="info_num">
-              3.29
+            <div class="info_num writing-num">
+              --
             </div>
           </div>
           <div class="info_row">
@@ -124,21 +124,21 @@
                 <div class="progress-bar group-bar p-0 m-0" style="width:0%"></div>
               </div>
             </div>
-            <div class="info_num">
-              3.29
+            <div class="info_num group-num">
+              --
             </div>
           </div>
           <div class="info_row">
             <div class="info_title">
-              Other
+              Homework
             </div>
             <div class="info_bar">
               <div class="progress p-0 m-0">
-                <div class="progress-bar other-bar p-0 m-0 {{rating}}" style="width: 0%"></div>
+                <div class="progress-bar homeword-bar p-0 m-0 {{rating}}" style="width: 0%"></div>
               </div>
             </div>
-            <div class="info_num">
-              3.29
+            <div class="info_num homework-num">
+              ---
             </div>
           </div>
         </div>
@@ -147,8 +147,8 @@
     <div class="grades_container">
       <canvas id="myChart2" class="pie-chart "></canvas>
       <div class="Absolute-Center">
-        <p class="gpa-text">3.50 GPA</p>
-        <p class="students-text">217 Students</p>
+        <p class="gpa-text"> -- GPA</p>
+        <p class="students-text"> -- Students</p>
       </div>
     </div>
 
@@ -176,35 +176,13 @@
 
 {% block js %}
 <script type="module" src="{% static 'reviews/review.js' %}"></script>
-<script src="{% static 'course/javascript/Chart.bundle.js' %}"></script>
-<script src="{% static 'course/javascript/chart.js' %}"></script>
-<script>
-    $(document).ready(function () {
-      var professor_percent = "{{rating}}"
-      $(".professor-bar").width(professor_percent+"%");
+<script type="module" src="{% static 'course/javascript/Chart.bundle.js' %}"></script>
+<script type="module" src="{% static 'course/javascript/chart.js' %}"></script>
+<script type="module">
 
-      var fun_percent = "{{rating}}"
-      $(".fun-bar").width(fun_percent+"%");
+  import { loadData } from "{% static 'course/javascript/chart.js' %}";
 
-      var difficulty_percent = "{{rating}}"
-      $(".difficulty-bar").width(difficulty_percent+"%");
+  loadData("http://localhost:8000/api/courses/{{course_id}}/?allstats")
 
-      var recommend_percent = "{{rating}}"
-      $(".recommend-bar").width(recommend_percent+"%");
-
-      var reading_percent = "{{rating}}"
-      $(".reading-bar").width(reading_percent+"%");
-
-      var writing_percent = "{{rating}}"
-      $(".writing-bar").width(writing_percent+"%");
-
-      var group_percent = "{{rating}}"
-      $(".group-bar").width(group_percent+"%");
-
-      var other_percent = "{{rating}}"
-      $(".other-bar").width(other_percent+"%");
-    });
-    
-  </script>
+</script>
 {% endblock %}
-
