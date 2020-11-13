@@ -19,17 +19,17 @@
         <!-- Tabs for displaying result categories: Courses, Departments, Instructors -->
         <div id="result-nav" class="result-nav row mb-5">
           <div class="col-12">
-            <div class="btn-group btn-group-sm" role="group">
+            <div class="btn-group btn-group-sm" role="toolbar">
               <a class="btn bg-tcf-indigo text-white" disabled>See results for</a>
-              <a href="#courses" id="course-tab" class="btn btn-light collapsed" role="button"
-                 data-toggle="collapse" aria-expanded="true" aria-controls="courses">
+              <a href="#courses" id="course-tab" class="btn btn-light collapsed" autofocus
+                 role="button" data-toggle="collapse" aria-expanded="true" aria-controls="courses">
                 Courses</a>
-              <a href="#departments" id="department-tab" class="btn btn-light collapsed" role="button"
-                data-toggle="collapse" aria-expanded="false" aria-controls="departments">
-                Departments</a>
-              <a href="#instructors" id="instructor-tab" class="btn btn-light collapsed" role="button"
-                 data-toggle="collapse" aria-expanded="false" aria-controls="instructors">
+              <a href="#instructors" id="instructor-tab" class="btn btn-light collapsed"
+                 role="button" data-toggle="collapse" aria-expanded="false" aria-controls="instructors">
                 Instructors</a>
+              <a href="#departments" id="department-tab" class="btn btn-light collapsed"
+                role="button" data-toggle="collapse" aria-expanded="false" aria-controls="departments">
+                Departments</a>
             </div>
           </div>
         </div>
@@ -43,8 +43,7 @@
             <div class="col-12">
 
               <div class="search-result-header mb-3">
-                <h3>Courses</h3>
-                &nbsp;&nbsp;&nbsp;
+                <h3 class="mr-3">Courses</h3>
                 {% if courses %}
                 <p class="text-muted">15 results</p>
                 {% else %}
@@ -80,14 +79,37 @@
             </div>
           </div>
 
+          <!-- Instructor results -->
+          <div id="instructors" class="row mb-5 collapse"
+               aria-labelledby="instructor-tab" data-parent="#results">
+            <div class="col-12">
+              <div class="search-result-header mb-3">
+                <h3 class="mr-3">Instructors</h3>
+                <p class="text-muted">{{ instructors|length }} results</p>
+              </div>
+              {% if instructors %}
+                <ul class="list-unstyled searched-instructors text-left">
+                {% for i in instructors %}
+                  <li class="my-2">
+                    <a href="{% url 'instructor' instructor_id=i.id %}">
+                        {{ i.first_name }} {{ i.last_name }}
+                    </a>
+                  </li>
+                {% endfor %}
+                </ul>
+              {% else %}
+                  <p>No professors matched your search.</p>
+              {% endif %}
+            </div>
+          </div>
+
           <!-- Department results -->
           <div id="departments" class="row mb-5 collapse"
                aria-labelledby="department-tab" data-parent="#results">
             <div class="col-12">
 
               <div class="search-result-header mb-3">
-                <h3>Departments</h3>
-                &nbsp;&nbsp;&nbsp;
+                <h3 class="mr-3">Departments</h3>
                 <p class="text-muted">{{ courses|length }} results</p>
               </div>
               {% if courses %}
@@ -105,31 +127,6 @@
                 </ul>
               {% else %}
               <p>No departments matched your search.</p>
-              {% endif %}
-            </div>
-          </div>
-
-          <!-- Instructor results -->
-          <div id="instructors" class="row mb-5 collapse"
-               aria-labelledby="instructor-tab" data-parent="#results">
-            <div class="col-12">
-              <div class="search-result-header mb-3">
-                <h3>Instructors</h3>
-                &nbsp;&nbsp;&nbsp;
-                <p class="text-muted">{{ instructors|length }} results</p>
-              </div>
-              {% if instructors %}
-                <ul class="list-unstyled searched-instructors text-left">
-                {% for i in instructors %}
-                  <li class="my-2">
-                    <a href="{% url 'instructor' instructor_id=i.id %}">
-                        {{ i.first_name }} {{ i.last_name }}
-                    </a>
-                  </li>
-                {% endfor %}
-                </ul>
-              {% else %}
-                  <p>No professors matched your search.</p>
               {% endif %}
             </div>
           </div>
