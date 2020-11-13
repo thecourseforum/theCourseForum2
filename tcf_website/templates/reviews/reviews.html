@@ -27,20 +27,4 @@
 {% if reviews %}
 <script type="module" src="{% static 'reviews/sort_reviews.js' %}"></script>
 {% endif %}
-<script type="module" src="{% static 'reviews/review.js' %}"></script>
-<script>
-    {% if user.is_authenticated %}
-        Array.prototype.forEach.call(document.getElementsByClassName("upvote"), function(button) {
-            button.addEventListener('click', ()=>{
-                    onclick="handleVote({{review.id}}, true)"
-            }, false);
-            button.href = "javascript:;"
-        });
-        Array.prototype.forEach.call(document.getElementsByClassName("downvote"), function(button) {
-            button.addEventListener('click', ()=>{
-                    onclick="handleVote({{review.id}}, false)"
-            }, false);
-            button.href = "javascript:;"
-        });
-    {% endif %}
-</script>
+<script src="{% static 'reviews/review.js' %}"></script>
