@@ -258,6 +258,7 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
+
 def custom_recording_logic(request):
     """Exclude API views for django-silk"""
     return not request.path.startswith('/api')
