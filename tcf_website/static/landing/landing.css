@@ -15,27 +15,28 @@ nav.navbar img.logo{
 }
 
 /* Masthead */
-.header-img img {
-  opacity: 1;
-}
-
 header.masthead {
   position: relative;
+  padding: 4rem 2rem 2rem; /* Top, right/left, bottom */
 }
-
 header.masthead h1 {
   font-size: 2rem;
 }
-.about-link {
-  font-size: 2rem;
-  line-height: 120%;
+.about-logo h1, .about-logo p {
+  text-align: center;
+  padding-left: 0rem;
 }
 @media (min-width: 768px) {
+  header.masthead {
+    position: relative;
+    padding: 8rem 2rem 2rem;
+  }
   header.masthead h1 {
     font-size: 3rem;
   }
-  .about-link {
-    font-size: 1.25rem;
+  .about-logo h1, .about-logo p {
+    text-align: left;
+    padding-left: 2rem;
   }
 }
 
@@ -58,15 +59,27 @@ header.masthead h1 {
 }
 
 .features-icons .features-icons-item .features-icons-icon i {
-  font-size: 4.5rem;
+  font-size: 3.5rem;
+}
+@media (min-width: 768px) {
+  .features-icons .features-icons-item .features-icons-icon i {
+    font-size: 4.5rem;
+  }
 }
 
 .features-icons .features-icons-item:hover .features-icons-icon i {
   font-size: 5rem;
 }
 
-
 /* About team */
+.about-team .about-header p {
+  font-size: 1.1rem;
+}
+@media (min-width: 768px) {
+  .about-team .about-header p {
+    font-size: 1.5rem;
+  }
+}
 /* About member photo hover animation */
 .about-team .about-pfp {
   overflow: hidden;
@@ -84,11 +97,32 @@ header.masthead h1 {
 .about-team .about-link:hover{
   box-shadow: 2px 2px 5px var(--main-color);
 }
+.about-link {
+  font-size: 1.25rem;
+}
 /* About info box */
 .about-team .about-info {
   border: 3px solid var(--accent-color);
   border-radius: 0%;
 }
+.about-team .about-info p {
+  font-size: 0.9rem;
+}
 .about-team .about-info:hover {
   box-shadow: 4px 4px 10px var(--accent-color);
+}
+@media (min-width: 768px) {
+  .about-team .about-info p {
+    font-size: 1rem;
+  }
+}
+
+/* Feedback form */
+.feedback .feedback-header p {
+  font-size: 1rem;
+}
+@media (min-width: 768px) {
+  .feedback .feedback-header p {
+    font-size: 1.25rem;
+  }
 }

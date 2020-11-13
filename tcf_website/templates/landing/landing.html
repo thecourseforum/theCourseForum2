@@ -20,7 +20,7 @@
     <div class="container">
       <!-- tCF logo -->
       <a class="navbar-brand logo-container" href="/">
-        <img class="logo" src="{% static 'base/img/new_logo.png' %}">&nbsp;
+        <img class="logo" src="{% static 'base/img/new_logo.png' %}" alt="theCourseForum logo">
         <h4 class="text-tcf-indigo">theCourseForum</h4>
       </a>
       <!-- tCF profile dropdown -->
@@ -47,15 +47,13 @@
   </nav>
 
   <!-- Masthead -->
-  <header class="masthead text-center p-5">
-    <!-- For extra padding -->
-    <div class="row py-5"></div>
-
+  <header class="masthead text-center">
     <div class="row">
       <div class="col-xl-8 mx-auto py-4">
         <div class="about-logo row justify-content-center">
-          <img src="{% static 'base/img/new_logo.png' %}" class="mr-4" height="150px">
-          <div class="tagline text-left">
+          <img src="{% static 'base/img/new_logo.png' %}" alt="theCourseForum logo"
+               height="150px">
+          <div class="tagline text-left pt-3">
             <h1>theCourseForum</h1>
             <p>connecting you to the courses you love.</p>
           </div>
@@ -69,10 +67,10 @@
 
   <!-- Icons Grid -->
   <section class="features-icons container px-5 pb-5">
-      <div class="row px-4 text-center">
+      <div class="row px-md-4 text-center">
         <div class="col-lg-4">
           <a href="{% url 'browse' %}" class="link-unstyled">
-            <div class="card m-3">
+            <div class="card mx-sm-3 my-3">
               <div class="card-body features-icons-item mx-auto mb-2">
                 <div class="features-icons-icon d-flex">
                   <i class="icon-list m-auto text-tcf-indigo"></i>
@@ -86,7 +84,7 @@
 
         <div class="col-lg-4">
           <a href="{% url 'browse' %}" class="link-unstyled">
-            <div class="card m-3">
+            <div class="card mx-sm-3 my-3">
               <div class="card-body features-icons-item mx-auto mb-2">
                 <div class="features-icons-icon d-flex">
                   <i class="icon-chart m-auto text-tcf-indigo"></i>
@@ -100,7 +98,7 @@
 
         <div class="col-lg-4">
           <a href="{% url 'new_review' %}" class="link-unstyled">
-            <div class="card m-3">
+            <div class="card mx-sm-3 my-3">
               <div class="card-body features-icons-item mx-auto mb-2">
                 <div class="features-icons-icon d-flex">
                   <i class="icon-pencil m-auto text-tcf-indigo"></i>
@@ -119,7 +117,7 @@
   <section class="about-team py-5 my-5">
     <div class="about-header row">
       <div class="col-lg-8 p-4 bg-tcf-indigo text-white text-right">
-        <h3 class="font-weight-light px-4">We'll connect you to courses you'll love, and make enrollment stress free.</h3>
+        <p class="font-weight-light px-4">We'll connect you to courses you'll love, and make enrollment stress free.</p>
       </div>
       <div class="col-lg-4">
       </div>
@@ -128,9 +126,9 @@
     <div class="about-content container">
       <div class="row pt-5 px-0">
         <div class="col-lg-8">
-          <div class="team-photos row text-center pr-4 mb-4">
+          <div class="team-photos row text-center pr-md-4 mb-4">
             {% for member in executive_team %}
-              <div class="col-md-3 col-xs-6 px-0">
+              <div class="col-6 col-md-3 px-0">
                 <div class="about-member card flex-fill bg-light">
                   <div class="about-pfp px-4 py-3">
                     <img class="card-img-top rounded-circle" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
@@ -142,7 +140,7 @@
                 </div>
               </div>
             {% endfor %}
-            <div class="col-md-3 col-xs-6">
+            <div class="col-6 col-md-3">
               <a href="{% url 'about' %}" class="link-unstyled">
                 <div class="about-link card bg-tcf-orange mt-3 mx-1">
                   <div class="card-body mx-auto py-5">
@@ -181,7 +179,7 @@
   <!-- Feedback Form -->
   <section class="feedback container py-5 mb-5">
       <div class="row text-center">
-        <div class="col-md-10 mx-auto">
+        <div class="feedback-header col-md-10 mx-auto">
           <h2 class="mb-4">Tell us about your experience</h2>
           <p class="lead mb-5">Keep in touch! We would love to hear about your experience with the site and areas where you think we can improve.</p>
         </div>
