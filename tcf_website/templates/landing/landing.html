@@ -178,7 +178,7 @@
           <p class="lead mb-5">Keep in touch! We would love to hear about your experience with the site and areas where you think we can improve.</p>
         </div>
         <div class="col-md-10 mx-auto text-left">
-          <form>
+          <form id="feedbackform">
             <div class="form-row">
               <div class="col-md-6">
                 <div class="form-row">
@@ -208,7 +208,7 @@
               </div>
             </div>
             <div class="text-right">
-              <button type="submit" class="btn btn-primary bg-tcf-indigo">Submit Feedback</button>
+              <button type="submit" class="btn btn-primary bg-tcf-indigo" id="submitFeedbackBtn">Submit Feedback</button>
             </div>
           </form>
         </div>
@@ -267,4 +267,8 @@
     </div>
   </div>
 </footer>
+{% endblock %}
+
+{% block js %}
+<script type="module" src="{% static 'landing/feedbackform.js' %}"></script>
 {% endblock %}

@@ -62,3 +62,23 @@ footer {
 footer > .row {
     background-color: #172248;
 }
+
+.btn-primary {
+  background-color: #D75626;
+  border-color: #D75626;
+}
+
+button.btn-primary:hover {
+  background-color: #D75626;
+  border-color: #D75626;
+}
+
+.form-control {
+  background-color: #EBEBEB;
+  color: #000000;
+  border-color: #EBEBEB;
+}
+
+.form-row {
+  margin: 0.5rem;
+}
