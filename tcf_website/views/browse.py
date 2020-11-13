@@ -198,7 +198,7 @@ def group_by_dept(instructor, courses):
                     instructor, course)), 'avg_difficulty': safe_round(
                 Instructor.average_difficulty_for_course(
                     instructor, course)), 'avg_hours': (
-                        lambda x: safe_round(x) if x is not None else '—')(
+                        lambda x: safe_round(x) if x is not None else '\u2014')(
                             Instructor.average_hours_for_course(
                                 instructor, course)), 'last_taught': str(
                                     course.semester_last_taught)}
@@ -214,4 +214,4 @@ def safe_round(num):
     """
     if num is not None:
         return round(num, 2)
-    return '—'
+    return '\u2014'
