@@ -2,8 +2,7 @@
 {% load static %}
 
 {% block styles %}
-<style>
-</style>
+<link rel="stylesheet" href="{% static 'reviews/new_review.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -16,25 +15,24 @@
     <form class="card-body" action="{% url 'new_review' %}" method="POST">
         {% csrf_token %}
         <!-- Class Info -->
-        <div class="form-row mb-3">
-          <h4 class="text-tcf-orange my-3">Which class are you reviewing?</h4>
-        </div>
-        <div class="form-row mb-3">
-          <div class="form-group col-3">
+        <div class="new-review-course form-row mb-3">
+          <h4 class="review-form-header form-group col-12 my-4">
+            Which class are you reviewing?</h4>
+          <div class="form-group col-sm-3 col-6">
             <label for="course">Subject</label>
             <input type="text" placeholder="e.g. CS" class="form-control" id="course" name="subject" required>
           </div>
-          <div class="form-group col-3">
+          <div class="form-group col-sm-3 col-6">
             <label for="course">Course ID</label>
             <input type="text" placeholder="e.g. 2150" class="form-control" id="course" name="course" required>
           </div>
-          <div class="form-group col-6">
+          <div class="form-group col-sm-6">
             <label for="instructor">Instructor</label>
             <input type="text" placeholder="e.g. Aaron Bloomfield" class="form-control" id="instructor" name="instructor" required>
           </div>
         </div>
         <div class="form-row mb-3">
-          <div class="form-group col-3">
+          <div class="form-group col-sm-3 col-6">
             <label for="semester">Semester</label>
             <input type="text" list="semesters" placeholder="e.g. Fall"
                    class="form-control" id="semester" name="semester" required>
@@ -45,7 +43,7 @@
               <option value="Summer">
             </datalist>
           </div>
-          <div class="form-group col-3">
+          <div class="form-group col-sm-3 col-6">
             <label for="year">Year</label>
             <input type="text" list="years" placeholder="e.g. 2020"
                    class="form-control" id="year" name="year" required>
@@ -62,10 +60,9 @@
         <hr>
 
         <!-- Review written content -->
-        <div class="form-row mb-3">
-          <h4 class="text-tcf-orange mt-3">Tell us more about the course & instructor...</h4>
-        </div>
-        <div class="form-row mb-3">
+        <div class="new-review-content form-row mb-3">
+          <h4 class="review-form-header form-group col-12 my-4">
+            Tell us more about the course & instructor</h4>
           <div class="form-group col mb-3">
             <textarea class="form-control" id="reviewText" name="reviewText" rows="5"
                       placeholder="e.g. I love CS 2150, Bloomfield is great!"></textarea>
@@ -73,15 +70,15 @@
         </div>
         <hr>
 
-        <!-- Review grade for course -->
-        <div class="form-row">
-          <h4 class="text-tcf-orange col-sm-6 p-0 mt-3">Rate the course</h4>
-          <h4 class="text-tcf-orange col-sm-6 pr-0 mt-3">Hours of work/week</h4>
-        </div>
-        <div class="form-row d-flex justify-content-space-around mb-3">
-          <div class="form-group col pr-5">
+        <!-- Review ratings for course -->
+        <div class="new-review-ratings form-row mb-3">
+          <div class="form-group col-sm-6 pr-sm-5">
+              <h4 class="review-form-header col-12 p-0 my-4">
+                Rate the course</h4>
               <div class="mt-3">
-                  <label for="instructorRating" class="text-tcf-orange">Instructor</label>
+                  <label for="instructorRating" class="review-form-label">
+                    <i class="fas fa-user"></i> Instructor
+                  </label>
                   <div class="d-flex">
                       <span class="mr-2">1</span>
                       <input type="range" class="custom-range" min="1" max="5" step="1"
@@ -90,7 +87,9 @@
                   </div>
               </div>
               <div class="mt-3">
-                  <label for="instructorRating" class="text-tcf-orange">Enjoyability</label>
+                  <label for="instructorRating" class="review-form-label">
+                    <i class="fas fa-smile-beam"></i> Enjoyability
+                  </label>
                   <div class="d-flex">
                       <span class="mr-2">1</span>
                       <input type="range" class="custom-range" min="1" max="5" step="1"
@@ -99,7 +98,9 @@
                   </div>
               </div>
               <div class="mt-3">
-                  <label for="difficulty" class="text-tcf-orange">Difficulty</label>
+                  <label for="difficulty" class="review-form-label">
+                    <i class="fas fa-dumbbell"></i> Difficulty
+                  </label>
                   <div class="d-flex">
                       <span class="mr-2">1</span>
                       <input type="range" class="custom-range" min="1" max="5" step="1"
@@ -108,7 +109,9 @@
                   </div>
               </div>
               <div class="mt-3">
-                  <label for="recommendability" class="text-tcf-orange">Recommendability</label>
+                  <label for="recommendability" class="review-form-label">
+                    <i class="fas fa-thumbs-up"></i> Recommendability
+                  </label>
                   <div class="d-flex">
                       <span class="mr-2">1</span>
                       <input type="range" class="custom-range" min="1" max="5" step="1"
@@ -117,31 +120,41 @@
                   </div>
               </div>
           </div>
-          <div class="form-group col px-5">
-              <div class="row mt-4">
-                <label for="hours" class="text-tcf-orange col-sm-6 p-0 mt-1">Reading</label>
+          <div class="form-group col-sm-6 px-sm-4">
+              <h4 class="review-form-header p-0 mt-4">
+                Hours of work/week</h4>
+              <div class="row py-3">
+                <label for="hours" class="review-form-label col-8">
+                  <i class="fas fa-book"></i> Reading
+                </label>
                 <input type="number" value=0 min="0" max="20" class="form-control col"
                        id="hours_reading" name="hours_reading" required>
               </div>
-              <div class="row mt-4">
-                <label for="hours" class="text-tcf-orange col-sm-6 p-0 mt-1">Writing</label>
+              <div class="row py-3">
+                <label for="hours" class="review-form-label col-8">
+                  <i class="fas fa-pencil-alt"></i> Writing
+                </label>
                 <input type="number" value=0 min="0" max="20" class="form-control col"
                        id="hours_writing" name="hours_writing" required>
               </div>
-              <div class="row mt-4">
-                <label for="hours" class="text-tcf-orange col-sm-6 p-0 mt-1">Groupwork</label>
+              <div class="row py-3">
+                <label for="hours" class="review-form-label col-8">
+                  <i class="fas fa-user-friends"></i> Groupwork
+                </label>
                 <input type="number" value=0 min="0" max="20" class="form-control col"
                        id="hours_groupwork" name="hours_groupwork" required>
               </div>
-              <div class="row mt-4">
-                <label for="hours" class="text-tcf-orange col-sm-6 p-0 mt-1">Other</label>
+              <div class="row py-3">
+                <label for="hours" class="review-form-label col-8">
+                  <i class="fas fa-flask"></i> Other
+                </label>
                 <input type="number" value=0 min="0" max="20" class="form-control col"
                        id="hours_other" name="hours_other" required>
               </div>
           </div>
         </div>
         <hr>
-        <div class="row my-4">
+        <div class="new-review-submit row my-4">
           <button type="submit" class="btn btn-primary mx-auto">Submit Review</button>
         </div>
       </form>
