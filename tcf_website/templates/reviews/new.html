@@ -2,70 +2,148 @@
 {% load static %}
 
 {% block styles %}
+<style>
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="browse container-fluid d-flex flex-column align-items-center">
-    
+<div class="new-review container-fluid d-flex flex-column text-left">
+
+    <h2 class="mt-2 mb-4">Write a review</h2>
     <div class="row">
     <div class="card col">
-        
-    <form class="card-body text-center" action="{% url 'new_review' %}" method="POST">
+
+    <form class="card-body" action="{% url 'new_review' %}" method="POST">
         {% csrf_token %}
-        <h2 class="card-title mt-3 mb-5">Write a review</h2>
+        <!-- Class Info -->
         <div class="form-row mb-3">
-          <div class="form-group col">
-            <label for="course">Course</label>
-            <input type="text" placeholder="e.g. CS 2150" class="form-control" id="course" name="course" required>
+          <h4 class="text-tcf-orange my-3">Which class are you reviewing?</h4>
+        </div>
+        <div class="form-row mb-3">
+          <div class="form-group col-3">
+            <label for="course">Subject</label>
+            <input type="text" placeholder="e.g. CS" class="form-control" id="course" name="subject" required>
           </div>
-          <div class="form-group col">
+          <div class="form-group col-3">
+            <label for="course">Course ID</label>
+            <input type="text" placeholder="e.g. 2150" class="form-control" id="course" name="course" required>
+          </div>
+          <div class="form-group col-6">
             <label for="instructor">Instructor</label>
             <input type="text" placeholder="e.g. Aaron Bloomfield" class="form-control" id="instructor" name="instructor" required>
           </div>
-          <div class="form-group col">
+        </div>
+        <div class="form-row mb-3">
+          <div class="form-group col-3">
             <label for="semester">Semester</label>
-            <input type="text" placeholder="e.g. {{ LATEST_SEMESTER }}" class="form-control" id="semester" name="semester" required>
+            <input type="text" list="semesters" placeholder="e.g. Fall"
+                   class="form-control" id="semester" name="semester" required>
+            <datalist id="semesters">
+              <option value="Fall">
+              <option value="January">
+              <option value="Spring">
+              <option value="Summer">
+            </datalist>
+          </div>
+          <div class="form-group col-3">
+            <label for="year">Year</label>
+            <input type="text" list="years" placeholder="e.g. 2020"
+                   class="form-control" id="year" name="year" required>
+            <datalist id="years">
+              <option value="2016">
+              <option value="2017">
+              <option value="2018">
+              <option value="2019">
+              <option value="2020">
+              <option value="2021">
+            </datalist>
           </div>
         </div>
-        <div class="form-group mb-3">
-          <label for="reviewText">Tell us more about the course & instructor:</label>
-          <textarea class="form-control" id="reviewText" name="reviewText" placeholder="e.g. I love CS 2150, Bloomfield is great!"></textarea>
+        <hr>
+
+        <!-- Review written content -->
+        <div class="form-row mb-3">
+          <h4 class="text-tcf-orange mt-3">Tell us more about the course & instructor...</h4>
+        </div>
+        <div class="form-row mb-3">
+          <div class="form-group col mb-3">
+            <textarea class="form-control" id="reviewText" name="reviewText" rows="5"
+                      placeholder="e.g. I love CS 2150, Bloomfield is great!"></textarea>
+          </div>
+        </div>
+        <hr>
+
+        <!-- Review grade for course -->
+        <div class="form-row">
+          <h4 class="text-tcf-orange col-sm-6 p-0 mt-3">Rate the course</h4>
+          <h4 class="text-tcf-orange col-sm-6 pr-0 mt-3">Hours of work/week</h4>
         </div>
         <div class="form-row d-flex justify-content-space-around mb-3">
-          <div class="form-group col mr-5">
-                <div class="mt-3">
-                    <label for="instructorRating">Instructor rating</label>
-                    <div class="d-flex">
-                        <span class="mr-2">1</span>
-                        <input type="range" class="custom-range" min="1" max="5" step="1" id="instructorRating" name="instructorRating" required>
-                        <span class="ml-2">5</span>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <label for="difficulty">Difficulty</label>
-                    <div class="d-flex">
-                        <span class="mr-2">1</span>
-                        <input type="range" class="custom-range" min="1" max="5" step="1" id="difficulty" name="difficulty" required>
-                        <span class="ml-2">5</span>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <label for="recommendability">Recommendability</label>
-                    <div class="d-flex">
-                        <span class="mr-2">1</span>
-                        <input type="range" class="custom-range" min="1" max="5" step="1" id="recommendability" name="recommendability" required>
-                        <span class="ml-2">5</span>
-                    </div>
-                </div>
+          <div class="form-group col pr-5">
+              <div class="mt-3">
+                  <label for="instructorRating" class="text-tcf-orange">Instructor</label>
+                  <div class="d-flex">
+                      <span class="mr-2">1</span>
+                      <input type="range" class="custom-range" min="1" max="5" step="1"
+                             value=3 id="instructorRating" name="instructorRating" required>
+                      <span class="ml-2">5</span>
+                  </div>
+              </div>
+              <div class="mt-3">
+                  <label for="instructorRating" class="text-tcf-orange">Enjoyability</label>
+                  <div class="d-flex">
+                      <span class="mr-2">1</span>
+                      <input type="range" class="custom-range" min="1" max="5" step="1"
+                             value=3 id="enjoyability" name="enjoyability" required>
+                      <span class="ml-2">5</span>
+                  </div>
+              </div>
+              <div class="mt-3">
+                  <label for="difficulty" class="text-tcf-orange">Difficulty</label>
+                  <div class="d-flex">
+                      <span class="mr-2">1</span>
+                      <input type="range" class="custom-range" min="1" max="5" step="1"
+                             value=3 id="difficulty" name="difficulty" required>
+                      <span class="ml-2">5</span>
+                  </div>
+              </div>
+              <div class="mt-3">
+                  <label for="recommendability" class="text-tcf-orange">Recommendability</label>
+                  <div class="d-flex">
+                      <span class="mr-2">1</span>
+                      <input type="range" class="custom-range" min="1" max="5" step="1"
+                             value=3 id="recommendability" name="recommendability" required>
+                      <span class="ml-2">5</span>
+                  </div>
+              </div>
           </div>
-          <div class="form-group col d-flex justify-content-center align-items-center">
-                <div class="container-fluid">
-                    <label for="hours">Hours per week of work</label>
-                    <input type="number" placeholder="e.g. 3" class="form-control" id="hours" name="hours" required>
-                </div>
+          <div class="form-group col px-5">
+              <div class="row mt-4">
+                <label for="hours" class="text-tcf-orange col-sm-6 p-0 mt-1">Reading</label>
+                <input type="number" value=0 min="0" max="20" class="form-control col"
+                       id="hours_reading" name="hours_reading" required>
+              </div>
+              <div class="row mt-4">
+                <label for="hours" class="text-tcf-orange col-sm-6 p-0 mt-1">Writing</label>
+                <input type="number" value=0 min="0" max="20" class="form-control col"
+                       id="hours_writing" name="hours_writing" required>
+              </div>
+              <div class="row mt-4">
+                <label for="hours" class="text-tcf-orange col-sm-6 p-0 mt-1">Groupwork</label>
+                <input type="number" value=0 min="0" max="20" class="form-control col"
+                       id="hours_groupwork" name="hours_groupwork" required>
+              </div>
+              <div class="row mt-4">
+                <label for="hours" class="text-tcf-orange col-sm-6 p-0 mt-1">Other</label>
+                <input type="number" value=0 min="0" max="20" class="form-control col"
+                       id="hours_other" name="hours_other" required>
+              </div>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit!</button>
+        <hr>
+        <div class="row my-4">
+          <button type="submit" class="btn btn-primary mx-auto">Submit Review</button>
+        </div>
       </form>
     </div>
 </div>
