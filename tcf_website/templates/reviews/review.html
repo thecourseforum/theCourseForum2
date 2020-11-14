@@ -1,29 +1,26 @@
 <div id="review{{review.id}}" class="review card mb-2 d-flex flex-row align-items-center">
-
-    <div class="d-none d-sm-flex vote-container ml-4 mr-2 flex-column justify-content-center align-items-center">
-        <!--Voting logic is implemented in the <script> tag of reviews.html-->
-        <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}">
-            <i class="fa fa-angle-up fa-fw"></i>
-        </a>
-        <span id="vote-count" class="voteCount">{{ review.count_votes }}</span>
-        <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}">
-            <i class="fa fa-angle-down fa-fw"></i>
-        </a>
-    </div>
-
     <div class="card-body text-left">
-
-        <div class="d-flex flex-row align-items-center">
-            <div>
-
-                {% if profile %}
-                <div class="d-flex justify-content-between">
-                    <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}"><p><strong>{{ review.instructor.full_name }} - {{ review.course }}</strong></p></a>
-                    <a href="#">Edit</a>
+        <div class="row">
+            <div class="col-2 vote-container d-flex flex-column justify-content-center align-items-center">
+                <!--Voting logic is implemented in the <script> tag of reviews.html-->
+                <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}">
+                    <i class="fa fa-angle-up fa-fw"></i>
+                </a>
+                <span id="vote-count" class="voteCount">{{ review.count_votes }}</span>
+                <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}">
+                    <i class="fa fa-angle-down fa-fw"></i>
+                </a>
+            </div>
+            <div class="col-10">
+                <div>
+                    {% if profile %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}"><p><strong>{{ review.instructor.full_name }} - {{ review.course }}</strong></p></a>
+                        <a href="#">Edit</a>
+                    </div>
+                    {% endif %}
+                    <p class="card-text" style="white-space: pre-line;">{{ review.text }}</p>
                 </div>
-                {% endif %}
-                <p style="white-space: pre-line;">{{ review.text }}</p>
-
             </div>
         </div>
 
