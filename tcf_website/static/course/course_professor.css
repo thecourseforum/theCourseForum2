@@ -5,7 +5,7 @@
     margin-bottom: 50px;
     margin-top: 30px
 }
-
+ 
 .grades_container {
     width: 45%;
     height: 100%;
@@ -16,19 +16,27 @@
     background-color: white;
     z-index: 0;
 }
-
+ 
+.chart_container {
+    height: 100%;
+    width: 300px;
+    position: relative;
+}
+ 
 .ratings_container {
+    height: 100%;
     display: flex;
     flex-grow: 1;
     flex-direction: column;
 }
-
+ 
 .ratings_row {
     display: flex;
     height: 50%
 }
+ 
 .rating_card {
-    height: 95%;
+    height: 97%;
     background-color: white;
     width: 200px;
     display: flex;
@@ -38,12 +46,12 @@
     padding-top: 40px;
     padding-bottom: 40px
 }
-
+ 
 .rating_card_num {
     font-size: 42px;
     color: #D75626
 }
-
+ 
 .rating_card_desc {
     font-size: 18px;
 }
@@ -52,7 +60,7 @@
     flex-direction: column;
     flex-grow: 1;
     background-color: white;
-    height: 95%;
+    height: 97%;
     margin-left: 10px;
     margin-right: 10px;
     padding-top: 6px;
@@ -61,7 +69,7 @@
     justify-content: space-around;
     min-width: 250px
 }
-
+ 
 .Absolute-Center {
     position: absolute;
     top: auto; left: auto;
@@ -69,39 +77,30 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    z-index: inherit;
 }
-
-.pie-chart {
-    padding: 0;
-    margin: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 1;
-}
-
+ 
 .gpa-text {
     color: #384676;
     font-size: 28px;
     margin: 0
 }
-
+ 
 .students-text {
     color: #56679d;
     font-size: 16px;
     margin: 0
 }
-
+ 
 .progress-bar {
     background-color: #56679d
 }
-
+ 
 .info_row {
     display: flex;
     align-items: center;
-    justify-content: space-between
+    justify-content: space-between;
 }
-
+ 
 .info_title{
     width: 110px;
     padding-left: 5px;
@@ -116,63 +115,86 @@
     flex-grow: 1;
     flex-shrink: 1;
 }
-
+ 
 @media (max-width: 1100px) {
     .grades_ratings_container {
       flex-direction: column;
-      margin-bottom: 400px
+      height: 650px;
     }
+ 
     .grades_container{
+        height: 50%;
         width: 100%;
         margin-top: 20px;
         padding-top: 15px;
         padding-bottom: 20px;
     }
-    .pie-chart{
-        width: 400px;
+ 
+    .ratings_container{
+        height: 50%
     }
-
+ 
+ 
     .info_container{
         margin-right: 0
     }
-
+ 
     .gpa-text{
         font-size: 24px
     }
     .students-text{
         font-size: 14
     }
-
+ 
   }
-
+ 
+  @media(max-width: 770px){
+ 
+  }
+ 
   @media(max-width: 500px){
-      .ratings_container{
-          height: 225px
-      }
-      .rating_card_num{
-          font-size: 24px
-      }
-      .rating_card_desc{
-          font-size: 14px
-      }
-      .info_title {
-          font-size: 14px
-      }
-      .info_num{
-          font-size: 14px
-      }
-      .progress{
-          height: 14px
-      }
-      .grades_container{
-          margin-bottom: 2013
-      }
-
-  }
-
-  @media(max-width: 400px){
+    .grades_ratings_container{
+        height: 500px;
+    }
     .ratings_container{
-        height: 175px
+        height: 40%;
+    }
+ 
+    .grades_container{
+        height: 60%;
+    }
+    .rating_card_num{
+        font-size: 24px
+    }
+    .rating_card_desc{
+        font-size: 14px
+    }
+    .info_title {
+        font-size: 14px
+    }
+    .info_num{
+        font-size: 14px
+    }
+    .progress{
+        height: 14px
+    }
+ 
+  }
+ 
+  @media(max-width: 400px){
+    .grades_ratings_container{
+        height: 400px
+    }
+ 
+    .grades_container{
+        height: 50%;
+    }
+ 
+    .chart_container{
+        width: 175px
+    }
+    .ratings_container{
+        height: 50%
     }
     .rating_card_num{
         font-size: 16px
@@ -189,9 +211,7 @@
     .progress{
         height: 10px
     }
-    .grades_container{
-        height: 1700px
-    }
+ 
     .gpa-text{
         font-size: 18px
     }
@@ -211,9 +231,9 @@
     .grades_ratings_container{
         margin-bottom: 100px
     }
-
+ 
   }
-
+ 
   @media(max-width: 380px){
     .rating_card{
         min-width: 80px;
@@ -235,5 +255,5 @@
     .info_num{
         margin-left: 2
     }
-
+ 
   }
