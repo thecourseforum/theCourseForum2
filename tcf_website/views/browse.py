@@ -85,10 +85,13 @@ def course_view(request, course_id):
         'instructors',
         flat=True).distinct()
     old_instructors = Instructor.objects.filter(pk__in=old_instructor_pks)
-    # Add ratings and difficulties
+    # Add ratings, difficulties, and semester
+    # Also passes in the semster number for sorting in template
     for instr in old_instructors:
         instr.rating = instr.average_rating_for_course(course)
         instr.difficulty = instr.average_difficulty_for_course(course)
+        instr.last_taught_sem = instr.last_taught(course)
+        instr.number = instr.last_taught_sem.number
 
     dept = course.subdepartment.department
 

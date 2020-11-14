@@ -41,10 +41,10 @@
                         {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty last_taught=course.semester_last_taught %}
                     </li>
                 {% endfor %}
-                {% for i in old_instructors %}
+                {% for i in old_instructors|dictsortreversed:"number" %}
                     <li class="instructor old">
                         {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
-                        {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty %}
+                        {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty last_taught=i.last_taught_sem%}
                     </li>
                 {% endfor %}
             </ul>

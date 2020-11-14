@@ -199,6 +199,15 @@ class Instructor(models.Model):
         # implies (collecting Sections instead of Courses); work in progress
         return Section.objects.filter(instructors=self)
 
+    def last_taught(self, course):
+        """Returns the latest semester a professort taught a section of a specific course."""
+        # Probably inefficient and similar comments as taught_courses above
+        # However, the is not called that many times so there is no noticable
+        # delay
+        return Section.objects.filter(
+            instructors=self,
+            course=course).order_by("-semester").first().semester
+
     def average_rating(self):
         """Compute average rating for all this Instructor's Courses"""
         ratings = Review.objects.filter(instructor=self).aggregate(
