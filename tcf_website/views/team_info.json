@@ -102,6 +102,12 @@
                        "class": "2021",
                        "img_filename": "ENG_Alexa_Gomez.jpg",
                        "github": "alexagomez"
+                       },
+                      {"name": "Jihoon Park",
+                        "role": "Developer",
+                        "class": "2021",
+                        "img_filename": "ENG_Jihoon_Park.jpg",
+                        "github": "Bartleby2718"
                        }
                      ],
 
