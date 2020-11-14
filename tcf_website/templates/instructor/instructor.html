@@ -50,18 +50,6 @@
                         </li>
                         <li class="col text-nowrap">
                             <small class="text-uppercase">
-                                <i class="fa fa-hourglass-half"></i> Hours
-                            </small>
-                            <p class="h3" id="hours">
-                                {% if avg_hours %}
-                                    {{ avg_hours }}
-                                {% else %}
-                                    &mdash;
-                                {% endif %}
-                            </p>
-                        </li>
-                        <li class="col text-nowrap">
-                            <small class="text-uppercase">
                                 <i class="fa fa-chart-bar"></i> GPA
                             </small>
                             <p class="h3" id="gpa">
@@ -99,14 +87,6 @@
                         </small>
                         <p class="h4" id="difficulty">
                             {{ course.avg_difficulty }}
-                        </p>
-                    </li>
-                    <li class="col text-nowrap">
-                        <small class="text-uppercase">
-                            <i class="fa fa-hourglass-half"></i> Hours
-                        </small>
-                        <p class="h4" id="hours">
-                            {{ course.avg_hours }}
                         </p>
                     </li>
                     <li class="col text-nowrap">

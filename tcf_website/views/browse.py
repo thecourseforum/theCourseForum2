@@ -131,7 +131,6 @@ def course_instructor(request, course_id, instructor_id):
     # Get average statistics.
     rating = instructor.average_rating_for_course(course)
     difficulty = instructor.average_difficulty_for_course(course)
-    hours = instructor.average_hours_for_course(course)
 
     return render(request, 'course/course_professor.html',
                   {
@@ -141,7 +140,6 @@ def course_instructor(request, course_id, instructor_id):
                       'breadcrumbs': breadcrumbs,
                       'rating': rating,
                       'difficulty': difficulty,
-                      'hours': hours,
                   })
 
 
@@ -197,11 +195,8 @@ def group_by_dept(instructor, courses):
                 Instructor.average_rating_for_course(
                     instructor, course)), 'avg_difficulty': safe_round(
                 Instructor.average_difficulty_for_course(
-                    instructor, course)), 'avg_hours': (
-                        lambda x: safe_round(x) if x is not None else '\u2014')(
-                            Instructor.average_hours_for_course(
-                                instructor, course)), 'last_taught': str(
-                                    course.semester_last_taught)}
+                    instructor, course)), 'last_taught': str(
+                course.semester_last_taught)}
         grouped_courses[course_subdept]['courses'].append(course_data)
 
     return grouped_courses
