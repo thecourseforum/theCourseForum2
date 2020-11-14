@@ -16,8 +16,6 @@
     width: fit-content;
     height: auto;
     padding: 3px 2px 1px 2px;
-    margin: 0px 16px 0px 0px;
-    border-radius: calc(.25rem - 1px);
 
     /* Animation */
     transform: scale(1.0);
@@ -26,28 +24,25 @@
 }
 
 .logo-container:hover {
-    background-color: rgba(140, 151, 161, 0.2);
     transform: scale(1.05);
 }
 
 .logo-container:active {
-    background-color: rgb(140, 151, 161, 0.4);
     transform: scale(1.05);
 }
 
 .logo-container:focus {
-    background-color: rgb(140, 151, 161, 0.4);
     transform: scale(1.05);
 }
 
 @media (min-width: 768px) {
     .logo-container {
-        width: calc(240px - 16px - 16px);
+        width: calc(var(--sidebar-width) - 16px);
         height: auto;
 
         /* Animation */
-        padding-left: 75.09px; /* centers logo in logo-container */
-        padding-right: 0px;
+        padding-left: 0.55rem; /* centers logo in logo-container */
+        padding-right: 0rem;
     }
 }
 
