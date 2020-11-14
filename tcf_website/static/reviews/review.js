@@ -56,3 +56,5 @@ function handleVote(reviewID, isUpvote) {
         otherElem.removeClass("active");
     }
 }
+
+export { handleVote };
