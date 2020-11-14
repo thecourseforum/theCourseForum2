@@ -22,12 +22,12 @@ function cmpByProp(prop, asc) {
             valB = dateToInt(valB);
         } else { // extract number from string
             try {
-                valA = valA.match(/-?[0-9]\d*(\.\d+)?/)[0];
+                valA = parseFloat(valA.match(/-?[0-9]\d*(\.\d+)?/)[0]);
             } catch (err) {
                 return 1;
             }
             try {
-                valB = valB.match(/-?[0-9]\d*(\.\d+)?/)[0];
+                valB = parseFloat(valB.match(/-?[0-9]\d*(\.\d+)?/)[0]);
             } catch (err) {
                 return -1;
             }
