@@ -3,7 +3,3 @@
 .new-review .review-form-header{
   color: var(--accent-color);
 }
-
-.new-review .review-form-label{
-  color: var(--main-color);
-}
