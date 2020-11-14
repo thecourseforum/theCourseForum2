@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from django.contrib.messages import constants as messages
 import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -137,7 +138,7 @@ DATABASES = {
     'legacy': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'tcf.db'),
-    },
+    }
 }
 
 
@@ -243,6 +244,18 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
+}
+
+DISCORD_URL_BUG = env.str('DISCORD_URL_BUG')
+DISCORD_URL_FEEDBACK = env.str('DISCORD_URL_FEEDBACK')
+
+# Use Bootstrap class names for Django message tags
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
 }
 
 
