@@ -34,27 +34,25 @@
         <div class="form-row mb-3">
           <div class="form-group col-sm-3 col-6">
             <label for="semester">Semester</label>
-            <input type="text" list="semesters" placeholder="e.g. Fall"
-                   class="form-control" id="semester" name="semester" required>
-            <datalist id="semesters">
-              <option value="Fall">
-              <option value="January">
-              <option value="Spring">
-              <option value="Summer">
-            </datalist>
+            <select type="text" class="form-control" id="semester" name="semester" required>
+              <option value="" disabled selected>[Select]</option>
+              <option value="Fall">Fall</option>
+              <option value="January">January</option>
+              <option value="Spring">Spring</option>
+              <option value="Summer">Summer</option>
+            </select>
           </div>
           <div class="form-group col-sm-3 col-6">
             <label for="year">Year</label>
-            <input type="text" list="years" placeholder="e.g. 2020"
-                   class="form-control" id="year" name="year" required>
-            <datalist id="years">
-              <option value="2016">
-              <option value="2017">
-              <option value="2018">
-              <option value="2019">
-              <option value="2020">
-              <option value="2021">
-            </datalist>
+            <select type="text" class="form-control" id="year" name="year" required>
+              <option value="" disabled selected>[Select]</option>
+              <option value="2016">2016</option>
+              <option value="2017">2017</option>
+              <option value="2018">2018</option>
+              <option value="2019">2019</option>
+              <option value="2020">2020</option>
+              <option value="2021">2021</option>
+            </select>
           </div>
         </div>
         <hr>
