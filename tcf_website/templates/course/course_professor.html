@@ -1,18 +1,18 @@
 {% extends "base/base.html" %}
 {% load static %}
-
+ 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'common/toolbar.css' %}" />
 <link rel="stylesheet" href="{% static 'course/course_professor.css' %}" />
 <link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
 {% endblock %}
-
+ 
 {% block content %}
-
+ 
 <div class="course-professor container">
-
+ 
   {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
-
+ 
   <div class="d-flex flex-column align-items-center my-3 mt-md-5">
     <h1>{{ instructor.full_name }}</h1>
     <div class="d-md-flex">
@@ -20,8 +20,8 @@
       <h4 class="mr-md-3">{{ course.title }}</h4>
     </div>
   </div>
-
-  <div class="grades_ratings_container ">
+ 
+  <div class="grades_ratings_container mb-5 ">
     <div class="ratings_container">
       <div class="ratings_row">
         <div class="rating_card">
@@ -39,7 +39,7 @@
               </div>
             </div>
             <div class="info_num professor-num">
-              --
+              ---
             </div>
           </div>
           <div class="info_row">
@@ -52,7 +52,7 @@
               </div>
             </div>
             <div class="info_num fun-num">
-              --
+              ---
             </div>
           </div>
           <div class="info_row">
@@ -65,7 +65,7 @@
               </div>
             </div>
             <div class="info_num difficulty-num">
-              --
+              ---
             </div>
           </div>
           <div class="info_row">
@@ -78,7 +78,7 @@
               </div>
             </div>
             <div class="info_num recommend-num">
-              --
+              ---
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@
               </div>
             </div>
             <div class="info_num reading-num">
-              --
+              ---
             </div>
           </div>
           <div class="info_row">
@@ -112,12 +112,12 @@
               </div>
             </div>
             <div class="info_num writing-num">
-              --
+              ---
             </div>
           </div>
           <div class="info_row">
             <div class="info_title">
-              Group
+              Groupwork
             </div>
             <div class="info_bar">
               <div class="progress  p-0 m-0">
@@ -125,7 +125,7 @@
               </div>
             </div>
             <div class="info_num group-num">
-              --
+              ---
             </div>
           </div>
           <div class="info_row">
@@ -134,7 +134,7 @@
             </div>
             <div class="info_bar">
               <div class="progress p-0 m-0">
-                <div class="progress-bar homework-bar p-0 m-0 {{rating}}" style="width: 0%"></div>
+                <div class="progress-bar homework-bar p-0 m-0" style="width: 0%"></div>
               </div>
             </div>
             <div class="info_num homework-num">
@@ -145,16 +145,18 @@
       </div>
     </div>
     <div class="grades_container">
-      <canvas id="myChart2" class="pie-chart "></canvas>
+      <div class="chart_container d-flex align-items-center justify-content-center">
+        <canvas width="100%" height="100%" id="myChart"></canvas>
+      </div>
       <div class="Absolute-Center">
         <p class="gpa-text"> -- GPA</p>
         <p class="students-text"> -- Students</p>
       </div>
     </div>
-
+ 
   </div>
-
-
+ 
+ 
   <div class="dropdown">
     <button id="review-sort-select" class="btn btn-secondary dropdown-toggle" type="button" id="sortOptions"
       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
@@ -169,21 +171,22 @@
         Rating</button>
     </div>
   </div>
-
+ 
   {% include "reviews/reviews.html" with reviews=reviews %}
 </div>
 {% endblock %}
-
+ 
 {% block js %}
 <script type="module" src="{% static 'reviews/review.js' %}"></script>
 <script type="module" src="{% static 'course/javascript/Chart.bundle.js' %}"></script>
-<script type="module" src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+<script type="module"
+  src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
 <script type="module" src="{% static 'course/javascript/chart.js' %}"></script>
 <script type="module">
-
+ 
   import { loadData } from "{% static 'course/javascript/chart.js' %}";
-
+ 
   loadData("http://localhost:8000/api/courses/{{course_id}}/?allstats")
-
+ 
 </script>
 {% endblock %}
