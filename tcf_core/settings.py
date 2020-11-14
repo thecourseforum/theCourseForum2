@@ -247,6 +247,7 @@ REST_FRAMEWORK = {
 }
 
 DISCORD_URL_BUG = env.str('DISCORD_URL_BUG')
+DISCORD_URL_FEEDBACK = env.str('DISCORD_URL_FEEDBACK')
 
 # Use Bootstrap class names for Django message tags
 MESSAGE_TAGS = {
@@ -256,6 +257,7 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
 
 def custom_recording_logic(request):
     """Exclude API views for django-silk"""
