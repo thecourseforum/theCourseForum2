@@ -1,0 +1,76 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block styles %}
+{% endblock %}
+
+{% block content %}
+<div class="browse container-fluid d-flex flex-column align-items-center">
+    
+    <div class="row">
+    <div class="card col">
+        
+    <form class="card-body text-center" action="{% url 'new_review' %}" method="POST">
+        {% csrf_token %}
+        <h2 class="card-title mt-3 mb-5">Write a review</h2>
+        <div class="form-row mb-3">
+          <div class="form-group col">
+            <label for="course">Course</label>
+            <input type="text" placeholder="e.g. CS 2150" class="form-control" id="course" name="course" required>
+          </div>
+          <div class="form-group col">
+            <label for="instructor">Instructor</label>
+            <input type="text" placeholder="e.g. Aaron Bloomfield" class="form-control" id="instructor" name="instructor" required>
+          </div>
+          <div class="form-group col">
+            <label for="semester">Semester</label>
+            <input type="text" placeholder="e.g. {{ LATEST_SEMESTER }}" class="form-control" id="semester" name="semester" required>
+          </div>
+        </div>
+        <div class="form-group mb-3">
+          <label for="reviewText">Tell us more about the course & instructor:</label>
+          <textarea class="form-control" id="reviewText" name="reviewText" placeholder="e.g. I love CS 2150, Bloomfield is great!"></textarea>
+        </div>
+        <div class="form-row d-flex justify-content-space-around mb-3">
+          <div class="form-group col mr-5">
+                <div class="mt-3">
+                    <label for="instructorRating">Instructor rating</label>
+                    <div class="d-flex">
+                        <span class="mr-2">1</span>
+                        <input type="range" class="custom-range" min="1" max="5" step="1" id="instructorRating" name="instructorRating" required>
+                        <span class="ml-2">5</span>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <label for="difficulty">Difficulty</label>
+                    <div class="d-flex">
+                        <span class="mr-2">1</span>
+                        <input type="range" class="custom-range" min="1" max="5" step="1" id="difficulty" name="difficulty" required>
+                        <span class="ml-2">5</span>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <label for="recommendability">Recommendability</label>
+                    <div class="d-flex">
+                        <span class="mr-2">1</span>
+                        <input type="range" class="custom-range" min="1" max="5" step="1" id="recommendability" name="recommendability" required>
+                        <span class="ml-2">5</span>
+                    </div>
+                </div>
+          </div>
+          <div class="form-group col d-flex justify-content-center align-items-center">
+                <div class="container-fluid">
+                    <label for="hours">Hours per week of work</label>
+                    <input type="number" placeholder="e.g. 3" class="form-control" id="hours" name="hours" required>
+                </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit!</button>
+      </form>
+    </div>
+</div>
+</div>
+
+
+
+{% endblock %}
