@@ -19,6 +19,10 @@ Responsive breakpoints:
 
 */
 
+:root {
+  --sidebar-width: 7rem;        /* Width of sidebar is fixed */
+}
+
 html {
     position: relative;
     min-height: 100%;
@@ -37,8 +41,8 @@ body {
 
 @media (min-width: 768px) {
     .content {
-        width: calc(100vw - 240px);
-        margin-left: 240px;
+        width: calc(100vw - var(--sidebar-width));
+        margin-left: var(--sidebar-width);
     }
 }
 
