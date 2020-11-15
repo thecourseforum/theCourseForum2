@@ -6,6 +6,8 @@ let loadData = async url => {
       //console.log("NOT FOUND")
     } else {
 
+      console.log(data)
+
       const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop } = data
       const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop]
 
