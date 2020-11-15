@@ -216,6 +216,39 @@
     </div>
   </section>
 
+  <!-- welcome modal -->
+  <div class="modal show" id="welcomeModal" tabindex="-1" role="dialog" aria-labelledby="welcomeModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <div class="container">
+            <div class="row justify-content-center">
+              <h5>Welcome to theCourseForum 2.0! </h5>
+            </div>
+            <div class="row justify-content-center">
+              <p> Our team has been working hard to bring you the new tCF
+                website. We've redesigned the site with the goal of writing
+                cleaner, maintainable, and well-documented code to keep tCF up
+                and running for years to come. <br><br>
+                We're still in the process of beta testing, so thank you for
+                your patience as we work out any bugs and errors. Help us out,
+                and report any bugs that your find! <br><br>
+                Questions, comments, or concerns? <br>
+                Fill out the feedback form below and/or join our
+                <a href="https://discord.gg/tAjzH7eyvW" class="text-tcf-blue">discord server</a>!</p>
+            </div>
+            <div class="row justify-content-center">
+              <button type="button" data-dismiss="modal" class="btn btn-primary bg-tcf-indigo"> Thank you! </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <div>
 
 <!-- Footer -->
@@ -271,4 +304,11 @@
 
 {% block js %}
 <script type="module" src="{% static 'landing/feedbackform.js' %}"></script>
+{% if not visited %}
+<script type="text/javascript">
+    $(window).on('load',function(){
+        $('#welcomeModal').modal('show');
+    });
+</script>
+{% endif %}
 {% endblock %}
