@@ -12,22 +12,24 @@ body {
   background-color: var(--main-color);
   position: fixed;
   z-index: 9999;
-  filter: brightness(75%);
-}
-
-#sidebar-wrapper .sidebar-heading {
-  padding: 0.875rem 1.25rem;
-  font-size: 1.2rem;
+  filter: brightness(85%);
 }
 
 #sidebar-wrapper .list-group {
-  width: 15rem;
+  width: var(--sidebar-width);      /* From base.css */
   margin-top: 2rem;
+}
+
+#sidebar-wrapper .list-group hr {
+  border-color: white;
+  margin-bottom: 0rem;
 }
 
 #sidebar-wrapper .list-group-item, .footer, .footer a {
   background-color: var(--main-color);
   color: var(--background-color);
+  padding-top: 1rem;
+  border: 0rem;
 }
 
 #sidebar-wrapper .list-group-item.active,
@@ -55,4 +57,8 @@ body {
     min-width: 0;
     width: 100%;
   }
+}
+
+.modal {
+  z-index: 10000;
 }

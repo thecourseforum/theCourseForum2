@@ -2,11 +2,11 @@
 
     <div class="d-none d-sm-flex vote-container ml-4 mr-2 flex-column justify-content-center align-items-center">
         <!--Voting logic is implemented in the <script> tag of reviews.html-->
-        <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}">
+        <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}" id="upvote{{review.id}}">
             <i class="fa fa-angle-up fa-fw"></i>
         </a>
         <span id="vote-count" class="voteCount">{{ review.count_votes }}</span>
-        <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}">
+        <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}" id="downvote{{review.id}}">
             <i class="fa fa-angle-down fa-fw"></i>
         </a>
     </div>
@@ -37,15 +37,20 @@
                     </strong>
                 </div>
                 <div class="ml-4 text-muted">
-                    <i class="fa fa-user fa-fw"></i>&nbsp;{{ review.instructor_rating }}
+                    <i class="fas fa-comment"></i>
+                    {{ review.recommendability }}
+                </div>
+                <div class="ml-4 text-muted">
+                    <i class="fa fa-user fa-fw"></i>&nbsp;
+                    {{ review.instructor_rating }}
+                </div>
+                <div class="ml-4 text-muted">
+                    <i class="far fa-grin"></i>
+                    {{ review.enjoyability }}
                 </div>
                 <div class="ml-4 text-muted">
                     <i class="fa fa-skull-crossbones fa-fw"></i>&nbsp;
                     {{ review.difficulty }}
-                </div>
-                <div class="ml-4 text-muted">
-                    <i class="fa fa-thumbs-up fa-fw"></i>&nbsp;
-                    {{ review.recommendability }}
                 </div>
                 <div class="ml-4 text-muted">
                     <i class="fa fa-hourglass-half fa-fw"></i>&nbsp;
