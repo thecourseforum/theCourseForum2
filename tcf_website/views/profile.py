@@ -13,7 +13,12 @@ class ProfileForm(ModelForm):
     """Form updating user profile."""
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'graduation_year']
+        fields = [
+            'first_name',
+            'last_name',
+            'graduation_year',
+            'first_major',
+            'second_major']
 
         # Add the form-control class to make the form work with Bootstrap
         widgets = {
@@ -25,7 +30,13 @@ class ProfileForm(ModelForm):
                     'class': 'form-control'}),
             'graduation_year': forms.NumberInput(
                 attrs={
-                    'class': 'form-control'})}
+                    'class': 'form-control'}),
+            'first_major': forms.TextInput(
+                attrs={
+                    'class': 'form-control'}),
+            'second_major': forms.TextInput(
+                attrs={
+                    'class': 'form-control'}), }
 
 
 @login_required

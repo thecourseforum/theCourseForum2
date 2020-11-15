@@ -30,8 +30,6 @@ def collect_extra_info(
     # session 'grad_year' is set by the pipeline infrastructure
     # because it exists in FIELDS_STORED_IN_SESSION
     grad_year = strategy.session_get('grad_year', None)
-    first_major = strategy.session_get('first_major', None)
-    second_major = strategy.session_get('second_major', None)
     if not grad_year:
         # if we return something besides a dict or None, then that is
         # returned to the user -- in this case we will redirect to a
@@ -57,9 +55,11 @@ def create_user(strategy, details, backend, user=None, *args, **kwargs):
     if not fields:
         return None
 
-    # Add graduation year and computing ID. This is extra info not
-    # automatically collected by python-social-auth.
+    # Add graduation year, major information, and computing ID.
+    # This is extra info not automatically collected by python-social-auth.
     fields['graduation_year'] = strategy.session_get('grad_year', None)
+    fields['first_major'] = strategy.session_get('first_major', None)
+    fields['second_major'] = strategy.session_get('second_major', None)
     fields['computing_id'] = kwargs.get(
         'email', details.get('email')).split('@')[0]
 
