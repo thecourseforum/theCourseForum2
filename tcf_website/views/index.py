@@ -16,10 +16,10 @@ def index(request):
         team_info = json.load(data_file)
 
     response = render(request, 'landing/landing.html',
-                  {'executive_team': team_info['executive_team'],
-                   'visited':request.session.get('visited', False)})
+                      {'executive_team': team_info['executive_team'],
+                       'visited': request.session.get('visited', False)})
     request.session['visited'] = True
-    
+
     return response
 
 
