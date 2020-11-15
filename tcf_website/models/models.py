@@ -1,4 +1,5 @@
-# pylint: disable=missing-class-docstring, wildcard-import, fixme
+# pylint: disable=line-too-long, missing-class-docstring, wildcard-import,
+# pylint: disable=fixme,
 
 """TCF Database models."""
 
@@ -110,6 +111,95 @@ class User(AbstractUser):
 
     Has many Reviews.
     """
+
+    # List of all majors
+    MAJOR_CHOICES = [('', 'N/A'),
+                     ('Undecided', 'Undecided'),
+                     ('African American & African Studies', 'African American & African Studies'),
+                     ('American Studies', 'American Studies'),
+                     ('Anthropology', 'Anthropology'),
+                     ('Art History', 'Art History'),
+                     ('Art, Studio', 'Art, Studio'),
+                     ('Astronomy', 'Astronomy'),
+                     ('Astronomy-Physics', 'Astronomy-Physics'),
+                     ('Biology', 'Biology'),
+                     ('Chemistry', 'Chemistry'),
+                     ('Chinese Language & Literature', 'Chinese Language & Literature'),
+                     ('Classics', 'Classics'),
+                     ('Cognitive Science', 'Cognitive Science'),
+                     ('Comparative Literature', 'Comparative Literature'),
+                     ('Computer Science (BA)', 'Computer Science (BA)'),
+                     ('Computer Science (BS)', 'Computer Science (BS)'),
+                     ('Drama', 'Drama'),
+                     ('East Asian Studies', 'East Asian Studies'),
+                     ('Economics', 'Economics'),
+                     ('English', 'English'),
+                     ('Environmental Sciences', 'Environmental Sciences'),
+                     ('Environmental Thought & Practice', 'Environmental Thought & Practice'),
+                     ('French', 'French'),
+                     ('German', 'German'),
+                     ('Global Studies', 'Global Studies'),
+                     ('History', 'History'),
+                     ('Human Biology', 'Human Biology'),
+                     ('Italian', 'Italian'),
+                     ('Japanese Language & Literature', 'Japanese Language & Literature'),
+                     ('Jewish Studies', 'Jewish Studies'),
+                     ('Latin American Studies', 'Latin American Studies'),
+                     ('Linguistics', 'Linguistics'),
+                     ('Mathematics', 'Mathematics'),
+                     ('Media Studies', 'Media Studies'),
+                     ('Medieval Studies', 'Medieval Studies'),
+                     ('Middle Eastern and South Asian Languages and Cultures', 'Middle Eastern and South Asian Languages and Cultures'),
+                     ('Music', 'Music'),
+                     ('Neuroscience', 'Neuroscience'),
+                     ('Philosophy', 'Philosophy'),
+                     ('Physics', 'Physics'),
+                     ('Political and Social Thought', 'Political and Social Thought'),
+                     ('Political Philosophy, Policy, and Law', 'Political Philosophy, Policy, and Law'),
+                     ('Politics', 'Politics'),
+                     ('Psychology', 'Psychology'),
+                     ('Religious Studies', 'Religious Studies'),
+                     ('Slavic Languages and Literatures', 'Slavic Languages and Literatures'),
+                     ('Sociology', 'Sociology'),
+                     ('South Asian Studies', 'South Asian Studies'),
+                     ('Spanish', 'Spanish'),
+                     ('Statistics', 'Statistics'),
+                     ('Women, Gender, and Sexuality', 'Women, Gender, and Sexuality'),
+                     ('Aerospace Engineering', 'Aerospace Engineering'),
+                     ('Biomedical Engineering', 'Biomedical Engineering'),
+                     ('Chemical Engineering', 'Chemical Engineering'),
+                     ('Civil Engineering', 'Civil Engineering'),
+                     ('Computer Engineering', 'Computer Engineering'),
+                     ('Computer Science', 'Computer Science'),
+                     ('Electrical Engineering', 'Electrical Engineering'),
+                     ('Engineering Science', 'Engineering Science'),
+                     ('Mechanical Engineering', 'Mechanical Engineering'),
+                     ('Systems Engineering', 'Systems Engineering'),
+                     ('Mcintire School of Commerce: Accounting', 'Mcintire School of Commerce: Accounting'),
+                     ('Mcintire School of Commerce: Finance', 'Mcintire School of Commerce: Finance'),
+                     ('Mcintire School of Commerce: Information Technology', 'Mcintire School of Commerce: Information Technology'),
+                     ('Mcintire School of Commerce: Management', 'Mcintire School of Commerce: Management'),
+                     ('Mcintire School of Commerce: Marketing', 'Mcintire School of Commerce: Marketing'),
+                     ('Architectural History', 'Architectural History'),
+                     ('Architecture', 'Architecture'),
+                     ('Urban & Environmental Planning', 'Urban & Environmental Planning'),
+                     ('Nursing', 'Nursing'),
+                     ('Public Policy and Research', 'Public Policy and Research'),
+                     ('Kinesiology', 'Kinesiology'),
+                     ('Speech Communications Disorders', 'Speech Communications Disorders'),
+                     ('Youth & Social Innovation', 'Youth & Social Innovation'),
+                     ('Teacher Education: Early Childhood Education', 'Teacher Education: Early Childhood Education'),
+                     ('Teacher Education: Elementary Education', 'Teacher Education: Elementary Education'),
+                     ('Teacher Education: Special Education', 'Teacher Education: Special Education'),
+                     ('Teacher Education: Elementary Education', 'Teacher Education: Elementary Education'),
+                     ('Teacher Education: English Education', 'Teacher Education: English Education'),
+                     ('Teacher Education: English as a Second Language Education', 'Teacher Education: English as a Second Language Education'),
+                     ('Teacher Education: Foreign Language Education', 'Teacher Education: Foreign Language Education'),
+                     ('Teacher Education: Mathematics Education', 'Teacher Education: Mathematics Education'),
+                     ('Teacher Education: Science Education', 'Teacher Education: Science Education'),
+                     ('Teacher Education: Social Studies Education', 'Teacher Education: Social Studies Education'),
+                     ('Teacher Education: Special Education', 'Teacher Education: Special Education')]
+
     # User computing ID. Not required by database schema, but is
     # necessary. Should be created during authentication pipeline.
     computing_id = models.CharField(max_length=20, unique=True, blank=True)
@@ -119,8 +209,16 @@ class User(AbstractUser):
         validators=[MinValueValidator(2000), MaxValueValidator(2999)],
         blank=True, null=True
     )
-    first_major = models.CharField(max_length=200, blank=True, null=True)
-    second_major = models.CharField(max_length=200, blank=True, null=True)
+    first_major = models.CharField(
+        max_length=200,
+        choices=MAJOR_CHOICES,
+        blank=True,
+        default='N/A')
+    second_major = models.CharField(
+        max_length=200,
+        choices=MAJOR_CHOICES,
+        blank=True,
+        default='N/A')
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"

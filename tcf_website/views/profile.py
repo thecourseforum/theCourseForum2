@@ -1,3 +1,4 @@
+# pylint: disable=duplicate-code   
 """Views for user profile."""
 
 from django.shortcuts import render
@@ -31,12 +32,12 @@ class ProfileForm(ModelForm):
             'graduation_year': forms.NumberInput(
                 attrs={
                     'class': 'form-control'}),
-            'first_major': forms.TextInput(
+            'first_major': forms.Select(
                 attrs={
                     'class': 'form-control'}),
-            'second_major': forms.TextInput(
+            'second_major': forms.Select(
                 attrs={
-                    'class': 'form-control'}), }
+                    'class': 'form-control'})}
 
 
 @login_required

@@ -1,3 +1,4 @@
+# pylint: disable=duplicate-code
 """Auth related views."""
 
 from django.shortcuts import render, redirect
@@ -6,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from django.contrib import messages
 from django import forms
+from django.forms import ModelForm
+from tcf_website.models import User
 
 
 def login(request):
@@ -20,11 +23,33 @@ def login_error(request):
     return render(request, 'login/login.html', {'error': True})
 
 
-class ExtraUserInfoForm(forms.Form):
+# class ExtraUserInfoForm(forms.Form):
+#     """Form to collect extra user info on sign up."""
+#     grad_year = forms.IntegerField(min_value=2000, max_value=2999)
+#     first_major = forms.CharField(required=False)
+#     second_major = forms.CharField(required=False)
+
+
+class ExtraUserInfoForm(ModelForm):
     """Form to collect extra user info on sign up."""
-    grad_year = forms.IntegerField(min_value=2000, max_value=2999)
-    first_major = forms.CharField(required=False)
-    second_major = forms.CharField(required=False)
+    class Meta:
+        model = User
+        fields = [
+            'graduation_year',
+            'first_major',
+            'second_major']
+
+        # Add the form-control class to make the form work with Bootstrap
+        widgets = {
+            'graduation_year': forms.NumberInput(
+                attrs={
+                    'class': 'form-control'}),
+            'first_major': forms.Select(
+                attrs={
+                    'class': 'form-control'}),
+            'second_major': forms.Select(
+                attrs={
+                    'class': 'form-control'})}
 
 
 def collect_extra_info(request):
@@ -34,12 +59,13 @@ def collect_extra_info(request):
         if form.is_valid():
             # because of FIELDS_STORED_IN_SESSION, this will get copied
             # to the request dictionary when the pipeline is resumed
-            request.session['grad_year'] = form.cleaned_data['grad_year']
+            request.session['grad_year'] = form.cleaned_data['graduation_year']
             request.session['first_major'] = form.cleaned_data['first_major']
             request.session['second_major'] = form.cleaned_data['second_major']
             # once we have the grad_year stashed in the session, we can
             # tell the pipeline to resume by using the "complete" endpoint
             return redirect(reverse('social:complete', args=["google-oauth2"]))
+        messages.error(request, form.errors)
     else:
         form = ExtraUserInfoForm()
 
