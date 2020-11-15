@@ -47,8 +47,8 @@ def new_review(request):
         form = ReviewForm(request.POST)
         if form.is_valid():
             try:
-                course_code = request.POST['course']
-                mnemonic, number = course_code.split()
+                mnemonic = request.POST['subject']
+                number = request.POST['courseID']
                 course = Course.objects.get(
                     subdepartment__mnemonic=mnemonic, number=int(number))
 
@@ -57,10 +57,16 @@ def new_review(request):
                 instructor = Instructor.objects.get(
                     first_name=first, last_name=last)
 
-                semester_str = request.POST['semester']
-                season, year = semester_str.split()
+                season = request.POST['semester']
+                year = request.POST['year']
                 semester = Semester.objects.get(
                     season=season.upper(), year=int(year))
+
+                hours_reading = int(request.POST['hoursReading'])
+                hours_writing = int(request.POST['hoursWriting'])
+                hours_group = int(request.POST['hoursGroupwork'])
+                hours_homework = int(request.POST['hoursOther'])
+                total_hours = hours_reading + hours_writing + hours_group + hours_homework
 
                 Review.objects.create(
                     user=request.user,
@@ -70,17 +76,22 @@ def new_review(request):
                     text=request.POST['reviewText'],
                     instructor_rating=int(
                         request.POST['instructorRating']),
+                    enjoyability=int(request.POST['enjoyability']),
                     difficulty=int(request.POST['difficulty']),
                     recommendability=int(
                         request.POST['recommendability']),
-                    hours_per_week=int(request.POST['hours']),
+                    amount_reading=int(request.POST['hoursReading']),
+                    amount_writing=int(request.POST['hoursWriting']),
+                    amount_group=int(request.POST['hoursGroupwork']),
+                    amount_homework=int(request.POST['hoursOther']),
+                    hours_per_week=total_hours
                 )
 
                 messages.add_message(
                     request,
                     messages.SUCCESS,
                     'Successfully reviewed ' +
-                    str(course_code) +
+                    str(mnemonic) + str(number) +
                     '!')
                 return redirect('reviews')
             except KeyError as err:
