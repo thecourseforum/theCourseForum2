@@ -17,7 +17,7 @@ let loadData = async url => {
       document.getElementsByClassName("rating_num")[0].innerHTML = data.average_rating.toFixed(2)
       document.getElementsByClassName("hours_num")[0].innerHTML = data.average_hours_per_week.toFixed(2)
  
-      document.getElementsByClassName("professor-num")[0].innerHTML = data.average_instructor.toFixed(2)
+      document.getElementsByClassName("instructor-num")[0].innerHTML = data.average_instructor.toFixed(2)
       document.getElementsByClassName("fun-num")[0].innerHTML = data.average_fun.toFixed(2)
       document.getElementsByClassName("difficulty-num")[0].innerHTML = data.average_difficulty.toFixed(2)
       document.getElementsByClassName("recommend-num")[0].innerHTML = data.average_recommendability.toFixed(2)
@@ -26,7 +26,7 @@ let loadData = async url => {
       document.getElementsByClassName("group-num")[0].innerHTML = data.average_amount_group.toFixed(2)
       document.getElementsByClassName("homework-num")[0].innerHTML = data.average_amount_homework.toFixed(2)
  
-      document.getElementsByClassName("professor-bar")[0].style.width = 100 * data.average_instructor / 5 + "%"
+      document.getElementsByClassName("instructor-bar")[0].style.width = 100 * data.average_instructor / 5 + "%"
       document.getElementsByClassName("fun-bar")[0].style.width = 100 * data.average_fun / 5 + "%"
       document.getElementsByClassName("difficulty-bar")[0].style.width = 100 * data.average_difficulty / 5 + "%"
       document.getElementsByClassName("recommend-bar")[0].style.width = 100 * data.average_recommendability / 5 + "%"

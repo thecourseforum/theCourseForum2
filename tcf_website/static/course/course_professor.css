@@ -5,7 +5,7 @@
     margin-bottom: 50px;
     margin-top: 30px
 }
- 
+
 .grades_container {
     width: 45%;
     height: 100%;
@@ -18,8 +18,8 @@
 }
  
 .chart_container {
-    height: 100%;
-    width: 300px;
+    height: 95%;
+    width: 290px;
     position: relative;
 }
  
@@ -102,11 +102,14 @@
 }
  
 .info_title{
-    width: 110px;
+    width: 130px;
     padding-left: 5px;
     display: flex;
     justify-content: flex-start;
+    align-items: center
 }
+
+
 .info_num {
     padding-left: 20px;
     padding-right: 10px;
@@ -134,7 +137,6 @@
         height: 50%
     }
  
- 
     .info_container{
         margin-right: 0
     }
@@ -148,20 +150,16 @@
  
   }
  
-  @media(max-width: 770px){
- 
-  }
- 
   @media(max-width: 500px){
     .grades_ratings_container{
         height: 500px;
     }
     .ratings_container{
-        height: 40%;
+        height: 38%;
     }
  
     .grades_container{
-        height: 60%;
+        height: 62%;
     }
     .rating_card_num{
         font-size: 24px
@@ -170,7 +168,8 @@
         font-size: 14px
     }
     .info_title {
-        font-size: 14px
+        font-size: 14px;
+        width: 120px
     }
     .info_num{
         font-size: 14px
@@ -203,7 +202,8 @@
         font-size: 10px
     }
     .info_title {
-        font-size: 10px
+        font-size: 10px;
+        width: 90
     }
     .info_num{
         font-size: 10px
@@ -240,9 +240,6 @@
         flex-grow: 1;
         flex-shrink: 1 
     } 
-    .info_title{
-        width: 70px
-    }
     .info_bar{
         width: 50%;
         flex-shrink:2;
