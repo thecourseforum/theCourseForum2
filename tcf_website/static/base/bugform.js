@@ -37,6 +37,7 @@ function postToDiscord() {
         }
     }
     var data = {
+        type: "bug",
         content: "Bug Found! \n**URL:** " + url +
         "\n**Description**: \n" + description +
         "\n**Categories: **" + categories +
