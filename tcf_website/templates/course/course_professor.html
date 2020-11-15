@@ -1,18 +1,18 @@
 {% extends "base/base.html" %}
 {% load static %}
- 
+
 {% block styles %}
 <link rel="stylesheet" href="{% static 'common/toolbar.css' %}" />
 <link rel="stylesheet" href="{% static 'course/course_professor.css' %}" />
 <link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
 {% endblock %}
- 
+
 {% block content %}
- 
+
 <div class="course-professor container">
- 
+
   {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
- 
+
   <div class="d-flex flex-column align-items-center my-3 mt-md-5">
     <h1>{{ instructor.full_name }}</h1>
     <div class="d-md-flex">
@@ -20,7 +20,7 @@
       <h4 class="mr-md-3">{{ course.title }}</h4>
     </div>
   </div>
- 
+
   <div class="grades_ratings_container mb-5 ">
     <div class="ratings_container">
       <div class="ratings_row">
@@ -31,20 +31,20 @@
         <div class="info_container">
           <div class="info_row">
             <div class="info_title">
-              Professor
+              <i class="fas fa-user"></i>&nbsp;Instructor
             </div>
             <div class="info_bar">
               <div class="progress p-0 m-0">
-                <div class="progress-bar professor-bar p-0 m-0" style="width: 0%"></div>
+                <div class="progress-bar instructor-bar p-0 m-0" style="width: 0%"></div>
               </div>
             </div>
-            <div class="info_num professor-num">
+            <div class="info_num instructor-num">
               ---
             </div>
           </div>
           <div class="info_row">
             <div class="info_title">
-              Fun
+              <i class="far fa-smile-beam"></i>&nbsp;Enjoyability
             </div>
             <div class="info_bar">
               <div class="progress p-0 m-0">
@@ -57,7 +57,7 @@
           </div>
           <div class="info_row">
             <div class="info_title">
-              Difficulty
+              <i class="fas fa-dumbbell"></i>&nbsp;Difficulty
             </div>
             <div class="info_bar">
               <div class="progress  p-0 m-0">
@@ -70,7 +70,7 @@
           </div>
           <div class="info_row">
             <div class="info_title">
-              Recommend
+              <i class="fas fa-thumbs-up"></i>&nbsp;Recommend
             </div>
             <div class="info_bar">
               <div class="progress  p-0 m-0">
@@ -91,7 +91,7 @@
         <div class="info_container">
           <div class="info_row">
             <div class="info_title">
-              Reading
+              <i class="fas fa-book"></i>&nbsp;Reading
             </div>
             <div class="info_bar">
               <div class="progress  p-0 m-0">
@@ -104,7 +104,7 @@
           </div>
           <div class="info_row">
             <div class="info_title">
-              Writing
+              <i class="fas fa-pencil-alt"></i>&nbsp;Writing
             </div>
             <div class="info_bar">
               <div class="progress  p-0 m-0">
@@ -117,7 +117,7 @@
           </div>
           <div class="info_row">
             <div class="info_title">
-              Groupwork
+              <i class="fas fa-user-friends"></i>&nbsp;Groupwork
             </div>
             <div class="info_bar">
               <div class="progress  p-0 m-0">
@@ -130,7 +130,7 @@
           </div>
           <div class="info_row">
             <div class="info_title">
-              Homework
+              <i class="fas fa-flask"></i>&nbsp;Other
             </div>
             <div class="info_bar">
               <div class="progress p-0 m-0">
@@ -153,10 +153,10 @@
         <p class="students-text"> -- Students</p>
       </div>
     </div>
- 
+
   </div>
- 
- 
+
+
   <div class="dropdown">
     <button id="review-sort-select" class="btn btn-secondary dropdown-toggle" type="button" id="sortOptions"
       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
@@ -171,11 +171,11 @@
         Rating</button>
     </div>
   </div>
- 
+
   {% include "reviews/reviews.html" with reviews=reviews %}
 </div>
 {% endblock %}
- 
+
 {% block js %}
 <script type="module" src="{% static 'reviews/review.js' %}"></script>
 <script type="module" src="{% static 'course/javascript/Chart.bundle.js' %}"></script>
@@ -183,10 +183,10 @@
   src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
 <script type="module" src="{% static 'course/javascript/chart.js' %}"></script>
 <script type="module">
- 
+
   import { loadData } from "{% static 'course/javascript/chart.js' %}";
- 
+
   loadData("http://localhost:8000/api/courses/{{course_id}}/?allstats")
- 
+
 </script>
 {% endblock %}
