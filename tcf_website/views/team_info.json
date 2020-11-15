@@ -115,6 +115,11 @@
                      "role": "Marketing",
                      "class": "2021",
                      "img_filename": "MAD_Tina_Wang.jpg"
+                     },
+                    {"name": "Jeremy Tran",
+                      "role": "Marketing",
+                      "class": "2023",
+                      "img_filename": "MAD_Jeremy_Tran.jpg"
                      }
                    ]
 }

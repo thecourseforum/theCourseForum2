@@ -19,17 +19,18 @@
 
 .tabs .about-tab {
   padding: 0rem;
-  background-color: var(--dark-color);
+  background-color: var(--main-color);
 }
 .tabs .about-tab:hover {
-  background-color: var(--background-color);
+  background-color: var(--secondary-color);
 }
 .tabs .about-tab a {
   color: white;
   width: 100%;
 }
-.tabs .about-tab a:hover {
-  color: black;
+
+.tabs .about-tab a:not(.collapsed) {
+  color: #ff7d4e;
 }
 
 .pfp {

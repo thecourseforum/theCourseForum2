@@ -41,10 +41,10 @@
         </div>
 
         <div class="about-tab col">
-          <a href="#team" id="team-tab" class="btn collapsed" role="button"
+          <a href="#team" id="team-tab" class="btn" role="button"
              data-toggle="collapse" aria-expanded="true" aria-controls="team">
              <h4><i class="fa fa-users"></i></h4>
-             theTeam
+             Current Team
           </a>
         </div>
 
@@ -52,7 +52,7 @@
           <a href="#contributors" id="contributors-tab" class="btn collapsed" role="button"
              data-toggle="collapse" aria-expanded="false" aria-controls="contributors">
              <h4><i class="fa fa-graduation-cap"></i></h4>
-             Contributors
+             Past Contributors
           </a>
         </div>
 
@@ -88,4 +88,20 @@
 
 </div>
 
+{% endblock %}
+
+{% block js %}
+  <script>
+    // Search results should display some content at all times
+    // Thus the current open accordion will not be able to close itself
+    $('[data-toggle="collapse"]').on('click',function(e) {
+      e.preventDefault();
+      if ( $(this).parents('.accordion').find('.collapse.show') ) {
+        var idx = $(this).index('[data-toggle="collapse"]');
+        if (idx == $('.collapse.show').index('.collapse')) {
+            e.stopPropagation();
+        }
+      }
+    });
+  </script>
 {% endblock %}
