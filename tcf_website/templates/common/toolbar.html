@@ -7,18 +7,22 @@
             {% endfor %}
         </ol>
     </div>
-    {% if sorting %}
-    <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" id="number-sort-btn" class="btn btn-outline-dark active">Number</button>
-        <button type="button" id="rating-sort-btn" class="btn btn-outline-dark">Rating</button>
-        <button type="button" id="diff-sort-btn" class="btn btn-outline-dark">Difficulty</button>
-        <button type="button" id="gpa-sort-btn" class="btn btn-outline-dark">GPA</button>
-    </div>
-    {% endif %}
+
     {% if active_text %}
-    <div class="btn-group" role="group" aria-label="Basic example">
+    <div class="btn-group btn-group-sm" role="group" aria-label="Show/Hide All Semesters">
         <button type="button" id="hide-btn" class="btn btn-outline-dark active">{{ active_text }}</button>
         <button type="button" id="show-btn" class="btn btn-outline-dark"> {{ hidden_text }} </button>
+    </div>
+    {% endif %}
+</div>
+
+<div class="d-flex justify-content-center justify-content-lg-end mt-3 mb-3" role="toolbar" aria-label="Toolbar with button groups">
+    {% if sorting %}
+    <div class="btn-group btn-group-sm" role="group" aria-label="Sorting Buttons">
+        <button type="button" id="number-sort-btn" class="btn btn-outline-primary active">Course ID</button>
+        <button type="button" id="rating-sort-btn" class="btn btn-outline-primary">Rating</button>
+        <button type="button" id="diff-sort-btn" class="btn btn-outline-primary">Difficulty</button>
+        <button type="button" id="gpa-sort-btn" class="btn btn-outline-primary">GPA</button>
     </div>
     {% endif %}
 </div>
