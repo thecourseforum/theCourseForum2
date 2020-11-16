@@ -1,4 +1,16 @@
 <div id="review{{review.id}}" class="review card mb-2 d-flex flex-row align-items-center">
+
+    <div class="d-none d-sm-flex vote-container ml-4 mr-2 flex-column justify-content-center align-items-center">
+        <!--Voting logic is implemented in the <script> tag of reviews.html-->
+        <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}" id="upvote{{review.id}}">
+            <i class="fa fa-angle-up fa-fw"></i>
+        </a>
+        <span id="vote-count" class="voteCount">{{ review.count_votes }}</span>
+        <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}" id="downvote{{review.id}}">
+            <i class="fa fa-angle-down fa-fw"></i>
+        </a>
+    </div>
+
     <div class="card-body text-left">
         <div class="row">
             <div class="col-2 vote-container d-flex flex-column justify-content-center align-items-center">
@@ -46,7 +58,7 @@
                     {{ review.enjoyability }}
                 </div>
                 <div class="ml-4 text-muted">
-                    <i class="fa fa-skull-crossbones fa-fw"></i>&nbsp;
+                    <i class="fa fa-dumbbell fa-fw"></i>&nbsp;
                     {{ review.difficulty }}
                 </div>
                 <div class="ml-4 text-muted">

@@ -27,20 +27,20 @@
 {% if reviews %}
 <script type="module" src="{% static 'reviews/sort_reviews.js' %}"></script>
 {% endif %}
-<script type="module" src="{% static 'reviews/review.js' %}"></script>
-<script>
+<script type="module">
+    import { handleVote } from "{% static 'reviews/review.js' %}";
     {% if user.is_authenticated %}
-        Array.prototype.forEach.call(document.getElementsByClassName("upvote"), function(button) {
-            button.addEventListener('click', ()=>{
-                    onclick="handleVote({{review.id}}, true)"
-            }, false);
-            button.href = "javascript:;"
+        $('.upvote').each(function(i, obj) {
+            $(this).click(()=>{
+                handleVote(obj.id.substring(6), true);
+            });
+            $(this).removeAttr('href');
         });
-        Array.prototype.forEach.call(document.getElementsByClassName("downvote"), function(button) {
-            button.addEventListener('click', ()=>{
-                    onclick="handleVote({{review.id}}, false)"
-            }, false);
-            button.href = "javascript:;"
+        $('.downvote').each(function(i, obj) {
+            $(this).click(()=>{
+                handleVote(obj.id.substring(8), false);
+            });
+            $(this).removeAttr('href');
         });
     {% endif %}
 </script>

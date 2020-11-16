@@ -5,7 +5,7 @@
 /* Use these variables in CSS stylesheets */
 :root {
 --main-color: #274F97;        /* Indigo/Dark blue */
---secondary-color: #476eb5;   /* Light blue */
+--secondary-color: #7ca2e8;   /* Light blue */
 --accent-color: #D75626;      /* Orange */
 --dark-color: #545454;        /* Dark grey, for headers/buttons */
 --shadow-color: #a6a6a6;      /* Medium grey, used for shadows */
@@ -19,10 +19,15 @@ h2,
 h3,
 h4,
 h5,
-h6 {
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
   /* Default heading font: Lato (others are fallbacks) */
   font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-weight: 700;
 }
 
 body {
@@ -36,6 +41,7 @@ a {
 }
 a:hover {
   color: var(--accent-color);
+  text-decoration: none;
 }
 ul {
     padding: 0;

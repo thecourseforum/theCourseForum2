@@ -7,14 +7,6 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('about', views.AboutView.as_view(), name='about'),
-    path(
-        'about/history',
-        views.AboutHistoryView.as_view(),
-        name='about_history'),
-    path(
-        'about/contributors',
-        views.AboutContributorsView.as_view(),
-        name='about_contributors'),
     path('privacy', views.privacy, name='privacy'),
     path('terms', views.terms, name='terms'),
     path('browse', views.browse, name='browse'),
@@ -37,7 +29,7 @@ urlpatterns = [
     path('api/', include('tcf_website.api.urls'), name='api'),
 
     # DISCORD URLS
-    path('discord/', views.post_bug, name='discord'),
+    path('discord/', views.post_message, name='discord'),
 
     # AUTH URLS
     path('accounts/profile/', views.browse),
