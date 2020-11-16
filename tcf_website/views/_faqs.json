@@ -1,6 +1,6 @@
 [
   {
-    "question": "Why did you switch to tCF 2.0?",
+    "question": "Why the switch to tCF 2.0?",
     "answer": "The previous version of theCourseForum.com was developed using the Ruby on Rails framework in 2012, over 8 years ago. That's a long time in tech years! Not many of our student developers know Ruby anymore, so we rebuilt the site from scratch with Django, a popular Python web framework that's taught in UVA's CS 3240 (Advanced Software Development). What this means for you is that it's easier for us in the long term to maintain the site and develop new features for you."
   },
   {
