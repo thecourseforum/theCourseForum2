@@ -85,7 +85,7 @@ class Subdepartment(models.Model):
         latest_semester = Semester.latest()
         return self.course_set.filter(
             semester_last_taught__year__gte=latest_semester.year -
-                                            5).order_by("number")
+            5).order_by("number")
 
     def has_current_course(self):
         """Return True if subdepartment has a course in current semester."""
@@ -237,7 +237,8 @@ class Instructor(models.Model):
 
     def average_gpa_for_course(self, course):
         """Compute average GPA"""
-        return CourseInstructorGrade.objects.filter(course=course, instructor=self).aggregate(
+        return CourseInstructorGrade.objects.filter(
+            course=course, instructor=self).aggregate(
             models.Avg('average'))['average__avg']
 
     def taught_courses(self):
