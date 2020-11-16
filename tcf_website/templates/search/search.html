@@ -1,6 +1,8 @@
 {% extends "base/base.html" %}
 {% load static %}
 
+{% block title %}{{displayed_query}} - theCourseForum{% endblock %}
+
 {% block styles %}
     <link rel="stylesheet" href="{% static 'search/search.css' %}"/>
 {% endblock %}
