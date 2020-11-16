@@ -264,6 +264,22 @@ class Instructor(models.Model):
             instructor=self).aggregate(
             models.Avg('difficulty'))['difficulty__avg']
 
+    def get_courses(self):
+        """Gets all Courses taught by a given Instructor"""
+        # More specifically, all Courses where this Instructor has taught a Section
+        # Might be good to store this data as a many-to-many field in
+        # Instructor instead of computing?
+        course_ids = list(
+            Section.objects.filter(
+                instructors=self).distinct().values_list(
+                'course_id', flat=True))
+
+        # <1000 course IDs are from super old classes...
+        # should we bother keeping the data at that point?
+        return Course.objects.filter(
+            pk__in=course_ids).filter(
+            number__gte=1000).order_by('number')
+
 
 class Semester(models.Model):
     """Semester model.
@@ -356,7 +372,7 @@ class Course(models.Model):
         Semester, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.subdepartment.mnemonic} {self.number} {self.title}"
+        return f"{self.subdepartment.mnemonic} {self.number} | {self.title}"
 
     def code(self):
         """Returns the courses code string."""
