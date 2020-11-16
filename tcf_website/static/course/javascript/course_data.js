@@ -1,45 +1,35 @@
 
-let loadData = async url => {
-  if (url) {
-    const data = await fetch(url).then(res => res.json())
-    if (data.detail === "Not found.") {
-      //console.log("NOT FOUND")
-    } else {
+let loadData = data => {
+    const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop } = data
+    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop]
 
-      console.log(data)
+    console.log(data)
 
-      const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop } = data
-      const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop]
+    createChart(grades_data)
 
-      createChart(grades_data)
+    data.average_gpa !== null ? document.getElementsByClassName("gpa-text")[0].innerHTML = data.average_gpa + " GPA" : null
+    grades_data !== null ? document.getElementsByClassName("students-text")[0].innerHTML = data.total_enrolled + " Students" : null
 
-      const reducer = (accumulator, currentValue) => accumulator + currentValue;
+    data.average_rating !== null ? document.getElementsByClassName("rating-num")[0].innerHTML = data.average_rating : null
+    data.average_hours_per_week !== null ? document.getElementsByClassName("hours-num")[0].innerHTML = data.average_hours_per_week : null
 
-      data.average_gpa !== null ? document.getElementsByClassName("gpa-text")[0].innerHTML = data.average_gpa.toFixed(2) + " GPA" : null
-      grades_data !== null ? document.getElementsByClassName("students-text")[0].innerHTML = grades_data.reduce(reducer) + " Students" : null
+    data.average_instructor !== null ? document.getElementsByClassName("instructor-num")[0].innerHTML = data.average_instructor : null
+    data.average_fun !== null ? document.getElementsByClassName("fun-num")[0].innerHTML = data.average_fun : null
+    data.average_difficulty !== null ? document.getElementsByClassName("difficulty-num")[0].innerHTML = data.average_difficulty : null
+    data.average_recommendability !== null ? document.getElementsByClassName("recommend-num")[0].innerHTML = data.average_recommendability : null
+    data.average_amount_reading !== null ? document.getElementsByClassName("reading-num")[0].innerHTML = data.average_amount_reading : null
+    data.average_amount_writing !== null ? document.getElementsByClassName("writing-num")[0].innerHTML = data.average_amount_writing : null
+    data.average_amount_group !== null ? document.getElementsByClassName("group-num")[0].innerHTML = data.average_amount_group : null
+    data.average_amount_homework !== null ? document.getElementsByClassName("homework-num")[0].innerHTML = data.average_amount_homework : null
 
-      data.average_rating !== null ? document.getElementsByClassName("rating-num")[0].innerHTML = data.average_rating.toFixed(2) : null
-      data.average_hours_per_week !== null ? document.getElementsByClassName("hours-num")[0].innerHTML = data.average_hours_per_week.toFixed(2) : null
-
-      data.average_instructor !== null ? document.getElementsByClassName("instructor-num")[0].innerHTML = data.average_instructor.toFixed(2) : null
-      data.average_fun !== null ? document.getElementsByClassName("fun-num")[0].innerHTML = data.average_fun.toFixed(2) : null
-      data.average_difficulty !== null ? document.getElementsByClassName("difficulty-num")[0].innerHTML = data.average_difficulty.toFixed(2) : null
-      data.average_recommendability !== null ? document.getElementsByClassName("recommend-num")[0].innerHTML = data.average_recommendability.toFixed(2) : null
-      data.average_amount_reading !== null ? document.getElementsByClassName("reading-num")[0].innerHTML = data.average_amount_reading.toFixed(2) : null
-      data.average_amount_writing !== null ? document.getElementsByClassName("writing-num")[0].innerHTML = data.average_amount_writing.toFixed(2) : null
-      data.average_amount_group !== null ? document.getElementsByClassName("group-num")[0].innerHTML = data.average_amount_group.toFixed(2) : null
-      data.average_amount_homework !== null ? document.getElementsByClassName("homework-num")[0].innerHTML = data.average_amount_homework.toFixed(2) : null
-
-      data.average_instructor !== null ? document.getElementsByClassName("instructor-bar")[0].style.width = 100 * (data.average_instructor - .8) / 4.2 + "%" : null
-      data.average_fun !== null ? document.getElementsByClassName("fun-bar")[0].style.width = 100 * (data.average_fun - .8) / 4.2 + "%" : null
-      data.average_difficulty !== null ? document.getElementsByClassName("difficulty-bar")[0].style.width = 100 * (data.average_difficulty-.8) / 4.2 + "%" : null
-      data.average_recommendability !== null ? document.getElementsByClassName("recommend-bar")[0].style.width = 100 * (data.average_recommendability-.8) / 4.2 + "%" : null
-      data.average_amount_reading !== null ? document.getElementsByClassName("reading-bar")[0].style.width = 100 * data.average_amount_reading / (data.average_hours_per_week) + "%" : null
-      data.average_amount_writing !== null ? document.getElementsByClassName("writing-bar")[0].style.width = 100 * data.average_amount_writing / data.average_hours_per_week + "%" : null
-      data.average_amount_group !== null ? document.getElementsByClassName("group-bar")[0].style.width = 100 * data.average_amount_group / data.average_hours_per_week + "%" : null
-      data.average_amount_homework !== null ? document.getElementsByClassName("homework-bar")[0].style.width = 100 * data.average_amount_homework / data.average_hours_per_week + "%" : null
-    }
-  }
+    data.average_instructor !== null ? document.getElementsByClassName("instructor-bar")[0].style.width = 100 * (data.average_instructor - .8) / 4.2 + "%" : null
+    data.average_fun !== null ? document.getElementsByClassName("fun-bar")[0].style.width = 100 * (data.average_fun - .8) / 4.2 + "%" : null
+    data.average_difficulty !== null ? document.getElementsByClassName("difficulty-bar")[0].style.width = 100 * (data.average_difficulty-.8) / 4.2 + "%" : null
+    data.average_recommendability !== null ? document.getElementsByClassName("recommend-bar")[0].style.width = 100 * (data.average_recommendability-.8) / 4.2 + "%" : null
+    data.average_amount_reading !== null ? document.getElementsByClassName("reading-bar")[0].style.width = 100 * data.average_amount_reading / (data.average_hours_per_week) + "%" : null
+    data.average_amount_writing !== null ? document.getElementsByClassName("writing-bar")[0].style.width = 100 * data.average_amount_writing / data.average_hours_per_week + "%" : null
+    data.average_amount_group !== null ? document.getElementsByClassName("group-bar")[0].style.width = 100 * data.average_amount_group / data.average_hours_per_week + "%" : null
+    data.average_amount_homework !== null ? document.getElementsByClassName("homework-bar")[0].style.width = 100 * data.average_amount_homework / data.average_hours_per_week + "%" : null
 }
 
 let createChart = grades_data => {
