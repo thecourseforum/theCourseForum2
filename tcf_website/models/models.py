@@ -85,7 +85,7 @@ class Subdepartment(models.Model):
         latest_semester = Semester.latest()
         return self.course_set.filter(
             semester_last_taught__year__gte=latest_semester.year -
-            5).order_by("number")
+                                            5).order_by("number")
 
     def has_current_course(self):
         """Return True if subdepartment has a course in current semester."""
@@ -235,6 +235,11 @@ class Instructor(models.Model):
             course=course, instructor=self).aggregate(
             models.Avg('amount_homework'))['amount_homework__avg']
 
+    def average_gpa_for_course(self, course):
+        """Compute average GPA"""
+        return CourseInstructorGrade.objects.filter(course=course, instructor=self).aggregate(
+            models.Avg('average'))['average__avg']
+
     def taught_courses(self):
         """Returns all sections taught by Instructor."""
         # this method is very inefficient and doesn't actually do what the name
@@ -263,6 +268,11 @@ class Instructor(models.Model):
         return Review.objects.filter(
             instructor=self).aggregate(
             models.Avg('difficulty'))['difficulty__avg']
+
+    def average_gpa(self):
+        """Compute average GPA for all this Instructor's Courses"""
+        return CourseInstructorGrade.objects.filter(instructor=self).aggregate(
+            models.Avg('average'))['average__avg']
 
     def get_courses(self):
         """Gets all Courses taught by a given Instructor"""
