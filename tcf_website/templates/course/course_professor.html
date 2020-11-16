@@ -13,11 +13,11 @@
     {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
 
     <div class="d-flex flex-column my-3 mt-md-5">
-        <div class="d-md-flex">
-            <h2 class="mr-md-3" style="white-space: nowrap">{{ course.code }} |</h2>
-            <h2 class="mr-md-3">{{ course.title }}</h2>
+        <div class="d-md-flex justify-content-center">
+            <h1 class="mr-md-3" style="white-space: nowrap">{{ course.code }} |</h1>
+            <h1 class="mr-md-3">{{ course.title }}</h1>
         </div>
-        <h4><a href="{% url 'instructor' instructor_id=instructor.id %}">{{ instructor.full_name }}</a></h4>
+        <h2 class="text-center mb-3"><a href="{% url 'instructor' instructor_id=instructor.id %}">{{ instructor.full_name }}</a></h2>
     </div>
 
     <div class="ratings row d-flex mb-3 justify-content-center">
