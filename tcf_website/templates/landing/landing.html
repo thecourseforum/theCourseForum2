@@ -21,7 +21,7 @@
       <!-- tCF logo -->
       <a class="navbar-brand logo-container" href="/">
         <img class="logo" src="{% static 'base/img/new_logo.png' %}" alt="theCourseForum logo">
-        <h4 class="text-tcf-indigo">theCourseForum</h4>
+        <h4 class="text-tcf-indigo ml-2">theCourseForum</h4>
       </a>
       <!-- tCF profile dropdown -->
       <div class="account-settings">
@@ -178,52 +178,59 @@
 
   <section class="faqs py-5 my-5">
     <div class="row px-md-4">
-      <div class="faqs-header col-md-10 mx-auto">
-        <h2 class="mb-4">FAQs </h2>
+      <div class="faqs-header col-sm-10 col-11 mx-auto">
+        <h2 class="mb-4">FAQs</h2>
       </div>
-      <div class="col-md-10 mx-auto">
-        <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse1"> <i class="fas fa-chevron-down"></i> Why did you switch to tCF 2.0? </h5>
-        <p id="collapse1" class="collapse show"> The previous version of the site was developed using the Ruby on
-          Rails framework 8 years ago. That's a long time in tech years! At this point, not many student developers on the team know
-            Ruby anymore, so we decided to rebuild the site from scratch with Django, a popular Python web framework that is also taught in UVA's
-            CS 3240 (Advanced Software Development). What this means for you is that it'll become easier for us in the long term to
-            maintain the site and develop new features. </p>
+      <div class="faqs-content col-sm-10 col-11 mx-auto">
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse1"> <i class="fas fa-chevron-down"></i> Why did you switch to tCF 2.0? </h5>
+          <p id="collapse1" class="collapse show"> The previous version of the site was developed using the Ruby on
+            Rails framework 8 years ago. That's a long time in tech years! Not many of our student developers know
+              Ruby anymore, so we decided to rebuild the site from scratch with Django, a popular Python web framework that is also taught in UVA's
+              CS 3240 (Advanced Software Development). What this means for you is that it'll become easier for us in the long term to
+              maintain the site and develop new features. </p>
+        </div>
+        <div class="col-md-6 mx-auto">
+          <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse2"><i class="fas fa-chevron-down"></i> Where did (insert previous feature) go?</h5>
+          <p id="collapse2" class="collapse"> During the rewrite, some features had to be left out due to low usage.
+              If you'd like to propose we bring one of them back, or suggest an entirely new feature, submit a feedback form or join the discussion on our
+            <a href="https://discord.gg/tAjzH7eyvW" class="text-tcf-blue">Discord server</a>!</p>
+        </div>
+        <div class="col-md-6 mx-auto">
+          <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse3"> <i class="fas fa-chevron-down"></i> Do you profit from people using the site? </h5>
+          <p id="collapse3" class="collapse"> No, our site is entirely a volunteer effort. This has been a subject of confusion
+              in the past, so to be clear: <b>we have never and will never make money from the site.</b> We get our money from
+              university grants, sponsors, and donations from users like you!</p>
+        </div>
+        <div class="col-md-6 mx-auto">
+          <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse4"> <i class="fas fa-chevron-down"></i> How can I join the team? </h5>
+          <p id="collapse4" class="collapse"> We’re planning to do a round of recruitment for both our dev team and
+            design team in Winter 2020! Stay tuned for details on how to apply. </p>
+        </div>
+
+        <div class="col-md-6 mx-auto">
+          <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse5"> <i class="fas fa-chevron-down"></i> What does the dev team do? </h5>
+          <p id="collapse5" class="collapse"> Our dev team develops and maintains the site! </p>
+        </div>
+        <div class="col-md-6 mx-auto">
+          <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse6"><i class="fas fa-chevron-down"></i> What does the design team do? </h5>
+          <p id="collapse6" class="collapse"> Our design team works on UI design and publicity, getting the word out about theCourseForum. </p>
+        </div>
+        <div class="col-md-6 mx-auto">
+          <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse7"> <i class="fas fa-chevron-down"></i> Where should I report bugs or leave a comment? </h5>
+          <p id="collapse7" class="collapse"> Fill out the feedback/report a bug forms on the site or
+            join our
+            <a href="https://discord.gg/tAjzH7eyvW" class="text-tcf-blue">Discord server</a>!</p>
+        </div>
+        <div class="col-md-6 mx-auto">
+          <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse8"> <i class="fas fa-chevron-down"></i> Where does your grade data come from? </h5>
+          <p id="collapse8" class="collapse"> Our data is official, completely anonymous grade data from UVA! Don't worry, nobody will find out about the D you got in MATH 1200.</p>
+        </div>
+
       </div>
-      <div class="col-md-10 mx-auto">
-        <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse2"><i class="fas fa-chevron-down"></i> Where did (insert previous feature) go?</h5>
-        <p id="collapse2" class="collapse"> During the rewrite, some features had to be left out due to low usage.
-            If you'd like to propose we bring one of them back, or suggest an entirely new feature, submit a feedback form or join the discussion on our
-          <a href="https://discord.gg/tAjzH7eyvW" class="text-tcf-blue">Discord server</a>!</p>
       </div>
-      <div class="col-md-10 mx-auto">
-        <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse3"> <i class="fas fa-chevron-down"></i> Do you profit from people using the site? </h5>
-        <p id="collapse3" class="collapse"> No, our site is entirely a volunteer effort. This has been a subject of confusion
-            in the past, so to be clear: <b>we have never and will never make money from the site.</b> We get our money from
-            university grants, sponsors, and donations from users like you!</p>
-      </div>
-      <div class="col-md-10 mx-auto">
-        <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse4"> <i class="fas fa-chevron-down"></i> How can I join the team? </h5>
-        <p id="collapse4" class="collapse"> We’re planning to do a round of recruitment for both our dev team and
-          design team in Winter 2020! Stay tuned for details on how to apply. </p>
-      </div>
-      <div class="col-md-10 mx-auto">
-        <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse5"> <i class="fas fa-chevron-down"></i> What does the dev team do? </h5>
-        <p id="collapse5" class="collapse"> Our dev team develops and maintains the site! </p>
-      </div>
-      <div class="col-md-10 mx-auto">
-        <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse6"><i class="fas fa-chevron-down"></i> What does the design team do? </h5>
-        <p id="collapse6" class="collapse"> Our design team works on UI design and publicity, getting the word out about theCourseForum. </p>
-      </div>
-      <div class="col-md-10 mx-auto">
-        <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse7"> <i class="fas fa-chevron-down"></i> Where should I report bugs or leave a comment? </h5>
-        <p id="collapse7" class="collapse"> Fill out the feedback/report a bug forms on the site or
-          join our
-          <a href="https://discord.gg/tAjzH7eyvW" class="text-tcf-blue">Discord server</a>!</p>
-      </div>
-      <div class="col-md-10 mx-auto">
-        <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#collapse8"> <i class="fas fa-chevron-down"></i> Where does your grade data come from? </h5>
-        <p id="collapse8" class="collapse"> Our data is official, completely anonymous grade data from UVA! Don't worry, nobody will find out about the D you got in MATH 1200.</p>
-      </div>
+
     </div>
   </section>
 
