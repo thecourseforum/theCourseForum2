@@ -118,6 +118,22 @@ header.masthead h1 {
 }
 
 /* Feedback form */
+.faqs .faqs-content h5 {
+  font-size: 1.1rem;
+}
+.faqs .faqs-content p {
+  font-size: 0.9rem;
+}
+@media (min-width: 768px) {
+  .faqs .faqs-content h5 {
+    font-size: 1.25rem;
+  }
+  .faqs .faqs-content p {
+    font-size: 1rem;
+  }
+}
+
+/* Feedback form */
 .feedback .feedback-header p {
   font-size: 1rem;
 }
