@@ -7,18 +7,10 @@
             {% endfor %}
         </ol>
     </div>
-    {% if sorting %}
-    <div class="btn-group" role="toolbar" aria-label="Sort courses">
-        <button type="button" id="number-sort-btn" class="btn btn-primary active">Course Number</button>
-        <button type="button" id="rating-sort-btn" class="btn btn-primary">Rating</button>
-        <button type="button" id="diff-sort-btn" class="btn btn-primary">Difficulty</button>
-        <button type="button" id="gpa-sort-btn" class="btn btn-primary">GPA</button>
-    </div>
-    {% endif %}
     {% if active_text %}
     <div class="btn-group btn-group-sm" role="toolbar" aria-label="Show/Hide All Semesters">
-        <button type="button" id="hide-btn" class="btn btn-primary active">{{ active_text }}</button>
-        <button type="button" id="show-btn" class="btn btn-primary"> {{ hidden_text }} </button>
+        <button type="button" id="hide-btn" class="btn btn-outline-primary active">{{ active_text }}</button>
+        <button type="button" id="show-btn" class="btn btn-outline-primary"> {{ hidden_text }} </button>
     </div>
     {% endif %}
 </div>
