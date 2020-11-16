@@ -7,9 +7,6 @@
 <link rel="stylesheet" href="{% static 'about/about.css' %}" />
 {% endblock %}
 
-{% block js %}
-<script type="module" src="{% static 'about/javascript/about.js' %}"></script>
-{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -22,7 +19,6 @@
           <p>connecting you to the courses you love.</p>
         </div>
       </div>
-      <hr>
       <p style="text-align: left;"><b>theCourseForum</b> is a place for
         University of Virginia students to share their academic experiences.
         These are captured in the form of course reviews, which provide insight,
@@ -34,46 +30,80 @@
       </p>
     </div>
   </div>
-  <br>
-  <div class="about-links">
-    <div class="card">
-      <!-- TODO: Create modal for application (sends to Slack) -->
-      <a href="#">
-        <i class="fas fa-users"></i>
-        <p>Apply to tCF!</p>
-      </a>
-    </div>
-    <div class="card">
-      <a href="{% url 'new_review' %}">
-        <i class="far fa-edit"></i>
-        <p>Write a Review!</p>
-      </a>
-    </div>
-  </div>
-  <br>
+
   <div class="card">
-    <div class="tabs">
-      <button class="btn" id="tCF-history-btn">
-        <i class="fa fa-book"></i>
-        <p>History</p>
-      </button>
-      <button class="btn active" id="tCF-current-team-btn">
-        <i class="fa fa-code"></i>
-        <p>Current Team</p>
-      </button>
-      <button class="btn" id="tCF-past-contributors-btn">
-        <i class="fa fa-graduation-cap"></i>
-        <p>Past Contributors</p>
-      </button>
-    </div>
-    <div class="card-body">
-      <div class="about-nav-content">
-        {% include "about/history.html" %}
-        {% include "about/current_team.html" %}
-        {% include "about/contributors.html" %}
+    <div class="container">
+      <div class="tabs row text-center text-white p-0">
+        <div class="about-tab col">
+          <a href="#history" id="history-tab" class="btn collapsed" role="button"
+             data-toggle="collapse" aria-expanded="true" aria-controls="history">
+             <h4><i class="fa fa-book"></i></h4>
+             History
+          </a>
+        </div>
+
+        <div class="about-tab col">
+          <a href="#team" id="team-tab" class="btn" role="button"
+             data-toggle="collapse" aria-expanded="true" aria-controls="team">
+             <h4><i class="fa fa-users"></i></h4>
+             Current Team
+          </a>
+        </div>
+
+        <div class="about-tab col">
+          <a href="#contributors" id="contributors-tab" class="btn collapsed" role="button"
+             data-toggle="collapse" aria-expanded="false" aria-controls="contributors">
+             <h4><i class="fa fa-graduation-cap"></i></h4>
+             Past Contributors
+          </a>
+        </div>
+
+        <div class="about-tab col">
+          <a href="#sponsors" id="sponsors-tab" class="btn collapsed" role="button"
+             data-toggle="collapse" aria-expanded="false" aria-controls="sponsors">
+             <h4><i class="fa fa-handshake"></i></h4>
+             Sponsors
+          </a>
+        </div>
+
       </div>
     </div>
+
+    <div class="card-body">
+      <div id="about-content" class="about-content">
+        <div id="history" class="collapse" aria-labelledby="history-tab" data-parent="#about-content">
+          {% include "about/history.html" %}
+        </div>
+        <div id="team" class="collapse show" aria-labelledby="team-tab" data-parent="#about-content">
+          {% include "about/current_team.html" %}
+        </div>
+        <div id="contributors" class="collapse" aria-labelledby="contributors-tab" data-parent="#about-content">
+          {% include "about/contributors.html"%}
+        </div>
+        <div id="sponsors" class="collapse" aria-labelledby="sponsors-tab" data-parent="#about-content">
+          {% include "about/sponsors.html" %}
+        </div>
+      </div>
+    </div>
+
   </div>
+
 </div>
 
+{% endblock %}
+
+{% block js %}
+  <script>
+    // Search results should display some content at all times
+    // Thus the current open accordion will not be able to close itself
+    $('[data-toggle="collapse"]').on('click',function(e) {
+      e.preventDefault();
+      if ( $(this).parents('.accordion').find('.collapse.show') ) {
+        var idx = $(this).index('[data-toggle="collapse"]');
+        if (idx == $('.collapse.show').index('.collapse')) {
+            e.stopPropagation();
+        }
+      }
+    });
+  </script>
 {% endblock %}
