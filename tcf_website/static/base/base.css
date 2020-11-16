@@ -66,12 +66,13 @@ footer > .row {
 .btn.btn-primary,
 .btn.btn-outline-primary:not(:disabled):not(.disabled).active,
 .btn.btn-outline-primary:not(:disabled):not(.disabled):active {
-  background-color: var(--accent-color);
+  background-color: #AC451E;
   border-color: var(--accent-color);
 }
 
 .btn.btn-outline-primary {
-  color: var(--accent-color);
+  color: white;
+  background-color: var(--accent-color);
   border-color: var(--accent-color);
 }
 
