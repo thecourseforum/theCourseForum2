@@ -65,8 +65,8 @@ def new_review(request):
                 hours_reading = int(request.POST['hoursReading'])
                 hours_writing = int(request.POST['hoursWriting'])
                 hours_group = int(request.POST['hoursGroupwork'])
-                hours_homework = int(request.POST['hoursOther'])
-                total_hours = hours_reading + hours_writing + hours_group + hours_homework
+                hours_other = int(request.POST['hoursOther'])
+                total_hours = hours_reading + hours_writing + hours_group + hours_other
 
                 Review.objects.create(
                     user=request.user,
@@ -80,10 +80,10 @@ def new_review(request):
                     difficulty=int(request.POST['difficulty']),
                     recommendability=int(
                         request.POST['recommendability']),
-                    amount_reading=int(request.POST['hoursReading']),
-                    amount_writing=int(request.POST['hoursWriting']),
-                    amount_group=int(request.POST['hoursGroupwork']),
-                    amount_homework=int(request.POST['hoursOther']),
+                    amount_reading=hours_reading,
+                    amount_writing=hours_writing,
+                    amount_group=hours_group,
+                    amount_homework=hours_other,
                     hours_per_week=total_hours
                 )
 
@@ -91,8 +91,7 @@ def new_review(request):
                     request,
                     messages.SUCCESS,
                     'Successfully reviewed ' +
-                    str(mnemonic) + str(number) +
-                    '!')
+                    str(course) + '!')
                 return redirect('reviews')
             except KeyError as err:
                 print(err)
