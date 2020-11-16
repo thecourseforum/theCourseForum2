@@ -187,11 +187,59 @@ class Instructor(models.Model):
             course=course, instructor=self).aggregate(
             models.Avg('difficulty'))['difficulty__avg']
 
+    def average_enjoyability_for_course(self, course):
+        """Computer average enjoyability"""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('enjoyability'))['enjoyability__avg']
+
+    def average_instructor_rating_for_course(self, course):
+        """Computer average instructor rating"""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('instructor_rating'))['instructor_rating__avg']
+
+    def average_recommendability_for_course(self, course):
+        """Computer average recommendability"""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('recommendability'))['recommendability__avg']
+
     def average_hours_for_course(self, course):
         """Compute average hrs/wk."""
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('hours_per_week'))['hours_per_week__avg']
+
+    def average_reading_hours_for_course(self, course):
+        """Compute average reading hrs/wk."""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('amount_reading'))['amount_reading__avg']
+
+    def average_writing_hours_for_course(self, course):
+        """Compute average writing hrs/wk."""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('amount_writing'))['amount_writing__avg']
+
+    def average_group_hours_for_course(self, course):
+        """Compute average group work hrs/wk."""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('amount_group'))['amount_group__avg']
+
+    def average_other_hours_for_course(self, course):
+        """Compute average other HW hrs/wk."""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('amount_homework'))['amount_homework__avg']
+
+    def average_gpa_for_course(self, course):
+        """Compute average GPA"""
+        return CourseInstructorGrade.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('average'))['average__avg']
 
     def taught_courses(self):
         """Returns all sections taught by Instructor."""
@@ -221,6 +269,27 @@ class Instructor(models.Model):
         return Review.objects.filter(
             instructor=self).aggregate(
             models.Avg('difficulty'))['difficulty__avg']
+
+    def average_gpa(self):
+        """Compute average GPA for all this Instructor's Courses"""
+        return CourseInstructorGrade.objects.filter(instructor=self).aggregate(
+            models.Avg('average'))['average__avg']
+
+    def get_courses(self):
+        """Gets all Courses taught by a given Instructor"""
+        # More specifically, all Courses where this Instructor has taught a Section
+        # Might be good to store this data as a many-to-many field in
+        # Instructor instead of computing?
+        course_ids = list(
+            Section.objects.filter(
+                instructors=self).distinct().values_list(
+                'course_id', flat=True))
+
+        # <1000 course IDs are from super old classes...
+        # should we bother keeping the data at that point?
+        return Course.objects.filter(
+            pk__in=course_ids).filter(
+            number__gte=1000).order_by('number')
 
 
 class Semester(models.Model):
@@ -314,7 +383,7 @@ class Course(models.Model):
         Semester, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.subdepartment.mnemonic} {self.number} {self.title}"
+        return f"{self.subdepartment.mnemonic} {self.number} | {self.title}"
 
     def code(self):
         """Returns the courses code string."""
@@ -370,6 +439,78 @@ class Course(models.Model):
                 name='unique course subdepartment and number'
             )
         ]
+
+
+class CourseGrade(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    subdepartment = models.CharField(max_length=255)
+    number = models.IntegerField(
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(99999)],
+        default=0)
+    title = models.CharField(max_length=225, default="")
+    average = models.FloatField(default=0.0)
+    a_plus = models.IntegerField(default=0)
+    a = models.IntegerField(default=0)
+    a_minus = models.IntegerField(default=0)
+    b_plus = models.IntegerField(default=0)
+    b = models.IntegerField(default=0)
+    b_minus = models.IntegerField(default=0)
+    c_plus = models.IntegerField(default=0)
+    c = models.IntegerField(default=0)
+    c_minus = models.IntegerField(default=0)
+    d_plus = models.IntegerField(default=0)
+    d = models.IntegerField(default=0)
+    d_minus = models.IntegerField(default=0)
+    f = models.IntegerField(default=0)
+    ot = models.IntegerField(default=0)
+    drop = models.IntegerField(default=0)
+    withdraw = models.IntegerField(default=0)
+    total_enrolled = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.subdepartment} {self.number} {self.average}"
+
+
+class CourseInstructorGrade(models.Model):
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, null=True)
+    first_name = models.CharField(max_length=225)
+    middle_name = models.CharField(max_length=225)
+    last_name = models.CharField(max_length=225)
+    email = models.CharField(max_length=225)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    subdepartment = models.CharField(max_length=255)
+    number = models.IntegerField(
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(99999)],
+        default=0)
+    # section_number = models.IntegerField()
+    title = models.CharField(max_length=225, default="")
+    average = models.FloatField(default=0.0)
+    a_plus = models.IntegerField(default=0)
+    a = models.IntegerField(default=0)
+    a_minus = models.IntegerField(default=0)
+    b_plus = models.IntegerField(default=0)
+    b = models.IntegerField(default=0)
+    b_minus = models.IntegerField(default=0)
+    c_plus = models.IntegerField(default=0)
+    c = models.IntegerField(default=0)
+    c_minus = models.IntegerField(default=0)
+    d_plus = models.IntegerField(default=0)
+    d = models.IntegerField(default=0)
+    d_minus = models.IntegerField(default=0)
+    f = models.IntegerField(default=0)
+    ot = models.IntegerField(default=0)
+    drop = models.IntegerField(default=0)
+    withdraw = models.IntegerField(default=0)
+    total_enrolled = models.IntegerField(default=0)
+
+    def __str__(self):
+        return (f"{self.first_name} {self.last_name} "
+                f"{self.subdepartment} {self.number} {self.average}")
 
 
 class Section(models.Model):

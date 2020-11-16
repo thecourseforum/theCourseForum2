@@ -48,12 +48,13 @@ class CourseSimpleStatsSerializer(CourseSerializer):
     semester_last_taught = SemesterSerializer(read_only=True)
     average_rating = serializers.FloatField(allow_null=True)
     average_difficulty = serializers.FloatField(allow_null=True)
+    average_gpa = serializers.FloatField(allow_null=True)
 
     class Meta:
         model = Course
         fields = ['id', 'title', 'description', 'number', 'subdepartment',
                   'semester_last_taught', 'average_rating',
-                  'average_difficulty', 'is_recent']
+                  'average_difficulty', 'average_gpa', 'is_recent']
 
 
 class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
@@ -68,6 +69,24 @@ class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
     average_amount_writing = serializers.FloatField(allow_null=True)
     average_amount_group = serializers.FloatField(allow_null=True)
     average_amount_homework = serializers.FloatField(allow_null=True)
+    # grades
+    a_plus = serializers.IntegerField(allow_null=True)
+    a = serializers.IntegerField(allow_null=True)
+    a_minus = serializers.IntegerField(allow_null=True)
+    b_plus = serializers.IntegerField(allow_null=True)
+    b = serializers.IntegerField(allow_null=True)
+    b_minus = serializers.IntegerField(allow_null=True)
+    c_plus = serializers.IntegerField(allow_null=True)
+    c = serializers.IntegerField(allow_null=True)
+    c_minus = serializers.IntegerField(allow_null=True)
+    d_plus = serializers.IntegerField(allow_null=True)
+    d = serializers.IntegerField(allow_null=True)
+    d_minus = serializers.IntegerField(allow_null=True)
+    f = serializers.IntegerField(allow_null=True)
+    ot = serializers.IntegerField(allow_null=True)
+    drop = serializers.IntegerField(allow_null=True)
+    withdraw = serializers.IntegerField(allow_null=True)
+    total_enrolled = serializers.IntegerField(allow_null=True)
 
     class Meta:
         model = Course
@@ -80,7 +99,11 @@ class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
                   'average_hours_per_week', 'average_amount_reading',
                   'average_amount_writing', 'average_amount_group',
                   'average_amount_homework',
-                  ]
+                  # grades
+                  'a_plus', 'a', 'a_minus', 'b_plus', 'b', 'b_minus',
+                  'c_plus', 'c', 'c_minus', 'd_plus', 'd', 'd_minus',
+                  'f', 'ot', 'drop', 'withdraw', 'total_enrolled',
+                  'average_gpa']
 
 
 class InstructorSerializer(serializers.ModelSerializer):

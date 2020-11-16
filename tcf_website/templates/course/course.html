@@ -1,6 +1,8 @@
 {% extends "base/base.html" %}
 {% load static %}
 
+{% block title %}{{course.code}} - theCourseForum{% endblock %}
+
 {% block styles %}
     <link rel="stylesheet" href="{% static 'course/course.css' %}"/>
     <link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
@@ -17,7 +19,7 @@
 
         <div class="instructors container-lg mt-3">
             <div class="d-md-flex align-items-baseline my-3">
-                <h1 class="mr-md-3">{{ course.code }}</h1>
+                <h1 class="mr-md-3" style="white-space: nowrap">{{ course.code }}</h1>
                 <h2>{{ course.title }}</h2>
             </div>
 
@@ -38,13 +40,13 @@
                 {% for i in recent_instructors %}
                     <li class="instructor">
                         {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
-                        {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty last_taught=course.semester_last_taught %}
+                        {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty gpa=i.gpa last_taught=course.semester_last_taught %}
                     </li>
                 {% endfor %}
                 {% for i in old_instructors %}
                     <li class="instructor old">
                         {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
-                        {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty %}
+                        {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty gpa=i.gpa %}
                     </li>
                 {% endfor %}
             </ul>
