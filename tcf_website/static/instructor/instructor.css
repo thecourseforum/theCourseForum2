@@ -1,0 +1,13 @@
+.card-header {
+  background-color: var(--secondary-color);
+  color: white;
+  height: 100%;
+}
+
+.course-header:hover {
+  background-color: var(--main-color);
+}
+
+small {
+  color: var(--accent-color);
+}
