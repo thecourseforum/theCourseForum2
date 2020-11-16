@@ -100,6 +100,10 @@ def new_review(request):
             except KeyError as err:
                 print(err)
                 print(request.POST)
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    'This course is invalid. Try again!')
                 return render(request, 'reviews/new.html', {'form': form})
         else:
             print("error")
