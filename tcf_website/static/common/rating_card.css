@@ -1,10 +1,10 @@
 .rating-card-link {
-    background-color: rgb(91, 129, 182);
+    background-color: var(--secondary-color);
     color: #EBEBEB;
 }
 
 .rating-card-link:hover {
-    background-color: rgb(57, 72, 108);
+    background-color: var(--main-color);
     color: #EBEBEB;
 }
 
@@ -14,4 +14,8 @@
 
 .rating-card .info {
     font-size: 1.25rem;
+}
+
+small {
+    color: var(--accent-color);
 }

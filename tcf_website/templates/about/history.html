@@ -1,47 +1,50 @@
-{% extends "about/about.html" %}
+{% block subcontent %}
 {% load static %}
 
-{% block subcontent %}
-<section class="jumbotron bg-light py-5 text-center banner-img">
-  <h1>History</h1>
-  <hr/>
-  <div class="row text-left">
-    <div class="col-lg-4 history-img">
-      <img src="{% static 'about/2014-team.jpeg' %}"/>
-    </div>
-    <div class="col-lg-8 pl-4 pt-4">
-      <h4>Beginnings</h4>
-      <p>
-          In Fall 2005, UVa students Jeff Bordogna and Alan Webb recognized a need for an online community to help students share their class experiences, and thus developed the first version of theCourseForum. Over time, this simple tool grew and prospered as more and more students found it despite our extraordinarily small marketing budget. The site has now become a fixture of the UVA course signup season to the extent that over 80% of students use the site every year.
-      </p>
-      <h4>tCF 1.0</h4>
-      <p>
-          In 2012-2013, a team of 6 student developers led by Justin Dao redesigned the site to bring it into the modern age using the Ruby on Rails framework.
-      </p>
-      <h4>tCF 2.0</h4>
-      <p>
-          In 2020, Brian Yu led a new team of students to rewrite tCF in the python Django framework to increase maintainability. After a few months of work, the new site was released, and it continues to be managed by UVa students.
-      </p>
-    </div>
-  </div>
-</section>
+{% block styles %}
+<link rel="stylesheet" href="{% static 'about/history/history.css' %}" />
+{% endblock %}
 
-<section class="jumbotron bg-light py-5 text-center">
-  <h1>Thanks to our sponsors</h1>
-  <hr/>
-  <div class="row text-left">
-    <p>
-        Our sponsors help us cover server costs from the large amount of traffic that we get. Their help has allowed the site to stay up and running continuously as we keep developing new features.
-    </p>
-  </div>
-  <div class="row">
-    <div class="col">
-      <img class="img-fluid" src="{% static 'about/parents_fund.png' %}"/>
+<div class="tCF-history">
+  <div class="grid">
+    <h1 class="grid-header">History</h1>
+    <img class="founders-img img-fluid" src="{% static 'about/history/tCF-2005-team.png' %}"/>
+    <div class="founders-text">
+      <h4>Founding</h4>
+      <p>
+        In Fall 2005, two University of Virginia students, Jeff Bordogna and
+        Alan Webb had an idea for an app that would let UVA students share
+        their classroom experiences.
+      </p>
     </div>
-    <div class="col">
-      <img class="img-fluid" src="{% static 'about/StudCo_Logo.png' %}"/>
+    <img class="revival-img img-fluid" src="{% static 'about/history/tCF-2014-team.jpeg' %}"/>
+    <div class="revival-text">
+      <h4>Revival</h4>
+      <p>
+        In 2012-2013, a team of 6 student developers led by Justin Dao redesigned
+        the site to bring it into the modern age using the Ruby on Rails framework.
+        <br><br>
+        <i>"Same dog, new tricks..." - Justin Dao</i>
+      </p>
+    </div>
+    <img class="cio-img img-fluid" src="{% static 'about/history/tCF-2017-team.png' %}" />
+    <div class="cio-text">
+      <h4>CIO Era</h4>
+      <p>
+        In 2017, a successful year of recruitment and organizational growth
+        resulted in UVA granting theCourseForum CIO status.
+      </p>
+    </div>
+    <img class="revival2-img img-fluid" src="{% static 'about/history/tCF-2020-team.png' %}" />
+    <div class="revival2-text">
+      <h4>Revival 2.0</h4>
+      <p>
+        In Spring 2020, theCourseForum needed a fresh start. Under the
+        leadership of Brian Yu, Sai Konuri, Brad Knaysi, and Jennifer Long, theCourseForum
+        was re-built from scratch using the Python web-framework Django.
+      </p>
     </div>
   </div>
-</section>
+</div>
 
 {% endblock %}

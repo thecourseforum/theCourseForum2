@@ -1,0 +1,121 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}{{instructor.full_name}} - theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
+<link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
+<link rel="stylesheet" href="{% static 'common/toolbar.css' %}"/>
+<link rel="stylesheet" href="{% static 'instructor/instructor.css' %}"/>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="row">
+            <div class="col">
+                <div class="card-header py-5">
+                    <h1 class="card-title">
+                        {{ instructor.full_name }}
+                    </h1>
+                    {{ instructor.email }}
+                </div>
+            </div>
+            <div class="col ">
+                <div class="card-body">
+                    <h2 class="h4 mt-4 mb-3">Average Ratings</h2>
+                    <ul class="row">
+                        <li class="col text-nowrap">
+                            <small class="text-uppercase">
+                                <i class="fa fa-star"></i> Rating
+                            </small>
+                            <p class="h3" id="rating">
+                                {% if avg_rating %}
+                                    {{ avg_rating }}
+                                {% else %}
+                                    &mdash;
+                                {% endif %}
+                            </p>
+                        </li>
+                        <li class="col text-nowrap">
+                            <small class="text-uppercase">
+                                <i class="fa fa-dumbbell"></i> Difficulty
+                            </small>
+                            <p class="h3" id="difficulty">
+                                {% if avg_difficulty %}
+                                    {{ avg_difficulty }}
+                                {% else %}
+                                    &mdash;
+                                {% endif %}
+                            </p>
+                        </li>
+                        <li class="col text-nowrap">
+                            <small class="text-uppercase">
+                                <i class="fa fa-chart-bar"></i> GPA
+                            </small>
+                            <p class="h3" id="gpa">
+                                {{ avg_gpa }}
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if courses %}
+    {% for dept, dept_data in courses.items %}
+        <h2 class="mt-5 h3">{{ dept }}</h2>
+        {% for course in dept_data.courses %}
+        <div class="card mt-3">
+            <a href="{% url 'course' course_id=course.id %}">
+                <div class="card-header course-header py-4">
+                    {{ course.name }}
+                </div>
+            </a>
+            <div class="card-body">
+                <ul class="row mb-0 px-3">
+                    <li class="col text-nowrap">
+                        <small class="text-uppercase">
+                            <i class="fa fa-star"></i> Rating
+                        </small>
+                        <p class="h4" id="rating">
+                            {{ course.avg_rating }}
+                        </p>
+                    </li>
+                    <li class="col text-nowrap">
+                        <small class="text-uppercase">
+                            <i class="fa fa-dumbbell"></i> Difficulty
+                        </small>
+                        <p class="h4" id="difficulty">
+                            {{ course.avg_difficulty }}
+                        </p>
+                    </li>
+                    <li class="col text-nowrap">
+                        <small class="text-uppercase">
+                            <i class="fa fa-chart-bar"></i> GPA
+                        </small>
+                        <p class="h4" id="gpa">
+                            {{ course.avg_gpa }}
+                        </p>
+                    </li>
+                    <div class="col">
+                        <small class="text-uppercase">
+                            <i class="fa fa-calendar"></i> Last Taught
+                        </small>
+                        <p class="h4">{{ course.last_taught }}</p>
+                    </div>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    {% endfor %}
+    {% endif %}
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+
+{% endblock %}

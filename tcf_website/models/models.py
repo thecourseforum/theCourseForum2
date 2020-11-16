@@ -1,4 +1,4 @@
-# pylint: disable=missing-class-docstring, wildcard-import
+# pylint: disable=missing-class-docstring, wildcard-import, fixme
 
 """TCF Database models."""
 
@@ -46,7 +46,6 @@ class Department(models.Model):
         return self.name
 
     class Meta:
-
         indexes = [
             models.Index(fields=['school']),
         ]
@@ -57,6 +56,7 @@ class Department(models.Model):
                 name='unique departments per school'
             )
         ]
+
 
 # e.g. CREO in French department or ENCW in English
 
@@ -85,7 +85,7 @@ class Subdepartment(models.Model):
         latest_semester = Semester.latest()
         return self.course_set.filter(
             semester_last_taught__year__gte=latest_semester.year -
-            5).order_by("number")
+                                            5).order_by("number")
 
     def has_current_course(self):
         """Return True if subdepartment has a course in current semester."""
@@ -93,7 +93,6 @@ class Subdepartment(models.Model):
             section__semester=Semester.latest()).exists()
 
     class Meta:
-
         indexes = [
             models.Index(fields=['department']),
         ]
@@ -159,33 +158,137 @@ class Instructor(models.Model):
         """Return string containing instructor full name."""
         return f"{self.first_name} {self.last_name}"
 
+    # this implementation is the same as average_rating in Course
+    # except with an extra
     def average_rating_for_course(self, course):
-        """Compute average of instructor and recommend scores."""
+        """Compute average rating for course.
+
+        Rating is defined as the average of recommendability,
+        instructor rating, and enjoyability."""
         ratings = Review.objects.filter(
             course=course, instructor=self).aggregate(
-                models.Avg('recommendability'),
-                models.Avg('instructor_rating'))
+            models.Avg('recommendability'),
+            models.Avg('instructor_rating'),
+            models.Avg('enjoyability'))
 
         recommendability = ratings.get('recommendability__avg')
         instructor_rating = ratings.get('instructor_rating__avg')
+        enjoyability = ratings.get('enjoyability__avg')
 
         # Return None if one component is absent.
-        if not recommendability or not instructor_rating:
+        if not recommendability or not instructor_rating or not enjoyability:
             return None
 
-        return (recommendability + instructor_rating) / 2
+        return (recommendability + instructor_rating + enjoyability) / 3
 
     def average_difficulty_for_course(self, course):
         """Compute average difficulty score."""
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
-                models.Avg('difficulty'))['difficulty__avg']
+            models.Avg('difficulty'))['difficulty__avg']
+
+    def average_enjoyability_for_course(self, course):
+        """Computer average enjoyability"""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('enjoyability'))['enjoyability__avg']
+
+    def average_instructor_rating_for_course(self, course):
+        """Computer average instructor rating"""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('instructor_rating'))['instructor_rating__avg']
+
+    def average_recommendability_for_course(self, course):
+        """Computer average recommendability"""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('recommendability'))['recommendability__avg']
 
     def average_hours_for_course(self, course):
         """Compute average hrs/wk."""
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
-                models.Avg('hours_per_week'))['hours_per_week__avg']
+            models.Avg('hours_per_week'))['hours_per_week__avg']
+
+    def average_reading_hours_for_course(self, course):
+        """Compute average reading hrs/wk."""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('amount_reading'))['amount_reading__avg']
+
+    def average_writing_hours_for_course(self, course):
+        """Compute average writing hrs/wk."""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('amount_writing'))['amount_writing__avg']
+
+    def average_group_hours_for_course(self, course):
+        """Compute average group work hrs/wk."""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('amount_group'))['amount_group__avg']
+
+    def average_other_hours_for_course(self, course):
+        """Compute average other HW hrs/wk."""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('amount_homework'))['amount_homework__avg']
+
+    def average_gpa_for_course(self, course):
+        """Compute average GPA"""
+        return CourseInstructorGrade.objects.filter(course=course, instructor=self).aggregate(
+            models.Avg('average'))['average__avg']
+
+    def taught_courses(self):
+        """Returns all sections taught by Instructor."""
+        # this method is very inefficient and doesn't actually do what the name
+        # implies (collecting Sections instead of Courses); work in progress
+        return Section.objects.filter(instructors=self)
+
+    def average_rating(self):
+        """Compute average rating for all this Instructor's Courses"""
+        ratings = Review.objects.filter(instructor=self).aggregate(
+            models.Avg('recommendability'),
+            models.Avg('instructor_rating'),
+            models.Avg('enjoyability'))
+
+        recommendability = ratings.get('recommendability__avg')
+        instructor_rating = ratings.get('instructor_rating__avg')
+        enjoyability = ratings.get('enjoyability__avg')
+
+        # Return None if one component is absent.
+        if not recommendability or not instructor_rating or not enjoyability:
+            return None
+
+        return (recommendability + instructor_rating + enjoyability) / 3
+
+    def average_difficulty(self):
+        """Compute average difficulty for all this Instructor's Courses"""
+        return Review.objects.filter(
+            instructor=self).aggregate(
+            models.Avg('difficulty'))['difficulty__avg']
+
+    def average_gpa(self):
+        """Compute average GPA for all this Instructor's Courses"""
+        return CourseInstructorGrade.objects.filter(instructor=self).aggregate(
+            models.Avg('average'))['average__avg']
+
+    def get_courses(self):
+        """Gets all Courses taught by a given Instructor"""
+        # More specifically, all Courses where this Instructor has taught a Section
+        # Might be good to store this data as a many-to-many field in
+        # Instructor instead of computing?
+        course_ids = list(
+            Section.objects.filter(
+                instructors=self).distinct().values_list(
+                'course_id', flat=True))
+
+        # <1000 course IDs are from super old classes...
+        # should we bother keeping the data at that point?
+        return Course.objects.filter(
+            pk__in=course_ids).filter(
+            number__gte=1000).order_by('number')
 
 
 class Semester(models.Model):
@@ -243,7 +346,6 @@ class Semester(models.Model):
         return Semester.objects.order_by("-number").first()
 
     class Meta:
-
         indexes = [
             models.Index(fields=['year', 'season']),
             models.Index(fields=['number']),
@@ -280,20 +382,41 @@ class Course(models.Model):
         Semester, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.subdepartment.mnemonic} {self.number} {self.title}"
+        return f"{self.subdepartment.mnemonic} {self.number} | {self.title}"
 
     def code(self):
         """Returns the courses code string."""
         return f"{self.subdepartment.mnemonic} {self.number}"
+
+    def eval_link(self):
+        """Returns link to student eval page for that class"""
+        link = f"https://evals.itc.virginia.edu/course-selectionguide/pages/SGMain.jsp?cmp=" \
+               f"{self.subdepartment.mnemonic},{self.number}"
+        return link
 
     def is_recent(self):
         """Returns True if course was taught in current semester."""
         return self.semester_last_taught == Semester.latest()
 
     def average_rating(self):
-        """Compute average rating."""
-        return Review.objects.filter(course=self).aggregate(
-            models.Avg('recommendability'))['recommendability__avg']
+        """Compute average rating.
+
+        Rating is defined as the average of recommendability,
+        instructor rating, and enjoyability."""
+        ratings = Review.objects.filter(course=self).aggregate(
+            models.Avg('recommendability'),
+            models.Avg('instructor_rating'),
+            models.Avg('enjoyability'))
+
+        recommendability = ratings.get('recommendability__avg')
+        instructor_rating = ratings.get('instructor_rating__avg')
+        enjoyability = ratings.get('enjoyability__avg')
+
+        # Return None if one component is absent.
+        if not recommendability or not instructor_rating or not enjoyability:
+            return None
+
+        return (recommendability + instructor_rating + enjoyability) / 3
 
     def average_difficulty(self):
         """Compute average difficulty score."""
@@ -305,7 +428,6 @@ class Course(models.Model):
         return self.review_set.count()
 
     class Meta:
-
         indexes = [
             models.Index(fields=['subdepartment', 'number']),
         ]
@@ -316,6 +438,78 @@ class Course(models.Model):
                 name='unique course subdepartment and number'
             )
         ]
+
+
+class CourseGrade(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    subdepartment = models.CharField(max_length=255)
+    number = models.IntegerField(
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(99999)],
+        default=0)
+    title = models.CharField(max_length=225, default="")
+    average = models.FloatField(default=0.0)
+    a_plus = models.IntegerField(default=0)
+    a = models.IntegerField(default=0)
+    a_minus = models.IntegerField(default=0)
+    b_plus = models.IntegerField(default=0)
+    b = models.IntegerField(default=0)
+    b_minus = models.IntegerField(default=0)
+    c_plus = models.IntegerField(default=0)
+    c = models.IntegerField(default=0)
+    c_minus = models.IntegerField(default=0)
+    d_plus = models.IntegerField(default=0)
+    d = models.IntegerField(default=0)
+    d_minus = models.IntegerField(default=0)
+    f = models.IntegerField(default=0)
+    ot = models.IntegerField(default=0)
+    drop = models.IntegerField(default=0)
+    withdraw = models.IntegerField(default=0)
+    total_enrolled = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.subdepartment} {self.number} {self.average}"
+
+
+class CourseInstructorGrade(models.Model):
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, null=True)
+    first_name = models.CharField(max_length=225)
+    middle_name = models.CharField(max_length=225)
+    last_name = models.CharField(max_length=225)
+    email = models.CharField(max_length=225)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    subdepartment = models.CharField(max_length=255)
+    number = models.IntegerField(
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(99999)],
+        default=0)
+    # section_number = models.IntegerField()
+    title = models.CharField(max_length=225, default="")
+    average = models.FloatField(default=0.0)
+    a_plus = models.IntegerField(default=0)
+    a = models.IntegerField(default=0)
+    a_minus = models.IntegerField(default=0)
+    b_plus = models.IntegerField(default=0)
+    b = models.IntegerField(default=0)
+    b_minus = models.IntegerField(default=0)
+    c_plus = models.IntegerField(default=0)
+    c = models.IntegerField(default=0)
+    c_minus = models.IntegerField(default=0)
+    d_plus = models.IntegerField(default=0)
+    d = models.IntegerField(default=0)
+    d_minus = models.IntegerField(default=0)
+    f = models.IntegerField(default=0)
+    ot = models.IntegerField(default=0)
+    drop = models.IntegerField(default=0)
+    withdraw = models.IntegerField(default=0)
+    total_enrolled = models.IntegerField(default=0)
+
+    def __str__(self):
+        return (f"{self.first_name} {self.last_name} "
+                f"{self.subdepartment} {self.number} {self.average}")
 
 
 class Section(models.Model):
@@ -349,7 +543,6 @@ class Section(models.Model):
         return f"{self.course} {self.semester} {', '.join(str(i) for i in self.instructors.all())}"
 
     class Meta:
-
         indexes = [
             models.Index(fields=['semester', 'course']),
             models.Index(fields=['course']),
@@ -397,28 +590,42 @@ class Review(models.Model):
     difficulty = models.PositiveSmallIntegerField(choices=RATINGS)
     # Review recommendability. Required.
     recommendability = models.PositiveSmallIntegerField(choices=RATINGS)
+    # Review enjoyability. Required.
+    enjoyability = models.PositiveSmallIntegerField(choices=RATINGS)
+
     # Review hours per week. Required.
+    # hours_per_week used to be the only thing, but we also brought back the
+    # subcategories. This is just a sum, but I'm keeping it because other parts
+    # of the codebase depend on this model field existing and I'm not fixing them.
+    # TODO: make validators/tests to ensure hours_per_week is the sum, or just
+    #  remove it entirely from the model and replace w/ function
     hours_per_week = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(168)])
+        validators=[MinValueValidator(0), MaxValueValidator(80)])
+    # Review hours of reading per week. Required.
+    amount_reading = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(20)])
+    # Review hours of writing per week. Required.
+    amount_writing = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(20)])
+    # Review hours of group work per week. Required.
+    amount_group = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(20)])
+    # Review hours of homework per week. Required.
+    amount_homework = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(20)])
+
     # Review created date. Required.
     created = models.DateTimeField(editable=False, default=timezone.now)
     # Review modified date. Required.
     modified = models.DateTimeField(default=timezone.now)
 
-    # After data migration, add the following in order to automatically
-    # save created and modified dates.
-
-    # def save(self, *args, **kwargs):
-    #     ''' On save, update timestamps '''
-    #     if not self.id:
-    #         self.created = timezone.now()
-    #     self.modified = timezone.now()
-    #     return super(Review, self).save(*args, **kwargs)
-
+    # does this get used anywhere? not sure
     def average(self):
         """Average score for review."""
-        return (self.instructor_rating + self.recommendability) / 2
+        return (self.instructor_rating +
+                self.recommendability + self.enjoyability) / 3
 
+    # not sure if this gets used anywhere either
     def count_votes(self):
         """Sum votes for review."""
         vote_sum = self.vote_set.aggregate(
@@ -512,6 +719,7 @@ class Review(models.Model):
 
         # Some of the tCF 1.0 data did not honor this constraint.
         # Should we add it and remove duplicates from old data?
+        # - Sounds good, just keep the newer review - Jennifer
 
     #     constraints = [
     #         models.UniqueConstraint(
@@ -539,7 +747,6 @@ class Vote(models.Model):
         return f"Vote of value {self.value} for {self.review} by {self.user}"
 
     class Meta:
-
         indexes = [
             models.Index(fields=['review']),
         ]

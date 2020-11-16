@@ -1,0 +1,13 @@
+<!-- tCF search -->
+<!-- To be imported into templates (navbar, landing page) -->
+<form class="form-inline flex-grow-1" action="/search" method="get">
+  <div class="input-group flex-grow-1">
+    <input type="search" class="form-control border border-right-0"
+            placeholder="Search for a class or professor..." aria-label="Search" name="q" value="{{query}}">
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary border border-left-0" type="submit">
+          <i class="fa fa-search" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</form>

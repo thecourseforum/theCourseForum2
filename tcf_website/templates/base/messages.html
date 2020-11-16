@@ -1,0 +1,18 @@
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'base/messages.css' %}" />
+{% endblock %}
+
+{% if messages %}
+    <div class="content">
+        {% for message in messages %}
+            <div class="alert {{message.tags}} alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert">
+                    <span>&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

@@ -1,0 +1,28 @@
+{
+  "name": "thecourseforum",
+  "version": "2.0.0",
+  "description": "[![Build Status](https://travis-ci.com/thecourseforum/theCourseForum2.svg?branch=master)](https://travis-ci.com/thecourseforum/theCourseForum2)",
+  "main": "index.js",
+  "dependencies": {
+    "chart.js": "^2.9.4",
+    "eslint": "^7.9.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thecourseforum/theCourseForum2.git"
+  },
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/thecourseforum/theCourseForum2/issues"
+  },
+  "homepage": "https://github.com/thecourseforum/theCourseForum2#readme"
+}

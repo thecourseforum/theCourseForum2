@@ -1,5 +1,5 @@
 <div class="tcf-toolbar btn-toolbar justify-content-center justify-content-md-between mb-3 text-center text-md-left" role="toolbar" aria-label="Toolbar with button groups">
-    <div class="btn-group mr-2" role="group" aria-label="First group">
+    <div class="btn-group mr-2" role="group" aria-label="Breadcrumbs">
         <ol class="breadcrumb mb-md-0">
             {% for text, url, active in breadcrumbs %}
                 <li class="breadcrumb-item {% if active %}active{% endif %}">{% if not active %}<a href="{{ url }}">{{ text }}</a>{% else %}{{ text }}{% endif %}
@@ -8,9 +8,20 @@
         </ol>
     </div>
     {% if active_text %}
-    <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" id="hide-btn" onclick="hideOld()" class="btn btn-outline-dark active">{{ active_text }}</button>
-        <button type="button" id="show-btn" onclick="showOld()" class="btn btn-outline-dark"> {{ hidden_text }} </button>
+    <div class="btn-group btn-group-sm" role="toolbar" aria-label="Show/Hide All Semesters">
+        <button type="button" id="hide-btn" class="btn btn-outline-primary active">{{ active_text }}</button>
+        <button type="button" id="show-btn" class="btn btn-outline-primary"> {{ hidden_text }} </button>
+    </div>
+    {% endif %}
+</div>
+
+<div class="d-flex justify-content-center justify-content-lg-end mt-3 mb-3" role="toolbar" aria-label="Toolbar with button groups">
+    {% if sorting %}
+    <div class="btn-group btn-group-sm" role="group" aria-label="Sorting Buttons">
+        <button type="button" id="number-sort-btn" class="btn btn-outline-primary active">Course ID</button>
+        <button type="button" id="rating-sort-btn" class="btn btn-outline-primary">Rating</button>
+        <button type="button" id="diff-sort-btn" class="btn btn-outline-primary">Difficulty</button>
+        <button type="button" id="gpa-sort-btn" class="btn btn-outline-primary">GPA</button>
     </div>
     {% endif %}
 </div>
