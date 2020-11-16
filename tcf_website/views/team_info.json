@@ -2,37 +2,37 @@
 "executive_team": [{"name": "Jennifer Long",
                      "role": "President\u00a0|\u00a0Product Lead",
                      "class": "2021",
-                     "img_filename": "ENG_Jennifer_Long.jpg"
+                     "img_filename": "ENG_Jennifer_Long.webp"
                     },
                    {"name": "Alex Shen",
                     "role": "VP\u00a0|\u00a0Product Engineering",
                     "class": "2023",
-                    "img_filename": "ENG_Alex_Shen.jpg"
+                    "img_filename": "ENG_Alex_Shen.webp"
                     },
                    {"name": "Jules Le Menestrel",
                     "role": "VP\u00a0|\u00a0Product Engineering",
                     "class": "2023",
-                    "img_filename": "ENG_Jules_LeMenestrel.jpg"
+                    "img_filename": "ENG_Jules_LeMenestrel.webp"
                     },
                    {"name": "Jack Liu",
                     "role": "VP\u00a0|\u00a0Infrastructure Engineering",
                     "class": "2023",
-                    "img_filename": "ENG_Jack_Liu.jpg"
+                    "img_filename": "ENG_Jack_Liu.webp"
                     },
                    {"name": "Shirley Chu",
                     "role": "VP\u00a0|\u00a0Marketing & Design",
                     "class": "2021",
-                    "img_filename": "MAD_Shirley_Chu.jpg"
+                    "img_filename": "MAD_Shirley_Chu.webp"
                     },
                    {"name": "Vi Nguyen",
                     "role": "Secretary\u00a0|\u00a0Operations Lead",
                     "class": "2023",
-                    "img_filename": "ENG_Vi_Nguyen.jpg"
+                    "img_filename": "ENG_Vi_Nguyen.webp"
                     },
                    {"name": "Davis DeLozier",
                     "role": "Treasurer\u00a0|\u00a0Business Lead",
                     "class": "2022",
-                    "img_filename": "MAD_Davis_Delozier.jpg"
+                    "img_filename": "MAD_Davis_Delozier.webp"
                     }
                    ],
   "engineering_team": [{"name": "Brian Yu",
