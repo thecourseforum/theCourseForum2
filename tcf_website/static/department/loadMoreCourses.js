@@ -21,6 +21,7 @@ async function loadPage(subdepartmentId, url) {
 function generateCourseCardHTML(course) {
     const rating = emdashOrTwoDecimals(course.average_rating);
     const difficulty = emdashOrTwoDecimals(course.average_difficulty);
+    const gpa = emdashOrTwoDecimals(course.average_gpa);
     const seasonAllCaps = course.semester_last_taught.season;
     const seasonTitleCase = seasonAllCaps.charAt(0) + seasonAllCaps.substr(1).toLowerCase();
     return `
@@ -37,7 +38,7 @@ function generateCourseCardHTML(course) {
                     <div class="card-body">
                         <div class="row justify-content-between text-center text-md-left">
                             <div class="col-4 col-lg-2 text-nowrap">
-                                <small class="mb-0 text-muted text-uppercase">
+                                <small class="mb-0 text-uppercase">
                                     <i class="fa fa-star fa-fw" aria-hidden="true"></i>&nbsp;Rating
                                 </small>
                                 <p class="mb-0 info" id="rating">
@@ -45,21 +46,21 @@ function generateCourseCardHTML(course) {
                                 </p>
                             </div> 
                             <div class="col-4 col-lg-2 text-nowrap">
-                                <small class="mb-0 text-muted text-uppercase">
-                                    <i class="fa fa-skull-crossbones fa-fw" aria-hidden="true"></i>&nbsp;Difficulty
+                                <small class="mb-0 text-uppercase">
+                                    <i class="fa fa-dumbbell fa-fw" aria-hidden="true"></i>&nbsp;Difficulty
                                 </small>
                                 <p class="mb-0 info" id="difficulty">
                                     ${difficulty}
                                 </p>
                             </div>
                             <div class="col-4 col-lg-2 text-nowrap">
-                                <small class="mb-0 text-muted text-uppercase">
+                                <small class="mb-0 text-uppercase">
                                     <i class="fas fa-chart-bar" aria-hidden="true"></i>&nbsp;GPA
                                 </small>
-                                <p class="mb-0 info" id="gpa">TODO</p>
+                                <p class="mb-0 info" id="gpa">${gpa}</p>
                             </div>
                             <div class="col-12 col-lg-3 offset-lg-3">
-                                <small class="mb-0 text-muted text-uppercase">
+                                <small class="mb-0 text-uppercase">
                                     Last Taught
                                 </small>
                                 <p class="mb-0 info">${seasonTitleCase} ${course.semester_last_taught.year}</p>
