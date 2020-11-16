@@ -188,7 +188,7 @@ if not DEBUG:
 
     # Gather information from environment variables.
 
-    HOSTNAME = env.str('HOSTNAME')
+    # HOSTNAME = env.str('HOSTNAME')
     # PUBLIC_IPV4 = env.str('PUBLIC_IPV4')
 
     # SECURITY WARNING: App Engine's security features ensure that it is safe to
@@ -198,8 +198,8 @@ if not DEBUG:
     # documentation)
     ALLOWED_HOSTS = ['*']
 
-    if HOSTNAME:
-        ALLOWED_HOSTS.append(HOSTNAME)
+    # if HOSTNAME:
+    #     ALLOWED_HOSTS.append(HOSTNAME)
     # if PUBLIC_IPV4:
     #     ALLOWED_HOSTS.append(PUBLIC_IPV4)
 
