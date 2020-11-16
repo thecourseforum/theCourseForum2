@@ -20,7 +20,7 @@ def index(request):
 
     response = render(request, 'landing/landing.html',
                       {'executive_team': team_info['executive_team'],
-                        'FAQs': faqs,
+                       'FAQs': faqs,
                        'visited': request.session.get('visited', False)})
     request.session['visited'] = True
 
