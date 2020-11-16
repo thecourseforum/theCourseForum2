@@ -90,7 +90,7 @@ footer > .row {
 
 .form-control {
   background-color: var(--background-color);
-  color: var(--background-color);
+  color: black;
   border-color: transparent;
 }
 
