@@ -97,7 +97,7 @@
         </div>
 
         <div class="col-lg-4">
-          <a href="{% url 'new_review' %}" class="link-unstyled">
+          <a data-toggle="modal" data-target="#comingSoonModal" class="link-unstyled">
             <div class="card mx-sm-3 my-3">
               <div class="card-body features-icons-item mx-auto mb-2">
                 <div class="features-icons-icon d-flex">
@@ -111,6 +111,31 @@
         </div>
       </div>
   </section>
+
+  <!-- under construction pop up (modal) -->
+  <div class="modal fade" id="comingSoonModal" tabindex="-1" role="dialog" aria-labelledby="comingSoonModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <div class="container">
+            <div class="row text-center justify-content-center">
+              <h5>Sorry!</h5>
+            </div>
+            <div class="row text-center justify-content-center">
+              <p> This feature is currently under construction. <br> Thanks for your patience! </p>
+            </div>
+            <div class="row justify-content-center">
+              <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
 
   <!-- About Team -->

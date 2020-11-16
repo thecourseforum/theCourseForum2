@@ -1,66 +1,74 @@
-<div id="review{{review.id}}" class="review card mb-2 d-flex flex-row align-items-center">
-
-    <div class="d-none d-sm-flex vote-container ml-4 mr-2 flex-column justify-content-center align-items-center">
-        <!--Voting logic is implemented in the <script> tag of reviews.html-->
-        <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}" id="upvote{{review.id}}">
-            <i class="fa fa-angle-up fa-fw"></i>
-        </a>
-        <span id="vote-count" class="voteCount">{{ review.count_votes }}</span>
-        <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}" id="downvote{{review.id}}">
-            <i class="fa fa-angle-down fa-fw"></i>
-        </a>
-    </div>
-
+<div id="review{{review.id}}" class="review card mb-2">
     <div class="card-body text-left">
-
-        <div class="d-flex flex-row align-items-center">
-            <div>
-
-                {% if profile %}
-                <div class="d-flex justify-content-between">
-                    <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}"><p><strong>{{ review.instructor.full_name }} - {{ review.course }}</strong></p></a>
-                    <a href="#">Edit</a>
-                </div>
-                {% endif %}
-                <p style="white-space: pre-line;">{{ review.text }}</p>
-
+        <div class="row">
+            <div class="col-2 col-lg-1 vote-container d-none d-md-flex flex-column justify-content-center align-items-center">
+                <!--Voting logic is implemented in the <script> tag of reviews.html-->
+                <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}" id="upvote{{review.id}}">
+                    <i class="fa fa-angle-up fa-fw"></i>
+                </a>
+                <span id="vote-count" class="voteCount">{{ review.count_votes }}</span>
+                <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}" id="downvote{{review.id}}">
+                    <i class="fa fa-angle-down fa-fw"></i>
+                </a>
             </div>
-        </div>
+            <div class="col-xs-12 col-md-10 col-lg-11">
+                <div class="d-flex flex-row align-items-center">
+                    <div>
+                        {% if profile %}
+                        <div class="d-flex">
+                            <div>
+                            <a class="review-header" href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
+                                <p><strong>{{ review.course }}</strong> - {{ review.instructor.full_name }}</p>
+                            </a>
+                            </div>
+                            <div class="ml-auto">
+                            <!-- Edit functionality is TBD -->
+                            <a class="review-edit btn btn-sm btn-primary" href="#">
+                                <i class="fas fa-pencil-alt"></i> Edit
+                            </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <p class="card-text" style="white-space: pre-line;">{{ review.text }}</p>
+                    </div>
+                </div>
 
-        <div class="d-flex justify-content-between align-items-end">
-            <div class="d-flex">
-                <div>
-                    <strong>
-                        <p id="review-average">
-                            <i class="fa fa-star fa-fw"></i>&nbsp;{{ review.average|floatformat:2 }}
-                        </p>
-                    </strong>
-                </div>
-                <div class="ml-4 text-muted">
-                    <i class="fas fa-comment"></i>
-                    {{ review.recommendability }}
-                </div>
-                <div class="ml-4 text-muted">
-                    <i class="fa fa-user fa-fw"></i>&nbsp;
-                    {{ review.instructor_rating }}
-                </div>
-                <div class="ml-4 text-muted">
-                    <i class="far fa-grin"></i>
-                    {{ review.enjoyability }}
-                </div>
-                <div class="ml-4 text-muted">
-                    <i class="fa fa-dumbbell fa-fw"></i>&nbsp;
-                    {{ review.difficulty }}
-                </div>
-                <div class="ml-4 text-muted">
-                    <i class="fa fa-hourglass-half fa-fw"></i>&nbsp;
-                    {{ review.hours_per_week }}
-                </div>
-            </div>
+                <div class="d-flex justify-content-between align-items-end flex-wrap">
+                    <div class="d-flex">
+                        <div>
+                            <strong>
+                                <p id="review-average">
+                                    <i class="fa fa-star fa-fw"></i> {{ review.average|floatformat:2 }}
+                                </p>
+                            </strong>
+                        </div>
+                        <div class="ml-4 text-muted">
+                            <i class="fas fa-thumbs-up"></i>
+                            {{ review.recommendability }}
+                        </div>
+                        <div class="ml-4 text-muted">
+                            <i class="fa fa-user"></i>
+                            {{ review.instructor_rating }}
+                        </div>
+                        <div class="ml-4 text-muted">
+                            <i class="far fa-smile-beam"></i>
+                            {{ review.enjoyability }}
+                        </div>
+                        <div class="ml-4 text-muted">
+                            <i class="fa fa-dumbbell fa-fw"></i>
+                            {{ review.difficulty }}
+                        </div>
+                        <div class="ml-4 text-muted">
+                            <i class="fa fa-hourglass-half fa-fw"></i>
+                            {{ review.hours_per_week }}
+                        </div>
+                    </div>
 
-            <div class="text-right">
-                <p>{{ review.semester }}</p>
-                <p id="date">{{ review.created|date }}</p>
+                    <div class="text-right">
+                        <p>{{ review.semester }}</p>
+                        <p id="date">{{ review.created|date }}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
