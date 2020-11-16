@@ -8,19 +8,20 @@
 
 <!-- Custom styles for this template -->
 <link rel="stylesheet" href="{% static 'base/navbar.css' %}" />
-<link rel="stylesheet" href="{% static 'landing/landing-page.css' %}" />
+<link rel="stylesheet" href="{% static 'landing/landing.css' %}" />
 {% endblock %}
 
 
 {% block body %}
-<div class="bg-light">
+<div class="container-fluid px-0 bg-light">
 
   <!-- Custom Landing Page Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container">
       <!-- tCF logo -->
       <a class="navbar-brand logo-container" href="/">
-        <img class="logo" src="{% static 'base/img/new_logo.png' %}">
+        <img class="logo" src="{% static 'base/img/new_logo.png' %}" alt="theCourseForum logo">
+        <h4 class="text-tcf-indigo">theCourseForum</h4>
       </a>
       <!-- tCF profile dropdown -->
       <div class="account-settings">
@@ -47,26 +48,29 @@
 
   <!-- Masthead -->
   <header class="masthead text-center">
-    <div class="container mt-5 pt-5">
-      <div class="row pt-5">
-        <div class="col-xl-9 mx-auto">
-          <h1 class="mb-2">theCourseForum</h1>
-          <p class="lead mb-5">A UVA student community, connecting you to the courses you love.</p>
+    <div class="row">
+      <div class="col-xl-8 mx-auto py-4">
+        <div class="about-logo row justify-content-center">
+          <img src="{% static 'base/img/new_logo.png' %}" alt="theCourseForum logo"
+               height="150px">
+          <div class="tagline text-left pt-3">
+            <h1>theCourseForum</h1>
+            <p>connecting you to the courses you love.</p>
+          </div>
         </div>
-        <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-          {% include "base/searchbar.html" %}
-        </div>
+      </div>
+      <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+        {% include "base/searchbar.html" %}
       </div>
     </div>
   </header>
 
   <!-- Icons Grid -->
-  <section class="features-icons py-5 text-center">
-    <div class="container">
-      <div class="row">
+  <section class="features-icons container px-5 pb-5">
+      <div class="row px-md-4 text-center">
         <div class="col-lg-4">
           <a href="{% url 'browse' %}" class="link-unstyled">
-            <div class="card m-3">
+            <div class="card mx-sm-3 my-3">
               <div class="card-body features-icons-item mx-auto mb-2">
                 <div class="features-icons-icon d-flex">
                   <i class="icon-list m-auto text-tcf-indigo"></i>
@@ -80,7 +84,7 @@
 
         <div class="col-lg-4">
           <a href="{% url 'browse' %}" class="link-unstyled">
-            <div class="card m-3">
+            <div class="card mx-sm-3 my-3">
               <div class="card-body features-icons-item mx-auto mb-2">
                 <div class="features-icons-icon d-flex">
                   <i class="icon-chart m-auto text-tcf-indigo"></i>
@@ -94,7 +98,7 @@
 
         <div class="col-lg-4">
           <a href="{% url 'new_review' %}" class="link-unstyled">
-            <div class="card m-3">
+            <div class="card mx-sm-3 my-3">
               <div class="card-body features-icons-item mx-auto mb-2">
                 <div class="features-icons-icon d-flex">
                   <i class="icon-pencil m-auto text-tcf-indigo"></i>
@@ -106,14 +110,14 @@
           </a>
         </div>
       </div>
-    </div>
   </section>
+
 
   <!-- About Team -->
   <section class="about-team py-5 my-5">
     <div class="about-header row">
       <div class="col-lg-8 p-4 bg-tcf-indigo text-white text-right">
-        <h3 class="font-weight-light px-4">We'll connect you to courses you'll love, and make enrollment stress free.</h3>
+        <p class="font-weight-light px-4">We'll connect you to courses you'll love, and make enrollment stress free.</p>
       </div>
       <div class="col-lg-4">
       </div>
@@ -122,9 +126,9 @@
     <div class="about-content container">
       <div class="row pt-5 px-0">
         <div class="col-lg-8">
-          <div class="team-photos row text-center mr-4 mb-4">
+          <div class="team-photos row text-center pr-md-4 mb-4">
             {% for member in executive_team %}
-              <div class="col-md-3 col-sm-6 d-flex px-0">
+              <div class="col-6 col-md-3 px-0">
                 <div class="about-member card flex-fill bg-light">
                   <div class="about-pfp px-4 py-3">
                     <img class="card-img-top rounded-circle" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
@@ -136,11 +140,14 @@
                 </div>
               </div>
             {% endfor %}
-            <div class="col-md-3 col-sm-6">
+            <div class="col-6 col-md-3">
               <a href="{% url 'about' %}" class="link-unstyled">
                 <div class="about-link card bg-tcf-orange mt-3 mx-1">
                   <div class="card-body mx-auto py-5">
-                    <h4 class="card-text text-white text-left">Meet the full team >></h4>
+                    <p class="card-text text-white text-left">
+                      Meet the full team
+                      <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                    </p>
                   </div>
                 </div>
               </a>
@@ -154,7 +161,7 @@
                 <h3 class="card-title">About Us</h3>
                 <p class="card-text font-weight-light mb-2">
                   theCourseForum is a product of volunteer developers and contributors from the UVA community.
-                  Founded in 2005 by two alumni, we are a student-run nonprofit CIO at the University of Virginia.
+                  We are a student-run nonprofit CIO, founded in 2005 at the University of Virginia.
                   <br/><br/>
                   We keep our servers running through university grants and your donations.
                   Just $4 keeps our servers up for a day, so we can keep serving you the best content.
@@ -170,10 +177,9 @@
   </section>
 
   <!-- Feedback Form -->
-  <section class="feedback py-5 mb-5 text-center">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-10 mx-auto">
+  <section class="feedback container py-5 mb-5">
+      <div class="row text-center">
+        <div class="feedback-header col-md-10 mx-auto">
           <h2 class="mb-4">Tell us about your experience</h2>
           <p class="lead mb-5">Keep in touch! We would love to hear about your experience with the site and areas where you think we can improve.</p>
         </div>
@@ -213,7 +219,6 @@
           </form>
         </div>
       </div>
-    </div>
   </section>
 
   <!-- welcome modal -->
@@ -252,9 +257,9 @@
 <div>
 
 <!-- Footer -->
-<footer class="footer py-3 bg-tcf-orange text-white link-white">
+<footer class="footer bg-tcf-indigo">
   <div class="container">
-    <div class="row">
+    <div class="row py-3 text-white link-white">
       <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
         <ul class="list-inline mb-2">
           <li class="list-inline-item">
@@ -281,6 +286,11 @@
             <h5>Follow theCourseForum!</h5>
           </li>
           <li class="list-inline-item mr-3">
+            <a href="https://discord.gg/tAjzH7eyvW">
+              <i class="fab fa-discord fa-2x fa-fw"></i>
+            </a>
+          </li>
+          <li class="list-inline-item mr-3">
             <a href="https://www.facebook.com/thecourseforum">
               <i class="fab fa-facebook fa-2x fa-fw"></i>
             </a>
@@ -300,6 +310,8 @@
     </div>
   </div>
 </footer>
+
+{% include "base/bugform.html" %}
 {% endblock %}
 
 {% block js %}
