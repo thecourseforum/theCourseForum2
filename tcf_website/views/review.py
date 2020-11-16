@@ -13,6 +13,8 @@ from ..models import Review, Course, Semester, Instructor
 # (i.e. better Course/Instructor/Semester search).
 
 
+
+
 class ReviewForm(forms.Form):
     """Form for review creation."""
 
@@ -37,6 +39,8 @@ def downvote(request, review_id):
     return JsonResponse({'ok': False})
 
 
+# pylint: disable=too-many-locals
+# ^Doing this for now
 @login_required
 def new_review(request):
     """Review creation view."""
