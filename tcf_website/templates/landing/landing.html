@@ -21,7 +21,7 @@
       <!-- tCF logo -->
       <a class="navbar-brand logo-container" href="/">
         <img class="logo" src="{% static 'base/img/new_logo.png' %}" alt="theCourseForum logo">
-        <h4 class="text-tcf-indigo">theCourseForum</h4>
+        <h4 class="text-tcf-indigo ml-2">theCourseForum</h4>
       </a>
       <!-- tCF profile dropdown -->
       <div class="account-settings">
@@ -201,6 +201,58 @@
 
   </section>
 
+  <section class="faqs features-icons px-md-4 mx-4 mb-5">
+    <div class="card row mx-md-4 py-4">
+
+      <div class="faqs-header col-11 mx-auto">
+        <h2 class="mb-4 text-tcf-orange">FAQs</h2>
+      </div>
+
+      <div class="faqs-content col-11 mx-auto">
+        <div class="row">
+          <!-- These questions have hyperlinks and cannot be in the JSON file -->
+          <div class="col-md-6 mb-3">
+            <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#faq-prevfeature">
+              <i class="fas fa-chevron-down"></i> Where did [previous feature] go?</h5>
+            <p id="faq-prevfeature" class="collapse">
+              During our tCF2.0 rewrite, some features had to be left out due to
+              low usage. If you'd like to propose we bring one of them back, or
+              suggest an entirely new feature, submit a feedback form or join
+              the discussion on our
+              <a href='https://discord.gg/tAjzH7eyvW' class='text-tcf-blue'>Discord server</a>!
+            </p>
+          </div>
+          {% for item in FAQs %}
+          <div class="col-md-6 mb-3">
+            <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#faq-{{forloop.counter}}">
+              <i class="fas fa-chevron-down"></i> {{ item.question }} </h5>
+            <p id="faq-{{forloop.counter}}" class="collapse"> {{ item.answer }} </p>
+          </div>
+          {% endfor %}
+          <!-- These questions have hyperlinks and cannot be in the JSON file -->
+          <div class="col-md-6 mb-3">
+            <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#faq-privacy">
+              <i class="fas fa-chevron-down"></i> How do you protect reviewers' privacy?</h5>
+            <p id="faq-privacy" class="collapse">
+              We will never display your name on reviews, nor release this
+              information to anyone. Read our
+              <a href="{% url 'privacy' %}" class='text-tcf-blue'>Privacy Policy</a> to learn more!
+            </p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#faq-reportbugs">
+              <i class="fas fa-chevron-down"></i> Where should I report bugs or leave a comment?</h5>
+            <p id="faq-reportbugs" class="collapse">
+              Fill out the feedback form or report a bug form on the site or join our
+              <a href='https://discord.gg/tAjzH7eyvW' class='text-tcf-blue'>Discord server</a>!
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
   <!-- Feedback Form -->
   <section class="feedback container py-5 mb-5">
       <div class="row text-center">
@@ -230,11 +282,11 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label for="inputTitle">Title</label>
-                  <input type="text" class="form-control" id="inputTitle" placeholder="Message Subject">
+                  <input type="text" class="form-control" id="inputTitle" placeholder="Message Subject" required>
                 </div>
                 <div class="form-group">
                   <label for="inputMessage">Feedback</label>
-                  <textarea type="text" class="form-control" id="inputMessage" rows="6" placeholder="Write your message here..."></textarea>
+                  <textarea type="text" class="form-control" id="inputMessage" rows="6" placeholder="Write your message here..." required></textarea>
                 </div>
               </div>
             </div>
