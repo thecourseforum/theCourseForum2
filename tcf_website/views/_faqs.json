@@ -1,0 +1,26 @@
+[
+  {
+    "question": "Why did you switch to tCF 2.0?",
+    "answer": "The previous version of theCourseForum.com was developed using the Ruby on Rails framework in 2012, over 8 years ago. That's a long time in tech years! Not many of our student developers know Ruby anymore, so we rebuilt the site from scratch with Django, a popular Python web framework that's taught in UVA's CS 3240 (Advanced Software Development). What this means for you is that it's easier for us in the long term to maintain the site and develop new features for you."
+  },
+  {
+    "question": "Do you profit from people using the site?",
+    "answer": "No, our site is entirely a student volunteer effort. This has been a subject of confusion in the past, so to be clear: We have never and will never make money from the site. We get our money from university grants, sponsors, and donations from users like you!"
+  },
+  {
+    "question": "Where does your grade data come from?",
+    "answer": "We use completely anonymized official grade data from UVA! Don't worry, nobody will find out about the C you got in MATH 1200."
+  },
+  {
+    "question": "How can I join the team?",
+    "answer": "Glad you're interested! We’re planning to do a round of recruitment for both our dev team and design team in Winter 2020. Stay tuned for details on how to apply."
+  },
+  {
+    "question": "What does the dev team do?",
+    "answer": "Our dev team develops and maintains the site! We do front-end, back-end, infrastructure, and database work."
+  },
+  {
+    "question": "What does the design team do?",
+    "answer": "Our design team works on UI design and publicity, getting the word out about theCourseForum."
+  }
+]
