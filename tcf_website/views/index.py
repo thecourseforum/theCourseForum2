@@ -14,9 +14,13 @@ def index(request):
     # Load "About Team" data from json file
     with open('tcf_website/views/team_info.json') as data_file:
         team_info = json.load(data_file)
+    # Load FAQ data from json file
+    with open('tcf_website/views/_faqs.json', encoding='utf-8') as data_file:
+        faqs = json.load(data_file)
 
     response = render(request, 'landing/landing.html',
                       {'executive_team': team_info['executive_team'],
+                        'FAQs': faqs,
                        'visited': request.session.get('visited', False)})
     request.session['visited'] = True
 
