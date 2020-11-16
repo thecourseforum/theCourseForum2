@@ -12,12 +12,12 @@
 
     {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
 
-    <div class="d-flex flex-column align-items-center my-3 mt-md-5">
-        <h1>{{ instructor.full_name }}</h1>
-        <div class="d-md-flex">
-            <h4 class="mr-md-3">{{ course.code }}</h4>
-            <h4 class="mr-md-3">{{ course.title }}</h4>
+    <div class="d-flex flex-column my-3 mt-md-5">
+        <div class="d-md-flex justify-content-center">
+            <h1 class="mr-md-3" style="white-space: nowrap">{{ course.code }} |</h1>
+            <h1 class="mr-md-3">{{ course.title }}</h1>
         </div>
+        <h2 class="text-center mb-3"><a href="{% url 'instructor' instructor_id=instructor.id %}">{{ instructor.full_name }}</a></h2>
     </div>
 
     <div class="ratings row d-flex mb-3 justify-content-center">
@@ -37,7 +37,7 @@
               <h5 class="card-title display-4">
                   {{ difficulty|floatformat:2 }}
               </h5>
-              <p class="card-text"><i class="fa fa-skull-crossbones fa-fw"></i>&nbsp;Difficulty</p>
+              <p class="card-text"><i class="fa fa-dumbbbell fa-fw"></i>&nbsp;Difficulty</p>
             </div>
         </div>
         {% endif %}

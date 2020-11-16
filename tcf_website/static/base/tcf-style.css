@@ -19,10 +19,15 @@ h2,
 h3,
 h4,
 h5,
-h6 {
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
   /* Default heading font: Lato (others are fallbacks) */
   font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-weight: 700;
 }
 
 body {
@@ -34,8 +39,10 @@ body {
 a {
     color: inherit;
 }
-a:hover {
+a:hover,
+.hover-tcf-orange:hover {
   color: var(--accent-color);
+  text-decoration: none;
 }
 ul {
     padding: 0;

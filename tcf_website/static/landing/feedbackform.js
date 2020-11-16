@@ -1,5 +1,11 @@
+import { validateForm } from "../common/form.js";
+
 function submit(event) {
-    postToDiscord(event);
+    var form = document.getElementById("feedbackform");
+    var valid = validateForm(form);
+    if (valid === true) {
+        postToDiscord(event);
+    }
 }
 
 function postToDiscord(event) {
