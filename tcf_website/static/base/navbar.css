@@ -1,0 +1,91 @@
+/*
+    Any css that involves the navbar should go in this file!
+    This way things are kept insolated and de-coupled from one
+    another, making components more maliable and maintainable.
+*/
+
+.navbar {
+    flex-wrap: nowrap;
+}
+
+.logo-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: fit-content;
+    height: auto;
+    padding: 3px 2px 1px 2px;
+
+    /* Animation */
+    transform: scale(1.0);
+    transition: padding-left .25s, transform .2s;
+    transition-timing-function: ease;
+}
+
+.logo-container:hover {
+    transform: scale(1.05);
+}
+
+.logo-container:active {
+    transform: scale(1.05);
+}
+
+.logo-container:focus {
+    transform: scale(1.05);
+}
+
+@media (min-width: 768px) {
+    .logo-container {
+        width: calc(var(--sidebar-width) - 16px);
+        height: auto;
+
+        /* Animation */
+        padding-left: 0.55rem; /* centers logo in logo-container */
+        padding-right: 0rem;
+    }
+}
+
+.logo {
+    width: auto;
+    height: calc(70px - 8px - 8px - 4px);
+    alt: "tCF";
+}
+
+
+@media (min-width: 769px) {
+    .navbar-toggler.menu {
+        display: none !important;
+    }
+}
+
+.navbar-toggler.menu {
+    margin-left: 16px;
+    margin-right: 8px;
+    border-color: rgb(24, 35, 71);
+    background-color: rgb(248, 249, 250);
+}
+
+.navbar-toggler.menu:hover {
+    background-color: rgb(230, 230, 230);
+}
+
+.navbar-toggler.menu:active {
+    background-color: rgb(200, 200, 200);
+}
+
+.navbar-toggler.menu:focus {
+    background-color: rgb(190, 190, 190);
+}
+
+@media (max-width: 768px) {
+    .account-settings {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .dropdown-menu.settings {
+        min-width: 140px !important;
+    }
+}

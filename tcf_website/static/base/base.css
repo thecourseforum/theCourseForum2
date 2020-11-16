@@ -19,6 +19,10 @@ Responsive breakpoints:
 
 */
 
+:root {
+  --sidebar-width: 7rem;        /* Width of sidebar is fixed */
+}
+
 html {
     position: relative;
     min-height: 100%;
@@ -26,52 +30,20 @@ html {
 }
 
 body {
-    font-family: 'Lato', sans-serif;
     padding-top: 70px; /* Height of fixed navbar */
-    background-color: #EBEBEB;
+    background-color: var(--background-color);
     max-width: 100vw;
 }
 
-.navbar {
-    max-width: 100vw;
-    height: 70px;
-}
-
-.navbar .logo-search {
-    width: 100px;
-    margin-right: 1rem;
-}
-
-@media (min-width: 400px) {
-    .navbar .logo-search {
-        width: auto;
-    }
-}
-
-@media (min-width: 400px) {
-    .navbar .search {
-        width: 100%;
-    }
+.content {
+  background-color: var(--background-color);
 }
 
 @media (min-width: 768px) {
     .content {
-        width: calc(100vw - 240px);
-        margin-left: 240px;
+        width: calc(100vw - var(--sidebar-width));
+        margin-left: var(--sidebar-width);
     }
-}
-
-a {
-    color: inherit;
-}
-a:hover {
-    text-decoration: none;
-    color: #db4929;
-}
-
-ul {
-    padding: 0;
-    list-style-type: none;
 }
 
 footer {
@@ -82,11 +54,46 @@ footer {
     line-height: 30px; /* Vertically center the text there */
     /* background-color: #f5f5f5; */
     text-align: center;
-    color: #EBEBEB;
+    color: var(--background-color);
     background-color: #172248;
     padding-top: 15px;
 }
 
 footer > .row {
     background-color: #172248;
+}
+
+.btn.btn-primary,
+.btn.btn-outline-primary:not(:disabled):not(.disabled).active,
+.btn.btn-outline-primary:not(:disabled):not(.disabled):active {
+  background-color: #AC451E;
+  border-color: var(--accent-color);
+}
+
+.btn.btn-outline-primary {
+  color: white;
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.btn.btn-primary:hover,
+.btn.btn-outline-primary:hover {
+  color: white;
+  background-color: #d1420d;
+  border-color: #d1420d;
+}
+
+.btn:not(:disabled):not(.disabled).active.focus,
+.btn:not(:disabled):not(.disabled).active:focus {
+  box-shadow: none;
+}
+
+.form-control {
+  background-color: var(--background-color);
+  color: black;
+  border-color: transparent;
+}
+
+.form-row {
+  margin: 0.5rem;
 }

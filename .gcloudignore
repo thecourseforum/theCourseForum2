@@ -12,6 +12,7 @@
 # below:
 .git
 .gitignore
+node_modules/
 
 # Python pycache:
 __pycache__/

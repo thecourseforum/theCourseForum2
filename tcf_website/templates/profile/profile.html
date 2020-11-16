@@ -1,6 +1,8 @@
 {% extends "base/base.html" %}
 {% load static %}
 
+{% block title %}My Profile - theCourseForum{% endblock %}
+
 {% block styles %}
 {% endblock %}
 
@@ -8,22 +10,32 @@
 <div class="container-fluid">
     <div class="row d-flex flex-column align-items-center">
         <h2>Profile</h2>
-        <div class="card col-9 col-md-4 text-center mt-3">
+        <div class="card col-12 col-sm-9 col-md-9 col-xl-6 mt-3 px-0">
+            <img class="card-img-top bg-dark" src="{% static 'base/img/alderman-and-peabody.jpg' %}" style="filter: brightness(150%) contrast(75%)">
             <div class="card-body">
-                <h4 class="card-title">
-                    {{ user.full_name }}
-                </h4>
-                <p class="card-text">
-                    <i class="fas fa-at fa-fw"></i> {{ user.computing_id }}
-                </p>
-                <p class="card-text">
-                    <i class="fas fa-university fa-fw"></i> University of Virginia
-                </p>
-                <p class="card-text">
-                    <i class="fas fa-graduation-cap fa-fw"></i> Class of {{ user.graduation_year }}
-                </p>
+                <h4 class="card-title"><i class="far fa-edit"></i> My Details</h4>
+                <form method="POST" action="{% url 'profile' %}" id="ProfileForm">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="col-12 col-lg-4 ">
+                            {{ form.first_name.label_tag }}
+                            {{ form.first_name }}
+                            <small id="first_name" class="form-text text-muted">Your name is never public.</small>
+                        </div>
+                        <div class="col-12 col-lg-4 ">
+                            {{ form.last_name.label_tag }}
+                            {{ form.last_name }}
+                        </div>
+                        <div class="col-12 col-lg-4 ">
+                            {{ form.graduation_year.label_tag }}
+                            {{ form.graduation_year }}
+                        </div>
+                    </div>
+                    <input type="submit" class="btn btn-primary mt-3" value="Save Profile">
+                </form>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+

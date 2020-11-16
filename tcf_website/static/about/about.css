@@ -1,14 +1,36 @@
-.about h2, h4 {
-  color:rgb(23, 34, 72);
+/*
+  This file contains all css pertaining to the
+  about page. Please keep the css isolated here
+  to improve maintainability within theCourseForum.
+*/
+
+.about-logo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 30px 0px 20px 0px;
 }
 
-.about-nav .about-nav-item a {
-  color:rgb(201, 93, 48);
+.about-logo > .tagline {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0px 0px 15px;
 }
 
-.about-nav-item:hover{
-  color:rgb(23, 34, 72);
-  border-bottom:8px solid rgb(23, 34, 72);
+.tabs .about-tab {
+  padding: 0rem;
+  background-color: var(--main-color);
+}
+.tabs .about-tab:hover {
+  background-color: var(--secondary-color);
+}
+.tabs .about-tab a {
+  color: white;
+  width: 100%;
+}
+
+.tabs .about-tab a:not(.collapsed) {
+  color: #ff7d4e;
 }
 
 .pfp {

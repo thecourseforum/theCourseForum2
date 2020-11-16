@@ -1,0 +1,107 @@
+/*
+  File: history.css
+  Description: This file contains the css for
+  the about page's history SUBCONTENT tab.
+*/
+
+.grid {
+    display: grid;
+    align-items: stretch;
+    justify-items: stretch;
+    grid-template-rows: auto;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+        "header header"
+        "img1 text1"
+        "text2 img2"
+        "img3 text3"
+        "text4 img4"
+        "sponsors sponsors"
+        "sponsors-img1 sponsors-img2"
+    ;
+}
+
+.grid > * {
+    padding: 50px;
+}
+
+.grid > img {
+    object-fit: contain;
+}
+
+.grid > div > p {
+    text-align: left;
+}
+
+@media (max-width: 992px) {
+    .grid {
+        grid-template-columns: repeat(1, 1fr);
+        grid-template-areas:
+            "header"
+            "img1"
+            "text1"
+            "img2"
+            "text2"
+            "img3"
+            "text3"
+            "img4"
+            "text4"
+            "sponsors"
+            "sponsors-img1"
+            "sponsors-img2"
+        ;
+    }
+
+    .grid > * {
+        padding: 30px;
+    }
+}
+
+.grid-header {
+    grid-area: header;
+    text-align: center;
+}
+
+.founders-img {
+    grid-area: img1;
+}
+
+.founders-text {
+    grid-area: text1;
+}
+
+.revival-img {
+    grid-area: img2;
+}
+
+.revival-text {
+    grid-area: text2;
+}
+
+.cio-img {
+    grid-area: img3;
+}
+
+.cio-text {
+    grid-area: text3;
+}
+
+.revival2-img {
+    grid-area: img4;
+}
+
+.revival2-text {
+    grid-area: text4;
+}
+
+.sponsors-text {
+    grid-area: sponsors;
+}
+
+.sponsors-img1 {
+    grid-area: sponsors-img1;
+}
+
+.sponsors-img2 {
+    grid-area: sponsors-img2;
+}

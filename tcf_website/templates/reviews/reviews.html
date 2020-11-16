@@ -1,4 +1,5 @@
 <!-- TODO: include review styles here -->
+{% load static %}
 
 <div class="reviews container-lg">
     <ul class="review-list" style="list-style-type: none;">
@@ -8,17 +9,38 @@
         </li>
     {% empty %}
         <div class="row d-flex justify-content-center">
-            <div class="card col-3 text-center">
+            <div class="card col-12 col-sm-8 col-lg-4 text-center">
                 <div class="card-body">
                     <h4 class="card-title">
                         No Reviews <i class="far fa-frown-open fa-fw"></i>
                     </h4>
-                    <p class="card-text">
-                        Help us out by <a href="{% url 'new_review' %}" style="color: dodgerblue;">writing a review!</a>
-                    </p>
+                    <!-- <p class="card-text">
+{#                        Help us out by <a href="{% url 'new_review' %}" style="color: dodgerblue;">writing a review!</a>#}
+                    </p> -->
                 </div>
             </div>
         </div>
     {% endfor %}
     </ul>
 </div>
+
+{% if reviews %}
+<script type="module" src="{% static 'reviews/sort_reviews.js' %}"></script>
+{% endif %}
+<script type="module">
+    import { handleVote } from "{% static 'reviews/review.js' %}";
+    {% if user.is_authenticated %}
+        $('.upvote').each(function(i, obj) {
+            $(this).click(()=>{
+                handleVote(obj.id.substring(6), true);
+            });
+            $(this).removeAttr('href');
+        });
+        $('.downvote').each(function(i, obj) {
+            $(this).click(()=>{
+                handleVote(obj.id.substring(8), false);
+            });
+            $(this).removeAttr('href');
+        });
+    {% endif %}
+</script>

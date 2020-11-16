@@ -1,0 +1,24 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'landing/dashboard.css' %}" />
+{% endblock %}
+
+{% block content %}
+<!-- A placeholder dashboard page, currently unused -->
+<div class="jumbotron">
+    <h1 class="display-4">Welcome to theCourseForum
+    </h1>
+    <p class="lead">connecting you to the courses you love</p>
+    <hr class="my-4">
+    <p>See what other students say about classes and professors</p>
+    <p>Check out actual grade distributions from past semesters
+    </p>
+    <p>Write reviews for courses you've taken.
+    </p>
+    <br>
+    <a class="btn btn-primary btn-lg" href="{% url 'browse' %}" role="button">Browse reviews</a>
+    <a class="btn btn-light btn-lg" href="{% url 'login' %}" role="button">Sign in</a>
+</div>
+{% endblock %}
