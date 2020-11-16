@@ -141,12 +141,13 @@ python3 manage.py migrate
 2. Convert to sqlite using `legacy_db/mysql2sqlite`
     - Then put in `settings.py` as database `legacy`
 3. `docker exec -it tcf_django bash` and then `python manage.py migrate_legacy_subdepartments`
-4. `python manage.py load_all_semesters`
-5. `python manage.py migrate_legacy_reviews`
-6. `docker exec tcf_db pg_dump -U tcf_django -Fc tcf_db > dump.pgsql`
-7. Test
+4. `python manage.py load_semester ALL_DANGEROUS`
+5. `python manage.py load_grades ALL_DANGEROUS`
+6. `python manage.py migrate_legacy_reviews`
+7. `docker exec tcf_db pg_dump -U tcf_django -Fc tcf_db > dump.pgsql`
+8. Test
     - Maybe crawl tCF and check that all viewable reviews are on the new system.
-8. Upload to DigitalOcean DB.
+9. Upload to DigitalOcean DB.
     - `PGPASSWORD=$DB_PASS pg_restore -U $DB_USER -h $DB_HOST -p 25060 -d $DB_NAME < dump.pgsql`
     - You may have to run this command 3 times.
 

@@ -187,11 +187,59 @@ class Instructor(models.Model):
             course=course, instructor=self).aggregate(
             models.Avg('difficulty'))['difficulty__avg']
 
+    def average_enjoyability_for_course(self, course):
+        """Computer average enjoyability"""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('enjoyability'))['enjoyability__avg']
+
+    def average_instructor_rating_for_course(self, course):
+        """Computer average instructor rating"""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('instructor_rating'))['instructor_rating__avg']
+
+    def average_recommendability_for_course(self, course):
+        """Computer average recommendability"""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('recommendability'))['recommendability__avg']
+
     def average_hours_for_course(self, course):
         """Compute average hrs/wk."""
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('hours_per_week'))['hours_per_week__avg']
+
+    def average_reading_hours_for_course(self, course):
+        """Compute average reading hrs/wk."""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('amount_reading'))['amount_reading__avg']
+
+    def average_writing_hours_for_course(self, course):
+        """Compute average writing hrs/wk."""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('amount_writing'))['amount_writing__avg']
+
+    def average_group_hours_for_course(self, course):
+        """Compute average group work hrs/wk."""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('amount_group'))['amount_group__avg']
+
+    def average_other_hours_for_course(self, course):
+        """Compute average other HW hrs/wk."""
+        return Review.objects.filter(
+            course=course, instructor=self).aggregate(
+            models.Avg('amount_homework'))['amount_homework__avg']
+
+    def taught_courses(self):
+        """Returns all sections taught by Instructor."""
+        # this method is very inefficient and doesn't actually do what the name
+        # implies (collecting Sections instead of Courses); work in progress
+        return Section.objects.filter(instructors=self)
 
     def average_rating(self):
         """Compute average rating for all this Instructor's Courses"""
@@ -380,6 +428,78 @@ class Course(models.Model):
                 name='unique course subdepartment and number'
             )
         ]
+
+
+class CourseGrade(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    subdepartment = models.CharField(max_length=255)
+    number = models.IntegerField(
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(99999)],
+        default=0)
+    title = models.CharField(max_length=225, default="")
+    average = models.FloatField(default=0.0)
+    a_plus = models.IntegerField(default=0)
+    a = models.IntegerField(default=0)
+    a_minus = models.IntegerField(default=0)
+    b_plus = models.IntegerField(default=0)
+    b = models.IntegerField(default=0)
+    b_minus = models.IntegerField(default=0)
+    c_plus = models.IntegerField(default=0)
+    c = models.IntegerField(default=0)
+    c_minus = models.IntegerField(default=0)
+    d_plus = models.IntegerField(default=0)
+    d = models.IntegerField(default=0)
+    d_minus = models.IntegerField(default=0)
+    f = models.IntegerField(default=0)
+    ot = models.IntegerField(default=0)
+    drop = models.IntegerField(default=0)
+    withdraw = models.IntegerField(default=0)
+    total_enrolled = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.subdepartment} {self.number} {self.average}"
+
+
+class CourseInstructorGrade(models.Model):
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, null=True)
+    first_name = models.CharField(max_length=225)
+    middle_name = models.CharField(max_length=225)
+    last_name = models.CharField(max_length=225)
+    email = models.CharField(max_length=225)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    subdepartment = models.CharField(max_length=255)
+    number = models.IntegerField(
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(99999)],
+        default=0)
+    # section_number = models.IntegerField()
+    title = models.CharField(max_length=225, default="")
+    average = models.FloatField(default=0.0)
+    a_plus = models.IntegerField(default=0)
+    a = models.IntegerField(default=0)
+    a_minus = models.IntegerField(default=0)
+    b_plus = models.IntegerField(default=0)
+    b = models.IntegerField(default=0)
+    b_minus = models.IntegerField(default=0)
+    c_plus = models.IntegerField(default=0)
+    c = models.IntegerField(default=0)
+    c_minus = models.IntegerField(default=0)
+    d_plus = models.IntegerField(default=0)
+    d = models.IntegerField(default=0)
+    d_minus = models.IntegerField(default=0)
+    f = models.IntegerField(default=0)
+    ot = models.IntegerField(default=0)
+    drop = models.IntegerField(default=0)
+    withdraw = models.IntegerField(default=0)
+    total_enrolled = models.IntegerField(default=0)
+
+    def __str__(self):
+        return (f"{self.first_name} {self.last_name} "
+                f"{self.subdepartment} {self.number} {self.average}")
 
 
 class Section(models.Model):

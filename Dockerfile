@@ -13,6 +13,7 @@ RUN apt-get update && \
 		eslint-plugin-import \
 		eslint-plugin-node \
 		eslint-plugin-promise \
-		eslint-plugin-standard && \
+		eslint-plugin-standard \
+		chart.js && \
 	pip3 install -r requirements.txt --disable-pip-version-check && \
 	rm -rf /var/lib/apt/lists/*

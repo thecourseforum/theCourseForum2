@@ -1,6 +1,6 @@
-# pylint: disable=too-many-ancestors
+# pylint: disable=too-many-ancestors,fixme
 """DRF Viewsets"""
-from django.db.models import Avg
+from django.db.models import Avg, Sum
 from rest_framework import viewsets
 from ..models import (Course, Department, Instructor, School, Semester,
                       Subdepartment)
@@ -59,11 +59,33 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                     average_amount_writing=Avg('review__amount_writing'),
                     average_amount_group=Avg('review__amount_group'),
                     average_amount_homework=Avg('review__amount_homework'),
+                    # grades
+                    # TODO: average_gpa should be fixed
+                    average_gpa=Avg('coursegrade__average', distinct=True),
+                    a_plus=Sum('coursegrade__a_plus', distinct=True),
+                    a=Sum('coursegrade__a', distinct=True),
+                    a_minus=Sum('coursegrade__a_minus', distinct=True),
+                    b_plus=Sum('coursegrade__b_plus', distinct=True),
+                    b=Sum('coursegrade__b', distinct=True),
+                    b_minus=Sum('coursegrade__b_minus', distinct=True),
+                    c_plus=Sum('coursegrade__c_plus', distinct=True),
+                    c=Sum('coursegrade__c', distinct=True),
+                    c_minus=Sum('coursegrade__c_minus', distinct=True),
+                    d_plus=Sum('coursegrade__d_plus', distinct=True),
+                    d=Sum('coursegrade__d', distinct=True),
+                    d_minus=Sum('coursegrade__d_minus', distinct=True),
+                    f=Sum('coursegrade__f', distinct=True),
+                    ot=Sum('coursegrade__ot', distinct=True),
+                    drop=Sum('coursegrade__drop', distinct=True),
+                    withdraw=Sum('coursegrade__withdraw', distinct=True),
+                    total_enrolled=Sum('coursegrade__total_enrolled',
+                                       distinct=True),
                 )
         elif 'simplestats' in self.request.query_params:
             queryset = queryset\
                 .prefetch_related('review_set')\
                 .annotate(
+                    average_gpa=Avg('coursegrade__average'),
                     average_difficulty=Avg('review__difficulty'),
                     average_rating=(
                         Avg('review__instructor_rating') +
