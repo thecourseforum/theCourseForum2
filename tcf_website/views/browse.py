@@ -1,12 +1,22 @@
 # pylint disable=bad-continuation
 
 """Views for Browse, department, and course/course instructor pages."""
+import json
 
+from django.db.models import Avg
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from ..models import School, Department, Course, Semester, Instructor, Review, Subdepartment
+from ..models import (
+    School,
+    Department,
+    Subdepartment,
+    Course,
+    Semester,
+    Instructor,
+    Review,
+    CourseInstructorGrade)
 
 
 def browse(request):
@@ -77,6 +87,9 @@ def course_view(request, course_id):
     for instr in recent_instructors:
         instr.rating = instr.average_rating_for_course(course)
         instr.difficulty = instr.average_difficulty_for_course(course)
+        instr.gpa = CourseInstructorGrade.objects.filter(
+            course=course, instructor=instr).aggregate(
+            Avg('average')).get('average__avg')
 
     # Get instructors that haven't taught the course this semester.
     old_instructor_pks = course.section_set.exclude(
@@ -89,6 +102,9 @@ def course_view(request, course_id):
     for instr in old_instructors:
         instr.rating = instr.average_rating_for_course(course)
         instr.difficulty = instr.average_difficulty_for_course(course)
+        instr.gpa = CourseInstructorGrade.objects.filter(
+            course=course, instructor=instr).aggregate(
+            Avg('average'))['average__avg']
 
     dept = course.subdepartment.department
 
@@ -128,18 +144,78 @@ def course_instructor(request, course_id, instructor_id):
         (instructor.full_name, None, True)
     ]
 
-    # Get average statistics.
-    rating = instructor.average_rating_for_course(course)
-    difficulty = instructor.average_difficulty_for_course(course)
+    data = {
+        # rating stats
+        "average_rating": safe_round(instructor.average_rating_for_course(course)),
+        "average_instructor": safe_round(instructor.average_instructor_rating_for_course(course)),
+        "average_fun": safe_round(instructor.average_enjoyability_for_course(course)),
+        "average_recommendability":
+            safe_round(instructor.average_recommendability_for_course(course)),
+        "average_difficulty": safe_round(instructor.average_difficulty_for_course(course)),
+        # workload stats
+        "average_hours_per_week": safe_round(instructor.average_hours_for_course(course)),
+        "average_amount_reading": safe_round(instructor.average_reading_hours_for_course(course)),
+        "average_amount_writing": safe_round(instructor.average_writing_hours_for_course(course)),
+        "average_amount_group": safe_round(instructor.average_group_hours_for_course(course)),
+        "average_amount_homework": safe_round(instructor.average_other_hours_for_course(course)),
+    }
+
+    try:
+        grades_data = CourseInstructorGrade.objects.get(
+            instructor=instructor, course=course)
+
+        # grades stats
+        data['average_gpa'] = round(grades_data.average, 2)
+        data['a_plus'] = grades_data.a_plus
+        data['a'] = grades_data.a
+        data['a_minus'] = grades_data.a_minus
+        data['b_plus'] = grades_data.b_plus
+        data['b'] = grades_data.b
+        data['b_minus'] = grades_data.b_minus
+        data['c_plus'] = grades_data.c_plus
+        data['c'] = grades_data.c
+        data['c_minus'] = grades_data.c_minus
+        data['d_plus'] = grades_data.d_plus
+        data['d'] = grades_data.d
+        data['d_minus'] = grades_data.d_minus
+        data['f'] = grades_data.f
+        data['withdraw'] = grades_data.withdraw
+        data['drop'] = grades_data.drop
+
+        fields = [
+            'a_plus',
+            'a',
+            'a_minus',
+            'b_plus',
+            'b',
+            'b_minus',
+            'c',
+            'c_minus',
+            'd_plus',
+            'd',
+            'd_minus',
+            'f',
+            'withdraw',
+            'drop']
+
+        total = 0
+        for field in fields:
+            total += data[field]
+        data['total_enrolled'] = total
+
+    except ObjectDoesNotExist:  # if no data found
+        pass
+
+    data_json = json.dumps(data)
 
     return render(request, 'course/course_professor.html',
                   {
                       'course': course,
+                      'course_id': course_id,
                       'instructor': instructor,
                       'reviews': reviews,
                       'breadcrumbs': breadcrumbs,
-                      'rating': rating,
-                      'difficulty': difficulty,
+                      'data': data_json
                   })
 
 
