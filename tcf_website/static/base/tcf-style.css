@@ -39,7 +39,8 @@ body {
 a {
     color: inherit;
 }
-a:hover {
+a:hover,
+.hover-tcf-orange:hover {
   color: var(--accent-color);
   text-decoration: none;
 }
