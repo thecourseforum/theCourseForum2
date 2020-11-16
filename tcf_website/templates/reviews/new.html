@@ -20,15 +20,30 @@
             Which class are you reviewing?</h4>
           <div class="form-group col-sm-3 col-6">
             <label for="subject">Subject</label>
-            <input type="text" placeholder="e.g. CS" class="form-control" id="subject" name="subject" required>
+            <select type="text" class="form-control" id="subject" name="subject" required>
+              <option value="" disabled selected>[Select]</option>
+              {% for s in subjects %}
+              <option value={{s}}>{{s}}</option>
+              {% endfor %}
+            </select>
           </div>
           <div class="form-group col-sm-3 col-6">
             <label for="courseID">Course ID</label>
-            <input type="text" placeholder="e.g. 2150" class="form-control" id="courseID" name="courseID" required>
+            <select type="text" class="form-control" id="courseID" name="courseID" required>
+              <option value="" disabled selected>[Select]</option>
+              {% for c in courseIDs %}
+              <option value={{c}}>{{c}}</option>
+              {% endfor %}
+            </select>
           </div>
           <div class="form-group col-sm-6">
             <label for="instructor">Instructor</label>
-            <input type="text" placeholder="e.g. Aaron Bloomfield" class="form-control" id="instructor" name="instructor" required>
+            <select type="text" class="form-control" id="instructor" name="instructor" required>
+              <option value="" disabled selected>[Select]</option>
+              {% for i in instructors %}
+              <option value={{i}}>{{i}}</option>
+              {% endfor %}
+            </select>
           </div>
         </div>
         <div class="form-row mb-3">
