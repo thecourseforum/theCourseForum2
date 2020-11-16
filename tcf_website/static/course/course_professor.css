@@ -22,7 +22,11 @@
     width: 290px;
     position: relative;
 }
- 
+
+#myChart {
+    z-index: 1;
+}
+
 .ratings-container {
     height: 100%;
     display: flex;
