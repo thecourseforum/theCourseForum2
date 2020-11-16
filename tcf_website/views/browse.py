@@ -8,8 +8,15 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from ..models import (School, Department, Course, Semester, Instructor, Review,
-                      CourseInstructorGrade)
+from ..models import (
+    School,
+    Department,
+    Subdepartment,
+    Course,
+    Semester,
+    Instructor,
+    Review,
+    CourseInstructorGrade)
 
 
 def browse(request):
