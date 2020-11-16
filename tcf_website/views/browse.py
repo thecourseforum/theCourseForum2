@@ -197,7 +197,7 @@ def course_instructor(request, course_id, instructor_id):
         data['total_enrolled'] = total
 
     except ObjectDoesNotExist:  # if no data found
-        data = {}
+        pass
 
     data_json = json.dumps(data)
 
