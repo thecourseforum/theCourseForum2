@@ -177,7 +177,7 @@ def set_arguments(query, courses, instructors):
 
 
 def group_by_dept(courses):
-    """Groups courses by their department and adds relevant metadata."""
+    """Groups courses by their department and adds relevant data."""
     grouped_courses = {}
     for course in courses:
         course_dept = course['mnemonic'][:course['mnemonic'].index(' ')]
