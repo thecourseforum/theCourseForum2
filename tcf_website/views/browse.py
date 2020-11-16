@@ -225,6 +225,7 @@ def instructor_view(request, instructor_id):
 
     avg_rating = safe_round(instructor.average_rating())
     avg_difficulty = safe_round(instructor.average_difficulty())
+    avg_gpa = safe_round(instructor.average_gpa())
 
     courses = group_by_dept(instructor, instructor.get_courses())
     return render(
@@ -232,6 +233,7 @@ def instructor_view(request, instructor_id):
             'instructor': instructor,
             'avg_rating': avg_rating,
             'avg_difficulty': avg_difficulty,
+            'avg_gpa': avg_gpa,
             'courses': courses
         })
 
@@ -267,12 +269,16 @@ def group_by_dept(instructor, courses):
     for course in courses:
         course_subdept = course.subdepartment.name
         course_data = {
-            'name': str(course), 'id': course.id, 'avg_rating': safe_round(
+            # autopep8 makes the formatting for this wack, sorry
+            'name': str(course), 'id': course.id,
+            'avg_rating': safe_round(
                 Instructor.average_rating_for_course(
-                    instructor, course)), 'avg_difficulty': safe_round(
+                    instructor, course)),
+            'avg_difficulty': safe_round(
                 Instructor.average_difficulty_for_course(
-                    instructor, course)), 'last_taught': str(
-                course.semester_last_taught)}
+                    instructor, course)),
+            'avg_gpa': safe_round(Instructor.average_gpa_for_course(instructor, course)),
+            'last_taught': str(course.semester_last_taught)}
         grouped_courses[course_subdept]['courses'].append(course_data)
 
     return grouped_courses
