@@ -189,7 +189,7 @@ if not DEBUG:
     # Gather information from environment variables.
 
     HOSTNAME = env.str('HOSTNAME')
-    PUBLIC_IPV4 = env.str('PUBLIC_IPV4')
+    # PUBLIC_IPV4 = env.str('PUBLIC_IPV4')
 
     # SECURITY WARNING: App Engine's security features ensure that it is safe to
     # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
@@ -200,8 +200,8 @@ if not DEBUG:
 
     if HOSTNAME:
         ALLOWED_HOSTS.append(HOSTNAME)
-    if PUBLIC_IPV4:
-        ALLOWED_HOSTS.append(PUBLIC_IPV4)
+    # if PUBLIC_IPV4:
+    #     ALLOWED_HOSTS.append(PUBLIC_IPV4)
 
     # Read-write access to Elastic
     ES_COURSE_DOCUMENTS_ENDPOINT = env.str('ES_COURSE_DOCUMENTS_ENDPOINT')
