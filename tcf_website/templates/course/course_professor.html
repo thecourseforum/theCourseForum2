@@ -186,7 +186,9 @@
 
   import { loadData } from "{% static 'course/javascript/course_data.js' %}";
 
-  loadData("http://127.0.0.1:8000/api/courses/{{course_id}}/?allstats")
+
+  loadData(JSON.parse("{{ data|escapejs }}"))
+
 
 </script>
 {% endblock %}
