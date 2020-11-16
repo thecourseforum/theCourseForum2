@@ -64,42 +64,34 @@
 
 .founders-img {
     grid-area: img1;
-    background-color: rgba(135, 131, 209, 0.2);
 }
 
 .founders-text {
     grid-area: text1;
-    background-color: rgba(135, 131, 209, 0.2);
 }
 
 .revival-img {
     grid-area: img2;
-    background-color: rgba(204, 0, 0, 0.3);
 }
 
 .revival-text {
     grid-area: text2;
-    background-color: rgba(204, 0, 0, 0.3);
 }
 
 .cio-img {
     grid-area: img3;
-    background-color: rgba(229, 114, 0, 0.2);
 }
 
 .cio-text {
     grid-area: text3;
-    background-color: rgba(229, 114, 0, 0.2);
 }
 
 .revival2-img {
     grid-area: img4;
-    background-color: rgba(255, 211, 67, 0.3);
 }
 
 .revival2-text {
     grid-area: text4;
-    background-color: rgba(255, 211, 67, 0.3);
 }
 
 .sponsors-text {
