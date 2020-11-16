@@ -1,6 +1,8 @@
 {% extends "base/base.html" %}
 {% load static %}
 
+{% block title %}{{course.code}} - theCourseForum{% endblock %}
+
 {% block styles %}
     <link rel="stylesheet" href="{% static 'course/course.css' %}"/>
     <link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
