@@ -24,27 +24,27 @@
             <label for="subject">Subject</label>
             <select type="text" class="form-control" id="subject" name="subject" required>
               <option value="" disabled selected>[Select]</option>
-              {% for s in subjects %}
+              <!-- {% for s in subjects %}
               <option value={{s}}>{{s}}</option>
-              {% endfor %}
+              {% endfor %} -->
             </select>
           </div>
           <div class="form-group col-sm-3 col-6">
             <label for="courseID">Course ID</label>
             <select type="text" class="form-control" id="courseID" name="courseID" required>
               <option value="" disabled selected>[Select]</option>
-              {% for c in courseIDs %}
+              <!-- {% for c in courseIDs %}
               <option value={{c}}>{{c}}</option>
-              {% endfor %}
+              {% endfor %} -->
             </select>
           </div>
           <div class="form-group col-sm-6">
             <label for="instructor">Instructor</label>
             <select type="text" class="form-control" id="instructor" name="instructor" required>
               <option value="" disabled selected>[Select]</option>
-              {% for i in instructors %}
+              <!-- {% for i in instructors %}
               <option value={{i}}>{{i}}</option>
-              {% endfor %}
+              {% endfor %} -->
             </select>
           </div>
         </div>
@@ -177,6 +177,10 @@
 </div>
 </div>
 
+{% endblock %}
 
+{% block js %}
+<script>
 
+</script>
 {% endblock %}
