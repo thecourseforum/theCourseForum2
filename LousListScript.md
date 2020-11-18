@@ -3,11 +3,12 @@
 
 Run the following commands to generate a table for Lou's List using our database:
 
-1. Exec into the docker database container, then the psql shell.
+1. Open the psql terminal in the tCF database Docker container with this command*:
 ```
-docker-compose exec db bash
-psql -U tcf_django tcf_db
+docker exec -it tcf_db psql -U tcf_django tcf_db
 ```
+
+*This should work for Unix shells (Linux, MacOS) and both Powershell and CMD on Windows, but has been confirmed to not work on Git Bash for Windows.
 
 2. In the psql shell, run the following:
 ```
@@ -17,10 +18,10 @@ COPY (
 )
 TO '/tmp/lous.csv' DELIMITER ',' CSV HEADER;
 ```
-Copying the file to the `/tmp` directory will allow write permissions.
+This will create a file in the Docker container containing the relevant data at `/tmp/lous.csv`. 
 
 
-3. Now copy the output file from the container to the repository root:
+1. Exit the psql shell with `\q` and copy the output file from the container to the repository root:
 ```
 docker cp tcf_db:/tmp/lous.csv .
 ```
