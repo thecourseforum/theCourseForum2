@@ -17,9 +17,17 @@ function handleVote(reviewID, isUpvote) {
             newVoteCount = voteCount - 1;
         // If already downvoted, add 2.
         } else if (otherElem.hasClass("active")) {
+            gtag('event', 'upvote', {
+                'event_category': 'upvote/downvote',
+                'value': reviewID,
+            });
             newVoteCount = voteCount + 2;
         // Otherwise add 1.
         } else {
+            gtag('event', 'upvote', {
+                'event_category': 'upvote/downvote',
+                'value': reviewID,
+            });
             newVoteCount = voteCount + 1;
         }
     } else {
@@ -32,9 +40,17 @@ function handleVote(reviewID, isUpvote) {
             newVoteCount = voteCount + 1;
         // If already upvoted, subtract 2.
         } else if (otherElem.hasClass("active")) {
+            gtag('event', 'downvote', {
+                'event_category': 'upvote/downvote',
+                'value': reviewID,
+            });
             newVoteCount = voteCount - 2;
         // Otherwise subtract 1.
         } else {
+            gtag('event', 'downvote', {
+                'event_category': 'upvote/downvote',
+                'value': reviewID,
+            });
             newVoteCount = voteCount - 1;
         }
     }
