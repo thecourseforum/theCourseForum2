@@ -139,7 +139,7 @@ class User(AbstractUser):
                            filter=models.Q(vote__user=self)),
                 models.Value(0)
             )
-        ).order_by("-created")
+        ).order_by('-created')
 
 
 class Instructor(models.Model):
