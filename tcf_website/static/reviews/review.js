@@ -15,18 +15,18 @@ function handleVote(reviewID, isUpvote) {
         // If already upvoted, subtract 1.
         if (elem.hasClass("active")) {
             newVoteCount = voteCount - 1;
-        // If already downvoted, add 2.
+            // If already downvoted, add 2.
         } else if (otherElem.hasClass("active")) {
-            gtag('event', 'upvote', {
-                'event_category': 'upvote/downvote',
-                'value': reviewID,
+            gtag("event", "upvote", { // eslint-disable-line no-eval
+                event_category: "upvote/downvote",
+                value: reviewID
             });
             newVoteCount = voteCount + 2;
-        // Otherwise add 1.
+            // Otherwise add 1.
         } else {
-            gtag('event', 'upvote', {
-                'event_category': 'upvote/downvote',
-                'value': reviewID,
+            gtag("event", "upvote", { // eslint-disable-line no-eval
+                event_category: "upvote/downvote",
+                value: reviewID
             });
             newVoteCount = voteCount + 1;
         }
@@ -38,18 +38,18 @@ function handleVote(reviewID, isUpvote) {
         // If already downvoted, add 1.
         if (elem.hasClass("active")) {
             newVoteCount = voteCount + 1;
-        // If already upvoted, subtract 2.
+            // If already upvoted, subtract 2.
         } else if (otherElem.hasClass("active")) {
-            gtag('event', 'downvote', {
-                'event_category': 'upvote/downvote',
-                'value': reviewID,
+            gtag("event", "downvote", { // eslint-disable-line no-eval
+                event_category: "upvote/downvote",
+                value: reviewID
             });
             newVoteCount = voteCount - 2;
-        // Otherwise subtract 1.
+            // Otherwise subtract 1.
         } else {
-            gtag('event', 'downvote', {
-                'event_category': 'upvote/downvote',
-                'value': reviewID,
+            gtag("event", "downvote", { // eslint-disable-line no-eval
+                event_category: "upvote/downvote",
+                value: reviewID
             });
             newVoteCount = voteCount - 1;
         }
@@ -58,7 +58,7 @@ function handleVote(reviewID, isUpvote) {
     // POST to upvote or downvote endpoint.
     fetch(endpoint, {
         method: "post",
-        headers: { "X-CSRFToken": getCookie("csrftoken") }
+        headers: { "X-CSRFToken": getCookie("csrftoken") },
     });
 
     // Update vote text.
