@@ -2,6 +2,7 @@
 """DRF Viewsets"""
 from django.db.models import Avg, Sum
 from rest_framework import viewsets
+from .filters import InstructorFilter
 from ..models import (Course, Department, Instructor, School, Semester,
                       Subdepartment)
 from .paginations import FlexiblePagination
@@ -112,7 +113,7 @@ class InstructorViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Instructor.objects.all()
     serializer_class = InstructorSerializer
     pagination_class = FlexiblePagination
-    filterset_fields = ['section__course']
+    filterset_class = InstructorFilter
 
 
 class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
