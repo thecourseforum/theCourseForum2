@@ -7,8 +7,8 @@
 // Executed when DOM is ready
 jQuery(function($) {
     // Fetch all semester data from API
-    var endpoint = "http://localhost:8000/api/semesters/";
-    $.getJSON(endpoint, function(data) {
+    var semEndpoint = "http://localhost:8000/api/semesters/";
+    $.getJSON(semEndpoint, function(data) {
         clearDropdown("#semester"); // Empty dropdown
 
         // Generate option tags
@@ -25,8 +25,8 @@ jQuery(function($) {
     });
 
     // Fetch all subdepartment data from API
-    var endpoint = "http://localhost:8000/api/subdepartments/";
-    $.getJSON(endpoint, function(data) {
+    var subdeptEndpoint = "http://localhost:8000/api/subdepartments/";
+    $.getJSON(subdeptEndpoint, function(data) {
         clearDropdown("#subject"); // Empty dropdown
 
         // Sort departments alphabetically by mnemonic
@@ -49,8 +49,8 @@ jQuery(function($) {
         // Fetch course data from API, based on selected subdepartment
         var subdeptID = $("#subject").val();
         var pageSizeParam = "&page_size=1000";
-        var endpoint = "http://localhost:8000/api/courses/?subdepartment=" + subdeptID + pageSizeParam;
-        $.getJSON(endpoint, function(data) {
+        var courseEndpoint = "http://localhost:8000/api/courses/?subdepartment=" + subdeptID + pageSizeParam;
+        $.getJSON(courseEndpoint, function(data) {
             clearDropdown("#courseID"); // Empty dropdown
             clearDropdown("#instructor"); //  Since courses are reloaded
 
@@ -73,8 +73,8 @@ jQuery(function($) {
         // Fetch instructor data from API, based on selected course
         var courseID = $("#courseID").val();
         var pageSizeParam = "&page_size=1000";
-        var endpoint = "http://localhost:8000/api/instructors/?section__course=" + courseID + pageSizeParam;
-        $.getJSON(endpoint, function(data) {
+        var instrEndpoint = "http://localhost:8000/api/instructors/?section__course=" + courseID + pageSizeParam;
+        $.getJSON(instrEndpoint, function(data) {
             clearDropdown("#instructor"); // Empty dropdown
 
             // Generate option tags
