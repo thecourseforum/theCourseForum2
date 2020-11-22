@@ -355,7 +355,7 @@
             <a href="{% url 'privacy' %}">Privacy Policy</a>
           </li>
         </ul>
-        <p class="text-white small mb-4 mb-lg-0">&copy; theCourseForum 2020. All Rights Reserved.</p>
+        <p class="text-white small mb-4 mb-lg-0">&copy; theCourseForum <span class="year"></span>. All Rights Reserved.</p>
       </div>
       <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
         <ul class="list-inline mb-0">
@@ -393,11 +393,13 @@
 
 {% block js %}
 <script type="module" src="{% static 'landing/feedbackform.js' %}"></script>
-{% if not visited %}
 <script type="text/javascript">
+    {% if not visited %}
     $(window).on('load',function(){
         $('#welcomeModal').modal('show');
     });
+    {% endif %}
+    // Update copyright year at the bottom of landing page
+    $(".year").text(new Date().getFullYear());
 </script>
-{% endif %}
 {% endblock %}

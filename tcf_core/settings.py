@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from django.urls import reverse_lazy
 from django.contrib.messages import constants as messages
 import environ
 
@@ -152,6 +153,7 @@ AUTHENTICATION_BACKENDS = (
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['virginia.edu']
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy('browse')
 # SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
 # LOGIN_ERROR_URL = '/'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
@@ -188,8 +190,8 @@ if not DEBUG:
 
     # Gather information from environment variables.
 
-    HOSTNAME = env.str('HOSTNAME')
-    PUBLIC_IPV4 = env.str('PUBLIC_IPV4')
+    # HOSTNAME = env.str('HOSTNAME')
+    # PUBLIC_IPV4 = env.str('PUBLIC_IPV4')
 
     # SECURITY WARNING: App Engine's security features ensure that it is safe to
     # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
@@ -198,10 +200,10 @@ if not DEBUG:
     # documentation)
     ALLOWED_HOSTS = ['*']
 
-    if HOSTNAME:
-        ALLOWED_HOSTS.append(HOSTNAME)
-    if PUBLIC_IPV4:
-        ALLOWED_HOSTS.append(PUBLIC_IPV4)
+    # if HOSTNAME:
+    #     ALLOWED_HOSTS.append(HOSTNAME)
+    # if PUBLIC_IPV4:
+    #     ALLOWED_HOSTS.append(PUBLIC_IPV4)
 
     # Read-write access to Elastic
     ES_COURSE_DOCUMENTS_ENDPOINT = env.str('ES_COURSE_DOCUMENTS_ENDPOINT')
