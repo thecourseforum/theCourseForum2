@@ -37,8 +37,6 @@ def downvote(request, review_id):
     return JsonResponse({'ok': False})
 
 
-# pylint: disable=too-many-locals
-# ^Doing this for now
 @login_required
 def new_review(request):
     """Review creation view."""
@@ -49,20 +47,14 @@ def new_review(request):
         form = ReviewForm(request.POST)
         if form.is_valid():
             try:
-                mnemonic = request.POST['subject']
-                number = request.POST['courseID']
-                course = Course.objects.get(
-                    subdepartment__mnemonic=mnemonic, number=int(number))
+                course_id = request.POST['courseID']
+                course = Course.objects.get(id=int(course_id))
 
-                instructor_name = request.POST['instructor']
-                first, last = instructor_name.split()
-                instructor = Instructor.objects.get(
-                    first_name=first, last_name=last)
+                instructor_id = request.POST['instructor']
+                instructor = Instructor.objects.get(id=int(instructor_id))
 
-                season = request.POST['semester']
-                year = request.POST['year']
-                semester = Semester.objects.get(
-                    season=season.upper(), year=int(year))
+                semester_id = request.POST['semester']
+                semester = Semester.objects.get(id=int(semester_id))
 
                 hours_reading = int(request.POST['hoursReading'])
                 hours_writing = int(request.POST['hoursWriting'])
@@ -76,12 +68,10 @@ def new_review(request):
                     semester=semester,
                     instructor=instructor,
                     text=request.POST['reviewText'],
-                    instructor_rating=int(
-                        request.POST['instructorRating']),
+                    instructor_rating=int(request.POST['instructorRating']),
                     enjoyability=int(request.POST['enjoyability']),
                     difficulty=int(request.POST['difficulty']),
-                    recommendability=int(
-                        request.POST['recommendability']),
+                    recommendability=int(request.POST['recommendability']),
                     amount_reading=hours_reading,
                     amount_writing=hours_writing,
                     amount_group=hours_group,

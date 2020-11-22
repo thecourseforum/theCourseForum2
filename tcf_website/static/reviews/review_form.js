@@ -6,10 +6,33 @@
 
 // Executed when DOM is ready
 jQuery(function($) {
+    // Fetch all semester data from API
+    var endpoint = "http://localhost:8000/api/semesters/";
+    $.getJSON(endpoint, function(data) {
+        clearDropdown("#semester"); // Empty dropdown
+
+        // Generate option tags
+        $.each(data, function(i, semester) {
+            // Most recent 5 years only
+            if (semester.year > 2015) {
+                $("<option />", {
+                    val: semester.id,
+                    text: semester.season + " " + semester.year
+                }).appendTo("#semester");
+            }
+        });
+        return this;
+    });
+
     // Fetch all subdepartment data from API
     var endpoint = "http://localhost:8000/api/subdepartments/";
     $.getJSON(endpoint, function(data) {
         clearDropdown("#subject"); // Empty dropdown
+
+        // Sort departments alphabetically by mnemonic
+        data.sort(function(a, b) {
+            return a.mnemonic.localeCompare(b.mnemonic);
+        });
 
         // Generate option tags
         $.each(data, function(i, subdept) {
