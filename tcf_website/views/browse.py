@@ -3,7 +3,7 @@
 """Views for Browse, department, and course/course instructor pages."""
 import json
 
-from django.db.models import Avg
+from django.db.models import Avg, Max, Q
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
@@ -75,36 +75,26 @@ def course_view(request, course_id):
 
     course = Course.objects.get(pk=course_id)
     latest_semester = Semester.latest()
-
-    # Get instructors that have taught the course in the most recent
-    # semester.
-    recent_instructor_pks = course.section_set.filter(
-        semester=latest_semester).values_list(
-        'instructors', flat=True).distinct()
-    recent_instructors = Instructor.objects.filter(
-        pk__in=recent_instructor_pks)
-    # Add ratings and difficulties
-    for instr in recent_instructors:
-        instr.rating = instr.average_rating_for_course(course)
-        instr.difficulty = instr.average_difficulty_for_course(course)
-        instr.gpa = CourseInstructorGrade.objects.filter(
-            course=course, instructor=instr).aggregate(
-            Avg('average')).get('average__avg')
-
-    # Get instructors that haven't taught the course this semester.
-    old_instructor_pks = course.section_set.exclude(
-        semester=latest_semester).exclude(
-        instructors__pk__in=recent_instructor_pks).values_list(
-        'instructors',
-        flat=True).distinct()
-    old_instructors = Instructor.objects.filter(pk__in=old_instructor_pks)
-    # Add ratings and difficulties
-    for instr in old_instructors:
-        instr.rating = instr.average_rating_for_course(course)
-        instr.difficulty = instr.average_difficulty_for_course(course)
-        instr.gpa = CourseInstructorGrade.objects.filter(
-            course=course, instructor=instr).aggregate(
-            Avg('average'))['average__avg']
+    instructors = Instructor.objects\
+        .filter(section__course=course).distinct()\
+        .annotate(
+            gpa=Avg('courseinstructorgrade__average',
+                    filter=Q(courseinstructorgrade__course=course)),
+            difficulty=Avg('review__difficulty', filter=Q(review__course=course)),
+            rating=(
+                Avg('review__instructor_rating', filter=Q(review__course=course)) +
+                Avg('review__enjoyability', filter=Q(review__course=course)) +
+                Avg('review__recommendability', filter=Q(review__course=course))
+            ) / 3,
+            semester_last_taught=Max('section__semester',
+                                     filter=Q(section__course=course)),
+        )
+    # Note: Wanted to use .annotate() but couldn't figure out a way
+    # So created a dictionary on the fly to minimize database access
+    semesters = {s.id: s for s in Semester.objects.all()}
+    for instructor in instructors:
+        instructor.semester_last_taught = semesters.get(
+            instructor.semester_last_taught)
 
     dept = course.subdepartment.department
 
@@ -118,9 +108,8 @@ def course_view(request, course_id):
     return render(request, 'course/course.html',
                   {
                       'course': course,
-                      'recent_instructors': recent_instructors,
+                      'instructors': instructors,
                       'latest_semester': latest_semester,
-                      'old_instructors': old_instructors,
                       'breadcrumbs': breadcrumbs
                   })
 
