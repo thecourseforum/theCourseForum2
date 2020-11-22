@@ -25,9 +25,6 @@
             <select type="text" class="form-control" required
                     id="subject" name="subject" onchange=loadCourseData()>
               <option value="NONE" disabled selected>[Select]</option>
-              <!-- {% for s in subjects %}
-              <option value={{s}}>{{s}}</option>
-              {% endfor %} -->
             </select>
           </div>
           <div class="form-group col-sm-3 col-6">
@@ -35,9 +32,6 @@
             <select type="text" class="form-control" required
                     id="courseID" name="courseID" onchange=loadInstructorData()>
               <option value="NONE" disabled selected>[Select]</option>
-              <!-- {% for c in courseIDs %}
-              <option value={{c}}>{{c}}</option>
-              {% endfor %} -->
             </select>
           </div>
           <div class="form-group col-sm-6">
@@ -45,9 +39,6 @@
             <select type="text" class="form-control" required
                     id="instructor" name="instructor">
               <option value="NONE" disabled selected>[Select]</option>
-              <!-- {% for i in instructors %}
-              <option value={{i}}>{{i}}</option>
-              {% endfor %} -->
             </select>
           </div>
         </div>
@@ -71,7 +62,6 @@
               <option value="2018">2018</option>
               <option value="2019">2019</option>
               <option value="2020">2020</option>
-              <option value="2021">2021</option>
             </select>
           </div>
         </div>
@@ -175,15 +165,6 @@
         <div class="new-review-submit row my-4">
           <button type="submit" class="btn btn-primary mx-auto">Submit Review</button>
         </div>
-
-        <select type="text" class="form-control" id="country" name="country" required>
-          <option value="" disabled selected>[Select]</option>
-          <option value="Germany">Germany</option>
-          <option value="Spain">Spain</option>
-        </select>
-        <select type="text" onchange=loadInstructorData() class="form-control" id="location" name="location" required>
-          <option value="" disabled selected>[Select]</option>
-        </select>
       </form>
     </div>
 </div>
@@ -192,73 +173,5 @@
 {% endblock %}
 
 {% block js %}
-<script type="text/javascript">
-  // Executed when DOM is ready
-  jQuery(function($) {
-    // Fetch all subdepartment data from API
-    var endpoint = 'http://localhost:8000/api/subdepartments/'
-    $.getJSON(endpoint, function(data) {
-        // Generate option tags
-        var optionTags = $.map(data, function(subdept){
-            return '<option value="' + subdept.id + '">' + subdept.mnemonic + '</option>'
-        }).join('');
-        // Prepend default option
-        optionTags = '<option value="" disabled selected>[Select]</option>' + optionTags
-
-        // Add option tags to select element in html
-        $('#subject').html(optionTags)
-
-        return this;
-    });
-  });
-
-  function loadCourseData() {
-    var subdeptID = $('#subject').val()
-    console.log(subdeptID);
-
-    // Fetch course data from API, based on selected subdepartment
-    var pageSizeParam = '&page_size=1000'
-    var endpoint = 'http://localhost:8000/api/courses/?subdepartment=' + subdeptID + pageSizeParam
-    $.getJSON(endpoint, function(data) {
-        console.log(data);
-        // Generate option tags
-        var optionTags = $.map(data.results, function(course){
-            // 4-digit courseIDs only
-            if(course.number > 1000)
-                return '<option value="' + course.id + '">' + course.number + '</option>'
-        }).join('');
-        // Prepend default option
-        optionTags = '<option value="" disabled selected>[Select]</option>' + optionTags
-
-        // Add option tags to select element in html
-        $('#courseID').html(optionTags)
-
-        return this;
-    });
-  }
-
-  function loadInstructorData() {
-    var courseID = $('#courseID').val()
-    console.log(courseID);
-
-    // Fetch instructor data from API, based on selected course
-    var pageSizeParam = '&page_size=1000'
-    var endpoint = 'http://localhost:8000/api/instructors/?section__course=' + courseID + pageSizeParam
-    $.getJSON(endpoint, function(data) {
-        console.log(data);
-        // Generate option tags
-        var optionTags = $.map(data.results, function(instr){
-            return '<option value="' + instr.id + '">' + instr.first_name +
-                   ' ' + instr.last_name + '</option>'
-        }).join('');
-        // Prepend default option
-        optionTags = '<option value="" disabled selected>[Select]</option>' + optionTags
-
-        // Add option tags to select element in html
-        $('#instructor').html(optionTags)
-
-        return this;
-    });
-  }
-</script>
+<script type="text/javascript" src="{% static 'reviews/review_form.js' %}"></script>
 {% endblock %}
