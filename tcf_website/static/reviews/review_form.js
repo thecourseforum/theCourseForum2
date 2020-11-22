@@ -1,67 +1,77 @@
+/*
+ * Cascading dropdown data population for the "new review" form
+ * in review.py and reviews/new.html
+ * Author: j-alicia-long, 11/22/2020
+*/
+
 // Executed when DOM is ready
 jQuery(function($) {
-  // Fetch all subdepartment data from API
-  var endpoint = 'http://localhost:8000/api/subdepartments/'
-  $.getJSON(endpoint, function(data) {
-      // Generate option tags
-      var optionTags = $.map(data, function(subdept){
-          return '<option value="' + subdept.id + '">' + subdept.mnemonic + '</option>'
-      }).join('');
-      // Prepend default option
-      optionTags = '<option value="" disabled selected>[Select]</option>' + optionTags
 
-      // Add option tags to select element in html
-      $('#subject').html(optionTags)
+  // Fetch all subdepartment data from API
+  var endpoint = "http://localhost:8000/api/subdepartments/"
+  $.getJSON(endpoint, function(data) {
+      clearDropdown("#subject"); // Empty dropdown
+
+      // Generate option tags
+      $.each(data, function(i, subdept) {
+          $("<option />", {
+              val: subdept.id,
+              text: subdept.mnemonic
+          }).appendTo("#subject");
+      });
 
       return this;
   });
 });
 
 function loadCourseData() {
-  var subdeptID = $('#subject').val()
-  console.log(subdeptID);
 
   // Fetch course data from API, based on selected subdepartment
-  var pageSizeParam = '&page_size=1000'
-  var endpoint = 'http://localhost:8000/api/courses/?subdepartment=' + subdeptID + pageSizeParam
+  var subdeptID = $("#subject").val()
+  var pageSizeParam = "&page_size=1000"
+  var endpoint = "http://localhost:8000/api/courses/?subdepartment=" + subdeptID + pageSizeParam
   $.getJSON(endpoint, function(data) {
-      console.log(data);
-      // Generate option tags
-      var optionTags = $.map(data.results, function(course){
-          // 4-digit courseIDs only
-          if(course.number > 1000)
-              return '<option value="' + course.id + '">' + course.number + '</option>'
-      }).join('');
-      // Prepend default option
-      optionTags = '<option value="" disabled selected>[Select]</option>' + optionTags
+      clearDropdown("#courseID"); // Empty dropdown
+      clearDropdown("#instructor") //  Since courses are reloaded
 
-      // Add option tags to select element in html
-      $('#courseID').html(optionTags)
+      // Generate option tags
+      $.each(data.results, function(i, course) {
+          // 4-digit courseIDs only
+          if(course.number > 1000) {
+              $("<option />", {
+                  val: course.id,
+                  text: course.number
+              }).appendTo("#courseID");
+          }
+      });
 
       return this;
   });
 }
 
 function loadInstructorData() {
-  var courseID = $('#courseID').val()
-  console.log(courseID);
+    // Fetch instructor data from API, based on selected course
+    var courseID = $("#courseID").val()
+    var pageSizeParam = "&page_size=1000"
+    var endpoint = "http://localhost:8000/api/instructors/?section__course=" + courseID + pageSizeParam
+    $.getJSON(endpoint, function(data) {
+        clearDropdown("#instructor"); // Empty dropdown
 
-  // Fetch instructor data from API, based on selected course
-  var pageSizeParam = '&page_size=1000'
-  var endpoint = 'http://localhost:8000/api/instructors/?section__course=' + courseID + pageSizeParam
-  $.getJSON(endpoint, function(data) {
-      console.log(data);
-      // Generate option tags
-      var optionTags = $.map(data.results, function(instr){
-          return '<option value="' + instr.id + '">' + instr.first_name +
-                 ' ' + instr.last_name + '</option>'
-      }).join('');
-      // Prepend default option
-      optionTags = '<option value="" disabled selected>[Select]</option>' + optionTags
+        // Generate option tags
+        $.each(data.results, function(i, instr) {
+            $("<option />", {
+                val: instr.id,
+                text: instr.first_name + " " + instr.last_name
+            }).appendTo("#instructor");
+        });
 
-      // Add option tags to select element in html
-      $('#instructor').html(optionTags)
+        return this;
+    });
+}
 
-      return this;
-  });
+
+function clearDropdown(id) {
+    // Clears all dropdown options & adds a disabled default option
+    $(id).empty();
+    $(id).html("<option value='' disabled selected>[Select]</option>");
 }
