@@ -7,10 +7,11 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
-from ..models import Review, Course, Semester, Instructor, Subdepartment
+from ..models import Review, Course, Semester, Instructor
 
 # TODO: use a proper django form, make it more robust.
 # (i.e. better Course/Instructor/Semester search).
+
 
 class ReviewForm(forms.Form):
     """Form for review creation."""
@@ -41,16 +42,6 @@ def downvote(request, review_id):
 @login_required
 def new_review(request):
     """Review creation view."""
-
-    subjects = set(Subdepartment.objects.values_list('mnemonic', flat=True))
-    subjects = sorted(list(subjects))
-
-    course_ids = set(Course.objects.values_list('number', flat=True))
-    course_ids = sorted(list(course_ids))
-
-    instructors = Instructor.objects.all()
-    instructors = set([i.full_name() for i in instructors])
-    instructors = sorted(list(instructors))
 
     # Collect form data into Review model instance.
     if request.method == 'POST':
@@ -105,31 +96,14 @@ def new_review(request):
                     str(course) + '!')
                 return redirect('reviews')
             except KeyError as err:
+                print(err)
                 messages.add_message(
                     request,
                     messages.ERROR,
                     'This course is invalid. Try again!')
-                return render(request, 'reviews/new.html',
-                              {
-                                'form': form,
-                                'subjects': subjects,
-                                'courseIDs': course_ids,
-                                'instructors': instructors
-                              })
+                return render(request, 'reviews/new.html', {'form': form})
         else:
-            return render(request, 'reviews/new.html',
-                          {
-                            'form': form,
-                            'subjects': subjects,
-                            'courseIDs': course_ids,
-                            'instructors': instructors
-                          })
+            return render(request, 'reviews/new.html', {'form': form})
 
     form = ReviewForm()
-    return render(request, 'reviews/new.html',
-                  {
-                    'form': form,
-                    'subjects': subjects,
-                    'courseIDs': course_ids,
-                    'instructors': instructors
-                  })
+    return render(request, 'reviews/new.html', {'form': form})
