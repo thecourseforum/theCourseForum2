@@ -14,7 +14,7 @@
     <div class="row">
     <div class="card col">
 
-    <form class="card-body" action="{% url 'new_review' %}" method="POST">
+    <form class="card-body px-md-5" action="{% url 'new_review' %}" method="POST">
         {% csrf_token %}
         <!-- Class Info -->
         <div class="new-review-course form-row mb-3">
@@ -23,19 +23,19 @@
           <div class="form-group col-sm-3 col-6">
             <label for="subject">Subject</label>
             <select type="text" class="form-control" required id="subject" name="subject">
-              <option value="NONE" disabled selected>[Select]</option>
+              <option value="NONE" disabled selected>Select...</option>
             </select>
           </div>
           <div class="form-group col-sm-3 col-6">
             <label for="courseID">Course ID</label>
             <select type="text" class="form-control" required id="courseID" name="courseID">
-              <option value="NONE" disabled selected>[Select]</option>
+              <option value="NONE" disabled selected>Select...</option>
             </select>
           </div>
           <div class="form-group col-sm-6">
             <label for="instructor">Instructor</label>
             <select type="text" class="form-control" required id="instructor" name="instructor">
-              <option value="NONE" disabled selected>[Select]</option>
+              <option value="NONE" disabled selected>Select...</option>
             </select>
           </div>
         </div>
@@ -43,7 +43,7 @@
           <div class="form-group col-sm-6">
             <label for="semester">Semester</label>
             <select type="text" class="form-control" id="semester" name="semester" required>
-              <option value="NONE" disabled selected>[Select]</option>
+              <option value="NONE" disabled selected>Select...</option>
             </select>
           </div>
         </div>

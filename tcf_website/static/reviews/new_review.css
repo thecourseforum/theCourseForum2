@@ -3,3 +3,8 @@
 .new-review .review-form-header{
   color: var(--accent-color);
 }
+
+.new-review select:disabled{
+  color: var(--shadow-color);
+  background-color: var(--background-color);
+}
