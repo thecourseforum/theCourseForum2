@@ -18,7 +18,7 @@ jQuery(function($) {
         clearDropdown("#semester"); // Empty dropdown
 
         // Reverse chronological order (API default is chronological)
-        data.reverse(); 
+        data.reverse();
 
         // Generate option tags
         $.each(data, function(i, semester) {
