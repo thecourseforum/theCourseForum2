@@ -85,7 +85,7 @@ jQuery(function($) {
         // Fetch instructor data from API, based on selected course
         var pageSize = "1000";
         var instrEndpoint = `/api/instructors/?course=${courseID}` +
-            `&page_size=${pageSize}&recent=true`;
+            `&page_size=${pageSize}`;
         $.getJSON(instrEndpoint, function(data) {
             clearDropdown("#instructor"); // Empty dropdown
 
