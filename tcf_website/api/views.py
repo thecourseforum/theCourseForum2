@@ -93,7 +93,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                         Avg('review__enjoyability') +
                         Avg('review__recommendability')
                     ) / 3)
-        if 'recent5years' in self.request.query_params:
+        if 'recent' in self.request.query_params:
             latest_semester = Semester.latest()
             queryset = queryset.filter(
                 semester_last_taught__year__gte=latest_semester.year - 5
@@ -118,5 +118,16 @@ class InstructorViewSet(viewsets.ReadOnlyModelViewSet):
 
 class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
     """DRF ViewSet for Semester"""
-    queryset = Semester.objects.all().order_by('number')
+    queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
+
+    def get_queryset(self):
+        # TODO: Refactor using django-filter if possible
+        # Can't use `.filter()` twice, so use a dict
+        # https://stackoverflow.com/q/8164675/
+        params = {}
+        if 'course' in self.request.query_params:
+            params['section__course'] = self.request.query_params['course']
+        if 'instructor' in self.request.query_params:
+            params['section__instructors'] = self.request.query_params['instructor']
+        return self.queryset.filter(**params).distinct().order_by('number')
