@@ -6,7 +6,7 @@
                 <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}" id="upvote{{review.id}}">
                     <i class="fa fa-angle-up fa-fw"></i>
                 </a>
-                <span id="vote-count" class="voteCount">{{ review.count_votes }}</span>
+                <span id="vote-count" class="voteCount">{{ review.sum_votes }}</span>
                 <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}" id="downvote{{review.id}}">
                     <i class="fa fa-angle-down fa-fw"></i>
                 </a>
