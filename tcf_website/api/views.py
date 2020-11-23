@@ -93,7 +93,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                         Avg('review__enjoyability') +
                         Avg('review__recommendability')
                     ) / 3)
-        if 'recent5years' in self.request.query_params:
+        if 'recent' in self.request.query_params:
             latest_semester = Semester.latest()
             queryset = queryset.filter(
                 semester_last_taught__year__gte=latest_semester.year - 5
