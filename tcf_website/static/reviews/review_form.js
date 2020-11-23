@@ -51,8 +51,8 @@ jQuery(function($) {
         // Fetch course data from API, based on selected subdepartment
         var subdeptID = $("#subject").val();
         var pageSize = "1000";
-        var courseEndpoint = "/api/courses/?subdepartment=" + subdeptID +
-                             "&page_size=" + pageSize + "&recent";
+        var courseEndpoint = `/api/courses/?subdepartment=${subdeptID}
+                              &page_size=${pageSize}&recent`;
         $.getJSON(courseEndpoint, function(data) {
             // Generate option tags
             $.each(data.results, function(i, course) {
@@ -84,8 +84,8 @@ jQuery(function($) {
 
         // Fetch instructor data from API, based on selected course
         var pageSize = "1000";
-        var instrEndpoint = "/api/instructors/?section__course=" + courseID +
-                            "&page_size=" + pageSize + "&recent=true";
+        var instrEndpoint = `/api/instructors/?section__course=${courseID}
+                             &page_size=${pageSize}&recent=true`;
         $.getJSON(instrEndpoint, function(data) {
             clearDropdown("#instructor"); // Empty dropdown
 
@@ -110,8 +110,7 @@ jQuery(function($) {
         // Fetch all semester data from API
         var courseID = $("#courseID").val();
         var instrID = $("#instructor").val();
-        var semEndpoint = "/api/semesters/?course=" + courseID +
-                          "&instructor=" + instrID;
+        var semEndpoint = `/api/semesters/?course=${courseID}&instructor=${instrID}`;
         $.getJSON(semEndpoint, function(data) {
             // Generate option tags
             $.each(data, function(i, semester) {
