@@ -14,7 +14,7 @@ class InstructorFilter(FilterSet):
         """Filter method for most recent 5 years"""
         if value is True:
             return queryset.filter(
-                section__semester__year__gt=Semester.latest().year - 5,
+                section__semester__year__gte=Semester.latest().year - 5,
             )
         return queryset
 
