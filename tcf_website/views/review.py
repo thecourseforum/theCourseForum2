@@ -1,4 +1,4 @@
-#pylint: disable=fixme
+#pylint: disable=fixme,bare-except
 """View pertaining to review creation/viewing."""
 
 from django import forms
@@ -86,7 +86,7 @@ def new_review(request):
                     str(course) + '!')
                 return redirect('reviews')
             except: # TODO: need more robust backend validation
-                print("Review error:", sys.exc_info()[0])
+                print("Review error")
                 messages.add_message(
                     request,
                     messages.ERROR,
