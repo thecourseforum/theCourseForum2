@@ -21,19 +21,19 @@
           <h4 class="review-form-header form-group col-12 my-4">
             Which class are you reviewing?</h4>
           <div class="form-group col-sm-3 col-6">
-            <label for="subject">Subject</label>
+            <label for="subject" class="required-field">Subject</label>
             <select type="text" class="form-control" required id="subject" name="subject">
               <option value="NONE" disabled selected>Select...</option>
             </select>
           </div>
           <div class="form-group col-sm-3 col-6">
-            <label for="courseID">Course ID</label>
+            <label for="courseID" class="required-field">Course ID</label>
             <select type="text" class="form-control" required id="courseID" name="courseID">
               <option value="NONE" disabled selected>Select...</option>
             </select>
           </div>
           <div class="form-group col-sm-6">
-            <label for="instructor">Instructor</label>
+            <label for="instructor" class="required-field">Instructor</label>
             <select type="text" class="form-control" required id="instructor" name="instructor">
               <option value="NONE" disabled selected>Select...</option>
             </select>
@@ -41,7 +41,7 @@
         </div>
         <div class="form-row mb-3">
           <div class="form-group col-sm-6">
-            <label for="semester">Semester</label>
+            <label for="semester" class="required-field">Semester</label>
             <select type="text" class="form-control" id="semester" name="semester" required>
               <option value="NONE" disabled selected>Select...</option>
             </select>
@@ -66,7 +66,7 @@
               <h4 class="review-form-header col-12 p-0 my-4">
                 Rate the course</h4>
               <div class="mt-3">
-                  <label for="instructorRating" class="review-form-label">
+                  <label for="instructorRating" class="required-field">
                     <i class="fas fa-user"></i> Instructor
                   </label>
                   <div class="d-flex">
@@ -77,7 +77,7 @@
                   </div>
               </div>
               <div class="mt-3">
-                  <label for="instructorRating" class="review-form-label">
+                  <label for="instructorRating" class="required-field">
                     <i class="far fa-smile-beam"></i> Enjoyability
                   </label>
                   <div class="d-flex">
@@ -88,7 +88,7 @@
                   </div>
               </div>
               <div class="mt-3">
-                  <label for="difficulty" class="review-form-label">
+                  <label for="difficulty" class="required-field">
                     <i class="fas fa-dumbbell"></i> Difficulty
                   </label>
                   <div class="d-flex">
@@ -99,7 +99,7 @@
                   </div>
               </div>
               <div class="mt-3">
-                  <label for="recommendability" class="review-form-label">
+                  <label for="recommendability" class="required-field">
                     <i class="fas fa-thumbs-up"></i> Recommendability
                   </label>
                   <div class="d-flex">
@@ -114,28 +114,28 @@
               <h4 class="review-form-header p-0 my-4">
                 Hours of work/week</h4>
               <div class="row py-3">
-                <label for="hoursReading" class="review-form-label col-8">
+                <label for="hoursReading" class="required-field col-8">
                   <i class="fas fa-book"></i> Reading
                 </label>
                 <input type="number" value=0 min="0" max="20" class="form-control col"
                        id="hoursReading" name="hoursReading" required>
               </div>
               <div class="row py-3">
-                <label for="hoursWriting" class="review-form-label col-8">
+                <label for="hoursWriting" class="required-field col-8">
                   <i class="fas fa-pencil-alt"></i> Writing
                 </label>
                 <input type="number" value=0 min="0" max="20" class="form-control col"
                        id="hoursWriting" name="hoursWriting" required>
               </div>
               <div class="row py-3">
-                <label for="hoursGroupwork" class="review-form-label col-8">
+                <label for="hoursGroupwork" class="required-field col-8">
                   <i class="fas fa-user-friends"></i> Groupwork
                 </label>
                 <input type="number" value=0 min="0" max="20" class="form-control col"
                        id="hoursGroupwork" name="hoursGroupwork" required>
               </div>
               <div class="row py-3">
-                <label for="hoursOther" class="review-form-label col-8">
+                <label for="hoursOther" class="required-field col-8">
                   <i class="fas fa-flask"></i> Other
                 </label>
                 <input type="number" value=0 min="0" max="20" class="form-control col"

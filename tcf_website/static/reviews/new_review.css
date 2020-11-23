@@ -8,3 +8,8 @@
   color: var(--shadow-color);
   background-color: var(--background-color);
 }
+
+.required-field::after {
+    content: " *";
+    color: red;
+}
