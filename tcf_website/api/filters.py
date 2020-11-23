@@ -7,7 +7,7 @@ from ..models import Instructor, Semester
 
 class InstructorFilter(FilterSet):
     """Filter for Instructor"""
-    section__course = NumberFilter(field_name='section__course', distinct=True)
+    course = NumberFilter(field_name='section__course', distinct=True)
     recent = BooleanFilter(method='filter_recent', distinct=True)
 
     def filter_recent(self, queryset, name, value):
@@ -20,4 +20,4 @@ class InstructorFilter(FilterSet):
 
     class Meta:
         model = Instructor
-        fields = ['section__course', 'recent']
+        fields = ['course', 'recent']
