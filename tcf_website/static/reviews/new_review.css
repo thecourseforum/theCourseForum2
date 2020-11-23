@@ -9,6 +9,10 @@
   background-color: var(--background-color);
 }
 
+.new-review input:disabled{
+  background-color: var(--background-color);
+}
+
 .required-field::after {
     content: " *";
     color: red;
