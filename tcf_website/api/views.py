@@ -130,4 +130,5 @@ class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
             params['section__course'] = self.request.query_params['course']
         if 'instructor' in self.request.query_params:
             params['section__instructors'] = self.request.query_params['instructor']
-        return self.queryset.filter(**params).distinct().order_by('number')
+        # Returns filtered, unique semesters in reverse chronological order
+        return self.queryset.filter(**params).distinct().order_by('-number')

@@ -18,7 +18,7 @@ jQuery(function($) {
     $("#semester").prop("disabled", true);
 
     // Fetch all subdepartment data from API
-    var subdeptEndpoint = "http://localhost:8000/api/subdepartments/";
+    var subdeptEndpoint = "/api/subdepartments/";
     $.getJSON(subdeptEndpoint, function(data) {
         // Sort departments alphabetically by mnemonic
         data.sort(function(a, b) {
@@ -49,18 +49,15 @@ jQuery(function($) {
         // Fetch course data from API, based on selected subdepartment
         var subdeptID = $("#subject").val();
         var pageSize = "1000";
-        var courseEndpoint = "http://localhost:8000/api/courses/?subdepartment="
-                             + subdeptID + "&page_size=" + pageSize + "&recent";
+        var courseEndpoint = "/api/courses/?subdepartment=" + subdeptID +
+                             "&page_size=" + pageSize + "&recent";
         $.getJSON(courseEndpoint, function(data) {
             // Generate option tags
             $.each(data.results, function(i, course) {
-                // 4-digit courseIDs only
-                if (course.number > 1000) {
-                    $("<option />", {
-                        val: course.id,
-                        text: course.number
-                    }).appendTo("#courseID");
-                }
+                $("<option />", {
+                    val: course.id,
+                    text: course.number
+                }).appendTo("#courseID");
             });
             return this;
         });
@@ -78,8 +75,8 @@ jQuery(function($) {
         // Fetch instructor data from API, based on selected course
         var courseID = $("#courseID").val();
         var pageSize = "1000";
-        var instrEndpoint = "http://localhost:8000/api/instructors/?section__course="
-                            + courseID + "&page_size=" + pageSize + "&recent=true";
+        var instrEndpoint = "/api/instructors/?section__course=" + courseID +
+                            "&page_size=" + pageSize + "&recent=true";
         $.getJSON(instrEndpoint, function(data) {
             clearDropdown("#instructor"); // Empty dropdown
 
@@ -104,14 +101,12 @@ jQuery(function($) {
         // Fetch all semester data from API
         var courseID = $("#courseID").val();
         var instrID = $("#instructor").val();
-        var semEndpoint = "http://localhost:8000/api/semesters/?course="
-                          + courseID + "&instructor=" + instrID;
+        var semEndpoint = "/api/semesters/?course=" + courseID +
+                          "&instructor=" + instrID;
         $.getJSON(semEndpoint, function(data) {
-            // Reverse chronological order (API default is chronological)
-            data.reverse();
-
             // Generate option tags
             $.each(data, function(i, semester) {
+                // Note: API returns semester list in reverse chronological order
                 // Most recent 5 years only
                 if (semester.year > 2014) {
                     $("<option />", {
