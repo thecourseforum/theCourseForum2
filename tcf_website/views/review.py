@@ -85,8 +85,8 @@ def new_review(request):
                     'Successfully reviewed ' +
                     str(course) + '!')
                 return redirect('reviews')
-            except KeyError as err:
-                print(err)
+            except: # TODO: need more robust backend validation
+                print "Review error:", sys.exc_info()[0]
                 messages.add_message(
                     request,
                     messages.ERROR,
