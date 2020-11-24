@@ -47,7 +47,7 @@ def new_review(request):
         form = ReviewForm(request.POST)
         if form.is_valid():
             try:
-                course_id = request.POST['courseID']
+                course_id = request.POST['course']
                 course = Course.objects.get(id=int(course_id))
 
                 instructor_id = request.POST['instructor']

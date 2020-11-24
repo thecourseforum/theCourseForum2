@@ -8,12 +8,12 @@
 jQuery(function($) {
     // Clear & disable sequenced dropdowns
     clearDropdown("#subject");
-    clearDropdown("#courseID");
+    clearDropdown("#course");
     clearDropdown("#instructor");
     clearDropdown("#semester");
     // Enable subject selector, disable the following
     $("#subject").prop("disabled", false);
-    $("#courseID").prop("disabled", true);
+    $("#course").prop("disabled", true);
     $("#instructor").prop("disabled", true);
     $("#semester").prop("disabled", true);
 
@@ -29,7 +29,7 @@ jQuery(function($) {
         $.each(data, function(i, subdept) {
             $("<option />", {
                 val: subdept.id,
-                text: subdept.mnemonic
+                text: subdept.mnemonic + " | " + subdept.name
             }).appendTo("#subject");
         });
         return this;
@@ -38,11 +38,11 @@ jQuery(function($) {
     // Fetch course data on subject select
     $("#subject").change(function() {
         // Clear & disable sequenced dropdowns
-        clearDropdown("#courseID");
+        clearDropdown("#course");
         clearDropdown("#instructor");
         clearDropdown("#semester");
         // Enable course selector, disable the following
-        $("#courseID").prop("disabled", false);
+        $("#course").prop("disabled", false);
         $("#instructor").prop("disabled", true);
         $("#semester").prop("disabled", true);
 
@@ -57,14 +57,14 @@ jQuery(function($) {
                 $("<option />", {
                     val: course.id,
                     text: course.number + " | " + course.title
-                }).appendTo("#courseID");
+                }).appendTo("#course");
             });
             return this;
         });
     });
 
     // Fetch instructor data on course select
-    $("#courseID").change(function() {
+    $("#course").change(function() {
         // Clear & disable sequenced dropdowns
         clearDropdown("#instructor");
         clearDropdown("#semester");
@@ -73,8 +73,9 @@ jQuery(function($) {
         $("#semester").prop("disabled", true);
 
         // Fetch instructor data from API, based on selected course
+        var course = $("#course").val();
         var pageSize = "1000";
-        var instrEndpoint = `/api/instructors/?course=${courseID}` +
+        var instrEndpoint = `/api/instructors/?course=${course}` +
             `&page_size=${pageSize}`;
         $.getJSON(instrEndpoint, function(data) {
             clearDropdown("#instructor"); // Empty dropdown
@@ -98,20 +99,18 @@ jQuery(function($) {
         $("#semester").prop("disabled", false);
 
         // Fetch all semester data from API
-        var courseID = $("#courseID").val();
+        var course = $("#course").val();
         var instrID = $("#instructor").val();
-        var semEndpoint = `/api/semesters/?course=${courseID}&instructor=${instrID}`;
+        var semEndpoint = `/api/semesters/?course=${course}&instructor=${instrID}`;
         $.getJSON(semEndpoint, function(data) {
             // Generate option tags
             $.each(data, function(i, semester) {
-                // Note: API returns semester list in reverse chronological order
+                // Note: API returns semester list in reverse chronological order,
                 // Most recent 5 years only
-                if (semester.year > 2014) {
-                    $("<option />", {
-                        val: semester.id,
-                        text: semester.season + " " + semester.year
-                    }).appendTo("#semester");
-                }
+                $("<option />", {
+                    val: semester.id,
+                    text: semester.season + " " + semester.year
+                }).appendTo("#semester");
             });
             return this;
         });
