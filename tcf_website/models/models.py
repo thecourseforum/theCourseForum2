@@ -129,7 +129,7 @@ class User(AbstractUser):
 
     def reviews(self):
         """Return user reviews sorted by creation date."""
-        return self.annotate(
+        return self.review_set.annotate(
             sum_votes=models.functions.Coalesce(
                 models.Sum('vote__value'),
                 models.Value(0)
