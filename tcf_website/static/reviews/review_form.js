@@ -11,7 +11,6 @@ jQuery(function($) {
     clearDropdown("#courseID");
     clearDropdown("#instructor");
     clearDropdown("#semester");
-    $("#courseName").val("");
     // Enable subject selector, disable the following
     $("#subject").prop("disabled", false);
     $("#courseID").prop("disabled", true);
@@ -42,7 +41,6 @@ jQuery(function($) {
         clearDropdown("#courseID");
         clearDropdown("#instructor");
         clearDropdown("#semester");
-        $("#courseName").val("");
         // Enable course selector, disable the following
         $("#courseID").prop("disabled", false);
         $("#instructor").prop("disabled", true);
@@ -58,7 +56,7 @@ jQuery(function($) {
             $.each(data.results, function(i, course) {
                 $("<option />", {
                     val: course.id,
-                    text: course.number
+                    text: course.number + " | " + course.title
                 }).appendTo("#courseID");
             });
             return this;
@@ -70,17 +68,9 @@ jQuery(function($) {
         // Clear & disable sequenced dropdowns
         clearDropdown("#instructor");
         clearDropdown("#semester");
-        $("#courseName").val("");
         // Enable instructor selector, disable the following
         $("#instructor").prop("disabled", false);
         $("#semester").prop("disabled", true);
-
-        // Update course name field
-        var courseID = $("#courseID").val();
-        var courseEndpoint = "/api/courses/" + courseID;
-        $.getJSON(courseEndpoint, function(course) {
-            $("#courseName").val(course.title);
-        });
 
         // Fetch instructor data from API, based on selected course
         var pageSize = "1000";
