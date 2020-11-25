@@ -91,9 +91,9 @@ def new_review(request):
                     request,
                     messages.ERROR,
                     'This course is invalid. Try again!')
-                return render(request, 'reviews/new.html', {'form': form})
+                return render(request, 'reviews/new_review.html', {'form': form})
         else:
-            return render(request, 'reviews/new.html', {'form': form})
+            return render(request, 'reviews/new_review.html', {'form': form})
 
     form = ReviewForm()
-    return render(request, 'reviews/new.html', {'form': form})
+    return render(request, 'reviews/new_review.html', {'form': form})
