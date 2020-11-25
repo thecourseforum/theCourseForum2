@@ -18,7 +18,7 @@ urlpatterns = [
         'instructor/<int:instructor_id>',
         views.instructor_view,
         name='instructor'),
-    # path('reviews/new', views.new_review, name='new_review'),
+    path('reviews/new', views.new_review, name='new_review'),
     path('reviews', views.reviews, name='reviews'),
     path('reviews/<int:review_id>/upvote', views.upvote),
     path('reviews/<int:review_id>/downvote', views.downvote),
