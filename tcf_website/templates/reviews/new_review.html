@@ -8,13 +8,10 @@
 {% endblock %}
 
 {% block content %}
-<div class="new-review container-fluid d-flex flex-column text-left mx-md-5 mx-sm-4">
-
-    <h1 class="h2 mt-2 mb-4">Write a review</h2>
-    <div class="row">
-    <div class="card col">
-
-    <form class="card-body mx-lg-5 px-md-5" action="{% url 'new_review' %}" method="POST">
+<div class="new-review container text-left mx-auto">
+  <h1 class="h2 mt-2 mb-4">Write a review</h2>
+  <div class="card">
+    <form class="card-body px-md-5" action="{% url 'new_review' %}" method="POST">
         {% csrf_token %}
         <!-- Class Info -->
         <div class="new-review-course form-row mb-3">
@@ -197,12 +194,11 @@
           </div>
         </div>
         <hr>
-        <div class="new-review-submit row my-4">
+        <div class="new-review-submit row py-4">
           <button type="submit" class="btn btn-primary mx-auto">Submit Review</button>
         </div>
-      </form>
-    </div>
-</div>
+    </form>
+  </div>
 </div>
 
 {% endblock %}
