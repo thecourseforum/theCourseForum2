@@ -115,6 +115,43 @@ jQuery(function($) {
             return this;
         });
     });
+
+    /* Course Rating Slider Inputs */
+    // Instructor Rating
+    $('#instructorRating2').val($('#instructorRating').val());
+    $('#instructorRating').change(function() {
+      $('#instructorRating2').val($('#instructorRating').val());
+    });
+    $('#instructorRating2').change(function() {
+      $('#instructorRating').val($('#instructorRating2').val());
+    });
+
+    // Enjoyability
+    $('#enjoyability2').val($('#enjoyability').val());
+    $('#enjoyability').change(function() {
+      $('#enjoyability2').val($('#enjoyability').val());
+    });
+    $('#enjoyability2').change(function() {
+      $('#enjoyability').val($('#enjoyability2').val());
+    });
+
+    // Difficulty
+    $('#difficulty2').val($('#difficulty').val());
+    $('#difficulty').change(function() {
+      $('#difficulty2').val($('#difficulty').val());
+    });
+    $('#difficulty2').change(function() {
+      $('#difficulty').val($('#difficulty2').val());
+    });
+    
+    // Recommendability
+    $('#recommendability2').val($('#recommendability').val());
+    $('#recommendability').change(function() {
+      $('#recommendability2').val($('#recommendability').val());
+    });
+    $('#recommendability2').change(function() {
+      $('#recommendability').val($('#recommendability2').val());
+    });
 });
 
 // Clears all dropdown options & adds a disabled default option
