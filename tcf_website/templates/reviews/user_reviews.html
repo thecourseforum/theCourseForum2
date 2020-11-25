@@ -8,8 +8,8 @@
 {% endblock %}
 
 {% block content %}
-<div class="my-reviews container-fluid">
-    <h2 class="mx-5 mb-4">My reviews</h2>
+<div class="my-reviews container mx-auto">
+    <h1 class="h2 mx-3 mt-2 mb-4">My reviews</h1>
     {% include "reviews/reviews.html" with reviews=user.reviews profile=True %}
 </div>
 {% endblock %}
