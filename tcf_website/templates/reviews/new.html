@@ -10,7 +10,7 @@
 {% block content %}
 <div class="new-review container-fluid d-flex flex-column text-left mx-md-5 mx-sm-4">
 
-    <h2 class="mt-2 mb-4">Write a review</h2>
+    <h1 class="h2 mt-2 mb-4">Write a review</h2>
     <div class="row">
     <div class="card col">
 
@@ -18,8 +18,8 @@
         {% csrf_token %}
         <!-- Class Info -->
         <div class="new-review-course form-row mb-3">
-          <h4 class="review-form-header form-group col-12 my-4">
-            Which class are you reviewing?</h4>
+          <h2 class="h4 review-form-header form-group col-12 my-4">
+            Which class are you reviewing?</h2>
           <div class="form-group col-sm-6">
             <label for="subject" class="required-field">Subject</label>
             <select type="text" class="form-control" required id="subject" name="subject">
@@ -51,8 +51,8 @@
 
         <!-- Review written content -->
         <div class="new-review-content form-row mb-3">
-          <h4 class="review-form-header form-group col-12 my-4">
-            Tell us more about the course and instructor</h4>
+          <h2 class="h4 review-form-header form-group col-12 my-4">
+            Tell us more about the course and instructor</h2>
           <div class="form-group col mb-3">
             <textarea class="form-control" id="reviewText" name="reviewText" rows="5"
                       placeholder="e.g. I love CS 2150, Bloomfield is great!"></textarea>
@@ -63,8 +63,8 @@
         <!-- Review ratings for course -->
         <div class="new-review-ratings form-row mb-3">
           <div class="form-group col-sm-6 pr-sm-5">
-              <h4 class="review-form-header col-12 p-0 my-4">
-                Rate the course</h4>
+              <h2 class="h4 review-form-header col-12 p-0 my-4">
+                Rate the course</h2>
               <div class="mt-3">
                   <label for="instructorRating" class="required-field">
                     <i class="fas fa-user"></i> Instructor
@@ -111,8 +111,8 @@
               </div>
           </div>
           <div class="form-group col-sm-6 px-sm-4">
-              <h4 class="review-form-header p-0 my-4">
-                Hours of work/week</h4>
+              <h2 class="h4 review-form-header p-0 my-4">
+                Hours of work/week</h2>
               <div class="row py-3">
                 <label for="hoursReading" class="required-field col-8">
                   <i class="fas fa-book"></i> Reading

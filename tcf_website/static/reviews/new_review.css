@@ -6,14 +6,22 @@
 
 .new-review select:disabled{
   color: var(--shadow-color);
-  background-color: var(--background-color);
-}
-
-.new-review input:disabled{
-  background-color: var(--background-color);
+  background-color: var(--shaded-color);
 }
 
 .required-field::after {
     content: " *";
     color: red;
+}
+
+.custom-range::-webkit-slider-thumb {
+  background: var(--accent-color);
+}
+
+.custom-range::-moz-range-thumb {
+  background: var(--accent-color);
+}
+
+.custom-range::-ms-thumb {
+  background: var(--accent-color);
 }
