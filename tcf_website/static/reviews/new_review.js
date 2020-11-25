@@ -1,6 +1,6 @@
 /*
  * Cascading dropdown data population for the "new review" form
- * in review.py and reviews/new.html
+ * in review.py and reviews/new_review.html
  * Author: j-alicia-long, 11/22/2020
 */
 

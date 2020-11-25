@@ -64,8 +64,8 @@ body {
 .btn.btn-primary:hover,
 .btn.btn-outline-primary:hover {
   color: white;
-  background-color: #AC451E;
-  border-color: #AC451E;
+  background-color: #AC451E !important;
+  border-color: #AC451E !important;
 }
 
 .btn:not(:disabled):not(.disabled).active.focus,
