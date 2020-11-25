@@ -18,8 +18,11 @@
         {% csrf_token %}
         <!-- Class Info -->
         <div class="new-review-course form-row mb-3">
-          <h2 class="h4 review-form-header form-group col-12 my-4">
+          <h2 class="h4 review-form-header form-group col-12 mt-4 mb-2">
             Which class are you reviewing?</h2>
+          <div class="form-group col-12">
+            <p class="small">You can type or use Arrowkeys+Enter to select.</p>
+          </div>
           <div class="form-group col-sm-6">
             <label for="subject" class="required-field">Subject</label>
             <select type="text" class="form-control" required id="subject" name="subject">
@@ -55,7 +58,7 @@
             Tell us more about the course and instructor</h2>
           <div class="form-group col mb-3">
             <textarea class="form-control" id="reviewText" name="reviewText" rows="5"
-                      placeholder="e.g. I love CS 2150, Bloomfield is great!"></textarea>
+                      placeholder="(Aim for 3 sentences or more!)"></textarea>
           </div>
         </div>
         <hr>
@@ -100,7 +103,7 @@
               </div>
               <div class="mt-3">
                   <label for="recommendability" class="required-field">
-                    <i class="fas fa-thumbs-up"></i> Recommendability
+                    <i class="fas fa-thumbs-up"></i> Recommend
                   </label>
                   <div class="d-flex">
                       <span class="mr-2">1</span>
@@ -136,7 +139,9 @@
               </div>
               <div class="row py-3">
                 <label for="hoursOther" class="required-field col-8">
-                  <i class="fas fa-flask"></i> Other
+                  <span tabindex="0" data-toggle="tooltip" data-placement="bottom" title="Labs, projects, etc.">
+                    <i class="fas fa-flask"></i> Other
+                  </span>
                 </label>
                 <input type="number" value=0 min="0" max="20" class="form-control col"
                        id="hoursOther" name="hoursOther" required>
@@ -156,4 +161,10 @@
 
 {% block js %}
 <script type="text/javascript" src="{% static 'reviews/new_review.js' %}"></script>
+<script>
+  // For Bootstrap tooltip
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
 {% endblock %}

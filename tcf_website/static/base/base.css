@@ -46,6 +46,23 @@ body {
     }
 }
 
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 80px; /* Set the fixed height of the footer here */
+    line-height: 30px; /* Vertically center the text there */
+    text-align: center;
+    color: var(--background-color);
+    background-color: #172248;
+    padding-top: 15px;
+}
+
+footer > .row {
+    background-color: #172248;
+}
+
+
 /* For buttons */
 .btn.btn-primary,
 .btn.btn-outline-primary:not(:disabled):not(.disabled).active,
@@ -84,18 +101,30 @@ body {
   margin: 0.5rem;
 }
 
-footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 80px; /* Set the fixed height of the footer here */
-    line-height: 30px; /* Vertically center the text there */
-    text-align: center;
-    color: var(--background-color);
-    background-color: #172248;
-    padding-top: 15px;
+/* Change tooltop color */
+.tooltip-inner {
+    background-color: var(--dark-color) !important;
+}
+.tooltip.bs-tooltip-right .arrow:before {
+    border-right-color: var(--dark-color) !important;
+}
+.tooltip.bs-tooltip-left .arrow:before {
+    border-left-color: var(--dark-color) !important;
+}
+.tooltip.bs-tooltip-bottom .arrow:before {
+    border-bottom-color: var(--dark-color) !important;
+}
+.tooltip.bs-tooltip-top .arrow:before {
+    border-top-color: var(--dark-color) !important;
 }
 
-footer > .row {
-    background-color: #172248;
+/* Change slider color */
+.custom-range::-webkit-slider-thumb {
+  background: var(--accent-color);
+}
+.custom-range::-moz-range-thumb {
+  background: var(--accent-color);
+}
+.custom-range::-ms-thumb {
+  background: var(--accent-color);
 }
