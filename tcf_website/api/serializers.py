@@ -9,6 +9,8 @@ class SemesterSerializer(serializers.ModelSerializer):
     season = serializers.SerializerMethodField()
 
     def get_season(self, obj):
+        """Change the `season` field to TitleCase (or PascalCase)"""
+        # pylint: disable=no-self-use
         return obj.season.title()
 
     class Meta:
