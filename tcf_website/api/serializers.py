@@ -6,6 +6,11 @@ from ..models import (Course, Department, School, Instructor, Semester,
 
 class SemesterSerializer(serializers.ModelSerializer):
     """DRF Serializer for Semester"""
+    season = serializers.SerializerMethodField()
+
+    def get_season(self, obj):
+        return obj.season.title()
+
     class Meta:
         model = Semester
         fields = '__all__'
