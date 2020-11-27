@@ -187,6 +187,7 @@ if not DEBUG:
     if env.bool("HEROKU", default=False):
         import django_heroku
         django_heroku.settings(locals())
+        SECURE_SSL_REDIRECT = True
 
     # Gather information from environment variables.
 
