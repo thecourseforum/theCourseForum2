@@ -7,9 +7,8 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_859f5568b0c8_key -iv $encrypted_859f5568b0c8_iv
     -in gae-service-account.json.enc -out gae-service-account.json -d
   - envsubst < .env.travis > .env
-  - docker build .
-  - docker-compose up -d
-  - docker exec tcf_django npm install eslint eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-standard
+  - docker-compose up -d --build
+  - docker exec tcf_django npm install
 
 script:
   - docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core
@@ -17,8 +16,7 @@ script:
   - docker exec tcf_django python3 manage.py test
 
 before_deploy:
-  - envsubst < app.yaml.template > app.yaml.env
-  - cp app.yaml.env app.yaml
+  - envsubst < app.yaml.template > app.yaml
   - docker exec tcf_django python3 manage.py collectstatic --noinput --clear
 
 deploy:
