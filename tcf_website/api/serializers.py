@@ -1,3 +1,4 @@
+# pylint: disable=no-self-use
 """DRF Serializers"""
 from rest_framework import serializers
 from ..models import (Course, Department, School, Instructor, Semester,
@@ -10,7 +11,6 @@ class SemesterSerializer(serializers.ModelSerializer):
 
     def get_season(self, obj):
         """Change the `season` field to TitleCase (or PascalCase)"""
-        # pylint: disable=no-self-use
         return obj.season.title()
 
     class Meta:
