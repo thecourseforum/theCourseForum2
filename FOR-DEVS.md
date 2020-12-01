@@ -58,14 +58,16 @@ If you are part of theCourseForum engineering team, follow the instructions belo
     ```
 3. Copy the [project secret keys](https://docs.google.com/document/d/1HsuJOf-5oZljQK_k02CQhFbqw1q-pD_1-mExvyC1TV0/edit?usp=sharing) into a `.env` file in the project base directory `theCourseForum2/`
 4. In the `theCourseForum2/` directory, run `docker-compose up` to start your Docker containers (tCF Django app and database)
-5. Download a copy of the database from [Google Drive](https://drive.google.com/open?id=1ubiiOj-jfzoBKaMK6pFEkFXdSqMuD-22)
+5. Download a copy of the database from [Google Drive](https://drive.google.com/file/d/1S9GNFydvw6ZZW0AGHy6zyTLl-pvyIT8Q/view?usp=sharing)
     - put this into the base `theCourseForum2/` directory
-6. While your container is still running, open a second terminal, cd into `theCourseForum2/`, and run this script to set up your database*:
-    - `./load_data ${DB}` 
-    - where `${DB}` should be replaced with the latest DB file (e.g. `./load_data april7.sql`)
+6. Once the Django server is done loading (i.e. when you see `tcf_django | Watching for file changes with StatReloader`), open a second terminal, cd into `theCourseForum2/`, and run the following two lines of script to set up your database, one at a time:
+    ```
+    docker exec -i tcf_db psql tcf_db -U tcf_django -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+    docker exec -i tcf_db psql tcf_db -U tcf_django < db_dump_file.sql
+    ```
+    where `db_dump_file.sql` should be replaced with the latest DB file (e.g. `launch.sql`)
 7. Go to http://localhost:8000 in your browser and make sure everything works!
 
-\* If you're on Windows, you'll specifically need to use a bash shell (e.g. PowerShell or Git Bash) as normal CMD doesn't have the `cat` command which is used by the script.
 ### Alternative Setup (Windows and MacOS if above failed)
 0. [Install Vagrant](https://www.vagrantup.com/intro/getting-started/install.html)
 1. `git clone https://github.com/thecourseforum/theCourseForum2.git`
