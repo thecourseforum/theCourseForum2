@@ -6,7 +6,7 @@
                 <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}" id="upvote{{review.id}}">
                     <i class="fa fa-angle-up fa-fw"></i>
                 </a>
-                <span id="vote-count" class="voteCount">{{ review.count_votes }}</span>
+                <span id="vote-count" class="voteCount">{{ review.sum_votes }}</span>
                 <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}" id="downvote{{review.id}}">
                     <i class="fa fa-angle-down fa-fw"></i>
                 </a>
@@ -18,7 +18,7 @@
                         <div class="d-flex">
                             <div>
                             <a class="review-header" href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
-                                <p><strong>{{ review.course }}</strong> - {{ review.instructor.full_name }}</p>
+                                <p><strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}</p>
                             </a>
                             </div>
                             <div class="ml-auto">

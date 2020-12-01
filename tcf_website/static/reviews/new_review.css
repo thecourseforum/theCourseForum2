@@ -1,0 +1,21 @@
+/* For the Review Form in new_review.html */
+
+.new-review .review-form-header{
+  color: var(--accent-color);
+}
+
+.new-review select:disabled{
+  color: var(--shadow-color);
+  background-color: var(--shaded-color);
+}
+
+.required-field::after {
+    content: " *";
+    color: red;
+}
+
+/* Change tooltip */
+.tooltip-inner {
+    margin-left: 4rem;
+    /* background-color: var(--dark-color) !important; */
+}
