@@ -1,0 +1,18 @@
+.large-stats-container {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.large-stats {
+    padding-top: 15px;
+    padding-bottom: 10px;
+    background-color: white;
+    text-align: center;
+    display: block;
+    margin-left: 1px;
+    width: 33.33%
+}
+
+.large-stats-number {
+    color: var(--accent-color);
+}
