@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.8.6
 COPY . /app/
 WORKDIR /app
 RUN apt-get update && \
