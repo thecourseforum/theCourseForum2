@@ -68,7 +68,7 @@ class Command(BaseCommand):
         CourseInstructorGrade.objects.all().delete()
 
         # Filter out data with no grades
-        return df.dropna(
+        df = df.dropna(
             how="all",
             subset=['A+', 'A', 'A-',
                     'B+', 'B', 'B-',
@@ -78,6 +78,8 @@ class Command(BaseCommand):
         ).fillna(  # Impute NaNs with empty string if the field is a CharField
             {'Instructor Middle Name': '', 'Instructor Email': ''},
         )
+        # Filter out data with missing instructor
+        return df[df['Instructor Last Name'] != 'MISSING INSTRUCTOR']
 
     def load_semester_file(self, file):
         year, semester = file.split('.')[0].split('_')
