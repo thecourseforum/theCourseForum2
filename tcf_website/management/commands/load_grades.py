@@ -76,7 +76,7 @@ class Command(BaseCommand):
                     'D+', 'D', 'D-',
                     'F']
         ).fillna(  # Impute NaNs with empty string if the field is a CharField
-            {'Instructor Middle Name': '', 'Instructor Email': ''},
+            {'Instructor Email': ''},
         )
         # Filter out data with missing instructor
         return df[df['Instructor Last Name'] != 'MISSING INSTRUCTOR']
@@ -100,7 +100,7 @@ class Command(BaseCommand):
     def load_row_into_dict(self, row):
         # parsing fields of the CSV file
         first_name = row['Instructor First Name']
-        middle_name = row['Instructor Middle Name']
+        # row['Insructor Middle Name'] is not used
         last_name = row['Instructor Last Name']
         email = row['Instructor Email']
         subdepartment = row['Subject']
@@ -135,7 +135,7 @@ class Command(BaseCommand):
         # identifiers are tuple keys to dictionaries
         course_identifier = (subdepartment, number, title)
         course_instructor_identifier = (
-            subdepartment, number, first_name, middle_name, last_name, email)
+            subdepartment, number, first_name, last_name, email)
 
         # value of dictionaries (incremented onto value if key already exists)
         this_semesters_grades = [a_plus, a, a_minus,
@@ -240,11 +240,11 @@ class Command(BaseCommand):
                 'subdepartment': row[0],
                 'number': row[1],
                 'first_name': row[2],
-                'middle_name': row[3],
-                'last_name': row[4],
-                'email': row[5],
+                'middle_name': '',  # for backward compatibility
+                'last_name': row[3],
+                'email': row[4],
                 'course_id': self.courses.get(row[:2]),
-                'instructor_id': self.instructors.get((row[2], row[4], row[5])),
+                'instructor_id': self.instructors.get(row[2:]),
                 'average': total_enrolled_gpa,
                 'a_plus': course_instructor_grades[row][0],
                 'a': course_instructor_grades[row][1],
