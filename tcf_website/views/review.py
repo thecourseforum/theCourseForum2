@@ -107,5 +107,4 @@ def new_review(request):
 class DeleteReview(LoginRequiredMixin, generic.DeleteView):
     """Review deletion view."""
     model = Review
-    template_name = 'reviews/delete_review.html'
     success_url = reverse_lazy('reviews')
