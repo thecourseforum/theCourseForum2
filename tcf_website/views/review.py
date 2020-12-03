@@ -3,9 +3,13 @@
 
 from django import forms
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin # For class-based views
+
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.views import generic
 
 from ..models import Review, Course, Semester, Instructor
 
@@ -97,3 +101,11 @@ def new_review(request):
 
     form = ReviewForm()
     return render(request, 'reviews/new_review.html', {'form': form})
+
+
+# Note: Class-based views can't use the @login_required decorator
+class DeleteReview(LoginRequiredMixin, generic.DeleteView):
+    """Review deletion view."""
+    model = Review
+    template_name = 'reviews/delete_review.html'
+    success_url = reverse_lazy('reviews')
