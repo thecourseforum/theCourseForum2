@@ -16,3 +16,4 @@ gae-service-account.json
 node_modules/
 .idea/
 !db/*.sql
+db/*.csv
