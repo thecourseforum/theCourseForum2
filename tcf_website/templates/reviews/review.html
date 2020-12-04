@@ -38,12 +38,12 @@
                         </div>
                     </div>
                     {% endif %}
-                    <p class="card-text" style="white-space: pre-line;">{{ review.text }}</p>
+                    <p class="card-text mb-2" style="white-space: pre-line;">{{ review.text }}</p>
                 </div>
 
                 <!-- Review Ratings -->
                 <div class="review-ratings d-flex justify-content-between align-items-end flex-wrap">
-                    <div class="d-flex">
+                    <div class="d-flex text-center">
                         <div>
                             <strong>
                                 <p id="review-average">
@@ -73,7 +73,7 @@
                         </div>
                     </div>
 
-                    <div class="text-right">
+                    <div class="review-date text-right">
                         <p>{{ review.semester }}</p>
                         <p id="date">{{ review.created|date }}</p>
                     </div>
