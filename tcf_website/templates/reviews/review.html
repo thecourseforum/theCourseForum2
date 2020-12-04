@@ -16,10 +16,11 @@
             <!-- Review Main Content -->
             <div class="review-content col-xs-12 col-md-10 col-lg-11">
                 <!-- Review header content (subject, actions, text) -->
-                <div class="review-header">
+                <div class="review-info">
                     {% if profile %}
+                    <!-- Subject and Edit/Delete actions show only on profile page -->
                     <div class="d-flex">
-                        <div class="review-subject">
+                        <div class="review-header">
                           <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
                               <p><strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}</p>
                           </a>
