@@ -1,13 +1,19 @@
-# pylint: disable=fixme,broad-except
 """View pertaining to review creation/viewing."""
 
 from django import forms
+from django.views import generic
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
+from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 
 from ..models import Review, Course, Semester, Instructor
+
+# pylint: disable=fixme
+# Disable pylint errors on TODO messages, such as below
 
 # TODO: use a proper django form, make it more robust.
 # (i.e. better Course/Instructor/Semester search).
@@ -85,15 +91,35 @@ def new_review(request):
                     'Successfully reviewed ' +
                     str(course) + '!')
                 return redirect('reviews')
-            except BaseException:  # TODO: need more robust backend validation
+
+            except BaseException:  # pylint: disable=broad-except
+                # TODO: need more robust backend validation
                 print("Review error")
                 messages.add_message(
                     request,
                     messages.ERROR,
                     'This course is invalid. Try again!')
-                return render(request, 'reviews/new_review.html', {'form': form})
+                return render(request,
+                              'reviews/new_review.html',
+                              {'form': form})
         else:
             return render(request, 'reviews/new_review.html', {'form': form})
 
     form = ReviewForm()
     return render(request, 'reviews/new_review.html', {'form': form})
+
+
+# Note: Class-based views can't use the @login_required decorator
+class DeleteReview(LoginRequiredMixin, generic.DeleteView):
+    """Review deletion view."""
+    model = Review
+    success_url = reverse_lazy('reviews')
+
+    def get_object(self):  # pylint: disable=arguments-differ
+        """Override DeleteView's function to validate review belonging to user."""
+        obj = super().get_object()
+        # For security: Make sure target review belongs to the current user
+        if obj.user != self.request.user:
+            raise PermissionDenied(
+                "You are not allowed to delete this review!")
+        return obj
