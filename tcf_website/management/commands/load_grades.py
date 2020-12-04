@@ -41,7 +41,7 @@ class Command(BaseCommand):
         self.verbosity = options['verbosity']
         self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
         if self.verbosity > 0:
-            print('Fetch Course and Instructor data for later use')
+            print('Step 1: Fetch Course and Instructor data for later use')
         self.courses = {
             (obj['subdepartment__mnemonic'], obj['number']): obj['id']
             for obj in Course.objects.values('id', 'number',
@@ -95,7 +95,7 @@ class Command(BaseCommand):
                 print(str(row).encode('ascii', 'ignore').decode('ascii'))
             self.load_row_into_dict(row)
         if self.verbosity > 0:
-            print('Done with loading CSV files')
+            print(f'Done loading {file}')
 
     def load_row_into_dict(self, row):
         # parsing fields of the CSV file
@@ -161,6 +161,8 @@ class Command(BaseCommand):
             course_instructor_grades[course_instructor_identifier] = this_semesters_grades
 
     def load_dict_into_models(self):
+        if self.verbosity > 0:
+            print('Step 2: Bulk-create CourseGrade instances')
         # used for gpa calculation
         grade_weights = [4.0, 4.0, 3.7,
                          3.3, 3.0, 2.7,
@@ -213,8 +215,10 @@ class Command(BaseCommand):
             unsaved_cg_instances.append(unsaved_cg_instance)
         CourseGrade.objects.bulk_create(unsaved_cg_instances)
         if self.verbosity > 0:
-            print('Done loading CourseGrade models')
+            print('Done creating CourseGrade instances')
 
+        if self.verbosity > 0:
+            print('Step 3: Bulk-create CourseInstructorGrade instances')
         # load course instructor grades
         unsaved_cig_instances = []
         for row in tqdm(course_instructor_grades):
@@ -269,4 +273,4 @@ class Command(BaseCommand):
             unsaved_cig_instances.append(unsaved_cig_instance)
         CourseInstructorGrade.objects.bulk_create(unsaved_cig_instances)
         if self.verbosity > 0:
-            print('Done loading CourseInstructorGrade models')
+            print('Done creating CourseInstructorGrade instances')
