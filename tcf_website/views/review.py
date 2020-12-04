@@ -2,14 +2,13 @@
 """View pertaining to review creation/viewing."""
 
 from django import forms
+from django.views import generic
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin # For class-based views
-
+from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views import generic
 
 from ..models import Review, Course, Semester, Instructor
 
