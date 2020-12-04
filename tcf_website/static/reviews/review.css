@@ -1,7 +1,13 @@
 .review .review-header {
     color: var(--accent-color);
-    font-size: 1.25rem;
-}  
+    font-size: 16px;
+}
+@media (min-width: 768px) {
+  .review .review-header {
+      color: var(--accent-color);
+      font-size: 20px;
+  }
+}
 
 .review .upvote, .review .downvote {
     font-size: 2rem;
@@ -15,4 +21,16 @@
 
 .review .downvote.active, .review .downvote:hover {
     color: dodgerblue;
+}
+
+
+.review .review-date {
+    color: var(--accent-color);
+    font-size: 12px;
+}
+@media (min-width: 768px) {
+  .review .review-date {
+      color: var(--accent-color);
+      font-size: 14px;
+  }
 }
