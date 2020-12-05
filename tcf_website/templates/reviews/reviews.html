@@ -10,16 +10,14 @@
                 {% include "reviews/review.html" with profile=profile review=r %}
             </li>
         {% empty %}
-            <div class="row d-flex justify-content-center">
-                <div class="card col-12 col-sm-8 col-lg-4 text-center">
-                    <div class="card-body">
-                        <h4 class="card-title">
-                            No Reviews <i class="far fa-frown-open fa-fw"></i>
-                        </h4>
-                        <p class="card-text">
-                            Help us out by <a href="{% url 'new_review' %}">writing a review!</a>
-                        </p>
-                    </div>
+            <div class="card col p-5 text-center">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        No Reviews <i class="far fa-frown-open fa-fw"></i>
+                    </h4>
+                    <p class="card-text">
+                        Help us out by <a href="{% url 'new_review' %}">writing a review!</a>
+                    </p>
                 </div>
             </div>
         {% endfor %}
