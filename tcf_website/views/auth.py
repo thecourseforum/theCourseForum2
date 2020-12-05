@@ -11,13 +11,16 @@ from django import forms
 def login(request):
     """Login view."""
     if request.user.is_authenticated:
+        messages.success(request, "Logged in successfully!")
         return redirect('browse')
     return render(request, 'login/login.html')
 
 
 def login_error(request):
     """Login error view."""
-    return render(request, 'login/login.html', {'error': True})
+    messages.error(request, 'There was an error logging you in. Please make \
+                   sure you\'re using an @virginia.edu email address.')
+    return render(request, 'login/login.html')
 
 
 class ExtraUserInfoForm(forms.Form):
