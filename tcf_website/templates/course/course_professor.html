@@ -149,6 +149,7 @@
                 </div>
             </div>
             <div class="grades-container">
+            {% if user.is_authenticated %}
                 <div class="chart-container d-flex align-items-center justify-content-center">
                     <canvas width="100%" height="100%" id="myChart"></canvas>
                 </div>
@@ -156,8 +157,11 @@
                     <p class="gpa-text"> No grades found <i class="far fa-frown-open fa-fw"></i></p>
                     <p class="students-text"> &mdash; Students</p>
                 </div>
+            {% else %}
+                <!-- UI block for account wall -->
+                {% include "base/account_wall.html" %}
+            {% endif %}
             </div>
-
         </div>
 
 
