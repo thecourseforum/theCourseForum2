@@ -4,12 +4,14 @@
 {% block title %}My Reviews - theCourseForum{% endblock %}
 
 {% block styles %}
+<link rel="stylesheet" href="{% static 'reviews/review_stats.css' %}" />
 <link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
 {% endblock %}
 
 {% block content %}
 <div class="my-reviews container mx-auto">
     <h1 class="h2 mx-3 mt-2 mb-4">My reviews</h1>
+    {% include "reviews/review_stats.html" with total_reviews_written=total_reviews_written total_review_upvotes=total_review_upvotes average_review_rating=average_review_rating %}
     {% include "reviews/reviews.html" with reviews=user.reviews profile=True %}
 </div>
 {% endblock %}
