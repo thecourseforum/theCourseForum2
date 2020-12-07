@@ -53,9 +53,9 @@ jobs:
           DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
           DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
         run: |
+          python manage.py makemigrations
           ls -a tcf_website
           ls -a tcf_website/migrations
-          python manage.py makemigrations
           python manage.py migrate
 
       - name: Tests
