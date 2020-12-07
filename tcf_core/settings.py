@@ -135,6 +135,7 @@ DATABASES = {
         'USER': 'tcf_django',
         'PASSWORD': 's3kr1t',
         'HOST': 'tcf_db',
+        'PORT': 5432,
     },
     'legacy': {
         'ENGINE': 'django.db.backends.sqlite3',

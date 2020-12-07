@@ -44,10 +44,6 @@ jobs:
       - name: Migrations
         env:
           DEBUG: 1
-          DB_HOST: tcf_db
-          DB_NAME: tcf_db
-          DB_USER: tcf_django
-          DB_PASSWORD: s3kr1t
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
           SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
