@@ -53,6 +53,8 @@ jobs:
           DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
           DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
         run: |
+          mkdir tcf_website/migrations
+          touch tcf_website/migrations/__init__.py
           python manage.py makemigrations
           ls -a tcf_website
           ls -a tcf_website/migrations
