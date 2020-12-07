@@ -58,3 +58,14 @@ jobs:
           python manage.py makemigrations
           python manage.py migrate
           python manage.py test
+
+      - name: Install Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install npm packages
+        run: npm ci
+
+      - name: Run ESLint
+        run: node_modules/.bin/eslint tcf_website/static/**/*.js
