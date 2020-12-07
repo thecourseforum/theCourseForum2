@@ -64,12 +64,17 @@ footer > .row {
 
 
 /* For buttons */
-.btn.btn-primary,
-.btn.btn-outline-primary:not(:disabled):not(.disabled).active,
-.btn.btn-outline-primary:not(:disabled):not(.disabled):active {
+.btn.btn-primary, .btn.btn-outline-primary {
   color: white;
   background-color: var(--accent-color);
   border-color: var(--accent-color);
+}
+
+.btn.btn-outline-primary:not(:disabled):not(.disabled).active,
+.btn.btn-outline-primary:not(:disabled):not(.disabled):active {
+  color: white;
+  background-color: #AC451E !important;
+  border-color: #AC451E !important;
 }
 
 .btn.btn-outline-primary {
