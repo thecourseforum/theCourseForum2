@@ -15,3 +15,4 @@ predeploy.sh
 gae-service-account.json
 node_modules/
 .idea/
+app.yml
