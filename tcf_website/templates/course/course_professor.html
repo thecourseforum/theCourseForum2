@@ -17,9 +17,9 @@
 
         <div class="course-instructor-header my-3 mt-md-5 px-3">
             <div class="d-flex flex-column justify-content-left justify-content-sm-center">
-                <div class="d-md-flex">
+                <div class="d-md-flex align-items-baseline">
                     <h1 class="mr-md-3 text-nowrap">{{ course.code }}</h1>
-                    <h2 class="h1 mr-md-3">{{ course.title }}</h2>
+                    <h2 class="mr-md-3">{{ course.title }}</h2>
                 </div>
                 <h3 class="font-weight-light text-tcf-orange">
                   <a href="{% url 'instructor' instructor_id=instructor.id %}">
