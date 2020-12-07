@@ -9,6 +9,7 @@
 --accent-color: #D75626;      /* Orange */
 --dark-color: #545454;        /* Dark grey, for headers/buttons */
 --shadow-color: #a6a6a6;      /* Medium grey, used for shadows */
+--shaded-color: #cfcfcf;      /* Medium light grey, used for shading */
 --background-color: #EBEBEB;  /* Light grey, used for backgrounds */
 /* Note: Can use Bootstrap "light" color and white color */
 }
