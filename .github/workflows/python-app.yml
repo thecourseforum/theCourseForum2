@@ -14,12 +14,12 @@ jobs:
         python-version: [3.8]
 
     services:
-      postgres:
+      tcf_db:
         image: postgres:12.2
         env:
-          POSTGRES_USER: 'user2'
-          POSTGRES_PASSWORD: 'pass2'
-          POSTGRES_DB: 'name2'
+          POSTGRES_USER: tcf_django
+          POSTGRES_PASSWORD: s3kr1t
+          POSTGRES_DB: tcf_db
         ports:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
@@ -44,10 +44,10 @@ jobs:
       - name: Migrations
         env:
           DEBUG: 1
-          DB_HOST: '127.0.0.1'
-          DB_NAME: 'name'
-          DB_USER: 'user'
-          DB_PASSWORD: 'pass'
+          DB_HOST: tcf_db
+          DB_NAME: tcf_db
+          DB_USER: tcf_django
+          DB_PASSWORD: s3kr1t
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
           SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
