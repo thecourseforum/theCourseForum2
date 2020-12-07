@@ -1,0 +1,55 @@
+# Based on https://github.com/actions/starter-workflows/blob/main/ci/django.yml
+
+name: Django CI
+
+on:
+  push:
+    branches: [master, dev, actions]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.8]
+
+    steps:
+      - name: Set environment variables
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            DEBUG=1
+            SECRET_KEY=${{ secrets.SECRET_KEY }}
+            SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
+            SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
+            ES_PUBLIC_API_KEY=${{ secrets.ES_PUBLIC_API_KEY }}
+            ES_COURSE_SEARCH_ENDPOINT=${{ secrets.ES_COURSE_SEARCH_ENDPOINT }}
+            ES_INSTRUCTOR_SEARCH_ENDPOINT=${{ secrets.ES_INSTRUCTOR_SEARCH_ENDPOINT }}
+            DISCORD_URL_BUG=${{ secrets.DISCORD_URL_BUG }}
+            DISCORD_URL_FEEDBACK=${{ secrets.DISCORD_URL_FEEDBACK }}
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: psycopg2 prerequisites
+        run: sudo apt-get install libpq-dev
+
+      - name: Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: pylint
+        run: |
+          pylint --load-plugins pylint_django tcf_website tcf_core
+
+      - name: Migrations
+        run: |
+          python manage.py makemigrations
+          python manage.py migrate
+
+      - name: Tests
+        run: |
+          python manage.py test
