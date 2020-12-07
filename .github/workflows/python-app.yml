@@ -3,7 +3,18 @@ name: Django CI
 
 on:
   push:
-    branches: [master, dev, actions]
+    branches: [master]
+
+env:
+  DEBUG: 1
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
+  SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
+  ES_PUBLIC_API_KEY: ${{ secrets.ES_PUBLIC_API_KEY }}
+  ES_COURSE_SEARCH_ENDPOINT: ${{ secrets.ES_COURSE_SEARCH_ENDPOINT }}
+  ES_INSTRUCTOR_SEARCH_ENDPOINT: ${{ secrets.ES_INSTRUCTOR_SEARCH_ENDPOINT }}
+  DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
+  DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
 
 jobs:
   build:
@@ -27,31 +38,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Dependencies
+      - name: Install Python packages
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: pylint
+      - name: Run pylint
         run: |
           pylint --load-plugins pylint_django tcf_website tcf_core
 
       - name: Migrations & Tests
-        env:
-          DEBUG: 1
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
-          SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
-          ES_PUBLIC_API_KEY: ${{ secrets.ES_PUBLIC_API_KEY }}
-          ES_COURSE_SEARCH_ENDPOINT: ${{ secrets.ES_COURSE_SEARCH_ENDPOINT }}
-          ES_INSTRUCTOR_SEARCH_ENDPOINT: ${{ secrets.ES_INSTRUCTOR_SEARCH_ENDPOINT }}
-          DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
-          DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
         run: |
           mkdir tcf_website/migrations
           touch tcf_website/migrations/__init__.py
