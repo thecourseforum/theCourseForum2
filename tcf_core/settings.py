@@ -198,7 +198,7 @@ if not DEBUG:
     # app not on App Engine, make sure to set an appropriate host here.
     # See https://docs.djangoproject.com/en/1.10/ref/settings/ (from GCP
     # documentation)
-    ALLOWED_HOSTS = ['*']
+    ALLOWED_HOSTS = ['*', 'thecourseforum.com']
 
     # if HOSTNAME:
     #     ALLOWED_HOSTS.append(HOSTNAME)
