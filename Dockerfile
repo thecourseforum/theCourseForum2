@@ -1,4 +1,4 @@
-FROM python:3.6.5
+FROM python:3.8.6
 COPY . /app/
 WORKDIR /app
 RUN apt-get update && \
@@ -8,12 +8,6 @@ RUN apt-get update && \
 		build-essential \
 		unattended-upgrades \
 		nodejs && \
-	npm install eslint \
-		eslint-config-standard \
-		eslint-plugin-import \
-		eslint-plugin-node \
-		eslint-plugin-promise \
-		eslint-plugin-standard \
-		chart.js && \
+	npm install && \
 	pip3 install -r requirements.txt --disable-pip-version-check && \
 	rm -rf /var/lib/apt/lists/*

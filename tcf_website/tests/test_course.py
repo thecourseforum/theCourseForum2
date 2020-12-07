@@ -64,12 +64,12 @@ class CourseTestCase(TestCase):
 
         self.assertTrue(self.course.average_difficulty() is None)
 
-    def test_get_queryset_recent5years_with_stats(self):
-        """Test CourseViewSet.get_queryset() with recent5years parameter
+    def test_get_queryset_recent_with_stats(self):
+        """Test CourseViewSet.get_queryset() with recent parameter
         and simplestats parameters"""
         client = Client()
         response = client.get(path=reverse('course-list'),
-                              data={'simplestats': '', 'recent5years': ''})
+                              data={'simplestats': '', 'recent': ''})
         courses = response.json()['results']
         self.assertTrue(len(courses) == 2)
         serializer = CourseSimpleStatsSerializer(data=courses, many=True)
@@ -77,12 +77,12 @@ class CourseTestCase(TestCase):
         serializer = CourseSerializer(data=courses, many=True)
         self.assertFalse(serializer.is_valid())
 
-    def test_get_queryset_recent5years_without_simplestats(self):
-        """Test CourseViewSet.get_queryset() with recent5years parameter
+    def test_get_queryset_recent_without_simplestats(self):
+        """Test CourseViewSet.get_queryset() with recent parameter
         but without simplestats parameters"""
         client = Client()
         response = client.get(path=reverse('course-list'),
-                              data={'recent5years': ''})
+                              data={'recent': ''})
         courses = response.json()['results']
         self.assertTrue(len(courses) == 2)
         serializer = CourseSimpleStatsSerializer(data=courses, many=True)
@@ -92,7 +92,7 @@ class CourseTestCase(TestCase):
 
     def test_get_queryset_all_with_simplestats(self):
         """Test CourseViewSet.get_queryset() with simplestats parameter
-        but without recent5years parameters"""
+        but without recent parameters"""
         client = Client()
         response = client.get(
             path=reverse('course-list'),
@@ -106,7 +106,7 @@ class CourseTestCase(TestCase):
         self.assertFalse(serializer.is_valid())
 
     def test_get_queryset_all_without_simplestats(self):
-        """Test CourseViewSet.get_queryset() without recent5years parameter
+        """Test CourseViewSet.get_queryset() without recent parameter
         or simplestats parameters"""
         client = Client()
         response = client.get(path=reverse('course-list'))
