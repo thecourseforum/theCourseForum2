@@ -134,7 +134,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'USER': 'tcf_django',
         'PASSWORD': 's3kr1t',
-        'HOST': 'tcf_db',
+        'HOST': 'localhost' if os.environ.get('CI') else 'tcf_db',
     },
     'legacy': {
         'ENGINE': 'django.db.backends.sqlite3',
