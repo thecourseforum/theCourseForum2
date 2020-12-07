@@ -2,6 +2,7 @@
 """DRF Viewsets"""
 from django.db.models import Avg, Sum
 from rest_framework import viewsets
+from .filters import InstructorFilter
 from ..models import (Course, Department, Instructor, School, Semester,
                       Subdepartment)
 from .paginations import FlexiblePagination
@@ -92,7 +93,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                         Avg('review__enjoyability') +
                         Avg('review__recommendability')
                     ) / 3)
-        if 'recent5years' in self.request.query_params:
+        if 'recent' in self.request.query_params:
             latest_semester = Semester.latest()
             queryset = queryset.filter(
                 semester_last_taught__year__gte=latest_semester.year - 5
@@ -112,10 +113,22 @@ class InstructorViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Instructor.objects.all()
     serializer_class = InstructorSerializer
     pagination_class = FlexiblePagination
-    filterset_fields = ['section__course']
+    filterset_class = InstructorFilter
 
 
 class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
     """DRF ViewSet for Semester"""
-    queryset = Semester.objects.all().order_by('number')
+    queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
+
+    def get_queryset(self):
+        # TODO: Refactor using django-filter if possible
+        # Can't use `.filter()` twice, so use a dict
+        # https://stackoverflow.com/q/8164675/
+        params = {'year__gte': Semester.latest().year - 5}
+        if 'course' in self.request.query_params:
+            params['section__course'] = self.request.query_params['course']
+        if 'instructor' in self.request.query_params:
+            params['section__instructors'] = self.request.query_params['instructor']
+        # Returns filtered, unique semesters in reverse chronological order
+        return self.queryset.filter(**params).distinct().order_by('-number')

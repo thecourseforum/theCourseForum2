@@ -40,7 +40,7 @@
     import { loadPage } from "{% static 'department/loadMoreCourses.js' %}";
 
     {% for sd in subdepartments %}
-        loadPage("{{sd.id}}", "/api/courses/?page=1&page_size=30&subdepartment={{sd.id}}&simplestats&recent5years");
+        loadPage("{{sd.id}}", "/api/courses/?page=1&page_size=30&subdepartment={{sd.id}}&simplestats&recent");
     {% endfor %}
 </script>
 {% endblock %}

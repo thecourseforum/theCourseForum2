@@ -6,6 +6,7 @@ services:
     command: bash -c "pip install --upgrade -r requirements.txt && python3 manage.py makemigrations tcf_website && python3 manage.py migrate && python3 manage.py collectstatic --noinput && python3 manage.py invalidate_cachalot tcf_website && echo Starting Django Server... && python3 manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
+      - /app/db/  # exclude the subfolder to prevent potential intereference
     ports:
       - '8000:8000'
     container_name: tcf_django
@@ -13,6 +14,8 @@ services:
       - .env
     restart: always
   db:
+    volumes:
+      - ./db:/app
     image: postgres:12.2
     restart: always
     container_name: tcf_db
