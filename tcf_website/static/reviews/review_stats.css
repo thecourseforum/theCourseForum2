@@ -1,0 +1,13 @@
+.large-stats {
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+
+.large-stats h2{
+    font-size: 16px;
+}
+@media (min-width: 768px) {
+  .large-stats h2{
+      font-size: 20px;
+  }
+}
