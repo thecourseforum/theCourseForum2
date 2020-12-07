@@ -1,5 +1,4 @@
 # Based on https://github.com/actions/starter-workflows/blob/main/ci/django.yml
-
 name: Django CI
 
 on:
