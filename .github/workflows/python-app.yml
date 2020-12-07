@@ -53,8 +53,7 @@ jobs:
           DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
           DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
         run: |
-          python manage.py makemigrations -v 3
-          python manage.py migrate
+          python manage.py makemigrations && python manage.py migrate
 
       - name: Tests
         run: |
