@@ -34,16 +34,15 @@ jobs:
 
       - name: Migrations
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            DEBUG=1
-            SECRET_KEY=${{ secrets.SECRET_KEY }}
-            SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
-            SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
-            ES_PUBLIC_API_KEY=${{ secrets.ES_PUBLIC_API_KEY }}
-            ES_COURSE_SEARCH_ENDPOINT=${{ secrets.ES_COURSE_SEARCH_ENDPOINT }}
-            ES_INSTRUCTOR_SEARCH_ENDPOINT=${{ secrets.ES_INSTRUCTOR_SEARCH_ENDPOINT }}
-            DISCORD_URL_BUG=${{ secrets.DISCORD_URL_BUG }}
-            DISCORD_URL_FEEDBACK=${{ secrets.DISCORD_URL_FEEDBACK }}
+          DEBUG: 1
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
+          SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
+          ES_PUBLIC_API_KEY: ${{ secrets.ES_PUBLIC_API_KEY }}
+          ES_COURSE_SEARCH_ENDPOINT: ${{ secrets.ES_COURSE_SEARCH_ENDPOINT }}
+          ES_INSTRUCTOR_SEARCH_ENDPOINT: ${{ secrets.ES_INSTRUCTOR_SEARCH_ENDPOINT }}
+          DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
+          DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
         run: |
           python manage.py makemigrations
           python manage.py migrate
