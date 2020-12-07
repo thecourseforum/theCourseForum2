@@ -41,7 +41,7 @@ jobs:
         run: |
           pylint --load-plugins pylint_django tcf_website tcf_core
 
-      - name: Migrations
+      - name: Migrations & Tests
         env:
           DEBUG: 1
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
@@ -56,10 +56,5 @@ jobs:
           mkdir tcf_website/migrations
           touch tcf_website/migrations/__init__.py
           python manage.py makemigrations
-          ls -a tcf_website
-          ls -a tcf_website/migrations
           python manage.py migrate
-
-      - name: Tests
-        run: |
           python manage.py test
