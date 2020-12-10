@@ -134,7 +134,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'USER': 'tcf_django',
         'PASSWORD': 's3kr1t',
-        'HOST': 'tcf_db',
+        'HOST': 'localhost' if os.environ.get('CI') else 'tcf_db',
     },
     'legacy': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -198,7 +198,7 @@ if not DEBUG:
     # app not on App Engine, make sure to set an appropriate host here.
     # See https://docs.djangoproject.com/en/1.10/ref/settings/ (from GCP
     # documentation)
-    ALLOWED_HOSTS = ['*']
+    ALLOWED_HOSTS = ['*', 'thecourseforum.com']
 
     # if HOSTNAME:
     #     ALLOWED_HOSTS.append(HOSTNAME)
