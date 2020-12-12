@@ -74,6 +74,8 @@ class Command(BaseCommand):
             )
             # The second one has the email, and the first one doesn't
             pair[0].email = pair[1].email
+            # Accordingly, only the second one is linked to Instructor
+            pair[0].instructor = pair[1].instructor
             pair[0].save()
 
         # Now combine the duplicate instances
