@@ -8,7 +8,19 @@ from tcf_website.models import CourseInstructorGrade
 
 
 class Command(BaseCommand):
-    """This fixes existing `MultipleObjectsReturned` errors"""
+    """
+    This command attempts to fix `MultipleObjectsReturned` errors.
+    
+    The assumption is that exactly half of the CourseInstructorGrade instances
+    are missing emails, and the other half do have emails. This script first
+    imputes the email fields of the instances without emails and then uses each
+    pair to create a new instance, deleting the existing pairs at the end.
+    
+    There was exactly one exception at the time of writing, and we agreed that
+    it was reasonable to assume that the instance with lr4zs@virginia.edu was
+    the  wrong one, so this script first updates that email field to an empty
+    string before doing other operations.
+    """
 
     help = 'Fix `MultipleObjectsReturned` errors that were caused by inconsistent email data'
 
@@ -16,39 +28,53 @@ class Command(BaseCommand):
         self.verbosity = options['verbosity']
 
         # Number of cases we want to fix
-        qs = CourseInstructorGrade.objects\
+        erroneous_instances = CourseInstructorGrade.objects\
             .exclude(course=None)\
             .values('course', 'first_name', 'last_name')\
             .annotate(num=Count('id'))\
             .filter(num__gt=1)
         if self.verbosity > 0:
-            print(qs.count())
+            print(f'{erroneous_instances.count()} cases we want to fix')
 
-        qs_without_num = qs.values('course', 'first_name', 'last_name')
+        erroneous_instances_without_num = erroneous_instances.values(
+            'course', 'first_name', 'last_name',
+        )
         total = CourseInstructorGrade.objects\
-            .filter(reduce(or_, [Q(**a) for a in qs_without_num]))\
-            .order_by('first_name', 'last_name', 'subdepartment', 'number')
+            .filter(
+                reduce(or_, [Q(**a) for a in erroneous_instances_without_num])
+            ).order_by('first_name', 'last_name', 'subdepartment', 'number')
         without_email = total.filter(email='')
+        if self.verbosity > 0:
+            print(f'{without_email.count()} cases without emails')
+        # This script requires that there be 2n CourseInstructorGrade instances
+        # n of which with emails and the other half without.
+        # Since this condition doesn't hold yet, our assumption is not met.
 
         # Fix the weird case with two different emails for the same professor
-        to_fix = list(CourseInstructorGrade.objects.filter(
+        conflicting_emails = list(CourseInstructorGrade.objects.filter(
             email='lr4zs@virginia.edu',
         ))
-        for obj in to_fix:
+        for obj in conflicting_emails:
             obj.email = ''
-        CourseInstructorGrade.objects.bulk_update(to_fix, ['email'])
+        CourseInstructorGrade.objects.bulk_update(
+            conflicting_emails, ['email'])
 
         # Now everything should have been fixed.
+        # Note that Django QuerySets are evaluated lazily. Although we didn't
+        # change `without_email` explicitly, it should now be different.
         if self.verbosity > 0:
-            print(without_email.count())
+            print(f'{without_email.count()} cases without emails')
+        assert total.count() \
+            == 2 * erroneous_instances.count() \
+            == 2 * without_email.count(), 'Assumption not met.'
 
-        for a in qs_without_num:
-            instructors = list(
+        for a in erroneous_instances_without_num:
+            pair = list(
                 CourseInstructorGrade.objects.filter(**a).order_by('email')
             )
             # The second one has the email, and the first one doesn't
-            instructors[0].email = instructors[1].email
-            instructors[0].save()
+            pair[0].email = pair[1].email
+            pair[0].save()
 
         # Now combine the duplicate instances
         fields_to_group_by = [
@@ -66,7 +92,7 @@ class Command(BaseCommand):
         instances_to_fix = total
         combined = list(
             instances_to_fix
-            .values(*fields_to_group_by)
+            .values(*fields_to_group_by)  # This is what combines each pair
             .annotate(
                 **{field: Sum(field) for field in fields_to_sum},
                 actual_enrolled=(F('total_enrolled') -
@@ -88,12 +114,14 @@ class Command(BaseCommand):
             ).values(*fields_all)  # to exclude actual_enrolled
         )
         # Drop problematic instances
-        instances_to_fix.delete()
+        num_deleted, _ = instances_to_fix.delete()
+        if self.verbosity > 0:
+            print(f'{num_deleted} instances deleted')
         # Create fixed instances
         objects_created = CourseInstructorGrade.objects.bulk_create(
             [CourseInstructorGrade(**x) for x in combined])
         if self.verbosity > 0:
-            print(len(objects_created))
+            print(f'{len(objects_created)} instances created')
 
         # Check the number of `MultipleObjectsReturned` error again
         assert CourseInstructorGrade.objects\
