@@ -6,7 +6,7 @@
 
 // Executed when DOM is ready
 jQuery(function($) {
-    /*** Fetch subject(subdepartment) data initially ***/
+    /* Fetch subject(subdepartment) data initially */
     // Clear & disable sequenced dropdowns
     clearDropdown("#subject");
     clearDropdown("#course");
@@ -30,16 +30,15 @@ jQuery(function($) {
         });
         return this;
     })
-    .done(function() { // Second callback
-      // Enable subject selector, disable the following
-      $("#subject").prop("disabled", false);
-      $("#course").prop("disabled", true);
-      $("#instructor").prop("disabled", true);
-      $("#semester").prop("disabled", true);
-    });
+        .done(function() { // Second callback
+            // Enable subject selector, disable the following
+            $("#subject").prop("disabled", false);
+            $("#course").prop("disabled", true);
+            $("#instructor").prop("disabled", true);
+            $("#semester").prop("disabled", true);
+        });
 
-
-    /*** Fetch course data on subject select ***/
+    /* Fetch course data on subject select */
     $("#subject").change(function() {
         // Clear & disable sequenced dropdowns
         clearDropdown("#course");
@@ -61,15 +60,15 @@ jQuery(function($) {
             });
             return this;
         })
-        .done(function() {
-          // Enable course selector, disable the following
-          $("#course").prop("disabled", false);
-          $("#instructor").prop("disabled", true);
-          $("#semester").prop("disabled", true);
-        });
+            .done(function() {
+                // Enable course selector, disable the following
+                $("#course").prop("disabled", false);
+                $("#instructor").prop("disabled", true);
+                $("#semester").prop("disabled", true);
+            });
     });
 
-    /*** Fetch instructor data on course select ***/
+    /* Fetch instructor data on course select */
     $("#course").change(function() {
         // Clear & disable sequenced dropdowns
         clearDropdown("#instructor");
@@ -92,14 +91,14 @@ jQuery(function($) {
             });
             return this;
         })
-        .done(function() {
-          // Enable instructor selector, disable the following
-          $("#instructor").prop("disabled", false);
-          $("#semester").prop("disabled", true);
-        });
+            .done(function() {
+                // Enable instructor selector, disable the following
+                $("#instructor").prop("disabled", false);
+                $("#semester").prop("disabled", true);
+            });
     });
 
-    /*** Fetch semester data on instructor select ***/
+    /* Fetch semester data on instructor select */
     $("#instructor").change(function() {
         // Clear & disable sequenced dropdowns
         clearDropdown("#semester");
@@ -120,10 +119,10 @@ jQuery(function($) {
             });
             return this;
         })
-        .done(function() {
-          // Enable semester selector, disable the following
-          $("#semester").prop("disabled", false);
-        });
+            .done(function() {
+                // Enable semester selector, disable the following
+                $("#semester").prop("disabled", false);
+            });
     });
 
     /* Course Rating Slider Inputs */
