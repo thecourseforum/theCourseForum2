@@ -14,11 +14,11 @@ urlpatterns = [
     path('course/<int:course_id>', views.course_view, name='course'),
     path('course/<int:course_id>/<int:instructor_id>',
          views.course_instructor, name='course_instructor'),
-    path(
-        'instructor/<int:instructor_id>',
-        views.instructor_view,
-        name='instructor'),
+    path('instructor/<int:instructor_id>',
+         views.instructor_view, name='instructor'),
     path('reviews/new', views.new_review, name='new_review'),
+    path('reviews/<int:pk>/delete',
+         views.DeleteReview.as_view(), name='delete_review'),
     path('reviews', views.reviews, name='reviews'),
     path('reviews/<int:review_id>/upvote', views.upvote),
     path('reviews/<int:review_id>/downvote', views.downvote),
@@ -32,7 +32,6 @@ urlpatterns = [
     path('discord/', views.post_message, name='discord'),
 
     # AUTH URLS
-    path('accounts/profile/', views.browse),
     path('login', views.login, name='login'),
     path('login/error', views.login_error),
     path('login/collect_extra_info', views.collect_extra_info),

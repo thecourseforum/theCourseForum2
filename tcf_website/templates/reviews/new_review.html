@@ -1,0 +1,214 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Write a Review - theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'reviews/new_review.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="new-review container text-left mx-auto">
+  <h1 class="h2 mt-2 mb-4">Write a review</h2>
+  <div class="card">
+    <form class="card-body px-md-5" action="{% url 'new_review' %}" method="POST">
+        {% csrf_token %}
+        <!-- Class Info -->
+        <div class="new-review-course form-row mb-3">
+          <h2 class="h4 review-form-header form-group col-12 mt-4 mb-2">
+            Which class are you reviewing?</h2>
+          <div class="form-group col-12">
+            <p class="small">You can type or use Arrowkeys+Enter to select.</p>
+          </div>
+          <div class="form-group col-sm-6">
+            <label for="subject" class="required-field">Subject</label>
+            <select type="text" class="form-control" required id="subject" name="subject">
+              <option value="NONE" disabled selected>Select...</option>
+            </select>
+          </div>
+          <div class="form-group col-sm-6">
+            <label for="course" class="required-field">Course</label>
+            <select type="text" class="form-control" required id="course" name="course">
+              <option value="NONE" disabled selected>Select...</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row mb-3">
+          <div class="form-group col-sm-6">
+            <label for="instructor" class="required-field">Instructor</label>
+            <select type="text" class="form-control" required id="instructor" name="instructor">
+              <option value="NONE" disabled selected>Select...</option>
+            </select>
+          </div>
+          <div class="form-group col-sm-6">
+            <label for="semester" class="required-field">Semester</label>
+            <select type="text" class="form-control" required id="semester" name="semester">
+              <option value="NONE" disabled selected>Select...</option>
+            </select>
+          </div>
+        </div>
+        <hr>
+
+        <!-- Review written content -->
+        <div class="new-review-content form-row mb-3">
+          <h2 class="h4 review-form-header form-group col-12 my-4">
+            Tell us more about the course and instructor</h2>
+          <div class="form-group col mb-3">
+            <textarea class="form-control" id="reviewText" name="reviewText" rows="5"
+                      placeholder="(Aim for 3 sentences or more!)" minlength="100" maxlength="5000"></textarea>
+          </div>
+        </div>
+        <hr>
+
+        <!-- Review ratings for course -->
+        <div class="new-review-ratings form-row mb-3">
+          <div class="form-group col-sm-6 pr-lg-5 pr-sm-4">
+              <h2 class="h4 review-form-header col-12 p-0 my-4">
+                Rate the course</h2>
+              <div class="mt-3">
+                  <label for="instructorRating" class="m-0">
+                    <i class="fas fa-user"></i> Instructor
+                  </label>
+                  <div class="row">
+                      <div class="col-xl-9 col-8 py-2">
+                        <input type="range" class="custom-range"
+                               min="1" max="5" step="1" value=3
+                               id="instructorRating" name="instructorRating" required>
+                      </div>
+                      <div class="col-xl-3 col-4 pl-lg-2 pl-0 d-inline-flex">
+                        <input type="number" class="form-control text-center"
+                               min="1" max="5" value=3
+                               id="instructorRating2" name="instructorRating2" required>
+                        <span class="ml-2 mt-2">/5</span>
+                      </div>
+                  </div>
+              </div>
+              <div class="mt-3">
+                  <label for="enjoyability" class="m-0">
+                    <i class="far fa-smile-beam"></i> Enjoyability
+                  </label>
+                  <div class="row">
+                      <div class="col-xl-9 col-8 py-2">
+                        <input type="range" class="custom-range"
+                               min="1" max="5" step="1" value=3
+                               id="enjoyability" name="enjoyability" required>
+                      </div>
+                      <div class="col-xl-3 col-4 pl-lg-2 pl-0 d-inline-flex">
+                        <input type="number" class="form-control text-center"
+                               min="1" max="5" value=3
+                               id="enjoyability2" name="enjoyability2" required>
+                        <span class="ml-2 mt-2">/5</span>
+                      </div>
+                  </div>
+              </div>
+              <div class="mt-3">
+                  <label for="difficulty" class="m-0">
+                    <i class="fas fa-dumbbell"></i> Difficulty
+                  </label>
+                  <div class="row">
+                      <div class="col-xl-9 col-8 py-2">
+                        <input type="range" class="custom-range"
+                               min="1" max="5" step="1" value=3
+                               id="difficulty" name="difficulty" required>
+                      </div>
+                      <div class="col-xl-3 col-4 pl-lg-2 pl-0 d-inline-flex">
+                        <input type="number" class="form-control text-center"
+                               min="1" max="5" value=3
+                               id="difficulty2" name="difficulty2" required>
+                        <span class="ml-2 mt-2">/5</span>
+                      </div>
+                  </div>
+              </div>
+              <div class="mt-3">
+                  <label for="recommendability" class="m-0">
+                    <i class="fas fa-thumbs-up"></i> Recommend
+                  </label>
+                  <div class="row">
+                      <div class="col-xl-9 col-8 py-2">
+                        <input type="range" class="custom-range"
+                               min="1" max="5" step="1" value=3
+                               id="recommendability" name="recommendability" required>
+                      </div>
+                      <div class="col-xl-3 col-4 pl-lg-2 pl-0 d-inline-flex">
+                        <input type="number" class="form-control text-center"
+                               min="1" max="5" value=3
+                               id="recommendability2" name="recommendability2" required>
+                        <span class="ml-2 mt-2">/5</span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="form-group col-sm-6 pl-lg-5 pl-sm-4">
+              <h2 class="h4 review-form-header p-0 my-4">
+                Hours of work/week</h2>
+              <div class="row py-3">
+                <div class="col-8">
+                  <label for="hoursReading">
+                    <i class="fas fa-book"></i> Reading
+                  </label>
+                </div>
+                <div class="col-4">
+                  <input type="number" class="form-control text-center"
+                         value=0 min="0" max="20"
+                         id="hoursReading" name="hoursReading" required>
+                </div>
+              </div>
+              <div class="row py-3">
+                <div class="col-8">
+                  <label for="hoursWriting">
+                    <i class="fas fa-pencil-alt"></i> Writing
+                  </label>
+                </div>
+                <div class="col-4">
+                  <input type="number" class="form-control text-center"
+                         value=0 min="0" max="20"
+                         id="hoursWriting" name="hoursWriting" required>
+                </div>
+              </div>
+              <div class="row py-3">
+                <div class="col-8">
+                  <label for="hoursGroupwork">
+                    <i class="fas fa-user-friends"></i> Groupwork
+                  </label>
+                </div>
+                <div class="col-4">
+                  <input type="number" class="form-control text-center"
+                         value=0 min="0" max="20"
+                         id="hoursGroupwork" name="hoursGroupwork" required>
+                </div>
+              </div>
+              <div class="row py-3">
+                <div class="col-8">
+                  <label for="hoursOther">
+                    <span tabindex="0" data-toggle="tooltip" data-placement="bottom" title="Labs, projects, etc.">
+                      <i class="fas fa-flask"></i> Other
+                    </span>
+                  </label>
+                </div>
+                <div class="col-4">
+                  <input type="number" class="form-control text-center"
+                         value=0 min="0" max="20"
+                         id="hoursOther" name="hoursOther" required>
+                </div>
+              </div>
+          </div>
+        </div>
+        <hr>
+        <div class="new-review-submit row py-4">
+          <button type="submit" class="btn btn-primary mx-auto">Submit Review</button>
+        </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="{% static 'reviews/new_review.js' %}"></script>
+<script>
+  // For Bootstrap tooltip
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
+{% endblock %}

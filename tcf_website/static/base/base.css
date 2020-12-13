@@ -52,7 +52,6 @@ footer {
     width: 100%;
     height: 80px; /* Set the fixed height of the footer here */
     line-height: 30px; /* Vertically center the text there */
-    /* background-color: #f5f5f5; */
     text-align: center;
     color: var(--background-color);
     background-color: #172248;
@@ -63,11 +62,19 @@ footer > .row {
     background-color: #172248;
 }
 
-.btn.btn-primary,
+
+/* For buttons */
+.btn.btn-primary, .btn.btn-outline-primary {
+  color: white;
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
 .btn.btn-outline-primary:not(:disabled):not(.disabled).active,
 .btn.btn-outline-primary:not(:disabled):not(.disabled):active {
-  background-color: #AC451E;
-  border-color: var(--accent-color);
+  color: white;
+  background-color: #AC451E !important;
+  border-color: #AC451E !important;
 }
 
 .btn.btn-outline-primary {
@@ -79,8 +86,8 @@ footer > .row {
 .btn.btn-primary:hover,
 .btn.btn-outline-primary:hover {
   color: white;
-  background-color: #d1420d;
-  border-color: #d1420d;
+  background-color: #AC451E !important;
+  border-color: #AC451E !important;
 }
 
 .btn:not(:disabled):not(.disabled).active.focus,
@@ -88,6 +95,7 @@ footer > .row {
   box-shadow: none;
 }
 
+/* For forms */
 .form-control {
   background-color: var(--background-color);
   color: black;
@@ -96,4 +104,32 @@ footer > .row {
 
 .form-row {
   margin: 0.5rem;
+}
+
+/* Change tooltop color */
+.tooltip-inner {
+    background-color: var(--dark-color) !important;
+}
+.tooltip.bs-tooltip-right .arrow:before {
+    border-right-color: var(--dark-color) !important;
+}
+.tooltip.bs-tooltip-left .arrow:before {
+    border-left-color: var(--dark-color) !important;
+}
+.tooltip.bs-tooltip-bottom .arrow:before {
+    border-bottom-color: var(--dark-color) !important;
+}
+.tooltip.bs-tooltip-top .arrow:before {
+    border-top-color: var(--dark-color) !important;
+}
+
+/* Change slider color */
+.custom-range::-webkit-slider-thumb {
+  background: var(--accent-color);
+}
+.custom-range::-moz-range-thumb {
+  background: var(--accent-color);
+}
+.custom-range::-ms-thumb {
+  background: var(--accent-color);
 }

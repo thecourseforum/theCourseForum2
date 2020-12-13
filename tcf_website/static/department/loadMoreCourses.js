@@ -22,8 +22,6 @@ function generateCourseCardHTML(course) {
     const rating = emdashOrTwoDecimals(course.average_rating);
     const difficulty = emdashOrTwoDecimals(course.average_difficulty);
     const gpa = emdashOrTwoDecimals(course.average_gpa);
-    const seasonAllCaps = course.semester_last_taught.season;
-    const seasonTitleCase = seasonAllCaps.charAt(0) + seasonAllCaps.substr(1).toLowerCase();
     return `
         <li class="${course.is_recent ? "" : "old"}">
             <div class="card rating-card mb-2">
@@ -63,7 +61,7 @@ function generateCourseCardHTML(course) {
                                 <small class="mb-0 text-uppercase">
                                     Last Taught
                                 </small>
-                                <p class="mb-0 info">${seasonTitleCase} ${course.semester_last_taught.year}</p>
+                                <p class="mb-0 info">${course.semester_last_taught.season} ${course.semester_last_taught.year}</p>
                             </div>
                         </div>
                             <p class="card-text mt-2">${course.description}</p>

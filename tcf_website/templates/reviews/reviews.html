@@ -1,22 +1,21 @@
 <!-- TODO: include review styles here -->
 {% load static %}
 
-<div class="reviews container-lg">
-    <ul class="review-list" style="list-style-type: none;">
-    {% for r in reviews %}
-        <li>
-            {% include "reviews/review.html" with profile=profile review=r %}
-        </li>
-    {% empty %}
-        <div class="row d-flex justify-content-center">
-            <div class="card col-12 col-sm-8 col-lg-4 text-center">
+<div class="reviews container-lg px-0">
+    <ul class="review-list list-unstyled">
+        {% for r in reviews %}
+            <li>
+                {% include "reviews/review.html" with profile=profile review=r %}
+            </li>
+        {% empty %}
+            <div class="card col p-5 text-center">
                 <div class="card-body">
                     <h4 class="card-title">
                         No Reviews <i class="far fa-frown-open fa-fw"></i>
                     </h4>
-                    <!-- <p class="card-text">
-                        Help us out by <a href="{% url 'new_review' %}" style="color: dodgerblue;">writing a review!</a>
-                    </p> -->
+                    <p class="card-text">
+                        Help us out by <a href="{% url 'new_review' %}">writing a review!</a>
+                    </p>
                 </div>
             </div>
         </div>
