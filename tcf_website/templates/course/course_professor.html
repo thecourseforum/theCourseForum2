@@ -21,10 +21,30 @@
                     <h1 class="mr-md-3 text-nowrap">{{ course.code }}</h1>
                     <h2 class="mr-md-3">{{ course.title }}</h2>
                 </div>
-                <h3 class="font-weight-light text-tcf-orange">
-                  <a href="{% url 'instructor' instructor_id=instructor.id %}">
-                    {{ instructor.full_name }}</a>
-                </h3>
+
+                <div class="d-flex flex-row">
+                  <!-- Instructor Dropdown -->
+                  <div class="dropdown btn-group">
+                    <a role="button" class="h3 font-weight-light text-tcf-orange mb-0"
+                       href="{% url 'instructor' instructor_id=instructor.id %}">
+                       {{ instructor.full_name }}</h3>
+                    </a>
+                    <!-- Store course ID here for jQuery -->
+                    <a role="button" class="btn dropdown-toggle dropdown-toggle-split mb-0"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <span class="sr-only">Toggle Dropdown</span>
+                    </a>
+                    <div id="instructor" class="dropdown-menu dropdown-menu-right" disabled>
+                      <!-- To be populated by instr_data.js script -->
+                    </div>
+                  </div>
+
+                  <!-- Semester last taught -->
+                  <div class="ml-auto btn-group">
+                    <button class="btn bg-white disabled">Last taught</button>
+                    <button class="btn bg-tcf-orange text-white">{{ semester_last_taught }}</button>
+                  </div>
+                </div>
             </div>
         </div>
 
@@ -191,14 +211,23 @@
 {% endblock %}
 
 {% block js %}
-    <script type="module" src="{% static 'reviews/review.js' %}"></script>
+    <!-- For instructor data -->
+    <script> // Create global js vars from template context vars
+       var courseID = "{{ course_id|escapejs }}";
+    </script>
+    <script type="module" src="{% static 'course/javascript/instr_data.js' %}"></script>
+
+    <!-- For grade data -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script type="module"
             src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
     <script type="module" src="{% static 'course/javascript/course_data.js' %}"></script>
     <script type="module">
+        // Run loaddata function from above script
         import {loadData} from "{% static 'course/javascript/course_data.js' %}";
-
         loadData(JSON.parse("{{ data|escapejs }}"))
     </script>
+
+    <!-- For course-instructor reviews -->
+    <script type="module" src="{% static 'reviews/review.js' %}"></script>
 {% endblock %}
