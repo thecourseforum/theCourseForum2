@@ -3,7 +3,7 @@
     height: 300px;
     display: flex;
     margin-bottom: 50px;
-    margin-top: 30px
+    margin-top: 30px;
 }
 
 .grades-container {
@@ -16,7 +16,7 @@
     background-color: white;
     z-index: 0;
 }
- 
+
 .chart-container {
     height: 95%;
     width: 290px;
@@ -33,12 +33,12 @@
     flex-grow: 1;
     flex-direction: column;
 }
- 
+
 .ratings-row {
     display: flex;
-    height: 50%
+    height: 50%;
 }
- 
+
 .rating-card {
     height: 97%;
     background-color: white;
@@ -48,14 +48,14 @@
     justify-content: space-around;
     flex-direction: column;
     padding-top: 40px;
-    padding-bottom: 40px
+    padding-bottom: 40px;
 }
- 
+
 .rating-card-num {
     font-size: 42px;
     color: #D75626
 }
- 
+
 .rating-card-desc {
     font-size: 18px;
 }
@@ -71,9 +71,9 @@
     padding-bottom: 6px;
     padding-left: 8px;
     justify-content: space-around;
-    min-width: 250px
+    min-width: 250px;
 }
- 
+
 .absolute-center {
     position: absolute;
     top: auto; left: auto;
@@ -82,35 +82,42 @@
     justify-content: center;
     flex-direction: column;
 }
- 
+
 .gpa-text {
     color: #384676;
     font-size: 28px;
-    margin: 0
+    margin: 0;
 }
- 
+
 .students-text {
     color: #56679d;
     font-size: 16px;
-    margin: 0
+    margin: 0;
 }
- 
-.progress-bar {
-    background-color: #56679d
-}
- 
+
 .info-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
- 
+
 .info-title{
+    font-size: 14px;
     width: 130px;
     padding-left: 5px;
     display: flex;
     justify-content: flex-start;
-    align-items: center
+    align-items: center;
+}
+
+.info-bar .progress {
+    margin: 0;
+    padding: 0;
+}
+.info-bar .progress-bar {
+    background-color: #56679d;
+    margin: 0;
+    padding: 0;
 }
 
 .info-num {
@@ -120,17 +127,17 @@
     padding-right: 10px;
 }
 
-.info-bar{ 
+.info-bar{
     flex-grow: 1;
     flex-shrink: 1;
 }
- 
+
 @media (max-width: 1100px) {
     .grades-ratings-container {
       flex-direction: column;
       height: 650px;
     }
- 
+
     .grades-container{
         height: 50%;
         width: 100%;
@@ -138,26 +145,26 @@
         padding-top: 15px;
         padding-bottom: 20px;
     }
- 
+
     .ratings-container{
-        height: 50%
+        height: 50%;
     }
- 
+
     .info-container{
-        margin-right: 0
+        margin-right: 0;
     }
- 
+
     .gpa-text{
-        font-size: 24px
+        font-size: 24px;
     }
     .students-text{
-        font-size: 14
+        font-size: 14;
     }
   }
- 
+
   @media(max-width: 800px){
       .info-num{
-          width: 60px
+          width: 60px;
       }
   }
 
@@ -172,95 +179,95 @@
         height: 62%;
     }
     .rating-card-num{
-        font-size: 24px
+        font-size: 24px;
     }
     .rating-card-desc{
-        font-size: 14px
+        font-size: 14px;
     }
     .info-title {
-        font-size: 14px;
-        width: 120px
+        font-size: 12px;
+        width: 120px;
     }
     .info-num{
         font-size: 14px;
-        width: 30
+        width: 30;
     }
     .progress{
-        height: 14px
+        height: 14px;
     }
   }
- 
+
   @media(max-width: 400px){
     .grades-ratings-container{
-        height: 400px
+        height: 400px;
     }
- 
+
     .grades-container{
         height: 50%;
     }
- 
+
     .chart-container{
-        width: 175px
+        width: 175px;
     }
     .ratings-container{
-        height: 50%
+        height: 50%;
     }
     .rating-card-num{
-        font-size: 16px
+        font-size: 16px;
     }
     .rating-card-desc{
-        font-size: 10px
+        font-size: 10px;
     }
     .info-title {
         font-size: 10px;
-        width: 90
+        width: 90;
     }
     .info-num{
-        font-size: 10px
+        font-size: 10px;
     }
     .progress{
-        height: 10px
+        height: 10px;
     }
- 
+
     .gpa-text{
-        font-size: 18px
+        font-size: 18px;
     }
     .students-text{
-        font-size: 12px
+        font-size: 12px;
     }
     .info-container {
         width: 250px;
-        flex-shrink: 1
+        flex-shrink: 1;
     }
     .rating-card{
-        width: 70px
+        width: 70px;
     }
     .grades-container{
-        margin-bottom: 0
+        margin-bottom: 0;
     }
     .grades-ratings-container{
         margin-bottom: 100px
     }
- 
+
   }
- 
+
   @media(max-width: 380px){
     .rating-card{
         min-width: 80px;
         flex-grow: 1;
-        flex-shrink: 1 
-    } 
+        flex-shrink: 1
+    }
     .info-bar{
         width: 50%;
         flex-shrink:2;
         margin-right: 0;
-        padding-right: 0
+        padding-right: 0;
     }
     .info-container{
         min-width: 0;
     }
     .info-num{
-        margin-left: 2
+        margin-left: 2;
     }
- 
+
   }
