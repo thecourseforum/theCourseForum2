@@ -3,401 +3,381 @@
 
 
 {% block styles %}
-<!-- Simple line icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.5.5/css/simple-line-icons.min.css" integrity="sha512-QKC1UZ/ZHNgFzVKSAhV5v5j73eeL9EEN289eKAEFaAjgAiobVAnVv/AGuPbXsKl1dNoel3kNr6PYnSiTzVVBCw==" crossorigin="anonymous" />
+    <!-- Simple line icons -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.5.5/css/simple-line-icons.min.css"
+          integrity="sha512-QKC1UZ/ZHNgFzVKSAhV5v5j73eeL9EEN289eKAEFaAjgAiobVAnVv/AGuPbXsKl1dNoel3kNr6PYnSiTzVVBCw=="
+          crossorigin="anonymous"/>
 
-<!-- Custom styles for this template -->
-<link rel="stylesheet" href="{% static 'base/navbar.css' %}" />
-<link rel="stylesheet" href="{% static 'landing/landing.css' %}" />
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{% static 'base/navbar.css' %}"/>
+    <link rel="stylesheet" href="{% static 'landing/landing.css' %}"/>
 {% endblock %}
 
 
 {% block body %}
-<div class="container-fluid px-0 bg-light">
+    <div class="container-fluid px-0 bg-light">
 
-  <!-- Custom Landing Page Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
-    <div class="container">
-      <!-- tCF logo -->
-      <a class="navbar-brand logo-container" href="/">
-        <img class="logo" src="{% static 'base/img/new_logo.png' %}" alt="theCourseForum logo">
-        <h4 class="text-tcf-indigo ml-2">theCourseForum</h4>
-      </a>
-      <!-- tCF profile dropdown -->
-      <div class="account-settings">
-        {% if user.is_authenticated %}
-        <div class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown">
-            Hey, {{user.first_name}}!
-          </a>
-          <div class="dropdown-menu settings" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
-            <a class="dropdown-item" href="{% url 'reviews' %}">My Reviews</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
-          </div>
-        </div>
-        {% else %}
-        <div class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}">Sign In</a>
-        </div>
-      {% endif %}
-      </div>
-    </div>
-  </nav>
-
-  <!-- Masthead -->
-  <header class="masthead text-center">
-    <div class="row">
-      <div class="col-xl-8 mx-auto py-4">
-        <div class="about-logo row justify-content-center">
-          <img src="{% static 'base/img/new_logo.png' %}" alt="theCourseForum logo"
-               height="150px">
-          <div class="tagline text-left pt-3">
-            <h1>theCourseForum</h1>
-            <p>connecting you to the courses you love.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-        {% include "base/searchbar.html" %}
-      </div>
-    </div>
-  </header>
-
-  <!-- Icons Grid -->
-  <section class="features-icons container px-5 pb-5">
-      <div class="row px-md-4 text-center">
-        <div class="col-lg-4">
-          <a href="{% url 'browse' %}" class="link-unstyled">
-            <div class="card mx-sm-3 my-3">
-              <div class="card-body features-icons-item mx-auto mb-2">
-                <div class="features-icons-icon d-flex">
-                  <i class="icon-list m-auto text-tcf-indigo"></i>
-                </div>
-                <h4 class="card-title">Browse Courses</h4>
-                <p class="card-text font-weight-light mb-0">See what other UVA students say about classes and professors</p>
-              </div>
+    <!-- Custom Landing Page Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <!-- tCF logo -->
+            <a class="navbar-brand logo-container" href="/">
+                <img class="logo" src="{% static 'base/img/new_logo.png' %}" alt="theCourseForum logo">
+                <h4 class="text-tcf-indigo ml-2">theCourseForum</h4>
+            </a>
+            <!-- tCF profile dropdown -->
+            <div class="account-settings">
+                {% if user.is_authenticated %}
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown">
+                            Hey, {{ user.first_name }}!
+                        </a>
+                        <div class="dropdown-menu settings" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
+                            <a class="dropdown-item" href="{% url 'reviews' %}">My Reviews</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Sign In</a>
+                    </div>
+                {% endif %}
             </div>
-          </a>
         </div>
+    </nav>
 
-        <div class="col-lg-4">
-          <a href="{% url 'browse' %}" class="link-unstyled">
-            <div class="card mx-sm-3 my-3">
-              <div class="card-body features-icons-item mx-auto mb-2">
-                <div class="features-icons-icon d-flex">
-                  <i class="icon-chart m-auto text-tcf-indigo"></i>
-                </div>
-                <h4 class="card-title">View Grades</h4>
-                <p class="card-text font-weight-light mb-0">Check out actual grade distributions from past semesters</p>
-              </div>
-            </div>
-          </a>
-        </div>
-
-        <div class="col-lg-4">
-          <a data-toggle="modal" data-target="#comingSoonModal" class="link-unstyled">
-            <div class="card mx-sm-3 my-3">
-              <div class="card-body features-icons-item mx-auto mb-2">
-                <div class="features-icons-icon d-flex">
-                  <i class="icon-pencil m-auto text-tcf-indigo"></i>
-                </div>
-                <h4 class="card-title">Write a Review</h4>
-                <p class="card-text font-weight-light mb-0">Help our community by telling others about your class experience</p>
-              </div>
-            </div>
-          </a>
-        </div>
-      </div>
-  </section>
-
-  <!-- under construction pop up (modal) -->
-  <div class="modal fade" id="comingSoonModal" tabindex="-1" role="dialog" aria-labelledby="comingSoonModal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-body">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <div class="container">
-            <div class="row text-center justify-content-center">
-              <h5>Sorry!</h5>
-            </div>
-            <div class="row text-center justify-content-center">
-              <p> This feature is currently under construction. <br> Thanks for your patience! </p>
-            </div>
-            <div class="row justify-content-center">
-              <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-
-  <!-- About Team -->
-  <section class="about-team py-5 my-5">
-    <div class="about-header row">
-      <div class="col-lg-8 p-4 bg-tcf-indigo text-white text-right">
-        <p class="font-weight-light px-4">We'll connect you to courses you'll love, and make enrollment stress free.</p>
-      </div>
-      <div class="col-lg-4">
-      </div>
-    </div>
-
-    <div class="about-content container">
-      <div class="row pt-5 px-0">
-        <div class="col-lg-8">
-          <div class="team-photos row text-center pr-md-4 mb-4">
-            {% for member in executive_team %}
-              <div class="col-6 col-md-3 px-0">
-                <div class="about-member card flex-fill bg-light">
-                  <div class="about-pfp px-4 py-3">
-                    <img class="card-img-top rounded-circle" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
-                  </div>
-                  <div class="card-body p-1">
-                    <h6 class="card-text">{{ member.name }}</h6>
-                    <p class="card-text small">{{ member.role }}</p>
-                  </div>
-                </div>
-              </div>
-            {% endfor %}
-            <div class="col-6 col-md-3">
-              <a href="{% url 'about' %}" class="link-unstyled">
-                <div class="about-link card bg-tcf-orange mt-3 mx-1">
-                  <div class="card-body mx-auto py-5">
-                    <p class="card-text text-white text-left">
-                      Meet the full team
-                      <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                    </p>
-                  </div>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <a href="{% url 'about' %}" class="link-unstyled">
-            <div class="card about-info mx-3">
-              <div class="card-body mx-auto mb-2">
-                <h3 class="card-title">About Us</h3>
-                <p class="card-text font-weight-light mb-2">
-                  theCourseForum is a product of volunteer developers and contributors from the UVA community.
-                  We are a student-run nonprofit CIO, founded in 2005 at the University of Virginia.
-                  <br/><br/>
-                  We keep our servers running through university grants and your donations.
-                  Just $4 keeps our servers up for a day, so we can keep serving you the best content.
-                </p>
-                <a href="https://gf.me/u/yvhyfa" class="btn btn-primary bg-tcf-indigo">Donate $4 today</a>
-              </div>
-            </div>
-          </a>
-        </div>
-      </div>
-    </div>
-
-  </section>
-
-  <section class="faqs features-icons px-md-4 mx-4 mb-5">
-    <div class="card row mx-md-4 py-4">
-
-      <div class="faqs-header col-11 mx-auto">
-        <h2 class="mb-4 text-tcf-orange">FAQs</h2>
-      </div>
-
-      <div class="faqs-content col-11 mx-auto">
+    <!-- Masthead -->
+    <header class="masthead text-center">
         <div class="row">
-          <!-- These questions have hyperlinks and cannot be in the JSON file -->
-          <div class="col-md-6 mb-3">
-            <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#faq-prevfeature">
-              <i class="fas fa-chevron-down"></i> Where did [previous feature] go?</h5>
-            <p id="faq-prevfeature" class="collapse">
-              During our tCF2.0 rewrite, some features had to be left out due to
-              low usage. If you'd like to propose we bring one of them back, or
-              suggest an entirely new feature, submit a feedback form or join
-              the discussion on our
-              <a href='https://discord.gg/tAjzH7eyvW' class='text-tcf-blue'>Discord server</a>!
-            </p>
-          </div>
-          {% for item in FAQs %}
-          <div class="col-md-6 mb-3">
-            <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#faq-{{forloop.counter}}">
-              <i class="fas fa-chevron-down"></i> {{ item.question }} </h5>
-            <p id="faq-{{forloop.counter}}" class="collapse"> {{ item.answer }} </p>
-          </div>
-          {% endfor %}
-          <!-- These questions have hyperlinks and cannot be in the JSON file -->
-          <div class="col-md-6 mb-3">
-            <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#faq-privacy">
-              <i class="fas fa-chevron-down"></i> How do you protect reviewers' privacy?</h5>
-            <p id="faq-privacy" class="collapse">
-              We will never display your name on reviews, nor release this
-              information to anyone. Read our
-              <a href="{% url 'privacy' %}" class='text-tcf-blue'>Privacy Policy</a> to learn more!
-            </p>
-          </div>
-          <div class="col-md-6 mb-3">
-            <h5 class="hover-tcf-orange" data-toggle="collapse" data-target="#faq-reportbugs">
-              <i class="fas fa-chevron-down"></i> Where should I report bugs or leave a comment?</h5>
-            <p id="faq-reportbugs" class="collapse">
-              Fill out the feedback form or report a bug form on the site or join our
-              <a href='https://discord.gg/tAjzH7eyvW' class='text-tcf-blue'>Discord server</a>!
-            </p>
-          </div>
+            <div class="col-xl-8 mx-auto py-4">
+                <div class="about-logo row justify-content-center">
+                    <img src="{% static 'base/img/new_logo.png' %}" alt="theCourseForum logo"
+                         height="150px">
+                    <div class="tagline text-left pt-3">
+                        <h1>theCourseForum</h1>
+                        <p>connecting you to the courses you love.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+                {% include "search/searchbar.html" %}
+            </div>
         </div>
-      </div>
+    </header>
 
+    <!-- Icons Grid -->
+    <section class="features-icons container px-5 pb-5">
+        <div class="row px-md-4 text-center">
+            <div class="col-lg-4">
+                <a href="{% url 'browse' %}" class="link-unstyled">
+                    <div class="card mx-sm-3 my-3">
+                        <div class="card-body features-icons-item mx-auto mb-2">
+                            <div class="features-icons-icon d-flex">
+                                <i class="icon-list m-auto text-tcf-indigo"></i>
+                            </div>
+                            <h4 class="card-title">Browse Courses</h4>
+                            <p class="card-text font-weight-light mb-0">See what other UVA students say about classes
+                                and professors</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-lg-4">
+                <a href="{% url 'browse' %}" class="link-unstyled">
+                    <div class="card mx-sm-3 my-3">
+                        <div class="card-body features-icons-item mx-auto mb-2">
+                            <div class="features-icons-icon d-flex">
+                                <i class="icon-chart m-auto text-tcf-indigo"></i>
+                            </div>
+                            <h4 class="card-title">View Grades</h4>
+                            <p class="card-text font-weight-light mb-0">Check out actual grade distributions from past
+                                semesters</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-lg-4">
+                <a href="{% url 'new_review' %}" class="link-unstyled">
+                    <div class="card mx-sm-3 my-3">
+                        <div class="card-body features-icons-item mx-auto mb-2">
+                            <div class="features-icons-icon d-flex">
+                                <i class="icon-pencil m-auto text-tcf-indigo"></i>
+                            </div>
+                            <h4 class="card-title">Write a Review</h4>
+                            <p class="card-text font-weight-light mb-0">Help our community by telling others about your
+                                class experience</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- About Team -->
+    <section class="about-team py-5 my-5">
+        <div class="about-header row">
+            <div class="col-lg-8 p-4 bg-tcf-indigo text-white text-right">
+                <p class="font-weight-light px-4">We'll connect you to courses you'll love, and make enrollment stress
+                    free.</p>
+            </div>
+            <div class="col-lg-4">
+            </div>
+        </div>
+
+        <div class="about-content container">
+            <div class="row pt-5 px-0">
+                <div class="col-lg-8">
+                    <div class="team-photos row text-center pr-md-4 mb-4">
+                        {% for member in executive_team %}
+                            <div class="col-6 col-md-3 px-0">
+                                <div class="about-member card flex-fill bg-light">
+                                    <div class="about-pfp px-4 py-3">
+                                        <img class="card-img-top rounded-circle"
+                                             src="{% static 'about/team-pfps/'|add:member.img_filename %}"
+                                             alt="{{ member.name }}">
+                                    </div>
+                                    <div class="card-body p-1">
+                                        <h6 class="card-text">{{ member.name }}</h6>
+                                        <p class="card-text small">{{ member.role }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="col-6 col-md-3">
+                            <a href="{% url 'about' %}" class="link-unstyled">
+                                <div class="about-link card bg-tcf-orange mt-3 mx-1">
+                                    <div class="card-body mx-auto py-5">
+                                        <p class="card-text text-white text-left">
+                                            Meet the full team
+                                            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <a href="{% url 'about' %}" class="link-unstyled">
+                        <div class="card about-info mx-3">
+                            <div class="card-body mx-auto mb-2">
+                                <h3 class="card-title">About Us</h3>
+                                <p class="card-text font-weight-light mb-2">
+                                    theCourseForum is a product of volunteer developers and contributors from the UVA
+                                    community.
+                                    We are a student-run nonprofit CIO, founded in 2005 at the University of Virginia.
+                                    <br/><br/>
+                                    We keep our servers running through university grants and your donations.
+                                    Just $4 keeps our servers up for a day, so we can keep serving you the best content.
+                                </p>
+                                <a href="https://gf.me/u/yvhyfa" class="btn btn-primary bg-tcf-indigo">Donate $4
+                                    today</a>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="faqs features-icons px-md-4 mx-4 mb-5">
+        <div class="card row mx-md-4 py-4">
+
+            <div class="faqs-header col-11 mx-auto">
+                <h2 class="mb-4 text-tcf-orange">FAQs</h2>
+            </div>
+
+            <div class="faqs-content col-11 mx-auto">
+                <div class="row">
+                    {% for i in FAQs %}
+                        <div class="col-md-6 mb-3">
+                            <h5 class="hover-tcf-orange" data-toggle="collapse"
+                                data-target="#faq-answer-{{ forloop.counter }}"
+                                id="faq-question-{{ forloop.counter }}">
+                                {#To be filled by JS script#}
+                            </h5>
+                            <p id="faq-answer-{{ forloop.counter }}" class="collapse"></p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Feedback Form -->
+    <section class="feedback container py-5 mb-5">
+        <div class="row text-center">
+            <div class="feedback-header col-md-10 mx-auto">
+                <h2 class="mb-4">Tell us about your experience</h2>
+                <p class="lead mb-5">Keep in touch! We would love to hear about your experience with the site and areas
+                    where you think we can improve.</p>
+            </div>
+            <div class="col-md-10 mx-auto text-left">
+                <form id="feedbackform">
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="inputFname">First Name</label>
+                                    <input type="text" class="form-control" id="inputFname" placeholder="Karen">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="inputLname">Last Name</label>
+                                    <input type="text" class="form-control" id="inputLname" placeholder="Doe">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEmail">Email</label>
+                                <input type="email" class="form-control" id="inputEmail"
+                                       placeholder="youremail@virginia.edu">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="inputTitle">Title</label>
+                                <input type="text" class="form-control" id="inputTitle" placeholder="Message Subject"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputMessage">Feedback</label>
+                                <textarea type="text" class="form-control" id="inputMessage" rows="6"
+                                          placeholder="Write your message here..." required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary bg-tcf-indigo" id="submitFeedbackBtn">Submit
+                            Feedback
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- welcome modal -->
+    <div class="modal show" id="welcomeModal" tabindex="-1" role="dialog" aria-labelledby="welcomeModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <h5>Welcome to theCourseForum 2.0! </h5>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p> Our team has been working hard to bring you the new tCF
+                                website. We've redesigned the site with the goal of writing
+                                cleaner, maintainable, and well-documented code to keep tCF up
+                                and running for years to come. <br><br>
+                                We're still in the process of beta testing, so thank you for
+                                your patience as we work out any bugs and errors. Help us out,
+                                and report any bugs that you find! <br><br>
+                                Questions, comments, or concerns? <br>
+                                Fill out the feedback form below and/or join our
+                                <a href="https://discord.gg/tAjzH7eyvW" class="text-tcf-blue">discord server</a>!</p>
+                        </div>
+                        <div class="row justify-content-center">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary bg-tcf-indigo"> Thank
+                                you!
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </section>
 
-  <!-- Feedback Form -->
-  <section class="feedback container py-5 mb-5">
-      <div class="row text-center">
-        <div class="feedback-header col-md-10 mx-auto">
-          <h2 class="mb-4">Tell us about your experience</h2>
-          <p class="lead mb-5">Keep in touch! We would love to hear about your experience with the site and areas where you think we can improve.</p>
+    <div>
+
+    <!-- Footer -->
+    <footer class="footer bg-tcf-indigo">
+        <div class="container">
+            <div class="row py-3 text-white link-white">
+                <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
+                    <ul class="list-inline mb-2">
+                        <li class="list-inline-item">
+                            <a href="{% url 'about' %}">About</a>
+                        </li>
+                        <li class="list-inline-item">&sdot;</li>
+                        <li class="list-inline-item">
+                            <a href="#">Contact</a>
+                        </li>
+                        <li class="list-inline-item">&sdot;</li>
+                        <li class="list-inline-item">
+                            <a href="{% url 'terms' %}">Terms of Use</a>
+                        </li>
+                        <li class="list-inline-item">&sdot;</li>
+                        <li class="list-inline-item">
+                            <a href="{% url 'privacy' %}">Privacy Policy</a>
+                        </li>
+                    </ul>
+                    <p class="text-white small mb-4 mb-lg-0">&copy; theCourseForum <span class="year"></span>. All
+                        Rights Reserved.</p>
+                </div>
+                <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item mr-3">
+                            <h5>Follow theCourseForum!</h5>
+                        </li>
+                        <li class="list-inline-item mr-3">
+                            <a href="https://discord.gg/tAjzH7eyvW">
+                                <i class="fab fa-discord fa-2x fa-fw"></i>
+                            </a>
+                        </li>
+                        <li class="list-inline-item mr-3">
+                            <a href="https://www.facebook.com/thecourseforum">
+                                <i class="fab fa-facebook fa-2x fa-fw"></i>
+                            </a>
+                        </li>
+                        <li class="list-inline-item mr-3">
+                            <a href="https://www.instagram.com/thecourseforum_uva/">
+                                <i class="fab fa-instagram fa-2x fa-fw"></i>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="https://twitter.com/thecourseforum">
+                                <i class="fab fa-twitter-square fa-2x fa-fw"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="col-md-10 mx-auto text-left">
-          <form id="feedbackform">
-            <div class="form-row">
-              <div class="col-md-6">
-                <div class="form-row">
-                  <div class="form-group col-md-6">
-                    <label for="inputFname">First Name</label>
-                    <input type="text" class="form-control" id="inputFname" placeholder="Karen">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="inputLname">Last Name</label>
-                    <input type="text" class="form-control" id="inputLname" placeholder="Doe">
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="inputEmail">Email</label>
-                  <input type="email" class="form-control" id="inputEmail" placeholder="youremail@virginia.edu">
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="inputTitle">Title</label>
-                  <input type="text" class="form-control" id="inputTitle" placeholder="Message Subject" required>
-                </div>
-                <div class="form-group">
-                  <label for="inputMessage">Feedback</label>
-                  <textarea type="text" class="form-control" id="inputMessage" rows="6" placeholder="Write your message here..." required></textarea>
-                </div>
-              </div>
-            </div>
-            <div class="text-right">
-              <button type="submit" class="btn btn-primary bg-tcf-indigo" id="submitFeedbackBtn">Submit Feedback</button>
-            </div>
-          </form>
-        </div>
-      </div>
-  </section>
+    </footer>
 
-  <!-- welcome modal -->
-  <div class="modal show" id="welcomeModal" tabindex="-1" role="dialog" aria-labelledby="welcomeModal">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-body">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <div class="container">
-            <div class="row justify-content-center">
-              <h5>Welcome to theCourseForum 2.0! </h5>
-            </div>
-            <div class="row justify-content-center">
-              <p> Our team has been working hard to bring you the new tCF
-                website. We've redesigned the site with the goal of writing
-                cleaner, maintainable, and well-documented code to keep tCF up
-                and running for years to come. <br><br>
-                We're still in the process of beta testing, so thank you for
-                your patience as we work out any bugs and errors. Help us out,
-                and report any bugs that you find! <br><br>
-                Questions, comments, or concerns? <br>
-                Fill out the feedback form below and/or join our
-                <a href="https://discord.gg/tAjzH7eyvW" class="text-tcf-blue">discord server</a>!</p>
-            </div>
-            <div class="row justify-content-center">
-              <button type="button" data-dismiss="modal" class="btn btn-primary bg-tcf-indigo"> Thank you! </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-<div>
-
-<!-- Footer -->
-<footer class="footer bg-tcf-indigo">
-  <div class="container">
-    <div class="row py-3 text-white link-white">
-      <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
-        <ul class="list-inline mb-2">
-          <li class="list-inline-item">
-            <a href="{% url 'about' %}">About</a>
-          </li>
-          <li class="list-inline-item">&sdot;</li>
-          <li class="list-inline-item">
-            <a href="#">Contact</a>
-          </li>
-          <li class="list-inline-item">&sdot;</li>
-          <li class="list-inline-item">
-            <a href="{% url 'terms' %}">Terms of Use</a>
-          </li>
-          <li class="list-inline-item">&sdot;</li>
-          <li class="list-inline-item">
-            <a href="{% url 'privacy' %}">Privacy Policy</a>
-          </li>
-        </ul>
-        <p class="text-white small mb-4 mb-lg-0">&copy; theCourseForum 2020. All Rights Reserved.</p>
-      </div>
-      <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
-        <ul class="list-inline mb-0">
-          <li class="list-inline-item mr-3">
-            <h5>Follow theCourseForum!</h5>
-          </li>
-          <li class="list-inline-item mr-3">
-            <a href="https://discord.gg/tAjzH7eyvW">
-              <i class="fab fa-discord fa-2x fa-fw"></i>
-            </a>
-          </li>
-          <li class="list-inline-item mr-3">
-            <a href="https://www.facebook.com/thecourseforum">
-              <i class="fab fa-facebook fa-2x fa-fw"></i>
-            </a>
-          </li>
-          <li class="list-inline-item mr-3">
-            <a href="https://www.instagram.com/thecourseforum_uva/">
-              <i class="fab fa-instagram fa-2x fa-fw"></i>
-            </a>
-          </li>
-          <li class="list-inline-item">
-            <a href="https://twitter.com/thecourseforum">
-              <i class="fab fa-twitter-square fa-2x fa-fw"></i>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</footer>
-
-{% include "base/bugform.html" %}
+    {% include "base/bugform.html" %}
 {% endblock %}
 
 {% block js %}
-<script type="module" src="{% static 'landing/feedbackform.js' %}"></script>
-{% if not visited %}
-<script type="text/javascript">
-    $(window).on('load',function(){
-        $('#welcomeModal').modal('show');
-    });
-</script>
-{% endif %}
+    <script type="module" src="{% static 'landing/feedbackform.js' %}"></script>
+    <script type="text/javascript">
+        {% if not visited %}
+            $(window).on('load', function () {
+                $('#welcomeModal').modal('show');
+            });
+        {% endif %}
+        // Update copyright year at the bottom of landing page
+        $(".year").text(new Date().getFullYear());
+    </script>
+    <script type="text/javascript">
+        // Loads FAQ questions in with URLs because for some reason it won't work normally
+        const questions =
+        {{ FAQs | safe }}
+        for (let i = 0; i <= questions.length; i++) {
+            // need to add 1 because Django loops are indexed starting at 1
+            document.getElementById(`faq-question-${i + 1}`).innerHTML = "<i class=\"fas fa-chevron-down\"><\/i>" + " " + questions[i].question
+            document.getElementById(`faq-answer-${i + 1}`).innerHTML = questions[i].answer
+        }
+    </script>
 {% endblock %}

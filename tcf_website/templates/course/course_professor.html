@@ -15,17 +15,20 @@
 
         {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
 
-        <div class="d-flex flex-column my-3 mt-md-5">
-            <div class="d-md-flex justify-content-center">
-                <h1 class="mr-md-3" style="white-space: nowrap">{{ course.code }} |</h1>
-                <h1 class="mr-md-3">{{ course.title }}</h1>
+        <div class="course-instructor-header my-3 mt-md-5 px-3">
+            <div class="d-flex flex-column justify-content-left justify-content-sm-center">
+                <div class="d-md-flex align-items-baseline">
+                    <h1 class="mr-md-3 text-nowrap">{{ course.code }}</h1>
+                    <h2 class="mr-md-3">{{ course.title }}</h2>
+                </div>
+                <h3 class="font-weight-light text-tcf-orange">
+                  <a href="{% url 'instructor' instructor_id=instructor.id %}">
+                    {{ instructor.full_name }}</a>
+                </h3>
             </div>
-            <h2 class="text-center mb-3"><a
-                    href="{% url 'instructor' instructor_id=instructor.id %}">{{ instructor.full_name }}</a></h2>
         </div>
 
-
-        <div class="grades-ratings-container mb-5 ">
+        <div class="grades-ratings-container px-3">
             <div class="ratings-container">
                 <div class="ratings-row">
                     <div class="rating-card">
@@ -38,8 +41,8 @@
                                 <i class="fas fa-user"></i>&nbsp;Instructor
                             </div>
                             <div class="info-bar">
-                                <div class="progress p-0 m-0">
-                                    <div class="progress-bar instructor-bar p-0 m-0" style="width: 0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar instructor-bar" style="width: 0%"></div>
                                 </div>
                             </div>
                             <div class="info-num instructor-num">
@@ -51,8 +54,8 @@
                                 <i class="far fa-smile-beam"></i>&nbsp;Enjoyability
                             </div>
                             <div class="info-bar">
-                                <div class="progress p-0 m-0">
-                                    <div class="progress-bar fun-bar p-0 m-0" style="width:0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar fun-bar" style="width:0%"></div>
                                 </div>
                             </div>
                             <div class="info-num fun-num">
@@ -64,8 +67,8 @@
                                 <i class="fas fa-dumbbell"></i>&nbsp;Difficulty
                             </div>
                             <div class="info-bar">
-                                <div class="progress  p-0 m-0">
-                                    <div class="progress-bar difficulty-bar p-0 m-0" style="width:0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar difficulty-bar" style="width:0%"></div>
                                 </div>
                             </div>
                             <div class="info-num difficulty-num">
@@ -77,8 +80,8 @@
                                 <i class="fas fa-thumbs-up"></i>&nbsp;Recommend
                             </div>
                             <div class="info-bar">
-                                <div class="progress  p-0 m-0">
-                                    <div class="progress-bar recommend-bar p-0 m-0" style="width:0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar recommend-bar" style="width:0%"></div>
                                 </div>
                             </div>
                             <div class="info-num recommend-num">
@@ -98,8 +101,8 @@
                                 <i class="fas fa-book"></i>&nbsp;Reading
                             </div>
                             <div class="info-bar">
-                                <div class="progress  p-0 m-0">
-                                    <div class="progress-bar reading-bar p-0 m-0" style="width:0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar reading-bar" style="width:0%"></div>
                                 </div>
                             </div>
                             <div class="info-num reading-num">
@@ -111,8 +114,8 @@
                                 <i class="fas fa-pencil-alt"></i>&nbsp;Writing
                             </div>
                             <div class="info-bar">
-                                <div class="progress  p-0 m-0">
-                                    <div class="progress-bar writing-bar p-0 m-0" style="width:0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar writing-bar" style="width:0%"></div>
                                 </div>
                             </div>
                             <div class="info-num writing-num">
@@ -124,8 +127,8 @@
                                 <i class="fas fa-user-friends"></i>&nbsp;Groupwork
                             </div>
                             <div class="info-bar">
-                                <div class="progress  p-0 m-0">
-                                    <div class="progress-bar group-bar p-0 m-0" style="width:0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar group-bar" style="width:0%"></div>
                                 </div>
                             </div>
                             <div class="info-num group-num">
@@ -137,8 +140,8 @@
                                 <i class="fas fa-flask"></i>&nbsp;Other
                             </div>
                             <div class="info-bar">
-                                <div class="progress p-0 m-0">
-                                    <div class="progress-bar homework-bar p-0 m-0" style="width: 0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar homework-bar" style="width: 0%"></div>
                                 </div>
                             </div>
                             <div class="info-num homework-num">
@@ -148,6 +151,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="grades-container">
                 <div class="chart-container d-flex align-items-center justify-content-center">
                     <canvas width="100%" height="100%" id="myChart"></canvas>
@@ -157,38 +161,37 @@
                     <p class="students-text"> &mdash; Students</p>
                 </div>
             </div>
-
         </div>
 
-
-        <div class="dropdown">
-            <button id="review-sort-select" class="btn btn-secondary dropdown-toggle" type="button" id="sortOptions"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-            <div class="dropdown-menu" aria-labelledby="sortOptions">
-                <button id="votes-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">Most
-                    Helpful
-                </button>
-                <button id="recent-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">Most
-                    Recent
-                </button>
-                <button id="highrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
-                    Highest
-                    Rating
-                </button>
-                <button id="lowrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
-                    Lowest
-                    Rating
-                </button>
+        <div class="reviews-container mb-5 px-3">
+            <div class="reviews-toolbar d-flex">
+                <div class="ml-auto dropdown btn-group">
+                    <button class="btn bg-white" disabled>Sort by</button>
+                    <button id="review-sort-select" class="btn btn-primary dropdown-toggle" type="button" id="sortOptions"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                    <div class="dropdown-menu" aria-labelledby="sortOptions">
+                        <button id="votes-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                            Most Helpful
+                        </button>
+                        <button id="recent-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                            Most Recent
+                        </button>
+                        <button id="highrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                            Highest Rating
+                        </button>
+                        <button id="lowrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                            Lowest Rating
+                        </button>
+                    </div>
+                </div>
             </div>
+            {% include "reviews/reviews.html" with reviews=reviews %}
         </div>
-
-        {% include "reviews/reviews.html" with reviews=reviews %}
     </div>
 {% endblock %}
 
 {% block js %}
     <script type="module" src="{% static 'reviews/review.js' %}"></script>
-    <script type="module" src="{% static 'course/javascript/Chart.bundle.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script type="module"
             src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>

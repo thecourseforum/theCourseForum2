@@ -85,7 +85,7 @@ class Subdepartment(models.Model):
         latest_semester = Semester.latest()
         return self.course_set.filter(
             semester_last_taught__year__gte=latest_semester.year -
-                                            5).order_by("number")
+            5).order_by("number")
 
     def has_current_course(self):
         """Return True if subdepartment has a course in current semester."""
@@ -129,7 +129,17 @@ class User(AbstractUser):
 
     def reviews(self):
         """Return user reviews sorted by creation date."""
-        return self.review_set.order_by("-created")
+        return self.review_set.annotate(
+            sum_votes=models.functions.Coalesce(
+                models.Sum('vote__value'),
+                models.Value(0)
+            ),
+            user_vote=models.functions.Coalesce(
+                models.Sum('vote__value',
+                           filter=models.Q(vote__user=self)),
+                models.Value(0)
+            )
+        ).order_by('-created')
 
 
 class Instructor(models.Model):
@@ -237,7 +247,8 @@ class Instructor(models.Model):
 
     def average_gpa_for_course(self, course):
         """Compute average GPA"""
-        return CourseInstructorGrade.objects.filter(course=course, instructor=self).aggregate(
+        return CourseInstructorGrade.objects.filter(
+            course=course, instructor=self).aggregate(
             models.Avg('average'))['average__avg']
 
     def taught_courses(self):
@@ -689,23 +700,24 @@ class Review(models.Model):
     @staticmethod
     def display_reviews(course, instructor, user):
         """Prepare review list for course-instructor page."""
-
         reviews = Review.objects.filter(
             instructor=instructor,
             course=course,
-        ).exclude(text="").order_by("-created")
-
+        ).exclude(text="").annotate(
+            sum_votes=models.functions.Coalesce(
+                models.Sum('vote__value'),
+                models.Value(0)
+            ),
+        )
         if user.is_authenticated:
-            for review in reviews:
-                try:
-                    review.user_vote = Vote.objects.get(
-                        user=user,
-                        review=review,
-                    ).value
-                except Vote.DoesNotExist:
-                    review.user_vote = 0
-
-        return reviews
+            reviews = reviews.annotate(
+                user_vote=models.functions.Coalesce(
+                    models.Sum('vote__value',
+                               filter=models.Q(vote__user=user)),
+                    models.Value(0)
+                ),
+            )
+        return reviews.order_by("-created")
 
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"

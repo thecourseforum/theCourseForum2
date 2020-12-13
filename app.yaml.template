@@ -1,6 +1,6 @@
 # Google App Engine Config
 
-runtime: python37
+runtime: python38
 
 # The --http flag exposes the app with uWSGI only and will act as the router/proxy/load balancer
 # If we want an nginx webserver upstream for more features, we would have to use a --socket flag so that nginx can communicate with uWSGI
@@ -28,10 +28,11 @@ env_variables:
     DB_USER: ${DB_USER}
     DB_PASSWORD: ${DB_PASSWORD}
     DB_PORT: ${DB_PORT}
-    HOSTNAME: ${HOSTNAME}
     ES_COURSE_DOCUMENTS_ENDPOINT: ${ES_COURSE_DOCUMENTS_ENDPOINT}
     ES_INSTRUCTOR_DOCUMENTS_ENDPOINT: ${ES_INSTRUCTOR_DOCUMENTS_ENDPOINT}
     ES_PRIVATE_API_KEY: ${ES_PRIVATE_API_KEY}
     ES_COURSE_SEARCH_ENDPOINT: ${ES_COURSE_SEARCH_ENDPOINT}
     ES_INSTRUCTOR_SEARCH_ENDPOINT: ${ES_INSTRUCTOR_SEARCH_ENDPOINT}
     ES_PUBLIC_API_KEY: ${ES_PUBLIC_API_KEY}
+    DISCORD_URL_BUG: ${DISCORD_URL_BUG}
+    DISCORD_URL_FEEDBACK: ${DISCORD_URL_FEEDBACK}
