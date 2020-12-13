@@ -5,7 +5,8 @@
 {% endblock %}
 
 <div class="login-button-container m-0">
-    <a class="login-button-wrapper" href="{% url 'social:begin' 'google-oauth2' %}">
+    <a class="login-button-wrapper"
+       href="{% url 'social:begin' 'google-oauth2' %}?next={{request.get_full_path}}">
         <button class="login-button"></button>
     </a>
 </div>
