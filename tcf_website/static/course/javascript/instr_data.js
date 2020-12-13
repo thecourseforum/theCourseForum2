@@ -6,11 +6,11 @@
 // Executed when DOM is ready
 jQuery(function($) {
 
-    /*** Fetch instructor data for given course ***/
-    // var courseID - From global var in template
+    /* Fetch instructor data for given course */
     var pageSize = "1000";
     var instrEndpoint = `/api/instructors/?course=${courseID}` +
         `&page_size=${pageSize}`;
+    // var courseID is from global var in template
     $.getJSON(instrEndpoint, function(data) {
         console.log(data);
         // Generate dropdown links
