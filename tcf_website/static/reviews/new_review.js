@@ -38,7 +38,6 @@ jQuery(function($) {
       $("#semester").prop("disabled", true);
     });
 
-
     /*** Fetch course data on subject select ***/
     $("#subject").change(function() {
         // Clear & disable sequenced dropdowns
