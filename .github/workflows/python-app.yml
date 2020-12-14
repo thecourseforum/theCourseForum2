@@ -75,9 +75,16 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
       - name: Collect static files
         run: python3 manage.py collectstatic --noinput --clear
+
+      - name: Substitute environment variables
+        run: envsubst < app.yaml.template > app.yaml
+
+      - name: Deploy to Google App Engine
+        uses: google-github-actions/deploy-appengine@main
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}

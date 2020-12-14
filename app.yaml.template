@@ -22,6 +22,7 @@ handlers:
 
 env_variables:
     # Set variables accordingly.
+    SECRET_KEY: ${SECRET_KEY}
     DEBUG: ${DEBUG}
     DB_NAME: ${DB_NAME}
     DB_HOST: ${DB_HOST}
