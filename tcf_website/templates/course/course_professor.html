@@ -21,11 +21,11 @@
                     <h2 class="mr-md-3">{{ course.title }}</h2>
                 </div>
 
-                <div class="instructor-row d-flex flex-sm-row flex-column align-items-baseline">
+                <div class="instructor-info d-flex flex-sm-row flex-column align-items-baseline">
 
-                  <div class="instructor d-flex flex-row">
+                  <div class="d-flex flex-row">
                     <!-- Instructor page link -->
-                    <a class="align-self-center mr-3"
+                    <a class="instructor-profile align-self-center mr-3"
                        href="{% url 'instructor' instructor_id=instructor.id %}">
                       <h4 class="m-0 text-tcf-indigo"
                           tabindex="0" data-toggle="tooltip" data-placement="bottom"
@@ -35,14 +35,14 @@
                     </a>
 
                     <!-- Instructor Dropdown -->
-                    <div class="instructor-menu dropdown">
+                    <div class="instructor dropdown">
                       <a class="instructor-select btn btn-lg text-tcf-orange p-0 dropdown-toggle" href="#"
                          role="button" id="dropdownMenuLink" data-toggle="dropdown"
                          aria-haspopup="true" aria-expanded="false">
-                         {{ instructor.full_name }}
+                         {{ instructor.last_name }}, {{ instructor.first_name }}
                       </a>
 
-                      <div id="instructorMenu" class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink" disabled>
+                      <div id="instructorMenu" class="instructor-menu dropdown-menu w-100" aria-labelledby="dropdownMenuLink" disabled>
                         <!-- To be populated by instr_data.js script -->
                       </div>
                     </div>

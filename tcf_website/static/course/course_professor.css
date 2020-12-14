@@ -1,12 +1,15 @@
-.course-instructor-header .instructor-menu .instructor-select{
+/* Instructor info row */
+.course-instructor-header .instructor-info .instructor-select{
    font-size: 28px;
 }
 @media (max-width: 900px) {
-  .course-instructor-header .instructor-menu .instructor-select{
+  .course-instructor-header .instructor-info .instructor-select{
     font-size: 22px;
   }
 }
-
+.course-instructor-header .instructor-menu{
+   box-shadow: 1px 1px 10px rgba(0,0,0,0.2);
+}
 /* Change tooltip alignment */
 @media (min-width: 768px) {
   .tooltip-inner {
