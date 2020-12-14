@@ -185,14 +185,6 @@ ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = env.str(
     'ES_INSTRUCTOR_DOCUMENTS_ENDPOINT')
 ES_PRIVATE_API_KEY = env.str('ES_PRIVATE_API_KEY')
 
-DATABASES['default'] = {
-    'NAME': env.str('DB_NAME'),
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'USER': env.str('DB_USER'),
-    'PASSWORD': env.str('DB_PASSWORD'),
-    'HOST': env.str('DB_HOST'),
-    'PORT': env.str('DB_PORT'),
-}
 
 # Django Rest Framework Settings
 REST_FRAMEWORK = {
