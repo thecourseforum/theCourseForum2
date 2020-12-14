@@ -120,7 +120,7 @@ jQuery(function($) {
             return this;
         })
             .done(function() {
-                // Enable semester selector, disable the following
+                // Enable semester selector
                 $("#semester").prop("disabled", false);
             });
     });
