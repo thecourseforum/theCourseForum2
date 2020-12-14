@@ -253,6 +253,11 @@ class Command(BaseCommand):
             units,
             section_type):
 
+        # Separating out unique fields lets us search for a given section number in
+        # a semester (which are unique) and then update it with new fields as necessary.
+        # Could maybe use `update_or_create`, but I couldn't resolve some
+        # errors.
+
         unique_params = {}
         params = {}
 
@@ -281,7 +286,7 @@ class Command(BaseCommand):
                 setattr(section, key, value)
             section.save()
         except Section.DoesNotExist:
-            # NOTE: Change to params |= unique_params when we switch to Python 3.9
+            # Change to params |= unique_params when we switch to Python 3.9
             params.update(unique_params)
             section = Section.objects.create(**params)
             created = True
