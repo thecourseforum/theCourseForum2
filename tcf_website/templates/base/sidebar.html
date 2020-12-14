@@ -56,7 +56,7 @@
         </div>
       </div>
     {% else %}
-      <a href="{% url 'login' %}"
+      <a href="#loginModal" data-toggle="modal"
       class="list-group-item list-group-item-action
       {% if request.resolver_match.url_name == 'login' %}active{% endif %}">
         <h4><i class="fa fa-user fa-fw"></i></h4>
