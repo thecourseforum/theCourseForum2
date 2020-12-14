@@ -213,8 +213,9 @@ class Command(BaseCommand):
         fixed_instructor_names = []
         for name in instructor_names:
             for split_name in name.split(','):
-                if split_name != '':
-                    fixed_instructor_names.append(split_name.strip())
+                stripped = split_name.strip()
+                if stripped != '':
+                    fixed_instructor_names.append(stripped)
 
         for name in fixed_instructor_names:
             if name in {'Staff', 'Faculty Staff', 'Faculty'} or name.isspace():
