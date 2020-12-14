@@ -6,22 +6,22 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from django.contrib import messages
 from django import forms
-
+from .browse import browse
 
 def login(request):
     """Login view."""
     if request.user.is_authenticated:
         messages.success(request, "Logged in successfully!")
-        return redirect('browse')
-    return render(request, 'login/login.html')
-
+        return redirect('profile')
+    return browse(request)
+    # Note: For some reason the data won't load if you use render like below:
+    # return render(request, 'browse/browse.html')
 
 def login_error(request):
     """Login error view."""
     messages.error(request, 'There was an error logging you in. Please make \
                    sure you\'re using an @virginia.edu email address.')
-    return render(request, 'login/login.html')
-
+    return browse(request)
 
 class ExtraUserInfoForm(forms.Form):
     """Form to collect extra user info on sign up."""
@@ -56,4 +56,4 @@ def logout(request):
     """Logs out user."""
     auth_logout(request)
     messages.add_message(request, messages.SUCCESS, "Logged out successfully!")
-    return redirect('login')
+    return redirect('browse')
