@@ -86,7 +86,7 @@ jQuery(function($) {
             $.each(data.results, function(i, instr) {
                 $("<option />", {
                     val: instr.id,
-                    text: instr.first_name + " " + instr.last_name
+                    text: instr.last_name + ", " + instr.first_name
                 }).appendTo("#instructor");
             });
             return this;
