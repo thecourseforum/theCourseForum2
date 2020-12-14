@@ -267,17 +267,12 @@ class Command(BaseCommand):
             'section_type'
         }
 
-        for k, v in locals().items():
-            if k in unique_fields and not pd.isnull(v):
-                unique_params[k] = v
-            if k in fields and not pd.isnull(v):
-                params[k] = v
+        for key, value in locals().items():
+            if key in unique_fields and not pd.isnull(value):
+                unique_params[key] = value
+            if key in fields and not pd.isnull(value):
+                params[key] = value
 
-        # print(locals())
-        # section, created = Section.objects.update_or_create(
-        #     sis_section_number=unique_params['sis_section_number'],
-        #     semester=unique_params['semester'],
-        #     **params)
         section = None
         created = False
         try:
@@ -286,6 +281,7 @@ class Command(BaseCommand):
                 setattr(section, key, value)
             section.save()
         except Section.DoesNotExist:
+            # NOTE: Change to params |= unique_params when we switch to Python 3.9
             params.update(unique_params)
             section = Section.objects.create(**params)
             created = True
