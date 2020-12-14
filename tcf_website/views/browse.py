@@ -118,7 +118,15 @@ def course_instructor(request, course_id, instructor_id):
     """View for course instructor page."""
 
     course = Course.objects.get(pk=course_id)
-    instructor = Instructor.objects.get(pk=instructor_id)
+    instructor = Instructor.objects\
+        .filter(pk=instructor_id)\
+        .annotate(
+            semester_last_taught_id=Max('section__semester',
+                                     filter=Q(section__course=course)),
+        )
+    instructor = instructor[0]
+    # Note: Like view above, this is kinda a hacky way to get the last-taught semester
+    semester_last_taught = Semester.objects.get(pk=instructor.semester_last_taught_id)
 
     # Filter out reviews with no text.
     reviews = Review.display_reviews(course, instructor, request.user)
@@ -202,6 +210,7 @@ def course_instructor(request, course_id, instructor_id):
                       'course': course,
                       'course_id': course_id,
                       'instructor': instructor,
+                      'semester_last_taught': semester_last_taught,
                       'reviews': reviews,
                       'breadcrumbs': breadcrumbs,
                       'data': data_json
