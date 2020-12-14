@@ -116,7 +116,7 @@ class InstructorViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = InstructorFilter
 
     def get_queryset(self):
-        # Returns filtered semesters ordered
+        # Returns filtered instructors ordered by last name
         return self.queryset.order_by('last_name')
 
 
