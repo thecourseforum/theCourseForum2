@@ -4,27 +4,56 @@
 {% block title %}{{course.code}} - {{instructor.full_name}} - theCourseForum{% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'common/toolbar.css' %}"/>
     <link rel="stylesheet" href="{% static 'course/course_professor.css' %}"/>
     <link rel="stylesheet" href="{% static 'reviews/review.css' %}"/>
 {% endblock %}
 
 {% block content %}
 
-    <div class="course-professor container">
+    <div class="course-professor container text-left px-0">
 
         {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
 
         <div class="course-instructor-header my-3 mt-md-5 px-3">
-            <div class="d-flex flex-column justify-content-left justify-content-sm-center">
-                <div class="d-md-flex align-items-baseline">
+            <div class="d-flex flex-column">
+                <div class="course-title d-md-flex align-items-baseline">
                     <h1 class="mr-md-3 text-nowrap">{{ course.code }}</h1>
                     <h2 class="mr-md-3">{{ course.title }}</h2>
                 </div>
-                <h3 class="font-weight-light text-tcf-orange">
-                  <a href="{% url 'instructor' instructor_id=instructor.id %}">
-                    {{ instructor.full_name }}</a>
-                </h3>
+
+                <div class="instructor-info d-flex flex-sm-row flex-column align-items-baseline">
+
+                  <div class="d-flex flex-row">
+                    <!-- Instructor page link -->
+                    <a class="instructor-profile align-self-center mr-3"
+                       href="{% url 'instructor' instructor_id=instructor.id %}">
+                      <h4 class="m-0 text-tcf-indigo"
+                          tabindex="0" data-toggle="tooltip" data-placement="bottom"
+                          title="View instructor profile">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                      </h4>
+                    </a>
+
+                    <!-- Instructor Dropdown -->
+                    <div class="instructor dropdown">
+                      <a class="instructor-select btn btn-lg text-tcf-orange p-0 dropdown-toggle" href="#"
+                         role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                         aria-haspopup="true" aria-expanded="false">
+                         {{ instructor.last_name }}, {{ instructor.first_name }}
+                      </a>
+
+                      <div id="instructorMenu" class="instructor-menu dropdown-menu w-100" aria-labelledby="dropdownMenuLink" disabled>
+                        <!-- To be populated by instr_data.js script -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Semester last taught -->
+                  <div class="ml-auto pl-5 btn-group text-center">
+                    <span class="p-2 bg-white">Last taught</span>
+                    <span class="p-2 bg-tcf-blue text-white">{{ semester_last_taught }}</span>
+                  </div>
+                </div>
             </div>
         </div>
 
@@ -164,26 +193,36 @@
         </div>
 
         <div class="reviews-container mb-5 px-3">
-            <div class="reviews-toolbar d-flex">
-                <div class="ml-auto dropdown btn-group">
-                    <button class="btn bg-white" disabled>Sort by</button>
-                    <button id="review-sort-select" class="btn btn-primary dropdown-toggle" type="button" id="sortOptions"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                    <div class="dropdown-menu" aria-labelledby="sortOptions">
-                        <button id="votes-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
-                            Most Helpful
-                        </button>
-                        <button id="recent-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
-                            Most Recent
-                        </button>
-                        <button id="highrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
-                            Highest Rating
-                        </button>
-                        <button id="lowrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
-                            Lowest Rating
-                        </button>
+            <div class="reviews-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
+                <h3 class="mb-0 mr-4">{{ reviews|length }} Comments</h3>
+                <div class="d-flex flex-sm-row flex-column col p-0">
+                    <a href="{% url 'new_review' %}" class="btn bg-tcf-orange text-white">
+                      <i class="fa fa-plus" aria-hidden="true"></i> Add your review!
+                    </a>
+                    {% if reviews %}
+                    <div class="ml-auto">
+                        <div class="dropdown btn-group ml-sm-4">
+                            <button class="btn bg-white" disabled>Sort by</button>
+                            <button id="review-sort-select" class="btn btn-primary dropdown-toggle" type="button" id="sortOptions"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                            <div class="dropdown-menu" aria-labelledby="sortOptions">
+                                <button id="votes-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                    Most Helpful
+                                </button>
+                                <button id="recent-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                    Most Recent
+                                </button>
+                                <button id="highrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                    Highest Rating
+                                </button>
+                                <button id="lowrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                    Lowest Rating
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                {% endif %}
             </div>
             {% include "reviews/reviews.html" with reviews=reviews %}
         </div>
@@ -191,14 +230,28 @@
 {% endblock %}
 
 {% block js %}
-    <script type="module" src="{% static 'reviews/review.js' %}"></script>
+    <!-- For instructor data -->
+    <script> // Create global js vars from template context vars
+       var courseID = "{{ course_id|escapejs }}";
+    </script>
+    <script type="module" src="{% static 'course/javascript/instr_data.js' %}"></script>
+
+    <!-- For Bootstrap tooltip -->
+    <script>
+      $(function () { $('[data-toggle="tooltip"]').tooltip() })
+    </script>
+
+    <!-- For grade data -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script type="module"
             src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
     <script type="module" src="{% static 'course/javascript/course_data.js' %}"></script>
     <script type="module">
+        // Run loaddata function from above script
         import {loadData} from "{% static 'course/javascript/course_data.js' %}";
-
         loadData(JSON.parse("{{ data|escapejs }}"))
     </script>
+
+    <!-- For course-instructor reviews -->
+    <script type="module" src="{% static 'reviews/review.js' %}"></script>
 {% endblock %}
