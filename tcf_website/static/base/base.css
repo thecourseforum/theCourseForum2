@@ -62,6 +62,14 @@ footer > .row {
     background-color: #172248;
 }
 
+/* For text on small screens */
+@media (max-width: 900px) {
+  h1{ font-size: 32px; }
+  h2{ font-size: 26px; }
+  h3{ font-size: 22px; }
+  h4{ font-size: 20px; }
+  html{ font-size: 14px; }
+}
 
 /* For buttons */
 .btn.btn-primary, .btn.btn-outline-primary {

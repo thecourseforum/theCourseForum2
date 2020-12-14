@@ -2,7 +2,7 @@
     <div class="btn-toolbar justify-content-center text-center text-md-left px-3"
          role="toolbar" aria-label="Toolbar with button groups">
         <!-- Breadcrumbs -->
-        <div id="breadcrumbs" class="rounded bg-white col-md-8 mr-md-auto mb-3"
+        <div id="breadcrumbs" class="rounded bg-white mr-md-auto mb-3 {% if active_text %}col-md-8{% endif %}"
              role="toolbar" aria-label="Breadcrumbs">
             <ol class="breadcrumb bg-white mb-0">
                 {% for text, url, active in breadcrumbs %}
@@ -23,7 +23,7 @@
           {% endif %}
     </div>
 
-    <div class="d-flex justify-content-center justify-content-md-end mb-3 px-3"
+    <div class="d-flex justify-content-center justify-content-md-end px-3 mb-3"
          role="toolbar" aria-label="Toolbar with button groups">
         <!-- Sorting buttons -->
         {% if sorting %}

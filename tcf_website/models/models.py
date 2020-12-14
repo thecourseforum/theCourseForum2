@@ -551,7 +551,8 @@ class Section(models.Model):
     section_type = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return f"{self.course} {self.semester} {', '.join(str(i) for i in self.instructors.all())}"
+        return f"{self.course} | {self.semester} | " \
+               f"{', '.join(str(i) for i in self.instructors.all())}"
 
     class Meta:
         indexes = [
