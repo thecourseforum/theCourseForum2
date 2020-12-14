@@ -86,7 +86,7 @@ jQuery(function($) {
             $.each(data.results, function(i, instr) {
                 $("<option />", {
                     val: instr.id,
-                    text: instr.first_name + " " + instr.last_name
+                    text: instr.last_name + ", " + instr.first_name
                 }).appendTo("#instructor");
             });
             return this;
@@ -120,7 +120,7 @@ jQuery(function($) {
             return this;
         })
             .done(function() {
-                // Enable semester selector, disable the following
+                // Enable semester selector
                 $("#semester").prop("disabled", false);
             });
     });

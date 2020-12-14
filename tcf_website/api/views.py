@@ -115,6 +115,10 @@ class InstructorViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = FlexiblePagination
     filterset_class = InstructorFilter
 
+    def get_queryset(self):
+        # Returns filtered instructors ordered by last name
+        return self.queryset.order_by('last_name')
+
 
 class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
     """DRF ViewSet for Semester"""
