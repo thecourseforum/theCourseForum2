@@ -10,12 +10,12 @@ from tcf_website.models import CourseInstructorGrade
 class Command(BaseCommand):
     """
     This command attempts to fix `MultipleObjectsReturned` errors.
-    
+
     The assumption is that exactly half of the CourseInstructorGrade instances
     are missing emails, and the other half do have emails. This script first
     imputes the email fields of the instances without emails and then uses each
     pair to create a new instance, deleting the existing pairs at the end.
-    
+
     There was exactly one exception at the time of writing, and we agreed that
     it was reasonable to assume that the instance with lr4zs@virginia.edu was
     the  wrong one, so this script first updates that email field to an empty
