@@ -8,6 +8,7 @@ from django.contrib import messages
 from django import forms
 from .browse import browse
 
+
 def login(request):
     """Login view."""
     if request.user.is_authenticated:
@@ -17,11 +18,13 @@ def login(request):
     # Note: For some reason the data won't load if you use render like below:
     # return render(request, 'browse/browse.html')
 
+
 def login_error(request):
     """Login error view."""
     messages.error(request, 'There was an error logging you in. Please make \
                    sure you\'re using an @virginia.edu email address.')
     return browse(request)
+
 
 class ExtraUserInfoForm(forms.Form):
     """Form to collect extra user info on sign up."""
