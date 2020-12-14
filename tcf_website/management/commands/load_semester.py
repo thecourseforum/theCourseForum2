@@ -253,29 +253,49 @@ class Command(BaseCommand):
             units,
             section_type):
 
+        unique_params = {}
         params = {}
-        fields = {
+
+        unique_fields = {
             'sis_section_number',
             'semester',
+        }
+        fields = {
             'course',
             'topic',
             'units',
-            'section_type'}
+            'section_type'
+        }
+
         for k, v in locals().items():
+            if k in unique_fields and not pd.isnull(v):
+                unique_params[k] = v
             if k in fields and not pd.isnull(v):
                 params[k] = v
 
         # print(locals())
-        section, created = Section.objects.get_or_create(
-            **params
-        )
+        # section, created = Section.objects.update_or_create(
+        #     sis_section_number=unique_params['sis_section_number'],
+        #     semester=unique_params['semester'],
+        #     **params)
+        section = None
+        created = False
+        try:
+            section = Section.objects.get(**unique_params)
+            for key, value in params.items():
+                setattr(section, key, value)
+            section.save()
+        except Section.DoesNotExist:
+            params.update(unique_params)
+            section = Section.objects.create(**params)
+            created = True
 
         for instructor in instructors:
             section.instructors.add(instructor)
 
         if self.verbose:
             if created:
-                print(f"Created {section}")
+                print(f"Created/updated {section}")
             else:
                 print(f"Retrieved {section}")
 
