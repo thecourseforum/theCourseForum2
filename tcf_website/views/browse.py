@@ -122,11 +122,13 @@ def course_instructor(request, course_id, instructor_id):
         .filter(pk=instructor_id)\
         .annotate(
             semester_last_taught_id=Max('section__semester',
-                                     filter=Q(section__course=course)),
+                                        filter=Q(section__course=course)),
         )
     instructor = instructor[0]
-    # Note: Like view above, this is kinda a hacky way to get the last-taught semester
-    semester_last_taught = Semester.objects.get(pk=instructor.semester_last_taught_id)
+    # Note: Like view above, this is kinda a hacky way to get the last-taught
+    # semester
+    semester_last_taught = Semester.objects.get(
+        pk=instructor.semester_last_taught_id)
 
     # Filter out reviews with no text.
     reviews = Review.display_reviews(course, instructor, request.user)
