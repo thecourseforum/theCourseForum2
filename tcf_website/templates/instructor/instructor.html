@@ -67,7 +67,7 @@
         <h2 class="mt-5 h3">{{ dept }}</h2>
         {% for course in dept_data.courses %}
         <div class="card mt-3">
-            <a href="{% url 'course' course_id=course.id %}">
+            <a href="{% url 'course_instructor' course_id=course.id instructor_id=instructor.id %}">
                 <div class="card-header course-header py-4">
                     {{ course.name }}
                 </div>
