@@ -5,7 +5,8 @@
 
 from .auth import login, login_error, logout, collect_extra_info
 from .index import index, privacy, terms, AboutView
-from .browse import browse, department, course_view, course_instructor, instructor_view
+from .browse import (browse, department, course_view, course_view_convenient,
+                     course_instructor, instructor_view)
 from .review import new_review, DeleteReview, upvote, downvote
 from .profile import profile, reviews
 from .search import search

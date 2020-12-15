@@ -4,7 +4,7 @@
 import json
 
 from django.db.models import Avg, Max, Q
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -112,6 +112,16 @@ def course_view(request, course_id):
                       'latest_semester': latest_semester,
                       'breadcrumbs': breadcrumbs
                   })
+
+
+def course_view_convenient(request, mnemonic, course_number):
+    """A Course view that allows you to input mnemonic and number instead"""
+    course_id = get_object_or_404(Course,
+                                  subdepartment__mnemonic=mnemonic.upper(),
+                                  number=course_number).id
+    # A (unique) course must have been found if you reach here
+    # NOTE: You access the database twice, but the overhead should be minimal.
+    return course_view(request, course_id)
 
 
 def course_instructor(request, course_id, instructor_id):
