@@ -212,9 +212,10 @@ class Command(BaseCommand):
         # In some old data files, multiple professors are in a single column
         fixed_instructor_names = []
         for name in instructor_names:
-            for split_name in name.split(', '):
-                if split_name != '':
-                    fixed_instructor_names.append(split_name)
+            for split_name in name.split(','):
+                stripped = split_name.strip()
+                if stripped != '':
+                    fixed_instructor_names.append(stripped)
 
         for name in fixed_instructor_names:
             if name in {'Staff', 'Faculty Staff', 'Faculty'} or name.isspace():
@@ -252,29 +253,50 @@ class Command(BaseCommand):
             units,
             section_type):
 
+        # Separating out unique fields lets us search for a given section number in
+        # a semester (which are unique) and then update it with new fields as necessary.
+        # Could maybe use `update_or_create`, but I couldn't resolve some
+        # errors.
+
+        unique_params = {}
         params = {}
-        fields = {
+
+        unique_fields = {
             'sis_section_number',
             'semester',
+        }
+        fields = {
             'course',
             'topic',
             'units',
-            'section_type'}
-        for k, v in locals().items():
-            if k in fields and not pd.isnull(v):
-                params[k] = v
+            'section_type'
+        }
 
-        # print(locals())
-        section, created = Section.objects.get_or_create(
-            **params
-        )
+        for key, value in locals().items():
+            if key in unique_fields and not pd.isnull(value):
+                unique_params[key] = value
+            if key in fields and not pd.isnull(value):
+                params[key] = value
+
+        section = None
+        created = False
+        try:
+            section = Section.objects.get(**unique_params)
+            for key, value in params.items():
+                setattr(section, key, value)
+            section.save()
+        except Section.DoesNotExist:
+            # Change to params |= unique_params when we switch to Python 3.9
+            params.update(unique_params)
+            section = Section.objects.create(**params)
+            created = True
 
         for instructor in instructors:
             section.instructors.add(instructor)
 
         if self.verbose:
             if created:
-                print(f"Created {section}")
+                print(f"Created/updated {section}")
             else:
                 print(f"Retrieved {section}")
 

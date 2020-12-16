@@ -12,8 +12,13 @@
       <img class="logo" src="{% static 'base/img/new_logo.png' %}" alt="theCourseForum home">
     </a>
 
+    <!-- tCF event banner -->
+    <a id="event-banner" class="btn btn-outline-info mr-3" href="https://docs.google.com/forms/d/e/1FAIpQLSdVYuz0LzaHwQotf_utqRUIlSDJpctyCGdDbkXLRNwiCMqH6Q/viewform?usp=sf_link">
+      Apply to our team!
+    </a>
+
     <!-- tCF search -->
-    {% include "base/searchbar.html" %}
+    {% include "search/searchbar.html" %}
 
     <!-- tCF navbar toggler -->
     <button class="navbar-toggler menu" id="menu-toggle">
@@ -23,22 +28,22 @@
     <!-- tCF profile dropdown -->
     <div class="account-settings">
       {% if user.is_authenticated %}
-      <div class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown">
-          Hey, {{user.first_name}}!
-        </a>
-        <div class="dropdown-menu settings" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
-          <a class="dropdown-item" href="{% url 'reviews' %}">My Reviews</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown">
+            Hey, {{user.first_name}}!
+          </a>
+          <div class="dropdown-menu settings" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
+            <a class="dropdown-item" href="{% url 'reviews' %}">My Reviews</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+          </div>
         </div>
-      </div>
-      {% else %}
-      <div class="nav-item">
-        <a class="nav-link" href="{% url 'login' %}">Sign In</a>
-      </div>
-    {% endif %}
+        {% else %}
+        <div class="nav-item">
+          <a class="nav-link" href="#loginModal" data-toggle="modal">Sign In</a>
+        </div>
+      {% endif %}
     </div>
   </nav>
 </header>
