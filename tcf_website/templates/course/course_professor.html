@@ -4,28 +4,60 @@
 {% block title %}{{course.code}} - {{instructor.full_name}} - theCourseForum{% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'common/toolbar.css' %}"/>
     <link rel="stylesheet" href="{% static 'course/course_professor.css' %}"/>
     <link rel="stylesheet" href="{% static 'reviews/review.css' %}"/>
 {% endblock %}
 
 {% block content %}
 
-    <div class="course-professor container">
+    <div class="course-professor container text-left px-0">
 
         {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
 
-        <div class="d-flex flex-column my-3 mt-md-5">
-            <div class="d-md-flex justify-content-center">
-                <h1 class="mr-md-3" style="white-space: nowrap">{{ course.code }} |</h1>
-                <h1 class="mr-md-3">{{ course.title }}</h1>
+        <div class="course-instructor-header my-3 mt-md-5 px-3">
+            <div class="d-flex flex-column">
+                <div class="course-title d-md-flex align-items-baseline">
+                    <h1 class="mr-md-3 text-nowrap">{{ course.code }}</h1>
+                    <h2 class="mr-md-3">{{ course.title }}</h2>
+                </div>
+
+                <div class="instructor-info d-flex flex-sm-row flex-column align-items-baseline">
+
+                  <div class="d-flex flex-row">
+                    <!-- Instructor page link -->
+                    <a class="instructor-profile align-self-center mr-3"
+                       href="{% url 'instructor' instructor_id=instructor.id %}">
+                      <h4 class="m-0 text-tcf-indigo"
+                          tabindex="0" data-toggle="tooltip" data-placement="bottom"
+                          title="View instructor profile">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                      </h4>
+                    </a>
+
+                    <!-- Instructor Dropdown -->
+                    <div class="instructor dropdown">
+                      <a class="instructor-select btn btn-lg text-tcf-orange p-0 dropdown-toggle" href="#"
+                         role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                         aria-haspopup="true" aria-expanded="false">
+                         {{ instructor.last_name }}, {{ instructor.first_name }}
+                      </a>
+
+                      <div id="instructorMenu" class="instructor-menu dropdown-menu w-100" aria-labelledby="dropdownMenuLink" disabled>
+                        <!-- To be populated by instr_data.js script -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Semester last taught -->
+                  <div class="ml-auto pl-5 btn-group text-center">
+                    <span class="p-2 bg-white">Last taught</span>
+                    <span class="p-2 bg-tcf-blue text-white">{{ semester_last_taught }}</span>
+                  </div>
+                </div>
             </div>
-            <h2 class="text-center mb-3"><a
-                    href="{% url 'instructor' instructor_id=instructor.id %}">{{ instructor.full_name }}</a></h2>
         </div>
 
-
-        <div class="grades-ratings-container mb-5 ">
+        <div class="grades-ratings-container px-3">
             <div class="ratings-container">
                 <div class="ratings-row">
                     <div class="rating-card">
@@ -38,8 +70,8 @@
                                 <i class="fas fa-user"></i>&nbsp;Instructor
                             </div>
                             <div class="info-bar">
-                                <div class="progress p-0 m-0">
-                                    <div class="progress-bar instructor-bar p-0 m-0" style="width: 0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar instructor-bar" style="width: 0%"></div>
                                 </div>
                             </div>
                             <div class="info-num instructor-num">
@@ -51,8 +83,8 @@
                                 <i class="far fa-smile-beam"></i>&nbsp;Enjoyability
                             </div>
                             <div class="info-bar">
-                                <div class="progress p-0 m-0">
-                                    <div class="progress-bar fun-bar p-0 m-0" style="width:0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar fun-bar" style="width:0%"></div>
                                 </div>
                             </div>
                             <div class="info-num fun-num">
@@ -64,8 +96,8 @@
                                 <i class="fas fa-dumbbell"></i>&nbsp;Difficulty
                             </div>
                             <div class="info-bar">
-                                <div class="progress  p-0 m-0">
-                                    <div class="progress-bar difficulty-bar p-0 m-0" style="width:0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar difficulty-bar" style="width:0%"></div>
                                 </div>
                             </div>
                             <div class="info-num difficulty-num">
@@ -77,8 +109,8 @@
                                 <i class="fas fa-thumbs-up"></i>&nbsp;Recommend
                             </div>
                             <div class="info-bar">
-                                <div class="progress  p-0 m-0">
-                                    <div class="progress-bar recommend-bar p-0 m-0" style="width:0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar recommend-bar" style="width:0%"></div>
                                 </div>
                             </div>
                             <div class="info-num recommend-num">
@@ -98,8 +130,8 @@
                                 <i class="fas fa-book"></i>&nbsp;Reading
                             </div>
                             <div class="info-bar">
-                                <div class="progress  p-0 m-0">
-                                    <div class="progress-bar reading-bar p-0 m-0" style="width:0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar reading-bar" style="width:0%"></div>
                                 </div>
                             </div>
                             <div class="info-num reading-num">
@@ -111,8 +143,8 @@
                                 <i class="fas fa-pencil-alt"></i>&nbsp;Writing
                             </div>
                             <div class="info-bar">
-                                <div class="progress  p-0 m-0">
-                                    <div class="progress-bar writing-bar p-0 m-0" style="width:0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar writing-bar" style="width:0%"></div>
                                 </div>
                             </div>
                             <div class="info-num writing-num">
@@ -124,8 +156,8 @@
                                 <i class="fas fa-user-friends"></i>&nbsp;Groupwork
                             </div>
                             <div class="info-bar">
-                                <div class="progress  p-0 m-0">
-                                    <div class="progress-bar group-bar p-0 m-0" style="width:0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar group-bar" style="width:0%"></div>
                                 </div>
                             </div>
                             <div class="info-num group-num">
@@ -137,8 +169,8 @@
                                 <i class="fas fa-flask"></i>&nbsp;Other
                             </div>
                             <div class="info-bar">
-                                <div class="progress p-0 m-0">
-                                    <div class="progress-bar homework-bar p-0 m-0" style="width: 0%"></div>
+                                <div class="progress">
+                                    <div class="progress-bar homework-bar" style="width: 0%"></div>
                                 </div>
                             </div>
                             <div class="info-num homework-num">
@@ -148,6 +180,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="grades-container">
                 <div class="chart-container d-flex align-items-center justify-content-center">
                     <canvas width="100%" height="100%" id="myChart"></canvas>
@@ -157,44 +190,69 @@
                     <p class="students-text"> &mdash; Students</p>
                 </div>
             </div>
-
         </div>
 
-
-        <div class="dropdown">
-            <button id="review-sort-select" class="btn btn-secondary dropdown-toggle" type="button" id="sortOptions"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-            <div class="dropdown-menu" aria-labelledby="sortOptions">
-                <button id="votes-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">Most
-                    Helpful
-                </button>
-                <button id="recent-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">Most
-                    Recent
-                </button>
-                <button id="highrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
-                    Highest
-                    Rating
-                </button>
-                <button id="lowrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
-                    Lowest
-                    Rating
-                </button>
+        <div class="reviews-container mb-5 px-3">
+            <div class="reviews-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
+                <h3 class="reviews-heading mb-0 mr-4">{{ reviews|length }} Comments</h3>
+                <div class="reviews-options d-flex flex-sm-row flex-column col p-0">
+                    <a href="{% url 'new_review' %}" class="btn bg-tcf-orange text-white">
+                      <i class="fa fa-plus" aria-hidden="true"></i> Add your review!
+                    </a>
+                    {% if reviews %}
+                    <!-- Show sorting options iff reviews exist -->
+                    <div class="ml-auto">
+                        <div class="dropdown btn-group ml-sm-4">
+                            <button class="btn bg-white" disabled>Sort by</button>
+                            <button id="review-sort-select" class="btn btn-primary dropdown-toggle" type="button" id="sortOptions"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                            <div class="dropdown-menu" aria-labelledby="sortOptions">
+                                <button id="votes-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                    Most Helpful
+                                </button>
+                                <button id="recent-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                    Most Recent
+                                </button>
+                                <button id="highrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                    Highest Rating
+                                </button>
+                                <button id="lowrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                    Lowest Rating
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
+            {% include "reviews/reviews.html" with reviews=reviews %}
         </div>
-
-        {% include "reviews/reviews.html" with reviews=reviews %}
     </div>
 {% endblock %}
 
 {% block js %}
-    <script type="module" src="{% static 'reviews/review.js' %}"></script>
+    <!-- For instructor data -->
+    <script> // Create global js vars from template context vars
+       var courseID = "{{ course_id|escapejs }}";
+    </script>
+    <script type="module" src="{% static 'course/javascript/instr_data.js' %}"></script>
+
+    <!-- For Bootstrap tooltip -->
+    <script>
+      $(function () { $('[data-toggle="tooltip"]').tooltip() })
+    </script>
+
+    <!-- For grade data -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script type="module"
             src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
     <script type="module" src="{% static 'course/javascript/course_data.js' %}"></script>
     <script type="module">
+        // Run loaddata function from above script
         import {loadData} from "{% static 'course/javascript/course_data.js' %}";
-
         loadData(JSON.parse("{{ data|escapejs }}"))
     </script>
+
+    <!-- For course-instructor reviews -->
+    <script type="module" src="{% static 'reviews/review.js' %}"></script>
 {% endblock %}

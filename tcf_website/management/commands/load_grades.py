@@ -41,7 +41,7 @@ class Command(BaseCommand):
         self.verbosity = options['verbosity']
         self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
         if self.verbosity > 0:
-            print('Fetch Course and Instructor data for later use')
+            print('Step 1: Fetch Course and Instructor data for later use')
         self.courses = {
             (obj['subdepartment__mnemonic'], obj['number']): obj['id']
             for obj in Course.objects.values('id', 'number',
@@ -67,14 +67,19 @@ class Command(BaseCommand):
         CourseGrade.objects.all().delete()
         CourseInstructorGrade.objects.all().delete()
 
-        return df.dropna(
+        # Filter out data with no grades
+        df = df.dropna(
             how="all",
             subset=['A+', 'A', 'A-',
                     'B+', 'B', 'B-',
                     'C+', 'C', 'C-',
                     'D+', 'D', 'D-',
                     'F']
+        ).fillna(  # Impute NaNs with empty string if the field is a CharField
+            {'Instructor Email': ''},
         )
+        # Filter out data with missing instructor
+        return df[df['Instructor Last Name'] != 'MISSING INSTRUCTOR']
 
     def load_semester_file(self, file):
         year, semester = file.split('.')[0].split('_')
@@ -90,12 +95,12 @@ class Command(BaseCommand):
                 print(str(row).encode('ascii', 'ignore').decode('ascii'))
             self.load_row_into_dict(row)
         if self.verbosity > 0:
-            print('Done with loading CSV files')
+            print(f'Done loading {file}')
 
     def load_row_into_dict(self, row):
         # parsing fields of the CSV file
         first_name = row['Instructor First Name']
-        middle_name = row['Instructor Middle Name']
+        # row['Insructor Middle Name'] is not used
         last_name = row['Instructor Last Name']
         email = row['Instructor Email']
         subdepartment = row['Subject']
@@ -130,7 +135,7 @@ class Command(BaseCommand):
         # identifiers are tuple keys to dictionaries
         course_identifier = (subdepartment, number, title)
         course_instructor_identifier = (
-            subdepartment, number, first_name, middle_name, last_name, email)
+            subdepartment, number, first_name, last_name, email)
 
         # value of dictionaries (incremented onto value if key already exists)
         this_semesters_grades = [a_plus, a, a_minus,
@@ -156,6 +161,8 @@ class Command(BaseCommand):
             course_instructor_grades[course_instructor_identifier] = this_semesters_grades
 
     def load_dict_into_models(self):
+        if self.verbosity > 0:
+            print('Step 2: Bulk-create CourseGrade instances')
         # used for gpa calculation
         grade_weights = [4.0, 4.0, 3.7,
                          3.3, 3.0, 2.7,
@@ -208,8 +215,10 @@ class Command(BaseCommand):
             unsaved_cg_instances.append(unsaved_cg_instance)
         CourseGrade.objects.bulk_create(unsaved_cg_instances)
         if self.verbosity > 0:
-            print('Done loading CourseGrade models')
+            print('Done creating CourseGrade instances')
 
+        if self.verbosity > 0:
+            print('Step 3: Bulk-create CourseInstructorGrade instances')
         # load course instructor grades
         unsaved_cig_instances = []
         for row in tqdm(course_instructor_grades):
@@ -235,11 +244,11 @@ class Command(BaseCommand):
                 'subdepartment': row[0],
                 'number': row[1],
                 'first_name': row[2],
-                'middle_name': row[3],
-                'last_name': row[4],
-                'email': row[5],
+                'middle_name': '',  # for backward compatibility
+                'last_name': row[3],
+                'email': row[4],
                 'course_id': self.courses.get(row[:2]),
-                'instructor_id': self.instructors.get((row[2], row[4], row[5])),
+                'instructor_id': self.instructors.get(row[2:]),
                 'average': total_enrolled_gpa,
                 'a_plus': course_instructor_grades[row][0],
                 'a': course_instructor_grades[row][1],
@@ -264,4 +273,4 @@ class Command(BaseCommand):
             unsaved_cig_instances.append(unsaved_cig_instance)
         CourseInstructorGrade.objects.bulk_create(unsaved_cig_instances)
         if self.verbosity > 0:
-            print('Done loading CourseInstructorGrade models')
+            print('Done creating CourseInstructorGrade instances')
