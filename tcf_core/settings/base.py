@@ -174,6 +174,27 @@ ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = env.str(
     'ES_INSTRUCTOR_DOCUMENTS_ENDPOINT')
 ES_PRIVATE_API_KEY = env.str('ES_PRIVATE_API_KEY')
 
+# Logging configuration (from https://docs.djangoproject.com/en/3.1/topics/logging/)
+LOGGING = {
+    'version': 1,	
+    'disable_existing_loggers': False,	
+    'handlers': {	
+        'console': {	
+            'class': 'logging.StreamHandler',	
+        },	
+    },	
+    'root': {	
+        'handlers': ['console'],	
+        'level': 'DEBUG',
+    },	
+    'loggers': {	
+        'django': {	
+            'handlers': ['console'],	
+            'level': 'INFO',	
+            'propagate': False,	
+        },	
+    },	
+}
 
 # Django Rest Framework Settings
 REST_FRAMEWORK = {
