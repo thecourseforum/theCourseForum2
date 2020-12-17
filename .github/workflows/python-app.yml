@@ -50,7 +50,7 @@ jobs:
 
       - name: Run pylint
         run: |
-          pylint --disable=R0801 --load-plugins pylint_django tcf_website tcf_core
+          pylint --load-plugins pylint_django tcf_website tcf_core
 
       - name: Migrations & Tests
         run: |

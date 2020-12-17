@@ -28,7 +28,7 @@ If you are part of theCourseForum engineering team, follow the instructions belo
     - `./precommit`
     - Fix any problems indicated by tests or pylint.
         - `docker exec tcf_django python3 manage.py test`
-        - `docker exec tcf_django pylint --disable=R0801 --load-plugins pylint_django tcf_website tcf_core`
+        - `docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core`
 4. Stage your changes with `git add .`
 5. Commit with `git commit -m "Add X feature."`
 6. Push! `git push`
