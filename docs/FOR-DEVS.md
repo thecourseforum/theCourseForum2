@@ -95,7 +95,7 @@ If the 'Browse Courses' page isn't loading, try the following:
     docker-compose exec web bash            # Exec into db container
     ps auxwww | grep postgres               # Check postgres processes
     ```
-    If it outputs only one line, postgres is not running. 
+    If it outputs only one line, postgres is not running.
     - MacOS: Restart it with Homebrew: `brew services start postgresql`
     - Linux: `sudo service postgresql restart`
 2. There may be a Django migration issue. See the section below this for details.
@@ -162,8 +162,8 @@ python3 manage.py migrate
 
 ### New semester update plan
 1. Go into the `/tcf_website/management/commands/semester_data` directory. Edit `fetch_data.py` to run `download_semester()` on the semester(s) you want*. For example, if you wanted Fall 2020, you would add a line saying `download_semester(2020, 'fall')`.
-2. Commit this updated data and push it into the repo; it needs to be on prod to update the DB (you could update locally, but what's the point?). 
-3. On a prod environment (we've been using `heroku run bash --app thecourseforum-dev` because our prod/dev DBs are linked...but we probably won't have it be this way forever), run `python3 manage.py load_semester ${SEMESTER}`, where `${SEMESTER}` is the semester you're adding in the format `YEAR_SEASON` e.g. `2020_FALL`. 
+2. Commit this updated data and push it into the repo; it needs to be on prod to update the DB (you could update locally, but what's the point?).
+3. On a prod environment (we've been using `heroku run bash --app thecourseforum-dev` because our prod/dev DBs are linked...but we probably won't have it be this way forever), run `python3 manage.py load_semester ${SEMESTER}`, where `${SEMESTER}` is the semester you're adding in the format `YEAR_SEASON` e.g. `2020_FALL`.
 4. You should be able to run this command as many times as you want, as it accounts for/skips over duplicates and will update sections with new instructors as necessary. Most courses will likely not change much, but this duplicate handling helps us deal with classes whose instructors change after we load the data the first time.
 5. I think we have to run the `department_fixes` script too? But not sure about that one.
 6. TODO: Consolidate this into one master script that we can run as a cron job on prod.
