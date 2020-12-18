@@ -161,11 +161,15 @@ python3 manage.py migrate
     - You may have to run this command 3 times.
 
 ### New semester update plan
-1. `python manage.py update_semester 2021 january`
-    - fetches CSV from lous list
-    - loads section data into database
-        - update courses with new course info if available
-        - create new instructors if needed
+1. Go into the `/tcf_website/management/commands/semester_data` directory. Edit `fetch_data.py` to run `download_semester()` on the semester(s) you want*. For example, if you wanted Fall 2020, you would add a line saying `download_semester(2020, 'fall')`.
+2. Commit this updated data and push it into the repo; it needs to be on prod to update the DB (you could update locally, but what's the point?). 
+3. On a prod environment (we've been using `heroku run bash --app thecourseforum-dev` because our prod/dev DBs are linked...but we probably won't have it be this way forever), run `python3 manage.py load_semester ${SEMESTER}`, where `${SEMESTER}` is the semester you're adding in the format `YEAR_SEASON` e.g. `2020_FALL`. 
+4. You should be able to run this command as many times as you want, as it accounts for/skips over duplicates and will update sections with new instructors as necessary. Most courses will likely not change much, but this duplicate handling helps us deal with classes whose instructors change after we load the data the first time.
+5. I think we have to run the `department_fixes` script too? But not sure about that one.
+6. TODO: Consolidate this into one master script that we can run as a cron job on prod.
 
-### TODO: Deploying to prod
-- https://docs.djangoproject.com/en/3.0/howto/deployment/
+<sub>\* Yeah, this method really sucks; should probably improve it in the consolidation process</sub>
+
+### Deploying to prod
+Production deployments (i.e. the version of the site users see on thecourseforum.com) should be handled automatically by our CI (continuous integration system). As of the writing of this documentation, Travis is set up to autodeploy every time a build on the `master` branch passes and we're working on moving towards GitHub Actions. However, in the event that something fails, the manual deploy process is outlined [here](https://docs.google.com/document/d/1sPl1v4JrvicrgQluXvG9cR6GWPijC0hr7zAa3h3uE5E/edit#heading=h.9mo53b4db0s8). Just note that the environmental variables list in the doc may not be up-to-date, so remember to set them accordingly.
+
