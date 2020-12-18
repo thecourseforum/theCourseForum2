@@ -15,7 +15,7 @@ urlpatterns = [
     path('course/<int:course_id>/<int:instructor_id>',
          views.course_instructor, name='course_instructor'),
     path('course/<str:mnemonic>/<int:course_number>',
-         views.course_view_convenient, name='course_convenient'),
+         views.course_view_easy, name='course_easy'),
     path('instructor/<int:instructor_id>',
          views.instructor_view, name='instructor'),
     path('reviews/new', views.new_review, name='new_review'),

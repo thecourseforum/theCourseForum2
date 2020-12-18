@@ -114,7 +114,7 @@ def course_view(request, course_id):
                   })
 
 
-def course_view_convenient(request, mnemonic, course_number):
+def course_view_easy(request, mnemonic, course_number):
     """A Course view that allows you to input mnemonic and number instead"""
     course_id = get_object_or_404(Course,
                                   subdepartment__mnemonic=mnemonic.upper(),
