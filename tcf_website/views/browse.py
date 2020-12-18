@@ -4,7 +4,7 @@
 import json
 
 from django.db.models import Avg, Max, Q
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -71,16 +71,29 @@ def department(request, dept_id):
 
 
 def course_view(request, course_id):
-    """View for course page."""
+    """Legacy view for course page."""
+    course = get_object_or_404(Course, pk=course_id)
+    return redirect('course_easy',
+                    mnemonic=course.subdepartment.mnemonic, 
+                    course_number=course.number)
 
-    course = Course.objects.get(pk=course_id)
+
+def course_view_easy(request, mnemonic, course_number):
+    """A new Course view that allows you to input mnemonic and number instead."""
+    # Redirect if the mnemonic is not all uppercase
+    if mnemonic != mnemonic.upper():
+        return redirect('course_easy',
+                        mnemonic=mnemonic.upper(), course_number=course_number)
+    course = get_object_or_404(
+        Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number)
     latest_semester = Semester.latest()
     instructors = Instructor.objects\
         .filter(section__course=course).distinct()\
         .annotate(
             gpa=Avg('courseinstructorgrade__average',
                     filter=Q(courseinstructorgrade__course=course)),
-            difficulty=Avg('review__difficulty', filter=Q(review__course=course)),
+            difficulty=Avg('review__difficulty',
+                           filter=Q(review__course=course)),
             rating=(
                 Avg('review__instructor_rating', filter=Q(review__course=course)) +
                 Avg('review__enjoyability', filter=Q(review__course=course)) +
@@ -112,16 +125,6 @@ def course_view(request, course_id):
                       'latest_semester': latest_semester,
                       'breadcrumbs': breadcrumbs
                   })
-
-
-def course_view_easy(request, mnemonic, course_number):
-    """A Course view that allows you to input mnemonic and number instead"""
-    course_id = get_object_or_404(Course,
-                                  subdepartment__mnemonic=mnemonic.upper(),
-                                  number=course_number).id
-    # A (unique) course must have been found if you reach here
-    # NOTE: You access the database twice, but the overhead should be minimal.
-    return course_view(request, course_id)
 
 
 def course_instructor(request, course_id, instructor_id):
