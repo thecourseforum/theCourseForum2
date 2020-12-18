@@ -152,7 +152,7 @@ def course_instructor(request, course_id, instructor_id):
     breadcrumbs = [
         (dept.school.name, reverse('browse'), False),
         (dept.name, reverse('department', args=[dept.pk]), False),
-        (course.code, reverse('course', args=[course.pk]), False),
+        (course.code, reverse('course_easy', args=[course.subdepartment.mnemonic, course.number]), False),
         (instructor.full_name, None, True)
     ]
 
