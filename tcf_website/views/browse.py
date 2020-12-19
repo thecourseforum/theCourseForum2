@@ -155,20 +155,26 @@ def course_instructor(request, course_id, instructor_id):
         (instructor.full_name, None, True)
     ]
 
-    data = {
-        # rating stats
-        "average_rating": instructor.average_rating_for_course(course),
-        "average_instructor": instructor.average_instructor_rating_for_course(course),
-        "average_fun": instructor.average_enjoyability_for_course(course),
-        "average_recommendability": instructor.average_recommendability_for_course(course),
-        "average_difficulty": instructor.average_difficulty_for_course(course),
-        # workload stats
-        "average_hours_per_week": instructor.average_hours_for_course(course),
-        "average_amount_reading": instructor.average_reading_hours_for_course(course),
-        "average_amount_writing": instructor.average_writing_hours_for_course(course),
-        "average_amount_group": instructor.average_group_hours_for_course(course),
-        "average_amount_homework": instructor.average_other_hours_for_course(course),
-    }
+    data = Review.objects\
+        .filter(course=course_id, instructor=instructor_id)\
+        .aggregate(
+            # rating stats
+            average_instructor=Avg('instructor_rating'),
+            average_fun=Avg('enjoyability'),
+            average_recommendability=Avg('recommendability'),
+            average_difficulty=Avg('difficulty'),
+            # workload stats
+            average_hours_per_week=Avg('hours_per_week'),
+            average_amount_reading=Avg('amount_reading'),
+            average_amount_writing=Avg('amount_writing'),
+            average_amount_group=Avg('amount_group'),
+            average_amount_homework=Avg('amount_homework'),
+        )
+    data['average_rating'] = (
+        data['average_instructor'] +
+        data['average_fun'] +
+        data['average_recommendability']
+    ) / 3
     data = {key: safe_round(value) for key, value in data.items()}
 
     try:
