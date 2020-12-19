@@ -2,21 +2,21 @@
 name: Continuous Integration
 
 on:
-  push:
-    branches-ignore:
-      - master
-      - dev
   pull_request:
     branches:
       - '*'
 env:
-  DEBUG: 1
+  # Django
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  DEBUG: 1
+  # social-auth-app-django
   SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
   SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
+  # elasticsearch
   ES_PUBLIC_API_KEY: ${{ secrets.ES_PUBLIC_API_KEY }}
   ES_COURSE_SEARCH_ENDPOINT: ${{ secrets.ES_COURSE_SEARCH_ENDPOINT }}
   ES_INSTRUCTOR_SEARCH_ENDPOINT: ${{ secrets.ES_INSTRUCTOR_SEARCH_ENDPOINT }}
+  # discord
   DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
   DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
 
