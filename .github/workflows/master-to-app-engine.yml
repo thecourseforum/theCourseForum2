@@ -7,8 +7,9 @@ on:
 
 env:
   # Django
+  DJANGO_SETTINGS_MODULE: tcf_core.settings.prod
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
-  DEBUG: 1
+  DEBUG: 0
   # database
   DB_NAME: ${{ secrets.DB_NAME }}
   DB_USER: ${{ secrets.DB_USER }}
