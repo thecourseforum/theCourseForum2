@@ -32,11 +32,11 @@ jobs:
       postgres:
         image: postgres:12.2
         env:
-          POSTGRES_USER: tcf_django
-          POSTGRES_PASSWORD: s3kr1t
-          POSTGRES_DB: tcf_db
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
         ports:
-          - 5432:5432
+          - ${{ secrets.DB_PORT }}:5432
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
