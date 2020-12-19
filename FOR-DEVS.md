@@ -81,7 +81,7 @@ If you are part of theCourseForum engineering team, follow the instructions belo
 2. Go into the `theCourseForum2/` folder and then run `vagrant up` to start a VM.
 3. After that's booted, run `vagrant ssh` to run commands inside the VM.
 4. `cd /vagrant`
-5. Start at step 3 in **MacOS and Linux setup**. You may have to prefix all docker commands with `sudo` (e.g. `sudo docker-compose up`). ----------------------
+5. Start at step 3 in **MacOS and Linux setup**. You may have to prefix all docker commands with `sudo` (e.g. `sudo docker-compose up`).
 6. Go to http://127.0.0.1:8000 and make sure it works!
 7. Run `vagrant` suspend when you're done to suspend the VM.
 
@@ -172,4 +172,3 @@ python3 manage.py migrate
 
 ### Deploying to prod
 Production deployments (i.e. the version of the site users see on thecourseforum.com) should be handled automatically by our CI (continuous integration system). As of the writing of this documentation, Travis is set up to autodeploy every time a build on the `master` branch passes and we're working on moving towards GitHub Actions. However, in the event that something fails, the manual deploy process is outlined [here](https://docs.google.com/document/d/1sPl1v4JrvicrgQluXvG9cR6GWPijC0hr7zAa3h3uE5E/edit#heading=h.9mo53b4db0s8). Just note that the environmental variables list in the doc may not be up-to-date, so remember to set them accordingly.
-
