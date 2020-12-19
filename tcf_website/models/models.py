@@ -185,6 +185,10 @@ class Instructor(models.Model):
         instructor_rating = ratings.get('instructor_rating__avg')
         enjoyability = ratings.get('enjoyability__avg')
 
+        # Return None if one component is absent.
+        if not recommendability or not instructor_rating or not enjoyability:
+            return None
+
         return (recommendability + instructor_rating + enjoyability) / 3
 
     def average_difficulty_for_course(self, course):
@@ -263,6 +267,10 @@ class Instructor(models.Model):
         recommendability = ratings.get('recommendability__avg')
         instructor_rating = ratings.get('instructor_rating__avg')
         enjoyability = ratings.get('enjoyability__avg')
+
+        # Return None if one component is absent.
+        if not recommendability or not instructor_rating or not enjoyability:
+            return None
 
         return (recommendability + instructor_rating + enjoyability) / 3
 
@@ -414,6 +422,10 @@ class Course(models.Model):
         recommendability = ratings.get('recommendability__avg')
         instructor_rating = ratings.get('instructor_rating__avg')
         enjoyability = ratings.get('enjoyability__avg')
+
+        # Return None if one component is absent.
+        if not recommendability or not instructor_rating or not enjoyability:
+            return None
 
         return (recommendability + instructor_rating + enjoyability) / 3
 
