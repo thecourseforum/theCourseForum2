@@ -14,7 +14,7 @@ django-filter
 # Linting
 pylint>=2.4.4
 pylint-django>=2.0.14
-autopep8>=1.5.1
+black
 html-linter>=0.4.0
 
 # Heroku setup

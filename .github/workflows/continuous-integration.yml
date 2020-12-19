@@ -56,6 +56,9 @@ jobs:
       - name: Run pylint
         run: pylint --load-plugins pylint_django tcf_website tcf_core
 
+      - name: Run black
+        uses: psf/black@stable
+
       - name: Migrations & Tests
         run: |
           mkdir tcf_website/migrations
