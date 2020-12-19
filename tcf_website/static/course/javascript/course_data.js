@@ -1,10 +1,11 @@
 const loadData = data => {
-    const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop } = data;
-    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop];
+    const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, ot, drop, withdraw } = data;
+    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, ot, drop, withdraw ];
 
     createChart(grades_data);
 
-    exist(data.average_gpa) ? document.getElementsByClassName("gpa-text")[0].innerHTML = data.average_gpa + " GPA" : null;
+    if (exist(data.average_gpa))
+        document.getElementsByClassName("gpa-text")[0].innerHTML = `${data.average_gpa} GPA`;
 
     exist(data.total_enrolled) ? document.getElementsByClassName("students-text")[0].innerHTML = data.total_enrolled + " Students" : document.getElementsByClassName("students-text")[0].remove();
 
@@ -48,12 +49,13 @@ const createChart = grades_data => {
                 "#E06A45",
                 "#DE6843",
                 "#C95F36",
+                "#000000", // TODO: Change the color of "Pass" to another color
                 "#B45133",
                 "#b35032"
             ]
         }],
         labels: [
-            "A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "Withdraw", "Drop"
+            "A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "Pass", "Drop", "Withdraw"
         ]
     };
     var ctx = document.getElementById("myChart");

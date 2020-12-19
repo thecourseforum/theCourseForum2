@@ -174,48 +174,25 @@ def course_instructor(request, course_id, instructor_id):
     try:
         grades_data = CourseInstructorGrade.objects.get(
             instructor=instructor, course=course)
-
-        # grades stats
-        data['average_gpa'] = round(grades_data.average, 2)
-        data['a_plus'] = grades_data.a_plus
-        data['a'] = grades_data.a
-        data['a_minus'] = grades_data.a_minus
-        data['b_plus'] = grades_data.b_plus
-        data['b'] = grades_data.b
-        data['b_minus'] = grades_data.b_minus
-        data['c_plus'] = grades_data.c_plus
-        data['c'] = grades_data.c
-        data['c_minus'] = grades_data.c_minus
-        data['d_plus'] = grades_data.d_plus
-        data['d'] = grades_data.d
-        data['d_minus'] = grades_data.d_minus
-        data['f'] = grades_data.f
-        data['withdraw'] = grades_data.withdraw
-        data['drop'] = grades_data.drop
-
-        fields = [
-            'a_plus',
-            'a',
-            'a_minus',
-            'b_plus',
-            'b',
-            'b_minus',
-            'c',
-            'c_minus',
-            'd_plus',
-            'd',
-            'd_minus',
-            'f',
-            'withdraw',
-            'drop']
-
-        total = 0
-        for field in fields:
-            total += data[field]
-        data['total_enrolled'] = total
-
     except ObjectDoesNotExist:  # if no data found
         pass
+    # NOTE: Don't catch MultipleObjectsReturned because we want to be notified
+    else:  # Fill in the data found
+        # grades stats
+        data['average_gpa'] = round(grades_data.average, 2)
+        fields = [
+            'a_plus', 'a', 'a_minus',
+            'b_plus', 'b', 'b_minus',
+            'c_plus', 'c', 'c_minus',
+            'd_plus', 'd', 'd_minus',
+            'f',
+            'ot', 'drop', 'withdraw',
+        ]
+        total = 0
+        for field in fields:
+            data[field] = getattr(grades_data, field)
+            total += data[field]
+        data['total_enrolled'] = total
 
     return render(request, 'course/course_professor.html',
                   {
