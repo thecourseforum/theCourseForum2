@@ -136,8 +136,7 @@ def course_instructor(request, course_id, instructor_id):
         .annotate(
             semester_last_taught_id=Max('section__semester',
                                         filter=Q(section__course=course)),
-        )
-    instructor = instructor[0]
+        )[0]
     # Note: Like view above, this is kinda a hacky way to get the last-taught
     # semester
     semester_last_taught = Semester.objects.get(
@@ -220,8 +219,6 @@ def course_instructor(request, course_id, instructor_id):
     except ObjectDoesNotExist:  # if no data found
         pass
 
-    data_json = json.dumps(data)
-
     return render(request, 'course/course_professor.html',
                   {
                       'course': course,
@@ -230,7 +227,7 @@ def course_instructor(request, course_id, instructor_id):
                       'semester_last_taught': semester_last_taught,
                       'reviews': reviews,
                       'breadcrumbs': breadcrumbs,
-                      'data': data_json
+                      'data': json.dumps(data),
                   })
 
 
