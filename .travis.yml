@@ -19,7 +19,7 @@ script:
 - docker exec tcf_django python3 manage.py test
 
 before_deploy:
-- envsubst < app.yaml.template > app.yaml
+- envsubst < .config/app.yaml.template > app.yaml
 - docker exec tcf_django python3 manage.py collectstatic --noinput --clear
 
 deploy:
