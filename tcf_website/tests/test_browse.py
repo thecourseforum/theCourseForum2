@@ -13,16 +13,16 @@ class CourseViewTestCase(TestCase):
         setup(self)
 
     def test_legacy_course_url_404(self):
-        url = reverse('course', args=[999999])
+        url = reverse('course_legacy', args=[999999])
         response = self.client.get(url)
         self.assertEquals(response.status_code, 404)
 
     def test_legacy_course_url_redirect(self):
-        url = reverse('course', args=[self.course.id])
+        url = reverse('course_legacy', args=[self.course.id])
         response = self.client.get(url)
         self.assertRedirects(response, '/course/CS/420')
 
     def test_redirect_lowercase_mnemonic(self):
-        url = reverse('course_easy', args=['cs', 421])
+        url = reverse('course', args=['cs', 421])
         response = self.client.get(url)
         self.assertRedirects(response, '/course/CS/421')

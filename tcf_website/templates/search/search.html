@@ -63,7 +63,7 @@
                             {% if c != dept_data.courses.0 %}
                             {% endif %}
                             <li class="list-group-item list-group-item-light text-dark p-2">
-                              <a href="{% url 'course_easy' mnemonic=c.mnemonic.split.0 course_number=c.number %}">
+                              <a href="{% url 'course' mnemonic=c.mnemonic.split.0 course_number=c.number %}">
                               <div class="row p-0">
                                 <div class="col-md-3">{{ c.mnemonic }}</div>
                                 <div class="col-md-9">{{ c.title }}</div>

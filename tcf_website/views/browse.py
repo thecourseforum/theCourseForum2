@@ -73,7 +73,7 @@ def department(request, dept_id):
 def course_view(request, course_id):
     """Legacy view for course page."""
     course = get_object_or_404(Course, pk=course_id)
-    return redirect('course_easy',
+    return redirect('course',
                     mnemonic=course.subdepartment.mnemonic,
                     course_number=course.number)
 
@@ -82,7 +82,7 @@ def course_view_easy(request, mnemonic, course_number):
     """A new Course view that allows you to input mnemonic and number instead."""
     # Redirect if the mnemonic is not all uppercase
     if mnemonic != mnemonic.upper():
-        return redirect('course_easy',
+        return redirect('course',
                         mnemonic=mnemonic.upper(), course_number=course_number)
     course = get_object_or_404(
         Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number)
@@ -147,7 +147,7 @@ def course_instructor(request, course_id, instructor_id):
 
     dept = course.subdepartment.department
 
-    course_url = reverse('course_easy',
+    course_url = reverse('course',
                          args=[course.subdepartment.mnemonic, course.number])
     # Navigation breadcrumbs
     breadcrumbs = [
