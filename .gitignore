@@ -8,7 +8,8 @@ legacy_db/*.sql
 *.pgsql
 .vscode/
 tcf_website/migrations/*
-.env
+.env*
+!.env.example
 .vagrant/
 /static/
 predeploy.sh
