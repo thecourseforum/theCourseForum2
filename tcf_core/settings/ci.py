@@ -10,4 +10,4 @@ from .base import *
 # The following if statement is needed to prevent overwriting global variables when
 # this settings file is interpreted
 if os.environ.get('DJANGO_SETTINGS_MODULE') == 'tcf_core.settings.ci':
-    pass  # Replace this when you need to
+    DATABASES['default']['PORT'] = 5432
