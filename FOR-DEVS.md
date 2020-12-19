@@ -70,9 +70,9 @@ If you are part of theCourseForum engineering team, follow the instructions belo
 
 ### Windows setup (recommended)
 1. Install [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-2. Install Docker
+2. Find your Windows version by looking for `System Information` in your settings.
     - If you're using Windows 10 Pro, Enterprise, or Education, then follow [these instructions](https://docs.docker.com/docker-for-windows/install/) to install Docker Desktop, which comes with Docker and Docker Compose. A free copy of Windows 10 Education is available from UVA.
-    - If you're using Windows 10 Home, which is what comes with most laptops, then follow [these instructions](https://docs.docker.com/docker-for-windows/install-windows-home/). The setup is a bit more complicated because you'll first need to setup [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/install-win10#manual-installation-steps). WSL, or Windows Subsystem for Linux, is like a Linux virtual machine that runs in the command line (meaning there's no GUI). It allows Docker to run by using Linux behind the scenes. Check out the [VS Code instructions](https://code.visualstudio.com/docs/remote/wsl) to learn how to develop with WSL (optional).
+    - If you're using Windows 10 Home (Version 1903, Build 18362 or above), which is what comes with most laptops, then follow [these instructions](https://docs.docker.com/docker-for-windows/install-windows-home/). The setup is a bit more complicated because you'll first need to setup [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/install-win10#manual-installation-steps). WSL, or Windows Subsystem for Linux, is like a Linux virtual machine that runs in the command line (meaning there's no GUI). It allows Docker to run by using Linux behind the scenes. Check out the [VS Code instructions](https://code.visualstudio.com/docs/remote/wsl) to learn how to develop with WSL (optional).
 3. Proceed at step 2 in **MacOS and Linux setup**
 
 ### Alternative Setup (Windows and MacOS if above failed)
