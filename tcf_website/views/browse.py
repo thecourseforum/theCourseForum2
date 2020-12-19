@@ -70,7 +70,7 @@ def department(request, dept_id):
                   })
 
 
-def course_view(request, course_id):
+def course_view_legacy(request, course_id):
     """Legacy view for course page."""
     course = get_object_or_404(Course, pk=course_id)
     return redirect('course',
@@ -78,7 +78,7 @@ def course_view(request, course_id):
                     course_number=course.number)
 
 
-def course_view_easy(request, mnemonic, course_number):
+def course_view(request, mnemonic, course_number):
     """A new Course view that allows you to input mnemonic and number instead."""
     # Redirect if the mnemonic is not all uppercase
     if mnemonic != mnemonic.upper():
