@@ -143,11 +143,11 @@ def course_instructor(request, course_id, instructor_id):
     semester_last_taught = section_last_taught.semester
 
     # Filter out reviews with no text.
-    reviews = Review.display_reviews(course, instructor, request.user)
+    reviews = Review.display_reviews(course_id, instructor_id, request.user)
 
+    # Navigation breadcrumbs
     course_url = reverse('course',
                          args=[course.subdepartment.mnemonic, course.number])
-    # Navigation breadcrumbs
     breadcrumbs = [
         (dept.school.name, reverse('browse'), False),
         (dept.name, reverse('department', args=[dept.pk]), False),
@@ -157,19 +157,19 @@ def course_instructor(request, course_id, instructor_id):
 
     data = {
         # rating stats
-        "average_rating": safe_round(instructor.average_rating_for_course(course)),
-        "average_instructor": safe_round(instructor.average_instructor_rating_for_course(course)),
-        "average_fun": safe_round(instructor.average_enjoyability_for_course(course)),
-        "average_recommendability":
-            safe_round(instructor.average_recommendability_for_course(course)),
-        "average_difficulty": safe_round(instructor.average_difficulty_for_course(course)),
+        "average_rating": instructor.average_rating_for_course(course),
+        "average_instructor": instructor.average_instructor_rating_for_course(course),
+        "average_fun": instructor.average_enjoyability_for_course(course),
+        "average_recommendability": instructor.average_recommendability_for_course(course),
+        "average_difficulty": instructor.average_difficulty_for_course(course),
         # workload stats
-        "average_hours_per_week": safe_round(instructor.average_hours_for_course(course)),
-        "average_amount_reading": safe_round(instructor.average_reading_hours_for_course(course)),
-        "average_amount_writing": safe_round(instructor.average_writing_hours_for_course(course)),
-        "average_amount_group": safe_round(instructor.average_group_hours_for_course(course)),
-        "average_amount_homework": safe_round(instructor.average_other_hours_for_course(course)),
+        "average_hours_per_week": instructor.average_hours_for_course(course),
+        "average_amount_reading": instructor.average_reading_hours_for_course(course),
+        "average_amount_writing": instructor.average_writing_hours_for_course(course),
+        "average_amount_group": instructor.average_group_hours_for_course(course),
+        "average_amount_homework": instructor.average_other_hours_for_course(course),
     }
+    data = {key: safe_round(value) for key, value in data.items()}
 
     try:
         grades_data = CourseInstructorGrade.objects.get(
