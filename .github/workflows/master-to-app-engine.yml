@@ -1,18 +1,31 @@
 # Based on https://github.com/actions/starter-workflows/blob/main/ci/django.yml
-name: Django CI
+name: Google App Engine Deployment
 
 on:
   push:
     branches: [master]
 
 env:
+  # Django
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
   DEBUG: 1
-  SECRET_KEY: "${{ secrets.SECRET_KEY }}"
+  # database
+  DB_NAME: ${{ secrets.DB_NAME }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  # social-auth-app-django
   SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
   SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
+  # elasticsearch
   ES_PUBLIC_API_KEY: ${{ secrets.ES_PUBLIC_API_KEY }}
   ES_COURSE_SEARCH_ENDPOINT: ${{ secrets.ES_COURSE_SEARCH_ENDPOINT }}
   ES_INSTRUCTOR_SEARCH_ENDPOINT: ${{ secrets.ES_INSTRUCTOR_SEARCH_ENDPOINT }}
+  ES_COURSE_DOCUMENTS_ENDPOINT: ${{ secrets.ES_COURSE_DOCUMENTS_ENDPOINT }}
+  ES_INSTRUCTOR_DOCUMENTS_ENDPOINT: ${{ secrets.ES_INSTRUCTOR_DOCUMENTS_ENDPOINT }}
+  ES_PRIVATE_API_KEY: ${{ secrets.ES_PRIVATE_API_KEY }}
+  # discord
   DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
   DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
 
