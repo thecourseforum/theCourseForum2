@@ -140,7 +140,6 @@ def course_instructor(request, course_id, instructor_id):
     course = section_last_taught.course
     dept = course.subdepartment.department
     instructor = section_last_taught.instructors.get(pk=instructor_id)
-    semester_last_taught = section_last_taught.semester
 
     # Filter out reviews with no text.
     reviews = Review.display_reviews(course_id, instructor_id, request.user)
@@ -205,7 +204,7 @@ def course_instructor(request, course_id, instructor_id):
                       'course': course,
                       'course_id': course_id,
                       'instructor': instructor,
-                      'semester_last_taught': semester_last_taught,
+                      'semester_last_taught': section_last_taught.semester,
                       'reviews': reviews,
                       'breadcrumbs': breadcrumbs,
                       'data': json.dumps(data),
