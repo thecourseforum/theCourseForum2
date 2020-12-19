@@ -74,7 +74,7 @@ def course_view(request, course_id):
     """Legacy view for course page."""
     course = get_object_or_404(Course, pk=course_id)
     return redirect('course_easy',
-                    mnemonic=course.subdepartment.mnemonic, 
+                    mnemonic=course.subdepartment.mnemonic,
                     course_number=course.number)
 
 
@@ -148,11 +148,13 @@ def course_instructor(request, course_id, instructor_id):
 
     dept = course.subdepartment.department
 
+    course_url = reverse('course_easy',
+                         args=[course.subdepartment.mnemonic, course.number])
     # Navigation breadcrumbs
     breadcrumbs = [
         (dept.school.name, reverse('browse'), False),
         (dept.name, reverse('department', args=[dept.pk]), False),
-        (course.code, reverse('course_easy', args=[course.subdepartment.mnemonic, course.number]), False),
+        (course.code, course_url, False),
         (instructor.full_name, None, True)
     ]
 
