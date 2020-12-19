@@ -5,7 +5,7 @@ const loadData = data => {
     createChart(grades_data);
 
     if (exist(data.average_gpa))
-        document.getElementsByClassName("gpa-text")[0].innerHTML = `${data.average_gpa} GPA`;
+        document.getElementsByClassName("gpa-text")[0].innerHTML = data.average_gpa == 0.0 ? "Pass/Fail" : `${data.average_gpa} GPA`;
 
     exist(data.total_enrolled) ? document.getElementsByClassName("students-text")[0].innerHTML = data.total_enrolled + " Students" : document.getElementsByClassName("students-text")[0].remove();
 
