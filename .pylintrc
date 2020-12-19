@@ -1,3 +1,5 @@
+[MESSAGES CONTROL]
 # Config to make pylint compatible with black
 disable = C0330, C0326
+[FORMAT]
 max-line-length = 88
