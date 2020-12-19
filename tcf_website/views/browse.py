@@ -4,6 +4,7 @@
 import json
 
 from django.db.models import Avg, Max, Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
@@ -13,6 +14,7 @@ from ..models import (
     Department,
     Subdepartment,
     Course,
+    Section,
     Semester,
     Instructor,
     Review,
@@ -129,23 +131,19 @@ def course_view(request, mnemonic, course_number):
 
 def course_instructor(request, course_id, instructor_id):
     """View for course instructor page."""
-
-    course = Course.objects.get(pk=course_id)
-    instructor = Instructor.objects\
-        .filter(pk=instructor_id)\
-        .annotate(
-            semester_last_taught_id=Max('section__semester',
-                                        filter=Q(section__course=course)),
-        )[0]
-    # Note: Like view above, this is kinda a hacky way to get the last-taught
-    # semester
-    semester_last_taught = Semester.objects.get(
-        pk=instructor.semester_last_taught_id)
+    section_last_taught = Section.objects\
+        .filter(course=course_id, instructors=instructor_id)\
+        .order_by('semester')\
+        .last()
+    if section_last_taught is None:
+        raise Http404
+    course = section_last_taught.course
+    dept = course.subdepartment.department
+    instructor = section_last_taught.instructors.get(pk=instructor_id)
+    semester_last_taught = section_last_taught.semester
 
     # Filter out reviews with no text.
     reviews = Review.display_reviews(course, instructor, request.user)
-
-    dept = course.subdepartment.department
 
     course_url = reverse('course',
                          args=[course.subdepartment.mnemonic, course.number])
