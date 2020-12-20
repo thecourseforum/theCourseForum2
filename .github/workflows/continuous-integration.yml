@@ -42,8 +42,8 @@ jobs:
       postgres:
         image: postgres:12.2
         env:
-          POSTGRES_USER: $DB_USER
-          POSTGRES_PASSWORD: $DB_PASSWORD
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: $DB_NAME
         ports:
           - 5432:5432
