@@ -14,15 +14,16 @@
             </div>
 
             <!-- Review Main Content -->
-            <div class="review-content col-xs-12 col-md-10 col-lg-11">
+            <div class="review-body col-xs-12 col-md-10 col-lg-11">
+
                 <!-- Review header content (subject, actions, text) -->
-                <div class="review-info">
-                    {% if profile %}
-                    <!-- Subject and Edit/Delete actions show only on profile page -->
+                {% if profile %}
+                <!-- Subject and Edit/Delete actions show only on profile page -->
+                <div class="review-header">
                     <div class="d-flex">
-                        <div class="review-header">
+                        <div class="review-subject">
                           <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
-                              <p><strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}</p>
+                              <h5><b>{{ review.course }}</b> — {{ review.instructor.full_name }}</h5>
                           </a>
                         </div>
                         <div class="review-actions ml-auto">
@@ -37,8 +38,11 @@
                           {% include "reviews/delete_confirm_modal.html" with review_id=review.id %}
                         </div>
                     </div>
-                    {% endif %}
-                    <p class="card-text mb-2" style="white-space: pre-line;">{{ review.text }}</p>
+                </div>
+                {% endif %}
+
+                <div class="review-content">
+                  <p class="card-text mb-2" style="white-space: pre-line;">{{ review.text }}</p>
                 </div>
 
                 <div class="review-footer row mt-3">
