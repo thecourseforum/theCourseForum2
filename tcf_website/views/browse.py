@@ -158,6 +158,11 @@ def course_instructor(request, course_id, instructor_id):
         .filter(course=course_id, instructor=instructor_id)\
         .aggregate(
             # rating stats
+            average_rating=(
+                Avg('instructor_rating') +
+                Avg('enjoyability') +
+                Avg('recommendability')
+            ) / 3,
             average_instructor=Avg('instructor_rating'),
             average_fun=Avg('enjoyability'),
             average_recommendability=Avg('recommendability'),
@@ -169,11 +174,6 @@ def course_instructor(request, course_id, instructor_id):
             average_amount_group=Avg('amount_group'),
             average_amount_homework=Avg('amount_homework'),
         )
-    data['average_rating'] = (
-        data['average_instructor'] +
-        data['average_fun'] +
-        data['average_recommendability']
-    ) / 3
     data = {key: safe_round(value) for key, value in data.items()}
 
     try:
