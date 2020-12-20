@@ -12,7 +12,7 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   DEBUG: 1
   # database 
-  DB_NAME: mydb
+  DB_NAME: mydb  # arbitrary string
   DB_USER: postgres  # default user
   DB_PASSWORD: postgres  # default password
   DB_HOST: localhost  # required for GitHub Actions
@@ -42,7 +42,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_TARGET }}
 
-      - name: Install pylint
+      - name: Install Python packages, excluding the unnecessary ones
         run: |
           python -m pip install --upgrade pip
           sed -i '/\(tqdm\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
@@ -57,9 +57,9 @@ jobs:
       postgres:
         image: postgres:12.2
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: mydb
+          POSTGRES_USER: ${{ env.DB_USER}}
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+          POSTGRES_DB: ${{ env.DB_NAME }}
         ports:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
@@ -76,7 +76,7 @@ jobs:
       - name: Install Python packages, excluding the unnecessary ones
         run: |
           python -m pip install --upgrade pip
-          sed -i '/\(tqdm\|lint\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
+          sed -i '/\(pandas\|tqdm\|lint\|autopep8\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
           pip install -r requirements.txt
 
       - name: Migrations & Tests
