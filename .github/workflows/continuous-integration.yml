@@ -37,10 +37,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python $PYTHON_TARGET
+      - name: Set up Python ${{ env.PYTHON_TARGET }}
         uses: actions/setup-python@v2
         with:
-          python-version: $PYTHON_TARGET
+          python-version: ${{ env.PYTHON_TARGET }}
 
       - name: Install pylint
         run: |
@@ -67,10 +67,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python $PYTHON_TARGET
+      - name: Set up Python ${{ env.PYTHON_TARGET }}
         uses: actions/setup-python@v2
         with:
-          python-version: $PYTHON_TARGET
+          python-version: ${{ env.PYTHON_TARGET }}
 
       - name: Install Python packages, excluding the unnecessary ones
         run: |
