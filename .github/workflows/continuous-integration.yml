@@ -45,7 +45,8 @@ jobs:
       - name: Install pylint
         run: |
           python -m pip install --upgrade pip
-          pip install $(egrep "Django|pylint" requirements.txt)
+          sed -i '/\(tqdm\|gunicorn\|django-heroku\|uwsgi\)/d' requirements.txt
+          pip install requirements.txt
 
       - name: Run pylint
         run: pylint --load-plugins pylint_django tcf_website tcf_core
@@ -75,7 +76,8 @@ jobs:
       - name: Install Python packages, excluding the unnecessary ones
         run: |
           python -m pip install --upgrade pip
-          pip install $(sed '/\(tqdm\|lint\|gunicorn\|django-heroku\|uwsgi\)/d' requirements.txt)
+          sed -i '/\(tqdm\|lint\|gunicorn\|django-heroku\|uwsgi\)/d' requirements.txt
+          pip install requirements.txt
 
       - name: Migrations & Tests
         run: |
