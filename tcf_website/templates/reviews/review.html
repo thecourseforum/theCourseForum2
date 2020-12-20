@@ -1,3 +1,6 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
+
 <div id="review{{review.id}}" class="review card mb-2">
     <div class="card-body text-left">
         <div class="row">
@@ -86,3 +89,21 @@
         </div>
     </div>
 </div>
+
+<script type="module">
+    import { handleVote } from "{% static 'reviews/review.js' %}";
+    {% if user.is_authenticated %}
+        $('.upvote').each(function(i, obj) {
+            $(this).click(()=>{
+                handleVote(obj.id.substring(6), true);
+            });
+            $(this).removeAttr('href');
+        });
+        $('.downvote').each(function(i, obj) {
+            $(this).click(()=>{
+                handleVote(obj.id.substring(8), false);
+            });
+            $(this).removeAttr('href');
+        });
+    {% endif %}
+</script>

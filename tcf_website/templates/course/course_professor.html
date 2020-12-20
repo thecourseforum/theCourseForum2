@@ -5,7 +5,6 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'course/course_professor.css' %}"/>
-    <link rel="stylesheet" href="{% static 'reviews/review.css' %}"/>
 {% endblock %}
 
 {% block content %}
@@ -252,7 +251,4 @@
         import {loadData} from "{% static 'course/javascript/course_data.js' %}";
         loadData(JSON.parse("{{ data|escapejs }}"))
     </script>
-
-    <!-- For course-instructor reviews -->
-    <script type="module" src="{% static 'reviews/review.js' %}"></script>
 {% endblock %}
