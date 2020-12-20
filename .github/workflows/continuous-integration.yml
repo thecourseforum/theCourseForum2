@@ -46,7 +46,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           sed -i '/\(tqdm\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
-          pip install requirements.txt
+          pip install -r requirements.txt
 
       - name: Run pylint
         run: pylint --load-plugins pylint_django tcf_website tcf_core
@@ -77,7 +77,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           sed -i '/\(tqdm\|lint\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
-          pip install requirements.txt
+          pip install -r requirements.txt
 
       - name: Migrations & Tests
         run: |
