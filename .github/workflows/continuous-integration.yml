@@ -44,7 +44,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: $DB_NAME
+          POSTGRES_DB: mydb
         ports:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
