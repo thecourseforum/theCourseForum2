@@ -14,6 +14,7 @@ def login(request):
     if request.user.is_authenticated:
         messages.success(request, "Logged in successfully!")
         return redirect('profile')
+    messages.add_message(request, messages.ERROR, "Login to view this page!")
     return browse(request)
     # Note: For some reason the data won't load if you use render like below:
     # return render(request, 'browse/browse.html')

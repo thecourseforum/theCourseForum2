@@ -13,7 +13,9 @@
          <hr>
       </a>
     </li>
+    <!-- Account wall for writing reviews -->
     <li>
+    {% if user.is_authenticated %}
       <a href="{% url 'new_review' %}"
          class="list-group-item list-group-item-action pb-0
          {% if request.resolver_match.url_name == 'new_review' %}active{% endif %}">
@@ -21,7 +23,15 @@
         <p>Review</p>
         <hr>
       </a>
-    </li>
+    {% else %}
+      <a href="#loginModal" data-toggle="modal"
+        class="list-group-item list-group-item-action pb-0
+        {% if request.resolver_match.url_name == 'new_review' %}active{% endif %}">
+        <h4><i class="fa fa-pencil-square-o fa-fw"></i></h4>
+        <p>Review</p>
+        <hr>
+      </a>
+    {% endif %}
     <li>
       <a href="{% url 'about' %}"
          class="list-group-item list-group-item-action pb-0

@@ -5,9 +5,8 @@
 {% endblock %}
 
 <div class="login-button-container m-0">
-  {% with request.resolver_match.view_name as view_name %}
     <!-- Redirect back to same page only if not on login error page -->
-    {% if view_name != 'tcf_website.views.auth.login_error' %}
+    {% if request.resolver_match.url_name != 'login_error' %}
         <a class="login-button-wrapper"
            href="{% url 'social:begin' 'google-oauth2' %}?next={{request.get_full_path}}">
             <button class="login-button"></button>
@@ -18,5 +17,4 @@
             <button class="login-button"></button>
         </a>
     {% endif %}
-  {% endwith %}
 </div>

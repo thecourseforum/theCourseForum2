@@ -32,9 +32,9 @@ urlpatterns = [
     path('discord/', views.post_message, name='discord'),
 
     # AUTH URLS
-    path('login', views.login, name='login'),
-    path('login/error', views.login_error),
-    path('login/collect_extra_info', views.collect_extra_info),
-    path('accounts/login/', views.login),
+    # path('login', views.login, name='login'), # Changed to login modal
+    path('login/error', views.login_error, name='login_error'),
+    path('login/collect_extra_info', views.collect_extra_info, name='login_info'),
+    path('accounts/login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
 ]
