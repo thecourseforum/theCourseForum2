@@ -10,12 +10,12 @@ env:
   DJANGO_SETTINGS_MODULE: tcf_core.settings.ci
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   DEBUG: 1
-  # database (the first three can be any strings)
+  # database 
   DB_NAME: mydb
-  DB_USER: myuser
-  DB_PASSWORD: mypassword
+  DB_USER: postgres  # default user
+  DB_PASSWORD: postgres  # default password
   DB_HOST: localhost  # required for GitHub Actions
-  DB_PORT: 5432  # default postgres port
+  DB_PORT: 5432  # default port
   # social-auth-app-django
   SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
   SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
