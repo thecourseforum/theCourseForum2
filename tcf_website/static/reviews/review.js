@@ -1,3 +1,4 @@
+/* For review upvote/downvote functionality */
 function handleVote(reviewID, isUpvote) {
     const voteCountElem = $(`#review${reviewID} .voteCount`);
     const voteCount = parseInt(voteCountElem.text());
@@ -59,22 +60,20 @@ function handleVote(reviewID, isUpvote) {
 
 export { handleVote };
 
-
+/* For review text collapse/expand functionality */
 $(function() {
-    $('.review').each(function(i, review) {
-      var reviewBlurb = $(this).find("div.review-text");
-      var reviewText = $(this).find("p.review-text-all");
-      var reviewCollapseLink = $(this).find("a.review-collapse-link");
+    $(".review").each(function(i, review) {
+        var reviewBlurb = $(this).find("div.review-text");
+        var reviewText = $(this).find("p.review-text-all");
+        var reviewCollapseLink = $(this).find("a.review-collapse-link");
 
-      // Long review
-      if (reviewBlurb.height() < reviewText.height()) {
-        // Show "See More" expander only for long reviews
-        reviewCollapseLink.show();
-      }
-      // Short review
-      else {
-        reviewCollapseLink.hide();
-        reviewBlurb.css("height", "auto"); // Remove static blurb height
-      }
+        // Long review
+        if (reviewBlurb.height() < reviewText.height()) {
+            // Show "See More" expander only for long reviews
+            reviewCollapseLink.show();
+        } else { // Short review
+            reviewCollapseLink.hide();
+            reviewBlurb.css("height", "auto"); // Remove static blurb height
+        }
     });
 });
