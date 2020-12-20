@@ -1,6 +1,5 @@
 # pylint: disable=import-error,unused-wildcard-import,wildcard-import
 """Django settings module for testing environment such as Heroku"""
-import django_heroku
 
 from .base import *
 
@@ -15,4 +14,5 @@ if os.environ.get('DJANGO_SETTINGS_MODULE') == 'tcf_core.settings.testing':
     # https://devcenter.heroku.com/articles/django-app-configuration
     # "This will automatically configure DATABASE_URL, ALLOWED_HOSTS, ... Logging"
     # https://github.com/heroku/django-heroku
+    import django_heroku
     django_heroku.settings(locals())
