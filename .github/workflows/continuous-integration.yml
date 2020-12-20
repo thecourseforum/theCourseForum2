@@ -6,6 +6,7 @@ on:
     branches:
       - '*'
 env:
+  PYTHON_TARGET: 3.8
   # Django
   DJANGO_SETTINGS_MODULE: tcf_core.settings.ci
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
@@ -33,17 +34,13 @@ env:
 jobs:
   pylint:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.8]
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python $PYTHON_TARGET
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: $PYTHON_TARGET
 
       - name: Install pylint
         run: |
@@ -54,10 +51,6 @@ jobs:
         run: pylint --load-plugins pylint_django tcf_website tcf_core
   django:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.8]
 
     services:
       postgres:
@@ -74,10 +67,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python $PYTHON_TARGET
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: $PYTHON_TARGET
 
       - name: Install Python packages, excluding the unnecessary ones
         run: |
