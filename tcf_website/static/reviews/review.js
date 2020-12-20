@@ -58,3 +58,23 @@ function handleVote(reviewID, isUpvote) {
 }
 
 export { handleVote };
+
+
+$(function() {
+    $('.review').each(function(i, review) {
+      var reviewBlurb = $(this).find("div.review-text");
+      var reviewText = $(this).find("p.review-text-all");
+      var reviewCollapseLink = $(this).find("a.review-collapse-link");
+
+      // Long review
+      if (reviewBlurb.height() < reviewText.height()) {
+        // Show "See More" expander only for long reviews
+        reviewCollapseLink.show();
+      }
+      // Short review
+      else {
+        reviewCollapseLink.hide();
+        reviewBlurb.css("height", "auto"); // Remove static blurb height
+      }
+    });
+});

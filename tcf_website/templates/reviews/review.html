@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
 
 <div id="review{{review.id}}" class="review card mb-2">
-    <div class="card-body text-left">
+    <div class="card-body text-left pt-0">
         <div class="row">
             <!-- Review upvote/downvote panel -->
             <div class="vote-container col-2 col-lg-1 d-none d-md-flex flex-column justify-content-center align-items-center">
@@ -44,8 +44,15 @@
                 </div>
                 {% endif %}
 
-                <div class="review-content">
-                  <p class="card-text mb-2" style="white-space: pre-line;">{{ review.text }}</p>
+                <div class="review-content mb-2">
+                  <div class="review-text collapse" id="reviewText{{review.id}}"
+                     aria-expanded="false" style="white-space: pre-line;">
+                    <p class="review-text-all">{{ review.text }}</p>
+                  </div>
+                  <a role="button" class="review-collapse-link collapsed"
+                     data-toggle="collapse" href="#reviewText{{review.id}}"
+                     aria-expanded="false" aria-controls="reviewText{{review.id}}">
+                  </a>
                 </div>
 
                 <div class="review-footer row mt-3">
