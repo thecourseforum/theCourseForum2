@@ -79,7 +79,7 @@ const createChart = grades_data => {
                 "#E06A45",  // D
                 "#DE6843",  // D-
                 "#C95F36",  // F
-                "#000000",  // Other TODO: Change the color to another color
+                "#666600",  // Other
                 "#B45133",  // Drop
                 "#b35032",  // Withdraw
             ]
