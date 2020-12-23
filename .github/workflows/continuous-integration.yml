@@ -12,7 +12,7 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   DEBUG: 1
   # database 
-  DB_NAME: mydb  # arbitrary string
+  DB_NAME: tcf_db  # arbitrary string
   DB_USER: postgres  # default user
   DB_PASSWORD: postgres  # default password
   DB_HOST: localhost  # required for GitHub Actions
