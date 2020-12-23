@@ -58,6 +58,11 @@ jobs:
       - name: Run pylint
         run: pylint --load-plugins pylint_django tcf_website tcf_core
 
+      - name: Notify that pylint failed
+        if: ${{ failure() }}
+        run: |
+          curl -X POST -H "Content-Type: application/json" --data "{ \"content\": \"pylint failed.\" }" ${{ secrets.DISCORD_URL_CI }}/github
+
   django:
     runs-on: ubuntu-latest
     services:
@@ -94,6 +99,11 @@ jobs:
           python manage.py migrate
           python manage.py test
 
+      - name: Notify that Django migrations/tests failed
+        if: ${{ failure() }}
+        run: |
+          curl -X POST -H "Content-Type: application/json" --data "{ \"content\": \"Django migrations/tests failed.\" }" ${{ secrets.DISCORD_URL_CI }}/github
+
   eslint:
     runs-on: ubuntu-latest
     steps:
@@ -109,3 +119,23 @@ jobs:
 
       - name: Run ESLint
         run: node_modules/.bin/eslint tcf_website/static/**/*.js
+
+      - name: Notify that eslint failed
+        if: ${{ failure() }}
+        run: |
+          curl -X POST -H "Content-Type: application/json" --data "{ \"content\": \"eslint failed.\" }" ${{ secrets.DISCORD_URL_CI }}/github
+
+  discord:
+    needs: [pylint, django, eslint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send a message to tCF Discord Server when triggered by a pull request
+        if: ${{ github.event.name == 'pull_request' }}
+        run: |
+          echo "PR #${{ github.pull_request.number}} \"${{ github.pull_request.title }}\"($GITHUB_HEAD_REF -> $GITHUB_BASE_REF): All jobs completed successfully!"
+          curl -X POST -H "Content-Type: application/json" --data "{ \"content\": \"PR #${{ github.pull_request.number}} \"${{ github.pull_request.title }}\"($GITHUB_HEAD_REF -> $GITHUB_BASE_REF): All jobs completed successfully!\" }" ${{ secrets.DISCORD_URL_CI }}/github
+
+      - name: Send a message to tCF Discord Server when triggered by a push
+        if: ${{ github.event.name == 'push' }}
+        run: |
+          curl -X POST -H "Content-Type: application/json" --data "{ \"content\": \"Push to All jobs completed successfully!\" }" ${{ secrets.DISCORD_URL_CI }}/github
