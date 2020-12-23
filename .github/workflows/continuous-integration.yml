@@ -60,8 +60,11 @@ jobs:
 
       - name: Notify that pylint failed
         if: ${{ failure() }}
-        run: |
-          curl -X POST -H "Content-Type: application/json" --data "{ \"content\": \"pylint failed.\" }" ${{ secrets.DISCORD_URL_CI }}/github
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
+        with:
+          args: "pylint failed."
 
   django:
     runs-on: ubuntu-latest
@@ -100,9 +103,11 @@ jobs:
           python manage.py test
 
       - name: Notify that Django migrations/tests failed
-        if: ${{ failure() }}
-        run: |
-          curl -X POST -H "Content-Type: application/json" --data "{ \"content\": \"Django migrations/tests failed.\" }" ${{ secrets.DISCORD_URL_CI }}/github
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
+        with:
+          args: "Django migrations/tests failed."
 
   eslint:
     runs-on: ubuntu-latest
@@ -125,8 +130,11 @@ jobs:
 
       - name: Notify that eslint failed
         if: ${{ failure() }}
-        run: |
-          curl -X POST -H "Content-Type: application/json" --data "{ \"content\": \"eslint failed.\" }" ${{ secrets.DISCORD_URL_CI }}/github
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
+        with:
+          args: "eslint failed."
 
   discord:
     needs: [pylint, django, eslint]
@@ -134,11 +142,16 @@ jobs:
     steps:
       - name: Send a message to tCF Discord Server when triggered by a pull request
         if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          echo "PR #${{ github.pull_request.number}} \"${{ github.pull_request.title }}\"($GITHUB_HEAD_REF -> $GITHUB_BASE_REF): All jobs completed successfully!"
-          curl -X POST -H "Content-Type: application/json" --data "{ \"content\": \"PR #${{ github.pull_request.number}} \"${{ github.pull_request.title }}\"($GITHUB_HEAD_REF -> $GITHUB_BASE_REF): All jobs completed successfully!\" }" ${{ secrets.DISCORD_URL_CI }}/github
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
+        with:
+          args: "PR #${{ github.pull_request.number}} ${{ github.pull_request.title }} ($GITHUB_HEAD_REF -> $GITHUB_BASE_REF): All jobs completed successfully!"
 
       - name: Send a message to tCF Discord Server when triggered by a push
         if: ${{ github.event_name == 'push' }}
-        run: |
-          curl -X POST -H "Content-Type: application/json" --data "{ \"content\": \"Push to All jobs completed successfully!\" }" ${{ secrets.DISCORD_URL_CI }}/github
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
+        with:
+          args: "Push to $GITHUB_REF: All jobs completed successfully!"
