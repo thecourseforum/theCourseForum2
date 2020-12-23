@@ -37,6 +37,9 @@ env:
   # discord
   DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
   DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
+  # variables for discord notifications
+  PR_FORMATTED: "${{ format('{{PR #{0} {1} ({2}->{3})}}', github.pull_request.number, github.pull_request.title, github.head_ref, github.base_ref) }}"
+  PUSH_FORMATTED: "${{ format('Push to {0}', github.ref) }}"
 
 jobs:
   pylint:
@@ -103,6 +106,7 @@ jobs:
           python manage.py test
 
       - name: Notify that Django migrations/tests failed
+        if: ${{ failure() }}
         uses: Ilshidur/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
@@ -146,7 +150,7 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
         with:
-          args: "PR #${{ github.pull_request.number}} ${{ github.pull_request.title }} ($GITHUB_HEAD_REF -> $GITHUB_BASE_REF): All jobs completed successfully!"
+          args: "{{ env.PR_FORMATTED }}: All jobs completed successfully!"
 
       - name: Send a message to tCF Discord Server when triggered by a push
         if: ${{ github.event_name == 'push' }}
@@ -154,4 +158,4 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
         with:
-          args: "Push to $GITHUB_REF: All jobs completed successfully!"
+          args: "{{ env.PUSH_FORMATTED }}: All jobs completed successfully!"
