@@ -14,4 +14,4 @@ jobs:
         shell: bash
 
       - name: fail a job
-        run: echo 1
+        run: exit 1
