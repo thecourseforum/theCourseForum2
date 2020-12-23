@@ -6,7 +6,7 @@ on:
 
   workflow_run:
     workflows: ["Echo"]
-    branches: [github-actions]
+    branches: [dev]
     types:
       - completed
 
