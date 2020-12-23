@@ -138,7 +138,7 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
         with:
-          args: "PR #${{ github.pull_request.number}} ${{ github.pull_request.title }} ($GITHUB_HEAD_REF -> $GITHUB_BASE_REF): ESLint failed :("
+          args: ${{ ESLint failed :(\nformat('See https://github.com/thecourseforum/theCourseForum2/actions/runs/{0}', github.run_id) }}
 
   discord:
     needs: [pylint, django, eslint]
