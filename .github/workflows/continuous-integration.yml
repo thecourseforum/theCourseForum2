@@ -64,7 +64,7 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
         with:
-          args: "pylint failed."
+          args: "PR #${{ github.pull_request.number}} ${{ github.pull_request.title }} ($GITHUB_HEAD_REF -> $GITHUB_BASE_REF): pylint failed :("
 
   django:
     runs-on: ubuntu-latest
@@ -107,7 +107,7 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
         with:
-          args: "Django migrations/tests failed."
+          args: "PR #${{ github.pull_request.number}} ${{ github.pull_request.title }} ($GITHUB_HEAD_REF -> $GITHUB_BASE_REF): Django migrations/tests failed :("
 
   eslint:
     runs-on: ubuntu-latest
@@ -134,7 +134,7 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
         with:
-          args: "eslint failed."
+          args: "PR #${{ github.pull_request.number}} ${{ github.pull_request.title }} ($GITHUB_HEAD_REF -> $GITHUB_BASE_REF): ESLint failed :("
 
   discord:
     needs: [pylint, django, eslint]
