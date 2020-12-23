@@ -5,6 +5,9 @@ on:
   pull_request:
     branches:
       - '*'
+  # The following is needed to run tests upon direct push to master
+  push:
+    branches: [master]
 env:
   PYTHON_TARGET: 3.8
   # Django

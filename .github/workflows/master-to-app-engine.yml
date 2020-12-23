@@ -2,8 +2,12 @@
 name: Google App Engine Deployment
 
 on:
-  push:
+  # CI must pass on the master branch
+  workflow_run:
+    workflows: ["Continuous Integration"]
     branches: [master]
+    types:
+      - completed
 
 env:
   # Django
@@ -31,59 +35,29 @@ env:
   DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
 
 jobs:
-  build:
+  deploy:
+    if: ${{ contains( ['success', 'skipped'], github.event.workflow_run.conclusion ) }}
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.8]
-
-    services:
-      postgres:
-        image: postgres:12.2
-        env:
-          POSTGRES_USER: tcf_django
-          POSTGRES_PASSWORD: s3kr1t
-          POSTGRES_DB: tcf_db
-        ports:
-          - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python ${{ env.PYTHON_TARGET }}
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ env.PYTHON_TARGET }}
 
-      - name: Install Python packages
+      - name: Install Python packages, excluding the unnecessary ones
         run: |
           python -m pip install --upgrade pip
+          sed -i '/\(gunicorn\|django\-heroku\)/d' requirements.txt
           pip install -r requirements.txt
 
-      - name: Run pylint
-        run: pylint --load-plugins pylint_django tcf_website tcf_core
-
-      - name: Migrations & Tests
+      - name: Migrations
         run: |
           mkdir tcf_website/migrations
           touch tcf_website/migrations/__init__.py
           python manage.py makemigrations
           python manage.py migrate
-          python manage.py test
-
-      - name: Install Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-
-      - name: Install npm packages
-        run: npm ci
-
-      - name: Run ESLint
-        run: node_modules/.bin/eslint tcf_website/static/**/*.js
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@master
