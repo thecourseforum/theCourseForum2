@@ -18,7 +18,7 @@ env:
   DJANGO_SETTINGS_MODULE: tcf_core.settings.ci
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   DEBUG: 1
-  # database 
+  # database
   DB_NAME: tcf_db  # arbitrary string
   DB_USER: postgres  # default user
   DB_PASSWORD: postgres  # default password
@@ -37,10 +37,6 @@ env:
   # discord
   DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
   DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
-  # variables for discord notifications
-  PR_FORMATTED: "${{ format('{{PR #{0} {1} ({2}->{3})}}', github.pull_request.number, github.pull_request.title, github.head_ref, github.base_ref) }}"
-  PUSH_FORMATTED: "${{ format('Push to {0}', github.ref) }}"
-
 jobs:
   pylint:
     runs-on: ubuntu-latest
@@ -60,14 +56,6 @@ jobs:
 
       - name: Run pylint
         run: pylint --load-plugins pylint_django tcf_website tcf_core
-
-      - name: Notify that pylint failed
-        if: ${{ failure() }}
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
-        with:
-          args: "PR #${{ github.pull_request.number}} ${{ github.pull_request.title }} ($GITHUB_HEAD_REF -> $GITHUB_BASE_REF): pylint failed :("
 
   django:
     runs-on: ubuntu-latest
@@ -144,14 +132,38 @@ jobs:
     needs: [pylint, django, eslint]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Send a message to tCF Discord Server when triggered by a pull request
         if: ${{ github.event_name == 'pull_request' }}
-        uses: Ilshidur/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
-        with:
-          args: "{{ env.PR_FORMATTED }}: All jobs completed successfully!"
-
+          PYLINT_RESULT: ${{ needs.pylint.result }}
+          DJANGO_RESULT: ${{ needs.django.result }}
+          ESLINT_RESULT: ${{ needs.eslint.result }}
+          PREFIX: ${{ env.PR_FORMATTED }}
+        run: |
+          - curl -X POST $DISCORD_WEBHOOK -H "Content-Type: application/json" --data
+            "{
+                \"content\" : \"$PREFIX\",
+                \"embeds\": [
+                    {
+                        \"color\": $(get_color $ESLINT_RESULT),
+                        \"title\": \"ESLint result\",
+                        \"description\": \"$ESLINT_RESULT\"
+                    }
+                ]
+            }"
+        shell: bash
+function get_color {
+  case $1 in 
+    success) echo 65280 ;;
+    failure) echo 16711680 ;;
+    skipped) echo 16776960 ;;
+    cancelled) echo 16776960 ;;
+    *) echo 0 ;;
+  esac
+}
+success, failure, cancelled, or skipped
       - name: Send a message to tCF Discord Server when triggered by a push
         if: ${{ github.event_name == 'push' }}
         uses: Ilshidur/action-discord@master
