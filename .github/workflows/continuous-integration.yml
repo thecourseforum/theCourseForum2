@@ -56,7 +56,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run pylint
-        run: pylint --load-plugins pylint_django tcf_website tcf_core
+        run: pylint --load-plugins pylint_django --django-settings-module=tcf_core.settings tcf_website tcf_core
 
       - name: Migrations & Tests
         run: |
