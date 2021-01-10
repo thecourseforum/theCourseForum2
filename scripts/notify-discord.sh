@@ -3,9 +3,9 @@
 function get_content {
     case $GITHUB_EVENT_NAME in 
       pull_request)
-        echo "[PR #$PR_NUMBER: $PR_TITLE](https://github.com/thecourseforum/theCourseForum2/pull/$PR_NUMBER) ([\`$GITHUB_HEAD_REF\`](https://github.com/thecourseforum/theCourseForum2/tree/$GITHUB_HEAD_REF)->[\`$GITHUB_BASE_REF\`](https://github.com/thecourseforum/theCourseForum2/tree/$GITHUB_BASE_REF))" ;;
+        echo "**[PR #$PR_NUMBER: $PR_TITLE](https://github.com/thecourseforum/theCourseForum2/pull/$PR_NUMBER)** ([\`$GITHUB_HEAD_REF\`](https://github.com/thecourseforum/theCourseForum2/tree/$GITHUB_HEAD_REF)->[\`$GITHUB_BASE_REF\`](https://github.com/thecourseforum/theCourseForum2/tree/$GITHUB_BASE_REF))" ;;
       push)
-        echo "Push to [\`${GITHUB_REF##*/}\` branch](https://github.com/thecourseforum/theCourseForum2/tree/${GITHUB_REF##*/})" ;;
+        echo "**Push to [\`${GITHUB_REF##*/}\` branch](https://github.com/thecourseforum/theCourseForum2/tree/${GITHUB_REF##*/})**" ;;
       *)
         echo "Unsupported event."
         exit 1 ;;
@@ -25,7 +25,7 @@ function get_color {
 
 body=$(cat  << EOF
 {
-  "content": "[$GITHUB_WORKFLOW] result for **$(get_content)**. See more at https://github.com/thecourseforum/theCourseForum2/actions/runs/$GITHUB_RUN_ID",
+  "content": "[$GITHUB_WORKFLOW] $(get_content). See more about the result [here](https://github.com/thecourseforum/theCourseForum2/actions/runs/$GITHUB_RUN_ID).",
   "embeds": [
     {
       "description": "**Pylint**: $PYLINT_RESULT",
