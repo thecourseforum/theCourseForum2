@@ -25,7 +25,7 @@ function get_color {
 
 body=$(cat  << EOF
 {
-  "content": "GitHub Actions result for $(get_content). See more at https://github.com/thecourseforum/theCourseForum2/actions/runs/$GITHUB_RUN_NUMBER",
+  "content": "GitHub Actions result for $(get_content). See more at https://github.com/thecourseforum/theCourseForum2/actions/runs/$GITHUB_RUN_ID",
   "embeds": [
     {
       "title": "Pylint",
