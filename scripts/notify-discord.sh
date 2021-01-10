@@ -28,18 +28,15 @@ body=$(cat  << EOF
   "content": "[$GITHUB_WORKFLOW] result for **$(get_content)**. See more at https://github.com/thecourseforum/theCourseForum2/actions/runs/$GITHUB_RUN_ID",
   "embeds": [
     {
-      "title": "Pylint",
-      "description": "$PYLINT_RESULT",
+      "description": "**Pylint**: $PYLINT_RESULT",
       "color": $(get_color $PYLINT_RESULT)
     },
     {
-      "title": "Django",
-      "description": "$DJANGO_RESULT",
+      "description": "**Django**: $DJANGO_RESULT",
       "color": $(get_color $DJANGO_RESULT)
     },
     {
-      "title": "ESLint",
-      "description": "$ESLINT_RESULT",
+      "description": "**ESLint**: $ESLINT_RESULT",
       "color": $(get_color $ESLINT_RESULT)
     }
   ]
