@@ -47,7 +47,7 @@ body=$(cat  << EOF
 EOF
 )
 
-curl $WEBHOOK_URL \
+curl $DISCORD_WEBHOOK \
   -X POST \
   -H "Content-Type: application/json" \
   -d "$body"

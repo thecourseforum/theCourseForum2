@@ -55,7 +55,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run pylint
-        run: pylint --load-plugins pylint_django tcf_website tcf_core
+        run: pylint --django-settings-module=tcf_core.settings.ci --load-plugins pylint_django tcf_website tcf_core
 
   django:
     runs-on: ubuntu-latest
