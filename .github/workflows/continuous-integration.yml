@@ -93,14 +93,6 @@ jobs:
           python manage.py migrate
           python manage.py test
 
-      - name: Notify that Django migrations/tests failed
-        if: ${{ failure() }}
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
-        with:
-          args: "PR #${{ github.pull_request.number}} ${{ github.pull_request.title }} ($GITHUB_HEAD_REF -> $GITHUB_BASE_REF): Django migrations/tests failed :("
-
   eslint:
     runs-on: ubuntu-latest
     steps:
@@ -117,57 +109,19 @@ jobs:
       - name: Run ESLint
         run: node_modules/.bin/eslint tcf_website/static/**/*.js
 
-      - name: Fail intentionally to see if GitHub Actions Bot works
-        run: exit 1
-
-      - name: Notify that eslint failed
-        if: ${{ failure() }}
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
-        with:
-          args: ${{ format('ESLint failed :({0}See https://github.com/thecourseforum/theCourseForum2/actions/runs/{1}', '\n', github.run_id) }}
-
   discord:
     needs: [pylint, django, eslint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Send a message to tCF Discord Server when triggered by a pull request
-        if: ${{ github.event_name == 'pull_request' }}
+      - name: Send a message to tCF Discord Server when all jobs are finished
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
           PYLINT_RESULT: ${{ needs.pylint.result }}
           DJANGO_RESULT: ${{ needs.django.result }}
           ESLINT_RESULT: ${{ needs.eslint.result }}
-          PREFIX: ${{ env.PR_FORMATTED }}
+          PR_NUMBER: ${{ github.pull_request.number}}
+          PR_TITLE: ${{ github.pull_request.title }}
         run: |
-          - curl -X POST $DISCORD_WEBHOOK -H "Content-Type: application/json" --data
-            "{
-                \"content\" : \"$PREFIX\",
-                \"embeds\": [
-                    {
-                        \"color\": $(get_color $ESLINT_RESULT),
-                        \"title\": \"ESLint result\",
-                        \"description\": \"$ESLINT_RESULT\"
-                    }
-                ]
-            }"
+          ./scripts/notify-discord.sh
         shell: bash
-function get_color {
-  case $1 in 
-    success) echo 65280 ;;
-    failure) echo 16711680 ;;
-    skipped) echo 16776960 ;;
-    cancelled) echo 16776960 ;;
-    *) echo 0 ;;
-  esac
-}
-success, failure, cancelled, or skipped
-      - name: Send a message to tCF Discord Server when triggered by a push
-        if: ${{ github.event_name == 'push' }}
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
-        with:
-          args: "{{ env.PUSH_FORMATTED }}: All jobs completed successfully!"
