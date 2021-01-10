@@ -124,5 +124,5 @@ jobs:
           PR_TITLE: ${{ github.pull_request.title }}
         run: |
           chmod +x ./scripts/notify-discord.sh
-          bash ./scripts/notify-discord.sh
+          ./scripts/notify-discord.sh
         shell: bash
