@@ -3,7 +3,7 @@
 function get_content {
     case $GITHUB_EVENT_NAME in 
       pull_request)
-        echo "PR #$PR_NUMBER: $PR_TITLE" ;;
+        echo "[PR #$PR_NUMBER: $PR_TITLE](https://github.com/thecourseforum/theCourseForum2/pull/$PR_NUMBER)" ;;
       push)
         echo "Push to master" ;;
       *)
@@ -25,7 +25,7 @@ function get_color {
 
 body=$(cat  << EOF
 {
-  "content": "*$GITHUB_WORKFLOW* result for **$(get_content)**. See more at https://github.com/thecourseforum/theCourseForum2/actions/runs/$GITHUB_RUN_ID",
+  "content": "[$GITHUB_WORKFLOW] result for **$(get_content)**. See more at https://github.com/thecourseforum/theCourseForum2/actions/runs/$GITHUB_RUN_ID",
   "embeds": [
     {
       "title": "Pylint",

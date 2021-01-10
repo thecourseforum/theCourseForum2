@@ -41,7 +41,6 @@ jobs:
   pylint:
     runs-on: ubuntu-latest
     steps:
-      - run: exit 1
       - uses: actions/checkout@v2
 
       - name: Set up Python ${{ env.PYTHON_TARGET }}
@@ -72,7 +71,6 @@ jobs:
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
-      - run: exit 1
       - uses: actions/checkout@v2
 
       - name: Set up Python ${{ env.PYTHON_TARGET }}
@@ -98,7 +96,6 @@ jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-      - run: exit 1
       - uses: actions/checkout@v2
 
       - name: Install Node
