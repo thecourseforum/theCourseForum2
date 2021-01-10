@@ -113,6 +113,7 @@ jobs:
         run: node_modules/.bin/eslint tcf_website/static/**/*.js
 
   discord:
+    if: always()
     needs: [pylint, django, eslint]
     runs-on: ubuntu-latest
     steps:
