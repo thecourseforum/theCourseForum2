@@ -3,7 +3,7 @@
 function get_content {
     case $GITHUB_EVENT_NAME in 
       pull_request)
-        echo "[PR #$PR_NUMBER: $PR_TITLE](https://github.com/thecourseforum/theCourseForum2/pull/$PR_NUMBER) ([`${GITHUB_HEAD_REF##*/}`](https://github.com/thecourseforum/theCourseForum2/tree/${GITHUB_HEAD_REF##*/})->[`${GITHUB_BASE_REF##*/}`](https://github.com/thecourseforum/theCourseForum2/tree/${GITHUB_BASE_REF##*/})) ([`${GITHUB_REF##*/}` branch](https://github.com/thecourseforum/theCourseForum2/tree/${GITHUB_REF##*/})" ;;
+        echo "[PR #$PR_NUMBER: $PR_TITLE](https://github.com/thecourseforum/theCourseForum2/pull/$PR_NUMBER) ([`$GITHUB_HEAD_REF`](https://github.com/thecourseforum/theCourseForum2/tree/$GITHUB_HEAD_REF)->[`$GITHUB_BASE_REF`](https://github.com/thecourseforum/theCourseForum2/tree/$GITHUB_BASE_REF))" ;;
       push)
         echo "Push to [`${GITHUB_REF##*/}` branch](https://github.com/thecourseforum/theCourseForum2/tree/${GITHUB_REF##*/})" ;;
       *)
