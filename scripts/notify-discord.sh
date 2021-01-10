@@ -5,7 +5,7 @@ function get_content {
       pull_request)
         echo "[PR #$PR_NUMBER: $PR_TITLE](https://github.com/thecourseforum/theCourseForum2/pull/$PR_NUMBER)" ;;
       push)
-        echo "Push to master" ;;
+        echo "Push to [`${GITHUB_REF##*/}` branch](https://github.com/thecourseforum/theCourseForum2/tree/${GITHUB_REF##*/})" ;;
       *)
         echo "Unsupported event."
         exit 1 ;;
