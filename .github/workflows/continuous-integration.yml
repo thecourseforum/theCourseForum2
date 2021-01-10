@@ -120,8 +120,8 @@ jobs:
           PYLINT_RESULT: ${{ needs.pylint.result }}
           DJANGO_RESULT: ${{ needs.django.result }}
           ESLINT_RESULT: ${{ needs.eslint.result }}
-          PR_NUMBER: ${{ github.pull_request.number}}
-          PR_TITLE: ${{ github.pull_request.title }}
+          PR_NUMBER: ${{ github.event.number}}
+          PR_TITLE: ${{ github.event.title }}
         run: |
           chmod +x ./scripts/notify-discord.sh
           ./scripts/notify-discord.sh
