@@ -3,9 +3,9 @@
 function get_content {
     case $GITHUB_EVENT_NAME in 
       pull_request)
-        echo "**PR #$PR_NUMBER: $PR_TITLE** (`$GITHUB_HEAD_REF` -> `$GITHUB_BASE_REF`)" ;;
+        echo "PR #$PR_NUMBER: $PR_TITLE" ;;
       push)
-        echo "**Push to master**" ;;
+        echo "Push to master" ;;
       *)
         echo "Unsupported event."
         exit 1 ;;
@@ -25,7 +25,7 @@ function get_color {
 
 body=$(cat  << EOF
 {
-  "content": "GitHub Actions result for $(get_content). See more at https://github.com/thecourseforum/theCourseForum2/actions/runs/$GITHUB_RUN_ID",
+  "content": "*$GITHUB_WORKFLOW* result for **$(get_content)**. See more at https://github.com/thecourseforum/theCourseForum2/actions/runs/$GITHUB_RUN_ID",
   "embeds": [
     {
       "title": "Pylint",
