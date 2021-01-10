@@ -33,7 +33,7 @@ If you are part of theCourseForum engineering team, follow the instructions belo
 5. Commit with `git commit -m "Add X feature."`
 6. Push! `git push`
 7. Make a PR (Pull Request) to merge your changes back into the `dev` branch.
-8. Wait for all tests to pass on Travis (indicated by green checkmark).
+8. Wait for all tests to pass on GitHub Actions (indicated by green checkmark).
 9. Request an approver.
 10. Wait to be approved and merged!
 
