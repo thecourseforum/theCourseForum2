@@ -4,7 +4,7 @@
 2020 Django rewrite of [theCourseForum 1.0](https://github.com/thecourseforum/theCourseForum) website at [thecourseforum.com](https://thecourseforum.com/).
 
 # theCourseForum2
-
+ 
 ### Connecting University of Virginia Students to Course Information and Reviews
 
 
