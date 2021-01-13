@@ -79,7 +79,7 @@ const createChart = grades_data => {
                 "#E06A45",  // D
                 "#DE6843",  // D-
                 "#C95F36",  // F
-                "#999900",  // Other
+                "#999900",  // Other (Pass)
                 "#B45133",  // Drop
                 "#b35032",  // Withdraw
             ]
