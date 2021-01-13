@@ -95,10 +95,10 @@
                             <i class="fa fa-chart-bar"></i> GPA
                         </small>
                         <p class="h4" id="gpa">
-                            {% if course.avg_gpa != 0.0 %}
-                                {{ course.avg_gpa }}
-                            {% else %}
+                            {% if course.avg_gpa == 0.0 %}
                                 &mdash;
+                            {% else %}
+                                {{ course.avg_gpa }}
                             {% endif %}
                         </p>
                     </li>
