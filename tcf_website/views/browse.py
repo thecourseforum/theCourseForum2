@@ -138,15 +138,15 @@ def course_instructor(request, course_id, instructor_id):
     if section_last_taught is None:
         raise Http404
     course = section_last_taught.course
-    dept = course.subdepartment.department
     instructor = section_last_taught.instructors.get(pk=instructor_id)
 
     # Filter out reviews with no text.
     reviews = Review.display_reviews(course_id, instructor_id, request.user)
+    dept = course.subdepartment.department
 
-    # Navigation breadcrumbs
     course_url = reverse('course',
                          args=[course.subdepartment.mnemonic, course.number])
+    # Navigation breadcrumbs
     breadcrumbs = [
         (dept.school.name, reverse('browse'), False),
         (dept.name, reverse('department', args=[dept.pk]), False),
