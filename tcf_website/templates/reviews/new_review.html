@@ -54,7 +54,7 @@
           <h2 class="h4 review-form-header form-group col-12 my-4">
             Tell us more about the course and instructor</h2>
           <div class="form-group col mb-3">
-            <textarea class="form-control" id="reviewText" name="reviewText" rows="5"
+            <textarea class="form-control" id="text" name="text" rows="5"
                       placeholder="(Aim for 3 sentences or more!)" minlength="100" maxlength="5000"></textarea>
           </div>
         </div>
@@ -66,19 +66,19 @@
               <h2 class="h4 review-form-header col-12 p-0 my-4">
                 Rate the course</h2>
               <div class="mt-3">
-                  <label for="instructorRating" class="m-0">
+                  <label for="instructor_rating" class="m-0">
                     <i class="fas fa-user"></i> Instructor
                   </label>
                   <div class="row">
                       <div class="col-xl-9 col-8 py-2">
                         <input type="range" class="custom-range"
                                min="1" max="5" step="1" value=3
-                               id="instructorRating" name="instructorRating" required>
+                               id="instructor_rating" name="instructor_rating" required>
                       </div>
                       <div class="col-xl-3 col-4 pl-lg-2 pl-0 d-inline-flex">
                         <input type="number" class="form-control text-center"
                                min="1" max="5" value=3
-                               id="instructorRating2" name="instructorRating2" required>
+                               id="instructor_rating2" name="instructor_rating2" required>
                         <span class="ml-2 mt-2">/5</span>
                       </div>
                   </div>
@@ -143,43 +143,43 @@
                 Hours of work/week</h2>
               <div class="row py-3">
                 <div class="col-8">
-                  <label for="hoursReading">
+                  <label for="amount_reading">
                     <i class="fas fa-book"></i> Reading
                   </label>
                 </div>
                 <div class="col-4">
                   <input type="number" class="form-control text-center"
                          value=0 min="0" max="20"
-                         id="hoursReading" name="hoursReading" required>
+                         id="amount_reading" name="amount_reading" required>
                 </div>
               </div>
               <div class="row py-3">
                 <div class="col-8">
-                  <label for="hoursWriting">
+                  <label for="amount_writing">
                     <i class="fas fa-pencil-alt"></i> Writing
                   </label>
                 </div>
                 <div class="col-4">
                   <input type="number" class="form-control text-center"
                          value=0 min="0" max="20"
-                         id="hoursWriting" name="hoursWriting" required>
+                         id="amount_writing" name="amount_writing" required>
                 </div>
               </div>
               <div class="row py-3">
                 <div class="col-8">
-                  <label for="hoursGroupwork">
+                  <label for="amount_group">
                     <i class="fas fa-user-friends"></i> Groupwork
                   </label>
                 </div>
                 <div class="col-4">
                   <input type="number" class="form-control text-center"
                          value=0 min="0" max="20"
-                         id="hoursGroupwork" name="hoursGroupwork" required>
+                         id="amount_group" name="amount_group" required>
                 </div>
               </div>
               <div class="row py-3">
                 <div class="col-8">
-                  <label for="hoursOther">
+                  <label for="amount_homework">
                     <span tabindex="0" data-toggle="tooltip" data-placement="bottom" title="Labs, projects, etc.">
                       <i class="fas fa-flask"></i> Other
                     </span>
@@ -188,7 +188,7 @@
                 <div class="col-4">
                   <input type="number" class="form-control text-center"
                          value=0 min="0" max="20"
-                         id="hoursOther" name="hoursOther" required>
+                         id="amount_homework" name="amount_homework" required>
                 </div>
               </div>
           </div>

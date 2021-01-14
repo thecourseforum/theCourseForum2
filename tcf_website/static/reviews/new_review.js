@@ -127,12 +127,12 @@ jQuery(function($) {
 
     /* Course Rating Slider Inputs */
     // Instructor Rating
-    $("#instructorRating2").val($("#instructorRating").val());
-    $("#instructorRating").change(function() {
-        $("#instructorRating2").val($("#instructorRating").val());
+    $("#instructor_rating2").val($("#instructor_rating").val());
+    $("#instructor_rating").change(function() {
+        $("#instructor_rating2").val($("#instructor_rating").val());
     });
-    $("#instructorRating2").change(function() {
-        $("#instructorRating").val($("#instructorRating2").val());
+    $("#instructor_rating2").change(function() {
+        $("#instructor_rating").val($("#instructor_rating2").val());
     });
 
     // Enjoyability

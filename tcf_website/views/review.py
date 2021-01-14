@@ -62,10 +62,10 @@ def new_review(request):
                 semester_id = request.POST['semester']
                 semester = Semester.objects.get(id=int(semester_id))
 
-                hours_reading = int(request.POST['hoursReading'])
-                hours_writing = int(request.POST['hoursWriting'])
-                hours_group = int(request.POST['hoursGroupwork'])
-                hours_other = int(request.POST['hoursOther'])
+                hours_reading = int(request.POST['amount_reading'])
+                hours_writing = int(request.POST['amount_writing'])
+                hours_group = int(request.POST['amount_group'])
+                hours_other = int(request.POST['amount_homework'])
                 total_hours = hours_reading + hours_writing + hours_group + hours_other
 
                 Review.objects.create(
@@ -73,8 +73,8 @@ def new_review(request):
                     course=course,
                     semester=semester,
                     instructor=instructor,
-                    text=request.POST['reviewText'],
-                    instructor_rating=int(request.POST['instructorRating']),
+                    text=request.POST['text'],
+                    instructor_rating=int(request.POST['instructor_rating']),
                     enjoyability=int(request.POST['enjoyability']),
                     difficulty=int(request.POST['difficulty']),
                     recommendability=int(request.POST['recommendability']),
