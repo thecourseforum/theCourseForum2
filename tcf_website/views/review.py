@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 
-from ..models import Review, Course, Semester, Instructor
+from ..models import Review
 
 # pylint: disable=fixme
 # Disable pylint errors on TODO messages, such as below
@@ -19,8 +19,15 @@ from ..models import Review, Course, Semester, Instructor
 # (i.e. better Course/Instructor/Semester search).
 
 
-class ReviewForm(forms.Form):
-    """Form for review creation."""
+class ReviewForm(forms.ModelForm):
+    """Form for review creation in the backend, not for rendering HTML."""
+    class Meta:
+        model = Review
+        fields = [
+            'text', 'course', 'instructor', 'semester', 'instructor_rating',
+            'difficulty', 'recommendability', 'enjoyability', 'amount_reading',
+            'amount_writing', 'amount_group', 'amount_homework',
+        ]
 
 
 @login_required
@@ -52,61 +59,18 @@ def new_review(request):
         # TODO: use a proper django form.
         form = ReviewForm(request.POST)
         if form.is_valid():
-            try:
-                course_id = request.POST['course']
-                course = Course.objects.get(id=int(course_id))
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.hours_per_week = \
+                instance.amount_reading + instance.amount_writing + \
+                instance.amount_group + instance.amount_homework
+            instance.save()
 
-                instructor_id = request.POST['instructor']
-                instructor = Instructor.objects.get(id=int(instructor_id))
-
-                semester_id = request.POST['semester']
-                semester = Semester.objects.get(id=int(semester_id))
-
-                hours_reading = int(request.POST['amount_reading'])
-                hours_writing = int(request.POST['amount_writing'])
-                hours_group = int(request.POST['amount_group'])
-                hours_other = int(request.POST['amount_homework'])
-                total_hours = hours_reading + hours_writing + hours_group + hours_other
-
-                Review.objects.create(
-                    user=request.user,
-                    course=course,
-                    semester=semester,
-                    instructor=instructor,
-                    text=request.POST['text'],
-                    instructor_rating=int(request.POST['instructor_rating']),
-                    enjoyability=int(request.POST['enjoyability']),
-                    difficulty=int(request.POST['difficulty']),
-                    recommendability=int(request.POST['recommendability']),
-                    amount_reading=hours_reading,
-                    amount_writing=hours_writing,
-                    amount_group=hours_group,
-                    amount_homework=hours_other,
-                    hours_per_week=total_hours
-                )
-
-                messages.add_message(
-                    request,
-                    messages.SUCCESS,
-                    'Successfully reviewed ' +
-                    str(course) + '!')
-                return redirect('reviews')
-
-            except BaseException:  # pylint: disable=broad-except
-                # TODO: need more robust backend validation
-                print("Review error")
-                messages.add_message(
-                    request,
-                    messages.ERROR,
-                    'This course is invalid. Try again!')
-                return render(request,
-                              'reviews/new_review.html',
-                              {'form': form})
-        else:
-            return render(request, 'reviews/new_review.html', {'form': form})
-
-    form = ReviewForm()
-    return render(request, 'reviews/new_review.html', {'form': form})
+            messages.add_message(request, messages.SUCCESS,
+                                 f'Successfully reviewed {instance.course}!')
+            return redirect('reviews')
+        return render(request, 'reviews/new_review.html', {'form': form})
+    return render(request, 'reviews/new_review.html')
 
 
 # Note: Class-based views can't use the @login_required decorator
