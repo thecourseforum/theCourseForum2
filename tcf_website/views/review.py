@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based vie
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 
 from ..models import Review
@@ -56,7 +56,6 @@ def new_review(request):
 
     # Collect form data into Review model instance.
     if request.method == 'POST':
-        # TODO: use a proper django form.
         form = ReviewForm(request.POST)
         if form.is_valid():
             instance = form.save(commit=False)
@@ -66,8 +65,8 @@ def new_review(request):
                 instance.amount_group + instance.amount_homework
             instance.save()
 
-            messages.add_message(request, messages.SUCCESS,
-                                 f'Successfully reviewed {instance.course}!')
+            messages.success(request,
+                             f'Successfully reviewed {instance.course}!')
             return redirect('reviews')
         return render(request, 'reviews/new_review.html', {'form': form})
     return render(request, 'reviews/new_review.html')
@@ -87,3 +86,23 @@ class DeleteReview(LoginRequiredMixin, generic.DeleteView):
             raise PermissionDenied(
                 "You are not allowed to delete this review!")
         return obj
+
+
+@login_required
+def edit_review(request, review_id):
+    """Review modification view."""
+    review = get_object_or_404(Review, pk=review_id)
+    if review.user != request.user:
+        raise PermissionDenied('You are not allowed to edit this review!')
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            form.save()
+            messages.success(request,
+                             f'Successfully updated the review for {form.instance.course}!')
+            return redirect('reviews')
+        messages.error(request, form.errors)
+        return render(request, 'reviews/edit_review.html', {'form': form})
+    form = ReviewForm(instance=review)
+    return render(request, 'reviews/edit_review.html', {'form': form})
