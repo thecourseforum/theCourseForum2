@@ -100,7 +100,7 @@ def edit_review(request, review_id):
         if form.is_valid():
             form.save()
             messages.success(request,
-                             f'Successfully updated the review for {form.instance.course}!')
+                             f'Successfully updated your review for {form.instance.course}!')
             return redirect('reviews')
         messages.error(request, form.errors)
         return render(request, 'reviews/edit_review.html', {'form': form})
