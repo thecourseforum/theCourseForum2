@@ -75,16 +75,6 @@ If you are part of theCourseForum engineering team, follow the instructions belo
     - If you're using Windows 10 Home (Version 1903, Build 18362 or above), which is what comes with most laptops, then follow [these instructions](https://docs.docker.com/docker-for-windows/install-windows-home/). The setup is a bit more complicated because you'll first need to setup [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/install-win10#manual-installation-steps). WSL, or Windows Subsystem for Linux, is like a Linux virtual machine that runs in the command line (meaning there's no GUI). It allows Docker to run by using Linux behind the scenes. Check out the [VS Code instructions](https://code.visualstudio.com/docs/remote/wsl) to learn how to develop with WSL (optional).
 3. Proceed at step 2 in **MacOS and Linux setup**
 
-### Alternative Setup (Windows and MacOS if above failed)
-0. [Install Vagrant](https://www.vagrantup.com/intro/getting-started/install.html)
-1. `git clone https://github.com/thecourseforum/theCourseForum2.git`
-2. Go into the `theCourseForum2/` folder and then run `vagrant up` to start a VM.
-3. After that's booted, run `vagrant ssh` to run commands inside the VM.
-4. `cd /vagrant`
-5. Start at step 3 in **MacOS and Linux setup**. You may have to prefix all docker commands with `sudo` (e.g. `sudo docker-compose up`).
-6. Go to http://127.0.0.1:8000 and make sure it works!
-7. Run `vagrant` suspend when you're done to suspend the VM.
-
 
 ## Common Issues and Fixes
 

@@ -10,7 +10,6 @@ legacy_db/*.sql
 tcf_website/migrations/*
 .env*
 !.config/.env.example
-.vagrant/
 /static/
 predeploy.sh
 gae-service-account.json
