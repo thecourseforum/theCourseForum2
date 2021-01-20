@@ -75,4 +75,4 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: node_modules/.bin/eslint tcf_website/static/**/*.js
+        run: node_modules/.bin/eslint tcf_website/static/**/*.js -c .config/.eslintrc.yml
