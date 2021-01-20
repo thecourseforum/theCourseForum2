@@ -32,7 +32,7 @@ body=$(cat  << EOF
       "color": $(get_color $PYLINT_RESULT)
     },
     {
-      "description": "**Django**: $DJANGO_RESULT",
+      "description": "**Django**: $DJANGO_RESULT (code coverage: ${DJANGO_COVERAGE:-unknown})",
       "color": $(get_color $DJANGO_RESULT)
     },
     {
