@@ -25,4 +25,4 @@ The code stack is current standard technologies. They were chosen specifically b
 - Javascript (jQuery)
 
 ### Want to get involved?
-Don't hesitate to contact us whether or not that you are at the University of Virginia! We love to talk about our app and we love to discuss everything that we do! Join our [discord server](https://discord.com/invite/tAjzH7eyvW) or shoot us an email at info@thecourseforum.com.
+Don't hesitate to contact us whether or not that you are at the University of Virginia! We love to talk about our app and we love to discuss everything that we do! Join our [Discord server](https://discord.com/invite/tAjzH7eyvW) or shoot us an email at info@thecourseforum.com.
