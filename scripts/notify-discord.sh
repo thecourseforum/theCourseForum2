@@ -1,11 +1,15 @@
 #!/bin/bash
 
+repo_link="https://github.com/thecourseforum/theCourseForum2"
 function get_content {
     case $GITHUB_EVENT_NAME in 
       pull_request)
-        echo "**[PR #$PR_NUMBER: $PR_TITLE](https://github.com/thecourseforum/theCourseForum2/pull/$PR_NUMBER)** ([\`$GITHUB_HEAD_REF\`](https://github.com/thecourseforum/theCourseForum2/tree/$GITHUB_HEAD_REF)->[\`$GITHUB_BASE_REF\`](https://github.com/thecourseforum/theCourseForum2/tree/$GITHUB_BASE_REF))" ;;
+        prefix="**[PR #$PR_NUMBER: $PR_TITLE]($repo_link/pull/$PR_NUMBER)**"
+        head="[\`$GITHUB_HEAD_REF\`]($repo_link/tree/$GITHUB_HEAD_REF)"
+        base="[\`$GITHUB_BASE_REF\`]($repo_link/tree/$GITHUB_BASE_REF)"
+        echo "$prefix ($head->$base)" ;;
       push)
-        echo "**Push to [\`${GITHUB_REF##*/}\` branch](https://github.com/thecourseforum/theCourseForum2/tree/${GITHUB_REF##*/})**" ;;
+        echo "**Push to [\`${GITHUB_REF##*/}\` branch]($repo_link/tree/${GITHUB_REF##*/})**" ;;
       *)
         echo "Unsupported event."
         exit 1 ;;
@@ -23,9 +27,10 @@ function get_color {
   esac
 }
 
+run_link="$repo_link/actions/runs/$GITHUB_RUN_ID"
 body=$(cat  << EOF
 {
-  "content": "[$GITHUB_WORKFLOW] $(get_content). See more about the result [here](https://github.com/thecourseforum/theCourseForum2/actions/runs/$GITHUB_RUN_ID).",
+  "content": "[$GITHUB_WORKFLOW] $(get_content). See more about the result [here]($run_link).",
   "embeds": [
     {
       "description": "**Pylint**: $PYLINT_RESULT",
