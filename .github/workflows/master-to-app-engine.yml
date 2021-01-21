@@ -69,7 +69,7 @@ jobs:
         run: python3 manage.py collectstatic --noinput --clear
 
       - name: Substitute environment variables
-        run: envsubst < .config/app.yaml.template > app.yaml
+        run: envsubst < .config/app.template.yaml > app.yaml
 
       - name: Deploy to Google App Engine
         uses: google-github-actions/deploy-appengine@main
