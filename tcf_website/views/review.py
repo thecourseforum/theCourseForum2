@@ -114,6 +114,7 @@ class DeleteReview(LoginRequiredMixin, generic.DeleteView):
     """Review deletion view."""
     model = Review
     success_url = reverse_lazy('reviews')
+    success_message = "Successfully deleted the review for %(course)s"
 
     def get_object(self):  # pylint: disable=arguments-differ
         """Override DeleteView's function to validate review belonging to user."""
@@ -123,3 +124,19 @@ class DeleteReview(LoginRequiredMixin, generic.DeleteView):
             raise PermissionDenied(
                 "You are not allowed to delete this review!")
         return obj
+
+    def delete(self, request, *args, **kwargs):
+        """Overide DeleteView's delete function to add a message confirming deletion."""
+        # Note: we don't use SuccessMessageMixin because it currently has issues
+        # with DeleteViews.
+        # See:
+        # https://stackoverflow.com/questions/24822509/success-message-in-deleteview-not-shown
+        course = super().get_object().course
+
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            'Successfully deleted the review for ' +
+            str(course) + '!')
+
+        return super().delete(request, *args, **kwargs)
