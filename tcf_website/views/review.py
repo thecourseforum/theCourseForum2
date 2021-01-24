@@ -127,15 +127,11 @@ class DeleteReview(LoginRequiredMixin, generic.DeleteView):
     def delete(self, request, *args, **kwargs):
         """Overide DeleteView's delete function to add a message confirming deletion."""
         # Note: we don't use SuccessMessageMixin because it currently has issues
-        # with DeleteViews.
-        # See:
+        # with DeleteViews. See:
         # https://stackoverflow.com/questions/24822509/success-message-in-deleteview-not-shown
-        course = super().get_object().course
-
         messages.add_message(
             request,
             messages.SUCCESS,
-            'Successfully deleted the review for ' +
-            str(course) + '!')
+            'Successfully deleted your review!')
 
         return super().delete(request, *args, **kwargs)
