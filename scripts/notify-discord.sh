@@ -17,32 +17,25 @@ function get_content {
   # 
 }
 
-function get_color {
+function get_emoji {
   case $1 in 
-    success) echo 65280 ;;  # green
-    failure) echo 16711680 ;;  # red
-    skipped) echo 13882323 ;;  # light gray
-    cancelled) echo 16776960 ;;  # yellow
-    *) echo 0 ;;  # black
+    success) echo ":white_check_mark:" ;;
+    failure) echo ":x:" ;;  # a red X
+    skipped) echo ":track_next:" ;;
+    cancelled) echo ":warning:" ;;  # a yellow warning sign
+    *) echo ":grey_question:"; exit 1 ;;  # unexpected input
   esac
 }
-
 run_link="$repo_link/actions/runs/$GITHUB_RUN_ID"
+pylint_formatted="**Pylint** $(get_emoji $PYLINT_RESULT)"
+django_formatted="**Django** $(get_emoji $DJANGO_RESULT) (code coverage: ${DJANGO_COVERAGE:-unknown})"
+eslint_formatted="**ESLint** $(get_emoji $ESLINT_RESULT)"
 body=$(cat  << EOF
 {
-  "content": "[$GITHUB_WORKFLOW] $(get_content). See more about the result [here]($run_link).",
+  "content": "$(get_content). See more about the result [here]($run_link).",
   "embeds": [
     {
-      "description": "**Pylint**: $PYLINT_RESULT",
-      "color": $(get_color $PYLINT_RESULT)
-    },
-    {
-      "description": "**Django**: $DJANGO_RESULT (code coverage: ${DJANGO_COVERAGE:-unknown})",
-      "color": $(get_color $DJANGO_RESULT)
-    },
-    {
-      "description": "**ESLint**: $ESLINT_RESULT",
-      "color": $(get_color $ESLINT_RESULT)
+      "description": "$pylint_formatted | $django_formatted | $eslint_formatted"
     }
   ]
 }
