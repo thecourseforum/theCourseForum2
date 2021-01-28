@@ -118,10 +118,6 @@ class DeleteReviewTests(TestCase):
         """Test if a 403 is returned for unauthorized review deletion."""
         self.client.force_login(self.user2)  # force login as user2
 
-        # Note: because PermissionDenied is (should be) raised in this view, we get a really ugly
-        # traceback in the test runner. This isn't so nice, because it makes the
-        # `./precommit` output annoying to sort through.
-        # Is there any way to silence the errors while we're running tests?
         response = self.client.post(
             # try to delete review1, which is not authored by user2
             reverse('delete_review', args=[self.review1.pk])
