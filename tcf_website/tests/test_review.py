@@ -99,7 +99,9 @@ class DeleteReviewTests(TestCase):
 
         # get messages from the request
         messages = [m.message for m in get_messages(response.wsgi_request)]
-        self.assertEqual(str(messages[0]), 'Successfully deleted your review!')
+        self.assertEqual(
+            str(messages[0]),
+            f'Successfully deleted your review for {str(self.review1.course)}!')
 
     @suppress_request_warnings
     def test_delete_nonexistent_review_id(self):

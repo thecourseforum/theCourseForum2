@@ -92,10 +92,14 @@ class DeleteReview(LoginRequiredMixin, generic.DeleteView):
         # Note: we don't use SuccessMessageMixin because it currently has issues
         # with DeleteViews. See:
         # https://stackoverflow.com/questions/24822509/success-message-in-deleteview-not-shown
+
+        # get the course this review is about
+        course = super().get_object().course
+
         messages.add_message(
             request,
             messages.SUCCESS,
-            'Successfully deleted your review!')
+            f'Successfully deleted your review for {str(course)}!')
 
         return super().delete(request, *args, **kwargs)
 
