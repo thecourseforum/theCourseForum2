@@ -5,7 +5,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
-from django.utils import timezone
 
 
 class School(models.Model):
@@ -627,9 +626,9 @@ class Review(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(20)])
 
     # Review created date. Required.
-    created = models.DateTimeField(editable=False, default=timezone.now)
+    created = models.DateTimeField(auto_now_add=True)
     # Review modified date. Required.
-    modified = models.DateTimeField(default=timezone.now)
+    modified = models.DateTimeField(auto_now=True)
 
     # does this get used anywhere? not sure
     def average(self):
