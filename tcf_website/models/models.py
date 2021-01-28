@@ -473,7 +473,7 @@ class CourseGrade(models.Model):
     d = models.IntegerField(default=0)
     d_minus = models.IntegerField(default=0)
     f = models.IntegerField(default=0)
-    ot = models.IntegerField(default=0)
+    ot = models.IntegerField(default=0)  # other/pass
     drop = models.IntegerField(default=0)
     withdraw = models.IntegerField(default=0)
     total_enrolled = models.IntegerField(default=0)
@@ -512,7 +512,7 @@ class CourseInstructorGrade(models.Model):
     d = models.IntegerField(default=0)
     d_minus = models.IntegerField(default=0)
     f = models.IntegerField(default=0)
-    ot = models.IntegerField(default=0)
+    ot = models.IntegerField(default=0)  # other/pass
     drop = models.IntegerField(default=0)
     withdraw = models.IntegerField(default=0)
     total_enrolled = models.IntegerField(default=0)
