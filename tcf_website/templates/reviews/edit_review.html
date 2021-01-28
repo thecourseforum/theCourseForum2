@@ -1,7 +1,7 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}Write a Review - theCourseForum{% endblock %}
+{% block title %}Edit a Review - theCourseForum{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'reviews/new_review.css' %}" />
@@ -9,13 +9,15 @@
 
 {% block content %}
 <div class="new-review container text-left mx-auto">
-  <h1 class="h2 mt-2 mb-4">Write a review</h1>
+  <h1 class="h2 mt-2 mb-4">Edit a review</h1>
   <div class="card">
-    <form class="card-body px-md-5" action="{% url 'new_review' %}" method="POST">
+    <form class="card-body px-md-5"
+    action="{% url 'edit_review' review_id=form.instance.id %}"
+    method="POST">
         {% csrf_token %}
         {% include 'reviews/review_form_content.html' %}
         <div class="new-review-submit row py-4">
-          <button type="submit" class="btn btn-primary mx-auto">Submit Review</button>
+          <button type="submit" class="btn btn-primary mx-auto">Update Review</button>
         </div>
     </form>
   </div>
@@ -24,12 +26,5 @@
 {% endblock %}
 
 {% block js %}
-<script type="text/javascript" src="{% static 'reviews/new_review.js' %}"></script>
 <script type="text/javascript" src="{% static 'reviews/sync_review_sliders.js' %}"></script>
-<script>
-  // For Bootstrap tooltip
-  $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
-  });
-</script>
 {% endblock %}
