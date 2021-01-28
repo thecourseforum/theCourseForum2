@@ -7,7 +7,6 @@ from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
 
-from .test_utils import setup
 from .test_utils import setup, suppress_request_warnings
 
 
@@ -80,6 +79,7 @@ class EditReviewTests(TestCase):
         messages = [m.message for m in get_messages(response.wsgi_request)]
         self.assertIn('difficulty', str(messages[0]))
 
+
 class DeleteReviewTests(TestCase):
     """Tests for the DeleteReview view."""
 
@@ -101,6 +101,7 @@ class DeleteReviewTests(TestCase):
         messages = [m.message for m in get_messages(response.wsgi_request)]
         self.assertEqual(str(messages[0]), 'Successfully deleted your review!')
 
+    @suppress_request_warnings
     def test_delete_nonexistent_review_id(self):
         """Test if a 404 is returned for deleting a nonexistent review ID."""
         self.client.force_login(self.user1)
@@ -110,6 +111,7 @@ class DeleteReviewTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    @suppress_request_warnings
     def test_unauthorized_user_delete(self):
         """Test if a 403 is returned for unauthorized review deletion."""
         self.client.force_login(self.user2)  # force login as user2
