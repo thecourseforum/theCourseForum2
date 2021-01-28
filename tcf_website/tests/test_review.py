@@ -6,7 +6,7 @@ from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
 
-from .test_utils import setup
+from .test_utils import setup, suppress_request_warnings
 
 
 class EditReviewTests(TestCase):
@@ -29,6 +29,7 @@ class EditReviewTests(TestCase):
             'amount_homework': self.review1.amount_homework,
         })
 
+    @suppress_request_warnings
     def test_nonexistent_review_id(self):
         """Test if a 404 error is returned for a nonexistent review ID."""
         self.client.force_login(self.review1.user)
@@ -39,6 +40,7 @@ class EditReviewTests(TestCase):
         )
         self.assertEqual(response.status_code, 404)
 
+    @suppress_request_warnings
     def test_different_user(self):
         """Test if a user can edit someone else's review."""
         self.client.force_login(self.user2)  # self.user2 != self.review1.user
