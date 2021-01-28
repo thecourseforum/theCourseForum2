@@ -1,11 +1,11 @@
 # pylint: disable=import-error,unused-wildcard-import,wildcard-import
-"""Django settings module for testing environment such as Heroku"""
+"""Django settings module for development environment such as Heroku"""
 
 from .base import *
 
 # The following if statement is needed to prevent overwriting global variables when
 # this settings file is interpreted
-if os.environ.get('DJANGO_SETTINGS_MODULE') == 'tcf_core.settings.testing':
+if os.environ.get('DJANGO_SETTINGS_MODULE') == 'tcf_core.settings.dev':
     # Use secure connection for database access
     DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
 
