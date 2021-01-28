@@ -21,6 +21,8 @@ urlpatterns = [
     path('reviews/new', views.new_review, name='new_review'),
     path('reviews/<int:pk>/delete',
          views.DeleteReview.as_view(), name='delete_review'),
+    path('reviews/<int:review_id>/edit',
+         views.edit_review, name='edit_review'),
     path('reviews', views.reviews, name='reviews'),
     path('reviews/<int:review_id>/upvote', views.upvote),
     path('reviews/<int:review_id>/downvote', views.downvote),
