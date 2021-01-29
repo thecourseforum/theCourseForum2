@@ -38,12 +38,29 @@ env:
   DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
   DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
 jobs:
+  pylint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python ${{ env.PYTHON_TARGET }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_TARGET }}
+
+      - name: Install Python packages, excluding the unnecessary ones
+        run: |
+          python -m pip install --upgrade pip
+          sed -i '/\(tqdm\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
+          pip install -r requirements.txt
+
+      - name: Run pylint
+        run: pylint --django-settings-module=${{env.DJANGO_SETTINGS_MODULE}} --load-plugins pylint_django tcf_website tcf_core
+
   django:
     runs-on: ubuntu-latest
     outputs:
       code-coverage: ${{ steps.coverage.outputs.percentage }}
-      django-result: ${{ steps.django-tests.outcome }}
-      pylint-result: ${{ steps.pylint.outcome }}
     services:
       postgres:
         image: postgres:12.2
@@ -66,12 +83,11 @@ jobs:
       - name: Install Python packages, excluding the unnecessary ones
         run: |
           python -m pip install --upgrade pip
-          sed -i '/\(pandas\|tqdm\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
+          sed -i '/\(pandas\|tqdm\|lint\|autopep8\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
           echo coverage >> requirements.txt
           pip install -r requirements.txt
 
       - name: Migrations & Tests
-        id: django-tests
         run: |
           mkdir tcf_website/migrations
           touch tcf_website/migrations/__init__.py
@@ -87,12 +103,6 @@ jobs:
         run: |
           echo "::set-output name=percentage::$(coverage report | grep -o '[0-9]\+%' | tail -1)"
 
-      - name: Run pylint
-        if: ${{ always() }}
-        id: pylint
-        run: |
-          pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} \
-            --load-plugins pylint_django tcf_website tcf_core
   eslint:
     runs-on: ubuntu-latest
     steps:
@@ -111,15 +121,15 @@ jobs:
 
   discord:
     if: ${{ always() }}
-    needs: [django, eslint]
+    needs: [pylint, django, eslint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Send a message to tCF Discord Server when all jobs are finished
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
-          PYLINT_RESULT: ${{ needs.django.outputs.pylint-result }}
-          DJANGO_RESULT: ${{ needs.django.outputs.django-result }}
+          PYLINT_RESULT: ${{ needs.pylint.result }}
+          DJANGO_RESULT: ${{ needs.django.result }}
           ESLINT_RESULT: ${{ needs.eslint.result }}
           PR_NUMBER: ${{ github.event.number}}
           PR_TITLE: ${{ github.event.pull_request.title }}
