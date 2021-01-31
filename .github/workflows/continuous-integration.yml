@@ -51,7 +51,7 @@ jobs:
       - name: Install Python packages, excluding the unnecessary ones
         run: |
           python -m pip install --upgrade pip
-          sed -i '/\(tqdm\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
+          sed -i '/\(tqdm\|coverage|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
           pip install -r requirements.txt
 
       - name: Run pylint
@@ -84,7 +84,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           sed -i '/\(pandas\|tqdm\|lint\|autopep8\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
-          echo coverage >> requirements.txt
           pip install -r requirements.txt
 
       - name: Migrations & Tests
