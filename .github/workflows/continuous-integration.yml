@@ -135,6 +135,5 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           DJANGO_COVERAGE: ${{ needs.django.outputs.code-coverage }}
         run: |
-          chmod +x ./scripts/notify-discord.sh
-          ./scripts/notify-discord.sh
+          bash ./scripts/notify-discord.sh
         shell: bash
