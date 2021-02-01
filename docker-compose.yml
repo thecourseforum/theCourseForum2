@@ -3,7 +3,15 @@ version: '3'
 services:
   web:
     build: .
-    command: bash -c "npm install --no-fund --no-audit && pip install --upgrade -r requirements.txt && python3 manage.py makemigrations tcf_website && python3 manage.py migrate && python3 manage.py collectstatic --noinput && python3 manage.py invalidate_cachalot tcf_website && echo Starting Django Server... && python3 manage.py runserver 0.0.0.0:8000"
+    command: bash -c "
+      npm install --no-fund --no-audit &&
+      pip install --upgrade -r requirements.txt &&
+      python3 manage.py makemigrations tcf_website &&
+      python3 manage.py migrate &&
+      python3 manage.py collectstatic --noinput &&
+      python3 manage.py invalidate_cachalot tcf_website &&
+      echo Starting Django Server... &&
+      python3 manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
       - /app/db/  # exclude the subfolder to prevent potential interference
@@ -20,7 +28,7 @@ services:
     restart: always
     container_name: ${DB_HOST}
     env_file:
-     - ./.env
+      - ./.env
     command: -p ${DB_PORT}
     environment:
       POSTGRES_USER: ${DB_USER}
