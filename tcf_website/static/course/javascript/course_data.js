@@ -3,7 +3,7 @@ const loadData = data => {
     const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, ot, drop, withdraw } = data;
     // order we want for the pie chart
     const other = ot;
-    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, other, withdraw, drop ];
+    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop, other ];
 
     createChart(grades_data);
     
@@ -82,15 +82,15 @@ const createChart = grades_data => {
                 "#E06A45",  // D
                 "#DE6843",  // D-
                 "#C95F36",  // F
-                "#999900",  // Other (Pass)
                 "#B35032",  // Withdraw
                 "#B45133",  // Drop
+                "#6775A6",  // Other (Pass)
             ]
         }],
         labels: [
             "A+", "A", "A-", "B+", "B", "B-",
             "C+", "C", "C-", "D+", "D", "D-",
-            "F", "Pass", "Withdraw", "Drop",
+            "F", "Withdraw", "Drop", "Pass",
         ]
     };
     var ctx = document.getElementById("myChart");
