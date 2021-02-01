@@ -6,7 +6,7 @@ services:
     command: bash -c "npm install --no-fund --no-audit && pip install --upgrade -r requirements.txt && python3 manage.py makemigrations tcf_website && python3 manage.py migrate && python3 manage.py collectstatic --noinput && python3 manage.py invalidate_cachalot tcf_website && echo Starting Django Server... && python3 manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
-      - /app/db/  # exclude the subfolder to prevent potential intereference
+      - /app/db/  # exclude the subfolder to prevent potential interference
     ports:
       - '8000:8000'
     container_name: tcf_django
