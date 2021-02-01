@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "chart.js": "^2.9.4",
-    "eslint": "^7.9.0",
+    "eslint": "^7.19.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-node": "^11.1.0",
