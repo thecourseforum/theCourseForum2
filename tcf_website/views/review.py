@@ -87,6 +87,22 @@ class DeleteReview(LoginRequiredMixin, generic.DeleteView):
                 "You are not allowed to delete this review!")
         return obj
 
+    def delete(self, request, *args, **kwargs):
+        """Overide DeleteView's delete function to add a message confirming deletion."""
+        # Note: we don't use SuccessMessageMixin because it currently has issues
+        # with DeleteViews. See:
+        # https://stackoverflow.com/questions/24822509/success-message-in-deleteview-not-shown
+
+        # get the course this review is about
+        course = super().get_object().course
+
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            f'Successfully deleted your review for {str(course)}!')
+
+        return super().delete(request, *args, **kwargs)
+
 
 @login_required
 def edit_review(request, review_id):
@@ -99,8 +115,9 @@ def edit_review(request, review_id):
         form = ReviewForm(request.POST, instance=review)
         if form.is_valid():
             form.save()
-            messages.success(request,
-                             f'Successfully updated your review for {form.instance.course}!')
+            messages.success(
+                request,
+                f'Successfully updated your review for {form.instance.course}!')
             return redirect('reviews')
         messages.error(request, form.errors)
         return render(request, 'reviews/edit_review.html', {'form': form})
