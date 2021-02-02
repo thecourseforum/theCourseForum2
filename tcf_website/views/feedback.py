@@ -26,7 +26,7 @@ def send_email(query):
     subject = query.GET.get("subject", "")
     content = query.GET.get("content", "")
     from_email = os.environ['EMAIL_HOST_USER']
-    recipient_list = ["support@thecourseforum.com"]
+    recipient_list = [query.GET.get("recipients", "support@thecourseforum.com")]
 
     send_mail(subject, content, from_email, recipient_list)
     return JsonResponse({'content': query.GET.get("content", "")})
