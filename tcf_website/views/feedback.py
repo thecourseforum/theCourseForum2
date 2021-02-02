@@ -5,6 +5,7 @@ import requests
 from django.http import JsonResponse
 from django.core.mail import send_mail
 
+
 def send_discord(query):
     """Post message to discord server"""
     message_type = query.GET.get("type", "bug")
@@ -18,6 +19,7 @@ def send_discord(query):
         url, data=json_data, headers={
             "Content-Type": "application/json"})
     return JsonResponse(content)
+
 
 def send_email(query):
     """Send email to support"""
