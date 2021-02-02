@@ -15,7 +15,7 @@ function submit(event) {
         "\n**Name:** " + fname + " " + lname +
         "\n**Email:** " + email +
         "\n**Title:** " + title +
-        "\n**Message:** \n" + message
+        "\n**Message:** \n" + message;
 
         postToDiscord("feedback", content);
 
@@ -23,7 +23,7 @@ function submit(event) {
         "\nName: " + fname + " " + lname +
         "\nEmail: " + email +
         "\nTitle: " + title +
-        "\nMessage: \n" + message
+        "\nMessage: \n" + message;
         sendEmail("[Feedback]" + title, content, "support@thecourseforum.com");
 
         content = "Hi " + fname + ", " +
@@ -32,7 +32,7 @@ function submit(event) {
         "\nMessage: \n" + message +
         "\n\nWe greatly appreciate you taking the time to help us improve tCF!" +
         "A team member will be following up with you shortly if neccesary." +
-        "\n\nBest, \ntheCourseForum Team"
+        "\n\nBest, \ntheCourseForum Team";
         sendEmail("[theCourseForum] Thank you for your feedback!", content, email);
     }
 }
