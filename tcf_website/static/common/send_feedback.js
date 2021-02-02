@@ -11,10 +11,12 @@ function postToDiscord(type, message) {
     });
 }
 
-function sendEmail(subject, message) {
+function sendEmail(subject, message, recipients) {
+    console.log(recipients)
     var data = {
         subject: subject,
-        content: message
+        content: message,
+        recipients: recipients
     };
 
     $.ajax({
