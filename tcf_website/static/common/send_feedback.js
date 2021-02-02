@@ -1,6 +1,6 @@
 function postToDiscord(type, message) {
     var data = {
-        type: "bug",
+        type: type,
         content: message
     };
 
