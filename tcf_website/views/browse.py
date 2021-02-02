@@ -4,7 +4,7 @@
 import json
 
 from django.db.models import Avg, Max, Q
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -70,17 +70,30 @@ def department(request, dept_id):
                   })
 
 
-def course_view(request, course_id):
-    """View for course page."""
+def course_view_legacy(request, course_id):
+    """Legacy view for course page."""
+    course = get_object_or_404(Course, pk=course_id)
+    return redirect('course',
+                    mnemonic=course.subdepartment.mnemonic,
+                    course_number=course.number)
 
-    course = Course.objects.get(pk=course_id)
+
+def course_view(request, mnemonic, course_number):
+    """A new Course view that allows you to input mnemonic and number instead."""
+    # Redirect if the mnemonic is not all uppercase
+    if mnemonic != mnemonic.upper():
+        return redirect('course',
+                        mnemonic=mnemonic.upper(), course_number=course_number)
+    course = get_object_or_404(
+        Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number)
     latest_semester = Semester.latest()
     instructors = Instructor.objects\
         .filter(section__course=course).distinct()\
         .annotate(
             gpa=Avg('courseinstructorgrade__average',
                     filter=Q(courseinstructorgrade__course=course)),
-            difficulty=Avg('review__difficulty', filter=Q(review__course=course)),
+            difficulty=Avg('review__difficulty',
+                           filter=Q(review__course=course)),
             rating=(
                 Avg('review__instructor_rating', filter=Q(review__course=course)) +
                 Avg('review__enjoyability', filter=Q(review__course=course)) +
@@ -123,8 +136,7 @@ def course_instructor(request, course_id, instructor_id):
         .annotate(
             semester_last_taught_id=Max('section__semester',
                                         filter=Q(section__course=course)),
-        )
-    instructor = instructor[0]
+        )[0]
     # Note: Like view above, this is kinda a hacky way to get the last-taught
     # semester
     semester_last_taught = Semester.objects.get(
@@ -135,11 +147,13 @@ def course_instructor(request, course_id, instructor_id):
 
     dept = course.subdepartment.department
 
+    course_url = reverse('course',
+                         args=[course.subdepartment.mnemonic, course.number])
     # Navigation breadcrumbs
     breadcrumbs = [
         (dept.school.name, reverse('browse'), False),
         (dept.name, reverse('department', args=[dept.pk]), False),
-        (course.code, reverse('course', args=[course.pk]), False),
+        (course.code, course_url, False),
         (instructor.full_name, None, True)
     ]
 
@@ -205,8 +219,6 @@ def course_instructor(request, course_id, instructor_id):
     except ObjectDoesNotExist:  # if no data found
         pass
 
-    data_json = json.dumps(data)
-
     return render(request, 'course/course_professor.html',
                   {
                       'course': course,
@@ -215,7 +227,7 @@ def course_instructor(request, course_id, instructor_id):
                       'semester_last_taught': semester_last_taught,
                       'reviews': reviews,
                       'breadcrumbs': breadcrumbs,
-                      'data': data_json
+                      'data': json.dumps(data),
                   })
 
 

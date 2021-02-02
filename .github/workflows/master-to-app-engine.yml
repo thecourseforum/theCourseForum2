@@ -50,7 +50,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run pylint
-        run: pylint --load-plugins pylint_django tcf_website tcf_core
+        run: pylint --load-plugins pylint_django --django-settings-module=tcf_core.settings tcf_website tcf_core
 
       - name: Migrations & Tests
         run: |
@@ -69,7 +69,7 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: node_modules/.bin/eslint tcf_website/static/**/*.js
+        run: node_modules/.bin/eslint tcf_website/static/**/*.js -c .config/.eslintrc.yml
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@master
@@ -81,7 +81,7 @@ jobs:
         run: python3 manage.py collectstatic --noinput --clear
 
       - name: Substitute environment variables
-        run: envsubst < app.yaml.template > app.yaml
+        run: envsubst < .config/app.yaml.template > app.yaml
 
       - name: Deploy to Google App Engine
         uses: google-github-actions/deploy-appengine@main
