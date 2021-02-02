@@ -1,0 +1,17 @@
+name: Echo
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: echo
+        run: echo echo.yml is run
+        shell: bash
+
+      - name: fail a job
+        run: exit 1
