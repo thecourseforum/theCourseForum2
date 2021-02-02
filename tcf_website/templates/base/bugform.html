@@ -12,17 +12,17 @@
       </div>
       <div class="modal-body">
         <form class="needs-validation" id="bugform" novalidate>
-        {% if user.is_authenticated %}
-            <input type="hidden" id="emailField" value="{{user.email}}" readonly>
-        {% else %}
             <div class="form-row">
                 <label for="emailField">Email</label>
-                <input type="email" class="form-control" id="emailField" placeholder="example@virginia.edu" value="">
+                {% if user.is_authenticated %}
+                    <input type="email" class="form-control" id="emailField" placeholder="example@virginia.edu" value="{{user.email}}">
+                {% else %}
+                    <input type="email" class="form-control" id="emailField" placeholder="example@virginia.edu" value="">
+                {% endif %}
                 <div class="invalid-feedback">
                     Invalid Email
-                </div>
             </div>
-         {% endif %}
+            </div>
           <div class="form-row">
               <label for="descriptionField">Description</label>
               <textarea class="form-control" id="descriptionField" rows="3" placeholder="Please be as detailed as possible!" required></textarea>
