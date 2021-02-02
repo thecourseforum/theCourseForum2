@@ -1,5 +1,5 @@
 ![version](https://img.shields.io/badge/version-1.0.0-blue.svg) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Build Status](https://travis-ci.com/thecourseforum/theCourseForum2.svg?branch=master)](https://travis-ci.com/thecourseforum/theCourseForum2) [![GitHub issues open](https://img.shields.io/github/issues/thecourseforum/theCourseForum2.svg?maxAge=2592000)]() [![GitHub issues closed](https://img.shields.io/github/issues-closed-raw/thecourseforum/theCourseForum2.svg?maxAge=2592000)]()
+[![Build Status](https://github.com/thecourseforum/theCourseForum2/workflows/Continuous%20Integration/badge.svg?branch=master)](https://github.com/thecourseforum/theCourseForum2/actions?query=workflow%3A%22Continuous+Integration%22+branch%3Amaster) [![GitHub issues open](https://img.shields.io/github/issues/thecourseforum/theCourseForum2.svg?maxAge=2592000)]() [![GitHub issues closed](https://img.shields.io/github/issues-closed-raw/thecourseforum/theCourseForum2.svg?maxAge=2592000)]()
 
 2020 Django rewrite of [theCourseForum 1.0](https://github.com/thecourseforum/theCourseForum) website at [thecourseforum.com](https://thecourseforum.com/).
 
