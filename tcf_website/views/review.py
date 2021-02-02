@@ -7,10 +7,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based vie
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 
-from ..models import Review, Course, Semester, Instructor
+from ..models import Review
 
 # pylint: disable=fixme
 # Disable pylint errors on TODO messages, such as below
@@ -19,8 +19,15 @@ from ..models import Review, Course, Semester, Instructor
 # (i.e. better Course/Instructor/Semester search).
 
 
-class ReviewForm(forms.Form):
-    """Form for review creation."""
+class ReviewForm(forms.ModelForm):
+    """Form for review creation in the backend, not for rendering HTML."""
+    class Meta:
+        model = Review
+        fields = [
+            'text', 'course', 'instructor', 'semester', 'instructor_rating',
+            'difficulty', 'recommendability', 'enjoyability', 'amount_reading',
+            'amount_writing', 'amount_group', 'amount_homework',
+        ]
 
 
 @login_required
@@ -49,64 +56,20 @@ def new_review(request):
 
     # Collect form data into Review model instance.
     if request.method == 'POST':
-        # TODO: use a proper django form.
         form = ReviewForm(request.POST)
         if form.is_valid():
-            try:
-                course_id = request.POST['course']
-                course = Course.objects.get(id=int(course_id))
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.hours_per_week = \
+                instance.amount_reading + instance.amount_writing + \
+                instance.amount_group + instance.amount_homework
+            instance.save()
 
-                instructor_id = request.POST['instructor']
-                instructor = Instructor.objects.get(id=int(instructor_id))
-
-                semester_id = request.POST['semester']
-                semester = Semester.objects.get(id=int(semester_id))
-
-                hours_reading = int(request.POST['hoursReading'])
-                hours_writing = int(request.POST['hoursWriting'])
-                hours_group = int(request.POST['hoursGroupwork'])
-                hours_other = int(request.POST['hoursOther'])
-                total_hours = hours_reading + hours_writing + hours_group + hours_other
-
-                Review.objects.create(
-                    user=request.user,
-                    course=course,
-                    semester=semester,
-                    instructor=instructor,
-                    text=request.POST['reviewText'],
-                    instructor_rating=int(request.POST['instructorRating']),
-                    enjoyability=int(request.POST['enjoyability']),
-                    difficulty=int(request.POST['difficulty']),
-                    recommendability=int(request.POST['recommendability']),
-                    amount_reading=hours_reading,
-                    amount_writing=hours_writing,
-                    amount_group=hours_group,
-                    amount_homework=hours_other,
-                    hours_per_week=total_hours
-                )
-
-                messages.add_message(
-                    request,
-                    messages.SUCCESS,
-                    'Successfully reviewed ' +
-                    str(course) + '!')
-                return redirect('reviews')
-
-            except BaseException:  # pylint: disable=broad-except
-                # TODO: need more robust backend validation
-                print("Review error")
-                messages.add_message(
-                    request,
-                    messages.ERROR,
-                    'This course is invalid. Try again!')
-                return render(request,
-                              'reviews/new_review.html',
-                              {'form': form})
-        else:
-            return render(request, 'reviews/new_review.html', {'form': form})
-
-    form = ReviewForm()
-    return render(request, 'reviews/new_review.html', {'form': form})
+            messages.success(request,
+                             f'Successfully reviewed {instance.course}!')
+            return redirect('reviews')
+        return render(request, 'reviews/new_review.html', {'form': form})
+    return render(request, 'reviews/new_review.html')
 
 
 # Note: Class-based views can't use the @login_required decorator
@@ -123,3 +86,40 @@ class DeleteReview(LoginRequiredMixin, generic.DeleteView):
             raise PermissionDenied(
                 "You are not allowed to delete this review!")
         return obj
+
+    def delete(self, request, *args, **kwargs):
+        """Overide DeleteView's delete function to add a message confirming deletion."""
+        # Note: we don't use SuccessMessageMixin because it currently has issues
+        # with DeleteViews. See:
+        # https://stackoverflow.com/questions/24822509/success-message-in-deleteview-not-shown
+
+        # get the course this review is about
+        course = super().get_object().course
+
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            f'Successfully deleted your review for {str(course)}!')
+
+        return super().delete(request, *args, **kwargs)
+
+
+@login_required
+def edit_review(request, review_id):
+    """Review modification view."""
+    review = get_object_or_404(Review, pk=review_id)
+    if review.user != request.user:
+        raise PermissionDenied('You are not allowed to edit this review!')
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request,
+                f'Successfully updated your review for {form.instance.course}!')
+            return redirect('reviews')
+        messages.error(request, form.errors)
+        return render(request, 'reviews/edit_review.html', {'form': form})
+    form = ReviewForm(instance=review)
+    return render(request, 'reviews/edit_review.html', {'form': form})

@@ -1,7 +1,7 @@
 # Auto format.
 docker exec tcf_django autopep8 --in-place --aggressive --aggressive -r tcf_website tcf_core
 # Lint.
-docker exec tcf_django pylint --load-plugins pylint_django tcf_website tcf_core
-docker exec tcf_django node_modules/.bin/eslint --fix tcf_website/static/**/*.js
+docker exec tcf_django pylint --load-plugins pylint_django --django-settings-module=tcf_core.settings tcf_website tcf_core
+docker exec tcf_django node_modules/.bin/eslint --fix tcf_website/static/**/*.js -c .config/.eslintrc.yml
 # Test.
 docker exec tcf_django python3 manage.py test
