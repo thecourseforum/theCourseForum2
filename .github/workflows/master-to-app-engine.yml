@@ -54,8 +54,6 @@ jobs:
 
       - name: Migrations
         run: |
-          mkdir tcf_website/migrations
-          touch tcf_website/migrations/__init__.py
           python manage.py makemigrations
           python manage.py migrate
 

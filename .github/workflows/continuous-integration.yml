@@ -89,8 +89,6 @@ jobs:
 
       - name: Migrations & Tests
         run: |
-          mkdir tcf_website/migrations
-          touch tcf_website/migrations/__init__.py
           envsubst < .config/.env.example > .env
           python manage.py makemigrations
           python manage.py migrate
