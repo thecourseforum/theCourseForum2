@@ -18,7 +18,7 @@ function submit(event) {
         "\n**Message:** \n" + message
 
         postToDiscord("feedback", content);
-        sendEmail(email, "[Feedback]" + title, message);
+        sendEmail("[Feedback]" + title, content);
     }
 }
 

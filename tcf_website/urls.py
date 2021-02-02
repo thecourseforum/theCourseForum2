@@ -24,8 +24,8 @@ urlpatterns = [
     path('reviews/<int:review_id>/downvote', views.downvote),
     path('profile', views.profile, name='profile'),
     path('search', views.search, name='search'),
-    path('feedback/', views.send_discord, name='discord'),
-    path('feedback/', views.send_email, name='email'),
+    path('feedback/discord', views.send_discord, name='discord'),
+    path('feedback/email', views.send_email, name='email'),
 
     # API URLs
     path('api/', include('tcf_website.api.urls'), name='api'),

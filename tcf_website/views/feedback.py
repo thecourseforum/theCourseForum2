@@ -21,9 +21,10 @@ def send_discord(query):
 
 def send_email(query):
     """Send email to support"""
-    from_email = query.GET.get("email", "support@thecourseforum.com")
     subject = query.GET.get("subject", "")
-    message = query.GET.get("message", "")
+    content = query.GET.get("content", "")
+    from_email = os.environ['EMAIL_HOST_USER']
     recipient_list = ["support@thecourseforum.com"]
 
-    return send_mail(subject, message, from_email, recipient_list)
+    send_mail(subject, content, from_email, recipient_list)
+    return JsonResponse({'content': query.GET.get("content", "")})
