@@ -2,10 +2,10 @@
 - Done, In progress, etc
 
 ## GitHub Issues addressed (`#IssueNumber`)
-- This PR closes
+- This PR closes 
 
 ## What I did
--
+- 
 
 ## Screenshots
 - Before
@@ -15,7 +15,7 @@
 - A brief explanation of tests done/written or how reviewers can test your work
 
 ## Questions/Discussions/Notes
--
+- 
 
 ## Merging the PR
 - Who should merge this PR?

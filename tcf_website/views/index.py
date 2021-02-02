@@ -1,7 +1,6 @@
 """Views for index and about pages."""
 import json
 from django.shortcuts import render
-from django.template.loader import render_to_string
 from django.views.generic.base import TemplateView
 
 
@@ -15,9 +14,10 @@ def index(request):
     # Load "About Team" data from json file
     with open('tcf_website/views/team_info.json') as data_file:
         team_info = json.load(data_file)
-    # Load FAQ data from json file, evaluating tags and filters
-    rendered = render_to_string('landing/_faqs.json')
-    faqs = json.loads(rendered)
+    # Load FAQ data from json file
+    with open('tcf_website/views/_faqs.json', encoding='utf-8') as data_file:
+        faqs = json.load(data_file)
+
     response = render(request, 'landing/landing.html',
                       {'executive_team': team_info['executive_team'],
                        'FAQs': faqs,

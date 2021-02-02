@@ -19,10 +19,22 @@ function submit(event) {
         var content = "Bug Found! \n**URL:** " + url +
         "\n**Description:** \n" + description +
         "\n**Categories:**" + categories +
-        "\n**Email:** " + email
-
+        "\n**Email:** " + email;
         postToDiscord("bug", content);
-        sendEmail("Bug Report", content);
+
+        content = "Bug Found! \n URL: " + url +
+        "\nDescription: \n" + description +
+        "\nCategories: " + categories +
+        "\nEmail: " + email;
+        sendEmail("Bug Report", content, "support@thecourseforum.com");
+
+        content = "Thanks for reaching out! We received the following bug report from you:" +
+        "\n\nDescription: \n" + description +
+        "\nCategories:" + categories +
+        "\n\nWe apologize for any inconveniences that this may have caused." +
+        "Our team will be investigating the issue and will follow up with you shortly." +
+        "\n\nBest, \ntheCourseForum Team";
+        sendEmail("[theCourseForum] Thank you for your feedback!", content, email);
     }
 }
 

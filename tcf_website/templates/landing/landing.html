@@ -201,11 +201,9 @@
                             <h5 class="hover-tcf-orange" data-toggle="collapse"
                                 data-target="#faq-answer-{{ forloop.counter }}"
                                 id="faq-question-{{ forloop.counter }}">
-                                <i class="fas fa-chevron-down"></i> {{ i.question }}
+                                {#To be filled by JS script#}
                             </h5>
-                            <p id="faq-answer-{{ forloop.counter }}" class="collapse">
-                                {{ i.answer | safe }}
-                            </p>
+                            <p id="faq-answer-{{ forloop.counter }}" class="collapse"></p>
                         </div>
                     {% endfor %}
                 </div>
@@ -371,5 +369,15 @@
         {% endif %}
         // Update copyright year at the bottom of landing page
         $(".year").text(new Date().getFullYear());
+    </script>
+    <script type="text/javascript">
+        // Loads FAQ questions in with URLs because for some reason it won't work normally
+        const questions =
+        {{ FAQs | safe }}
+        for (let i = 0; i <= questions.length; i++) {
+            // need to add 1 because Django loops are indexed starting at 1
+            document.getElementById(`faq-question-${i + 1}`).innerHTML = "<i class=\"fas fa-chevron-down\"><\/i>" + " " + questions[i].question
+            document.getElementById(`faq-answer-${i + 1}`).innerHTML = questions[i].answer
+        }
     </script>
 {% endblock %}

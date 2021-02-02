@@ -1,155 +1,125 @@
 {
-  "executive_team": [
-    {
-      "name": "Jennifer Long",
-      "role": "President\u00a0|\u00a0Product Lead",
-      "class": "2021",
-      "img_filename": "ENG_Jennifer_Long.webp"
-    },
-    {
-      "name": "Alex Shen",
-      "role": "VP\u00a0|\u00a0Product Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Alex_Shen.webp"
-    },
-    {
-      "name": "Jules Le Menestrel",
-      "role": "VP\u00a0|\u00a0Product Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Jules_LeMenestrel.webp"
-    },
-    {
-      "name": "Jack Liu",
-      "role": "VP\u00a0|\u00a0Infrastructure Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Jack_Liu.webp"
-    },
-    {
-      "name": "Shirley Chu",
-      "role": "VP\u00a0|\u00a0Marketing & Design",
-      "class": "2022",
-      "img_filename": "MAD_Shirley_Chu.webp"
-    },
-    {
-      "name": "Vi Nguyen",
-      "role": "Secretary\u00a0|\u00a0Operations Lead",
-      "class": "2023",
-      "img_filename": "ENG_Vi_Nguyen.webp"
-    },
-    {
-      "name": "Davis DeLozier",
-      "role": "Treasurer\u00a0|\u00a0Business Lead",
-      "class": "2022",
-      "img_filename": "MAD_Davis_Delozier.webp"
-    }
-  ],
+"executive_team": [{"name": "Jennifer Long",
+                     "role": "President\u00a0|\u00a0Product Lead",
+                     "class": "2021",
+                     "img_filename": "ENG_Jennifer_Long.webp"
+                    },
+                   {"name": "Alex Shen",
+                    "role": "VP\u00a0|\u00a0Product Engineering",
+                    "class": "2023",
+                    "img_filename": "ENG_Alex_Shen.webp"
+                    },
+                   {"name": "Jules Le Menestrel",
+                    "role": "VP\u00a0|\u00a0Product Engineering",
+                    "class": "2023",
+                    "img_filename": "ENG_Jules_LeMenestrel.webp"
+                    },
+                   {"name": "Jack Liu",
+                    "role": "VP\u00a0|\u00a0Infrastructure Engineering",
+                    "class": "2023",
+                    "img_filename": "ENG_Jack_Liu.webp"
+                    },
+                   {"name": "Shirley Chu",
+                    "role": "VP\u00a0|\u00a0Marketing & Design",
+                    "class": "2022",
+                    "img_filename": "MAD_Shirley_Chu.webp"
+                    },
+                   {"name": "Vi Nguyen",
+                    "role": "Secretary\u00a0|\u00a0Operations Lead",
+                    "class": "2023",
+                    "img_filename": "ENG_Vi_Nguyen.webp"
+                    },
+                   {"name": "Davis DeLozier",
+                    "role": "Treasurer\u00a0|\u00a0Business Lead",
+                    "class": "2022",
+                    "img_filename": "MAD_Davis_Delozier.webp"
+                    }
+                   ],
   "engineering_team": [
-    {
-      "name": "Jennifer Long",
-      "role": "President",
-      "class": "2021",
-      "img_filename": "ENG_Jennifer_Long.jpg",
-      "github": "j-alicia-long"
-    },
-    {
-      "name": "Alex Shen",
-      "role": "VP of Product Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Alex_Shen.jpg",
-      "github": "alex-shen1"
-    },
-    {
-      "name": "Jules Le Menestrel",
-      "role": "VP of Product Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Jules_LeMenestrel.jpg",
-      "github": "julesfll"
-    },
-    {
-      "name": "Jack Liu",
-      "role": "VP of Infrastructure Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Jack_Liu.jpg",
-      "github": "jackliu612"
-    },
-    {
-      "name": "Vi Nguyen",
-      "role": "Operations Lead/Developer",
-      "class": "2023",
-      "img_filename": "ENG_Vi_Nguyen.jpg",
-      "github": "vn6"
-    },
-    {
-      "name": "Arjun Kumar",
-      "role": "Developer",
-      "class": "2023",
-      "img_filename": "ENG_Arjun_Kumar.jpg",
-      "github": "arjunk01"
-    },
-    {
-      "name": "Alexa Gomez",
-      "role": "Developer",
-      "class": "2021",
-      "img_filename": "ENG_Alexa_Gomez.jpg",
-      "github": "alexagomez"
-    },
-    {
-      "name": "Jihoon Park",
-      "role": "Developer",
-      "class": "2021",
-      "img_filename": "ENG_Jihoon_Park.jpg",
-      "github": "Bartleby2718"
-    },
-    {
-      "name": "Joe Kerrigan",
-      "role": "Developer",
-      "class": "2023",
-      "img_filename": "ENG_Joe_Kerrigan.jpg",
-      "github": "joek13"
-    }
-  ],
-  "marketing_team": [
-    {
-      "name": "Davis DeLozier",
-      "role": "Business Lead",
-      "class": "2022",
-      "img_filename": "MAD_Davis_Delozier.jpg"
-    },
-    {
-      "name": "Shirley Chu",
-      "role": "VP of Marketing/Design",
-      "class": "2022",
-      "img_filename": "MAD_Shirley_Chu.jpg"
-    },
-    {
-      "name": "Sierra Arnold",
-      "role": "Marketing/Designer",
-      "class": "2021",
-      "img_filename": "MAD_Sierra_Arnold.jpg"
-    },
-    {
-      "name": "Max von Schroeter",
-      "role": "Marketing",
-      "class": "2023",
-      "img_filename": "MAD_Max_von_Schroeter.jpg"
-    },
-    {
-      "name": "Kimberly Vo",
-      "role": "Marketing",
-      "class": "2022",
-      "img_filename": "MAD_Kimberly_Vo.jpg"
-    },
-    {
-      "name": "Tina Wang",
-      "role": "Marketing",
-      "class": "2021",
-      "img_filename": "MAD_Tina_Wang.jpg"
-    },
-    {
-      "name": "Jeremy Tran",
-      "role": "Marketing",
-      "class": "2023",
-      "img_filename": "MAD_Jeremy_Tran.jpg"
-    }
-  ]
+                      {"name": "Jennifer Long",
+                       "role": "President",
+                       "class": "2021",
+                       "img_filename": "ENG_Jennifer_Long.jpg",
+                       "github": "j-alicia-long"
+                      },
+                      {"name": "Alex Shen",
+                       "role": "VP of Product Engineering",
+                       "class": "2023",
+                       "img_filename": "ENG_Alex_Shen.jpg",
+                       "github": "alex-shen1"
+                       },
+                      {"name": "Jules Le Menestrel",
+                       "role": "VP of Product Engineering",
+                       "class": "2023",
+                       "img_filename": "ENG_Jules_LeMenestrel.jpg",
+                       "github": "julesfll"
+                       },
+                      {"name": "Jack Liu",
+                       "role": "VP of Infrastructure Engineering",
+                       "class": "2023",
+                       "img_filename": "ENG_Jack_Liu.jpg",
+                       "github": "jackliu612"
+                       },
+                      {"name": "Vi Nguyen",
+                       "role": "Operations Lead/Developer",
+                       "class": "2023",
+                       "img_filename": "ENG_Vi_Nguyen.jpg",
+                       "github": "vn6"
+                       },
+                      {"name": "Arjun Kumar",
+                       "role": "Developer",
+                       "class": "2023",
+                       "img_filename": "ENG_Arjun_Kumar.jpg",
+                       "github": "arjunk01"
+                       },
+                      {"name": "Alexa Gomez",
+                       "role": "Developer",
+                       "class": "2021",
+                       "img_filename": "ENG_Alexa_Gomez.jpg",
+                       "github": "alexagomez"
+                       },
+                      {"name": "Jihoon Park",
+                        "role": "Developer",
+                        "class": "2021",
+                        "img_filename": "ENG_Jihoon_Park.jpg",
+                        "github": "Bartleby2718"
+                       }
+                     ],
+
+  "marketing_team": [{"name": "Davis DeLozier",
+                     "role": "Business Lead",
+                     "class": "2022",
+                     "img_filename": "MAD_Davis_Delozier.jpg"
+                     },
+                    {"name": "Shirley Chu",
+                     "role": "VP of Marketing/Design",
+                     "class": "2022",
+                     "img_filename": "MAD_Shirley_Chu.jpg"
+                     },
+                    {"name": "Sierra Arnold",
+                     "role": "Marketing/Designer",
+                     "class": "2021",
+                     "img_filename": "MAD_Sierra_Arnold.jpg"
+                     },
+                    {"name": "Max von Schroeter",
+                     "role": "Marketing",
+                     "class": "2023",
+                     "img_filename": "MAD_Max_von_Schroeter.jpg"
+                     },
+                    {"name": "Kimberly Vo",
+                     "role": "Marketing",
+                     "class": "2022",
+                     "img_filename": "MAD_Kimberly_Vo.jpg"
+                     },
+                    {"name": "Tina Wang",
+                     "role": "Marketing",
+                     "class": "2021",
+                     "img_filename": "MAD_Tina_Wang.jpg"
+                     },
+                    {"name": "Jeremy Tran",
+                      "role": "Marketing",
+                      "class": "2023",
+                      "img_filename": "MAD_Jeremy_Tran.jpg"
+                     }
+                   ]
 }
