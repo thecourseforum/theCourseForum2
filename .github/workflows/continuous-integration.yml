@@ -2,67 +2,111 @@
 name: Continuous Integration
 
 on:
-  push:
-    branches-ignore:
-      - master
-      - dev
   pull_request:
     branches:
       - '*'
+    paths-ignore:
+    - 'docs/**'
+  # The following is needed to run tests upon direct push to master
+  push:
+    branches: [master]
+    paths-ignore:
+    - 'docs/**'
 env:
-  DEBUG: 1
+  PYTHON_TARGET: 3.8
+  # Django
+  DJANGO_SETTINGS_MODULE: tcf_core.settings.ci
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  DEBUG: 1
+  # database
+  DB_NAME: tcf_db  # arbitrary string
+  DB_USER: postgres  # default user
+  DB_PASSWORD: postgres  # default password
+  DB_HOST: localhost  # required for GitHub Actions
+  DB_PORT: 5432  # default port
+  # social-auth-app-django
   SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
   SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
+  # elasticsearch
   ES_PUBLIC_API_KEY: ${{ secrets.ES_PUBLIC_API_KEY }}
   ES_COURSE_SEARCH_ENDPOINT: ${{ secrets.ES_COURSE_SEARCH_ENDPOINT }}
   ES_INSTRUCTOR_SEARCH_ENDPOINT: ${{ secrets.ES_INSTRUCTOR_SEARCH_ENDPOINT }}
+  ES_COURSE_DOCUMENTS_ENDPOINT: ""  # no write access to elasticsearch in CI
+  ES_INSTRUCTOR_DOCUMENTS_ENDPOINT: ""  # no write access to elasticsearch in CI
+  ES_PRIVATE_API_KEY: ""  # no write access to elasticsearch in CI
+  # discord
   DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
   DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
-
 jobs:
-  build:
+  pylint:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.8]
+    steps:
+      - uses: actions/checkout@v2
 
+      - name: Set up Python ${{ env.PYTHON_TARGET }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_TARGET }}
+
+      - name: Install Python packages, excluding the unnecessary ones
+        run: |
+          python -m pip install --upgrade pip
+          sed -i '/\(tqdm\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
+          pip install -r requirements.txt
+
+      - name: Run pylint
+        run: pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --load-plugins pylint_django tcf_website tcf_core
+
+  django:
+    runs-on: ubuntu-latest
+    outputs:
+      code-coverage: ${{ steps.coverage.outputs.percentage }}
     services:
       postgres:
         image: postgres:12.2
         env:
-          POSTGRES_USER: tcf_django
-          POSTGRES_PASSWORD: s3kr1t
-          POSTGRES_DB: tcf_db
+          POSTGRES_USER: ${{ env.DB_USER}}
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+          POSTGRES_DB: ${{ env.DB_NAME }}
         ports:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python ${{ env.PYTHON_TARGET }}
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ env.PYTHON_TARGET }}
 
-      - name: Install Python packages
+      - name: Install Python packages, excluding the unnecessary ones
         run: |
           python -m pip install --upgrade pip
+          sed -i '/\(pandas\|tqdm\|lint\|autopep8\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
+          echo coverage >> requirements.txt
           pip install -r requirements.txt
-
-      - name: Run pylint
-        run: pylint --load-plugins pylint_django --django-settings-module=tcf_core.settings tcf_website tcf_core
 
       - name: Migrations & Tests
         run: |
           mkdir tcf_website/migrations
           touch tcf_website/migrations/__init__.py
+          envsubst < .config/.env.example > .env
           python manage.py makemigrations
           python manage.py migrate
-          python manage.py test
+          coverage run manage.py test
+        continue-on-error: true
+
+      - name: Get code coverage
+        if: ${{ success() }}
+        id: coverage
+        run: |
+          echo "::set-output name=percentage::$(coverage report | grep -o '[0-9]\+%' | tail -1)"
+
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
 
       - name: Install Node
         uses: actions/setup-node@v1
@@ -74,3 +118,22 @@ jobs:
 
       - name: Run ESLint
         run: node_modules/.bin/eslint tcf_website/static/**/*.js -c .config/.eslintrc.yml
+
+  discord:
+    if: ${{ always() }}
+    needs: [pylint, django, eslint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Send a message to tCF Discord Server when all jobs are finished
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
+          PYLINT_RESULT: ${{ needs.pylint.result }}
+          DJANGO_RESULT: ${{ needs.django.result }}
+          ESLINT_RESULT: ${{ needs.eslint.result }}
+          PR_NUMBER: ${{ github.event.number}}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          DJANGO_COVERAGE: ${{ needs.django.outputs.code-coverage }}
+        run: |
+          bash ./scripts/notify-discord.sh
+        shell: bash
