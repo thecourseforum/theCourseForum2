@@ -251,6 +251,13 @@ REST_FRAMEWORK = {
 DISCORD_URL_BUG = env.str('DISCORD_URL_BUG')
 DISCORD_URL_FEEDBACK = env.str('DISCORD_URL_FEEDBACK')
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
+
 # Use Bootstrap class names for Django message tags
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info',

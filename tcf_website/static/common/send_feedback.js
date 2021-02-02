@@ -6,21 +6,20 @@ function postToDiscord(type, message) {
 
     $.ajax({
         type: "GET",
-        url: "/discord/",
+        url: "/feedback/discord",
         data: data
     });
 }
 
-function sendEmail(email, subject, message) {
+function sendEmail(subject, message) {
     var data = {
-        email: email,
         subject: subject,
         content: message
     };
 
     $.ajax({
         type: "GET",
-        url: "/email/",
+        url: "/feedback/email",
         data: data
     });
 }

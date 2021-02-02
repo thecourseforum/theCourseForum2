@@ -16,21 +16,22 @@ function submit(event) {
             }
         }
 
-        var message = "Bug Found! \n**URL:** " + url +
-        "\n**Description**: \n" + description +
-        "\n**Categories: **" + categories
+        var content = "Bug Found! \n**URL:** " + url +
+        "\n**Description:** \n" + description +
+        "\n**Categories:**" + categories +
+        "\n**Email:** " + email
 
-        var content = message + "\n**Email:** " + email
-
-        console.log(message);
         postToDiscord("bug", content);
-        sendEmail(email, "Bug Report", message);
-
-        // close form after submit
-        $("#bugModal").modal("toggle");
-        $("#confirmationModal").modal("toggle");
+        sendEmail("Bug Report", content);
     }
 }
 
 const form = document.getElementById("bugform");
 form.onsubmit = submit;
+
+// Show confirmation modal on form submit
+$("#bugform").submit(function(e) {
+    $("#bugModal").modal("hide");
+    $("#confirmationModal").modal("show");
+    return false;
+});
