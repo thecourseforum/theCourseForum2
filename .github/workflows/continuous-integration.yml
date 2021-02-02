@@ -56,7 +56,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run pylint
-        run: pylint --load-plugins pylint_django tcf_website tcf_core
+        run: pylint --load-plugins pylint_django --django-settings-module=tcf_core.settings tcf_website tcf_core
 
       - name: Migrations & Tests
         run: |
@@ -75,4 +75,4 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: node_modules/.bin/eslint tcf_website/static/**/*.js
+        run: node_modules/.bin/eslint tcf_website/static/**/*.js -c .config/.eslintrc.yml

@@ -156,6 +156,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['virginia.edu']
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy('browse')
 # SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
 # LOGIN_ERROR_URL = '/'
+LOGIN_URL = reverse_lazy('social:begin', args=['google-oauth2'])
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
 SOCIAL_AUTH_USER_MODEL = 'tcf_website.User'
