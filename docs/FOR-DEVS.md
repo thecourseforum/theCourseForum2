@@ -1,7 +1,7 @@
 
 # theCourseForum2
 ![version](https://img.shields.io/badge/version-1.0.0-blue.svg) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Build Status](https://travis-ci.com/thecourseforum/theCourseForum2.svg?branch=master)](https://travis-ci.com/thecourseforum/theCourseForum2) [![GitHub issues open](https://img.shields.io/github/issues/thecourseforum/theCourseForum2.svg?maxAge=2592000)]() [![GitHub issues closed](https://img.shields.io/github/issues-closed-raw/thecourseforum/theCourseForum2.svg?maxAge=2592000)]()
+[![Build Status](https://github.com/thecourseforum/theCourseForum2/workflows/Continuous%20Integration/badge.svg?branch=master)](https://github.com/thecourseforum/theCourseForum2/actions?query=workflow%3A%22Continuous+Integration%22+branch%3Amaster) [![GitHub issues open](https://img.shields.io/github/issues/thecourseforum/theCourseForum2.svg?maxAge=2592000)]() [![GitHub issues closed](https://img.shields.io/github/issues-closed-raw/thecourseforum/theCourseForum2.svg?maxAge=2592000)]()
 
 2020 Django rewrite of [theCourseForum 1.0](https://github.com/thecourseforum/theCourseForum) website at [thecourseforum.com](https://thecourseforum.com/).
 
@@ -33,7 +33,7 @@ If you are part of theCourseForum engineering team, follow the instructions belo
 5. Commit with `git commit -m "Add X feature."`
 6. Push! `git push`
 7. Make a PR (Pull Request) to merge your changes back into the `dev` branch.
-8. Wait for all tests to pass on Travis (indicated by green checkmark).
+8. Wait for all tests to pass on GitHub Actions (indicated by green checkmark).
 9. Request an approver.
 10. Wait to be approved and merged!
 
@@ -74,16 +74,6 @@ If you are part of theCourseForum engineering team, follow the instructions belo
     - If you're using Windows 10 Pro, Enterprise, or Education, then follow [these instructions](https://docs.docker.com/docker-for-windows/install/) to install Docker Desktop, which comes with Docker and Docker Compose. A free copy of Windows 10 Education is available from UVA.
     - If you're using Windows 10 Home (Version 1903, Build 18362 or above), which is what comes with most laptops, then follow [these instructions](https://docs.docker.com/docker-for-windows/install-windows-home/). The setup is a bit more complicated because you'll first need to setup [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/install-win10#manual-installation-steps). WSL, or Windows Subsystem for Linux, is like a Linux virtual machine that runs in the command line (meaning there's no GUI). It allows Docker to run by using Linux behind the scenes. Check out the [VS Code instructions](https://code.visualstudio.com/docs/remote/wsl) to learn how to develop with WSL (optional).
 3. Proceed at step 2 in **MacOS and Linux setup**
-
-### Alternative Setup (Windows and MacOS if above failed)
-0. [Install Vagrant](https://www.vagrantup.com/intro/getting-started/install.html)
-1. `git clone https://github.com/thecourseforum/theCourseForum2.git`
-2. Go into the `theCourseForum2/` folder and then run `vagrant up` to start a VM.
-3. After that's booted, run `vagrant ssh` to run commands inside the VM.
-4. `cd /vagrant`
-5. Start at step 3 in **MacOS and Linux setup**. You may have to prefix all docker commands with `sudo` (e.g. `sudo docker-compose up`).
-6. Go to http://127.0.0.1:8000 and make sure it works!
-7. Run `vagrant` suspend when you're done to suspend the VM.
 
 
 ## Common Issues and Fixes
@@ -153,11 +143,11 @@ python3 manage.py migrate
 4. `python manage.py load_semester ALL_DANGEROUS`
 5. `python manage.py load_grades ALL_DANGEROUS`
 6. `python manage.py migrate_legacy_reviews`
-7. `docker exec tcf_db pg_dump -U tcf_django -Fc tcf_db > dump.pgsql`
+7. `docker exec tcf_db pg_dump -U tcf_django -Fc tcf_db > dump.sql`
 8. Test
     - Maybe crawl tCF and check that all viewable reviews are on the new system.
 9. Upload to DigitalOcean DB.
-    - `PGPASSWORD=$DB_PASS pg_restore -U $DB_USER -h $DB_HOST -p 25060 -d $DB_NAME < dump.pgsql`
+    - `PGPASSWORD=$DB_PASS pg_restore -U $DB_USER -h $DB_HOST -p 25060 -d $DB_NAME < dump.sql`
     - You may have to run this command 3 times.
 
 ### New semester update plan
@@ -171,4 +161,4 @@ python3 manage.py migrate
 <sub>\* Yeah, this method really sucks; should probably improve it in the consolidation process</sub>
 
 ### Deploying to prod
-Production deployments (i.e. the version of the site users see on thecourseforum.com) should be handled automatically by our CI (continuous integration system). As of the writing of this documentation, Travis is set up to autodeploy every time a build on the `master` branch passes and we're working on moving towards GitHub Actions. However, in the event that something fails, the manual deploy process is outlined [here](https://docs.google.com/document/d/1sPl1v4JrvicrgQluXvG9cR6GWPijC0hr7zAa3h3uE5E/edit#heading=h.9mo53b4db0s8). Just note that the environmental variables list in the doc may not be up-to-date, so remember to set them accordingly.
+Production deployments (i.e. the version of the site users see on thecourseforum.com) should be handled automatically by our CI (continuous integration system). As of the writing of this documentation, GitHub Actions is set up to autodeploy every time a build on the `master` branch passes. However, in the event that something fails, the manual deploy process is outlined [here](https://docs.google.com/document/d/1sPl1v4JrvicrgQluXvG9cR6GWPijC0hr7zAa3h3uE5E/edit#heading=h.9mo53b4db0s8). Just note that the environmental variables list in the doc may not be up-to-date, so remember to set them accordingly.
