@@ -115,7 +115,7 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: node_modules/.bin/eslint tcf_website/static/**/*.js -c .config/.eslintrc.yml
+        run: node_modules/.bin/eslint 'tcf_website/static/**/*.js' -c .config/.eslintrc.yml
 
   discord:
     if: ${{ always() }}
