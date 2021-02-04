@@ -1,9 +1,14 @@
 const loadData = data => {
+    /* eslint-disable camelcase */
     const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop } = data;
     const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop];
+    /* eslint-enable camelcase */
 
     createChart(grades_data);
 
+    // these ternary-hack if statements are not favored by eslint
+    // to keep this block of code concise, we'll just disable the warning
+    /* eslint-disable no-unused-expressions */
     exist(data.average_gpa) ? document.getElementsByClassName("gpa-text")[0].innerHTML = data.average_gpa + " GPA" : null;
 
     exist(data.total_enrolled) ? document.getElementsByClassName("students-text")[0].innerHTML = data.total_enrolled + " Students" : document.getElementsByClassName("students-text")[0].remove();
@@ -28,12 +33,13 @@ const loadData = data => {
     exist(data.average_amount_writing) ? document.getElementsByClassName("writing-bar")[0].style.width = 100 * data.average_amount_writing / data.average_hours_per_week + "%" : null;
     exist(data.average_amount_group) ? document.getElementsByClassName("group-bar")[0].style.width = 100 * data.average_amount_group / data.average_hours_per_week + "%" : null;
     exist(data.average_amount_homework) ? document.getElementsByClassName("homework-bar")[0].style.width = 100 * data.average_amount_homework / data.average_hours_per_week + "%" : null;
+    /* eslint-enable no-unused-expressions */
 };
 
-const createChart = grades_data => {
-    const chart_data = {
+const createChart = gradesData => {
+    const chartData = {
         datasets: [{
-            data: grades_data,
+            data: gradesData,
             backgroundColor: [
                 "#57679D",
                 "#56669C",
@@ -57,9 +63,19 @@ const createChart = grades_data => {
         ]
     };
     var ctx = document.getElementById("myChart");
-    var myChart = new Chart(ctx, {
+    // 1. Justification for no-new: (Do not use 'new' for side effects)
+    // Without disabling the warning, eslint complains about using `new` to produce side-effects.
+    // (Which is how chart.js works. We can't change that.)
+    // You can silence it by assigning the expression to a variable. But then, eslint complains that we have an unused variable.
+    // We're not going to be able to avoid this, so I've disabled the error.
+    // 2. Justification for no-undef: ('Chart' is not defined)
+    // We could avoid this in the future by using WebPack or plain old ES6 modules.
+    // But right now, the chart.js source is referenced in the templates themselves through a CDN,
+    // so eslint will always complain. We'll just silence it.
+    // eslint-disable-next-line no-new,no-undef
+    new Chart(ctx, {
         type: "pie",
-        data: chart_data,
+        data: chartData,
         options: {
             cutoutPercentage: 65,
             responsive: true,
@@ -111,10 +127,6 @@ const createChart = grades_data => {
             }
         }
     });
-};
-
-const blankChart = () => {
-
 };
 
 const exist = data => {
