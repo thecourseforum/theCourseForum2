@@ -34,6 +34,11 @@
             <br/>
             <br/>
 
+            <!-- Unsure if we want to remove it when they are looking at all semesters. If so, may need the opposite of "old" class. -->
+            {% if not this_semester_instructors %}
+                <h5 class="">Looks like this course isn't taught this semester. Sort by "All" in the top right to see previous semesters.</div>
+            {% endif %}
+
             <ul class="instructor-list">
                 {% for i in instructors %}
                     <li class="instructor {% if i.semester_last_taught != latest_semester %}old{% endif %}">
