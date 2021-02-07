@@ -17,26 +17,40 @@ function submit(event) {
         }
 
         var content = `Bug Found!
-        \n**URL:** ${url}
-        \n**Categories:** ${categories}
-        \n**Email:** ${email}
-        \n**Description:** \n ${description}`;
-        \\postToDiscord("bug", content);
+        **URL:** ${url}
+        **Categories:** ${categories}
+        **Email:** ${email}
+        **Description:** \n ${description}`;
+        //postToDiscord("bug", content);
 
         content = `Bug Report:
-        \n**URL:** ${url}
-        \n**Categories:** ${categories}
-        \n**Email:** ${email}
-        \n**Description:** \n ${description}`;
+        URL: ${url}
+        Categories: ${categories}
+        Email: ${email}
+        Description: \n ${description}`;
         sendEmail("Bug Report", content, "support@thecourseforum.com");
 
         content = `Thanks for reaching out! We received the following bug report from you:
-        \n\nDescription: \n ${description}
-        \nCategories:" ${categories}
-        \n\nWe apologize for any inconveniences that this may have caused.
+        Description: ${description}
+        Categories: ${categories}
+        We apologize for any inconveniences that this may have caused.
         Our team will be investigating the issue and will follow up with you shortly.
-        \n\nBest, \ntheCourseForum Team`;
+        Best,
+        theCourseForum Team`;
         sendEmail("[theCourseForum] Thank you for your feedback!", content, email);
+
+        resetForm();
+    }
+}
+
+function resetForm() {
+    var form = document.getElementById("bugform");
+    form.classList.remove("was-validated");
+
+    $("#descriptionField").val("");
+    for (var i = 1; i <= 4; i++) {
+        var id = "#category" + i;
+        $(id).prop("checked", false);
     }
 }
 
