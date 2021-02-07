@@ -120,7 +120,14 @@
       "class": "2023",
       "img_filename": "ENG_Andrew_Niu.jpg",
       "github": "andrewmniu"
-    }
+    },
+    {
+      "name": "Quyen Huynh",
+      "role": "Developer",
+      "class": "2021",
+      "img_filename": "ENG_Quyen_Huynh.jpg",
+      "github": "quyenxhuynh"
+     }
   ],
   "marketing_team": [
     {
