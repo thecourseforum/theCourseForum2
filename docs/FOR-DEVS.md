@@ -56,7 +56,7 @@ If you are part of theCourseForum engineering team, follow the instructions belo
         git clone https://github.com/thecourseforum/theCourseForum2.git
         cd theCourseForum2
     ```
-3. Copy the [project secret keys](https://docs.google.com/document/d/1HsuJOf-5oZljQK_k02CQhFbqw1q-pD_1-mExvyC1TV0/edit?usp=sharing) into a `.env` file in the project base directory `theCourseForum2/`
+3. Download the [project secret keys](https://drive.google.com/file/d/1vwPpugcniPo-gq3J8RQzluJdSHkzIfad/view?usp=sharing) as an `.env` file and put it in the project base directory `theCourseForum2/`
 4. In the `theCourseForum2/` directory, run `docker-compose up` to start your Docker containers (tCF Django app and database)
 5. Download a copy of the database from [Google Drive](https://drive.google.com/file/d/1S9GNFydvw6ZZW0AGHy6zyTLl-pvyIT8Q/view?usp=sharing)
     - put this into the base `theCourseForum2/` directory
