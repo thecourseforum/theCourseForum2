@@ -16,27 +16,35 @@ function submit(event) {
             }
         }
 
-        var content = `Bug Found!
+        var content = `
+        Bug Found!
         **URL:** ${url}
         **Categories:** ${categories}
         **Email:** ${email}
-        **Description:** \n ${description}`;
+        **Description:** ${description}
+        `;
         //postToDiscord("bug", content);
 
-        content = `Bug Report:
+        content = `
+        Bug Report
         URL: ${url}
         Categories: ${categories}
         Email: ${email}
-        Description: \n ${description}`;
+        Description: ${description}
+        `;
         sendEmail("Bug Report", content, "support@thecourseforum.com");
 
-        content = `Thanks for reaching out! We received the following bug report from you:
+        content = `
+        Thanks for reaching out! We received the following bug report from you:
         Description: ${description}
         Categories: ${categories}
+        
         We apologize for any inconveniences that this may have caused.
         Our team will be investigating the issue and will follow up with you shortly.
+
         Best,
-        theCourseForum Team`;
+        theCourseForum Team
+        `;
         sendEmail("[theCourseForum] Thank you for your feedback!", content, email);
 
         resetForm();
