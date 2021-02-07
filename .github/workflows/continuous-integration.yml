@@ -7,7 +7,7 @@ on:
       - '*'
   # The following is needed to run tests upon direct push to dev or master
   push:
-    branches: [dev, master, dev-wiki]
+    branches: [dev, master]
 env:
   PYTHON_TARGET: 3.8
   # Django
