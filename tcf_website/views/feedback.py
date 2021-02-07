@@ -29,7 +29,7 @@ def send_email(query):
     recipient_list = [
         query.GET.get(
             "recipients",
-            "support@thecourseforum.com")]
+            os.environ['EMAIL_HOST_USER'])]
 
     send_mail(subject, content, from_email, recipient_list)
-    return JsonResponse({'content': query.GET.get("content", "")})
+    return JsonResponse({'content': content})
