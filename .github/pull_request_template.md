@@ -21,6 +21,6 @@
 - Who should merge this PR?
   - [ ] I will merge it myself
   - [ ] The last reviewer to approve can merge it
-    - Should the commit history be preserved in the base branch, or is it okay to combine all of them into a single commit ("squash-merge")?
-    - [ ] preserve the history
-    - [ ] squash-merge
+- Should the commit history be preserved in the base branch, or is it okay to combine all of them into a single commit ("squash-merge")?
+  - [ ] preserve the history
+  - [ ] squash-merge
