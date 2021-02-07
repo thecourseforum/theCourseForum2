@@ -34,9 +34,17 @@
             <br/>
             <br/>
 
-            <!-- Unsure if we want to remove it when they are looking at all semesters. If so, may need the opposite of "old" class. -->
             {% if not this_semester_instructors %}
-                <h5 class="">Looks like this course isn't taught this semester. Sort by "All" in the top right to see previous semesters.</div>
+                <div class="new card col p-5 text-center">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            Looks like this course isn't being taught this semester. <i class="far fa-frown-open fa-fw"></i>
+                        </h4>
+                        <p class="card-text">
+                            Sort by "All" in the top right to see previous semesters.
+                        </p>
+                    </div>
+                </div>
             {% endif %}
 
             <ul class="instructor-list">
