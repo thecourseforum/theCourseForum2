@@ -113,6 +113,27 @@
       "class": "2023",
       "img_filename": "ENG_Nikhil_Mahajan.jpg",
       "github": "n4mahajan"
+    },
+    {
+      "name": "Andrew Niu",
+      "role": "Developer",
+      "class": "2023",
+      "img_filename": "ENG_Andrew_Niu.jpg",
+      "github": "andrewmniu"
+    },
+    {
+      "name": "Quyen Huynh",
+      "role": "Developer",
+      "class": "2021",
+      "img_filename": "ENG_Quyen_Huynh.jpg",
+      "github": "quyenxhuynh"
+    },
+    {
+      "name": "Borja Ingle-Fernandez",
+      "role": "Developer",
+      "class": "2023",
+      "img_filename": "ENG_Borja_Ingle-Fernandez.jpg",
+      "github": "borjainglefernandez"
     }
   ],
   "marketing_team": [
