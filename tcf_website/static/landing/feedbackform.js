@@ -37,7 +37,7 @@ function submit(event) {
 
         We greatly appreciate you taking the time to help us improve tCF!
         A team member will be following up with you shortly if neccesary.
-        
+
         Best,
         theCourseForum Team
         `;

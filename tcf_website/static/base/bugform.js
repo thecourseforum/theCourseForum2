@@ -23,7 +23,7 @@ function submit(event) {
         **Email:** ${email}
         **Description:** ${description}
         `;
-        //postToDiscord("bug", content);
+        postToDiscord("bug", content);
 
         content = `
         Bug Report
@@ -38,7 +38,7 @@ function submit(event) {
         Thanks for reaching out! We received the following bug report from you:
         Description: ${description}
         Categories: ${categories}
-        
+
         We apologize for any inconveniences that this may have caused.
         Our team will be investigating the issue and will follow up with you shortly.
 
