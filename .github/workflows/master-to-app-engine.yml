@@ -10,6 +10,7 @@ on:
       - completed
 
 env:
+  PYTHON_TARGET: 3.8
   # Django
   DJANGO_SETTINGS_MODULE: tcf_core.settings.prod
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
