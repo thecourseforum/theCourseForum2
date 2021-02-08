@@ -26,7 +26,7 @@ function generateCourseCardHTML(course) {
         <li class="${course.is_recent ? "" : "old"}">
             <div class="card rating-card mb-2">
                 <div class="row no-gutters">
-                    <a class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start align-items-center rating-card-link" href="/course/${course.id}">
+                    <a class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start align-items-center rating-card-link" href="/course/${course.subdepartment.mnemonic}/${course.number}">
                         <div class="text-center text-lg-left">
                             <h3 id="title">${course.subdepartment.mnemonic} ${course.number}</h3>
                             <h5>${course.title}</h5>
