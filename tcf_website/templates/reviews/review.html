@@ -26,10 +26,9 @@
                           </a>
                         </div>
                         <div class="review-actions ml-auto">
-                          <!-- Edit functionality is TBD -->
-                          <!-- <a class="review-edit btn btn-sm btn-primary" href="#">
+                          <a class="review-edit btn btn-sm btn-primary" href="{% url 'edit_review' review_id=review.id %}">
                               <i class="fas fa-pencil-alt"></i> Edit
-                          </a> -->
+                          </a>
                           <button class="review-delete btn btn-sm btn-outline-danger" type="button"
                                   data-toggle="modal" data-target="#deleteReviewModal{{review.id}}">
                             <i class="fa fa-trash-o"></i> Delete
