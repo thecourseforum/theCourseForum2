@@ -5,13 +5,9 @@ on:
   pull_request:
     branches:
       - '*'
-    paths-ignore:
-    - 'docs/**'
-  # The following is needed to run tests upon direct push to master
+  # The following is needed to run tests upon direct push to dev or master
   push:
-    branches: [master]
-    paths-ignore:
-    - 'docs/**'
+    branches: [dev, master]
 env:
   PYTHON_TARGET: 3.8
   # Django
