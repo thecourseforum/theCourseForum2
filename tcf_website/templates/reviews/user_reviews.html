@@ -10,7 +10,12 @@
 
 {% block content %}
 <div class="my-reviews container mx-auto">
-    <h1 class="h2 mx-3 mt-2 mb-4">My reviews</h1>
+    <div class="my-reviews-header d-flex flex-sm-row flex-column mb-4">
+        <h1 class="h2 mt-2 mb-0">My reviews</h1>
+        <a class="ml-sm-auto mt-2 btn bg-tcf-orange text-white" href="{% url 'new_review' %}" >
+            <i class="fa fa-pencil" aria-hidden="true"></i> New review
+        </a>
+    </div>
     {% include "reviews/review_stats.html" with total_reviews_written=total_reviews_written total_review_upvotes=total_review_upvotes average_review_rating=average_review_rating %}
     {% include "reviews/reviews.html" with reviews=user.reviews profile=True %}
 </div>
