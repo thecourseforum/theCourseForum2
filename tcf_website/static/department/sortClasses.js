@@ -23,10 +23,10 @@ const sortByNumber = () => {
         $("#ascending-order-btn").addClass("active");
     } else { // Already selected so simply reverse the order of sorting (ascending vs descending)
         sortNumberAsc *= -1;
-        if ($("#ascending-order-btn").hasClass("active")){
+        if ($("#ascending-order-btn").hasClass("active")) {
             $("#ascending-order-btn").removeClass("active");
             $("#descending-order-btn").addClass("active");
-        } else{
+        } else {
             $("#descending-order-btn").removeClass("active");
             $("#ascending-order-btn").addClass("active");
         }
@@ -46,10 +46,10 @@ const sortByRating = () => {
         $("#ascending-order-btn").addClass("active");
     } else {
         sortRatingAsc *= -1;
-        if ($("#ascending-order-btn").hasClass("active")){
+        if ($("#ascending-order-btn").hasClass("active")) {
             $("#ascending-order-btn").removeClass("active");
             $("#descending-order-btn").addClass("active");
-        } else{
+        } else {
             $("#descending-order-btn").removeClass("active");
             $("#ascending-order-btn").addClass("active");
         }
@@ -68,10 +68,10 @@ const sortByDifficulty = () => {
         $("#ascending-order-btn").addClass("active");
     } else {
         sortDifficultyAsc *= -1;
-        if ($("#ascending-order-btn").hasClass("active")){
+        if ($("#ascending-order-btn").hasClass("active")) {
             $("#ascending-order-btn").removeClass("active");
             $("#descending-order-btn").addClass("active");
-        } else{
+        } else {
             $("#descending-order-btn").removeClass("active");
             $("#ascending-order-btn").addClass("active");
         }
@@ -90,10 +90,10 @@ const sortByGpa = () => {
         $("#ascending-order-btn").addClass("active");
     } else {
         sortGpaAsc *= -1;
-        if ($("#ascending-order-btn").hasClass("active")){
+        if ($("#ascending-order-btn").hasClass("active")) {
             $("#ascending-order-btn").removeClass("active");
             $("#descending-order-btn").addClass("active");
-        } else{
+        } else {
             $("#descending-order-btn").removeClass("active");
             $("#ascending-order-btn").addClass("active");
         }
@@ -103,34 +103,34 @@ const sortByGpa = () => {
 };
 
 const ascendingOrder = () => {
-    if(!$("#ascending-order-btn").hasClass("active")){
+    if (!$("#ascending-order-btn").hasClass("active")) {
         $("#descending-order-btn").removeClass("active");
         $("#ascending-order-btn").addClass("active");
         // Check which sort is currently selected and compute that sort
         if ($("#number-sort-btn").hasClass("active")) {
             sortClasses(cmpByProp("title", 1));
-        } else if ($("#rating-sort-btn").hasClass("active")){
+        } else if ($("#rating-sort-btn").hasClass("active")) {
             sortClasses(cmpByProp("rating", -1));
-        } else if ($("#diff-sort-btn").hasClass("active")){
+        } else if ($("#diff-sort-btn").hasClass("active")) {
             sortClasses(cmpByProp("difficulty", 1));
-        } else if ($("#gpa-sort-btn").hasClass("active")){
+        } else if ($("#gpa-sort-btn").hasClass("active")) {
             sortClasses(cmpByProp("gpa", -1));
         }
     }
 };
 
 const descendingOrder = () => {
-    if(!$("#descending-order-btn").hasClass("active")){
+    if (!$("#descending-order-btn").hasClass("active")) {
         $("#ascending-order-btn").removeClass("active");
         $("#descending-order-btn").addClass("active");
         // Check which sort is currently selected and compute that sort
         if ($("#number-sort-btn").hasClass("active")) {
             sortClasses(cmpByProp("title", -1));
-        } else if ($("#rating-sort-btn").hasClass("active")){
+        } else if ($("#rating-sort-btn").hasClass("active")) {
             sortClasses(cmpByProp("rating", 1));
-        } else if ($("#diff-sort-btn").hasClass("active")){
+        } else if ($("#diff-sort-btn").hasClass("active")) {
             sortClasses(cmpByProp("difficulty", -1));
-        } else if ($("#gpa-sort-btn").hasClass("active")){
+        } else if ($("#gpa-sort-btn").hasClass("active")) {
             sortClasses(cmpByProp("gpa", 1));
         }
     }
