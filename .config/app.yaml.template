@@ -21,6 +21,7 @@ handlers:
   secure: always
 
 env_variables:
+    DJANGO_SETTINGS_MODULE: tcf_core.settings.prod
     # Django
     SECRET_KEY: "${SECRET_KEY}"
     DEBUG: 0
