@@ -87,7 +87,7 @@ jobs:
           envsubst < .config/.env.example > .env
           python manage.py makemigrations
           python manage.py migrate
-          coverage run manage.py test --keepdb --parallel
+          coverage run manage.py test --keepdb
         continue-on-error: true
 
       - name: Get code coverage
