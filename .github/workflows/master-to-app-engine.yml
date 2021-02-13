@@ -10,6 +10,7 @@ on:
       - completed
 
 env:
+  PYTHON_TARGET: 3.8
   # Django
   DJANGO_SETTINGS_MODULE: tcf_core.settings.prod
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
@@ -36,7 +37,7 @@ env:
 
 jobs:
   deploy:
-    if: ${{ contains( ['success', 'skipped'], github.event.workflow_run.conclusion ) }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -49,7 +50,7 @@ jobs:
       - name: Install Python packages, excluding the unnecessary ones
         run: |
           python -m pip install --upgrade pip
-          sed -i '/\(gunicorn\|django\-heroku\)/d' requirements.txt
+          sed -i '/\(coverage\|gunicorn\|django\-heroku\)/d' requirements.txt
           pip install -r requirements.txt
 
       - name: Migrations
