@@ -122,6 +122,13 @@
       "github": "andrewmniu"
     },
     {
+      "name": "Khushi Chawla",
+      "role": "Developer",
+      "class": "2024",
+      "img_filename": "ENG_Khushi_Chawla.jpg",
+      "github": "khushic"
+    },
+    {
       "name": "Quyen Huynh",
       "role": "Developer",
       "class": "2021",
@@ -134,6 +141,13 @@
       "class": "2023",
       "img_filename": "ENG_Borja_Ingle-Fernandez.jpg",
       "github": "borjainglefernandez"
+    },
+    {
+      "name": "James Lim",
+      "role": "Developer",
+      "class": "2021",
+      "img_filename": "ENG_James_Lim.jpg",
+      "github": "yl2vv"
     }
   ],
   "marketing_team": [
