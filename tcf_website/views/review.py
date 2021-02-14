@@ -63,6 +63,17 @@ def new_review(request):
             instance.hours_per_week = \
                 instance.amount_reading + instance.amount_writing + \
                 instance.amount_group + instance.amount_homework
+
+            # Verify that user has not already submitted a review for this
+            # specific course for the same semester and instructor before
+            for review in request.user.reviews():
+                if review.__str__() == instance.__str__() and review.semester == instance.semester:
+                    messages.error(
+                        request,
+                        'Looks like you have already submitted a review for this specific course!'
+                        ' Please edit your original review if you would like to modify anything.')
+                    return redirect('reviews')
+
             instance.save()
 
             messages.success(request,

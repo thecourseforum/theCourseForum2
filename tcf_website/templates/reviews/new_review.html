@@ -11,11 +11,11 @@
 <div class="new-review container text-left mx-auto">
   <h1 class="h2 mt-2 mb-4">Write a review</h1>
   <div class="card">
-    <form class="card-body px-md-5" action="{% url 'new_review' %}" method="POST">
+    <form class="card-body px-md-5" id="reviewForm" action="{% url 'new_review' %}" method="POST">
         {% csrf_token %}
         {% include 'reviews/review_form_content.html' %}
         <div class="new-review-submit row py-4">
-          <button type="submit" class="btn btn-primary mx-auto">Submit Review</button>
+          <button type="submit" class="btn btn-primary mx-auto" id="submitBtn" >Submit Review</button>
         </div>
     </form>
   </div>
@@ -31,5 +31,26 @@
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()
   });
+
+  // Checks if required fields for review were filled
+  // If required fields are filled, timeout the submit button so that the user can't spam click it
+  $(document).ready(function () {
+    $("#submitBtn").click(function () {
+        var formValidity = document.getElementById("reviewForm");
+        if (formValidity.checkValidity()) {
+            var btn = document.getElementById("submitBtn");
+            btn.style.display = 'none';
+            //redisplays button after 2 seconds
+            setTimeout(function () { removeButton(); }, 2000);
+        }
+    });
+
+    function removeButton() {
+        //sets button back to initial state
+        btn.style.display = 'initial';
+        document.getElementById("submitBtn").disabled = false;
+    }
+  });
+
 </script>
 {% endblock %}
