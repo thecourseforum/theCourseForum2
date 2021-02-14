@@ -5,13 +5,9 @@ on:
   pull_request:
     branches:
       - '*'
-    paths-ignore:
-    - 'docs/**'
-  # The following is needed to run tests upon direct push to master
+  # The following is needed to run tests upon direct push to dev or master
   push:
-    branches: [master]
-    paths-ignore:
-    - 'docs/**'
+    branches: [dev, master]
 env:
   PYTHON_TARGET: 3.8
   # Django
@@ -51,7 +47,7 @@ jobs:
       - name: Install Python packages, excluding the unnecessary ones
         run: |
           python -m pip install --upgrade pip
-          sed -i '/\(tqdm\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
+          sed -i '/\(tqdm\|coverage|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
           pip install -r requirements.txt
 
       - name: Run pylint
@@ -84,7 +80,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           sed -i '/\(pandas\|tqdm\|lint\|autopep8\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
-          echo coverage >> requirements.txt
           pip install -r requirements.txt
 
       - name: Migrations & Tests

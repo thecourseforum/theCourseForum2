@@ -24,3 +24,5 @@ db/*.csv
 # IDEs
 .idea/
 .vscode/
+# Code coverage
+.coverage
