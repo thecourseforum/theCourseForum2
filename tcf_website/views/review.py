@@ -68,9 +68,7 @@ def new_review(request):
             # specific course for the same semester and instructor before
             for review in request.user.reviews():
                 if review.__str__() == instance.__str__() and review.semester == instance.semester:
-                    messages.error(
-                        request,
-                        'Looks like you have already submitted a review for this specific course!'
+                    messages.error(request, 'Looks like you have already submitted a review for this specific course!'
                         ' Please edit your original review if you would like to modify anything.')
                     return redirect('reviews')
 

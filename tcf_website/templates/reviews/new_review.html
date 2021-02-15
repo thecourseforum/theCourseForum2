@@ -33,11 +33,12 @@
   });
 
   // Checks if required fields for review were filled
-  // If required fields are filled, timeout the submit button so that the user can't spam click it
+  // If required fields are filled, timeout and hide the submit button so that the user can't spam click it
   $(document).ready(function () {
     $("#submitBtn").click(function () {
-        var formValidity = document.getElementById("reviewForm");
-        if (formValidity.checkValidity()) {
+        var reviewForm = document.getElementById("reviewForm");
+        // Check if required fields are filled
+        if (reviewForm.checkValidity()) {
             var btn = document.getElementById("submitBtn");
             btn.style.display = 'none';
             //redisplays button after 3 seconds
