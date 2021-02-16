@@ -127,14 +127,15 @@ def course_view(request, mnemonic, course_number):
     if not currently_taught:
         messages.warning(
             request,
-            'Looks like this course isn\'t taught this semester. Sort by \"All\" in the top right to see previous semesters.')
+            """Looks like this course isn\'t taught this semester. 
+            Sort by \"All\" in the top right to see previous semesters.""")
 
     return render(request, 'course/course.html',
                   {
                       'course': course,
                       'instructors': instructors,
                       'latest_semester': latest_semester,
-                      'breadcrumbs': breadcrumbs,
+                      'breadcrumbs': breadcrumbs
                   })
 
 
