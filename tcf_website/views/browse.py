@@ -7,6 +7,8 @@ from django.db.models import Avg, Max, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
+
 
 from ..models import (
     School,
@@ -105,9 +107,13 @@ def course_view(request, mnemonic, course_number):
     # Note: Wanted to use .annotate() but couldn't figure out a way
     # So created a dictionary on the fly to minimize database access
     semesters = {s.id: s for s in Semester.objects.all()}
+    # Checks if it is currently taught
+    currently_taught = False
     for instructor in instructors:
         instructor.semester_last_taught = semesters.get(
             instructor.semester_last_taught)
+        if instructor.semester_last_taught == latest_semester:
+            currently_taught = True
 
     dept = course.subdepartment.department
 
@@ -118,12 +124,17 @@ def course_view(request, mnemonic, course_number):
         (course.code, None, True),
     ]
 
+    if not currently_taught:
+        messages.warning(
+            request,
+            'Looks like this course isn\'t taught this semester. Sort by \"All\" in the top right to see previous semesters.')
+
     return render(request, 'course/course.html',
                   {
                       'course': course,
                       'instructors': instructors,
                       'latest_semester': latest_semester,
-                      'breadcrumbs': breadcrumbs
+                      'breadcrumbs': breadcrumbs,
                   })
 
 
