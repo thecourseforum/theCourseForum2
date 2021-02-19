@@ -24,7 +24,7 @@ class School(models.Model):
     """URL to this School's homepage. Optional."""
 
     def __str__(self):
-        """String representation of School."""
+        """String representation of this School."""
         return self.name
 
 
@@ -109,17 +109,26 @@ class Subdepartment(models.Model):
     """Foreign key to the Department containing this Subdepartment. Required."""
 
     def __str__(self):
+        """Converts this Subdepartment to a string representation.
+
+        Returns:
+            str: String representation of this Subdepartment.
+        """
         return f"{self.mnemonic} - {self.name}"
 
     def recent_courses(self):
-        """Return courses within last 5 years."""
+        """Returns courses within last 5 years."""
         latest_semester = Semester.latest()
         return self.course_set.filter(
             semester_last_taught__year__gte=latest_semester.year -
             5).order_by("number")
 
     def has_current_course(self):
-        """Return True if subdepartment has a course in current semester."""
+        """Checks whether this Subdepartment has any courses offered this semester.
+
+        Returns:
+            bool: True if this Subdepartment has courses offered this semester, False otherwise.
+        """
         return self.course_set.filter(
             section__semester=Semester.latest()).exists()
 
@@ -137,25 +146,47 @@ class Subdepartment(models.Model):
 
 
 class User(AbstractUser):
-    """User model.
+    """User model. Represents an individual user account.
 
-    Has many Reviews.
+    This model derives from Django's AbstractUser, so it
+    inherits fields like first_name, last_name, and email.
+
+    This model is created automatically by the authentication pipeline.
+
+    Relationships:
+    - Has many Reviews.
     """
-    # User computing ID. Not required by database schema, but is
-    # necessary. Should be created during authentication pipeline.
     computing_id = models.CharField(max_length=20, unique=True, blank=True)
-    # User graduation year. Not required by database schema, but is
-    # necessary. Should be created during authentication pipeline.
+    """The User's computing ID.
+
+    This field is necessary, although it is not required by the database schema.
+    It should be created during the authentication pipeline.
+    """
+
     graduation_year = models.IntegerField(
         validators=[MinValueValidator(2000), MaxValueValidator(2999)],
         blank=True, null=True
     )
+    """User's graduation year.
+
+    This field is necessary, although it is not required by the database schema.
+    It should be created during the authentication pipeline.
+    """
 
     def __str__(self):
+        """Gets a string representation of this User.
+
+        Returns:
+            str: A string representation of this User.
+        """
         return f"{self.first_name} {self.last_name} ({self.email})"
 
     def full_name(self):
-        """Return string containing user full name."""
+        """Gets a User's full name.
+
+        Returns:
+            str: A string containing the User's first and last name.
+        """
         return f"{self.first_name} {self.last_name}"
 
     def reviews(self):
@@ -174,25 +205,27 @@ class User(AbstractUser):
 
 
 class Instructor(models.Model):
-    """Instructor model.
+    """Instructor model. Represents an instructor, such as Louis Bloomfield or Kenneth Elzinga.
 
-    Belongs to many departments.
-    Has many courses.
-    Has many departments.
+    Relationships:
+    - Belongs to many departments.
+    - Has many courses.
+    - Has many departments.
     """
 
-    # Instructor first_name. Optional.
     first_name = models.CharField(max_length=255, blank=True)
-    # Instructor last_name. Required.
+    """Instructor first name. Optional."""
     last_name = models.CharField(max_length=255)
-    # Instructor email. Optional.
+    """Instructor last name. Optional."""
     email = models.EmailField(blank=True)
-    # Instructor website. Optional.
+    """Instructor email. Optional."""
     website = models.URLField(blank=True)
-    # Instructor departments. Optional.
+    """URL to Instructor's website. Optional."""
     departments = models.ManyToManyField(Department)
+    """Set of Departments this instructor teaches in. Can potentially be empty."""
 
     def __str__(self):
+        """Returns a string representation of this Instructor."""
         return f"{self.first_name} {self.last_name} ({self.email})"
 
     def full_name(self):
