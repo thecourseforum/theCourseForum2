@@ -8,7 +8,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class School(models.Model):
-    """School model. Represents a single school within the University, 
+    """School model. Represents a single school within the University,
     such as the College of Arts & Sciences.
 
     Relationships:
