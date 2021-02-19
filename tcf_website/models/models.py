@@ -8,16 +8,20 @@ from django.contrib.auth.models import AbstractUser
 
 
 class School(models.Model):
-    """School model.
+    """School model. Represents a single school within the University, 
+    such as the College of Arts & Sciences.
 
-    Has many departments.
+    Relationships:
+    - Has many departments.
     """
-    # School name. Required.
     name = models.CharField(max_length=255, unique=True)
-    # Description of school. Optional.
+    """The name of this School. Required."""
+
     description = models.TextField(blank=True)
-    # Website URL. Optional.
+    """The description of this School. Optional."""
+
     website = models.URLField(blank=True)
+    """URL to this School's homepage. Optional."""
 
     def __str__(self):
         """String representation of School."""
@@ -25,23 +29,31 @@ class School(models.Model):
 
 
 class Department(models.Model):
-    """Department model.
+    """Department model. Represents a single department within a School, such as Mathematics.
 
-    Belongs to a School.
-    Has many Subdepartments.
-    Has many Instructors.
+    Relationships:
+    - Belongs to a School.
+    - Has many Subdepartments.
+    - Has many Instructors.
     """
-    # Department name. Required.
     name = models.CharField(max_length=255)
-    # Department description. Optional.
-    description = models.TextField(blank=True)
-    # Website URL. Optional.
-    website = models.URLField(blank=True)
+    """The name of this Department. Required."""
 
-    # School foreign key. Required.
+    description = models.TextField(blank=True)
+    """The description of this Department. Optional."""
+
+    website = models.URLField(blank=True)
+    """URL to this Department's homepage. Optional."""
+
     school = models.ForeignKey(School, on_delete=models.CASCADE)
+    """Foreign key to the School containing this Department. Required."""
 
     def __str__(self):
+        """Converts this Department to a string representation.
+
+        Returns:
+            str: String representation of this Department.
+        """
         return self.name
 
     class Meta:
@@ -61,20 +73,40 @@ class Department(models.Model):
 
 
 class Subdepartment(models.Model):
-    """Subdepartment model.
+    """Subdepartment model. Represents a specific subject within a Department.
+    For example, "CREO" in the French department, "ENCW" in the English department,
+    or "CS - Computer Science" in the Computer Science department.
 
-    Belongs to a Department.
-    Has many Courses.
+    Relationships:
+    - Belongs to a Department.
+    - Has many Courses.
     """
-    # Subdepartment name. Required.
     name = models.CharField(max_length=255)
-    # Subdepartment description. Optional.
-    description = models.TextField(blank=True)
-    # Subdepartment mnemonic. Required.
-    mnemonic = models.CharField(max_length=255, unique=True)
+    """The name of this Subdepartment. Required.
 
-    # Department foreign key. Required.
+    Examples:
+    - "Computer Science"
+    - "Religion - Judaism"
+
+    Considerations:
+    Some Subdepartments have descriptive names, like "Computer Science."
+    Other Subdepartments are named after their mnemonic, like "CREO."
+    """
+    description = models.TextField(blank=True)
+    """The description of this Department. Optional."""
+
+    mnemonic = models.CharField(max_length=255, unique=True)
+    """The mnemonic of this Department. Required.
+
+    A mnemonic is a 2-4 letter code representing a subdepartment.
+
+    Examples:
+    - "CS" (Computer Science)
+    - "RELJ" (Religion - Judaism)
+    """
+
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    """Foreign key to the Department containing this Subdepartment. Required."""
 
     def __str__(self):
         return f"{self.mnemonic} - {self.name}"
