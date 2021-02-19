@@ -216,7 +216,7 @@ class Instructor(models.Model):
     first_name = models.CharField(max_length=255, blank=True)
     """Instructor first name. Optional."""
     last_name = models.CharField(max_length=255)
-    """Instructor last name. Optional."""
+    """Instructor last name. Required."""
     email = models.EmailField(blank=True)
     """Instructor email. Optional."""
     website = models.URLField(blank=True)
