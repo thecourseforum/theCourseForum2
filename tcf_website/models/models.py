@@ -75,7 +75,7 @@ class Department(models.Model):
 class Subdepartment(models.Model):
     """Subdepartment model. Represents a specific subject within a Department.
     For example, "CREO" in the French department, "ENCW" in the English department,
-    or "CS - Computer Science" in the Computer Science department.
+    or "Computer Science" in the Computer Science department.
 
     Relationships:
     - Belongs to a Department.
@@ -89,7 +89,7 @@ class Subdepartment(models.Model):
     - "Religion - Judaism"
 
     Considerations:
-    Some Subdepartments have descriptive names, like "Computer Science."
+    Most Subdepartments have descriptive names, like "Computer Science."
     Other Subdepartments are named after their mnemonic, like "CREO."
     """
     description = models.TextField(blank=True)
