@@ -7,7 +7,10 @@ from django.contrib.messages import constants as messages
 import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(
+    os.path.dirname(
+        os.path.dirname(
+            os.path.abspath(__file__))))
 
 # Django-environ library imports .env settings
 env = environ.Env(
@@ -170,12 +173,14 @@ ES_COURSE_SEARCH_ENDPOINT = env.str('ES_COURSE_SEARCH_ENDPOINT')
 ES_INSTRUCTOR_SEARCH_ENDPOINT = env.str('ES_INSTRUCTOR_SEARCH_ENDPOINT')
 
 # Read-write access to Elastic
-ES_COURSE_DOCUMENTS_ENDPOINT = env.str('ES_COURSE_DOCUMENTS_ENDPOINT', default='')
+ES_COURSE_DOCUMENTS_ENDPOINT = env.str(
+    'ES_COURSE_DOCUMENTS_ENDPOINT', default='')
 ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = env.str(
     'ES_INSTRUCTOR_DOCUMENTS_ENDPOINT', default='')
 ES_PRIVATE_API_KEY = env.str('ES_PRIVATE_API_KEY', default='')
 
-# Logging configuration (from https://docs.djangoproject.com/en/3.1/topics/logging/)
+# Logging configuration (from
+# https://docs.djangoproject.com/en/3.1/topics/logging/)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
