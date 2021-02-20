@@ -26,3 +26,5 @@ db/*.csv
 .vscode/
 # Code coverage
 .coverage
+# ESLint cache
+.eslintcache
