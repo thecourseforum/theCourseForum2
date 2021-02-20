@@ -259,9 +259,9 @@ class Instructor(models.Model):
             course (Course): The Course to compute an average rating for.
 
         Returns:
-            Union[float, None]: Average rating for `course` as taught by this Instructor,
-                                or None if `course` is not taught by this Instructor or
-                                there are no ratings.
+            Optional[float]: Average rating for `course` as taught by this Instructor,
+                             or None if `course` is not taught by this Instructor or
+                             there are no ratings.
         """
         ratings = Review.objects.filter(
             course=course, instructor=self).aggregate(
@@ -280,67 +280,162 @@ class Instructor(models.Model):
         return (recommendability + instructor_rating + enjoyability) / 3
 
     def average_difficulty_for_course(self, course):
-        """Compute average difficulty score."""
+        """Returns the average difficulty score for `course` as taught by this Instructor.
+
+        Args:
+            course (Course): Course to compute average difficulty score for.
+
+        Returns:
+            Optional[float]: Average difficulty rating for `course` as taught by this
+                             Instructor, or None if `course` is not taught by this Instructor
+                             or there are no ratings.
+        """
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('difficulty'))['difficulty__avg']
 
     def average_enjoyability_for_course(self, course):
-        """Computer average enjoyability"""
+        """Returns the average enjoyability score for `course` as taught by this Instructor.
+
+        Args:
+            course (Course): Course to compute average enjoyability score for.
+
+        Returns:
+            Optional[float]: Average enjoyability rating for `course` as taught by this
+                             Instructor, or None if `course` is not taught by this Instructor
+                             or there are no ratings.
+        """
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('enjoyability'))['enjoyability__avg']
 
     def average_instructor_rating_for_course(self, course):
-        """Computer average instructor rating"""
+        """Returns the average instructor score for `course` as taught by this Instructor.
+
+        Args:
+            course (Course): Course to compute average instructor score for.
+
+        Returns:
+            Optional[float]: Average instructor rating for `course` as taught by this
+                             Instructor, or None if `course` is not taught by this Instructor
+                             or there are no ratings.
+        """
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('instructor_rating'))['instructor_rating__avg']
 
     def average_recommendability_for_course(self, course):
-        """Computer average recommendability"""
+        """Returns the average recommendability score for `course` as taught by this Instructor.
+
+        Args:
+            course (Course): Course to compute average recommendability score for.
+
+        Returns:
+            Optional[float]: Average recommendability rating for `course` as taught by this
+                             Instructor, or None if `course` is not taught by this Instructor
+                             or there are no ratings.
+        """
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('recommendability'))['recommendability__avg']
 
     def average_hours_for_course(self, course):
-        """Compute average hrs/wk."""
+        """Returns the average hours per week for `course` as taught by this Instructor.
+
+        Args:
+            course (Course): Course to compute hours per week for.
+
+        Returns:
+            Optional[float]: Average hours per week for `course` as taught by this
+                             Instructor, or None if `course` is not taught by this Instructor
+                             or there are no ratings.
+        """
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('hours_per_week'))['hours_per_week__avg']
 
     def average_reading_hours_for_course(self, course):
-        """Compute average reading hrs/wk."""
+        """Returns the average reading hours for `course` as taught by this Instructor.
+
+        Args:
+            course (Course): Course to compute average reading hours for.
+
+        Returns:
+            Optional[float]: Average reading hours for `course` as taught by this
+                             Instructor, or None if `course` is not taught by this Instructor
+                             or there are no ratings.
+        """
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('amount_reading'))['amount_reading__avg']
 
     def average_writing_hours_for_course(self, course):
-        """Compute average writing hrs/wk."""
+        """Returns the average writing hours for `course` as taught by this Instructor.
+
+        Args:
+            course (Course): Course to compute writing hours for.
+
+        Returns:
+            Optional[float]: Average writing hours for `course` as taught by this
+                             Instructor, or None if `course` is not taught by this Instructor
+                             or there are no ratings.
+        """
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('amount_writing'))['amount_writing__avg']
 
     def average_group_hours_for_course(self, course):
-        """Compute average group work hrs/wk."""
+        """Returns the average group hours for `course` as taught by this Instructor.
+
+        Args:
+            course (Course): Course to compute average group hours for.
+
+        Returns:
+            Optional[float]: Average group hours for `course` as taught by this
+                             Instructor, or None if `course` is not taught by this Instructor
+                             or there are no ratings.
+        """
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('amount_group'))['amount_group__avg']
 
     def average_other_hours_for_course(self, course):
-        """Compute average other HW hrs/wk."""
+        """Returns the average 'Other' hours for `course` as taught by this Instructor.
+
+        Args:
+            course (Course): Course to compute average 'Other' hours for.
+
+        Returns:
+            Optional[float]: Average 'Other' hours for `course` as taught by this
+                             Instructor, or None if `course` is not taught by this Instructor
+                             or there are no ratings.
+        """
         return Review.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('amount_homework'))['amount_homework__avg']
 
     def average_gpa_for_course(self, course):
-        """Compute average GPA"""
+        """Returns the average GPA for `course` as taught by this Instructor.
+
+        Args:
+            course (Course): Course to compute average GPA for.
+
+        Returns:
+            Optional[float]: Average GPA for `course` as taught by this
+                             Instructor, or None if `course` is not taught by this Instructor
+                             or there are no ratings.
+        """
         return CourseInstructorGrade.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('average'))['average__avg']
 
     def average_rating(self):
-        """Compute average rating for all this Instructor's Courses"""
+        """Computes average rating across all Reviews about this Instructor.
+
+        Returns:
+            Optional[float]: Average rating across all Reviews about this Instructor.
+                             None if there are no Reviews about this Instructor.
+        """
         ratings = Review.objects.filter(instructor=self).aggregate(
             models.Avg('recommendability'),
             models.Avg('instructor_rating'),
@@ -357,19 +452,40 @@ class Instructor(models.Model):
         return (recommendability + instructor_rating + enjoyability) / 3
 
     def average_difficulty(self):
-        """Compute average difficulty for all this Instructor's Courses"""
+        """Computes average difficulty across all Reviews about this Instructor.
+
+        Returns:
+            Optional[float]: Average difficulty across Reviews about this Instructor.
+                             None if there are no Reviews about this Instructor.
+        """
         return Review.objects.filter(
             instructor=self).aggregate(
             models.Avg('difficulty'))['difficulty__avg']
 
     def average_gpa(self):
-        """Compute average GPA for all this Instructor's Courses"""
+        """Computes average GPA for this Instructor.
+
+        Technically, this computes average GPA across all
+        CourseInstructorGrades about this Instructor.
+
+        Returns:
+            Optional[float]: Average GPA across all CourseInstructorGrades about this Instructor.
+                             None if there are no CourseInstructorGrades about this Instructor.
+        """
         return CourseInstructorGrade.objects.filter(instructor=self).aggregate(
             models.Avg('average'))['average__avg']
 
     def get_courses(self):
-        """Gets all Courses taught by a given Instructor"""
-        # More specifically, all Courses where this Instructor has taught a Section
+        """Returns all Courses taught by this Instructor.
+
+        More specifically, returns all Courses where this Instructor has taught a Section.
+
+        Considerations:
+        Only returns courses whose IDs are >1000.
+
+        Returns:
+            QuerySet[Course]: Courses taught by this instructor.
+        """
         # Might be good to store this data as a many-to-many field in
         # Instructor instead of computing?
         course_ids = list(
