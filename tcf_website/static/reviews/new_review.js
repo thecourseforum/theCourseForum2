@@ -124,7 +124,47 @@ jQuery(function($) {
                 $("#semester").prop("disabled", false);
             });
     });
+
+    // Code for the progress bar
+    $("#reviewtext").keydown(function() {
+        // Used .trim() to remove leading and trailing spaces
+        var review = $("#reviewtext").val().trim();
+        var numberOfWords = countNumberOfWords(review);
+
+        // Set the width of the bar to the what percent of 300 words the current review is
+        $("#reviewprogressbar").width(1000 * (numberOfWords / 300));
+        if (numberOfWords < 100) {
+            $("#progressbarmessage").html("Your review is under 100 words. Aim for 300 or more!");
+        } else if (numberOfWords >= 100 && numberOfWords < 200) {
+            $("#reviewprogressbar").removeClass("progress-bar bg-danger");
+            $("#reviewprogressbar").css("background-color", "#ff9900");
+            $("#progressbarmessage").html("Good job getting to 100 words, keep going!");
+        } else if (numberOfWords >= 200 && numberOfWords < 300) {
+            $("#reviewprogressbar").css("background-color", "yellow");
+            $("#progressbarmessage").html("200 words! You're so close to the 300 mark!");
+        } else if (numberOfWords >= 300) {
+            $("#reviewprogressbar").css("background-color", "green");
+            $("#progressbarmessage").html("Thank you for your in depth review. The tCF team and other users appreciate your effort!");
+        }
+    });
 });
+
+// Counts the number of words in a review
+function countNumberOfWords(review) {
+    if (review.length === 0) {
+        return 0;
+    }
+    // If first condition is not met, we have at least one word
+    var count = 1;
+    for (const s of review) {
+        // Chose to count words based on how many spaces there are
+        if (s === " ") {
+            count++;
+        }
+    }
+    // Number of words is spaces + 1
+    return count + 1;
+}
 
 // Clears all dropdown options & adds a disabled default option
 function clearDropdown(id) {

@@ -34,12 +34,22 @@
 </div>
 <hr>
 
+<!-- Progress Bar -->
+<div class="progress" style="height: 25px;">
+    <div id="reviewprogressbar" class="progress-bar bg-danger" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+
+<!-- Message for Progress Bar-->
+<div class="form-group col-12">
+    <p class="medium" id="progressbarmessage"></p>
+</div>
+
 <!-- Review written content -->
 <div class="new-review-content form-row mb-3">
-  <h2 class="h4 review-form-header form-group col-12 my-4">
+  <h2 class="h4 review-form-header form-group col-12 my-4" id = "tell">
     Tell us more about the course and instructor</h2>
   <div class="form-group col mb-3">
-    <textarea class="form-control" id="text" name="text" rows="5"
+    <textarea class="form-control" id="reviewtext" name="text" rows="5"
               placeholder="(Aim for 3 sentences or more!)" minlength="100" maxlength="5000">{{ form.text.value }}</textarea>
   </div>
 </div>
