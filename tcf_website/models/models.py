@@ -117,7 +117,11 @@ class Subdepartment(models.Model):
         return f"{self.mnemonic} - {self.name}"
 
     def recent_courses(self):
-        """Returns courses within last 5 years."""
+        """Returns courses taught within this Subdepartment in the last 5 years.
+
+        Returns:
+            QuerySet[Course]: QuerySet of Courses taught in this Subdepartment in the last 5 years.
+        """
         latest_semester = Semester.latest()
         return self.course_set.filter(
             semester_last_taught__year__gte=latest_semester.year -
@@ -190,7 +194,13 @@ class User(AbstractUser):
         return f"{self.first_name} {self.last_name}"
 
     def reviews(self):
-        """Return user reviews sorted by creation date."""
+        """Returns this User's reviews, sorted by creation date, reverse chronological order.
+        (Newer reviews come before older reviews.)
+
+        Returns:
+            QuerySet[Review]: QuerySet of reviews authored by this User, sorted by creation date,
+                              reverse chronological order.
+        """
         return self.review_set.annotate(
             sum_votes=models.functions.Coalesce(
                 models.Sum('vote__value'),
@@ -207,10 +217,13 @@ class User(AbstractUser):
 class Instructor(models.Model):
     """Instructor model. Represents an instructor, such as Louis Bloomfield or Kenneth Elzinga.
 
+    Considerations:
+    An instructor doesn't have any Courses. Instead, it has a collection of Section objects,
+    which all correspond with instances of a Course taught during a specific semester.
+
     Relationships:
+    - Has many sections.
     - Belongs to many departments.
-    - Has many courses.
-    - Has many departments.
     """
 
     first_name = models.CharField(max_length=255, blank=True)
@@ -235,10 +248,21 @@ class Instructor(models.Model):
     # this implementation is the same as average_rating in Course
     # except with an extra
     def average_rating_for_course(self, course):
-        """Compute average rating for course.
+        """Computes the average rating for a given Course this instructor teaches.
 
-        Rating is defined as the average of recommendability,
-        instructor rating, and enjoyability."""
+        Finds reviews of `course` taught by this Instructor, and returns the average rating.
+
+        Average rating is computed as the average of recommendability, instructor rating,
+        and enjoyability.
+
+        Args:
+            course (Course): The Course to compute an average rating for.
+
+        Returns:
+            Union[float, None]: Average rating for `course` as taught by this Instructor,
+                                or None if `course` is not taught by this Instructor or
+                                there are no ratings.
+        """
         ratings = Review.objects.filter(
             course=course, instructor=self).aggregate(
             models.Avg('recommendability'),
