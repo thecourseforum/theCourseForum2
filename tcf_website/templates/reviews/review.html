@@ -7,11 +7,13 @@
             <!-- Review upvote/downvote panel -->
             <div class="vote-container col-2 col-lg-1 d-none d-md-flex flex-column justify-content-center align-items-center">
                 <!--Voting logic is implemented in the <script> tag of reviews.html-->
-                <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}" id="upvote{{review.id}}">
+                <a id="upvote{{review.id}}" href="#loginModal" data-toggle="modal"
+                   class="upvote {% if review.user_vote == 1 %}active{% endif %}">
                     <i class="fa fa-angle-up fa-fw"></i>
                 </a>
                 <span id="vote-count" class="voteCount">{{ review.sum_votes }}</span>
-                <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}" id="downvote{{review.id}}">
+                <a id="downvote{{review.id}}" href="#loginModal" data-toggle="modal"
+                   class="downvote {% if review.user_vote == -1 %}active{% endif %}">
                     <i class="fa fa-angle-down fa-fw"></i>
                 </a>
             </div>
