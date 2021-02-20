@@ -339,12 +339,6 @@ class Instructor(models.Model):
             course=course, instructor=self).aggregate(
             models.Avg('average'))['average__avg']
 
-    def taught_courses(self):
-        """Returns all sections taught by Instructor."""
-        # this method is very inefficient and doesn't actually do what the name
-        # implies (collecting Sections instead of Courses); work in progress
-        return Section.objects.filter(instructors=self)
-
     def average_rating(self):
         """Compute average rating for all this Instructor's Courses"""
         ratings = Review.objects.filter(instructor=self).aggregate(
