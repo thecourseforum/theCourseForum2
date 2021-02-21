@@ -7,11 +7,13 @@
             <!-- Review upvote/downvote panel -->
             <div class="vote-container col-2 col-lg-1 d-none d-md-flex flex-column justify-content-center align-items-center">
                 <!--Voting logic is implemented in the <script> tag of reviews.html-->
-                <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}" id="upvote{{review.id}}">
+                <a id="upvote{{review.id}}" href="#loginModal" data-toggle="modal"
+                   class="upvote {% if review.user_vote == 1 %}active{% endif %}">
                     <i class="fa fa-angle-up fa-fw"></i>
                 </a>
                 <span id="vote-count" class="voteCount">{{ review.sum_votes }}</span>
-                <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}" id="downvote{{review.id}}">
+                <a id="downvote{{review.id}}" href="#loginModal" data-toggle="modal"
+                   class="downvote {% if review.user_vote == -1 %}active{% endif %}">
                     <i class="fa fa-angle-down fa-fw"></i>
                 </a>
             </div>
@@ -26,7 +28,7 @@
                     <div class="d-flex">
                         <div class="review-subject">
                           <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
-                              <h5><b>{{ review.course }}</b> — {{ review.instructor.full_name }}</h5>
+                              <h5><strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}</h5>
                           </a>
                         </div>
                         <div class="review-actions ml-auto">
@@ -56,38 +58,36 @@
 
                 <div class="review-footer row mt-3">
                     <!-- Review Ratings -->
-                    <div class="review-ratings col-sm-8 d-flex align-items-end">
-                        <div class="d-flex text-center flex-wrap mb-2">
-                            <div id="review-average" class="font-weight-bold">
-                                <i class="fa fa-star fa-fw"></i>
-                                {{ review.average|floatformat:2 }}
-                            </div>
-                            <div class="ml-4 text-muted">
-                                <i class="fas fa-thumbs-up"></i>
-                                {{ review.recommendability }}
-                            </div>
-                            <div class="ml-4 text-muted">
-                                <i class="fa fa-user"></i>
-                                {{ review.instructor_rating }}
-                            </div>
-                            <div class="ml-4 text-muted">
-                                <i class="far fa-smile-beam"></i>
-                                {{ review.enjoyability }}
-                            </div>
-                            <div class="ml-4 text-muted">
-                                <i class="fa fa-dumbbell fa-fw"></i>
-                                {{ review.difficulty }}
-                            </div>
-                            <div class="ml-4 text-muted">
-                                <i class="fa fa-hourglass-half fa-fw"></i>
-                                {{ review.hours_per_week }}
-                            </div>
+                    <div class="review-ratings col-sm-8 d-flex align-items-end text-center text-muted flex-wrap mb-2">
+                        <div id="review-average" class="text-dark mr-3 mr-sm-4">
+                            <i class="fa fa-star fa-fw"></i>
+                            {{ review.average|floatformat:2 }}
+                        </div>
+                        <div class="mr-3 mr-sm-4">
+                            <i class="fas fa-thumbs-up"></i>
+                            {{ review.recommendability }}
+                        </div>
+                        <div class="mr-3 mr-sm-4">
+                            <i class="fa fa-user"></i>
+                            {{ review.instructor_rating }}
+                        </div>
+                        <div class="mr-3 mr-sm-4">
+                            <i class="far fa-smile-beam"></i>
+                            {{ review.enjoyability }}
+                        </div>
+                        <div class="mr-3 mr-sm-4">
+                            <i class="fa fa-dumbbell fa-fw"></i>
+                            {{ review.difficulty }}
+                        </div>
+                        <div>
+                            <i class="fa fa-hourglass-half fa-fw"></i>
+                            {{ review.hours_per_week }}
                         </div>
                     </div>
 
-                    <div class="review-date col-sm-4 pl-0 text-right text-tcf-orange">
-                        <h6 class="font-weight-bold">{{ review.semester }}</h6>
-                        <h6 id="date">Updated {{ review.created|date }}</h6>
+                    <div class="review-date col-sm-4 pl-0 text-right">
+                        <h6 class="font-weight-bold text-tcf-orange">{{ review.semester }}</h6>
+                        <h6 id="date" class="text-muted">Updated {{ review.created|date }}</h6>
                     </div>
 
                 </div>
@@ -95,21 +95,3 @@
         </div>
     </div>
 </div>
-
-<script type="module">
-    import { handleVote } from "{% static 'reviews/review.js' %}";
-    {% if user.is_authenticated %}
-        $('.upvote').each(function(i, obj) {
-            $(this).click(()=>{
-                handleVote(obj.id.substring(6), true);
-            });
-            $(this).removeAttr('href');
-        });
-        $('.downvote').each(function(i, obj) {
-            $(this).click(()=>{
-                handleVote(obj.id.substring(8), false);
-            });
-            $(this).removeAttr('href');
-        });
-    {% endif %}
-</script>
