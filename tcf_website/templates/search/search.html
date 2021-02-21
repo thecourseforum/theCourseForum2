@@ -3,7 +3,7 @@
 
 {% load static %}
 
-{% block title %}{{displayed_query}} - theCourseForum{% endblock %}
+{% block title %}{{ displayed_query }} - theCourseForum{% endblock %}
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'search/search.css' %}"/>
@@ -12,148 +12,149 @@
 {% block content %}
     <div class="search container px-5">
 
-      <div class="search-title row p-4">
-        <h2>
-          Search results - <b><i>{{ displayed_query }}</i></b>
-        </h2>
-      </div>
-
-      <div class="search-results container p-5">
-
-        <!-- Tabs for displaying result categories: Courses, Departments, Instructors -->
-        <div id="result-nav" class="result-nav row mb-5">
-          <div class="col-12">
-            <div class="btn-group btn-group-sm" role="toolbar">
-              <a class="btn bg-tcf-indigo text-white" disabled>See results for</a>
-              <a href="#courses" id="course-tab" class="btn btn-light collapsed" autofocus
-                 role="button" data-toggle="collapse" aria-expanded="true" aria-controls="courses">
-                 Courses</a>
-              <a href="#instructors" id="instructor-tab" class="btn btn-light collapsed"
-                 role="button" data-toggle="collapse" aria-expanded="false" aria-controls="instructors">
-                 Instructors</a>
-              <a href="#departments" id="department-tab" class="btn btn-light collapsed"
-                role="button" data-toggle="collapse" aria-expanded="false" aria-controls="departments">
-                 Departments</a>
-            </div>
-          </div>
+        <div class="search-title row p-4">
+            <h2>
+                Search results - <b><i>{{ displayed_query }}</i></b>
+            </h2>
         </div>
 
-        <!-- The current result category that is displayed -->
-        <div id="results" class="accordion">
+        <div class="search-results container p-5">
 
-          <!-- Course results -->
-          <div id="courses" class="row mb-5 collapse show"
-               aria-labelledby="course-tab" data-parent="#results">
-            <div class="col-12">
-
-              <div class="search-result-header mb-3">
-                <h3 class="mr-3">Courses</h3>
-                {% if courses %}
-                <p class="text-muted">15 results</p>
-                {% else %}
-                <p class="text-muted">0 results</p>
-                {% endif %}
-              </div>
-
-              {% if courses %}
-                {% for dept, dept_data in courses.items %}
-                <div class="row mb-5">
-                  <div class="col-12">
-                    <h5><a href="{% url 'department' dept_id=dept_data.dept_id %}">{{ dept }} / {{ dept_data.subdept_name }}</a></h5>
-                    <ul class="list-group searched-department-courses">
-                        {% for c in dept_data.courses %}
-                            {% if c != dept_data.courses.0 %}
-                            {% endif %}
-                            <li class="list-group-item list-group-item-light text-dark p-2">
-                              <a href="{% url 'course' mnemonic=c.mnemonic.split.0 course_number=c.number %}">
-                              <div class="row p-0">
-                                <div class="col-md-3">{{ c.mnemonic }}</div>
-                                <div class="col-md-9">{{ c.title }}</div>
-                              </div>
-                              </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                  </div>
+            <!-- Tabs for displaying result categories: Courses, Departments, Instructors -->
+            <div id="result-nav" class="result-nav row mb-5">
+                <div class="col-12">
+                    <div class="btn-group btn-group-sm" role="toolbar">
+                        <a class="btn bg-tcf-indigo text-white" disabled>See results for</a>
+                        <a href="#courses" id="course-tab" class="btn btn-light collapsed" autofocus
+                           role="button" data-toggle="collapse" aria-expanded="true" aria-controls="courses">
+                            Courses</a>
+                        <a href="#instructors" id="instructor-tab" class="btn btn-light collapsed"
+                           role="button" data-toggle="collapse" aria-expanded="false" aria-controls="instructors">
+                            Instructors</a>
+                        <a href="#departments" id="department-tab" class="btn btn-light collapsed"
+                           role="button" data-toggle="collapse" aria-expanded="false" aria-controls="departments">
+                            Departments</a>
+                    </div>
                 </div>
-                {% endfor %}
-              {% else %}
-              <p>No courses matched your search.</p>
-              {% endif %}
             </div>
-          </div>
 
-          <!-- Instructor results -->
-          <div id="instructors" class="row mb-5 collapse"
-               aria-labelledby="instructor-tab" data-parent="#results">
-            <div class="col-12">
-              <div class="search-result-header mb-3">
-                <h3 class="mr-3">Instructors</h3>
-                <p class="text-muted">{{ instructors|length }} results</p>
-              </div>
-              {% if instructors %}
-                <ul class="list-unstyled searched-instructors text-left">
-                {% for i in instructors %}
-                  <li class="my-2">
-                    <a href="{% url 'instructor' instructor_id=i.id %}">
-                        {{ i.first_name }} {{ i.last_name }}
-                    </a>
-                  </li>
-                {% endfor %}
-                </ul>
-              {% else %}
-                  <p>No professors matched your search.</p>
-              {% endif %}
+            <!-- The current result category that is displayed -->
+            <div id="results" class="accordion">
+
+                <!-- Course results -->
+                <div id="courses" class="row mb-5 collapse show"
+                     aria-labelledby="course-tab" data-parent="#results">
+                    <div class="col-12">
+
+                        <div class="search-result-header mb-3">
+                            <h3 class="mr-3">Courses</h3>
+                            {% if courses %}
+                                <p class="text-muted">15 results</p>
+                            {% else %}
+                                <p class="text-muted">0 results</p>
+                            {% endif %}
+                        </div>
+
+                        {% if courses %}
+                            {% for dept, dept_data in courses.items %}
+                                <div class="row mb-5">
+                                    <div class="col-12">
+                                        <h5><a href="{% url 'department' dept_id=dept_data.dept_id %}">{{ dept }}
+                                            / {{ dept_data.subdept_name }}</a></h5>
+                                        <ul class="list-group searched-department-courses">
+                                            {% for c in dept_data.courses %}
+                                                {% if c != dept_data.courses.0 %}
+                                                {% endif %}
+                                                <li class="list-group-item list-group-item-light text-dark p-2">
+                                                    <a href="{% url 'course' mnemonic=c.mnemonic.split.0 course_number=c.number %}">
+                                                        <div class="row p-0">
+                                                            <div class="col-md-3">{{ c.mnemonic }}</div>
+                                                            <div class="col-md-9">{{ c.title }}</div>
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>No courses matched your search.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Instructor results -->
+                <div id="instructors" class="row mb-5 collapse"
+                     aria-labelledby="instructor-tab" data-parent="#results">
+                    <div class="col-12">
+                        <div class="search-result-header mb-3">
+                            <h3 class="mr-3">Instructors</h3>
+                            <p class="text-muted">{{ instructors|length }} results</p>
+                        </div>
+                        {% if instructors %}
+                            <ul class="list-unstyled searched-instructors text-left">
+                                {% for i in instructors %}
+                                    <li class="my-2">
+                                        <a href="{% url 'instructor' instructor_id=i.id %}">
+                                            {{ i.first_name }} {{ i.last_name }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No professors matched your search.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Department results -->
+                <div id="departments" class="row mb-5 collapse"
+                     aria-labelledby="department-tab" data-parent="#results">
+                    <div class="col-12">
+
+                        <div class="search-result-header mb-3">
+                            <h3 class="mr-3">Departments</h3>
+                            <p class="text-muted">{{ courses|length }} results</p>
+                        </div>
+                        {% if courses %}
+                            <ul class="list-unstyled searched-instructors">
+                                {% for dept, dept_data in courses.items %}
+                                    <li class="my-2">
+                                        <a href="{% url 'department' dept_id=dept_data.dept_id %}">
+                                            <div class="row p-0 text-left">
+                                                <div class="col-sm-3">{{ dept }}</div>
+                                                <div class="col-sm-9">{{ dept_data.subdept_name }}</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No departments matched your search.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
             </div>
-          </div>
-
-          <!-- Department results -->
-          <div id="departments" class="row mb-5 collapse"
-               aria-labelledby="department-tab" data-parent="#results">
-            <div class="col-12">
-
-              <div class="search-result-header mb-3">
-                <h3 class="mr-3">Departments</h3>
-                <p class="text-muted">{{ courses|length }} results</p>
-              </div>
-              {% if courses %}
-                <ul class="list-unstyled searched-instructors">
-                {% for dept, dept_data in courses.items %}
-                  <li class="my-2">
-                    <a href="{% url 'department' dept_id=dept_data.dept_id %}">
-                      <div class="row p-0 text-left">
-                        <div class="col-sm-3">{{ dept }}</div>
-                        <div class="col-sm-9">{{ dept_data.subdept_name }}</div>
-                      </div>
-                    </a>
-                  </li>
-                {% endfor %}
-                </ul>
-              {% else %}
-                <p>No departments matched your search.</p>
-              {% endif %}
-            </div>
-          </div>
 
         </div>
-
-      </div>
 
     </div>
 {% endblock %}
 
 {% block js %}
-  <script>
-    // Search results should display some content at all times
-    // Thus the current open accordion will not be able to close itself
-    $('[data-toggle="collapse"]').on('click',function(e) {
-      e.preventDefault();
-      if ( $(this).parents('.accordion').find('.collapse.show') ) {
-        var idx = $(this).index('[data-toggle="collapse"]');
-        if (idx == $('.collapse.show').index('.collapse')) {
-            e.stopPropagation();
-        }
-      }
-    });
-  </script>
+    <script>
+        // Search results should display some content at all times
+        // Thus the current open accordion will not be able to close itself
+        $('[data-toggle="collapse"]').on('click', function (e) {
+            e.preventDefault();
+            if ($(this).parents('.accordion').find('.collapse.show')) {
+                var idx = $(this).index('[data-toggle="collapse"]');
+                if (idx == $('.collapse.show').index('.collapse')) {
+                    e.stopPropagation();
+                }
+            }
+        });
+    </script>
 {% endblock %}

@@ -1,45 +1,45 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}{{breadcrumbs.1.0}} - theCourseForum{% endblock %}
+{% block title %}{{ breadcrumbs.1.0 }} - theCourseForum{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'department/department.css' %}" />
-<link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
-<link rel="stylesheet" href="{% static 'common/show-hide.css' %}" />
+    <link rel="stylesheet" href="{% static 'department/department.css' %}"/>
+    <link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
+    <link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
 {% endblock %}
 
 {% block content %}
 
-<div class="department container">
+    <div class="department container">
 
-    {% include "common/../base/components/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True%}
+        {% include "common/../base/components/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True %}
 
-    <div class="subdepartments mt-3">
-        {% for sd in subdepartments %}
-        <div class="subdepartment container-lg {% if not sd.has_current_course %}old{% endif %}">
-            <h1 class="my-3">{{ sd.name }}</h1>
-            <ul class="course-list" id="courses-sd-{{sd.id}}">
-            </ul>
-            <div class="text-center" id="spinner-sd-{{sd.id}}">
-                <div class="spinner-border" role="status" >
-                    <span class="sr-only">Loading...</span>
+        <div class="subdepartments mt-3">
+            {% for sd in subdepartments %}
+                <div class="subdepartment container-lg {% if not sd.has_current_course %}old{% endif %}">
+                    <h1 class="my-3">{{ sd.name }}</h1>
+                    <ul class="course-list" id="courses-sd-{{ sd.id }}">
+                    </ul>
+                    <div class="text-center" id="spinner-sd-{{ sd.id }}">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-</div>
 {% endblock %}
 
 {% block js %}
-<script type="module" src="{% static 'common/bind-show-hide.js' %}"></script>
-<script type="module" src="{% static 'department/bind-sort.js' %}"></script>
-<script type="module">
-    import { loadPage } from "{% static 'department/loadMoreCourses.js' %}";
+    <script type="module" src="{% static 'common/bind-show-hide.js' %}"></script>
+    <script type="module" src="{% static 'department/bind-sort.js' %}"></script>
+    <script type="module">
+        import {loadPage} from "{% static 'department/loadMoreCourses.js' %}";
 
-    {% for sd in subdepartments %}
-        loadPage("{{sd.id}}", "/api/courses/?page=1&page_size=30&subdepartment={{sd.id}}&simplestats&recent");
-    {% endfor %}
-</script>
+        {% for sd in subdepartments %}
+            loadPage("{{sd.id}}", "/api/courses/?page=1&page_size=30&subdepartment={{sd.id}}&simplestats&recent");
+        {% endfor %}
+    </script>
 {% endblock %}

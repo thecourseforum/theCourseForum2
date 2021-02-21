@@ -4,17 +4,19 @@ Used in reviews_list.html, which itself is used in both user_review.html and cou
 When used in user_reviews, includes buttons to delete the review.
 {% endcomment %}
 
-<div id="review{{review.id}}" class="review card mb-2">
+<div id="review{{ review.id }}" class="review card mb-2">
     <div class="card-body text-left">
         <div class="row">
             <!-- Review upvote/downvote panel -->
             <div class="vote-container col-2 col-lg-1 d-none d-md-flex flex-column justify-content-center align-items-center">
                 <!--Voting logic is implemented in the <script> tag of reviews_list.html-->
-                <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}" id="upvote{{review.id}}">
+                <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}"
+                   id="upvote{{ review.id }}">
                     <i class="fa fa-angle-up fa-fw"></i>
                 </a>
                 <span id="vote-count" class="voteCount">{{ review.sum_votes }}</span>
-                <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}" id="downvote{{review.id}}">
+                <a class="downvote {% if review.user_vote == -1 %}active{% endif %}" href="{% url 'login' %}"
+                   id="downvote{{ review.id }}">
                     <i class="fa fa-angle-down fa-fw"></i>
                 </a>
             </div>
@@ -24,24 +26,25 @@ When used in user_reviews, includes buttons to delete the review.
                 <!-- Review header content (subject, actions, text) -->
                 <div class="review-info">
                     {% if profile %}
-                    <!-- Subject and Edit/Delete actions show only on profile page -->
-                    <div class="d-flex">
-                        <div class="review-header">
-                          <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
-                              <p><strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}</p>
-                          </a>
+                        <!-- Subject and Edit/Delete actions show only on profile page -->
+                        <div class="d-flex">
+                            <div class="review-header">
+                                <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
+                                    <p><strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}</p>
+                                </a>
+                            </div>
+                            <div class="review-actions ml-auto">
+                                <a class="review-edit btn btn-sm btn-primary"
+                                   href="{% url 'edit_review' review_id=review.id %}">
+                                    <i class="fas fa-pencil-alt"></i> Edit
+                                </a>
+                                <button class="review-delete btn btn-sm btn-outline-danger" type="button"
+                                        data-toggle="modal" data-target="#deleteReviewModal{{ review.id }}">
+                                    <i class="fa fa-trash-o"></i> Delete
+                                </button>
+                                {% include "reviews/../profile/components/delete_confirm_modal.html" with review_id=review.id %}
+                            </div>
                         </div>
-                        <div class="review-actions ml-auto">
-                          <a class="review-edit btn btn-sm btn-primary" href="{% url 'edit_review' review_id=review.id %}">
-                              <i class="fas fa-pencil-alt"></i> Edit
-                          </a>
-                          <button class="review-delete btn btn-sm btn-outline-danger" type="button"
-                                  data-toggle="modal" data-target="#deleteReviewModal{{review.id}}">
-                            <i class="fa fa-trash-o"></i> Delete
-                          </button>
-                          {% include "reviews/../profile/components/delete_confirm_modal.html" with review_id=review.id %}
-                        </div>
-                    </div>
                     {% endif %}
                     <p class="card-text" style="white-space: pre-line;">{{ review.text }}</p>
                 </div>

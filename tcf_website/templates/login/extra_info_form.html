@@ -5,24 +5,25 @@
 
 {% block content %}
 
-<div class="container-fluid col-lg-9 col-xl-7 justify-content-center">
-  <div class="card text-center">
-    <div class="card-body" style="padding: 25px;">
-        <img style="width: auto; height: 150px;" src="{% static 'base/img/new_logo.png' %}" class="card-img-top" alt="tCF" width="auto">
-        {% block login_content %}
-        <h2 class="card-title">Welcome to theCourseForum!</h2>
-        <form method="POST">
-            {% csrf_token %}
-            <div class="form-group">
-                <div id="course-form-input" class="input-group">
-                    Please enter your graduation year: {{ form.grad_year }} <br>
-                    <input type="submit" value="Submit">
-                </div>
+    <div class="container-fluid col-lg-9 col-xl-7 justify-content-center">
+        <div class="card text-center">
+            <div class="card-body" style="padding: 25px;">
+                <img style="width: auto; height: 150px;" src="{% static 'base/img/new_logo.png' %}" class="card-img-top"
+                     alt="tCF" width="auto">
+                {% block login_content %}
+                    <h2 class="card-title">Welcome to theCourseForum!</h2>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div id="course-form-input" class="input-group">
+                                Please enter your graduation year: {{ form.grad_year }} <br>
+                                <input type="submit" value="Submit">
+                            </div>
+                        </div>
+                    </form>
+                {% endblock %}
             </div>
-        </form>
-        {% endblock %}
+        </div>
     </div>
-  </div>
-</div>
 
 {% endblock %}

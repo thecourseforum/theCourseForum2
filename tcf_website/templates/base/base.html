@@ -8,82 +8,87 @@ Key note: NOT used for the landing page.
 {% load static %}
 
 {% block basestyles %}
-<!-- Custom styles for this template -->
-<link rel="stylesheet" href="{% static 'base/sidebar.css'%}">
-<link rel="stylesheet" href="{% static 'base/base.css' %}" />
-<link rel="stylesheet" href="{% static 'base/tcf-style.css' %}" />
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{% static 'base/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'base/base.css' %}"/>
+    <link rel="stylesheet" href="{% static 'base/tcf-style.css' %}"/>
 {% endblock %}
 
 {% block body %}
-<div class="d-flex" id="wrapper">
+    <div class="d-flex" id="wrapper">
 
-  {% include "base/components/sidebar.html" %}
+        {% include "base/components/sidebar.html" %}
 
-  <!-- Page Content -->
-  <div id="page-content-wrapper">
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
 
-    {% include "base/components/navbar.html" %}
-    {% include "base/components/message.html" %}
-    <div class="content p-4 container-fluid text-center text-md-left h-100">
-        <div class="row h-100">
-        <div class="container">
-          {% include "../common/notification.html" %}
+            {% include "base/components/navbar.html" %}
+            {% include "base/components/message.html" %}
+            <div class="content p-4 container-fluid text-center text-md-left h-100">
+                <div class="row h-100">
+                    <div class="container">
+                        {% include "../common/notification.html" %}
+                    </div>
+                    {% block content %}
+                        <p>Base content goes here.</p>
+                    {% endblock %}
+                </div>
+            </div>
+
         </div>
-        {% block content %}
-        <p>Base content goes here.</p>
-        {% endblock %}
-        </div>
+        <!-- /#page-content-wrapper -->
+
     </div>
-
-  </div>
-  <!-- /#page-content-wrapper -->
-
-</div>
 {% endblock %}
 
 
 {% block basejs %}
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-MS4QJTK01Z"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MS4QJTK01Z"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
 
-  gtag('config', 'G-MS4QJTK01Z');
-</script>
+        function gtag() {
+            dataLayer.push(arguments);
+        }
 
-<!-- Menu Toggle Script -->
-<script>
-  /*
-    This jquery function is CRITICAL to the
-    sidebar working properly when clicking
-    the navbar-toggler of the navbar.
-  */
-  $("#menu-toggle").click(function(e) {
-    e.preventDefault();
-    $("#wrapper").toggleClass("toggled");
-  });
+        gtag('js', new Date());
 
-  function getCookie(c_name) {
-    if (document.cookie.length > 0) {
-      c_start = document.cookie.indexOf(c_name + "=");
-      if (c_start != -1) {
-        c_start = c_start + c_name.length + 1;
-        c_end = document.cookie.indexOf(";", c_start);
-        if (c_end == -1) c_end = document.cookie.length;
-        return unescape(document.cookie.substring(c_start,c_end));
-      }
-    }
-    return "";
-  }
-  // Update copyright year in the sidebar
-  $(".year").text(new Date().getFullYear());
-</script>
+        gtag('config', 'G-MS4QJTK01Z');
+    </script>
 
-<!-- Turbolinks -->
-<!-- Need to do more research. -->
-<!-- https://www.reddit.com/r/django/comments/9ccwci/django_and_turbolinks/ -->
-<!-- https://stackoverflow.com/questions/47240766/to-use-turbolinks-5-with-django-how-can-i-automate-inclusion-of-the-turbolinks -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js"></script> -->
+    <!-- Menu Toggle Script -->
+    <script>
+        /*
+          This jquery function is CRITICAL to the
+          sidebar working properly when clicking
+          the navbar-toggler of the navbar.
+        */
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+
+        function getCookie(c_name) {
+            if (document.cookie.length > 0) {
+                c_start = document.cookie.indexOf(c_name + "=");
+                if (c_start != -1) {
+                    c_start = c_start + c_name.length + 1;
+                    c_end = document.cookie.indexOf(";", c_start);
+                    if (c_end == -1) c_end = document.cookie.length;
+                    return unescape(document.cookie.substring(c_start, c_end));
+                }
+            }
+            return "";
+        }
+
+        // Update copyright year in the sidebar
+        $(".year").text(new Date().getFullYear());
+    </script>
+
+    <!-- Turbolinks -->
+    <!-- Need to do more research. -->
+    <!-- https://www.reddit.com/r/django/comments/9ccwci/django_and_turbolinks/ -->
+    <!-- https://stackoverflow.com/questions/47240766/to-use-turbolinks-5-with-django-how-can-i-automate-inclusion-of-the-turbolinks -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js"></script> -->
 {% endblock %}

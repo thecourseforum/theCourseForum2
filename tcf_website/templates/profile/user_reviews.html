@@ -6,23 +6,23 @@
 {% block title %}My Reviews - theCourseForum{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'reviews/review_stats.css' %}" />
-<link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
+    <link rel="stylesheet" href="{% static 'reviews/review_stats.css' %}"/>
+    <link rel="stylesheet" href="{% static 'reviews/review.css' %}"/>
 {% endblock %}
 
 {% block content %}
-<div class="my-reviews container mx-auto">
-    <div class="my-reviews-header d-flex flex-sm-row flex-column mb-4">
-        <h1 class="h2 mt-2 mb-0">My reviews</h1>
-        <a class="ml-sm-auto mt-2 btn bg-tcf-orange text-white" href="{% url 'new_review' %}" >
-            <i class="fa fa-pencil" aria-hidden="true"></i> New review
-        </a>
+    <div class="my-reviews container mx-auto">
+        <div class="my-reviews-header d-flex flex-sm-row flex-column mb-4">
+            <h1 class="h2 mt-2 mb-0">My reviews</h1>
+            <a class="ml-sm-auto mt-2 btn bg-tcf-orange text-white" href="{% url 'new_review' %}">
+                <i class="fa fa-pencil" aria-hidden="true"></i> New review
+            </a>
+        </div>
+        {% include "reviews/components/components/user_review_stats.html" with total_reviews_written=total_reviews_written total_review_upvotes=total_review_upvotes average_review_rating=average_review_rating %}
+        {% include "reviews/reviews_list.html" with reviews=user.reviews profile=True %}
     </div>
-    {% include "reviews/components/components/user_review_stats.html" with total_reviews_written=total_reviews_written total_review_upvotes=total_review_upvotes average_review_rating=average_review_rating %}
-    {% include "reviews/reviews_list.html" with reviews=user.reviews profile=True %}
-</div>
 {% endblock %}
 
 {% block js %}
-<script type="module" src="{% static 'reviews/review.js' %}"></script>
+    <script type="module" src="{% static 'reviews/review.js' %}"></script>
 {% endblock %}

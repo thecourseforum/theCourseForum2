@@ -1,6 +1,7 @@
 <div class="card rating-card mb-2">
     <div class="row no-gutters">
-        <a class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start align-items-center rating-card-link" href="{{ link }}">
+        <a class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start align-items-center rating-card-link"
+           href="{{ link }}">
             <div class="text-center text-lg-left">
                 <h3 id="title">{{ title }}</h3>
                 {% if subtitle %}
@@ -8,56 +9,56 @@
                 {% endif %}
             </div>
         </a>
-      <div class="col-md-8">
-        <div class="card-body">
-          <div class="row justify-content-between text-center text-md-left">
-              <div class="col-4 col-lg-2 text-nowrap">
-                <small class="mb-0 text-uppercase">
-                  <i class="fa fa-star fa-fw"></i>&nbsp;Rating
-                </small>
-                <p class="mb-0 info" id="rating">
-                  {% if rating %}
-                    {{ rating|floatformat:2 }}
-                  {% else %}
-                    &mdash;
-                  {% endif %}
-                </p>
-              </div> 
-              <div class="col-4 col-lg-2 text-nowrap">
-                <small class="mb-0 text-uppercase">
-                  <i class="fa fa-dumbbell fa-fw"></i>&nbsp;Difficulty
-                </small>
-                <p class="mb-0 info" id="difficulty">
-                  {% if difficulty %}
-                    {{ difficulty|floatformat:2 }}
-                  {% else %}
-                    &mdash;
-                  {% endif %}
-                </p>
-              </div>
-              <div class="col-4 col-lg-2 text-nowrap">
-                <small class="mb-0 text-uppercase">
-                  <i class="fas fa-chart-bar"></i>&nbsp;GPA
-                </small>
-                <p class="mb-0 info" id="gpa">
-                  {% if gpa %}
-                    {{ gpa|floatformat:2 }}
-                  {% else %}
-                    &mdash;
-                  {% endif %}
-                </p>
-              </div>
-              <div class="col-12 col-lg-3 offset-lg-3" {% if not last_taught %}style="opacity: 0;"{% endif %}>
-                <small class="mb-0 text-uppercase">
-                  Last Taught
-                </small>
-                  <p class="mb-0 info">{{ last_taught }}</p>
-              </div>
-          </div>
-          {% if content %}
-          <p class="card-text mt-2">{{ content }}</p>
-          {% endif %}
+        <div class="col-md-8">
+            <div class="card-body">
+                <div class="row justify-content-between text-center text-md-left">
+                    <div class="col-4 col-lg-2 text-nowrap">
+                        <small class="mb-0 text-uppercase">
+                            <i class="fa fa-star fa-fw"></i>&nbsp;Rating
+                        </small>
+                        <p class="mb-0 info" id="rating">
+                            {% if rating %}
+                                {{ rating|floatformat:2 }}
+                            {% else %}
+                                &mdash;
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-4 col-lg-2 text-nowrap">
+                        <small class="mb-0 text-uppercase">
+                            <i class="fa fa-dumbbell fa-fw"></i>&nbsp;Difficulty
+                        </small>
+                        <p class="mb-0 info" id="difficulty">
+                            {% if difficulty %}
+                                {{ difficulty|floatformat:2 }}
+                            {% else %}
+                                &mdash;
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-4 col-lg-2 text-nowrap">
+                        <small class="mb-0 text-uppercase">
+                            <i class="fas fa-chart-bar"></i>&nbsp;GPA
+                        </small>
+                        <p class="mb-0 info" id="gpa">
+                            {% if gpa %}
+                                {{ gpa|floatformat:2 }}
+                            {% else %}
+                                &mdash;
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-12 col-lg-3 offset-lg-3" {% if not last_taught %}style="opacity: 0;"{% endif %}>
+                        <small class="mb-0 text-uppercase">
+                            Last Taught
+                        </small>
+                        <p class="mb-0 info">{{ last_taught }}</p>
+                    </div>
+                </div>
+                {% if content %}
+                    <p class="card-text mt-2">{{ content }}</p>
+                {% endif %}
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>

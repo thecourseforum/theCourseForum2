@@ -6,13 +6,13 @@ Included in base.html, which means it can go anywhere, but notably used in revie
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'base/messages.css' %}" />
+    <link rel="stylesheet" href="{% static 'base/messages.css' %}"/>
 {% endblock %}
 
 {% if messages %}
     <div class="content">
         {% for message in messages %}
-            <div class="alert {{message.tags}} alert-dismissible fade show">
+            <div class="alert {{ message.tags }} alert-dismissible fade show">
                 {{ message }}
                 <button type="button" class="close" data-dismiss="alert">
                     <span>&times;</span>

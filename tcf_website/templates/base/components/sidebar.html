@@ -5,80 +5,81 @@
 <!-- Sidebar -->
 <div id="sidebar-wrapper" class="border-right pb-0
      d-flex flex-column justify-content-between text-center">
-  <ul class="list-group list-group-flush mt-3">
-    <li>
-      <a href="{% url 'browse' %}"
-         class="list-group-item list-group-item-action pb-0
+    <ul class="list-group list-group-flush mt-3">
+        <li>
+            <a href="{% url 'browse' %}"
+               class="list-group-item list-group-item-action pb-0
          {% if request.resolver_match.url_name == 'browse' %}active{% endif %}">
-         <h4><i class="fa fa-list fa-fw"></i></h4>
-         <p>Browse</p>
-         <hr>
-      </a>
-    </li>
-    <li>
-      <a href="{% url 'new_review' %}"
-         class="list-group-item list-group-item-action pb-0
+                <h4><i class="fa fa-list fa-fw"></i></h4>
+                <p>Browse</p>
+                <hr>
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'new_review' %}"
+               class="list-group-item list-group-item-action pb-0
          {% if request.resolver_match.url_name == 'new_review' %}active{% endif %}">
-        <h4><i class="fa fa-pencil-square-o fa-fw"></i></h4>
-        <p>Review</p>
-        <hr>
-      </a>
-    </li>
-    <li>
-      <a href="{% url 'about' %}"
-         class="list-group-item list-group-item-action pb-0
+                <h4><i class="fa fa-pencil-square-o fa-fw"></i></h4>
+                <p>Review</p>
+                <hr>
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'about' %}"
+               class="list-group-item list-group-item-action pb-0
          {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
-        <h4><i class="fa fa-code fa-fw"></i></h4>
-        <p>About</p>
-        <hr>
-      </a>
-    </li>
-    <li>
-      <a href="#bugModal" data-toggle="modal" data-target="#bugModal" id="bugFormOpen"
-         class="list-group-item list-group-item-action pb-0
+                <h4><i class="fa fa-code fa-fw"></i></h4>
+                <p>About</p>
+                <hr>
+            </a>
+        </li>
+        <li>
+            <a href="#bugModal" data-toggle="modal" data-target="#bugModal" id="bugFormOpen"
+               class="list-group-item list-group-item-action pb-0
          {% if request.resolver_match.url_name == 'feedback' %}active{% endif %}">
-        <h4><i class="fa fa-thumbs-up fa-fw"></i></h4>
-        <p>Feedback</p>
-        <hr>
-      </a>
-    </li>
-    <!-- tCF profile dropdown when navbar collapses -->
-    <li>
-    {% if user.is_authenticated %}
-      <div class="list-group-item d-md-none dropdown">
-        <div class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <h4><i class="fa fa-user fa-fw"></i></h4>
-          <p class="mb-0">Account</p>
-        </div>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
-          <a class="dropdown-item" href="{% url 'reviews' %}">My reviews</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
-        </div>
-      </div>
-    {% else %}
-      <a href="#loginModal" data-toggle="modal"
-      class="list-group-item list-group-item-action
+                <h4><i class="fa fa-thumbs-up fa-fw"></i></h4>
+                <p>Feedback</p>
+                <hr>
+            </a>
+        </li>
+        <!-- tCF profile dropdown when navbar collapses -->
+        <li>
+            {% if user.is_authenticated %}
+                <div class="list-group-item d-md-none dropdown">
+                    <div class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                         aria-haspopup="true" aria-expanded="false">
+                        <h4><i class="fa fa-user fa-fw"></i></h4>
+                        <p class="mb-0">Account</p>
+                    </div>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
+                        <a class="dropdown-item" href="{% url 'reviews' %}">My reviews</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="#loginModal" data-toggle="modal"
+                   class="list-group-item list-group-item-action
       {% if request.resolver_match.url_name == 'login' %}active{% endif %}">
-        <h4><i class="fa fa-user fa-fw"></i></h4>
-        <p>Sign In</p>
-      </a>
-    {% endif %}
-    </li>
-  </ul>
+                    <h4><i class="fa fa-user fa-fw"></i></h4>
+                    <p>Sign In</p>
+                </a>
+            {% endif %}
+        </li>
+    </ul>
 
-  <div class="footer text-center small">
-    <a href="{% url 'privacy' %}">Privacy</a> |
-    <a href="{% url 'terms' %}">Terms</a>
-    <p>theCourseForum <br> &copy; <span class="year"></span> v1.1.2</p>
-    {% if DEBUG %}
-    <div class="bg-tcf-blue pb-3">
-      <hr class="border-white">
-      DEBUG Mode
+    <div class="footer text-center small">
+        <a href="{% url 'privacy' %}">Privacy</a> |
+        <a href="{% url 'terms' %}">Terms</a>
+        <p>theCourseForum <br> &copy; <span class="year"></span> v1.1.2</p>
+        {% if DEBUG %}
+            <div class="bg-tcf-blue pb-3">
+                <hr class="border-white">
+                DEBUG Mode
+            </div>
+        {% endif %}
     </div>
-    {% endif %}
-  </div>
 </div>
 
 {% include "base/components/bugform.html" %}
