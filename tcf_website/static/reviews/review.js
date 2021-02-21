@@ -61,7 +61,7 @@ function handleVote(reviewID, isUpvote) {
 export { handleVote };
 
 /* For review text collapse/expand functionality */
-$(function() {
+$(window).resize(function() {
     $(".review").each(function(i, review) {
         var visibleReviewBody = $(this).find("div.review-text-body");
         var fullReviewText = $(this).find("p.review-text-full");
