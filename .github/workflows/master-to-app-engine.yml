@@ -81,6 +81,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Send a message to tCF Discord Server when deployment is finished
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
           DEPLOY_RESULT: ${{ needs.deploy.result }}
