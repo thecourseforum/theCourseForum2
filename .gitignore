@@ -1,20 +1,30 @@
+# Python
 __pycache__/*
 *.pyc
+# MacOS
 .DS_STORE
+# SQLite
 *.sqlite3
+# Database dump or SQL scripts
 *.db
-legacy_db/*.sql
 *.sql
-*.pgsql
-.vscode/
-tcf_website/migrations/*
-.env
-.vagrant/
-/static/
-predeploy.sh
-gae-service-account.json
-node_modules/
-.idea/
-app.yml
 !db/*.sql
+# Migration files
+tcf_website/migrations/*
+!tcf_website/migrations/__init__.py
+# Environment variables
+.env*
+!.config/.env.example
+# Static files collected by Django
+/static/
+# npm packages
+node_modules/
+# CSV files exported from PostgreSQL
 db/*.csv
+# IDEs
+.idea/
+.vscode/
+# Code coverage
+.coverage
+# ESLint cache
+.eslintcache
