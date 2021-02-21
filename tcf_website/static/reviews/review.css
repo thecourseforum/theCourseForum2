@@ -1,9 +1,13 @@
-.review-content .review-text.collapse:not(.show) {
+.review-content .review-text-body {
+  white-space: pre-line;
+}
+
+.review-content .review-text-body.collapse:not(.show) {
   display: block;
   height: 12rem;
   overflow: hidden;
 }
-.review-content .review-text.collapsing {
+.review-content .review-text-body.collapsing {
   height: 12rem;
 }
 

@@ -46,13 +46,14 @@
                 {% endif %}
 
                 <div class="review-content mb-2">
-                  <div class="review-text collapse" id="reviewText{{review.id}}"
-                     aria-expanded="false" style="white-space: pre-line;">
-                    <p class="review-text-all">{{ review.text }}</p>
+                  <div class="review-text-body collapse" id="reviewText{{review.id}}"
+                     aria-expanded="false">
+                    <p class="review-text-full">{{ review.text }}</p>
                   </div>
-                  <a role="button" class="review-collapse-link collapsed"
+                  <a role="button" class="review-collapse-link btn-block p-1 collapsed"
                      data-toggle="collapse" href="#reviewText{{review.id}}"
                      aria-expanded="false" aria-controls="reviewText{{review.id}}">
+                     <!-- Note: collapser text ("See more...") is encoded in review.css for this link -->
                   </a>
                 </div>
 

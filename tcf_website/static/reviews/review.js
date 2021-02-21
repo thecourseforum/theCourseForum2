@@ -63,17 +63,17 @@ export { handleVote };
 /* For review text collapse/expand functionality */
 $(function() {
     $(".review").each(function(i, review) {
-        var reviewBlurb = $(this).find("div.review-text");
-        var reviewText = $(this).find("p.review-text-all");
+        var visibleReviewBody = $(this).find("div.review-text-body");
+        var fullReviewText = $(this).find("p.review-text-full");
         var reviewCollapseLink = $(this).find("a.review-collapse-link");
 
         // Long review
-        if (reviewBlurb.height() < reviewText.height()) {
+        if (visibleReviewBody.height() < fullReviewText.height()) {
             // Show "See More" expander only for long reviews
             reviewCollapseLink.show();
         } else { // Short review
             reviewCollapseLink.hide();
-            reviewBlurb.css("height", "auto"); // Remove static blurb height
+            visibleReviewText.css("height", "auto"); // Remove static blurb height
         }
     });
 });
