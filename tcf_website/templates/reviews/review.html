@@ -1,9 +1,15 @@
+{% comment %}
+Generic component for a review. Shows text, ratings, and votes/voting buttons.
+Used in reviews_list.html, which itself is used in both user_review.html and course_instructor.html.
+When used in user_reviews, includes buttons to delete the review.
+{% endcomment %}
+
 <div id="review{{review.id}}" class="review card mb-2">
     <div class="card-body text-left">
         <div class="row">
             <!-- Review upvote/downvote panel -->
             <div class="vote-container col-2 col-lg-1 d-none d-md-flex flex-column justify-content-center align-items-center">
-                <!--Voting logic is implemented in the <script> tag of reviews.html-->
+                <!--Voting logic is implemented in the <script> tag of reviews_list.html-->
                 <a class="upvote {% if review.user_vote == 1 %}active{% endif %}" href="{% url 'login' %}" id="upvote{{review.id}}">
                     <i class="fa fa-angle-up fa-fw"></i>
                 </a>
@@ -33,7 +39,7 @@
                                   data-toggle="modal" data-target="#deleteReviewModal{{review.id}}">
                             <i class="fa fa-trash-o"></i> Delete
                           </button>
-                          {% include "reviews/delete_confirm_modal.html" with review_id=review.id %}
+                          {% include "reviews/../profile/components/delete_confirm_modal.html" with review_id=review.id %}
                         </div>
                     </div>
                     {% endif %}

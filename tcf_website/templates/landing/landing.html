@@ -1,6 +1,7 @@
 {% extends "base/index.html" %}
-{% load static %}
+{# Landing page. FAQ questions sourced from _faqs.json. #}
 
+{% load static %}
 
 {% block styles %}
     <!-- Simple line icons -->
@@ -63,7 +64,7 @@
                 </div>
             </div>
             <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-                {% include "search/searchbar.html" %}
+                {% include "search/components/searchbar.html" %}
             </div>
         </div>
     </header>
@@ -358,7 +359,7 @@
         </div>
     </footer>
 
-    {% include "base/bugform.html" %}
+    {% include "base/components/bugform.html" %}
 {% endblock %}
 
 {% block js %}

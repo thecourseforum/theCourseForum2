@@ -1,4 +1,10 @@
 {% extends "base/index.html" %}
+{% comment %}
+Base of the site. Arranges all the base components in the proper manner.
+Key note: NOT used for the landing page.
+{% endcomment %}
+
+
 {% load static %}
 
 {% block basestyles %}
@@ -11,13 +17,13 @@
 {% block body %}
 <div class="d-flex" id="wrapper">
 
-  {% include "base/sidebar.html" %}
+  {% include "base/components/sidebar.html" %}
 
   <!-- Page Content -->
   <div id="page-content-wrapper">
 
-    {% include "base/navbar.html" %}
-    {% include "base/messages.html" %}
+    {% include "base/components/navbar.html" %}
+    {% include "base/components/message.html" %}
     <div class="content p-4 container-fluid text-center text-md-left h-100">
         <div class="row h-100">
         <div class="container">

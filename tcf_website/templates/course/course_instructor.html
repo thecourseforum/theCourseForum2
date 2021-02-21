@@ -1,4 +1,5 @@
 {% extends "base/base.html" %}
+{# Displays reviews/grade data for a particular course taught by an instructor. #}
 {% load static %}
 
 {% block title %}{{course.code}} - {{instructor.full_name}} - theCourseForum{% endblock %}
@@ -12,7 +13,7 @@
 
     <div class="course-professor container text-left px-0">
 
-        {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
+        {% include "common/../base/components/toolbar.html" with breadcrumbs=breadcrumbs %}
 
         <div class="course-instructor-header my-3 mt-md-5 px-3">
             <div class="d-flex flex-column">
@@ -225,7 +226,7 @@
                     {% endif %}
                 </div>
             </div>
-            {% include "reviews/reviews.html" with reviews=reviews %}
+            {% include "reviews/reviews_list.html" with reviews=reviews %}
         </div>
     </div>
 {% endblock %}

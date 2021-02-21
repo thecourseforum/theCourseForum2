@@ -1,4 +1,6 @@
 {% extends "base/base.html" %}
+{# User's "My Reviews" page. #}
+
 {% load static %}
 
 {% block title %}My Reviews - theCourseForum{% endblock %}
@@ -16,8 +18,8 @@
             <i class="fa fa-pencil" aria-hidden="true"></i> New review
         </a>
     </div>
-    {% include "reviews/review_stats.html" with total_reviews_written=total_reviews_written total_review_upvotes=total_review_upvotes average_review_rating=average_review_rating %}
-    {% include "reviews/reviews.html" with reviews=user.reviews profile=True %}
+    {% include "reviews/components/components/user_review_stats.html" with total_reviews_written=total_reviews_written total_review_upvotes=total_review_upvotes average_review_rating=average_review_rating %}
+    {% include "reviews/reviews_list.html" with reviews=user.reviews profile=True %}
 </div>
 {% endblock %}
 

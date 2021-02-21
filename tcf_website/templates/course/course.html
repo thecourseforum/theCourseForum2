@@ -1,4 +1,9 @@
 {% extends "base/base.html" %}
+{% comment %}
+Course page. Shows instructors who taught the course and
+links to course_instructor pages with reviews.
+{% endcomment %}
+
 {% load static %}
 
 {% block title %}{{course.code}} - theCourseForum{% endblock %}
@@ -8,12 +13,9 @@
     <link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
 {% endblock %}
 
-
-
 {% block content %}
-
     <div class="course container">
-        {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="All" %}
+        {% include "common/../base/components/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="All" %}
 
         <div class="instructors container-lg mt-3">
             <div class="d-md-flex align-items-baseline my-3">

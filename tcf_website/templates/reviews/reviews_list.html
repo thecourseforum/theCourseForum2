@@ -1,3 +1,5 @@
+{# Component that holds/styles a list of reviews. #}
+
 <!-- TODO: include review styles here -->
 {% load static %}
 
@@ -18,25 +20,24 @@
                     </p>
                 </div>
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
     </ul>
 </div>
 
 {% if reviews %}
-<script type="module" src="{% static 'reviews/sort_reviews.js' %}"></script>
+    <script type="module" src="{% static 'reviews/sort_reviews.js' %}"></script>
 {% endif %}
 <script type="module">
-    import { handleVote } from "{% static 'reviews/review.js' %}";
+    import {handleVote} from "{% static 'reviews/review.js' %}";
     {% if user.is_authenticated %}
-        $('.upvote').each(function(i, obj) {
-            $(this).click(()=>{
+        $('.upvote').each(function (i, obj) {
+            $(this).click(() => {
                 handleVote(obj.id.substring(6), true);
             });
             $(this).removeAttr('href');
         });
-        $('.downvote').each(function(i, obj) {
-            $(this).click(()=>{
+        $('.downvote').each(function (i, obj) {
+            $(this).click(() => {
                 handleVote(obj.id.substring(8), false);
             });
             $(this).removeAttr('href');

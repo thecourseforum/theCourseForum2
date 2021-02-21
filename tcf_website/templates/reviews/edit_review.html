@@ -1,4 +1,6 @@
 {% extends "base/base.html" %}
+{# Edit review form. #}
+
 {% load static %}
 
 {% block title %}Edit a Review - theCourseForum{% endblock %}
@@ -15,7 +17,7 @@
     action="{% url 'edit_review' review_id=form.instance.id %}"
     method="POST">
         {% csrf_token %}
-        {% include 'reviews/review_form_content.html' %}
+        {% include 'reviews/components/review_form_content.html' %}
         <div class="new-review-submit row py-4">
           <button type="submit" class="btn btn-primary mx-auto">Update Review</button>
         </div>

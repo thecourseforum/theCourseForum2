@@ -70,4 +70,4 @@ def reviews(request):
     merged = {**upvote_stat, **other_stats}
     # Round floats
     stats = {key: safe_round(value) for key, value in merged.items()}
-    return render(request, 'reviews/user_reviews.html', context=stats)
+    return render(request, 'profile/user_reviews.html', context=stats)

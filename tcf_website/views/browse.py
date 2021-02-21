@@ -219,7 +219,7 @@ def course_instructor(request, course_id, instructor_id):
     except ObjectDoesNotExist:  # if no data found
         pass
 
-    return render(request, 'course/course_professor.html',
+    return render(request, 'course/course_instructor.html',
                   {
                       'course': course,
                       'course_id': course_id,

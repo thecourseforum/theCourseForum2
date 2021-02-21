@@ -1,109 +1,112 @@
+{# About page. Shows up at https://thecourseforum.com/about #}
+
 {% extends "base/base.html" %}
 {% load static %}
 
 {% block title %}About - theCourseForum{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'about/about.css' %}" />
+    <link rel="stylesheet" href="{% static 'about/about.css' %}"/>
 {% endblock %}
 
 
 {% block content %}
-<div class="container">
-  <div class="card">
-    <div class="card-body">
-      <div class="about-logo">
-        <img src="{% static 'base/img/new_logo.png' %}" height="150px">
-        <div class="tagline">
-          <h1>theCourseForum</h1>
-          <p>connecting you to the courses you love.</p>
-        </div>
-      </div>
-      <p style="text-align: left;"><b>theCourseForum</b> is a place for
-        University of Virginia students to share their academic experiences.
-        These are captured in the form of course reviews, which provide insight,
-        advice, and caution to students before course enrollment. We believe
-        that reading <i>student</i> reflections is the best way to understand a class and
-        its professor without actually experiencing it.
-        <br> <br>
-        <i>Of the students, by the students, for the students...</i>
-      </p>
-    </div>
-  </div>
-
-  <div class="card">
     <div class="container">
-      <div class="tabs row text-center text-white p-0">
-        <div class="about-tab col">
-          <a href="#history" id="history-tab" class="btn collapsed" role="button"
-             data-toggle="collapse" aria-expanded="true" aria-controls="history">
-             <h4><i class="fa fa-book"></i></h4>
-             History
-          </a>
+        <div class="card">
+            <div class="card-body">
+                <div class="about-logo">
+                    <img src="{% static 'base/img/new_logo.png' %}" height="150px">
+                    <div class="tagline">
+                        <h1>theCourseForum</h1>
+                        <p>connecting you to the courses you love.</p>
+                    </div>
+                </div>
+                <p style="text-align: left;"><b>theCourseForum</b> is a place for
+                    University of Virginia students to share their academic experiences.
+                    These are captured in the form of course reviews, which provide insight,
+                    advice, and caution to students before course enrollment. We believe
+                    that reading <i>student</i> reflections is the best way to understand a class and
+                    its professor without actually experiencing it.
+                    <br> <br>
+                    <i>Of the students, by the students, for the students...</i>
+                </p>
+            </div>
         </div>
 
-        <div class="about-tab col">
-          <a href="#team" id="team-tab" class="btn" role="button"
-             data-toggle="collapse" aria-expanded="true" aria-controls="team">
-             <h4><i class="fa fa-users"></i></h4>
-             Current Team
-          </a>
+        <div class="card">
+            <div class="container">
+                <div class="tabs row text-center text-white p-0">
+                    <div class="about-tab col">
+                        <a href="#history" id="history-tab" class="btn collapsed" role="button"
+                           data-toggle="collapse" aria-expanded="true" aria-controls="history">
+                            <h4><i class="fa fa-book"></i></h4>
+                            History
+                        </a>
+                    </div>
+
+                    <div class="about-tab col">
+                        <a href="#team" id="team-tab" class="btn" role="button"
+                           data-toggle="collapse" aria-expanded="true" aria-controls="team">
+                            <h4><i class="fa fa-users"></i></h4>
+                            Current Team
+                        </a>
+                    </div>
+
+                    <div class="about-tab col">
+                        <a href="#contributors" id="contributors-tab" class="btn collapsed" role="button"
+                           data-toggle="collapse" aria-expanded="false" aria-controls="contributors">
+                            <h4><i class="fa fa-graduation-cap"></i></h4>
+                            Past Contributors
+                        </a>
+                    </div>
+
+                    <div class="about-tab col">
+                        <a href="#sponsors" id="sponsors-tab" class="btn collapsed" role="button"
+                           data-toggle="collapse" aria-expanded="false" aria-controls="sponsors">
+                            <h4><i class="fa fa-handshake"></i></h4>
+                            Sponsors
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div id="about-content" class="about-content">
+                    <div id="history" class="collapse" aria-labelledby="history-tab" data-parent="#about-content">
+                        {% include "about/components/history.html" %}
+                    </div>
+                    <div id="team" class="collapse show" aria-labelledby="team-tab" data-parent="#about-content">
+                        {% include "about/components/current_team.html" %}
+                    </div>
+                    <div id="contributors" class="collapse" aria-labelledby="contributors-tab"
+                         data-parent="#about-content">
+                        {% include "about/components/past_contributors.html" %}
+                    </div>
+                    <div id="sponsors" class="collapse" aria-labelledby="sponsors-tab" data-parent="#about-content">
+                        {% include "about/components/sponsors.html" %}
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <div class="about-tab col">
-          <a href="#contributors" id="contributors-tab" class="btn collapsed" role="button"
-             data-toggle="collapse" aria-expanded="false" aria-controls="contributors">
-             <h4><i class="fa fa-graduation-cap"></i></h4>
-             Past Contributors
-          </a>
-        </div>
-
-        <div class="about-tab col">
-          <a href="#sponsors" id="sponsors-tab" class="btn collapsed" role="button"
-             data-toggle="collapse" aria-expanded="false" aria-controls="sponsors">
-             <h4><i class="fa fa-handshake"></i></h4>
-             Sponsors
-          </a>
-        </div>
-
-      </div>
     </div>
-
-    <div class="card-body">
-      <div id="about-content" class="about-content">
-        <div id="history" class="collapse" aria-labelledby="history-tab" data-parent="#about-content">
-          {% include "about/history.html" %}
-        </div>
-        <div id="team" class="collapse show" aria-labelledby="team-tab" data-parent="#about-content">
-          {% include "about/current_team.html" %}
-        </div>
-        <div id="contributors" class="collapse" aria-labelledby="contributors-tab" data-parent="#about-content">
-          {% include "about/contributors.html"%}
-        </div>
-        <div id="sponsors" class="collapse" aria-labelledby="sponsors-tab" data-parent="#about-content">
-          {% include "about/sponsors.html" %}
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-</div>
 
 {% endblock %}
 
 {% block js %}
-  <script>
-    // Search results should display some content at all times
-    // Thus the current open accordion will not be able to close itself
-    $('[data-toggle="collapse"]').on('click',function(e) {
-      e.preventDefault();
-      if ( $(this).parents('.accordion').find('.collapse.show') ) {
-        var idx = $(this).index('[data-toggle="collapse"]');
-        if (idx == $('.collapse.show').index('.collapse')) {
-            e.stopPropagation();
-        }
-      }
-    });
-  </script>
+    <script>
+        // Search results should display some content at all times
+        // Thus the current open accordion will not be able to close itself
+        $('[data-toggle="collapse"]').on('click', function (e) {
+            e.preventDefault();
+            if ($(this).parents('.accordion').find('.collapse.show')) {
+                var idx = $(this).index('[data-toggle="collapse"]');
+                if (idx == $('.collapse.show').index('.collapse')) {
+                    e.stopPropagation();
+                }
+            }
+        });
+    </script>
 {% endblock %}
