@@ -122,7 +122,7 @@ class Command(BaseCommand):
             d = int(row['D'])
             d_minus = int(row['D-'])
             f = int(row['F'])
-            ot = int(row['OT'])
+            other = int(row['OT'])  # pass
             drop = int(row['DR'])
             withdraw = int(row['W'])
             total_enrolled = int(row['Total'])
@@ -143,7 +143,7 @@ class Command(BaseCommand):
                                  c_plus, c, c_minus,
                                  d_plus, d, d_minus,
                                  f,
-                                 ot, drop, withdraw]
+                                 other, drop, withdraw]
 
         # load this semester into course dictionary
         if course_identifier in course_grades:
@@ -178,7 +178,7 @@ class Command(BaseCommand):
             total_weight = sum(a * b for a, b in
                                zip(course_grades[row], grade_weights))
 
-            # calculate gpa excluding ot/drop/withdraw in total_enrolled
+            # calculate gpa excluding other/drop/withdraw in total_enrolled
             total_enrolled_filtered = total_enrolled - \
                 sum(course_grades[row][i] for i in (13, 14, 15))
             # check divide by 0
@@ -206,7 +206,7 @@ class Command(BaseCommand):
                 'd': course_grades[row][10],
                 'd_minus': course_grades[row][11],
                 'f': course_grades[row][12],
-                'ot': course_grades[row][13],
+                'ot': course_grades[row][13],  # other/pass
                 'drop': course_grades[row][14],
                 'withdraw': course_grades[row][15],
                 'total_enrolled': total_enrolled
@@ -231,7 +231,7 @@ class Command(BaseCommand):
                 total_weight += (
                     course_instructor_grades[row][i] * grade_weights[i])
 
-            # calculate gpa without including ot/drop/withdraw in
+            # calculate gpa without including other/drop/withdraw in
             # total_enrolled
             total_enrolled_filtered = total_enrolled - \
                 sum(course_instructor_grades[row][i] for i in (13, 14, 15))
@@ -263,7 +263,7 @@ class Command(BaseCommand):
                 'd': course_instructor_grades[row][10],
                 'd_minus': course_instructor_grades[row][11],
                 'f': course_instructor_grades[row][12],
-                'ot': course_instructor_grades[row][13],
+                'ot': course_instructor_grades[row][13],  # other/pass
                 'drop': course_instructor_grades[row][14],
                 'withdraw': course_instructor_grades[row][15],
                 'total_enrolled': total_enrolled
