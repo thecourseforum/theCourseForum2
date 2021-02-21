@@ -1,6 +1,5 @@
 {# Component that holds/styles a list of reviews. #}
 
-<!-- TODO: include review styles here -->
 {% load static %}
 
 <div class="reviews container-lg px-0">
@@ -27,6 +26,7 @@
 {% if reviews %}
     <script type="module" src="{% static 'reviews/sort_reviews.js' %}"></script>
 {% endif %}
+
 <script type="module">
     import {handleVote} from "{% static 'reviews/review.js' %}";
     {% if user.is_authenticated %}

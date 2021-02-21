@@ -13,7 +13,7 @@
 
     <div class="department container">
 
-        {% include "common/../base/components/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True %}
+        {% include "base/components/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True %}
 
         <div class="subdepartments mt-3">
             {% for sd in subdepartments %}
