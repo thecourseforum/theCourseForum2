@@ -25,3 +25,21 @@
 {% if reviews %}
 <script type="module" src="{% static 'reviews/sort_reviews.js' %}"></script>
 {% endif %}
+
+<script type="module">
+    import { handleVote } from "{% static 'reviews/review.js' %}";
+    {% if user.is_authenticated %}
+        $('.upvote').each(function(i, obj) {
+            $(this).click(()=>{
+                handleVote(obj.id.substring(6), true);
+            });
+            $(this).removeAttr('href');
+        });
+        $('.downvote').each(function(i, obj) {
+            $(this).click(()=>{
+                handleVote(obj.id.substring(8), false);
+            });
+            $(this).removeAttr('href');
+        });
+    {% endif %}
+</script>
