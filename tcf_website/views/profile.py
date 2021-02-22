@@ -78,4 +78,4 @@ def courses(request):
     # get user courses
     courses = []
 
-    return render(request, 'reviews/user_courses.html', {'courses': courses})
+    return render(request, 'course/user_courses.html', {'courses': courses})
