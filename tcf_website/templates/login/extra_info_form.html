@@ -5,10 +5,11 @@
 
 <div class="container-fluid col-lg-9 col-xl-7 justify-content-center">
   <div class="card text-center">
-    <div class="card-body" style="padding: 25px;">
-        <img style="width: auto; height: 150px;" src="{% static 'base/img/new_logo.png' %}" class="card-img-top" alt="tCF" width="auto">
+    <div class="card-body p-5">
+        <img style="width: auto; height: 5em;" src="{% static 'base/img/new_logo.png' %}" class="card-img-top" alt="tCF" width="auto">
         {% block login_content %}
         <h2 class="card-title">Welcome to theCourseForum!</h2>
+        <p> Please finish completing your profile. </p>
         <form method="POST">
             {% csrf_token %}
             <div class="form-row justify-content-center align-items-baseline">
