@@ -72,10 +72,10 @@ def reviews(request):
     stats = {key: safe_round(value) for key, value in merged.items()}
     return render(request, 'reviews/user_reviews.html', context=stats)
 
-    @login_required
-    def courses(request):
-        """User courses view."""
-        # get user courses
-        courses = []
+@login_required
+def courses(request):
+    """User courses view."""
+    # get user courses
+    courses = []
 
-        return render(request, 'reviews/user_courses.html', {'courses': courses})
+    return render(request, 'reviews/user_courses.html', {'courses': courses})
