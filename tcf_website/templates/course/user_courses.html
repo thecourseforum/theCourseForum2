@@ -59,6 +59,14 @@
         </div>
         {% endfor %}
     {% endfor %}
+    {% else %}
+    <div class="card col p-5 text-center">
+        <div class="card-body">
+            <h4 class="card-title">
+                No Saved Courses <i class="far fa-frown-open fa-fw"></i>
+            </h4>
+        </div>
+    </div>
     {% endif %}
 </div>
 {% endblock %}
