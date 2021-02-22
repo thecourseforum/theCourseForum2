@@ -30,7 +30,7 @@ urlpatterns = [
     path('reviews/<int:review_id>/upvote', views.upvote),
     path('reviews/<int:review_id>/downvote', views.downvote),
     path('profile', views.profile, name='profile'),
-    path('courses', views.courses, name='courses'),
+    path('courses', views.saved_courses, name='courses'),
     path('search', views.search, name='search'),
 
     # API URLs
