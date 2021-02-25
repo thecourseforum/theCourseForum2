@@ -522,6 +522,38 @@ class CourseInstructorGrade(models.Model):
                 f"{self.subdepartment} {self.number} {self.average}")
 
 
+class SavedCourse(models.Model):
+    """
+    A model to record who saved which courses.
+    This model can be used to implement `follow-course` in the future.
+
+    Create this instance when a User saves a Course.
+    Delete this instance when a User unsaves the Course.
+    Update this instance only to update `index` or `notes`.
+
+    `index`: Used to stores orders within the list of saved Courses.
+        Trello uses a floating point, but string seems more reliable.
+        See https://softwareengineering.stackexchange.com/q/195308/
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    index = models.CharField(max_length=255, unique=True)
+    notes = models.TextField(default='')
+
+    def __str__(self):
+        return f'{self.course} taught by {self.instructor} saved by {self.user}'
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'course'],
+                name='one instance for each user-course pair',
+            ),
+        ]
+
+
 class Section(models.Model):
     """Section model.
 
