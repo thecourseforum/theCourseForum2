@@ -8,7 +8,7 @@ from django import forms
 from django.forms import ModelForm
 from django.http import HttpResponseRedirect
 from .browse import safe_round
-from ..models import Review, User
+from ..models import Review, User, SavedCourse
 
 
 class ProfileForm(ModelForm):
@@ -77,6 +77,13 @@ def reviews(request):
 def saved_courses(request):
     """User courses view."""
     # get user courses
-    courses = []
-
+    saved_courses = SavedCourse.objects.filter(user=request.user).annotate(
+        average_gpa=Avg('course__coursegrade__average'),
+    )
+    courses = {}
+    for saved in saved_courses:
+        if saved.course.subdepartment in courses:
+            courses[saved.course.subdepartment].append(saved)
+        else:
+            courses[saved.course.subdepartment] = [saved]
     return render(request, 'course/user_courses.html', {'courses': courses})

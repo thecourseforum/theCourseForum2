@@ -15,11 +15,11 @@
     {% if courses %}
     {% for dept, dept_data in courses.items %}
         <h2 class="mt-5 h3">{{ dept }}</h2>
-        {% for course in dept_data.courses %}
+        {% for saved in dept_data %}
         <div class="card mt-3">
-            <a href="{% url 'course_instructor' course_id=course.id instructor_id=instructor.id %}">
+            <a href="{% url 'course_instructor' course_id=saved.course.id instructor_id=saved.instructor.id %}">
                 <div class="card-header course-header py-4">
-                    {{ course.name }}
+                    {{ saved.course }} by {{ saved.instructor.full_name }}
                 </div>
             </a>
             <div class="card-body">
@@ -29,7 +29,7 @@
                             <i class="fa fa-star"></i> Rating
                         </small>
                         <p class="h4" id="rating">
-                            {{ course.avg_rating }}
+                            {{ saved.course.average_rating|floatformat:2 }}
                         </p>
                     </li>
                     <li class="col text-nowrap">
@@ -37,7 +37,7 @@
                             <i class="fa fa-dumbbell"></i> Difficulty
                         </small>
                         <p class="h4" id="difficulty">
-                            {{ course.avg_difficulty }}
+                            {{ saved.course.average_difficulty|floatformat:2 }}
                         </p>
                     </li>
                     <li class="col text-nowrap">
@@ -45,14 +45,20 @@
                             <i class="fa fa-chart-bar"></i> GPA
                         </small>
                         <p class="h4" id="gpa">
-                            {{ course.avg_gpa }}
+                            {{ saved.average_gpa|floatformat:2 }}
                         </p>
                     </li>
                     <div class="col">
                         <small class="text-uppercase">
                             <i class="fa fa-calendar"></i> Last Taught
                         </small>
-                        <p class="h4">{{ course.last_taught }}</p>
+                        <p class="h4">{{ saved.course.semester_last_taught }}</p>
+                    </div>
+                    <div class="col">
+                        <small class="text-uppercase">
+                            <i class="fa fa-sticky-note"></i> Notes
+                        </small>
+                        <p class="h4">{{ saved.notes }}</p>
                     </div>
                 </ul>
             </div>
