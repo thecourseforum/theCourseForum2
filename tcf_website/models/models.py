@@ -551,8 +551,8 @@ class SavedCourse(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'course'],
-                name='one instance for each user-course pair',
+                fields=['user', 'course', 'instructor'],
+                name='one instance for each user-course-instructor pair',
             ),
             models.UniqueConstraint(
                 fields=['user', 'rank'],
