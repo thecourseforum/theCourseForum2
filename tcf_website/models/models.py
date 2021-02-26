@@ -528,10 +528,13 @@ class SavedCourse(models.Model):
     This model can be used to implement `follow-course` in the future.
 
     Create this instance when a User saves a Course.
+        Note that you need to make `rank` non-NULL yourself when you use
+        `bulk_create` because it doesn't call the `save` method and hence
+        the `pre_save` and post_save` signals)
     Delete this instance when a User unsaves the Course.
-    Update this instance only to update `index` or `notes`.
+    Update this instance only to update `rank` or `notes`.
 
-    `index`: Used to stores orders within the list of saved Courses.
+    `rank`: Used to stores orders within the list of saved Courses.
         Trello uses a floating point, but string seems more reliable.
         See https://softwareengineering.stackexchange.com/q/195308/
     """
@@ -539,7 +542,7 @@ class SavedCourse(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
-    index = models.CharField(max_length=255, unique=True)
+    rank = models.CharField(max_length=255, null=True)
     notes = models.TextField(default='')
 
     def __str__(self):
@@ -550,6 +553,10 @@ class SavedCourse(models.Model):
             models.UniqueConstraint(
                 fields=['user', 'course'],
                 name='one instance for each user-course pair',
+            ),
+            models.UniqueConstraint(
+                fields=['user', 'rank'],
+                name='unique rank for each user if not NULL',
             ),
         ]
 
