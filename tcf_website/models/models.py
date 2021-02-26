@@ -5,6 +5,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
+from .validators import validate_caps
 
 
 class School(models.Model):
@@ -542,7 +543,8 @@ class SavedCourse(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
-    rank = models.CharField(max_length=255, null=True)
+    rank = models.CharField(max_length=255, null=True,
+                            validators=[validate_caps])
     notes = models.TextField(default='')
 
     def __str__(self):
