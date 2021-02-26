@@ -550,6 +550,14 @@ class SavedCourse(models.Model):
     def __str__(self):
         return f'{self.course} taught by {self.instructor} saved by {self.user}'
 
+    @staticmethod
+    def get_next_rank(last_rank):
+        """Given `last_rank`, returns the next rank."""
+        if last_rank.endswith('Z'):
+            return last_rank + 'A'
+        last_letter = last_rank[-1]
+        return last_rank[:-1] + chr(ord(last_letter) + 1)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
