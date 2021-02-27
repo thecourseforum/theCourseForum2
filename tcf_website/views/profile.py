@@ -107,8 +107,9 @@ def saved_courses(request):
         INNER JOIN tcf_website_semester AS s2
             ON s.semester_id=s2.id
         WHERE sc.user_id = %s
-        GROUP BY sc.id, sc.course_id, sc.instructor_id, sc.notes;
-    ''', [request.user.id])
+        GROUP BY sc.id, sc.course_id, sc.instructor_id, sc.notes
+        ORDER BY sc.rank DESC
+    ;''', [request.user.id])
 
     courses = {}
     for saved in saved_courses:
