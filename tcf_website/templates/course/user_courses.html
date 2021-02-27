@@ -29,7 +29,7 @@
                             <i class="fa fa-star"></i> Rating
                         </small>
                         <p class="h4" id="rating">
-                            {{ saved.course.average_rating|floatformat:2 }}
+                            {{ saved.average_rating|floatformat:2 }}
                         </p>
                     </li>
                     <li class="col text-nowrap">
@@ -37,7 +37,7 @@
                             <i class="fa fa-dumbbell"></i> Difficulty
                         </small>
                         <p class="h4" id="difficulty">
-                            {{ saved.course.average_difficulty|floatformat:2 }}
+                            {{ saved.average_difficulty|floatformat:2 }}
                         </p>
                     </li>
                     <li class="col text-nowrap">
@@ -52,7 +52,7 @@
                         <small class="text-uppercase">
                             <i class="fa fa-calendar"></i> Last Taught
                         </small>
-                        <p class="h4">{{ saved.course.semester_last_taught }}</p>
+                        <p class="h4">{{ saved.semester_last_taught }}</p>
                     </div>
                     <div class="col">
                         <small class="text-uppercase">
