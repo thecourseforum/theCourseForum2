@@ -77,9 +77,39 @@ def reviews(request):
 def saved_courses(request):
     """User courses view."""
     # get user courses
-    saved_courses = SavedCourse.objects.filter(user=request.user).annotate(
-        average_gpa=Avg('course__coursegrade__average'),
-    )
+    saved_courses = SavedCourse.objects.raw('''
+        SELECT sc.id
+            , sc.course_id
+            , sc.instructor_id
+            , sc.notes
+            , AVG(cig.average) AS average_gpa
+            , AVG(r.difficulty) AS average_difficulty
+            , (AVG(r.instructor_rating) + AVG(r.enjoyability) + AVG(r.recommendability)) / 3 AS average_rating
+            , MAX(CONCAT(INITCAP(s2.season), ' ', s2.year)) AS semester_last_taught
+        FROM tcf_website_savedcourse AS sc
+        LEFT OUTER JOIN tcf_website_courseinstructorgrade AS cig
+            ON sc.course_id = cig.course_id
+            AND sc.instructor_id = cig.instructor_id
+        LEFT OUTER JOIN tcf_website_review AS r
+            ON sc.course_id = r.course_id
+            AND sc.instructor_id = r.instructor_id
+        INNER JOIN (
+            SELECT course_id
+                , instructor_id
+                , MAX(semester_id) AS semester_id
+            FROM tcf_website_section s
+            INNER JOIN tcf_website_section_instructors AS si
+                ON s.id=si.section_id
+            GROUP BY course_id, instructor_id
+        ) AS s
+            ON sc.course_id = s.course_id
+            AND sc.instructor_id = s.instructor_id
+        INNER JOIN tcf_website_semester AS s2
+            ON s.semester_id=s2.id
+        WHERE sc.user_id = %s
+        GROUP BY sc.id, sc.course_id, sc.instructor_id, sc.notes;
+    ''', [request.user.id])
+
     courses = {}
     for saved in saved_courses:
         if saved.course.subdepartment in courses:
