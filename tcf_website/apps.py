@@ -1,3 +1,4 @@
+# pylint: disable=import-outside-toplevel, unused-import
 """TCF Django Web Application."""
 
 from django.apps import AppConfig
