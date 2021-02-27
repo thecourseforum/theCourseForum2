@@ -5,7 +5,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
-from .validators import validate_caps
 
 
 class School(models.Model):
@@ -543,22 +542,16 @@ class SavedCourse(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
-    rank = models.CharField(max_length=255, null=True,
-                            validators=[validate_caps])
+    rank = models.PositiveIntegerField(null=True)
     notes = models.TextField(default='')
 
     def __str__(self):
         return f'{self.course} taught by {self.instructor} saved by {self.user}'
 
-    @staticmethod
-    def get_next_rank(last_rank):
-        """Given `last_rank`, returns the next rank."""
-        if last_rank.endswith('Z'):
-            return last_rank + 'A'
-        last_letter = last_rank[-1]
-        return last_rank[:-1] + chr(ord(last_letter) + 1)
-
     class Meta:
+        indexes = [
+            models.Index(fields=['rank']),
+        ]
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'course', 'instructor'],
@@ -567,6 +560,7 @@ class SavedCourse(models.Model):
             models.UniqueConstraint(
                 fields=['user', 'rank'],
                 name='unique rank for each user if not NULL',
+                deferrable=models.Deferrable.DEFERRED,
             ),
         ]
 

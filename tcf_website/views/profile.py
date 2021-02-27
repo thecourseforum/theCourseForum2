@@ -1,12 +1,13 @@
+# pylint: disable=no-self-use, unused-argument, too-few-public-methods
 """Views for user profile."""
 
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.db.models import Avg, Count, Q
 from django import forms
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db.models import Avg, Count, Q
 from django.forms import ModelForm
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from .browse import safe_round
 from ..models import Review, User, SavedCourse
 
@@ -77,7 +78,7 @@ def reviews(request):
 def saved_courses(request):
     """User courses view."""
     # get user courses
-    saved_courses = SavedCourse.objects.raw('''
+    saved_course_instances = SavedCourse.objects.raw('''
         SELECT sc.id
             , sc.course_id
             , sc.instructor_id
@@ -112,7 +113,7 @@ def saved_courses(request):
     ;''', [request.user.id])
 
     courses = {}
-    for saved in saved_courses:
+    for saved in saved_course_instances:
         if saved.course.subdepartment in courses:
             courses[saved.course.subdepartment].append(saved)
         else:
