@@ -28,7 +28,6 @@ body {
 #sidebar-wrapper .list-group-item, .footer, .footer a {
   background-color: var(--main-color);
   color: var(--background-color);
-  padding-top: 1rem;
   border: 0rem;
 }
 
@@ -38,6 +37,49 @@ body {
   border-color: var(--main-color);
   filter: brightness(125%);
 }
+
+/* For the quad version
+#sidebar-wrapper .icon-section{
+  width: 100%;
+  padding-bottom: 1.5rem;
+}
+
+#sidebar-wrapper .icon-wrapper{
+  display:inline-block;
+  width: 50%;
+}
+
+#sidebar-wrapper .icon-wrapper i {
+  font-size: 2.15rem;
+}*/
+
+
+/* Shared between the versions */
+#sidebar-wrapper .left-icon{
+  float: left;
+}
+
+#sidebar-wrapper .right-icon{
+  float: right;
+}
+
+
+/* For the row version*/
+#sidebar-wrapper .icon-section{
+  width: 100%;
+  padding-bottom: 1rem;
+}
+
+#sidebar-wrapper .icon-wrapper{
+  display:inline-block;
+  width: 25%;
+}
+
+#sidebar-wrapper .icon-wrapper i {
+  font-size: 1.15rem;
+}
+
+
 
 #page-content-wrapper {
   min-width: 100vw;
