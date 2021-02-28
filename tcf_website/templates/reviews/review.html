@@ -4,22 +4,8 @@
 <div id="review{{review.id}}" class="review card mb-2">
     <div class="card-body text-left pr-4">
         <div class="row">
-            <!-- Review upvote/downvote panel -->
-            <div class="vote-container col-2 col-lg-1 d-none d-md-flex flex-column justify-content-center align-items-center">
-                <!--Voting logic is implemented in the <script> tag of reviews.html-->
-                <a id="upvote{{review.id}}" href="#loginModal" data-toggle="modal"
-                   class="upvote {% if review.user_vote == 1 %}active{% endif %}">
-                    <i class="fa fa-angle-up fa-fw"></i>
-                </a>
-                <span id="vote-count" class="voteCount">{{ review.sum_votes }}</span>
-                <a id="downvote{{review.id}}" href="#loginModal" data-toggle="modal"
-                   class="downvote {% if review.user_vote == -1 %}active{% endif %}">
-                    <i class="fa fa-angle-down fa-fw"></i>
-                </a>
-            </div>
-
             <!-- Review Main Content -->
-            <div class="review-body col-xs-12 col-md-10 col-lg-11">
+            <div class="review-body col-xs-12 col-md-10 col-lg-12">
 
                 <!-- Review header content (subject, actions, text) -->
                 {% if profile %}
@@ -50,6 +36,22 @@
                 </div>
 
                 <div class="review-footer row mt-3">
+                    <div class="col-sm-8 d-flex align-items-end text-center text-muted flex-wrap mb-2">
+                        <div class="mr-3 mr-sm-4">
+                            <a id="upvote{{review.id}}" href="#loginModal" data-toggle="modal"
+                               class="upvote {% if review.user_vote == 1 %}active{% endif %}">
+                                <i class="fa fa-thumbs-up fa-fw"></i>
+                            </a>
+                            <span id="vote-count" class="voteCount">{{ review.count_votes.upvotes }}</span>
+                        </div>
+                        <div class="mr-3 mr-sm-4">
+                            <a id="downvote{{review.id}}" href="#loginModal" data-toggle="modal"
+                               class="downvote {% if review.user_vote == -1 %}active{% endif %}">
+                                <i class="fa fa-thumbs-down fa-fw"></i>
+                            </a>
+                            {{ review.count_votes.downvotes }}
+                        </div>
+                    </div>
                     <!-- Review Ratings -->
                     <div class="review-ratings col-sm-8 d-flex align-items-end text-center text-muted flex-wrap mb-2">
                         <div id="review-average" class="text-dark mr-3 mr-sm-4">
