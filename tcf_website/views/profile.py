@@ -4,10 +4,13 @@
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Avg, Count, Q
+from django.db import IntegrityError, transaction
+from django.db.models import Avg, Count, F, Q
 from django.forms import ModelForm
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.utils.decorators import method_decorator
+from django.views import View
 from .browse import safe_round
 from ..models import Review, User, SavedCourse
 
@@ -119,3 +122,43 @@ def saved_courses(request):
         else:
             courses[saved.course.subdepartment] = [saved]
     return render(request, 'course/user_courses.html', {'courses': courses})
+
+
+class SavedCourseReorderingView(View):
+    """View for reordering SavedCourse instances"""
+    @method_decorator(login_required)
+    def post(self, request, *args, **kwargs):
+        """
+        Ensures that the rank is just lower than that of the SavedCourse
+        instance with the given `successor_id`. If `successor_id` is not
+        supplied, the ranks of all SavedCourse instances will be incremented.
+        """
+        # Lock the user's saved courses
+        saved = SavedCourse.objects.select_for_update().filter(user=request.user)
+
+        try:
+            to_move_id = int(request.POST.get('to_move_id'))
+        except (ValueError, TypeError):
+            return HttpResponseBadRequest('`to_move_id` must be an `int`.')
+        to_move = get_object_or_404(
+            SavedCourse, pk=to_move_id, user=request.user)
+        try:
+            successor_id = int(request.POST.get('successor_id'))
+        except ValueError:  # str
+            return HttpResponseBadRequest('`successor_id` must be an `int`.')
+        except TypeError:  # None
+            # Everything whose ID >= `successor_id` will be pushed back by 1
+            successor_id = 0
+            to_move.rank = 1
+        else:  # validate successor_id is provided
+            successor = get_object_or_404(
+                SavedCourse, pk=successor_id, user=request.user)
+            to_move.rank = successor.rank
+
+        try:
+            with transaction.atomic():
+                saved.filter(id__gte=successor_id).update(rank=F('rank') + 1)
+                to_move.save()
+        except IntegrityError:
+            return HttpResponse('Reordering failed...', status_code=500)
+        return HttpResponse('Reordering successful!')
