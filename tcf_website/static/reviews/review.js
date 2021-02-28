@@ -61,7 +61,7 @@ function handleVote(reviewID, isUpvote) {
 export { handleVote };
 
 /* For review text collapse/expand functionality */
-$(window).resize(function() {
+$(function() {
     // On browser window resize, refresh collapser threshold for each review card
     $(".review").each(function(i, review) {
         var visibleReviewBody = $(this).find("div.review-text-body");
