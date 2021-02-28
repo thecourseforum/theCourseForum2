@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 from django.views import View
 from .browse import safe_round
-from ..models import Review, User, SavedCourse
+from ..models import Review, User, SavedCourse, Section
 
 
 class ProfileForm(ModelForm):
@@ -162,3 +162,19 @@ class SavedCourseReorderingView(View):
         except IntegrityError:
             return HttpResponse('Reordering failed...', status_code=500)
         return HttpResponse('Reordering successful!')
+
+
+@login_required
+def save_course(request, course_id: int, instructor_id: int):
+    """Saves a Course-Instructor pair for the given user."""
+    if not Section.objects.filter(course__id=course_id,
+                                  instructors__id=instructor_id).exists():
+        return HttpResponseBadRequest(
+            'The course has never been offered by the instructor.')
+    try:
+        saved = SavedCourse.objects.create(user=request.user, course_id=course_id,
+                                           instructor_id=instructor_id)
+    except IntegrityError:
+        return HttpResponseBadRequest(
+            'The course-instructor pair is already saved by the user.')
+    return HttpResponse(str(saved))
