@@ -49,7 +49,11 @@
                   </div>
 
                   <div class="ml-auto pl-5 text-center">
-                      <button class="btn bg-tcf-orange text-white d-flex"> Save Course </button>
+                      {% if is_saved %}
+                      <button class="btn bg-tcf-orange text-white d-flex">Unsave Course</button>
+                      {% else %}
+                      <button class="btn bg-tcf-orange text-white d-flex">Save Course</button>
+                      {% endif  %}
                   </div>
 
                   <!-- Semester last taught -->

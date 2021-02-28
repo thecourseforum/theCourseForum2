@@ -13,6 +13,7 @@ from ..models import (
     Department,
     Subdepartment,
     Course,
+    SavedCourse,
     Semester,
     Instructor,
     Review,
@@ -219,6 +220,8 @@ def course_instructor(request, course_id, instructor_id):
     except ObjectDoesNotExist:  # if no data found
         pass
 
+    is_saved = SavedCourse.objects.filter(user=request.user, course=course,
+                                          instructor=instructor).exists()
     return render(request, 'course/course_professor.html',
                   {
                       'course': course,
@@ -228,6 +231,7 @@ def course_instructor(request, course_id, instructor_id):
                       'reviews': reviews,
                       'breadcrumbs': breadcrumbs,
                       'data': json.dumps(data),
+                      'is_saved': is_saved,
                   })
 
 
