@@ -102,8 +102,8 @@ def course_view(request, mnemonic, course_number):
             semester_last_taught=Max('section__semester',
                                      filter=Q(section__course=course)),
         )
-    this_semester_instructors = Instructor.objects.filter(
-        section__course=course, section__semester=latest_semester).distinct()
+    taught_this_semester = Instructor.objects.filter(
+        section__course=course, section__semester=latest_semester).distinct().exists()
 
     # Note: Wanted to use .annotate() but couldn't figure out a way
     # So created a dictionary on the fly to minimize database access
@@ -127,7 +127,7 @@ def course_view(request, mnemonic, course_number):
                       'instructors': instructors,
                       'latest_semester': latest_semester,
                       'breadcrumbs': breadcrumbs,
-                      'this_semester_instructors': this_semester_instructors
+                      'taught_this_semester': taught_this_semester
                   })
 
 
