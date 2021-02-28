@@ -30,6 +30,8 @@ urlpatterns = [
     path('reviews/<int:review_id>/upvote', views.upvote),
     path('reviews/<int:review_id>/downvote', views.downvote),
     path('profile', views.profile, name='profile'),
+    path('save_course/<int:course_id>/<int:instructor_id>',
+         views.save_course, name='save_course'),
     path('saved/reorder', views.SavedCourseReorderingView.as_view(),
          name='insert_before'),
     path('courses', views.saved_courses, name='courses'),
