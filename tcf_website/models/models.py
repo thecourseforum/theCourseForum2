@@ -636,14 +636,16 @@ class Review(models.Model):
         return (self.instructor_rating +
                 self.recommendability + self.enjoyability) / 3
 
-    # not sure if this gets used anywhere either
     def count_votes(self):
         """Sum votes for review."""
-        vote_sum = self.vote_set.aggregate(
-            models.Sum('value')).get('value__sum', 0)
-        if not vote_sum:
-            return 0
-        return vote_sum
+        upvotes = downvotes = 0
+        for vote in self.vote_set.all():
+            if vote.value == 1:
+                upvotes += 1
+            else:
+                downvotes += 1
+
+        return {'upvotes':upvotes, 'downvotes': downvotes}
 
     def upvote(self, user):
         """Create an upvote."""
