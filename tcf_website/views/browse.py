@@ -4,6 +4,7 @@
 import json
 
 from django.db.models import Avg, Max, Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
@@ -13,6 +14,7 @@ from ..models import (
     Department,
     Subdepartment,
     Course,
+    Section,
     Semester,
     Instructor,
     Review,
@@ -133,22 +135,17 @@ def course_view(request, mnemonic, course_number):
 
 def course_instructor(request, course_id, instructor_id):
     """View for course instructor page."""
-
-    course = Course.objects.get(pk=course_id)
-    instructor = Instructor.objects\
-        .filter(pk=instructor_id)\
-        .annotate(
-            semester_last_taught_id=Max('section__semester',
-                                        filter=Q(section__course=course)),
-        )[0]
-    # Note: Like view above, this is kinda a hacky way to get the last-taught
-    # semester
-    semester_last_taught = Semester.objects.get(
-        pk=instructor.semester_last_taught_id)
+    section_last_taught = Section.objects\
+        .filter(course=course_id, instructors=instructor_id)\
+        .order_by('semester')\
+        .last()
+    if section_last_taught is None:
+        raise Http404
+    course = section_last_taught.course
+    instructor = section_last_taught.instructors.get(pk=instructor_id)
 
     # Filter out reviews with no text.
-    reviews = Review.display_reviews(course, instructor, request.user)
-
+    reviews = Review.display_reviews(course_id, instructor_id, request.user)
     dept = course.subdepartment.department
 
     course_url = reverse('course',
@@ -161,74 +158,57 @@ def course_instructor(request, course_id, instructor_id):
         (instructor.full_name, None, True)
     ]
 
-    data = {
-        # rating stats
-        "average_rating": safe_round(instructor.average_rating_for_course(course)),
-        "average_instructor": safe_round(instructor.average_instructor_rating_for_course(course)),
-        "average_fun": safe_round(instructor.average_enjoyability_for_course(course)),
-        "average_recommendability":
-            safe_round(instructor.average_recommendability_for_course(course)),
-        "average_difficulty": safe_round(instructor.average_difficulty_for_course(course)),
-        # workload stats
-        "average_hours_per_week": safe_round(instructor.average_hours_for_course(course)),
-        "average_amount_reading": safe_round(instructor.average_reading_hours_for_course(course)),
-        "average_amount_writing": safe_round(instructor.average_writing_hours_for_course(course)),
-        "average_amount_group": safe_round(instructor.average_group_hours_for_course(course)),
-        "average_amount_homework": safe_round(instructor.average_other_hours_for_course(course)),
-    }
+    data = Review.objects\
+        .filter(course=course_id, instructor=instructor_id)\
+        .aggregate(
+            # rating stats
+            average_rating=(
+                Avg('instructor_rating') +
+                Avg('enjoyability') +
+                Avg('recommendability')
+            ) / 3,
+            average_instructor=Avg('instructor_rating'),
+            average_fun=Avg('enjoyability'),
+            average_recommendability=Avg('recommendability'),
+            average_difficulty=Avg('difficulty'),
+            # workload stats
+            average_hours_per_week=Avg('hours_per_week'),
+            average_amount_reading=Avg('amount_reading'),
+            average_amount_writing=Avg('amount_writing'),
+            average_amount_group=Avg('amount_group'),
+            average_amount_homework=Avg('amount_homework'),
+        )
+    data = {key: safe_round(value) for key, value in data.items()}
 
     try:
         grades_data = CourseInstructorGrade.objects.get(
             instructor=instructor, course=course)
-
-        # grades stats
-        data['average_gpa'] = round(grades_data.average, 2)
-        data['a_plus'] = grades_data.a_plus
-        data['a'] = grades_data.a
-        data['a_minus'] = grades_data.a_minus
-        data['b_plus'] = grades_data.b_plus
-        data['b'] = grades_data.b
-        data['b_minus'] = grades_data.b_minus
-        data['c_plus'] = grades_data.c_plus
-        data['c'] = grades_data.c
-        data['c_minus'] = grades_data.c_minus
-        data['d_plus'] = grades_data.d_plus
-        data['d'] = grades_data.d
-        data['d_minus'] = grades_data.d_minus
-        data['f'] = grades_data.f
-        data['withdraw'] = grades_data.withdraw
-        data['drop'] = grades_data.drop
-
-        fields = [
-            'a_plus',
-            'a',
-            'a_minus',
-            'b_plus',
-            'b',
-            'b_minus',
-            'c',
-            'c_minus',
-            'd_plus',
-            'd',
-            'd_minus',
-            'f',
-            'withdraw',
-            'drop']
-
-        total = 0
-        for field in fields:
-            total += data[field]
-        data['total_enrolled'] = total
-
     except ObjectDoesNotExist:  # if no data found
         pass
+    # NOTE: Don't catch MultipleObjectsReturned because we want to be notified
+    else:  # Fill in the data found
+        # grades stats
+        data['average_gpa'] = round(grades_data.average, 2)
+        fields = [
+            'a_plus', 'a', 'a_minus',
+            'b_plus', 'b', 'b_minus',
+            'c_plus', 'c', 'c_minus',
+            'd_plus', 'd', 'd_minus',
+            'f',
+            'ot', 'drop', 'withdraw',
+        ]
+        total = 0
+        for field in fields:
+            data[field] = getattr(grades_data, field)
+            total += data[field]
+        data['total_enrolled'] = total
 
     return render(request, 'course/course_professor.html',
                   {
                       'course': course,
                       'course_id': course_id,
                       'instructor': instructor,
-                      'semester_last_taught': semester_last_taught,
+                      'semester_last_taught': section_last_taught.semester,
                       'reviews': reviews,
                       'breadcrumbs': breadcrumbs,
                       'data': json.dumps(data),

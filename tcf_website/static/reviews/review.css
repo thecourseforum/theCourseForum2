@@ -1,8 +1,3 @@
-.review .review-header {
-    color: var(--accent-color);
-    font-size: 1.25rem;
-}  
-
 .review .upvote, .review .downvote {
     font-size: 2rem;
     color: #aaa;

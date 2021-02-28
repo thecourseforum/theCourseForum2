@@ -15,4 +15,4 @@ if os.environ.get('DJANGO_SETTINGS_MODULE') == 'tcf_core.settings.dev':
     # "This will automatically configure DATABASE_URL, ALLOWED_HOSTS, ... Logging"
     # https://github.com/heroku/django-heroku
     import django_heroku
-    django_heroku.settings(locals())
+    django_heroku.settings(locals(), databases=False)
