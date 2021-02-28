@@ -178,3 +178,11 @@ def save_course(request, course_id: int, instructor_id: int):
         return HttpResponseBadRequest(
             'The course-instructor pair is already saved by the user.')
     return HttpResponse(str(saved))
+
+
+@login_required
+def unsave_course(request, course_id: int, instructor_id: int):
+    """Unsaves a Course-Instructor pair for the given user."""
+    SavedCourse.objects.filter(user=request.user, course_id=course_id,
+                               instructor_id=instructor_id).delete()
+    return HttpResponse(status_code=204)
