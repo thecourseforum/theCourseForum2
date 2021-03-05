@@ -4,7 +4,7 @@
 import json
 from typing import Any, Dict, List
 
-from django.db.models import Avg, CharField, F, Max, Q, QuerySet, Value
+from django.db.models import Avg, CharField, F, Max, Q, Value
 from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -228,7 +228,7 @@ def instructor_view(request, instructor_id):
             ) / 3)
     course_fields: List[str] = ['name', 'id', 'avg_rating', 'avg_difficulty',
                                 'avg_gpa', 'last_taught']
-    queryset: QuerySet[Course] = Course.objects\
+    queryset: List[Dict[str, Any]] = Course.objects\
         .filter(section__instructors=instructor, number__gte=1000)\
         .prefetch_related('review_set')\
         .annotate(
@@ -261,7 +261,7 @@ def instructor_view(request, instructor_id):
             ),
     ).values('dept', *course_fields)\
         .order_by('dept', 'name')
-    courses: Dict[str, List[Any]] = {}
+    courses: Dict[str, List[Dict[str, Any]]] = {}
     for course in queryset:  # type: Dict[str, Any]
         course['avg_rating'] = safe_round(course['avg_rating'])
         course['avg_difficulty'] = safe_round(course['avg_difficulty'])
