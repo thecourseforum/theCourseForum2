@@ -2,8 +2,10 @@
 
 """Views for Browse, department, and course/course instructor pages."""
 import json
+from typing import Any, Dict, List
 
-from django.db.models import Avg, Max, Q
+from django.db.models import Avg, CharField, F, Max, Q, QuerySet, Value
+from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -12,7 +14,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from ..models import (
     School,
     Department,
-    Subdepartment,
     Course,
     Section,
     Semester,
@@ -213,67 +214,66 @@ def course_instructor(request, course_id, instructor_id):
 
 def instructor_view(request, instructor_id):
     """View for instructor page, showing all their courses taught."""
-    instructor = get_object_or_404(Instructor, pk=instructor_id)
-
-    avg_rating = safe_round(instructor.average_rating())
-    avg_difficulty = safe_round(instructor.average_difficulty())
-    avg_gpa = safe_round(instructor.average_gpa())
-
-    courses = group_by_dept(instructor, instructor.get_courses())
-    return render(
-        request, 'instructor/instructor.html', {
-            'instructor': instructor,
-            'avg_rating': avg_rating,
-            'avg_difficulty': avg_difficulty,
-            'avg_gpa': avg_gpa,
-            'courses': courses
-        })
-
-
-def group_by_dept(instructor, courses):
-    """ Group instructor's courses by subdepartment.
-
-        Returns a dictionary mapping subdepartment names to ids and
-        lists of Course data.
-    """
-    subdept_ids = list(
-        set(courses.values_list('subdepartment', flat=True)))
-
-    # Contains IDs and names of all subdepartments for Instructor's Courses
-    subdepts = sorted(
-        list(
-            map(
-                lambda subdept_id: [
-                    subdept_id,
-                    Subdepartment.objects.get(
-                        pk=subdept_id).name],
-                subdept_ids)),
-        key=lambda x: x[1])
-
-    # Create dictionary corresponding dept to courses
-    grouped_courses = {}
-    for subdept in subdepts:
-        grouped_courses[subdept[1]] = {
-            "id": subdept[0],
-            "courses": []
-        }
-
-    for course in courses:
-        course_subdept = course.subdepartment.name
-        course_data = {
-            # autopep8 makes the formatting for this wack, sorry
-            'name': str(course), 'id': course.id,
-            'avg_rating': safe_round(
-                Instructor.average_rating_for_course(
-                    instructor, course)),
-            'avg_difficulty': safe_round(
-                Instructor.average_difficulty_for_course(
-                    instructor, course)),
-            'avg_gpa': safe_round(Instructor.average_gpa_for_course(instructor, course)),
-            'last_taught': str(course.semester_last_taught)}
-        grouped_courses[course_subdept]['courses'].append(course_data)
-
-    return grouped_courses
+    instructor: Instructor = get_object_or_404(Instructor, pk=instructor_id)
+    stats: Dict[str, float] = Instructor.objects\
+        .filter(pk=instructor_id)\
+        .prefetch_related('review_set')\
+        .aggregate(
+            avg_gpa=Avg('courseinstructorgrade__average'),
+            avg_difficulty=Avg('review__difficulty'),
+            avg_rating=(
+                Avg('review__instructor_rating') +
+                Avg('review__enjoyability') +
+                Avg('review__recommendability')
+            ) / 3)
+    course_fields: List[str] = ['name', 'id', 'avg_rating', 'avg_difficulty',
+                                'avg_gpa', 'last_taught']
+    queryset: QuerySet[Course] = Course.objects\
+        .filter(section__instructors=instructor, number__gte=1000)\
+        .prefetch_related('review_set')\
+        .annotate(
+            dept=F('subdepartment__name'),
+            name=Concat(
+                F('subdepartment__mnemonic'),
+                Value(' '),
+                F('number'),
+                Value(' | '),
+                F('title'),
+                output_field=CharField(),
+            ),
+            avg_gpa=Avg('courseinstructorgrade__average',
+                        filter=Q(courseinstructorgrade__instructor=instructor)),
+            avg_difficulty=Avg('review__difficulty',
+                               filter=Q(review__instructor=instructor)),
+            avg_rating=(
+                Avg('review__instructor_rating',
+                    filter=Q(review__instructor=instructor)) +
+                Avg('review__enjoyability',
+                    filter=Q(review__instructor=instructor)) +
+                Avg('review__recommendability',
+                    filter=Q(review__instructor=instructor))
+            ) / 3,
+            last_taught=Concat(
+                F('semester_last_taught__season'),
+                Value(' '),
+                F('semester_last_taught__year'),
+                output_field=CharField(),
+            ),
+    ).values('dept', *course_fields)\
+        .order_by('dept', 'name')
+    courses: Dict[str, List[Any]] = {}
+    for course in queryset:  # type: Dict[str, Any]
+        course['avg_rating'] = safe_round(course['avg_rating'])
+        course['avg_difficulty'] = safe_round(course['avg_difficulty'])
+        course['avg_gpa'] = safe_round(course['avg_gpa'])
+        course['last_taught'] = course['last_taught'].title()
+        courses.setdefault(course['dept'], []).append(course)
+    context: Dict[str, Any] = {
+        'instructor': instructor,
+        **{key: safe_round(value) for key, value in stats.items()},
+        'courses': courses,
+    }
+    return render(request, 'instructor/instructor.html', context)
 
 
 def safe_round(num):

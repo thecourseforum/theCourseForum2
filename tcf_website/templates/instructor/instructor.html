@@ -65,7 +65,7 @@
     {% if courses %}
     {% for dept, dept_data in courses.items %}
         <h2 class="mt-5 h3">{{ dept }}</h2>
-        {% for course in dept_data.courses %}
+        {% for course in dept_data %}
         <div class="card mt-3">
             <a href="{% url 'course_instructor' course_id=course.id instructor_id=instructor.id %}">
                 <div class="card-header course-header py-4">
@@ -79,7 +79,7 @@
                             <i class="fa fa-star"></i> Rating
                         </small>
                         <p class="h4" id="rating">
-                            {{ course.avg_rating }}
+                            {{ course.avg_rating  }}
                         </p>
                     </li>
                     <li class="col text-nowrap">
