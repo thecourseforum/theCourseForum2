@@ -126,7 +126,7 @@ jQuery(function($) {
     });
 
     // Code for the progress bar
-    $("#reviewtext").keydown(function() {
+    $("#reviewtext").on("keyup keypress keydown", function() { // Need all these different events so it works truly dynamically
         // Used .trim() to remove leading and trailing spaces
         var review = $("#reviewtext").val().trim();
         var numberOfWords = countNumberOfWords(review);
@@ -134,9 +134,11 @@ jQuery(function($) {
         // Set the width of the bar to the what percent of 300 words the current review is
         $("#reviewprogressbar").width(1000 * (numberOfWords / 300));
         if (numberOfWords < 100) {
+            // Originally a django progress bar with danger for red so need to remove that to change colors
+            $("#reviewprogressbar").removeClass("progress-bar bg-danger");
+            $("#reviewprogressbar").css("background-color", "#ffb3ba");
             $("#progressbarmessage").html("Your review is under 100 words. Aim for 300 or more!");
         } else if (numberOfWords >= 100 && numberOfWords < 200) {
-            $("#reviewprogressbar").removeClass("progress-bar bg-danger");
             $("#reviewprogressbar").css("background-color", "#FFDAC1");
             $("#progressbarmessage").html("Good job getting to 100 words, keep going!");
         } else if (numberOfWords >= 200 && numberOfWords < 300) {
@@ -151,19 +153,30 @@ jQuery(function($) {
 
 // Counts the number of words in a review
 function countNumberOfWords(review) {
-    if (review.length === 0) {
+    if (review.length === 0 || typeof review !== "string") {
         return 0;
     }
-    // If first condition is not met, we have at least one word
-    var count = 1;
-    for (const s of review) {
-        // Chose to count words based on how many spaces there are
-        if (s === " ") {
-            count++;
+    // Create an array of all the words
+    var arrayOfWords = review.split(" ");
+
+    // Used to keep track of all "words" with no letters in them
+    var countNonAlphaWords = 0;
+
+    // Iterate through all words and letters within the words
+    for (var i = 0; i < arrayOfWords.length; i++) {
+        // Tracks if the word is all non letter characters
+        var allNonAlpha = true;
+        for (var j = 0; j < arrayOfWords[i].length; j++) {
+            if (arrayOfWords[i][j].toUpperCase() >= "A" && arrayOfWords[i][j].toUpperCase() <= "Z") {
+                allNonAlpha = false;
+            }
+        }
+        if (allNonAlpha) {
+            countNonAlphaWords++;
         }
     }
-    // Number of words is spaces + 1
-    return count + 1;
+    // Computes the total word count by subtracting amount of "words" by "words" with no letters
+    return arrayOfWords.length - countNonAlphaWords;
 }
 
 // Clears all dropdown options & adds a disabled default option
