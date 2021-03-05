@@ -137,13 +137,13 @@ jQuery(function($) {
             $("#progressbarmessage").html("Your review is under 100 words. Aim for 300 or more!");
         } else if (numberOfWords >= 100 && numberOfWords < 200) {
             $("#reviewprogressbar").removeClass("progress-bar bg-danger");
-            $("#reviewprogressbar").css("background-color", "#ff9900");
+            $("#reviewprogressbar").css("background-color", "#FFDAC1");
             $("#progressbarmessage").html("Good job getting to 100 words, keep going!");
         } else if (numberOfWords >= 200 && numberOfWords < 300) {
-            $("#reviewprogressbar").css("background-color", "yellow");
+            $("#reviewprogressbar").css("background-color", "#fff5ba");
             $("#progressbarmessage").html("200 words! You're so close to the 300 mark!");
         } else if (numberOfWords >= 300) {
-            $("#reviewprogressbar").css("background-color", "green");
+            $("#reviewprogressbar").css("background-color", "#B5EAD7");
             $("#progressbarmessage").html("Thank you for your in depth review. The tCF team and other users appreciate your effort!");
         }
     });
