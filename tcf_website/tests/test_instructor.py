@@ -2,8 +2,9 @@
 """Tests for Instructor model."""
 
 from django.test import TestCase
+from django.urls import reverse
 
-from .test_utils import setup
+from .test_utils import setup, suppress_request_warnings
 
 
 class InstructorTestCase(TestCase):
@@ -58,3 +59,17 @@ class InstructorTestCase(TestCase):
         self.assertTrue(
             self.instructor.average_rating_for_course(self.course) is
             None)
+
+    def test_instructor_view(self):
+        """Test if context variables are correct in the instructor view."""
+        response = self.client.post(
+            reverse('instructor', args=(self.instructor.id,)))
+        self.assertEqual(response.context[0]['avg_difficulty'], 2.67)
+        self.assertEqual(response.context[0]['avg_rating'], 3.39)
+
+    @suppress_request_warnings
+    def test_instructor_view_404(self):
+        """Test if instructor view returns a 404 status code when it should."""
+        response = self.client.post(
+            reverse('instructor', args=(99999999999,)))
+        self.assertEqual(response.status_code, 404)
