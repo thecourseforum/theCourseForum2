@@ -213,7 +213,7 @@ def course_instructor(request, course_id, instructor_id):
 
 def instructor_view(request, instructor_id):
     """View for instructor page, showing all their courses taught."""
-    instructor = Instructor.objects.get(pk=instructor_id)
+    instructor = get_object_or_404(Instructor, pk=instructor_id)
 
     avg_rating = safe_round(instructor.average_rating())
     avg_difficulty = safe_round(instructor.average_difficulty())
