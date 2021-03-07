@@ -184,6 +184,29 @@ def setup(obj):
         amount_homework=0
     )
 
+    obj.section1 = Section.objects.create(
+        sis_section_number=1,
+        course=obj.course,
+        semester=obj.semester,
+    )
+    obj.section2 = Section.objects.create(
+        sis_section_number=2,
+        course=obj.course2,
+        semester=obj.semester,
+    )
+    obj.section3 = Section.objects.create(
+        sis_section_number=3,
+        course=obj.course3,
+        semester=obj.semester,
+    )
+    obj.section4 = Section.objects.create(
+        sis_section_number=4,
+        course=obj.course4,
+        semester=obj.semester,
+    )
+    for section in [obj.section1, obj.section2, obj.section3, obj.section4]:
+        section.instructors.add(obj.instructor)
+
 
 def suppress_request_warnings(original_function):
     """
