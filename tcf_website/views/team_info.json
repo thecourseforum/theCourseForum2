@@ -148,6 +148,13 @@
       "class": "2021",
       "img_filename": "ENG_James_Lim.jpg",
       "github": "yl2vv"
+    },
+    {
+      "name": "Kartik Chugh",
+      "role": "Developer",
+      "class": "2023",
+      "img_filename": "ENG_Kartik_Chugh.jpg",
+      "github": "KartikChugh"
     }
   ],
   "marketing_team": [
@@ -192,6 +199,54 @@
       "role": "Marketing",
       "class": "2023",
       "img_filename": "MAD_Jeremy_Tran.jpg"
+    },
+    {
+      "name": "Anne Yong",
+      "role": "Marketing/Designer",
+      "class": "2022",
+      "img_filename": "DM_Anne_Yong.jpg"
+    },
+    {
+      "name": "Joshua Dano",
+      "role": "Marketing/Designer",
+      "class": "2022",
+      "img_filename": "DM_Joshua_Dano.jpg"
+    },
+    {
+      "name": "Lauren Kim",
+      "role": "Marketing/Designer",
+      "class": "2022",
+      "img_filename": "DM_Lauren_Kim.jpg"
+    },
+    {
+      "name": "Rena Wolinsky",
+      "role": "Marketing/Designer",
+      "class": "2022",
+      "img_filename": "DM_Rena_Wolinsky.jpg"
+    },
+    {
+      "name": "Lilleth Snavely",
+      "role": "Marketing/Designer",
+      "class": "2023",
+      "img_filename": "DM_Lilleth_Snavely.jpg"
+    },
+    {
+      "name": "Liza Harold",
+      "role": "Marketing/Designer",
+      "class": "2023",
+      "img_filename": "DM_Liza_Harold.jpg"
+    },
+    {
+      "name": "Annie Chotikul",
+      "role": "Marketing/Designer",
+      "class": "2023",
+      "img_filename": "DM_Annie_Chotikul.jpg"
+    },
+    {
+      "name": "Dani Szabo",
+      "role": "Marketing/Designer",
+      "class": "2023",
+      "img_filename": "DM_Dani_Szabo.jpg"
     }
   ]
 }
