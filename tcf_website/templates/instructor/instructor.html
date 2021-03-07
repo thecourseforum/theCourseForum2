@@ -63,8 +63,8 @@
         </div>
     </div>
     {% if courses %}
-    {% for dept, dept_data in courses.items %}
-        <h2 class="mt-5 h3">{{ dept }}</h2>
+    {% for subdept, dept_data in courses.items %}
+        <h2 class="mt-5 h3">{{ subdept }}</h2>
         {% for course in dept_data %}
         <div class="card mt-3">
             <a href="{% url 'course_instructor' course_id=course.id instructor_id=instructor.id %}">

@@ -215,6 +215,7 @@ def course_instructor(request, course_id, instructor_id):
 def instructor_view(request, instructor_id):
     """View for instructor page, showing all their courses taught."""
     instructor: Instructor = get_object_or_404(Instructor, pk=instructor_id)
+
     stats: Dict[str, float] = Instructor.objects\
         .filter(pk=instructor_id)\
         .prefetch_related('review_set')\
@@ -226,13 +227,14 @@ def instructor_view(request, instructor_id):
                 Avg('review__enjoyability') +
                 Avg('review__recommendability')
             ) / 3)
+
     course_fields: List[str] = ['name', 'id', 'avg_rating', 'avg_difficulty',
                                 'avg_gpa', 'last_taught']
-    queryset: List[Dict[str, Any]] = Course.objects\
+    courses: List[Dict[str, Any]] = Course.objects\
         .filter(section__instructors=instructor, number__gte=1000)\
         .prefetch_related('review_set')\
         .annotate(
-            dept=F('subdepartment__name'),
+            subdept=F('subdepartment__name'),
             name=Concat(
                 F('subdepartment__mnemonic'),
                 Value(' '),
@@ -259,19 +261,21 @@ def instructor_view(request, instructor_id):
                 F('semester_last_taught__year'),
                 output_field=CharField(),
             ),
-    ).values('dept', *course_fields)\
-        .order_by('dept', 'name')
-    courses: Dict[str, List[Dict[str, Any]]] = {}
-    for course in queryset:  # type: Dict[str, Any]
+    ).values('subdept', *course_fields)\
+        .order_by('subdept', 'name')
+
+    grouped_courses: Dict[str, List[Dict[str, Any]]] = {}
+    for course in courses:  # type: Dict[str, Any]
         course['avg_rating'] = safe_round(course['avg_rating'])
         course['avg_difficulty'] = safe_round(course['avg_difficulty'])
         course['avg_gpa'] = safe_round(course['avg_gpa'])
         course['last_taught'] = course['last_taught'].title()
-        courses.setdefault(course['dept'], []).append(course)
+        grouped_courses.setdefault(course['subdept'], []).append(course)
+
     context: Dict[str, Any] = {
         'instructor': instructor,
         **{key: safe_round(value) for key, value in stats.items()},
-        'courses': courses,
+        'courses': grouped_courses,
     }
     return render(request, 'instructor/instructor.html', context)
 
