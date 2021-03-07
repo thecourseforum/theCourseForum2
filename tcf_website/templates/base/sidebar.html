@@ -67,8 +67,26 @@
   </ul>
 
   <div class="footer text-center small">
-    <a href="{% url 'privacy' %}">Privacy</a> |
-    <a href="{% url 'terms' %}">Terms</a>
+    <ul class="icon-section">
+      <li class="icon-wrapper left-icon">
+          <a href="https://discord.gg/tAjzH7eyvW">
+              <i class="fab fa-discord fa-fw"></i>
+          </a>
+      </li>
+      <li class="icon-wrapper left-icon">
+          <a href="https://www.facebook.com/thecourseforum">
+              <i class="fab fa-facebook fa-fw"></i>
+          </a>
+      </li>
+      <li class="icon-wrapper right-icon">
+          <a href="https://www.instagram.com/thecourseforum_uva/">
+              <i class="fab fa-instagram fa-fw"></i>
+          </a>
+      </li>
+    </ul>
+
+    <a style="padding-top: 0rem;" href="{% url 'privacy' %}">Privacy</a> |
+    <a style="padding-top: 0rem;" href="{% url 'terms' %}">Terms</a>
     <p>theCourseForum <br> &copy; <span class="year"></span> v1.1.2</p>
     {% if DEBUG %}
     <div class="bg-tcf-blue pb-3">
