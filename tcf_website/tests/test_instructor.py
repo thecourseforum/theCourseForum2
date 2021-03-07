@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .test_utils import setup, suppress_request_warnings
+from ..views.browse import safe_round
 
 
 class InstructorTestCase(TestCase):
@@ -64,8 +65,10 @@ class InstructorTestCase(TestCase):
         """Test if context variables are correct in the instructor view."""
         response = self.client.post(
             reverse('instructor', args=(self.instructor.id,)))
-        self.assertEqual(response.context[0]['avg_difficulty'], 2.67)
-        self.assertEqual(response.context[0]['avg_rating'], 3.39)
+        difficulty = safe_round(self.instructor.average_difficulty())
+        rating = safe_round(self.instructor.average_rating())
+        self.assertEqual(difficulty, response.context[0]['avg_difficulty'])
+        self.assertEqual(rating, response.context[0]['avg_rating'])
 
     @suppress_request_warnings
     def test_instructor_view_404(self):
