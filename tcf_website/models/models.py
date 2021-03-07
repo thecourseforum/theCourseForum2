@@ -534,9 +534,9 @@ class SavedCourse(models.Model):
     Delete this instance when a User unsaves the Course.
     Update this instance only to update `rank` or `notes`.
 
-    `rank`: Used to stores orders within the list of saved Courses.
-        Trello uses a floating point, but string seems more reliable.
-        See https://softwareengineering.stackexchange.com/q/195308/
+    `rank`: Used to stores orders within the list of saved Courses. Trello uses
+        a floating point, but chose int for an easier but more reliable
+        implementation. https://softwareengineering.stackexchange.com/q/195308/
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
