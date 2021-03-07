@@ -1,5 +1,6 @@
 """Auth related views."""
 
+from datetime import datetime
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -28,7 +29,15 @@ def login_error(request):
 
 class ExtraUserInfoForm(forms.Form):
     """Form to collect extra user info on sign up."""
-    grad_year = forms.IntegerField()
+    current_yr = datetime.now().year
+    max_yr = current_yr + 6
+    grad_year = forms.IntegerField(
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+                'min': '1900',
+                'max': max_yr,
+                'value': current_yr}))
 
 
 def collect_extra_info(request):
