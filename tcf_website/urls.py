@@ -35,7 +35,7 @@ urlpatterns = [
     path('save_course/<int:course_id>/<int:instructor_id>',
          views.save_course, name='save_course'),
     path('saved/reorder', views.SavedCourseReorderingView.as_view(),
-         name='insert_before'),
+         name='reorder_saved_courses'),
     path('courses', views.saved_courses, name='courses'),
     path('search', views.search, name='search'),
 

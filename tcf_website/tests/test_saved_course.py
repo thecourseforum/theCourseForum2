@@ -45,7 +45,7 @@ class SavedCourseReorderingTests(TestCase):
 
     def test_move_saved_course_one_step(self):
         """Move saved4 to the front of saved3"""
-        path = reverse('insert_before')
+        path = reverse('reorder_saved_courses')
         data = {'to_move_id': self.saved4.id, 'successor_id': self.saved3.id}
         response = self.client.post(path, data)
         self.assertEqual(response.status_code, 200)
@@ -56,7 +56,7 @@ class SavedCourseReorderingTests(TestCase):
 
     def test_move_saved_course_to_the_beginning(self):
         """Move saved4, which was created last, to the very beginning"""
-        path = reverse('insert_before')
+        path = reverse('reorder_saved_courses')
         data = {'to_move_id': self.saved4.id}  # No `successor_id`
         response = self.client.post(path, data)
         self.assertEqual(response.status_code, 200)
@@ -69,16 +69,16 @@ class SavedCourseReorderingTests(TestCase):
 
     @suppress_request_warnings
     def test_reorder_saved_courses_invalid_to_move_id(self):
-        """Call `insert_before` with invalid `to_move_id`"""
-        path = reverse('insert_before')
+        """Call `reorder_saved_courses` with invalid `to_move_id`"""
+        path = reverse('reorder_saved_courses')
         data = {'to_move_id': 'not_a_number', 'successor_id': self.saved1.id}
         response = self.client.post(path, data)
         self.assertEqual(response.status_code, 400)
 
     @suppress_request_warnings
     def test_reorder_saved_courses_invalid_successor_id(self):
-        """Call `insert_before` with invalid `successor_id`"""
-        path = reverse('insert_before')
+        """Call `reorder_saved_courses` with invalid `successor_id`"""
+        path = reverse('reorder_saved_courses')
         data = {'to_move_id': self.saved4.id, 'successor_id': 'not_a_number'}
         response = self.client.post(path, data)
         self.assertEqual(response.status_code, 400)
