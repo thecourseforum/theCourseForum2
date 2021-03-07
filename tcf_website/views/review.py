@@ -9,6 +9,8 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
+from django.http import HttpResponse
+import json
 
 from ..models import Review
 
@@ -64,15 +66,18 @@ def new_review(request):
                 instance.amount_reading + instance.amount_writing + \
                 instance.amount_group + instance.amount_homework
 
-            # Verify that user has not already submitted a review for this
-            # specific course for the same semester and instructor before
-            for review in request.user.reviews():
-                if review.__str__() == instance.__str__() and review.semester == instance.semester:
-                    messages.error(
-                        request,
-                        'Looks like you have already submitted a review for this specific course!'
-                        ' Please edit your original review if you would like to modify anything.')
-                    return redirect('reviews')
+
+            # Verify that user has not already submitted a review for the
+            # given course before, with any instructor or during any semester
+            reviews_on_same_class = request.user.review_set.filter(
+                course=instance.course,
+                instructor=instance.instructor,
+                semester=instance.semester,
+            )
+
+            if reviews_on_same_class.exists():
+                response = {"duplicate": True}
+                return HttpResponse(json.dumps(response), content_type="application/json")
 
             instance.save()
 

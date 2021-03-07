@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block content %}
+
 <div class="new-review container text-left mx-auto">
   <h1 class="h2 mt-2 mb-4">Write a review</h1>
   <div class="card">
@@ -15,7 +16,7 @@
         {% csrf_token %}
         {% include 'reviews/review_form_content.html' %}
         <div class="new-review-submit row py-4">
-          <button type="submit" class="btn btn-primary mx-auto" id="submitBtn" >Submit Review</button>
+          <button type="submit" class="btn btn-primary mx-auto" id="submitBtn">Submit Review</button>
         </div>
     </form>
   </div>
@@ -26,32 +27,43 @@
 {% block js %}
 <script type="text/javascript" src="{% static 'reviews/new_review.js' %}"></script>
 <script type="text/javascript" src="{% static 'reviews/sync_review_sliders.js' %}"></script>
+<script src="jquery-3.5.1.min.js"></script>
 <script>
   // For Bootstrap tooltip
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()
   });
 
-  // Checks if required fields for review were filled
-  // If required fields are filled, timeout and hide the submit button so that the user can't spam click it
-  $(document).ready(function () {
-    $("#submitBtn").click(function () {
-        var reviewForm = document.getElementById("reviewForm");
-        // Check if required fields are filled
-        if (reviewForm.checkValidity()) {
-            var btn = document.getElementById("submitBtn");
-            btn.style.display = 'none';
-            //redisplays button after 3 seconds
-            setTimeout(function () { removeButton(); }, 3000);
-        }
-    });
+  $('#submitBtn').on('click', function(e) {
+        var submit = true;
 
-    function removeButton() {
-        //sets button back to initial state
-        btn.style.display = 'initial';
-        document.getElementById("submitBtn").disabled = false;
-    }
+        $.ajax({
+            type: 'POST',
+            url: '/reviews/new',
+            dataType: "json",
+            data: $("#reviewForm").serialize(),
+            async: false,
+            success: function(json) {
+                if(json.duplicate) {
+                    alert("You have already submitted a review for this course!");
+                    submit = false;
+                }
+            }
+        });
+
+        if(submit) {
+            document.getElementById("submitBtn").style = 'hidden';
+            setTimeout(function () { reenableButton(); }, 3000);
+        }
+
+        return submit;
   });
+
+  function reenableButton() {
+        // Sets button back to initial state
+        document.getElementById("submitBtn").disabled = false;
+        return true;
+  }
 
 </script>
 {% endblock %}
