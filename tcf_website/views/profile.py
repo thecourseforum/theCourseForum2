@@ -160,7 +160,7 @@ class SavedCourseReorderingView(View):
                 saved.filter(id__gte=successor_id).update(rank=F('rank') + 1)
                 to_move.save()
         except IntegrityError:
-            return HttpResponse('Reordering failed...', status_code=500)
+            return HttpResponse('Reordering failed...', status=500)
         return HttpResponse('Reordering successful!')
 
 
@@ -172,8 +172,11 @@ def save_course(request, course_id: int, instructor_id: int):
         return HttpResponseBadRequest(
             'The course has never been offered by the instructor.')
     try:
-        saved = SavedCourse.objects.create(user=request.user, course_id=course_id,
-                                           instructor_id=instructor_id)
+        saved = SavedCourse.objects.create(
+            user=request.user,
+            course_id=course_id,
+            instructor_id=instructor_id,
+        )
     except IntegrityError:
         return HttpResponseBadRequest(
             'The course-instructor pair is already saved by the user.')
@@ -185,4 +188,4 @@ def unsave_course(request, course_id: int, instructor_id: int):
     """Unsaves a Course-Instructor pair for the given user."""
     SavedCourse.objects.filter(user=request.user, course_id=course_id,
                                instructor_id=instructor_id).delete()
-    return HttpResponse(status_code=204)
+    return HttpResponse(status=204)
