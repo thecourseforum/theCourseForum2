@@ -12,22 +12,26 @@ let activeSort = "title";
 /*
     Each method sort_by_... is the same format as outline below
     If not currently active, make it active and all other sort buttons inactive
+    Remove the arrows from all other buttons as well
     Use selectOrderOfSort to sort and toggle correct ascending/descneding button
 */
 const sortByNumber = () => {
     activeSort = "title";
+
     // Updating looks and sorting order
     if (!$("#number-sort-btn").hasClass("active")) {
         $("#rating-sort-btn").removeClass("active");
         $("#diff-sort-btn").removeClass("active");
         $("#gpa-sort-btn").removeClass("active");
+        $("#rating-sort-btn").html("Rating");
+        $("#diff-sort-btn").html("Difficulty");
+        $("#gpa-sort-btn").html("GPA");
         $("#number-sort-btn").addClass("active");
         // Choose default order
-        selectOrderOfSort(sortNumberAsc);
     } else { // Already selected so simply reverse the order of sorting (ascending vs descending)
         sortNumberAsc *= -1;
-        selectOrderOfSort(sortNumberAsc);
     }
+    selectOrderOfSort(sortNumberAsc, "#number-sort-btn", "Course ID");
 };
 
 const sortByRating = () => {
@@ -36,12 +40,14 @@ const sortByRating = () => {
         $("#number-sort-btn").removeClass("active");
         $("#diff-sort-btn").removeClass("active");
         $("#gpa-sort-btn").removeClass("active");
+        $("#number-sort-btn").html("Course ID");
+        $("#diff-sort-btn").html("Difficulty");
+        $("#gpa-sort-btn").html("GPA");
         $("#rating-sort-btn").addClass("active");
-        selectOrderOfSort(sortRatingAsc);
     } else {
         sortRatingAsc *= -1;
-        selectOrderOfSort(sortRatingAsc);
     }
+    selectOrderOfSort(sortRatingAsc, "#rating-sort-btn", "Rating");
 };
 
 const sortByDifficulty = () => {
@@ -49,13 +55,16 @@ const sortByDifficulty = () => {
     if (!$("#diff-sort-btn").hasClass("active")) {
         $("#number-sort-btn").removeClass("active");
         $("#rating-sort-btn").removeClass("active");
+        $("#gpa-sort-btn").html("GPA");
+        $("#number-sort-btn").html("Course ID");
+        $("#rating-sort-btn").html("Rating");
         $("#gpa-sort-btn").removeClass("active");
+
         $("#diff-sort-btn").addClass("active");
-        selectOrderOfSort(sortDifficultyAsc);
     } else {
         sortDifficultyAsc *= -1;
-        selectOrderOfSort(sortDifficultyAsc);
     }
+    selectOrderOfSort(sortDifficultyAsc, "#diff-sort-btn", "Difficulty");
 };
 
 const sortByGpa = () => {
@@ -64,41 +73,32 @@ const sortByGpa = () => {
         $("#number-sort-btn").removeClass("active");
         $("#rating-sort-btn").removeClass("active");
         $("#diff-sort-btn").removeClass("active");
+        $("#number-sort-btn").html("Course ID");
+        $("#rating-sort-btn").html("Rating");
+        $("#diff-sort-btn").html("Difficulty");
         $("#gpa-sort-btn").addClass("active");
-        selectOrderOfSort(sortGpaAsc);
     } else {
         sortGpaAsc *= -1;
-        selectOrderOfSort(sortGpaAsc);
     }
-};
-
-// Simply here for the ascending order button to bind to
-const ascendingOrder = () => {
-    selectOrderOfSort(1);
-};
-
-// Simply here for the descending order button to bind to
-const descendingOrder = () => {
-    selectOrderOfSort(-1);
+    selectOrderOfSort(sortGpaAsc, "#gpa-sort-btn", "GPA");
 };
 
 /* Helper function used by all sort functions to:
    -Compute the relevant sort based on what sort button is active
-   -Select the relevant ascending/descending button
+   -Select the relevant ascending/descending arrow and add it as text
 */
-const selectOrderOfSort = (asc) => {
+const selectOrderOfSort = (asc, id, sortName) => {
     /* sortClasses takes in a comparing function (defined below) and reorders the classes appropriately
-       comparator needed for both ascending and decending as any classes with null values should be at the end of the list either order
+       comparator needed for both ascending and descending as any classes with null values should be at the end of the list either order
     */
+    var arrow = "";
     sortClasses(cmpByProp(activeSort, asc));
-
-    if (asc === -1 && !$("#descending-order-btn").hasClass("active")) {
-        $("#ascending-order-btn").removeClass("active");
-        $("#descending-order-btn").addClass("active");
-    } else if (asc === 1 && !$("#ascending-order-btn").hasClass("active")) {
-        $("#descending-order-btn").removeClass("active");
-        $("#ascending-order-btn").addClass("active");
+    if (asc === 1) {
+        arrow = " ⬆";
+    } else {
+        arrow = " ⬇";
     }
+    $(id).html(sortName + arrow);
 };
 
 const sortClasses = (cmp) => {
@@ -109,4 +109,4 @@ const sortClasses = (cmp) => {
     });
 };
 
-export { sortByNumber, sortByRating, sortByDifficulty, sortByGpa, ascendingOrder, descendingOrder };
+export { sortByNumber, sortByRating, sortByDifficulty, sortByGpa };
