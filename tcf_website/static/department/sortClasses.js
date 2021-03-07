@@ -94,9 +94,9 @@ const selectOrderOfSort = (asc, id, sortName) => {
     var arrow = "";
     sortClasses(cmpByProp(activeSort, asc));
     if (asc === 1) {
-        arrow = " ⬆";
+        arrow = " &#11014;"; // Up arrow (dummy Unicode value replace with the real one)
     } else {
-        arrow = " ⬇";
+        arrow = " &#11015;"; // Down arrow (dummy Unicode value replace with the real one)
     }
     $(id).html(sortName + arrow);
 };
