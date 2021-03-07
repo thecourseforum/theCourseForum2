@@ -15,10 +15,16 @@ class CourseTestCase(TestCase):
     def setUp(self):
         setup(self)
 
+    def test_review_count(self):
+        """Test review count method"""
+
+        expected_reviews = 2
+        self.assertEqual(self.course.review_count(), expected_reviews)
+
     def test_code(self):
         """Course code string."""
         code = self.course.code()
-        self.assertTrue(code == 'CS 420')
+        self.assertTrue(code == 'CS 1420')
 
     def test_is_recent(self):
         """Test for is_recent()."""
@@ -120,7 +126,7 @@ class CourseTestCase(TestCase):
     def test_student_eval_link(self):
         """Test if a student eval link matches up with a real link."""
         eval_link = "https://evals.itc.virginia.edu/" + \
-            "course-selectionguide/pages/SGMain.jsp?cmp=CS,420"
+            "course-selectionguide/pages/SGMain.jsp?cmp=CS,1420"
         # need to break into 2 lines because otherwise pylint gets mad
         # this link doesn't actually work because CS 420 is not a real class
         self.assertTrue(eval_link == self.course.eval_link())

@@ -1,7 +1,10 @@
+# pylint: disable=no-member
+
 """Tests for Semester model."""
 
 from django.test import TestCase
 from ..models import Semester
+from .test_utils import setup
 
 
 class IsAfterTestCase(TestCase):
@@ -34,3 +37,22 @@ class IsAfterTestCase(TestCase):
         second = Semester(season='JANUARY', year=2020, number=1201)
 
         self.assertFalse(first.is_after(second))
+
+
+class SemesterTestCase(TestCase):
+    """Additional Tests for Semester Model"""
+
+    def setUp(self):
+        setup(self)
+
+    def test_repr(self):
+        """Test for repr method"""
+
+        repr_expected = "2020 Fall (1208)"
+        self.assertEqual(repr(self.semester), repr_expected)
+
+    def test_repr_missing_info(self):
+        """Test for repr method when information is missing"""
+
+        repr_expected = "2019  (1198)"
+        self.assertEqual(repr(self.incomplete_semester), repr_expected)
