@@ -48,12 +48,9 @@
                     </div>
                   </div>
 
-                  <div class="ml-auto pl-5 text-center">
-                      {% if is_saved %}
-                      <button class="btn bg-tcf-orange text-white d-flex">Unsave Course</button>
-                      {% else %}
-                      <button class="btn bg-tcf-orange text-white d-flex">Save Course</button>
-                      {% endif  %}
+                  <div class="ml-auto pl-5 text-center" id="saveUnsave">
+                      <button class="btn bg-tcf-indigo text-white d-flex" id="unsaveCourseBtn" {% if not is_saved %} style="display: none!important;" {% endif %}>Unsave Course</button>
+                      <button class="btn bg-tcf-orange text-white d-flex" id="saveCourseBtn" {% if is_saved %} style="display: none!important;" {% endif %}>Save Course</button>
                   </div>
 
                   <!-- Semester last taught -->
@@ -263,4 +260,11 @@
 
     <!-- For course-instructor reviews -->
     <script type="module" src="{% static 'reviews/review.js' %}"></script>
+
+    <!-- For save course -->
+    <script type="text/javascript">
+        var course_id = "{{ course.id }}";
+        var instructor_id = "{{ instructor.id }}";
+    </script>
+    <script type="module" src="{% static 'course/javascript/save_course.js' %}"></script>
 {% endblock %}
