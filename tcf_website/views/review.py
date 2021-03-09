@@ -72,6 +72,7 @@ def new_review(request):
         return render(request, 'reviews/new_review.html', {'form': form})
     return render(request, 'reviews/new_review.html')
 
+
 @login_required()
 def check_duplicate(request):
     """Check for duplicate reviews when a user submits a review
@@ -87,7 +88,7 @@ def check_duplicate(request):
         semester=instance.semester
     )
 
-    """Review already exists so it's a duplicate; inform user"""
+    # Review already exists so it's a duplicate; inform user
     if reviews_on_same_class.exists():
         response = {"duplicate": True}
         return JsonResponse(response)
@@ -96,6 +97,8 @@ def check_duplicate(request):
     return JsonResponse(response)
 
 # Note: Class-based views can't use the @login_required decorator
+
+
 class DeleteReview(LoginRequiredMixin, generic.DeleteView):
     """Review deletion view."""
     model = Review
