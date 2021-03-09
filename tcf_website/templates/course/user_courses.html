@@ -13,8 +13,7 @@
 <div class="container mx-auto">
     <h1 class="h2 mt-2">Saved Courses </h1>
     {% if courses %}
-    {% for dept, dept_data in courses.items %}
-        {% for saved in dept_data %}
+    {% for saved in courses %}
         <div class="card mt-3">
             <a href="{% url 'course_instructor' course_id=saved.course.id instructor_id=saved.instructor.id %}">
                 <div class="card-header course-header py-4">
@@ -62,7 +61,6 @@
                 </ul>
             </div>
         </div>
-        {% endfor %}
     {% endfor %}
     {% else %}
     <div class="card col p-5 text-center">

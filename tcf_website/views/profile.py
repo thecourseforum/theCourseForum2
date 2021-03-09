@@ -81,7 +81,7 @@ def reviews(request):
 def saved_courses(request):
     """User courses view."""
     # get user courses
-    saved_course_instances = SavedCourse.objects.raw('''
+    courses = SavedCourse.objects.raw('''
         SELECT sc.id
             , sc.course_id
             , sc.instructor_id
@@ -115,12 +115,6 @@ def saved_courses(request):
         ORDER BY sc.rank DESC
     ;''', [request.user.id])
 
-    courses = {}
-    for saved in saved_course_instances:
-        if saved.course.subdepartment in courses:
-            courses[saved.course.subdepartment].append(saved)
-        else:
-            courses[saved.course.subdepartment] = [saved]
     return render(request, 'course/user_courses.html', {'courses': courses})
 
 
