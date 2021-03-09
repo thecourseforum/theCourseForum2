@@ -237,7 +237,7 @@ def instructor_view(request, instructor_id):
         .filter(section__instructors=instructor, number__gte=1000)\
         .prefetch_related('review_set')\
         .annotate(
-            subdept=F('subdepartment__name'),
+            subdepartment__name=F('subdepartment__name'),
             name=Concat(
                 F('subdepartment__mnemonic'),
                 Value(' '),
@@ -264,8 +264,8 @@ def instructor_view(request, instructor_id):
                 F('semester_last_taught__year'),
                 output_field=CharField(),
             ),
-    ).values('subdept', *course_fields)\
-        .order_by('subdept', 'name')
+    ).values('subdepartment__name', *course_fields)\
+        .order_by('subdepartment__name', 'name')
 
     grouped_courses: Dict[str, List[Dict[str, Any]]] = {}
     for course in courses:  # type: Dict[str, Any]
@@ -273,7 +273,7 @@ def instructor_view(request, instructor_id):
         course['avg_difficulty'] = safe_round(course['avg_difficulty'])
         course['avg_gpa'] = safe_round(course['avg_gpa'])
         course['last_taught'] = course['last_taught'].title()
-        grouped_courses.setdefault(course['subdept'], []).append(course)
+        grouped_courses.setdefault(course['subdepartment__name'], []).append(course)
 
     context: Dict[str, Any] = {
         'instructor': instructor,
