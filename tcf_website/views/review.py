@@ -9,8 +9,6 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
-from django.http import HttpResponse
-import json
 
 from ..models import Review
 
@@ -66,19 +64,6 @@ def new_review(request):
                 instance.amount_reading + instance.amount_writing + \
                 instance.amount_group + instance.amount_homework
 
-
-            # Verify that user has not already submitted a review for the
-            # given course before, with any instructor or during any semester
-            reviews_on_same_class = request.user.review_set.filter(
-                course=instance.course,
-                instructor=instance.instructor,
-                semester=instance.semester,
-            )
-
-            if reviews_on_same_class.exists():
-                response = {"duplicate": True}
-                return HttpResponse(json.dumps(response), content_type="application/json")
-
             instance.save()
 
             messages.success(request,
@@ -87,6 +72,28 @@ def new_review(request):
         return render(request, 'reviews/new_review.html', {'form': form})
     return render(request, 'reviews/new_review.html')
 
+@login_required()
+def check_duplicate(request):
+    """Check for duplicate reviews when a user submits a review
+    based on if it's the same course with the same instructor/semester.
+    Used for an ajax request in new_review.html"""
+
+    form = ReviewForm(request.POST)
+    instance = form.save(commit=False)
+
+    reviews_on_same_class = request.user.review_set.filter(
+        course=instance.course,
+        instructor=instance.instructor,
+        semester=instance.semester
+    )
+
+    """Review already exists so it's a duplicate; inform user"""
+    if reviews_on_same_class.exists():
+        response = {"duplicate": True}
+        return JsonResponse(response)
+
+    response = {"duplicate": False}
+    return JsonResponse(response)
 
 # Note: Class-based views can't use the @login_required decorator
 class DeleteReview(LoginRequiredMixin, generic.DeleteView):
