@@ -14,7 +14,6 @@
     <h1 class="h2 mt-2">Saved Courses </h1>
     {% if courses %}
     {% for dept, dept_data in courses.items %}
-        <h2 class="mt-5 h3">{{ dept }}</h2>
         {% for saved in dept_data %}
         <div class="card mt-3">
             <a href="{% url 'course_instructor' course_id=saved.course.id instructor_id=saved.instructor.id %}">
