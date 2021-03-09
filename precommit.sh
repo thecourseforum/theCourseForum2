@@ -1,3 +1,4 @@
+#!/bin/sh
 # Auto format.
 docker exec tcf_django autopep8 --in-place --jobs=0 --aggressive --aggressive -r tcf_website tcf_core
 # Lint.
