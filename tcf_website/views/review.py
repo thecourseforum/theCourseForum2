@@ -77,28 +77,43 @@ def new_review(request):
 def check_duplicate(request):
     """Check for duplicate reviews when a user submits a review
     based on if it's the same course with the same instructor/semester.
-    Used for an ajax request in new_review.html"""
+    Used for an Ajax request in new_review.html"""
 
     form = ReviewForm(request.POST)
-    instance = form.save(commit=False)
+    if form.is_valid():
+        instance = form.save(commit=False)
 
-    reviews_on_same_class = request.user.review_set.filter(
-        course=instance.course,
-        instructor=instance.instructor,
-        semester=instance.semester
-    )
+        # First check if user has reviewed given course during same
+        # semester before
+        reviews_on_same_class = request.user.review_set.filter(
+            course=instance.course,
+            semester=instance.semester
+        )
 
-    # Review already exists so it's a duplicate; inform user
-    if reviews_on_same_class.exists():
-        response = {"duplicate": True}
+        # Review already exists so it's a duplicate; inform user
+        if reviews_on_same_class.exists():
+            response = {"duplicate": True}
+            return JsonResponse(response)
+
+        # Then check if user has reviewed given course with same
+        # instructor before
+        reviews_on_same_class = request.user.review_set.filter(
+            course=instance.course,
+            instructor=instance.instructor
+        )
+        # Review already exists so it's a duplicate; inform user
+        if reviews_on_same_class.exists():
+            response = {"duplicate": True}
+            return JsonResponse(response)
+
+        # User has not reviewed course during same semester OR with same instructor before;
+        # proceed with standard form submission
+        response = {"duplicate": False}
         return JsonResponse(response)
+    return redirect('new_review')
 
-    response = {"duplicate": False}
-    return JsonResponse(response)
 
 # Note: Class-based views can't use the @login_required decorator
-
-
 class DeleteReview(LoginRequiredMixin, generic.DeleteView):
     """Review deletion view."""
     model = Review
