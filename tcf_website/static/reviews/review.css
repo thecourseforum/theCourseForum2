@@ -1,7 +1,3 @@
-.review-content .review-text-body {
-  white-space: pre-line;
-}
-
 .review-content .review-text-body.collapse:not(.show) {
   display: block;
   height: 12rem;
