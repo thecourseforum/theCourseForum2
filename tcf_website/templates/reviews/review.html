@@ -19,26 +19,28 @@
             </div>
 
             <!-- Review Main Content -->
-            <div class="review-body col-xs-12 col-md-10 col-lg-11">
+            <div class="review-body pt-4 col-xs-12 col-md-10 col-lg-11">
 
                 <!-- Review header content (subject, actions, text) -->
                 {% if profile %}
                 <!-- Subject and Edit/Delete actions show only on profile page -->
-                <div class="review-header">
+                <div class="review-header mb-2">
                     <div class="d-flex">
-                        <div class="review-subject">
+                        <div class="review-subject mr-auto">
                           <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
-                              <h5><strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}</h5>
+                              <h5 class="text-tcf-orange">
+                                <strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}
+                              </h5>
                           </a>
                         </div>
-                        <div class="review-actions ml-auto">
-                          <a class="review-edit btn btn-sm btn-primary" href="{% url 'edit_review' review_id=review.id %}">
-                              <i class="fas fa-pencil-alt"></i> Edit
+                        <div class="review-actions d-inline-flex">
+                          <a class="review-edit h5 px-2 text-tcf-blue" href="{% url 'edit_review' review_id=review.id %}">
+                              <i class="fas fa-pencil-alt"></i>
                           </a>
-                          <button class="review-delete btn btn-sm btn-outline-danger" type="button"
+                          <a class="review-delete h5 pl-2 text-danger" type="button"
                                   data-toggle="modal" data-target="#deleteReviewModal{{review.id}}">
-                            <i class="fa fa-trash-o"></i> Delete
-                          </button>
+                            <i class="fa fa-trash-o"></i>
+                          </a>
                           {% include "reviews/delete_confirm_modal.html" with review_id=review.id %}
                         </div>
                     </div>
