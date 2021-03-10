@@ -4,3 +4,10 @@
 .old.shown {
     display: block;
 }
+
+.new {
+    display: block;
+}
+.new.hide {
+    display: none;
+}
