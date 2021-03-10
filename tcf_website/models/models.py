@@ -284,22 +284,6 @@ class Instructor(models.Model):
         return CourseInstructorGrade.objects.filter(instructor=self).aggregate(
             models.Avg('average'))['average__avg']
 
-    def get_courses(self):
-        """Gets all Courses taught by a given Instructor"""
-        # More specifically, all Courses where this Instructor has taught a Section
-        # Might be good to store this data as a many-to-many field in
-        # Instructor instead of computing?
-        course_ids = list(
-            Section.objects.filter(
-                instructors=self).distinct().values_list(
-                'course_id', flat=True))
-
-        # <1000 course IDs are from super old classes...
-        # should we bother keeping the data at that point?
-        return Course.objects.filter(
-            pk__in=course_ids).filter(
-            number__gte=1000).order_by('number')
-
 
 class Semester(models.Model):
     """Semester model.
@@ -473,7 +457,7 @@ class CourseGrade(models.Model):
     d = models.IntegerField(default=0)
     d_minus = models.IntegerField(default=0)
     f = models.IntegerField(default=0)
-    ot = models.IntegerField(default=0)
+    ot = models.IntegerField(default=0)  # other/pass
     drop = models.IntegerField(default=0)
     withdraw = models.IntegerField(default=0)
     total_enrolled = models.IntegerField(default=0)
@@ -512,7 +496,7 @@ class CourseInstructorGrade(models.Model):
     d = models.IntegerField(default=0)
     d_minus = models.IntegerField(default=0)
     f = models.IntegerField(default=0)
-    ot = models.IntegerField(default=0)
+    ot = models.IntegerField(default=0)  # other/pass
     drop = models.IntegerField(default=0)
     withdraw = models.IntegerField(default=0)
     total_enrolled = models.IntegerField(default=0)
@@ -698,11 +682,11 @@ class Review(models.Model):
         )
 
     @staticmethod
-    def display_reviews(course, instructor, user):
+    def display_reviews(course_id, instructor_id, user):
         """Prepare review list for course-instructor page."""
         reviews = Review.objects.filter(
-            instructor=instructor,
-            course=course,
+            instructor=instructor_id,
+            course=course_id,
         ).exclude(text="").annotate(
             sum_votes=models.functions.Coalesce(
                 models.Sum('vote__value'),
