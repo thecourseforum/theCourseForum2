@@ -35,7 +35,7 @@
 <hr>
 
 <!-- Review written content -->
-<div class="new-review-content form-row mb-3">
+<div id="review-form-div" class="new-review-content form-row mb-3">
   <h2 class="h4 review-form-header form-group col-12 my-4">
     Tell us more about the course and instructor</h2>
   <div class="form-group col mb-3">
@@ -44,11 +44,11 @@
   </div>
     <!-- Message for Progress Bar-->
   <div class="form-group col-12">
-    <p class="medium" id="progressbarmessage"></p>
+    <p class="medium" id="progressbar-message"></p>
   </div>
         <!-- Progress Bar -->
-  <div class="progress" style="height: 25px;">
-    <div id="reviewprogressbar" class="progress-bar bg-danger" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+  <div class="progress">
+    <div id="review-progressbar" class="progress-bar bg-danger" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
   </div>
 </div>
 <hr>
