@@ -18,6 +18,8 @@ def custom_recording_logic(request):
 
 
 # Performance profiling for non-API views during development
-INSTALLED_APPS.append('silk')
-MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
-SILKY_INTERCEPT_FUNC = custom_recording_logic
+if os.environ.get('DJANGO_SETTINGS_MODULE') not in [
+        'tcf_core.settings.dev', 'tcf_core.settings.prod']:
+    INSTALLED_APPS.append('silk')
+    MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
+    SILKY_INTERCEPT_FUNC = custom_recording_logic

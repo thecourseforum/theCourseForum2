@@ -16,7 +16,7 @@ Started 15 years ago, the project has grown monumentally. Over 10k users in the 
 theCourseForum team is a group of students that contribute their time and effort to continue to improve the site for other students to use.
 
 ### Stack
-The code stack is current standard technologies. They were chosen specifically because they are standard, modern and ubiquitous technologies.
+The code stack is current standard technologies. They were chosen because they are robust and align with the stack that UVA students learn in courses.
 
 - Python
 - Django
@@ -25,4 +25,4 @@ The code stack is current standard technologies. They were chosen specifically b
 - Javascript (jQuery)
 
 ### Want to get involved?
-Don't hesitate to contact us whether or not that you are at the University of Virginia! We love to talk about our app and we love to discuss everything that we do! Join our [discord server](https://discord.com/invite/tAjzH7eyvW) or shoot us an email at info@thecourseforum.com.
+Don't hesitate to contact us whether or not that you are at the University of Virginia! We love to talk about our app and we love to discuss everything that we do! Join our [Discord server](https://discord.com/invite/tAjzH7eyvW) or shoot us an email at info@thecourseforum.com.
