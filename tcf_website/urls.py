@@ -26,6 +26,7 @@ urlpatterns = [
     path('reviews', views.reviews, name='reviews'),
     path('reviews/<int:review_id>/upvote', views.upvote),
     path('reviews/<int:review_id>/downvote', views.downvote),
+    path('reviews/check_duplicate', views.review.check_duplicate),
     path('profile', views.profile, name='profile'),
     path('search', views.search, name='search'),
 
