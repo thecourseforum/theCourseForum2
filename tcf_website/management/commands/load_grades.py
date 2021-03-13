@@ -52,6 +52,9 @@ class Command(BaseCommand):
         # Default level of verbosity
         self.verbosity = 0
 
+        # Whether or not to suppress tqdm
+        self.suppress_tqdm = False
+
     def add_arguments(self, parser):
         # The only required argument at the moment
         # A previous author wrote that reloading all semesters can be dangerous
@@ -65,8 +68,16 @@ class Command(BaseCommand):
             type=str
         )
 
+        parser.add_argument(
+            '--suppress-tqdm',
+            action='store_true',
+            help='Suppress the tqdm loading bars'
+        )
+
     def handle(self, *args, **options):
         self.verbosity = options['verbosity']
+        self.suppress_tqdm = options['suppress_tqdm']
+
         if self.verbosity > 0:
             print('Step 1: Fetch Course and Instructor data for later use')
         semester = options['semester']
@@ -112,7 +123,7 @@ class Command(BaseCommand):
         if self.verbosity > 0:
             print(f"Found {df.size} sections in {file}")
 
-        for index, row in tqdm(df.iterrows(), total=df.shape[0]):
+        for index, row in tqdm(df.iterrows(), total=df.shape[0], disable=self.suppress_tqdm):
             if self.verbosity == 3:
                 print(str(row).encode('ascii', 'ignore').decode('ascii'))
             self.load_row_into_dict(row)
@@ -204,7 +215,7 @@ class Command(BaseCommand):
 
         # load course grades
         unsaved_cg_instances = []
-        for row in tqdm(course_grades):
+        for row in tqdm(course_grades, disable=self.suppress_tqdm):
             total_enrolled = sum(course_grades[row])
             total_weight = sum(a * b for a, b in
                                zip(course_grades[row], grade_weights))
@@ -220,7 +231,7 @@ class Command(BaseCommand):
             print('Step 3: Bulk-create CourseInstructorGrade instances')
         # load course instructor grades
         unsaved_cig_instances = []
-        for row in tqdm(course_instructor_grades):
+        for row in tqdm(course_instructor_grades, disable=self.suppress_tqdm):
             total_enrolled = 0
             for grade_count in course_instructor_grades[row]:
                 total_enrolled += grade_count
