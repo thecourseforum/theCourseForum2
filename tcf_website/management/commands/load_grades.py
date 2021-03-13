@@ -15,7 +15,7 @@ class Command(BaseCommand):
     in the tcf_website/management/commands/grade_data/csv/ directory.
     This should take ~20 min to run to load all the grades
     """
-    help = 'Imports grade data from VAGrades CSV files into PostgresSQL database'
+    help = 'Imports FOIAed grade data files into PostgreSQL database'
 
     # Not a good practice but declared as global for readability & convenience?
     global course_grades
@@ -73,6 +73,8 @@ class Command(BaseCommand):
         if semester == 'ALL_DANGEROUS':
             # ignores temporary files ('~' on Windows, '.' otherwise)
             for file in sorted(os.listdir(self.data_dir)):
+                if self.verbosity == 3:
+                    print('Loading data from', file)
                 if file[0] not in ('.', '~'):
                     self.load_semester_file(file)
         else:
@@ -102,9 +104,9 @@ class Command(BaseCommand):
         return df[df['Primary Instructor Name'] != '...']
 
     def load_semester_file(self, file):
-        year, semester = file.split('.')[0].split('_')
-        year = int(year)
-        season = semester.upper()
+        # year, semester = file.split('.')[0].split('_')
+        # year = int(year)
+        # season = semester.upper()
 
         df = self.clean(pd.read_csv(os.path.join(self.data_dir, file)))
         if self.verbosity > 0:
@@ -176,6 +178,8 @@ class Command(BaseCommand):
 
         # load this semester into course dictionary
         if course_identifier in course_grades:
+            if self.verbosity == 3:
+                print(course_identifier, 'is a duplicate')
             for i in range(len(course_grades[course_identifier])):
                 course_grades[course_identifier][i] += this_semesters_grades[i]
         else:
