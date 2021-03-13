@@ -196,9 +196,7 @@ class Command(BaseCommand):
         grade_weights = [4.0, 4.0, 3.7,
                          3.3, 3.0, 2.7,
                          2.3, 2.0, 1.7,
-                         1.3, 1.0, 0.7,
-                         0,
-                         0, 0, 0]
+                         0]
 
         # load course grades
         unsaved_cg_instances = []
@@ -207,39 +205,7 @@ class Command(BaseCommand):
             total_weight = sum(a * b for a, b in
                                zip(course_grades[row], grade_weights))
 
-            # calculate gpa excluding other/drop/withdraw in total_enrolled
-            total_enrolled_filtered = total_enrolled - \
-                sum(course_grades[row][i] for i in (13, 14, 15))
-            # check divide by 0
-            if total_enrolled_filtered == 0:
-                total_enrolled_gpa = 0
-            else:
-                total_enrolled_gpa = total_weight / total_enrolled_filtered
-
-            course_grade_params = {
-                'course_id': self.courses.get(row[:2]),
-                'subdepartment': row[0],
-                'number': row[1],
-                'title': row[2],
-                'average': total_enrolled_gpa,
-                'a_plus': course_grades[row][0],
-                'a': course_grades[row][1],
-                'a_minus': course_grades[row][2],
-                'b_plus': course_grades[row][3],
-                'b': course_grades[row][4],
-                'b_minus': course_grades[row][5],
-                'c_plus': course_grades[row][6],
-                'c': course_grades[row][7],
-                'c_minus': course_grades[row][8],
-                'd_plus': course_grades[row][9],
-                'd': course_grades[row][10],
-                'd_minus': course_grades[row][11],
-                'f': course_grades[row][12],
-                'ot': course_grades[row][13],  # other/pass
-                'drop': course_grades[row][14],
-                'withdraw': course_grades[row][15],
-                'total_enrolled': total_enrolled
-            }
+            course_grade_params = self.set_grade_params(row, total_enrolled, total_weight, has_instructor=False)
             unsaved_cg_instance = CourseGrade(**course_grade_params)
             unsaved_cg_instances.append(unsaved_cg_instance)
         CourseGrade.objects.bulk_create(unsaved_cg_instances)
@@ -258,48 +224,45 @@ class Command(BaseCommand):
             total_weight = 0
             for i in range(len(course_instructor_grades[row])):
                 total_weight += (
-                    course_instructor_grades[row][i] * grade_weights[i])
+                        course_instructor_grades[row][i] * grade_weights[i])
 
-            # calculate gpa without including other/drop/withdraw in
-            # total_enrolled
-            total_enrolled_filtered = total_enrolled - \
-                sum(course_instructor_grades[row][i] for i in (13, 14, 15))
-            if total_enrolled_filtered == 0:
-                total_enrolled_gpa = 0
-            else:
-                total_enrolled_gpa = total_weight / total_enrolled_filtered
-
-            course_instructor_grade_params = {
-                'subdepartment': row[0],
-                'number': row[1],
-                'first_name': row[2],
-                'middle_name': '',  # for backward compatibility
-                'last_name': row[3],
-                'email': row[4],
-                'course_id': self.courses.get(row[:2]),
-                'instructor_id': self.instructors.get(row[2:]),
-                'average': total_enrolled_gpa,
-                'a_plus': course_instructor_grades[row][0],
-                'a': course_instructor_grades[row][1],
-                'a_minus': course_instructor_grades[row][2],
-                'b_plus': course_instructor_grades[row][3],
-                'b': course_instructor_grades[row][4],
-                'b_minus': course_instructor_grades[row][5],
-                'c_plus': course_instructor_grades[row][6],
-                'c': course_instructor_grades[row][7],
-                'c_minus': course_instructor_grades[row][8],
-                'd_plus': course_instructor_grades[row][9],
-                'd': course_instructor_grades[row][10],
-                'd_minus': course_instructor_grades[row][11],
-                'f': course_instructor_grades[row][12],
-                'ot': course_instructor_grades[row][13],  # other/pass
-                'drop': course_instructor_grades[row][14],
-                'withdraw': course_instructor_grades[row][15],
-                'total_enrolled': total_enrolled
-            }
+            course_instructor_grade_params = self.set_grade_params(row, total_enrolled, total_weight, has_instructor=True)
             unsaved_cig_instance = CourseInstructorGrade(
                 **course_instructor_grade_params)
             unsaved_cig_instances.append(unsaved_cig_instance)
         CourseInstructorGrade.objects.bulk_create(unsaved_cig_instances)
         if self.verbosity > 0:
             print('Done creating CourseInstructorGrade instances')
+
+    def set_grade_params(self, row, total_enrolled, total_weight, has_instructor):
+        if has_instructor:
+            data = course_instructor_grades[row]
+        else:
+            data = course_grades[row]
+
+        # calculate gpa excluding DFW column
+        total_enrolled_filtered = total_enrolled - data[9]
+        # check divide by 0
+        if total_enrolled_filtered == 0:
+            total_enrolled_gpa = 0
+        else:
+            total_enrolled_gpa = total_weight / total_enrolled_filtered
+        course_grade_params = {
+            'course_id': self.courses.get(row[:2]),
+            'average': total_enrolled_gpa,
+            'a_plus': data[0],
+            'a': data[1],
+            'a_minus': data[2],
+            'b_plus': data[3],
+            'b': data[4],
+            'b_minus': data[5],
+            'c_plus': data[6],
+            'c': data[7],
+            'c_minus': data[8],
+            'not_pass': data[9],
+            'total_enrolled': total_enrolled
+        }
+
+        if has_instructor:
+            course_grade_params['instructor_id'] = self.instructors.get(row[2:])
+        return course_grade_params
