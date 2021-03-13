@@ -84,19 +84,22 @@ class Command(BaseCommand):
         CourseGrade.objects.all().delete()
         CourseInstructorGrade.objects.all().delete()
 
+        # Note: some 'Course GPA' and '# of Students' entries are empty due to FERPA
+        # (see wiki for more details) but we don't use those columns anyways
+
         # Filter out data with no grades
         df = df.dropna(
             how="all",
             subset=['A+', 'A', 'A-',
                     'B+', 'B', 'B-',
                     'C+', 'C', 'C-',
-                    'D+', 'D', 'D-',
-                    'F']
-        ).fillna(  # Impute NaNs with empty string if the field is a CharField
-            {'Instructor Email': ''},
+                    'DFW']
         )
-        # Filter out data with missing instructor
-        return df[df['Instructor Last Name'] != 'MISSING INSTRUCTOR']
+        # Not quite sure how much data this actually applies to,
+        # as UVA data is much more reliable than the old VAGrades data
+
+        # Filter out data with missing instructor (represented by ...)
+        return df[df['Primary Instructor Name'] != '...']
 
     def load_semester_file(self, file):
         year, semester = file.split('.')[0].split('_')
@@ -115,17 +118,33 @@ class Command(BaseCommand):
             print(f'Done loading {file}')
 
     def load_row_into_dict(self, row):
-        # parsing fields of the CSV file
-        first_name = row['Instructor First Name']
-        # row['Insructor Middle Name'] is not used
-        last_name = row['Instructor Last Name']
-        email = row['Instructor Email']
+        """Loads data from a given row into the global dicts
+        course_grades and course_instructor_grades"""
+        # Columns are processed left to right, with one exception
+
+        # 'Term Desc' column is unused because we only care about aggregate across semesters
+        # Might want to display semester-by-semester metrics too? Would have to change this
+
         subdepartment = row['Subject']
-        # row['Section Number'] is not used
-        title = row['Title']
+        # `Catalog Number` is handled with all other numerical data in the try block below
+
+        title = row['Class Title']
+        full_name = row['Primary Instructor Name']
+        # Key assumption: names are in the format `LAST,FIRST MIDDLE`
         try:
-            number = int(re.sub('[^0-9]', '', str(row['Course Number'])))
-            gpa = float(row['Course GPA'])
+            last_name, first_and_middle = full_name.split(',')
+            first_name = first_and_middle.split(' ')[0]
+        except:
+            if self.verbosity > 0:
+                print('full name is', full_name)
+                # print(e)
+            raise ValueError
+
+        # 'Class Section' column is unused
+        try:
+            number = int(re.sub('[^0-9]', '', str(row['Catalog Number'])))
+            # 'Course GPA' is unused because we manually calculate average between all semesters
+            # '# of Students' is unused because we manually calculate it for all semesters
             a_plus = int(row['A+'])
             a = int(row['A'])
             a_minus = int(row['A-'])
@@ -135,14 +154,9 @@ class Command(BaseCommand):
             c_plus = int(row['C+'])
             c = int(row['C'])
             c_minus = int(row['C-'])
-            d_plus = int(row['D+'])
-            d = int(row['D'])
-            d_minus = int(row['D-'])
-            f = int(row['F'])
-            other = int(row['OT'])  # pass
-            drop = int(row['DR'])
-            withdraw = int(row['W'])
-            total_enrolled = int(row['Total'])
+            # UVA data doesn't contain D's or F's, just the DFW column
+            # Assuming it means "drop", "fail", "withdraw"
+            not_pass = int(row['DFW'])
         except (TypeError, ValueError) as e:
             if self.verbosity > 0:
                 print(row)
@@ -152,15 +166,13 @@ class Command(BaseCommand):
         # identifiers are tuple keys to dictionaries
         course_identifier = (subdepartment, number, title)
         course_instructor_identifier = (
-            subdepartment, number, first_name, last_name, email)
+            subdepartment, number, first_name, last_name)
 
         # value of dictionaries (incremented onto value if key already exists)
         this_semesters_grades = [a_plus, a, a_minus,
                                  b_plus, b, b_minus,
                                  c_plus, c, c_minus,
-                                 d_plus, d, d_minus,
-                                 f,
-                                 other, drop, withdraw]
+                                 not_pass]
 
         # load this semester into course dictionary
         if course_identifier in course_grades:
