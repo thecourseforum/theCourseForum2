@@ -88,10 +88,8 @@ jobs:
           python manage.py makemigrations
           python manage.py migrate
           coverage run manage.py test
-        continue-on-error: true
 
       - name: Get code coverage
-        if: ${{ success() }}
         id: coverage
         run: |
           echo "::set-output name=percentage::$(coverage report | grep -o '[0-9]\+%' | tail -1)"
