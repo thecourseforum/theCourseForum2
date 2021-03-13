@@ -24,6 +24,34 @@ class Command(BaseCommand):
     course_grades = {}
     course_instructor_grades = {}
 
+    def __init__(self, stdout=None, stderr=None, no_color=False, force_color=False):
+        super().__init__(stdout, stderr, no_color, force_color)
+
+        # Initialize some variables that get used everywhere
+
+        # Dict mapping instructor first/last name to their ID in our database
+        # We used to be able to include email, but the UVA dataset doesn't include it!
+        # This is pretty risky if instructors have the exact same name, so yikes
+        # TODO: figure out how to differentiate (maybe by classes taught?)
+        self.instructors = {
+            (obj['first_name'], obj['last_name']): obj['id']
+            for obj in Instructor.objects.values('id', 'first_name',
+                                                 'last_name')
+        }
+
+        # Dict mapping course mnemonic in a tuple to its ID in our database
+        self.courses = {
+            (obj['subdepartment__mnemonic'], obj['number']): obj['id']
+            for obj in Course.objects.values('id', 'number',
+                                             'subdepartment__mnemonic')
+        }
+
+        # Location of our grade data CSVs
+        self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
+
+        # Default level of verbosity
+        self.verbosity = 0
+
     def add_arguments(self, parser):
         # The only required argument at the moment
         # A previous author wrote that reloading all semesters can be dangerous
@@ -39,19 +67,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.verbosity = options['verbosity']
-        self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
         if self.verbosity > 0:
             print('Step 1: Fetch Course and Instructor data for later use')
-        self.courses = {
-            (obj['subdepartment__mnemonic'], obj['number']): obj['id']
-            for obj in Course.objects.values('id', 'number',
-                                             'subdepartment__mnemonic')
-        }
-        self.instructors = {
-            (obj['first_name'], obj['last_name'], obj['email']): obj['id']
-            for obj in Instructor.objects.values('id', 'first_name',
-                                                 'last_name', 'email')
-        }
         semester = options['semester']
         if semester == 'ALL_DANGEROUS':
             # ignores temporary files ('~' on Windows, '.' otherwise)
