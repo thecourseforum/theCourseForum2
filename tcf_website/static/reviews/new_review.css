@@ -19,3 +19,11 @@
     margin-left: 4rem;
     /* background-color: var(--dark-color) !important; */
 }
+
+.progress {
+    height: 15px;
+}
+
+#progressbar-message {
+    margin-bottom: 0px;
+}
