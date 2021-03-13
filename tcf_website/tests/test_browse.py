@@ -12,9 +12,6 @@ class CourseViewTestCase(TestCase):
     def setUp(self):
         setup(self)
 
-    def test_dummy(self):
-        self.assertTrue(False)
-
     @suppress_request_warnings
     def test_legacy_course_url_404(self):
         """Test if the legacy course view can handle wrong URLs"""
