@@ -194,7 +194,7 @@ class Command(BaseCommand):
             for i in range(len(course_grades[course_identifier])):
                 course_grades[course_identifier][i] += this_semesters_grades[i]
         else:
-            course_grades[course_identifier] = this_semesters_grades
+            course_grades[course_identifier] = this_semesters_grades.copy()
 
         # load this semester into course instructor dictionary
         if course_instructor_identifier in course_instructor_grades:
@@ -202,7 +202,7 @@ class Command(BaseCommand):
                     len(course_instructor_grades[course_instructor_identifier])):
                 course_instructor_grades[course_instructor_identifier][i] += this_semesters_grades[i]
         else:
-            course_instructor_grades[course_instructor_identifier] = this_semesters_grades
+            course_instructor_grades[course_instructor_identifier] = this_semesters_grades.copy()
 
     def load_dict_into_models(self):
         if self.verbosity > 0:
