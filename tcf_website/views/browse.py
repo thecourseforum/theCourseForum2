@@ -237,7 +237,7 @@ def instructor_view(request, instructor_id):
         .filter(section__instructors=instructor, number__gte=1000)\
         .prefetch_related('review_set')\
         .annotate(
-            subdepartment_name=F('subdepartment_name'),
+            subdepartment_name=F('subdepartment__name'),
             name=Concat(
                 F('subdepartment__mnemonic'),
                 Value(' '),

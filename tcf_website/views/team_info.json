@@ -87,13 +87,6 @@
       "github": "arjunk01"
     },
     {
-      "name": "Alexa Gomez",
-      "role": "Developer",
-      "class": "2021",
-      "img_filename": "ENG_Alexa_Gomez.jpg",
-      "github": "alexagomez"
-    },
-    {
       "name": "Jihoon Park",
       "role": "Developer",
       "class": "2021",
@@ -207,12 +200,6 @@
       "img_filename": "DM_Anne_Yong.jpg"
     },
     {
-      "name": "Joshua Dano",
-      "role": "Marketing/Designer",
-      "class": "2022",
-      "img_filename": "DM_Joshua_Dano.jpg"
-    },
-    {
       "name": "Lauren Kim",
       "role": "Marketing/Designer",
       "class": "2022",
@@ -229,12 +216,6 @@
       "role": "Marketing/Designer",
       "class": "2023",
       "img_filename": "DM_Lilleth_Snavely.jpg"
-    },
-    {
-      "name": "Liza Harold",
-      "role": "Marketing/Designer",
-      "class": "2023",
-      "img_filename": "DM_Liza_Harold.jpg"
     },
     {
       "name": "Annie Chotikul",
