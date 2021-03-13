@@ -4,7 +4,6 @@ import re
 
 from django.core.management.base import BaseCommand
 from tcf_website.models import *
-from django.core.exceptions import ObjectDoesNotExist
 
 from tqdm import tqdm
 
@@ -16,13 +15,6 @@ class Command(BaseCommand):
     This should take ~20 min to run to load all the grades
     """
     help = 'Imports FOIAed grade data files into PostgreSQL database'
-
-    # Not a good practice but declared as global for readability & convenience?
-    global course_grades
-    global course_instructor_grades
-
-    course_grades = {}
-    course_instructor_grades = {}
 
     def __init__(self, stdout=None, stderr=None, no_color=False, force_color=False):
         super().__init__(stdout, stderr, no_color, force_color)
@@ -54,6 +46,9 @@ class Command(BaseCommand):
 
         # Whether or not to suppress tqdm
         self.suppress_tqdm = False
+
+        self.course_grades = {}
+        self.course_instructor_grades = {}
 
     def add_arguments(self, parser):
         # The only required argument at the moment
@@ -115,10 +110,6 @@ class Command(BaseCommand):
         return df[df['Primary Instructor Name'] != '...']
 
     def load_semester_file(self, file):
-        # year, semester = file.split('.')[0].split('_')
-        # year = int(year)
-        # season = semester.upper()
-
         df = self.clean(pd.read_csv(os.path.join(self.data_dir, file)))
         if self.verbosity > 0:
             print(f"Found {df.size} sections in {file}")
@@ -147,10 +138,10 @@ class Command(BaseCommand):
         try:
             last_name, first_and_middle = full_name.split(',')
             first_name = first_and_middle.split(' ')[0]
-        except:
+        except ValueError:
+            # Script should stop if name that doesn't fit this pattern is given
             if self.verbosity > 0:
                 print('full name is', full_name)
-                # print(e)
             raise ValueError
 
         # 'Class Section' column is unused
@@ -176,7 +167,7 @@ class Command(BaseCommand):
                 print(e)
             raise e
         # No error casting values to float/int, so continue
-        # identifiers are tuple keys to dictionaries
+        # identifiers are tuple keys to grade data dictionaries
         course_identifier = (subdepartment, number, title)
         course_instructor_identifier = (
             subdepartment, number, first_name, last_name)
@@ -187,24 +178,28 @@ class Command(BaseCommand):
                                  c_plus, c, c_minus,
                                  not_pass]
 
-        # load this semester into course dictionary
-        if course_identifier in course_grades:
-            if self.verbosity == 3:
-                print(course_identifier, 'is a duplicate')
-            for i in range(len(course_grades[course_identifier])):
-                course_grades[course_identifier][i] += this_semesters_grades[i]
+        # load this semester into course_grades dictionary
+        if course_identifier in self.course_grades:
+            for i in range(len(self.course_grades[course_identifier])):
+                self.course_grades[course_identifier][i] += this_semesters_grades[i]
         else:
-            course_grades[course_identifier] = this_semesters_grades.copy()
+            self.course_grades[course_identifier] = this_semesters_grades.copy()
 
-        # load this semester into course instructor dictionary
-        if course_instructor_identifier in course_instructor_grades:
+        # load this semester into course_instructor_grades dictionary
+        if course_instructor_identifier in self.course_instructor_grades:
             for i in range(
-                    len(course_instructor_grades[course_instructor_identifier])):
-                course_instructor_grades[course_instructor_identifier][i] += this_semesters_grades[i]
+                    len(self.course_instructor_grades[course_instructor_identifier])):
+                self.course_instructor_grades[course_instructor_identifier][i] += this_semesters_grades[i]
         else:
-            course_instructor_grades[course_instructor_identifier] = this_semesters_grades.copy()
+            self.course_instructor_grades[course_instructor_identifier] = this_semesters_grades.copy(
+            )
 
     def load_dict_into_models(self):
+        """
+        Given a course or course-instructor pair and its corresponding grade distribution,
+        calculates weighted GPA average and total enrolled students and then uses all of those
+        as parameters to create new CourseGrade and CourseInstructorGrade instances.
+        """
         if self.verbosity > 0:
             print('Step 2: Bulk-create CourseGrade instances')
         # used for gpa calculation
@@ -213,35 +208,39 @@ class Command(BaseCommand):
                          2.3, 2.0, 1.7,
                          0]
 
-        # load course grades
+        # Load course_grades data from dicts and create model instances
         unsaved_cg_instances = []
-        for row in tqdm(course_grades, disable=self.suppress_tqdm):
-            total_enrolled = sum(course_grades[row])
+        for row in tqdm(self.course_grades, disable=self.suppress_tqdm):
+            total_enrolled = sum(self.course_grades[row])
             total_weight = sum(a * b for a, b in
-                               zip(course_grades[row], grade_weights))
+                               zip(self.course_grades[row], grade_weights))
 
-            course_grade_params = self.set_grade_params(row, total_enrolled, total_weight, has_instructor=False)
+            course_grade_params = self.set_grade_params(
+                row, total_enrolled, total_weight, has_instructor=False)
             unsaved_cg_instance = CourseGrade(**course_grade_params)
             unsaved_cg_instances.append(unsaved_cg_instance)
+
+        # bulk_create is much more efficient than creating them separately
         CourseGrade.objects.bulk_create(unsaved_cg_instances)
         if self.verbosity > 0:
             print('Done creating CourseGrade instances')
 
         if self.verbosity > 0:
             print('Step 3: Bulk-create CourseInstructorGrade instances')
-        # load course instructor grades
+        # Load course_instructor_grades data from dicts and create model instances
         unsaved_cig_instances = []
-        for row in tqdm(course_instructor_grades, disable=self.suppress_tqdm):
+        for row in tqdm(self.course_instructor_grades, disable=self.suppress_tqdm):
             total_enrolled = 0
-            for grade_count in course_instructor_grades[row]:
+            for grade_count in self.course_instructor_grades[row]:
                 total_enrolled += grade_count
 
             total_weight = 0
-            for i in range(len(course_instructor_grades[row])):
+            for i in range(len(self.course_instructor_grades[row])):
                 total_weight += (
-                        course_instructor_grades[row][i] * grade_weights[i])
+                    self.course_instructor_grades[row][i] * grade_weights[i])
 
-            course_instructor_grade_params = self.set_grade_params(row, total_enrolled, total_weight, has_instructor=True)
+            course_instructor_grade_params = self.set_grade_params(
+                row, total_enrolled, total_weight, has_instructor=True)
             unsaved_cig_instance = CourseInstructorGrade(
                 **course_instructor_grade_params)
             unsaved_cig_instances.append(unsaved_cig_instance)
@@ -250,10 +249,13 @@ class Command(BaseCommand):
             print('Done creating CourseInstructorGrade instances')
 
     def set_grade_params(self, row, total_enrolled, total_weight, has_instructor):
+        """Creates dict of params to be used as parameters
+        in creating CourseGrade/CourseInstructorGrade instances.
+        Helper function for load_dict_into_models()"""
         if has_instructor:
-            data = course_instructor_grades[row]
+            data = self.course_instructor_grades[row]
         else:
-            data = course_grades[row]
+            data = self.course_grades[row]
 
         # calculate gpa excluding DFW column
         total_enrolled_filtered = total_enrolled - data[9]
