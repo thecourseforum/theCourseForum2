@@ -1,6 +1,7 @@
 """
 The data came from UVA was 2009-2020, but that's bulky and we want it to come
-in semester-by-semester files.
+in semester-by-semester files. This script probably won't ever be run again, but
+may come in handy if we ever need to break up a big data file by semester.
 """
 from pandas import read_csv
 
