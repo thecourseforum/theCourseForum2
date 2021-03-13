@@ -14,7 +14,7 @@ class LoadGradesTestCase(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         setup(cls)
-        management.call_command('load_grades', 'test_data', '--suppress-tqdm', verbosity=3)
+        management.call_command('load_grades', 'test_data', '--suppress-tqdm', verbosity=0)
         cls.cg = CourseGrade.objects.all()[0]
         cls.cig = CourseInstructorGrade.objects.all()[0]
 
@@ -30,6 +30,7 @@ class LoadGradesTestCase(TestCase):
         self.assertEqual(self.cg.course.number, 420)
 
     def test_correct_instructor(self):
+        """Make sure instructor is Tom Jefferson"""
         self.assertEqual(self.cig.instructor.full_name(), "Tom Jefferson")
 
     def test_total_students(self):
