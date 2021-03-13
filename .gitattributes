@@ -1,2 +1,6 @@
 # Declare files that will always have LF line endings on checkout.
+# Reasoning: Most files don't care about line endings, but shell scripts do.
+# Thus, this file has been added to prevent '\r' from interfering with scripts.
+# e.g. `/bin/sh^M: bad interpreter: No such file or directory`
+# https://docs.github.com/en/github/using-git/configuring-git-to-handle-line-endings
 *.sh text eol=lf
