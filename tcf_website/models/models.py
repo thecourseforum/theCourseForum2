@@ -638,14 +638,17 @@ class Review(models.Model):
 
     def count_votes(self):
         """Sum votes for review."""
-        upvotes = downvotes = 0
-        for vote in self.vote_set.all():
-            if vote.value == 1:
-                upvotes += 1
-            else:
-                downvotes += 1
+        upvotes = self.vote_set.filter(value=1)\
+            .aggregate(models.Sum('value'))\
+            .get('value__sum', 0)
+        downvotes = self.vote_set.filter(value=-1)\
+            .aggregate(models.Sum('value'))\
+            .get('value__sum', 0)
 
-        return {'upvotes':upvotes, 'downvotes': downvotes}
+        upvotes = upvotes if upvotes else 0
+        downvotes = -1 * downvotes if downvotes else 0
+
+        return {'upvotes': upvotes, 'downvotes': downvotes}
 
     def upvote(self, user):
         """Create an upvote."""

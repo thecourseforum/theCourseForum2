@@ -37,19 +37,20 @@
 
                 <div class="review-footer row mt-3">
                     <div class="col-sm-8 d-flex align-items-end text-center text-muted flex-wrap mb-2">
+                        <span id="vote-count" hidden>{{ review.sum_votes }}</span>
                         <div class="mr-3 mr-sm-4">
                             <a id="upvote{{review.id}}" href="#loginModal" data-toggle="modal"
                                class="upvote {% if review.user_vote == 1 %}active{% endif %}">
                                 <i class="fa fa-thumbs-up fa-fw"></i>
                             </a>
-                            <span id="vote-count" class="voteCount">{{ review.count_votes.upvotes }}</span>
+                            <span class="upvoteCount">{{ review.count_votes.upvotes }}</span>
                         </div>
                         <div class="mr-3 mr-sm-4">
                             <a id="downvote{{review.id}}" href="#loginModal" data-toggle="modal"
                                class="downvote {% if review.user_vote == -1 %}active{% endif %}">
                                 <i class="fa fa-thumbs-down fa-fw"></i>
                             </a>
-                            {{ review.count_votes.downvotes }}
+                            <span class="downvoteCount">{{ review.count_votes.downvotes }}</span>
                         </div>
                     </div>
                     <!-- Review Ratings -->
