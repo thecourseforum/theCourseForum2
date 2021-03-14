@@ -157,7 +157,7 @@ class ModelReviewTests(TestCase):
         self.assertEqual(self.review1.count_votes(), expected_sum)
 
     def test_upvote_already_upvoted(self):
-        """Test for upvote method verify with count_votes"""
+        """Test for upvote method verify with count_votes when the user already upvoted"""
 
         self.review1.upvote(self.user4)
         self.review1.upvote(self.user4)
@@ -172,7 +172,7 @@ class ModelReviewTests(TestCase):
         self.assertEqual(self.review1.count_votes(), expected_sum)
 
     def test_upvote_already_downvoted(self):
-        """Test for downvote method verify with count_votes"""
+        """Test for downvote method verify with count_votes when the user already downvoted"""
 
         self.review1.downvote(self.user4)
         self.review1.downvote(self.user4)
@@ -181,14 +181,10 @@ class ModelReviewTests(TestCase):
 
     def test_double_vote(self):
         """Test for voting twice on same review by same user using vote model"""
-        try:
-            self.assertRaises(IntegrityError, Vote.objects.create(
-                value=-1,
-                user=self.user3,
-                review=self.review1))
-
-        except IntegrityError:
-            pass
+        self.assertRaises(IntegrityError, Vote.objects.create,
+                          value=-1,
+                          user=self.user3,
+                          review=self.review1)
 
     def test_display_reviews(self):
         """Test display reviews method"""

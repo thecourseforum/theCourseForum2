@@ -1,5 +1,5 @@
 # pylint: disable=no-member
-# pylint: disable=missing-module-docstring
+"""Tests for User model."""
 
 from django.test import TestCase
 

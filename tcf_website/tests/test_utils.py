@@ -32,7 +32,8 @@ def setup(obj):
     )
     obj.incomplete_semester = Semester.objects.create(
         year=2019,
-        number=1198)
+        number=1198
+    )
 
     obj.course = Course.objects.create(
         title="Software Testing",
@@ -289,3 +290,12 @@ def suppress_request_warnings(original_function):
         logger.setLevel(previous_logging_level)
 
     return new_function
+
+
+def create_new_sem(obj, year):
+    """Helper method to modify current semester"""
+    obj.semester = Semester.objects.create(
+        year=year,
+        season='FALL',
+        number=1508
+    )

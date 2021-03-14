@@ -3,8 +3,7 @@
 
 from django.test import TestCase
 
-from ..models import Semester
-from .test_utils import setup
+from .test_utils import setup, create_new_sem
 
 
 class SubdepartmentTestCase(TestCase):
@@ -41,12 +40,3 @@ class SubdepartmentTestCase(TestCase):
         when it does not have a course in the current semester"""
         create_new_sem(self, 2050)
         self.assertFalse(self.subdepartment.has_current_course())
-
-
-def create_new_sem(obj, year):
-    """Helper method to modify current semester"""
-    obj.semester = Semester.objects.create(
-        year=year,
-        season='FALL',
-        number=1508
-    )
