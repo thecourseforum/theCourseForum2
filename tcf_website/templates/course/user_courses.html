@@ -7,19 +7,26 @@
 <link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
 <link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
 <link rel="stylesheet" href="{% static 'instructor/instructor.css' %}"/>
+<link rel="stylesheet" href="{% static 'base/tcf-style.css' %}"/>
+
+
 {% endblock %}
 
 {% block content %}
 <div class="container mx-auto">
-    <h1 class="h2 mt-2">Saved Courses </h1>
+    <h1 class="h2 mt-2"> Saved Courses </h1>
     {% if courses %}
     {% for saved in courses %}
-        <div class="card mt-3">
-            <a href="{% url 'course_instructor' course_id=saved.course.id instructor_id=saved.instructor.id %}">
-                <div class="card-header course-header py-4">
-                    {{ saved.course }} by {{ saved.instructor.full_name }}
-                </div>
-            </a>
+        <div class="card mt-3" id="course_{{saved.course_id}}_{{saved.instructor_id}}">
+            <div class="d-flex px-3 m-3" style="font-size: 1.25rem;">
+              <a href="{% url 'course_instructor' course_id=saved.course.id instructor_id=saved.instructor.id %}">
+                  <strong>{{ saved.course }}</strong> — {{ saved.instructor.full_name }}
+              </a>
+              <button class="ml-auto btn btn-sm bg-tcf-indigo text-white" id="btn_{{saved.course_id}}_{{saved.instructor_id}}" type="button">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i>
+                  Unsave
+              </button>
+            </div>
             <div class="card-body">
                 <ul class="row mb-0 px-3">
                     <li class="col text-nowrap">
@@ -72,4 +79,8 @@
     </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block js %}
+    <script type="module" src="{% static 'course/javascript/user_courses.js' %}"></script>
 {% endblock %}
