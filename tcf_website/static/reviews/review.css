@@ -30,3 +30,7 @@
 .review .downvote.active, .review .downvote:hover {
     color: dodgerblue;
 }
+
+.tooltip-inner {
+  margin: 0;
+}
