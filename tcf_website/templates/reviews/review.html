@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
 
 <div id="review{{review.id}}" class="review card mb-2">
-    <div class="card-body text-left pr-4">
+    <div class="card-body text-left pt-0 pr-4">
         <div class="row">
             <!-- Review upvote/downvote panel -->
             <div class="vote-container col-2 col-lg-1 d-none d-md-flex flex-column justify-content-center align-items-center">
@@ -19,34 +19,47 @@
             </div>
 
             <!-- Review Main Content -->
-            <div class="review-body col-xs-12 col-md-10 col-lg-11">
+            <div class="review-body pt-4 col-xs-12 col-md-10 col-lg-11">
 
                 <!-- Review header content (subject, actions, text) -->
                 {% if profile %}
                 <!-- Subject and Edit/Delete actions show only on profile page -->
-                <div class="review-header">
+                <div class="review-header mb-2">
                     <div class="d-flex">
-                        <div class="review-subject">
+                        <div class="review-subject mr-auto">
                           <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
-                              <h5><strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}</h5>
+                              <h5 class="text-tcf-orange">
+                                <strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}
+                              </h5>
                           </a>
                         </div>
-                        <div class="review-actions ml-auto">
-                          <a class="review-edit btn btn-sm btn-primary" href="{% url 'edit_review' review_id=review.id %}">
-                              <i class="fas fa-pencil-alt"></i> Edit
+                        <div class="review-actions d-inline-flex">
+                          <a class="review-edit h5 px-2 text-tcf-blue" href="{% url 'edit_review' review_id=review.id %}">
+                              <i class="fas fa-pencil-alt"></i>
                           </a>
-                          <button class="review-delete btn btn-sm btn-outline-danger" type="button"
+                          <a class="review-delete h5 pl-2 text-danger" type="button"
                                   data-toggle="modal" data-target="#deleteReviewModal{{review.id}}">
-                            <i class="fa fa-trash-o"></i> Delete
-                          </button>
+                            <i class="fa fa-trash-o"></i>
+                          </a>
                           {% include "reviews/delete_confirm_modal.html" with review_id=review.id %}
                         </div>
                     </div>
                 </div>
                 {% endif %}
 
-                <div class="review-content">
-                  <p class="card-text mb-2" style="white-space: pre-line;">{{ review.text }}</p>
+                <div class="review-content mb-2">
+                  <!-- Max-height container for the review text collapse feature -->
+                  <div class="review-text-body collapse" id="reviewText{{review.id}}"
+                     aria-expanded="false">
+                     <!-- Full review text -->
+                    <p class="review-text-full">{{ review.text }}</p>
+                  </div>
+                  <!-- Collapser link (click target spans entire row block) -->
+                  <a role="button" class="review-collapse-link btn-block p-1 collapsed"
+                     data-toggle="collapse" href="#reviewText{{review.id}}"
+                     aria-expanded="false" aria-controls="reviewText{{review.id}}">
+                     <!-- Note: collapser text ("See more...") is encoded in review.css for this link -->
+                  </a>
                 </div>
 
                 <div class="review-footer row mt-3">

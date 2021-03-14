@@ -1,7 +1,7 @@
 ## Status
 - Done, In progress, etc
 
-## GitHub Issues addressed (`#IssueNumber`)
+## GitHub Issues addressed
 - This PR closes 
 
 ## What I did
