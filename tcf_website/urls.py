@@ -9,6 +9,7 @@ urlpatterns = [
     path('about', views.AboutView.as_view(), name='about'),
     path('privacy', views.privacy, name='privacy'),
     path('terms', views.terms, name='terms'),
+    path('ads.txt', views.ads, name='ads'),
     path('browse', views.browse, name='browse'),
     path('department/<int:dept_id>', views.department, name='department'),
     path('course/<int:course_id>', views.course_view_legacy, name='course_legacy'),
