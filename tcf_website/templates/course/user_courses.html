@@ -15,14 +15,15 @@
 {% block content %}
 <div class="container mx-auto">
     <h1 class="h2 mt-2"> Saved Courses </h1>
-    {% if courses %}
-    {% for saved in courses %}
+    <div id="saved_courses_block">
+        {% if courses %}
+        {% for saved in courses %}
         <div class="card mt-3" id="course_{{saved.course_id}}_{{saved.instructor_id}}">
             <div class="d-flex px-3 m-3" style="font-size: 1.25rem;">
               <a href="{% url 'course_instructor' course_id=saved.course.id instructor_id=saved.instructor.id %}">
                   <strong>{{ saved.course }}</strong> — {{ saved.instructor.full_name }}
               </a>
-              <button class="ml-auto btn btn-sm bg-tcf-indigo text-white" id="btn_{{saved.course_id}}_{{saved.instructor_id}}" type="button">
+              <button class="ml-auto btn btn-sm bg-tcf-indigo text-white unsave_btn" id="btn_{{saved.course_id}}_{{saved.instructor_id}}" type="button">
                   <i class="fa fa-trash-o" aria-hidden="true"></i>
                   Unsave
               </button>
@@ -68,16 +69,17 @@
                 </ul>
             </div>
         </div>
-    {% endfor %}
-    {% else %}
-    <div class="card col p-5 text-center">
-        <div class="card-body">
-            <h4 class="card-title">
-                No Saved Courses <i class="far fa-frown-open fa-fw"></i>
-            </h4>
+        {% endfor %}
+        {% else %}
+        <div class="card col p-5 text-center">
+            <div class="card-body">
+                <h4 class="card-title">
+                    No Saved Courses <i class="far fa-frown-open fa-fw"></i>
+                </h4>
+            </div>
         </div>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
 {% endblock %}
 
