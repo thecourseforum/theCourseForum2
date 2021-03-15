@@ -15,14 +15,26 @@
 {% block content %}
 <div class="container mx-auto">
     <h1 class="h2 mt-2"> Saved Courses </h1>
-    <div id="saved_courses_block">
+    <div class="d-flex align-items-baseline">
+        <p> Drag and drop to rearrange </p>
+        <div id="sortButtons" class="btn-group btn-group ml-auto" role="toolbar" aria-label="Sorting Buttons">
+            <button type="button" class="btn bg-white"> Sort by</button>
+            <button type="button" id="number-sort-btn" class="btn btn-outline-primary">Course ID</button>
+            <button type="button" id="rating-sort-btn" class="btn btn-outline-primary">Rating</button>
+            <button type="button" id="diff-sort-btn" class="btn btn-outline-primary">Difficulty</button>
+            <button type="button" id="gpa-sort-btn" class="btn btn-outline-primary">GPA</button>
+        </div>
+    </div>
+    <ul id="saved_courses_block" class="course-list">
         {% if courses %}
         {% for saved in courses %}
+        <li>
         <div class="card mt-3" id="course_{{saved.course_id}}_{{saved.instructor_id}}">
             <div class="d-flex px-3 m-3" style="font-size: 1.25rem;">
               <a href="{% url 'course_instructor' course_id=saved.course.id instructor_id=saved.instructor.id %}">
-                  <strong>{{ saved.course }}</strong> — {{ saved.instructor.full_name }}
+                  <strong>{{ saved.course }} </strong> — {{ saved.instructor.full_name }}
               </a>
+              <p id="title" hidden> {{saved.course.subdepartment.mnemonic}} {{saved.course.number}} </p>
               <button class="ml-auto btn btn-sm bg-tcf-indigo text-white unsave_btn" id="btn_{{saved.course_id}}_{{saved.instructor_id}}" type="button">
                   <i class="fa fa-trash-o" aria-hidden="true"></i>
                   Unsave
@@ -68,7 +80,7 @@
                     </div>
                 </ul>
             </div>
-        </div>
+            </li>
         {% endfor %}
         {% else %}
         <div class="card col p-5 text-center">
@@ -79,10 +91,11 @@
             </div>
         </div>
         {% endif %}
-    </div>
+    </ul>
 </div>
 {% endblock %}
 
 {% block js %}
     <script type="module" src="{% static 'course/javascript/user_courses.js' %}"></script>
+    <script type="module" src="{% static 'department/bind-sort.js' %}"></script>
 {% endblock %}
