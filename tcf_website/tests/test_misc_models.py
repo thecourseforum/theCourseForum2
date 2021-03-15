@@ -35,7 +35,6 @@ class MiscModelsTestCase(TestCase):
 
     def test_course_vote_name(self):
         """Test __str__ method in Vote model"""
-
         vote = Vote.objects.create(
             value=-1,
             user=self.user4,

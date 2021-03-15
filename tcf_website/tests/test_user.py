@@ -8,7 +8,6 @@ from .test_utils import setup
 
 class UserTestCase(TestCase):
     """Tests for User model."""
-
     def setUp(self):
         setup(self)
 

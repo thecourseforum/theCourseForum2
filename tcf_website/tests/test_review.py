@@ -85,7 +85,6 @@ class EditReviewTests(TestCase):
 
 class DeleteReviewTests(TestCase):
     """Tests for the DeleteReview view."""
-
     def setUp(self):
         setup(self)  # set up tests: add some example data
 
@@ -133,32 +132,27 @@ class DeleteReviewTests(TestCase):
 
 class ModelReviewTests(TestCase):
     """Tests for the Review model."""
-
     def setUp(self):
         setup(self)
 
     def test_count_votes(self):
         """Test for count votes method"""
-
         expected_sum = 1
         self.assertEqual(self.review1.count_votes(), expected_sum)
 
     def test_count_votes_no_votes(self):
         """Test for count votes method for when there are no votes"""
-
         expected_sum = 0
         self.assertEqual(self.review2.count_votes(), expected_sum)
 
     def test_upvote(self):
         """Test for upvote method verify with count_votes"""
-
         self.review1.upvote(self.user4)
         expected_sum = 2
         self.assertEqual(self.review1.count_votes(), expected_sum)
 
     def test_upvote_already_upvoted(self):
         """Test for upvote method verify with count_votes when the user already upvoted"""
-
         self.review1.upvote(self.user4)
         self.review1.upvote(self.user4)
         expected_sum = 1
@@ -166,14 +160,12 @@ class ModelReviewTests(TestCase):
 
     def test_downvote(self):
         """Test for downvote method verify with count_votes"""
-
         self.review1.downvote(self.user4)
         expected_sum = 0
         self.assertEqual(self.review1.count_votes(), expected_sum)
 
     def test_upvote_already_downvoted(self):
         """Test for downvote method verify with count_votes when the user already downvoted"""
-
         self.review1.downvote(self.user4)
         self.review1.downvote(self.user4)
         expected_sum = 1
@@ -188,21 +180,21 @@ class ModelReviewTests(TestCase):
 
     def test_display_reviews(self):
         """Test display reviews method"""
-        self.assertEqual(
-            str(
-                Review.display_reviews(
-                    self.course,
-                    self.instructor,
-                    self.user1)),
-            "<QuerySet [<Review: Review by  No first name () for CS 1420 | " +
-            "Software Testing taught by Tom Jefferson (tjt3rea@virginia.edu)>, " +
-            "<Review: Review by Taylor Comb (tcf2yay@virginia.edu) for CS 1420 | " +
-            "Software Testing taught by Tom Jefferson (tjt3rea@virginia.edu)>]>")
+        review_queryset = Review.objects.filter(
+            course=self.course)
+
+        self.assertQuerysetEqual(
+            Review.display_reviews(
+                self.course,
+                self.instructor,
+                self.user1),
+            review_queryset,
+            transform=lambda x: x,  # Needed so that the formatting works
+            ordered=False)
 
     def test_display_no_reviews(self):
         """Test display reviews method when there are no reviews"""
-
         self.review1.delete()
         self.review2.delete()
-        self.assertEqual(str(Review.display_reviews(
-            self.course, self.instructor, self.user1)), "<QuerySet []>")
+        self.assertFalse(Review.display_reviews(
+            self.course, self.instructor, self.user1).exists())

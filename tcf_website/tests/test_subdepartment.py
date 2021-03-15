@@ -4,6 +4,7 @@
 from django.test import TestCase
 
 from .test_utils import setup, create_new_sem
+from ..models import Course
 
 
 class SubdepartmentTestCase(TestCase):
@@ -19,16 +20,25 @@ class SubdepartmentTestCase(TestCase):
 
     def test_recent_courses_has_recent_courses(self):
         """Test recent_courses method in Subdepartment model when there are recent courses"""
-        self.assertEqual(
-            "<QuerySet [<Course: CS 1420 | Software Testing>, <Course: CS 1421 | Algorithms>]>",
-            str(self.subdepartment.recent_courses()))
+        course1_queryset = Course.objects.filter(
+            id=self.course.id)
+
+        course2_queryset = Course.objects.filter(
+            id=self.course2.id)
+
+        # Combine the query sets together into one
+        recent_courses = course1_queryset.union(course2_queryset)
+
+        self.assertQuerysetEqual(
+            self.subdepartment.recent_courses(),
+            recent_courses,
+            transform=lambda x: x,  # Needed so that the formatting works
+            ordered=False)
 
     def test_recent_courses_has_no_recent_courses(self):
         """Test recent_courses method in Subdepartment model when there are not recent courses"""
         create_new_sem(self, 2050)
-        self.assertEqual(
-            "<QuerySet []>",
-            str(self.subdepartment.recent_courses()))
+        self.assertFalse(self.subdepartment.recent_courses().exists())
 
     def test_has_current_course_true(self):
         """Test has_current_course method in
