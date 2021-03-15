@@ -147,7 +147,8 @@ class InstructorTestCase(TestCase):
 
         avg_instructor_rating = (self.review1.instructor_rating + self.review2.instructor_rating +
                                  self.review3.instructor_rating + self.review4.instructor_rating +
-                                 self.review5.instructor_rating + self.review6.instructor_rating) / 6
+                                 self.review5.instructor_rating + self.review6.instructor_rating) \
+                                / 6
 
         avg_enjoyability = (self.review1.enjoyability + self.review2.enjoyability +
                             self.review3.enjoyability + self.review4.enjoyability +
