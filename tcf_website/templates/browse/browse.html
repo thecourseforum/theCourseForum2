@@ -8,8 +8,11 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
+    {% comment %} <div class="container">
         {% include "../common/notification.html" %}
+    </div> {% endcomment %}
+    <div class="container mb-4">
+        {% include "../common/banner_ad.html" %}
     </div>
     <div class="browse container">
         <h2 class="font-weight-light">Browse by Department</h2>
