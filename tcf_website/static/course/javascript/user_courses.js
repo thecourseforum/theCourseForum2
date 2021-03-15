@@ -24,11 +24,10 @@ function unsaveCourse(course_id, instructor_id) {
 
 var buttons = document.getElementsByClassName("unsave_btn");
 for(var i=0; i<buttons.length; i++){
-    console.log(buttons[i]);
-    var x = buttons[i].id.split("_");
-    var course_id = x[1];
-    var instructor_id = x[2];
+    const x = buttons[i].id.split("_");
+    const course = x[1];
+    const instructor = x[2];
 
     num_courses++;
-    document.addEventListener("click", ()=>unsaveCourse(course_id, instructor_id), false);
+    buttons[i].addEventListener("click", ()=>unsaveCourse(course, instructor), false);
 }
