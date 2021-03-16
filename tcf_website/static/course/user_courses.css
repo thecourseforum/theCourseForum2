@@ -1,0 +1,8 @@
+.card-header{
+    font-size: 1.25rem;
+    background-color: white;
+}
+
+li{
+  cursor: pointer;
+}

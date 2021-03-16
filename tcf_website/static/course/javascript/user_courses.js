@@ -1,4 +1,4 @@
-var num_courses = 0;
+var numCourses = 0;
 
 function unsaveCourse(course_id, instructor_id) {
     $.ajax({
@@ -8,9 +8,9 @@ function unsaveCourse(course_id, instructor_id) {
 
     document.getElementById(`course_${course_id}_${instructor_id}`).remove();
 
-    num_courses--;
-    if(num_courses==0){
-        document.getElementById("saved_courses_block").innerHTML = `
+    numCourses--;
+    if(numCourses==0){
+        $("savedCoursesList").innerHTML = `
             <div class="card col p-5 text-center">
                 <div class="card-body">
                     <h4 class="card-title">
@@ -22,12 +22,14 @@ function unsaveCourse(course_id, instructor_id) {
     }
 }
 
-var buttons = document.getElementsByClassName("unsave_btn");
+// Configure unsave course buttons
+var buttons = document.getElementsByClassName("unsave-btn");
 for(var i=0; i<buttons.length; i++){
-    const x = buttons[i].id.split("_");
+    const button = buttons[i];
+    const x = button.id.split("_");
     const course = x[1];
     const instructor = x[2];
 
-    num_courses++;
-    buttons[i].addEventListener("click", ()=>unsaveCourse(course, instructor), false);
+    numCourses++;
+    button.addEventListener("click", ()=>unsaveCourse(course, instructor), false);
 }
