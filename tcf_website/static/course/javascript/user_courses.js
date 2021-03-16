@@ -33,3 +33,10 @@ for(var i=0; i<buttons.length; i++){
     numCourses++;
     button.addEventListener("click", ()=>unsaveCourse(course, instructor), false);
 }
+
+//Drag and Drop
+$("#savedCoursesList").sortable();
+$("#savedCoursesList").disableSelection();
+$("#savedCoursesList").on( "sortupdate", function( event, ui ) {
+    // save course order
+} );
