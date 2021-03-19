@@ -88,10 +88,8 @@ jobs:
           python manage.py makemigrations
           python manage.py migrate
           coverage run manage.py test
-        continue-on-error: true
 
       - name: Get code coverage
-        if: ${{ success() }}
         id: coverage
         run: |
           echo "::set-output name=percentage::$(coverage report | grep -o '[0-9]\+%' | tail -1)"
@@ -110,7 +108,7 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: node_modules/.bin/eslint tcf_website/static/**/*.js -c .config/.eslintrc.yml
+        run: node_modules/.bin/eslint -c .config/.eslintrc.yml tcf_website/static/
 
   discord:
     if: ${{ always() }}
