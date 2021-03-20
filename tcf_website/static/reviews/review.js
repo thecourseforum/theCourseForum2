@@ -54,7 +54,7 @@ function handleVote(reviewID, isUpvote) {
     // Update vote text.
     upvoteCountElem.text(newUpvoteCount);
     downvoteCountElem.text(newDownvoteCount);
-    
+
     if (elem.hasClass("active")) {
         elem.removeClass("active");
     } else {
