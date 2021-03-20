@@ -39,9 +39,10 @@ run_link="$repo_link/actions/runs/$GITHUB_RUN_ID"
 pylint_formatted="$(get_emoji $PYLINT_RESULT) **Pylint**"
 django_formatted="$(get_emoji $DJANGO_RESULT) **Django** (code coverage: ${DJANGO_COVERAGE:-unknown})"
 eslint_formatted="$(get_emoji $ESLINT_RESULT) **ESLint**"
+commit_message="Last commit message: \"$LAST_COMMIT_MESSAGE\""
 body=$(cat  << EOF
 {
-  "content": "$(get_content). See more about the result [here]($run_link).",
+  "content": "$(get_content) ($commit_message). See more about the result [here]($run_link).",
   "embeds": [
     {
       "description": "$pylint_formatted\\n$django_formatted\\n$eslint_formatted",
