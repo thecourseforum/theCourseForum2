@@ -1,6 +1,6 @@
 """Routes URLs to views"""
 
-from django.urls import include, path
+from django.urls import include, path, re_path
 
 from . import views
 
@@ -45,4 +45,7 @@ urlpatterns = [
     path('login/error', views.login_error),
     path('login/collect_extra_info', views.collect_extra_info),
     path('logout/', views.logout, name='logout'),
+
+    # BLOG URLS
+    re_path(r'^markdownx/', include('markdownx.urls')),
 ]
