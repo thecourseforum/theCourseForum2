@@ -24,7 +24,20 @@
 
         </div>
         <div class="all-posts">
-          Posts go here
+            {% csrf_token %}
+
+            {% for post in posts %}
+        
+                <div class="card shadow bg-white">
+                    <div class="card-body">
+                        <h1 class="card-title"> <a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
+                        <p class="card-text"> {{ post.body_summary|striptags }} </p>
+                        <div> {{ post.created_date }}</div>
+                    </div>
+                </div>
+        
+            {% endfor %}
+                
         </div>
     </div>
 {% endblock %}

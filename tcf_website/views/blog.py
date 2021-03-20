@@ -2,6 +2,8 @@
 import json
 from django.template.loader import render_to_string
 from django.views.generic.base import TemplateView
+from ..models import BlogPost
+from django.shortcuts import render,get_object_or_404
 
 
 class BlogView(TemplateView):
@@ -32,3 +34,16 @@ class BlogPostView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['blog_post'] = self.blog_post
         return context
+
+def blog_posts(request):
+    """Displays all blog posts."""
+    posts = BlogPost.objects.all().order_by('-created_date')
+
+    return render(request, 'blog/blog.html', {'posts': posts})
+
+def post(request, pk):
+    """Display specific blog posts"""
+
+    post_detail = get_object_or_404(BlogPost, pk=pk)
+
+    return render(request, 'blog/post.html', {'post_detail': post_detail})

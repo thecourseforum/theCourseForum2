@@ -8,8 +8,12 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('about', views.AboutView.as_view(), name='about'),
     path('ads.txt', views.ads, name='ads'),
-    path('blog', views.BlogView.as_view(), name='blog'),
-    path('blog/post', views.BlogPostView.as_view(), name='blog_post'),
+#     path('blog', views.BlogView.as_view(), name='blog'),
+#     path('blog/post', views.BlogPostView.as_view(), name='blog_post'),
+    path('blog/<int:pk>/', views.post, name='post_detail'),
+    path('blog/', views.blog_posts, name='blog'),
+    path('markdownx/', include('markdownx.urls')),
+     
     path('browse', views.browse, name='browse'),
     path('course/<int:course_id>', views.course_view_legacy, name='course_legacy'),
     path('course/<int:course_id>/<int:instructor_id>',
@@ -46,6 +50,6 @@ urlpatterns = [
     path('login/collect_extra_info', views.collect_extra_info),
     path('logout/', views.logout, name='logout'),
 
-    # BLOG URLS
+    # MARKDOWN URL
     re_path(r'^markdownx/', include('markdownx.urls')),
 ]

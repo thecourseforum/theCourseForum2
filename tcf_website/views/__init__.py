@@ -5,7 +5,7 @@
 
 from .ads import ads
 from .auth import login, login_error, logout, collect_extra_info
-from .blog import BlogView, BlogPostView
+from .blog import BlogView, BlogPostView, blog_posts, post
 from .browse import (browse, department, course_view_legacy, course_view,
                      course_instructor, instructor_view)
 from .discord import post_message

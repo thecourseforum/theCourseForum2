@@ -7,6 +7,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from markdownx.models import MarkdownxField
+from markdownx.utils import markdownify
 
 
 class School(models.Model):
@@ -775,3 +776,9 @@ class BlogPost(DateCreateModMixin):
     title = models.CharField(max_length=50)
     body = MarkdownxField()
     # background_image = models.ImageField(default='img/header.jpg', upload_to=datetime.now().strftime('backgrounds/%Y/%m/%d'))
+    
+    def formatted_markdown(self):
+        return markdownify(self.body)
+
+    def body_summary(self):
+        return markdownify(self.body[:300] + "...")
