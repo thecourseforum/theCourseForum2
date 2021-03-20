@@ -286,8 +286,7 @@ class Command(BaseCommand):
                 setattr(section, key, value)
             section.save()
         except Section.DoesNotExist:
-            # Change to params |= unique_params when we switch to Python 3.9
-            params.update(unique_params)
+            params |= unique_params
             section = Section.objects.create(**params)
             created = True
 

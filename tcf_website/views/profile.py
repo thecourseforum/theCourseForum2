@@ -66,8 +66,8 @@ def reviews(request):
             Avg('review__recommendability')
         ) / 3,
     )
-    # Merge the two dictionaries (NOTE: can be simplified in Python 3.9)
-    merged = {**upvote_stat, **other_stats}
+    # Merge the two dictionaries
+    merged = upvote_stat | other_stats
     # Round floats
     stats = {key: safe_round(value) for key, value in merged.items()}
     return render(request, 'reviews/user_reviews.html', context=stats)

@@ -9,12 +9,10 @@ urlpatterns = [
     path('about', views.AboutView.as_view(), name='about'),
     path('privacy', views.privacy, name='privacy'),
     path('terms', views.terms, name='terms'),
+    path('ads.txt', views.ads, name='ads'),
     path('browse', views.browse, name='browse'),
     path('department/<int:dept_id>', views.department, name='department'),
-    path(
-        'course/<int:course_id>',
-        views.course_view_legacy,
-        name='course_legacy'),
+    path('course/<int:course_id>', views.course_view_legacy, name='course_legacy'),
     path('course/<int:course_id>/<int:instructor_id>',
          views.course_instructor, name='course_instructor'),
     path('course/<str:mnemonic>/<int:course_number>',
@@ -29,6 +27,7 @@ urlpatterns = [
     path('reviews', views.reviews, name='reviews'),
     path('reviews/<int:review_id>/upvote', views.upvote),
     path('reviews/<int:review_id>/downvote', views.downvote),
+    path('reviews/check_duplicate', views.review.check_duplicate),
     path('profile', views.profile, name='profile'),
     path('search', views.search, name='search'),
 
