@@ -9,5 +9,5 @@
 }
 
 .review .downvote.active, .review .downvote:hover {
-    color: dodgerblue;
+    color: rgb(215, 86, 38);
 }

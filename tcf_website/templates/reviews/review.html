@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
 
 <div id="review{{review.id}}" class="review card mb-2">
-    <div class="card-body text-left pr-4">
+    <div class="card-body text-left px-4">
         <div class="row">
             <!-- Review Main Content -->
             <div class="review-body col-xs-12 col-md-10 col-lg-12">
@@ -67,7 +67,10 @@
 
                     <!-- Review Ratings -->
                     <div class="review-ratings col-sm-8 d-flex align-items-end justify-content-end text-center text-muted flex-wrap">
-
+                        <div id="review-average" class="text-dark mr-3 mr-sm-4">
+                           <i class="fa fa-star fa-fw"></i>
+                           {{ review.average|floatformat:2 }}
+                       </div>
                         <div class="mr-3 mr-sm-4">
                             <i class="fa fa-user"></i>
                             {{ review.instructor_rating }}
