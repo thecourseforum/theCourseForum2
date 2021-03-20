@@ -3,8 +3,8 @@
 
 from django.test import TestCase
 from django.urls import reverse
-from ..models import Section
 
+from ..models import Section
 from .test_utils import setup
 from ..views.browse import safe_round
 
@@ -124,14 +124,7 @@ class InstructorTestCase(TestCase):
 
     def test_taught_courses(self):
         """Test taught courses for a particular section."""
-        course1_queryset = Section.objects.filter(
-            course=self.course)
-
-        course2_queryset = Section.objects.filter(
-            course=self.course2)
-
-        # Combine the query sets together into one
-        courses_taught = course1_queryset.union(course2_queryset)
+        courses_taught = Section.objects.filter(course__in=[self.course, self.course2])
 
         self.assertQuerysetEqual(
             self.instructor.taught_courses(),
@@ -148,7 +141,7 @@ class InstructorTestCase(TestCase):
         avg_instructor_rating = (self.review1.instructor_rating + self.review2.instructor_rating +
                                  self.review3.instructor_rating + self.review4.instructor_rating +
                                  self.review5.instructor_rating + self.review6.instructor_rating) \
-                                / 6
+            / 6
 
         avg_enjoyability = (self.review1.enjoyability + self.review2.enjoyability +
                             self.review3.enjoyability + self.review4.enjoyability +

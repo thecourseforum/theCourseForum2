@@ -82,17 +82,19 @@ def setup(obj):
     obj.user2 = User.objects.create(
         username="tcf3yay",
         computing_id="tcf3yay",
-        last_name="No first name"
+        last_name="NoFirstName"
     )
     obj.user3 = User.objects.create(
         username="bnf89798",
         computing_id="bnf89798",
-        last_name="Bam Friedman"
+        first_name="Bam",
+        last_name="Friedman"
     )
     obj.user4 = User.objects.create(
         username="kik878",
         computing_id="kik878",
-        last_name="Kjell Kool"
+        first_name="Kjell",
+        last_name="Kool"
     )
 
     obj.instructor = Instructor.objects.create(
@@ -109,7 +111,7 @@ def setup(obj):
 
     obj.section_course.instructors.set(
         Instructor.objects.filter(
-            first_name="Tom"))
+            pk=obj.instructor.pk))
 
     obj.section_course2 = Section.objects.create(
         course=obj.course2,
@@ -118,7 +120,7 @@ def setup(obj):
     )
     obj.section_course2.instructors.set(
         Instructor.objects.filter(
-            first_name="Tom"))
+            pk=obj.instructor.pk))
 
     obj.instructor_grade = CourseInstructorGrade.objects.create(
         instructor=obj.instructor,
@@ -144,7 +146,7 @@ def setup(obj):
 
     obj.instructor2 = Instructor.objects.create(
         first_name="No",
-        last_name="Email",
+        last_name="Email"
     )
 
     obj.review1 = Review.objects.create(
@@ -161,7 +163,7 @@ def setup(obj):
         amount_group=20,
         amount_reading=20,
         amount_writing=20,
-        amount_homework=20,
+        amount_homework=20
     )
 
     obj.review2 = Review.objects.create(
@@ -178,7 +180,7 @@ def setup(obj):
         amount_group=1,
         amount_reading=2,
         amount_writing=0,
-        amount_homework=0,
+        amount_homework=0
     )
 
     obj.review3 = Review.objects.create(
@@ -273,6 +275,15 @@ def setup(obj):
     )
 
 
+def create_new_semester(self, year):
+    """Helper method to modify current semester"""
+    self.semester = Semester.objects.create(
+        year=year,
+        season='FALL',
+        number=f'1{year % 100}8'
+    )
+
+
 def suppress_request_warnings(original_function):
     """
     Suppress unnecessary request error messages in tests.
@@ -290,12 +301,3 @@ def suppress_request_warnings(original_function):
         logger.setLevel(previous_logging_level)
 
     return new_function
-
-
-def create_new_sem(obj, year):
-    """Helper method to modify current semester"""
-    obj.semester = Semester.objects.create(
-        year=year,
-        season='FALL',
-        number=1508
-    )

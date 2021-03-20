@@ -8,6 +8,7 @@ from .test_utils import setup
 
 class UserTestCase(TestCase):
     """Tests for User model."""
+
     def setUp(self):
         setup(self)
 
@@ -17,7 +18,7 @@ class UserTestCase(TestCase):
 
     def test_user_name_no_email(self):
         """Test __str__ method in User model with no email"""
-        self.assertEqual(" No first name ()", str(self.user2))
+        self.assertEqual("Kjell Kool ()", str(self.user4))
 
     def test_full_name(self):
         """Test full_name method in User model when fullname exists"""
@@ -25,4 +26,4 @@ class UserTestCase(TestCase):
 
     def test_full_name_no_first(self):
         """Test full_name method in User model when first name missing exists"""
-        self.assertEqual(" No first name", self.user2.full_name())
+        self.assertEqual(" NoFirstName", self.user2.full_name())

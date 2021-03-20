@@ -17,7 +17,6 @@ class CourseTestCase(TestCase):
 
     def test_review_count(self):
         """Test review count method"""
-
         self.assertEqual(self.course.review_count(), 2)
 
     def test_code(self):
@@ -27,7 +26,6 @@ class CourseTestCase(TestCase):
 
     def test_is_recent(self):
         """Test for is_recent()."""
-
         self.assertTrue(self.course.is_recent())
 
         Semester.objects.create(
@@ -40,7 +38,6 @@ class CourseTestCase(TestCase):
 
     def test_average_rating(self):
         """Test average rating."""
-
         rating = (self.review1.average() +
                   self.review2.average()) / 2
 
@@ -48,7 +45,6 @@ class CourseTestCase(TestCase):
 
     def test_average_difficulty(self):
         """Test average difficulty."""
-
         difficulty = (self.review1.difficulty +
                       self.review2.difficulty) / 2
 
@@ -63,7 +59,6 @@ class CourseTestCase(TestCase):
 
     def test_average_difficulty_no_reviews(self):
         """Test average difficulty no reviews."""
-
         self.review1.delete()
         self.review2.delete()
 

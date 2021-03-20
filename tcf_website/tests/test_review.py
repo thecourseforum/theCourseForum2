@@ -7,9 +7,8 @@ from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
 from django.db import IntegrityError
+
 from ..models import Vote, Review
-
-
 from .test_utils import setup, suppress_request_warnings
 
 
@@ -132,44 +131,39 @@ class DeleteReviewTests(TestCase):
 
 class ModelReviewTests(TestCase):
     """Tests for the Review model."""
+
     def setUp(self):
         setup(self)
 
     def test_count_votes(self):
         """Test for count votes method"""
-        expected_sum = 1
-        self.assertEqual(self.review1.count_votes(), expected_sum)
+        self.assertEqual(self.review1.count_votes(), 1)
 
     def test_count_votes_no_votes(self):
         """Test for count votes method for when there are no votes"""
-        expected_sum = 0
-        self.assertEqual(self.review2.count_votes(), expected_sum)
+        self.assertEqual(self.review2.count_votes(), 0)
 
     def test_upvote(self):
         """Test for upvote method verify with count_votes"""
         self.review1.upvote(self.user4)
-        expected_sum = 2
-        self.assertEqual(self.review1.count_votes(), expected_sum)
+        self.assertEqual(self.review1.count_votes(), 2)
 
     def test_upvote_already_upvoted(self):
         """Test for upvote method verify with count_votes when the user already upvoted"""
         self.review1.upvote(self.user4)
         self.review1.upvote(self.user4)
-        expected_sum = 1
-        self.assertEqual(self.review1.count_votes(), expected_sum)
+        self.assertEqual(self.review1.count_votes(), 1)
 
     def test_downvote(self):
         """Test for downvote method verify with count_votes"""
         self.review1.downvote(self.user4)
-        expected_sum = 0
-        self.assertEqual(self.review1.count_votes(), expected_sum)
+        self.assertEqual(self.review1.count_votes(), 0)
 
     def test_upvote_already_downvoted(self):
         """Test for downvote method verify with count_votes when the user already downvoted"""
         self.review1.downvote(self.user4)
         self.review1.downvote(self.user4)
-        expected_sum = 1
-        self.assertEqual(self.review1.count_votes(), expected_sum)
+        self.assertEqual(self.review1.count_votes(), 1)
 
     def test_double_vote(self):
         """Test for voting twice on same review by same user using vote model"""
@@ -180,8 +174,7 @@ class ModelReviewTests(TestCase):
 
     def test_display_reviews(self):
         """Test display reviews method"""
-        review_queryset = Review.objects.filter(
-            course=self.course)
+        review_queryset = Review.objects.filter(course=self.course)
 
         self.assertQuerysetEqual(
             Review.display_reviews(

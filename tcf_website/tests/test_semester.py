@@ -3,12 +3,14 @@
 """Tests for Semester model."""
 
 from django.test import TestCase
+
 from ..models import Semester
 from .test_utils import setup
 
 
 class IsAfterTestCase(TestCase):
     """Tests for is_after method."""
+
     def setUp(self):
         pass
 
@@ -37,15 +39,14 @@ class IsAfterTestCase(TestCase):
 
 class SemesterTestCase(TestCase):
     """Additional Tests for Semester Model"""
+
     def setUp(self):
         setup(self)
 
     def test_repr(self):
-        """Test for repr method"""
-        repr_expected = "2020 Fall (1208)"
-        self.assertEqual(repr(self.semester), repr_expected)
+        """Test for __repr__ method"""
+        self.assertEqual(repr(self.semester), "2020 Fall (1208)")
 
     def test_repr_missing_info(self):
-        """Test for repr method when information is missing"""
-        repr_expected = "2019  (1198)"
-        self.assertEqual(repr(self.incomplete_semester), repr_expected)
+        """Test for __repr__ method when information is missing"""
+        self.assertEqual(repr(self.incomplete_semester), "2019  (1198)")

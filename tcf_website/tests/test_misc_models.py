@@ -23,6 +23,11 @@ class MiscModelsTestCase(TestCase):
         self.assertEqual("Computer Science", str(
             self.course.subdepartment.department))
 
+    def test_section_name(self):
+        """Test __str__ method in Section mdoel"""
+        self.assertEqual("CS 1420 | Software Testing | Fall 2020 | Tom Jefferson (tjt3rea@virginia.edu)",
+                         str(self.section_course))
+
     def test_course_grade_name(self):
         """Test __str__ method in CourseGrade model"""
         self.assertEqual("CS - Computer Science 300 2.9", str(
@@ -42,4 +47,4 @@ class MiscModelsTestCase(TestCase):
         self.assertEqual(
             str(vote), "Vote of value -1 for Review by Taylor Comb "
             "(tcf2yay@virginia.edu) for CS 1420 | Software Testing taught by Tom Jefferson "
-            "(tjt3rea@virginia.edu) by  Kjell Kool ()")
+            "(tjt3rea@virginia.edu) by Kjell Kool ()")
