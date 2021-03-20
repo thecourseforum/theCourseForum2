@@ -1,0 +1,30 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}theBlog - theCourseForum{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'blog/blog.css' %}"/>
+{% endblock %}
+
+{% block content %}
+    <!-- {% comment %} <div class="container">
+        {% include "../common/notification.html" %}
+    </div> {% endcomment %} -->
+
+    <div class="blog container">
+        <!-- Google adsense -->
+        <!-- <div class="container mb-4">
+            {% include "../common/banner_ad.html" %}
+        </div> -->
+
+        <!-- Browse page content -->
+        <h2 class="font-weight-light">theBlog</h2>
+        <div class="featured-posts">
+
+        </div>
+        <div class="all-posts">
+          Posts go here
+        </div>
+    </div>
+{% endblock %}
