@@ -34,6 +34,19 @@
             <br/>
             <br/>
 
+            {% if not taught_this_semester %}
+                <div class="new card col p-5 text-center">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            Looks like this course isn't being taught this semester. <i class="far fa-frown-open fa-fw"></i>
+                        </h4>
+                        <p class="card-text">
+                            Sort by "All" in the top right to see previous semesters.
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+
             <ul class="instructor-list">
                 {% for i in instructors %}
                     <li class="instructor {% if i.semester_last_taught != latest_semester %}old{% endif %}">
