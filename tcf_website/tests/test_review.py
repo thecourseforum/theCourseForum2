@@ -84,6 +84,7 @@ class EditReviewTests(TestCase):
 
 class DeleteReviewTests(TestCase):
     """Tests for the DeleteReview view."""
+
     def setUp(self):
         setup(self)  # set up tests: add some example data
 
