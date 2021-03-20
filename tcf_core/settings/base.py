@@ -173,14 +173,12 @@ ES_COURSE_SEARCH_ENDPOINT = env.str('ES_COURSE_SEARCH_ENDPOINT')
 ES_INSTRUCTOR_SEARCH_ENDPOINT = env.str('ES_INSTRUCTOR_SEARCH_ENDPOINT')
 
 # Read-write access to Elastic
-ES_COURSE_DOCUMENTS_ENDPOINT = env.str(
-    'ES_COURSE_DOCUMENTS_ENDPOINT', default='')
+ES_COURSE_DOCUMENTS_ENDPOINT = env.str('ES_COURSE_DOCUMENTS_ENDPOINT', default='')
 ES_INSTRUCTOR_DOCUMENTS_ENDPOINT = env.str(
     'ES_INSTRUCTOR_DOCUMENTS_ENDPOINT', default='')
 ES_PRIVATE_API_KEY = env.str('ES_PRIVATE_API_KEY', default='')
 
-# Logging configuration (from
-# https://docs.djangoproject.com/en/3.1/topics/logging/)
+# Logging configuration (from https://docs.djangoproject.com/en/3.1/topics/logging/)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

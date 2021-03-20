@@ -1,3 +1,22 @@
+.review-content .review-text-body.collapse:not(.show) {
+  display: block;
+  height: 12rem;
+  overflow: hidden;
+}
+.review-content .review-text-body.collapsing {
+  height: 12rem;
+}
+
+.review-content a.collapsed::after {
+  content: '...See More';
+  color: var(--secondary-color);
+}
+
+.review-content a:not(.collapsed)::after {
+  content: 'See Less';
+  color: var(--secondary-color);
+}
+
 .review .upvote, .review .downvote {
     font-size: 1.3rem;
     color: #aaa;
