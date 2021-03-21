@@ -5,6 +5,8 @@ const showOld = () => {
 
     $(".new").addClass("hide");
     $(".old").addClass("shown");
+
+    $(".last-taught").addClass("shown");
 };
 
 const hideOld = () => {
@@ -13,6 +15,8 @@ const hideOld = () => {
 
     $(".new").removeClass("hide");
     $(".old").removeClass("shown");
+
+    $(".last-taught").removeClass("shown");
 };
 
 export { showOld, hideOld };

@@ -11,3 +11,10 @@
 .new.hide {
     display: none;
 }
+
+.last-taught {
+    opacity: 0;
+}
+.last-taught.shown {
+    opacity: 1;
+}
