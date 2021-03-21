@@ -53,7 +53,13 @@ body=$(cat  << EOF
 EOF
 )
 
-curl $DISCORD_WEBHOOK \
+response=$(curl $DISCORD_WEBHOOK \
   -X POST \
   -H "Content-Type: application/json" \
-  -d "$body"
+  -d "$body" | jq -r .message)
+
+if [[ $response != "" ]]
+then
+  echo $response
+  exit 1
+fi
