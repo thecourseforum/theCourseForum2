@@ -1,4 +1,5 @@
 # pylint disable=bad-continuation
+# pylint: disable=too-many-locals
 
 """Views for Browse, department, and course/course instructor pages."""
 import json
