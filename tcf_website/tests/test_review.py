@@ -4,12 +4,14 @@
 from urllib.parse import urlencode
 
 from django.contrib.messages import get_messages
+from django.forms.models import model_to_dict
 from django.test import TestCase
 from django.urls import reverse
 from django.db import IntegrityError
 
 from ..models import Vote, Review
 from .test_utils import setup, suppress_request_warnings
+from ..views.review import ReviewForm
 
 
 class EditReviewTests(TestCase):
@@ -80,6 +82,17 @@ class EditReviewTests(TestCase):
         )
         messages = [m.message for m in get_messages(response.wsgi_request)]
         self.assertIn('difficulty', str(messages[0]))
+
+    def test_reviewform_recalculates_hours_per_week_on_save(self):
+        """Test if a message is shown when invalid form data is submitted."""
+        review1: dict = model_to_dict(self.review1)
+        review1['amount_reading'] = self.review1.amount_reading - 1
+        previous_sum: int = self.review1.hours_per_week
+        form = ReviewForm(review1, instance=self.review1)
+        self.assertTrue(form.is_valid())
+        form.save()
+        self.review1.refresh_from_db()
+        self.assertEqual(previous_sum - 1, self.review1.hours_per_week)
 
 
 class DeleteReviewTests(TestCase):

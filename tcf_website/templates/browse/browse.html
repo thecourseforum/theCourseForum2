@@ -8,10 +8,16 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
+    {% comment %} <div class="container">
         {% include "../common/notification.html" %}
-    </div>
+    </div> {% endcomment %}
     <div class="browse container">
+        <!-- Google adsense -->
+        <div class="container mb-4">
+            {% include "../common/banner_ad.html" %}
+        </div>
+
+        <!-- Browse page content -->
         <h2 class="font-weight-light">Browse by Department</h2>
         <div class="schools text-left">
 
