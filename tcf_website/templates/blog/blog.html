@@ -4,27 +4,84 @@
 {% block title %}theBlog - theCourseForum{% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'blog/blog.css' %}"/>
+<link rel="stylesheet" href="{% static 'blog/blog.css' %}"/>
 {% endblock %}
 
 {% block content %}
-    <!-- {% comment %} <div class="container">
-        {% include "../common/notification.html" %}
-    </div> {% endcomment %} -->
+<!-- {% comment %} <div class="container">
+{% include "../common/notification.html" %}
+</div> {% endcomment %} -->
 
-    <div class="blog container">
-        <!-- Google adsense -->
-        <!-- <div class="container mb-4">
-            {% include "../common/banner_ad.html" %}
-        </div> -->
+<div class="blog container p-0">
+  <!-- Google adsense -->
+  <!-- <div class="container mb-4">
+  {% include "../common/banner_ad.html" %}
+</div> -->
 
-        <!-- Browse page content -->
-        <h2 class="font-weight-light">theBlog</h2>
-        <div class="featured-posts">
-
-        </div>
-        <div class="all-posts">
-          Posts go here
-        </div>
+  <!-- Browse page content -->
+  <section id="masthead">
+    <div class="row p-5 bg-tcf-orange text-white">
+      <div class="col-sm-6">
+        <h2 class="display-4 font-weight-bold mb-2">theBlog</h2>
+        <p class="h5 font-weight-light">
+          Join our community and read about what's going on in your favorite classes!
+        </p>
+      </div>
     </div>
-{% endblock %}
+  </section>
+
+  <section id="featuredPosts">
+    <div class="row mt-4 p-4 bg-light">
+      <div class="col">
+        <h3>Featured Posts</h3>
+
+        <!-- Featured Posts Grid -->
+        <div class="row">
+          {% for fpost in featured_posts %}
+            <div class="col-md-4">
+              <!-- To do: Add url to post -->
+              <a href="#" class="link-unstyled">
+                <div class="card my-3">
+                  <div class="card-header bg-tcf-indigo"></div>
+                  <div class="card-body features-icons-item mb-2">
+                    <h4 class="card-title mb-0">{{ fpost.shortTitle }}</h4>
+                    <small class="card-subtitle text-muted">By {{ fpost.author }}</small>
+                    <p class="card-text mt-2">Click to read more...</p>
+                  </div>
+                  <div class="card-footer bg-white border-0 text-muted">
+                    <small>{{ fpost.postDate }}</small>
+                  </div>
+                </div>
+              </a>
+            </div>
+            {% endfor %}
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Posts List -->
+    <section id="allPosts">
+      <div class="row mt-4 p-4">
+        <div class="col">
+          <h3>All Posts</h3>
+          {% for post in all_posts %}
+            <div class="card d-inline-flex flex-row-reverse mt-4 w-100">
+              <div class="card-header border-0">
+                  <img src="{% static 'blog/'|add:post.headerImg %}" alt="Blog header image" style="width:200px">
+              </div>
+              <div class="card-body p-4">
+                  <h4 class="card-title mb-0">{{ post.title }}</h4>
+                  <small class="card-subtitle text-muted">By {{ post.author }}</small>
+                  <p class="card-text mt-2 mb-5">Click to read more...</p>
+                  <small class="text-muted">{{ post.postDate }}</small>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+  </div>
+  {% endblock %}
