@@ -40,9 +40,9 @@ pylint_formatted="$(get_emoji $PYLINT_RESULT) **Pylint**"
 django_formatted="$(get_emoji $DJANGO_RESULT) **Django** (code coverage: ${DJANGO_COVERAGE:-unknown})"
 eslint_formatted="$(get_emoji $ESLINT_RESULT) **ESLint**"
 commit_message="$(git log -1 --pretty=format:"%s" $LAST_COMMIT_SHA)"
-echo $commit_message
-commit_message_formatted="Last commit message: $(printf '%s' "$commit_message" | jq -arRs)"
-echo $commit_message_formatted
+echo "$commit_message"
+commit_message_formatted="Last commit message: $(echo "$commit_message" | jq -jR)"
+echo "$commit_message_formatted"
 body=$(cat  << EOF
 {
   "content": "$(get_content) ($commit_message_formatted). See more about the result [here]($run_link).",
