@@ -1,8 +1,9 @@
 <div class="school card mb-3">
-    <div class="card-header pt-3">
+    <div class="card-header pt-3" data-toggle="collapse"
+    data-target="#school-{{ id }}" aria-expanded="true">
         <h3 class="card-title mb-0">{{school_name}}</h3>
     </div>
-    <div class="card-body">
+    <div class="card-body collapse show" id="school-{{ id }}">
       {% block department_list %}
         <ul class="department-list">
             {% for d in departments|dictsort:"name" %}
