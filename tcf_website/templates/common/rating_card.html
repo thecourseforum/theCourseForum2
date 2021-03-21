@@ -22,7 +22,7 @@
                     &mdash;
                   {% endif %}
                 </p>
-              </div> 
+              </div>
               <div class="col-4 col-lg-2 text-nowrap">
                 <small class="mb-0 text-uppercase">
                   <i class="fa fa-dumbbell fa-fw"></i>&nbsp;Difficulty
@@ -47,7 +47,7 @@
                   {% endif %}
                 </p>
               </div>
-              <div class="col-12 col-lg-3 offset-lg-3" {% if not last_taught %}style="opacity: 0;"{% endif %}>
+              <div class="col-12 col-lg-3 offset-lg-3" {% if not last_taught %}style="opacity: 0;"{% endif %} {% ifequal last_taught current_semester %}style="opacity: 0;"{% endifequal %}>
                 <small class="mb-0 text-uppercase">
                   Last Taught
                 </small>
