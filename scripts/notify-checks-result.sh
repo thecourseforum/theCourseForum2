@@ -14,7 +14,18 @@ function get_content {
         echo "Unsupported event."
         exit 1 ;;
     esac
-  # 
+}
+
+function get_branch {
+    case $GITHUB_EVENT_NAME in 
+      pull_request)
+        echo $GITHUB_HEAD_REF ;;
+      push)
+        echo ${GITHUB_REF##*/} ;;
+      *)
+        echo "Unsupported event."
+        exit 1 ;;
+    esac
 }
 
 function get_color {
@@ -39,7 +50,7 @@ run_link="$repo_link/actions/runs/$GITHUB_RUN_ID"
 pylint_formatted="$(get_emoji $PYLINT_RESULT) **Pylint**"
 django_formatted="$(get_emoji $DJANGO_RESULT) **Django** (code coverage: ${DJANGO_COVERAGE:-unknown})"
 eslint_formatted="$(get_emoji $ESLINT_RESULT) **ESLint**"
-commit_message="$(git log -1 --pretty=format:"%s" ${GITHUB_REF##*/})"
+commit_message="$(git log -1 --pretty=format:"%s" $(get_branch))"
 echo "$commit_message"
 commit_message_formatted="Last commit message: $(echo "$commit_message" | jq -jR)"
 echo "$commit_message_formatted"
