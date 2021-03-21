@@ -144,6 +144,9 @@ def course_instructor(request, course_id, instructor_id):
     course = section_last_taught.course
     instructor = section_last_taught.instructors.get(pk=instructor_id)
 
+    # Find the total number of reviews (with or without text) for the given course
+    num_reviews = len(Review.objects.filter(instructor=instructor_id, course=course_id))
+
     # Filter out reviews with no text.
     reviews = Review.display_reviews(course_id, instructor_id, request.user)
     dept = course.subdepartment.department
@@ -209,6 +212,7 @@ def course_instructor(request, course_id, instructor_id):
                       'course_id': course_id,
                       'instructor': instructor,
                       'semester_last_taught': section_last_taught.semester,
+                      'num_reviews': num_reviews,
                       'reviews': reviews,
                       'breadcrumbs': breadcrumbs,
                       'data': json.dumps(data),
