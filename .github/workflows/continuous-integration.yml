@@ -117,8 +117,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0
-          
+          fetch-depth: 0 # needed for PRs
+
       - name: Send a message to tCF Discord Server when all jobs are finished
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
