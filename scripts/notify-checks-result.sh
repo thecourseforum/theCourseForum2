@@ -41,7 +41,7 @@ django_formatted="$(get_emoji $DJANGO_RESULT) **Django** (code coverage: ${DJANG
 eslint_formatted="$(get_emoji $ESLINT_RESULT) **ESLint**"
 commit_message="$(git log -1 --pretty=format:"%s" $LAST_COMMIT_SHA)"
 echo $commit_message
-commit_message_formatted="Last commit message: $(printf '%s' "$commit_message" | jq -aRs)"
+commit_message_formatted="Last commit message: $(printf '%s' "$commit_message" | jq -arRs)"
 echo $commit_message_formatted
 body=$(cat  << EOF
 {
