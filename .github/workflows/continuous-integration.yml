@@ -125,7 +125,7 @@ jobs:
           PR_NUMBER: ${{ github.event.number}}
           PR_TITLE: ${{ github.event.pull_request.title }}
           DJANGO_COVERAGE: ${{ needs.django.outputs.code-coverage }}
-          LAST_COMMIT_SHA: ${{ github.sha }}
+          MY_GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
           bash ./scripts/notify-checks-result.sh
         shell: bash
