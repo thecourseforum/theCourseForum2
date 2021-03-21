@@ -16,12 +16,12 @@ function get_content {
     esac
 }
 
-function get_branch {
+function get_last_commit {
     case $GITHUB_EVENT_NAME in 
       pull_request)
-        echo $GITHUB_HEAD_REF ;;
+        echo "HEAD^2" ;;
       push)
-        echo ${GITHUB_REF##*/} ;;
+        echo "HEAD" ;;
       *)
         echo "Unsupported event."
         exit 1 ;;
@@ -50,7 +50,7 @@ run_link="$repo_link/actions/runs/$GITHUB_RUN_ID"
 pylint_formatted="$(get_emoji $PYLINT_RESULT) **Pylint**"
 django_formatted="$(get_emoji $DJANGO_RESULT) **Django** (code coverage: ${DJANGO_COVERAGE:-unknown})"
 eslint_formatted="$(get_emoji $ESLINT_RESULT) **ESLint**"
-commit_message="$(git log -1 --pretty=format:"%s" $(get_branch))"
+commit_message="$(git log -1 --pretty=format:"%s" $(get_last_commit))"
 echo "$commit_message"
 commit_message_formatted="Last commit message: $(echo "$commit_message" | jq -jR)"
 echo "$commit_message_formatted"
