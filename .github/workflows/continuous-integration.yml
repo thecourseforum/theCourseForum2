@@ -116,6 +116,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.after }}
+          
       - name: Send a message to tCF Discord Server when all jobs are finished
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
