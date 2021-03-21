@@ -5,6 +5,9 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
+from markdownx.models import MarkdownxField
+from markdownx.utils import markdownify
 
 
 class School(models.Model):
@@ -753,3 +756,29 @@ class Vote(models.Model):
                 name='unique vote per user and review',
             )
         ]
+
+
+class DateCreateModMixin(models.Model):
+    """Date create/modified mixin (for posts).
+    """
+    class Meta:
+        abstract = True
+    
+    created_date = models.DateTimeField(default=timezone.now)
+    mod_date = models.DateTimeField(blank=True, null=True)
+
+
+class BlogPost(DateCreateModMixin):
+    """Blog post model.
+    https://existenceundefined.com/blog/programming/1/how-to-use-django-markdownx-for-your-blog
+    """
+
+    title = models.CharField(max_length=50)
+    body = MarkdownxField()
+    # background_image = models.ImageField(default='img/header.jpg', upload_to=datetime.now().strftime('backgrounds/%Y/%m/%d'))
+    
+    def formatted_markdown(self):
+        return markdownify(self.body)
+
+    def body_summary(self):
+        return markdownify(self.body[:300] + "...")
