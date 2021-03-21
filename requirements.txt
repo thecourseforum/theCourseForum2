@@ -11,6 +11,8 @@ django-silk
 djangorestframework
 django-filter
 coverage
+selenium>=2.35.1
+webdriver-manager
 
 # Linting
 pylint>=2.4.4
