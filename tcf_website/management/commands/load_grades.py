@@ -50,6 +50,12 @@ class Command(BaseCommand):
         self.course_grades = {}
         self.course_instructor_grades = {}
 
+        # Set of instructors that are in the data but not in the database
+        self.missing_instructors = set()
+
+        # Whether or not to log those missing instructors in a txt
+        self.log_missing_instructors = False
+
     def add_arguments(self, parser):
         # The only required argument at the moment
         # A previous author wrote that reloading all semesters can be dangerous
@@ -69,9 +75,16 @@ class Command(BaseCommand):
             help='Suppress the tqdm loading bars'
         )
 
+        parser.add_argument(
+            '--log-missing-instructors',
+            action='store_true',
+            help='Create a .txt file with missing instructors'
+        )
+
     def handle(self, *args, **options):
         self.verbosity = options['verbosity']
         self.suppress_tqdm = options['suppress_tqdm']
+        self.log_missing_instructors = options['log_missing_instructors']
 
         if self.verbosity > 0:
             print('Step 1: Fetch Course and Instructor data for later use')
@@ -248,6 +261,13 @@ class Command(BaseCommand):
         if self.verbosity > 0:
             print('Done creating CourseInstructorGrade instances')
 
+        if self.log_missing_instructors:
+            print('Writing missing instructors to missing-instructors.txt')
+            file = open('missing-instructors.txt', 'w')
+            for instructor in self.missing_instructors:
+                file.write(instructor)
+            file.close
+
     def set_grade_params(self, row, total_enrolled, total_weight, has_instructor):
         """Creates dict of params to be used as parameters
         in creating CourseGrade/CourseInstructorGrade instances.
@@ -282,4 +302,6 @@ class Command(BaseCommand):
 
         if has_instructor:
             course_grade_params['instructor_id'] = self.instructors.get(row[2:])
+            if self.log_missing_instructors and course_grade_params['instructor_id'] is None:
+                self.missing_instructors.add(f'{row[2]} {row[3]}\n')
         return course_grade_params
