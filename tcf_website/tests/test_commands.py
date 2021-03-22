@@ -26,8 +26,6 @@ class LoadGradesTestCase(TestCase):
     def test_correct_course(self):
         """Make sure the course for both is CS 420"""
         self.assertEqual(self.cg.course, self.cig.course)
-        self.assertEqual(self.cg.course.subdepartment.mnemonic, 'CS')
-        self.assertEqual(self.cg.course.number, 420)
 
     def test_correct_instructor(self):
         """Make sure instructor is Tom Jefferson"""
