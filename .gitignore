@@ -25,3 +25,5 @@ db/*.csv
 .coverage
 # ESLint cache
 .eslintcache
+# Logging text files
+*.txt
