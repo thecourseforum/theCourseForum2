@@ -47,6 +47,10 @@
                 </div>
             {% endif %}
 
+            <p class="card-text mt-2" id="course-description">{{ course.description }}</p>
+
+            <br/>
+
             <ul class="instructor-list">
                 {% for i in instructors %}
                     <li class="instructor {% if i.semester_last_taught != latest_semester %}old{% endif %}">
