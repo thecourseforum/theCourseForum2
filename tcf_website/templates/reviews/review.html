@@ -2,10 +2,10 @@
 <link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
 
 <div id="review{{review.id}}" class="review card mb-2">
-    <div class="card-body text-left px-4">
+    <div class="card-body text-left">
         <div class="row">
             <!-- Review Main Content -->
-            <div class="review-body col-xs-12 col-md-10 col-lg-12">
+            <div class="review-body col-xs-12 col-md-12 col-lg-12">
                 <!-- Review header content (subject, actions, text) -->
                 {% if profile %}
                 <!-- Subject and Edit/Delete actions show only on profile page -->
