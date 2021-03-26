@@ -6,6 +6,7 @@
 {% block styles %}
     <link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
     <link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
+    <link rel="stylesheet" href="{% static 'course/course.css' %}"/>
 {% endblock %}
 
 
@@ -21,17 +22,25 @@
                 <h2>{{ course.title }}</h2>
             </div>
 
-            <a data-toggle="tooltip"
-               data-placement="right"
-               title="Requires NetBadge Login"
-               class="text-tcf-blue font-weight-bold"
-               target="_blank"
-               href={{ course.eval_link }}>
-                Official UVA Student Evaluations
-                <i class="fa fa-external-link" aria-hidden="true"></i>
-            </a>
+            <!-- Course Description -->
+            <div class="card">
+                <h4 class="card-header">
+                    <a id="course-eval-link" data-toggle="tooltip"
+                       data-placement="right"
+                       title="Requires NetBadge Login"
+                       class="text-tcf-blue font-weight-bold"
+                       target="_blank"
+                       href={{ course.eval_link }}>
+                        Official UVA Student Evaluations
+                        <i class="fa fa-external-link" aria-hidden="true"></i>
+                    </a>
+                    Course Description
+                </h4>
+                <div class="card-body">
+                    {{ course.description }}
+                </div>
+            </div>
 
-            <br/>
             <br/>
 
             {% if not taught_this_semester %}
@@ -46,10 +55,6 @@
                     </div>
                 </div>
             {% endif %}
-
-            <p class="card-text mt-2" id="course-description">{{ course.description }}</p>
-
-            <br/>
 
             <ul class="instructor-list">
                 {% for i in instructors %}
