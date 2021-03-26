@@ -12,7 +12,13 @@ function get_content() {
   fi
 }
 
-curl $DISCORD_WEBHOOK \
+response=$(curl $DISCORD_WEBHOOK \
   -X "POST" \
   -H "Content-Type: application/json" \
-  -d "{ \"content\" : \"$(get_content)\" }"
+  -d "{ \"content\" : \"$(get_content)\" }" | jq -r .message)
+
+if [[ $response != "" ]]
+then
+  echo $response
+  exit 1
+fi
