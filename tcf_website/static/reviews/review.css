@@ -17,6 +17,10 @@
   color: var(--secondary-color);
 }
 
+.review .card-body {
+  padding: 20px 30px
+}
+
 .review .upvote, .review .downvote {
     font-size: 1.3rem;
     color: #aaa;
