@@ -5,6 +5,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
+from django.db.models.functions import Coalesce, Abs
 
 
 class School(models.Model):
@@ -622,17 +623,10 @@ class Review(models.Model):
 
     def count_votes(self):
         """Sum votes for review."""
-        upvotes = self.vote_set.filter(value=1)\
-            .aggregate(models.Sum('value'))\
-            .get('value__sum', 0)
-        downvotes = self.vote_set.filter(value=-1)\
-            .aggregate(models.Sum('value'))\
-            .get('value__sum', 0)
-
-        upvotes = upvotes if upvotes else 0
-        downvotes = -1 * downvotes if downvotes else 0
-
-        return {'upvotes': upvotes, 'downvotes': downvotes}
+        return self.vote_set.aggregate(
+            upvotes=Coalesce(models.Sum('value', filter=models.Q(value=1)), 0),
+            downvotes=Coalesce(Abs(models.Sum('value', filter=models.Q(value=-1))), 0),
+        )
 
     def upvote(self, user):
         """Create an upvote."""
