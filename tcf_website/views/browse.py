@@ -193,7 +193,7 @@ def course_instructor(request, course_id, instructor_id):
             'a_plus', 'a', 'a_minus',
             'b_plus', 'b', 'b_minus',
             'c_plus', 'c', 'c_minus',
-            'not_pass', 'total_enrolled'
+            'no_credit', 'total_enrolled'
         ]
         for field in fields:
             data[field] = getattr(grades_data, field)

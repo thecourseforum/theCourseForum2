@@ -173,7 +173,7 @@ class Command(BaseCommand):
             c_minus = int(row['C-'])
             # UVA data doesn't contain D's or F's, just the DFW column
             # Assuming it means "drop", "fail", "withdraw"
-            not_pass = int(row['DFW'])
+            no_credit = int(row['DFW'])
         except (TypeError, ValueError) as e:
             if self.verbosity > 0:
                 print(row)
@@ -189,7 +189,7 @@ class Command(BaseCommand):
         this_semesters_grades = [a_plus, a, a_minus,
                                  b_plus, b, b_minus,
                                  c_plus, c, c_minus,
-                                 not_pass]
+                                 no_credit]
 
         # load this semester into course_grades dictionary
         if course_identifier in self.course_grades:
@@ -296,7 +296,7 @@ class Command(BaseCommand):
             'c_plus': data[6],
             'c': data[7],
             'c_minus': data[8],
-            'not_pass': data[9],
+            'no_credit': data[9],
             'total_enrolled': total_enrolled
         }
 

@@ -53,7 +53,7 @@ class LoadGradesTestCase(TestCase):
         self.assertEqual(model.c_plus, 1)
         self.assertEqual(model.c, 2)
         self.assertEqual(model.c_minus, 0)
-        self.assertEqual(model.not_pass, 4)
+        self.assertEqual(model.no_credit, 4)
 
     def test_matching_data(self):
         """Make sure both instances match each other"""
@@ -66,4 +66,4 @@ class LoadGradesTestCase(TestCase):
         self.assertEqual(self.cg.c_plus, self.cig.c_plus)
         self.assertEqual(self.cg.c, self.cig.c)
         self.assertEqual(self.cg.c_minus, self.cig.c_minus)
-        self.assertEqual(self.cg.not_pass, self.cig.not_pass)
+        self.assertEqual(self.cg.no_credit, self.cig.no_credit)

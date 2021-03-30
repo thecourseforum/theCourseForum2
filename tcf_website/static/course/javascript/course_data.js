@@ -1,9 +1,9 @@
 const loadData = data => {
     // order in the input data
     /* eslint-disable camelcase */
-    const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, not_pass} = data;
+    const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, no_credit } = data;
     // order we want for the pie chart
-    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, not_pass];
+    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, no_credit];
     /* eslint-enable camelcase */
 
     createChart(grades_data);
@@ -57,7 +57,7 @@ const createChart = gradesData => {
                 "#DAA38E", // C+
                 "#DD734C", // C
                 "#D75626", // C-
-                "#BE4B20", // No Credit
+                "#BE4B20" // No Credit
             ]
         }],
         labels: [
@@ -88,11 +88,11 @@ const createChart = gradesData => {
                     label: function(tooltipItem, data) {
                         var dataset = data.datasets[0];
                         var percent = Math.round((dataset.data[tooltipItem.index] / dataset._meta[0].total) * 100);
-                        var label = data.labels[tooltipItem.index]
-                        if (tooltipItem.index == 9){
-                            label = "No Credit"
+                        var label = data.labels[tooltipItem.index];
+                        if (tooltipItem.index === 9) {
+                            label = "No Credit";
                         }
-                        return  label + ": " + percent + "%";
+                        return label + ": " + percent + "%";
                     }
                 },
                 displayColors: false
