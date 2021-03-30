@@ -116,6 +116,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # needed for PRs
+
       - name: Send a message to tCF Discord Server when all jobs are finished
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
@@ -125,6 +128,7 @@ jobs:
           PR_NUMBER: ${{ github.event.number}}
           PR_TITLE: ${{ github.event.pull_request.title }}
           DJANGO_COVERAGE: ${{ needs.django.outputs.code-coverage }}
+          LATEST_PR_COMMIT: ${{ github.event.after }}
         run: |
-          bash ./scripts/notify-discord.sh
+          bash ./scripts/notify-checks-result.sh
         shell: bash
