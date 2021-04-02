@@ -4,9 +4,9 @@
 {% block title %}{{breadcrumbs.1.0}} - theCourseForum{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'department/department.css' %}" />
-<link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
-<link rel="stylesheet" href="{% static 'common/show-hide.css' %}" />
+<link rel="stylesheet" href="{% static 'department/department.css' %}"/>
+<link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
+<link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
 {% endblock %}
 
 {% block content %}
@@ -17,16 +17,43 @@
 
     <div class="subdepartments mt-3">
         {% for sd in subdepartments %}
-        <div class="subdepartment container-lg {% if not sd.has_current_course %}old{% endif %}">
+        <div class="subdepartment container-lg">
             <h1 class="my-3">{{ sd.name }}</h1>
             <ul class="course-list" id="courses-sd-{{sd.id}}">
             </ul>
             <div class="text-center" id="spinner-sd-{{sd.id}}">
-                <div class="spinner-border" role="status" >
+                <div class="spinner-border" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
             </div>
         </div>
+        <!-- Card for if there are no courses in this subdepartment in general-->
+        {% if not sd.recent_courses %}
+        <div class="new card col p-5 text-center">
+            <div class="card-body">
+                <h4 class="card-title">
+                    Looks like this subdepartment has no courses that are taught as of now. <i
+                        class="far fa-frown-open fa-fw"></i>
+                </h4>
+                <p class="card-text">
+                    Check back later!
+                </p>
+            </div>
+        </div>
+        <!-- Card for if there are no courses in this subdepartment this semester-->
+        {% elif not sd.has_current_course%}
+        <div class="new card col p-5 text-center">
+            <div class="card-body">
+                <h4 class="card-title">
+                    Looks like this subdepartment has no courses that are taught this semester. <i
+                        class="far fa-frown-open fa-fw"></i>
+                </h4>
+                <p class="card-text">
+                    Sort by "Last 5 Years" in the top right to see previous semesters.
+                </p>
+            </div>
+        </div>
+        {% endif %}
         {% endfor %}
     </div>
 </div>
@@ -41,5 +68,6 @@
     {% for sd in subdepartments %}
         loadPage("{{sd.id}}", "/api/courses/?page=1&page_size=30&subdepartment={{sd.id}}&simplestats&recent");
     {% endfor %}
+
 </script>
 {% endblock %}
