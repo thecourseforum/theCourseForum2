@@ -7,7 +7,9 @@ from django.contrib.messages import get_messages
 from django.forms.models import model_to_dict
 from django.test import TestCase
 from django.urls import reverse
+from django.db import IntegrityError
 
+from ..models import Vote, Review
 from .test_utils import setup, suppress_request_warnings
 from ..views.review import ReviewForm
 
@@ -67,7 +69,7 @@ class EditReviewTests(TestCase):
         self.assertEqual(self.review1.text, 'new text')
         messages = [m.message for m in get_messages(response.wsgi_request)]
         self.assertEqual(str(messages[0]),
-                         'Successfully updated your review for CS 420 | Software Testing!')
+                         'Successfully updated your review for CS 1420 | Software Testing!')
 
     def test_message_for_invalid_form(self):
         """Test if a message is shown when invalid form data is submitted."""
@@ -139,3 +141,67 @@ class DeleteReviewTests(TestCase):
         # trying to delete a review you don't have access to should result in
         # 403 - forbidden
         self.assertEqual(response.status_code, 403)
+
+
+class ModelReviewTests(TestCase):
+    """Tests for the Review model."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_count_votes(self):
+        """Test for count votes method"""
+        self.assertDictEqual(self.review1.count_votes(), {'upvotes': 2, 'downvotes': 1})
+
+    def test_count_votes_no_votes(self):
+        """Test for count votes method for when there are no votes"""
+        self.assertEqual(self.review2.count_votes(), {'upvotes': 0, 'downvotes': 0})
+
+    def test_upvote(self):
+        """Test for upvote method verify with count_votes"""
+        self.review1.upvote(self.user4)
+        self.assertDictEqual(self.review1.count_votes(), {'upvotes': 3, 'downvotes': 1})
+
+    def test_upvote_already_upvoted(self):
+        """Test for upvote method verify with count_votes when the user already upvoted"""
+        self.review1.upvote(self.user4)
+        self.review1.upvote(self.user4)
+        self.assertDictEqual(self.review1.count_votes(), {'upvotes': 2, 'downvotes': 1})
+
+    def test_downvote(self):
+        """Test for downvote method verify with count_votes"""
+        self.review1.downvote(self.user4)
+        self.assertDictEqual(self.review1.count_votes(), {'upvotes': 2, 'downvotes': 2})
+
+    def test_upvote_already_downvoted(self):
+        """Test for downvote method verify with count_votes when the user already downvoted"""
+        self.review1.downvote(self.user4)
+        self.review1.downvote(self.user4)
+        self.assertDictEqual(self.review1.count_votes(), {'upvotes': 2, 'downvotes': 1})
+
+    def test_double_vote(self):
+        """Test for voting twice on same review by same user using vote model"""
+        self.assertRaises(IntegrityError, Vote.objects.create,
+                          value=-1,
+                          user=self.user3,
+                          review=self.review1)
+
+    def test_display_reviews(self):
+        """Test display reviews method"""
+        review_queryset = Review.objects.filter(course=self.course)
+
+        self.assertQuerysetEqual(
+            Review.display_reviews(
+                self.course,
+                self.instructor,
+                self.user1),
+            review_queryset,
+            transform=lambda x: x,  # Needed so that the formatting works
+            ordered=False)
+
+    def test_display_no_reviews(self):
+        """Test display reviews method when there are no reviews"""
+        self.review1.delete()
+        self.review2.delete()
+        self.assertFalse(Review.display_reviews(
+            self.course, self.instructor, self.user1).exists())

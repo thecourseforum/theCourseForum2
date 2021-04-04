@@ -8,6 +8,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
+from django.db.models.functions import Coalesce, Abs
 
 
 class School(models.Model):
@@ -623,14 +624,12 @@ class Review(models.Model):
         return (self.instructor_rating +
                 self.recommendability + self.enjoyability) / 3
 
-    # not sure if this gets used anywhere either
     def count_votes(self):
         """Sum votes for review."""
-        vote_sum = self.vote_set.aggregate(
-            models.Sum('value')).get('value__sum', 0)
-        if not vote_sum:
-            return 0
-        return vote_sum
+        return self.vote_set.aggregate(
+            upvotes=Coalesce(models.Sum('value', filter=models.Q(value=1)), 0),
+            downvotes=Coalesce(Abs(models.Sum('value', filter=models.Q(value=-1))), 0),
+        )
 
     def upvote(self, user):
         """Create an upvote."""
@@ -763,7 +762,7 @@ class DateCreateModMixin(models.Model):
     """
     class Meta:
         abstract = True
-    
+
     created_date = models.DateTimeField(default=timezone.now)
     mod_date = models.DateTimeField(blank=True, null=True)
 
@@ -776,7 +775,7 @@ class BlogPost(DateCreateModMixin):
     title = models.CharField(max_length=50)
     body = MarkdownxField()
     # background_image = models.ImageField(default='img/header.jpg', upload_to=datetime.now().strftime('backgrounds/%Y/%m/%d'))
-    
+
     def formatted_markdown(self):
         return markdownify(self.body)
 
