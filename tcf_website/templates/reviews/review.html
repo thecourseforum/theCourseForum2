@@ -2,25 +2,10 @@
 <link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
 
 <div id="review{{review.id}}" class="review card mb-2">
-    <div class="card-body text-left pt-0 pr-4">
+    <div class="card-body text-left">
         <div class="row">
-            <!-- Review upvote/downvote panel -->
-            <div class="vote-container col-2 col-lg-1 d-none d-md-flex flex-column justify-content-center align-items-center">
-                <!--Voting logic is implemented in the <script> tag of reviews.html-->
-                <a id="upvote{{review.id}}" href="#loginModal" data-toggle="modal"
-                   class="upvote {% if review.user_vote == 1 %}active{% endif %}">
-                    <i class="fa fa-angle-up fa-fw"></i>
-                </a>
-                <span id="vote-count" class="voteCount">{{ review.sum_votes }}</span>
-                <a id="downvote{{review.id}}" href="#loginModal" data-toggle="modal"
-                   class="downvote {% if review.user_vote == -1 %}active{% endif %}">
-                    <i class="fa fa-angle-down fa-fw"></i>
-                </a>
-            </div>
-
             <!-- Review Main Content -->
-            <div class="review-body pt-4 col-xs-12 col-md-10 col-lg-11">
-
+            <div class="review-body col-xs-12 col-md-12 col-lg-12">
                 <!-- Review header content (subject, actions, text) -->
                 {% if profile %}
                 <!-- Subject and Edit/Delete actions show only on profile page -->
@@ -45,6 +30,14 @@
                         </div>
                     </div>
                 </div>
+                {% else %}
+                <!-- Display reviewer's semester and updated date of review if on review page -->
+                <div class="review-header">
+                  <div class="d-flex justify-content-between">
+                    <h6 class="font-weight-bold text-tcf-orange">{{ review.semester }}</h6>
+                    <h6 id="date" class="text-muted">Updated {{ review.created|date:"n/d/y" }}</h6>
+                  </div>
+                </div>
                 {% endif %}
 
                 <div class="review-content mb-2">
@@ -63,16 +56,33 @@
                 </div>
 
                 <div class="review-footer row mt-3">
+                    <!-- Review upvote/downvote container -->
+                    <div class="vote-container col-sm-4 d-flex align-items-end text-center text-muted flex-wrap">
+                      <!-- Hidden HTML tag to sort reviews by helpfulness (net upvotes)-->
+                      <span id="vote-count" hidden>{{ review.sum_votes }}</span>
+                      <div class="mr-3 mr-sm-4">
+                          <!--Voting logic is implemented in the <script> tag of reviews.html-->
+                          <a id="upvote{{review.id}}" href="#loginModal" data-toggle="modal"
+                             class="upvote {% if review.user_vote == 1 %}active{% endif %}">
+                              <i class="fa fa-thumbs-up"></i>
+                          </a>
+                          <span class="upvoteCount">{{ review.count_votes.upvotes }}</span>
+                      </div>
+                      <div class="mr-3 mr-sm-4">
+                          <a id="downvote{{review.id}}" href="#loginModal" data-toggle="modal"
+                             class="downvote {% if review.user_vote == -1 %}active{% endif %}">
+                              <i class="fa fa-thumbs-down"></i>
+                          </a>
+                          <span class="downvoteCount">{{ review.count_votes.downvotes }}</span>
+                      </div>
+                    </div>
+
                     <!-- Review Ratings -->
-                    <div class="review-ratings col-sm-8 d-flex align-items-end text-center text-muted flex-wrap mb-2">
+                    <div class="review-ratings col-sm-8 d-flex align-items-end justify-content-end text-center text-muted flex-wrap">
                         <div id="review-average" class="text-dark mr-3 mr-sm-4">
-                            <i class="fa fa-star fa-fw"></i>
-                            {{ review.average|floatformat:2 }}
-                        </div>
-                        <div class="mr-3 mr-sm-4">
-                            <i class="fas fa-thumbs-up"></i>
-                            {{ review.recommendability }}
-                        </div>
+                           <i class="fa fa-star fa-fw"></i>
+                           {{ review.average|floatformat:2 }}
+                       </div>
                         <div class="mr-3 mr-sm-4">
                             <i class="fa fa-user"></i>
                             {{ review.instructor_rating }}
@@ -85,15 +95,14 @@
                             <i class="fa fa-dumbbell fa-fw"></i>
                             {{ review.difficulty }}
                         </div>
+                        <div class="mr-3 mr-sm-4">
+                          <i class="fa fa-heart"></i>
+                          {{ review.recommendability }}
+                        </div>
                         <div>
                             <i class="fa fa-hourglass-half fa-fw"></i>
                             {{ review.hours_per_week }}
                         </div>
-                    </div>
-
-                    <div class="review-date col-sm-4 pl-0 text-right">
-                        <h6 class="font-weight-bold text-tcf-orange">{{ review.semester }}</h6>
-                        <h6 id="date" class="text-muted">Updated {{ review.created|date }}</h6>
                     </div>
 
                 </div>
