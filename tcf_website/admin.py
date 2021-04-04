@@ -74,7 +74,6 @@ class BlogPostAdmin(MarkdownxModelAdmin):
     search_fields = ['title']
 
 
-
 admin.site.register(Section, SectionAdmin)
 admin.site.register(Instructor, InstructorAdmin)
 admin.site.register(Course, CourseAdmin)
