@@ -1,12 +1,15 @@
 /* For review upvote/downvote functionality */
 function handleVote(reviewID, isUpvote) {
-    const voteCountElem = $(`#review${reviewID} .voteCount`);
-    const voteCount = parseInt(voteCountElem.text());
+    const upvoteCountElem = $(`#review${reviewID} .upvoteCount`);
+    const downvoteCountElem = $(`#review${reviewID} .downvoteCount`);
+    const upvoteCount = parseInt(upvoteCountElem.text());
+    const downvoteCount = parseInt(downvoteCountElem.text());
 
     let elem;
     let otherElem;
     let endpoint;
-    let newVoteCount;
+    let newUpvoteCount;
+    let newDownvoteCount;
 
     if (isUpvote) {
         elem = $(`#review${reviewID} .upvote`);
@@ -15,13 +18,14 @@ function handleVote(reviewID, isUpvote) {
 
         // If already upvoted, subtract 1.
         if (elem.hasClass("active")) {
-            newVoteCount = voteCount - 1;
-        // If already downvoted, add 2.
+            newUpvoteCount = upvoteCount - 1;
+        // If already downvoted, add 1 to upvote and subtract 1 from downvote.
         } else if (otherElem.hasClass("active")) {
-            newVoteCount = voteCount + 2;
+            newUpvoteCount = upvoteCount + 1;
+            newDownvoteCount = downvoteCount - 1;
         // Otherwise add 1.
         } else {
-            newVoteCount = voteCount + 1;
+            newUpvoteCount = upvoteCount + 1;
         }
     } else {
         elem = $(`#review${reviewID} .downvote`);
@@ -30,13 +34,14 @@ function handleVote(reviewID, isUpvote) {
 
         // If already downvoted, add 1.
         if (elem.hasClass("active")) {
-            newVoteCount = voteCount + 1;
-        // If already upvoted, subtract 2.
+            newDownvoteCount = downvoteCount - 1;
+        // If already upvoted, add 1 to downvote and subtract 1 from upvote.
         } else if (otherElem.hasClass("active")) {
-            newVoteCount = voteCount - 2;
+            newDownvoteCount = downvoteCount + 1;
+            newUpvoteCount = upvoteCount - 1;
         // Otherwise subtract 1.
         } else {
-            newVoteCount = voteCount - 1;
+            newDownvoteCount = downvoteCount + 1;
         }
     }
 
@@ -47,9 +52,9 @@ function handleVote(reviewID, isUpvote) {
     });
 
     // Update vote text.
-    voteCountElem.text(newVoteCount);
+    upvoteCountElem.text(newUpvoteCount);
+    downvoteCountElem.text(newDownvoteCount);
 
-    // Only one option can be active
     if (elem.hasClass("active")) {
         elem.removeClass("active");
     } else {
