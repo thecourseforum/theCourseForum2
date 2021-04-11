@@ -94,7 +94,7 @@ class Command(BaseCommand):
             for file in sorted(os.listdir(self.data_dir)):
                 if self.verbosity == 3:
                     print('Loading data from', file)
-                if file[0] not in ('.', '~'):
+                if file[0] not in ('.', '~') and file != 'test_data.csv':
                     self.load_semester_file(file)
         else:
             self.load_semester_file(f"{semester.lower()}.csv")
@@ -155,7 +155,8 @@ class Command(BaseCommand):
             # Script should stop if name that doesn't fit this pattern is given
             if self.verbosity > 0:
                 print('full name is', full_name)
-            raise ValueError(f"{full_name=} doesn't meet our assumption about `Primary Instructor Name`.")
+            raise ValueError(
+                f"{full_name=} doesn't meet our assumption about `Primary Instructor Name`.")
 
         # 'Class Section' column is unused
         try:
@@ -263,10 +264,9 @@ class Command(BaseCommand):
 
         if self.log_missing_instructors:
             print('Writing missing instructors to missing-instructors.txt')
-            file = open('missing-instructors.txt', 'w')
-            for instructor in self.missing_instructors:
-                file.write(instructor)
-            file.close
+            with open('missing-instructors.txt', 'w') as file:
+                for instructor in self.missing_instructors:
+                    file.write(instructor)
 
     def set_grade_params(self, row, total_enrolled, total_weight, has_instructor):
         """Creates dict of params to be used as parameters

@@ -57,13 +57,17 @@ class LoadGradesTestCase(TestCase):
 
     def test_matching_data(self):
         """Make sure both instances match each other"""
-        self.assertEqual(self.cg.a_plus, self.cig.a_plus)
-        self.assertEqual(self.cg.a, self.cig.a)
-        self.assertEqual(self.cg.a_minus, self.cig.a_minus)
-        self.assertEqual(self.cg.b_plus, self.cig.b_plus)
-        self.assertEqual(self.cg.b, self.cig.b)
-        self.assertEqual(self.cg.b_minus, self.cig.b_minus)
-        self.assertEqual(self.cg.c_plus, self.cig.c_plus)
-        self.assertEqual(self.cg.c, self.cig.c)
-        self.assertEqual(self.cg.c_minus, self.cig.c_minus)
-        self.assertEqual(self.cg.no_credit, self.cig.no_credit)
+        for field in [
+            'a_plus',
+            'a',
+            'a_minus',
+            'b_plus',
+            'b',
+            'b_minus',
+            'c_plus',
+            'c',
+            'c_minus',
+                'no_credit']:
+            cg_field = getattr(self.cg, field)
+            cig_field = getattr(self.cig, field)
+            self.assertEqual(cg_field, cig_field)
