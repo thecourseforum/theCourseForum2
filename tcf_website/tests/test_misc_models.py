@@ -31,8 +31,7 @@ class MiscModelsTestCase(TestCase):
 
     def test_course_grade_name(self):
         """Test __str__ method in CourseGrade model"""
-        self.assertEqual("CS 1420 2.9", str(
-            self.course_grade))
+        self.assertEqual("CS 1420 2.9", str(self.course_grade))
 
     def test_course_instructor_grade_name(self):
         """Test __str__ method in CourseInstructorGrade model"""

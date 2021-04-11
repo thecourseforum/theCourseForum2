@@ -155,7 +155,7 @@ class Command(BaseCommand):
             # Script should stop if name that doesn't fit this pattern is given
             if self.verbosity > 0:
                 print('full name is', full_name)
-            raise ValueError
+            raise ValueError(f"{full_name=} doesn't meet our assumption about `Primary Instructor Name`.")
 
         # 'Class Section' column is unused
         try:

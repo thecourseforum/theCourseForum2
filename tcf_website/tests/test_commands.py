@@ -15,16 +15,16 @@ class LoadGradesTestCase(TestCase):
         super().setUpClass()
         setup(cls)
         management.call_command('load_grades', 'test_data', '--suppress-tqdm', verbosity=0)
-        cls.cg = CourseGrade.objects.all()[0]
-        cls.cig = CourseInstructorGrade.objects.all()[0]
+        cls.cg = CourseGrade.objects.first()
+        cls.cig = CourseInstructorGrade.objects.first()
 
     def test_no_duplicates(self):
         """Make sure only one instance of CourseGrade and CourseInstructorGrade were created"""
-        self.assertEqual(len(CourseGrade.objects.all()), 1)
-        self.assertEqual(len(CourseInstructorGrade.objects.all()), 1)
+        self.assertEqual(CourseGrade.objects.count(), 1)
+        self.assertEqual(CourseInstructorGrade.objects.count(), 1)
 
     def test_correct_course(self):
-        """Make sure the course for both is CS 420"""
+        """Make sure the course for both is CS 1420"""
         self.assertEqual(self.cg.course, self.cig.course)
 
     def test_correct_instructor(self):
@@ -33,8 +33,8 @@ class LoadGradesTestCase(TestCase):
 
     def test_total_students(self):
         """Check valid total_enrolled"""
-        self.assertEqual(self.cg.total_enrolled, self.cig.total_enrolled)
         self.assertEqual(self.cg.total_enrolled, 24)
+        self.assertEqual(self.cig.total_enrolled, 24)
 
     def test_correct_distribution(self):
         """Make sure both instances match expected values"""
@@ -57,7 +57,7 @@ class LoadGradesTestCase(TestCase):
 
     def test_matching_data(self):
         """Make sure both instances match each other"""
-        self.assertEqual(self.cig.a_plus, self.cig.a_plus)
+        self.assertEqual(self.cg.a_plus, self.cig.a_plus)
         self.assertEqual(self.cg.a, self.cig.a)
         self.assertEqual(self.cg.a_minus, self.cig.a_minus)
         self.assertEqual(self.cg.b_plus, self.cig.b_plus)
