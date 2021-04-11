@@ -4,6 +4,7 @@ docker exec tcf_django autopep8 --in-place --jobs=0 --max-line-length=100 --aggr
 # Lint.
 docker exec tcf_django pylint --jobs=0 --load-plugins pylint_django --django-settings-module=tcf_core.settings tcf_website tcf_core
 docker exec tcf_django node_modules/.bin/eslint --cache --fix -c .config/.eslintrc.yml tcf_website/static/
+docker exec tcf_django node_modules/.bin/markdownlint **/*.md --config .config/.markdownlint.yml --dot --ignore node_modules/ --ignore static/
 # Test.
 docker exec tcf_django coverage run manage.py test --keepdb
 # Get code coverage.

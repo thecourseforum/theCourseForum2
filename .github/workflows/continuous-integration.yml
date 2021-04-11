@@ -94,7 +94,7 @@ jobs:
         run: |
           echo "::set-output name=percentage::$(coverage report | grep -o '[0-9]\+%' | tail -1)"
 
-  eslint:
+  js-md-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -110,9 +110,12 @@ jobs:
       - name: Run ESLint
         run: node_modules/.bin/eslint -c .config/.eslintrc.yml tcf_website/static/
 
+      - name: Run markdownlint
+        run: node_modules/.bin/markdownlint **/*.md --config .config/.markdownlint.yml --dot --ignore node_modules/ --ignore static/
+
   discord:
     if: ${{ always() }}
-    needs: [pylint, django, eslint]
+    needs: [pylint, django, js-md-lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -124,7 +127,7 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
           PYLINT_RESULT: ${{ needs.pylint.result }}
           DJANGO_RESULT: ${{ needs.django.result }}
-          ESLINT_RESULT: ${{ needs.eslint.result }}
+          JSMDLINT_RESULT: ${{ needs.js-md-lint.result }}
           PR_NUMBER: ${{ github.event.number}}
           PR_TITLE: ${{ github.event.pull_request.title }}
           DJANGO_COVERAGE: ${{ needs.django.outputs.code-coverage }}

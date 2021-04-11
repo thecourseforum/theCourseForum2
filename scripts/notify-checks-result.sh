@@ -49,7 +49,7 @@ function get_emoji {
 run_link="$repo_link/actions/runs/$GITHUB_RUN_ID"
 pylint_formatted="$(get_emoji $PYLINT_RESULT) **Pylint**"
 django_formatted="$(get_emoji $DJANGO_RESULT) **Django** (code coverage: ${DJANGO_COVERAGE:-unknown})"
-eslint_formatted="$(get_emoji $ESLINT_RESULT) **ESLint**"
+jsmdlint_formatted="$(get_emoji $JSMDLINT_RESULT) **ESLint/markdownlint**"
 commit_message_quoted_wrapped="$(git log -1 --pretty=format:"%s" $(get_last_commit) | jq -R)"
 commit_message_formatted="Last commit message: ${commit_message_quoted_wrapped:1:-1}"
 body=$(cat  << EOF
@@ -57,8 +57,8 @@ body=$(cat  << EOF
   "content": "$(get_content) ($commit_message_formatted). See more about the result [here]($run_link).",
   "embeds": [
     {
-      "description": "$pylint_formatted\\n$django_formatted\\n$eslint_formatted",
-      "color": $(get_color $PYLINT_RESULT $DJANGO_RESULT $ESLINT_RESULT)
+      "description": "$pylint_formatted\\n$django_formatted\\n$jsmdlint_formatted",
+      "color": $(get_color $PYLINT_RESULT $DJANGO_RESULT $JSMDLINT_RESULT)
     }
   ]
 }
