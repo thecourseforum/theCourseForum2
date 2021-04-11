@@ -11,7 +11,7 @@ raw_data = read_csv("csv/GradeDistributionF09toSpr20.csv", encoding="ISO-8859-1"
 grouped_data = raw_data.groupby("Term Desc")  # What semesters are called in the data
 
 for group in grouped_data.groups:
-    semester = group.lower().replace(' ', '_')  # Format semester name e.g. 2020_fall
+    semester = group.lower().strip().replace(' ', '_')  # Format semester name e.g. 2020_fall
 
     semester_data = grouped_data.get_group(group)
     semester_data.to_csv(f'csv/{semester}.csv', index=False)
