@@ -17,18 +17,22 @@
   color: var(--secondary-color);
 }
 
+.review .card-body {
+  padding: 20px 30px
+}
+
 .review .upvote, .review .downvote {
-    font-size: 2rem;
+    font-size: 1.3rem;
     color: #aaa;
     cursor: pointer;
 }
 
 .review .upvote.active, .review .upvote:hover {
-    color: rgb(220, 72, 36);
+    color: dodgerblue;
 }
 
 .review .downvote.active, .review .downvote:hover {
-    color: dodgerblue;
+    color: rgb(215, 86, 38);
 }
 
 .tooltip-inner {
