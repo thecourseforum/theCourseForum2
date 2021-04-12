@@ -29,6 +29,16 @@ class ReviewForm(forms.ModelForm):
             'amount_writing', 'amount_group', 'amount_homework',
         ]
 
+    def save(self, commit=True):
+        """Compute `hours_per_week` before actually saving"""
+        instance = super().save(commit=False)
+        instance.hours_per_week = \
+            instance.amount_reading + instance.amount_writing + \
+            instance.amount_group + instance.amount_homework
+        if commit:
+            instance.save()
+        return instance
+
 
 @login_required
 def upvote(request, review_id):
