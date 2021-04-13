@@ -12,9 +12,12 @@
 {% block content %}
 
 <div class="department container">
-
-    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True%}
-
+    <div class="container-lg mb-4">
+        {% include "../common/leaderboard_ad.html" with ad_slot="3719332473" %}
+    </div>
+    <div class="container-lg">
+        {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True%}
+    </div>
     <div class="subdepartments mt-3">
         {% for sd in subdepartments %}
         <div class="subdepartment container-lg {% if not sd.has_current_course %}old{% endif %}">
