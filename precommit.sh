@@ -9,4 +9,4 @@ docker exec tcf_django coverage run manage.py test --keepdb
 # Get code coverage.
 docker exec tcf_django coverage report -m
 
-python3 seleniumtests/selenium_test.py
+python3 seleniumtests/selenium_test.py $@
