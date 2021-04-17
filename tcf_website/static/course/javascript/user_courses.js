@@ -1,12 +1,12 @@
 var numCourses = 0;
 
-function unsaveCourse(course_id, instructor_id) {
+function unsaveCourse(course_id, instructor_id, id) {
     $.ajax({
         type: "GET",
         url: `/unsave_course/${course_id}/${instructor_id}`
     });
 
-    document.getElementById(`course_${course_id}_${instructor_id}`).remove();
+    document.getElementById(`course_${course_id}_${instructor_id}_${id}`).remove();
 
     numCourses--;
     if(numCourses==0){
@@ -29,9 +29,10 @@ for(var i=0; i<buttons.length; i++){
     const x = button.id.split("_");
     const course = x[1];
     const instructor = x[2];
+    const id = x[3];
 
     numCourses++;
-    button.addEventListener("click", ()=>unsaveCourse(course, instructor), false);
+    button.addEventListener("click", ()=>unsaveCourse(course, instructor, id), false);
 }
 
 // source: https://docs.djangoproject.com/en/3.1/ref/csrf/
@@ -62,6 +63,8 @@ $("#savedCoursesList").on( "sortupdate", function( event, ui ) {
     const successor_id = successor.id.split("_")[3];
     const csrftoken = getCookie('csrftoken');
 
+    console.log(moved_id);
+    console.log(successor_id);
     $.ajaxSetup({
        headers: { "X-CSRFToken": csrftoken }
     });
