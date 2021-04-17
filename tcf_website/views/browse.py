@@ -208,9 +208,6 @@ def course_instructor(request, course_id, instructor_id):
             total += data[field]
         data['total_enrolled'] = total
 
-    except ObjectDoesNotExist:  # if no data found
-        pass
-
     is_saved = SavedCourse.objects.filter(user=request.user, course=course,
                                           instructor=instructor).exists()
 
