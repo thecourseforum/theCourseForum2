@@ -59,7 +59,7 @@ $("#savedCoursesList").on( "sortupdate", function( event, ui ) {
     // save course order
     const moved = ui.item.context;
     const moved_id = moved.id.split("_")[3];
-    const successor = $("#" + moved.id).next()[0];
+    const successor = $("#" + moved.id).prev()[0];
     const successor_id = successor.id.split("_")[3];
     const csrftoken = getCookie('csrftoken');
 
