@@ -1,65 +1,92 @@
 const loadData = data => {
-    const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop } = data;
-    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop];
+    // order in the input data
+    /* eslint-disable camelcase */
+    const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, ot, drop, withdraw } = data;
+    // order we want for the pie chart
+    const other = ot;
+    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop, other];
+    /* eslint-enable camelcase */
 
     createChart(grades_data);
 
-    exist(data.average_gpa) ? document.getElementsByClassName("gpa-text")[0].innerHTML = data.average_gpa + " GPA" : null;
+    const formatWorkload = x => `${100 * x / data.average_hours_per_week}%`;
+    // Subtracting 0.8 from both the numerators and the denominator
+    // so that the rating of 1 does look like a low one
+    const formatRating = x => `${100 * (x - 0.8) / (5 - 0.8)}%`;
 
-    exist(data.total_enrolled) ? document.getElementsByClassName("students-text")[0].innerHTML = data.total_enrolled + " Students" : document.getElementsByClassName("students-text")[0].remove();
+    // Pie chart
+    if (exist(data.average_gpa)) { $(".gpa-text").html(data.average_gpa === 0.0 ? "Pass/Fail" : `${data.average_gpa} GPA`); }
+    if (exist(data.total_enrolled)) { $(".students-text").html(`${data.total_enrolled} Students`); } else { $(".students-text").remove(); }
 
-    exist(data.average_rating) ? document.getElementsByClassName("rating-num")[0].innerHTML = data.average_rating : null;
-    exist(data.average_hours_per_week) ? document.getElementsByClassName("hours-num")[0].innerHTML = data.average_hours_per_week : null;
+    // Summary numbers
+    if (exist(data.average_rating)) { $(".rating-num").html(data.average_rating); }
+    if (exist(data.average_hours_per_week)) { $(".hours-num").html(data.average_hours_per_week); }
+    // Rating numbers
+    if (exist(data.average_instructor)) { $(".instructor-num").html(data.average_instructor); }
+    if (exist(data.average_fun)) { $(".fun-num").html(data.average_fun); }
+    if (exist(data.average_difficulty)) { $(".difficulty-num").html(data.average_difficulty); }
+    if (exist(data.average_recommendability)) { $(".recommend-num").html(data.average_recommendability); }
+    // Workload numbers
+    if (exist(data.average_amount_reading)) { $(".reading-num").html(data.average_amount_reading); }
+    if (exist(data.average_amount_writing)) { $(".writing-num").html(data.average_amount_writing); }
+    if (exist(data.average_amount_group)) { $(".group-num").html(data.average_amount_group); }
+    if (exist(data.average_amount_homework)) { $(".homework-num").html(data.average_amount_homework); }
 
-    exist(data.average_instructor) ? document.getElementsByClassName("instructor-num")[0].innerHTML = data.average_instructor : null;
-    exist(data.average_fun) ? document.getElementsByClassName("fun-num")[0].innerHTML = data.average_fun : null;
-    exist(data.average_difficulty) ? document.getElementsByClassName("difficulty-num")[0].innerHTML = data.average_difficulty : null;
-    exist(data.average_recommendability) ? document.getElementsByClassName("recommend-num")[0].innerHTML = data.average_recommendability : null;
-    exist(data.average_amount_reading) ? document.getElementsByClassName("reading-num")[0].innerHTML = data.average_amount_reading : null;
-    exist(data.average_amount_writing) ? document.getElementsByClassName("writing-num")[0].innerHTML = data.average_amount_writing : null;
-    exist(data.average_amount_group) ? document.getElementsByClassName("group-num")[0].innerHTML = data.average_amount_group : null;
-    exist(data.average_amount_homework) ? document.getElementsByClassName("homework-num")[0].innerHTML = data.average_amount_homework : null;
-
-    exist(data.average_instructor) ? document.getElementsByClassName("instructor-bar")[0].style.width = 100 * (data.average_instructor - 0.8) / 4.2 + "%" : null;
-    exist(data.average_fun) ? document.getElementsByClassName("fun-bar")[0].style.width = 100 * (data.average_fun - 0.8) / 4.2 + "%" : null;
-    exist(data.average_difficulty) ? document.getElementsByClassName("difficulty-bar")[0].style.width = 100 * (data.average_difficulty - 0.8) / 4.2 + "%" : null;
-    exist(data.average_recommendability) ? document.getElementsByClassName("recommend-bar")[0].style.width = 100 * (data.average_recommendability - 0.8) / 4.2 + "%" : null;
-    exist(data.average_amount_reading) ? document.getElementsByClassName("reading-bar")[0].style.width = 100 * data.average_amount_reading / (data.average_hours_per_week) + "%" : null;
-    exist(data.average_amount_writing) ? document.getElementsByClassName("writing-bar")[0].style.width = 100 * data.average_amount_writing / data.average_hours_per_week + "%" : null;
-    exist(data.average_amount_group) ? document.getElementsByClassName("group-bar")[0].style.width = 100 * data.average_amount_group / data.average_hours_per_week + "%" : null;
-    exist(data.average_amount_homework) ? document.getElementsByClassName("homework-bar")[0].style.width = 100 * data.average_amount_homework / data.average_hours_per_week + "%" : null;
+    // Rating bars
+    if (exist(data.average_instructor)) { $(".instructor-bar").width(formatRating(data.average_instructor)); }
+    if (exist(data.average_fun)) { $(".fun-bar").width(formatRating(data.average_fun)); }
+    if (exist(data.average_difficulty)) { $(".difficulty-bar").width(formatRating(data.average_difficulty)); }
+    if (exist(data.average_recommendability)) { $(".recommend-bar").width(formatRating(data.average_recommendability)); }
+    // Workload bars
+    if (exist(data.average_amount_reading)) { $(".reading-bar").width(formatWorkload(data.average_amount_reading)); }
+    if (exist(data.average_amount_writing)) { $(".writing-bar").width(formatWorkload(data.average_amount_writing)); }
+    if (exist(data.average_amount_group)) { $(".group-bar").width(formatWorkload(data.average_amount_group)); }
+    if (exist(data.average_amount_homework)) { $(".homework-bar").width(formatWorkload(data.average_amount_homework)); }
 };
 
-const createChart = grades_data => {
-    const chart_data = {
+const createChart = gradesData => {
+    const chartData = {
         datasets: [{
-            data: grades_data,
+            data: gradesData,
             backgroundColor: [
-                "#57679D",
-                "#56669C",
-                "#55659B",
-                "#384676",
-                "#384676",
-                "#374575",
-                "#364474",
-                "#18244B",
-                "#17234A",
-                "#162249",
-                "#E06A45",
-                "#DE6843",
-                "#C95F36",
-                "#B45133",
-                "#b35032"
+                "#57679D", // A+
+                "#56669C", // A
+                "#55659B", // A-
+                "#384676", // B+
+                "#384676", // B
+                "#374575", // B-
+                "#364474", // C+
+                "#18244B", // C
+                "#17234A", // C-
+                "#162249", // D+
+                "#E06A45", // D
+                "#DE6843", // D-
+                "#C95F36", // F
+                "#B35032", // Withdraw
+                "#B45133", // Drop
+                "#6775A6" // Other (Pass)
             ]
         }],
         labels: [
-            "A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "Withdraw", "Drop"
+            "A+", "A", "A-", "B+", "B", "B-",
+            "C+", "C", "C-", "D+", "D", "D-",
+            "F", "Withdraw", "Drop", "Pass"
         ]
     };
     var ctx = document.getElementById("myChart");
-    var myChart = new Chart(ctx, {
+    // 1. Justification for no-new: (Do not use 'new' for side effects)
+    // Without disabling the warning, eslint complains about using `new` to produce side-effects.
+    // (Which is how chart.js works. We can't change that.)
+    // You can silence it by assigning the expression to a variable. But then, eslint complains that we have an unused variable.
+    // We're not going to be able to avoid this, so I've disabled the error.
+    // 2. Justification for no-undef: ('Chart' is not defined)
+    // We could avoid this in the future by using WebPack or plain old ES6 modules.
+    // But right now, the chart.js source is referenced in the templates themselves through a CDN,
+    // so eslint will always complain. We'll just silence it.
+    // eslint-disable-next-line no-new,no-undef
+    new Chart(ctx, {
         type: "pie",
-        data: chart_data,
+        data: chartData,
         options: {
             cutoutPercentage: 65,
             responsive: true,
@@ -111,10 +138,6 @@ const createChart = grades_data => {
             }
         }
     });
-};
-
-const blankChart = () => {
-
 };
 
 const exist = data => {

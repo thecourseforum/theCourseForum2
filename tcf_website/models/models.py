@@ -5,6 +5,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
+from django.db.models.functions import Coalesce, Abs
 
 
 class School(models.Model):
@@ -284,22 +285,6 @@ class Instructor(models.Model):
         return CourseInstructorGrade.objects.filter(instructor=self).aggregate(
             models.Avg('average'))['average__avg']
 
-    def get_courses(self):
-        """Gets all Courses taught by a given Instructor"""
-        # More specifically, all Courses where this Instructor has taught a Section
-        # Might be good to store this data as a many-to-many field in
-        # Instructor instead of computing?
-        course_ids = list(
-            Section.objects.filter(
-                instructors=self).distinct().values_list(
-                'course_id', flat=True))
-
-        # <1000 course IDs are from super old classes...
-        # should we bother keeping the data at that point?
-        return Course.objects.filter(
-            pk__in=course_ids).filter(
-            number__gte=1000).order_by('number')
-
 
 class Semester(models.Model):
     """Semester model.
@@ -473,7 +458,7 @@ class CourseGrade(models.Model):
     d = models.IntegerField(default=0)
     d_minus = models.IntegerField(default=0)
     f = models.IntegerField(default=0)
-    ot = models.IntegerField(default=0)
+    ot = models.IntegerField(default=0)  # other/pass
     drop = models.IntegerField(default=0)
     withdraw = models.IntegerField(default=0)
     total_enrolled = models.IntegerField(default=0)
@@ -512,7 +497,7 @@ class CourseInstructorGrade(models.Model):
     d = models.IntegerField(default=0)
     d_minus = models.IntegerField(default=0)
     f = models.IntegerField(default=0)
-    ot = models.IntegerField(default=0)
+    ot = models.IntegerField(default=0)  # other/pass
     drop = models.IntegerField(default=0)
     withdraw = models.IntegerField(default=0)
     total_enrolled = models.IntegerField(default=0)
@@ -679,14 +664,12 @@ class Review(models.Model):
         return (self.instructor_rating +
                 self.recommendability + self.enjoyability) / 3
 
-    # not sure if this gets used anywhere either
     def count_votes(self):
         """Sum votes for review."""
-        vote_sum = self.vote_set.aggregate(
-            models.Sum('value')).get('value__sum', 0)
-        if not vote_sum:
-            return 0
-        return vote_sum
+        return self.vote_set.aggregate(
+            upvotes=Coalesce(models.Sum('value', filter=models.Q(value=1)), 0),
+            downvotes=Coalesce(Abs(models.Sum('value', filter=models.Q(value=-1))), 0),
+        )
 
     def upvote(self, user):
         """Create an upvote."""
@@ -741,11 +724,11 @@ class Review(models.Model):
         )
 
     @staticmethod
-    def display_reviews(course, instructor, user):
+    def display_reviews(course_id, instructor_id, user):
         """Prepare review list for course-instructor page."""
         reviews = Review.objects.filter(
-            instructor=instructor,
-            course=course,
+            instructor=instructor_id,
+            course=course_id,
         ).exclude(text="").annotate(
             sum_votes=models.functions.Coalesce(
                 models.Sum('vote__value'),

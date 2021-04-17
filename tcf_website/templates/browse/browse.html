@@ -4,20 +4,26 @@
 {% block title %}Browse - theCourseForum{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'browse/browse.css' %}" />
+    <link rel="stylesheet" href="{% static 'browse/browse.css' %}"/>
 {% endblock %}
 
 {% block content %}
-<div class="browse container">
-    <h2 class="font-weight-light">Browse by Department</h2>
-    <div class="schools text-left">
+    {% comment %} <div class="container">
+        {% include "../common/notification.html" %}
+    </div> {% endcomment %}
+    <div class="browse container">
+        {% include "../common/leaderboard_ad.html" with ad_slot="9691204298" %}
 
-        {% include "browse/school.html" with school_name=CLAS.name departments=CLAS.department_set.all %}
+        <!-- Browse page content -->
+        <h2 class="font-weight-light mt-4">Browse by Department</h2>
+        <div class="schools text-left">
 
-        {% include "browse/school.html" with school_name=SEAS.name departments=SEAS.department_set.all %}
+            {% include "browse/school.html" with school_name=CLAS.name departments=CLAS.department_set.all %}
 
-        {% include "browse/grouped_schools.html" with school_name="Other Schools at the University of Virginia" schools=other_schools misc=misc_school%}
+            {% include "browse/school.html" with school_name=SEAS.name departments=SEAS.department_set.all %}
 
+            {% include "browse/grouped_schools.html" with school_name="Other Schools at the University of Virginia" schools=other_schools misc=misc_school %}
+
+        </div>
     </div>
-</div>
 {% endblock %}

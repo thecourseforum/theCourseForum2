@@ -9,7 +9,7 @@ on:
   push:
     branches: [dev, master]
 env:
-  PYTHON_TARGET: 3.8
+  PYTHON_TARGET: 3.9
   # Django
   DJANGO_SETTINGS_MODULE: tcf_core.settings.ci
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
@@ -88,10 +88,8 @@ jobs:
           python manage.py makemigrations
           python manage.py migrate
           coverage run manage.py test
-        continue-on-error: true
 
       - name: Get code coverage
-        if: ${{ success() }}
         id: coverage
         run: |
           echo "::set-output name=percentage::$(coverage report | grep -o '[0-9]\+%' | tail -1)"
@@ -110,7 +108,7 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: node_modules/.bin/eslint tcf_website/static/**/*.js -c .config/.eslintrc.yml
+        run: node_modules/.bin/eslint -c .config/.eslintrc.yml tcf_website/static/
 
   discord:
     if: ${{ always() }}
@@ -118,6 +116,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # needed for PRs
+
       - name: Send a message to tCF Discord Server when all jobs are finished
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
@@ -127,6 +128,7 @@ jobs:
           PR_NUMBER: ${{ github.event.number}}
           PR_TITLE: ${{ github.event.pull_request.title }}
           DJANGO_COVERAGE: ${{ needs.django.outputs.code-coverage }}
+          LATEST_PR_COMMIT: ${{ github.event.after }}
         run: |
-          bash ./scripts/notify-discord.sh
+          bash ./scripts/notify-checks-result.sh
         shell: bash
