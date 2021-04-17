@@ -4,7 +4,6 @@
   "description": "[![Build Status](https://github.com/thecourseforum/theCourseForum2/workflows/Continuous%20Integration/badge.svg?branch=master)](https://github.com/thecourseforum/theCourseForum2/actions?query=workflow%3A%22Continuous+Integration%22+branch%3Amaster)",
   "main": "index.js",
   "dependencies": {
-    "chart.js": "^2.9.4",
     "eslint": "^7.9.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",

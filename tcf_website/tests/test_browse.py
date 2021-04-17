@@ -23,10 +23,10 @@ class CourseViewTestCase(TestCase):
         """Test if the legacy course view can handle redirects"""
         url = reverse('course_legacy', args=[self.course.id])
         response = self.client.get(url)
-        self.assertRedirects(response, '/course/CS/420')
+        self.assertRedirects(response, '/course/CS/1420')
 
     def test_redirect_lowercase_mnemonic(self):
         """Test if course page URLs with lowercase mnemonics are redirected"""
-        url = reverse('course', args=['cs', 421])
+        url = reverse('course', args=['cs', 1421])
         response = self.client.get(url)
-        self.assertRedirects(response, '/course/CS/421')
+        self.assertRedirects(response, '/course/CS/1421')

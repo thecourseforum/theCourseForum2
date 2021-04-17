@@ -5,16 +5,18 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'course/course_professor.css' %}"/>
-    <link rel="stylesheet" href="{% static 'reviews/review.css' %}"/>
 {% endblock %}
 
 {% block content %}
 
-    <div class="course-professor container text-left px-0">
+    <div class="course-professor container text-left px-3">
+        {% include "../common/leaderboard_ad.html" with ad_slot="5402759869" %}
+        <!-- Empty div for margin (maybe not the best solution) -->
+        <div class="mt-4"></div>
 
         {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
 
-        <div class="course-instructor-header my-3 mt-md-5 px-3">
+        <div class="course-instructor-header my-2">
             <div class="d-flex flex-column">
                 <div class="course-title d-md-flex align-items-baseline">
                     <h1 class="mr-md-3 text-nowrap">{{ course.code }}</h1>
@@ -36,7 +38,7 @@
 
                     <!-- Instructor Dropdown -->
                     <div class="instructor dropdown">
-                      <a class="instructor-select btn btn-lg text-tcf-orange p-0 dropdown-toggle" href="#"
+                      <a class="instructor-select btn btn-lg text-tcf-orange p-0 mt-1 dropdown-toggle" href="#"
                          role="button" id="dropdownMenuLink" data-toggle="dropdown"
                          aria-haspopup="true" aria-expanded="false">
                          {{ instructor.last_name }}, {{ instructor.first_name }}
@@ -62,12 +64,12 @@
             </div>
         </div>
 
-        <div class="grades-ratings-container px-3">
+        <div class="grades-ratings-container">
             <div class="ratings-container">
                 <div class="ratings-row">
                     <div class="rating-card">
                         <span class="rating-card-num rating-num">&mdash;</span>
-                        <p class="rating-card-desc"><i class="fa fa-star fa-fw"></i>&nbsp;Rating</p>
+                        <p class="rating-card-desc"><i class="fa fa-star fa-fw"></i>&nbsp;{{ num_reviews }} {% if num_reviews == 1 %} Rating {% else %} Ratings {% endif %}</p>
                     </div>
                     <div class="info-container">
                         <div class="info-row">
@@ -111,7 +113,7 @@
                         </div>
                         <div class="info-row">
                             <div class="info-title">
-                                <i class="fas fa-thumbs-up"></i>&nbsp;Recommend
+                                <i class="fas fa-heart"></i>&nbsp;Recommend
                             </div>
                             <div class="info-bar">
                                 <div class="progress">
@@ -197,11 +199,11 @@
             </div>
         </div>
 
-        <div class="reviews-container mb-5 px-3">
+        <div class="reviews-container mb-5">
             <div class="reviews-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
-                <h3 class="reviews-heading mb-0 mr-4">{{ reviews|length }} Comments</h3>
+                <h3 class="reviews-heading mb-0 mt-1 mr-4">{{ reviews|length }} {% if reviews|length == 1 %} Comment {% else %} Comments {% endif %}</h3>
                 <div class="reviews-options d-flex flex-sm-row flex-column col p-0">
-                    <a href="{% url 'new_review' %}" class="btn bg-tcf-orange text-white">
+                    <a href="{% url 'new_review' %}" class="btn bg-tcf-orange text-white mb-3">
                       <i class="fa fa-plus" aria-hidden="true"></i> Add your review!
                     </a>
                     {% if reviews %}

@@ -8,14 +8,16 @@
 {% endblock %}
 
 {% block content %}
+
 <div class="new-review container text-left mx-auto">
   <h1 class="h2 mt-2 mb-4">Write a review</h1>
   <div class="card">
-    <form class="card-body px-md-5" action="{% url 'new_review' %}" method="POST">
+    <form class="card-body px-md-5" id="reviewForm" action="{% url 'new_review' %}" method="POST">
         {% csrf_token %}
         {% include 'reviews/review_form_content.html' %}
+        {% include 'reviews/duplicate_review_modal.html' %}
         <div class="new-review-submit row py-4">
-          <button type="submit" class="btn btn-primary mx-auto">Submit Review</button>
+          <button type="submit" class="btn btn-primary mx-auto" id="submitBtn">Submit Review</button>
         </div>
     </form>
   </div>
@@ -31,5 +33,38 @@
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()
   });
+
+  $(document).ready(function () {
+    // Stop normal submit to check for duplicate review with ajax request
+    $("#reviewForm").submit(function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: "POST",
+            url: "/reviews/check_duplicate",
+            data: $("#reviewForm").serialize(),
+            async: false,
+            success: function (check) {
+                if(check.duplicate) {
+                    $("#duplicate-review").modal();
+                } else {
+                    // Timeout button for 3 seconds so user can't spam button while form is submitting
+                    $("#submitBtn").prop("disabled", true);
+                    setTimeout(enableButton, 3000);
+                    // $("#reviewForm") didn't work for some reason
+                    // Not a duplicate review, so proceed with normal form submission for new review
+                    document.getElementById("reviewForm").action = "{% url 'new_review' %}";
+                    document.getElementById("reviewForm").submit();
+                }
+            }
+        });
+    });
+  });
+
+  // Re-enable button
+  function enableButton() {
+        $("#submitBtn").prop("disabled", false);
+  }
+
 </script>
 {% endblock %}

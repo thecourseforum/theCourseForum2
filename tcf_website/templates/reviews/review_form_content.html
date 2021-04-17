@@ -35,12 +35,20 @@
 <hr>
 
 <!-- Review written content -->
-<div class="new-review-content form-row mb-3">
+<div id="review-form-div" class="new-review-content form-row mb-3">
   <h2 class="h4 review-form-header form-group col-12 my-4">
     Tell us more about the course and instructor</h2>
   <div class="form-group col mb-3">
-    <textarea class="form-control" id="text" name="text" rows="5"
+    <textarea class="form-control" id="reviewtext" name="text" rows="5"
               placeholder="(Aim for 3 sentences or more!)" minlength="100" maxlength="5000">{{ form.text.value }}</textarea>
+  </div>
+    <!-- Message for Progress Bar-->
+  <div class="form-group col-12">
+    <p class="medium" id="progressbar-message"></p>
+  </div>
+        <!-- Progress Bar -->
+  <div class="progress">
+    <div id="review-progressbar" class="progress-bar bg-danger" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
   </div>
 </div>
 <hr>
@@ -106,7 +114,7 @@
       </div>
       <div class="mt-3">
           <label for="recommendability" class="m-0">
-            <i class="fas fa-thumbs-up"></i> Recommend
+            <i class="fas fa-heart"></i> Recommend
           </label>
           <div class="row">
               <div class="col-xl-9 col-8 py-2">
