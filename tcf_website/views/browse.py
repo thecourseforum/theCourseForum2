@@ -208,8 +208,11 @@ def course_instructor(request, course_id, instructor_id):
             total += data[field]
         data['total_enrolled'] = total
 
-    is_saved = SavedCourse.objects.filter(user=request.user, course=course,
-                                          instructor=instructor).exists()
+    try:
+        is_saved = SavedCourse.objects.filter(user=request.user, course=course,
+                                              instructor=instructor).exists()
+    except TypeError:  # user not logged in
+        is_saved = False
 
     return render(request, 'course/course_professor.html',
                   {
