@@ -51,8 +51,12 @@
                   </div>
 
                   <div class="ml-auto pl-5 text-center" id="saveUnsave">
-                      <button class="btn bg-tcf-indigo text-white d-flex" id="unsaveCourseBtn" {% if not is_saved %} style="display: none!important;" {% endif %}>Unsave Course</button>
-                      <button class="btn bg-tcf-orange text-white d-flex" id="saveCourseBtn" {% if is_saved %} style="display: none!important;" {% endif %}>Save Course</button>
+                  {% if user.is_authenticated %}
+                    <button class="btn bg-tcf-indigo text-white d-flex" id="unsaveCourseBtn" {% if not is_saved %} style="display: none!important;" {% endif %}>Unsave Course</button>
+                    <button class="btn bg-tcf-orange text-white d-flex" id="saveCourseBtn" {% if is_saved %} style="display: none!important;" {% endif %}>Save Course</button>
+                  {% else %}
+                    <button class="btn bg-tcf-orange text-white d-flex" href="#loginModal" data-toggle="modal">Save Course</button>
+                  {% endif %}
                   </div>
 
                   <!-- Semester last taught -->
@@ -264,9 +268,11 @@
     <script type="module" src="{% static 'reviews/review.js' %}"></script>
 
     <!-- For save course -->
+    {% if user.is_authenticated %}
     <script type="text/javascript">
         var course_id = "{{ course.id }}";
         var instructor_id = "{{ instructor.id }}";
     </script>
     <script type="module" src="{% static 'course/javascript/save_course.js' %}"></script>
+    {% endif %}
 {% endblock %}
