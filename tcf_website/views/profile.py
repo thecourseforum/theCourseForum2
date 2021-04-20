@@ -159,17 +159,19 @@ class SavedCourseReorderingView(View):
 
 
 @login_required
-def save_course(request, course_id: int, instructor_id: int):
+def save_course(request, course_id: int, instructor_id: int, notes=""):
     """Saves a Course-Instructor pair for the given user."""
     if not Section.objects.filter(course__id=course_id,
                                   instructors__id=instructor_id).exists():
         return HttpResponseBadRequest(
             'The course has never been offered by the instructor.')
     try:
+        notes = request.GET.get("notes", "")
         saved = SavedCourse.objects.create(
             user=request.user,
             course_id=course_id,
             instructor_id=instructor_id,
+            notes=notes
         )
     except IntegrityError:
         return HttpResponseBadRequest(

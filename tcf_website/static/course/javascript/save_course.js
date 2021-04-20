@@ -1,10 +1,14 @@
 
 function saveCourse() {
+    const notes = $(`#notesField${course_id}`).val();
+
     $.ajax({
         type: "GET",
-        url: `/save_course/${course_id}/${instructor_id}`
+        url: `/save_course/${course_id}/${instructor_id}`,
+        data: { notes: notes }
     });
 
+    $(`#saveCourseModal${course_id}`).modal("toggle");
     document.getElementById("saveCourseBtn").style = "display: none!important;";
     document.getElementById("unsaveCourseBtn").style = "display: auto;";
 }
@@ -19,5 +23,5 @@ function unsaveCourse() {
     document.getElementById("unsaveCourseBtn").style = "display: none!important;";
 }
 
-document.getElementById("saveCourseBtn").addEventListener("click", saveCourse, false);
+document.getElementById(`saveCourseBtn${course_id}`).addEventListener("click", saveCourse, false);
 document.getElementById("unsaveCourseBtn").addEventListener("click", unsaveCourse, false);
