@@ -31,13 +31,12 @@
         {% if courses %}
         {% csrf_token %}
         {% for saved in courses %}
-        <li class="course-card" draggable="true" id="course_{{saved.course_id}}_{{saved.instructor_id}}_{{saved.id}}">
+        <li class="course-card" draggable="true" id="course_{{saved.id}}">
         <div class="card mt-3">
             <div class="d-flex px-3 m-3 card-header">
               <a href="{% url 'course_instructor' course_id=saved.course.id instructor_id=saved.instructor.id %}">
                   <strong>{{ saved.course }} </strong> — {{ saved.instructor.full_name }}
               </a>
-              <p id="title" hidden> {{saved.course.subdepartment.mnemonic}} {{saved.course.number}} </p>
               <button class="ml-auto btn btn-sm bg-tcf-indigo text-white unsave-btn" id="btn_{{saved.course_id}}_{{saved.instructor_id}}_{{saved.id}}" type="button">
                   <i class="fa fa-trash-o" aria-hidden="true"></i>
                   Unsave
@@ -76,7 +75,7 @@
                         <p class="h4">{{ saved.semester_last_taught }}</p>
                     </div>
                     <div class="col">
-                        <a href="#saveCourseModal" data-toggle="modal">
+                        <a href="#saveCourseModal{{saved.course.id}}" data-toggle="modal">
                         <small class="text-uppercase">
                             <i class="fa fa-sticky-note"></i> Notes
                         </small>
@@ -86,6 +85,7 @@
                 </ul>
             </div>
             </li>
+        {% include "course/save_course_form.html" with course=saved.course instructor=saved.instructor notes=saved.notes%}
         {% endfor %}
         {% else %}
         <div class="card col p-5 text-center">
@@ -98,8 +98,6 @@
         {% endif %}
     </ul>
 </div>
-
-{% include "course/save_course_form.html" %}
 
 {% endblock %}
 

@@ -6,7 +6,7 @@ function unsaveCourse(course_id, instructor_id, id) {
         url: `/unsave_course/${course_id}/${instructor_id}`
     });
 
-    document.getElementById(`course_${course_id}_${instructor_id}_${id}`).remove();
+    document.getElementById(`course_${id}`).remove();
 
     numCourses--;
     if(numCourses==0){
@@ -58,9 +58,9 @@ $("#savedCoursesList").disableSelection();
 $("#savedCoursesList").on( "sortupdate", function( event, ui ) {
     // save course order
     const moved = ui.item.context;
-    const moved_id = moved.id.split("_")[3];
+    const moved_id = moved.id.split("_")[1];
     const successor = $("#" + moved.id).prev()[0];
-    const successor_id = successor.id.split("_")[3];
+    const successor_id = successor.id.split("_")[1];
     const csrftoken = getCookie('csrftoken');
 
     console.log(moved_id);
