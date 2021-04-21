@@ -27,11 +27,11 @@ function editCourse(course_id, instructor_id, id){
 
     $.ajax({
         type: "GET",
-        url: `/edit_course/${course_id}/${instructor_id}`,
+        url: `/save_course/${course_id}/${instructor_id}/edit`,
         data: { notes: notes }
     });
 
-    $(`#saveCourseModal${id}`).modal("toggle");
+    $(`#notes${id}`).text(notes);
 }
 
 // Configure unsave and edit course buttons
@@ -40,8 +40,8 @@ numCourses = buttons.length;
 for(var i=0; i<buttons.length; i++){
     const button = buttons[i];
     const saved_id = button.id.substring(13); // remove "saveCourseBtn"
-    const course = document.getElementById(`course_id${saved_id}`).value;
-    const instructor = document.getElementById(`instructor_id${saved_id}`).value;
+    const course = $(`#course_id${saved_id}`).val();
+    const instructor = $(`#instructor_id${saved_id}`).val();
 
     document.getElementById(`unsaveCourseBtn${saved_id}`).addEventListener("click", ()=>unsaveCourse(course, instructor, saved_id), false);
     document.getElementById(`saveCourseBtn${saved_id}`).addEventListener("click", ()=>editCourse(course, instructor, saved_id), false);

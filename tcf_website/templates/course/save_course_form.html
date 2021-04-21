@@ -15,10 +15,10 @@
           </div>
           <div class="form-row">
               <label for="descriptionField">Notes</label>
-              <textarea class="form-control" id="notesField{{course.id}}" placeholder="Use this space to save pros, cons, or other notes to yourself." rows="3">{{ notes }}</textarea>
+              <textarea class="form-control" id="notesField{{id}}" placeholder="Use this space to save pros, cons, or other notes to yourself." rows="3">{{ notes }}</textarea>
           </div>
           <div class="form-row justify-content-center">
-            <button type="button" id="saveCourseBtn{{id}}" class="btn btn-primary align-self-center save-btn">Save</button>
+            <button type="button" id="saveCourseBtn{{id}}" data-dismiss="modal" class="btn btn-primary align-self-center save-btn">Save</button>
           </div>
         </form>
       </div>
