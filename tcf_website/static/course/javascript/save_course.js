@@ -8,7 +8,6 @@ function saveCourse() {
         data: { notes: notes }
     });
 
-    $(`#saveCourseModal${course_id}`).modal("toggle");
     document.getElementById("saveCourseBtn").style = "display: none!important;";
     document.getElementById("unsaveCourseBtn").style = "display: auto;";
 }
