@@ -159,7 +159,7 @@ class SavedCourseReorderingView(View):
 
 
 @login_required
-def save_course(request, course_id: int, instructor_id: int, notes=""):
+def save_course(request, course_id: int, instructor_id: int):
     """Saves a Course-Instructor pair for the given user."""
     if not Section.objects.filter(course__id=course_id,
                                   instructors__id=instructor_id).exists():
@@ -185,3 +185,23 @@ def unsave_course(request, course_id: int, instructor_id: int):
     SavedCourse.objects.filter(user=request.user, course_id=course_id,
                                instructor_id=instructor_id).delete()
     return HttpResponse(status=204)
+
+@login_required
+def edit_course(request, course_id: int, instructor_id: int):
+    """Updates notes corresponding to Course-Instructor pair for the given user."""
+    if not Section.objects.filter(course__id=course_id,
+                                  instructors__id=instructor_id).exists():
+        return HttpResponseBadRequest(
+            'The course has never been offered by the instructor.')
+
+    try:
+        saved = SavedCourse.objects.filter(user=request.user, course_id=course_id,
+                                   instructor_id=instructor_id)[0]
+        notes = request.GET.get("notes", "")
+        saved.notes = notes;
+        saved.save();
+    except IntegrityError:
+        return HttpResponseBadRequest(
+            'The course-instructor pair has not been saved by the user.')
+
+    return HttpResponse(str(saved))

@@ -54,7 +54,7 @@
                   {% if user.is_authenticated %}
                     <button class="btn bg-tcf-indigo text-white d-flex" id="unsaveCourseBtn" {% if not is_saved %} style="display: none!important;" {% endif %}>Unsave Course</button>
                     <button class="btn bg-tcf-orange text-white d-flex" id="saveCourseBtn" {% if is_saved %} style="display: none!important;" {% endif %} data-toggle="modal" data-target="#saveCourseModal{{course.id}}">Save Course</button>
-                    {% include "course/save_course_form.html" with course=course instructor=instructor %}
+                    {% include "course/save_course_form.html" with id=course.id course=course instructor=instructor %}
                   {% else %}
                     <button class="btn bg-tcf-orange text-white d-flex" href="#loginModal" data-toggle="modal">Save Course</button>
                   {% endif %}

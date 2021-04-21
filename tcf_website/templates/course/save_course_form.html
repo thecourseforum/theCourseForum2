@@ -1,23 +1,24 @@
 {% load static %}
 
-<div class="modal fade" id="saveCourseModal{{course.id}}" tabindex="-1" role="dialog" aria-labelledby="saveCourseModal" aria-hidden="true">
+<div class="modal fade" id="saveCourseModal{{id}}" tabindex="-1" role="dialog" aria-labelledby="saveCourseModal" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-body">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-        <form id="saveCourseForm" class="mt-4" novalidate>
+        <form id="saveCourseForm{{id}}" class="mt-4" novalidate>
           <div class="form-row mb-2">
               <strong> {{course.subdepartment.mnemonic}} {{course.number}} </strong> — {{ instructor.full_name }}
-              <input id="instructor_id{{course.id}}" type="hidden" value="{{instructor.id}}">
+              <input id="course_id{{id}}" type="hidden" value="{{course.id}}">
+              <input id="instructor_id{{id}}" type="hidden" value="{{instructor.id}}">
           </div>
           <div class="form-row">
               <label for="descriptionField">Notes</label>
               <textarea class="form-control" id="notesField{{course.id}}" placeholder="Use this space to save pros, cons, or other notes to yourself." rows="3">{{ notes }}</textarea>
           </div>
           <div class="form-row justify-content-center">
-            <button type="button" id="saveCourseBtn{{course.id}}" class="btn btn-primary align-self-center">Save</button>
+            <button type="button" id="saveCourseBtn{{id}}" class="btn btn-primary align-self-center save-btn">Save</button>
           </div>
         </form>
       </div>
