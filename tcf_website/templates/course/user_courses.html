@@ -14,7 +14,7 @@
 <div class="container mx-auto">
     <h1 class="h2 mt-2"> Saved Courses </h1>
     {% if courses %}
-    <div class="d-flex align-items-baseline">
+    <div id="courseToolbar" class="d-flex align-items-baseline">
         <p> Drag and drop to rearrange </p>
         <div id="sortButtons" class="btn-group btn-group ml-auto" role="toolbar" aria-label="Sorting Buttons">
             <button type="button" class="btn bg-white"> Sort by</button>
@@ -29,7 +29,7 @@
         {% if courses %}
         {% csrf_token %}
         {% for saved in courses %}
-        <li class="course-card" draggable="true" id="course_{{saved.id}}">
+        <li class="course-card" draggable="true" id="course{{saved.id}}">
         <div class="card mt-3">
             <div class="d-flex px-3 m-3 card-header">
               <a href="{% url 'course_instructor' course_id=saved.course.id instructor_id=saved.instructor.id %}">
