@@ -22,17 +22,29 @@ function unsaveCourse(course_id, instructor_id, id) {
     }
 }
 
-// Configure unsave course buttons
-var buttons = document.getElementsByClassName("unsave-btn");
+function editCourse(course_id, instructor_id, id){
+    const notes = $(`#notesField${id}`).val();
+
+    $.ajax({
+        type: "GET",
+        url: `/edit_course/${course_id}/${instructor_id}`,
+        data: { notes: notes }
+    });
+
+    $(`#saveCourseModal${id}`).modal("toggle");
+}
+
+// Configure unsave and edit course buttons
+var buttons = document.getElementsByClassName("save-btn");
+numCourses = buttons.length;
 for(var i=0; i<buttons.length; i++){
     const button = buttons[i];
-    const x = button.id.split("_");
-    const course = x[1];
-    const instructor = x[2];
-    const id = x[3];
+    const saved_id = button.id.substring(13); // remove "saveCourseBtn"
+    const course = document.getElementById(`course_id${saved_id}`).value;
+    const instructor = document.getElementById(`instructor_id${saved_id}`).value;
 
-    numCourses++;
-    button.addEventListener("click", ()=>unsaveCourse(course, instructor, id), false);
+    document.getElementById(`unsaveCourseBtn${saved_id}`).addEventListener("click", ()=>unsaveCourse(course, instructor, saved_id), false);
+    document.getElementById(`saveCourseBtn${saved_id}`).addEventListener("click", ()=>editCourse(course, instructor, saved_id), false);
 }
 
 // source: https://docs.djangoproject.com/en/3.1/ref/csrf/
