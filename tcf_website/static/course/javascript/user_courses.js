@@ -1,13 +1,13 @@
-function unsaveCourse(course_id, instructor_id, id) {
+function unsaveCourse(courseID, instructorID, id) {
     $.ajax({
         type: "GET",
-        url: `/unsave_course/${course_id}/${instructor_id}`
+        url: `/unsave_course/${courseID}/${instructorID}`
     });
 
     document.getElementById(`course${id}`).remove();
 
-    // if no more courses left 
-    if($(".course-card").length==0) {
+    // if no more courses left
+    if ($(".course-card").length == 0) {
         document.getElementById("courseToolbar").remove();
         $("#savedCoursesList").html(`
             <div class="card col p-5 text-center">
@@ -21,12 +21,12 @@ function unsaveCourse(course_id, instructor_id, id) {
     }
 }
 
-function editCourse(course_id, instructor_id, id){
+function editCourse(courseID, instructorID, id) {
     const notes = $(`#notesField${id}`).val();
 
     $.ajax({
         type: "GET",
-        url: `/save_course/${course_id}/${instructor_id}/edit`,
+        url: `/save_course/${courseID}/${instructorID}/edit`,
         data: { notes: notes }
     });
 
@@ -35,25 +35,25 @@ function editCourse(course_id, instructor_id, id){
 
 // Configure unsave and edit course buttons
 var buttons = document.getElementsByClassName("save-btn");
-for(var i=0; i<buttons.length; i++){
+for (var i = 0; i < buttons.length; i++) {
     const button = buttons[i];
-    const saved_id = button.id.substring(13); // remove "saveCourseBtn"
-    const course = $(`#course_id${saved_id}`).val();
-    const instructor = $(`#instructor_id${saved_id}`).val();
+    const id = button.id.substring(13); // remove "saveCourseBtn"
+    const course = $(`#courseID${id}`).val();
+    const instructor = $(`#instructorID${id}`).val();
 
-    document.getElementById(`unsaveCourseBtn${saved_id}`).addEventListener("click", ()=>unsaveCourse(course, instructor, saved_id), false);
-    document.getElementById(`saveCourseBtn${saved_id}`).addEventListener("click", ()=>editCourse(course, instructor, saved_id), false);
+    document.getElementById(`unsaveCourseBtn${id}`).addEventListener("click", () => unsaveCourse(course, instructor, id), false);
+    document.getElementById(`saveCourseBtn${id}`).addEventListener("click", () => editCourse(course, instructor, id), false);
 }
 
 // source: https://docs.djangoproject.com/en/3.1/ref/csrf/
 function getCookie(name) {
     let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
             // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            if (cookie.substring(0, name.length + 1) === (name + "=")) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
             }
@@ -62,28 +62,26 @@ function getCookie(name) {
     return cookieValue;
 }
 
-//Drag and Drop
+// Drag and Drop
 $("#savedCoursesList").sortable();
 $("#savedCoursesList").disableSelection();
-$("#savedCoursesList").on( "sortupdate", function( event, ui ) {
+$("#savedCoursesList").on("sortupdate", function(event, ui) {
     // save course order
     const moved = ui.item.context;
-    const moved_id = moved.id.split("_")[1];
-    const successor = $("#" + moved.id).prev()[0];
-    const successor_id = successor.id.split("_")[1];
-    const csrftoken = getCookie('csrftoken');
+    const movedID = moved.id.substring(6); // remove "course"
+    const successor = $("#" + moved.id).prev("li")[0];
+    const successorID = successor.id.substring(6);
+    const csrftoken = getCookie("csrftoken");
 
-    console.log(moved_id);
-    console.log(successor_id);
     $.ajaxSetup({
-       headers: { "X-CSRFToken": csrftoken }
+        headers: { "X-CSRFToken": csrftoken }
     });
     $.ajax({
         type: "POST",
         url: "/saved/reorder",
         data: {
-           'to_move_id': moved_id,
-           'successor_id':successor_id
+            to_move_id: movedID,
+            successor_id: successorID
         }
     });
-} );
+});

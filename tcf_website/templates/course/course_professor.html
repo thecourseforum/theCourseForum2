@@ -271,8 +271,8 @@
     <!-- For save course -->
     {% if user.is_authenticated %}
     <script type="text/javascript">
-        var course_id = "{{ course.id }}";
-        var instructor_id = "{{ instructor.id }}";
+        var courseID = "{{ course.id }}";
+        var instructorID = "{{ instructor.id }}";
     </script>
     <script type="module" src="{% static 'course/javascript/save_course.js' %}"></script>
     {% endif %}
