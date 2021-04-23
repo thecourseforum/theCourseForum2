@@ -7,7 +7,7 @@ function unsaveCourse(courseID, instructorID, id) {
     document.getElementById(`course${id}`).remove();
 
     // if no more courses left
-    if ($(".course-card").length == 0) {
+    if ($(".course-card").length === 0) {
         document.getElementById("courseToolbar").remove();
         $("#savedCoursesList").html(`
             <div class="card col p-5 text-center">
