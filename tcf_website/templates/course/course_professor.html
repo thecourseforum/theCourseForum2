@@ -245,7 +245,8 @@
 {% block js %}
     <!-- For instructor data -->
     <script> // Create global js vars from template context vars
-       var courseID = "{{ course_id|escapejs }}";
+       var courseID = "{{ course.id|escapejs }}";
+       var instructorID = "{{ instructor.id|escapejs }}";
     </script>
     <script type="module" src="{% static 'course/javascript/instr_data.js' %}"></script>
 
@@ -270,10 +271,6 @@
 
     <!-- For save course -->
     {% if user.is_authenticated %}
-    <script type="text/javascript">
-        var courseID = "{{ course.id }}";
-        var instructorID = "{{ instructor.id }}";
-    </script>
     <script type="module" src="{% static 'course/javascript/save_course.js' %}"></script>
     {% endif %}
 {% endblock %}
