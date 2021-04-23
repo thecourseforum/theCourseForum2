@@ -6,3 +6,9 @@
 li{
   cursor: pointer;
 }
+
+.notes-content {
+  display: block;
+  height: 2rem;
+  overflow: hidden;
+}
