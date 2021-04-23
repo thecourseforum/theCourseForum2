@@ -114,7 +114,7 @@ class SavedCourseReorderingTests(TestCase):
         response = self.client.post(path)
         self.assertEqual(response.status_code, 204)
 
-    def test_unsave_course(self):
+    def test_unsave_course_with_invalid_course_instructor_pair(self):
         """Try unsaving a course-instructor pair that has not been saved."""
         random_pair = (12345, 67890)
         path = reverse('unsave_course', args=random_pair)
