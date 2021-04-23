@@ -1,10 +1,10 @@
 
 function saveCourse() {
-    const notes = $(`#notesField${course_id}`).val();
+    const notes = $(`#notesField${courseID}`).val();
 
     $.ajax({
         type: "GET",
-        url: `/save_course/${course_id}/${instructor_id}`,
+        url: `/save_course/${courseID}/${instructorID}`,
         data: { notes: notes }
     });
 
@@ -15,12 +15,12 @@ function saveCourse() {
 function unsaveCourse() {
     $.ajax({
         type: "GET",
-        url: `/unsave_course/${course_id}/${instructor_id}`
+        url: `/unsave_course/${courseID}/${instructorID}`
     });
 
     document.getElementById("saveCourseBtn").style = "display: auto;";
     document.getElementById("unsaveCourseBtn").style = "display: none!important;";
 }
 
-document.getElementById(`saveCourseBtn${course_id}`).addEventListener("click", saveCourse, false);
+document.getElementById(`saveCourseBtn${courseID}`).addEventListener("click", saveCourse, false);
 document.getElementById("unsaveCourseBtn").addEventListener("click", unsaveCourse, false);
