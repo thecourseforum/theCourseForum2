@@ -6,7 +6,6 @@
 {% block styles %}
     <link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
     <link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
-    <link rel="stylesheet" href="{% static 'course/course.css' %}"/>
 {% endblock %}
 
 
@@ -23,23 +22,26 @@
             </div>
 
             <!-- Course Description -->
-            <div class="card-body">
-                <h4 class="card-title">
-                    <a id="course-eval-link" data-toggle="tooltip"
-                       data-placement="right"
-                       title="Requires NetBadge Login"
-                       class="text-tcf-blue font-weight-bold"
-                       target="_blank"
-                       href={{ course.eval_link }}>
-                        Official UVA Student Evaluations
-                        <i class="fa fa-external-link" aria-hidden="true"></i>
-                    </a>
-                    Course Description
-                </h4>
-                <p class="card-text">
-                    {{ course.description }}
-                </p>
-            </div>
+            {% if course.description|length > 0 %}
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <a id="course-eval-link" data-toggle="tooltip"
+                           data-placement="right"
+                           title="Requires NetBadge Login"
+                           class="text-tcf-blue font-weight-bold float-right"
+                           style="margin-top: 5px; font-size: 16px;"
+                           target="_blank"
+                           href={{ course.eval_link }}>
+                            Official UVA Student Evaluations
+                            <i class="fa fa-external-link" aria-hidden="true"></i>
+                        </a>
+                        Course Description
+                    </h4>
+                    <p class="card-text">
+                        {{ course.description }}
+                    </p>
+                </div>
+            {% endif %}
 
             <br/>
 
