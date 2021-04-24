@@ -14,7 +14,7 @@
 <div class="container mx-auto">
     <h1 class="h2 mt-2"> Saved Courses </h1>
     {% if courses %}
-    <div id="courseToolbar" class="d-flex align-items-baseline">
+    <div id="courseToolbar" class="d-flex flex-sm-row flex-column align-items-baseline">
         <p> Drag and drop to rearrange (this ordering will be saved)</p>
         <div id="sortButtons" class="btn-group btn-group ml-auto" role="toolbar" aria-label="Sorting Buttons">
             <button type="button" class="btn bg-white"> Sort by</button>
@@ -67,7 +67,7 @@
                             {{ saved.average_gpa|floatformat:2 }}
                         </p>
                     </li>
-                    <div class="col">
+                    <div class="col-md-3">
                         <small class="text-uppercase">
                             <i class="fa fa-calendar"></i> Last Taught
                         </small>
