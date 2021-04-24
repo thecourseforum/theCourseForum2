@@ -12,3 +12,7 @@ li{
     height: 2rem;
     overflow: hidden;
 }
+
+.dragging {
+    border-color: var(--accent-color);
+}

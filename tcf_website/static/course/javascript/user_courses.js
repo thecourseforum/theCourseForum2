@@ -37,7 +37,7 @@ function editCourse(courseID, instructorID, id) {
 var buttons = document.getElementsByClassName("save-btn");
 for (var i = 0; i < buttons.length; i++) {
     const button = buttons[i];
-    const id = button.id.substring(13); // remove "saveCourseBtn"
+    const id = button.id.substring(13); // remove "saveCourseBtn" from string
     const course = $(`#courseID${id}`).val();
     const instructor = $(`#instructorID${id}`).val();
 
@@ -65,11 +65,26 @@ function getCookie(name) {
 // Drag and Drop
 $("#savedCoursesList").sortable();
 $("#savedCoursesList").disableSelection();
+
+$("#savedCoursesList").on( "sortstart", function( event, ui ) {
+    // highlight border when dragging
+    const moved = ui.item.context;
+    const movedID = moved.id.substring(6); // remove "course" from string
+    $(`#card${movedID}`).addClass("dragging");
+} );
+
+$("#savedCoursesList").on( "sortstop", function( event, ui ) {
+    // remove border highlight
+    const moved = ui.item.context;
+    const movedID = moved.id.substring(6); // remove "course" from string
+    $(`#card${movedID}`).removeClass("dragging");
+} );
+
 $("#savedCoursesList").on("sortupdate", function(event, ui) {
     // save course order
     const moved = ui.item.context;
-    const movedID = moved.id.substring(6); // remove "course"
-    const successor = $("#" + moved.id).prev("li")[0];
+    const movedID = moved.id.substring(6); // remove "course" from string
+    const successor = $(`#${moved.id}`).prev("li")[0];
     const csrftoken = getCookie("csrftoken");
     var data;
     try{
