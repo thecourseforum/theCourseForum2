@@ -13,7 +13,12 @@
 {% block content %}
 
     <div class="course container">
-        {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="All" %}
+        <div class="container-lg mb-4">
+            {% include "../common/leaderboard_ad.html" with ad_slot="9533576562" %}
+        </div>
+        <div class="container-lg">
+            {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="All" %}
+        </div>
 
         <div class="instructors container-lg mt-3">
             <div class="d-md-flex align-items-baseline my-3">
