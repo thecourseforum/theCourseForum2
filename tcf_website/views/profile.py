@@ -97,7 +97,7 @@ def saved_courses(request):
         LEFT OUTER JOIN tcf_website_review AS r
             ON sc.course_id = r.course_id
             AND sc.instructor_id = r.instructor_id
-        INNER JOIN (
+        LEFT OUTER JOIN (
             SELECT course_id
                 , instructor_id
                 , MAX(semester_id) AS semester_id
@@ -108,7 +108,7 @@ def saved_courses(request):
         ) AS s
             ON sc.course_id = s.course_id
             AND sc.instructor_id = s.instructor_id
-        INNER JOIN tcf_website_semester AS s2
+        LEFT OUTER JOIN tcf_website_semester AS s2
             ON s.semester_id=s2.id
         WHERE sc.user_id = %s
         GROUP BY sc.id, sc.course_id, sc.instructor_id, sc.notes

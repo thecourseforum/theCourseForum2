@@ -38,10 +38,8 @@ class SavedCourseReorderingTests(TestCase):
         """Test if the 4 saved courses show up for user1"""
         response = self.client.post(reverse('courses'))
         saved = response.context['courses']
-        # 1 Subdepartment ('Computer Science')
-        self.assertEqual(len(saved.keys()), 1)
         # 4 SavedCourses (saved1, saved2, saved3, saved4)
-        self.assertEqual(sum(len(v) for v in saved.values()), 4)
+        self.assertEqual(len(list(saved)), 4)
 
     def test_move_saved_course_one_step(self):
         """Move saved4 to the front of saved3"""
