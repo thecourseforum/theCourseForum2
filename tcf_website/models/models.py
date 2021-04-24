@@ -520,7 +520,7 @@ class SavedCourse(models.Model):
     Update this instance only to update `rank` or `notes`.
 
     `rank`: Used to stores orders within the list of saved Courses. Trello uses
-        a floating point, but chose int for an easier but more reliable
+        a floating point, but chose int for a slower but easier & more reliable
         implementation. https://softwareengineering.stackexchange.com/q/195308/
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
