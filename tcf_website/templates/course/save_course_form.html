@@ -10,8 +10,8 @@
         <form id="saveCourseForm{{id}}" class="mt-4" novalidate>
           <div class="form-row mb-2">
               <strong> {{course.subdepartment.mnemonic}} {{course.number}} </strong> — {{ instructor.full_name }}
-              <input id="course_id{{id}}" type="hidden" value="{{course.id}}">
-              <input id="instructor_id{{id}}" type="hidden" value="{{instructor.id}}">
+              <input id="courseID{{id}}" type="hidden" value="{{course.id}}">
+              <input id="instructorID{{id}}" type="hidden" value="{{instructor.id}}">
           </div>
           <div class="form-row">
               <label for="descriptionField">Notes</label>
