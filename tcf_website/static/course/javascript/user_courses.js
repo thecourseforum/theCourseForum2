@@ -84,4 +84,13 @@ $("#savedCoursesList").on("sortupdate", function(event, ui) {
             successor_id: successorID
         }
     });
+
+    // clear sort buttons
+    $("#number-sort-btn").removeClass("active");
+    $("#rating-sort-btn").removeClass("active");
+    $("#diff-sort-btn").removeClass("active");
+    $("#gpa-sort-btn").removeClass("active");
+    $("#rating-sort-btn").html("Rating");
+    $("#diff-sort-btn").html("Difficulty");
+    $("#gpa-sort-btn").html("GPA");
 });
