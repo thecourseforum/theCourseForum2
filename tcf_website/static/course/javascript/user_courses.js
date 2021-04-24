@@ -66,19 +66,19 @@ function getCookie(name) {
 $("#savedCoursesList").sortable();
 $("#savedCoursesList").disableSelection();
 
-$("#savedCoursesList").on( "sortstart", function( event, ui ) {
+$("#savedCoursesList").on("sortstart", function(event, ui) {
     // highlight border when dragging
     const moved = ui.item.context;
     const movedID = moved.id.substring(6); // remove "course" from string
     $(`#card${movedID}`).addClass("dragging");
-} );
+});
 
-$("#savedCoursesList").on( "sortstop", function( event, ui ) {
+$("#savedCoursesList").on("sortstop", function(event, ui) {
     // remove border highlight
     const moved = ui.item.context;
     const movedID = moved.id.substring(6); // remove "course" from string
     $(`#card${movedID}`).removeClass("dragging");
-} );
+});
 
 $("#savedCoursesList").on("sortupdate", function(event, ui) {
     // save course order
@@ -87,17 +87,17 @@ $("#savedCoursesList").on("sortupdate", function(event, ui) {
     const successor = $(`#${moved.id}`).prev("li")[0];
     const csrftoken = getCookie("csrftoken");
     var data;
-    try{
+    try {
         const successorID = successor.id.substring(6);
         data = {
             to_move_id: movedID,
             successor_id: successorID
-        }
-    }catch(error){
+        };
+    } catch (error) {
         // successor ID is undefined, move to beginning of list
         data = {
             to_move_id: movedID
-        }
+        };
     }
 
     $.ajaxSetup({
