@@ -70,19 +70,29 @@ $("#savedCoursesList").on("sortupdate", function(event, ui) {
     const moved = ui.item.context;
     const movedID = moved.id.substring(6); // remove "course"
     const successor = $("#" + moved.id).prev("li")[0];
-    const successorID = successor.id.substring(6);
     const csrftoken = getCookie("csrftoken");
+    var data;
+    try{
+        const successorID = successor.id.substring(6);
+        data = {
+            to_move_id: movedID,
+            successor_id: successorID
+        }
+    }catch(error){
+        // successor ID is undefined, move to beginning of list
+        data = {
+            to_move_id: movedID
+        }
+    }
 
     $.ajaxSetup({
         headers: { "X-CSRFToken": csrftoken }
     });
+
     $.ajax({
         type: "POST",
         url: "/saved/reorder",
-        data: {
-            to_move_id: movedID,
-            successor_id: successorID
-        }
+        data: data
     });
 
     // clear sort buttons

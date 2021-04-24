@@ -4,11 +4,11 @@
 }
 
 li{
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .notes-content {
-  display: block;
-  height: 2rem;
-  overflow: hidden;
+    display: block;
+    height: 2rem;
+    overflow: hidden;
 }

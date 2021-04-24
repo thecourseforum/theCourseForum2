@@ -15,7 +15,7 @@
     <h1 class="h2 mt-2"> Saved Courses </h1>
     {% if courses %}
     <div id="courseToolbar" class="d-flex align-items-baseline">
-        <p> Drag and drop to rearrange </p>
+        <p> Drag and drop to rearrange (this ordering will be saved)</p>
         <div id="sortButtons" class="btn-group btn-group ml-auto" role="toolbar" aria-label="Sorting Buttons">
             <button type="button" class="btn bg-white"> Sort by</button>
             <button type="button" id="number-sort-btn" class="btn btn-outline-primary">Course ID</button>
@@ -84,7 +84,6 @@
                 </ul>
             </div>
             </li>
-        {% include "course/save_course_form.html" with id=saved.id course=saved.course instructor=saved.instructor notes=saved.notes%}
         {% endfor %}
         {% else %}
         <div class="card col p-5 text-center">
@@ -96,6 +95,12 @@
         </div>
         {% endif %}
     </ul>
+
+    {% if courses %}
+    {% for saved in courses %}
+        {% include "course/save_course_form.html" with id=saved.id course=saved.course instructor=saved.instructor notes=saved.notes%}
+    {% endfor %}
+    {% endif %}
 </div>
 
 {% endblock %}
