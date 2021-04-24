@@ -54,18 +54,20 @@ class SavedCourseReorderingTests(TestCase):
         self.saved4.refresh_from_db()
         self.assertGreater(self.saved3.rank, self.saved4.rank)
 
-    def test_move_saved_course_to_the_beginning(self):
-        """Move saved4, which was created last, to the very beginning"""
+    def test_move_saved_course_to_the_end(self):
+        """Move saved1, which was created first, to the very end"""
         path = reverse('reorder_saved_courses')
-        data = {'to_move_id': self.saved4.id}  # No `successor_id`
+        data = {'to_move_id': self.saved1.id}  # No `successor_id`
         response = self.client.post(path, data)
         self.assertEqual(response.status_code, 200)
-        for saved in [self.saved1, self.saved2, self.saved3]:
-            self.assertLess(saved.rank, self.saved4.rank)
+        # saved1 was created first -> lowest rank at first
+        for saved in [self.saved2, self.saved3, self.saved4]:
+            self.assertLess(self.saved1.rank, saved.rank)
             saved.refresh_from_db()
-        self.saved4.refresh_from_db()
-        for saved in [self.saved1, self.saved2, self.saved3]:
-            self.assertGreater(saved.rank, self.saved4.rank)
+        self.saved1.refresh_from_db()
+        # saved1 was moved to the end -> highest rank now
+        for saved in [self.saved2, self.saved3, self.saved4]:
+            self.assertGreater(self.saved1.rank, saved.rank)
 
     @suppress_request_warnings
     def test_reorder_saved_courses_invalid_to_move_id(self):

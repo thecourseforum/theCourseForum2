@@ -5,7 +5,7 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
-from django.db.models import Avg, Count, F, Q
+from django.db.models import Avg, Count, F, Max, Q
 from django.forms import ModelForm
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -136,14 +136,13 @@ class SavedCourseReorderingView(View):
             return HttpResponseBadRequest('`to_move_id` must be an `int`.')
         to_move = get_object_or_404(
             SavedCourse, pk=to_move_id, user=request.user)
+        move_to_end = False
         try:
             successor_id = int(request.POST.get('successor_id'))
         except ValueError:  # str
             return HttpResponseBadRequest('`successor_id` must be an `int`.')
         except TypeError:  # None
-            # Everything whose ID >= `successor_id` will be pushed back by 1
-            successor_id = 0
-            to_move.rank = 1
+            move_to_end = True
         else:  # validate successor_id is provided
             successor = get_object_or_404(
                 SavedCourse, pk=successor_id, user=request.user)
@@ -151,7 +150,14 @@ class SavedCourseReorderingView(View):
 
         try:
             with transaction.atomic():
-                saved.filter(id__gte=successor_id).update(rank=F('rank') + 1)
+                # Set rank of `to_move` to be higher than the current max
+                # This increment the rank even if `to_move` was the only one
+                if move_to_end:
+                    rank_query = SavedCourse.objects.aggregate(Max('rank'))
+                    to_move.rank = rank_query['rank__max'] + 1
+                # Everything whose ID >= `successor_id` will be pushed back by 1
+                else:
+                    saved.filter(id__gte=successor_id).update(rank=F('rank') + 1)
                 to_move.save()
         except IntegrityError:
             return HttpResponse('Reordering failed...', status=500)
