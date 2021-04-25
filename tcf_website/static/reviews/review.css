@@ -34,3 +34,7 @@
 .review .downvote.active, .review .downvote:hover {
     color: rgb(215, 86, 38);
 }
+
+.tooltip-inner {
+  margin: 0;
+}
