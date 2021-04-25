@@ -11,6 +11,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.http import require_http_methods
 from .browse import safe_round
 from ..models import Review, User, SavedCourse, Section
 
@@ -165,14 +166,15 @@ class SavedCourseReorderingView(View):
 
 
 @login_required
+@require_http_methods('POST')
 def save_course(request, course_id: int, instructor_id: int):
     """Saves a Course-Instructor pair for the given user."""
     if not Section.objects.filter(course__id=course_id,
                                   instructors__id=instructor_id).exists():
         return HttpResponseBadRequest(
             'The course has never been offered by the instructor.')
+    notes = request.POST.get("notes", "")
     try:
-        notes = request.GET.get("notes", "")
         saved = SavedCourse.objects.create(
             user=request.user,
             course_id=course_id,
@@ -186,6 +188,7 @@ def save_course(request, course_id: int, instructor_id: int):
 
 
 @login_required
+@require_http_methods('POST')
 def unsave_course(request, course_id: int, instructor_id: int):
     """Unsaves a Course-Instructor pair for the given user."""
     SavedCourse.objects.filter(user=request.user, course_id=course_id,
@@ -194,9 +197,10 @@ def unsave_course(request, course_id: int, instructor_id: int):
 
 
 @login_required
+@require_http_methods('POST')
 def edit_course(request, course_id: int, instructor_id: int):
     """Updates notes corresponding to Course-Instructor pair for the given user."""
-    notes = request.GET.get("notes")
+    notes = request.POST.get("notes")
     if notes is None:
         return HttpResponseBadRequest("The 'notes' parameter is missing.")
 

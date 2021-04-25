@@ -1,9 +1,11 @@
 
 function saveCourse() {
     const notes = $(`#notesField${window.courseID}`).val();
+    const csrftoken = getCookie("csrftoken");
 
     $.ajax({
-        type: "GET",
+        type: "POST",
+        headers: { "X-CSRFToken": csrftoken },
         url: `/save_course/${window.courseID}/${window.instructorID}`,
         data: { notes: notes }
     });
@@ -13,8 +15,11 @@ function saveCourse() {
 }
 
 function unsaveCourse() {
+    const csrftoken = getCookie("csrftoken");
+
     $.ajax({
-        type: "GET",
+        type: "POST",
+        headers: { "X-CSRFToken": csrftoken },
         url: `/unsave_course/${window.courseID}/${window.instructorID}`
     });
 
