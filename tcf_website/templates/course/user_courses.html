@@ -48,7 +48,11 @@
                             <i class="fa fa-star"></i> Rating
                         </small>
                         <p class="h4" id="rating">
-                            {{ saved.average_rating|floatformat:2 }}
+                            {% if saved.average_rating %}
+                                {{ saved.average_rating|floatformat:2 }}
+                            {% else %}
+                                &mdash;
+                            {% endif %}
                         </p>
                     </li>
                     <li class="col text-nowrap">
@@ -56,7 +60,11 @@
                             <i class="fa fa-dumbbell"></i> Difficulty
                         </small>
                         <p class="h4" id="difficulty">
-                            {{ saved.average_difficulty|floatformat:2 }}
+                            {% if saved.average_difficulty %}
+                                {{ saved.average_difficulty|floatformat:2 }}
+                            {% else %}
+                                &mdash;
+                            {% endif %}
                         </p>
                     </li>
                     <li class="col text-nowrap">
@@ -64,7 +72,11 @@
                             <i class="fa fa-chart-bar"></i> GPA
                         </small>
                         <p class="h4" id="gpa">
-                            {{ saved.average_gpa|floatformat:2 }}
+                            {% if saved.average_gpa %}
+                                {{ saved.average_gpa|floatformat:2 }}
+                            {% else %}
+                                &mdash;
+                            {% endif %}
                         </p>
                     </li>
                     <div class="col-md-3">
