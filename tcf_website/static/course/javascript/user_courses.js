@@ -1,6 +1,9 @@
 function unsaveCourse(courseID, instructorID, id) {
+    const csrftoken = getCookie("csrftoken");
+
     $.ajax({
-        type: "GET",
+        type: "POST",
+        headers: { "X-CSRFToken": csrftoken },
         url: `/unsave_course/${courseID}/${instructorID}`
     });
 
@@ -23,9 +26,11 @@ function unsaveCourse(courseID, instructorID, id) {
 
 function editCourse(courseID, instructorID, id) {
     const notes = $(`#notesField${id}`).val();
+    const csrftoken = getCookie("csrftoken");
 
     $.ajax({
-        type: "GET",
+        type: "POST",
+        headers: { "X-CSRFToken": csrftoken },
         url: `/save_course/${courseID}/${instructorID}/edit`,
         data: { notes: notes }
     });
