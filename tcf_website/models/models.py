@@ -369,6 +369,8 @@ class Course(models.Model):
     # Course number. Required.
     number = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(99999)])
+    # Prerequisite. Optional.
+    pre_req = models.TextField(blank=True)
 
     # Subdepartment foreign key. Required.
     subdepartment = models.ForeignKey(Subdepartment, on_delete=models.CASCADE)
@@ -378,6 +380,31 @@ class Course(models.Model):
 
     def __str__(self):
         return f"{self.subdepartment.mnemonic} {self.number} | {self.title}"
+
+    def course_description_without_prerequisite(self):
+        """Returns course description without its pre-requisite(s)."""
+        return self.description.replace(self.pre_req, "")
+
+    def prerequisite(self):
+        """Returns course pre-requisite(s) and assigns them to a model attribute pre-req."""
+        if self.description.find("Prerequisite: ") >= 0:
+            pre_req_to_end = self.description[self.description.find("Prerequisite: "):]
+            if pre_req_to_end.find(".") >= 0:  # In line pre-reqs
+                self.pre_req = pre_req_to_end[:pre_req_to_end.find(".") + 1]
+                return self.pre_req[len("Prerequisite: "):-1]
+            # At the end pre-reqs
+            self.pre_req = pre_req_to_end
+            return self.pre_req[len("Prerequisite: "):]
+        if self.description.find("Prerequisites: ") >= 0:
+            pre_req_to_end = self.description[self.description.find("Prerequisites: "):]
+            if pre_req_to_end.find(".") >= 0:  # In line pre-reqs
+                self.pre_req = pre_req_to_end[:pre_req_to_end.find(".") + 1]
+                return self.pre_req[len("Prerequisites: "):-1]
+            # At the end pre-reqs
+            self.pre_req = pre_req_to_end
+            return self.pre_req[len("Prerequisites: "):]
+        self.pre_req = ""
+        return ""
 
     def code(self):
         """Returns the courses code string."""
