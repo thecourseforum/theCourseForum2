@@ -132,23 +132,23 @@ jQuery(function($) {
         var numberOfWords = countNumberOfWords(review);
 
         // Set the width of the bar to the what percent of 300 words the current review is (Used an outer container's width to ensure it scales properly to mobile)
-        $("#review-progressbar").width(($("#review-form-div").width()) * (numberOfWords / 300));
+        $("#review-progressbar").width(($("#review-form-div").width()) * (numberOfWords / 150));
 
         // String Form of the number of words out of 300
-        var numberOfWordsInMessage = "(" + numberOfWords.toString() + "/300)";
+        var numberOfWordsInMessage = "(" + numberOfWords.toString() + "/150)";
 
-        if (numberOfWords < 100) {
+        if (numberOfWords < 50) {
             // Originally a django progress bar with danger for red so need to remove that to change colors
             $("#review-progressbar").removeClass("progress-bar bg-danger");
             $("#review-progressbar").css("background-color", "#FFB3BA");
-            $("#progressbar-message").html(numberOfWordsInMessage + " Your review is under 100 words. Aim for 300 or more!");
-        } else if (numberOfWords >= 100 && numberOfWords < 200) {
+            $("#progressbar-message").html(numberOfWordsInMessage + " Your review is under 50 words. Aim for 150 or more!");
+        } else if (numberOfWords >= 50 && numberOfWords < 100) {
             $("#review-progressbar").css("background-color", "#FFDAC1");
-            $("#progressbar-message").html(numberOfWordsInMessage + " Good job getting to 100 words, keep going!");
-        } else if (numberOfWords >= 200 && numberOfWords < 300) {
+            $("#progressbar-message").html(numberOfWordsInMessage + " Good job getting to 50 words, keep going!");
+        } else if (numberOfWords >= 100 && numberOfWords < 150) {
             $("#review-progressbar").css("background-color", "#FFF5BA");
-            $("#progressbar-message").html(numberOfWordsInMessage + " 200 words! You're so close to the 300 mark!");
-        } else if (numberOfWords >= 300) {
+            $("#progressbar-message").html(numberOfWordsInMessage + " 100 words! You're so close to the 150 mark!");
+        } else if (numberOfWords >= 150) {
             $("#review-progressbar").css("background-color", "#B5EAD7");
             $("#progressbar-message").html(numberOfWordsInMessage + " Thank you for your in depth review. The tCF team and other users appreciate your effort!");
         }
