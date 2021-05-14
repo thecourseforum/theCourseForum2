@@ -12,7 +12,7 @@ from .models import SavedCourse
           dispatch_uid='initialize_savedcourse_rank')
 def initialize_savedcourse_rank(sender, instance: SavedCourse, created: bool,
                                 **kwargs):
-    """Initializes Savedourse.rank to a non-null integer."""
+    """Initializes SavedCourse.rank to a non-null integer."""
     if not created:
         return
     over: bool = False
