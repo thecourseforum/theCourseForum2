@@ -16,6 +16,7 @@
         {% csrf_token %}
         {% include 'reviews/review_form_content.html' %}
         {% include 'reviews/duplicate_review_modal.html' %}
+        {% include 'reviews/zero_hours_modal.html' %}
         <div class="new-review-submit row py-4">
           <button type="submit" class="btn btn-primary mx-auto" id="submitBtn">Submit Review</button>
         </div>
@@ -34,6 +35,8 @@
     $('[data-toggle="tooltip"]').tooltip()
   });
 
+  // Counter to keep track of number of times "zero-hours-review" modal is shown
+  var count = 0;
   $(document).ready(function () {
     // Stop normal submit to check for duplicate review with ajax request
     $("#reviewForm").submit(function(e) {
@@ -48,13 +51,28 @@
                 if(check.duplicate) {
                     $("#duplicate-review").modal();
                 } else {
-                    // Timeout button for 3 seconds so user can't spam button while form is submitting
-                    $("#submitBtn").prop("disabled", true);
-                    setTimeout(enableButton, 3000);
-                    // $("#reviewForm") didn't work for some reason
-                    // Not a duplicate review, so proceed with normal form submission for new review
-                    document.getElementById("reviewForm").action = "{% url 'new_review' %}";
-                    document.getElementById("reviewForm").submit();
+                    // Check if review has 0 total hours/week and warn user if it does
+                    $.ajax({
+                        type: "POST",
+                        url: "/reviews/check_zero_hours_per_week",
+                        data: $("#reviewForm").serialize(),
+                        async: false,
+                        success: function (check) {
+                            // Only show "zero-hours-review" modal once
+                            if(check.zero && count == 0) {
+                                $("#zero-hours-review").modal();
+                                count = 1;
+                            } else {
+                                // Timeout button for 3 seconds so user can't spam button while form is submitting
+                                $("#submitBtn").prop("disabled", true);
+                                setTimeout(enableButton, 3000);
+                                // $("#reviewForm") didn't work for some reason
+                                // Not a duplicate review, so proceed with normal form submission for new review
+                                document.getElementById("reviewForm").action = "{% url 'new_review' %}";
+                                document.getElementById("reviewForm").submit();
+                            }
+                        }
+                    });
                 }
             }
         });
