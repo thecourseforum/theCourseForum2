@@ -1,7 +1,8 @@
 <div class="dropdown-menu dropdown-menu-right settings" aria-labelledby="navbarDropdown">
   <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
   <a class="dropdown-item" href="{% url 'user_reviews' %}">My Reviews</a>
-  <a class="dropdown-item" href="{% url 'user_courses' %}">Saved Courses</a>
+  <a class="dropdown-item" href="{% url 'user_courses' %}">Saved Courses
+      <span class="badge badge-pill badge-info">New</span></a>
   <div class="dropdown-divider"></div>
   <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
 </div>
