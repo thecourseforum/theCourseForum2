@@ -25,7 +25,7 @@
 
                 <div class="instructor-info d-flex flex-sm-row flex-column align-items-baseline">
 
-                  <div class="d-flex flex-row">
+                  <div class="d-flex flex-row mr-5">
                     <!-- Instructor page link -->
                     <a class="instructor-profile align-self-center mr-3"
                        href="{% url 'instructor' instructor_id=instructor.id %}">
@@ -50,7 +50,8 @@
                     </div>
                   </div>
 
-                  <div class="ml-auto pl-5 text-center" id="saveUnsave">
+                  <div class="d-flex ml-sm-auto flex-row mt-3">
+                  <div class="text-center" id="saveUnsave">
                   {% if user.is_authenticated %}
                     <button class="btn bg-tcf-indigo text-white d-flex" id="unsaveCourseBtn" {% if not is_saved %} style="display: none!important;" {% endif %}>Unsave Course</button>
                     <button class="btn bg-tcf-orange text-white d-flex" id="saveCourseBtn" {% if is_saved %} style="display: none!important;" {% endif %} data-toggle="modal" data-target="#saveCourseModal{{course.id}}">Save Course</button>
@@ -64,6 +65,7 @@
                   <div class="btn-group ml-5 text-center">
                     <span class="p-2 bg-white">Last taught</span>
                     <span class="p-2 bg-tcf-blue text-white">{{ semester_last_taught }}</span>
+                  </div>
                   </div>
                 </div>
             </div>
