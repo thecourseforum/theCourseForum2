@@ -12,15 +12,8 @@ function unsaveCourse(courseID, instructorID, id) {
 
     // if no more courses left
     if ($(".course-card").length === 0) {
-        $("#courseContainer").html(`
-            <div class="card col p-5 text-center">
-                <div class="card-body">
-                    <h4 class="card-title">
-                        No Saved Courses <i class="far fa-frown-open fa-fw"></i>
-                    </h4>
-                </div>
-            </div>
-            `);
+        document.getElementById("courseToolbar").remove();
+        $("#noCoursesCard").css("display", "block");
     }
 }
 
@@ -50,8 +43,8 @@ for (var i = 0; i < buttons.length; i++) {
     document.getElementById(`saveCourseBtn${id}`).addEventListener("click", () => editCourse(course, instructor, id), false);
 }
 
-// Drag and Drop
 if(buttons.length > 0){
+    // Drag and Drop
     $("#savedCoursesList").sortable();
     $("#savedCoursesList").disableSelection();
 
@@ -109,4 +102,7 @@ if(buttons.length > 0){
         $("#diff-sort-btn").html("Difficulty");
         $("#gpa-sort-btn").html("GPA");
     });
+}else{
+    // show no courses card
+    $("#noCoursesCard").css("display", "block");
 }
