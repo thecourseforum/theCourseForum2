@@ -100,30 +100,34 @@
             </li>
         {% endfor %}
     </ul>
+    {% endif %}
+
     {% for saved in courses %}
         {% include "course/save_course_form.html" with id=saved.id course=saved.course instructor=saved.instructor notes=saved.notes%}
     {% endfor %}
 
-    {% else %}
-    <div class="card col p-5 text-center">
+    <div id="noCoursesCard" class="card col p-5 text-center" style="display: none;">
         <div class="card-body">
             <h4 class="card-title">
-                No Saved Courses <i class="far fa-frown-open fa-fw"></i>
+                No Saved Courses
             </h4>
+            <p> Click <button class="btn btn-sm bg-tcf-orange text-white m-1"> Save Course </button>
+                on a course page to see it here </p>
         </div>
     </div>
-    {% endif %}
+
     </div>
 </div>
 
 {% endblock %}
 
 {% block js %}
+    {% if courses %}
     <script type="module" src="{% static 'department/bind-sort.js' %}"></script>
 
     <!-- For drag and drop, source: https://jqueryui.com/sortable/#default -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
+    {% endif %}
     <script type="module" src="{% static 'course/javascript/user_courses.js' %}"></script>
 {% endblock %}
