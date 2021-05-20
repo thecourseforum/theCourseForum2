@@ -48,13 +48,7 @@
           <h4><i class="fa fa-user fa-fw"></i></h4>
           <p class="mb-0">Account</p>
         </div>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
-          <a class="dropdown-item" href="{% url 'reviews' %}">My reviews</a>
-          <a class="dropdown-item" href="{% url 'courses' %}">Saved Courses</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
-        </div>
+        {% include "base/profile_dropdown.html" %}
       </div>
     {% else %}
       <a href="#loginModal" data-toggle="modal"

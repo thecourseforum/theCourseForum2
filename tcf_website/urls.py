@@ -24,7 +24,7 @@ urlpatterns = [
          views.DeleteReview.as_view(), name='delete_review'),
     path('reviews/<int:review_id>/edit',
          views.edit_review, name='edit_review'),
-    path('reviews', views.reviews, name='reviews'),
+    path('profile/reviews', views.reviews, name='user_reviews'),
     path('reviews/<int:review_id>/upvote', views.upvote),
     path('reviews/<int:review_id>/downvote', views.downvote),
     path('reviews/check_duplicate', views.review.check_duplicate),
@@ -37,7 +37,7 @@ urlpatterns = [
          name='reorder_saved_courses'),
     path('save_course/<int:course_id>/<int:instructor_id>/edit',
          views.edit_course, name='edit_course'),
-    path('courses', views.saved_courses, name='courses'),
+    path('profile/courses', views.saved_courses, name='user_courses'),
     path('search', views.search, name='search'),
 
     # API URLs
