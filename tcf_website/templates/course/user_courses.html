@@ -13,6 +13,7 @@
 {% block content %}
 <div class="container mx-auto">
     <h1 class="h2 mt-2"> Saved Courses </h1>
+    <div id="courseContainer">
     {% if courses %}
     <div id="courseToolbar" class="d-flex flex-sm-row flex-column align-items-baseline">
         <p> Drag and drop to rearrange (this ordering will be saved)</p>
@@ -24,9 +25,8 @@
             <button type="button" id="gpa-sort-btn" class="btn btn-outline-primary">GPA</button>
         </div>
     </div>
-    {% endif %}
+
     <ul id="savedCoursesList" class="course-list">
-        {% if courses %}
         {% csrf_token %}
         {% for saved in courses %}
         <li class="course-card" draggable="true" id="course{{saved.id}}">
@@ -99,22 +99,21 @@
             </div>
             </li>
         {% endfor %}
-        {% else %}
-        <div class="card col p-5 text-center">
-            <div class="card-body">
-                <h4 class="card-title">
-                    No Saved Courses <i class="far fa-frown-open fa-fw"></i>
-                </h4>
-            </div>
-        </div>
-        {% endif %}
     </ul>
-
-    {% if courses %}
     {% for saved in courses %}
         {% include "course/save_course_form.html" with id=saved.id course=saved.course instructor=saved.instructor notes=saved.notes%}
     {% endfor %}
+
+    {% else %}
+    <div class="card col p-5 text-center">
+        <div class="card-body">
+            <h4 class="card-title">
+                No Saved Courses <i class="far fa-frown-open fa-fw"></i>
+            </h4>
+        </div>
+    </div>
     {% endif %}
+    </div>
 </div>
 
 {% endblock %}
