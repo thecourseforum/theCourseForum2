@@ -8,11 +8,11 @@ function unsaveCourse(courseID, instructorID, id) {
     });
 
     document.getElementById(`course${id}`).remove();
+    document.getElementById(`saveCourseModal${id}`).remove();
 
     // if no more courses left
     if ($(".course-card").length === 0) {
-        document.getElementById("courseToolbar").remove();
-        $("#savedCoursesList").html(`
+        $("#courseContainer").html(`
             <div class="card col p-5 text-center">
                 <div class="card-body">
                     <h4 class="card-title">
@@ -51,60 +51,62 @@ for (var i = 0; i < buttons.length; i++) {
 }
 
 // Drag and Drop
-$("#savedCoursesList").sortable();
-$("#savedCoursesList").disableSelection();
+if(buttons.length > 0){
+    $("#savedCoursesList").sortable();
+    $("#savedCoursesList").disableSelection();
 
-$("#savedCoursesList").on("sortstart", function(event, ui) {
-    // highlight border when dragging
-    const moved = ui.item.context;
-    const movedID = moved.id.substring(6); // remove "course" from string
-    $(`#card${movedID}`).addClass("dragging");
-});
-
-$("#savedCoursesList").on("sortstop", function(event, ui) {
-    // remove border highlight
-    const moved = ui.item.context;
-    const movedID = moved.id.substring(6); // remove "course" from string
-    $(`#card${movedID}`).removeClass("dragging");
-});
-
-$("#savedCoursesList").on("sortupdate", function(event, ui) {
-    // save course order
-    const moved = ui.item.context;
-    const movedID = moved.id.substring(6); // remove "course" from string
-    const successor = $(`#${moved.id}`).prev("li")[0];
-    const csrftoken = getCookie("csrftoken");
-    var data;
-    try {
-        const successorID = successor.id.substring(6);
-        data = {
-            to_move_id: movedID,
-            successor_id: successorID
-        };
-    } catch (error) {
-        // successor ID is undefined, move to beginning of list
-        data = {
-            to_move_id: movedID
-        };
-    }
-
-    $.ajaxSetup({
-        headers: { "X-CSRFToken": csrftoken }
+    $("#savedCoursesList").on("sortstart", function(event, ui) {
+        // highlight border when dragging
+        const moved = ui.item.context;
+        const movedID = moved.id.substring(6); // remove "course" from string
+        $(`#card${movedID}`).addClass("dragging");
     });
 
-    $.ajax({
-        type: "POST",
-        url: "/saved/reorder",
-        data: data
+    $("#savedCoursesList").on("sortstop", function(event, ui) {
+        // remove border highlight
+        const moved = ui.item.context;
+        const movedID = moved.id.substring(6); // remove "course" from string
+        $(`#card${movedID}`).removeClass("dragging");
     });
 
-    // clear sort buttons
-    $("#number-sort-btn").removeClass("active");
-    $("#rating-sort-btn").removeClass("active");
-    $("#diff-sort-btn").removeClass("active");
-    $("#gpa-sort-btn").removeClass("active");
-    $("#number-sort-btn").html("Course ID");
-    $("#rating-sort-btn").html("Rating");
-    $("#diff-sort-btn").html("Difficulty");
-    $("#gpa-sort-btn").html("GPA");
-});
+    $("#savedCoursesList").on("sortupdate", function(event, ui) {
+        // save course order
+        const moved = ui.item.context;
+        const movedID = moved.id.substring(6); // remove "course" from string
+        const successor = $(`#${moved.id}`).prev("li")[0];
+        const csrftoken = getCookie("csrftoken");
+        var data;
+        try {
+            const successorID = successor.id.substring(6);
+            data = {
+                to_move_id: movedID,
+                successor_id: successorID
+            };
+        } catch (error) {
+            // successor ID is undefined, move to beginning of list
+            data = {
+                to_move_id: movedID
+            };
+        }
+
+        $.ajaxSetup({
+            headers: { "X-CSRFToken": csrftoken }
+        });
+
+        $.ajax({
+            type: "POST",
+            url: "/saved/reorder",
+            data: data
+        });
+
+        // clear sort buttons
+        $("#number-sort-btn").removeClass("active");
+        $("#rating-sort-btn").removeClass("active");
+        $("#diff-sort-btn").removeClass("active");
+        $("#gpa-sort-btn").removeClass("active");
+        $("#number-sort-btn").html("Course ID");
+        $("#rating-sort-btn").html("Rating");
+        $("#diff-sort-btn").html("Difficulty");
+        $("#gpa-sort-btn").html("GPA");
+    });
+}
