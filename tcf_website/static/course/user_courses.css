@@ -3,8 +3,8 @@
     background-color: white;
 }
 
-li{
-    cursor: pointer;
+.draggable-card{
+    cursor: move;
 }
 
 .notes-content {

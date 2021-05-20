@@ -29,7 +29,7 @@
     <ul id="savedCoursesList" class="course-list">
         {% csrf_token %}
         {% for saved in courses %}
-        <li class="course-card" draggable="true" id="course{{saved.id}}">
+        <li class="course-card draggable-card" draggable="true" id="course{{saved.id}}">
         <div class="card mt-3" id="card{{saved.id}}">
             <div class="d-flex px-3 m-3 card-header">
               <a href="{% url 'course_instructor' course_id=saved.course.id instructor_id=saved.instructor.id %}">
