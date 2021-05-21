@@ -32,7 +32,7 @@ function editCourse(courseID, instructorID, id) {
 }
 
 // Configure unsave and edit course buttons
-var buttons = document.getElementsByClassName("save-btn");
+const buttons = document.getElementsByClassName("save-btn");
 for (var i = 0; i < buttons.length; i++) {
     const button = buttons[i];
     const id = button.id.substring(13); // remove "saveCourseBtn" from string
