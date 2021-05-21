@@ -29,6 +29,17 @@ function editCourse(courseID, instructorID, id) {
     });
 
     $(`#notes${id}`).text(notes);
+
+    if($(`#notes${id}`).height() == $("#rating").height()){
+        $(`#notes${id}`).removeClass("collapsed");
+        $(`#notes${id}`).removeClass("collapsible");
+    }else {
+        $(`#notes${id}`).addClass("collapsed");
+        $(`#notes${id}`).addClass("collapsible");
+        $(`#notes${id}`).click(function() {
+            $(`#notes${id}`).toggleClass('collapsed');
+        });
+    }
 }
 
 // Configure unsave and edit course buttons
