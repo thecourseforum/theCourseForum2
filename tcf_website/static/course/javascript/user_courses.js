@@ -41,6 +41,15 @@ for (var i = 0; i < buttons.length; i++) {
 
     document.getElementById(`unsaveCourseBtn${id}`).addEventListener("click", () => unsaveCourse(course, instructor, id), false);
     document.getElementById(`saveCourseBtn${id}`).addEventListener("click", () => editCourse(course, instructor, id), false);
+
+    // Notes collapser
+    if($(`#notes${id}`).height() > $("#rating").height()){ // check if notes longer than 1 line
+        $(`#notes${id}`).addClass("collapsed");
+        $(`#notes${id}`).addClass("collapsible");
+        $(`#notes${id}`).click(function() {
+            $(`#notes${id}`).toggleClass('collapsed');
+        });
+    }
 }
 
 if(buttons.length > 0){

@@ -11,6 +11,12 @@
     border-color: var(--accent-color);
 }
 
-.notes-content {
-    font-size: 1.5rem;
+.collapsible{
+    cursor: pointer;
+}
+
+.collapsed {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
