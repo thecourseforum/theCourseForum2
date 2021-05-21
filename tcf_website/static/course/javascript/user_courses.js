@@ -30,14 +30,14 @@ function editCourse(courseID, instructorID, id) {
 
     $(`#notes${id}`).text(notes);
 
-    if($(`#notes${id}`).height() == $("#rating").height()){
+    if ($(`#notes${id}`).height() === $("#rating").height()) {
         $(`#notes${id}`).removeClass("collapsed");
         $(`#notes${id}`).removeClass("collapsible");
-    }else {
+    } else {
         $(`#notes${id}`).addClass("collapsed");
         $(`#notes${id}`).addClass("collapsible");
         $(`#notes${id}`).click(function() {
-            $(`#notes${id}`).toggleClass('collapsed');
+            $(`#notes${id}`).toggleClass("collapsed");
         });
     }
 }
@@ -54,16 +54,16 @@ for (var i = 0; i < buttons.length; i++) {
     document.getElementById(`saveCourseBtn${id}`).addEventListener("click", () => editCourse(course, instructor, id), false);
 
     // Notes collapser
-    if($(`#notes${id}`).height() > $("#rating").height()){ // check if notes longer than 1 line
+    if ($(`#notes${id}`).height() > $("#rating").height()) { // check if notes longer than 1 line
         $(`#notes${id}`).addClass("collapsed");
         $(`#notes${id}`).addClass("collapsible");
         $(`#notes${id}`).click(function() {
-            $(`#notes${id}`).toggleClass('collapsed');
+            $(`#notes${id}`).toggleClass("collapsed");
         });
     }
 }
 
-if(buttons.length > 0){
+if (buttons.length > 0) {
     // Drag and Drop
     $("#savedCoursesList").sortable();
     $("#savedCoursesList").disableSelection();
@@ -122,7 +122,7 @@ if(buttons.length > 0){
         $("#diff-sort-btn").html("Difficulty");
         $("#gpa-sort-btn").html("GPA");
     });
-}else{
+} else {
     // show no courses card
     $("#noCoursesCard").css("display", "block");
 }
