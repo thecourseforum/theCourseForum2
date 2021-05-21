@@ -36,7 +36,7 @@ class SavedCourseReorderingTests(TestCase):
 
     def test_saved_courses(self):
         """Test if the 4 saved courses show up for user1"""
-        response = self.client.post(reverse('courses'))
+        response = self.client.post(reverse('user_courses'))
         saved = response.context['courses']
         # 4 SavedCourses (saved1, saved2, saved3, saved4)
         self.assertEqual(len(list(saved)), 4)
