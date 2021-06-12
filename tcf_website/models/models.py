@@ -545,6 +545,9 @@ class SavedCourse(models.Model):
             models.UniqueConstraint(
                 fields=['user', 'rank'],
                 name='unique rank for each user if not NULL',
+                # Defer this constraint until the transaction is over
+                # `Deferrable.DEFERRED` is needed for reordering
+                # https://docs.djangoproject.com/en/3.1/ref/models/constraints/#deferrable
                 deferrable=models.Deferrable.DEFERRED,
             ),
         ]
