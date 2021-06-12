@@ -31,9 +31,9 @@ class Command(BaseCommand):
 
         self.verbose = options['verbose']
 
-        self.UNKNOWN_SCHOOL, _ = School.objects.get_or_create(name='UNKNOWN')
+        self.UNKNOWN_SCHOOL, _ = School.objects.get_or_create(name='Miscellaneous')
         self.UNKNOWN_DEPT, _ = Department.objects.get_or_create(
-            name='UNKNOWN', school=self.UNKNOWN_SCHOOL)
+            name='Miscellaneous', school=self.UNKNOWN_SCHOOL)
         self.STAFF, _ = Instructor.objects.get_or_create(last_name='Staff')
 
         self.data_dir = 'tcf_website/management/commands/semester_data/csv/'

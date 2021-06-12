@@ -9,11 +9,14 @@
 
 {% block content %}
 
-    <div class="course-professor container text-left px-0">
-
+    <div class="course-professor container text-left px-3">
+        {% include "../common/leaderboard_ad.html" with ad_slot="5402759869" %}
+        <!-- Empty div for margin (maybe not the best solution) -->
+        <div class="mt-4"></div>
+        
         {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
 
-        <div class="course-instructor-header my-3 mt-md-5 px-3">
+        <div class="course-instructor-header my-2">
             <div class="d-flex flex-column">
                 <div class="course-title d-md-flex align-items-baseline">
                     <h1 class="mr-md-3 text-nowrap">{{ course.code }}</h1>
@@ -56,7 +59,7 @@
             </div>
         </div>
 
-        <div class="grades-ratings-container px-3">
+        <div class="grades-ratings-container">
             <div class="ratings-container">
                 <div class="ratings-row">
                     <div class="rating-card">
@@ -191,7 +194,7 @@
             </div>
         </div>
 
-        <div class="reviews-container mb-5 px-3">
+        <div class="reviews-container mb-5">
             <div class="reviews-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
                 <h3 class="reviews-heading mb-0 mt-1 mr-4">{{ reviews|length }} {% if reviews|length == 1 %} Comment {% else %} Comments {% endif %}</h3>
                 <div class="reviews-options d-flex flex-sm-row flex-column col p-0">
