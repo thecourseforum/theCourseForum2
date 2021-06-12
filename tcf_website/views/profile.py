@@ -128,7 +128,7 @@ class SavedCourseReorderingView(View):
         instance with the given `successor_id`. If `successor_id` is not
         supplied, the ranks of all SavedCourse instances will be incremented.
         """
-        # Lock the user's saved courses
+        # Lock all of the user's saved courses
         saved = SavedCourse.objects.select_for_update().filter(user=request.user)
 
         try:
@@ -140,19 +140,19 @@ class SavedCourseReorderingView(View):
         move_to_end = False
         try:
             successor_id = int(request.POST.get('successor_id'))
-        except ValueError:  # str
+        except ValueError:  # `successor_id` is a `str`
             return HttpResponseBadRequest('`successor_id` must be an `int`.')
-        except TypeError:  # None
+        except TypeError:  # `successor_id` is None
             move_to_end = True
-        else:  # validate successor_id is provided
+        else:  # valid `successor_id` was provided
             successor = get_object_or_404(
                 SavedCourse, pk=successor_id, user=request.user)
             to_move.rank = successor.rank
 
         try:
             with transaction.atomic():
-                # Set rank of `to_move` to be higher than the current max
-                # This increment the rank even if `to_move` was the only one
+                # Set the rank of `to_move` to be higher than the current max
+                # This increments the rank even if `to_move` was the only one
                 if move_to_end:
                     rank_query = SavedCourse.objects.aggregate(Max('rank'))
                     to_move.rank = rank_query['rank__max'] + 1
