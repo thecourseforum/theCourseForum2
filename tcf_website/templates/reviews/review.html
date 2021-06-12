@@ -45,7 +45,7 @@
                   <div class="review-text-body collapse" id="reviewText{{review.id}}"
                      aria-expanded="false">
                      <!-- Full review text -->
-                    <p class="review-text-full">{{ review.text }}</p>
+                    <div class="review-text-full">{{ review.text|linebreaks }}</div>
                   </div>
                   <!-- Collapser link (click target spans entire row block) -->
                   <a role="button" class="review-collapse-link btn-block p-1 collapsed"
@@ -78,28 +78,28 @@
                     </div>
 
                     <!-- Review Ratings -->
-                    <div class="review-ratings col-sm-8 d-flex align-items-end justify-content-end text-center text-muted flex-wrap">
-                        <div id="review-average" class="text-dark mr-3 mr-sm-4">
-                           <i class="fa fa-star fa-fw"></i>
-                           {{ review.average|floatformat:2 }}
-                       </div>
-                        <div class="mr-3 mr-sm-4">
+                    <div class="review-ratings col-sm-8 d-flex align-items-end justify-content-end text-center text-muted flex-wrap mb-2">
+                        <div id="review-average" class="text-dark mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="Review Average">
+                            <i class="fa fa-star fa-fw"></i>
+                            {{ review.average|floatformat:2 }}
+                        </div>
+                        <div class="mr-3 mr-sm-4"  data-toggle="tooltip" data-placement="bottom" title="Instructor Rating">
                             <i class="fa fa-user"></i>
                             {{ review.instructor_rating }}
                         </div>
-                        <div class="mr-3 mr-sm-4">
+                        <div class="mr-3 mr-sm-4"  data-toggle="tooltip" data-placement="bottom" title="Enjoyability">
                             <i class="far fa-smile-beam"></i>
                             {{ review.enjoyability }}
                         </div>
-                        <div class="mr-3 mr-sm-4">
+                        <div class="mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="Difficulty">
                             <i class="fa fa-dumbbell fa-fw"></i>
                             {{ review.difficulty }}
                         </div>
-                        <div class="mr-3 mr-sm-4">
-                          <i class="fa fa-heart"></i>
-                          {{ review.recommendability }}
+                        <div class="mr-3 mr-sm-4"   data-toggle="tooltip" data-placement="bottom" title="Recommend">
+                            <i class="fas fa-heart"></i>
+                            {{ review.recommendability }}
                         </div>
-                        <div>
+                        <div data-toggle="tooltip" data-placement="bottom" title="Hours Per Week">
                             <i class="fa fa-hourglass-half fa-fw"></i>
                             {{ review.hours_per_week }}
                         </div>
