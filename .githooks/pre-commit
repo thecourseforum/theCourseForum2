@@ -1,12 +1,18 @@
 #!/bin/sh
-echo 'Autoformatting...'
+passing=true
+
+echo '\e[1;33mAutoformatting...\e[1;0m'
 docker exec tcf_django autopep8 --in-place --jobs=0 --max-line-length=100 --aggressive --aggressive -r tcf_website tcf_core
-echo 'Linting...'
-docker exec tcf_django pylint --jobs=0 --load-plugins pylint_django --django-settings-module=tcf_core.settings tcf_website tcf_core || {echo 'Pylint failed'; exit 1}
-docker exec tcf_django node_modules/.bin/eslint --cache --fix -c .config/.eslintrc.yml tcf_website/static/ || {echo 'ESLint failed'; exit 1}
+echo '\e[1;33mLinting...\e[1;0m'
+docker exec tcf_django pylint --jobs=0 -s no --load-plugins pylint_django --django-settings-module=tcf_core.settings tcf_website tcf_core || { echo '\e[1;31mERROR: Pylint failed\e[1;0m'; passing=false; } 
+docker exec tcf_django node_modules/.bin/eslint --cache --fix -c .config/.eslintrc.yml tcf_website/static/ || { echo '\e[1;31mERROR: ESLint failed\e[1;0m'; passing=false; } 
 # Test.
-echo 'Running tests...'
-docker exec tcf_django coverage run manage.py test --keepdb || {echo 'Django tests failed'; exit 1}
-# Get code coverage.
-docker exec tcf_django coverage report -m
-echo 'Success!'
+echo '\e[1;33mRunning tests...\e[1;0m'
+docker exec tcf_django coverage run manage.py test --keepdb || { echo '\e[1;31mERROR: Django tests failed\e[1;0m'; passing=false; } 
+
+if [ "$passing" = true ] ; then
+    echo '\e[1;32mSuccess!\e[1;0m'
+else
+    echo '\e[1;31mOne or more checks failed. Please fix and try committing again.\e[1;0m'
+    exit 1
+fi
