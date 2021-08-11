@@ -2,11 +2,11 @@
 echo 'Autoformatting...'
 docker exec tcf_django autopep8 --in-place --jobs=0 --max-line-length=100 --aggressive --aggressive -r tcf_website tcf_core
 echo 'Linting...'
-docker exec tcf_django pylint --jobs=0 --load-plugins pylint_django --django-settings-module=tcf_core.settings tcf_website tcf_core
-docker exec tcf_django node_modules/.bin/eslint --cache --fix -c .config/.eslintrc.yml tcf_website/static/
+docker exec tcf_django pylint --jobs=0 --load-plugins pylint_django --django-settings-module=tcf_core.settings tcf_website tcf_core || {echo 'Pylint failed'; exit 1}
+docker exec tcf_django node_modules/.bin/eslint --cache --fix -c .config/.eslintrc.yml tcf_website/static/ || {echo 'ESLint failed'; exit 1}
 # Test.
 echo 'Running tests...'
-docker exec tcf_django coverage run manage.py test --keepdb
+docker exec tcf_django coverage run manage.py test --keepdb || {echo 'Django tests failed'; exit 1}
 # Get code coverage.
 docker exec tcf_django coverage report -m
 echo 'Success!'
