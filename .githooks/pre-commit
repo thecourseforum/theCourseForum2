@@ -1,6 +1,7 @@
 #!/bin/sh
 passing=true
 
+# The \e[ characters set colors in terminal, but look weird on Windows
 echo '\e[1;33mAutoformatting...\e[1;0m'
 docker exec tcf_django autopep8 --in-place --jobs=0 --max-line-length=100 --aggressive --aggressive -r tcf_website tcf_core
 echo '\e[1;33mLinting...\e[1;0m'
