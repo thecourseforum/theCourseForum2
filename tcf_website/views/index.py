@@ -13,7 +13,7 @@ def index(request):
     """
 
     # Load "About Team" data from json file
-    with open('tcf_website/views/team_info.json') as data_file:
+    with open('tcf_website/views/team_info.json', encoding='UTF-8') as data_file:
         team_info = json.load(data_file)
     # Load FAQ data from json file, evaluating tags and filters
     rendered = render_to_string('landing/_faqs.json')
@@ -42,10 +42,10 @@ class AboutView(TemplateView):
     template_name = 'about/about.html'
 
     # Load data from json files
-    with open('tcf_website/views/team_info.json') as data_file:
+    with open('tcf_website/views/team_info.json', encoding='UTF-8') as data_file:
         team_info = json.load(data_file)
 
-    with open('tcf_website/views/team_alums.json') as data_file:
+    with open('tcf_website/views/team_alums.json', encoding='UTF-8') as data_file:
         alum_info = json.load(data_file)
 
     def get_context_data(self, **kwargs):
