@@ -45,7 +45,7 @@
                   <div class="review-text-body collapse" id="reviewText{{review.id}}"
                      aria-expanded="false">
                      <!-- Full review text -->
-                    <p class="review-text-full">{{ review.text }}</p>
+                    <div class="review-text-full">{{ review.text|linebreaks }}</div>
                   </div>
                   <!-- Collapser link (click target spans entire row block) -->
                   <a role="button" class="review-collapse-link btn-block p-1 collapsed"
