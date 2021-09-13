@@ -44,7 +44,7 @@ function editCourse(courseID, instructorID, id) {
 
 // Configure unsave and edit course buttons
 const buttons = document.getElementsByClassName("save-btn");
-for (var i = 0; i < buttons.length; i++) {
+for (let i = 0; i < buttons.length; i++) {
     const button = buttons[i];
     const id = button.id.substring(13); // remove "saveCourseBtn" from string
     const course = $(`#courseID${id}`).val();
@@ -88,7 +88,7 @@ if (buttons.length > 0) {
         const movedID = moved.id.substring(6); // remove "course" from string
         const successor = $(`#${moved.id}`).prev("li")[0];
         const csrftoken = getCookie("csrftoken");
-        var data;
+        let data;
         try {
             const successorID = successor.id.substring(6);
             data = {
@@ -111,7 +111,6 @@ if (buttons.length > 0) {
             url: "/saved/reorder",
             data: data
         });
-
     });
 } else {
     // show no courses card
