@@ -112,15 +112,6 @@ if (buttons.length > 0) {
             data: data
         });
 
-        // clear sort buttons
-        $("#number-sort-btn").removeClass("active");
-        $("#rating-sort-btn").removeClass("active");
-        $("#diff-sort-btn").removeClass("active");
-        $("#gpa-sort-btn").removeClass("active");
-        $("#number-sort-btn").html("Course ID");
-        $("#rating-sort-btn").html("Rating");
-        $("#diff-sort-btn").html("Difficulty");
-        $("#gpa-sort-btn").html("GPA");
     });
 } else {
     // show no courses card
