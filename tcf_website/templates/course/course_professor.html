@@ -247,8 +247,8 @@
 {% block js %}
     <!-- For instructor data -->
     <script> // Create global js vars from template context vars
-       let courseID = "{{ course.id|escapejs }}";
-       let instructorID = "{{ instructor.id|escapejs }}";
+       var courseID = "{{ course.id|escapejs }}";
+       var instructorID = "{{ instructor.id|escapejs }}";
     </script>
     <script type="module" src="{% static 'course/javascript/instr_data.js' %}"></script>
 
