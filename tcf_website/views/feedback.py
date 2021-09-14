@@ -3,6 +3,9 @@ import os
 import json
 import requests
 from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.core.mail import send_mail
+
 
 @require_http_methods('POST')
 def send_discord(query):
@@ -18,6 +21,7 @@ def send_discord(query):
         url, data=json_data, headers={
             "Content-Type": "application/json"})
     return JsonResponse(content)
+
 
 @require_http_methods('POST')
 def send_email(query):

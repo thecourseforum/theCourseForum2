@@ -10,7 +10,7 @@ function submit(event) {
         const description = $("#descriptionField").val();
         const categories = "";
         for (let i = 1; i <= 4; i++) {
-            let id = "#category" + i;
+            const id = "#category" + i;
             if ($(id).is(":checked")) {
                 categories += "[" + $(id).val() + "]";
             }
