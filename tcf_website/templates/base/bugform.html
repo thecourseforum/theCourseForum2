@@ -14,7 +14,11 @@
         <form class="needs-validation" id="bugform" novalidate>
           <div class="form-row">
               <label for="emailField">Email (leave blank to remain anonymous)</label>
-              <input type="email" class="form-control" id="emailField" placeholder="example@virginia.edu" value="">
+              {% if user.is_authenticated %}
+                <input type="email" class="form-control" id="emailField" placeholder="example@virginia.edu" value="{{user.email}}">
+              {% else %}
+                <input type="email" class="form-control" id="emailField" placeholder="example@virginia.edu" value="">
+              {% endif %}
               <div class="invalid-feedback">
                 Invalid Email
               </div>
@@ -22,9 +26,6 @@
           <div class="form-row">
               <label for="descriptionField">Description</label>
               <textarea class="form-control" id="descriptionField" rows="3" placeholder="Please be as detailed as possible!" required></textarea>
-              <div class="valid-feedback">
-                Looks good!
-              </div>
           </div>
           <div class="form-row justify-content-center">
             <div class="form-check form-check-inline">
@@ -45,7 +46,7 @@
             </div>
           </div>
           <div class="form-row justify-content-center">
-            <button type="button" id="bugSubmitBtn" class="btn btn-primary align-self-center">Submit</button>
+            <button type="submit" class="btn btn-primary align-self-center">Submit</button>
           </div>
         </form>
       </div>
