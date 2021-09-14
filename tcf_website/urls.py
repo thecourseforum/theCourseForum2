@@ -34,8 +34,9 @@ urlpatterns = [
     # API URLs
     path('api/', include('tcf_website.api.urls'), name='api'),
 
-    # DISCORD URLS
-    path('discord/', views.post_message, name='discord'),
+    # FEEDBACK URLS
+    path('feedback/discord', views.send_discord, name='discord'),
+    path('feedback/email', views.send_email, name='email'),
 
     # AUTH URLS
     path('login', views.login, name='login'),

@@ -11,4 +11,4 @@ from .browse import (browse, department, course_view_legacy, course_view,
 from .review import new_review, DeleteReview, upvote, downvote, edit_review
 from .profile import profile, reviews
 from .search import search
-from .discord import post_message
+from .feedback import send_discord, send_email
