@@ -1,10 +1,10 @@
-import { validateForm } from "../common/form.js";
+import { validateForm, validateEmail } from "../common/form.js";
 import { postToDiscord, sendEmail } from "../common/send_feedback.js";
 
 function submit(event) {
     const form = document.getElementById("bugform");
-    const valid = validateForm(form);
-    if (valid === true) {
+    if (validateForm(form) === true) {
+        // Extract fields
         const url = window.location.href;
         const email = $("#emailField").val();
         const description = $("#descriptionField").val();
@@ -16,6 +16,7 @@ function submit(event) {
             }
         }
 
+        // Post to Discord
         const discordContent = `
         Bug Found!
         **URL:** ${url}
@@ -25,17 +26,20 @@ function submit(event) {
         `;
         postToDiscord("bug", discordContent);
 
-        const subject = "[theCourseForum] Thank you for your feedback!";
-        const emailContent = `
-        Thanks for reaching out! We received the following bug report from you:
-        Description: ${description}
-        Categories: ${categories}
-        We apologize for any inconveniences that this may have caused.
-        Our team will be investigating the issue and will follow up with you shortly.
-        Best,
-        theCourseForum Team
-        `;
-        sendEmail(subject, emailContent, email);
+        // Send email
+        if(validateEmail(email) === true) {
+            const subject = "[theCourseForum] Thank you for your feedback!";
+            const emailContent = `
+            Thanks for reaching out! We received the following bug report from you:
+            Description: ${description}
+            Categories: ${categories}
+            We apologize for any inconveniences that this may have caused.
+            Our team will be investigating the issue and will follow up with you shortly.
+            Best,
+            theCourseForum Team
+            `;
+            sendEmail(subject, emailContent, email);
+        }
 
         resetForm();
     }
