@@ -8,7 +8,7 @@ function submit(event) {
         const url = window.location.href;
         const email = $("#emailField").val();
         const description = $("#descriptionField").val();
-        const categories = "";
+        let categories = "";
         for (let i = 1; i <= 4; i++) {
             const id = "#category" + i;
             if ($(id).is(":checked")) {
@@ -42,16 +42,12 @@ function submit(event) {
 }
 
 function resetForm() {
-    var form = document.getElementById("bugform");
-    form.classList.remove("was-validated");
-    var emailField = document.getElementById("emailField");
-    emailField.value = "";
-    var descriptionField = document.getElementById("descriptionField");
-    descriptionField.value = "";
-
+    $("#bugform").removeClass("was-validated");
+    $("#emailField").val("");
     $("#descriptionField").val("");
-    for (var i = 1; i <= 4; i++) {
-        var id = "#category" + i;
+
+    for (let i = 1; i <= 4; i++) {
+        const id = "#category" + i;
         $(id).prop("checked", false);
     }
 }
