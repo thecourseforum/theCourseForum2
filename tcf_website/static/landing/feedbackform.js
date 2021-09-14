@@ -1,4 +1,4 @@
-import { validateForm, validateEmail } from "../common/form.js";
+import { validateForm } from "../common/form.js";
 import { postToDiscord, sendEmail } from "../common/send_feedback.js";
 
 function submit(event) {
@@ -21,7 +21,7 @@ function submit(event) {
         postToDiscord("feedback", discordContent);
 
         // Send email
-        if(validateEmail(email) === true){
+        if (email !== "") {
             const subject = "[theCourseForum] Thank you for your feedback!";
             const emailContent = `
             Hi ${fname},
