@@ -1,34 +1,38 @@
 import { validateForm } from "../common/form.js";
+import { postToDiscord, sendEmail } from "../common/send_feedback.js";
 
 function submit(event) {
-    var form = document.getElementById("feedbackform");
-    var valid = validateForm(form);
+    const form = document.getElementById("feedbackform");
+    const valid = validateForm(form);
     if (valid === true) {
-        postToDiscord(event);
+        const fname = $("#inputFname").val();
+        const lname = $("#inputLname").val();
+        const email = $("#inputEmail").val();
+        const title = $("#inputTitle").val();
+        const message = $("#inputMessage").val();
+
+        const discordContent = `
+        Feedback submitted
+        **Name:** ${fname} ${lname}
+        **Email:** ${email}
+        **Title:** ${title}
+        **Message:** ${message}
+        `;
+        postToDiscord("feedback", discordContent);
+
+        const subject = "[theCourseForum] Thank you for your feedback!";
+        const emailContent = `
+        Hi ${fname},
+        Thanks for reaching out! We received the following feedback from you:
+        Title: ${title}
+        Message: ${message}
+        We greatly appreciate you taking the time to help us improve tCF!
+        A team member will be following up with you shortly if neccesary.
+        Best,
+        theCourseForum Team
+        `;
+        sendEmail(subject, emailContent, email);
     }
-}
-
-function postToDiscord(event) {
-    var fname = $("#inputFname").val();
-    var lname = $("#inputLname").val();
-    var email = $("#inputEmail").val();
-    var title = $("#inputTitle").val();
-    var message = $("#inputMessage").val();
-
-    var data = {
-        type: "feedback",
-        content: "Feedback submitted" +
-        "\n**Name:** " + fname + " " + lname +
-        "\n**Email:** " + email +
-        "\n**Title:** " + title +
-        "\n**Message:** \n" + message
-    };
-
-    $.ajax({
-        type: "GET",
-        url: "/discord/",
-        data: data
-    });
 }
 
 const form = document.getElementById("feedbackform");

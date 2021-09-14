@@ -1,13 +1,43 @@
 import { validateForm } from "../common/form.js";
+import { postToDiscord, sendEmail } from "../common/send_feedback.js";
 
-function submitForm() {
-    var form = document.getElementById("bugform");
-    var valid = validateForm(form);
+function submit(event) {
+    const form = document.getElementById("bugform");
+    const valid = validateForm(form);
     if (valid === true) {
-        postToDiscord();
-        // close form after submit
-        $("#bugModal").modal("toggle");
-        $("#confirmationModal").modal("toggle");
+        const url = window.location.href;
+        const email = $("#emailField").val();
+        const description = $("#descriptionField").val();
+        const categories = "";
+        for (let i = 1; i <= 4; i++) {
+            let id = "#category" + i;
+            if ($(id).is(":checked")) {
+                categories += "[" + $(id).val() + "]";
+            }
+        }
+
+        const discordContent = `
+        Bug Found!
+        **URL:** ${url}
+        **Categories:** ${categories}
+        **Email:** ${email}
+        **Description:** ${description}
+        `;
+        postToDiscord("bug", discordContent);
+
+        const subject = "[theCourseForum] Thank you for your feedback!";
+        const emailContent = `
+        Thanks for reaching out! We received the following bug report from you:
+        Description: ${description}
+        Categories: ${categories}
+        We apologize for any inconveniences that this may have caused.
+        Our team will be investigating the issue and will follow up with you shortly.
+        Best,
+        theCourseForum Team
+        `;
+        sendEmail(subject, emailContent, email);
+
+        resetForm();
     }
 }
 
@@ -19,37 +49,19 @@ function resetForm() {
     var descriptionField = document.getElementById("descriptionField");
     descriptionField.value = "";
 
+    $("#descriptionField").val("");
     for (var i = 1; i <= 4; i++) {
         var id = "#category" + i;
         $(id).prop("checked", false);
     }
 }
 
-function postToDiscord() {
-    var url = window.location.href;
-    var email = $("#emailField").val();
-    var description = $("#descriptionField").val();
-    var categories = "";
-    for (var i = 1; i <= 4; i++) {
-        var id = "#category" + i;
-        if ($(id).is(":checked")) {
-            categories += "[" + $(id).val() + "]";
-        }
-    }
-    var data = {
-        type: "bug",
-        content: "Bug Found! \n**URL:** " + url +
-        "\n**Description**: \n" + description +
-        "\n**Categories: **" + categories +
-        "\n**Email:** " + email
-    };
+const form = document.getElementById("bugform");
+form.onsubmit = submit;
 
-    $.ajax({
-        type: "GET",
-        url: "/discord/",
-        data: data
-    });
-}
-
-document.getElementById("bugSubmitBtn").addEventListener("click", submitForm, false);
-document.getElementById("bugFormOpen").addEventListener("click", resetForm, false);
+// Show confirmation modal on form submit
+$("#bugform").submit(function(e) {
+    $("#bugModal").modal("hide");
+    $("#confirmationModal").modal("show");
+    return false;
+});
