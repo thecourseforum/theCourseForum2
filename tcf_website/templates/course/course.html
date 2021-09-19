@@ -28,33 +28,35 @@
 
             <!-- Course Description -->
             {% if course.description|length > 0 %}
-            <div class="card-body">
-                <h4 class="card-title">
-                    <a id="course-eval-link" data-toggle="tooltip"
-                       data-placement="right"
-                       title="Requires NetBadge Login"
-                       class="text-tcf-blue font-weight-bold float-right"
-                       style="margin-top: 5px; font-size: 16px;"
-                       target="_blank"
-                       href={{ course.eval_link }}>
-                        Official UVA Student Evaluations
-                        <i class="fa fa-external-link" aria-hidden="true"></i>
-                    </a>
-                    Course Description
-                </h4>
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <a id="course-eval-link" data-toggle="tooltip"
+                           data-placement="right"
+                           title="Requires NetBadge Login"
+                           class="text-tcf-blue font-weight-bold float-right"
+                           style="margin-top: 5px; font-size: 16px;"
+                           target="_blank"
+                           href={{ course.eval_link }}>
+                            Official UVA Student Evaluations
+                            <i class="fa fa-external-link" aria-hidden="true"></i>
+                        </a>
+                        Course Description
+                    </h4>
 
-                {% if course.prerequisite|length > 0 %}
-                <div>
-                    <small class="mb-0 text-uppercase" style="font-size: 15px;">
-                        <i class="fa-fw" aria-hidden="true"></i>Pre-Requisite(s):
-                    </small>
-                    {{ course.prerequisite }}
+                    {% if course.compute_pre_req|length > 0 %}
+                    <div>
+                        <small class="mb-0 text-uppercase" style="font-size: 15px;">
+                            <i class="fa-fw" aria-hidden="true"></i>Pre-Requisite(s):
+                        </small>
+                        {{ course.compute_pre_req }}
+                    </div>
+                    {% endif %}
+
+                    <p class="card-text">
+                        {{ course.course_description_without_pre_req }}
+                    </p>
                 </div>
-                {% endif %}
-
-                <p class="card-text">
-                    {{ course.course_description_without_prerequisite }}
-                </p>
             </div>
             {% endif %}
 
