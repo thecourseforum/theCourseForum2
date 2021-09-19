@@ -381,30 +381,33 @@ class Course(models.Model):
     def __str__(self):
         return f"{self.subdepartment.mnemonic} {self.number} | {self.title}"
 
-    def course_description_without_prerequisite(self):
+    def course_description_without_pre_req(self):
         """Returns course description without its pre-requisite(s)."""
-        return self.description.replace(self.pre_req, "")
+        if self.pre_req != "":
+            # Get pre_req from beginning to end
+            from_pre_req_to_end = self.description[self.description.find("Prerequisite"):]
+            # Check whether it is inline or at end
+            if from_pre_req_to_end.find(".") > 0:
+                return self.description.replace(
+                    from_pre_req_to_end[:from_pre_req_to_end.find(".") + 1], "")
+            return self.description.replace(from_pre_req_to_end, "")
+        return self.description
 
-    def prerequisite(self):
+    def compute_pre_req(self):
         """Returns course pre-requisite(s) and assigns them to a model attribute pre-req."""
-        if self.description.find("Prerequisite: ") >= 0:
-            pre_req_to_end = self.description[self.description.find("Prerequisite: "):]
-            if pre_req_to_end.find(".") >= 0:  # In line pre-reqs
-                self.pre_req = pre_req_to_end[:pre_req_to_end.find(".") + 1]
-                return self.pre_req[len("Prerequisite: "):-1]
-            # At the end pre-reqs
-            self.pre_req = pre_req_to_end
-            return self.pre_req[len("Prerequisite: "):]
-        if self.description.find("Prerequisites: ") >= 0:
-            pre_req_to_end = self.description[self.description.find("Prerequisites: "):]
-            if pre_req_to_end.find(".") >= 0:  # In line pre-reqs
-                self.pre_req = pre_req_to_end[:pre_req_to_end.find(".") + 1]
-                return self.pre_req[len("Prerequisites: "):-1]
-            # At the end pre-reqs
-            self.pre_req = pre_req_to_end
-            return self.pre_req[len("Prerequisites: "):]
-        self.pre_req = ""
-        return ""
+        if "Prerequisite" in self.description:
+            # Get pre_req from beginning to end
+            from_pre_req_to_end = self.description[self.description.find("Prerequisite"):]
+            # Get rid of title of "Prerequisite"
+            pre_req_no_title = from_pre_req_to_end[from_pre_req_to_end.find(":") + 1:]
+            # Check if in-line or not
+            if pre_req_no_title.find(".") > 0:
+                self.pre_req = pre_req_no_title[:pre_req_no_title.find(".")]
+            else:
+                self.pre_req = pre_req_no_title
+        else:
+            self.pre_req = ""
+        return self.pre_req
 
     def code(self):
         """Returns the courses code string."""
