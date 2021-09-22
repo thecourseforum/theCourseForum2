@@ -13,16 +13,88 @@
   ],
   "contributors": [
     {
+      "group_name": "Class of 2023",
+      "members": [
+                {
+                  "name": "Arjun Kumar",
+                  "role": "Developer",
+                  "class": "2023",
+                  "img_filename": "akumar.jpeg",
+                  "github": "arjunk01"
+                },
+                {
+                  "name": "Joe Kerrigan",
+                  "role": "Developer",
+                  "class": "2023",
+                  "img_filename": "jkerrigan.jpeg",
+                  "github": "joek13"
+                },
+                {
+                  "name": "Kartik Chugh",
+                  "role": "Developer",
+                  "class": "2023",
+                  "img_filename": "kchugh2.jpeg",
+                  "github": "KartikChugh"
+                },
+                {
+                  "name": "Max von Schroeter",
+                  "role": "Marketing",
+                  "class": "2023",
+                  "img_filename": "mvonschroeter.jpeg"
+                },
+                {
+                  "name": "Jeremy Tran",
+                  "role": "Marketing",
+                  "class": "2023",
+                  "img_filename": "jtran.jpeg"
+                },
+                {
+                  "name": "Dani Szabo",
+                  "role": "Marketing and Design",
+                  "class": "2023",
+                  "img_filename": "dszabo.jpeg"
+                },
+                {
+                  "name": "Annie Chotikul",
+                  "role": "Marketing and Design",
+                  "class": "2023",
+                  "img_filename": "achotikul.jpeg"
+                }]
+    },
+    {
       "group_name": "Class of 2022",
       "members": [
+                  {
+                    "name": "Shirley Chu",
+                    "role": "VP of Marketing and Design",
+                    "class": "2022",
+                    "img_filename": "schu.jpeg"
+                  },
+                  {
+                    "name": "Davis DeLozier",
+                    "role": "Treasurer",
+                    "class": "2022",
+                    "img_filename": "ddelozier.jpeg"
+                  },
                   {
                     "name": "Harshita Pathipati",
                     "role": "Developer",
                     "class": "2022",
-                    "img_filename": "hpathipati.jpg",
+                    "img_filename": "blank.jpeg",
                     "github": ""
-                  }
-                 ]
+                  },
+                  {
+                    "name": "Rena Wolinsky",
+                    "role": "UX Manager",
+                    "class": "2022",
+                    "img_filename": "rwolinsky.jpeg"
+                  },
+                  {
+                    "name": "Anne Yong",
+                    "role": "Community and Outreach Chair",
+                    "class": "2022",
+                    "img_filename": "ayong.jpeg"
+                  }]
     },
     {
       "group_name": "Class of 2021",
@@ -33,6 +105,13 @@
                     "class": "2021",
                     "img_filename": "byu.jpg",
                     "github": "brian-yu"
+                  },
+                  {
+                    "name": "Jennifer Long",
+                    "role": "President",
+                    "class": "2021",
+                    "img_filename": "jlong.jpg",
+                    "github": "j-alicia-long"
                   },
                   {
                     "name": "Nikash Sethi",
@@ -60,8 +139,40 @@
                     "class": "2021",
                     "img_filename": "agomez.jpeg",
                     "github": "alexagomez"
-                  }
-                 ]
+                  },
+                  {
+                    "name": "Jihoon Park",
+                    "role": "Developer",
+                    "class": "2021",
+                    "img_filename": "jpark.jpeg",
+                    "github": "Bartleby2718"
+                  },
+                  {
+                    "name": "James Lim",
+                    "role": "Developer",
+                    "class": "2021",
+                    "img_filename": "jlim.jpeg",
+                    "github": "yl2vv"
+                  },
+                  {
+                  "name": "Quyen Huynh",
+                  "role": "Developer",
+                  "class": "2021",
+                  "img_filename": "qhuynh.jpeg",
+                  "github": "quyenxhuynh"
+                  },
+                  {
+                    "name": "Tina Wang",
+                    "role": "Marketing",
+                    "class": "2021",
+                    "img_filename": "twang.jpeg"
+                  },
+                  {
+                    "name": "Sierra Arnold",
+                    "role": "Marketing and Design",
+                    "class": "2021",
+                    "img_filename": "sarnold.jpeg"
+                  }]
     },
     {
       "group_name": "Class of 2020",

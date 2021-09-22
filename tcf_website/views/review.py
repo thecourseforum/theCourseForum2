@@ -122,6 +122,30 @@ def check_duplicate(request):
         return JsonResponse(response)
     return redirect('new_review')
 
+@login_required()
+def check_zero_hours_per_week(request):
+    """Check that user hasn't submitted 0 *total* hours/week
+    for a given course/review.
+    Used for an Ajax request in new_review.html"""
+
+    form = ReviewForm(request.POST)
+    if form.is_valid():
+        instance = form.save(commit=False)
+
+        hours_per_week = \
+            instance.amount_reading + instance.amount_writing + \
+            instance.amount_group + instance.amount_homework
+
+        # Review has 0 total hours/week
+        # Send user a warning message that they have entered 0 hours
+        if hours_per_week == 0:
+            response = {"zero": True}
+            return JsonResponse(response)
+
+        # Otherwise, proceed with normal form submission
+        response = {"zero": False}
+        return JsonResponse(response)
+    return redirect('new_review')
 
 # Note: Class-based views can't use the @login_required decorator
 class DeleteReview(LoginRequiredMixin, generic.DeleteView):
