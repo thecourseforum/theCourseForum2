@@ -38,7 +38,7 @@
   // Counter to keep track of number of times "zero-hours-review" modal is shown
   // Boolean to track whether "zero-hours-review" modal has already been shown or not
   // True if already shown, false if not
-  var isZeroHoursReviewModalShown = false;
+  var zeroHoursModalShown = false;
   $(document).ready(function () {
     // Stop normal submit to check for duplicate review with ajax request
     $("#reviewForm").submit(function(e) {
@@ -61,9 +61,9 @@
                         async: false,
                         success: function (check) {
                             // Only show "zero-hours-review" modal once
-                            if(check.zero && !isZeroHoursReviewModalShown) {
+                            if(check.zero && !zeroHoursModalShown) {
                                 $("#zero-hours-review").modal();
-                                isZeroHoursReviewModalShown = true;
+                                zeroHoursModalShown = true;
                             } else {
                                 // Timeout button for 3 seconds so user can't spam button while form is submitting
                                 $("#submitBtn").prop("disabled", true);
