@@ -36,7 +36,9 @@
   });
 
   // Counter to keep track of number of times "zero-hours-review" modal is shown
-  var count = 0;
+  // Boolean to track whether "zero-hours-review" modal has already been shown or not
+  // True if already shown, false if not
+  var isZeroHoursReviewModalShown = false;
   $(document).ready(function () {
     // Stop normal submit to check for duplicate review with ajax request
     $("#reviewForm").submit(function(e) {
@@ -59,15 +61,16 @@
                         async: false,
                         success: function (check) {
                             // Only show "zero-hours-review" modal once
-                            if(check.zero && count == 0) {
+                            if(check.zero && !isZeroHoursReviewModalShown) {
                                 $("#zero-hours-review").modal();
-                                count = 1;
+                                isZeroHoursReviewModalShown = true;
                             } else {
                                 // Timeout button for 3 seconds so user can't spam button while form is submitting
                                 $("#submitBtn").prop("disabled", true);
                                 setTimeout(enableButton, 3000);
                                 // $("#reviewForm") didn't work for some reason
-                                // Not a duplicate review, so proceed with normal form submission for new review
+                                // Not a duplicate review and the zero hours modal has been shown or wasn't
+                                // necessary to show, so proceed with normal form submission for new review
                                 document.getElementById("reviewForm").action = "{% url 'new_review' %}";
                                 document.getElementById("reviewForm").submit();
                             }
