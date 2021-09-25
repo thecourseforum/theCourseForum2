@@ -1,5 +1,5 @@
 wheel
-Django>=3.0
+Django>=3.2
 psycopg2>=2.8.4
 social-auth-app-django>=3.1.0
 pandas>=1.0.3
