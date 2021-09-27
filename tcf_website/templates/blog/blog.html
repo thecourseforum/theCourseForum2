@@ -15,11 +15,11 @@
 <div class="blog container p-0">
   <!-- Google adsense -->
   <!-- <div class="container mb-4">
-  {% include "../common/banner_ad.html" %}
+  {% include "../common/leaderboard_ad.html" %}
 </div> -->
 
   <!-- Browse page content -->
-  <section id="masthead">
+  <section>
     <div class="row p-5 bg-tcf-orange text-white">
       <div class="col-sm-6">
         <h2 class="display-4 font-weight-bold mb-2">theBlog</h2>
@@ -30,26 +30,26 @@
     </div>
   </section>
 
-  <section id="featuredPosts">
+  <section>
     <div class="row mt-4 p-4 bg-light">
       <div class="col">
         <h3>Featured Posts</h3>
 
         <!-- Featured Posts Grid -->
         <div class="row">
-          {% for fpost in featured_posts %}
+          {% for post in featured_posts %}
             <div class="col-md-4">
               <!-- To do: Add url to post -->
-              <a href="#" class="link-unstyled">
+              <a href="{% url 'post_detail' slug=post.slug %}" class="link-unstyled">
                 <div class="card my-3">
                   <div class="card-header bg-tcf-indigo"></div>
                   <div class="card-body features-icons-item mb-2">
-                    <h4 class="card-title mb-0">{{ fpost.shortTitle }}</h4>
-                    <small class="card-subtitle text-muted">By {{ fpost.author }}</small>
-                    <p class="card-text mt-2">Click to read more...</p>
+                    <h4 class="card-title mb-0">{{ post.short_title }}</h4>
+                    <small class="card-subtitle text-muted">By {{ post.author }}</small>
+                    <p class="card-text mt-2">{{ post.body_summary|striptags }}</p>
                   </div>
                   <div class="card-footer bg-white border-0 text-muted">
-                    <small>{{ fpost.postDate }}</small>
+                    <small>{{ post.created_date | date:"N d, Y" }}</small>
                   </div>
                 </div>
               </a>
@@ -62,38 +62,26 @@
     </section>
 
     <!-- Posts List -->
-    <section id="allPosts">
+    <section>
       <div class="row mt-4 p-4">
         <div class="col">
           <h3>All Posts</h3>
           {% for post in all_posts %}
             <div class="card d-inline-flex flex-row-reverse mt-4 w-100">
               <div class="card-header border-0">
-                  <img src="{% static 'blog/'|add:post.headerImg %}" alt="Blog header image" style="width:200px">
+                  <img src="{% static 'blog/'|add:post.thumbnail_image %}" alt="Blog thumbnail image" style="width:200px">
               </div>
               <div class="card-body p-4">
                   <h4 class="card-title mb-0">{{ post.title }}</h4>
                   <small class="card-subtitle text-muted">By {{ post.author }}</small>
-                  <p class="card-text mt-2 mb-5">Click to read more...</p>
-                  <small class="text-muted">{{ post.postDate }}</small>
+                  <p class="card-text mt-2 mb-5">{{ post.body_summary|striptags }}</p>
+                  <small class="text-muted">{{ post.created_date | date:"N d, Y" }}</small>
               </div>
             </div>
           {% endfor %}
         </div>
       </div>
     </section>
-
-    <!-- TODO: Merge this with post cards above -->
-    {% csrf_token %}
-    {% for post in posts %}
-        <div class="card shadow bg-white">
-            <div class="card-body">
-                <h1 class="card-title"> <a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
-                <p class="card-text"> {{ post.body_summary|striptags }} </p>
-                <div> {{ post.created_date }}</div>
-            </div>
-        </div>
-    {% endfor %}
-
   </div>
   {% endblock %}
+  

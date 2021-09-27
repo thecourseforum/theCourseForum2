@@ -72,6 +72,7 @@ class BlogPostAdmin(MarkdownxModelAdmin):
     list_display = ['title', 'created_date', 'mod_date']
     list_filter = ['created_date', 'mod_date']
     search_fields = ['title']
+    prepopulated_fields = {'slug': ('title',)}
 
 
 admin.site.register(Section, SectionAdmin)

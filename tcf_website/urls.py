@@ -14,7 +14,7 @@ urlpatterns = [
 
     # BlOG URLS
     path('blog', views.BlogView.as_view(), name='blog'),
-    path('blog/<int:pk>/', views.post, name='post_detail'),
+    path('blog/<slug:slug>/', views.post, name='post_detail'),
     path('markdownx/', include('markdownx.urls')),
 
     # MAIN SITE URLS

@@ -7,6 +7,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.db.models.functions import Coalesce, Abs
+from django.template.defaultfilters import slugify
 
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
@@ -773,10 +774,20 @@ class BlogPost(DateCreateModMixin):
     https://existenceundefined.com/blog/programming/1/how-to-use-django-markdownx-for-your-blog
     """
 
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=255)
+    short_title = models.CharField(max_length=50)
+    slug = models.SlugField(null=False, unique=True)
+    author = models.CharField(max_length=50)
+    thumbnail_image = models.ImageField(default='placeholder.jpeg')
+
     body = MarkdownxField()
-    # background_image = models.ImageField(default='img/header.jpg',
+
     # upload_to=datetime.now().strftime('backgrounds/%Y/%m/%d'))
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('post_detail', kwargs={'slug': self.slug})
 
     def formatted_markdown(self):
         """Returns formatted markdown of post content."""

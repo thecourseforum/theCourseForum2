@@ -1,43 +1,38 @@
-{% extends "base/base.html" %}
-{% load static %}
-
-{% block title %}theBlog - theCourseForum{% endblock %}
-
-{% block styles %}
-    <link rel="stylesheet" href="{% static 'blog/blog.css' %}"/>
-{% endblock %}
-
-{% block content %}
-    <!-- {% comment %} <div class="container">
+{% extends "base/base.html" %} {% load static %} {% block title %}theBlog -
+theCourseForum{% endblock %} {% block styles %}
+<link rel="stylesheet" href="{% static 'blog/blog.css' %}" />
+{% endblock %} {% block content %}
+<!-- {% comment %} <div class="container">
         {% include "../common/notification.html" %}
     </div> {% endcomment %} -->
 
-    <div class="blog container">
-        <!-- Google adsense -->
-        <!-- <div class="container mb-4">
-            {% include "../common/banner_ad.html" %}
-        </div> -->
+<div class="blog container">
+    <!-- Google adsense -->
+    <div class="container mb-4">
+        {% include "../common/leaderboard_ad.html" %}
+    </div>
 
-        <!-- Browse page content -->
-        <h2 class="font-weight-light">theBlog</h2>
-        <div class="featured-posts">
-
+    <!-- Browse page content -->
+    <section id="masthead">
+        <div class="row px-5 py-3 bg-tcf-orange text-white">
+          <div class="col-sm-6">
+            <h2 class="display-4 font-weight-bold mb-2">theBlog</h2>
+          </div>
         </div>
-        <header class="masthead text-center d-flex" id="mastheadPost">
-            <div class="container my-auto">
-                <div class="row">
-                    <div class="col-lg-10 mx-auto">
-                        <h1>
-                            {{ post_detail.title }}
-                        </h1>
-                    </div>
+      </section>    
+    <section>
+        <div class="row mt-4 p-4 bg-light">
+            <div class="col">
+                <h1 class="display-3">{{ post_detail.title }}</h1>
+                <p>
+                    Written by: {{post_detail.author}}
+                    <span class="text-muted">&#8226; {{ post_detail.created_date | date:"N d, Y" }}</span>
+                </p>
+                <div class="blog-body">
+                    {{ post_detail.formatted_markdown|safe }}
                 </div>
             </div>
-        </header>
-        
-        <div id="blog">
-            <p class="card-text" id="post"> {{ post_detail.formatted_markdown|safe }} </p>
-            <div class="text-muted text-right" style="margin-top: 4rem"> {{ post_detail.created_date }}</div>
         </div>
-    </div>
+    </section>
+</div>
 {% endblock %}

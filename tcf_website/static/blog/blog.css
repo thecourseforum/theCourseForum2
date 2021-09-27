@@ -1,0 +1,15 @@
+.blog-body a {
+  text-decoration: underline;
+}
+.blog-body ul {
+  list-style-type: disc;
+  padding-left: 1em;
+}
+.blog-body pre {
+  background-color: #f0f0f0;
+  padding: 1em;
+}
+.blog-body code {
+  background-color: #f0f0f0;
+  padding: 0.2em;
+}
