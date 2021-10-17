@@ -45,7 +45,7 @@
                   <div class="review-text-body collapse" id="reviewText{{review.id}}"
                      aria-expanded="false">
                      <!-- Full review text -->
-                    <p class="review-text-full">{{ review.text }}</p>
+                    <div class="review-text-full">{{ review.text|linebreaks }}</div>
                   </div>
                   <!-- Collapser link (click target spans entire row block) -->
                   <a role="button" class="review-collapse-link btn-block p-1 collapsed"
@@ -91,13 +91,13 @@
                             <i class="far fa-smile-beam"></i>
                             {{ review.enjoyability }}
                         </div>
-                        <div class="mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="Difficulty">
-                            <i class="fa fa-dumbbell fa-fw"></i>
-                            {{ review.difficulty }}
-                        </div>
                         <div class="mr-3 mr-sm-4"   data-toggle="tooltip" data-placement="bottom" title="Recommend">
                             <i class="fas fa-heart"></i>
                             {{ review.recommendability }}
+                        </div>
+                        <div class="mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="Difficulty">
+                            <i class="fa fa-dumbbell fa-fw"></i>
+                            {{ review.difficulty }}
                         </div>
                         <div data-toggle="tooltip" data-placement="bottom" title="Hours Per Week">
                             <i class="fa fa-hourglass-half fa-fw"></i>

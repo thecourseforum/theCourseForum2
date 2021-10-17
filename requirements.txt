@@ -1,5 +1,5 @@
 wheel
-Django==3.1.8
+Django>=3.2
 psycopg2>=2.8.4
 social-auth-app-django>=3.1.0
 pandas>=1.0.3
@@ -13,7 +13,7 @@ django-filter
 coverage
 
 # Linting
-pylint>=2.4.4,<2.8.0
+pylint>=2.4.4
 pylint-django>=2.0.14
 autopep8>=1.5.1
 html-linter>=0.4.0
