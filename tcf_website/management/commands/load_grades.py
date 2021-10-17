@@ -57,6 +57,7 @@ class Command(BaseCommand):
         self.log_missing_instructors = False
 
     def add_arguments(self, parser):
+        """Standard Django function implementation - defines command-line parameters"""
         # The only required argument at the moment
         # A previous author wrote that reloading all semesters can be dangerous
         # Not sure why, but requiring `ALL_DANGEROUS` to honor the help text
@@ -82,6 +83,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        """Standard Django function implementation - runs when this command is executed."""
         self.verbosity = options['verbosity']
         self.suppress_tqdm = options['suppress_tqdm']
         self.log_missing_instructors = options['log_missing_instructors']
@@ -90,10 +92,15 @@ class Command(BaseCommand):
             print('Step 1: Fetch Course and Instructor data for later use')
         semester = options['semester']
         if semester == 'ALL_DANGEROUS':
-            # ignores temporary files ('~' on Windows, '.' otherwise)
+            # ALL_DANGEROUS removes all existing data
+            CourseGrade.objects.all().delete()
+            CourseInstructorGrade.objects.all().delete()
+
+            # Loads every data CSV file in /grade_data/csv with exceptions
             for file in sorted(os.listdir(self.data_dir)):
                 if self.verbosity == 3:
                     print('Loading data from', file)
+                # Ignore temp files (start with '~' on Windows, '.' otherwise) and test data
                 if file[0] not in ('.', '~') and file != 'test_data.csv':
                     self.load_semester_file(file)
         else:
@@ -101,10 +108,7 @@ class Command(BaseCommand):
         self.load_dict_into_models()
 
     def clean(self, df):
-        # Truncate existing tables
-        CourseGrade.objects.all().delete()
-        CourseInstructorGrade.objects.all().delete()
-
+        """ Removes rows with incomplete data from dataframe"""
         # Note: some 'Course GPA' and '# of Students' entries are empty due to FERPA
         # (see wiki for more details) but we don't use those columns anyways
 
@@ -123,6 +127,7 @@ class Command(BaseCommand):
         return df[df['Primary Instructor Name'] != '...']
 
     def load_semester_file(self, file):
+        """Given a file name, cleans + loads its data into the global grade data dicts."""
         df = self.clean(pd.read_csv(os.path.join(self.data_dir, file)))
         if self.verbosity > 0:
             print(f"Found {df.size} sections in {file}")
@@ -135,8 +140,10 @@ class Command(BaseCommand):
             print(f'Done loading {file}')
 
     def load_row_into_dict(self, row):
-        """Loads data from a given row into the global dicts
-        course_grades and course_instructor_grades"""
+        """
+        Loads data from a given row into the global dicts
+        course_grades and course_instructor_grades
+        """
         # Columns are processed left to right, with one exception
 
         # 'Term Desc' column is unused because we only care about aggregate across semesters
@@ -156,7 +163,7 @@ class Command(BaseCommand):
             if self.verbosity > 0:
                 print('full name is', full_name)
             raise ValueError(
-                f"{full_name=} doesn't meet our assumption about `Primary Instructor Name`.")
+                f"{full_name=} doesn't meet our assumption about `Primary Instructor Name` format.")
 
         # 'Class Section' column is unused
         try:
@@ -181,42 +188,42 @@ class Command(BaseCommand):
                 print(e)
             raise e
         # No error casting values to float/int, so continue
-        # identifiers are tuple keys to grade data dictionaries
+        # Identifiers are tuple keys to grade data dictionaries
         course_identifier = (subdepartment, number, title)
         course_instructor_identifier = (
             subdepartment, number, first_name, last_name)
 
-        # value of dictionaries (incremented onto value if key already exists)
+        # Dictionary values (incremented onto value if key already exists)
         this_semesters_grades = [a_plus, a, a_minus,
                                  b_plus, b, b_minus,
                                  c_plus, c, c_minus,
                                  no_credit]
 
-        # load this semester into course_grades dictionary
+        # Load this semester into course_grades dictionary
         if course_identifier in self.course_grades:
             for i in range(len(self.course_grades[course_identifier])):
                 self.course_grades[course_identifier][i] += this_semesters_grades[i]
         else:
             self.course_grades[course_identifier] = this_semesters_grades.copy()
 
-        # load this semester into course_instructor_grades dictionary
+        # Load this semester into course_instructor_grades dictionary
         if course_instructor_identifier in self.course_instructor_grades:
-            for i in range(
-                    len(self.course_instructor_grades[course_instructor_identifier])):
+            for i in range(len(self.course_instructor_grades[course_instructor_identifier])):
                 self.course_instructor_grades[course_instructor_identifier][i] += this_semesters_grades[i]
         else:
             self.course_instructor_grades[course_instructor_identifier] = this_semesters_grades.copy(
             )
 
     def load_dict_into_models(self):
-        """
+        """ Converts dictionaries to real instances of CourseGrade and CourseInstructorGrade.
+
         Given a course or course-instructor pair and its corresponding grade distribution,
         calculates weighted GPA average and total enrolled students and then uses all of those
         as parameters to create new CourseGrade and CourseInstructorGrade instances.
         """
         if self.verbosity > 0:
             print('Step 2: Bulk-create CourseGrade instances')
-        # used for gpa calculation
+        # Used for GPA calculation
         grade_weights = [4.0, 4.0, 3.7,
                          3.3, 3.0, 2.7,
                          2.3, 2.0, 1.7,
@@ -238,9 +245,8 @@ class Command(BaseCommand):
         CourseGrade.objects.bulk_create(unsaved_cg_instances)
         if self.verbosity > 0:
             print('Done creating CourseGrade instances')
-
-        if self.verbosity > 0:
             print('Step 3: Bulk-create CourseInstructorGrade instances')
+
         # Load course_instructor_grades data from dicts and create model instances
         unsaved_cig_instances = []
         for row in tqdm(self.course_instructor_grades, disable=self.suppress_tqdm):
