@@ -78,7 +78,7 @@ def new_review(request):
 
             messages.success(request,
                              f'Successfully reviewed {instance.course}!')
-            return redirect('reviews')
+            return redirect('user_reviews')
         return render(request, 'reviews/new_review.html', {'form': form})
     return render(request, 'reviews/new_review.html')
 
@@ -151,7 +151,7 @@ def check_zero_hours_per_week(request):
 class DeleteReview(LoginRequiredMixin, generic.DeleteView):
     """Review deletion view."""
     model = Review
-    success_url = reverse_lazy('reviews')
+    success_url = reverse_lazy('user_reviews')
 
     def get_object(self):  # pylint: disable=arguments-differ
         """Override DeleteView's function to validate review belonging to user."""
@@ -193,7 +193,7 @@ def edit_review(request, review_id):
             messages.success(
                 request,
                 f'Successfully updated your review for {form.instance.course}!')
-            return redirect('reviews')
+            return redirect('user_reviews')
         messages.error(request, form.errors)
         return render(request, 'reviews/edit_review.html', {'form': form})
     form = ReviewForm(instance=review)
