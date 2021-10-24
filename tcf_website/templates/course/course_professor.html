@@ -13,7 +13,7 @@
         {% include "../common/leaderboard_ad.html" with ad_slot="5402759869" %}
         <!-- Empty div for margin (maybe not the best solution) -->
         <div class="mt-4"></div>
-        
+
         {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
 
         <div class="course-instructor-header my-2">
@@ -25,7 +25,7 @@
 
                 <div class="instructor-info d-flex flex-sm-row flex-column align-items-baseline">
 
-                  <div class="d-flex flex-row">
+                  <div class="d-flex flex-row mr-5">
                     <!-- Instructor page link -->
                     <a class="instructor-profile align-self-center mr-3"
                        href="{% url 'instructor' instructor_id=instructor.id %}">
@@ -50,10 +50,22 @@
                     </div>
                   </div>
 
+                  <div class="d-flex ml-sm-auto flex-row mt-3">
+                  <div class="text-center" id="saveUnsave">
+                  {% if user.is_authenticated %}
+                    <button class="btn bg-tcf-indigo text-white d-flex" id="unsaveCourseBtn" {% if not is_saved %} style="display: none!important;" {% endif %}>Unsave Course</button>
+                    <button class="btn bg-tcf-orange text-white d-flex" id="saveCourseBtn" {% if is_saved %} style="display: none!important;" {% endif %} data-toggle="modal" data-target="#saveCourseModal{{course.id}}">Save Course</button>
+                    {% include "course/save_course_form.html" with id=course.id course=course instructor=instructor %}
+                  {% else %}
+                    <button class="btn bg-tcf-orange text-white d-flex" href="#loginModal" data-toggle="modal">Save Course</button>
+                  {% endif %}
+                  </div>
+
                   <!-- Semester last taught -->
-                  <div class="ml-auto pl-5 btn-group text-center">
+                  <div class="btn-group ml-5 text-center">
                     <span class="p-2 bg-white">Last taught</span>
                     <span class="p-2 bg-tcf-blue text-white">{{ semester_last_taught }}</span>
+                  </div>
                   </div>
                 </div>
             </div>
@@ -235,7 +247,8 @@
 {% block js %}
     <!-- For instructor data -->
     <script> // Create global js vars from template context vars
-       var courseID = "{{ course_id|escapejs }}";
+       var courseID = "{{ course.id|escapejs }}";
+       var instructorID = "{{ instructor.id|escapejs }}";
     </script>
     <script type="module" src="{% static 'course/javascript/instr_data.js' %}"></script>
 
@@ -254,4 +267,12 @@
         import {loadData} from "{% static 'course/javascript/course_data.js' %}";
         loadData(JSON.parse("{{ data|escapejs }}"))
     </script>
+
+    <!-- For course-instructor reviews -->
+    <script type="module" src="{% static 'reviews/review.js' %}"></script>
+
+    <!-- For save course -->
+    {% if user.is_authenticated %}
+    <script type="module" src="{% static 'course/javascript/save_course.js' %}"></script>
+    {% endif %}
 {% endblock %}

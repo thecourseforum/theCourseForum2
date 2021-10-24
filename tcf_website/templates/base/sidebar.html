@@ -23,11 +23,12 @@
       </a>
     </li>
     <li>
-      <a href="{% url 'about' %}"
-         class="list-group-item list-group-item-action pb-0
-         {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
-        <h4><i class="fa fa-code fa-fw"></i></h4>
-        <p>About</p>
+      <a href="{% url 'user_courses' %}"
+         class="list-group-item list-group-item-action pb-0">
+         <!-- temporary badge -->
+        <span class="badge badge-pill badge-info mb-2">New</span>
+        <h4><i class="fas fa-bookmark fa-fw"></i></h4>
+        <p>Saved</p>
         <hr>
       </a>
     </li>
@@ -48,12 +49,7 @@
           <h4><i class="fa fa-user fa-fw"></i></h4>
           <p class="mb-0">Account</p>
         </div>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
-          <a class="dropdown-item" href="{% url 'reviews' %}">My reviews</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
-        </div>
+        {% include "base/profile_dropdown.html" %}
       </div>
     {% else %}
       <a href="#loginModal" data-toggle="modal"
