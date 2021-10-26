@@ -1,0 +1,126 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Saved Courses - theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
+<link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
+<link rel="stylesheet" href="{% static 'course/user_courses.css' %}"/>
+<link rel="stylesheet" href="{% static 'base/tcf-style.css' %}"/>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto">
+    <h2 class="mt-2"> Saved Courses </h2>
+    <div id="courseContainer">
+    {% if courses %}
+    <div id="courseToolbar" class="d-flex flex-sm-row flex-column align-items-baseline">
+        <p> Drag and drop to rearrange (this ordering will be saved)</p>
+    </div>
+
+    <ul id="savedCoursesList" class="course-list">
+        {% csrf_token %}
+        {% for saved in courses %}
+        <li class="course-card draggable-card" draggable="true" id="course{{saved.id}}">
+        <div class="card mt-3" id="card{{saved.id}}">
+            <div class="d-flex px-3 m-3 card-header">
+              <a href="{% url 'course_instructor' course_id=saved.course.id instructor_id=saved.instructor.id %}">
+                  <strong>{{ saved.course }} </strong> — {{ saved.instructor.full_name }}
+              </a>
+              <p id="title" hidden> {{saved.course.subdepartment.mnemonic}} {{saved.course.number}} </p>
+              <a class="ml-auto h5 px-2 text-tcf-blue"  href="#saveCourseModal{{saved.id}}" data-toggle="modal">
+                  <i class="fas fa-pencil-alt"></i>
+              </a>
+              <a class="h5 pl-2 text-danger unsave-btn" type="button" id="unsaveCourseBtn{{saved.id}}"
+                    data-toggle="modal" data-target="#deleteReviewModal{{review.id}}">
+                <i class="fa fa-trash-o"></i>
+              </a>
+
+            </div>
+            <div class="card-body">
+                <ul class="row mb-0 px-3">
+                    <li class="col text-nowrap">
+                        <small class="text-uppercase">
+                            <i class="fa fa-star"></i> Rating
+                        </small>
+                        <p class="h4" id="rating">
+                            {% if saved.average_rating %}
+                                {{ saved.average_rating|floatformat:2 }}
+                            {% else %}
+                                &mdash;
+                            {% endif %}
+                        </p>
+                    </li>
+                    <li class="col text-nowrap">
+                        <small class="text-uppercase">
+                            <i class="fa fa-dumbbell"></i> Difficulty
+                        </small>
+                        <p class="h4" id="difficulty">
+                            {% if saved.average_difficulty %}
+                                {{ saved.average_difficulty|floatformat:2 }}
+                            {% else %}
+                                &mdash;
+                            {% endif %}
+                        </p>
+                    </li>
+                    <li class="col text-nowrap">
+                        <small class="text-uppercase">
+                            <i class="fa fa-chart-bar"></i> GPA
+                        </small>
+                        <p class="h4" id="gpa">
+                            {% if saved.average_gpa %}
+                                {{ saved.average_gpa|floatformat:2 }}
+                            {% else %}
+                                &mdash;
+                            {% endif %}
+                        </p>
+                    </li>
+                    <div class="col-md-2">
+                        <small class="text-uppercase">
+                            <i class="fa fa-calendar"></i> Last Taught
+                        </small>
+                        <p class="h4">{{ saved.semester_last_taught }}</p>
+                    </div>
+                    <div class="col-sm col-md-6">
+                        <small class="text-uppercase">
+                            <i class="fa fa-sticky-note"></i> Notes
+                        </small>
+                        <p class="h4" id="notes{{saved.id}}">
+                          {{ saved.notes }}
+                        </p>
+                    </div>
+                </ul>
+            </div>
+            </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% for saved in courses %}
+        {% include "course/save_course_form.html" with id=saved.id course=saved.course instructor=saved.instructor notes=saved.notes%}
+    {% endfor %}
+
+    <div id="noCoursesCard" class="card col p-5 text-center" style="display: none;">
+        <div class="card-body">
+            <h4 class="card-title">
+                No Saved Courses
+            </h4>
+            <p> Click <button class="btn btn-sm bg-tcf-orange text-white m-1"> Save Course </button>
+                on a course page to see it here </p>
+        </div>
+    </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+    {% if courses %}
+    <!-- For drag and drop, source: https://jqueryui.com/sortable/#default -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    {% endif %}
+    <script type="module" src="{% static 'course/javascript/user_courses.js' %}"></script>
+{% endblock %}
