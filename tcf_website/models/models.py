@@ -542,6 +542,52 @@ class CourseInstructorGrade(models.Model):
                 f"{self.subdepartment} {self.number} {self.average}")
 
 
+class SavedCourse(models.Model):
+    """
+    A model to record who saved which courses.
+    This model can be used to implement `follow-course` in the future.
+
+    Create this instance when a User saves a Course.
+        Note that you need to make `rank` non-NULL yourself when you use
+        `bulk_create` because it doesn't call the `save` method and hence
+        the `pre_save` and post_save` signals)
+    Delete this instance when a User unsaves the Course.
+    Update this instance only to update `rank` or `notes`.
+
+    `rank`: Used to stores orders within the list of saved Courses. Trello uses
+        a floating point, but chose int for a slower but easier & more reliable
+        implementation. https://softwareengineering.stackexchange.com/q/195308/
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    rank = models.PositiveIntegerField(null=True)
+    notes = models.TextField(default='')
+
+    def __str__(self):
+        return f'{self.course} taught by {self.instructor} saved by {self.user}'
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['rank']),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'course', 'instructor'],
+                name='one instance for each user-course-instructor pair',
+            ),
+            models.UniqueConstraint(
+                fields=['user', 'rank'],
+                name='unique rank for each user if not NULL',
+                # Defer this constraint until the transaction is over
+                # `Deferrable.DEFERRED` is needed for reordering
+                # https://docs.djangoproject.com/en/3.1/ref/models/constraints/#deferrable
+                deferrable=models.Deferrable.DEFERRED,
+            ),
+        ]
+
+
 class Section(models.Model):
     """Section model.
 
