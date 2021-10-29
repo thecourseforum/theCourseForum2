@@ -16,7 +16,6 @@ from ..models import (
     School,
     Department,
     Course,
-    SavedCourse,
     Section,
     Semester,
     Instructor,
@@ -208,9 +207,6 @@ def course_instructor(request, course_id, instructor_id):
             total += data[field]
         data['total_enrolled'] = total
 
-    is_saved = request.user.is_authenticated and SavedCourse.objects.filter(
-        user=request.user, course=course, instructor=instructor).exists()
-
     return render(request, 'course/course_professor.html',
                   {
                       'course': course,
@@ -221,7 +217,6 @@ def course_instructor(request, course_id, instructor_id):
                       'reviews': reviews,
                       'breadcrumbs': breadcrumbs,
                       'data': json.dumps(data),
-                      'is_saved': is_saved,
                   })
 
 

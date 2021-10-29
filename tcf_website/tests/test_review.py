@@ -64,7 +64,7 @@ class EditReviewTests(TestCase):
             self.valid_data_with_different_text,  # data with updated text
             content_type='application/x-www-form-urlencoded',
         )
-        self.assertRedirects(response, reverse('user_reviews'))
+        self.assertRedirects(response, reverse('reviews'))
         self.review1.refresh_from_db()
         self.assertEqual(self.review1.text, 'new text')
         messages = [m.message for m in get_messages(response.wsgi_request)]
