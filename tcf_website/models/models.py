@@ -388,7 +388,8 @@ class Course(models.Model):
         return self.parse_course_description()[1]
 
     def parse_course_description(self):
-        """Returns a tuple with pre-requisite(s) and course description without the pre-requisite(s)."""
+        """Returns a tuple with pre-requisite(s)
+        and course description without the pre-requisite(s)."""
         # When no pre-req
         course_description_without_pre_req = self.description
         pre_req = ""
