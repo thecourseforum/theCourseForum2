@@ -379,16 +379,16 @@ class Course(models.Model):
     def __str__(self):
         return f"{self.subdepartment.mnemonic} {self.number} | {self.title}"
 
+    def compute_pre_req(self):
+        """Returns course pre-requisite(s)."""
+        return self.parse_course_description()[0]
+
     def course_description_without_pre_req(self):
         """Returns course description without its pre-requisite(s)."""
         return self.parse_course_description()[1]
 
-    def compute_pre_req(self):
-        """Returns course pre-requisite(s) and assigns them to a model attribute pre-req."""
-        return self.parse_course_description()[0]
-
     def parse_course_description(self):
-        """Returns course pre-requisite(s) """
+        """Returns a tuple with pre-requisite(s) and course description without the pre-requisite(s)."""
         # When no pre-req
         course_description_without_pre_req = self.description
         pre_req = ""
