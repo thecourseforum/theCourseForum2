@@ -327,11 +327,6 @@
 {% block js %}
     <script type="module" src="{% static 'landing/feedbackform.js' %}"></script>
     <script type="text/javascript">
-        {% if not visited %}
-            $(window).on('load', function () {
-                $('#welcomeModal').modal('show');
-            });
-        {% endif %}
         // Update copyright year at the bottom of landing page
         $(".year").text(new Date().getFullYear());
     </script>
