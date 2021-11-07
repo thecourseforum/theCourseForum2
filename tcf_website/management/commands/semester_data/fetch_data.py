@@ -57,7 +57,5 @@ def download_semester(year, season):
 #             download_semester(year, season)
 
 print('hi')
-download_semester(2021, 'summer')
-download_semester(2021, 'fall')
 download_semester(2022, 'spring')
 print('bye')
