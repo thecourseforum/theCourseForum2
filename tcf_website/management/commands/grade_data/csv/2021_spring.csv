@@ -1,4 +1,4 @@
-﻿TermDesc,Subject,CatalogNumber,ClassTitle,CourseID,PrimaryInstructorName,ClassSection,ClassNum,ClassAcademicGroup,CourseGPA,NStudents,A_plus,A,A_minus,B_plus,B,B_minus,C_plus,C,C_minus,DFW,LEVEL
+﻿TermDesc,Subject,Catalog Number,Class Title,CourseID,Primary Instructor Name,ClassSection,ClassNum,ClassAcademicGroup,CourseGPA,NStudents,A+,A,A-,B+,B,B-,C+,C,C-,DFW,LEVEL
 2021 Spring,AAS,3500,Intermediate Seminar in AAS,039376,"Smithson,Brian C",002,12785,CGAS,3.91,11,,,,,,,,,,,UGRD
 2021 Spring,ACCT,5310,Topics in Advanced Accounting,000192,"Brooks,Gary D",701,19650,SCPS,,,,,,,,,,,,,GRAD
 2021 Spring,ACCT,5410,Fraud Examination,040496,"Achilles,Wendy W",701,19654,SCPS,,,,,,,,,,,,,GRAD
