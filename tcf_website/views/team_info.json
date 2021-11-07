@@ -134,6 +134,19 @@
       "class": "2024",
       "img_filename": "ENG_Vinya_Ponugoti.jpg",
       "github": "vinyaponugoti"
+    },
+      "name": "AJ Nye",
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_AJ_Nye.jpg",
+      "github": "ajnye"
+    },
+    {
+      "name": "Ann Li",
+      "role": "Developer",
+      "class": "2024",
+      "img_filename": "ENG_Ann_Li.jpg",
+      "github": "Ann924"
     }
   ],
   "marketing_team": [
