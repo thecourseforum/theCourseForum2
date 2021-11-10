@@ -122,6 +122,7 @@ def check_duplicate(request):
         return JsonResponse(response)
     return redirect('new_review')
 
+
 @login_required()
 def check_zero_hours_per_week(request):
     """Check that user hasn't submitted 0 *total* hours/week
@@ -148,6 +149,8 @@ def check_zero_hours_per_week(request):
     return redirect('new_review')
 
 # Note: Class-based views can't use the @login_required decorator
+
+
 class DeleteReview(LoginRequiredMixin, generic.DeleteView):
     """Review deletion view."""
     model = Review
