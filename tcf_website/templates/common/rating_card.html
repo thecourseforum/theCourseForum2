@@ -22,7 +22,7 @@
                     &mdash;
                   {% endif %}
                 </p>
-              </div> 
+              </div>
               <div class="col-4 col-lg-2 text-nowrap">
                 <small class="mb-0 text-uppercase">
                   <i class="fa fa-dumbbell fa-fw"></i>&nbsp;Difficulty
@@ -47,7 +47,31 @@
                   {% endif %}
                 </p>
               </div>
-              <div class="col-12 col-lg-3 offset-lg-3" {% if not last_taught %}style="opacity: 0;"{% endif %}>
+              <div class="col-4 col-lg-2 text-nowrap">
+                <small class="mb-0 text-uppercase">
+                  <i class="fas fa-clock"></i>&nbsp;Times
+                </small>
+                <div class="mb-0 info" id="times">
+                  {% load tags %}
+                  {% if times %}
+                    {% with times|split_times:";" as sections %}
+                      {% for section in sections %}
+                        {% for time in section %}
+                          {% if time|length > 0 %}
+                          <p style="font-size: 20px; margin: 0;">{{ time }}</p>
+                          {% endif %}
+                        {% endfor %}
+                        {% if forloop.counter < sections|length %}
+                        <hr style="border: unset; margin: 4px 0; height: 4px; background: black; width: 50px;">
+                        {% endif %}
+                      {% endfor %}
+                    {% endwith %}
+                  {% else %}
+                    &mdash;
+                  {% endif %}
+                </div>
+              </div>
+              <div class="col-12 col-lg-3" {% if not last_taught %}style="opacity: 0;"{% endif %}>
                 <small class="mb-0 text-uppercase">
                   Last Taught
                 </small>

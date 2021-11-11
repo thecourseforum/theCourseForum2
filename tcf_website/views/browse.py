@@ -11,6 +11,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.postgres.aggregates.general import StringAgg
 
 from ..models import (
     School,
@@ -105,6 +106,9 @@ def course_view(request, mnemonic, course_number):
             ) / 3,
             semester_last_taught=Max('section__semester',
                                      filter=Q(section__course=course)),
+            # StringAgg:
+            # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#stringagg
+            times=StringAgg('section__section_times', delimiter=';', distinct=True),
         )
     taught_this_semester = Section.objects.filter(course=course, semester=latest_semester).exists()
 
