@@ -13,7 +13,7 @@ __pycache__/*
 tcf_website/migrations/*
 !tcf_website/migrations/__init__.py
 # Environment variables
-.env
+.env*
 !.config/.env.example
 # Static files collected by Django
 /static/
