@@ -13,7 +13,7 @@
         {% include "../common/leaderboard_ad.html" with ad_slot="5402759869" %}
         <!-- Empty div for margin (maybe not the best solution) -->
         <div class="mt-4"></div>
-        
+
         {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
 
         <div class="course-instructor-header my-2">
@@ -59,137 +59,160 @@
             </div>
         </div>
 
-        <div class="grades-ratings-container">
-            <div class="ratings-container">
-                <div class="ratings-row">
-                    <div class="rating-card">
-                        <span class="rating-card-num rating-num">&mdash;</span>
-                        <p class="rating-card-desc"><i class="fa fa-star fa-fw"></i>&nbsp;{{ num_reviews }} {% if num_reviews == 1 %} Rating {% else %} Ratings {% endif %}</p>
+        <div class="course-info-container">
+            <div class="grades-ratings-container">
+                <div class="ratings-container">
+                    <div class="ratings-row">
+                        <div class="rating-card">
+                            <span class="rating-card-num rating-num">&mdash;</span>
+                            <p class="rating-card-desc"><i class="fa fa-star fa-fw"></i>&nbsp;{{ num_reviews }} {% if num_reviews == 1 %} Rating {% else %} Ratings {% endif %}</p>
+                        </div>
+                        <div class="info-container">
+                            <div class="info-row">
+                                <div class="info-title">
+                                    <i class="fas fa-user"></i>&nbsp;Instructor
+                                </div>
+                                <div class="info-bar">
+                                    <div class="progress">
+                                        <div class="progress-bar instructor-bar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="info-num instructor-num">
+                                    &mdash;
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-title">
+                                    <i class="far fa-smile-beam"></i>&nbsp;Enjoyability
+                                </div>
+                                <div class="info-bar">
+                                    <div class="progress">
+                                        <div class="progress-bar fun-bar" style="width:0%"></div>
+                                    </div>
+                                </div>
+                                <div class="info-num fun-num">
+                                    &mdash;
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-title">
+                                    <i class="fas fa-dumbbell"></i>&nbsp;Difficulty
+                                </div>
+                                <div class="info-bar">
+                                    <div class="progress">
+                                        <div class="progress-bar difficulty-bar" style="width:0%"></div>
+                                    </div>
+                                </div>
+                                <div class="info-num difficulty-num">
+                                    &mdash;
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-title">
+                                    <i class="fas fa-heart"></i>&nbsp;Recommend
+                                </div>
+                                <div class="info-bar">
+                                    <div class="progress">
+                                        <div class="progress-bar recommend-bar" style="width:0%"></div>
+                                    </div>
+                                </div>
+                                <div class="info-num recommend-num">
+                                    &mdash;
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-container">
-                        <div class="info-row">
-                            <div class="info-title">
-                                <i class="fas fa-user"></i>&nbsp;Instructor
-                            </div>
-                            <div class="info-bar">
-                                <div class="progress">
-                                    <div class="progress-bar instructor-bar" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <div class="info-num instructor-num">
-                                &mdash;
-                            </div>
+                    <div class="ratings-row" style="align-items: flex-end">
+                        <div class="rating-card">
+                            <span class="rating-card-num hours-num">&mdash;</span>
+                            <p class="rating-card-desc"><i class="fa fa-hourglass-half fa-fw"></i>&nbsp;Hours/Week</p>
                         </div>
-                        <div class="info-row">
-                            <div class="info-title">
-                                <i class="far fa-smile-beam"></i>&nbsp;Enjoyability
-                            </div>
-                            <div class="info-bar">
-                                <div class="progress">
-                                    <div class="progress-bar fun-bar" style="width:0%"></div>
+                        <div class="info-container">
+                            <div class="info-row">
+                                <div class="info-title">
+                                    <i class="fas fa-book"></i>&nbsp;Reading
+                                </div>
+                                <div class="info-bar">
+                                    <div class="progress">
+                                        <div class="progress-bar reading-bar" style="width:0%"></div>
+                                    </div>
+                                </div>
+                                <div class="info-num reading-num">
+                                    &mdash;
                                 </div>
                             </div>
-                            <div class="info-num fun-num">
-                                &mdash;
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-title">
-                                <i class="fas fa-dumbbell"></i>&nbsp;Difficulty
-                            </div>
-                            <div class="info-bar">
-                                <div class="progress">
-                                    <div class="progress-bar difficulty-bar" style="width:0%"></div>
+                            <div class="info-row">
+                                <div class="info-title">
+                                    <i class="fas fa-pencil-alt"></i>&nbsp;Writing
+                                </div>
+                                <div class="info-bar">
+                                    <div class="progress">
+                                        <div class="progress-bar writing-bar" style="width:0%"></div>
+                                    </div>
+                                </div>
+                                <div class="info-num writing-num">
+                                    &mdash;
                                 </div>
                             </div>
-                            <div class="info-num difficulty-num">
-                                &mdash;
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-title">
-                                <i class="fas fa-heart"></i>&nbsp;Recommend
-                            </div>
-                            <div class="info-bar">
-                                <div class="progress">
-                                    <div class="progress-bar recommend-bar" style="width:0%"></div>
+                            <div class="info-row">
+                                <div class="info-title">
+                                    <i class="fas fa-user-friends"></i>&nbsp;Groupwork
+                                </div>
+                                <div class="info-bar">
+                                    <div class="progress">
+                                        <div class="progress-bar group-bar" style="width:0%"></div>
+                                    </div>
+                                </div>
+                                <div class="info-num group-num">
+                                    &mdash;
                                 </div>
                             </div>
-                            <div class="info-num recommend-num">
-                                &mdash;
+                            <div class="info-row">
+                                <div class="info-title">
+                                    <i class="fas fa-flask"></i>&nbsp;Other
+                                </div>
+                                <div class="info-bar">
+                                    <div class="progress">
+                                        <div class="progress-bar homework-bar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="info-num homework-num">
+                                    &mdash;
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="ratings-row" style="align-items: flex-end">
-                    <div class="rating-card">
-                        <span class="rating-card-num hours-num">&mdash;</span>
-                        <p class="rating-card-desc"><i class="fa fa-hourglass-half fa-fw"></i>&nbsp;Hours/Week</p>
+
+                <div class="grades-container">
+                    <div class="chart-container d-flex align-items-center justify-content-center">
+                        <canvas width="100%" height="100%" id="myChart"></canvas>
                     </div>
-                    <div class="info-container">
-                        <div class="info-row">
-                            <div class="info-title">
-                                <i class="fas fa-book"></i>&nbsp;Reading
-                            </div>
-                            <div class="info-bar">
-                                <div class="progress">
-                                    <div class="progress-bar reading-bar" style="width:0%"></div>
-                                </div>
-                            </div>
-                            <div class="info-num reading-num">
-                                &mdash;
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-title">
-                                <i class="fas fa-pencil-alt"></i>&nbsp;Writing
-                            </div>
-                            <div class="info-bar">
-                                <div class="progress">
-                                    <div class="progress-bar writing-bar" style="width:0%"></div>
-                                </div>
-                            </div>
-                            <div class="info-num writing-num">
-                                &mdash;
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-title">
-                                <i class="fas fa-user-friends"></i>&nbsp;Groupwork
-                            </div>
-                            <div class="info-bar">
-                                <div class="progress">
-                                    <div class="progress-bar group-bar" style="width:0%"></div>
-                                </div>
-                            </div>
-                            <div class="info-num group-num">
-                                &mdash;
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-title">
-                                <i class="fas fa-flask"></i>&nbsp;Other
-                            </div>
-                            <div class="info-bar">
-                                <div class="progress">
-                                    <div class="progress-bar homework-bar" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <div class="info-num homework-num">
-                                &mdash;
-                            </div>
-                        </div>
+                    <div class="absolute-center">
+                        <p class="gpa-text"> No grades found <i class="far fa-frown-open fa-fw"></i></p>
+                        <p class="students-text"> &mdash; Students</p>
                     </div>
                 </div>
             </div>
-
-            <div class="grades-container">
-                <div class="chart-container d-flex align-items-center justify-content-center">
-                    <canvas width="100%" height="100%" id="myChart"></canvas>
+            <div class="times-info-container">
+                <div class="rating-card" style="height: unset;">
+                    <span class="rating-card-num">{{ section_info.sections|length }}</span>
+                    <p class="rating-card-desc"><i class="fas fa-clock"></i>&nbsp;Sections</p>
                 </div>
-                <div class="absolute-center">
-                    <p class="gpa-text"> No grades found <i class="far fa-frown-open fa-fw"></i></p>
-                    <p class="students-text"> &mdash; Students</p>
+                <div class="info-container" style="height: unset;">
+                    <p class="rating-card-desc">Sections For {{ section_info.term }} {{ section_info.year }}</p>
+                    <div>
+                        {% for section, times in section_info.sections.items %}
+                        <div style="display: flex;">
+                            <div>{{ section }}</div>
+                            <div style="margin-left: 10px;">
+                                {% for time in times %}
+                                <div>{{ time }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
