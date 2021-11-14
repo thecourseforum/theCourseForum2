@@ -106,8 +106,8 @@ def course_view(request, mnemonic, course_number):
             ) / 3,
             semester_last_taught=Max('section__semester',
                                      filter=Q(section__course=course)),
-            # StringAgg:
-            # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#stringagg
+            # ArrayAgg:
+            # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
             section_times=ArrayAgg(
                 Case(
                     When(
