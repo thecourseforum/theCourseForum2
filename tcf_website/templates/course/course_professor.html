@@ -194,6 +194,7 @@
                     </div>
                 </div>
             </div>
+            {% if display_times %}
             <div class="times-info-container">
                 <div class="rating-card" style="height: unset;">
                     <span class="rating-card-num">{{ section_info.sections|length }}</span>
@@ -215,6 +216,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
         </div>
 
         <div class="reviews-container mb-5">

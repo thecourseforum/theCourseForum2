@@ -258,7 +258,8 @@ def course_instructor(request, course_id, instructor_id):
                       'reviews': reviews,
                       'breadcrumbs': breadcrumbs,
                       'data': json.dumps(data),
-                      'section_info': section_info
+                      'section_info': section_info,
+                      'display_times': Semester.latest() == section_last_taught.semester
                   })
 
 
