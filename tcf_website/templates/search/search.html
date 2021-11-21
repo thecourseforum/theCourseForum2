@@ -58,7 +58,7 @@
                 {% for dept, dept_data in courses.items %}
                 <div class="row mb-5">
                   <div class="col-12">
-                    <h5><a href="{% url 'department' dept_id=dept_data.dept_id %}">{{ dept }} / {{ dept_data.subdept_name }}</a></h5>
+                    <!--<h5><a href="{% url 'department' dept_id=dept_data.dept_id %}">{{ dept }} / {{ dept_data.subdept_name }}</a></h5>
                     <ul class="list-group searched-department-courses">
                         {% for c in dept_data.courses %}
                             {% if c != dept_data.courses.0 %}
@@ -72,10 +72,37 @@
                               </a>
                             </li>
                         {% endfor %}
-                    </ul>
+                    </ul>-->
+                    <h5><a href="{% url 'department' dept_id=dept_data.dept_id %}">{{ dept }} / {{ dept_data.subdept_name }}</a></h5>
+                      {% for c in dept_data.courses %}
+                        {% if c != dept_data.courses.0 %}
+                        {% endif %}
+                        <div class="list-group-item list-group-item-light text-dark p-2">
+                          <div class="row p-0">
+                            <div class = "col-md-11">
+                                <a href="{% url 'course' mnemonic=c.mnemonic.split.0 course_number=c.number %}">
+                                  <div class = "row g-0">
+                                    <div class = "col-md-3">{{c.mnemonic}}</div>
+                                    <div class = "col_md_8">{{c.title}}</div>
+                                  </div>
+                                </a>
+                            </div>
+                            <div class = "col-md-1">
+                              <h5 class="hover-tcf-orange" data-toggle="collapse"
+                                data-target="#description_{{forloop.counter}}"
+                                id="result_{{forloop.counter}}">
+                                  <i class="fas fa-chevron-down"></i>
+                              </h5>
+                            </div>
+                          </div>
+                          <div id="description_{{forloop.counter}}" class="collapse">
+                            <p>{{ c.description }}</p>
+                          </div>
+                        </div>
+                      {% endfor %}
                   </div>
                 </div>
-                {% endfor %}
+              {% endfor %}
               {% else %}
               <p>No courses matched your search.</p>
               {% endif %}
