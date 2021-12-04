@@ -78,25 +78,24 @@
                         {% if c != dept_data.courses.0 %}
                         {% endif %}
                         <div class="list-group-item list-group-item-light text-dark p-2">
-                          <div class="row p-0">
-                            <div class = "col-md-11">
+                          <div class="row">
+                            <div class = "col-md-11 align-self-center">
                                 <a href="{% url 'course' mnemonic=c.mnemonic.split.0 course_number=c.number %}">
-                                  <div class = "row g-0">
+                                  <div class = "row g-0 ">
                                     <div class = "col-md-3">{{c.mnemonic}}</div>
                                     <div class = "col_md_8">{{c.title}}</div>
                                   </div>
                                 </a>
                             </div>
-                            <div class = "col-md-1">
+                            <div class = "col-md-1 align-self-center">
                               <h5 class="hover-tcf-orange" data-toggle="collapse"
                                 data-target="#description_{{forloop.counter}}"
-                                id="result_{{forloop.counter}}">
-                                  <i class="fas fa-chevron-down"></i>
-                              </h5>
+                                id="result_{{forloop.counter}}"><i class="fas fa-chevron-down"></i></h5>
                             </div>
                           </div>
-                          <div id="description_{{forloop.counter}}" class="collapse">
-                            <p>{{ c.description }}</p>
+                          <div class = "collapse" id="description_{{forloop.counter}}">
+                            <hr>
+                            <p><b>Course Description:</b> {{ c.description }}</p>
                           </div>
                         </div>
                       {% endfor %}
