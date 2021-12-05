@@ -95,7 +95,14 @@
                           </div>
                           <div class = "collapse" id="description_{{forloop.counter}}">
                             <hr>
-                            <p><b>Course Description:</b> {{ c.description }}</p>
+                            <p>
+                              <b>Course Description: </b>
+                              {% if c.description|length > 0 %}
+                                {{c.description}}
+                              {%else%}
+                                N/A
+                              {%endif%}
+                            </p>
                           </div>
                         </div>
                       {% endfor %}
