@@ -1,4 +1,5 @@
 """Routes URLs to views"""
+# pylint: disable=line-too-long
 
 from django.urls import include, path
 
@@ -20,6 +21,10 @@ urlpatterns = [
     path('instructor/<int:instructor_id>',
          views.instructor_view, name='instructor'),
     path('reviews/new', views.new_review, name='new_review'),
+    path(
+        'reviews/new/subdept/<int:subdepartment_id>/course/<int:course_id>/instr/<int:instructor_id>',
+        views.new_review,
+        name='new_review_auto'),
     path('reviews/<int:pk>/delete',
          views.DeleteReview.as_view(), name='delete_review'),
     path('reviews/<int:review_id>/edit',
