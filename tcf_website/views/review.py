@@ -62,8 +62,9 @@ def downvote(request, review_id):
 
 
 @login_required
-def new_review(request):
+def new_review(request, subdepartment_id=None, course_id=None, instructor_id=None):
     """Review creation view."""
+    print(subdepartment_id, course_id, instructor_id)
 
     # Collect form data into Review model instance.
     if request.method == 'POST':

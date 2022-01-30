@@ -13,6 +13,21 @@ jQuery(function($) {
     clearDropdown("#instructor");
     clearDropdown("#semester");
 
+    // If coming from sidebar:
+    // Path will be /reviews/new
+    //    => path = ['', 'reviews', 'new']
+
+    // If coming from course instructor page (autofill):
+    // Path will be /reviews/new/subdept/subdepartment_id/course/course_id/instr/instructor_id
+    //    => path = ['', 'reviews', 'new', 'subdept', subdepartment_id, 'course', course_id, 'instr', instructor_id]
+    const path = window.location.pathname.split("/");
+    let subdeptID, courseID, instructorID;
+    if (path.length > 3) {
+        subdeptID = parseInt(path[4]);
+        courseID = parseInt(path[6]);
+        instructorID = parseInt(path[8]);
+    }
+
     // Fetch all subdepartment data from API
     var subdeptEndpoint = "/api/subdepartments/";
     $.getJSON(subdeptEndpoint, function(data) {
@@ -25,8 +40,14 @@ jQuery(function($) {
         $.each(data, function(i, subdept) {
             $("<option />", {
                 val: subdept.id,
-                text: subdept.mnemonic + " | " + subdept.name
+                text: subdept.mnemonic + " | " + subdept.name,
+                // Check for autofill
+                selected: subdept.id === subdeptID
             }).appendTo("#subject");
+            // Trigger change on autofill
+            if (subdept.id === subdeptID) {
+                $("#subject").trigger("change");
+            }
         });
         return this;
     })
@@ -55,8 +76,14 @@ jQuery(function($) {
             $.each(data.results, function(i, course) {
                 $("<option />", {
                     val: course.id,
-                    text: course.number + " | " + course.title
+                    text: course.number + " | " + course.title,
+                    // Check for autofill
+                    selected: course.id === courseID
                 }).appendTo("#course");
+                // Trigger change on autofill
+                if (course.id === courseID) {
+                    $("#course").trigger("change");
+                }
             });
             return this;
         })
@@ -86,8 +113,14 @@ jQuery(function($) {
             $.each(data.results, function(i, instr) {
                 $("<option />", {
                     val: instr.id,
-                    text: instr.last_name + ", " + instr.first_name
+                    text: instr.last_name + ", " + instr.first_name,
+                    // Check for autofill
+                    selected: instr.id === instructorID
                 }).appendTo("#instructor");
+                // Trigger change on autofill
+                if (instr.id === instructorID) {
+                    $("#instructor").trigger("change");
+                }
             });
             return this;
         })
