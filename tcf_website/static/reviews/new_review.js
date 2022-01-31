@@ -18,8 +18,8 @@ jQuery(function($) {
     //    => path = ['', 'reviews', 'new']
 
     // If coming from course instructor page (autofill):
-    // Path will be /reviews/new/subdept/subdepartment_id/course/course_id/instr/instructor_id
-    //    => path = ['', 'reviews', 'new', 'subdept', subdepartment_id, 'course', course_id, 'instr', instructor_id]
+    // Path will be /reviews/new/subdept/subdept_id/course/course_id/instr/instr_id
+    //    => path = ['', 'reviews', 'new', 'subdept', subdept_id, 'course', course_id, 'instr', instr_id]
     const path = window.location.pathname.split("/");
     let subdeptID, courseID, instructorID;
     if (path.length > 3) {

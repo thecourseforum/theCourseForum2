@@ -13,7 +13,7 @@ from django.urls import reverse_lazy
 
 from ..models import Review
 
-# pylint: disable=fixme
+# pylint: disable=fixme,unused-argument
 # Disable pylint errors on TODO messages, such as below
 
 # TODO: use a proper django form, make it more robust.
@@ -62,9 +62,8 @@ def downvote(request, review_id):
 
 
 @login_required
-def new_review(request, subdepartment_id=None, course_id=None, instructor_id=None):
+def new_review(request, subdept_id=None, course_id=None, instr_id=None):
     """Review creation view."""
-    print(subdepartment_id, course_id, instructor_id)
 
     # Collect form data into Review model instance.
     if request.method == 'POST':
