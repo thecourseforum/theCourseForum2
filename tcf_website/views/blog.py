@@ -1,5 +1,4 @@
 """Views for blog pages."""
-import json
 from django.views.generic.base import TemplateView
 from django.shortcuts import render, get_object_or_404
 
@@ -15,7 +14,7 @@ class BlogView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['featured_posts'] = self.posts[:3]
-        context['all_posts'] = self.posts  # Placeholder posts
+        context['all_posts'] = self.posts
         return context
 
 

@@ -23,11 +23,11 @@ theCourseForum{% endblock %} {% block styles %}
     <section>
         <div class="row mt-4 p-4 bg-light">
             <div class="col">
-                <h1 class="display-3">{{ post_detail.title }}</h1>
-                <p>
-                    Written by: {{post_detail.author}}
-                    <span class="text-muted">&#8226; {{ post_detail.created_date | date:"N d, Y" }}</span>
+                <p class="text-muted">
+                    Written by: {{post_detail.author}} &#8226; {{ post_detail.created_date | date:"N d, Y" }}</span>
                 </p>
+                <h1 class="display-3">{{ post_detail.title }}</h1>
+                <h2 class="text-muted">{{ post_detail.subtitle }}</h2>
                 <div class="blog-body">
                     {{ post_detail.formatted_markdown|safe }}
                 </div>

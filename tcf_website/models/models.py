@@ -4,10 +4,10 @@
 
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.db.models.functions import Coalesce, Abs
-from django.template.defaultfilters import slugify
 
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
@@ -811,7 +811,8 @@ class BlogPost(DateCreateModMixin):
     """
 
     title = models.CharField(max_length=255)
-    short_title = models.CharField(max_length=50)
+    subtitle = models.CharField(max_length=255)
+
     slug = models.SlugField(null=False, unique=True)
     author = models.CharField(max_length=50)
     thumbnail_image = models.ImageField(default='placeholder.jpeg')
@@ -823,12 +824,9 @@ class BlogPost(DateCreateModMixin):
         return self.title
 
     def get_absolute_url(self):
+        """Returns url to the post"""
         return reverse('post_detail', kwargs={'slug': self.slug})
 
     def formatted_markdown(self):
         """Returns formatted markdown of post content."""
         return markdownify(self.body)
-
-    def body_summary(self):
-        """Returns summary snippet of post content."""
-        return markdownify(self.body[:300] + "...")

@@ -39,17 +39,15 @@
         <div class="row">
           {% for post in featured_posts %}
             <div class="col-md-4">
-              <!-- To do: Add url to post -->
               <a href="{% url 'post_detail' slug=post.slug %}" class="link-unstyled">
                 <div class="card my-3">
                   <div class="card-header bg-tcf-indigo"></div>
                   <div class="card-body features-icons-item mb-2">
-                    <h4 class="card-title mb-0">{{ post.short_title }}</h4>
-                    <small class="card-subtitle text-muted">By {{ post.author }}</small>
-                    <p class="card-text mt-2">{{ post.body_summary|striptags }}</p>
+                    <h4 class="card-title mb-0">{{ post.title|truncatechars:85 }}</h4>
+                    <small class="card-subtitle text-muted">{{ post.subtitle|truncatechars:125 }}</small>
                   </div>
                   <div class="card-footer bg-white border-0 text-muted">
-                    <small>{{ post.created_date | date:"N d, Y" }}</small>
+                    <small>{{ post.author }} &middot {{ post.created_date | date:"N d, Y" }}</small>
                   </div>
                 </div>
               </a>
@@ -67,17 +65,22 @@
         <div class="col">
           <h3>All Posts</h3>
           {% for post in all_posts %}
-            <div class="card d-inline-flex flex-row-reverse mt-4 w-100">
+          <a href="{% url 'post_detail' slug=post.slug %}" class="link-unstyled">
+            <div class="card d-inline-flex flex-row mt-4 w-100">
+              <div class="flex-grow-1">
+                <div class="card-body p-4">
+                  <h4 class="card-title mb-0">{{ post.title|truncatechars:85 }}</h4>
+                  <small class="card-subtitle text-muted">{{ post.subtitle|truncatechars:125 }}</small>
+                </div>
+                <div class="card-footer bg-white border-0 text-muted">
+                  <small>{{ post.author }} &middot {{ post.created_date | date:"N d, Y" }}</small>
+                </div>
+              </div>
               <div class="card-header border-0">
                   <img src="{% static 'blog/'|add:post.thumbnail_image %}" alt="Blog thumbnail image" style="width:200px">
               </div>
-              <div class="card-body p-4">
-                  <h4 class="card-title mb-0">{{ post.title }}</h4>
-                  <small class="card-subtitle text-muted">By {{ post.author }}</small>
-                  <p class="card-text mt-2 mb-5">{{ post.body_summary|striptags }}</p>
-                  <small class="text-muted">{{ post.created_date | date:"N d, Y" }}</small>
-              </div>
             </div>
+          </a>
           {% endfor %}
         </div>
       </div>
