@@ -10,7 +10,7 @@ django-environ
 django-silk
 djangorestframework
 django-filter
-django-markdownx
+django-markdownx>=4.0.0b1
 coverage
 
 # Linting
