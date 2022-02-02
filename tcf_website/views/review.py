@@ -62,7 +62,7 @@ def downvote(request, review_id):
 
 
 @login_required
-def new_review(request, subdept_id=None, course_id=None, instr_id=None):
+def new_review(request):
     """Review creation view."""
 
     # Collect form data into Review model instance.

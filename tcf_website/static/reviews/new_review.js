@@ -13,19 +13,15 @@ jQuery(function($) {
     clearDropdown("#instructor");
     clearDropdown("#semester");
 
-    // If coming from sidebar:
-    // Path will be /reviews/new
-    //    => path = ['', 'reviews', 'new']
-
-    // If coming from course instructor page (autofill):
-    // Path will be /reviews/new/subdept/subdept_id/course/course_id/instr/instr_id
-    //    => path = ['', 'reviews', 'new', 'subdept', subdept_id, 'course', course_id, 'instr', instr_id]
-    const path = window.location.pathname.split("/");
+    // If coming from the sidebar, path.length = 0
+    // If coming from a course professor page, path.length > 0
+    const path = window.location.search;
     let subdeptID, courseID, instructorID;
-    if (path.length > 3) {
-        subdeptID = parseInt(path[4]);
-        courseID = parseInt(path[6]);
-        instructorID = parseInt(path[8]);
+    if (path.length > 0) {
+        const pathArr = path.split("&");
+        subdeptID = parseInt(pathArr[0].replace("?subdept_id=", ""));
+        courseID = parseInt(pathArr[1].replace("course_id=", ""));
+        instructorID = parseInt(pathArr[2].replace("instr_id=", ""));
     }
 
     // Fetch all subdepartment data from API
