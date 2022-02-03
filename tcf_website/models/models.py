@@ -807,7 +807,7 @@ class DateCreateModMixin(models.Model):
 
 class BlogPost(DateCreateModMixin):
     """Blog post model.
-    https://existenceundefined.com/blog/programming/1/how-to-use-django-markdownx-for-your-blog
+    https://www.existenceundefined.com/blog/programming/1/how-to-use-django-markdownx-for-your-blog
     """
 
     title = models.CharField(max_length=255)
@@ -825,6 +825,7 @@ class BlogPost(DateCreateModMixin):
 
     def get_absolute_url(self):
         """Returns url to the post"""
+        print(reverse('post_detail', kwargs={'slug': self.slug}))
         return reverse('post_detail', kwargs={'slug': self.slug})
 
     def formatted_markdown(self):

@@ -16,7 +16,9 @@ theCourseForum{% endblock %} {% block styles %}
     <section id="masthead">
         <div class="row px-5 py-3 bg-tcf-orange text-white">
           <div class="col-sm-6">
-            <h2 class="display-4 font-weight-bold mb-2">theBlog</h2>
+            <a href="{% url 'blog' %}" class="link-unstyled">
+              <h2 class="display-4 font-weight-bold mb-2">theBlog</h2>
+            </a>
           </div>
         </div>
       </section>    
