@@ -20,7 +20,7 @@ def send_discord(query):
     requests.post(
         url, data=json_data, headers={
             "Content-Type": "application/json"})
-    return JsonResponse(content)
+    return return JsonResponse({'ok': True, 'content': content})
 
 
 @require_http_methods('POST')
@@ -35,5 +35,11 @@ def send_email(query):
         from_email
     ]
 
-    send_mail(subject, content, from_email, recipient_list)
-    return JsonResponse({'content': content})
+    if subject and content and from_email and recipient_list:
+        try:
+            send_mail(subject, content, from_email, recipient_list)
+        except BadHeaderError:
+            return JsonResponse({'ok': False, 'content': content})
+        return JsonResponse({'ok': True, 'content': content})
+    else:
+        return JsonResponse({'ok': False, 'content': content})
