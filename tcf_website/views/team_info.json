@@ -120,6 +120,62 @@
       "class": "2023",
       "img_filename": "ENG_Andrew_Niu.jpg",
       "github": "andrewmniu"
+    },
+    {
+      "name": "Austin Houck",
+      "role": "Developer",
+      "class": "2022",
+      "img_filename": "ENG_Austin_Houck.jpg",
+      "github": "akh4rf"
+    },
+    {
+      "name": "Vinya Ponugoti",
+      "role": "Developer",
+      "class": "2024",
+      "img_filename": "ENG_Vinya_Ponugoti.jpg",
+      "github": "vinyaponugoti"
+    },
+    {
+      "name": "AJ Nye",
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_AJ_Nye.jpg",
+      "github": "ajnye"
+    },
+    {
+      "name": "Mohammad Murad",
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Mohammad_Murad.jpg",
+      "github": "mmurad05"
+    },
+    {
+      "name": "Oliver Song",
+      "role": "Developer",
+      "class": "2024",
+      "img_filename": "ENG_Oliver_Song.jpg",
+      "github": "obs4qqf"
+    },
+    {
+      "name": "Ann Li",
+      "role": "Developer",
+      "class": "2024",
+      "img_filename": "ENG_Ann_Li.jpg",
+      "github": "Ann924"
+    },
+    {
+      "name": "Christina Wang",
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Christina_Wang.JPG",
+      "github": "cwang12197"
+    },
+    {
+      "name": "Dylan Herbig",
+      "role": "Developer",
+      "class": "2024",
+      "img_filename": "ENG_Dylan_Herbig.jpg",
+      "github": "dylanherbig"
     }
   ],
   "marketing_team": [
@@ -146,5 +202,6 @@
       "role": "Marketer/Designer",
       "class": "2023",
       "img_filename": "DM_Lilleth_Snavely.jpg"
-    }]
+    }
+  ]
 }
