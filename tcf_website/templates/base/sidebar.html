@@ -5,6 +5,15 @@
      d-flex flex-column justify-content-between text-center">
   <ul class="list-group list-group-flush mt-3">
     <li>
+        <a href="{% url 'blog' %}"
+            class="list-group-item list-group-item-action pb-0
+        {% if request.resolver_match.url_name == 'blog' %}active{% endif %}">
+        <h4><i class="fa fa-comments fa-fw"></i></h4>
+        <p>NEW! Blog</p>
+        <hr>
+        </a>
+    </li>
+    <li>
       <a href="{% url 'browse' %}"
          class="list-group-item list-group-item-action pb-0
          {% if request.resolver_match.url_name == 'browse' %}active{% endif %}">
