@@ -11,37 +11,34 @@
         </button>
       </div>
       <div class="modal-body">
-        <form class="needs-validation" id="bugform" novalidate>
+        <form id="bugform">
           <div class="form-row">
-              <label for="emailField">Email (leave blank to remain anonymous)</label>
+              <label for="inputEmail">Email (leave blank to remain anonymous)</label>
               {% if user.is_authenticated %}
-                <input type="email" class="form-control" id="emailField" placeholder="example@virginia.edu" value="{{user.email}}">
+                <input type="email" class="form-control" id="inputEmail" name="email" placeholder="example@virginia.edu" value="{{user.email}}">
               {% else %}
-                <input type="email" class="form-control" id="emailField" placeholder="example@virginia.edu" value="">
+                <input type="email" class="form-control" id="inputEmail" name="email" placeholder="example@virginia.edu" value="">
               {% endif %}
-              <div class="invalid-feedback">
-                Invalid Email
-              </div>
           </div>
           <div class="form-row">
-              <label for="descriptionField">Description</label>
-              <textarea class="form-control" id="descriptionField" rows="3" placeholder="Please be as detailed as possible!" required></textarea>
+              <label for="inputDescription">Description</label>
+              <textarea class="form-control" id="inputDescription" name="description" rows="3" placeholder="Please be as detailed as possible!" required></textarea>
           </div>
           <div class="form-row justify-content-center">
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="category1" value="Crash">
+              <input class="form-check-input" type="checkbox" id="category1" name="categories" value="Crash">
               <label class="form-check-label" for="category1">Crash</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="category2" value="UI/Styling">
+              <input class="form-check-input" type="checkbox" id="category2" name="categories" value="UI/Styling">
               <label class="form-check-label" for="category2">UI/Styling</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="category3" value="Data Error">
+              <input class="form-check-input" type="checkbox" id="category3" name="categories" value="Data Error">
               <label class="form-check-label" for="category3">Data Error</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="category4" value="Account Error">
+              <input class="form-check-input" type="checkbox" id="category4" name="categories" value="Account Error">
               <label class="form-check-label" for="category4">Account Error</label>
             </div>
           </div>

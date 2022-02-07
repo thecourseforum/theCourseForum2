@@ -4,36 +4,13 @@ import { postToDiscord, sendEmail } from "../common/send_feedback.js";
 function submit(event) {
     const form = document.getElementById("feedbackform");
     if (validateForm(form) === true) {
-        const fname = $("#inputFname").val();
-        const lname = $("#inputLname").val();
-        const email = $("#inputEmail").val();
-        const title = $("#inputTitle").val();
-        const message = $("#inputMessage").val();
+        const data = new FormData(form);
+        const content = Object.fromEntries(data.entries());
+        const type = "feedback";
 
-        // Post to DIscord
-        const discordContent = `
-        Feedback submitted
-        **Name:** ${fname} ${lname}
-        **Email:** ${email}
-        **Title:** ${title}
-        **Message:** ${message}
-        `;
-        postToDiscord("feedback", discordContent);
-
-        // Send email
-        if (email !== "") {
-            const subject = "[theCourseForum] Thank you for your feedback!";
-            const emailContent = `
-            Hi ${fname},
-            Thanks for reaching out! We received the following feedback from you:
-            Title: ${title}
-            Message: ${message}
-            We greatly appreciate you taking the time to help us improve tCF!
-            A team member will be following up with you shortly if neccesary.
-            Best,
-            theCourseForum Team
-            `;
-            sendEmail(subject, emailContent, email);
+        postToDiscord(type, content);
+        if (content.email !== "") {
+            sendEmail(type, content);
         }
     }
 }

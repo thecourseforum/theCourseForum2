@@ -1,7 +1,7 @@
-function postToDiscord(type, message) {
+function postToDiscord(type, content) {
     const data = {
         type: type,
-        content: message
+        content: content
     };
 
     const csrftoken = getCookie("csrftoken");
@@ -14,11 +14,10 @@ function postToDiscord(type, message) {
     });
 }
 
-function sendEmail(subject, message, recipient) {
+function sendEmail(type, content) {
     const data = {
-        subject: subject,
-        content: message,
-        recipient: recipient
+        type: type,
+        content: content
     };
 
     const csrftoken = getCookie("csrftoken");

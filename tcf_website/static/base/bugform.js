@@ -5,50 +5,24 @@ function submit(event) {
     const form = document.getElementById("bugform");
     if (validateForm(form) === true) {
         // Extract fields
-        const url = window.location.href;
-        const email = $("#emailField").val();
-        const description = $("#descriptionField").val();
-        let categories = "";
-        for (let i = 1; i <= 4; i++) {
-            const id = "#category" + i;
-            if ($(id).is(":checked")) {
-                categories += "[" + $(id).val() + "]";
-            }
+        const data = new FormData(form);
+        const content = Object.fromEntries(data.entries());
+        content.categories = data.getAll("categories"); // handle checkboxes
+        content.url = window.location.href; // get current url
+        const type = "bug";
+
+        postToDiscord(type, content);
+        if (content.email !== "") {
+            sendEmail(type, content);
         }
-
-        // Post to Discord
-        const discordContent = `
-        Bug Found!
-        **URL:** ${url}
-        **Categories:** ${categories}
-        **Email:** ${email}
-        **Description:** ${description}
-        `;
-        postToDiscord("bug", discordContent);
-
-        // Send email
-        if (email !== "") {
-            const subject = "[theCourseForum] Thank you for your feedback!";
-            const emailContent = `
-            Thanks for reaching out! We received the following bug report from you:
-            Description: ${description}
-            Categories: ${categories}
-            We apologize for any inconveniences that this may have caused.
-            Our team will be investigating the issue and will follow up with you shortly.
-            Best,
-            theCourseForum Team
-            `;
-            sendEmail(subject, emailContent, email);
-        }
-
         resetForm();
     }
 }
 
 function resetForm() {
     $("#bugform").removeClass("was-validated");
-    $("#emailField").val("");
-    $("#descriptionField").val("");
+    $("#inputEmail").val("");
+    $("#inputDescription").val("");
 
     for (let i = 1; i <= 4; i++) {
         const id = "#category" + i;
