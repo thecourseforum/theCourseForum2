@@ -1,14 +1,12 @@
 function postToDiscord(type, content) {
     const data = {
         type: type,
-        content: content
+        content: JSON.stringify(content)
     };
-
-    const csrftoken = getCookie("csrftoken");
 
     $.ajax({
         type: "POST",
-        headers: { "X-CSRFToken": csrftoken },
+        headers: { "X-CSRFToken": content.csrfmiddlewaretoken },
         url: "/feedback/discord",
         data: data
     });
@@ -17,14 +15,12 @@ function postToDiscord(type, content) {
 function sendEmail(type, content) {
     const data = {
         type: type,
-        content: content
+        content: JSON.stringify(content)
     };
-
-    const csrftoken = getCookie("csrftoken");
 
     $.ajax({
         type: "POST",
-        headers: { "X-CSRFToken": csrftoken },
+        headers: { "X-CSRFToken": content.csrfmiddlewaretoken },
         url: "/feedback/email",
         data: data
     });

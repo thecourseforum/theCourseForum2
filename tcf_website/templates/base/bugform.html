@@ -12,6 +12,7 @@
       </div>
       <div class="modal-body">
         <form id="bugform">
+          {% csrf_token %}
           <div class="form-row">
               <label for="inputEmail">Email (leave blank to remain anonymous)</label>
               {% if user.is_authenticated %}
