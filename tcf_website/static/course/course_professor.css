@@ -294,3 +294,17 @@
     }
 
   }
+
+  .rotated {
+      transform: rotateZ(90deg);
+  }
+
+  #sectionInfo {
+      /* margin-top set by JS */
+      transition: margin-top cubic-bezier(1, 0, 1, 1) 0.3s;
+  }
+
+  #sectionInfo.show {
+      /* margin-top set by JS */
+      transition: margin-top cubic-bezier(0, 1, 1, 1) 0.3s;
+  }

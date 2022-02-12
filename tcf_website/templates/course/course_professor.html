@@ -196,28 +196,52 @@
             </div>
             {% if display_times %}
             <div class="times-info-container">
-                <div class="rating-card" style="height: unset;">
-                    <span class="rating-card-num">{{ section_info.sections|length }}</span>
-                    <p class="rating-card-desc"><i class="fas fa-clock"></i>&nbsp;Sections</p>
-                </div>
-                <div class="info-container" style="height: unset;">
-                    <p class="rating-card-desc">Sections For {{ section_info.term }} {{ section_info.year }}</p>
-                    <div>
-                        {% for section, times in section_info.sections.items %}
-                        <div style="display: flex;">
-                            <div>{{ section }}</div>
-                            <div style="margin-left: 10px;">
-                                {% for time in times %}
-                                <div>{{ time }}</div>
-                                {% endfor %}
+                <div class="info-container" style="padding: 10px 15px; margin: 0;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;" onclick="toggleSections(this)">
+                        <p class="rating-card-desc" style="margin-bottom: 0; display: flex; align-items: center;">Sections
+                            <span style="background-color: var(--secondary-color); color: white; padding: 0 8px; border-radius: 25%; font-size: 12px; margin-left: 7px;">
+                                {{ section_info.sections|length }}
+                            </span>
+                        </p>
+                        <i class="fas fa-solid fa-chevron-right" style="transition: transform 0.3s;"></i>
+                    </div>
+                    <div style="overflow: hidden;">
+                        <div id="sectionInfo" style="margin-top: -10000px;">
+                            {% for section, sec_info in section_info.sections.items %}
+                            <div style="display: grid; grid-template-columns: [start] 6ch [sec-num] auto [type] 1fr [end]; margin-bottom: 3px;">
+                                <div style="color: var(--accent-color);">{{ section }}</div>
+                                <div style="margin-left: min(20px, 4vw);">
+                                    {{ sec_info.type }}{% if sec_info.units is not None %} ({{ sec_info.units }} Unit{% if sec_info.units != 1 %}s{% endif %}){% endif %}
+                                </div>
+                                <div style="grid-column: type/end; text-align: right;">
+                                    {% for time in sec_info.times %}
+                                    {% if forloop.counter > 1 %}<br>{% endif %}{{ time }}
+                                    {% endfor %}
+                                </div>
                             </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     </div>
                 </div>
             </div>
             {% endif %}
         </div>
+
+        <script>
+            document.querySelector("#sectionInfo").style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
+
+            function toggleSections(div) {
+                const arrow = div.getElementsByTagName("i")[0],
+                    sectionInfo = document.querySelector("#sectionInfo");
+                arrow.classList.toggle("rotated");
+                sectionInfo.classList.toggle("show");
+                if (sectionInfo.classList.contains("show")) {
+                    sectionInfo.style.marginTop = '10px';
+                } else {
+                    sectionInfo.style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
+                }
+            }
+        </script>
 
         <div class="reviews-container mb-5">
             <div class="reviews-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">

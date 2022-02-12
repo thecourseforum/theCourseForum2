@@ -10,7 +10,7 @@
         </a>
       <div class="col-md-8">
         <div class="card-body">
-          <div class="row justify-content-between text-center text-md-left">
+          <div class="row justify-content-between text-center">
               <div class="col-4 col-lg-2 text-nowrap">
                 <small class="mb-0 text-uppercase">
                   <i class="fa fa-star fa-fw"></i>&nbsp;Rating
@@ -51,21 +51,13 @@
                 <small class="mb-0 text-uppercase">
                   <i class="fas fa-clock"></i>&nbsp;Sections
                 </small>
-                <div class="mb-0 info" id="times">
-                  {% if times %}
-                      {% for section, time_list in times.items %}
-                      <span style="font-size: 20px; margin: 0; display: flex; align-items: center; gap: 4px;"
-                            data-toggle="tooltip"
-                            data-html="true"
-                            data-placement='right'
-                            title=" {% for time in time_list %}
-                                    <span>{{ time }}</span>
-                                    {% endfor %}">{{ section }} <i class="far fa-question-circle" style="font-size: 12px;"></i></span>
-                      {% endfor %}
+                <p class="mb-0 info" id="times">
+                  {% if sec_nums %}
+                      {{ sec_nums|length }}
                   {% else %}
                     &mdash;
                   {% endif %}
-                </div>
+                </p>
               </div>
               <div class="col-12 col-md-8 col-lg-3" {% if not last_taught %}style="opacity: 0;"{% endif %}>
                 <small class="mb-0 text-uppercase">
