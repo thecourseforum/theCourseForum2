@@ -123,12 +123,15 @@ def course_view(request, mnemonic, course_number):
                     output_field=CharField()),
                 distinct=True),
         )
+
     for i in instructors:
         if (i.section_times[0] is not None and i.section_nums[0] is not None):
             i.times = {}
             for idx, _ in enumerate(i.section_times):
                 if (i.section_times[idx] is not None and i.section_nums[idx] is not None):
                     i.times[str(i.section_nums[idx])] = i.section_times[idx][:-1].split(",")
+        if i.section_nums.count(None) > 0:
+            i.section_nums.remove(None)
 
     taught_this_semester = Section.objects.filter(course=course, semester=latest_semester).exists()
 
@@ -244,9 +247,8 @@ def course_instructor(request, course_id, instructor_id):
         for time in section.section_times.split(","):
             if len(time) > 0:
                 times.append(time)
-        section_info["sections"][section.sis_section_number] = times
-
-    print(section_info)
+        section_info["sections"][section.sis_section_number] = {
+            "type": section.section_type, "units": int(section.units), "times": times}
 
     return render(request, 'course/course_professor.html',
                   {
