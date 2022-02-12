@@ -13,6 +13,17 @@ jQuery(function($) {
     clearDropdown("#instructor");
     clearDropdown("#semester");
 
+    // If coming from the sidebar, params.length = 0
+    // If coming from a course professor page, params.length > 0
+    const params = window.location.search;
+    let subdeptID, courseID, instructorID;
+    if (params.length > 0) {
+        const paramsArr = params.split("&");
+        subdeptID = parseInt(paramsArr[0].replace("?subdept_id=", ""));
+        courseID = parseInt(paramsArr[1].replace("course_id=", ""));
+        instructorID = parseInt(paramsArr[2].replace("instr_id=", ""));
+    }
+
     // Fetch all subdepartment data from API
     var subdeptEndpoint = "/api/subdepartments/";
     $.getJSON(subdeptEndpoint, function(data) {
@@ -25,8 +36,14 @@ jQuery(function($) {
         $.each(data, function(i, subdept) {
             $("<option />", {
                 val: subdept.id,
-                text: subdept.mnemonic + " | " + subdept.name
+                text: subdept.mnemonic + " | " + subdept.name,
+                // Check for autofill
+                selected: subdept.id === subdeptID
             }).appendTo("#subject");
+            // Trigger change on autofill
+            if (subdept.id === subdeptID) {
+                $("#subject").trigger("change");
+            }
         });
         return this;
     })
@@ -55,8 +72,14 @@ jQuery(function($) {
             $.each(data.results, function(i, course) {
                 $("<option />", {
                     val: course.id,
-                    text: course.number + " | " + course.title
+                    text: course.number + " | " + course.title,
+                    // Check for autofill
+                    selected: course.id === courseID
                 }).appendTo("#course");
+                // Trigger change on autofill
+                if (course.id === courseID) {
+                    $("#course").trigger("change");
+                }
             });
             return this;
         })
@@ -86,8 +109,14 @@ jQuery(function($) {
             $.each(data.results, function(i, instr) {
                 $("<option />", {
                     val: instr.id,
-                    text: instr.last_name + ", " + instr.first_name
+                    text: instr.last_name + ", " + instr.first_name,
+                    // Check for autofill
+                    selected: instr.id === instructorID
                 }).appendTo("#instructor");
+                // Trigger change on autofill
+                if (instr.id === instructorID) {
+                    $("#instructor").trigger("change");
+                }
             });
             return this;
         })
