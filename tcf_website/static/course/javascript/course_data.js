@@ -1,3 +1,34 @@
+var barConfig;
+var pieConfig;
+var myChart;
+var ctx = document.getElementById("myChart");
+
+function togglePieChart() {
+    if (myChart) {
+        myChart.destroy();
+    }
+    // eslint-disable-next-line no-new,no-undef
+    myChart = new Chart(ctx, pieConfig);
+};
+
+function toggleBarChart() {
+    if (myChart) {
+        myChart.destroy();
+    }
+    // eslint-disable-next-line no-new,no-undef
+    myChart = new Chart(ctx, barConfig);
+};
+
+$(".pieToBar").click(function() {
+    toggleBarChart();
+    $(".togglepie").hide();
+});
+
+$(".barToPie").click(function() {
+    togglePieChart();
+    $(".togglepie").show();
+});
+
 const loadData = data => {
     // order in the input data
     /* eslint-disable camelcase */
@@ -44,6 +75,20 @@ const loadData = data => {
     if (exist(data.average_amount_homework)) { $(".homework-bar").width(formatWorkload(data.average_amount_homework)); }
 };
 
+/* createBarChart = gradesData => {
+    // 1. Justification for no-new: (Do not use 'new' for side effects)
+    // Without disabling the warning, eslint complains about using `new` to produce side-effects.
+    // (Which is how chart.js works. We can't change that.)
+    // You can silence it by assigning the expression to a variable. But then, eslint complains that we have an unused variable.
+    // We're not going to be able to avoid this, so I've disabled the error.
+    // 2. Justification for no-undef: ('Chart' is not defined)
+    // We could avoid this in the future by using WebPack or plain old ES6 modules.
+    // But right now, the chart.js source is referenced in the templates themselves through a CDN,
+    // so eslint will always complain. We'll just silence it.
+    // eslint-disable-next-line no-new,no-undef
+
+}; */
+
 const createChart = gradesData => {
     const chartData = {
         datasets: [{
@@ -73,18 +118,73 @@ const createChart = gradesData => {
             "F", "Withdraw", "Drop", "Pass"
         ]
     };
-    var ctx = document.getElementById("myChart");
-    // 1. Justification for no-new: (Do not use 'new' for side effects)
-    // Without disabling the warning, eslint complains about using `new` to produce side-effects.
-    // (Which is how chart.js works. We can't change that.)
-    // You can silence it by assigning the expression to a variable. But then, eslint complains that we have an unused variable.
-    // We're not going to be able to avoid this, so I've disabled the error.
-    // 2. Justification for no-undef: ('Chart' is not defined)
-    // We could avoid this in the future by using WebPack or plain old ES6 modules.
-    // But right now, the chart.js source is referenced in the templates themselves through a CDN,
-    // so eslint will always complain. We'll just silence it.
-    // eslint-disable-next-line no-new,no-undef
-    new Chart(ctx, {
+
+    barConfig = {
+        type: "bar",
+        data: chartData,
+        options: {
+            responsive: true,
+            legend: {
+                display: false
+            },
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        autoSkip: false
+                    },
+                    gridLines: {
+                        drawOnChartArea: false
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Number of Students"
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    },
+                    gridLines: {
+                        drawOnChartArea: true
+                    }
+                }]
+            },
+            plugins: {
+                labels: {
+                    // render 'label', 'value', 'percentage', 'image' or custom function, default is 'percentage'
+                    render: "value",
+
+                    // font size, default is defaultFontSize
+                    fontSize: 10,
+
+                    // font color, can be color array for each data or function for dynamic color, default is defaultFontColor
+                    // fontColor: "#fff",
+
+                    // font style, default is defaultFontStyle
+                    fontStyle: "normal",
+
+                    // draw label in arc, default is false
+                    // bar chart ignores this
+                    arc: false,
+
+                    // position to draw label, available value is 'default', 'border' and 'outside'
+                    // bar chart ignores this
+                    // default is 'default'
+                    position: "default",
+
+                    // draw label even it's overlap, default is true
+                    // bar chart ignores this
+                    overlap: false,
+
+                    // add margin of text when position is `outside` or `border`
+                    // default is 2
+                    textMargin: 4
+                }
+            }
+        }
+    };
+
+    pieConfig = {
         type: "pie",
         data: chartData,
         options: {
@@ -137,7 +237,10 @@ const createChart = gradesData => {
                 }
             }
         }
-    });
+    };
+
+    // eslint-disable-next-line no-new,no-undef
+    myChart = new Chart(ctx, pieConfig);
 };
 
 const exist = data => {
