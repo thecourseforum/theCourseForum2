@@ -37,8 +37,9 @@
 }
 
 .chart-container {
-    height: 95%;
-    width: 290px;
+    height: 90%;
+    width: 90%;
+    /*width: 290px;*/
     position: relative;
 }
 
