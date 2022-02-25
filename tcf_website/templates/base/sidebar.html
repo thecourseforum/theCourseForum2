@@ -23,6 +23,16 @@
       </a>
     </li>
     <li>
+        <a href="{% url 'blog' %}"
+            class="list-group-item list-group-item-action pb-0
+        {% if request.resolver_match.url_name == 'blog' %}active{% endif %}">
+        <span class="badge badge-pill badge-info mb-2">New</span>
+        <h4><i class="fa fa-comments fa-fw"></i></h4>
+        <p>Blog</p>
+        <hr>
+        </a>
+    </li>
+    <li>
       <a href="{% url 'about' %}"
          class="list-group-item list-group-item-action pb-0
          {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
