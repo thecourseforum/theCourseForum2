@@ -82,7 +82,6 @@ jobs:
       - name: Migrations & Tests
         run: |
           envsubst < .config/.env.example > .env
-          python manage.py makemigrations
           python manage.py migrate
           coverage run manage.py test
 
