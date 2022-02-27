@@ -1,12 +1,15 @@
 var barConfig;
 var pieConfig;
 var myChart;
+var chartData;
+var totalSum;
 var ctx = document.getElementById("myChart");
 
 function togglePieChart() {
     if (myChart) {
         myChart.destroy();
     }
+    document.getElementById("canvas-parent").style.width = '290px';
     // eslint-disable-next-line no-new,no-undef
     myChart = new Chart(ctx, pieConfig);
 };
@@ -15,6 +18,7 @@ function toggleBarChart() {
     if (myChart) {
         myChart.destroy();
     }
+    document.getElementById("canvas-parent").style.width = '95%';
     // eslint-disable-next-line no-new,no-undef
     myChart = new Chart(ctx, barConfig);
 };
@@ -29,6 +33,10 @@ $(".barToPie").click(function() {
     $(".togglepie").show();
 });
 
+function add(total, num) {
+  return total + Math.round(num);
+}
+
 const loadData = data => {
     // order in the input data
     /* eslint-disable camelcase */
@@ -36,8 +44,10 @@ const loadData = data => {
     // order we want for the pie chart
     const other = ot;
     const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop, other];
-    /* eslint-enable camelcase */
 
+    totalSum = grades_data.reduce(add, 0);
+
+    /* eslint-enable camelcase */
     createChart(grades_data);
 
     const formatWorkload = x => `${100 * x / data.average_hours_per_week}%`;
@@ -90,7 +100,7 @@ const loadData = data => {
 }; */
 
 const createChart = gradesData => {
-    const chartData = {
+    chartData = {
         datasets: [{
             data: gradesData,
             backgroundColor: [
@@ -195,7 +205,8 @@ const createChart = gradesData => {
                 callbacks: {
                     label: function(tooltipItem, data) {
                         var dataset = data.datasets[0];
-                        var percent = Math.round((dataset.data[tooltipItem.index] / dataset._meta[0].total) * 100);
+                        var sum = totalSum;
+                        var percent = Math.round((dataset.data[tooltipItem.index] / sum) * 100);
                         return data.labels[tooltipItem.index] + ": " + percent + "%";
                     }
                 },
