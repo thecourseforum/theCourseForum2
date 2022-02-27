@@ -185,14 +185,16 @@
 
             <div class="grades-container">
                 <div class="chart-container d-flex align-items-center justify-content-center">
-                    <canvas id="myChart"></canvas>
+                    <div id = "canvas-parent"><canvas id="myChart"></canvas></div>
                 </div>
                 <div class="absolute-center togglepie">
                     <p class="gpa-text"> No grades found <i class="far fa-frown-open fa-fw"></i></p>
                     <p class="students-text"> &mdash; Students</p>
                 </div>
-                <button class = "barToPie">Pie</button>
-                <button class = "pieToBar">Bar</button>
+                <div class="lower-button">
+                    <button class = "barToPie">Pie</button>
+                    <button class = "pieToBar">Bar</button>
+                </div>
             </div>
         </div>
 

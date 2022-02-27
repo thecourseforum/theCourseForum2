@@ -26,6 +26,7 @@
 }
 
 .grades-container {
+    position: relative;
     width: 45%;
     height: 100%;
     flex-shrink: 1;
@@ -37,10 +38,17 @@
 }
 
 .chart-container {
-    height: 90%;
+    /*height: 290px;*/
     width: 90%;
-    /*width: 290px;*/
+    width: 90%;
     position: relative;
+}
+
+.lower-button{
+   position: absolute;
+   bottom: 10px;
+   right: 10px;
+   display: flex;
 }
 
 #myChart {
