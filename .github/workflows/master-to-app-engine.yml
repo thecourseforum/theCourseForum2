@@ -58,7 +58,6 @@ jobs:
 
       - name: Migrations
         run: |
-          python manage.py makemigrations
           python manage.py migrate
 
       - name: Set up Google Cloud SDK
