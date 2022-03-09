@@ -13,12 +13,6 @@
       "img_filename": "ENG_Jules_LeMenestrel.webp"
     },
     {
-      "name": "Borja Ingle-Fernandez",
-      "role": "VP | Product Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Borja_Ingle-Fernandez.webp"
-    },
-    {
       "name": "Jack Liu",
       "role": "VP | Infrastructure Engineering",
       "class": "2023",
@@ -80,13 +74,6 @@
       "github": "julesfll"
     },
     {
-      "name": "Borja Ingle-Fernandez",
-      "role": "VP of Product Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Borja_Ingle-Fernandez.jpg",
-      "github": "borjainglefernandez"
-    },
-    {
       "name": "Jack Liu",
       "role": "VP of Infrastructure Engineering",
       "class": "2023",
@@ -113,13 +100,6 @@
       "class": "2023",
       "img_filename": "ENG_Nikhil_Mahajan.jpg",
       "github": "n4mahajan"
-    },
-    {
-      "name": "Andrew Niu",
-      "role": "Developer",
-      "class": "2023",
-      "img_filename": "ENG_Andrew_Niu.jpg",
-      "github": "andrewmniu"
     },
     {
       "name": "Austin Houck",
@@ -164,11 +144,16 @@
       "github": "Ann924"
     },
     {
-      "name": "Christina Wang",
+      "name": "Dylan Herbig",
       "role": "Developer",
-      "class": "2025",
-      "img_filename": "ENG_Christina_Wang.jpg",
-      "github": "cwang12197"
+      "class": "2024",
+      "img_filename": "ENG_Dylan_Herbig.jpg"
+    },
+    {
+      "name": "Joseph Kerrigan",
+      "role": "Developer",
+      "class": "2023",
+      "img_filename": "ENG_Joe_Kerrigan.jpg"
     }
   ],
   "marketing_team": [
@@ -191,10 +176,22 @@
       "img_filename": "DM_Lauren_Kim.jpg"
     },
     {
-      "name": "Lilleth Snavely",
+      "name": "Anoushka Sarkar",
       "role": "Marketer/Designer",
-      "class": "2023",
-      "img_filename": "DM_Lilleth_Snavely.jpg"
+      "class": "2025",
+      "img_filename": "DM_Anoushka_Sarkar.JPG"
+    },
+    {
+      "name": "Edmund Chen",
+      "role": "Marketer/Designer",
+      "class": "2024",
+      "img_filename": "DM_Edmund_Chen.jpg"
+    },
+    {
+      "name": "Sid Tickle",
+      "role": "Marketer/Designer",
+      "class": "2024",
+      "img_filename": "DM_Sid_Tickle.jpg"
     }
   ]
 }
