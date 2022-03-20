@@ -13,7 +13,7 @@ from django.urls import reverse_lazy
 
 from ..models import Review
 
-# pylint: disable=fixme
+# pylint: disable=fixme,unused-argument
 # Disable pylint errors on TODO messages, such as below
 
 # TODO: use a proper django form, make it more robust.
