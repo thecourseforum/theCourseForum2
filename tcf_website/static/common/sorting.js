@@ -20,6 +20,38 @@ function cmpByProp(prop, asc) {
         if (prop === "date") { // convert date string to int
             valA = dateToInt(valA);
             valB = dateToInt(valB);
+        } else if (prop === "last-taught") {
+            try {
+                const sessionA = valA.match(/^[a-zA-Z]+/)[0];
+                valA = valA.match(/-?[0-9]\d*(\.\d+)?/)[0];
+                // last taught session taken into account for sorting
+                if (sessionA == "January") {
+                    valA = parseFloat(valA + "0");
+                } else if (sessionA === "Spring") {
+                    valA = parseFloat(valA + "1");
+                } else if (sessionA === "Summer") {
+                    valA = parseFloat(valA + "2");
+                } else {
+                    valA = parseFloat(valA + "3");
+                }
+            } catch (err) {
+                return 1;
+            }
+            try {
+                const sessionB = valB.match(/^[a-zA-Z]+/)[0];
+                valB = valB.match(/-?[0-9]\d*(\.\d+)?/)[0];
+                if (sessionB == "January") {
+                    valB = parseFloat(valB + "0");
+                } else if (sessionB === "Spring") {
+                    valB = parseFloat(valB + "1");
+                } else if (sessionB === "Summer") {
+                    valB = parseFloat(valB + "2");
+                } else {
+                    valB = parseFloat(valB + "3");
+                }
+            } catch (err) {
+                return 1;
+            }
         } else { // extract number from string
             try {
                 valA = parseFloat(valA.match(/-?[0-9]\d*(\.\d+)?/)[0]);
