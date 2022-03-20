@@ -5,6 +5,7 @@ let sortNumberAsc = 1;
 let sortRatingAsc = -1;
 let sortDifficultyAsc = 1;
 let sortGpaAsc = -1;
+let sortLastTaughtAsc = -1;
 
 // Used to track which button is active for the ascending/descending order buttons
 let activeSort = "title";
@@ -37,10 +38,16 @@ const sortByNumber = () => {
 const sortByRating = () => {
     activeSort = "rating";
     if (!$("#rating-sort-btn").hasClass("active")) {
-        $("#number-sort-btn").removeClass("active");
+        if ($('#number-sort-btn').length) {
+            $("#number-sort-btn").removeClass("active");
+            $("#number-sort-btn").html("Course ID");
+        }
+        if ($('#last-taught-sort-btn').length) {
+            $("#last-taught-sort-btn").removeClass("active");
+            $("#last-taught-sort-btn").html("Last Taught");
+        }
         $("#diff-sort-btn").removeClass("active");
         $("#gpa-sort-btn").removeClass("active");
-        $("#number-sort-btn").html("Course ID");
         $("#diff-sort-btn").html("Difficulty");
         $("#gpa-sort-btn").html("GPA");
         $("#rating-sort-btn").addClass("active");
@@ -53,10 +60,16 @@ const sortByRating = () => {
 const sortByDifficulty = () => {
     activeSort = "difficulty";
     if (!$("#diff-sort-btn").hasClass("active")) {
-        $("#number-sort-btn").removeClass("active");
+        if ($('#number-sort-btn').length) {
+            $("#number-sort-btn").removeClass("active");
+            $("#number-sort-btn").html("Course ID");
+        }
+        if ($('#last-taught-sort-btn').length) {
+            $("#last-taught-sort-btn").removeClass("active");
+            $("#last-taught-sort-btn").html("Last Taught");
+        }
         $("#rating-sort-btn").removeClass("active");
         $("#gpa-sort-btn").html("GPA");
-        $("#number-sort-btn").html("Course ID");
         $("#rating-sort-btn").html("Rating");
         $("#gpa-sort-btn").removeClass("active");
 
@@ -70,10 +83,16 @@ const sortByDifficulty = () => {
 const sortByGpa = () => {
     activeSort = "gpa";
     if (!$("#gpa-sort-btn").hasClass("active")) {
-        $("#number-sort-btn").removeClass("active");
+        if ($('#number-sort-btn').length) {
+            $("#number-sort-btn").removeClass("active");
+            $("#number-sort-btn").html("Course ID");
+        }
+        if ($('#last-taught-sort-btn').length) {
+            $("#last-taught-sort-btn").removeClass("active");
+            $("#last-taught-sort-btn").html("Last Taught");
+        }
         $("#rating-sort-btn").removeClass("active");
         $("#diff-sort-btn").removeClass("active");
-        $("#number-sort-btn").html("Course ID");
         $("#rating-sort-btn").html("Rating");
         $("#diff-sort-btn").html("Difficulty");
         $("#gpa-sort-btn").addClass("active");
@@ -82,6 +101,37 @@ const sortByGpa = () => {
     }
     selectOrderOfSort(sortGpaAsc, "#gpa-sort-btn", "GPA");
 };
+
+const sortByLastTaught = () => {
+    activeSort = "last-taught"
+    if (!$("#last-taught-sort-btn").hasClass("active")) {
+        $("#rating-sort-btn").removeClass("active");
+        $("#diff-sort-btn").removeClass("active");
+        $("#gpa-sort-btn").removeClass("active");
+        $("#rating-sort-btn").html("Rating");
+        $("#diff-sort-btn").html("Difficulty");
+        $("#gpa-sort-btn").html("GPA");
+        $("#last-taught-sort-btn").addClass("active");
+    } else {
+        sortLastTaughtAsc *= -1;
+    }
+    selectOrderOfSort(sortLastTaughtAsc, "#last-taught-sort-btn", "Last Taught");
+};
+
+const sortByLastTaughtOnce = () => {
+    activeSort = "last-taught"
+    if (!$("#last-taught-sort-btn").hasClass("active")) {
+        $("#rating-sort-btn").removeClass("active");
+        $("#diff-sort-btn").removeClass("active");
+        $("#gpa-sort-btn").removeClass("active");
+        $("#rating-sort-btn").html("Rating");
+        $("#diff-sort-btn").html("Difficulty");
+        $("#gpa-sort-btn").html("GPA");
+        $("#last-taught-sort-btn").addClass("active");
+    }
+    sortLastTaughtAsc = -1;
+    selectOrderOfSort(sortLastTaughtAsc, "#last-taught-sort-btn", "Last Taught");
+}
 
 /* Helper function used by all sort functions to:
    -Compute the relevant sort based on what sort button is active
@@ -109,4 +159,4 @@ const sortClasses = (cmp) => {
     });
 };
 
-export { sortByNumber, sortByRating, sortByDifficulty, sortByGpa };
+export { sortByNumber, sortByRating, sortByDifficulty, sortByGpa, sortByLastTaught, sortByLastTaughtOnce };
