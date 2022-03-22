@@ -38,9 +38,8 @@
 }
 
 .chart-container {
-    /*height: 290px;*/
     width: 90%;
-    width: 90%;
+    height: 90%;
     position: relative;
 }
 
@@ -49,10 +48,6 @@
    bottom: 10px;
    right: 10px;
    display: flex;
-}
-
-#myChart {
-    z-index: 1;
 }
 
 .ratings-container {
@@ -87,6 +82,7 @@
 .rating-card-desc {
     font-size: 18px;
 }
+
 .info-container {
     display: flex;
     flex-direction: column;
@@ -105,6 +101,15 @@
 .absolute-center {
     position: absolute;
     top: auto; left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.bottom-center {
+    position: absolute;
+    bottom: 10px; left: auto;
     display: flex;
     align-items: center;
     justify-content: center;
