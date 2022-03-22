@@ -67,20 +67,20 @@
                             <div class="col-md-11 align-self-center">
                                 <a href="{% url 'course' mnemonic=c.mnemonic.split.0 course_number=c.number %}">
                                   <div class="row g-0">
-                                    <div class="col-md-3">{{c.mnemonic}}</div>
-                                    <div class="col_md_8">{{c.title}}</div>
+                                    <div class="col-3">{{c.mnemonic}}</div>
+                                    <div class="col-8">{{c.title}}</div>
                                   </div>
                                 </a>
                             </div>
                             <div class="col-md-1 align-self-center">
                               <h5 class="hover-tcf-orange" data-toggle="collapse"
-                                data-target="#description_container_{{forloop.counter}}"
+                                data-target="#description_container_{{forloop.parentloop.counter}}_{{forloop.counter}}"
                                 id="result_{{forloop.counter}}">
                                 <i class="fas fa-chevron-down" style="vertical-align: middle;"></i>
                               </h5>
                             </div>
                           </div>
-                          <div class="collapse" id="description_container_{{forloop.counter}}">
+                          <div class="collapse" id="description_container_{{forloop.parentloop.counter}}_{{forloop.counter}}">
                             <hr>
                             <p>
                               <small class="text-uppercase search-course-description" style="font-size: 15px;">
