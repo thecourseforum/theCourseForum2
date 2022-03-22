@@ -1,7 +1,6 @@
 var barConfig;
 var pieConfig;
 var myChart;
-var chartData;
 var totalSum;
 var ctx = document.getElementById("myChart");
 
@@ -9,7 +8,7 @@ function togglePieChart() {
     if (myChart) {
         myChart.destroy();
     }
-    document.getElementById("canvas-parent").style.width = '290px';
+    document.getElementById("canvas-parent").style.width = "290px";
     // eslint-disable-next-line no-new,no-undef
     myChart = new Chart(ctx, pieConfig);
 };
@@ -18,24 +17,24 @@ function toggleBarChart() {
     if (myChart) {
         myChart.destroy();
     }
-    document.getElementById("canvas-parent").style.width = '95%';
+    document.getElementById("canvas-parent").style.width = "95%";
     // eslint-disable-next-line no-new,no-undef
     myChart = new Chart(ctx, barConfig);
 };
 
 $(".pieToBar").click(function() {
-    toggleBarChart();
-    $(".togglepie").hide();
+    if (document.getElementById("toggle-btn").value === "bar") {
+        toggleBarChart();
+        document.getElementById("toggleinformation").className = "bottom-center";
+        document.getElementById("toggle-btn").innerHTML = "Pie";
+        document.getElementById("toggle-btn").value = "pie";
+    } else {
+        togglePieChart();
+        document.getElementById("toggleinformation").className = "absolute-center";
+        document.getElementById("toggle-btn").innerHTML = "Bar";
+        document.getElementById("toggle-btn").value = "bar";
+    }
 });
-
-$(".barToPie").click(function() {
-    togglePieChart();
-    $(".togglepie").show();
-});
-
-function add(total, num) {
-  return total + Math.round(num);
-}
 
 const loadData = data => {
     // order in the input data
@@ -45,8 +44,10 @@ const loadData = data => {
     const other = ot;
     const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop, other];
 
-    totalSum = grades_data.reduce(add, 0);
+    // Calculate total number of students
+    totalSum = grades_data.reduce((total, num) => total + num, 0);
 
+    // Create default pie chart
     /* eslint-enable camelcase */
     createChart(grades_data);
 
@@ -55,9 +56,12 @@ const loadData = data => {
     // so that the rating of 1 does look like a low one
     const formatRating = x => `${100 * (x - 0.8) / (5 - 0.8)}%`;
 
-    // Pie chart
+    // Change display if there is no data
     if (exist(data.average_gpa)) { $(".gpa-text").html(data.average_gpa === 0.0 ? "Pass/Fail" : `${data.average_gpa} GPA`); }
-    if (exist(data.total_enrolled)) { $(".students-text").html(`${data.total_enrolled} Students`); } else { $(".students-text").remove(); }
+    if (exist(data.total_enrolled)) { $(".students-text").html(`${data.total_enrolled} Students`); } else {
+        $(".students-text").remove();
+        $(".lower-button").remove();
+    }
 
     // Summary numbers
     if (exist(data.average_rating)) { $(".rating-num").html(data.average_rating); }
@@ -85,7 +89,7 @@ const loadData = data => {
     if (exist(data.average_amount_homework)) { $(".homework-bar").width(formatWorkload(data.average_amount_homework)); }
 };
 
-/* createBarChart = gradesData => {
+const createChart = gradesData => {
     // 1. Justification for no-new: (Do not use 'new' for side effects)
     // Without disabling the warning, eslint complains about using `new` to produce side-effects.
     // (Which is how chart.js works. We can't change that.)
@@ -95,12 +99,7 @@ const loadData = data => {
     // We could avoid this in the future by using WebPack or plain old ES6 modules.
     // But right now, the chart.js source is referenced in the templates themselves through a CDN,
     // so eslint will always complain. We'll just silence it.
-    // eslint-disable-next-line no-new,no-undef
-
-}; */
-
-const createChart = gradesData => {
-    chartData = {
+    const chartData = {
         datasets: [{
             data: gradesData,
             backgroundColor: [
@@ -129,10 +128,16 @@ const createChart = gradesData => {
         ]
     };
 
+    // Generate configuration for Bar Chart with chartData
     barConfig = {
         type: "bar",
         data: chartData,
         options: {
+            layout: {
+                padding: {
+                    top: 20
+                }
+            },
             responsive: true,
             legend: {
                 display: false
@@ -194,6 +199,7 @@ const createChart = gradesData => {
         }
     };
 
+    // Generate configuration for Pie Chart
     pieConfig = {
         type: "pie",
         data: chartData,
