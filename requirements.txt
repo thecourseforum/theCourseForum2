@@ -6,6 +6,7 @@ pandas>=1.0.3
 tqdm>=4.45.0
 django-cachalot
 requests
+requests-toolbelt
 django-environ
 django-silk
 djangorestframework
