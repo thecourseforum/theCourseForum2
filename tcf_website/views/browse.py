@@ -248,7 +248,7 @@ def course_instructor(request, course_id, instructor_id):
             if len(time) > 0:
                 times.append(time)
         section_info["sections"][section.sis_section_number] = {
-            "type": section.section_type, "units": int(section.units), "times": times}
+            "type": section.section_type, "units": section.units, "times": times}
 
     return render(request, 'course/course_professor.html',
                   {
