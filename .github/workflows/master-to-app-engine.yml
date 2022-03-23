@@ -91,4 +91,3 @@ jobs:
         run: |
           bash ./scripts/notify-deployment-result.sh
         shell: bash
-        
