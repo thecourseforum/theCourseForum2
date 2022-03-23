@@ -2,13 +2,10 @@
 import os
 import json
 import requests
-import requests_toolbelt.adapters.appengine
 
 from django.shortcuts import render
 from ..models import Subdepartment
 
-# Needed for requests to work on GAE
-requests_toolbelt.adapters.appengine.monkeypatch()
 
 def search(request):
     """Search results view."""
