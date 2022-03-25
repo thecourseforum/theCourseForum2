@@ -20,12 +20,12 @@ function cmpByProp(prop, asc) {
         if (prop === "date") { // convert date string to int
             valA = dateToInt(valA);
             valB = dateToInt(valB);
-        } else if (prop === "last-taught") {
+        } else if (prop === "recency") {
             try {
                 const sessionA = valA.match(/^[a-zA-Z]+/)[0];
                 valA = valA.match(/-?[0-9]\d*(\.\d+)?/)[0];
                 // last taught session taken into account for sorting
-                if (sessionA == "January") {
+                if (sessionA === "January") {
                     valA = parseFloat(valA + "0");
                 } else if (sessionA === "Spring") {
                     valA = parseFloat(valA + "1");
@@ -40,7 +40,7 @@ function cmpByProp(prop, asc) {
             try {
                 const sessionB = valB.match(/^[a-zA-Z]+/)[0];
                 valB = valB.match(/-?[0-9]\d*(\.\d+)?/)[0];
-                if (sessionB == "January") {
+                if (sessionB === "January") {
                     valB = parseFloat(valB + "0");
                 } else if (sessionB === "Spring") {
                     valB = parseFloat(valB + "1");
