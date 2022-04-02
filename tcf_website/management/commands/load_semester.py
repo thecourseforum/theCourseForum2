@@ -129,6 +129,15 @@ class Command(BaseCommand):
                                     'Instructor3',
                                     'Instructor4']].dropna().array
 
+            times = row[['Days1',
+                         'Days2',
+                         'Days3',
+                         'Days4']].dropna().array
+
+            section_times = ""
+            for i in range(len(times)):
+                section_times += str(times[i]) + ","
+
         except TypeError as e:
             print(row)
             print(e)
@@ -145,7 +154,8 @@ class Command(BaseCommand):
             course,
             topic,
             units,
-            section_type)
+            section_type,
+            section_times)
 
     def load_subdepartment(self, mnemonic):
 
@@ -251,7 +261,8 @@ class Command(BaseCommand):
             course,
             topic,
             units,
-            section_type):
+            section_type,
+            section_times):
 
         # Separating out unique fields lets us search for a given section number in
         # a semester (which are unique) and then update it with new fields as necessary.
@@ -269,7 +280,8 @@ class Command(BaseCommand):
             'course',
             'topic',
             'units',
-            'section_type'
+            'section_type',
+            'section_times'
         }
 
         for key, value in locals().items():

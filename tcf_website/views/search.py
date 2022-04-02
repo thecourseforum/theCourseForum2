@@ -27,7 +27,7 @@ def search(request):
 
 def fetch_courses(query):
     """Gets Elasticsearch course data."""
-    api_endpoint = os.environ['ES_COURSE_SEARCH_ENDPOINT']
+    api_endpoint = os.environ['ELASTICSEARCH_ENDPOINT'] + 'tcf-courses/search'
     algorithm = rank_course(query)
     response = fetch_elasticsearch(api_endpoint, algorithm)
     return format_response(response)
@@ -35,7 +35,7 @@ def fetch_courses(query):
 
 def fetch_instructors(query):
     """Gets Elasticsearch instructor data."""
-    api_endpoint = os.environ['ES_INSTRUCTOR_SEARCH_ENDPOINT']
+    api_endpoint = os.environ['ELASTICSEARCH_ENDPOINT'] + 'tcf-instructors/search'
     algorithm = rank_instructor(query)
     response = fetch_elasticsearch(api_endpoint, algorithm)
     return format_response(response)
