@@ -79,7 +79,7 @@
                 {% for i in instructors %}
                     <li class="instructor {% if i.semester_last_taught != latest_semester %}old{% endif %}">
                         {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
-                        {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty gpa=i.gpa last_taught=i.semester_last_taught %}
+                        {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty gpa=i.gpa sec_nums=i.section_nums last_taught=i.semester_last_taught %}
                     </li>
                 {% endfor %}
             </ul>
