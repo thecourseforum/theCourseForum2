@@ -10,3 +10,7 @@
 .search-result-header h3, .search-result-header p {
   display: inline-block;
 }
+
+.search-course-description {
+  color: var(--accent-color);
+}
