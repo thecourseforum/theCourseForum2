@@ -50,7 +50,7 @@ function cmpByProp(prop, asc) {
                     valB = parseFloat(valB + "3");
                 }
             } catch (err) {
-                return 1;
+                return -1;
             }
         } else { // extract number from string
             try {
