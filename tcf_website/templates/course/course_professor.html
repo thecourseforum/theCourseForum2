@@ -33,6 +33,7 @@
                           tabindex="0" data-toggle="tooltip" data-placement="bottom"
                           title="View instructor profile">
                         <i class="fa fa-user" aria-hidden="true"></i>
+                          {{ instructor.last_name }}, {{ instructor.first_name }}
                       </h4>
                     </a>
 
@@ -41,7 +42,6 @@
                       <a class="instructor-select btn btn-lg text-tcf-orange p-0 mt-1 dropdown-toggle" href="#"
                          role="button" id="dropdownMenuLink" data-toggle="dropdown"
                          aria-haspopup="true" aria-expanded="false">
-                         {{ instructor.last_name }}, {{ instructor.first_name }}
                       </a>
 
                       <div id="instructorMenu" class="instructor-menu dropdown-menu w-100" aria-labelledby="dropdownMenuLink" disabled>
