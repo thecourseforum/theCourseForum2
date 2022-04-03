@@ -5,12 +5,13 @@
 import json
 from typing import Any, Dict, List
 
-from django.db.models import Avg, CharField, F, Max, Q, Value
+from django.db.models import Avg, CharField, F, Max, Q, Value, Case, When
 from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.postgres.aggregates.general import ArrayAgg
 
 from ..models import (
     School,
@@ -105,7 +106,33 @@ def course_view(request, mnemonic, course_number):
             ) / 3,
             semester_last_taught=Max('section__semester',
                                      filter=Q(section__course=course)),
+            # ArrayAgg:
+            # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
+            section_times=ArrayAgg(
+                Case(
+                    When(
+                        section__semester=latest_semester,
+                        then=('section__section_times')),
+                    output_field=CharField()),
+                distinct=True),
+            section_nums=ArrayAgg(
+                Case(
+                    When(
+                        section__semester=latest_semester,
+                        then=('section__sis_section_number')),
+                    output_field=CharField()),
+                distinct=True),
         )
+
+    for i in instructors:
+        if (i.section_times[0] is not None and i.section_nums[0] is not None):
+            i.times = {}
+            for idx, _ in enumerate(i.section_times):
+                if (i.section_times[idx] is not None and i.section_nums[idx] is not None):
+                    i.times[str(i.section_nums[idx])] = i.section_times[idx][:-1].split(",")
+        if i.section_nums.count(None) > 0:
+            i.section_nums.remove(None)
+
     taught_this_semester = Section.objects.filter(course=course, semester=latest_semester).exists()
 
     # Note: Wanted to use .annotate() but couldn't figure out a way
@@ -207,6 +234,22 @@ def course_instructor(request, course_id, instructor_id):
             total += data[field]
         data['total_enrolled'] = total
 
+    sections_taught = Section.objects.filter(
+        course=course_id, instructors__in=Instructor.objects.filter(
+            pk=instructor_id), semester=section_last_taught.semester)
+    section_info = {
+        "year": section_last_taught.semester.year,
+        "term": section_last_taught.semester.season.lower().capitalize(),
+        "sections": {}
+    }
+    for section in sections_taught:
+        times = []
+        for time in section.section_times.split(","):
+            if len(time) > 0:
+                times.append(time)
+        section_info["sections"][section.sis_section_number] = {
+            "type": section.section_type, "units": section.units, "times": times}
+
     return render(request, 'course/course_professor.html',
                   {
                       'course': course,
@@ -217,6 +260,8 @@ def course_instructor(request, course_id, instructor_id):
                       'reviews': reviews,
                       'breadcrumbs': breadcrumbs,
                       'data': json.dumps(data),
+                      'section_info': section_info,
+                      'display_times': Semester.latest() == section_last_taught.semester
                   })
 
 

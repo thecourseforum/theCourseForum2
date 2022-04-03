@@ -570,6 +570,9 @@ class Section(models.Model):
     # Section section_type. Optional. e.g. 'lec' or 'lab'.
     section_type = models.CharField(max_length=255, blank=True)
 
+    # Comma-separated list of times the section is taught.
+    section_times = models.CharField(max_length=255, blank=True)
+
     def __str__(self):
         return f"{self.course} | {self.semester} | " \
                f"{', '.join(str(i) for i in self.instructors.all())}"
