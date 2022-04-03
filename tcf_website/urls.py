@@ -44,4 +44,5 @@ urlpatterns = [
     path('login/collect_extra_info/', views.collect_extra_info),
     path('accounts/login/', views.login),
     path('logout/', views.logout, name='logout'),
+    path('well-known/microsoft-identity-association.json', views.auth.load_microsoft_verification, name="load_microsoft_verification")
 ]
