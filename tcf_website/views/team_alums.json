@@ -13,6 +13,32 @@
   ],
   "contributors": [
     {
+      "group_name": "Class of 2025",
+      "members": [
+        {
+          "name": "Christina Wang",
+                  "role": "Developer",
+                  "class": "2025",
+                  "img_filename": "blank.jpeg"
+        }
+      ]
+    },
+    {
+      "group_name": "Class of 2024",
+      "members": [
+        {
+          "name": "Lilleth Snavely",
+                  "role": "Marketing & Design",
+                  "class": "2024",
+                  "img_filename": "DM_Lilleth_Snavely.png"
+        },{
+          "name": "Liza Harold",
+                  "role": "Marketing & Design",
+                  "class": "2024",
+                  "img_filename": "DM_Liza_Harold.png"
+        }
+      ]},
+    {
       "group_name": "Class of 2023",
       "members": [
                 {
@@ -59,6 +85,18 @@
                   "role": "Marketing and Design",
                   "class": "2023",
                   "img_filename": "achotikul.jpeg"
+                },
+                {
+                  "name": "Andrew Niu",
+                  "role": "Developer",
+                  "class": "2023",
+                  "img_filename": "ENG_Andrew_Niu.png"
+                },
+                {
+                  "name": "Josh Dano",
+                  "role": "Marketing and Design",
+                  "class": "2023",
+                  "img_filename": "DM_Joshua_Dano.png"
                 }]
     },
     {
@@ -94,6 +132,18 @@
                     "role": "Community and Outreach Chair",
                     "class": "2022",
                     "img_filename": "ayong.jpeg"
+                  },
+                  {
+                    "name": "Pragun Ananda",
+                    "role": "Developer",
+                    "class": "2022",
+                    "img_filename": "blank.jpeg"
+                  },
+                  {
+                    "name": "Twindy Pham",
+                    "role": "Design",
+                    "class": "2022",
+                    "img_filename": "DM_Twindy_Pham.png"
                   }]
     },
     {
