@@ -26,17 +26,40 @@
                 <h2>{{ course.title }}</h2>
             </div>
 
-            <a data-toggle="tooltip"
-               data-placement="right"
-               title="Requires NetBadge Login"
-               class="text-tcf-blue font-weight-bold"
-               target="_blank"
-               href={{ course.eval_link }}>
-                Official UVA Student Evaluations
-                <i class="fa fa-external-link" aria-hidden="true"></i>
-            </a>
+            <!-- Course Description -->
+            {% if course.description|length > 0 %}
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <a id="course-eval-link" data-toggle="tooltip"
+                           data-placement="right"
+                           title="Requires NetBadge Login"
+                           class="text-tcf-blue font-weight-bold float-right"
+                           style="margin-top: 5px; font-size: 16px;"
+                           target="_blank"
+                           href={{ course.eval_link }}>
+                            Official UVA Student Evaluations
+                            <i class="fa fa-external-link" aria-hidden="true"></i>
+                        </a>
+                        Course Description
+                    </h4>
 
-            <br/>
+                    {% if course.compute_pre_req|length > 0 %}
+                    <div>
+                        <small class="mb-0 text-uppercase" style="font-size: 15px;">
+                            <i class="fa-fw" aria-hidden="true"></i>Pre-Requisite(s):
+                        </small>
+                        {{ course.compute_pre_req }}
+                    </div>
+                    {% endif %}
+
+                    <p class="card-text">
+                        {{ course.course_description_without_pre_req }}
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+
             <br/>
 
             {% if not taught_this_semester %}
@@ -56,7 +79,7 @@
                 {% for i in instructors %}
                     <li class="instructor {% if i.semester_last_taught != latest_semester %}old{% endif %}">
                         {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
-                        {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty gpa=i.gpa last_taught=i.semester_last_taught %}
+                        {% include "common/rating_card.html" with title=i.full_name link=link rating=i.rating difficulty=i.difficulty gpa=i.gpa sec_nums=i.section_nums last_taught=i.semester_last_taught %}
                     </li>
                 {% endfor %}
             </ul>

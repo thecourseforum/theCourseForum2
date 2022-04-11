@@ -2,7 +2,6 @@
 import os
 import json
 import requests
-# import functools
 
 from django.shortcuts import render
 from ..models import Subdepartment
@@ -28,7 +27,7 @@ def search(request):
 
 def fetch_courses(query):
     """Gets Elasticsearch course data."""
-    api_endpoint = os.environ['ES_COURSE_SEARCH_ENDPOINT']
+    api_endpoint = os.environ['ELASTICSEARCH_ENDPOINT'] + 'tcf-courses/search'
     algorithm = rank_course(query)
     response = fetch_elasticsearch(api_endpoint, algorithm)
     return format_response(response)
@@ -36,7 +35,7 @@ def fetch_courses(query):
 
 def fetch_instructors(query):
     """Gets Elasticsearch instructor data."""
-    api_endpoint = os.environ['ES_INSTRUCTOR_SEARCH_ENDPOINT']
+    api_endpoint = os.environ['ELASTICSEARCH_ENDPOINT'] + 'tcf-instructors/search'
     algorithm = rank_instructor(query)
     response = fetch_elasticsearch(api_endpoint, algorithm)
     return format_response(response)
@@ -53,7 +52,7 @@ def fetch_elasticsearch(api_endpoint, algorithm):
         response = requests.get(
             url=api_endpoint,
             headers=https_headers,
-            data=algorithm
+            params=algorithm
         )
         if response.status_code != 200:
             response = {
@@ -75,38 +74,39 @@ def rank_instructor(query):
     algorithm = {
         "query": query
     }
-    return json.dumps(algorithm)  # improve algorithm later
+    return algorithm  # improve algorithm later
 
 
 def rank_course(query):
     """Returns the courses search algorithm."""
+    #
     algorithm = {
         "query": query,
-        "page": {
-            "current": 1,
-            "size": 15
-        },
-        "search_fields": {
-            "mnemonic": {
-                "weight": 10
-            },
-            "title": {
-                "weight": 8
-            },
-            "description": {
-                "weight": 5
-            }
-        },
-        "boosts": {
-            "review_count": {
-                "type": "functional",
-                "function": "logarithmic",
-                "operation": "multiply",
-                "factor": 2
-            }
-        }
+        # "page": {
+        #     "current": 1,
+        #     "size": 15
+        # },
+        # "search_fields": {
+        #     "mnemonic": {
+        #         "weight": 10
+        #     },
+        #     "title": {
+        #         "weight": 8
+        #     },
+        #     "description": {
+        #         "weight": 5
+        #     }
+        # },
+        # "boosts": {
+        #     "review_count": {
+        #         "type": "functional",
+        #         "function": "logarithmic",
+        #         "operation": "multiply",
+        #         "factor": 2
+        #     }
+        # }
     }
-    return json.dumps(algorithm)
+    return algorithm
 
 
 def format_response(response):
@@ -122,9 +122,9 @@ def format_response(response):
     body = json.loads(response.text)
     engine = body.get("meta").get("engine").get("name")
     results = body.get("results")
-    if engine == "uva-courses":
+    if engine == "tcf-courses":
         formatted["results"] = format_courses(results)
-    elif engine == "uva-instructors":
+    elif engine == "tcf-instructors":
         formatted["results"] = format_instructors(results)
     else:
         formatted["error"] = True
@@ -141,7 +141,8 @@ def format_courses(results):
             "id": result.get("_meta").get("id"),
             "title": result.get("title").get("raw"),
             "number": result.get("number").get("raw"),
-            "mnemonic": result.get("mnemonic").get("raw")
+            "mnemonic": result.get("mnemonic").get("raw"),
+            "description": result.get("description").get("raw")
         }
         formatted.append(course)
     return formatted

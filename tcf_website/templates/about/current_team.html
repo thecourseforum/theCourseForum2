@@ -19,7 +19,30 @@
                 <div class="card-body">
                   <h5 class="card-text">{{ member.name }}</h5>
                   <p class="card-text small">{{ member.role }}</p>
-                  <p class="card-text small text-muted">Class of {{ member.class }}</p>
+                  <p class="card-text small text-muted">Class of {{ member.class }} </p>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="executive-team jumbotron py-5 bg-light">
+      <div class="container">
+        <h3>Chairs</h3>
+        <hr/>
+        <div class="row text-left">
+          {% for member in chairs %}
+            <div class="col-lg-4 col-sm-6 d-flex">
+              <div class="member card mb-4 shadow-sm flex-fill">
+                <div class="pfp">
+                  <img class="card-img-top" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
+                </div>
+                <div class="card-body">
+                  <h5 class="card-text">{{ member.name }}</h5>
+                  <p class="card-text small">{{ member.role }}</p>
+                  <p class="card-text small text-muted">Class of {{ member.class }} </p>
                 </div>
               </div>
             </div>
