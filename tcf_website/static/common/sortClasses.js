@@ -38,10 +38,12 @@ const sortByNumber = () => {
 const sortByRating = () => {
     activeSort = "rating";
     if (!$("#rating-sort-btn").hasClass("active")) {
+        // Checks whether toolbar is reused on departments page (which has course ID sort button)
         if ($("#number-sort-btn").length) {
             $("#number-sort-btn").removeClass("active");
             $("#number-sort-btn").html("Course ID");
         }
+        // Checks whether toolbar is reused on courses page (which has last taught sort button)
         if ($("#recency-sort-btn").length) {
             $("#recency-sort-btn").removeClass("active");
             $("#recency-sort-btn").html("Last Taught");
@@ -102,9 +104,10 @@ const sortByGpa = () => {
     selectOrderOfSort(sortGpaAsc, "#gpa-sort-btn", "GPA");
 };
 
-const sortByRecency = () => {
+const sortByRecency = (event, sortOnce) => {
     activeSort = "recency";
     if (!$("#recency-sort-btn").hasClass("active")) {
+        // No button checks necessary as function only used on 1 page
         $("#rating-sort-btn").removeClass("active");
         $("#diff-sort-btn").removeClass("active");
         $("#gpa-sort-btn").removeClass("active");
@@ -115,21 +118,9 @@ const sortByRecency = () => {
     } else {
         sortRecencyAsc *= -1;
     }
-    selectOrderOfSort(sortRecencyAsc, "#recency-sort-btn", "Last Taught");
-};
-
-const sortByRecencyOnce = () => {
-    activeSort = "recency";
-    if (!$("#recency-sort-btn").hasClass("active")) {
-        $("#rating-sort-btn").removeClass("active");
-        $("#diff-sort-btn").removeClass("active");
-        $("#gpa-sort-btn").removeClass("active");
-        $("#rating-sort-btn").html("Rating");
-        $("#diff-sort-btn").html("Difficulty");
-        $("#gpa-sort-btn").html("GPA");
-        $("#recency-sort-btn").addClass("active");
+    if (sortOnce) { // Sorting order never changes with single recency sort
+        sortRecencyAsc = -1;
     }
-    sortRecencyAsc = -1;
     selectOrderOfSort(sortRecencyAsc, "#recency-sort-btn", "Last Taught");
 };
 
@@ -159,4 +150,4 @@ const sortClasses = (cmp) => {
     });
 };
 
-export { sortByNumber, sortByRating, sortByDifficulty, sortByGpa, sortByRecency, sortByRecencyOnce };
+export { sortByNumber, sortByRating, sortByDifficulty, sortByGpa, sortByRecency };
