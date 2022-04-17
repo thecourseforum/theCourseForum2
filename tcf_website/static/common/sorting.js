@@ -22,33 +22,12 @@ function cmpByProp(prop, asc) {
             valB = dateToInt(valB);
         } else if (prop === "recency") {
             try {
-                const sessionA = valA.match(/^[a-zA-Z]+/)[0];
-                valA = valA.match(/-?[0-9]\d*(\.\d+)?/)[0];
-                // last taught session taken into account for sorting
-                if (sessionA === "January") {
-                    valA = parseFloat(valA + "0");
-                } else if (sessionA === "Spring") {
-                    valA = parseFloat(valA + "1");
-                } else if (sessionA === "Summer") {
-                    valA = parseFloat(valA + "2");
-                } else {
-                    valA = parseFloat(valA + "3");
-                }
+                valA = getSessionNum(valA);
             } catch (err) {
                 return 1;
             }
             try {
-                const sessionB = valB.match(/^[a-zA-Z]+/)[0];
-                valB = valB.match(/-?[0-9]\d*(\.\d+)?/)[0];
-                if (sessionB === "January") {
-                    valB = parseFloat(valB + "0");
-                } else if (sessionB === "Spring") {
-                    valB = parseFloat(valB + "1");
-                } else if (sessionB === "Summer") {
-                    valB = parseFloat(valB + "2");
-                } else {
-                    valB = parseFloat(valB + "3");
-                }
+                valB = getSessionNum(valB);
             } catch (err) {
                 return -1;
             }
@@ -78,6 +57,23 @@ function cmpByProp(prop, asc) {
 function dateToInt(dateStr) {
     const date = new Date(dateStr);
     return date.getTime();
+}
+
+function getSessionNum(sessionStr) {
+    const session = sessionStr.match(/^[a-zA-Z]+/)[0];
+    const year = sessionStr.match(/-?[0-9]\d*(\.\d+)?/)[0];
+    // last taught session taken into account for sorting
+    if (session === "January") {
+        return parseFloat(year + "0");
+    } else if (session === "Spring") {
+        return parseFloat(year + "1");
+    } else if (session === "Summer") {
+        return parseFloat(year + "2");
+    } else if (session === "Fall") {
+        return parseFloat(year + "3");
+    } else { // Unexpected sessions sorted last
+        return parseFloat(year + "4");
+    }
 }
 
 export { cmpByProp, sortHTML };
