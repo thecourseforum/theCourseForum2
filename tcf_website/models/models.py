@@ -791,3 +791,43 @@ class Vote(models.Model):
                 name='unique vote per user and review',
             )
         ]
+
+
+class Question(models.Model):
+    """Question model.
+
+    Belongs to a User.
+    Has a course.
+    """
+    text = models.CharField(max_length=255)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    placeholder = models.TextField(default="Enter your response here")
+
+    def __str__(self):
+        return f"Question for {self.course} by {self.user}"
+
+
+class Answer(models.Model):
+    """Answer model.
+
+    Belongs to a User.
+    Has a question.
+    """
+    text = models.TextField()
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    # TODO: add instructor choice of All or a specific instructor
+
+    def __str__(self):
+        return f"Answer for {self.question} by {self.user}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'question'],
+                name='unique answer per user and question',
+            )
+        ]
