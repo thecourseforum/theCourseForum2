@@ -21,9 +21,9 @@ def search(request):
     courses_first = decide_order(query, courses, instructors)
 
     if courses_first:
-        print("courses")
+        print('courses')
     else:
-        print("instructors")
+        print('instructors')
 
     # Set arguments for template view
     args = set_arguments(query, courses, instructors, courses_first)
@@ -34,15 +34,13 @@ def search(request):
 
 
 def decide_order(query, courses, instructors):
-    courses_z = 0
-    instructors_z = 0
 
-    # Four letters or less likely refer to class abbreviations, default to courses
+    #Likely an abbreviation if 4 letters or less
     if len(query) <= 4:
         return True
 
     # Calculates z-score of top courses result
-    if len(courses["results"]) > 1:
+    if len(courses['results']) > 1:
         course_scores = [x['score'] for x in courses['results']]
 
         courses_mean = statistics.mean(course_scores)
@@ -51,10 +49,14 @@ def decide_order(query, courses, instructors):
 
         if courses_stddev == 0:
             courses_stddev = 1
-        courses_z = (courses["results"][0].get("score") - courses_mean) / courses_stddev
+        courses_z = (courses['results'][0].get('score') - courses_mean) / courses_stddev
+    elif len(courses['results']) == 0:
+        courses_z = 0
+    else:
+        courses_z = -1
 
     # Calculates z-score of top instructors result
-    if len(instructors["results"]) > 1:
+    if len(instructors['results']) > 1:
         instructor_scores = [x['score'] for x in instructors['results']]
 
         instructors_mean = statistics.mean(instructor_scores)
@@ -63,9 +65,18 @@ def decide_order(query, courses, instructors):
 
         if instructors_stddev == 0:
             instructors_stddev = 1
-        instructors_z = (instructors["results"][0].get("score") - instructors_mean) / instructors_stddev
+        instructors_z = (instructors['results'][0].get('score') - instructors_mean) / instructors_stddev
+    elif len(instructors['results']) == 0:
+        instructors_z = 0
+    else:
+        instructors_z = -1
 
-    return courses_z > instructors_z
+    print(courses_z)
+    print(instructors_z)
+    # if instructors_z == -1:
+    #     return True
+    # return min(courses_z, instructors_z, key=abs) == courses_z
+    return courses_z >= instructors_z
 
 def fetch_courses(query):
     """Gets Elasticsearch course data."""
@@ -81,6 +92,7 @@ def fetch_instructors(query):
     api_endpoint = os.environ['ELASTICSEARCH_ENDPOINT'] + 'tcf-instructors/search'
     algorithm = rank_instructor(query)
     response = fetch_elasticsearch(api_endpoint, algorithm)
+    print(response.text)
     return format_response(response)
 
 
