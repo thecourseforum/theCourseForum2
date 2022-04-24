@@ -4,13 +4,13 @@ from django.db.models import Avg, Sum
 from rest_framework import viewsets
 from .filters import InstructorFilter
 from ..models import (Course, Department, Instructor, School, Semester,
-                      Subdepartment)
+                      Subdepartment, Question)
 from .paginations import FlexiblePagination
 from .serializers import (CourseSerializer, CourseSimpleStatsSerializer,
                           CourseAllStatsSerializer,
                           DepartmentSerializer, InstructorSerializer,
                           SemesterSerializer, SchoolSerializer,
-                          SubdepartmentSerializer)
+                          SubdepartmentSerializer, QuestionSerializer)
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
@@ -136,3 +136,10 @@ class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
             params['section__instructors'] = self.request.query_params['instructor']
         # Returns filtered, unique semesters in reverse chronological order
         return self.queryset.filter(**params).distinct().order_by('-number')
+
+
+class QuestionViewSet(viewsets.ModelViewSet):
+    """API endpoint that allows questions to be viewed or edited."""
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+    # permission_classes = (IsAuthenticated,)
