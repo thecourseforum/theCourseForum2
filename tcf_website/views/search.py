@@ -2,6 +2,7 @@
 import os
 import json
 import requests
+import statistics
 
 from django.shortcuts import render
 from ..models import Subdepartment
@@ -17,19 +18,61 @@ def search(request):
     courses = fetch_courses(query)
     instructors = fetch_instructors(query)
 
+    courses_first = decide_order(query, courses, instructors)
+
+    if courses_first:
+        print("courses")
+    else:
+        print("instructors")
+
     # Set arguments for template view
-    args = set_arguments(query, courses, instructors)
+    args = set_arguments(query, courses, instructors, courses_first)
     context_vars = args
 
     # Load template view
     return render(request, 'search/search.html', context_vars)
 
 
+def decide_order(query, courses, instructors):
+    courses_z = 0
+    instructors_z = 0
+
+    # Four letters or less likely refer to class abbreviations, default to courses
+    if len(query) <= 4:
+        return True
+
+    # Calculates z-score of top courses result
+    if len(courses["results"]) > 1:
+        course_scores = [x['score'] for x in courses['results']]
+
+        courses_mean = statistics.mean(course_scores)
+
+        courses_stddev = statistics.stdev(course_scores, courses_mean)
+
+        if courses_stddev == 0:
+            courses_stddev = 1
+        courses_z = (courses["results"][0].get("score") - courses_mean) / courses_stddev
+
+    # Calculates z-score of top instructors result
+    if len(instructors["results"]) > 1:
+        instructor_scores = [x['score'] for x in instructors['results']]
+
+        instructors_mean = statistics.mean(instructor_scores)
+
+        instructors_stddev = statistics.stdev(instructor_scores, instructors_mean)
+
+        if instructors_stddev == 0:
+            instructors_stddev = 1
+        instructors_z = (instructors["results"][0].get("score") - instructors_mean) / instructors_stddev
+
+    return courses_z > instructors_z
+
 def fetch_courses(query):
     """Gets Elasticsearch course data."""
     api_endpoint = os.environ['ELASTICSEARCH_ENDPOINT'] + 'tcf-courses/search'
     algorithm = rank_course(query)
     response = fetch_elasticsearch(api_endpoint, algorithm)
+    print(response.text)
     return format_response(response)
 
 
@@ -142,7 +185,8 @@ def format_courses(results):
             "title": result.get("title").get("raw"),
             "number": result.get("number").get("raw"),
             "mnemonic": result.get("mnemonic").get("raw"),
-            "description": result.get("description").get("raw")
+            "description": result.get("description").get("raw"),
+            "score": result.get("_meta").get("score"),
         }
         formatted.append(course)
     return formatted
@@ -157,13 +201,14 @@ def format_instructors(results):
             "first_name": result.get("first_name").get("raw"),
             "last_name": result.get("last_name").get("raw"),
             "email": result.get("email").get("raw"),
-            "website": result.get("website").get("raw")
+            "website": result.get("website").get("raw"),
+            "score": result.get("_meta").get("score"),
         }
         formatted.append(instructor)
     return formatted
 
 
-def set_arguments(query, courses, instructors):
+def set_arguments(query, courses, instructors, courses_first):
     """Sets the search template arguments."""
     args = {
         "query": query
@@ -172,6 +217,8 @@ def set_arguments(query, courses, instructors):
         args["courses"] = group_by_dept(courses['results'])
     if not instructors["error"]:
         args["instructors"] = instructors["results"]
+
+    args["courses_first"] = courses_first
 
     args["displayed_query"] = query[:30] + "..." if len(query) > 30 else query
     return args
