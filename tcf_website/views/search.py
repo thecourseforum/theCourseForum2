@@ -1,8 +1,8 @@
 """Views for search results"""
 import os
 import json
-import requests
 import statistics
+import requests
 
 from django.shortcuts import render
 from ..models import Subdepartment
@@ -29,6 +29,9 @@ def search(request):
 
 
 def decide_order(query, courses, instructors):
+    """Decides if courses or instructors should be displayed first."""
+    # Returns True if courses should be prioritized, False if instructors should be prioritized
+
     # Calculates z-score of top courses result
     if len(courses['results']) > 1:
         course_scores = [x['score'] for x in courses['results']]
@@ -39,7 +42,8 @@ def decide_order(query, courses, instructors):
 
         if courses_stddev == 0:
             courses_stddev = 1
-        courses_z = (courses['results'][0].get('score') - courses_mean) / courses_stddev
+        courses_z = courses['results'][0].get('score') - courses_mean
+        courses_z /= courses_stddev
     elif len(courses['results']) == 1:
         courses_z = 0
     else:
@@ -55,7 +59,8 @@ def decide_order(query, courses, instructors):
 
         if instructors_stddev == 0:
             instructors_stddev = 1
-        instructors_z = (instructors['results'][0].get('score') - instructors_mean) / instructors_stddev
+        instructors_z = instructors['results'][0].get('score') - instructors_mean
+        instructors_z /= instructors_stddev
     elif len(instructors['results']) == 1:
         instructors_z = 0
     else:
