@@ -73,7 +73,6 @@ def fetch_courses(query):
     api_endpoint = os.environ['ELASTICSEARCH_ENDPOINT'] + 'tcf-courses/search'
     algorithm = rank_course(query)
     response = fetch_elasticsearch(api_endpoint, algorithm)
-    print(response.text)
     return format_response(response)
 
 
@@ -82,7 +81,6 @@ def fetch_instructors(query):
     api_endpoint = os.environ['ELASTICSEARCH_ENDPOINT'] + 'tcf-instructors/search'
     algorithm = rank_instructor(query)
     response = fetch_elasticsearch(api_endpoint, algorithm)
-    print(response.text)
     return format_response(response)
 
 
