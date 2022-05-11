@@ -4,6 +4,7 @@ from django import forms
 from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.http import JsonResponse
@@ -12,7 +13,7 @@ from django.urls import reverse_lazy
 
 from ..models import Review
 
-# pylint: disable=fixme
+# pylint: disable=fixme,unused-argument
 # Disable pylint errors on TODO messages, such as below
 
 # TODO: use a proper django form, make it more robust.
@@ -123,8 +124,35 @@ def check_duplicate(request):
     return redirect('new_review')
 
 
+@login_required()
+def check_zero_hours_per_week(request):
+    """Check that user hasn't submitted 0 *total* hours/week
+    for a given course/review.
+    Used for an Ajax request in new_review.html"""
+
+    form = ReviewForm(request.POST)
+    if form.is_valid():
+        instance = form.save(commit=False)
+
+        hours_per_week = \
+            instance.amount_reading + instance.amount_writing + \
+            instance.amount_group + instance.amount_homework
+
+        # Review has 0 total hours/week
+        # Send user a warning message that they have entered 0 hours
+        if hours_per_week == 0:
+            response = {"zero": True}
+            return JsonResponse(response)
+
+        # Otherwise, proceed with normal form submission
+        response = {"zero": False}
+        return JsonResponse(response)
+    return redirect('new_review')
+
 # Note: Class-based views can't use the @login_required decorator
-class DeleteReview(LoginRequiredMixin, generic.DeleteView):
+
+
+class DeleteReview(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
     """Review deletion view."""
     model = Review
     success_url = reverse_lazy('reviews')
@@ -138,21 +166,13 @@ class DeleteReview(LoginRequiredMixin, generic.DeleteView):
                 "You are not allowed to delete this review!")
         return obj
 
-    def delete(self, request, *args, **kwargs):
-        """Overide DeleteView's delete function to add a message confirming deletion."""
-        # Note: we don't use SuccessMessageMixin because it currently has issues
-        # with DeleteViews. See:
-        # https://stackoverflow.com/questions/24822509/success-message-in-deleteview-not-shown
-
+    def get_success_message(self, cleaned_data) -> str:
+        """Overrides SuccessMessageMixin's get_success_message method."""
         # get the course this review is about
-        course = super().get_object().course
+        course = self.object.course
 
-        messages.add_message(
-            request,
-            messages.SUCCESS,
-            f'Successfully deleted your review for {str(course)}!')
-
-        return super().delete(request, *args, **kwargs)
+        # return success message
+        return f"Successfully deleted your review for {str(course)}!"
 
 
 @login_required
