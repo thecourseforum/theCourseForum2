@@ -379,6 +379,42 @@ class Course(models.Model):
     def __str__(self):
         return f"{self.subdepartment.mnemonic} {self.number} | {self.title}"
 
+    def compute_pre_req(self):
+        """Returns course pre-requisite(s)."""
+        return self.parse_course_description()[0]
+
+    def course_description_without_pre_req(self):
+        """Returns course description without its pre-requisite(s)."""
+        return self.parse_course_description()[1]
+
+    def parse_course_description(self):
+        """Returns a tuple with pre-requisite(s)
+        and course description without the pre-requisite(s)."""
+        # When no pre-req
+        course_description_without_pre_req = self.description
+        pre_req = ""
+        if "Prerequisite" in self.description:
+            # Get pre_req from beginning to end
+            from_pre_req_to_end = self.description[self.description.find("Prerequisite"):]
+            # Get rid of title of "Prerequisite"
+            pre_req_no_title = from_pre_req_to_end[from_pre_req_to_end.find(":") + 1:]
+
+            # Check if in-line or not for pre_req
+            if pre_req_no_title.find(".") > 0:
+                pre_req = pre_req_no_title[:pre_req_no_title.find(".")]
+            else:
+                pre_req = pre_req_no_title
+
+            # Check whether it is inline or at end for extracting course_description_without_pre_req
+            if from_pre_req_to_end.find(".") > 0:
+                course_description_without_pre_req = self.description.replace(
+                    from_pre_req_to_end[:from_pre_req_to_end.find(".") + 1], "")
+            else:
+                course_description_without_pre_req = self.description.replace(
+                    from_pre_req_to_end, "")
+
+        return (pre_req, course_description_without_pre_req)
+
     def code(self):
         """Returns the courses code string."""
         return f"{self.subdepartment.mnemonic} {self.number}"
@@ -502,6 +538,9 @@ class Section(models.Model):
     units = models.CharField(max_length=10, blank=True)
     # Section section_type. Optional. e.g. 'lec' or 'lab'.
     section_type = models.CharField(max_length=255, blank=True)
+
+    # Comma-separated list of times the section is taught.
+    section_times = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return f"{self.course} | {self.semester} | " \

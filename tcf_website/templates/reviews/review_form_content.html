@@ -95,24 +95,6 @@
           </div>
       </div>
       <div class="mt-3">
-          <label for="difficulty" class="m-0">
-            <i class="fas fa-dumbbell"></i> Difficulty
-          </label>
-          <div class="row">
-              <div class="col-xl-9 col-8 py-2">
-                <input type="range" class="custom-range"
-                       min="1" max="5" step="1" value="{{ form.difficulty.value|default:3 }}"
-                       id="difficulty" name="difficulty" required>
-              </div>
-              <div class="col-xl-3 col-4 pl-lg-2 pl-0 d-inline-flex">
-                <input type="number" class="form-control text-center"
-                       min="1" max="5" value="{{ form.difficulty.value|default:3 }}"
-                       id="difficulty2" name="difficulty2" required>
-                <span class="ml-2 mt-2">/5</span>
-              </div>
-          </div>
-      </div>
-      <div class="mt-3">
           <label for="recommendability" class="m-0">
             <i class="fas fa-heart"></i> Recommend
           </label>
@@ -126,6 +108,24 @@
                 <input type="number" class="form-control text-center"
                        min="1" max="5" value="{{ form.recommendability.value|default:3 }}"
                        id="recommendability2" name="recommendability2" required>
+                <span class="ml-2 mt-2">/5</span>
+              </div>
+          </div>
+      </div>
+      <div class="mt-3">
+          <label for="difficulty" class="m-0">
+            <i class="fas fa-dumbbell"></i> Difficulty
+          </label>
+          <div class="row">
+              <div class="col-xl-9 col-8 py-2">
+                <input type="range" class="custom-range"
+                       min="1" max="5" step="1" value="{{ form.difficulty.value|default:3 }}"
+                       id="difficulty" name="difficulty" required>
+              </div>
+              <div class="col-xl-3 col-4 pl-lg-2 pl-0 d-inline-flex">
+                <input type="number" class="form-control text-center"
+                       min="1" max="5" value="{{ form.difficulty.value|default:3 }}"
+                       id="difficulty2" name="difficulty2" required>
                 <span class="ml-2 mt-2">/5</span>
               </div>
           </div>
