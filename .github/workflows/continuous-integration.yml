@@ -47,8 +47,8 @@ jobs:
           sed -i '/\(tqdm\|coverage\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
           pip install -r requirements.txt
 
-      - name: Run pylint
-        run: pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
+#      - name: Run pylint
+#        run: pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
 
   django:
     runs-on: ubuntu-latest
