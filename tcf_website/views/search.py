@@ -29,48 +29,40 @@ def search(request):
 
 
 def decide_order(query, courses, instructors):
-    """Decides if courses or instructors should be displayed first."""
-    # Returns True if courses should be prioritized, False if instructors should be prioritized
+    """Decides if courses or instructors should be displayed first.
+    Returns True if courses should be prioritized, False if instructors should be prioritized """
 
-    # Calculates z-score of top courses result
-    if len(courses['results']) > 1:
-        course_scores = [x['score'] for x in courses['results']]
+    # Calculate z-score for courses
+    courses_z = compute_zscore([x['score'] for x in courses['results']])
 
-        courses_mean = statistics.mean(course_scores)
-
-        courses_stddev = statistics.stdev(course_scores, courses_mean)
-
-        if courses_stddev == 0:
-            courses_stddev = 1
-        courses_z = courses['results'][0].get('score') - courses_mean
-        courses_z /= courses_stddev
-    elif len(courses['results']) == 1:
-        courses_z = 0
-    else:
-        courses_z = -1
-
-    # Calculates z-score of top instructors result
-    if len(instructors['results']) > 1:
-        instructor_scores = [x['score'] for x in instructors['results']]
-
-        instructors_mean = statistics.mean(instructor_scores)
-
-        instructors_stddev = statistics.stdev(instructor_scores, instructors_mean)
-
-        if instructors_stddev == 0:
-            instructors_stddev = 1
-        instructors_z = instructors['results'][0].get('score') - instructors_mean
-        instructors_z /= instructors_stddev
-    elif len(instructors['results']) == 1:
-        instructors_z = 0
-    else:
-        instructors_z = -1
+    # Calculate z-score for instructors
+    instructors_z = compute_zscore([x['score'] for x in instructors['results']])
 
     # Likely an abbreviation if 4 letters or less
     if len(query) <= 4 and courses_z > 0:
         return True
 
     return courses_z >= instructors_z
+
+def compute_zscore(scores):
+    """Computes and returns the z_score from the list and gets the z-score of the highest z-score."""
+    if len(scores) > 1:
+        mean = statistics.mean(scores)
+
+        stddev = statistics.stdev(scores, mean)
+
+        if stddev == 0:
+            stddev = 1
+        z_score = scores[0] - mean
+        z_score /= stddev
+
+        return z_score
+    # Returns 0 for only one item (can't compute z-score) or -1 if no items
+    elif len(scores) == 1:
+        return 0
+    else:
+        return -1
+
 
 
 def fetch_courses(query):
