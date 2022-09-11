@@ -24,21 +24,12 @@
           <div class="col-12">
             <div class="btn-group btn-group-sm" role="toolbar">
               <a class="btn bg-tcf-indigo text-white" disabled>See results for</a>
-              {% if courses_first %}
-              <a href="#courses" id="course-tab" class="btn btn-light collapsed" autofocus
+              <a href="#courses" id="course-tab" class="btn btn-light collapsed" {% if courses_first %} autofocus {% endif %}
                  role="button" data-toggle="collapse" aria-expanded="true" aria-controls="courses">
                  Courses</a>
-              <a href="#instructors" id="instructor-tab" class="btn btn-light collapsed"
+              <a href="#instructors" id="instructor-tab" class="btn btn-light collapsed" {% if not courses_first %} autofocus {% endif %}
                  role="button" data-toggle="collapse" aria-expanded="false" aria-controls="instructors">
                  Instructors</a>
-              {% else %}
-              <a href="#courses" id="course-tab" class="btn btn-light collapsed"
-                 role="button" data-toggle="collapse" aria-expanded="false" aria-controls="courses">
-                 Courses</a>
-              <a href="#instructors" id="instructor-tab" class="btn btn-light collapsed" autofocus
-                 role="button" data-toggle="collapse" aria-expanded="true" aria-controls="instructors">
-                 Instructors</a>
-              {% endif %}
               <a href="#departments" id="department-tab" class="btn btn-light collapsed"
                 role="button" data-toggle="collapse" aria-expanded="false" aria-controls="departments">
                  Departments</a>
@@ -50,13 +41,9 @@
         <div id="results" class="accordion">
 
           <!-- Course results -->
-          {% if courses_first %}
-          <div id="courses" class="row mb-5 collapse show"
+
+          <div id="courses" class="row mb-5 collapse {% if courses_first %} show {% endif %}"
                aria-labelledby="course-tab" data-parent="#results">
-          {% else %}
-           <div id="courses" class="row mb-5 collapse"
-               aria-labelledby="course-tab" data-parent="#results">
-          {% endif %}
             <div class="col-12">
 
               <div class="search-result-header mb-3">
@@ -119,13 +106,8 @@
           </div>
 
           <!-- Instructor results -->
-          {% if courses_first %}
-          <div id="instructors" class="row mb-5 collapse"
-               aria-labelledby="instructor-tab" data-parent="#results">
-          {% else %}
-          <div id="instructors" class="row mb-5 collapse show"
+          <div id="instructors" class="row mb-5 collapse {% if not courses_first %} show {% endif %}"
              aria-labelledby="instructor-tab" data-parent="#results">
-          {% endif %}
 
             <div class="col-12">
               <div class="search-result-header mb-3">
