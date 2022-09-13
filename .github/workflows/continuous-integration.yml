@@ -10,7 +10,6 @@ on:
     branches: [dev, master]
 env:
   PYTHON_TARGET: 3.9
-  PYTHONPATH: /app # Needed for pylint to work; should be root directory of app
   # Django
   DJANGO_SETTINGS_MODULE: tcf_core.settings.ci
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
@@ -49,7 +48,9 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run pylint
-        run: pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
+        run: |
+          echo "::set-env name=PYTHONPATH::home/runner/work/theCourseForum2"
+          pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
 
   django:
     runs-on: ubuntu-latest
