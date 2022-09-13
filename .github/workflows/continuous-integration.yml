@@ -10,6 +10,7 @@ on:
     branches: [dev, master]
 env:
   PYTHON_TARGET: 3.9
+  PYTHONPATH: /app # Needed for pylint to work; should be root directory of app
   # Django
   DJANGO_SETTINGS_MODULE: tcf_core.settings.ci
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
