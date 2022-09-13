@@ -49,7 +49,7 @@ jobs:
 
       - name: Run pylint
         run: |
-          echo "::set-env name=PYTHONPATH::home/runner/work/theCourseForum2"
+          export PYTHONPATH="$(pwd)"
           pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
 
   django:
