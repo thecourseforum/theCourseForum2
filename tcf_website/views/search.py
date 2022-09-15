@@ -52,7 +52,8 @@ def fetch_elasticsearch(api_endpoint, algorithm):
         response = requests.get(
             url=api_endpoint,
             headers=https_headers,
-            params=algorithm
+            params=algorithm,
+            timeout=5
         )
         if response.status_code != 200:
             response = {
