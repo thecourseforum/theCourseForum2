@@ -15,6 +15,6 @@ def post_message(query):
     content = {'content': query.GET.get("content", "")}
     json_data = json.dumps(content)
     requests.post(
-        url, data=json_data, headers={
+        url, data=json_data, timeout=5, headers={
             "Content-Type": "application/json"})
     return JsonResponse(content)
