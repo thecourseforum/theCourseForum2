@@ -45,7 +45,8 @@ def decide_order(query, courses, instructors):
     return courses_z >= instructors_z
 
 def compute_zscore(scores):
-    """Computes and returns the z_score from the list and gets the z-score of the highest z-score."""
+    """Computes and returns the z_score from the list
+     and gets the z-score of the highest z-score."""
     if len(scores) > 1:
         mean = statistics.mean(scores)
 
@@ -58,7 +59,7 @@ def compute_zscore(scores):
 
         return z_score
     # Returns 0 for only one item (can't compute z-score) or -1 if no items
-    elif len(scores) == 1:
+    if len(scores) == 1:
         return 0
     else:
         return -1
