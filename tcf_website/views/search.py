@@ -61,8 +61,8 @@ def compute_zscore(scores):
     # Returns 0 for only one item (can't compute z-score) or -1 if no items
     if len(scores) == 1:
         return 0
-    else:
-        return -1
+
+    return -1
 
 
 
