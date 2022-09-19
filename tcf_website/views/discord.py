@@ -2,11 +2,8 @@
 import os
 import json
 import requests
-import requests_toolbelt.adapters.appengine
 from django.http import JsonResponse
 
-# Needed for requests to work on GAE
-requests_toolbelt.adapters.appengine.monkeypatch()
 
 def post_message(query):
     """Post message to discord server"""
@@ -18,6 +15,6 @@ def post_message(query):
     content = {'content': query.GET.get("content", "")}
     json_data = json.dumps(content)
     requests.post(
-        url, data=json_data, headers={
+        url, data=json_data, timeout=5, headers={
             "Content-Type": "application/json"})
     return JsonResponse(content)

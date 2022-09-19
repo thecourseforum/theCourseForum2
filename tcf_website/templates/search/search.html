@@ -24,10 +24,10 @@
           <div class="col-12">
             <div class="btn-group btn-group-sm" role="toolbar">
               <a class="btn bg-tcf-indigo text-white" disabled>See results for</a>
-              <a href="#courses" id="course-tab" class="btn btn-light collapsed" autofocus
+              <a href="#courses" id="course-tab" class="btn btn-light collapsed" {% if courses_first %} autofocus {% endif %}
                  role="button" data-toggle="collapse" aria-expanded="true" aria-controls="courses">
                  Courses</a>
-              <a href="#instructors" id="instructor-tab" class="btn btn-light collapsed"
+              <a href="#instructors" id="instructor-tab" class="btn btn-light collapsed" {% if not courses_first %} autofocus {% endif %}
                  role="button" data-toggle="collapse" aria-expanded="false" aria-controls="instructors">
                  Instructors</a>
               <a href="#departments" id="department-tab" class="btn btn-light collapsed"
@@ -41,7 +41,8 @@
         <div id="results" class="accordion">
 
           <!-- Course results -->
-          <div id="courses" class="row mb-5 collapse show"
+
+          <div id="courses" class="row mb-5 collapse {% if courses_first %} show {% endif %}"
                aria-labelledby="course-tab" data-parent="#results">
             <div class="col-12">
 
@@ -59,23 +60,45 @@
                 <div class="row mb-5">
                   <div class="col-12">
                     <h5><a href="{% url 'department' dept_id=dept_data.dept_id %}">{{ dept }} / {{ dept_data.subdept_name }}</a></h5>
-                    <ul class="list-group searched-department-courses">
-                        {% for c in dept_data.courses %}
-                            {% if c != dept_data.courses.0 %}
-                            {% endif %}
-                            <li class="list-group-item list-group-item-light text-dark p-2">
-                              <a href="{% url 'course' mnemonic=c.mnemonic.split.0 course_number=c.number %}">
-                              <div class="row p-0">
-                                <div class="col-md-3">{{ c.mnemonic }}</div>
-                                <div class="col-md-9">{{ c.title }}</div>
-                              </div>
-                              </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                      {% for c in dept_data.courses %}
+                        {% if c != dept_data.courses.0 %}
+                        {% endif %}
+                        <div class="list-group-item list-group-item-light text-dark p-2">
+                          <div class="row">
+                            <div class="col-md-11 align-self-center">
+                                <a href="{% url 'course' mnemonic=c.mnemonic.split.0 course_number=c.number %}">
+                                  <div class="row g-0">
+                                    <div class="col-3">{{c.mnemonic}}</div>
+                                    <div class="col-8">{{c.title}}</div>
+                                  </div>
+                                </a>
+                            </div>
+                            <div class="col-md-1 align-self-center">
+                              <h5 class="hover-tcf-orange" data-toggle="collapse"
+                                data-target="#description_container_{{forloop.parentloop.counter}}_{{forloop.counter}}"
+                                id="result_{{forloop.counter}}">
+                                <i class="fas fa-chevron-down" style="vertical-align: middle;"></i>
+                              </h5>
+                            </div>
+                          </div>
+                          <div class="collapse" id="description_container_{{forloop.parentloop.counter}}_{{forloop.counter}}">
+                            <hr>
+                            <p>
+                              <small class="text-uppercase search-course-description" style="font-size: 15px;">
+                                Course Description:
+                              </small>
+                              {% if c.description|length > 0 %}
+                                {{c.description}}
+                              {%else%}
+                                N/A
+                              {%endif%}
+                            </p>
+                          </div>
+                        </div>
+                      {% endfor %}
                   </div>
                 </div>
-                {% endfor %}
+              {% endfor %}
               {% else %}
               <p>No courses matched your search.</p>
               {% endif %}
@@ -83,8 +106,9 @@
           </div>
 
           <!-- Instructor results -->
-          <div id="instructors" class="row mb-5 collapse"
-               aria-labelledby="instructor-tab" data-parent="#results">
+          <div id="instructors" class="row mb-5 collapse {% if not courses_first %} show {% endif %}"
+             aria-labelledby="instructor-tab" data-parent="#results">
+
             <div class="col-12">
               <div class="search-result-header mb-3">
                 <h3 class="mr-3">Instructors</h3>
