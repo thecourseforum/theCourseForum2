@@ -1,10 +1,10 @@
 {
   "executive_team": [
     {
-      "name": "Alex Shen",
-      "role": "President | Product Lead",
+      "name": "Jack Liu",
+      "role": "President | Product Lead",
       "class": "2023",
-      "img_filename": "ENG_Alex_Shen.webp"
+      "img_filename": "ENG_Jack_Liu.webp"
     },
     {
       "name": "Jules Le Menestrel",
@@ -13,34 +13,40 @@
       "img_filename": "ENG_Jules_LeMenestrel.webp"
     },
     {
-      "name": "Borja Ingle-Fernandez",
-      "role": "VP | Product Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Borja_Ingle-Fernandez.webp"
-    },
-    {
-      "name": "Jack Liu",
-      "role": "VP | Infrastructure Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Jack_Liu.webp"
-    },
-    {
-      "name": "Kimberly Vo",
-      "role": "VP | Marketing & Design",
-      "class": "2022",
-      "img_filename": "MAD_Kimberly_Vo.webp"
-    },
-    {
-      "name": "Vi Nguyen",
-      "role": "Secretary | Operations Lead",
-      "class": "2023",
-      "img_filename": "ENG_Vi_Nguyen.webp"
-    },
-    {
       "name": "Khushi Chawla",
-      "role": "Treasurer | Business Lead",
+      "role": "VP | Product Engineering",
       "class": "2024",
       "img_filename": "ENG_Khushi_Chawla.webp"
+    },
+    {
+      "name": "Alex Shen",
+      "role": "VP | Infrastructure Engineering",
+      "class": "2023",
+      "img_filename": "ENG_Alex_Shen.webp"
+    },
+    {
+      "name": "Ann Li",
+      "role": "VP | Infrastructure Engineering",
+      "class": "2024",
+      "img_filename": "ENG_Ann_Li.jpg"
+    },
+    {
+      "name": "Rachita Pathipati",
+      "role": "VP | Marketing & Design",
+      "class": "2025",
+      "img_filename": "MAD_Rachita_Pathipati.webp"
+    },
+    {
+      "name": "AJ Nye",
+      "role": "Secretary | Operations Lead",
+      "class": "2025",
+      "img_filename": "ENG_AJ_Nye.jpg"
+    },
+    {
+      "name": "Oliver Song",
+      "role": "Treasurer | Business Lead",
+      "class": "2024",
+      "img_filename": "ENG_Oliver_Song.jpg"
     }
   ],
   "chairs": [
@@ -66,11 +72,11 @@
   ],
   "engineering_team": [
     {
-      "name": "Alex Shen",
+      "name": "Jack Liu",
       "role": "President",
       "class": "2023",
-      "img_filename": "ENG_Alex_Shen.jpg",
-      "github": "alex-shen1"
+      "img_filename": "ENG_Jack_Liu.jpg",
+      "github": "jackliu612"
     },
     {
       "name": "Jules Le Menestrel",
@@ -87,11 +93,11 @@
       "github": "borjainglefernandez"
     },
     {
-      "name": "Jack Liu",
+      "name": "Alex Shen",
       "role": "VP of Infrastructure Engineering",
       "class": "2023",
-      "img_filename": "ENG_Jack_Liu.jpg",
-      "github": "jackliu612"
+      "img_filename": "ENG_Alex_Shen.jpg",
+      "github": "alex-shen1"
     },
     {
       "name": "Vi Nguyen",

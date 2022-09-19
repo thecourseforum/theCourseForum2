@@ -1,7 +1,9 @@
 """Auth related views."""
 
+import json
 from datetime import datetime
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
@@ -69,3 +71,13 @@ def logout(request):
     auth_logout(request)
     messages.add_message(request, messages.SUCCESS, "Logged out successfully!")
     return redirect('browse')
+
+
+def load_microsoft_verification(request):
+    """Loads Microsoft verification document in order to be an authorized
+    provider for Microsoft authentication """
+    with open('tcf_website/microsoft-identity-association.json', encoding='UTF-8') as data_file:
+        json_content = json.load(data_file)
+    return JsonResponse(
+        json_content
+    )
