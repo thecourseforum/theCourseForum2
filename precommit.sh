@@ -1,4 +1,5 @@
 #!/bin/sh
+# NOTE: manually running this precommit script is not recommended. See the setup instructions for how to automatically run it as a Git hook.
 
 # List of files staged for commit
 changing_files=`git diff --cached --name-status | awk '$1 != "D" { print $2 }'`
