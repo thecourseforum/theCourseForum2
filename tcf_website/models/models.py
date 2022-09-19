@@ -654,6 +654,9 @@ class Review(models.Model):
     # Review modified date. Required.
     modified = models.DateTimeField(auto_now=True)
 
+    # Review visibility. Required. Default visible.
+    hidden = models.BooleanField(default=False)
+
     # does this get used anywhere? not sure
     def average(self):
         """Average score for review."""
@@ -725,6 +728,7 @@ class Review(models.Model):
         reviews = Review.objects.filter(
             instructor=instructor_id,
             course=course_id,
+            hidden=False
         ).exclude(text="").annotate(
             sum_votes=models.functions.Coalesce(
                 models.Sum('vote__value'),
