@@ -25,12 +25,12 @@ function toggleBarChart() {
 $(".pieToBar").click(function() {
     if (document.getElementById("toggle-btn").value === "bar") {
         toggleBarChart();
-        document.getElementById("toggleinformation").className = "bottom-center";
+        document.getElementById("chart-label").className = "bottom-center";
         document.getElementById("toggle-btn").innerHTML = "Pie";
         document.getElementById("toggle-btn").value = "pie";
     } else {
         togglePieChart();
-        document.getElementById("toggleinformation").className = "absolute-center";
+        document.getElementById("chart-label").className = "absolute-center";
         document.getElementById("toggle-btn").innerHTML = "Bar";
         document.getElementById("toggle-btn").value = "bar";
     }
@@ -60,7 +60,7 @@ const loadData = data => {
     if (exist(data.average_gpa)) { $(".gpa-text").html(data.average_gpa === 0.0 ? "Pass/Fail" : `${data.average_gpa} GPA`); }
     if (exist(data.total_enrolled)) { $(".students-text").html(`${data.total_enrolled} Students`); } else {
         $(".students-text").remove();
-        $(".lower-button").remove();
+        $(".chart-button").remove();
     }
 
     // Summary numbers
@@ -90,15 +90,6 @@ const loadData = data => {
 };
 
 const createChart = gradesData => {
-    // 1. Justification for no-new: (Do not use 'new' for side effects)
-    // Without disabling the warning, eslint complains about using `new` to produce side-effects.
-    // (Which is how chart.js works. We can't change that.)
-    // You can silence it by assigning the expression to a variable. But then, eslint complains that we have an unused variable.
-    // We're not going to be able to avoid this, so I've disabled the error.
-    // 2. Justification for no-undef: ('Chart' is not defined)
-    // We could avoid this in the future by using WebPack or plain old ES6 modules.
-    // But right now, the chart.js source is referenced in the templates themselves through a CDN,
-    // so eslint will always complain. We'll just silence it.
     const chartData = {
         datasets: [{
             data: gradesData,
@@ -255,7 +246,15 @@ const createChart = gradesData => {
             }
         }
     };
-
+    // 1. Justification for no-new: (Do not use 'new' for side effects)
+    // Without disabling the warning, eslint complains about using `new` to produce side-effects.
+    // (Which is how chart.js works. We can't change that.)
+    // You can silence it by assigning the expression to a variable. But then, eslint complains that we have an unused variable.
+    // We're not going to be able to avoid this, so I've disabled the error.
+    // 2. Justification for no-undef: ('Chart' is not defined)
+    // We could avoid this in the future by using WebPack or plain old ES6 modules.
+    // But right now, the chart.js source is referenced in the templates themselves through a CDN,
+    // so eslint will always complain. We'll just silence it.
     // eslint-disable-next-line no-new,no-undef
     myChart = new Chart(ctx, pieConfig);
 };
