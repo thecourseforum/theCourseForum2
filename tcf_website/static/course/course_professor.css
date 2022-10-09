@@ -39,6 +39,7 @@
 }
 
 .grades-container {
+    position: relative;
     width: 45%;
     height: 100%;
     flex-shrink: 1;
@@ -50,13 +51,16 @@
 }
 
 .chart-container {
-    height: 95%;
-    width: 290px;
+    width: 90%;
+    height: 90%;
     position: relative;
 }
 
-#myChart {
-    z-index: 1;
+.chart-button{
+   position: absolute;
+   bottom: 10px;
+   right: 10px;
+   display: flex;
 }
 
 .ratings-container {
@@ -90,6 +94,7 @@
 .rating-card-desc {
     font-size: 18px;
 }
+
 .info-container {
     display: flex;
     flex-direction: column;
@@ -107,6 +112,15 @@
 .absolute-center {
     position: absolute;
     top: auto; left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.bottom-center {
+    position: absolute;
+    bottom: 10px; left: auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -163,6 +177,10 @@
 }
 
 @media (max-width: 1100px) {
+    .chart-container { 
+        max-width: 600px; 
+    }
+
     .grades-ratings-container {
       flex-direction: column;
       height: 650px;
