@@ -67,9 +67,11 @@
                     <h5 class="card-text">{{ member.name }}</h5>
                     <p class="card-text small text-muted">Class of {{ member.class }}</p>
                   </span>
-                  <a class="text-muted" href="https://github.com/{{ member.github }}">
+                  {% if member.github %}
+                  <a class="text-muted" href="https://github.com/{{ member.github }}" target="_blank">
                     <h4><i class="fa fa-github"></i></h4>
                   </a>
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -89,9 +91,16 @@
                 <div class="pfp">
                   <img class="card-img-top" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
                 </div>
-                <div class="card-body">
-                  <h5 class="card-text">{{ member.name }}</h5>
-                  <p class="card-text small text-muted">Class of {{ member.class }}</p>
+                <div class="card-body d-flex justify-content-between">
+                  <span>
+                    <h5 class="card-text">{{ member.name }}</h5>
+                    <p class="card-text small text-muted">Class of {{ member.class }}</p>
+                  </span>
+                  {% if member.linkedin %}
+                  <a class="text-muted" href="https://linkedin.com/in/{{ member.linkedin }}" target="_blank">
+                    <h4><i class="fa fa-linkedin"></i></h4>
+                  </a>
+                  {% endif %}
                 </div>
               </div>
             </div>
