@@ -182,6 +182,13 @@
       "class": "2024",
       "img_filename": "ENG_Dylan_Herbig.jpg",
       "github": "dylanherbig"
+    },
+    {
+      "name": "Caesar Ning",
+      "role": "Developer",
+      "class": "2024",
+      "img_filename": "ENG_Caesar_Ning.jpg",
+      "github": "Caesarsyning"
     }
   ],
   "marketing_team": [
@@ -209,5 +216,6 @@
       "class": "2023",
       "img_filename": "DM_Lilleth_Snavely.jpg"
     }
+
   ]
 }
