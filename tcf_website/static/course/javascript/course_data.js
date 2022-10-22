@@ -1,3 +1,41 @@
+var barConfig;
+var pieConfig;
+var myChart;
+var totalSum;
+var ctx = document.getElementById("myChart");
+
+function togglePieChart() {
+    if (myChart) {
+        myChart.destroy();
+    }
+    document.getElementById("canvas-parent").style.width = "290px";
+    // eslint-disable-next-line no-new,no-undef
+    myChart = new Chart(ctx, pieConfig);
+};
+
+function toggleBarChart() {
+    if (myChart) {
+        myChart.destroy();
+    }
+    document.getElementById("canvas-parent").style.width = "95%";
+    // eslint-disable-next-line no-new,no-undef
+    myChart = new Chart(ctx, barConfig);
+};
+
+$(".pieToBar").click(function() {
+    if (document.getElementById("toggle-btn").value === "bar") {
+        toggleBarChart();
+        document.getElementById("chart-label").className = "bottom-center";
+        document.getElementById("toggle-btn").innerHTML = "Pie";
+        document.getElementById("toggle-btn").value = "pie";
+    } else {
+        togglePieChart();
+        document.getElementById("chart-label").className = "absolute-center";
+        document.getElementById("toggle-btn").innerHTML = "Bar";
+        document.getElementById("toggle-btn").value = "bar";
+    }
+});
+
 const loadData = data => {
     // order in the input data
     /* eslint-disable camelcase */
@@ -5,8 +43,12 @@ const loadData = data => {
     // order we want for the pie chart
     const other = ot;
     const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop, other];
-    /* eslint-enable camelcase */
 
+    // Calculate total number of students
+    totalSum = grades_data.reduce((total, num) => total + num, 0);
+
+    // Create default pie chart
+    /* eslint-enable camelcase */
     createChart(grades_data);
 
     const formatWorkload = x => `${100 * x / data.average_hours_per_week}%`;
@@ -14,9 +56,12 @@ const loadData = data => {
     // so that the rating of 1 does look like a low one
     const formatRating = x => `${100 * (x - 0.8) / (5 - 0.8)}%`;
 
-    // Pie chart
+    // Change display if there is no data
     if (exist(data.average_gpa)) { $(".gpa-text").html(data.average_gpa === 0.0 ? "Pass/Fail" : `${data.average_gpa} GPA`); }
-    if (exist(data.total_enrolled)) { $(".students-text").html(`${data.total_enrolled} Students`); } else { $(".students-text").remove(); }
+    if (exist(data.total_enrolled)) { $(".students-text").html(`${data.total_enrolled} Students`); } else {
+        $(".students-text").remove();
+        $(".chart-button").remove();
+    }
 
     // Summary numbers
     if (exist(data.average_rating)) { $(".rating-num").html(data.average_rating); }
@@ -73,18 +118,80 @@ const createChart = gradesData => {
             "F", "Withdraw", "Drop", "Pass"
         ]
     };
-    var ctx = document.getElementById("myChart");
-    // 1. Justification for no-new: (Do not use 'new' for side effects)
-    // Without disabling the warning, eslint complains about using `new` to produce side-effects.
-    // (Which is how chart.js works. We can't change that.)
-    // You can silence it by assigning the expression to a variable. But then, eslint complains that we have an unused variable.
-    // We're not going to be able to avoid this, so I've disabled the error.
-    // 2. Justification for no-undef: ('Chart' is not defined)
-    // We could avoid this in the future by using WebPack or plain old ES6 modules.
-    // But right now, the chart.js source is referenced in the templates themselves through a CDN,
-    // so eslint will always complain. We'll just silence it.
-    // eslint-disable-next-line no-new,no-undef
-    new Chart(ctx, {
+
+    // Generate configuration for Bar Chart with chartData
+    barConfig = {
+        type: "bar",
+        data: chartData,
+        options: {
+            layout: {
+                padding: {
+                    top: 20
+                }
+            },
+            responsive: true,
+            legend: {
+                display: false
+            },
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        autoSkip: false
+                    },
+                    gridLines: {
+                        drawOnChartArea: false
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Number of Students"
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    },
+                    gridLines: {
+                        drawOnChartArea: true
+                    }
+                }]
+            },
+            plugins: {
+                labels: {
+                    // render 'label', 'value', 'percentage', 'image' or custom function, default is 'percentage'
+                    render: "value",
+
+                    // font size, default is defaultFontSize
+                    fontSize: 10,
+
+                    // font color, can be color array for each data or function for dynamic color, default is defaultFontColor
+                    // fontColor: "#fff",
+
+                    // font style, default is defaultFontStyle
+                    fontStyle: "normal",
+
+                    // draw label in arc, default is false
+                    // bar chart ignores this
+                    arc: false,
+
+                    // position to draw label, available value is 'default', 'border' and 'outside'
+                    // bar chart ignores this
+                    // default is 'default'
+                    position: "default",
+
+                    // draw label even it's overlap, default is true
+                    // bar chart ignores this
+                    overlap: false,
+
+                    // add margin of text when position is `outside` or `border`
+                    // default is 2
+                    textMargin: 4
+                }
+            }
+        }
+    };
+
+    // Generate configuration for Pie Chart
+    pieConfig = {
         type: "pie",
         data: chartData,
         options: {
@@ -95,7 +202,8 @@ const createChart = gradesData => {
                 callbacks: {
                     label: function(tooltipItem, data) {
                         var dataset = data.datasets[0];
-                        var percent = Math.round((dataset.data[tooltipItem.index] / dataset._meta[0].total) * 100);
+                        var sum = totalSum;
+                        var percent = Math.round((dataset.data[tooltipItem.index] / sum) * 100);
                         return data.labels[tooltipItem.index] + ": " + percent + "%";
                     }
                 },
@@ -137,7 +245,18 @@ const createChart = gradesData => {
                 }
             }
         }
-    });
+    };
+    // 1. Justification for no-new: (Do not use 'new' for side effects)
+    // Without disabling the warning, eslint complains about using `new` to produce side-effects.
+    // (Which is how chart.js works. We can't change that.)
+    // You can silence it by assigning the expression to a variable. But then, eslint complains that we have an unused variable.
+    // We're not going to be able to avoid this, so I've disabled the error.
+    // 2. Justification for no-undef: ('Chart' is not defined)
+    // We could avoid this in the future by using WebPack or plain old ES6 modules.
+    // But right now, the chart.js source is referenced in the templates themselves through a CDN,
+    // so eslint will always complain. We'll just silence it.
+    // eslint-disable-next-line no-new,no-undef
+    myChart = new Chart(ctx, pieConfig);
 };
 
 const exist = data => {
