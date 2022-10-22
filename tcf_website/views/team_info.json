@@ -105,6 +105,20 @@
       "class": "2026",
       "img_filename": "ENG_Raffi_Khondaker.jpeg",
       "github": "therealraffi"
+    },
+    {
+      "name": "Barrett Ruth",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Barrett_Ruth.jpg",
+      "github": "barrett-ruth"
+    },
+    {
+      "name": "Tommy Lam",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Tommy_Lam.jpg",
+      "github": "t0mmylam"
     }
   ],
   "marketing_team": [
