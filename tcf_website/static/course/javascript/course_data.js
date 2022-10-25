@@ -118,7 +118,7 @@ const createChart = gradesData => {
         options: {
             layout: {
                 padding: {
-                    top: 20
+                    bottom: 20
                 }
             },
             responsive: true,
