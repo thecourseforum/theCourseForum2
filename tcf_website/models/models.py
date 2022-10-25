@@ -483,7 +483,7 @@ class CourseGrade(models.Model):
     c_plus = models.IntegerField(default=0)
     c = models.IntegerField(default=0)
     c_minus = models.IntegerField(default=0)
-    no_credit = models.IntegerField(default=0)
+    dfw = models.IntegerField(default=0)
     total_enrolled = models.IntegerField(default=0)
 
     def __str__(self):
@@ -504,7 +504,7 @@ class CourseInstructorGrade(models.Model):
     c_plus = models.IntegerField(default=0)
     c = models.IntegerField(default=0)
     c_minus = models.IntegerField(default=0)
-    no_credit = models.IntegerField(default=0)
+    dfw = models.IntegerField(default=0)
     total_enrolled = models.IntegerField(default=0)
 
     def __str__(self):
