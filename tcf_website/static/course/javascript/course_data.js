@@ -39,9 +39,12 @@ $(".pieToBar").click(function() {
 const loadData = data => {
     // order in the input data
     /* eslint-disable camelcase */
-    const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, no_credit } = data;
+    const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, dfw } = data;
     // order we want for the pie chart
-    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, no_credit];
+    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, dfw];
+
+    // Calculate total number of students
+    totalSum = grades_data.reduce((total, num) => total + num, 0);
 
     // Create default pie chart
     /* eslint-enable camelcase */
@@ -99,12 +102,12 @@ const createChart = gradesData => {
                 "#DAA38E", // C+
                 "#DD734C", // C
                 "#D75626", // C-
-                "#BE4B20" // No Credit
+                "#BE4B20" // DFW
             ]
         }],
         labels: [
             "A+", "A", "A-", "B+", "B", "B-",
-            "C+", "C", "C-", "NC"
+            "C+", "C", "C-", "DFW"
         ]
     };
 
@@ -191,10 +194,10 @@ const createChart = gradesData => {
                 callbacks: {
                     label: function(tooltipItem, data) {
                         var dataset = data.datasets[0];
-                        var percent = Math.round((dataset.data[tooltipItem.index] / dataset._meta[0].total) * 100);
+                        var percent = Math.round((dataset.data[tooltipItem.index] / totalSum) * 100);
                         var label = data.labels[tooltipItem.index];
                         if (tooltipItem.index === 9) {
-                            label = "No Credit";
+                            label = "Drop/Fail/Withdraw";
                         }
                         return label + ": " + percent + "%";
                     }

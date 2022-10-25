@@ -72,7 +72,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                     c_plus=Sum('coursegrade__c_plus', distinct=True),
                     c=Sum('coursegrade__c', distinct=True),
                     c_minus=Sum('coursegrade__c_minus', distinct=True),
-                    no_credit=Sum('coursegrade__no_credit', distinct=True),
+                    dfw=Sum('coursegrade__dfw', distinct=True),
                     total_enrolled=Sum('coursegrade__total_enrolled',
                                        distinct=True),
                 )

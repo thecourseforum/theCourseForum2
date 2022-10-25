@@ -85,7 +85,7 @@ class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
     c_plus = serializers.IntegerField(allow_null=True)
     c = serializers.IntegerField(allow_null=True)
     c_minus = serializers.IntegerField(allow_null=True)
-    no_credit = serializers.IntegerField(allow_null=True)
+    dfw = serializers.IntegerField(allow_null=True)
     total_enrolled = serializers.IntegerField(allow_null=True)
 
     class Meta:
@@ -102,7 +102,7 @@ class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
                   # grades
                   'a_plus', 'a', 'a_minus', 'b_plus', 'b', 'b_minus',
                   'c_plus', 'c', 'c_minus',
-                  'no_credit', 'total_enrolled', 'average_gpa']
+                  'dfw', 'total_enrolled', 'average_gpa']
 
 
 class InstructorSerializer(serializers.ModelSerializer):
