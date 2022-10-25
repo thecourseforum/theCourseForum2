@@ -175,7 +175,7 @@ def course_instructor(request, course_id, instructor_id):
     # Find the total number of reviews (with or without text) for the given course
     num_reviews = Review.objects.filter(instructor=instructor_id, course=course_id).count()
 
-    # Filter out reviews with no text.
+    # Filter out reviews with no text and hidden field true.
     reviews = Review.display_reviews(course_id, instructor_id, request.user)
     dept = course.subdepartment.department
 
