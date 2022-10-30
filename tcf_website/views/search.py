@@ -52,7 +52,8 @@ def fetch_elasticsearch(api_endpoint, algorithm):
         response = requests.get(
             url=api_endpoint,
             headers=https_headers,
-            params=algorithm
+            params=algorithm,
+            timeout=5
         )
         if response.status_code != 200:
             response = {
@@ -141,7 +142,8 @@ def format_courses(results):
             "id": result.get("_meta").get("id"),
             "title": result.get("title").get("raw"),
             "number": result.get("number").get("raw"),
-            "mnemonic": result.get("mnemonic").get("raw")
+            "mnemonic": result.get("mnemonic").get("raw"),
+            "description": result.get("description").get("raw")
         }
         formatted.append(course)
     return formatted

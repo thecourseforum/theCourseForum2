@@ -55,4 +55,9 @@ urlpatterns = [
 
     # MARKDOWN URL
     re_path(r'^markdownx/', include('markdownx.urls')),
+
+    path(
+        '.well-known/microsoft-identity-association.json',
+        views.auth.load_microsoft_verification,
+        name="load_microsoft_verification")
 ]
