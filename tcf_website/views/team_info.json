@@ -147,6 +147,13 @@
       "class": "2026",
       "img_filename": "ENG_Hari_Gajjala.JPG",
       "github": "hari-gajjala"
+    },
+    {
+    "name": "Caesar Ning",
+    "role": "Developer",
+    "class": "2024",
+    "img_filename": "ENG_Caesar_Ning.jpg",
+    "github": "Caesarsyning"
     }
   ],
   "marketing_team": [
@@ -156,5 +163,6 @@
       "class": "2025",
       "img_filename": "MAD_Rachita_Pathipati.webp"
     }
+
   ]
 }
