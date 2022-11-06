@@ -35,7 +35,7 @@ function generateCourseCardHTML(course) {
                 <div class="col-md-8">
                     <div class="card-body">
                         <div class="row justify-content-between text-center text-md-left">
-                            <div class="col-3 col-lg-2 text-nowrap">
+                            <div class="col-4 col-lg-2 text-nowrap">
                                 <small class="mb-0 text-uppercase">
                                     <i class="fa fa-star fa-fw" aria-hidden="true"></i>&nbsp;Rating
                                 </small>
@@ -43,7 +43,7 @@ function generateCourseCardHTML(course) {
                                     ${rating}
                                 </p>
                             </div> 
-                            <div class="col-3 col-lg-2 text-nowrap">
+                            <div class="col-4 col-lg-2 text-nowrap">
                                 <small class="mb-0 text-uppercase">
                                     <i class="fa fa-dumbbell fa-fw" aria-hidden="true"></i>&nbsp;Difficulty
                                 </small>
@@ -51,7 +51,7 @@ function generateCourseCardHTML(course) {
                                     ${difficulty}
                                 </p>
                             </div>
-                            <div class="col-3 col-lg-2 text-nowrap">
+                            <div class="col-4 col-lg-2 text-nowrap">
                                 <small class="mb-0 text-uppercase">
                                     <i class="fas fa-chart-bar" aria-hidden="true"></i>&nbsp;GPA
                                 </small>
