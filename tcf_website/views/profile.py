@@ -5,6 +5,7 @@ from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.db.models import Avg, Count, Q
 from django import forms
@@ -12,6 +13,7 @@ from django.forms import ModelForm
 from django.http import HttpResponseRedirect
 from .browse import safe_round
 from ..models import Review, User
+from django.urls import reverse_lazy
 
 
 class ProfileForm(ModelForm):
@@ -76,11 +78,20 @@ def reviews(request):
     return render(request, 'reviews/user_reviews.html', context=stats)
 
 class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
+    model = User
+    success_url = reverse_lazy('browse')
+
     def get_object(self):  # pylint: disable=arguments-differ
-        """Override DeleteView's function to validate review belonging to user."""
+        """Override DeleteView's function to validate profile belonging to user."""
         obj = super().get_object()
         # For security: Make sure target review belongs to the current user
-        if obj.user != self.request.user:
+        if obj != self.request.user:
             raise PermissionDenied(
-                "You are not allowed to delete this review!")
+                "You are not allowed to delete this account!")
         return obj
+
+    def get_success_message(self, cleaned_data) -> str:
+        """Overrides SuccessMessageMixin's get_success_message method."""
+
+        # return success message
+        return f"Successfully deleted your account!"
