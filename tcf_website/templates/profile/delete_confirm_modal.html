@@ -1,9 +1,9 @@
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteProfileModal{{profile}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteProfileModal{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Delete Account</h5>
+          <h5 class="modal-title">Delete Profile</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -13,9 +13,9 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-          <form method="POST" action="{% url 'delete_profile' profile %}">
+          <form method="POST" action="{% url 'delete_profile' user.id %}">
              {% csrf_token %}
-             <button type="submit" value="DELETE" class="btn btn-danger">Yes</button>
+             <button name="delete" type="submit" value="DELETE" class="btn btn-danger">Yes</button>
           </form>
         </div>
       </div>
