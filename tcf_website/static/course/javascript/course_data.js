@@ -197,7 +197,7 @@ const createChart = gradesData => {
                         var percent = Math.round((dataset.data[tooltipItem.index] / totalSum) * 100);
                         var label = data.labels[tooltipItem.index];
                         if (tooltipItem.index === 9) {
-                            label = "Drop/Fail/Withdraw";
+                            label = "D/F/Withdraw";
                         }
                         return label + ": " + percent + "%";
                     }
