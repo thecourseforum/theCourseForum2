@@ -73,6 +73,7 @@ def logout(request):
     return redirect('browse')
 
 
+# pylint: disable=unused-argument
 def load_microsoft_verification(request):
     """Loads Microsoft verification document in order to be an authorized
     provider for Microsoft authentication """

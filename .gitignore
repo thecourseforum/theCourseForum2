@@ -1,29 +1,35 @@
 # Python
 __pycache__/*
 *.pyc
+venv/
+
 # MacOS
 .DS_STORE
-# SQLite
+
+# DB files
 *.sqlite3
-# Database dump or SQL scripts
 *.db
 *.sql
 !db/*.sql
+db/*.csv
+db/*.sql
+
 # Environment variables
 .env*
 !.config/.env.example
+
 # Static files collected by Django
 /static/
+
 # npm packages
 node_modules/
-# CSV files exported from PostgreSQL
-db/*.csv
-# Data dumps
-db/*.sql
+
 # IDEs
 .idea/
 .vscode/
+
 # Code coverage
 .coverage
+
 # ESLint cache
 .eslintcache

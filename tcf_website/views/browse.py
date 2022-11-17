@@ -75,6 +75,7 @@ def department(request, dept_id):
                   })
 
 
+# pylint: disable=unused-argument
 def course_view_legacy(request, course_id):
     """Legacy view for course page."""
     course = get_object_or_404(Course, pk=course_id)
@@ -92,8 +93,8 @@ def course_view(request, mnemonic, course_number):
     course = get_object_or_404(
         Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number)
     latest_semester = Semester.latest()
-    instructors = Instructor.objects\
-        .filter(section__course=course).distinct()\
+    instructors = Instructor.objects \
+        .filter(section__course=course).distinct() \
         .annotate(
             gpa=Avg('courseinstructorgrade__average',
                     filter=Q(courseinstructorgrade__course=course)),
@@ -163,9 +164,9 @@ def course_view(request, mnemonic, course_number):
 
 def course_instructor(request, course_id, instructor_id):
     """View for course instructor page."""
-    section_last_taught = Section.objects\
-        .filter(course=course_id, instructors=instructor_id)\
-        .order_by('semester')\
+    section_last_taught = Section.objects \
+        .filter(course=course_id, instructors=instructor_id) \
+        .order_by('semester') \
         .last()
     if section_last_taught is None:
         raise Http404
@@ -189,8 +190,8 @@ def course_instructor(request, course_id, instructor_id):
         (instructor.full_name, None, True)
     ]
 
-    data = Review.objects\
-        .filter(course=course_id, instructor=instructor_id)\
+    data = Review.objects \
+        .filter(course=course_id, instructor=instructor_id) \
         .aggregate(
             # rating stats
             average_rating=(
@@ -269,52 +270,52 @@ def instructor_view(request, instructor_id):
     """View for instructor page, showing all their courses taught."""
     instructor: Instructor = get_object_or_404(Instructor, pk=instructor_id)
 
-    stats: Dict[str, float] = Instructor.objects\
-        .filter(pk=instructor_id)\
-        .prefetch_related('review_set')\
+    stats: Dict[str, float] = Instructor.objects \
+        .filter(pk=instructor_id) \
+        .prefetch_related('review_set') \
         .aggregate(
-            avg_gpa=Avg('courseinstructorgrade__average'),
-            avg_difficulty=Avg('review__difficulty'),
-            avg_rating=(
-                Avg('review__instructor_rating') +
-                Avg('review__enjoyability') +
-                Avg('review__recommendability')
-            ) / 3)
+        avg_gpa=Avg('courseinstructorgrade__average'),
+        avg_difficulty=Avg('review__difficulty'),
+        avg_rating=(
+            Avg('review__instructor_rating') +
+            Avg('review__enjoyability') +
+            Avg('review__recommendability')
+        ) / 3)
 
     course_fields: List[str] = ['name', 'id', 'avg_rating', 'avg_difficulty',
                                 'avg_gpa', 'last_taught']
-    courses: List[Dict[str, Any]] = Course.objects\
-        .filter(section__instructors=instructor, number__gte=1000)\
-        .prefetch_related('review_set')\
+    courses: List[Dict[str, Any]] = Course.objects \
+        .filter(section__instructors=instructor, number__gte=1000) \
+        .prefetch_related('review_set') \
         .annotate(
-            subdepartment_name=F('subdepartment__name'),
-            name=Concat(
-                F('subdepartment__mnemonic'),
-                Value(' '),
-                F('number'),
-                Value(' | '),
-                F('title'),
-                output_field=CharField(),
-            ),
-            avg_gpa=Avg('courseinstructorgrade__average',
-                        filter=Q(courseinstructorgrade__instructor=instructor)),
-            avg_difficulty=Avg('review__difficulty',
-                               filter=Q(review__instructor=instructor)),
-            avg_rating=(
-                Avg('review__instructor_rating',
-                    filter=Q(review__instructor=instructor)) +
-                Avg('review__enjoyability',
-                    filter=Q(review__instructor=instructor)) +
-                Avg('review__recommendability',
-                    filter=Q(review__instructor=instructor))
-            ) / 3,
-            last_taught=Concat(
-                F('semester_last_taught__season'),
-                Value(' '),
-                F('semester_last_taught__year'),
-                output_field=CharField(),
-            ),
-    ).values('subdepartment_name', *course_fields)\
+        subdepartment_name=F('subdepartment__name'),
+        name=Concat(
+            F('subdepartment__mnemonic'),
+            Value(' '),
+            F('number'),
+            Value(' | '),
+            F('title'),
+            output_field=CharField(),
+        ),
+        avg_gpa=Avg('courseinstructorgrade__average',
+                    filter=Q(courseinstructorgrade__instructor=instructor)),
+        avg_difficulty=Avg('review__difficulty',
+                           filter=Q(review__instructor=instructor)),
+        avg_rating=(
+            Avg('review__instructor_rating',
+                filter=Q(review__instructor=instructor)) +
+            Avg('review__enjoyability',
+                filter=Q(review__instructor=instructor)) +
+            Avg('review__recommendability',
+                filter=Q(review__instructor=instructor))
+        ) / 3,
+        last_taught=Concat(
+            F('semester_last_taught__season'),
+            Value(' '),
+            F('semester_last_taught__year'),
+            output_field=CharField(),
+        ),
+    ).values('subdepartment_name', *course_fields) \
         .order_by('subdepartment_name', 'name')
 
     grouped_courses: Dict[str, List[Dict[str, Any]]] = {}

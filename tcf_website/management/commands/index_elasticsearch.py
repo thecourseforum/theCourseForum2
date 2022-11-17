@@ -37,6 +37,7 @@ class Command(BaseCommand):
     """
 
     help = 'Indexes the Elastic AppSearch instance w/ Course and Instructor data.'
+    # pylint: disable=too-many-locals
 
     def handle(self, *args, **options):
 
@@ -59,7 +60,6 @@ class Command(BaseCommand):
         end = start
 
         for course in all_courses:
-
             end += 1
 
             # ignore courses not taught in the last 5 years
@@ -152,7 +152,8 @@ class Command(BaseCommand):
             response = requests.post(
                 url=api_endpoint,
                 data=json_documents,
-                headers=https_headers
+                headers=https_headers,
+                timeout=60  # Need a timeout to satisfy Pylint, dunno how long it should be
             )
             if response.status_code != 200:
                 raise CommandError("status_code = " +
@@ -161,4 +162,4 @@ class Command(BaseCommand):
                                    str(response.text))
 
         except Exception as error:
-            raise CommandError("Error: " + str(error))
+            raise CommandError("Error: " + str(error)) from error

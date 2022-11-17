@@ -1,9 +1,8 @@
 """View for ads.txt."""
-
-
 from django.http import HttpResponse
 
 
+# pylint: disable=unused-argument
 def ads(request):
     """
     Serves the following line when thecourseforum.com/ads.txt is accessed,

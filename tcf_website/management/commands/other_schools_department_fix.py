@@ -1,17 +1,23 @@
+"""
+Management command that promotes "Other Schools at the University of Virginia" subdepartments
+to full departments; used to resolve a quirk of how Lou's List stored data
+"""
 from django.core.management.base import BaseCommand, CommandError
-from tcf_website.models import *
+from tcf_website.models import School, Department
 
 
 class Command(BaseCommand):
+    """
+    Run this command using:
+    `sudo docker exec -it tcf_django python3 manage.py other_schools_department_fix`
+    Optional flag --verbose can be set to show output of the script
+    Must be run in a separate terminal after already running docker-compose up
+    May have to restart the docker container for database changes to be visible on the site
+    Visually check that CS department has been moved to E School and that
+    other schools have been split up.
+    """
 
-    # Run this coomand using `sudo docker exec -it tcf_django python3 manage.py other_schools_department_fix`
-    # Optional flag --verbose can be set to show output of the script
-    # Must be run in a separate terminal after already running docker-compose up
-    # May have to restart the docker container for database changes to be visible on the site
-    # Visually check that CS department has been moved to E School and that
-    # other schools have been split up.
-
-    help = 'Promotes subdepartments in \'Other Schools at the University of Virginia\' to departments'
+    help = 'Promotes \'Other Schools at the University of Virginia\' subdepartments to departments'
 
     def add_arguments(self, parser):
         # Named (optional) arguments
