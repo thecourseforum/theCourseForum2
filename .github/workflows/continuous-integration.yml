@@ -25,10 +25,7 @@ env:
   SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
   # elasticsearch
   ES_PUBLIC_API_KEY: ${{ secrets.ES_PUBLIC_API_KEY }}
-  ES_COURSE_SEARCH_ENDPOINT: ${{ secrets.ES_COURSE_SEARCH_ENDPOINT }}
-  ES_INSTRUCTOR_SEARCH_ENDPOINT: ${{ secrets.ES_INSTRUCTOR_SEARCH_ENDPOINT }}
-  ES_COURSE_DOCUMENTS_ENDPOINT: ""  # no write access to elasticsearch in CI
-  ES_INSTRUCTOR_DOCUMENTS_ENDPOINT: ""  # no write access to elasticsearch in CI
+  ELASTICSEARCH_ENDPOINT: ${{ secrets.ELASTICSEARCH_ENDPOINT }}
   ES_PRIVATE_API_KEY: ""  # no write access to elasticsearch in CI
   # discord
   DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
@@ -51,7 +48,9 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run pylint
-        run: pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
+        run: |
+          export PYTHONPATH="$(pwd)"
+          pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
 
   django:
     runs-on: ubuntu-latest
@@ -85,7 +84,6 @@ jobs:
       - name: Migrations & Tests
         run: |
           envsubst < .config/.env.example > .env
-          python manage.py makemigrations
           python manage.py migrate
           coverage run manage.py test
 
