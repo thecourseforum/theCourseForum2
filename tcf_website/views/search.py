@@ -1,6 +1,7 @@
 """Views for search results"""
 import os
 import json
+import statistics
 import requests
 
 from django.shortcuts import render
@@ -17,12 +18,52 @@ def search(request):
     courses = fetch_courses(query)
     instructors = fetch_instructors(query)
 
+    courses_first = decide_order(query, courses, instructors)
+
     # Set arguments for template view
-    args = set_arguments(query, courses, instructors)
+    args = set_arguments(query, courses, instructors, courses_first)
     context_vars = args
 
     # Load template view
     return render(request, 'search/search.html', context_vars)
+
+
+def decide_order(query, courses, instructors):
+    """Decides if courses or instructors should be displayed first.
+    Returns True if courses should be prioritized, False if instructors should be prioritized """
+
+    # Calculate z-score for courses
+    courses_z = compute_zscore([x['score'] for x in courses['results']])
+
+    # Calculate z-score for instructors
+    instructors_z = compute_zscore([x['score'] for x in instructors['results']])
+
+    # Likely an abbreviation if 4 letters or less
+    if len(query) <= 4 and courses_z > 0:
+        return True
+
+    return courses_z >= instructors_z
+
+def compute_zscore(scores):
+    """Computes and returns the z_score from the list
+     and gets the z-score of the highest z-score."""
+    if len(scores) > 1:
+        mean = statistics.mean(scores)
+
+        stddev = statistics.stdev(scores, mean)
+
+        if stddev == 0:
+            stddev = 1
+        z_score = scores[0] - mean
+        z_score /= stddev
+
+        return z_score
+    # Returns 0 for only one item (can't compute z-score) or -1 if no items
+    if len(scores) == 1:
+        return 0
+
+    return -1
+
 
 
 def fetch_courses(query):
@@ -143,7 +184,8 @@ def format_courses(results):
             "title": result.get("title").get("raw"),
             "number": result.get("number").get("raw"),
             "mnemonic": result.get("mnemonic").get("raw"),
-            "description": result.get("description").get("raw")
+            "description": result.get("description").get("raw"),
+            "score": result.get("_meta").get("score"),
         }
         formatted.append(course)
     return formatted
@@ -158,13 +200,14 @@ def format_instructors(results):
             "first_name": result.get("first_name").get("raw"),
             "last_name": result.get("last_name").get("raw"),
             "email": result.get("email").get("raw"),
-            "website": result.get("website").get("raw")
+            "website": result.get("website").get("raw"),
+            "score": result.get("_meta").get("score"),
         }
         formatted.append(instructor)
     return formatted
 
 
-def set_arguments(query, courses, instructors):
+def set_arguments(query, courses, instructors, courses_first):
     """Sets the search template arguments."""
     args = {
         "query": query
@@ -173,6 +216,8 @@ def set_arguments(query, courses, instructors):
         args["courses"] = group_by_dept(courses['results'])
     if not instructors["error"]:
         args["instructors"] = instructors["results"]
+
+    args["courses_first"] = courses_first
 
     args["displayed_query"] = query[:30] + "..." if len(query) > 30 else query
     return args
