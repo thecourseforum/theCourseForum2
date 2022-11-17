@@ -102,7 +102,12 @@
             </div>
 
             <div class="col-lg-4">
+                {% if user.is_authenticated %}
                 <a href="{% url 'new_review' %}" class="link-unstyled">
+                {% else %}
+                {% include "login/login_modal.html" with path="/reviews/new" path_id="reviewLoginModal" %}
+                <a href="#reviewLoginModal" data-toggle="modal" class="link-unstyled">
+                {% endif %}
                     <div class="card mx-sm-3 my-3">
                         <div class="card-body features-icons-item mx-auto mb-2">
                             <div class="features-icons-icon d-flex">
@@ -149,10 +154,12 @@
                                 </div>
                             </div>
                         {% endfor %}
-                        <div class="col-6 col-md-3">
+                    </div>
+                    <div class="row text-center">
+                        <div class="col">
                             <a href="{% url 'about' %}" class="link-unstyled">
-                                <div class="about-link card bg-tcf-orange mt-3 mx-1">
-                                    <div class="card-body mx-auto py-5">
+                                <div class="about-link card bg-tcf-orange mx-1">
+                                    <div class="card-body mx-auto">
                                         <p class="card-text text-white text-left">
                                             Meet the full team
                                             <i class="fa fa-arrow-right" aria-hidden="true"></i>
@@ -265,41 +272,6 @@
         </div>
     </section>
 
-    <!-- welcome modal -->
-    <div class="modal show" id="welcomeModal" tabindex="-1" role="dialog" aria-labelledby="welcomeModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <h5>Welcome to theCourseForum 2.0! </h5>
-                        </div>
-                        <div class="row justify-content-center">
-                            <p> Our team has been working hard to bring you the new tCF
-                                website. We've redesigned the site with the goal of writing
-                                cleaner, maintainable, and well-documented code to keep tCF up
-                                and running for years to come. <br><br>
-                                We're still in the process of beta testing, so thank you for
-                                your patience as we work out any bugs and errors. Help us out,
-                                and report any bugs that you find! <br><br>
-                                Questions, comments, or concerns? <br>
-                                Fill out the feedback form below and/or join our
-                                <a href="https://discord.gg/tAjzH7eyvW" class="text-tcf-blue">Discord server</a>!</p>
-                        </div>
-                        <div class="row justify-content-center">
-                            <button type="button" data-dismiss="modal" class="btn btn-primary bg-tcf-indigo"> Thank
-                                you!
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div>
 
     <!-- Footer -->
@@ -362,11 +334,6 @@
 {% block js %}
     <script type="module" src="{% static 'landing/feedbackform.js' %}"></script>
     <script type="text/javascript">
-        {% if not visited %}
-            $(window).on('load', function () {
-                $('#welcomeModal').modal('show');
-            });
-        {% endif %}
         // Update copyright year at the bottom of landing page
         $(".year").text(new Date().getFullYear());
     </script>

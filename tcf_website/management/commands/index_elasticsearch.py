@@ -40,8 +40,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        courses_engine_endpoint = os.environ['ES_COURSE_DOCUMENTS_ENDPOINT']
-        instructors_engine_endpoint = os.environ['ES_INSTRUCTOR_DOCUMENTS_ENDPOINT']
+        courses_engine_endpoint = os.environ['ELASTICSEARCH_ENDPOINT'] + 'tcf-courses/documents'
+        instructors_engine_endpoint = os.environ['ELASTICSEARCH_ENDPOINT'] + \
+            'tcf-instructors/documents'
         all_courses = Course.objects.all().order_by('pk')
         all_instructors = Instructor.objects.all().order_by('pk')
         self.stdout.write("Number of Courses: " + str(len(all_courses)))
