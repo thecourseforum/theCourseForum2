@@ -71,7 +71,7 @@ class LoadGradesTestCase(TestCase):
             'c_plus',
             'c',
             'c_minus',
-            'dfw']:
+                'dfw']:
             cg_field = getattr(self.cg, field)
             cig_field = getattr(self.cig, field)
             self.assertEqual(cg_field, cig_field)
