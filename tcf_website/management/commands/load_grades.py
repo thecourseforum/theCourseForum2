@@ -43,9 +43,9 @@ class Command(BaseCommand):
         if self.verbosity > 0:
             print('Step 1: Fetch Course and Instructor data for later use')
         self.courses = {
-            (obj['subdepartment__mnemonic'], obj['number']): obj['id']
+            (obj['subject__mnemonic'], obj['number']): obj['id']
             for obj in Course.objects.values('id', 'number',
-                                             'subdepartment__mnemonic')
+                                             'subject__mnemonic')
         }
         self.instructors = {
             (obj['first_name'], obj['last_name'], obj['email']): obj['id']
@@ -103,7 +103,7 @@ class Command(BaseCommand):
         # row['Insructor Middle Name'] is not used
         last_name = row['Instructor Last Name']
         email = row['Instructor Email']
-        subdepartment = row['Subject']
+        subject = row['Subject']
         # row['Section Number'] is not used
         title = row['Title']
         try:
@@ -133,9 +133,9 @@ class Command(BaseCommand):
             raise e
         # No error casting values to float/int, so continue
         # identifiers are tuple keys to dictionaries
-        course_identifier = (subdepartment, number, title)
+        course_identifier = (subject, number, title)
         course_instructor_identifier = (
-            subdepartment, number, first_name, last_name, email)
+            subject, number, first_name, last_name, email)
 
         # value of dictionaries (incremented onto value if key already exists)
         this_semesters_grades = [a_plus, a, a_minus,
@@ -189,7 +189,7 @@ class Command(BaseCommand):
 
             course_grade_params = {
                 'course_id': self.courses.get(row[:2]),
-                'subdepartment': row[0],
+                'subject': row[0],
                 'number': row[1],
                 'title': row[2],
                 'average': total_enrolled_gpa,
@@ -241,7 +241,7 @@ class Command(BaseCommand):
                 total_enrolled_gpa = total_weight / total_enrolled_filtered
 
             course_instructor_grade_params = {
-                'subdepartment': row[0],
+                'subject': row[0],
                 'number': row[1],
                 'first_name': row[2],
                 'middle_name': '',  # for backward compatibility

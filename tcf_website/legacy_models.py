@@ -91,7 +91,7 @@ class CalendarSections(models.Model):
         db_table = 'calendar_sections'
 
 
-class Subdepartments(models.Model):
+class Subjects(models.Model):
     id = models.IntegerField(primary_key=True, db_column="id")
     name = models.CharField(max_length=255, blank=True, null=True)
     mnemonic = models.CharField(max_length=255, blank=True, null=True)
@@ -103,7 +103,7 @@ class Subdepartments(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'subdepartments'
+        db_table = 'subjects'
 
 
 class Semesters(models.Model):
@@ -210,10 +210,10 @@ class Courses(models.Model):
     # handles decimal fields as float
     course_number = models.DecimalField(
         max_digits=10, decimal_places=5, blank=True, null=True)
-    # subdepartment_id = models.IntegerField(blank=True, null=True)
-    subdepartment = models.ForeignKey(
-        Subdepartments,
-        db_column='subdepartment_id',
+    # subject_id = models.IntegerField(blank=True, null=True)
+    subject = models.ForeignKey(
+        Subjects,
+        db_column='subject_id',
         on_delete=models.CASCADE)
     # created_at = models.DateTimeField()
     # updated_at = models.DateTimeField()
@@ -226,7 +226,7 @@ class Courses(models.Model):
 
     def __str__(self):
         try:
-            return f"{self.subdepartment.mnemonic} {self.course_number:.0f}"
+            return f"{self.subject.mnemonic} {self.course_number:.0f}"
         except Exception as e:
             return f"Error for course with number {self.course_number}: {e}"
 
@@ -327,22 +327,22 @@ class Departments(models.Model):
         return f"{self.name}"
 
 
-class DepartmentsSubdepartments(models.Model):
+class DepartmentsSubjects(models.Model):
     # department_id = models.IntegerField(blank=True, null=True)
-    # subdepartment_id = models.IntegerField(blank=True, null=True)
+    # subject_id = models.IntegerField(blank=True, null=True)
 
     department = models.ForeignKey(
         Departments,
         db_column='department_id',
         on_delete=models.CASCADE)
-    subdepartment = models.ForeignKey(
-        Subdepartments,
-        db_column='subdepartment_id',
+    subject = models.ForeignKey(
+        Subjects,
+        db_column='subject_id',
         on_delete=models.CASCADE)
 
     class Meta:
         managed = False
-        db_table = 'departments_subdepartments'
+        db_table = 'departments_subjects'
 
 
 class Grades(models.Model):

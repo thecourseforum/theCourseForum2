@@ -249,7 +249,7 @@
             <div class="reviews-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
                 <h3 class="reviews-heading mb-0 mt-1 mr-4">{{ reviews|length }} {% if reviews|length == 1 %} Comment {% else %} Comments {% endif %}</h3>
                 <div class="reviews-options d-flex flex-sm-row flex-column col p-0">
-                    <a href="{% url 'new_review' %}?subdept_id={{course.subdepartment.id}}&course_id={{course.id}}&instr_id={{instructor.id}}" class="btn bg-tcf-orange text-white mb-3">
+                    <a href="{% url 'new_review' %}?subdept_id={{course.subject.id}}&course_id={{course.id}}&instr_id={{instructor.id}}" class="btn bg-tcf-orange text-white mb-3">
                       <i class="fa fa-plus" aria-hidden="true"></i> Add your review!
                     </a>
                     {% if reviews %}

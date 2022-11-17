@@ -143,7 +143,7 @@ class Command(BaseCommand):
             print(e)
             raise e
 
-        sd = self.load_subdepartment(mnemonic)
+        sd = self.load_subject(mnemonic)
         course = self.load_course(
             title, description, semester, sd, course_number)
         instructors = self.load_instructors(instructor_names)
@@ -157,16 +157,16 @@ class Command(BaseCommand):
             section_type,
             section_times)
 
-    def load_subdepartment(self, mnemonic):
+    def load_subject(self, mnemonic):
 
         try:
-            sd = Subdepartment.objects.get(
+            sd = Subject.objects.get(
                 mnemonic=mnemonic,
             )
             if self.verbose:
                 print(f"Retrieved {sd}")
         except ObjectDoesNotExist:  # no SD
-            sd = Subdepartment(mnemonic=mnemonic, department=self.UNKNOWN_DEPT)
+            sd = Subject(mnemonic=mnemonic, department=self.UNKNOWN_DEPT)
             sd.save()
             if self.verbose:
                 print(f"Created {sd}")
@@ -175,23 +175,23 @@ class Command(BaseCommand):
     # TODO: how to handle special topics courses?
     # topic: section topic
     # description: course description!
-    def load_course(self, title, description, semester, subdepartment, number):
+    def load_course(self, title, description, semester, subject, number):
 
         params = {}
-        fields = {'title', 'description', 'subdepartment', 'number'}
+        fields = {'title', 'description', 'subject', 'number'}
         for k, v in locals().items():
             if k in fields and not pd.isnull(v):
                 params[k] = v
 
         try:
             course = Course.objects.get(
-                subdepartment=subdepartment,
+                subject=subject,
                 number=number
             )
             if self.verbose:
                 print(f"Retrieved {course}")
         except ObjectDoesNotExist:
-            # create new Course with title, description, subdepartment, number
+            # create new Course with title, description, subject, number
             course = Course(**params)
             course.semester_last_taught = semester
             course.save()

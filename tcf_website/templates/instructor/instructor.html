@@ -63,9 +63,9 @@
         </div>
     </div>
     {% if courses %}
-    {% for subdepartment_name, subdepartment_courses in courses.items %}
-        <h2 class="mt-5 h3">{{ subdepartment_name }}</h2>
-        {% for course in subdepartment_courses %}
+    {% for subject_name, subject_courses in courses.items %}
+        <h2 class="mt-5 h3">{{ subject_name }}</h2>
+        {% for course in subject_courses %}
         <div class="card mt-3">
             <a href="{% url 'course_instructor' course_id=course.id instructor_id=instructor.id %}">
                 <div class="card-header course-header py-4">

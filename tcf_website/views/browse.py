@@ -51,12 +51,12 @@ def browse(request):
 def department(request, dept_id):
     """View for department page."""
 
-    # Prefetch related subdepartments and courses to improve performance.
-    # department.html loops through related subdepartments and courses.
+    # Prefetch related subjects and courses to improve performance.
+    # department.html loops through related subjects and courses.
     # See:
     # https://docs.djangoproject.com/en/3.0/ref/models/querysets/#django.db.models.query.QuerySet.prefetch_related
     dept = Department.objects.prefetch_related(
-        'subdepartment_set').get(pk=dept_id)
+        'subject_set').get(pk=dept_id)
 
     # Get the most recent semester
     latest_semester = Semester.latest()
@@ -69,7 +69,7 @@ def department(request, dept_id):
 
     return render(request, 'department/department.html',
                   {
-                      'subdepartments': dept.subdepartment_set.all(),
+                      'subjects': dept.subject_set.all(),
                       'latest_semester': latest_semester,
                       'breadcrumbs': breadcrumbs
                   })
@@ -80,7 +80,7 @@ def course_view_legacy(request, course_id):
     """Legacy view for course page."""
     course = get_object_or_404(Course, pk=course_id)
     return redirect('course',
-                    mnemonic=course.subdepartment.mnemonic,
+                    mnemonic=course.subject.mnemonic,
                     course_number=course.number)
 
 
@@ -91,7 +91,7 @@ def course_view(request, mnemonic, course_number):
         return redirect('course',
                         mnemonic=mnemonic.upper(), course_number=course_number)
     course = get_object_or_404(
-        Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number)
+        Course, subject__mnemonic=mnemonic.upper(), number=course_number)
     latest_semester = Semester.latest()
     instructors = Instructor.objects \
         .filter(section__course=course).distinct() \
@@ -143,7 +143,7 @@ def course_view(request, mnemonic, course_number):
         instructor.semester_last_taught = semesters.get(
             instructor.semester_last_taught)
 
-    dept = course.subdepartment.department
+    dept = course.subject.department
 
     # Navigation breadcrumbs
     breadcrumbs = [
@@ -178,10 +178,10 @@ def course_instructor(request, course_id, instructor_id):
 
     # Filter out reviews with no text and hidden field true.
     reviews = Review.display_reviews(course_id, instructor_id, request.user)
-    dept = course.subdepartment.department
+    dept = course.subject.department
 
     course_url = reverse('course',
-                         args=[course.subdepartment.mnemonic, course.number])
+                         args=[course.subject.mnemonic, course.number])
     # Navigation breadcrumbs
     breadcrumbs = [
         (dept.school.name, reverse('browse'), False),
@@ -288,9 +288,9 @@ def instructor_view(request, instructor_id):
         .filter(section__instructors=instructor, number__gte=1000) \
         .prefetch_related('review_set') \
         .annotate(
-        subdepartment_name=F('subdepartment__name'),
+        subject_name=F('subject__name'),
         name=Concat(
-            F('subdepartment__mnemonic'),
+            F('subject__mnemonic'),
             Value(' '),
             F('number'),
             Value(' | '),
@@ -315,8 +315,8 @@ def instructor_view(request, instructor_id):
             F('semester_last_taught__year'),
             output_field=CharField(),
         ),
-    ).values('subdepartment_name', *course_fields) \
-        .order_by('subdepartment_name', 'name')
+    ).values('subject_name', *course_fields) \
+        .order_by('subject_name', 'name')
 
     grouped_courses: Dict[str, List[Dict[str, Any]]] = {}
     for course in courses:  # type: Dict[str, Any]
@@ -324,7 +324,7 @@ def instructor_view(request, instructor_id):
         course['avg_difficulty'] = safe_round(course['avg_difficulty'])
         course['avg_gpa'] = safe_round(course['avg_gpa'])
         course['last_taught'] = course['last_taught'].title()
-        grouped_courses.setdefault(course['subdepartment_name'], []).append(course)
+        grouped_courses.setdefault(course['subject_name'], []).append(course)
 
     context: Dict[str, Any] = {
         'instructor': instructor,

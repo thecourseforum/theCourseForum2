@@ -5,7 +5,7 @@ import statistics
 import requests
 
 from django.shortcuts import render
-from ..models import Subdepartment
+from ..models import Subject
 
 
 def search(request):
@@ -229,7 +229,7 @@ def group_by_dept(courses):
     for course in courses:
         course_dept = course['mnemonic'][:course['mnemonic'].index(' ')]
         if course_dept not in grouped_courses:
-            subdept = Subdepartment.objects.filter(mnemonic=course_dept)[0]
+            subdept = Subject.objects.filter(mnemonic=course_dept)[0]
             # should only ever have one returned with that mnemonic
             grouped_courses[course_dept] = {
                 "subdept_name": subdept.name,

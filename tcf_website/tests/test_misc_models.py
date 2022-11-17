@@ -16,12 +16,12 @@ class MiscModelsTestCase(TestCase):
     def test_school_name(self):
         """Test __str__ method in School model"""
         self.assertEqual("School of Hard Knocks", str(
-            self.course.subdepartment.department.school))
+            self.course.subject.department.school))
 
     def test_department_name(self):
         """Test __str__ method in Department model"""
         self.assertEqual("Computer Science", str(
-            self.course.subdepartment.department))
+            self.course.subject.department))
 
     def test_section_name(self):
         """Test __str__ method in Section mdoel"""

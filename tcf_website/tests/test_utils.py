@@ -15,7 +15,7 @@ def setup(obj):
         name="Computer Science",
         school=obj.school
     )
-    obj.subdepartment = Subdepartment.objects.create(
+    obj.subject = Subject.objects.create(
         name="Computer Science",
         mnemonic="CS",
         department=obj.department
@@ -39,35 +39,35 @@ def setup(obj):
         title="Software Testing",
         description="Super advanced and smart tests.",
         number=1420,
-        subdepartment=obj.subdepartment,
+        subject=obj.subject,
         semester_last_taught=obj.semester
     )
     obj.course2 = Course.objects.create(
         title="Algorithms",
         description="Super hard algorithms.",
         number=1421,
-        subdepartment=obj.subdepartment,
+        subject=obj.subject,
         semester_last_taught=obj.semester
     )
     obj.course3 = Course.objects.create(
         title="Program & Data Structures",
         description="Many complicated data structures.",
         number=1422,
-        subdepartment=obj.subdepartment,
+        subject=obj.subject,
         semester_last_taught=obj.past_semester
     )
     obj.course4 = Course.objects.create(
         title="Operating Systems",
         description="Very low-level stuff.",
         number=1423,
-        subdepartment=obj.subdepartment,
+        subject=obj.subject,
         semester_last_taught=obj.past_semester
     )
     obj.course5 = Course.objects.create(
         title="Introduction to Programming",
         description="Intro.",
         number=1424,
-        subdepartment=obj.subdepartment,
+        subject=obj.subject,
         semester_last_taught=obj.past_semester
     )
 
@@ -126,7 +126,7 @@ def setup(obj):
         instructor=obj.instructor,
         first_name=obj.instructor.first_name,
         last_name=obj.instructor.last_name,
-        subdepartment=obj.subdepartment,
+        subject=obj.subject,
         course=obj.course,
         average=3.8,
         number=450
@@ -252,7 +252,7 @@ def setup(obj):
     )
 
     obj.course_grade = CourseGrade.objects.create(
-        subdepartment=obj.subdepartment,
+        subject=obj.subject,
         number=300,
         average=2.9
     )

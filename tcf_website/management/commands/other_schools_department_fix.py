@@ -1,5 +1,5 @@
 """
-Management command that promotes "Other Schools at the University of Virginia" subdepartments
+Management command that promotes "Other Schools at the University of Virginia" subjects
 to full departments; used to resolve a quirk of how Lou's List stored data
 """
 from django.core.management.base import BaseCommand, CommandError
@@ -17,7 +17,7 @@ class Command(BaseCommand):
     other schools have been split up.
     """
 
-    help = 'Promotes \'Other Schools at the University of Virginia\' subdepartments to departments'
+    help = 'Promotes \'Other Schools at the University of Virginia\' subjects to departments'
 
     def add_arguments(self, parser):
         # Named (optional) arguments
@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
         self.verbose = options['verbose']
 
-        # Take Other Schools at UVA and promote all subdepartments into departments
+        # Take Other Schools at UVA and promote all subjects into departments
         # Excluded schools not to split up
         excluded = [
             "College of Arts & Sciences",
@@ -50,7 +50,7 @@ class Command(BaseCommand):
             print(dash)
             print(
                 '{:<50s}{:<50s}{:<50s}'.format(
-                    'Subdepartment',
+                    'Subject',
                     'Department',
                     'School'))
             print(dash)
@@ -59,26 +59,26 @@ class Command(BaseCommand):
         for school in School.objects.exclude(name__in=excluded):
             # Go through all departments
             for department in school.department_set.all():
-                # Go through all subdepartments
-                for subdepartment in department.subdepartment_set.all():
+                # Go through all subjects
+                for subject in department.subject_set.all():
                     if self.verbose:
                         print(
                             '{:<50s}{:<50s}{:<50s}'.format(
-                                subdepartment.name,
+                                subject.name,
                                 department.name,
                                 school.name))
                         print(dash)
-                    # Promote the subdepartment to a department
+                    # Promote the subject to a department
                     new_department = Department(
-                        name=subdepartment.name,
+                        name=subject.name,
                         school=school,
-                        description=subdepartment.description
+                        description=subject.description
                     )
                     # Reassign relation
-                    subdepartment.department = new_department
+                    subject.department = new_department
                     # Save everything
                     new_department.save()
-                    subdepartment.save()
+                    subject.save()
                 # Delete old department
                 department.delete()
 

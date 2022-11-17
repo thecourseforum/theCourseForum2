@@ -42,7 +42,7 @@ class Command(BaseCommand):
         total = CourseInstructorGrade.objects\
             .filter(
                 reduce(or_, [Q(**a) for a in erroneous_instances_without_num])
-            ).order_by('first_name', 'last_name', 'subdepartment', 'number')
+            ).order_by('first_name', 'last_name', 'subject', 'number')
         without_email = total.filter(email='')
         if self.verbosity > 0:
             print(f'{without_email.count()} cases without emails')
@@ -80,7 +80,7 @@ class Command(BaseCommand):
 
         # Now combine the duplicate instances
         fields_to_group_by = [
-            'subdepartment', 'number', 'first_name', 'middle_name',
+            'subject', 'number', 'first_name', 'middle_name',
             'last_name', 'email', 'course_id', 'instructor_id',
         ]
         fields_to_sum = [

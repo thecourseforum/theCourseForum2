@@ -6,7 +6,7 @@
 
 // Executed when DOM is ready
 jQuery(function($) {
-    /* Fetch subject(subdepartment) data initially */
+    /* Fetch subject(subject) data initially */
     // Clear & disable sequenced dropdowns
     clearDropdown("#subject");
     clearDropdown("#course");
@@ -24,8 +24,8 @@ jQuery(function($) {
         instructorID = parseInt(paramsArr[2].replace("instr_id=", ""));
     }
 
-    // Fetch all subdepartment data from API
-    var subdeptEndpoint = "/api/subdepartments/";
+    // Fetch all subject data from API
+    var subdeptEndpoint = "/api/subjects/";
     $.getJSON(subdeptEndpoint, function(data) {
         // Sort departments alphabetically by mnemonic
         data.sort(function(a, b) {
@@ -62,10 +62,10 @@ jQuery(function($) {
         clearDropdown("#instructor");
         clearDropdown("#semester");
 
-        // Fetch course data from API, based on selected subdepartment
+        // Fetch course data from API, based on selected subject
         var subdeptID = $("#subject").val();
         var pageSize = "1000";
-        var courseEndpoint = `/api/courses/?subdepartment=${subdeptID}
+        var courseEndpoint = `/api/courses/?subject=${subdeptID}
                               &page_size=${pageSize}&recent`;
         $.getJSON(courseEndpoint, function(data) {
             // Generate option tags

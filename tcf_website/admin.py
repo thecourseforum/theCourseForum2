@@ -18,7 +18,7 @@ class SchoolAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 
-class SubdepartmentAdmin(admin.ModelAdmin):
+class SubjectAdmin(admin.ModelAdmin):
     ordering = ['name']
     search_fields = ['name']
 
@@ -34,8 +34,8 @@ class SemesterAdmin(admin.ModelAdmin):
 
 
 class CourseAdmin(admin.ModelAdmin):
-    ordering = ['subdepartment__mnemonic', 'number', 'title']
-    search_fields = ['subdepartment__mnemonic', 'number']
+    ordering = ['subject__mnemonic', 'number', 'title']
+    search_fields = ['subject__mnemonic', 'number']
 
 
 class InstructorAdmin(admin.ModelAdmin):
@@ -45,7 +45,7 @@ class InstructorAdmin(admin.ModelAdmin):
 
 class SectionAdmin(admin.ModelAdmin):
     search_fields = [
-        'course__subdepartment__mnemonic',
+        'course__subject__mnemonic',
         'course__number',
         'course__title']
     autocomplete_fields = ['instructors']
@@ -57,8 +57,8 @@ class SectionAdmin(admin.ModelAdmin):
 
 
 class CourseGradeAdmin(admin.ModelAdmin):
-    ordering = ['subdepartment', 'number', 'title']
-    search_fields = ['subdepartment', 'number']
+    ordering = ['subject', 'number', 'title']
+    search_fields = ['subject', 'number']
 
 
 class CourseInstructorGradeAdmin(admin.ModelAdmin):
@@ -71,7 +71,7 @@ admin.site.register(Instructor, InstructorAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(School, SchoolAdmin)
 admin.site.register(Department, DepartmentAdmin)
-admin.site.register(Subdepartment, SubdepartmentAdmin)
+admin.site.register(Subject, SubjectAdmin)
 admin.site.register(Semester, SemesterAdmin)
 admin.site.register(CourseGrade, CourseGradeAdmin)
 admin.site.register(CourseInstructorGrade, CourseInstructorGradeAdmin)

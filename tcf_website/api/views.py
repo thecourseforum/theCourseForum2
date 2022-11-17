@@ -4,13 +4,13 @@ from django.db.models import Avg, Sum
 from rest_framework import viewsets
 from .filters import InstructorFilter
 from ..models import (Course, Department, Instructor, School, Semester,
-                      Subdepartment)
+                      Subject)
 from .paginations import FlexiblePagination
 from .serializers import (CourseSerializer, CourseSimpleStatsSerializer,
                           CourseAllStatsSerializer,
                           DepartmentSerializer, InstructorSerializer,
                           SemesterSerializer, SchoolSerializer,
-                          SubdepartmentSerializer)
+                          SubjectSerializer)
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
@@ -25,18 +25,18 @@ class DepartmentViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = DepartmentSerializer
 
 
-class SubdepartmentViewSet(viewsets.ReadOnlyModelViewSet):
-    """DRF ViewSet for Subdepartment"""
-    queryset = Subdepartment.objects.all()
-    serializer_class = SubdepartmentSerializer
+class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
+    """DRF ViewSet for Subject"""
+    queryset = Subject.objects.all()
+    serializer_class = SubjectSerializer
 
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     """DRF ViewSet for Course"""
     queryset = Course.objects\
-        .select_related('subdepartment', 'semester_last_taught')
+        .select_related('subject', 'semester_last_taught')
     pagination_class = FlexiblePagination
-    filterset_fields = ['subdepartment']
+    filterset_fields = ['subject']
 
     def get_queryset(self):
         queryset = self.queryset

@@ -18,9 +18,9 @@
     <div class="container-lg">
         {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True%}
     </div>
-    <div class="subdepartments mt-3">
-        {% for sd in subdepartments %}
-        <div class="subdepartment container-lg {% if not sd.has_current_course %}old{% endif %}">
+    <div class="subjects mt-3">
+        {% for sd in subjects %}
+        <div class="subject container-lg {% if not sd.has_current_course %}old{% endif %}">
             <h1 class="my-3">{{ sd.name }}</h1>
             <ul class="course-list" id="courses-sd-{{sd.id}}">
             </ul>
@@ -41,8 +41,8 @@
 <script type="module">
     import { loadPage } from "{% static 'department/loadMoreCourses.js' %}";
 
-    {% for sd in subdepartments %}
-        loadPage("{{sd.id}}", "/api/courses/?page=1&page_size=30&subdepartment={{sd.id}}&simplestats&recent");
+    {% for sd in subjects %}
+        loadPage("{{sd.id}}", "/api/courses/?page=1&page_size=30&subject={{sd.id}}&simplestats&recent");
     {% endfor %}
 </script>
 {% endblock %}

@@ -13,7 +13,7 @@ from .grade_data.fetch_data import download_grade_data
 TODO:
     - DONE: port schools
     - DONE: port departments
-    - DONE: port subdepartments
+    - DONE: port subjects
     - DONE: port semester
     - port sections
     - DONE*: port courses
@@ -21,7 +21,7 @@ TODO:
     - port students --- need to figure out how that will work!
     - port reviews
     - port votes
-    - check that all courses departments + subdepartments currently
+    - check that all courses departments + subjects currently
         viewable on the website are in the migrated database
 
 Done* denotes that it could be improved.
@@ -90,7 +90,7 @@ class Command(BaseCommand):
         already_fetched = set(os.listdir(path))
 
         for c in tqdm(courses, total=courses.count()):
-            course = f"{c.subdepartment.mnemonic}{c.number}"
+            course = f"{c.subject.mnemonic}{c.number}"
 
             if f'{course}.json' in already_fetched:
                 continue

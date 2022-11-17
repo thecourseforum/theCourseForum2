@@ -1,7 +1,7 @@
 """DRF Serializers"""
 from rest_framework import serializers
 from ..models import (Course, Department, School, Instructor, Semester,
-                      Subdepartment)
+                      Subject)
 
 
 class SemesterSerializer(serializers.ModelSerializer):
@@ -33,16 +33,16 @@ class DepartmentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SubdepartmentSerializer(serializers.ModelSerializer):
-    """DRF Serializer for Subdepartment"""
+class SubjectSerializer(serializers.ModelSerializer):
+    """DRF Serializer for Subject"""
     class Meta:
-        model = Subdepartment
+        model = Subject
         fields = '__all__'
 
 
 class CourseSerializer(serializers.ModelSerializer):
     """DRF Serializer for Course"""
-    subdepartment = SubdepartmentSerializer(read_only=True)
+    subject = SubjectSerializer(read_only=True)
 
     class Meta:
         model = Course
@@ -58,7 +58,7 @@ class CourseSimpleStatsSerializer(CourseSerializer):
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'description', 'number', 'subdepartment',
+        fields = ['id', 'title', 'description', 'number', 'subject',
                   'semester_last_taught', 'average_rating',
                   'average_difficulty', 'average_gpa', 'is_recent']
 
@@ -96,7 +96,7 @@ class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'description', 'number', 'subdepartment',
+        fields = ['id', 'title', 'description', 'number', 'subject',
                   'semester_last_taught', 'is_recent',
                   # ratings
                   'average_rating', 'average_instructor', 'average_fun',
