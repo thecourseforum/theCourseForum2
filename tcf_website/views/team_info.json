@@ -149,11 +149,25 @@
       "github": "hari-gajjala"
     },
     {
-    "name": "Caesar Ning",
-    "role": "Developer",
-    "class": "2024",
-    "img_filename": "ENG_Caesar_Ning.jpg",
-    "github": "Caesarsyning"
+      "name": "Caesar Ning",
+      "role": "Developer",
+      "class": "2024",
+      "img_filename": "ENG_Caesar_Ning.jpg",
+      "github": "Caesarsyning"
+    },
+    {
+      "name": "Ankit Poudyal",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Ankit_Poudyal.jpg",
+      "github": "poudyalankit"
+    },
+    {
+      "name": "Neha Bagalkot",
+      "role": "Developer",
+      "class": "2024",
+      "img_filename": "ENG_Neha_Bagalkot.jpg",
+      "github": "nehagb99"
     }
   ],
   "marketing_team": [
@@ -163,6 +177,5 @@
       "class": "2025",
       "img_filename": "MAD_Rachita_Pathipati.webp"
     }
-
   ]
 }
