@@ -4,6 +4,8 @@ from django.urls import include, path
 
 from . import views
 
+from django.views.generic import TemplateView
+
 urlpatterns = [
     path('', views.index, name='index'),
     path('about/', views.AboutView.as_view(), name='about'),
@@ -47,5 +49,6 @@ urlpatterns = [
     path(
         '.well-known/microsoft-identity-association.json',
         views.auth.load_microsoft_verification,
-        name="load_microsoft_verification")
+        name="load_microsoft_verification"),
+    path('register', TemplateView.as_view(template_name='login/login_form.html'), name="register")
 ]

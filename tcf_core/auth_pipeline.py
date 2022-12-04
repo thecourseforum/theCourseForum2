@@ -4,8 +4,10 @@
 # pylint: disable=line-too-long
 """Custom authentication pipeline steps."""
 
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from social_core.pipeline.partial import partial
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 
 def auth_allowed(backend, details, response, *args, **kwargs):
@@ -27,14 +29,24 @@ def collect_extra_info(
     """Collect extra information on sign up."""
     if user:
         return {'is_new': False}
+
+    print('request', request.POST.get('password'))
+    # TODO: commenting this out fixes registering for some reason
+    try:
+        validate_password(request.POST.get('password'))
+    except ValidationError as e:
+        return render(request, 'login/login_form.html', {
+            'error_message': e
+        })
+
     # session 'grad_year' is set by the pipeline infrastructure
     # because it exists in FIELDS_STORED_IN_SESSION
     grad_year = strategy.session_get('grad_year', None)
     if not grad_year:
-        print('.'*100)
+        print('.' * 100)
         print(strategy)
         print(backend.name)
-        print('-'*100)
+        print('-' * 100)
         # if we return something besides a dict or None, then that is
         # returned to the user -- in this case we will redirect to a
         # view that can be used to get a password
