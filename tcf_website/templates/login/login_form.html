@@ -1,8 +1,43 @@
-<form action="/oauth/complete/email/" method="post">
-    {% csrf_token %}
-    <label for="your_name">Your email: </label>
-    <input id="email" type="text" name="email" value="jack">
-    <label for="your_name">Your password: </label>
-    <input id="password" type="text" name="password" value="jack">
-    <input type="submit" value="OK">
-</form>
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}My Profile - theCourseForum{% endblock %}
+
+{% block styles %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row d-flex flex-column align-items-center">
+        <form action="/oauth/complete/email/" method="post">
+            {% csrf_token %}
+            <fieldset>
+                <label for="your_name">Your first name: </label>
+                <input id="first_name" type="text" name="first_name" value="jack">
+            </fieldset>
+            <fieldset>
+                <label for="your_name">Your last name: </label>
+                <input id="last_name" type="text" name="last_name" value="jack">
+            </fieldset>
+            <fieldset>
+                <label for="your_name">Your email: </label>
+                <input id="email" type="text" name="email" value="jack">
+            </fieldset>
+            {% if error_message %}
+                {% for error in error_message %}
+                    <p><strong>{{ error }}</strong></p>
+                {% endfor %}
+            {% endif %}
+            <fieldset>
+                <label for="your_name">Your password: </label>
+                <input id="password" type="text" name="password" value="jack">
+            </fieldset>
+            <fieldset>
+                <label for="your_name">Please confirm password: </label>
+                <input id="password_confirm" type="text" name="password_confirm" value="jack">
+            </fieldset>
+            <input type="submit" value="Create Account">
+        </form>
+    </div>
+</div>
+{% endblock %}
