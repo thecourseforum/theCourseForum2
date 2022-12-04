@@ -27,3 +27,6 @@ class UserTestCase(TestCase):
     def test_full_name_no_first(self):
         """Test full_name method in User model when first name missing exists"""
         self.assertEqual(" NoFirstName", self.user2.full_name())
+
+class DeleteUserTests(TestCase):
+    """Tests for the DeleteProfile view."""
