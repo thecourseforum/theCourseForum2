@@ -11,9 +11,10 @@ from django.db.models import Avg, Count, Q
 from django import forms
 from django.forms import ModelForm
 from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
 from .browse import safe_round
 from ..models import Review, User
-from django.urls import reverse_lazy
+
 
 
 class ProfileForm(ModelForm):
