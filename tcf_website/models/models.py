@@ -2,12 +2,15 @@
 
 """TCF Database models."""
 
+import re
+
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.db.models.functions import Coalesce, Abs
+from django.core.exceptions import ValidationError
 
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
@@ -820,13 +823,17 @@ class BlogPost(DateCreateModMixin):
     title = models.CharField(max_length=255)
     subtitle = models.CharField(max_length=255)
 
-    slug = models.SlugField(null=False, unique=True)
+    slug = models.SlugField(
+        null=False,
+        unique=True,
+        help_text='The URL that the post will have. Match it to the headline, keep length at 3-5 \
+            words, and use dashes between words. Example: "what-is-url-slug" \
+                (More info: https://rockcontent.com/blog/what-is-url-slug/)')
     author = models.CharField(max_length=50)
     thumbnail_image = models.ImageField(default='placeholder.jpeg')
 
     body = MarkdownxField()
 
-    # upload_to=datetime.now().strftime('backgrounds/%Y/%m/%d'))
     def __str__(self):
         return self.title
 
@@ -838,3 +845,8 @@ class BlogPost(DateCreateModMixin):
     def formatted_markdown(self):
         """Returns formatted markdown of post content."""
         return markdownify(self.body)
+
+    def clean(self):
+        """Validate slug."""
+        if not re.search(r'^[a-z0-9-]+$', self.slug):
+            raise ValidationError("Slug has invalid format. Use kebab-case (e.g. 'my-new-post').")
