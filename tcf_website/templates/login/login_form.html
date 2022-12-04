@@ -1,0 +1,8 @@
+<form action="/oauth/complete/email/" method="post">
+    {% csrf_token %}
+    <label for="your_name">Your email: </label>
+    <input id="email" type="text" name="email" value="jack">
+    <label for="your_name">Your password: </label>
+    <input id="password" type="text" name="password" value="jack">
+    <input type="submit" value="OK">
+</form>

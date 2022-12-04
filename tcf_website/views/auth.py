@@ -53,7 +53,7 @@ def collect_extra_info(request):
 
             # once we have the grad_year stashed in the session, we can
             # tell the pipeline to resume by using the "complete" endpoint
-            return redirect(reverse('social:complete', args=["google-oauth2"]))
+            return redirect(reverse('social:complete', args=["email"]))
     else:
         form = ExtraUserInfoForm()
 
