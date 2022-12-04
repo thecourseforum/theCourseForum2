@@ -31,6 +31,10 @@ def collect_extra_info(
     # because it exists in FIELDS_STORED_IN_SESSION
     grad_year = strategy.session_get('grad_year', None)
     if not grad_year:
+        print('.'*100)
+        print(strategy)
+        print(backend.name)
+        print('-'*100)
         # if we return something besides a dict or None, then that is
         # returned to the user -- in this case we will redirect to a
         # view that can be used to get a password
