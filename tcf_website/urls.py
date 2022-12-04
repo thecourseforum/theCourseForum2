@@ -30,6 +30,8 @@ urlpatterns = [
     path('reviews/check_duplicate/', views.review.check_duplicate),
     path('reviews/check_zero_hours_per_week/', views.review.check_zero_hours_per_week),
     path('profile/', views.profile, name='profile'),
+    path('profile/<int:pk>/delete/',
+          views.DeleteProfile.as_view(), name='delete_profile'),
     path('search/', views.search, name='search'),
 
     # API URLs
