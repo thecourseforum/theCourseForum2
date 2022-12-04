@@ -79,6 +79,7 @@ def reviews(request):
     return render(request, 'reviews/user_reviews.html', context=stats)
 
 class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
+    """User deletion view."""
     model = User
     success_url = reverse_lazy('browse')
 
@@ -95,4 +96,4 @@ class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView)
         """Overrides SuccessMessageMixin's get_success_message method."""
 
         # return success message
-        return f"Successfully deleted your account!"
+        return "Successfully deleted your account!"
