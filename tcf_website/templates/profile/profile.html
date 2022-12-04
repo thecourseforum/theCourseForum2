@@ -34,7 +34,7 @@
                 </form>
                 <div class="button-wrapper">
                     <input type="submit" class="btn btn-primary mt-3" form="ProfileForm" value="Save Profile">
-                    <button class="btn btn-danger mt-3" type="button" data-toggle="modal" data-target="#deleteProfileModal{{user.id}}">Delete Profile</button>
+                    <button class="btn btn-danger mt-3" type="button" data-toggle="modal" data-target="#deleteProfileModal">Delete Profile</button>
                     {% include "profile/delete_confirm_modal.html" with profile=profile %}
                 </div>
             </div>
