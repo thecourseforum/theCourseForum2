@@ -43,12 +43,13 @@ urlpatterns = [
     # AUTH URLS
     path('login/', views.login, name='login'),
     path('login/error/', views.login_error),
-    path('login/collect_extra_info/', views.collect_extra_info),
+    path('login/collect_extra_info/<str:method>', views.collect_extra_info),
     path('accounts/login/', views.login),
     path('logout/', views.logout, name='logout'),
     path(
         '.well-known/microsoft-identity-association.json',
         views.auth.load_microsoft_verification,
         name="load_microsoft_verification"),
-    path('register', TemplateView.as_view(template_name='login/login_form.html'), name="register")
+    path('register', TemplateView.as_view(template_name='login/login_form.html'), name="register"),
+    path('register/email', views.auth.email_verification, name="email_verification")
 ]
