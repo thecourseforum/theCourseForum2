@@ -28,6 +28,12 @@ def login_error(request):
                    sure you\'re using an @virginia.edu email address.')
     return browse(request)
 
+def password_error(request):
+    """Incorrect password error view."""
+    messages.error(request, 'There was an error logging you in. Please check \
+                    your email and password')
+    return browse(request)
+
 class ExtraUserInfoForm(forms.Form):
     """Form to collect extra user info on sign up."""
     current_yr = datetime.now().year
@@ -43,8 +49,6 @@ class ExtraUserInfoForm(forms.Form):
 
 def collect_extra_info(request, method):
     """Extra sign up info collection view."""
-    print('testing::::::::::::::::::::')
-    print(method)
     if request.method == 'POST':
         form = ExtraUserInfoForm(request.POST)
         if form.is_valid():
