@@ -19,7 +19,10 @@
               <p class="card-text mb-3">Please log in to continue.</p>
           </div>
           <div class="modal-footer d-flex justify-content-center">
-            <button><a href="{% url 'register' %}">Create an Account!</a></button>
+            {% include "login/login_form.html" %}
+          </div>
+          <div class="modal-footer d-flex justify-content-center">
+            <a href="{% url 'register' %}" class="btn btn-lg bg-tcf-orange text-white">Create an Account!</a>
           </div>
       </div>
       <div class="modal-footer d-flex justify-content-center">

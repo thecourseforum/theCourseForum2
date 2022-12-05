@@ -1,43 +1,22 @@
-{% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}Register - theCourseForum{% endblock %}
-
 {% block styles %}
+<link rel="stylesheet" href="{% static 'login/login_button.css' %}" />
 {% endblock %}
 
-{% block content %}
-<div class="container-fluid">
-    <div class="row d-flex flex-column align-items-center">
-        <form action="/oauth/complete/email/" method="post">
-            {% csrf_token %}
-            <fieldset>
-                <label for="first_name">Your first name: </label>
-                <input id="first_name" type="text" name="first_name" value="fname">
-            </fieldset>
-            <fieldset>
-                <label for="last_name">Your last name: </label>
-                <input id="last_name" type="text" name="last_name" value="lname">
-            </fieldset>
-            <fieldset>
-                <label for="email">Your email: </label>
-                <input id="email" type="email" name="email" value="jackliu612@gmail.com">
-            </fieldset>
-            {% if error_message %}
-                {% for error in error_message %}
-                    <p><strong>{{ error }}</strong></p>
-                {% endfor %}
-            {% endif %}
-            <fieldset>
-                <label for="password">Your password: </label>
-                <input id="password" type="password" name="password" value="fillerpassword">
-            </fieldset>
-            <fieldset>
-                <label for="password_confirm">Please confirm password: </label>
-                <input id="password_confirm" type="password" name="password_confirm" value="fillerpassword">
-            </fieldset>
-            <input type="submit" value="Create Account">
-        </form>
+<form action="{% url 'social:complete' 'email' %}" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <label for="email">Your email: </label>
+        <input id="email" type="email" name="email" value="jackliu612@gmail.com">
+    </fieldset>
+    <fieldset>
+        <label for="password">Your password: </label>
+        <input id="password" type="password" name="password" value="fillerpassword">
+    </fieldset>
+    <input type="hidden" name="login" value="login">
+    <div class="login-button-container m-0">
+        <input type="submit" class="btn btn-lg bg-tcf-blue text-white" value="Login">
     </div>
-</div>
-{% endblock %}
+    
+</form>
