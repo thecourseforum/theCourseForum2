@@ -8,14 +8,41 @@ from django.shortcuts import redirect, render
 from social_core.pipeline.partial import partial
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.urls import reverse
+from django.conf import settings
 
 
 def auth_allowed(backend, details, response, *args, **kwargs):
     """Route unallowed auth attempts to error page."""
+    print('checkingggggggggg')
+    print(response)
+    print(details)
     if not backend.auth_allowed(response, details):
         return redirect('/login/error', error=True)
     return None
 
+def password_validation(backend, details, request, response, *args, **kwargs):
+    """Route unallowed auth attempts to error page."""
+    if backend.name != 'email':
+        return
+    print(response)
+    print('lmaooooooooooooooooooooo')
+    # print('request:', request, request.POST.get('password'), request.POST.get('password_confirm'))
+    if response.get('password') != response.get('password_confirm'):
+        return render(request, 'login/login_form.html', {
+            'error_message': ['passwords do not match']
+        })
+    try:
+        validate_password(response.get('password'))
+        # details.put(response.password)
+        # details.put(response.password)
+        # details.put(response.password)
+    except ValidationError as e:
+        return render(request, 'login/login_form.html', {
+            'error_message': e
+        })
+    return {'password': response.get('password')}
 
 @partial
 def collect_extra_info(
@@ -30,15 +57,6 @@ def collect_extra_info(
     if user:
         return {'is_new': False}
 
-    print('request', request.POST.get('password'))
-    # TODO: commenting this out fixes registering for some reason
-    try:
-        validate_password(request.POST.get('password'))
-    except ValidationError as e:
-        return render(request, 'login/login_form.html', {
-            'error_message': e
-        })
-
     # session 'grad_year' is set by the pipeline infrastructure
     # because it exists in FIELDS_STORED_IN_SESSION
     grad_year = strategy.session_get('grad_year', None)
@@ -50,7 +68,7 @@ def collect_extra_info(
         # if we return something besides a dict or None, then that is
         # returned to the user -- in this case we will redirect to a
         # view that can be used to get a password
-        return redirect("/login/collect_extra_info")
+        return redirect(f"/login/collect_extra_info/{backend.name}")
 
 
 USER_FIELDS = ['email', 'username']
@@ -62,12 +80,19 @@ def create_user(strategy, details, backend, user=None, *args, **kwargs):
 
     Based on https://github.com/python-social-auth/social-core/blob/3.3.3/social_core/pipeline/user.py#L64
     """
+
     # User has registered previously.
     if user:
         return {'is_new': False}
 
     fields = dict((name, kwargs.get(name, details.get(name)))
                   for name in backend.setting('USER_FIELDS', USER_FIELDS))
+    print(details)
+    print('xdddddddddddddddddddddddddd')
+    print(fields)
+    print(backend.setting('USER_FIELDS', USER_FIELDS))
+
+    
     if not fields:
         return None
 
@@ -81,3 +106,34 @@ def create_user(strategy, details, backend, user=None, *args, **kwargs):
         'is_new': True,
         'user': strategy.create_user(**fields)
     }
+
+def check_user_password(strategy, backend, user, is_new=False, password="", *args, **kwargs):
+    if backend.name != 'email':
+        return
+    print('hehehehehehehehehehehehehexd')
+    print(user)
+    print(is_new)
+    print(password)
+
+    if is_new:
+        user.set_password(password)
+        user.save()
+    elif not user.check_password(password):
+        # return {'user': None, 'social': None}
+        raise AuthForbidden(backend)
+
+def validate_email(strategy, backend, code, partial_token):
+    print('GOT HERE!! YAY')
+    print(settings.EMAIL_HOST_USER)
+    print(settings.EMAIL_HOST_PASSWORD)
+    if not code.verified:
+        url = strategy.build_absolute_uri(
+            reverse('social:complete', args=(backend.name,))
+        ) + '?verification_code=' + code.code + '&partial_token=' + partial_token
+        send_mail(
+            'theCourseForum Email Verification',
+            f'Please go to {url} to confirm your new account for theCourseForum',
+            settings.EMAIL_HOST_USER,
+            [code.email],
+            fail_silently=False,
+        )

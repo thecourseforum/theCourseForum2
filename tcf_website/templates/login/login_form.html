@@ -1,7 +1,7 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}My Profile - theCourseForum{% endblock %}
+{% block title %}Register - theCourseForum{% endblock %}
 
 {% block styles %}
 {% endblock %}
@@ -12,16 +12,16 @@
         <form action="/oauth/complete/email/" method="post">
             {% csrf_token %}
             <fieldset>
-                <label for="your_name">Your first name: </label>
-                <input id="first_name" type="text" name="first_name" value="jack">
+                <label for="first_name">Your first name: </label>
+                <input id="first_name" type="text" name="first_name" value="fname">
             </fieldset>
             <fieldset>
-                <label for="your_name">Your last name: </label>
-                <input id="last_name" type="text" name="last_name" value="jack">
+                <label for="last_name">Your last name: </label>
+                <input id="last_name" type="text" name="last_name" value="lname">
             </fieldset>
             <fieldset>
-                <label for="your_name">Your email: </label>
-                <input id="email" type="text" name="email" value="jack">
+                <label for="email">Your email: </label>
+                <input id="email" type="email" name="email" value="jackliu612@gmail.com">
             </fieldset>
             {% if error_message %}
                 {% for error in error_message %}
@@ -29,12 +29,12 @@
                 {% endfor %}
             {% endif %}
             <fieldset>
-                <label for="your_name">Your password: </label>
-                <input id="password" type="text" name="password" value="jack">
+                <label for="password">Your password: </label>
+                <input id="password" type="password" name="password" value="fillerpassword">
             </fieldset>
             <fieldset>
-                <label for="your_name">Please confirm password: </label>
-                <input id="password_confirm" type="text" name="password_confirm" value="jack">
+                <label for="password_confirm">Please confirm password: </label>
+                <input id="password_confirm" type="password" name="password_confirm" value="fillerpassword">
             </fieldset>
             <input type="submit" value="Create Account">
         </form>

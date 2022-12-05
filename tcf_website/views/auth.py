@@ -28,7 +28,6 @@ def login_error(request):
                    sure you\'re using an @virginia.edu email address.')
     return browse(request)
 
-
 class ExtraUserInfoForm(forms.Form):
     """Form to collect extra user info on sign up."""
     current_yr = datetime.now().year
@@ -42,8 +41,10 @@ class ExtraUserInfoForm(forms.Form):
                 'value': current_yr}))
 
 
-def collect_extra_info(request):
+def collect_extra_info(request, method):
     """Extra sign up info collection view."""
+    print('testing::::::::::::::::::::')
+    print(method)
     if request.method == 'POST':
         form = ExtraUserInfoForm(request.POST)
         if form.is_valid():
@@ -53,7 +54,7 @@ def collect_extra_info(request):
 
             # once we have the grad_year stashed in the session, we can
             # tell the pipeline to resume by using the "complete" endpoint
-            return redirect(reverse('social:complete', args=["email"]))
+            return redirect(reverse('social:complete', args=[method]))
     else:
         form = ExtraUserInfoForm()
 
@@ -72,6 +73,11 @@ def logout(request):
     messages.add_message(request, messages.SUCCESS, "Logged out successfully!")
     return redirect('browse')
 
+
+def email_verification(request):
+    """Loads Microsoft verification document in order to be an authorized
+    provider for Microsoft authentication """
+    return render(request, 'login/email_verification.html', {'address':request.session.get('email_validation_address')})
 
 def load_microsoft_verification(request):
     """Loads Microsoft verification document in order to be an authorized
