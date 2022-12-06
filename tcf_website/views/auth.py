@@ -81,7 +81,8 @@ def logout(request):
 def email_verification(request):
     """Loads Microsoft verification document in order to be an authorized
     provider for Microsoft authentication """
-    return render(request, 'login/email_verification.html', {'address':request.session.get('email_validation_address')})
+    return render(request, 'login/email_verification.html', \
+                    {'address':request.session.get('email_validation_address')})
 
 def load_microsoft_verification(request):
     """Loads Microsoft verification document in order to be an authorized
