@@ -367,6 +367,8 @@ class Course(models.Model):
     # Course number. Required.
     number = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(99999)])
+    # ID used in SIS. Required.
+    sis_id = models.IntegerField(validators=[MinValueValidator(0)])
 
     # Subject foreign key. Required.
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
