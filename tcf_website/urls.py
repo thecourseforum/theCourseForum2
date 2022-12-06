@@ -1,8 +1,9 @@
 """Routes URLs to views"""
 
 from django.urls import include, path
-
+from django.views.generic import TemplateView
 from . import views
+
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -31,7 +32,7 @@ urlpatterns = [
     path('reviews/check_zero_hours_per_week/', views.review.check_zero_hours_per_week),
     path('profile/', views.profile, name='profile'),
     path('profile/<int:pk>/delete/',
-          views.DeleteProfile.as_view(), name='delete_profile'),
+         views.DeleteProfile.as_view(), name='delete_profile'),
     path('search/', views.search, name='search'),
 
     # API URLs
@@ -43,11 +44,15 @@ urlpatterns = [
     # AUTH URLS
     path('login/', views.login, name='login'),
     path('login/error/', views.login_error),
-    path('login/collect_extra_info/', views.collect_extra_info),
+    path('login/password_error/', views.password_error),
+    path('login/collect_extra_info/<str:method>', views.collect_extra_info),
     path('accounts/login/', views.login),
     path('logout/', views.logout, name='logout'),
     path(
         '.well-known/microsoft-identity-association.json',
         views.auth.load_microsoft_verification,
-        name="load_microsoft_verification")
+        name="load_microsoft_verification"),
+    path('register', TemplateView.as_view(template_name='login/register_form.html'), \
+         name="register"),
+    path('register/email', views.auth.email_verification, name="email_verification")
 ]

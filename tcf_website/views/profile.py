@@ -16,7 +16,6 @@ from .browse import safe_round
 from ..models import Review, User
 
 
-
 class ProfileForm(ModelForm):
     """Form updating user profile."""
     class Meta:
@@ -77,6 +76,7 @@ def reviews(request):
     # Round floats
     stats = {key: safe_round(value) for key, value in merged.items()}
     return render(request, 'reviews/user_reviews.html', context=stats)
+
 
 class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
     """User deletion view."""
