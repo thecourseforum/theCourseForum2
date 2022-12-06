@@ -32,12 +32,12 @@ def password_validation(backend, details, request, response, *args, **kwargs):
         try:
             validate_password(response.get('password'))
         except ValidationError as err:
-            return render(request, 'login/login_form.html', {
+            return render(request, 'login/register_form.html', {
                 'error_message': err
             })
     else:
-        if len(User.objects.filter(email=response.get('email'))) == 0:
-            return redirect('/register', error=True)
+        if User.objects.filter(email=response.get('email')).count() == 0:
+            redirect('/login/password_error', error=True)
     return {'password': response.get('password')}
 
 @partial
@@ -98,7 +98,7 @@ def create_user(strategy, details, backend, user=None, *args, **kwargs):
 
 def check_user_password(strategy, backend, user, is_new=False, password="", *args, **kwargs):
     """
-    Saves passwort to user object if a new user (registering).
+    Saves password to user object if a new user (registering).
     Otherwise, validates given password is correct.
     """
     if backend.name != 'email':
