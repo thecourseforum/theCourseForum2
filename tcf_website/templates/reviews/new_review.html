@@ -46,7 +46,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/reviews/check_duplicate",
+            url: "/reviews/check_duplicate/",
             data: $("#reviewForm").serialize(),
             async: false,
             success: function (check) {
@@ -56,7 +56,7 @@
                     // Check if review has 0 total hours/week and warn user if it does
                     $.ajax({
                         type: "POST",
-                        url: "/reviews/check_zero_hours_per_week",
+                        url: "/reviews/check_zero_hours_per_week/",
                         data: $("#reviewForm").serialize(),
                         async: false,
                         success: function (check) {
