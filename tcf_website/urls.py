@@ -1,10 +1,9 @@
 """Routes URLs to views"""
 
 from django.urls import include, path
-
+from django.views.generic import TemplateView
 from . import views
 
-from django.views.generic import TemplateView
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -51,6 +50,7 @@ urlpatterns = [
         '.well-known/microsoft-identity-association.json',
         views.auth.load_microsoft_verification,
         name="load_microsoft_verification"),
-    path('register', TemplateView.as_view(template_name='login/register_form.html'), name="register"),
+    path('register', TemplateView.as_view(template_name='login/register_form.html'), \
+                                             name="register"),
     path('register/email', views.auth.email_verification, name="email_verification")
 ]
