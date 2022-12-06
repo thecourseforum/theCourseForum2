@@ -4,8 +4,8 @@
 # pylint: disable=line-too-long
 """Custom authentication pipeline steps."""
 
-from django.shortcuts import redirect, render
 from social_core.pipeline.partial import partial
+from django.shortcuts import redirect, render
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
@@ -31,9 +31,9 @@ def password_validation(backend, details, request, response, *args, **kwargs):
             })
         try:
             validate_password(response.get('password'))
-        except ValidationError as e:
+        except ValidationError as err:
             return render(request, 'login/login_form.html', {
-                'error_message': e
+                'error_message': err
             })
     else:
         if len(User.objects.filter(email=response.get('email'))) == 0:
@@ -82,7 +82,6 @@ def create_user(strategy, details, backend, user=None, *args, **kwargs):
 
     fields = dict((name, kwargs.get(name, details.get(name)))
                   for name in backend.setting('USER_FIELDS', USER_FIELDS))
-    
     if not fields:
         return None
 
@@ -98,6 +97,10 @@ def create_user(strategy, details, backend, user=None, *args, **kwargs):
     }
 
 def check_user_password(strategy, backend, user, is_new=False, password="", *args, **kwargs):
+    """
+    Saves passwort to user object if a new user (registering).
+    Otherwise, validates given password is correct.
+    """
     if backend.name != 'email':
         return
 
@@ -108,6 +111,9 @@ def check_user_password(strategy, backend, user, is_new=False, password="", *arg
         return redirect('/login/password_error', error=True)
 
 def validate_email(strategy, backend, code, partial_token):
+    """
+    Used in auth pipeline to generate the verificaion email for account creation
+    """
     if not code.verified:
         url = strategy.build_absolute_uri(
             reverse('social:complete', args=(backend.name,))
