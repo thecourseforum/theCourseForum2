@@ -32,7 +32,7 @@ urlpatterns = [
     path('reviews/check_zero_hours_per_week/', views.review.check_zero_hours_per_week),
     path('profile/', views.profile, name='profile'),
     path('profile/<int:pk>/delete/',
-          views.DeleteProfile.as_view(), name='delete_profile'),
+         views.DeleteProfile.as_view(), name='delete_profile'),
     path('search/', views.search, name='search'),
 
     # API URLs
@@ -53,6 +53,6 @@ urlpatterns = [
         views.auth.load_microsoft_verification,
         name="load_microsoft_verification"),
     path('register', TemplateView.as_view(template_name='login/register_form.html'), \
-                                             name="register"),
+         name="register"),
     path('register/email', views.auth.email_verification, name="email_verification")
 ]
