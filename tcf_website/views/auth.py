@@ -28,11 +28,13 @@ def login_error(request):
                    sure you\'re using an @virginia.edu email address.')
     return browse(request)
 
+
 def password_error(request):
     """Incorrect password error view."""
     messages.error(request, 'There was an error logging you in. Please check \
                     your email and password')
     return browse(request)
+
 
 class ExtraUserInfoForm(forms.Form):
     """Form to collect extra user info on sign up."""
@@ -81,8 +83,9 @@ def logout(request):
 def email_verification(request):
     """Loads Microsoft verification document in order to be an authorized
     provider for Microsoft authentication """
-    return render(request, 'login/email_verification.html', \
-                    {'address':request.session.get('email_validation_address')})
+    return render(request, 'login/email_verification.html',
+                  {'address': request.session.get('email_validation_address')})
+
 
 def load_microsoft_verification(request):
     """Loads Microsoft verification document in order to be an authorized

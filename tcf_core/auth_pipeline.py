@@ -20,6 +20,7 @@ def auth_allowed(backend, details, response, *args, **kwargs):
         return redirect('/login/error', error=True)
     return None
 
+
 def password_validation(backend, details, request, response, *args, **kwargs):
     """Route unallowed auth attempts to error page."""
     if backend.name != 'email':
@@ -36,9 +37,10 @@ def password_validation(backend, details, request, response, *args, **kwargs):
                 'error_message': err
             })
     else:
-        if User.objects.filter(email=response.get('email')).count() == 0:
-            redirect('/login/password_error', error=True)
+        if not User.objects.filter(email=response.get('email')).exists():
+            return redirect('/login/password_error', error=True)
     return {'password': response.get('password')}
+
 
 @partial
 def collect_extra_info(
@@ -96,6 +98,7 @@ def create_user(strategy, details, backend, user=None, *args, **kwargs):
         'user': strategy.create_user(**fields)
     }
 
+
 def check_user_password(strategy, backend, user, is_new=False, password="", *args, **kwargs):
     """
     Saves password to user object if a new user (registering).
@@ -109,6 +112,7 @@ def check_user_password(strategy, backend, user, is_new=False, password="", *arg
         user.save()
     elif not user.check_password(password):
         return redirect('/login/password_error', error=True)
+
 
 def validate_email(strategy, backend, code, partial_token):
     """
