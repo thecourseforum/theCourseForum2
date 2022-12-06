@@ -6,17 +6,17 @@
 
 <form action="{% url 'social:complete' 'email' %}" method="post">
     {% csrf_token %}
-    <fieldset>
-        <label for="email">Your email: </label>
-        <input id="email" type="email" name="email" value="jackliu612@gmail.com">
-    </fieldset>
-    <fieldset>
-        <label for="password">Your password: </label>
-        <input id="password" type="password" name="password" value="fillerpassword">
-    </fieldset>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" class="form-control" type="email" name="email" placeholder="mst3k@virginia.edu">
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" class="form-control" type="password" name="password" placeholder="Password">
+    </div>
     <input type="hidden" name="login" value="login">
     <div class="login-button-container m-0">
-        <input type="submit" class="btn btn-lg bg-tcf-blue text-white" value="Login">
+        <input type="submit" class="btn btn-lg bg-tcf-indigo text-white" value="Login">
     </div>
     
 </form>
