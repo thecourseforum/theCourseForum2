@@ -1,7 +1,13 @@
-{% extends "base/base.html" %} {% load static %} {% block title %}theBlog -
-theCourseForum{% endblock %} {% block styles %}
+{% extends "base/base.html" %} 
+{% load static %} 
+
+{% block title %}theBlog - theCourseForum{% endblock %}
+
+{% block styles %}
 <link rel="stylesheet" href="{% static 'blog/blog.css' %}" />
-{% endblock %} {% block content %}
+{% endblock %} 
+
+{% block content %}
 <!-- {% comment %} <div class="container">
         {% include "../common/notification.html" %}
     </div> {% endcomment %} -->
@@ -15,13 +21,13 @@ theCourseForum{% endblock %} {% block styles %}
     <!-- Browse page content -->
     <section id="masthead">
         <div class="row px-5 py-3 bg-tcf-orange text-white">
-          <div class="col-sm-6">
-            <a href="{% url 'blog' %}" class="link-unstyled">
-              <h2 class="display-4 font-weight-bold mb-2">theBlog</h2>
-            </a>
-          </div>
+            <div class="col-sm-6">
+                <a href="{% url 'blog' %}" class="link-unstyled">
+                    <h2 class="display-4 font-weight-bold mb-2">theBlog</h2>
+                </a>
+            </div>
         </div>
-      </section>    
+    </section>
     <section>
         <div class="row mt-4 p-4 bg-light">
             <div class="col">
