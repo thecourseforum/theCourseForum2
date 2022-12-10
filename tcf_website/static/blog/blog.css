@@ -1,6 +1,7 @@
 .col {
   max-width: 670px;
   margin: auto;
+  text-align: left;
 }
 .blog-body a {
   text-decoration: underline;
