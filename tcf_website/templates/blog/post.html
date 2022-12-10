@@ -26,7 +26,7 @@ theCourseForum{% endblock %} {% block styles %}
         <div class="row mt-4 p-4 bg-light">
             <div class="col">
                 <p class="text-muted">
-                    Written by: {{post_detail.author}} &#8226; {{ post_detail.created_date | date:"N d, Y" }}</span>
+                    Written by {{post_detail.author}} &#8226; {{ post_detail.created_date | date:"N d, Y" }}</span>
                 </p>
                 <h1 class="display-3">{{ post_detail.title }}</h1>
                 <h2 class="text-muted">{{ post_detail.subtitle }}</h2>
