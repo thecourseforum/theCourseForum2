@@ -18,3 +18,7 @@
   background-color: #f0f0f0;
   padding: 0.2em;
 }
+.blog-body blockquote {
+  border-left: 1px solid #6c757d;
+  padding: 1em;
+}
