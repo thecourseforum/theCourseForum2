@@ -14,7 +14,7 @@ function handleVote(reviewID, isUpvote) {
     if (isUpvote) {
         elem = $(`#review${reviewID} .upvote`);
         otherElem = $(`#review${reviewID} .downvote`);
-        endpoint = `/reviews/${reviewID}/upvote`;
+        endpoint = `/reviews/${reviewID}/upvote/`;
 
         // If already upvoted, subtract 1.
         if (elem.hasClass("active")) {
@@ -30,7 +30,7 @@ function handleVote(reviewID, isUpvote) {
     } else {
         elem = $(`#review${reviewID} .downvote`);
         otherElem = $(`#review${reviewID} .upvote`);
-        endpoint = `/reviews/${reviewID}/downvote`;
+        endpoint = `/reviews/${reviewID}/downvote/`;
 
         // If already downvoted, add 1.
         if (elem.hasClass("active")) {

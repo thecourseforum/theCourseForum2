@@ -18,6 +18,8 @@ __pycache__/*
 node_modules/
 # CSV files exported from PostgreSQL
 db/*.csv
+# Data dumps
+db/*.sql
 # IDEs
 .idea/
 .vscode/
