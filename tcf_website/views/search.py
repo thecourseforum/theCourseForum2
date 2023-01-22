@@ -44,6 +44,7 @@ def decide_order(query, courses, instructors):
 
     return courses_z >= instructors_z
 
+
 def compute_zscore(scores):
     """Computes and returns the z_score from the list
      and gets the z-score of the highest z-score."""
@@ -63,7 +64,6 @@ def compute_zscore(scores):
         return 0
 
     return -1
-
 
 
 def fetch_courses(query):
