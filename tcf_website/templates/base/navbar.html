@@ -20,6 +20,11 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
+    <!-- tCF History Popup -->
+    <div class="nav-item">
+      <a class="nav-link fa fa-clock-o" href="#"></a>
+    </div>
+
     <!-- tCF profile dropdown -->
     <div class="account-settings">
       {% if user.is_authenticated %}
@@ -42,3 +47,11 @@
     </div>
   </nav>
 </header>
+
+<script>
+// When the user clicks on <div>, open the popup
+function myFunction() {
+  var popup = document.getElementById("myPopup");
+  popup.classList.toggle("show");
+}
+</script>
