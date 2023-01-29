@@ -227,7 +227,7 @@ class Command(BaseCommand):
         grade_weights = [4.0, 4.0, 3.7,
                          3.3, 3.0, 2.7,
                          2.3, 2.0, 1.7,
-                         0]
+                         0]  # DFW column removed in average calculation
 
         # Load course_grades data from dicts and create model instances
         unsaved_cg_instances = []
@@ -237,7 +237,7 @@ class Command(BaseCommand):
                                zip(self.course_grades[row], grade_weights))
 
             course_grade_params = self.set_grade_params(
-                row, total_enrolled, total_weight, has_instructor=False)
+                row, total_enrolled, total_weight, is_instructor_grade=False)
             unsaved_cg_instance = CourseGrade(**course_grade_params)
             unsaved_cg_instances.append(unsaved_cg_instance)
 
@@ -260,7 +260,7 @@ class Command(BaseCommand):
                     self.course_instructor_grades[row][i] * grade_weights[i])
 
             course_instructor_grade_params = self.set_grade_params(
-                row, total_enrolled, total_weight, has_instructor=True)
+                row, total_enrolled, total_weight, is_instructor_grade=True)
             unsaved_cig_instance = CourseInstructorGrade(
                 **course_instructor_grade_params)
             unsaved_cig_instances.append(unsaved_cig_instance)
@@ -274,11 +274,11 @@ class Command(BaseCommand):
                 for instructor in self.missing_instructors:
                     file.write(instructor)
 
-    def set_grade_params(self, row, total_enrolled, total_weight, has_instructor):
+    def set_grade_params(self, row, total_enrolled, total_weight, is_instructor_grade):
         """Creates dict of params to be used as parameters
         in creating CourseGrade/CourseInstructorGrade instances.
         Helper function for load_dict_into_models()"""
-        if has_instructor:
+        if is_instructor_grade:
             data = self.course_instructor_grades[row]
         else:
             data = self.course_grades[row]
@@ -308,7 +308,7 @@ class Command(BaseCommand):
             'total_enrolled': total_enrolled
         }
 
-        if has_instructor:
+        if is_instructor_grade:
             course_grade_params['instructor_id'] = self.instructors.get(row[2:])
             if self.log_missing_instructors and course_grade_params['instructor_id'] is None:
                 self.missing_instructors.add(f'{row[2]} {row[3]}\n')
