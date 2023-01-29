@@ -180,7 +180,7 @@ class Command(BaseCommand):
             c = int(row['C'])
             c_minus = int(row['C-'])
             # UVA data doesn't contain D's or F's, just the DFW column
-            # Assuming it means "drop", "fail", "withdraw"
+            # DFW combines Ds, Fs, and withdraws into one category
             dfw = int(row['DFW'])
         except (TypeError, ValueError) as e:
             if self.verbosity > 0:
@@ -283,9 +283,11 @@ class Command(BaseCommand):
         else:
             data = self.course_grades[row]
 
-        # calculate gpa excluding DFW column
+        # Calculate gpa excluding DFW column. This will skew average GPAs above
+        # what they actually are since DFW includes students with low scores, but
+        # the skew is in a consistent direction for all classes so it's *probably* fine.
         total_enrolled_filtered = total_enrolled - data[9]
-        # check divide by 0
+        # Check divide by 0
         if total_enrolled_filtered == 0:
             total_enrolled_gpa = 0
         else:
