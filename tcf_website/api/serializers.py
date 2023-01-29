@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use
 """DRF Serializers"""
 from rest_framework import serializers
 from ..models import (Course, Department, School, Instructor, Semester,
