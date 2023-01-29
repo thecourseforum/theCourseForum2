@@ -1,0 +1,27 @@
+{% extends "base/index.html" %}
+
+{% load static %}
+
+{% block title %}404 - theCourseForum{% endblock %}
+
+{% block body %}
+
+<div
+  class="row justify-content-center"
+  style="position: relative; transform: translateY(100%)"
+>
+  <img
+    src="{% static 'base/img/new_logo.png' %}"
+    alt="theCourseForum logo"
+    height="200px"
+  />
+  <div class="pl-4 pt-3">
+    <h1>Oops!</h1>
+    <p>
+      Looks like this page doesn't exist.<br />
+      You probably want to go
+      <a style="color: var(--accent-color)" href="{% url 'index' %}">home</a>.
+    </p>
+  </div>
+</div>
+{% endblock %}
