@@ -53,6 +53,7 @@
     <header class="masthead text-center">
         <div class="row">
             <div class="col-xl-8 mx-auto py-4">
+                {% include "../common/review-drive-banner.html" %}
                 <div class="about-logo row justify-content-center">
                     <img src="{% static 'base/img/new_logo.png' %}" alt="theCourseForum logo"
                          height="150px">
@@ -101,7 +102,12 @@
             </div>
 
             <div class="col-lg-4">
+                {% if user.is_authenticated %}
                 <a href="{% url 'new_review' %}" class="link-unstyled">
+                {% else %}
+                {% include "login/login_modal.html" with path="/reviews/new" path_id="reviewLoginModal" %}
+                <a href="#reviewLoginModal" data-toggle="modal" class="link-unstyled">
+                {% endif %}
                     <div class="card mx-sm-3 my-3">
                         <div class="card-body features-icons-item mx-auto mb-2">
                             <div class="features-icons-icon d-flex">
