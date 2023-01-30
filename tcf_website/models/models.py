@@ -160,6 +160,8 @@ class Instructor(models.Model):
     website = models.URLField(blank=True)
     # Instructor departments. Optional.
     departments = models.ManyToManyField(Department)
+    # hidden professor. Required. Default visible.
+    hidden= models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
