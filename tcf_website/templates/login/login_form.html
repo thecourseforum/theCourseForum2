@@ -1,0 +1,21 @@
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'login/login_button.css' %}"/>
+{% endblock %}
+
+<form action="{% url 'social:complete' 'email' %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" class="form-control" type="email" name="email" placeholder="mst3k@virginia.edu">
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" class="form-control" type="password" name="password" placeholder="Password">
+    </div>
+    <input type="hidden" name="login" value="login">
+    <div class="login-button-container m-0">
+        <input type="submit" class="btn btn-lg bg-tcf-indigo text-white" value="Login">
+    </div>
+</form>
