@@ -39,10 +39,9 @@ $(".pieToBar").click(function() {
 const loadData = data => {
     // order in the input data
     /* eslint-disable camelcase */
-    const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, ot, drop, withdraw } = data;
+    const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, dfw } = data;
     // order we want for the pie chart
-    const other = ot;
-    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, d_plus, d, d_minus, f, withdraw, drop, other];
+    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, dfw];
 
     // Calculate total number of students
     totalSum = grades_data.reduce((total, num) => total + num, 0);
@@ -94,28 +93,21 @@ const createChart = gradesData => {
         datasets: [{
             data: gradesData,
             backgroundColor: [
-                "#57679D", // A+
-                "#56669C", // A
-                "#55659B", // A-
-                "#384676", // B+
-                "#384676", // B
-                "#374575", // B-
-                "#364474", // C+
-                "#18244B", // C
-                "#17234A", // C-
-                "#162249", // D+
-                "#E06A45", // D
-                "#DE6843", // D-
-                "#C95F36", // F
-                "#B35032", // Withdraw
-                "#B45133", // Drop
-                "#6775A6" // Other (Pass)
+                "#182D66", // A+
+                "#274F97", // A
+                "#4467B6", // A-
+                "#5D83D1", // B+
+                "#6E98E4", // B
+                "#8FA9DF", // B-
+                "#DAA38E", // C+
+                "#DD734C", // C
+                "#D75626", // C-
+                "#BE4B20" // DFW
             ]
         }],
         labels: [
             "A+", "A", "A-", "B+", "B", "B-",
-            "C+", "C", "C-", "D+", "D", "D-",
-            "F", "Withdraw", "Drop", "Pass"
+            "C+", "C", "C-", "DFW"
         ]
     };
 
@@ -126,7 +118,7 @@ const createChart = gradesData => {
         options: {
             layout: {
                 padding: {
-                    top: 20
+                    bottom: 20
                 }
             },
             responsive: true,
@@ -202,9 +194,12 @@ const createChart = gradesData => {
                 callbacks: {
                     label: function(tooltipItem, data) {
                         var dataset = data.datasets[0];
-                        var sum = totalSum;
-                        var percent = Math.round((dataset.data[tooltipItem.index] / sum) * 100);
-                        return data.labels[tooltipItem.index] + ": " + percent + "%";
+                        var percent = Math.round((dataset.data[tooltipItem.index] / totalSum) * 100);
+                        var label = data.labels[tooltipItem.index];
+                        if (tooltipItem.index === 9) {
+                            label = "D/F/Withdraw";
+                        }
+                        return label + ": " + percent + "%";
                     }
                 },
                 displayColors: false
