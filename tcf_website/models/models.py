@@ -1,24 +1,3 @@
-Lilian Zhang
-#1156
-in:#q-a 
-Jules [VP-Product Eng] — 04/24/2022 5:05 PM
-Models are done-- you can branch off the q-a branch to access these
-AJ Nye [Secretary] — 01/22/2023 2:21 PM
-https://github.com/thecourseforum/theCourseForum2/issues/581
-GitHub
-Answer UI · Issue #581 · thecourseforum/theCourseForum2
-Create the UI for the answers on the Course page. The below pictures will be a good reference; see Amazon as well for more detail. The admin page or console could be used to mock up questions if ne...
-Answer UI · Issue #581 · thecourseforum/theCourseForum2
-https://github.com/thecourseforum/theCourseForum2/issues/580
-GitHub
-Questions UI · Issue #580 · thecourseforum/theCourseForum2
-Create the UI for the questions on the Course page. The below pictures will be a good reference; see Amazon as well for more detail. The admin page or console could be used to mock up questions if ...
-Questions UI · Issue #580 · thecourseforum/theCourseForum2
-Image
-I think the QA is done by class, not professor, given the sample questions above
-Oliver Song [Treasurer] — Today at 2:12 PM
-# pylint: disable=missing-class-docstring, wildcard-import, fixme
-
 """TCF Database models."""
 
 from django.db import models
