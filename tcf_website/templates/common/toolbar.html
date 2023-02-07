@@ -29,7 +29,12 @@
         {% if sorting %}
         <div id="sortButtons" class="btn-group btn-group-sm"
              role="toolbar" aria-label="Sorting Buttons">
+            {% if 'department' in request.path %}
             <button type="button" id="number-sort-btn" class="btn btn-outline-primary active">Course ID &#11014;</button>
+            {% endif %}
+            {% if 'course' in request.path %}
+            <button type="button" id="recency-sort-btn" class="btn btn-outline-primary active">Last Taught &#11015;</button>
+            {% endif %}
             <button type="button" id="rating-sort-btn" class="btn btn-outline-primary"> Rating</button>
             <button type="button" id="diff-sort-btn" class="btn btn-outline-primary"> Difficulty</button>
             <button type="button" id="gpa-sort-btn" class="btn btn-outline-primary"> GPA</button>
