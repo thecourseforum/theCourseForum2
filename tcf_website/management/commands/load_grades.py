@@ -213,7 +213,6 @@ class Command(BaseCommand):
             # Load this semester into dictionary
             if identifier in data_dict:
                 # Average needs to be computed separately instead of incrementing
-                # IMPORTANT ASSUMPTION: average is last index of grades data row
                 prev_data = data_dict[identifier]
                 prev_total_enrolled = prev_data[-2]
                 prev_average = prev_data[-1]
