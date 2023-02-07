@@ -21,14 +21,14 @@
           "name": "Christina Wang",
           "role": "Developer",
           "class": "2025",
-          "img_filename": "blank.jpeg"
+          "img_filename": "ENG_Christina_Wang.JPG"
         },
         {
           "name": "Anoushka Sarkar",
           "role": "Marketing and Design",
           "class": "2025",
           "img_filename": "DM_Anoushka_Sarkar.JPG"
-        },
+        }
       ]
     },
     {
@@ -106,7 +106,7 @@
           "name": "Zina Lahham",
           "role": "UX Manager",
           "class": "2023",
-          "img_filename": "DM_Zina_Lahham.jpeg"
+          "img_filename": "DM_Zina_Lahham.webp"
         },
         {
           "name": "Dani Szabo",
@@ -147,13 +147,13 @@
           "name": "Kimberly Vo",
           "role": "VP of Marketing and Design",
           "class": "2022",
-          "img_filename": "MAD_Kimberly_Vo.jpg"
+          "img_filename": "MAD_Kimberly_Vo.webp"
         },
         {
           "name": "Lauren Kim",
           "role": "Social Media Chair",
           "class": "2022",
-          "img_filename": "DM_Lauren_Kim.jpg"
+          "img_filename": "DM_Lauren_Kim.webp"
         },
         {
           "name": "Davis DeLozier",
