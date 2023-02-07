@@ -17,7 +17,7 @@
             {% include "../common/leaderboard_ad.html" with ad_slot="9533576562" %}
         </div>
         <div class="container-lg">
-            {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="All" %}
+            {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="All" sorting=True %}
         </div>
 
         <div class="instructors container-lg mt-3">
@@ -75,7 +75,7 @@
                 </div>
             {% endif %}
 
-            <ul class="instructor-list">
+            <ul class="instructor-list course-list">
                 {% for i in instructors %}
                     <li class="instructor {% if i.semester_last_taught != latest_semester %}old{% endif %}">
                         {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
@@ -89,6 +89,7 @@
 
 {% block js %}
     <script type="module" src="{% static 'common/bind-show-hide.js' %}"></script>
+    <script type="module" src="{% static 'common/bind-sort.js' %}"></script>
 
     {#initializes Bootstrap tooltip#}
     <script>
