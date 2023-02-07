@@ -105,7 +105,7 @@ class Command(BaseCommand):
                 if self.verbosity == 3:
                     print('Loading data from', file)
                 # Ignore temp files (start with '~' on Windows, '.' otherwise) and test data
-                if file[0] not in ('.', '~') and file != 'test_data.csv':
+                if file[0] not in ('.', '~') and '.csv' in file:
                     self.load_semester_file(file)
         else:
             self.load_semester_file(f"{semester.lower()}.csv")
@@ -113,14 +113,24 @@ class Command(BaseCommand):
 
     def clean(self, df):
         """ Cleans data.
-        Because of FERPA redactions (see wiki for details), there are 3 types of rows:
+        Because of FERPA redactions (see wiki for details), there are 3 types of usable rows:
         1. Contains both average/total enrolled and distribution (counts of A, B, C, etc.)
         2. Contains only average/total enrolled, with distribution deleted
         3. Contains only distribution, with no average.
 
-        All of these types have value, so we don't drop any rows.
+        The only case we drop is when there is no data in any relevant column.
         """
         df.replace('-', np.NaN, inplace=True)
+
+        df.dropna(
+            how="all",
+            subset=['A+', 'A', 'A-',
+                    'B+', 'B', 'B-',
+                    'C+', 'C', 'C-',
+                    'DFW', '# of Students', 'Course GPA'],
+            inplace=True
+        )
+
         df.fillna(0, inplace=True)
 
         # Not quite sure how much data this actually applies to,
@@ -179,19 +189,17 @@ class Command(BaseCommand):
             c_plus = int(row['C+'])
             c = int(row['C'])
             c_minus = int(row['C-'])
-            # UVA data doesn't contain D's or F's, just the DFW column
             # DFW combines Ds, Fs, and withdraws into one category
             dfw = int(row['DFW'])
 
-            try:
-                # With no redactions, tracking these aggregate data would be unnecessary, but
-                # we need these because DFW is vague and small class distributions are deleted.
-                # Both can be redacted as '-', which shouldn't be the same thing as a 0.
-                average = float(row['Course GPA'])
-                total_enrolled = int(row['# of Students'])
-            except ValueError as e:
-                average = None
-                total_enrolled = a_plus + a + a_minus + b_plus + b + b_minus + c_plus + c + c_minus + dfw
+            # With no redactions, tracking these aggregate data would be unnecessary, but
+            # we need these because DFW is vague and small class distributions are deleted.
+            # We also need to handle the edge case where these fields are empty, which
+            # clean() fills as 0.
+            average = float(row['Course GPA'])
+            total_enrolled = max(int(row['# of Students']), a_plus + a +
+                                 a_minus + b_plus + b + b_minus + c_plus + c + c_minus + dfw)
+
         except (TypeError, ValueError) as e:
             if self.verbosity > 0:
                 print(row)
@@ -218,13 +226,13 @@ class Command(BaseCommand):
                 prev_data = data_dict[identifier]
                 prev_total_enrolled = prev_data[-2]
                 prev_average = prev_data[-1]
-                # If both are not None, then update with weighted formula
+                # If both are not zero, then update with weighted formula
                 if prev_average and average:
                     new_average = (prev_average * prev_total_enrolled + average *
                                    total_enrolled) / (prev_total_enrolled + total_enrolled)
                     data_dict[identifier][-1] = new_average
                     data_dict[identifier][-2] += total_enrolled
-                # If only old average is None, then set it to new average
+                # If only old average is zero, then set it to new average
                 elif average:
                     data_dict[identifier][-1] = average
                     data_dict[identifier][-2] = total_enrolled
