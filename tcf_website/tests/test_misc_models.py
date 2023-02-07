@@ -31,12 +31,11 @@ class MiscModelsTestCase(TestCase):
 
     def test_course_grade_name(self):
         """Test __str__ method in CourseGrade model"""
-        self.assertEqual("CS - Computer Science 300 2.9", str(
-            self.course_grade))
+        self.assertEqual("CS 1420 2.9", str(self.course_grade))
 
     def test_course_instructor_grade_name(self):
         """Test __str__ method in CourseInstructorGrade model"""
-        self.assertEqual("Tom Jefferson CS - Computer Science 450 3.8", str(
+        self.assertEqual("Tom Jefferson CS 1420 3.8", str(
             self.instructor_grade))
 
     def test_course_vote_name(self):

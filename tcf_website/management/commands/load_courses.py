@@ -9,6 +9,7 @@ import json
 from django.core.management.base import BaseCommand
 from tcf_website.models import Course
 
+
 class Command(BaseCommand):
     """TODO: write"""
 
@@ -25,5 +26,3 @@ class Command(BaseCommand):
             if subject == 'CS':
                 for course_id, course_data in subject_data['courses'].items():
                     course, created = Course.objects.get
-
-

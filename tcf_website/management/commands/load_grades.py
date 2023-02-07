@@ -4,7 +4,6 @@ import re
 
 from django.core.management.base import BaseCommand
 from tcf_website.models import *
-from django.core.exceptions import ObjectDoesNotExist
 
 from tqdm import tqdm
 
@@ -15,16 +14,50 @@ class Command(BaseCommand):
     in the tcf_website/management/commands/grade_data/csv/ directory.
     This should take ~20 min to run to load all the grades
     """
-    help = 'Imports grade data from VAGrades CSV files into PostgresSQL database'
+    help = 'Imports FOIAed grade data files into PostgreSQL database'
 
-    # Not a good practice but declared as global for readability & convenience?
-    global course_grades
-    global course_instructor_grades
+    def __init__(self, stdout=None, stderr=None, no_color=False, force_color=False):
+        super().__init__(stdout, stderr, no_color, force_color)
 
-    course_grades = {}
-    course_instructor_grades = {}
+        # Initialize some variables that get used everywhere
+
+        # Dict mapping instructor first/last name to their ID in our database
+        # We used to be able to include email, but the UVA dataset doesn't include it!
+        # This is pretty risky if instructors have the exact same name, so yikes
+        # TODO: figure out how to differentiate (maybe by classes taught?)
+        self.instructors = {
+            (obj['first_name'], obj['last_name']): obj['id']
+            for obj in Instructor.objects.values('id', 'first_name',
+                                                 'last_name')
+        }
+
+        # Dict mapping course mnemonic in a tuple to its ID in our database
+        self.courses = {
+            (obj['subject__mnemonic'], obj['number']): obj['id']
+            for obj in Course.objects.values('id', 'number',
+                                             'subject__mnemonic')
+        }
+
+        # Location of our grade data CSVs
+        self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
+
+        # Default level of verbosity
+        self.verbosity = 0
+
+        # Whether or not to suppress tqdm
+        self.suppress_tqdm = False
+
+        self.course_grades = {}
+        self.course_instructor_grades = {}
+
+        # Set of instructors that are in the data but not in the database
+        self.missing_instructors = set()
+
+        # Whether or not to log those missing instructors in a txt
+        self.log_missing_instructors = False
 
     def add_arguments(self, parser):
+        """Standard Django function implementation - defines command-line parameters"""
         # The only required argument at the moment
         # A previous author wrote that reloading all semesters can be dangerous
         # Not sure why, but requiring `ALL_DANGEROUS` to honor the help text
@@ -37,35 +70,47 @@ class Command(BaseCommand):
             type=str
         )
 
+        parser.add_argument(
+            '--suppress-tqdm',
+            action='store_true',
+            help='Suppress the tqdm loading bars'
+        )
+
+        parser.add_argument(
+            '--log-missing-instructors',
+            action='store_true',
+            help='Create a .txt file with missing instructors'
+        )
+
     def handle(self, *args, **options):
+        """Standard Django function implementation - runs when this command is executed."""
         self.verbosity = options['verbosity']
-        self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
+        self.suppress_tqdm = options['suppress_tqdm']
+        self.log_missing_instructors = options['log_missing_instructors']
+
         if self.verbosity > 0:
             print('Step 1: Fetch Course and Instructor data for later use')
-        self.courses = {
-            (obj['subject__mnemonic'], obj['number']): obj['id']
-            for obj in Course.objects.values('id', 'number',
-                                             'subject__mnemonic')
-        }
-        self.instructors = {
-            (obj['first_name'], obj['last_name'], obj['email']): obj['id']
-            for obj in Instructor.objects.values('id', 'first_name',
-                                                 'last_name', 'email')
-        }
         semester = options['semester']
         if semester == 'ALL_DANGEROUS':
-            # ignores temporary files ('~' on Windows, '.' otherwise)
+            # ALL_DANGEROUS removes all existing data
+            CourseGrade.objects.all().delete()
+            CourseInstructorGrade.objects.all().delete()
+
+            # Loads every data CSV file in /grade_data/csv with exceptions
             for file in sorted(os.listdir(self.data_dir)):
-                if file[0] not in ('.', '~'):
+                if self.verbosity == 3:
+                    print('Loading data from', file)
+                # Ignore temp files (start with '~' on Windows, '.' otherwise) and test data
+                if file[0] not in ('.', '~') and file != 'test_data.csv':
                     self.load_semester_file(file)
         else:
             self.load_semester_file(f"{semester.lower()}.csv")
         self.load_dict_into_models()
 
     def clean(self, df):
-        # Truncate existing tables
-        CourseGrade.objects.all().delete()
-        CourseInstructorGrade.objects.all().delete()
+        """ Removes rows with incomplete data from dataframe"""
+        # Note: some 'Course GPA' and '# of Students' entries are empty due to FERPA
+        # (see wiki for more details) but we don't use those columns anyways
 
         # Filter out data with no grades
         df = df.dropna(
@@ -73,24 +118,21 @@ class Command(BaseCommand):
             subset=['A+', 'A', 'A-',
                     'B+', 'B', 'B-',
                     'C+', 'C', 'C-',
-                    'D+', 'D', 'D-',
-                    'F']
-        ).fillna(  # Impute NaNs with empty string if the field is a CharField
-            {'Instructor Email': ''},
+                    'DFW']
         )
-        # Filter out data with missing instructor
-        return df[df['Instructor Last Name'] != 'MISSING INSTRUCTOR']
+        # Not quite sure how much data this actually applies to,
+        # as UVA data is much more reliable than the old VAGrades data
+
+        # Filter out data with missing instructor (represented by ...)
+        return df[df['Primary Instructor Name'] != '...']
 
     def load_semester_file(self, file):
-        year, semester = file.split('.')[0].split('_')
-        year = int(year)
-        season = semester.upper()
-
+        """Given a file name, cleans + loads its data into the global grade data dicts."""
         df = self.clean(pd.read_csv(os.path.join(self.data_dir, file)))
         if self.verbosity > 0:
             print(f"Found {df.size} sections in {file}")
 
-        for index, row in tqdm(df.iterrows(), total=df.shape[0]):
+        for index, row in tqdm(df.iterrows(), total=df.shape[0], disable=self.suppress_tqdm):
             if self.verbosity == 3:
                 print(str(row).encode('ascii', 'ignore').decode('ascii'))
             self.load_row_into_dict(row)
@@ -98,17 +140,36 @@ class Command(BaseCommand):
             print(f'Done loading {file}')
 
     def load_row_into_dict(self, row):
-        # parsing fields of the CSV file
-        first_name = row['Instructor First Name']
-        # row['Insructor Middle Name'] is not used
-        last_name = row['Instructor Last Name']
-        email = row['Instructor Email']
+        """
+        Loads data from a given row into the global dicts
+        course_grades and course_instructor_grades
+        """
+        # Columns are processed left to right, with one exception
+
+        # 'Term Desc' column is unused because we only care about aggregate across semesters
+        # Might want to display semester-by-semester metrics too? Would have to change this
+
         subject = row['Subject']
-        # row['Section Number'] is not used
-        title = row['Title']
+        # `Catalog Number` is handled with all other numerical data in the try block below
+
+        title = row['Class Title']
+        full_name = row['Primary Instructor Name']
+        # Key assumption: names are in the format `LAST,FIRST MIDDLE`
         try:
-            number = int(re.sub('[^0-9]', '', str(row['Course Number'])))
-            gpa = float(row['Course GPA'])
+            last_name, first_and_middle = full_name.split(',')
+            first_name = first_and_middle.split(' ')[0]
+        except ValueError:
+            # Script should stop if name that doesn't fit this pattern is given
+            if self.verbosity > 0:
+                print('full name is', full_name)
+            raise ValueError(
+                f"{full_name=} doesn't meet our assumption about `Primary Instructor Name` format.")
+
+        # 'Class Section' column is unused
+        try:
+            number = int(re.sub('[^0-9]', '', str(row['Catalog Number'])))
+            # 'Course GPA' is unused because we manually calculate average between all semesters
+            # '# of Students' is unused because we manually calculate it for all semesters
             a_plus = int(row['A+'])
             a = int(row['A'])
             a_minus = int(row['A-'])
@@ -118,159 +179,137 @@ class Command(BaseCommand):
             c_plus = int(row['C+'])
             c = int(row['C'])
             c_minus = int(row['C-'])
-            d_plus = int(row['D+'])
-            d = int(row['D'])
-            d_minus = int(row['D-'])
-            f = int(row['F'])
-            other = int(row['OT'])  # pass
-            drop = int(row['DR'])
-            withdraw = int(row['W'])
-            total_enrolled = int(row['Total'])
+            # UVA data doesn't contain D's or F's, just the DFW column
+            # DFW combines Ds, Fs, and withdraws into one category
+            dfw = int(row['DFW'])
         except (TypeError, ValueError) as e:
             if self.verbosity > 0:
                 print(row)
                 print(e)
             raise e
         # No error casting values to float/int, so continue
-        # identifiers are tuple keys to dictionaries
+        # Identifiers are tuple keys to grade data dictionaries
         course_identifier = (subject, number, title)
         course_instructor_identifier = (
-            subject, number, first_name, last_name, email)
+            subject, number, first_name, last_name)
 
-        # value of dictionaries (incremented onto value if key already exists)
+        # Dictionary values (incremented onto value if key already exists)
         this_semesters_grades = [a_plus, a, a_minus,
                                  b_plus, b, b_minus,
                                  c_plus, c, c_minus,
-                                 d_plus, d, d_minus,
-                                 f,
-                                 other, drop, withdraw]
+                                 dfw]
 
-        # load this semester into course dictionary
-        if course_identifier in course_grades:
-            for i in range(len(course_grades[course_identifier])):
-                course_grades[course_identifier][i] += this_semesters_grades[i]
+        # Load this semester into course_grades dictionary
+        if course_identifier in self.course_grades:
+            for i in range(len(self.course_grades[course_identifier])):
+                self.course_grades[course_identifier][i] += this_semesters_grades[i]
         else:
-            course_grades[course_identifier] = this_semesters_grades
+            self.course_grades[course_identifier] = this_semesters_grades.copy()
 
-        # load this semester into course instructor dictionary
-        if course_instructor_identifier in course_instructor_grades:
-            for i in range(
-                    len(course_instructor_grades[course_instructor_identifier])):
-                course_instructor_grades[course_instructor_identifier][i] += this_semesters_grades[i]
+        # Load this semester into course_instructor_grades dictionary
+        if course_instructor_identifier in self.course_instructor_grades:
+            for i in range(len(self.course_instructor_grades[course_instructor_identifier])):
+                self.course_instructor_grades[course_instructor_identifier][i] += this_semesters_grades[i]
         else:
-            course_instructor_grades[course_instructor_identifier] = this_semesters_grades
+            self.course_instructor_grades[course_instructor_identifier] = this_semesters_grades.copy(
+            )
 
     def load_dict_into_models(self):
+        """ Converts dictionaries to real instances of CourseGrade and CourseInstructorGrade.
+
+        Given a course or course-instructor pair and its corresponding grade distribution,
+        calculates weighted GPA average and total enrolled students and then uses all of those
+        as parameters to create new CourseGrade and CourseInstructorGrade instances.
+        """
         if self.verbosity > 0:
             print('Step 2: Bulk-create CourseGrade instances')
-        # used for gpa calculation
+        # Used for GPA calculation
         grade_weights = [4.0, 4.0, 3.7,
                          3.3, 3.0, 2.7,
                          2.3, 2.0, 1.7,
-                         1.3, 1.0, 0.7,
-                         0,
-                         0, 0, 0]
+                         0]  # DFW column removed in average calculation
 
-        # load course grades
+        # Load course_grades data from dicts and create model instances
         unsaved_cg_instances = []
-        for row in tqdm(course_grades):
-            total_enrolled = sum(course_grades[row])
+        for row in tqdm(self.course_grades, disable=self.suppress_tqdm):
+            total_enrolled = sum(self.course_grades[row])
             total_weight = sum(a * b for a, b in
-                               zip(course_grades[row], grade_weights))
+                               zip(self.course_grades[row], grade_weights))
 
-            # calculate gpa excluding other/drop/withdraw in total_enrolled
-            total_enrolled_filtered = total_enrolled - \
-                sum(course_grades[row][i] for i in (13, 14, 15))
-            # check divide by 0
-            if total_enrolled_filtered == 0:
-                total_enrolled_gpa = 0
-            else:
-                total_enrolled_gpa = total_weight / total_enrolled_filtered
-
-            course_grade_params = {
-                'course_id': self.courses.get(row[:2]),
-                'subject': row[0],
-                'number': row[1],
-                'title': row[2],
-                'average': total_enrolled_gpa,
-                'a_plus': course_grades[row][0],
-                'a': course_grades[row][1],
-                'a_minus': course_grades[row][2],
-                'b_plus': course_grades[row][3],
-                'b': course_grades[row][4],
-                'b_minus': course_grades[row][5],
-                'c_plus': course_grades[row][6],
-                'c': course_grades[row][7],
-                'c_minus': course_grades[row][8],
-                'd_plus': course_grades[row][9],
-                'd': course_grades[row][10],
-                'd_minus': course_grades[row][11],
-                'f': course_grades[row][12],
-                'ot': course_grades[row][13],  # other/pass
-                'drop': course_grades[row][14],
-                'withdraw': course_grades[row][15],
-                'total_enrolled': total_enrolled
-            }
+            course_grade_params = self.set_grade_params(
+                row, total_enrolled, total_weight, is_instructor_grade=False)
             unsaved_cg_instance = CourseGrade(**course_grade_params)
             unsaved_cg_instances.append(unsaved_cg_instance)
+
+        # bulk_create is much more efficient than creating them separately
         CourseGrade.objects.bulk_create(unsaved_cg_instances)
         if self.verbosity > 0:
             print('Done creating CourseGrade instances')
-
-        if self.verbosity > 0:
             print('Step 3: Bulk-create CourseInstructorGrade instances')
-        # load course instructor grades
+
+        # Load course_instructor_grades data from dicts and create model instances
         unsaved_cig_instances = []
-        for row in tqdm(course_instructor_grades):
+        for row in tqdm(self.course_instructor_grades, disable=self.suppress_tqdm):
             total_enrolled = 0
-            for grade_count in course_instructor_grades[row]:
+            for grade_count in self.course_instructor_grades[row]:
                 total_enrolled += grade_count
 
             total_weight = 0
-            for i in range(len(course_instructor_grades[row])):
+            for i in range(len(self.course_instructor_grades[row])):
                 total_weight += (
-                    course_instructor_grades[row][i] * grade_weights[i])
+                    self.course_instructor_grades[row][i] * grade_weights[i])
 
-            # calculate gpa without including other/drop/withdraw in
-            # total_enrolled
-            total_enrolled_filtered = total_enrolled - \
-                sum(course_instructor_grades[row][i] for i in (13, 14, 15))
-            if total_enrolled_filtered == 0:
-                total_enrolled_gpa = 0
-            else:
-                total_enrolled_gpa = total_weight / total_enrolled_filtered
-
-            course_instructor_grade_params = {
-                'subject': row[0],
-                'number': row[1],
-                'first_name': row[2],
-                'middle_name': '',  # for backward compatibility
-                'last_name': row[3],
-                'email': row[4],
-                'course_id': self.courses.get(row[:2]),
-                'instructor_id': self.instructors.get(row[2:]),
-                'average': total_enrolled_gpa,
-                'a_plus': course_instructor_grades[row][0],
-                'a': course_instructor_grades[row][1],
-                'a_minus': course_instructor_grades[row][2],
-                'b_plus': course_instructor_grades[row][3],
-                'b': course_instructor_grades[row][4],
-                'b_minus': course_instructor_grades[row][5],
-                'c_plus': course_instructor_grades[row][6],
-                'c': course_instructor_grades[row][7],
-                'c_minus': course_instructor_grades[row][8],
-                'd_plus': course_instructor_grades[row][9],
-                'd': course_instructor_grades[row][10],
-                'd_minus': course_instructor_grades[row][11],
-                'f': course_instructor_grades[row][12],
-                'ot': course_instructor_grades[row][13],  # other/pass
-                'drop': course_instructor_grades[row][14],
-                'withdraw': course_instructor_grades[row][15],
-                'total_enrolled': total_enrolled
-            }
+            course_instructor_grade_params = self.set_grade_params(
+                row, total_enrolled, total_weight, is_instructor_grade=True)
             unsaved_cig_instance = CourseInstructorGrade(
                 **course_instructor_grade_params)
             unsaved_cig_instances.append(unsaved_cig_instance)
         CourseInstructorGrade.objects.bulk_create(unsaved_cig_instances)
         if self.verbosity > 0:
             print('Done creating CourseInstructorGrade instances')
+
+        if self.log_missing_instructors:
+            print('Writing missing instructors to missing-instructors.txt')
+            with open('missing-instructors.txt', 'w') as file:
+                for instructor in self.missing_instructors:
+                    file.write(instructor)
+
+    def set_grade_params(self, row, total_enrolled, total_weight, is_instructor_grade):
+        """Creates dict of params to be used as parameters
+        in creating CourseGrade/CourseInstructorGrade instances.
+        Helper function for load_dict_into_models()"""
+        if is_instructor_grade:
+            data = self.course_instructor_grades[row]
+        else:
+            data = self.course_grades[row]
+
+        # Calculate gpa excluding DFW column. This will skew average GPAs above
+        # what they actually are since DFW includes students with low scores, but
+        # the skew is in a consistent direction for all classes so it's *probably* fine.
+        total_enrolled_filtered = total_enrolled - data[9]
+        # Check divide by 0
+        if total_enrolled_filtered == 0:
+            total_enrolled_gpa = 0
+        else:
+            total_enrolled_gpa = total_weight / total_enrolled_filtered
+        course_grade_params = {
+            'course_id': self.courses.get(row[:2]),
+            'average': total_enrolled_gpa,
+            'a_plus': data[0],
+            'a': data[1],
+            'a_minus': data[2],
+            'b_plus': data[3],
+            'b': data[4],
+            'b_minus': data[5],
+            'c_plus': data[6],
+            'c': data[7],
+            'c_minus': data[8],
+            'dfw': data[9],
+            'total_enrolled': total_enrolled
+        }
+
+        if is_instructor_grade:
+            course_grade_params['instructor_id'] = self.instructors.get(row[2:])
+            if self.log_missing_instructors and course_grade_params['instructor_id'] is None:
+                self.missing_instructors.add(f'{row[2]} {row[3]}\n')
+        return course_grade_params

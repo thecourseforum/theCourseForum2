@@ -124,12 +124,8 @@ def setup(obj):
 
     obj.instructor_grade = CourseInstructorGrade.objects.create(
         instructor=obj.instructor,
-        first_name=obj.instructor.first_name,
-        last_name=obj.instructor.last_name,
-        subject=obj.subject,
         course=obj.course,
         average=3.8,
-        number=450
     )
 
     obj.instructor_grade2 = CourseInstructorGrade.objects.create(
@@ -252,8 +248,7 @@ def setup(obj):
     )
 
     obj.course_grade = CourseGrade.objects.create(
-        subject=obj.subject,
-        number=300,
+        course=obj.course,
         average=2.9
     )
 
@@ -290,6 +285,7 @@ def suppress_request_warnings(original_function):
 
     Source: https://stackoverflow.com/a/46079090
     """
+
     def new_function(*args, **kwargs):
         # raise logging level to ERROR
         logger = logging.getLogger('django.request')
