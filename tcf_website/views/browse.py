@@ -93,7 +93,7 @@ def course_view(request, mnemonic, course_number):
         Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number)
     latest_semester = Semester.latest()
     instructors = Instructor.objects\
-        .filter(section__course=course,hidden=False).distinct()\
+        .filter(section__course=course, hidden=False).distinct()\
         .annotate(
             gpa=Avg('courseinstructorgrade__average',
                     filter=Q(courseinstructorgrade__course=course)),
