@@ -160,6 +160,8 @@ class Instructor(models.Model):
     website = models.URLField(blank=True)
     # Instructor departments. Optional.
     departments = models.ManyToManyField(Department)
+    # hidden professor. Required. Default visible.
+    hidden= models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
@@ -473,13 +475,6 @@ class Course(models.Model):
 
 class CourseGrade(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
-    subdepartment = models.CharField(max_length=255)
-    number = models.IntegerField(
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(99999)],
-        default=0)
-    title = models.CharField(max_length=225, default="")
     average = models.FloatField(default=0.0)
     a_plus = models.IntegerField(default=0)
     a = models.IntegerField(default=0)
@@ -490,35 +485,17 @@ class CourseGrade(models.Model):
     c_plus = models.IntegerField(default=0)
     c = models.IntegerField(default=0)
     c_minus = models.IntegerField(default=0)
-    d_plus = models.IntegerField(default=0)
-    d = models.IntegerField(default=0)
-    d_minus = models.IntegerField(default=0)
-    f = models.IntegerField(default=0)
-    ot = models.IntegerField(default=0)  # other/pass
-    drop = models.IntegerField(default=0)
-    withdraw = models.IntegerField(default=0)
+    dfw = models.IntegerField(default=0)
     total_enrolled = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.subdepartment} {self.number} {self.average}"
+        return f"{self.course.subdepartment.mnemonic} {self.course.number} {self.average}"
 
 
 class CourseInstructorGrade(models.Model):
     instructor = models.ForeignKey(
         Instructor, on_delete=models.CASCADE, null=True)
-    first_name = models.CharField(max_length=225)
-    middle_name = models.CharField(max_length=225)
-    last_name = models.CharField(max_length=225)
-    email = models.CharField(max_length=225)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
-    subdepartment = models.CharField(max_length=255)
-    number = models.IntegerField(
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(99999)],
-        default=0)
-    # section_number = models.IntegerField()
-    title = models.CharField(max_length=225, default="")
     average = models.FloatField(default=0.0)
     a_plus = models.IntegerField(default=0)
     a = models.IntegerField(default=0)
@@ -529,18 +506,12 @@ class CourseInstructorGrade(models.Model):
     c_plus = models.IntegerField(default=0)
     c = models.IntegerField(default=0)
     c_minus = models.IntegerField(default=0)
-    d_plus = models.IntegerField(default=0)
-    d = models.IntegerField(default=0)
-    d_minus = models.IntegerField(default=0)
-    f = models.IntegerField(default=0)
-    ot = models.IntegerField(default=0)  # other/pass
-    drop = models.IntegerField(default=0)
-    withdraw = models.IntegerField(default=0)
+    dfw = models.IntegerField(default=0)
     total_enrolled = models.IntegerField(default=0)
 
     def __str__(self):
-        return (f"{self.first_name} {self.last_name} "
-                f"{self.subdepartment} {self.number} {self.average}")
+        return (f"{self.instructor.first_name} {self.instructor.last_name} "
+                f"{self.course.subdepartment.mnemonic} {self.course.number} {self.average}")
 
 
 class Section(models.Model):
@@ -654,6 +625,9 @@ class Review(models.Model):
     # Review modified date. Required.
     modified = models.DateTimeField(auto_now=True)
 
+    # Review visibility. Required. Default visible.
+    hidden = models.BooleanField(default=False)
+
     # does this get used anywhere? not sure
     def average(self):
         """Average score for review."""
@@ -725,6 +699,7 @@ class Review(models.Model):
         reviews = Review.objects.filter(
             instructor=instructor_id,
             course=course_id,
+            hidden=False
         ).exclude(text="").annotate(
             sum_votes=models.functions.Coalesce(
                 models.Sum('vote__value'),
