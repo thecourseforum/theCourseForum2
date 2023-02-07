@@ -1,14 +1,16 @@
 {
   "founders": [
-    {"name": "Jeff Bordogna",
-    "role": "Co-Founder",
-    "class": "2007",
-    "img_filename": "jbordogna.png"
+    {
+      "name": "Jeff Bordogna",
+      "role": "Co-Founder",
+      "class": "2007",
+      "img_filename": "jbordogna.png"
     },
-    {"name": "Alan Webb",
-    "role": "Co-Founder",
-    "class": "2007",
-    "img_filename": "awebb.png"
+    {
+      "name": "Alan Webb",
+      "role": "Co-Founder",
+      "class": "2007",
+      "img_filename": "awebb.png"
     }
   ],
   "contributors": [
@@ -17,10 +19,16 @@
       "members": [
         {
           "name": "Christina Wang",
-                  "role": "Developer",
-                  "class": "2025",
-                  "img_filename": "blank.jpeg"
-        }
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "blank.jpeg"
+        },
+        {
+          "name": "Anoushka Sarkar",
+          "role": "Marketing and Design",
+          "class": "2025",
+          "img_filename": "DM_Anoushka_Sarkar.JPG"
+        },
       ]
     },
     {
@@ -28,386 +36,478 @@
       "members": [
         {
           "name": "Lilleth Snavely",
-                  "role": "Marketing & Design",
-                  "class": "2024",
-                  "img_filename": "DM_Lilleth_Snavely.png"
-        },{
+          "role": "Marketing and Design",
+          "class": "2024",
+          "img_filename": "DM_Lilleth_Snavely.png"
+        },
+        {
           "name": "Liza Harold",
-                  "role": "Marketing & Design",
-                  "class": "2024",
-                  "img_filename": "DM_Liza_Harold.png"
+          "role": "Marketing and Design",
+          "class": "2024",
+          "img_filename": "DM_Liza_Harold.png"
+        },
+        {
+          "name": "Edmund Chen",
+          "role": "Marketing and Design",
+          "class": "2024",
+          "img_filename": "DM_Edmund_Chen.jpg"
+        },
+        {
+          "name": "Sid Tickle",
+          "role": "Marketing and Design",
+          "class": "2024",
+          "img_filename": "DM_Sid_Tickle.jpg"
+        },
+        {
+          "name": "Dylan Herbig",
+          "role": "Developer",
+          "class": "2024",
+          "img_filename": "ENG_Dylan_Herbig.jpg"
         }
-      ]},
+      ]
+    },
     {
       "group_name": "Class of 2023",
       "members": [
-                {
-                  "name": "Arjun Kumar",
-                  "role": "Developer",
-                  "class": "2023",
-                  "img_filename": "akumar.jpeg",
-                  "github": "arjunk01"
-                },
-                {
-                  "name": "Joe Kerrigan",
-                  "role": "Developer",
-                  "class": "2023",
-                  "img_filename": "jkerrigan.jpeg",
-                  "github": "joek13"
-                },
-                {
-                  "name": "Kartik Chugh",
-                  "role": "Developer",
-                  "class": "2023",
-                  "img_filename": "kchugh2.jpeg",
-                  "github": "KartikChugh"
-                },
-                {
-                  "name": "Max von Schroeter",
-                  "role": "Marketing",
-                  "class": "2023",
-                  "img_filename": "mvonschroeter.jpeg"
-                },
-                {
-                  "name": "Jeremy Tran",
-                  "role": "Marketing",
-                  "class": "2023",
-                  "img_filename": "jtran.jpeg"
-                },
-                {
-                  "name": "Dani Szabo",
-                  "role": "Marketing and Design",
-                  "class": "2023",
-                  "img_filename": "dszabo.jpeg"
-                },
-                {
-                  "name": "Annie Chotikul",
-                  "role": "Marketing and Design",
-                  "class": "2023",
-                  "img_filename": "achotikul.jpeg"
-                },
-                {
-                  "name": "Andrew Niu",
-                  "role": "Developer",
-                  "class": "2023",
-                  "img_filename": "ENG_Andrew_Niu.png"
-                },
-                {
-                  "name": "Josh Dano",
-                  "role": "Marketing and Design",
-                  "class": "2023",
-                  "img_filename": "DM_Joshua_Dano.png"
-                }]
+        {
+          "name": "Arjun Kumar",
+          "role": "Developer",
+          "class": "2023",
+          "img_filename": "akumar.jpeg",
+          "github": "arjunk01"
+        },
+        {
+          "name": "Joe Kerrigan",
+          "role": "Developer",
+          "class": "2023",
+          "img_filename": "jkerrigan.jpeg",
+          "github": "joek13"
+        },
+        {
+          "name": "Kartik Chugh",
+          "role": "Developer",
+          "class": "2023",
+          "img_filename": "kchugh2.jpeg",
+          "github": "KartikChugh"
+        },
+        {
+          "name": "Max von Schroeter",
+          "role": "Marketing",
+          "class": "2023",
+          "img_filename": "mvonschroeter.jpeg"
+        },
+        {
+          "name": "Jeremy Tran",
+          "role": "Marketing",
+          "class": "2023",
+          "img_filename": "jtran.jpeg"
+        },
+        {
+          "name": "Zina Lahham",
+          "role": "UX Manager",
+          "class": "2023",
+          "img_filename": "DM_Zina_Lahham.jpeg"
+        },
+        {
+          "name": "Dani Szabo",
+          "role": "Marketing and Design",
+          "class": "2023",
+          "img_filename": "dszabo.jpeg"
+        },
+        {
+          "name": "Annie Chotikul",
+          "role": "Marketing and Design",
+          "class": "2023",
+          "img_filename": "achotikul.jpeg"
+        },
+        {
+          "name": "Andrew Niu",
+          "role": "Developer",
+          "class": "2023",
+          "img_filename": "ENG_Andrew_Niu.png"
+        },
+        {
+          "name": "Josh Dano",
+          "role": "Marketing and Design",
+          "class": "2023",
+          "img_filename": "DM_Joshua_Dano.png"
+        }
+      ]
     },
     {
       "group_name": "Class of 2022",
       "members": [
-                  {
-                    "name": "Shirley Chu",
-                    "role": "VP of Marketing and Design",
-                    "class": "2022",
-                    "img_filename": "schu.jpeg"
-                  },
-                  {
-                    "name": "Davis DeLozier",
-                    "role": "Treasurer",
-                    "class": "2022",
-                    "img_filename": "ddelozier.jpeg"
-                  },
-                  {
-                    "name": "Harshita Pathipati",
-                    "role": "Developer",
-                    "class": "2022",
-                    "img_filename": "blank.jpeg",
-                    "github": ""
-                  },
-                  {
-                    "name": "Rena Wolinsky",
-                    "role": "UX Manager",
-                    "class": "2022",
-                    "img_filename": "rwolinsky.jpeg"
-                  },
-                  {
-                    "name": "Anne Yong",
-                    "role": "Community and Outreach Chair",
-                    "class": "2022",
-                    "img_filename": "ayong.jpeg"
-                  },
-                  {
-                    "name": "Pragun Ananda",
-                    "role": "Developer",
-                    "class": "2022",
-                    "img_filename": "blank.jpeg"
-                  },
-                  {
-                    "name": "Twindy Pham",
-                    "role": "Design",
-                    "class": "2022",
-                    "img_filename": "DM_Twindy_Pham.png"
-                  }]
+        {
+          "name": "Shirley Chu",
+          "role": "VP of Marketing and Design",
+          "class": "2022",
+          "img_filename": "schu.jpeg"
+        },
+        {
+          "name": "Kimberly Vo",
+          "role": "VP of Marketing and Design",
+          "class": "2022",
+          "img_filename": "MAD_Kimberly_Vo.jpg"
+        },
+        {
+          "name": "Lauren Kim",
+          "role": "Social Media Chair",
+          "class": "2022",
+          "img_filename": "DM_Lauren_Kim.jpg"
+        },
+        {
+          "name": "Davis DeLozier",
+          "role": "Treasurer",
+          "class": "2022",
+          "img_filename": "ddelozier.jpeg"
+        },
+        {
+          "name": "Harshita Pathipati",
+          "role": "Developer",
+          "class": "2022",
+          "img_filename": "blank.jpeg",
+          "github": ""
+        },
+        {
+          "name": "Rena Wolinsky",
+          "role": "UX Manager",
+          "class": "2022",
+          "img_filename": "rwolinsky.jpeg"
+        },
+        {
+          "name": "Anne Yong",
+          "role": "Community and Outreach Chair",
+          "class": "2022",
+          "img_filename": "ayong.jpeg"
+        },
+        {
+          "name": "Pragun Ananda",
+          "role": "Developer",
+          "class": "2022",
+          "img_filename": "blank.jpeg"
+        },
+        {
+          "name": "Twindy Pham",
+          "role": "Design",
+          "class": "2022",
+          "img_filename": "DM_Twindy_Pham.png"
+        },
+        {
+          "name": "Austin Houck",
+          "role": "Developer",
+          "class": "2022",
+          "img_filename": "ENG_Austin_Houck.jpg"
+        }
+      ]
     },
     {
       "group_name": "Class of 2021",
       "members": [
-                  {
-                    "name": "Brian Yu",
-                    "role": "President",
-                    "class": "2021",
-                    "img_filename": "byu.jpg",
-                    "github": "brian-yu"
-                  },
-                  {
-                    "name": "Jennifer Long",
-                    "role": "President",
-                    "class": "2021",
-                    "img_filename": "jlong.jpg",
-                    "github": "j-alicia-long"
-                  },
-                  {
-                    "name": "Nikash Sethi",
-                    "role": "Developer",
-                    "class": "2021",
-                    "img_filename": "nsethi.png",
-                    "github": "nikashs"
-                  },
-                  {
-                    "name": "Neal Patel",
-                    "role": "Developer",
-                    "class": "2021",
-                    "img_filename": "npatel.jpg",
-                    "github": "nealpatel50"
-                  },
-                  {
-                    "name": "Dale Wilson",
-                    "role": "Developer",
-                    "class": "2021",
-                    "img_filename": "dwilson.png"
-                  },
-                  {
-                    "name": "Alexa Gomez",
-                    "role": "Developer",
-                    "class": "2021",
-                    "img_filename": "agomez.jpeg",
-                    "github": "alexagomez"
-                  },
-                  {
-                    "name": "Jihoon Park",
-                    "role": "Developer",
-                    "class": "2021",
-                    "img_filename": "jpark.jpeg",
-                    "github": "Bartleby2718"
-                  },
-                  {
-                    "name": "James Lim",
-                    "role": "Developer",
-                    "class": "2021",
-                    "img_filename": "jlim.jpeg",
-                    "github": "yl2vv"
-                  },
-                  {
-                  "name": "Quyen Huynh",
-                  "role": "Developer",
-                  "class": "2021",
-                  "img_filename": "qhuynh.jpeg",
-                  "github": "quyenxhuynh"
-                  },
-                  {
-                    "name": "Tina Wang",
-                    "role": "Marketing",
-                    "class": "2021",
-                    "img_filename": "twang.jpeg"
-                  },
-                  {
-                    "name": "Sierra Arnold",
-                    "role": "Marketing and Design",
-                    "class": "2021",
-                    "img_filename": "sarnold.jpeg"
-                  }]
+        {
+          "name": "Brian Yu",
+          "role": "President",
+          "class": "2021",
+          "img_filename": "byu.jpg",
+          "github": "brian-yu"
+        },
+        {
+          "name": "Jennifer Long",
+          "role": "President",
+          "class": "2021",
+          "img_filename": "jlong.jpg",
+          "github": "j-alicia-long"
+        },
+        {
+          "name": "Nikash Sethi",
+          "role": "Developer",
+          "class": "2021",
+          "img_filename": "nsethi.png",
+          "github": "nikashs"
+        },
+        {
+          "name": "Neal Patel",
+          "role": "Developer",
+          "class": "2021",
+          "img_filename": "npatel.jpg",
+          "github": "nealpatel50"
+        },
+        {
+          "name": "Dale Wilson",
+          "role": "Developer",
+          "class": "2021",
+          "img_filename": "dwilson.png"
+        },
+        {
+          "name": "Alexa Gomez",
+          "role": "Developer",
+          "class": "2021",
+          "img_filename": "agomez.jpeg",
+          "github": "alexagomez"
+        },
+        {
+          "name": "Jihoon Park",
+          "role": "Developer",
+          "class": "2021",
+          "img_filename": "jpark.jpeg",
+          "github": "Bartleby2718"
+        },
+        {
+          "name": "James Lim",
+          "role": "Developer",
+          "class": "2021",
+          "img_filename": "jlim.jpeg",
+          "github": "yl2vv"
+        },
+        {
+          "name": "Quyen Huynh",
+          "role": "Developer",
+          "class": "2021",
+          "img_filename": "qhuynh.jpeg",
+          "github": "quyenxhuynh"
+        },
+        {
+          "name": "Tina Wang",
+          "role": "Marketing",
+          "class": "2021",
+          "img_filename": "twang.jpeg"
+        },
+        {
+          "name": "Sierra Arnold",
+          "role": "Marketing and Design",
+          "class": "2021",
+          "img_filename": "sarnold.jpeg"
+        }
+      ]
     },
     {
       "group_name": "Class of 2020",
-      "members": [{"name": "Brad Knaysi",
-                   "role": "VP of Product Engineering",
-                   "class": "2020",
-                   "img_filename": "bknaysi.jpg",
-                   "github": "bradknaysi"
-                  },
-                  {"name": "Sai Konuri",
-                   "role": "VP of Infrastructure Engineering",
-                   "class": "2020",
-                   "img_filename": "skonuri.jpg",
-                   "github": "saikonuri"
-                  },
-                   {"name": "Chris Zion",
-                    "role": "Business Lead",
-                    "class": "2020",
-                    "img_filename": "czion.png"
-                  }]
+      "members": [
+        {
+          "name": "Brad Knaysi",
+          "role": "VP of Product Engineering",
+          "class": "2020",
+          "img_filename": "bknaysi.jpg",
+          "github": "bradknaysi"
+        },
+        {
+          "name": "Sai Konuri",
+          "role": "VP of Infrastructure Engineering",
+          "class": "2020",
+          "img_filename": "skonuri.jpg",
+          "github": "saikonuri"
+        },
+        {
+          "name": "Chris Zion",
+          "role": "Business Lead",
+          "class": "2020",
+          "img_filename": "czion.png"
+        }
+      ]
     },
     {
       "group_name": "Class of 2019",
-      "members": [{"name": "Varun Patel",
-                  "role": "Developer",
-                  "class": "2019",
-                  "img_filename": "vpatel.png"
-                  },
-                  {"name": "Ayman Mobin",
-                  "role": "Developer",
-                  "class": "2019",
-                  "img_filename": "amobin.jpg"
-                  },
-                  {"name": "Rohan Raval",
-                  "role": "Developer",
-                  "class": "2019",
-                  "img_filename": "rraval.jpg"
-                  },
-                  {"name": "Justin Barry",
-                  "role": "Developer",
-                  "class": "2019",
-                  "img_filename": "jbarry.jpg"
-                  },
-                  {"name": "Henry Harris",
-                  "role": "Developer",
-                  "class": "2019",
-                  "img_filename": "hharris.jpg"
-                  },
-                  {"name": "Andrew Ton",
-                  "role": "Developer",
-                  "class": "2019",
-                  "img_filename": "aton.png"
-                  },
-                  {"name": "Jordan Farquhar",
-                  "role": "Developer",
-                  "class": "2019",
-                  "img_filename": "jfarquhar.png"
-                  },
-                  {"name": "Anirudh Ryali",
-                  "role": "Developer",
-                  "class": "2019",
-                  "img_filename": "aryali.png"
-                  },
-                  {"name": "Oliver Nicholas",
-                  "role": "Operations Lead",
-                  "class": "2019",
-                  "img_filename": "onicholas.png"
-                  }]
+      "members": [
+        {
+          "name": "Varun Patel",
+          "role": "Developer",
+          "class": "2019",
+          "img_filename": "vpatel.png"
+        },
+        {
+          "name": "Ayman Mobin",
+          "role": "Developer",
+          "class": "2019",
+          "img_filename": "amobin.jpg"
+        },
+        {
+          "name": "Rohan Raval",
+          "role": "Developer",
+          "class": "2019",
+          "img_filename": "rraval.jpg"
+        },
+        {
+          "name": "Justin Barry",
+          "role": "Developer",
+          "class": "2019",
+          "img_filename": "jbarry.jpg"
+        },
+        {
+          "name": "Henry Harris",
+          "role": "Developer",
+          "class": "2019",
+          "img_filename": "hharris.jpg"
+        },
+        {
+          "name": "Andrew Ton",
+          "role": "Developer",
+          "class": "2019",
+          "img_filename": "aton.png"
+        },
+        {
+          "name": "Jordan Farquhar",
+          "role": "Developer",
+          "class": "2019",
+          "img_filename": "jfarquhar.png"
+        },
+        {
+          "name": "Anirudh Ryali",
+          "role": "Developer",
+          "class": "2019",
+          "img_filename": "aryali.png"
+        },
+        {
+          "name": "Oliver Nicholas",
+          "role": "Operations Lead",
+          "class": "2019",
+          "img_filename": "onicholas.png"
+        }
+      ]
     },
     {
       "group_name": "Class of 2018",
-      "members": [{"name": "Christine Tsou",
-                  "role": "Developer",
-                  "class": "2018",
-                  "img_filename": "ctsou.png"
-                  },
-                  {"name": "Candace Park",
-                  "role": "Developer",
-                  "class": "2018",
-                  "img_filename": "cpark.png"
-                  },
-                  {"name": "Apoorva Arunkumar",
-                  "role": "Developer",
-                  "class": "2018",
-                  "img_filename": "aarunkumar.png"
-                  },
-                  {"name": "Josie Chiao",
-                  "role": "Developer",
-                  "class": "2018",
-                  "img_filename": "jchiao.jpg"
-                  },
-                  {"name": "Ann Liu",
-                  "role": "Business",
-                  "class": "2018",
-                  "img_filename": "aliu.png"
-                  },
-                  {"name": "Lizzie Redd",
-                  "role": "Business",
-                  "class": "2018",
-                  "img_filename": "lredd.png"
-                  }]
+      "members": [
+        {
+          "name": "Christine Tsou",
+          "role": "Developer",
+          "class": "2018",
+          "img_filename": "ctsou.png"
+        },
+        {
+          "name": "Candace Park",
+          "role": "Developer",
+          "class": "2018",
+          "img_filename": "cpark.png"
+        },
+        {
+          "name": "Apoorva Arunkumar",
+          "role": "Developer",
+          "class": "2018",
+          "img_filename": "aarunkumar.png"
+        },
+        {
+          "name": "Josie Chiao",
+          "role": "Developer",
+          "class": "2018",
+          "img_filename": "jchiao.jpg"
+        },
+        {
+          "name": "Ann Liu",
+          "role": "Business",
+          "class": "2018",
+          "img_filename": "aliu.png"
+        },
+        {
+          "name": "Lizzie Redd",
+          "role": "Business",
+          "class": "2018",
+          "img_filename": "lredd.png"
+        }
+      ]
     },
     {
       "group_name": "Class of 2017",
-      "members": [{"name": "Alan Wei",
-                  "role": "Developer",
-                  "class": "2017",
-                  "img_filename": "awei.png"
-                  },
-                  {"name": "Atallah Hezbor",
-                  "role": "Developer",
-                  "class": "2017",
-                  "img_filename": "ahezbor.png"
-                  },
-                  {"name": "Robert Schmidt",
-                  "role": "Developer",
-                  "class": "2017",
-                  "img_filename": "rschmidt.png"
-                  },
-                  {"name": "Kienan Adams",
-                  "role": "Developer",
-                  "class": "2017",
-                  "img_filename": "kadams.png"
-                  },
-                  {"name": "Lawrence Hook",
-                  "role": "Developer",
-                  "class": "2017",
-                  "img_filename": "lhook.png"
-                  },
-                  {"name": "Mario Sukkar",
-                  "role": "Developer",
-                  "class": "2017",
-                  "img_filename": "msukkar.png"
-                  },
-                  {"name": "Daniel Coo",
-                  "role": "Developer",
-                  "class": "2017",
-                  "img_filename": "dcoo.jpg"
-                  },
-                  {"name": "Ian Zheng",
-                  "role": "Developer",
-                  "class": "2017",
-                  "img_filename": "izheng.png"
-                  },
-                  {"name": "Lewis Jones",
-                  "role": "Business",
-                  "class": "2017",
-                  "img_filename": "ljones.png"
-                  }]
+      "members": [
+        {
+          "name": "Alan Wei",
+          "role": "Developer",
+          "class": "2017",
+          "img_filename": "awei.png"
+        },
+        {
+          "name": "Atallah Hezbor",
+          "role": "Developer",
+          "class": "2017",
+          "img_filename": "ahezbor.png"
+        },
+        {
+          "name": "Robert Schmidt",
+          "role": "Developer",
+          "class": "2017",
+          "img_filename": "rschmidt.png"
+        },
+        {
+          "name": "Kienan Adams",
+          "role": "Developer",
+          "class": "2017",
+          "img_filename": "kadams.png"
+        },
+        {
+          "name": "Lawrence Hook",
+          "role": "Developer",
+          "class": "2017",
+          "img_filename": "lhook.png"
+        },
+        {
+          "name": "Mario Sukkar",
+          "role": "Developer",
+          "class": "2017",
+          "img_filename": "msukkar.png"
+        },
+        {
+          "name": "Daniel Coo",
+          "role": "Developer",
+          "class": "2017",
+          "img_filename": "dcoo.jpg"
+        },
+        {
+          "name": "Ian Zheng",
+          "role": "Developer",
+          "class": "2017",
+          "img_filename": "izheng.png"
+        },
+        {
+          "name": "Lewis Jones",
+          "role": "Business",
+          "class": "2017",
+          "img_filename": "ljones.png"
+        }
+      ]
     },
     {
       "group_name": "Class of 2016",
-      "members": [{"name": "Sean Spector",
-                  "role": "Business",
-                  "class": "2016",
-                  "img_filename": "sspector.jpg"
-                  }]
+      "members": [
+        {
+          "name": "Sean Spector",
+          "role": "Business",
+          "class": "2016",
+          "img_filename": "sspector.jpg"
+        }
+      ]
     },
     {
       "group_name": "Class of 2015",
-      "members": [{"name": "Justin Dao",
-                  "role": "Developer",
-                  "class": "2015",
-                  "img_filename": "jdao.png"
-                  },
-                  {"name": "Brian Whitlow",
-                  "role": "Developer",
-                  "class": "2015",
-                  "img_filename": "bwhitlow.png"
-                  },
-                  {"name": "Alex Aberman",
-                  "role": "Data Engineering",
-                  "class": "2015",
-                  "img_filename": "aaberman.jpg"
-                  },
-                  {"name": "Alex Bergman",
-                  "role": "Graphic Design",
-                  "class": "2015",
-                  "img_filename": "abergman.jpg"
-                  },
-                  {"name": "Sara Neel",
-                  "role": "Graphic Design",
-                  "class": "2015",
-                  "img_filename": "sneel.png"
-                  }]
+      "members": [
+        {
+          "name": "Justin Dao",
+          "role": "Developer",
+          "class": "2015",
+          "img_filename": "jdao.png"
+        },
+        {
+          "name": "Brian Whitlow",
+          "role": "Developer",
+          "class": "2015",
+          "img_filename": "bwhitlow.png"
+        },
+        {
+          "name": "Alex Aberman",
+          "role": "Data Engineering",
+          "class": "2015",
+          "img_filename": "aaberman.jpg"
+        },
+        {
+          "name": "Alex Bergman",
+          "role": "Graphic Design",
+          "class": "2015",
+          "img_filename": "abergman.jpg"
+        },
+        {
+          "name": "Sara Neel",
+          "role": "Graphic Design",
+          "class": "2015",
+          "img_filename": "sneel.png"
+        }
+      ]
     }
   ]
 }

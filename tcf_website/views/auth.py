@@ -1,7 +1,9 @@
 """Auth related views."""
 
+import json
 from datetime import datetime
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
@@ -27,6 +29,13 @@ def login_error(request):
     return browse(request)
 
 
+def password_error(request):
+    """Incorrect password error view."""
+    messages.error(request, 'There was an error logging you in. Please check \
+                    your email and password')
+    return browse(request)
+
+
 class ExtraUserInfoForm(forms.Form):
     """Form to collect extra user info on sign up."""
     current_yr = datetime.now().year
@@ -40,7 +49,7 @@ class ExtraUserInfoForm(forms.Form):
                 'value': current_yr}))
 
 
-def collect_extra_info(request):
+def collect_extra_info(request, method):
     """Extra sign up info collection view."""
     if request.method == 'POST':
         form = ExtraUserInfoForm(request.POST)
@@ -51,7 +60,7 @@ def collect_extra_info(request):
 
             # once we have the grad_year stashed in the session, we can
             # tell the pipeline to resume by using the "complete" endpoint
-            return redirect(reverse('social:complete', args=["google-oauth2"]))
+            return redirect(reverse('social:complete', args=[method]))
     else:
         form = ExtraUserInfoForm()
 
@@ -69,3 +78,20 @@ def logout(request):
     auth_logout(request)
     messages.add_message(request, messages.SUCCESS, "Logged out successfully!")
     return redirect('browse')
+
+
+def email_verification(request):
+    """Loads Microsoft verification document in order to be an authorized
+    provider for Microsoft authentication """
+    return render(request, 'login/email_verification.html',
+                  {'address': request.session.get('email_validation_address')})
+
+
+def load_microsoft_verification(request):
+    """Loads Microsoft verification document in order to be an authorized
+    provider for Microsoft authentication """
+    with open('tcf_website/microsoft-identity-association.json', encoding='UTF-8') as data_file:
+        json_content = json.load(data_file)
+    return JsonResponse(
+        json_content
+    )
