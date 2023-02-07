@@ -93,7 +93,7 @@ def course_view(request, mnemonic, course_number):
         Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number)
     latest_semester = Semester.latest()
     instructors = Instructor.objects\
-        .filter(section__course=course).distinct()\
+        .filter(section__course=course,hidden=False).distinct()\
         .annotate(
             gpa=Avg('courseinstructorgrade__average',
                     filter=Q(courseinstructorgrade__course=course)),
@@ -112,14 +112,14 @@ def course_view(request, mnemonic, course_number):
                 Case(
                     When(
                         section__semester=latest_semester,
-                        then=('section__section_times')),
+                        then='section__section_times'),
                     output_field=CharField()),
                 distinct=True),
             section_nums=ArrayAgg(
                 Case(
                     When(
                         section__semester=latest_semester,
-                        then=('section__sis_section_number')),
+                        then='section__sis_section_number'),
                     output_field=CharField()),
                 distinct=True),
         )
@@ -224,15 +224,10 @@ def course_instructor(request, course_id, instructor_id):
             'a_plus', 'a', 'a_minus',
             'b_plus', 'b', 'b_minus',
             'c_plus', 'c', 'c_minus',
-            'd_plus', 'd', 'd_minus',
-            'f',
-            'ot', 'drop', 'withdraw',
+            'dfw', 'total_enrolled'
         ]
-        total = 0
         for field in fields:
             data[field] = getattr(grades_data, field)
-            total += data[field]
-        data['total_enrolled'] = total
 
     sections_taught = Section.objects.filter(
         course=course_id, instructors__in=Instructor.objects.filter(
