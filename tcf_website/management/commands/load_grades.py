@@ -38,6 +38,7 @@ class Command(BaseCommand):
                                              'subdepartment__mnemonic')
         }
 
+        self.num_broken = 0
         # Location of our grade data CSVs
         self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
 
@@ -118,7 +119,7 @@ class Command(BaseCommand):
             subset=['A+', 'A', 'A-',
                     'B+', 'B', 'B-',
                     'C+', 'C', 'C-',
-                    'DFW']
+                    'DFW', 'Course GPA']
         )
         # Not quite sure how much data this actually applies to,
         # as UVA data is much more reliable than the old VAGrades data
@@ -168,7 +169,7 @@ class Command(BaseCommand):
         # 'Class Section' column is unused
         try:
             number = int(re.sub('[^0-9]', '', str(row['Catalog Number'])))
-            # 'Course GPA' is unused because we manually calculate average between all semesters
+            # 'Course GPA' *is* used because we can't calculate precise GPA from DFW
             # '# of Students' is unused because we manually calculate it for all semesters
             a_plus = int(row['A+'])
             a = int(row['A'])
@@ -182,6 +183,16 @@ class Command(BaseCommand):
             # UVA data doesn't contain D's or F's, just the DFW column
             # DFW combines Ds, Fs, and withdraws into one category
             dfw = int(row['DFW'])
+
+            # 'Course GPA' can be the '-' string when data is redacted
+            try:
+                average = float(row['Course GPA'])
+            except ValueError as e:
+                average = None
+                # print((subdepartment, number, title))
+                # self.num_broken += 1
+                # print(self.num_broken)
+                # print(e)
         except (TypeError, ValueError) as e:
             if self.verbosity > 0:
                 print(row)
@@ -197,7 +208,7 @@ class Command(BaseCommand):
         this_semesters_grades = [a_plus, a, a_minus,
                                  b_plus, b, b_minus,
                                  c_plus, c, c_minus,
-                                 dfw]
+                                 dfw, average]
 
         # Load this semester into course_grades dictionary
         if course_identifier in self.course_grades:
@@ -223,21 +234,14 @@ class Command(BaseCommand):
         """
         if self.verbosity > 0:
             print('Step 2: Bulk-create CourseGrade instances')
-        # Used for GPA calculation
-        grade_weights = [4.0, 4.0, 3.7,
-                         3.3, 3.0, 2.7,
-                         2.3, 2.0, 1.7,
-                         0]  # DFW column removed in average calculation
 
         # Load course_grades data from dicts and create model instances
         unsaved_cg_instances = []
         for row in tqdm(self.course_grades, disable=self.suppress_tqdm):
             total_enrolled = sum(self.course_grades[row])
-            total_weight = sum(a * b for a, b in
-                               zip(self.course_grades[row], grade_weights))
 
             course_grade_params = self.set_grade_params(
-                row, total_enrolled, total_weight, is_instructor_grade=False)
+                row, total_enrolled, is_instructor_grade=False)
             unsaved_cg_instance = CourseGrade(**course_grade_params)
             unsaved_cg_instances.append(unsaved_cg_instance)
 
@@ -254,13 +258,8 @@ class Command(BaseCommand):
             for grade_count in self.course_instructor_grades[row]:
                 total_enrolled += grade_count
 
-            total_weight = 0
-            for i in range(len(self.course_instructor_grades[row])):
-                total_weight += (
-                    self.course_instructor_grades[row][i] * grade_weights[i])
-
             course_instructor_grade_params = self.set_grade_params(
-                row, total_enrolled, total_weight, is_instructor_grade=True)
+                row, total_enrolled, is_instructor_grade=True)
             unsaved_cig_instance = CourseInstructorGrade(
                 **course_instructor_grade_params)
             unsaved_cig_instances.append(unsaved_cig_instance)
@@ -274,7 +273,7 @@ class Command(BaseCommand):
                 for instructor in self.missing_instructors:
                     file.write(instructor)
 
-    def set_grade_params(self, row, total_enrolled, total_weight, is_instructor_grade):
+    def set_grade_params(self, row, total_enrolled, is_instructor_grade):
         """Creates dict of params to be used as parameters
         in creating CourseGrade/CourseInstructorGrade instances.
         Helper function for load_dict_into_models()"""
@@ -283,18 +282,9 @@ class Command(BaseCommand):
         else:
             data = self.course_grades[row]
 
-        # Calculate gpa excluding DFW column. This will skew average GPAs above
-        # what they actually are since DFW includes students with low scores, but
-        # the skew is in a consistent direction for all classes so it's *probably* fine.
-        total_enrolled_filtered = total_enrolled - data[9]
-        # Check divide by 0
-        if total_enrolled_filtered == 0:
-            total_enrolled_gpa = 0
-        else:
-            total_enrolled_gpa = total_weight / total_enrolled_filtered
         course_grade_params = {
             'course_id': self.courses.get(row[:2]),
-            'average': total_enrolled_gpa,
+            'average': data[10],
             'a_plus': data[0],
             'a': data[1],
             'a_minus': data[2],
