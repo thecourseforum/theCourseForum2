@@ -20,6 +20,17 @@ function cmpByProp(prop, asc) {
         if (prop === "date") { // convert date string to int
             valA = dateToInt(valA);
             valB = dateToInt(valB);
+        } else if (prop === "recency") {
+            try {
+                valA = getSessionNum(valA);
+            } catch (err) {
+                return 1;
+            }
+            try {
+                valB = getSessionNum(valB);
+            } catch (err) {
+                return -1;
+            }
         } else { // extract number from string
             try {
                 valA = parseFloat(valA.match(/-?[0-9]\d*(\.\d+)?/)[0]);
@@ -46,6 +57,23 @@ function cmpByProp(prop, asc) {
 function dateToInt(dateStr) {
     const date = new Date(dateStr);
     return date.getTime();
+}
+
+function getSessionNum(sessionStr) {
+    const session = sessionStr.match(/^[a-zA-Z]+/)[0];
+    const year = sessionStr.match(/-?[0-9]\d*(\.\d+)?/)[0];
+    // last taught session taken into account for sorting
+    if (session === "January") {
+        return parseFloat(year + "0");
+    } else if (session === "Spring") {
+        return parseFloat(year + "1");
+    } else if (session === "Summer") {
+        return parseFloat(year + "2");
+    } else if (session === "Fall") {
+        return parseFloat(year + "3");
+    } else { // Unexpected sessions sorted last
+        return parseFloat(year + "4");
+    }
 }
 
 export { cmpByProp, sortHTML };
