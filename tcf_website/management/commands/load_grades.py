@@ -1,21 +1,25 @@
+# pylint: disable=fixme,invalid-name
+"""
+Loads grade data from CSV files into database
+"""
 import os
-
-import django.db.utils
+import re
 import numpy as np
 import pandas as pd
-import re
+from tqdm import tqdm
 
 from django.core.management.base import BaseCommand
-from tcf_website.models import *
+from tcf_website.models import Course, Instructor, CourseGrade, CourseInstructorGrade
 
-from tqdm import tqdm
+# Location of our grade data CSVs
+DATA_DIR = 'tcf_website/management/commands/grade_data/csv/'
 
 
 class Command(BaseCommand):
     """
-    How To Use: Run python3 manage.py load_grades to load all grades
+    How To Use: Run python3 manage.py load_grades ALL_DANGEROUS to load all grades
     in the tcf_website/management/commands/grade_data/csv/ directory.
-    This should take ~20 min to run to load all the grades
+    This should take less than a minute to load all the grades
     """
     help = 'Imports FOIAed grade data files into PostgreSQL database'
 
@@ -41,10 +45,6 @@ class Command(BaseCommand):
                                              'subdepartment__mnemonic')
         }
 
-        self.num_broken = 0
-        # Location of our grade data CSVs
-        self.data_dir = 'tcf_website/management/commands/grade_data/csv/'
-
         # Default level of verbosity
         self.verbosity = 0
 
@@ -53,12 +53,6 @@ class Command(BaseCommand):
 
         self.course_grades = {}
         self.course_instructor_grades = {}
-
-        # Set of instructors that are in the data but not in the database
-        self.missing_instructors = set()
-
-        # Whether to log those missing instructors in a txt
-        self.log_missing_instructors = False
 
     def add_arguments(self, parser):
         """Standard Django function implementation - defines command-line parameters"""
@@ -90,7 +84,6 @@ class Command(BaseCommand):
         """Standard Django function implementation - runs when this command is executed."""
         self.verbosity = options['verbosity']
         self.suppress_tqdm = options['suppress_tqdm']
-        self.log_missing_instructors = options['log_missing_instructors']
 
         if self.verbosity > 0:
             print('Step 1: Fetch Course and Instructor data for later use')
@@ -101,7 +94,7 @@ class Command(BaseCommand):
             CourseInstructorGrade.objects.all().delete()
 
             # Loads every data CSV file in /grade_data/csv with exceptions
-            for file in sorted(os.listdir(self.data_dir)):
+            for file in sorted(os.listdir(DATA_DIR)):
                 if self.verbosity == 3:
                     print('Loading data from', file)
                 # Ignore temp files (start with '~' on Windows, '.' otherwise) and test data
@@ -140,11 +133,11 @@ class Command(BaseCommand):
 
     def load_semester_file(self, file):
         """Given a file name, cleans + loads its data into the global grade data dicts."""
-        df = self.clean(pd.read_csv(os.path.join(self.data_dir, file)))
+        df = self.clean(pd.read_csv(os.path.join(DATA_DIR, file)))
         if self.verbosity > 0:
             print(f"Found {df.size} sections in {file}")
 
-        for index, row in tqdm(df.iterrows(), total=df.shape[0], disable=self.suppress_tqdm):
+        for _, row in tqdm(df.iterrows(), total=df.shape[0], disable=self.suppress_tqdm):
             if self.verbosity == 3:
                 print(str(row).encode('ascii', 'ignore').decode('ascii'))
             self.load_row_into_dict(row)
@@ -165,40 +158,44 @@ class Command(BaseCommand):
         # `Catalog Number` is handled with all other numerical data in the try block below
 
         title = row['Class Title']
-        full_name = row['Primary Instructor Name']
         # Key assumption: names are in the format `LAST,FIRST MIDDLE`
         try:
-            last_name, first_and_middle = full_name.split(',')
+            last_name, first_and_middle = row['Primary Instructor Name'].split(',')
             first_name = first_and_middle.split(' ')[0]
-        except ValueError:
+        except ValueError as e:
             # Script should stop if name that doesn't fit this pattern is given
             if self.verbosity > 0:
-                print('full name is', full_name)
+                print(f"full name is {row['Primary Instructor Name']}")
             raise ValueError(
-                f"{full_name=} doesn't meet our assumption about `Primary Instructor Name` format.")
+                f"{row['Primary Instructor Name']} doesn't meet our assumption "
+                f"about instructor name format.") from e
 
         # 'Class Section' column is unused
         try:
             number = int(re.sub('[^0-9]', '', str(row['Catalog Number'])))
-            a_plus = int(row['A+'])
-            a = int(row['A'])
-            a_minus = int(row['A-'])
-            b_plus = int(row['B+'])
-            b = int(row['B'])
-            b_minus = int(row['B-'])
-            c_plus = int(row['C+'])
-            c = int(row['C'])
-            c_minus = int(row['C-'])
-            # DFW combines Ds, Fs, and withdraws into one category
-            dfw = int(row['DFW'])
+
+            semester_grades = [int(x) for x in [row['A+'],
+                                                row['A'],
+                                                row['A-'],
+                                                row['B+'],
+                                                row['B'],
+                                                row['B-'],
+                                                row['C+'],
+                                                row['C'],
+                                                row['C-'],
+                                                row['DFW']
+                                                ]]
 
             # With no redactions, tracking these aggregate data would be unnecessary, but
             # we need these because DFW is vague and small class distributions are deleted.
             # We also need to handle the edge case where these fields are empty, which
             # clean() fills as 0.
             average = float(row['Course GPA'])
-            total_enrolled = max(int(row['# of Students']), a_plus + a +
-                                 a_minus + b_plus + b + b_minus + c_plus + c + c_minus + dfw)
+            total_enrolled = max(int(row['# of Students']), sum(semester_grades))
+
+            # Add aggregate stats to end of array
+            semester_grades.append(total_enrolled)
+            semester_grades.append(average)
 
         except (TypeError, ValueError) as e:
             if self.verbosity > 0:
@@ -210,12 +207,6 @@ class Command(BaseCommand):
         course_identifier = (subdepartment, number, title)
         course_instructor_identifier = (
             subdepartment, number, first_name, last_name)
-
-        # Dictionary values (incremented onto value if key already exists)
-        semester_grades = [a_plus, a, a_minus,
-                           b_plus, b, b_minus,
-                           c_plus, c, c_minus,
-                           dfw, total_enrolled, average]
 
         # Helper function because we basically do the same thing twice
         def add_entry(data_dict, identifier):
@@ -280,12 +271,6 @@ class Command(BaseCommand):
         if self.verbosity > 0:
             print('Done creating CourseInstructorGrade instances')
 
-        if self.log_missing_instructors:
-            print('Writing missing instructors to missing-instructors.txt')
-            with open('missing-instructors.txt', 'w') as file:
-                for instructor in self.missing_instructors:
-                    file.write(instructor)
-
     def set_grade_params(self, row, is_instructor_grade):
         """Creates dict of params to be used as parameters
         in creating CourseGrade/CourseInstructorGrade instances.
@@ -313,6 +298,4 @@ class Command(BaseCommand):
 
         if is_instructor_grade:
             course_grade_params['instructor_id'] = self.instructors.get(row[2:])
-            if self.log_missing_instructors and course_grade_params['instructor_id'] is None:
-                self.missing_instructors.add(f'{row[2]} {row[3]}\n')
         return course_grade_params
