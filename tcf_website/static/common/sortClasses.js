@@ -5,6 +5,7 @@ let sortNumberAsc = 1;
 let sortRatingAsc = -1;
 let sortDifficultyAsc = 1;
 let sortGpaAsc = -1;
+let sortRecencyAsc = -1;
 
 // Used to track which button is active for the ascending/descending order buttons
 let activeSort = "title";
@@ -37,10 +38,18 @@ const sortByNumber = () => {
 const sortByRating = () => {
     activeSort = "rating";
     if (!$("#rating-sort-btn").hasClass("active")) {
-        $("#number-sort-btn").removeClass("active");
+        // Checks whether toolbar is reused on departments page (which has course ID sort button)
+        if ($("#number-sort-btn").length) {
+            $("#number-sort-btn").removeClass("active");
+            $("#number-sort-btn").html("Course ID");
+        }
+        // Checks whether toolbar is reused on courses page (which has last taught sort button)
+        if ($("#recency-sort-btn").length) {
+            $("#recency-sort-btn").removeClass("active");
+            $("#recency-sort-btn").html("Last Taught");
+        }
         $("#diff-sort-btn").removeClass("active");
         $("#gpa-sort-btn").removeClass("active");
-        $("#number-sort-btn").html("Course ID");
         $("#diff-sort-btn").html("Difficulty");
         $("#gpa-sort-btn").html("GPA");
         $("#rating-sort-btn").addClass("active");
@@ -53,10 +62,16 @@ const sortByRating = () => {
 const sortByDifficulty = () => {
     activeSort = "difficulty";
     if (!$("#diff-sort-btn").hasClass("active")) {
-        $("#number-sort-btn").removeClass("active");
+        if ($("#number-sort-btn").length) {
+            $("#number-sort-btn").removeClass("active");
+            $("#number-sort-btn").html("Course ID");
+        }
+        if ($("#recency-sort-btn").length) {
+            $("#recency-sort-btn").removeClass("active");
+            $("#recency-sort-btn").html("Last Taught");
+        }
         $("#rating-sort-btn").removeClass("active");
         $("#gpa-sort-btn").html("GPA");
-        $("#number-sort-btn").html("Course ID");
         $("#rating-sort-btn").html("Rating");
         $("#gpa-sort-btn").removeClass("active");
 
@@ -70,10 +85,16 @@ const sortByDifficulty = () => {
 const sortByGpa = () => {
     activeSort = "gpa";
     if (!$("#gpa-sort-btn").hasClass("active")) {
-        $("#number-sort-btn").removeClass("active");
+        if ($("#number-sort-btn").length) {
+            $("#number-sort-btn").removeClass("active");
+            $("#number-sort-btn").html("Course ID");
+        }
+        if ($("#recency-sort-btn").length) {
+            $("#recency-sort-btn").removeClass("active");
+            $("#recency-sort-btn").html("Last Taught");
+        }
         $("#rating-sort-btn").removeClass("active");
         $("#diff-sort-btn").removeClass("active");
-        $("#number-sort-btn").html("Course ID");
         $("#rating-sort-btn").html("Rating");
         $("#diff-sort-btn").html("Difficulty");
         $("#gpa-sort-btn").addClass("active");
@@ -81,6 +102,26 @@ const sortByGpa = () => {
         sortGpaAsc *= -1;
     }
     selectOrderOfSort(sortGpaAsc, "#gpa-sort-btn", "GPA");
+};
+
+const sortByRecency = (event, sortOnce) => {
+    activeSort = "recency";
+    if (!$("#recency-sort-btn").hasClass("active")) {
+        // No button checks necessary as function only used on 1 page
+        $("#rating-sort-btn").removeClass("active");
+        $("#diff-sort-btn").removeClass("active");
+        $("#gpa-sort-btn").removeClass("active");
+        $("#rating-sort-btn").html("Rating");
+        $("#diff-sort-btn").html("Difficulty");
+        $("#gpa-sort-btn").html("GPA");
+        $("#recency-sort-btn").addClass("active");
+    } else {
+        sortRecencyAsc *= -1;
+    }
+    if (sortOnce) { // Sorting order never changes with single recency sort
+        sortRecencyAsc = -1;
+    }
+    selectOrderOfSort(sortRecencyAsc, "#recency-sort-btn", "Last Taught");
 };
 
 /* Helper function used by all sort functions to:
@@ -109,4 +150,4 @@ const sortClasses = (cmp) => {
     });
 };
 
-export { sortByNumber, sortByRating, sortByDifficulty, sortByGpa };
+export { sortByNumber, sortByRating, sortByDifficulty, sortByGpa, sortByRecency };
