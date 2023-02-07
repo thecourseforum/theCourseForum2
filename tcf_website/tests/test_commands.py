@@ -14,16 +14,16 @@ class LoadGradesTestCase(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         setup(cls)
-        # I'm not entirely sure why since the DB should be empty anyways, but
-        # clearing is required to pass tests
+        # Clearing is required to pass tests
         CourseGrade.objects.all().delete()
         CourseInstructorGrade.objects.all().delete()
-        management.call_command('load_grades', 'test_data', '--suppress-tqdm', verbosity=0)
+        management.call_command('load_grades', 'test/test_data', '--suppress-tqdm', verbosity=0)
         cls.cg = CourseGrade.objects.first()
         cls.cig = CourseInstructorGrade.objects.first()
 
     def test_no_duplicates(self):
-        """Make sure only one instance of CourseGrade and CourseInstructorGrade were created"""
+        """Make sure only one instance of CourseGrade and CourseInstructorGrade were created.
+        In particular, make sure that the blank row does *not* have an object created for it."""
         self.assertEqual(CourseGrade.objects.count(), 1)
         self.assertEqual(CourseInstructorGrade.objects.count(), 1)
 
@@ -75,3 +75,52 @@ class LoadGradesTestCase(TestCase):
             cg_field = getattr(self.cg, field)
             cig_field = getattr(self.cig, field)
             self.assertEqual(cg_field, cig_field)
+
+
+class LoadGradesMissingAggregate(TestCase):
+    """ Tests case when aggregate data (Course GPA/# Students) is not provided."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        setup(cls)
+        CourseGrade.objects.all().delete()
+        CourseInstructorGrade.objects.all().delete()
+        management.call_command(
+            'load_grades',
+            'test/missing_aggregate',
+            '--suppress-tqdm',
+            verbosity=0)
+        cls.cg = CourseGrade.objects.first()
+        cls.cig = CourseInstructorGrade.objects.first()
+
+    def test_total_students(self):
+        """Check valid total_enrolled even when not provided"""
+        self.assertEqual(self.cg.total_enrolled, 10)
+        self.assertEqual(self.cig.total_enrolled, 10)
+
+
+class LoadGradesMissingDistribution(TestCase):
+    """ Tests case when distribution data is not provided."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        setup(cls)
+        CourseGrade.objects.all().delete()
+        CourseInstructorGrade.objects.all().delete()
+        management.call_command(
+            'load_grades',
+            'test/missing_distribution',
+            '--suppress-tqdm',
+            verbosity=0)
+        cls.cg = CourseGrade.objects.first()
+        cls.cig = CourseInstructorGrade.objects.first()
+
+    def test_aggregate_stats(self):
+        """Check aggregate stats across sections combined correctly"""
+        self.assertEqual(self.cg.average, 3)
+        self.assertEqual(self.cig.average, 3)
+
+        self.assertEqual(self.cg.total_enrolled, 4)
+        self.assertEqual(self.cig.total_enrolled, 4)

@@ -84,8 +84,7 @@ class Subdepartment(models.Model):
         """Return courses within last 5 years."""
         latest_semester = Semester.latest()
         return self.course_set.filter(
-            semester_last_taught__year__gte=latest_semester.year -
-            5).order_by("number")
+            semester_last_taught__year__gte=latest_semester.year - 5).order_by("number")
 
     def has_current_course(self):
         """Return True if subdepartment has a course in current semester."""
