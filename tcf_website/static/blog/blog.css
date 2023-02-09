@@ -1,0 +1,24 @@
+.col {
+  max-width: 670px;
+  margin: auto;
+  text-align: left;
+}
+.blog-body a {
+  text-decoration: underline;
+}
+.blog-body ul {
+  list-style-type: disc;
+  padding-left: 1em;
+}
+.blog-body pre {
+  background-color: #f0f0f0;
+  padding: 1em;
+}
+.blog-body code {
+  background-color: #f0f0f0;
+  padding: 0.2em;
+}
+.blog-body blockquote {
+  border-left: 1px solid #6c757d;
+  padding: 0 0.9em;
+}

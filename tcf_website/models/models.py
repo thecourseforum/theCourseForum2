@@ -2,10 +2,18 @@
 
 """TCF Database models."""
 
+import re
+
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 from django.db.models.functions import Coalesce, Abs
+from django.core.exceptions import ValidationError
+
+from markdownx.models import MarkdownxField
+from markdownx.utils import markdownify
 
 
 class School(models.Model):
@@ -766,3 +774,50 @@ class Vote(models.Model):
                 name='unique vote per user and review',
             )
         ]
+
+
+class DateCreateModMixin(models.Model):
+    """Date create/modified mixin (for posts).
+    """
+    class Meta:
+        abstract = True
+
+    created_date = models.DateTimeField(default=timezone.now)
+    mod_date = models.DateTimeField(blank=True, null=True)
+
+
+class BlogPost(DateCreateModMixin):
+    """Blog post model.
+    https://www.existenceundefined.com/blog/programming/1/how-to-use-django-markdownx-for-your-blog
+    """
+
+    title = models.CharField(max_length=255)
+    subtitle = models.CharField(max_length=255)
+
+    slug = models.SlugField(
+        null=False,
+        unique=True,
+        help_text='The URL that the post will have. Match it to the headline, keep length at 3-5 \
+            words, and use dashes between words. Example: "what-is-url-slug" \
+                (More info: https://rockcontent.com/blog/what-is-url-slug/)')
+    author = models.CharField(max_length=50)
+    thumbnail_image = models.ImageField(default='placeholder.jpeg')
+
+    body = MarkdownxField()
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        """Returns url to the post"""
+        print(reverse('post_detail', kwargs={'slug': self.slug}))
+        return reverse('post_detail', kwargs={'slug': self.slug})
+
+    def formatted_markdown(self):
+        """Returns formatted markdown of post content."""
+        return markdownify(self.body)
+
+    def clean(self):
+        """Validate slug."""
+        if not re.search(r'^[a-z0-9-]+$', self.slug):
+            raise ValidationError("Slug has invalid format. Use kebab-case (e.g. 'my-new-post').")

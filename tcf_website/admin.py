@@ -3,6 +3,7 @@
 """TCF Django Admin."""
 
 from django.contrib import admin
+from markdownx.admin import MarkdownxModelAdmin
 
 # Register your models here.
 from .models import *
@@ -11,6 +12,7 @@ from .models import *
 admin.site.register(User)
 admin.site.register(Review)
 admin.site.register(Vote)
+admin.site.register(BlogPost, MarkdownxModelAdmin)
 
 
 class SchoolAdmin(admin.ModelAdmin):
@@ -64,6 +66,13 @@ class CourseGradeAdmin(admin.ModelAdmin):
 class CourseInstructorGradeAdmin(admin.ModelAdmin):
     ordering = ['instructor__last_name', 'instructor__first_name']
     search_fields = ['instructor__first_name', 'instructor__last_name']
+
+
+class BlogPostAdmin(MarkdownxModelAdmin):
+    list_display = ['title', 'created_date', 'mod_date']
+    list_filter = ['created_date', 'mod_date']
+    search_fields = ['title']
+    prepopulated_fields = {'slug': ('title',)}
 
 
 admin.site.register(Section, SectionAdmin)

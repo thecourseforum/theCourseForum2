@@ -1,0 +1,90 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}theBlog - theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'blog/blog.css' %}"/>
+{% endblock %}
+
+{% block content %}
+<!-- {% comment %} <div class="container">
+{% include "../common/notification.html" %}
+</div> {% endcomment %} -->
+
+<div class="blog container p-0">
+  <!-- Google adsense -->
+  <!-- <div class="container mb-4">
+  {% include "../common/leaderboard_ad.html" %}
+</div> -->
+
+  <!-- Browse page content -->
+  <section>
+    <div class="row p-5 bg-tcf-orange text-white">
+      <div class="col-sm-6">
+        <h2 class="display-4 font-weight-bold mb-2">theBlog</h2>
+        <p class="h5 font-weight-light">
+          Join our community and read about what's going on in your favorite classes!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="row mt-4 p-4 bg-light">
+      <div class="col">
+        <h3>Featured Posts</h3>
+
+        <!-- Featured Posts Grid -->
+        <div class="row">
+          {% for post in featured_posts %}
+            <div class="col-md-4">
+              <a href="{% url 'post_detail' slug=post.slug %}" class="link-unstyled">
+                <div class="card my-3">
+                  <div class="card-header bg-tcf-indigo"></div>
+                  <div class="card-body features-icons-item mb-2">
+                    <h4 class="card-title mb-0">{{ post.title|truncatechars:85 }}</h4>
+                    <small class="card-subtitle text-muted">{{ post.subtitle|truncatechars:125 }}</small>
+                  </div>
+                  <div class="card-footer bg-white border-0 text-muted">
+                    <small>{{ post.author }} &middot {{ post.created_date | date:"N d, Y" }}</small>
+                  </div>
+                </div>
+              </a>
+            </div>
+            {% endfor %}
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Posts List -->
+    <section>
+      <div class="row mt-4 p-4">
+        <div class="col">
+          <h3>All Posts</h3>
+          {% for post in all_posts %}
+          <a href="{% url 'post_detail' slug=post.slug %}" class="link-unstyled">
+            <div class="card d-inline-flex flex-row mt-4 w-100">
+              <div class="flex-grow-1">
+                <div class="card-body p-4">
+                  <h4 class="card-title mb-0">{{ post.title|truncatechars:85 }}</h4>
+                  <small class="card-subtitle text-muted">{{ post.subtitle|truncatechars:125 }}</small>
+                </div>
+                <div class="card-footer bg-white border-0 text-muted">
+                  <small>{{ post.author }} &middot {{ post.created_date | date:"N d, Y" }}</small>
+                </div>
+              </div>
+              <div class="card-header border-0">
+                  <img src="{% static 'blog/'|add:post.thumbnail_image %}" alt="Blog thumbnail image" style="width:200px">
+              </div>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  </div>
+  {% endblock %}
+  

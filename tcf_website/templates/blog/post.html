@@ -1,0 +1,46 @@
+{% extends "base/base.html" %} 
+{% load static %} 
+
+{% block title %}theBlog - theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'blog/blog.css' %}" />
+{% endblock %} 
+
+{% block content %}
+<!-- {% comment %} <div class="container">
+        {% include "../common/notification.html" %}
+    </div> {% endcomment %} -->
+
+<div class="blog container">
+    <!-- Google adsense -->
+    <div class="container mb-4">
+        {% include "../common/leaderboard_ad.html" %}
+    </div>
+
+    <!-- Browse page content -->
+    <section id="masthead">
+        <div class="row px-5 py-3 bg-tcf-orange text-white">
+            <div class="col-sm-6">
+                <a href="{% url 'blog' %}" class="link-unstyled">
+                    <h2 class="display-4 font-weight-bold mb-2">theBlog</h2>
+                </a>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="row mt-4 p-4 bg-light">
+            <div class="col">
+                <p class="text-muted">
+                    Written by {{post_detail.author}} &#8226; {{ post_detail.created_date | date:"N d, Y" }}</span>
+                </p>
+                <h1 class="display-3">{{ post_detail.title }}</h1>
+                <h2 class="text-muted">{{ post_detail.subtitle }}</h2>
+                <div class="blog-body">
+                    {{ post_detail.formatted_markdown|safe }}
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

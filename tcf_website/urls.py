@@ -1,6 +1,6 @@
 """Routes URLs to views"""
 
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 from . import views
 
@@ -10,7 +10,6 @@ urlpatterns = [
     path('about/', views.AboutView.as_view(), name='about'),
     path('privacy/', views.privacy, name='privacy'),
     path('terms/', views.terms, name='terms'),
-    path('ads.txt/', views.ads, name='ads'),
     path('browse/', views.browse, name='browse'),
     path('department/<int:dept_id>/', views.department, name='department'),
     path('course/<int:course_id>/', views.course_view_legacy, name='course_legacy'),
@@ -35,8 +34,17 @@ urlpatterns = [
          views.DeleteProfile.as_view(), name='delete_profile'),
     path('search/', views.search, name='search'),
 
+    # BlOG URLS
+    path('blog/', views.BlogView.as_view(), name='blog'),
+    path('blog/<slug:slug>/', views.post, name='post_detail'),
+    path('markdownx/', include('markdownx.urls')),
+
+
     # API URLs
     path('api/', include('tcf_website.api.urls'), name='api'),
+
+    # GOOGLE ADS
+    path('ads.txt/', views.ads, name='ads'),
 
     # DISCORD URLS
     path('discord/', views.post_message, name='discord'),
@@ -48,6 +56,10 @@ urlpatterns = [
     path('login/collect_extra_info/<str:method>', views.collect_extra_info),
     path('accounts/login/', views.login),
     path('logout/', views.logout, name='logout'),
+
+    # MARKDOWN URL
+    re_path(r'^markdownx/', include('markdownx.urls')),
+
     path(
         '.well-known/microsoft-identity-association.json',
         views.auth.load_microsoft_verification,

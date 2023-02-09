@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'cachalot',  # TODO: add Redis?
     'rest_framework',
     'django_filters',
+    'markdownx',
     'tcf_website',
 ]
 
