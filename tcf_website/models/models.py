@@ -796,6 +796,7 @@ class Vote(models.Model):
             )
         ]
 
+
 class Question(models.Model):
     """Question model.
     Belongs to a User.
@@ -821,7 +822,7 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
-    
+
     # TODO: add instructor choice of All or a specific instructor
     # TODO: add semester choice option
 
@@ -835,6 +836,7 @@ class Answer(models.Model):
                 name='unique answer per user and question',
             )
         ]
+
 
 class VoteQuestion(models.Model):
     """Vote model.
@@ -864,6 +866,7 @@ class VoteQuestion(models.Model):
                 name='unique vote per user and question',
             )
         ]
+
 
 class VoteAnswer(models.Model):
     """Vote model.
