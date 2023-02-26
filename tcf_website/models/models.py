@@ -804,7 +804,7 @@ class Question(models.Model):
     """
     text = models.CharField(max_length=255)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, default=None)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     placeholder = models.CharField(max_length=100, default="Enter your response here")
@@ -822,9 +822,9 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, default=None)
 
     # TODO: add instructor choice of All or a specific instructor
-    # TODO: add semester choice option
 
     def __str__(self):
         return f"Answer for {self.question} by {self.user}"
