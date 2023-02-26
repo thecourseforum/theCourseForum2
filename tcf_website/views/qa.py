@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
-from ..models import Question
+from ..models import Question, Answer
 
 
 class QuestionForm(forms.ModelForm):
@@ -29,6 +29,32 @@ def new_question(request):
             instance.save()
 
             messages.success(request, f'Successfully added a question for {instance.course}!')
+            return redirect('browse')
+        return render(request, 'browse', {'form': form})
+    return render(request, 'browse')
+
+
+class AnswerForm(forms.ModelForm):
+    """Form for answer creation"""
+    class Meta:
+        model = Answer
+        fields = ['text', 'semester', 'question']
+
+
+@login_required
+def new_answer(request):
+    """Answer creation view."""
+
+    if request.method == 'POST':
+        form = AnswerForm(request.POST)
+
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+
+            instance.save()
+
+            messages.success(request, 'Successfully added a answer!')
             return redirect('browse')
         return render(request, 'browse', {'form': form})
     return render(request, 'browse')
