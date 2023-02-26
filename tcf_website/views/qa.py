@@ -16,10 +16,9 @@ class QuestionForm(forms.ModelForm):
 
 
 @login_required
-def new_review(request):
+def new_question(request):
     """Question creation view."""
 
-    # Collect form data into Review model instance.
     if request.method == 'POST':
         form = QuestionForm(request.POST)
 

@@ -21,7 +21,8 @@ from ..models import (
     Semester,
     Instructor,
     Review,
-    CourseInstructorGrade)
+    CourseInstructorGrade,
+    Question)
 
 
 def browse(request):
@@ -250,6 +251,10 @@ def course_instructor(request, course_id, instructor_id):
         section_info["sections"][section.sis_section_number] = {
             "type": section.section_type, "units": section.units, "times": times}
 
+    # QA Data
+
+    questions = Question.objects.filter(course=course_id, instructor=instructor_id)
+
     return render(request, 'course/course_professor.html',
                   {
                       'course': course,
@@ -261,7 +266,8 @@ def course_instructor(request, course_id, instructor_id):
                       'breadcrumbs': breadcrumbs,
                       'data': json.dumps(data),
                       'section_info': section_info,
-                      'display_times': Semester.latest() == section_last_taught.semester
+                      'display_times': Semester.latest() == section_last_taught.semester,
+                      'questions': questions
                   })
 
 

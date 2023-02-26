@@ -21,6 +21,7 @@ urlpatterns = [
     path('instructor/<int:instructor_id>/',
          views.instructor_view, name='instructor'),
     path('reviews/new/', views.new_review, name='new_review'),
+    path('reviews/new_question/', views.new_question, name='new_question'),
     path('reviews/<int:pk>/delete/',
          views.DeleteReview.as_view(), name='delete_review'),
     path('reviews/<int:review_id>/edit/',
