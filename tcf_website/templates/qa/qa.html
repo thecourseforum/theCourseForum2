@@ -1,0 +1,14 @@
+{% for question in questions %}
+    <p>{{question.text}}</p>
+{% endfor %}
+
+<form method="POST" action="{% url 'new_question' %}">
+    {% csrf_token %}
+    <fieldset>
+        <label></label>
+        <input type="text" name="text" id="1" value="">
+    </fieldset>
+    <input type="hidden" name="course" id="2" value="{{course.id}}">
+    <input type="hidden" name="instructor" id="3" value="{{instructor.id}}">
+    <input type="submit" value="Post Question">
+</form>
