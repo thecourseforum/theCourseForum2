@@ -216,19 +216,18 @@ class Command(BaseCommand):
                 prev_data = data_dict[identifier]
                 prev_total_enrolled = prev_data[-2]
                 prev_average = prev_data[-1]
+
                 # If both are not zero, then update with weighted formula
                 if prev_average and average:
                     new_average = (prev_average * prev_total_enrolled + average *
                                    total_enrolled) / (prev_total_enrolled + total_enrolled)
                     data_dict[identifier][-1] = new_average
-                    data_dict[identifier][-2] += total_enrolled
                 # If only old average is zero, then set it to new average
                 elif average:
                     data_dict[identifier][-1] = average
-                    data_dict[identifier][-2] = total_enrolled
-                # Any situation where new average is None, do nothing
-
+                # Any situation where new average is None, do nothing to average
                 # The distribution itself can be incremented normally in all cases
+                data_dict[identifier][-2] += total_enrolled
                 for i in range(len(semester_grades) - 2):
                     data_dict[identifier][i] += semester_grades[i]
             else:
