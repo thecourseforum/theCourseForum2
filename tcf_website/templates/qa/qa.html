@@ -1,7 +1,30 @@
+{% load static %}
+
+<h1>Questions and Answers:</h1>
 {% for question in questions %}
     <p>{{question.text}}</p>
+    {% for question_id, answer_list in answers.items %}
+        {% if question.id == question_id %}
+            {% for answer in answer_list %}
+                <p>{{ answer.text }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+    <form method="POST" action="{% url 'new_answer' %}">
+        {% csrf_token %}
+        <input type="text" name="text" id="1" value="">
+        <input type="hidden" name="question" id="2" value="{{question.id}}">
+        <div class="form-group col-sm-6">
+            <label for="semester" class="required-field">Semester</label>
+            <select type="text" class="form-control" required id="semester" name="semester">
+              <option value="{{ form.instance.semester.id }}" selected>{{ form.instance.semester }}</option>
+            </select>
+          </div>
+        <input type="submit" value="Submit Answer">
+    </form>
 {% endfor %}
 
+<h1>Post a Question:</h1>
 <form method="POST" action="{% url 'new_question' %}">
     {% csrf_token %}
     <fieldset>
