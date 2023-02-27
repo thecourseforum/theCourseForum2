@@ -84,8 +84,7 @@ class Subdepartment(models.Model):
         """Return courses within last 5 years."""
         latest_semester = Semester.latest()
         return self.course_set.filter(
-            semester_last_taught__year__gte=latest_semester.year -
-            5).order_by("number")
+            semester_last_taught__year__gte=latest_semester.year - 5).order_by("number")
 
     def has_current_course(self):
         """Return True if subdepartment has a course in current semester."""
@@ -161,7 +160,7 @@ class Instructor(models.Model):
     # Instructor departments. Optional.
     departments = models.ManyToManyField(Department)
     # hidden professor. Required. Default visible.
-    hidden= models.BooleanField(default=False)
+    hidden = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
@@ -475,7 +474,7 @@ class Course(models.Model):
 
 class CourseGrade(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
-    average = models.FloatField(default=0.0)
+    average = models.FloatField(default=0.0, null=True)
     a_plus = models.IntegerField(default=0)
     a = models.IntegerField(default=0)
     a_minus = models.IntegerField(default=0)
@@ -496,7 +495,7 @@ class CourseInstructorGrade(models.Model):
     instructor = models.ForeignKey(
         Instructor, on_delete=models.CASCADE, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
-    average = models.FloatField(default=0.0)
+    average = models.FloatField(default=0.0, null=True)
     a_plus = models.IntegerField(default=0)
     a = models.IntegerField(default=0)
     a_minus = models.IntegerField(default=0)
