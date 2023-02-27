@@ -43,8 +43,8 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ANTH,1010,Introduction to Anthropology,"Douglass,Carrie Bess",1,3.53,11,0,2,5,2,1,1,0,0,0,0
 2009 Fall,ANTH,2156,Peoples and Cultures of Africa,"Hickel,Jason Edward",1,-,-,0,1,2,2,0,0,0,0,1,0
 2009 Fall,ANTH,2190,Desire and World Economics,"Mentore,George P",100,2.83,17,0,0,2,4,4,1,2,1,2,1
-2009 Fall,ANTH,2230,Fantasy and Social Values,"Wagner,Roy",1,3.40,42,1,7,12,15,2,4,0,0,0,1
-2009 Fall,ANTH,2320,Anthropology of Religion,"Metcalf,Peter",100,2.90,31,2,8,3,4,3,1,2,1,0,7
+2009 Fall,ANTH,2230,Fantasy and Social Values,"Wagner,Roy",1,3.4,42,1,7,12,15,2,4,0,0,0,1
+2009 Fall,ANTH,2320,Anthropology of Religion,"Metcalf,Peter",100,2.9,31,2,8,3,4,3,1,2,1,0,7
 2009 Fall,ANTH,2400,Language and Culture,"Harr,Adam Patrick",1,-,-,0,4,1,1,0,1,0,0,0,2
 2009 Fall,ANTH,2559,New Course: ANTH,"Douglass,Carrie Bess",1,-,-,0,4,2,0,0,1,1,0,0,1
 2009 Fall,ANTH,2559,New Course: ANTH,"Marshall,Lydia Lee Ann Wilson",3,-,-,0,1,2,0,1,0,0,0,1,0
@@ -54,7 +54,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ANTH,2559,New Course: ANTH,"Trevathan,Wenda",500,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,ANTH,2660,Peoples of Polynesia,"Siikala,Harri Miihka Henrikki",1,3.11,15,0,3,3,3,1,1,1,2,1,0
 2009 Fall,ANTH,2800,Introduction to Archaeology,"Laviolette,Adria",100,3.11,31,0,2,8,8,2,4,4,0,2,1
-2009 Fall,ANTH,3010,Theory & History Anthropology,"Sihle,Nicolas",100,2.90,14,0,0,3,4,3,0,1,1,1,1
+2009 Fall,ANTH,3010,Theory & History Anthropology,"Sihle,Nicolas",100,2.9,14,0,0,3,4,3,0,1,1,1,1
 2009 Fall,ANTH,3150,Readings in Ethnography,"Metcalf,Peter",1,-,-,0,2,1,2,1,0,0,0,0,0
 2009 Fall,ANTH,3152,Amazonian Peoples,"Mentore,George P",100,-,-,1,0,2,2,0,1,1,0,0,1
 2009 Fall,ANTH,3155,Anth of Everyday American Life,"Damon,Frederick H.",100,3.41,22,4,5,3,3,4,1,0,0,0,2
@@ -96,10 +96,10 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ANTH,9020,Directed Readings,"Contini-Morava,Ellen L",4,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,ANTH,9020,Directed Readings,"Hantman,Jeffrey L",2,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,ANTH,9020,Directed Readings,"Marshall,Wende E",20,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,APMA,1000,Pre-Calculus,"Beck,Mary P",001,-,-,0,2,5,0,0,0,0,0,0,0
+2009 Fall,APMA,1000,Pre-Calculus,"Beck,Mary P",1,-,-,0,2,5,0,0,0,0,0,0,0
 2009 Fall,APMA,1090,Single Variable Calculus I,"Beck,Mary P",1,2.69,15,0,2,1,1,1,2,5,1,2,0
 2009 Fall,APMA,1090,Single Variable Calculus I,"Johnson,William Craig",2,2.67,16,0,1,0,0,6,2,2,4,0,1
-2009 Fall,APMA,1110,Single Variable Calculus II,"Beck,Mary P",2,2.50,12,0,0,1,4,2,2,0,0,1,2
+2009 Fall,APMA,1110,Single Variable Calculus II,"Beck,Mary P",2,2.5,12,0,0,1,4,2,2,0,0,1,2
 2009 Fall,APMA,1110,Single Variable Calculus II,"Guadagni,Gianluca",1,-,-,0,0,1,1,2,2,0,0,1,0
 2009 Fall,APMA,1110,Single Variable Calculus II,"Guadagni,Gianluca",5,-,-,0,1,3,0,0,2,0,0,2,1
 2009 Fall,APMA,1110,Single Variable Calculus II,"Pisano,Stacie",3,-,-,0,0,0,0,5,2,2,0,0,0
@@ -114,15 +114,15 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,APMA,2130,Ordinary Differentl Equations,"Fulgham,Bernard Ives",2,2.46,20,0,3,0,3,2,1,2,1,4,4
 2009 Fall,APMA,2130,Ordinary Differentl Equations,"Wells,Benjamin Baxter",1,2.56,14,0,2,1,0,1,3,1,2,4,0
 2009 Fall,APMA,2130,Ordinary Differentl Equations,"Wells,Benjamin Baxter",3,-,-,0,0,2,0,1,3,0,1,2,1
-2009 Fall,APMA,3080,Linear Algebra,"Matucci,Francesco",3,3.20,18,2,4,2,3,3,1,2,0,0,1
+2009 Fall,APMA,3080,Linear Algebra,"Matucci,Francesco",3,3.2,18,2,4,2,3,3,1,2,0,0,1
 2009 Fall,APMA,3080,Linear Algebra,"McCrimmon,Kevin",2,3.13,24,1,3,5,4,3,2,2,1,2,1
-2009 Fall,APMA,3080,Linear Algebra,"Pindera,Marek-Jerzy",1,2.80,30,3,1,2,1,8,6,0,6,1,2
+2009 Fall,APMA,3080,Linear Algebra,"Pindera,Marek-Jerzy",1,2.8,30,3,1,2,1,8,6,0,6,1,2
 2009 Fall,APMA,3100,Probability,"Dascaliuc,Radu",1,2.51,17,1,2,2,0,3,0,1,3,0,5
 2009 Fall,APMA,3100,Probability,"Snider,Daria M",2,-,-,1,1,0,1,2,0,1,1,0,2
 2009 Fall,APMA,3100,Probability,"Snider,Daria M",3,3.11,11,0,1,1,2,3,1,0,1,0,2
 2009 Fall,APMA,3110,Applied Stats & Probablity,"Maybee,John D",1,3.33,26,0,5,4,4,7,4,0,0,0,2
 2009 Fall,APMA,3110,Applied Stats & Probablity,"Maybee,John D",2,3.26,30,1,8,3,5,5,5,1,0,2,0
-2009 Fall,APMA,3110,Applied Stats & Probablity,"Maybee,John D",3,3.10,27,0,9,2,2,8,1,1,0,1,3
+2009 Fall,APMA,3110,Applied Stats & Probablity,"Maybee,John D",3,3.1,27,0,9,2,2,8,1,1,0,1,3
 2009 Fall,APMA,3120,Statistics,"Zhou,Jianhui",1,3.45,12,0,5,2,1,1,2,1,0,0,0
 2009 Fall,APMA,3120,Statistics,"Zhou,Jianhui",2,3.31,21,0,3,6,0,9,1,1,0,0,1
 2009 Fall,APMA,3140,App Partial Differentl Equatns,"Wood III,Houston G.",1,3.15,16,0,4,3,1,3,1,2,1,1,0
@@ -150,7 +150,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ARAB,4559,New Course: ARAB,"Said Ramadan,Abdulkareem",1,-,-,0,0,3,2,0,0,0,0,0,0
 2009 Fall,ARAB,5830,Topics in Arabic Prose I,"Sawaie,Mohammed",1,-,-,0,4,0,0,1,0,0,0,0,0
 2009 Fall,ARAD,3100,Prin & Prac in Arts Administrn,"Sampson,George W.",1,3.69,16,0,4,9,0,2,0,0,0,0,1
-2009 Fall,ARAD,3993,Independent Study,"Sampson,George W.",001,-,-,0,4,0,0,1,0,0,0,0,0
+2009 Fall,ARAD,3993,Independent Study,"Sampson,George W.",1,-,-,0,4,0,0,1,0,0,0,0,0
 2009 Fall,ARAD,5050,Arts Marketing Theory & Pract,"Sampson,George W.",1,3.77,12,0,4,6,1,0,0,0,0,0,1
 2009 Fall,ARAH,7515,Rsch Problems Medieval Art,"Reilly,Lisa A",1,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,ARAH,7585,"Res Prob Art E,S, SE Asia","Wong,Dorothy",1,-,-,0,1,0,0,0,0,0,0,0,0
@@ -183,7 +183,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ARCH,4010,Architectural Design III,"Roettger,Elizabeth Louise",4,-,-,0,1,1,1,0,0,0,0,0,0
 2009 Fall,ARCH,4010,Architectural Design III,"Waldman,Peter D",5,-,-,0,0,3,1,1,1,0,0,0,0
 2009 Fall,ARCH,4820,Teaching Experience,"Mark,Earl J",4,-,-,0,2,1,1,0,0,0,0,0,0
-2009 Fall,ARCH,4820,Teaching Experience,"Waldman,Peter D",1,3.80,15,0,5,10,0,0,0,0,0,0,0
+2009 Fall,ARCH,4820,Teaching Experience,"Waldman,Peter D",1,3.8,15,0,5,10,0,0,0,0,0,0,0
 2009 Fall,ARCH,4993,Independent Study,"Canfora,Anselmo Gianluca",2,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,ARCH,5150,Global Sustainability,"Crisman,Phoebe",1,-,-,0,1,5,0,0,0,0,0,0,0
 2009 Fall,ARCH,5300,Evaluating Eco-MOD,"Quale,John David",1,-,-,0,1,0,1,0,0,0,0,0,0
@@ -227,7 +227,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ARH,7701,Early American Architecture,"Nelson,Louis P",1,-,-,0,0,0,0,0,1,0,0,0,0
 2009 Fall,ARH,8001,Methods in Architectural Hist,"Brothers,Cammy",1,-,-,0,1,0,0,0,0,0,0,0,1
 2009 Fall,ARH,9540,Seminar 20/21st Century,"Wilson,Richard Guy",1,-,-,0,4,2,0,0,0,0,0,0,0
-2009 Fall,ARTH,1051,History of Art I,"Ramirez-Weaver,Eric Matthew",100,3.40,45,0,13,9,9,8,1,1,2,1,1
+2009 Fall,ARTH,1051,History of Art I,"Ramirez-Weaver,Eric Matthew",100,3.4,45,0,13,9,9,8,1,1,2,1,1
 2009 Fall,ARTH,2051,Art of the Ancient Near East,"Dakouri-Hild,Anastasia",1,3.73,17,8,1,3,2,0,0,1,0,0,2
 2009 Fall,ARTH,2053,Greek Art,"Smith,Tyler Jo",1,3.27,21,0,5,7,0,3,2,2,1,1,0
 2009 Fall,ARTH,2251,Italian Renaissance Art,"Barolsky,Paul",100,3.11,19,0,0,3,4,8,4,0,0,0,0
@@ -346,13 +346,13 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,BIOL,4070,Developmental Biology Lab,"Keller,Raymond E",1,-,-,0,3,2,1,2,0,0,0,0,0
 2009 Fall,BIOL,4070,Developmental Biology Lab,"Keller,Raymond E",2,-,-,1,5,4,0,0,0,0,0,0,0
 2009 Fall,BIOL,4100,Management of Forest Ecosystem,"Shugart,Herman H",100,-,-,0,1,1,0,0,0,0,0,0,0
-2009 Fall,BIOL,4180,Behavioral Ecology,"Brodie III,Edmund Darrell",1,3.30,17,0,3,4,2,6,1,0,1,0,0
+2009 Fall,BIOL,4180,Behavioral Ecology,"Brodie III,Edmund Darrell",1,3.3,17,0,3,4,2,6,1,0,1,0,0
 2009 Fall,BIOL,4190,Biological Clocks,"Menaker,Michael",1,2.97,26,0,1,8,3,2,6,3,1,1,1
 2009 Fall,BIOL,4190,Biological Clocks,"Wijnen,Herman",1,2.97,26,0,1,8,3,2,6,3,1,1,1
 2009 Fall,BIOL,4270,Animal Behavior Laboratory,"Kawasaki,Masashi",1,-,-,0,0,2,4,2,0,0,0,0,0
 2009 Fall,BIOL,4330,Wiring the Brain,"Condron,Barry G",1,3.78,17,3,8,4,0,0,0,0,0,1,1
 2009 Fall,BIOL,4370,Epigenetics,"Henriksen,Melissa Ann",1,-,-,0,0,3,0,1,0,0,0,0,1
-2009 Fall,BIOL,4559,New Course: BIOL,"Formica,Vincent Anthony",01,-,-,1,1,2,1,0,0,0,0,0,0
+2009 Fall,BIOL,4559,New Course: BIOL,"Formica,Vincent Anthony",1,-,-,1,1,2,1,0,0,0,0,0,0
 2009 Fall,BIOL,4810,DMP Seminar- Biology Research,"Hirsh,Jay",1,-,-,0,7,0,1,0,0,0,0,0,0
 2009 Fall,BIOL,4911,Independent Research I,"Adler,Paul N",8,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,BIOL,4911,Independent Research I,"Bloom,George S",10,-,-,0,1,0,0,0,0,0,0,0,0
@@ -377,7 +377,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,BIOL,4913,Independent Research III,"Menaker,Michael",19,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,BIOL,4913,Independent Research III,"Spano,Anthony Joseph",29,-,-,1,0,0,0,0,0,0,0,0,0
 2009 Fall,BIOL,4913,Independent Research III,"Wilbur,Henry M",26,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,BIOL,4914,Independent Research IV,"Bloom,George S",03,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,BIOL,4914,Independent Research IV,"Bloom,George S",3,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,BIOL,4914,Independent Research IV,"Kretsinger,Robert H",16,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,BIOL,4915,Independent Research V,"Kozminski,Keith G",15,-,-,1,0,0,0,0,0,0,0,0,0
 2009 Fall,BIOL,4915,Independent Research V,"Li,Lei",17,-,-,0,0,1,0,0,0,0,0,0,0
@@ -396,7 +396,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,BIOP,9999,"Non-Topical Research, Doctoral","Derewenda,Zygmunt S",5,-,-,0,0,0,0,0,0,0,0,0,1
 2009 Fall,BME,2000,Biomed Engr Design & Discovery,"Walker,William F",100,3.46,16,1,1,7,5,1,0,0,1,0,0
 2009 Fall,BME,2101,Physiology I,"Adams,James M",100,3.28,24,1,2,5,5,6,3,1,0,0,1
-2009 Fall,BME,3080,Biomed IDEAS Lab I,"Allen,Timothy E",100,3.20,40,1,7,6,4,13,5,1,2,1,0
+2009 Fall,BME,3080,Biomed IDEAS Lab I,"Allen,Timothy E",100,3.2,40,1,7,6,4,13,5,1,2,1,0
 2009 Fall,BME,3310,Biomed Sys Analysis & Design,"Saucerman,Jeffrey J",1,3.38,42,1,15,12,5,3,0,1,0,1,4
 2009 Fall,BME,4063,Biomed Engr Capstone Design I,"Peirce-Cottler,Shayn",1,3.66,40,5,17,6,6,3,2,0,1,0,0
 2009 Fall,BME,4280,Motion Biomechanics,"Kent,Richard Wesley",1,-,-,0,1,0,2,0,0,0,0,0,0
@@ -424,7 +424,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,BME,8550,Advanced Tops: Biomedical Engr,"Hossack,John A",1,-,-,1,2,0,0,0,0,0,0,0,0
 2009 Fall,BME,8823,"Cell Mechncs, Adhesn & Locomtn","Lawrence,Michael B",1,-,-,0,6,0,0,0,0,0,0,0,0
 2009 Fall,BME,8995,Supervised Projects Research,"Price,Richard John",1,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,BME,9000,Graduate Teaching Instruction,"Allen,Timothy E",001,-,-,0,0,0,0,0,0,0,0,0,4
+2009 Fall,BME,9000,Graduate Teaching Instruction,"Allen,Timothy E",1,-,-,0,0,0,0,0,0,0,0,0,4
 2009 Fall,BUS,3410,Commercial Law I,"Funk,Larry Edward",1,-,-,0,1,0,0,3,0,0,0,0,0
 2009 Fall,BUS,5050,Threat Assmt/Security Measures,"Ward,David O",1,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,BUS,5060,Tech & Open Access Environment,"Sylvertooth,Randall E",1,-,-,0,1,0,1,0,0,0,0,0,1
@@ -434,9 +434,9 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,CE,2010,Civil Engineering Techniques,"Smith,Brian Lee",1,2.98,26,0,4,2,4,8,1,2,2,1,2
 2009 Fall,CE,2300,Statics,"Pindera,Marek-Jerzy",1,3.23,24,3,5,1,3,7,2,0,1,2,0
 2009 Fall,CE,3200,Water Resources Engineering,"Curran,Joanna Catherine",1,2.99,24,0,2,4,4,2,7,3,2,0,0
-2009 Fall,CE,3300,Structural Mechanics,"Baber,Thomas T",1,3.00,30,1,7,2,5,5,3,1,1,2,3
+2009 Fall,CE,3300,Structural Mechanics,"Baber,Thomas T",1,3,30,1,7,2,5,5,3,1,1,2,3
 2009 Fall,CE,3700,Prop & Behavior of Materials,"Brown,Michael C",1,2.87,27,0,0,8,4,4,4,2,2,2,1
-2009 Fall,CE,3702,Materials Laboratory,"Brown,Michael C",1,4.00,11,0,11,0,0,0,0,0,0,0,0
+2009 Fall,CE,3702,Materials Laboratory,"Brown,Michael C",1,4,11,0,11,0,0,0,0,0,0,0,0
 2009 Fall,CE,3702,Materials Laboratory,"Brown,Michael C",2,-,-,0,3,2,0,0,0,0,0,0,0
 2009 Fall,CE,3702,Materials Laboratory,"Brown,Michael C",3,-,-,3,2,3,0,0,0,0,0,0,0
 2009 Fall,CE,3702,Materials Laboratory,"Brown,Michael C",4,-,-,1,2,0,1,0,0,0,0,0,0
@@ -466,11 +466,11 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,CHE,4442,Applied Surface Chemistry,"Green,David",1,3.64,24,0,15,1,2,5,0,0,1,0,0
 2009 Fall,CHE,4491,Chemical Engineering Lab II,"Davis,Robert J",101,3.51,15,0,2,6,5,2,0,0,0,0,0
 2009 Fall,CHE,4491,Chemical Engineering Lab II,"Davis,Robert J",102,3.63,17,0,6,5,4,2,0,0,0,0,0
-2009 Fall,CHE,4995,Chemical Engineering Research,"Davis,Robert J",05,-,-,0,2,0,0,0,0,0,0,0,0
-2009 Fall,CHE,4995,Chemical Engineering Research,"Fernandez,Erik",06,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,CHE,4995,Chemical Engineering Research,"Green,David",02,-,-,0,3,0,0,0,0,0,0,0,0
-2009 Fall,CHE,4995,Chemical Engineering Research,"Kwon,Inchan",03,-,-,0,1,1,0,0,0,0,0,0,0
-2009 Fall,CHE,4995,Chemical Engineering Research,"McIntosh,Steven",09,-,-,0,0,1,0,0,0,0,0,0,0
+2009 Fall,CHE,4995,Chemical Engineering Research,"Davis,Robert J",5,-,-,0,2,0,0,0,0,0,0,0,0
+2009 Fall,CHE,4995,Chemical Engineering Research,"Fernandez,Erik",6,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,CHE,4995,Chemical Engineering Research,"Green,David",2,-,-,0,3,0,0,0,0,0,0,0,0
+2009 Fall,CHE,4995,Chemical Engineering Research,"Kwon,Inchan",3,-,-,0,1,1,0,0,0,0,0,0,0
+2009 Fall,CHE,4995,Chemical Engineering Research,"McIntosh,Steven",9,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,CHE,4995,Chemical Engineering Research,"O'Connell,John P",11,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,CHE,4995,Chemical Engineering Research,"Shirts,Michael R",12,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,CHE,6442,Applied Surface Chemistry,"Green,David",1,-,-,0,4,0,0,0,0,0,0,0,0
@@ -533,7 +533,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,CHEM,5210,Advanced Physical Chemistry I,"Egorov,Sergei",1,-,-,0,1,1,0,0,0,0,0,0,0
 2009 Fall,CHEM,5360,Adv Inorganic Chemistry II,"Fraser,Cassandra L",2,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,CHEM,5360,Adv Inorganic Chemistry II,"Pu,Lin",1,-,-,0,1,0,0,2,0,0,0,0,0
-2009 Fall,CHEM,7030,Research Seminar III,"Marshall,James A.",1,4.00,13,0,13,0,0,0,0,0,0,0,0
+2009 Fall,CHEM,7030,Research Seminar III,"Marshall,James A.",1,4,13,0,13,0,0,0,0,0,0,0,0
 2009 Fall,CHEM,7430,Biological Chemistry I,"Mura,Cameron",1,-,-,0,1,1,1,0,1,0,0,0,0
 2009 Fall,CHEM,7510,Special Topics in Organic Chem,"Fraser,Cassandra L",1,-,-,0,0,2,2,0,0,0,0,0,0
 2009 Fall,CHEM,7710,Analytical Chemistry,"Venton,Barbara Jill",1,-,-,0,1,0,0,1,1,0,0,0,0
@@ -559,22 +559,22 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,CHIN,5830,Intro Classical Chinese:Prose,"Kinney,Anne B",1,3.77,14,0,8,4,1,0,1,0,0,0,0
 2009 Fall,CLAS,2020,Roman Civilization,"Myers,Karen S",100,3.62,18,0,8,5,1,0,2,1,0,0,1
 2009 Fall,CLAS,3120,Age of Alexander,"Leon-Ruiz,Daniel William",1,-,-,0,4,3,1,1,0,0,0,0,1
-2009 Fall,COLA,1500,College Advising Seminars,"Freedman,Paul",001,-,-,0,1,2,0,1,0,0,0,0,0
-2009 Fall,COLA,1500,College Advising Seminars,"Kittlesen,David Jon",007,-,-,0,4,1,0,0,0,0,0,0,0
-2009 Fall,COLA,1500,College Advising Seminars,"Mason,John E",013,-,-,0,2,0,0,0,0,0,0,0,2
-2009 Fall,COLA,1500,College Advising Seminars,"Most,Rachel",002,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,COLA,1500,College Advising Seminars,"Murphy,Edward Michael",009,-,-,0,0,2,2,0,0,0,0,0,0
-2009 Fall,COLA,1500,College Advising Seminars,"Timko,Michael P",011,-,-,0,6,0,0,0,0,0,0,0,0
-2009 Fall,COLA,1500,College Advising Seminars,"Tucker,Ann E.R.",003,-,-,0,2,1,0,0,0,0,0,0,0
-2009 Fall,COLA,1500,College Advising Seminars,"Vander Meulen,David L",015,-,-,0,5,0,0,0,0,0,0,0,0
-2009 Fall,COLA,1500,College Advising Seminars,"Wellmon,Michael Chad",012,-,-,0,4,0,0,0,0,0,0,0,0
-2009 Fall,COLA,1500,College Advising Seminars,"West,Gweneth L",016,-,-,1,5,1,0,0,0,0,0,0,0
+2009 Fall,COLA,1500,College Advising Seminars,"Freedman,Paul",1,-,-,0,1,2,0,1,0,0,0,0,0
+2009 Fall,COLA,1500,College Advising Seminars,"Kittlesen,David Jon",7,-,-,0,4,1,0,0,0,0,0,0,0
+2009 Fall,COLA,1500,College Advising Seminars,"Mason,John E",13,-,-,0,2,0,0,0,0,0,0,0,2
+2009 Fall,COLA,1500,College Advising Seminars,"Most,Rachel",2,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,COLA,1500,College Advising Seminars,"Murphy,Edward Michael",9,-,-,0,0,2,2,0,0,0,0,0,0
+2009 Fall,COLA,1500,College Advising Seminars,"Timko,Michael P",11,-,-,0,6,0,0,0,0,0,0,0,0
+2009 Fall,COLA,1500,College Advising Seminars,"Tucker,Ann E.R.",3,-,-,0,2,1,0,0,0,0,0,0,0
+2009 Fall,COLA,1500,College Advising Seminars,"Vander Meulen,David L",15,-,-,0,5,0,0,0,0,0,0,0,0
+2009 Fall,COLA,1500,College Advising Seminars,"Wellmon,Michael Chad",12,-,-,0,4,0,0,0,0,0,0,0,0
+2009 Fall,COLA,1500,College Advising Seminars,"West,Gweneth L",16,-,-,1,5,1,0,0,0,0,0,0,0
 2009 Fall,COMM,1800,Making Business Work,"Kemp,Robert S",1,3.61,69,0,27,20,10,5,2,2,1,0,2
 2009 Fall,COMM,1800,Making Business Work,"Kemp,Robert S",2,3.64,51,0,18,15,14,3,1,0,0,0,0
 2009 Fall,COMM,2010,Intro to Financial Accounting,"Erickson,Mary K",1,2.84,51,1,3,6,7,8,5,10,10,0,1
 2009 Fall,COMM,2010,Intro to Financial Accounting,"Erickson,Mary K",2,2.95,42,1,7,5,3,5,7,5,5,3,1
-2009 Fall,COMM,2010,Intro to Financial Accounting,"Erickson,Mary K",3,2.70,59,0,3,9,5,7,10,8,10,5,2
-2009 Fall,COMM,2020,Intro Management Accounting,"Wilkie,Patrick J",1,3.30,31,2,4,7,8,5,1,1,3,0,0
+2009 Fall,COMM,2010,Intro to Financial Accounting,"Erickson,Mary K",3,2.7,59,0,3,9,5,7,10,8,10,5,2
+2009 Fall,COMM,2020,Intro Management Accounting,"Wilkie,Patrick J",1,3.3,31,2,4,7,8,5,1,1,3,0,0
 2009 Fall,COMM,2020,Intro Management Accounting,"Wilkie,Patrick J",2,3.27,34,0,6,7,9,5,3,2,2,0,0
 2009 Fall,COMM,2730,Personal Finance,"Bonding,Karin B",1,3.56,50,0,16,18,4,6,6,0,0,0,0
 2009 Fall,COMM,3010,Strategy and Systems,"Gray,Peter Horst",6,3.52,15,0,4,3,5,1,1,0,0,0,1
@@ -593,25 +593,25 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,COMM,3010,Strategy and Systems,"Nelson,Russell R",3,3.48,19,0,3,5,9,2,0,0,0,0,0
 2009 Fall,COMM,3010,Strategy and Systems,"Nelson,Russell R",4,3.49,19,0,5,4,6,3,1,0,0,0,0
 2009 Fall,COMM,3010,Strategy and Systems,"Zeithaml,Carl P",3,3.48,19,0,3,5,9,2,0,0,0,0,0
-2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Ballinger,Gary Andrew",1,3.30,14,0,1,2,6,5,0,0,0,0,0
+2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Ballinger,Gary Andrew",1,3.3,14,0,1,2,6,5,0,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Ballinger,Gary Andrew",3,3.62,19,0,6,7,3,3,0,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Burroughs,James E",4,3.44,19,0,3,5,8,1,2,0,0,0,0
-2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Burroughs,James E",7,3.60,24,0,6,8,9,1,0,0,0,0,0
+2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Burroughs,James E",7,3.6,24,0,6,8,9,1,0,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Cheema,Amar",2,-,-,0,2,1,3,2,2,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Cheema,Amar",5,3.36,18,0,3,5,3,4,3,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Cowen,Amanda",4,3.44,19,0,3,5,8,1,2,0,0,0,0
-2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Cowen,Amanda",7,3.60,24,0,6,8,9,1,0,0,0,0,0
-2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Foutz,Ying Natasha Zhang",1,3.30,14,0,1,2,6,5,0,0,0,0,0
+2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Cowen,Amanda",7,3.6,24,0,6,8,9,1,0,0,0,0,0
+2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Foutz,Ying Natasha Zhang",1,3.3,14,0,1,2,6,5,0,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Foutz,Ying Natasha Zhang",3,3.62,19,0,6,7,3,3,0,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Fraser,Cynthia",2,-,-,0,2,1,3,2,2,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Fraser,Cynthia",5,3.36,18,0,3,5,3,4,3,0,0,0,0
-2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Hamilton,Lynn Auld",1,3.30,14,0,1,2,6,5,0,0,0,0,0
+2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Hamilton,Lynn Auld",1,3.3,14,0,1,2,6,5,0,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Hamilton,Lynn Auld",3,3.62,19,0,6,7,3,3,0,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Jansen,Karen Jean",8,3.59,22,0,7,6,6,3,0,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Kehoe,William J",6,3.48,15,0,2,5,4,3,0,0,0,0,1
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Kehoe,William J",8,3.59,22,0,7,6,6,3,0,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Martin,Janette M",4,3.44,19,0,3,5,8,1,2,0,0,0,0
-2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Martin,Janette M",7,3.60,24,0,6,8,9,1,0,0,0,0,0
+2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Martin,Janette M",7,3.6,24,0,6,8,9,1,0,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Patterson,Robert E",2,-,-,0,2,1,3,2,2,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Patterson,Robert E",5,3.36,18,0,3,5,3,4,3,0,0,0,0
 2009 Fall,COMM,3020,Behavior Issues in Mktg & Mgmt,"Pentz-Harris,Marcia Lynne",6,3.48,15,0,2,5,4,3,0,0,0,0,1
@@ -633,7 +633,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,COMM,3030,Quantitative & Finan Analysis,"White,Mark A",4,3.44,19,0,2,6,7,4,0,0,0,0,0
 2009 Fall,COMM,3030,Quantitative & Finan Analysis,"White,Mark A",7,3.65,24,0,8,9,4,3,0,0,0,0,0
 2009 Fall,COMM,3110,Intermediate Accounting I,"Banyi,Monica Lynn",5,3.24,13,0,2,2,0,8,1,0,0,0,0
-2009 Fall,COMM,3110,Intermediate Accounting I,"Banyi,Monica Lynn",6,3.40,11,0,4,1,0,5,1,0,0,0,0
+2009 Fall,COMM,3110,Intermediate Accounting I,"Banyi,Monica Lynn",6,3.4,11,0,4,1,0,5,1,0,0,0,0
 2009 Fall,COMM,3110,Intermediate Accounting I,"Banyi,Monica Lynn",8,3.45,13,0,6,1,0,3,3,0,0,0,0
 2009 Fall,COMM,3110,Intermediate Accounting I,"Broome,Oscar W",3,3.34,14,0,4,1,1,7,1,0,0,0,0
 2009 Fall,COMM,3110,Intermediate Accounting I,"Koch,Adam S",1,3.52,11,0,3,3,2,3,0,0,0,0,0
@@ -641,7 +641,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,COMM,3110,Intermediate Accounting I,"Koch,Adam S",7,3.52,13,0,5,2,2,3,1,0,0,0,0
 2009 Fall,COMM,3110,Intermediate Accounting I,"Martin,Roger D",2,3.47,14,0,2,4,6,2,0,0,0,0,0
 2009 Fall,COMM,3110,Intermediate Accounting I,"Martin,Roger D",9,-,-,0,1,3,0,5,1,0,0,0,0
-2009 Fall,COMM,3410,Commercial Law I,"Wheeler,John",1,3.90,29,0,22,3,1,1,0,0,0,0,2
+2009 Fall,COMM,3410,Commercial Law I,"Wheeler,John",1,3.9,29,0,22,3,1,1,0,0,0,0,2
 2009 Fall,COMM,3410,Commercial Law I,"Wheeler,John",2,3.85,79,0,53,20,3,1,1,1,0,0,0
 2009 Fall,COMM,3410,Commercial Law I,"Wheeler,John",3,3.87,32,0,24,5,1,2,0,0,0,0,0
 2009 Fall,COMM,3420,Commercial Law II,"Wheeler,John",1,3.66,36,0,18,7,3,6,0,1,0,0,1
@@ -672,9 +672,9 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,COMM,4660,Strategic Mgmt Consulting,"Thurston,Elizabeth Kent",1,3.85,11,0,7,3,1,0,0,0,0,0,0
 2009 Fall,COMM,4660,Strategic Mgmt Consulting,"Thurston,Elizabeth Kent",2,3.86,14,0,10,2,2,0,0,0,0,0,0
 2009 Fall,COMM,4680,Entrepreneurship,"Martin,Eric",2,3.98,12,0,11,1,0,0,0,0,0,0,0
-2009 Fall,COMM,4680,Entrepreneurship,"Thurston,Elizabeth Kent",1,4.00,16,2,14,0,0,0,0,0,0,0,0
-2009 Fall,COMM,4701,Analyst's Edge,"Griffin,John A.",0001,-,-,0,2,0,0,0,0,0,0,0,0
-2009 Fall,COMM,4701,Analyst's Edge,"Leonard,Rebecca Locke",0001,-,-,0,2,0,0,0,0,0,0,0,0
+2009 Fall,COMM,4680,Entrepreneurship,"Thurston,Elizabeth Kent",1,4,16,2,14,0,0,0,0,0,0,0,0
+2009 Fall,COMM,4701,Analyst's Edge,"Griffin,John A.",1,-,-,0,2,0,0,0,0,0,0,0,0
+2009 Fall,COMM,4701,Analyst's Edge,"Leonard,Rebecca Locke",1,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,COMM,4710,Intermediate Investments,"Chen,Zhaohui",2,3.43,12,1,3,0,4,4,0,0,0,0,0
 2009 Fall,COMM,4710,Intermediate Investments,"Chen,Zhaohui",5,3.44,16,0,5,0,7,4,0,0,0,0,0
 2009 Fall,COMM,4710,Intermediate Investments,"Chen,Zhaohui",6,3.26,17,0,3,1,4,7,0,1,0,0,1
@@ -695,7 +695,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,COMM,5140,Strategic Cost Management,"Roberts,Andrea A",2,3.52,22,0,6,3,11,2,0,0,0,0,0
 2009 Fall,COMM,5450,Federal Taxation I,"Porter,Susan Lynne",1,3.36,27,5,3,4,6,5,1,2,0,1,0
 2009 Fall,COMM,5450,Federal Taxation I,"Porter,Susan Lynne",2,3.58,25,4,7,6,3,2,1,2,0,0,0
-2009 Fall,CPLT,2010,Hist of European Literature I,"Cantor,Paul A",100,2.80,14,0,1,3,3,1,2,0,1,0,3
+2009 Fall,CPLT,2010,Hist of European Literature I,"Cantor,Paul A",100,2.8,14,0,1,3,3,1,2,0,1,0,3
 2009 Fall,CPLT,3559,New Course: CPLT,"Bennett,Benjamin K",1,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,CPLT,3559,New Course: CPLT,"Lofgren,Lotta M.",2,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,CPLT,3590,Topics in CompLit,"Bennett,Benjamin K",1,-,-,0,1,0,1,0,0,0,0,0,0
@@ -709,8 +709,8 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,CS,1120,Computing: From Ada to the Web,"Evans,David E",1,3.58,23,0,12,2,3,3,3,0,0,0,0
 2009 Fall,CS,2102,Discrete Mathematics I,"Horton,Thomas B",2,2.27,21,1,1,1,3,0,3,3,3,0,6
 2009 Fall,CS,2102,Discrete Mathematics I,"Knight,John C",1,2.55,11,0,2,0,0,2,2,1,2,1,1
-2009 Fall,CS,2110,Software Development Methods,"Sherriff,Mark S",001,3.50,29,0,10,8,4,5,0,0,1,1,0
-2009 Fall,CS,2110,Software Development Methods,"Sherriff,Mark S",002,3.50,29,1,12,7,4,1,2,0,1,0,1
+2009 Fall,CS,2110,Software Development Methods,"Sherriff,Mark S",1,3.5,29,0,10,8,4,5,0,0,1,1,0
+2009 Fall,CS,2110,Software Development Methods,"Sherriff,Mark S",2,3.5,29,1,12,7,4,1,2,0,1,0,1
 2009 Fall,CS,2150,Program & Data Representation,"Bloomfield,Aaron S",1,3.23,15,0,2,5,3,0,0,1,1,0,3
 2009 Fall,CS,2150,Program & Data Representation,"Bloomfield,Aaron S",2,-,-,1,2,1,0,0,3,0,1,0,1
 2009 Fall,CS,2220,Engineering Software,"Reynolds,Paul F",1,-,-,0,1,0,0,1,0,1,0,0,1
@@ -726,25 +726,25 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,CS,4610,Programming Languages,"Weimer,Westley R",1,3.81,14,5,6,0,1,2,0,0,0,0,0
 2009 Fall,CS,4630,Defense Against the Dark Arts,"Davidson,Jack W",1,3.33,16,0,3,4,0,7,2,0,0,0,0
 2009 Fall,CS,4753,Electronic Commerce Technology,"Weaver,Alfred C",1,3.59,20,3,8,4,0,1,1,0,1,1,1
-2009 Fall,CS,4993,Independent Study,"Knight,John C",07,-,-,0,2,0,0,0,0,0,0,0,0
-2009 Fall,CS,4993,Independent Study,"Weimer,Westley R",04,3.78,12,5,4,0,1,2,0,0,0,0,0
+2009 Fall,CS,4993,Independent Study,"Knight,John C",7,-,-,0,2,0,0,0,0,0,0,0,0
+2009 Fall,CS,4993,Independent Study,"Weimer,Westley R",4,3.78,12,5,4,0,1,2,0,0,0,0,0
 2009 Fall,CS,6160,Theory of Computation,"Robins,Gabriel",1,-,-,0,5,1,1,0,0,0,0,0,0
 2009 Fall,CS,6190,Computer Science Perspectives,"Soffa,Mary Lou",1,-,-,0,3,0,0,0,0,0,0,0,0
 2009 Fall,CS,6240,Software Engineering,"Sullivan,Kevin J",1,-,-,0,9,0,0,0,0,0,0,0,0
 2009 Fall,CS,6354,Computer Architecture,"Skadron,Kevin",1,-,-,2,1,0,0,0,0,0,0,0,1
 2009 Fall,CS,6444,Intro to Parallel Computing,"Grimshaw,Andrew S",1,-,-,0,1,1,0,1,0,0,1,0,0
-2009 Fall,CS,6501,Spec Top: Computer Science,"Evans,David E",1,4.00,11,0,11,0,0,0,0,0,0,0,0
+2009 Fall,CS,6501,Spec Top: Computer Science,"Evans,David E",1,4,11,0,11,0,0,0,0,0,0,0,0
 2009 Fall,CS,6501,Spec Top: Computer Science,"Gurumurthi,Sudhanva",2,-,-,3,4,0,1,0,0,0,0,0,0
 2009 Fall,CS,6501,Spec Top: Computer Science,"Whitehouse,Cameron Dean",3,-,-,0,3,0,0,0,0,0,0,0,0
 2009 Fall,CS,7457,Computer Networks,"Veeraraghavan,Malathi",1,3.57,12,0,3,3,2,2,0,0,0,0,2
 2009 Fall,CS,7993,Independent Study,"Skadron,Kevin",3,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,CS,7995,Supervised Project Research,"Humphrey,Marty A",06,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,CS,7995,Supervised Project Research,"Humphrey,Marty A",6,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,CS,7995,Supervised Project Research,"Knight,John C",10,-,-,0,0,0,0,0,0,0,0,0,1
-2009 Fall,CS,7995,Supervised Project Research,"Soffa,Mary Lou",08,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,CS,7995,Supervised Project Research,"Stankovic,John A",09,-,-,0,4,0,0,0,0,0,0,0,0
+2009 Fall,CS,7995,Supervised Project Research,"Soffa,Mary Lou",8,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,CS,7995,Supervised Project Research,"Stankovic,John A",9,-,-,0,4,0,0,0,0,0,0,0,0
 2009 Fall,DANC,1400,The Art of Dance,"Barnard,Susan E.",1,3.56,13,0,5,3,3,1,0,1,0,0,0
 2009 Fall,DANC,2210,Ballet I,"Proctor,Autumn Irene",1,-,-,0,5,3,0,1,1,0,0,0,0
-2009 Fall,DANC,2220,Modern I,"Proctor,Autumn Irene",01,3.85,12,0,6,6,0,0,0,0,0,0,0
+2009 Fall,DANC,2220,Modern I,"Proctor,Autumn Irene",1,3.85,12,0,6,6,0,0,0,0,0,0,0
 2009 Fall,DANC,2300,Dance Improvisation,"Beauchamp,Rose Pasquarello",1,3.68,13,0,5,5,1,2,0,0,0,0,0
 2009 Fall,DANC,3230,Jazz Dance II,"Barnard,Susan E.",1,-,-,0,1,1,1,0,0,0,0,0,0
 2009 Fall,DANC,3640,Dance for the Camera,"Beauchamp,Rose Pasquarello",1,-,-,1,0,0,1,0,1,0,0,0,0
@@ -778,7 +778,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,DRAM,2630,Production Laboratory: Sound,"Rasbury,Michael C",1,-,-,0,2,0,0,1,0,0,0,0,0
 2009 Fall,DRAM,2810,Cinema as Art Form,"Korte Jr.,Walter F",100,3.45,25,0,4,8,6,4,2,0,0,0,1
 2009 Fall,DRAM,3050,Theatre History,"Frick Jr.,John W.",1,-,-,0,1,1,2,2,1,2,0,0,0
-2009 Fall,DRAM,3070,African-American Theatre,"Davis,Theresa M",1,3.40,11,0,3,3,1,3,0,0,1,0,0
+2009 Fall,DRAM,3070,African-American Theatre,"Davis,Theresa M",1,3.4,11,0,3,3,1,3,0,0,1,0,0
 2009 Fall,DRAM,3080,Script Analysis,"Tucker,Ann E.R.",1,-,-,0,1,0,1,1,0,0,0,0,0
 2009 Fall,DRAM,3210,Scene Design I,"Bloom,Thomas A",1,-,-,0,2,0,0,0,0,0,1,0,0
 2009 Fall,DRAM,3300,History of Dress,"West,Gweneth L",100,-,-,0,1,0,0,0,0,0,1,0,0
@@ -849,26 +849,26 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ECE,6435,Computer Organization & Design,"Williams,Ronald D",1,-,-,0,0,2,0,0,0,0,0,0,0
 2009 Fall,ECE,6501,Spec Top:Elect & Computer Engr,"Marshall,Phineas Paxton",10,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,ECE,6501,Spec Top:Elect & Computer Engr,"Powell Jr.,Harry Courtney",3,-,-,0,0,2,0,0,0,0,0,0,0
-2009 Fall,ECE,6555,Spec. Tops in Distance Learnin,"Groves,James Frederick",01,-,-,0,0,0,0,2,0,0,0,0,0
-2009 Fall,ECE,6555,Spec. Tops in Distance Learnin,"Groves,James Frederick",03,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ECE,6555,Spec. Tops in Distance Learnin,"Groves,James Frederick",1,-,-,0,0,0,0,2,0,0,0,0,0
+2009 Fall,ECE,6555,Spec. Tops in Distance Learnin,"Groves,James Frederick",3,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,ECE,6711,Probability & Stochastic Proc,"Berger,Toby",1,-,-,0,2,1,2,0,1,0,0,0,0
 2009 Fall,ECE,6713,Communication Systems Engr,"Wilson,Stephen G",1,-,-,0,3,1,2,0,0,0,0,0,0
 2009 Fall,ECE,6851,Linear Automatic Cntrl Systems,"Tao,Gang",1,-,-,0,0,0,0,0,1,0,0,0,0
 2009 Fall,ECE,6851,Linear Automatic Cntrl Systems,"Tao,Gang",6,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,ECE,6852,Linear State Space Control Sys,"Lin,Zongli",1,-,-,0,0,2,0,1,0,0,1,0,0
-2009 Fall,ECE,6993,Independent Study,"Campbell,Joe C",01,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ECE,6993,Independent Study,"Campbell,Joe C",1,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,ECE,6993,Independent Study,"Marshall,Phineas Paxton",4,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,ECE,6993,Independent Study,"Weikle,Robert M",2,-,-,0,3,0,0,0,0,0,0,0,0
-2009 Fall,ECE,6996,Suprvsd Grad Teachng Xperience,"Gupta,Mool C",002,-,-,0,0,0,0,0,0,0,0,0,2
-2009 Fall,ECE,6996,Suprvsd Grad Teachng Xperience,"Swami,Nathan",001,-,-,0,7,0,0,0,0,0,0,0,0
-2009 Fall,ECE,6996,Suprvsd Grad Teachng Xperience,"Weikle,Robert M",004,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,ECE,6996,Suprvsd Grad Teachng Xperience,"Whitehouse,Cameron Dean",003,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ECE,6996,Suprvsd Grad Teachng Xperience,"Gupta,Mool C",2,-,-,0,0,0,0,0,0,0,0,0,2
+2009 Fall,ECE,6996,Suprvsd Grad Teachng Xperience,"Swami,Nathan",1,-,-,0,7,0,0,0,0,0,0,0,0
+2009 Fall,ECE,6996,Suprvsd Grad Teachng Xperience,"Weikle,Robert M",4,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ECE,6996,Suprvsd Grad Teachng Xperience,"Whitehouse,Cameron Dean",3,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,ECE,7457,Computer Networks,"Veeraraghavan,Malathi",1,-,-,0,0,1,1,2,0,0,0,0,0
-2009 Fall,ECE,7993,Independent Study,"Blalock,Travis",03,-,-,0,0,0,0,0,0,0,0,0,1
-2009 Fall,ECE,7993,Independent Study,"Ghosh,Avik",04,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,ECE,7995,Supervised Project Research,"Calhoun,Benton Highsmith",02,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,ECE,7995,Supervised Project Research,"Ghosh,Avik",01,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,ECE,7995,Supervised Project Research,"Whitehouse,Cameron Dean",09,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ECE,7993,Independent Study,"Blalock,Travis",3,-,-,0,0,0,0,0,0,0,0,0,1
+2009 Fall,ECE,7993,Independent Study,"Ghosh,Avik",4,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ECE,7995,Supervised Project Research,"Calhoun,Benton Highsmith",2,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ECE,7995,Supervised Project Research,"Ghosh,Avik",1,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ECE,7995,Supervised Project Research,"Whitehouse,Cameron Dean",9,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,ECON,2010,Principles of Econ: Microecon,"Choi,Moon Jung",4,-,-,0,2,2,1,2,0,0,0,0,0
 2009 Fall,ECON,2010,Principles of Econ: Microecon,"Curcic,Dusan",7,-,-,0,3,3,1,0,0,1,1,0,0
 2009 Fall,ECON,2010,Principles of Econ: Microecon,"Elzinga,Kenneth G",1,3.12,134,2,22,33,18,19,6,12,13,6,3
@@ -903,7 +903,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ECON,3020,Intermediate Macroeconomics,"Popov,Latchezar Alexandrov",100,2.84,39,2,5,3,2,9,5,2,3,3,5
 2009 Fall,ECON,3020,Intermediate Macroeconomics,"Puslenghea,Radu Constantin",4,3.62,12,0,6,2,1,2,1,0,0,0,0
 2009 Fall,ECON,3030,Money and Banking,"Moscoso Boedo,Hernan J",100,3.03,34,2,8,2,3,5,3,5,3,3,0
-2009 Fall,ECON,3040,The Economics of Education,"Turner,Sarah E",100,3.30,26,1,5,6,2,6,2,1,2,0,1
+2009 Fall,ECON,3040,The Economics of Education,"Turner,Sarah E",100,3.3,26,1,5,6,2,6,2,1,2,0,1
 2009 Fall,ECON,3110,Mathematical Microeconomics,"Engers,Maxim P",100,3.51,18,1,7,4,3,1,0,0,0,0,2
 2009 Fall,ECON,3330,Public Choice,"Coppock,Lee A",1,3.19,15,0,5,0,2,5,0,1,2,0,0
 2009 Fall,ECON,3330,Public Choice,"Coppock,Lee A",2,2.81,19,0,3,0,1,8,0,0,7,0,0
@@ -923,9 +923,9 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ECON,4390,Economics of Advertising,"Anderson,Simon P",1,-,-,0,1,0,0,5,1,1,0,0,0
 2009 Fall,ECON,4400,Topics in Economic History,"James,John",1,-,-,0,0,0,0,1,2,0,0,0,0
 2009 Fall,ECON,4410,Economics of European Union,"James,John",1,-,-,0,2,1,2,3,0,0,1,0,0
-2009 Fall,ECON,4430,Environmental Economics,"Sekhri,Sheetal",1,3.40,31,0,8,8,2,9,0,3,0,0,1
+2009 Fall,ECON,4430,Environmental Economics,"Sekhri,Sheetal",1,3.4,31,0,8,8,2,9,0,3,0,0,1
 2009 Fall,ECON,4430,Environmental Economics,"Shobe,William M",2,3.55,27,1,7,10,4,1,2,0,0,1,1
-2009 Fall,ECON,4590,Majors Seminar,"Burton,Edwin T",2,4.00,15,0,15,0,0,0,0,0,0,0,0
+2009 Fall,ECON,4590,Majors Seminar,"Burton,Edwin T",2,4,15,0,15,0,0,0,0,0,0,0,0
 2009 Fall,ECON,4720,Introductory Econometrics,"Kim,Dukpa",100,3.18,24,0,4,2,7,6,2,0,0,0,3
 2009 Fall,ECON,4820,Experimental Economics,"Holt,Charles A.",1,3.76,18,1,12,2,2,0,0,0,0,1,0
 2009 Fall,ECON,4990,Distinguished Majors Seminar,"Johnson,William R",1,3.97,11,0,10,1,0,0,0,0,0,0,0
@@ -948,8 +948,8 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ECON,8991,Research Methods,"Friedberg,Leora",1,-,-,0,2,2,1,0,0,0,0,0,0
 2009 Fall,EDHS,2240,Substance Abuse,"Doyle,Kevin Saunders",1,3.48,48,0,18,7,5,14,1,1,1,0,1
 2009 Fall,EDHS,2890,Personal Development,"Gates,Phillip Allen",1,-,-,0,0,0,0,0,0,0,0,0,1
-2009 Fall,EDHS,2891,Issues Facing Adolescent Girls,"Lawrence,Edith C",1,4.00,13,0,13,0,0,0,0,0,0,0,0
-2009 Fall,EDHS,2891,Issues Facing Adolescent Girls,"Levy,Melissa Kim",1,4.00,13,0,13,0,0,0,0,0,0,0,0
+2009 Fall,EDHS,2891,Issues Facing Adolescent Girls,"Lawrence,Edith C",1,4,13,0,13,0,0,0,0,0,0,0,0
+2009 Fall,EDHS,2891,Issues Facing Adolescent Girls,"Levy,Melissa Kim",1,4,13,0,13,0,0,0,0,0,0,0,0
 2009 Fall,EDHS,3240,Peer Health Education,"Leonard,Jamie",1,-,-,0,2,1,1,0,0,0,0,0,1
 2009 Fall,EDHS,3410,Basic Skills,"Cook,Jane Mayhew",1,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,EDHS,3450,Adapted Physical Education,"Kelly,Luke E",1,2.83,12,0,0,0,4,3,2,2,0,1,0
@@ -977,7 +977,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,EDHS,5500,Selected Topics,"Hoffman,LaVae M",2,-,-,0,0,3,1,2,1,1,0,0,0
 2009 Fall,EDHS,5500,Selected Topics,"Locke-Downer,Lisa Maria",1,-,-,0,5,0,0,0,0,0,0,0,0
 2009 Fall,EDHS,5500,Selected Topics,"Robey,Randall R",4,-,-,0,2,0,0,0,0,0,0,0,0
-2009 Fall,EDHS,5500,Selected Topics,"Robey,Randall R",7,4.00,26,0,26,0,0,0,0,0,0,0,0
+2009 Fall,EDHS,5500,Selected Topics,"Robey,Randall R",7,4,26,0,26,0,0,0,0,0,0,0,0
 2009 Fall,EDHS,5993,Independent Study,"Farr,Lisa Michelle",1,-,-,0,3,0,0,0,0,0,0,0,0
 2009 Fall,EDHS,7060,Articulation & Phonology,"Hilton,Jane C",1,-,-,0,0,2,0,0,0,0,0,0,0
 2009 Fall,EDHS,7090,Disorders of Voice,"Khidr,Aliaa A",1,3.58,26,6,6,3,5,4,2,0,0,0,0
@@ -993,11 +993,11 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,EDHS,7600,Adapted Phys Ed:Devel Disabils,"Block,Martin E",1,-,-,0,1,1,1,0,0,0,0,0,0
 2009 Fall,EDHS,7680,Psychopathology,"Gregory,Anne",1,-,-,0,0,3,1,0,0,0,0,0,0
 2009 Fall,EDHS,7993,Independent Study,"Weltman,Arthur L",2,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,EDHS,8020,Augmentative & Alternate Systs,"Loncke,Filip T",1,4.00,25,23,2,0,0,0,0,0,0,0,0
+2009 Fall,EDHS,8020,Augmentative & Alternate Systs,"Loncke,Filip T",1,4,25,23,2,0,0,0,0,0,0,0,0
 2009 Fall,EDHS,8090,Disorders of Language I,"Loncke,Filip T",1,-,-,0,2,2,0,0,0,0,0,0,0
 2009 Fall,EDHS,8120,Disord Comm Based in Cogn Dysf,"Braddock,Barbara Ann",1,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,EDHS,8150,Clinical Seminars,"Rehm,Rebecca Ann",1,-,-,1,1,0,0,0,0,0,0,0,0
-2009 Fall,EDHS,8170,Clinical Externship,"Norton,Jessica Jerome",1,4.00,18,0,18,0,0,0,0,0,0,0,0
+2009 Fall,EDHS,8170,Clinical Externship,"Norton,Jessica Jerome",1,4,18,0,18,0,0,0,0,0,0,0,0
 2009 Fall,EDHS,8310,Intro to School Counseling,"Mason,Michael Gerard",1,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,EDHS,8430,Exercise Interven in Disease,"Farr,Lisa Michelle",1,-,-,0,2,1,1,0,0,0,0,0,0
 2009 Fall,EDHS,8500,Seminar,"Hart III,Joseph M",2,-,-,0,1,0,0,0,0,0,0,0,0
@@ -1005,8 +1005,8 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,EDHS,8640,Adv Prins of Psychotherapy,"Loper,Ann B",1,-,-,0,5,0,0,0,0,0,0,0,0
 2009 Fall,EDHS,8640,Adv Prins of Psychotherapy,"Sheras,Peter L",1,-,-,0,5,0,0,0,0,0,0,0,0
 2009 Fall,EDHS,8660,Personality Assessment I,"Cornell,Dewey G",1,-,-,0,4,1,0,0,0,0,0,0,0
-2009 Fall,EDHS,8691,Clin Prac: Comm Dis,"Hilton,Jane C",1,4.00,11,0,11,0,0,0,0,0,0,0,0
-2009 Fall,EDHS,8700,Clinical Psychology Practicum,"Reeve,Ronald E",1,4.00,11,0,11,0,0,0,0,0,0,0,0
+2009 Fall,EDHS,8691,Clin Prac: Comm Dis,"Hilton,Jane C",1,4,11,0,11,0,0,0,0,0,0,0,0
+2009 Fall,EDHS,8700,Clinical Psychology Practicum,"Reeve,Ronald E",1,4,11,0,11,0,0,0,0,0,0,0,0
 2009 Fall,EDHS,8740,Advanced Family Therapy,"Lawrence,Edith C",1,-,-,0,5,0,0,0,0,0,0,0,0
 2009 Fall,EDHS,9320,Doctoral Sem: Counselor Educ,"Shoffner,Marie Forcier",1,-,-,0,3,1,0,0,0,0,0,0,0
 2009 Fall,EDHS,9762,Social & Affective Processes,"Gregory,Anne",1,-,-,0,4,2,0,0,0,0,0,0,0
@@ -1030,8 +1030,8 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,EDIS,5000,The Exceptional Learner,"Dowd,Kathy J",2,-,-,1,2,0,0,0,0,0,0,0,0
 2009 Fall,EDIS,5000,The Exceptional Learner,"Lovelace,Shelly Pearson",1,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,EDIS,5000,The Exceptional Learner,"Trent,Stanley Cornelius",1,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,EDIS,5010,Curriculum & Instr (Elem/Spec),"Conradi,Kristin Erika",2,4.00,13,0,13,0,0,0,0,0,0,0,0
-2009 Fall,EDIS,5010,Curriculum & Instr (Elem/Spec),"Lewinski,Kimberly Edith",2,4.00,13,0,13,0,0,0,0,0,0,0,0
+2009 Fall,EDIS,5010,Curriculum & Instr (Elem/Spec),"Conradi,Kristin Erika",2,4,13,0,13,0,0,0,0,0,0,0,0
+2009 Fall,EDIS,5010,Curriculum & Instr (Elem/Spec),"Lewinski,Kimberly Edith",2,4,13,0,13,0,0,0,0,0,0,0,0
 2009 Fall,EDIS,5010,Curriculum & Instr (Elem/Spec),"Wilson,Eleanor Vernon",1,3.96,14,0,12,2,0,0,0,0,0,0,0
 2009 Fall,EDIS,5020,Instruction and Assessment,"Mintz,Susan",1,3.24,13,0,0,1,10,0,2,0,0,0,0
 2009 Fall,EDIS,5020,Instruction and Assessment,"Mintz,Susan",2,-,-,0,0,1,2,1,1,0,0,0,0
@@ -1057,7 +1057,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,EDIS,5230,Read Diagnosis & Remediation,"Rose,Tessie E",1,-,-,1,0,0,1,0,1,0,0,1,0
 2009 Fall,EDIS,5300,Language Skills Block I,"Smolkin,Laura B",1,-,-,2,6,0,0,0,1,0,0,0,0
 2009 Fall,EDIS,5300,Language Skills Block I,"Smolkin,Laura B",2,-,-,0,2,1,4,0,0,0,0,0,0
-2009 Fall,EDIS,5330,Science in Elementary School,"Tai,Robert H",1,4.00,19,4,15,0,0,0,0,0,0,0,0
+2009 Fall,EDIS,5330,Science in Elementary School,"Tai,Robert H",1,4,19,4,15,0,0,0,0,0,0,0,0
 2009 Fall,EDIS,5330,Science in Elementary School,"Tai,Robert H",2,-,-,4,5,0,1,0,0,0,0,0,0
 2009 Fall,EDIS,5340,Social Studies in Elem School,"Grimes,Patrice Preston",1,3.97,18,0,16,2,0,0,0,0,0,0,0
 2009 Fall,EDIS,5420,"Language, Literacy & Culture","Figgins,Margo Andrea",1,-,-,0,2,6,0,0,0,0,0,0,0
@@ -1123,8 +1123,8 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,EDLF,3450,Teaching with Technology,"Yoder,Eric David",1,-,-,0,6,0,1,0,0,0,0,0,0
 2009 Fall,EDLF,3450,Teaching with Technology,"Yoder,Eric David",2,-,-,0,5,0,0,0,0,0,0,0,0
 2009 Fall,EDLF,4160,Life Span Development,"Whaley,Diane E",1,-,-,0,3,2,0,0,0,0,0,0,0
-2009 Fall,EDLF,4993,Independent Study,"Lee Williams,Joanna Marie",002,-,-,0,3,0,0,0,0,0,0,0,0
-2009 Fall,EDLF,5000,Multicultural Education,"Covert,Robert W",1,3.80,56,0,41,5,6,2,0,2,0,0,0
+2009 Fall,EDLF,4993,Independent Study,"Lee Williams,Joanna Marie",2,-,-,0,3,0,0,0,0,0,0,0,0
+2009 Fall,EDLF,5000,Multicultural Education,"Covert,Robert W",1,3.8,56,0,41,5,6,2,0,2,0,0,0
 2009 Fall,EDLF,5000,Multicultural Education,"Covert,Robert W",2,3.86,45,0,37,1,4,0,1,1,0,0,1
 2009 Fall,EDLF,5000,Multicultural Education,"Covert,Robert W",3,3.91,45,0,40,2,2,0,0,0,1,0,0
 2009 Fall,EDLF,5010,Child Learning & Development,"Rimm-Kaufman,Sara",1,3.68,12,0,6,3,1,1,1,0,0,0,0
@@ -1145,7 +1145,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,EDLF,5500,Selected Topics,"Horn,Carol V.",23,-,-,0,7,0,0,0,0,0,0,0,0
 2009 Fall,EDLF,5500,Selected Topics,"Kelly,Julia Bateman",22,-,-,6,1,0,0,0,0,0,0,0,0
 2009 Fall,EDLF,5500,Selected Topics,"Matthews,Catherine",30,-,-,0,6,0,0,0,0,0,0,0,0
-2009 Fall,EDLF,5500,Selected Topics,"Merritt,Jennifer",6,4.00,13,0,13,0,0,0,0,0,0,0,0
+2009 Fall,EDLF,5500,Selected Topics,"Merritt,Jennifer",6,4,13,0,13,0,0,0,0,0,0,0,0
 2009 Fall,EDLF,5500,Selected Topics,"Miller,Margaret A.",1,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,EDLF,5500,Selected Topics,"Sullivan,Melissa C",28,-,-,0,4,1,0,0,0,0,0,0,0
 2009 Fall,EDLF,5500,Selected Topics,"Sullivan,Melissa C",31,-,-,0,4,1,0,0,0,0,0,0,0
@@ -1169,7 +1169,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,EDLF,7260,Rsch Literature in Ed Psyc,"Brighton,Catherine Mary",1,-,-,0,4,0,0,0,0,0,0,0,0
 2009 Fall,EDLF,7260,Rsch Literature in Ed Psyc,"Hertberg,Holly Lynn",1,-,-,0,4,0,0,0,0,0,0,0,0
 2009 Fall,EDLF,7260,Rsch Literature in Ed Psyc,"Moon,Tonya Renee",1,-,-,0,4,0,0,0,0,0,0,0,0
-2009 Fall,EDLF,7280,Creativity and Problem Solving,"Brighton,Catherine Mary",1,4.00,12,0,12,0,0,0,0,0,0,0,0
+2009 Fall,EDLF,7280,Creativity and Problem Solving,"Brighton,Catherine Mary",1,4,12,0,12,0,0,0,0,0,0,0,0
 2009 Fall,EDLF,7300,Foundations of Ed Research,"Henig,Cheryl Buscher",2,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,EDLF,7300,Foundations of Ed Research,"Moon,Tonya Renee",1,-,-,0,2,4,1,1,0,0,0,0,0
 2009 Fall,EDLF,7310,Educational Statistics: Stat I,"Nowell,Dana Leigh",2,-,-,0,6,0,0,0,0,0,0,0,1
@@ -1248,22 +1248,22 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ENGR,1559,Special Topics in Engineering,"Spreen,Carol Anne",1,-,-,0,2,1,0,0,0,0,0,0,0
 2009 Fall,ENGR,1559,Special Topics in Engineering,"Swap,Robert John",1,-,-,0,2,1,0,0,0,0,0,0,0
 2009 Fall,ENGR,1559,Special Topics in Engineering,"Wayland,Kent Allen",1,-,-,0,2,1,0,0,0,0,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Agnew,Sean R",010,-,-,0,2,5,0,0,1,0,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Bailey,Robert Reid",006,-,-,0,0,2,0,0,1,0,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Bennett,Bradford C",016,-,-,0,5,2,0,0,0,0,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Berger,Edward J",011,-,-,1,3,0,0,0,0,0,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Guilford,William",004,-,-,0,2,6,0,0,0,0,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Harriott,Lloyd R",001,-,-,0,3,2,0,0,0,0,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Holmes Jr.,Archie L",005,-,-,0,5,1,0,0,0,0,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Lark III,James Willard",015,-,-,0,3,4,0,0,0,0,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Laufer,Gabriel",012,3.78,13,1,5,5,2,0,0,0,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Miksad,Richard W",003,-,-,2,2,4,0,0,1,0,0,1,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Miksad,Richard W",013,-,-,1,0,3,0,0,0,0,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Price,Richard John",014,-,-,0,1,1,0,0,0,0,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Swami,Nathan",002,-,-,1,5,2,0,0,0,0,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Watkins Jr.,Robert Bryans",007,3.26,11,0,2,1,3,4,0,1,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"Watkins Jr.,Robert Bryans",009,-,-,0,0,0,0,5,1,1,0,0,0
-2009 Fall,ENGR,1620,Introduction to Engineering,"White,K P",008,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Agnew,Sean R",10,-,-,0,2,5,0,0,1,0,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Bailey,Robert Reid",6,-,-,0,0,2,0,0,1,0,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Bennett,Bradford C",16,-,-,0,5,2,0,0,0,0,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Berger,Edward J",11,-,-,1,3,0,0,0,0,0,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Guilford,William",4,-,-,0,2,6,0,0,0,0,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Harriott,Lloyd R",1,-,-,0,3,2,0,0,0,0,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Holmes Jr.,Archie L",5,-,-,0,5,1,0,0,0,0,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Lark III,James Willard",15,-,-,0,3,4,0,0,0,0,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Laufer,Gabriel",12,3.78,13,1,5,5,2,0,0,0,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Miksad,Richard W",3,-,-,2,2,4,0,0,1,0,0,1,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Miksad,Richard W",13,-,-,1,0,3,0,0,0,0,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Price,Richard John",14,-,-,0,1,1,0,0,0,0,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Swami,Nathan",2,-,-,1,5,2,0,0,0,0,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Watkins Jr.,Robert Bryans",7,3.26,11,0,2,1,3,4,0,1,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"Watkins Jr.,Robert Bryans",9,-,-,0,0,0,0,5,1,1,0,0,0
+2009 Fall,ENGR,1620,Introduction to Engineering,"White,K P",8,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,ENGR,2500,Intro Nanoscience and Tech,"Bean,John C",1,-,-,0,1,2,2,1,1,0,0,0,0
 2009 Fall,ENGR,2510,Nanoscience and Tech Lab,"Bean,John C",1,-,-,0,0,1,1,0,0,0,0,0,0
 2009 Fall,ENGR,2510,Nanoscience and Tech Lab,"Bean,John C",2,-,-,0,1,0,0,0,1,0,0,0,0
@@ -1275,9 +1275,9 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ENGR,2595,Special Topics in Engineering,"Swap,Robert John",1,-,-,0,1,0,1,4,0,0,0,0,0
 2009 Fall,ENGR,3580,Rodman Scholars Seminar,"Mock III,Harold Conard",3,-,-,0,0,0,0,0,0,0,0,0,1
 2009 Fall,ENGR,4010,Multidisc Design & Devel I,"Elzey,Dana M",1,3.58,19,0,6,5,5,3,0,0,0,0,0
-2009 Fall,ENGR,4595,Special Topics in Engineering,"Cahen,George L",02,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,ENGR,4595,Special Topics in Engineering,"Durand,James H",01,-,-,0,1,1,0,0,0,0,0,0,0
-2009 Fall,ENGR,4595,Special Topics in Engineering,"Marshall,Phineas Paxton",04,3.45,16,0,6,3,1,2,4,0,0,0,0
+2009 Fall,ENGR,4595,Special Topics in Engineering,"Cahen,George L",2,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ENGR,4595,Special Topics in Engineering,"Durand,James H",1,-,-,0,1,1,0,0,0,0,0,0,0
+2009 Fall,ENGR,4595,Special Topics in Engineering,"Marshall,Phineas Paxton",4,3.45,16,0,6,3,1,2,4,0,0,0,0
 2009 Fall,ENGR,4880,Busi & Tech Leadership in Engr,"Yarno,Wendy L",1,3.27,30,3,5,1,4,11,6,0,0,0,0
 2009 Fall,ENGR,6000,Effec Communication in English,"Baritaud,Catherine D",1,-,-,0,0,0,0,0,0,0,0,0,2
 2009 Fall,ENLT,2100,Intro to Literary Studies,"Krentz,Christopher Becker",3,-,-,0,0,2,2,3,0,0,0,0,0
@@ -1308,7 +1308,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ENMC,3800,Concepts of the Modern,"Arata,Stephen D",1,3.48,11,0,3,2,4,1,1,0,0,0,0
 2009 Fall,ENMC,3810,Modern Irish Literature,"Luftig,Victor",1,3.55,17,0,6,4,3,3,1,0,0,0,0
 2009 Fall,ENMC,4500,Adv Stud in Mod & Contemp Lit,"Lofgren,Lotta M.",1,-,-,0,0,0,0,0,1,0,0,0,0
-2009 Fall,ENMC,4530,Seminar in Modern Studies,"Wicke,Jennifer A",1,4.00,11,3,8,0,0,0,0,0,0,0,0
+2009 Fall,ENMC,4530,Seminar in Modern Studies,"Wicke,Jennifer A",1,4,11,3,8,0,0,0,0,0,0,0,0
 2009 Fall,ENMC,8559,New Course: ENMC,"Levenson,Michael H",2,-,-,0,5,1,0,0,0,0,0,0,1
 2009 Fall,ENMC,9500,Studies in Modern/ Contemp Lit,"McGann,Jerome J",1,-,-,0,0,0,1,0,0,0,0,0,0
 2009 Fall,ENMD,3110,Medievel European Lit in Trans,"Spearing,Jeannette Elizabeth",1,-,-,0,0,2,2,2,0,0,0,0,1
@@ -1320,7 +1320,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ENMD,8850,Mapping the Middle Ages,"Spearing,Anthony C",1,-,-,0,2,1,1,0,0,0,0,0,0
 2009 Fall,ENMD,9500,Adv Studies in Medieval Lit,"Holsinger,Bruce Wood",1,-,-,0,3,2,1,0,0,0,0,0,1
 2009 Fall,ENNC,3110,Engl Poetry & Prose 19th-C I,"Ross,Marlon B",1,-,-,0,1,2,0,1,1,0,1,0,1
-2009 Fall,ENNC,3500,Nineteenth-Century Topics,"Booth,Alison",1,3.10,14,0,1,2,4,1,3,2,0,0,1
+2009 Fall,ENNC,3500,Nineteenth-Century Topics,"Booth,Alison",1,3.1,14,0,1,2,4,1,3,2,0,0,1
 2009 Fall,ENNC,3600,The English Novel II,"Capuano,Peter J.",1,-,-,0,1,3,1,1,1,0,0,0,1
 2009 Fall,ENNC,3850,The Fiction of Empire,"Cantor,Paul A",1,3.27,13,0,1,3,2,4,0,1,0,0,2
 2009 Fall,ENNC,4500,Adv Studies in 19th-C Lit,"Booth,Alison",2,-,-,0,2,4,2,0,0,0,0,0,0
@@ -1342,7 +1342,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ENSP,4500,Adv Studies in Spec Topics Lit,"Edmundson,Mark W",2,-,-,0,0,1,2,1,1,0,0,0,1
 2009 Fall,ENSP,5559,New Course: ENSP,"Eisenberg,Deborah",1,-,-,0,1,1,0,0,0,0,0,0,0
 2009 Fall,ENSP,5810,Film Aesthetics,"Korte Jr.,Walter F",1,-,-,0,2,2,0,0,0,0,0,0,0
-2009 Fall,ENSP,5820,Culture of London,"Levenson,Michael H",01,-,-,0,1,5,1,0,0,0,0,0,0
+2009 Fall,ENSP,5820,Culture of London,"Levenson,Michael H",1,-,-,0,1,5,1,0,0,0,0,0,0
 2009 Fall,ENSP,5910,Literary Journal Editing,"Livingood,James Stuart",1,-,-,0,6,0,0,0,0,0,0,0,0
 2009 Fall,ENWR,1505,Academic Writing I,"Chantell,Claire A",2,-,-,0,0,2,1,0,0,0,0,0,0
 2009 Fall,ENWR,1505,Academic Writing I,"Lewis,Michael David",1,-,-,0,0,0,0,0,0,1,0,0,0
@@ -1350,59 +1350,59 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ENWR,1505,Academic Writing I,"Nabi,Jason H",3,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,ENWR,1505,Academic Writing I,"Wood,Joley R",8,-,-,0,0,0,0,0,0,1,0,0,0
 2009 Fall,ENWR,1506,Academic Writing II,"Chantell,Claire A",1,-,-,0,0,1,0,1,0,0,0,0,1
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Allardice,Kevin Lynch",041,-,-,0,0,2,3,0,2,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Baird,Ileana Florentina",010,-,-,0,2,0,1,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Baird,Ileana Florentina",020,-,-,0,1,1,0,0,1,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Barrett,Jessica Leigh",014,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Bishop,Michael Bryan",023,-,-,0,1,2,0,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Bishop,Sarah Rebecca",015,-,-,0,1,1,0,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Bray,Katie Richarts",035,-,-,0,0,0,0,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Broyles,Paul Augustus",016,-,-,0,0,0,3,2,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Campbell,Marvin Alfred",024,-,-,0,0,1,0,0,0,0,0,0,1
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Chang,Jennifer Tai-Chen",037,-,-,0,1,1,1,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Cosper,David James",048,-,-,0,0,3,0,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Couchman,Dorothy Altea",040,-,-,0,0,2,3,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Cullen,Shaun Michael",045,-,-,0,0,1,0,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Ducker,Matthew Paul",029,-,-,0,0,1,2,0,1,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Duffy,Timothy John",043,-,-,0,1,1,3,0,2,0,0,1,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Eversman,Jason Paul",021,-,-,0,0,0,0,0,0,0,2,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Gil,Alexander",051,-,-,0,0,1,1,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Gilger,Kristin Elizabeth",027,-,-,0,0,1,0,2,0,0,0,0,1
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Haley,Madigan Keegan",002,-,-,0,1,0,1,0,1,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Hall,Saffron",026,-,-,0,1,0,1,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Hankins,Gabriel Clinton Anderson",001,-,-,0,2,1,0,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Imma,Z'Etoile",052,-,-,0,0,0,0,0,1,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Ingle,Sarah Elizabeth",042,-,-,0,0,1,2,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Jackson,Christopher Newton",011,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Jackson,Christopher Newton",019,-,-,0,1,2,1,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Jennison-Scheler,Andrew Edward",033,-,-,0,0,1,1,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Johnson,Reed Adam",005,-,-,0,2,2,3,0,1,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Keeling,Evan Robert",025,-,-,0,0,0,1,0,0,0,0,0,1
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"King,Wesley R",007,-,-,0,0,0,0,2,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Kiser,Heather Elizabeth",012,-,-,0,1,2,0,0,0,1,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Lawson Jr.,James Robert",006,-,-,0,0,1,0,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Lewis,Cara Lynn",034,-,-,0,0,3,1,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Lindau,Elizabeth Ann",008,-,-,0,1,2,0,0,0,1,0,0,1
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Mabee,Bethany Lynn",050,-,-,0,0,0,0,2,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Middlesworth,Jennifer Foreman",022,-,-,0,1,1,0,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Mock III,Harold Conard",009,-,-,0,0,0,1,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Murphy,John B",053,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Nemecek,Angela Faith Lea",049,-,-,0,0,2,1,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Patterson,James McGill",032,-,-,0,0,2,0,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Peebles,Memory Blake",028,-,-,0,0,0,2,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Perederin,Rebecca Jane Knerl",046,-,-,0,0,1,0,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Pickard,William Michael",044,-,-,0,0,1,1,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Price,Kenneth Richard",030,-,-,0,0,0,2,0,0,0,2,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Ragain,Nathan",013,-,-,0,0,0,1,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Ragain,Nathan",047,-,-,0,0,1,3,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Sandberg,Emily Jane",038,-,-,0,1,2,0,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Sigler,Amanda Margaret",018,-,-,0,1,2,1,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Solberg,Emma Margaret",031,-,-,0,0,1,3,0,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Strauss,Rebecca Sharon",017,-,-,0,0,2,0,0,0,0,1,1,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Tate,Carolyn Joy",039,-,-,0,0,0,0,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Trusner,Adam Robert",003,-,-,0,1,4,1,1,0,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Tschirhart,Peter Louis",004,-,-,0,1,2,0,1,1,0,0,0,0
-2009 Fall,ENWR,1510,Accelerated Academic Writing,"Wagenaar,Mark Garreth",036,-,-,0,4,0,0,3,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Allardice,Kevin Lynch",41,-,-,0,0,2,3,0,2,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Baird,Ileana Florentina",10,-,-,0,2,0,1,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Baird,Ileana Florentina",20,-,-,0,1,1,0,0,1,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Barrett,Jessica Leigh",14,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Bishop,Michael Bryan",23,-,-,0,1,2,0,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Bishop,Sarah Rebecca",15,-,-,0,1,1,0,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Bray,Katie Richarts",35,-,-,0,0,0,0,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Broyles,Paul Augustus",16,-,-,0,0,0,3,2,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Campbell,Marvin Alfred",24,-,-,0,0,1,0,0,0,0,0,0,1
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Chang,Jennifer Tai-Chen",37,-,-,0,1,1,1,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Cosper,David James",48,-,-,0,0,3,0,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Couchman,Dorothy Altea",40,-,-,0,0,2,3,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Cullen,Shaun Michael",45,-,-,0,0,1,0,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Ducker,Matthew Paul",29,-,-,0,0,1,2,0,1,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Duffy,Timothy John",43,-,-,0,1,1,3,0,2,0,0,1,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Eversman,Jason Paul",21,-,-,0,0,0,0,0,0,0,2,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Gil,Alexander",51,-,-,0,0,1,1,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Gilger,Kristin Elizabeth",27,-,-,0,0,1,0,2,0,0,0,0,1
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Haley,Madigan Keegan",2,-,-,0,1,0,1,0,1,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Hall,Saffron",26,-,-,0,1,0,1,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Hankins,Gabriel Clinton Anderson",1,-,-,0,2,1,0,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Imma,Z'Etoile",52,-,-,0,0,0,0,0,1,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Ingle,Sarah Elizabeth",42,-,-,0,0,1,2,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Jackson,Christopher Newton",11,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Jackson,Christopher Newton",19,-,-,0,1,2,1,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Jennison-Scheler,Andrew Edward",33,-,-,0,0,1,1,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Johnson,Reed Adam",5,-,-,0,2,2,3,0,1,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Keeling,Evan Robert",25,-,-,0,0,0,1,0,0,0,0,0,1
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"King,Wesley R",7,-,-,0,0,0,0,2,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Kiser,Heather Elizabeth",12,-,-,0,1,2,0,0,0,1,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Lawson Jr.,James Robert",6,-,-,0,0,1,0,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Lewis,Cara Lynn",34,-,-,0,0,3,1,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Lindau,Elizabeth Ann",8,-,-,0,1,2,0,0,0,1,0,0,1
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Mabee,Bethany Lynn",50,-,-,0,0,0,0,2,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Middlesworth,Jennifer Foreman",22,-,-,0,1,1,0,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Mock III,Harold Conard",9,-,-,0,0,0,1,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Murphy,John B",53,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Nemecek,Angela Faith Lea",49,-,-,0,0,2,1,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Patterson,James McGill",32,-,-,0,0,2,0,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Peebles,Memory Blake",28,-,-,0,0,0,2,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Perederin,Rebecca Jane Knerl",46,-,-,0,0,1,0,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Pickard,William Michael",44,-,-,0,0,1,1,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Price,Kenneth Richard",30,-,-,0,0,0,2,0,0,0,2,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Ragain,Nathan",13,-,-,0,0,0,1,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Ragain,Nathan",47,-,-,0,0,1,3,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Sandberg,Emily Jane",38,-,-,0,1,2,0,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Sigler,Amanda Margaret",18,-,-,0,1,2,1,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Solberg,Emma Margaret",31,-,-,0,0,1,3,0,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Strauss,Rebecca Sharon",17,-,-,0,0,2,0,0,0,0,1,1,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Tate,Carolyn Joy",39,-,-,0,0,0,0,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Trusner,Adam Robert",3,-,-,0,1,4,1,1,0,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Tschirhart,Peter Louis",4,-,-,0,1,2,0,1,1,0,0,0,0
+2009 Fall,ENWR,1510,Accelerated Academic Writing,"Wagenaar,Mark Garreth",36,-,-,0,4,0,0,3,0,0,0,0,0
 2009 Fall,ENWR,1559,New Course: ENWR,"Boatner,Jane E",2,-,-,1,1,0,0,0,0,0,0,0,0
 2009 Fall,ENWR,1559,New Course: ENWR,"Bradburn,Chanley Sage",1,-,-,0,0,0,0,0,1,0,0,0,0
 2009 Fall,ENWR,2150,Pavilion Writers I,"Connor,Francis Xavier",4,-,-,0,1,1,0,1,0,0,0,0,0
@@ -1433,11 +1433,11 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,ENWR,7610,Fiction Writing,"Eisenberg,Deborah",2,-,-,0,3,0,0,0,0,0,0,0,0
 2009 Fall,EP,7000,Graduate Seminar,"Reinke,Petra",1,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,EP,7000,Graduate Seminar,"Soffa,William A",1,-,-,0,2,0,0,0,0,0,0,0,0
-2009 Fall,ESL,3010,ESL - Classroom Comm - UG,"Moya,Trisha",01,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,ESL,3010,ESL - Classroom Comm - UG,"Moya,Trisha",1,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,ETP,3870,Framing the Environment,"Borton,Sean D",1,-,-,0,3,2,1,1,0,0,0,0,0
 2009 Fall,ETP,4810,Class Race & the Environment,"Thomson,Vivian Elizabeth",1,-,-,0,2,1,1,1,0,0,0,0,0
 2009 Fall,EVAT,5410,Atmospheric Dynamics,"Davis,Robert E",100,-,-,0,2,2,1,1,1,0,0,0,0
-2009 Fall,EVAT,7999,Indep Stdy:Atmospheric Science,"De Wekker,Stephan Franz Joseph",02,-,-,0,0,0,1,0,0,0,0,0,0
+2009 Fall,EVAT,7999,Indep Stdy:Atmospheric Science,"De Wekker,Stephan Franz Joseph",2,-,-,0,0,0,1,0,0,0,0,0,0
 2009 Fall,EVEC,7100,Mgmt of Forest Ecosystems,"Shugart,Herman H",100,-,-,1,2,0,0,0,0,0,0,0,0
 2009 Fall,EVEC,7559,New Course: EVEC,"Epstein,Howard E",1,-,-,0,2,1,0,1,0,1,0,0,0
 2009 Fall,EVGE,5820,Geomorphology,"Howard,Alan D",100,-,-,0,1,2,4,0,0,0,0,0,0
@@ -1453,11 +1453,11 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,EVSC,1559,New Course: EVSC,"Davies-Vollum,Sian",500,-,-,0,1,1,0,0,0,0,0,0,0
 2009 Fall,EVSC,2010,Mats that Shape Civilization,"Shiflet,Gary J",1,3.73,37,1,24,1,7,3,0,1,0,0,0
 2009 Fall,EVSC,2010,Mats that Shape Civilization,"Shiflet,Gary J",2,3.42,48,4,22,3,7,3,1,3,2,0,3
-2009 Fall,EVSC,2030,Intro to Environmental Policy,"Thomson,Vivian Elizabeth",100,3.00,29,1,7,3,5,4,1,3,2,0,3
+2009 Fall,EVSC,2030,Intro to Environmental Policy,"Thomson,Vivian Elizabeth",100,3,29,1,7,3,5,4,1,3,2,0,3
 2009 Fall,EVSC,2559,New Course: EVSC,"Crisman,Phoebe",2,-,-,0,2,2,3,2,0,0,0,0,0
 2009 Fall,EVSC,2559,New Course: EVSC,"Marshall,Phineas Paxton",2,-,-,0,2,2,3,2,0,0,0,0,0
 2009 Fall,EVSC,2559,New Course: EVSC,"Skokan,Catherine",500,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,EVSC,2559,New Course: EVSC,"Smith,Thomas M",1,3.30,54,6,8,13,8,5,4,4,2,0,4
+2009 Fall,EVSC,2559,New Course: EVSC,"Smith,Thomas M",1,3.3,54,6,8,13,8,5,4,4,2,0,4
 2009 Fall,EVSC,2800,Fundamentals of Geology,"Biggs,Thomas H",1,2.97,14,1,1,2,2,2,1,0,1,0,4
 2009 Fall,EVSC,2801,Fundamentals of Geology Lab,"Biggs,Thomas H",1,-,-,0,1,2,1,0,0,0,1,0,0
 2009 Fall,EVSC,2801,Fundamentals of Geology Lab,"Biggs,Thomas H",2,-,-,0,1,0,2,1,0,0,0,0,0
@@ -1500,17 +1500,17 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,EVSC,4559,New Course: EVSC,"Herman,Janet S",6,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,EVSC,4559,New Course: EVSC,"Scanlon,Todd Michael",4,-,-,0,0,0,0,1,0,0,0,0,0
 2009 Fall,EVSC,4810,Petrology,"Biggs,Thomas H",100,-,-,0,1,0,0,1,0,0,1,0,0
-2009 Fall,EVSC,4993,Independent Study,"Blum,Linda K",03,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,EVSC,4993,Independent Study,"Davis,Robert E",06,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,EVSC,4993,Independent Study,"Dolan,Robert",09,-,-,0,2,0,0,0,0,0,0,0,0
+2009 Fall,EVSC,4993,Independent Study,"Blum,Linda K",3,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,EVSC,4993,Independent Study,"Davis,Robert E",6,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,EVSC,4993,Independent Study,"Dolan,Robert",9,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,EVSC,4993,Independent Study,"Herman,Janet S",14,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,EVSC,4993,Independent Study,"Macko,Stephen A",20,-,-,0,1,0,1,0,0,0,0,0,0
 2009 Fall,EVSC,4993,Independent Study,"McGlathery,Karen J",19,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,EVSC,4993,Independent Study,"Shugart,Herman H",28,-,-,1,0,0,0,0,0,0,0,0,0
 2009 Fall,EVSC,4993,Independent Study,"Smith,Thomas M",30,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,EVSC,4993,Independent Study,"Swap,Robert John",31,-,-,0,1,3,0,0,0,0,0,0,0
-2009 Fall,EVSC,4995,Supervised Research,"Blum,Linda K",03,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,EVSC,4995,Supervised Research,"D'Odorico,Paolo",08,-,-,0,2,0,0,0,0,0,0,0,0
+2009 Fall,EVSC,4995,Supervised Research,"Blum,Linda K",3,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,EVSC,4995,Supervised Research,"D'Odorico,Paolo",8,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,EVSC,4995,Supervised Research,"Epstein,Howard E",10,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,EVSC,4995,Supervised Research,"Herman,Janet S",14,-,-,0,0,0,1,0,0,0,0,0,0
 2009 Fall,EVSC,4995,Supervised Research,"McGlathery,Karen J",19,-,-,0,0,2,0,0,0,0,0,0,0
@@ -1609,7 +1609,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,GBUS,7601,Financial Reporting & Analysis,"Allen,Brandt R",1,-,12,0,0,0,0,0,0,0,0,0,0
 2009 Fall,GBUS,7603,Valuation in Financial Markets,"Harris,Robert S",1,-,29,0,0,0,0,0,0,0,0,0,0
 2009 Fall,GBUS,7603,Valuation in Financial Markets,"Harris,Robert S",2,-,26,0,0,0,0,0,0,0,0,0,0
-2009 Fall,GBUS,7606,Marketing Intelligence,"Wilcox Jr.,Ronald Thomas",1,0.00,29,0,0,0,0,0,0,0,0,0,1
+2009 Fall,GBUS,7606,Marketing Intelligence,"Wilcox Jr.,Ronald Thomas",1,0,29,0,0,0,0,0,0,0,0,0,1
 2009 Fall,GBUS,7609,Entrepreneurial Thinking,"Sarasvathy,Saras",1,-,26,0,0,0,0,0,0,0,0,0,0
 2009 Fall,GBUS,7817,LR3: Leading in Emerg. Economy,"Simko,Paul J",1,-,29,0,0,0,0,0,0,0,0,0,0
 2009 Fall,GBUS,8020,Corporate Communication,"Rubin,James Richard",1,-,14,0,0,0,0,0,0,0,0,0,0
@@ -1672,24 +1672,24 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,GCOM,7010,Global Strategy and Systems,"Patterson,Robert E",1,3.41,20,0,1,6,10,3,0,0,0,0,0
 2009 Fall,GCOM,7010,Global Strategy and Systems,"Pentz-Harris,Marcia Lynne",1,3.41,20,0,1,6,10,3,0,0,0,0,0
 2009 Fall,GCOM,7010,Global Strategy and Systems,"Wixom,Barbara Haley",1,3.41,20,0,1,6,10,3,0,0,0,0,0
-2009 Fall,GCOM,7020,Strategic Cost Management,"Williams,Susan Perry",001,3.25,20,0,1,4,8,3,4,0,0,0,0
-2009 Fall,GCOM,7030,Financial Accounting,"Wilkie,Patrick J",001,3.46,20,0,4,6,4,5,1,0,0,0,0
-2009 Fall,GCOM,7040,Marketing & QA,"Netemeyer,Richard G",001,3.53,20,0,4,5,10,1,0,0,0,0,0
-2009 Fall,GCOM,7050,OB & Communication,"Bateman,Thomas",001,3.56,20,0,8,2,6,4,0,0,0,0,0
-2009 Fall,GCOM,7050,OB & Communication,"Patterson,Robert E",001,3.56,20,0,8,2,6,4,0,0,0,0,0
-2009 Fall,GCOM,7050,OB & Communication,"Pentz-Harris,Marcia Lynne",001,3.56,20,0,8,2,6,4,0,0,0,0,0
-2009 Fall,GCOM,7060,Fin. Mgmt.,"DeMong,Richard F",001,3.35,20,0,5,6,3,1,4,0,0,0,1
-2009 Fall,GCOM,7060,Fin. Mgmt.,"White,Mark A",001,3.35,20,0,5,6,3,1,4,0,0,0,1
-2009 Fall,GCOM,7070,SATL,"Harris,Ira C",001,3.73,20,0,10,4,6,0,0,0,0,0,0
-2009 Fall,GCOM,7070,SATL,"Martin,Janette M",001,3.73,20,0,10,4,6,0,0,0,0,0,0
+2009 Fall,GCOM,7020,Strategic Cost Management,"Williams,Susan Perry",1,3.25,20,0,1,4,8,3,4,0,0,0,0
+2009 Fall,GCOM,7030,Financial Accounting,"Wilkie,Patrick J",1,3.46,20,0,4,6,4,5,1,0,0,0,0
+2009 Fall,GCOM,7040,Marketing & QA,"Netemeyer,Richard G",1,3.53,20,0,4,5,10,1,0,0,0,0,0
+2009 Fall,GCOM,7050,OB & Communication,"Bateman,Thomas",1,3.56,20,0,8,2,6,4,0,0,0,0,0
+2009 Fall,GCOM,7050,OB & Communication,"Patterson,Robert E",1,3.56,20,0,8,2,6,4,0,0,0,0,0
+2009 Fall,GCOM,7050,OB & Communication,"Pentz-Harris,Marcia Lynne",1,3.56,20,0,8,2,6,4,0,0,0,0,0
+2009 Fall,GCOM,7060,Fin. Mgmt.,"DeMong,Richard F",1,3.35,20,0,5,6,3,1,4,0,0,0,1
+2009 Fall,GCOM,7060,Fin. Mgmt.,"White,Mark A",1,3.35,20,0,5,6,3,1,4,0,0,0,1
+2009 Fall,GCOM,7070,SATL,"Harris,Ira C",1,3.73,20,0,10,4,6,0,0,0,0,0,0
+2009 Fall,GCOM,7070,SATL,"Martin,Janette M",1,3.73,20,0,10,4,6,0,0,0,0,0,0
 2009 Fall,GCOM,7330,Enterprise Risk Mgmt & Consult,"Walker,Paul L",1,-,-,0,1,1,3,1,0,0,0,0,0
 2009 Fall,GCOM,7340,Special Topics in Accounting,"Roberts,Andrea A",1,-,-,0,1,3,2,0,0,0,0,0,0
 2009 Fall,GCOM,7350,"Auditing, Assurance & Ethics","Martin,Roger D",1,-,-,0,2,1,0,2,1,0,0,0,0
 2009 Fall,GCOM,7410,Tax Research,"Maloney,David M",1,-,-,0,0,1,2,1,1,0,0,0,0
 2009 Fall,GCOM,7440,Tax of Corp/Shareholder Trans,"Maloney,David M",1,-,-,0,1,0,1,0,0,0,0,0,0
 2009 Fall,GCOM,7740,Global Finance & Acct,"Kemp,Robert S",1,-,-,0,0,0,0,1,0,0,0,0,0
-2009 Fall,GCOM,7760,Real Estate Investments,"Overstreet,George A",001,-,-,0,0,1,0,1,0,0,0,0,0
-2009 Fall,GCOM,7770,Financial Systems Engineering,"Grazioli,Stefano",001,-,-,0,0,2,0,0,1,0,0,0,1
+2009 Fall,GCOM,7760,Real Estate Investments,"Overstreet,George A",1,-,-,0,0,1,0,1,0,0,0,0,0
+2009 Fall,GCOM,7770,Financial Systems Engineering,"Grazioli,Stefano",1,-,-,0,0,2,0,0,1,0,0,0,1
 2009 Fall,GCOM,7780,Project Management,"Browne,Glenn Jefferson",1,-,-,0,0,0,0,1,0,0,0,0,0
 2009 Fall,GCOM,7830,IT Project Management,"Nelson,Russell R",1,-,-,0,2,1,1,0,0,0,0,0,0
 2009 Fall,GCOM,7850,Enterprise IT Management,"Browne,Glenn Jefferson",1,-,-,0,1,1,2,0,0,0,0,0,0
@@ -1727,7 +1727,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,GERM,7559,New Course: GERM,"Bennett,Benjamin K",1,-,-,0,3,1,0,0,0,0,0,0,0
 2009 Fall,GERM,7559,New Course: GERM,"von Braun,Christina",2,-,-,0,1,1,0,0,0,0,0,0,0
 2009 Fall,GETR,2400,Faust,"Stewart,Gordon",1,-,-,0,1,0,0,0,0,0,0,0,1
-2009 Fall,GETR,3330,Introduction to German Culture,"Wellmon,Michael Chad",1,3.30,21,0,12,1,1,1,0,3,1,1,1
+2009 Fall,GETR,3330,Introduction to German Culture,"Wellmon,Michael Chad",1,3.3,21,0,12,1,1,1,0,3,1,1,1
 2009 Fall,GETR,3500,German Cinema,"Hansen-Glucklich,Jennifer Linette",1,-,-,0,0,1,2,0,0,0,0,0,1
 2009 Fall,GETR,3559,New Course: GETR,"Bennett,Benjamin K",1,-,-,0,0,0,0,0,0,0,0,0,1
 2009 Fall,GETR,3590,Course(s) in English,"Achilles,Manuela",6,-,-,1,3,0,0,4,0,0,0,0,0
@@ -1738,7 +1738,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,GETR,3590,Course(s) in English,"Voris,Renate E",3,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,GNUR,5003,Complementary & Alt Therapies,"Taylor,Ann G",1,-,-,0,3,1,1,0,0,0,0,0,1
 2009 Fall,GNUR,5210,Care Environment Management I,"Cox,Kathleen B",1,-,-,4,0,2,0,1,0,0,0,0,0
-2009 Fall,GNUR,5670,Primary Care Seminar II,"Boitnott,Amy Drake",1,3.70,13,1,3,6,3,0,0,0,0,0,0
+2009 Fall,GNUR,5670,Primary Care Seminar II,"Boitnott,Amy Drake",1,3.7,13,1,3,6,3,0,0,0,0,0,0
 2009 Fall,GNUR,5690,Primary Care Preceptorship I,"Boitnott,Amy Drake",1,3.83,11,3,4,3,0,1,0,0,0,0,0
 2009 Fall,GNUR,5690,Primary Care Preceptorship I,"Boitnott,Amy Drake",2,-,-,1,1,1,0,0,0,0,0,0,0
 2009 Fall,GNUR,5690,Primary Care Preceptorship I,"Clark,Myra Leslie",1,3.83,11,3,4,3,0,1,0,0,0,0,0
@@ -1746,7 +1746,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,GNUR,5690,Primary Care Preceptorship I,"Lee,Connie W",1,3.83,11,3,4,3,0,1,0,0,0,0,0
 2009 Fall,GNUR,5690,Primary Care Preceptorship I,"Newberry,Yvonne G",1,3.83,11,3,4,3,0,1,0,0,0,0,0
 2009 Fall,GNUR,5690,Primary Care Preceptorship I,"Zschaebitz,Elke J",1,3.83,11,3,4,3,0,1,0,0,0,0,0
-2009 Fall,GNUR,6010,Pathophysiology,"Brashers,Valentina L",1,3.30,16,1,4,1,2,3,5,0,0,0,0
+2009 Fall,GNUR,6010,Pathophysiology,"Brashers,Valentina L",1,3.3,16,1,4,1,2,3,5,0,0,0,0
 2009 Fall,GNUR,6031,Role I: Acquisition,"Gott,Kristi",1,-,-,0,4,5,1,0,0,0,0,0,0
 2009 Fall,GNUR,6031,Role I: Acquisition,"Hamric,Ann B",1,-,-,0,4,5,1,0,0,0,0,0,0
 2009 Fall,GNUR,6050,Theoretical Foundations of Nsg,"Kane,Catherine F",1,-,-,0,1,1,0,0,0,0,0,0,0
@@ -1784,7 +1784,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,GNUR,9610,DNP Practicum I,"Kane,Catherine F",100,-,-,0,4,0,0,0,0,0,0,0,0
 2009 Fall,GNUR,9620,DNP Practicum II,"Kane,Catherine F",100,-,-,1,2,0,0,1,0,0,0,0,0
 2009 Fall,GNUR,9999,Dissertation Research,"Parker,Barbara J.",3,-,-,0,0,0,0,0,0,0,0,0,1
-2009 Fall,GREE,1010,Elementary Greek,"Mikalson,Jon D",100,3.70,13,0,9,2,0,0,0,0,0,0,2
+2009 Fall,GREE,1010,Elementary Greek,"Mikalson,Jon D",100,3.7,13,0,9,2,0,0,0,0,0,0,2
 2009 Fall,GREE,2010,Intermediate Greek I,"George,Coulter Harris",1,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,GREE,2230,The New Testament I,"Dillery,John D",1,-,-,0,2,0,1,1,0,0,0,0,0
 2009 Fall,GREE,3030,Advanced Reading in Greek,"Dillery,John D",1,-,-,0,0,1,0,0,0,0,0,0,0
@@ -1815,7 +1815,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,HIEU,2111,History of England to 1688,"Dudley,Brian Chapman",100,-,-,0,1,2,1,3,1,1,0,0,1
 2009 Fall,HIEU,2152,Hist of Russ Empire 1700-1917,"Geraci,Robert P",100,3.29,13,0,2,3,1,3,3,0,0,0,1
 2009 Fall,HIEU,3111,Later Medieval Civilization,"Crosby,Everett U",1,-,-,0,0,1,0,0,2,0,0,1,1
-2009 Fall,HIEU,3382,Revolutionary France 1770-1815,"Rosenfeld,Sophia A",100,3.10,38,0,5,2,7,9,11,1,1,0,2
+2009 Fall,HIEU,3382,Revolutionary France 1770-1815,"Rosenfeld,Sophia A",100,3.1,38,0,5,2,7,9,11,1,1,0,2
 2009 Fall,HIEU,3472,Nineteenth Century Britain,"Floyd,Richard D",100,-,-,0,2,2,0,2,0,1,2,0,1
 2009 Fall,HIEU,3742,"European Social Hist,1890-1980","Berlanstein,Lenard R",1,3.04,12,0,2,3,0,4,2,0,0,0,1
 2009 Fall,HIEU,3802,Origins of Contemporary Thgt,"Megill,Allan D",1,3.07,14,1,4,1,2,2,1,1,0,1,1
@@ -1856,7 +1856,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,HIST,7191,Hist of Tech: Thry & Methods,"Carlson,W B",1,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,HIST,7331,History of Gender & Sexuality,"Klubock,Thomas Miller",1,-,-,0,5,0,1,0,0,0,0,0,0
 2009 Fall,HIST,8002,Intermediate Research Seminar,"Thomas,Mark",1,-,-,0,1,1,0,0,0,0,0,0,0
-2009 Fall,HIST,9011,Advanced Research Seminar,"Dimberg,Ronald G",2,3.80,16,2,6,6,2,0,0,0,0,0,0
+2009 Fall,HIST,9011,Advanced Research Seminar,"Dimberg,Ronald G",2,3.8,16,2,6,6,2,0,0,0,0,0,0
 2009 Fall,HIST,9011,Advanced Research Seminar,"Halliday,Paul D",4,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,HIST,9960,Independent Research,"Balogh,Brian H",7,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,HIST,9960,Independent Research,"Dimberg,Ronald G",2,-,-,0,0,1,0,0,0,0,0,0,0
@@ -1995,8 +1995,8 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,LAR,6160,Adv Tops:Hist Landscape Design,"Carr,Ethan",1,-,-,0,1,2,3,0,1,0,0,0,2
 2009 Fall,LAR,6160,Adv Tops:Hist Landscape Design,"Meyer,Elizabeth",1,-,-,0,1,2,3,0,1,0,0,0,2
 2009 Fall,LAR,7010,Foundation Studio III,"Sieweke,Joerg Dieter",1,-,-,0,2,3,0,1,0,0,0,0,0
-2009 Fall,LAR,7320,Regenerative Technologies,"Bargmann,Julie L",1,3.40,11,0,2,3,3,1,2,0,0,0,0
-2009 Fall,LAR,7350,Site Work,"Hill,Kristina E.",1,3.50,11,1,2,4,0,3,1,0,0,0,0
+2009 Fall,LAR,7320,Regenerative Technologies,"Bargmann,Julie L",1,3.4,11,0,2,3,3,1,2,0,0,0,0
+2009 Fall,LAR,7350,Site Work,"Hill,Kristina E.",1,3.5,11,1,2,4,0,3,1,0,0,0,0
 2009 Fall,LAR,7993,Independent Study,"Bargmann,Julie L",3,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,LAR,7993,Independent Study,"Counts,Christopher Lee",4,-,-,0,0,0,0,0,0,0,0,0,1
 2009 Fall,LAR,7993,Independent Study,"Meyer,Elizabeth",2,-,-,0,0,1,1,0,0,0,0,0,0
@@ -2048,7 +2048,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,LAW,6103,Corporations,"Kitch,Edmund W",1,3.33,16,0,1,4,6,4,1,0,0,0,0
 2009 Fall,LAW,6104,Evidence,"Brown,Darryl Keith",1,3.42,15,0,4,2,4,4,1,0,0,0,0
 2009 Fall,LAW,6104,Evidence,"Schauer,Frederick",3,3.33,17,0,1,4,7,4,1,0,0,0,0
-2009 Fall,LAW,6104,Evidence,"Spellman,Barbara A",2,3.30,15,0,3,1,6,3,1,1,0,0,0
+2009 Fall,LAW,6104,Evidence,"Spellman,Barbara A",2,3.3,15,0,3,1,6,3,1,1,0,0,0
 2009 Fall,LAW,6105,Federal Courts,"Collins,Michael G",1,3.33,42,0,2,11,17,9,3,0,0,0,0
 2009 Fall,LAW,6105,Federal Courts,"Jeffries Jr.,John C",2,3.28,30,1,1,8,8,6,6,0,0,0,0
 2009 Fall,LAW,6106,Federal Income Tax,"Robinson,Mildred W",1,-,-,0,1,4,1,0,0,0,0,0,0
@@ -2062,7 +2062,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,LAW,7010,Communications Law,"Nachbar,Thomas B",1,3.16,14,0,1,1,5,4,3,0,0,0,0
 2009 Fall,LAW,7016,Con Hist II:Twentieth Century,"Goluboff,Risa L",1,3.29,23,0,1,6,6,9,1,0,0,0,0
 2009 Fall,LAW,7018,Criminal Adjudication,"Bowers,Josh",1,3.34,25,0,0,8,11,5,1,0,0,0,0
-2009 Fall,LAW,7019,Criminal Investigation,"Armacost,Barbara Ellen",1,3.30,19,0,2,4,6,4,3,0,0,0,0
+2009 Fall,LAW,7019,Criminal Investigation,"Armacost,Barbara Ellen",1,3.3,19,0,2,4,6,4,3,0,0,0,0
 2009 Fall,LAW,7019,Criminal Investigation,"Harmon,Rachel A",2,3.28,29,0,4,4,11,5,4,1,0,0,0
 2009 Fall,LAW,7028,European Legal Systems,"Hausmaninger,Herbert",1,-,-,0,0,0,1,1,0,0,0,0,0
 2009 Fall,LAW,7029,European Union Law,"Saenger,Ingo",1,-,-,0,0,0,1,0,0,0,0,0,0
@@ -2070,7 +2070,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,LAW,7030,Family Law,"Abrams,Karen L",1,3.44,27,0,1,9,15,2,0,0,0,0,0
 2009 Fall,LAW,7044,Survey: Patent/Copyrt/Trademrk,"Oliar,Dotan",1,3.41,15,0,2,4,4,3,1,0,0,0,1
 2009 Fall,LAW,7046,Internatl Patent Law & Policy,"Bagley,Margo Andrea",1,-,-,0,0,0,1,0,0,0,0,0,0
-2009 Fall,LAW,7060,Land Use Law,"Cannon,Jonathan Z",1,3.30,28,0,3,6,9,6,3,1,0,0,0
+2009 Fall,LAW,7060,Land Use Law,"Cannon,Jonathan Z",1,3.3,28,0,3,6,9,6,3,1,0,0,0
 2009 Fall,LAW,7062,Legislation,"Gilbert,Michael",1,3.14,16,1,1,1,5,2,5,1,0,0,0
 2009 Fall,LAW,7063,Local Government Law,"Schragger,Richard C.",1,3.34,17,0,0,7,4,5,1,0,0,0,0
 2009 Fall,LAW,7064,Nonprofit Organizations,"Kordana,Kevin A",1,-,-,0,1,2,2,2,0,0,0,0,0
@@ -2182,7 +2182,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,MAE,2300,Statics,"Barrett,Lloyd E",1,3.09,18,1,2,3,3,1,4,1,0,2,1
 2009 Fall,MAE,2300,Statics,"Berger,Edward J",2,2.54,23,0,0,6,2,3,1,3,3,1,4
 2009 Fall,MAE,3210,Fluid Mechanics,"Haj-Hariri,Hossein",1,2.42,49,2,7,1,3,3,9,2,5,8,9
-2009 Fall,MAE,3310,Aerospace Structures,"Utz,Marcel",1,2.30,51,1,0,7,4,4,4,4,8,7,12
+2009 Fall,MAE,3310,Aerospace Structures,"Utz,Marcel",1,2.3,51,1,0,7,4,4,4,4,8,7,12
 2009 Fall,MAE,3610,Aerospace Materials,"Kelly,Robert G",1,3.08,16,1,2,2,2,2,5,0,1,1,0
 2009 Fall,MAE,3710,Mechanical Systems Modeling,"Knospe,Carl Richard",1,2.59,39,0,6,4,4,5,3,3,3,5,6
 2009 Fall,MAE,3730,Flight Vehicle Dynamics,"Barrett,Lloyd E",1,2.98,17,0,0,2,5,4,4,0,2,0,0
@@ -2198,7 +2198,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,MAE,4650,Aerospace Design I,"McDaniel,James C.",1,3.92,12,2,9,0,0,1,0,0,0,0,0
 2009 Fall,MAE,4670,Creativity & New Product Dev,"Richards,Larry",1,3.92,12,0,10,1,1,0,0,0,0,0,0
 2009 Fall,MAE,4990,Mae Professional Development,"Barrett,Lloyd E",1,2.73,45,0,1,4,4,10,9,8,9,0,0
-2009 Fall,MAE,6020,Continuum Mechanics w/Applctns,"Begley,Matthew Richard",1,3.50,16,0,6,3,3,2,1,1,0,0,0
+2009 Fall,MAE,6020,Continuum Mechanics w/Applctns,"Begley,Matthew Richard",1,3.5,16,0,6,3,3,2,1,1,0,0,0
 2009 Fall,MAE,6100,Thermomechanics,"Chelliah,Harsha K",1,-,-,1,3,5,1,0,0,0,0,0,0
 2009 Fall,MAE,6200,Energy Principles in Mechanics,"Baber,Thomas T",1,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,MAE,6210,Analytical Dynamics,"Knospe,Carl Richard",1,-,-,0,1,0,0,2,0,0,1,0,0
@@ -2206,8 +2206,8 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,MAE,6410,Engineering Mathematics I,"Wood III,Houston G.",1,-,-,0,1,3,0,1,0,0,1,1,0
 2009 Fall,MAE,6410,Engineering Mathematics I,"Wood III,Houston G.",2,-,-,0,0,0,0,0,0,0,0,0,1
 2009 Fall,MAE,6410,Engineering Mathematics I,"Wood III,Houston G.",6,-,-,0,0,0,0,0,0,0,0,0,1
-2009 Fall,MAE,6555,Spec. Topics Distance Learning,"Groves,James Frederick",01,-,-,0,0,0,0,1,0,0,0,0,0
-2009 Fall,MAE,6555,Spec. Topics Distance Learning,"Groves,James Frederick",02,-,-,0,0,1,0,0,0,0,0,0,0
+2009 Fall,MAE,6555,Spec. Topics Distance Learning,"Groves,James Frederick",1,-,-,0,0,0,0,1,0,0,0,0,0
+2009 Fall,MAE,6555,Spec. Topics Distance Learning,"Groves,James Frederick",2,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,MAE,6592,Spec Topcs Impact Biomechanics,"Blemker,Silvia S",1,-,-,0,8,0,0,0,0,0,0,0,0
 2009 Fall,MAE,6610,Linear Automatic Cntrl Systems,"Tao,Gang",1,-,-,3,1,3,0,0,0,0,1,0,0
 2009 Fall,MAE,6620,Linear State Space Systems,"Lin,Zongli",1,-,-,0,0,1,0,2,0,0,1,0,0
@@ -2233,7 +2233,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,MATH,1210,Applied Calculus I,"Yarnall,Carolyn Marie",7,3.05,11,0,3,1,3,0,0,2,1,0,1
 2009 Fall,MATH,1210,Applied Calculus I,"Zhang,Jing",9,3.25,11,0,6,1,0,1,0,1,0,1,1
 2009 Fall,MATH,1220,Applied Calculus II,"Heald,Andrea Merlin",5,-,-,0,2,4,0,1,1,0,0,0,0
-2009 Fall,MATH,1220,Applied Calculus II,"Hogancamp,Matthew Thomas",1,3.40,13,1,2,3,1,1,0,2,0,0,3
+2009 Fall,MATH,1220,Applied Calculus II,"Hogancamp,Matthew Thomas",1,3.4,13,1,2,3,1,1,0,2,0,0,3
 2009 Fall,MATH,1220,Applied Calculus II,"Lu,Yongjin",4,3.29,19,0,4,4,5,4,0,0,0,0,2
 2009 Fall,MATH,1220,Applied Calculus II,"McEwen II,Robert Alan",3,-,-,0,1,0,1,2,0,1,2,0,1
 2009 Fall,MATH,1220,Applied Calculus II,"Nessler,Reed Clayton",2,-,-,0,1,1,3,1,0,0,0,0,3
@@ -2364,14 +2364,14 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,MSE,7340,Phase Transformations,"Soffa,William A",1,3.78,14,0,5,8,1,0,0,0,0,0,0
 2009 Fall,MSE,9999,"Non-Topical Research, Doctoral","Gangloff,Richard P",15,-,-,0,0,0,0,0,0,0,0,0,1
 2009 Fall,MSE,9999,"Non-Topical Research, Doctoral","Hull,Robert",19,-,-,0,0,0,0,0,0,0,0,0,1
-2009 Fall,MUBD,2610,Marching Band I,"Pease,William Eugene",1,4.00,21,0,21,0,0,0,0,0,0,0,0
-2009 Fall,MUBD,2620,Marching Band II,"Pease,William Eugene",1,4.00,16,0,16,0,0,0,0,0,0,0,0
-2009 Fall,MUBD,2630,Marching Band III,"Pease,William Eugene",1,4.00,22,0,21,0,0,0,0,0,0,0,1
+2009 Fall,MUBD,2610,Marching Band I,"Pease,William Eugene",1,4,21,0,21,0,0,0,0,0,0,0,0
+2009 Fall,MUBD,2620,Marching Band II,"Pease,William Eugene",1,4,16,0,16,0,0,0,0,0,0,0,0
+2009 Fall,MUBD,2630,Marching Band III,"Pease,William Eugene",1,4,22,0,21,0,0,0,0,0,0,0,1
 2009 Fall,MUBD,2640,Marching Band IV,"Pease,William Eugene",1,-,-,0,10,0,0,0,0,0,0,0,0
-2009 Fall,MUEN,3600,Jazz Ensemble,"D'earth,John E",1,4.00,12,1,11,0,0,0,0,0,0,0,0
+2009 Fall,MUEN,3600,Jazz Ensemble,"D'earth,John E",1,4,12,1,11,0,0,0,0,0,0,0,0
 2009 Fall,MUEN,3610,Orchestra,"Arnold,Kate",100,-,-,0,4,0,0,0,0,0,0,0,0
 2009 Fall,MUEN,3610,Orchestra,"Arnold,Kate",200,-,-,0,3,0,0,0,0,0,0,0,0
-2009 Fall,MUEN,3620,Wind Ensemble,"Pease,William Eugene",1,4.00,12,0,12,0,0,0,0,0,0,0,0
+2009 Fall,MUEN,3620,Wind Ensemble,"Pease,William Eugene",1,4,12,0,12,0,0,0,0,0,0,0,0
 2009 Fall,MUEN,3630,Chamber Ensemble,"Carter,Adam Christopher",20,-,-,0,4,0,0,0,0,0,0,0,0
 2009 Fall,MUEN,3630,Chamber Ensemble,"D'earth,John E",6,-,-,0,1,1,0,0,0,0,0,0,0
 2009 Fall,MUEN,3630,Chamber Ensemble,"Decker,Jeffrey Clayton",22,-,-,0,2,0,0,0,0,0,0,0,0
@@ -2520,12 +2520,12 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,PHIL,1510,Intro Philosophy Seminars,"Cwik,Bryan Patrick",3,-,-,0,0,2,1,2,0,1,0,0,0
 2009 Fall,PHIL,1710,Human Nature,"Langsam,Harold L",100,3.12,43,0,3,6,12,12,6,0,0,3,1
 2009 Fall,PHIL,1730,Intro to Moral & Pol Phil,"Stangl,Rebecca Lynn",100,2.97,29,0,1,5,5,9,5,2,0,0,2
-2009 Fall,PHIL,2110,Hist of Phil: Anc & Medieval,"Scott,Dominic John",100,3.20,15,0,1,5,4,2,0,2,0,1,0
+2009 Fall,PHIL,2110,Hist of Phil: Anc & Medieval,"Scott,Dominic John",100,3.2,15,0,1,5,4,2,0,2,0,1,0
 2009 Fall,PHIL,2420,Introduction to Symbolic Logic,"Humphreys,Paul W",100,2.97,40,0,5,10,4,6,4,4,0,0,7
 2009 Fall,PHIL,2510,Seminar in Philosophy,"Marshall,John",1,-,-,1,0,0,4,1,1,0,0,0,0
 2009 Fall,PHIL,2660,Philosophy of Religion,"Merricks,Trenton",100,-,-,0,1,1,2,1,1,2,2,0,0
 2009 Fall,PHIL,2770,Political Philosophy,"Simmons,Alan J",100,3.28,20,0,2,4,6,6,1,1,0,0,0
-2009 Fall,PHIL,3110,Plato,"Devereux,Daniel T",1,3.30,17,0,3,7,3,1,0,1,1,0,1
+2009 Fall,PHIL,3110,Plato,"Devereux,Daniel T",1,3.3,17,0,3,7,3,1,0,1,1,0,1
 2009 Fall,PHIL,3150,"Descartes, Spinoza and Leibniz","Lolordo,Antonia",1,-,-,0,2,2,4,0,0,1,0,0,1
 2009 Fall,PHIL,3310,Metaphysics,"Cargile,James",1,3.38,11,0,0,6,2,1,2,0,0,0,0
 2009 Fall,PHIL,3330,Philosophy of Mind,"Langsam,Harold L",1,2.79,15,0,1,1,3,3,3,1,1,0,2
@@ -2575,16 +2575,16 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,PHYE,1440,Running for Fitness,"Cook,Jane Mayhew",1,-,-,0,0,0,0,0,0,0,0,0,2
 2009 Fall,PHYE,1440,Running for Fitness,"Cook,Jane Mayhew",2,-,-,0,0,0,0,0,0,0,0,0,2
 2009 Fall,PHYE,1440,Running for Fitness,"Lafontaine,Faye A",2,-,-,0,0,0,0,0,0,0,0,0,2
-2009 Fall,PHYS,1010,Concepts of Physics,"Shivaram,Bellave S",1,2.70,25,0,2,4,1,7,0,1,1,1,8
-2009 Fall,PHYS,1050,How Things Work,"Bloomfield,Louis A",1,2.90,63,4,6,11,7,8,8,3,6,4,6
+2009 Fall,PHYS,1010,Concepts of Physics,"Shivaram,Bellave S",1,2.7,25,0,2,4,1,7,0,1,1,1,8
+2009 Fall,PHYS,1050,How Things Work,"Bloomfield,Louis A",1,2.9,63,4,6,11,7,8,8,3,6,4,6
 2009 Fall,PHYS,1090,Galileo and Einstein,"Fowler,Michael",1,2.92,16,0,1,3,4,3,1,1,0,2,1
-2009 Fall,PHYS,1110,Energy this World & Elsewhere,"Cates Jr.,Gordon D",1,3.00,26,2,4,2,3,5,3,2,1,2,2
+2009 Fall,PHYS,1110,Energy this World & Elsewhere,"Cates Jr.,Gordon D",1,3,26,2,4,2,3,5,3,2,1,2,2
 2009 Fall,PHYS,1427,General Physics I,"Lee,Seung-Hun",100,-,-,0,0,0,0,2,0,0,0,0,0
 2009 Fall,PHYS,1559,New Course: PHYS,"Wilsdorf,Doris",1,-,-,3,2,0,0,3,0,0,0,0,1
 2009 Fall,PHYS,1610,Introductory Physics I,"Pfister,Olivier",100,-,-,0,1,1,1,1,3,0,0,0,0
-2009 Fall,PHYS,2010,Principles of Physics I,"Hung,Pham Q",002,2.95,28,2,3,1,2,4,8,3,3,0,2
-2009 Fall,PHYS,2010,Principles of Physics I,"Paschke,Kent Dieter",001,3.13,66,3,13,7,8,12,10,5,4,2,2
-2009 Fall,PHYS,2010,Principles of Physics I,"Zheng,Xiaochao",003,3.24,41,4,8,6,6,5,5,1,2,0,4
+2009 Fall,PHYS,2010,Principles of Physics I,"Hung,Pham Q",2,2.95,28,2,3,1,2,4,8,3,3,0,2
+2009 Fall,PHYS,2010,Principles of Physics I,"Paschke,Kent Dieter",1,3.13,66,3,13,7,8,12,10,5,4,2,2
+2009 Fall,PHYS,2010,Principles of Physics I,"Zheng,Xiaochao",3,3.24,41,4,8,6,6,5,5,1,2,0,4
 2009 Fall,PHYS,2030,Basic Physics Laboratory I,"Markot,Marina S",501,-,-,0,0,0,0,1,0,0,0,0,0
 2009 Fall,PHYS,2030,Basic Physics Laboratory I,"Yoon,Jongsoo",1,-,-,0,1,1,3,1,2,0,1,0,0
 2009 Fall,PHYS,2030,Basic Physics Laboratory I,"Yoon,Jongsoo",2,-,-,2,2,1,1,2,1,0,1,0,0
@@ -2610,7 +2610,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,PHYS,2310,Classical & Modern Physics I,"Norum,Blaine E",100,3.03,12,0,2,2,3,0,2,1,0,2,0
 2009 Fall,PHYS,2415,General Physics II,"Fowler,Michael",1,2.81,31,1,4,1,4,5,2,7,6,1,0
 2009 Fall,PHYS,2415,General Physics II,"Fowler,Michael",3,2.94,41,0,2,5,9,3,12,4,3,1,2
-2009 Fall,PHYS,2415,General Physics II,"Thornton,Stephen T",2,3.10,53,1,6,10,10,8,5,6,6,0,1
+2009 Fall,PHYS,2415,General Physics II,"Thornton,Stephen T",2,3.1,53,1,6,10,10,8,5,6,6,0,1
 2009 Fall,PHYS,2419,General Physics II Workshop,"Dukes,Edmond Craig",1,-,-,0,1,1,1,0,2,2,0,0,0
 2009 Fall,PHYS,2419,General Physics II Workshop,"Dukes,Edmond Craig",2,-,-,0,0,3,0,0,0,1,0,0,0
 2009 Fall,PHYS,2419,General Physics II Workshop,"Dukes,Edmond Craig",3,-,-,0,0,3,0,1,1,0,0,0,0
@@ -2643,8 +2643,8 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,PHYS,3310,Statistical Physics,"Lamacraft,Austen",1,3.08,13,1,3,2,0,0,3,2,2,0,0
 2009 Fall,PHYS,3430,Electricity and Magnetism II,"Gallagher,Thomas F",1,3.53,12,1,2,3,4,2,0,0,0,0,0
 2009 Fall,PHYS,3650,Quantum Physics I,"Vaman,Diana",1,3.28,13,1,2,2,2,3,0,1,1,0,2
-2009 Fall,PHYS,3993,Independent Study,"Arnold,Peter",01,-,-,0,0,1,0,0,0,0,0,0,0
-2009 Fall,PHYS,3993,Independent Study,"Day,Donal B",08,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,PHYS,3993,Independent Study,"Arnold,Peter",1,-,-,0,0,1,0,0,0,0,0,0,0
+2009 Fall,PHYS,3993,Independent Study,"Day,Donal B",8,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,PHYS,3993,Independent Study,"Paschke,Kent Dieter",30,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,PHYS,3993,Independent Study,"Williams,Keith A",40,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,PHYS,3993,Independent Study,"Wolf,Stuart A",42,-,-,0,0,1,0,0,0,0,0,0,0
@@ -2655,7 +2655,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,PHYS,5620,Intro to Solid State Physics,"Louca,Despo A",1,-,-,0,1,0,1,1,0,0,0,0,0
 2009 Fall,PHYS,5630,Computational Physics I,"Hirosky,Robert",1,3.45,15,0,5,3,4,0,0,0,2,0,1
 2009 Fall,PHYS,5720,Intro Nuclear & Particle Phys,"Cox,Bradley B",1,-,-,1,0,1,1,1,1,0,0,0,0
-2009 Fall,PHYS,5993,Independent Study,"Cates Jr.,Gordon D",04,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,PHYS,5993,Independent Study,"Cates Jr.,Gordon D",4,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,PHYS,5993,Independent Study,"Jones Jr.,Robert Rivers",17,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,PHYS,5993,Independent Study,"Liyanage,Nilanga K",25,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,PHYS,5993,Independent Study,"Paschke,Kent Dieter",30,-,-,0,2,0,0,0,0,0,0,0,0
@@ -2685,7 +2685,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,PLAD,8900,Departmental Pro-Seminar,"Pandya,Sonal Sharadkumar",1,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,PLAN,1030,Intro to Urban & Environ Plan,"Firehock,Karen Elizabeth",1,3.54,57,21,13,7,7,2,1,1,2,0,3
 2009 Fall,PLAN,2110,Digital Visualization,"Phillips,David L",1,3.64,18,0,6,6,3,1,1,0,0,0,1
-2009 Fall,PLAN,3060,"Law, Land and the Environment","Slaughter,Katherine E",1,3.50,22,0,12,0,0,9,0,0,1,0,0
+2009 Fall,PLAN,3060,"Law, Land and the Environment","Slaughter,Katherine E",1,3.5,22,0,12,0,0,9,0,0,1,0,0
 2009 Fall,PLAN,3140,Design Themes of Great Cities,"Boeschenstein,Warren C",1,-,-,0,1,2,0,3,0,0,0,0,0
 2009 Fall,PLAN,4993,Independent Study,"Beatley,Timothy",1,-,-,0,0,0,1,0,0,0,0,0,0
 2009 Fall,PLAN,4993,Independent Study,"Denckla Cobb,Tanya",3,-,-,0,1,0,0,0,0,0,0,0,0
@@ -2700,14 +2700,14 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,PLAN,6010,Planning Process and Practice,"Dotson,A Bruce",1,-,-,0,1,1,0,0,0,0,0,0,0
 2009 Fall,PLAN,6070,Urban Theory and Public Policy,"Lucy,William H",1,-,-,0,4,0,0,0,0,0,0,0,0
 2009 Fall,PLAN,6090,Planning Theory and Practice,"Lucy,William H",1,3.98,14,0,13,1,0,0,0,0,0,0,0
-2009 Fall,PLAP,1010,Intro to American Politics,"Ceaser,James W",100,3.30,23,0,1,4,9,6,1,0,0,0,2
+2009 Fall,PLAP,1010,Intro to American Politics,"Ceaser,James W",100,3.3,23,0,1,4,9,6,1,0,0,0,2
 2009 Fall,PLAP,2250,American Political Tradition,"Doneson,Daniel Adam",3,-,-,0,2,3,2,0,0,0,0,0,0
 2009 Fall,PLAP,2250,American Political Tradition,"Sitman,Matthew J",1,-,-,0,0,1,3,0,0,0,0,0,0
 2009 Fall,PLAP,2250,American Political Tradition,"Uzzell,Lynn E",2,-,-,0,1,2,0,2,0,0,0,0,1
 2009 Fall,PLAP,3140,Mass Media & American Politics,"Freedman,Paul",100,3.23,86,0,15,24,11,13,11,4,4,2,2
 2009 Fall,PLAP,3240,Political Communication,"Claibourn,Michele Paige",1,3.11,16,0,3,1,4,3,1,0,1,0,3
 2009 Fall,PLAP,3370,Wksp Cntmp Amer Elect Politics,"Sabato,Larry J",1,-,-,0,2,0,1,1,0,0,0,0,0
-2009 Fall,PLAP,3500,Spec Tops: American Politics,"Sanders,Lynn M",100,3.00,28,0,6,2,3,7,4,2,1,0,3
+2009 Fall,PLAP,3500,Spec Tops: American Politics,"Sanders,Lynn M",100,3,28,0,6,2,3,7,4,2,1,0,3
 2009 Fall,PLAP,3810,Constitutional Interpretation,"O'Brien,David M",100,2.89,39,0,3,2,5,14,5,5,2,1,2
 2009 Fall,PLAP,3820,Civil Rights & Civil Liberties,"Klein,David E",1,2.73,16,0,2,3,0,3,3,0,2,2,1
 2009 Fall,PLAP,4120,Electoral Behavior & Particip,"Sanders,Lynn M",1,-,-,0,1,3,1,2,0,0,0,0,0
@@ -2729,7 +2729,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,PLAP,5993,Problems in American Politics,"Weaver,Vesla Mae",40,-,-,1,0,1,0,1,0,0,0,0,0
 2009 Fall,PLAP,7000,American Political Development,"Weaver,Vesla Mae",1,-,-,1,0,0,0,0,0,0,0,0,0
 2009 Fall,PLAP,8210,The American Presidency,"Milkis,Sidney M",1,-,-,0,1,3,1,0,0,0,0,0,0
-2009 Fall,PLCP,1010,Intro to Comparative Politics,"Waldner,David A",100,2.90,60,0,2,11,10,15,7,7,5,0,3
+2009 Fall,PLCP,1010,Intro to Comparative Politics,"Waldner,David A",100,2.9,60,0,2,11,10,15,7,7,5,0,3
 2009 Fall,PLCP,2120,Politics of Developing Areas,"Waldner,David A",100,3.18,85,0,1,20,23,21,12,2,1,0,5
 2009 Fall,PLCP,3130,Politics Econ of Development,"Schwartz,Herman M",1,3.53,14,0,5,3,1,5,0,0,0,0,0
 2009 Fall,PLCP,3170,"Develpmnt,Conflict&Dem Lat Am","Medina,Luis Fernando",1,3.51,23,2,4,6,8,0,1,0,1,0,1
@@ -2798,8 +2798,8 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,PPOL,5000,Am Polt Institutions & Process,"Patashnik,Eric Mark",1,3.76,15,0,7,5,3,0,0,0,0,0,0
 2009 Fall,PPOL,5100,Economics of Public Policy I,"Olsen,Edgar O",100,3.48,12,1,3,5,0,0,1,2,0,0,0
 2009 Fall,PPOL,5150,Res Methods & Data Analysis I,"Pepper,John V",100,3.65,13,1,5,3,1,3,0,0,0,0,0
-2009 Fall,PPOL,7110,Economics of Public Policy II,"Leblang,David Andrew",1,3.70,21,0,6,11,3,1,0,0,0,0,0
-2009 Fall,PPOL,7110,Economics of Public Policy II,"Shobe,William M",1,3.70,21,0,6,11,3,1,0,0,0,0,0
+2009 Fall,PPOL,7110,Economics of Public Policy II,"Leblang,David Andrew",1,3.7,21,0,6,11,3,1,0,0,0,0,0
+2009 Fall,PPOL,7110,Economics of Public Policy II,"Shobe,William M",1,3.7,21,0,6,11,3,1,0,0,0,0,0
 2009 Fall,PPOL,7160,Rsch Mthds & Data Analysis II,"Moore,Michael J",100,3.84,21,0,10,11,0,0,0,0,0,0,0
 2009 Fall,PPOL,7350,PPOL: Summer Internship,"Martin,Paul Sterling",1,3.99,21,0,20,1,0,0,0,0,0,0,0
 2009 Fall,PPOL,7350,PPOL: Summer Internship,"Rockwell,Jill S",1,3.99,21,0,20,1,0,0,0,0,0,0,0
@@ -2850,8 +2850,8 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,PSPM,5030,Intro to Project Mgmt,"Kropp,Edward H.",1,-,-,0,1,1,0,0,0,0,0,0,1
 2009 Fall,PSPM,5230,Project Manager & Proj Teams,"Jernell,Andrew B",1,-,-,0,9,0,0,0,0,0,0,0,1
 2009 Fall,PSPM,5240,Intro to Purchasing,"Soares,Steven S",1,-,-,0,7,0,0,0,0,0,0,0,0
-2009 Fall,PST,4850,PST Core Seminar I,"Smith,Michael J",1,3.80,11,0,5,5,1,0,0,0,0,0,0
-2009 Fall,PST,4993,Ind Study in PST,"Smith,Michael J",001,-,-,0,0,0,1,0,0,0,0,0,0
+2009 Fall,PST,4850,PST Core Seminar I,"Smith,Michael J",1,3.8,11,0,5,5,1,0,0,0,0,0,0
+2009 Fall,PST,4993,Ind Study in PST,"Smith,Michael J",1,-,-,0,0,0,1,0,0,0,0,0,0
 2009 Fall,PSYC,1010,Introductory Psychology,"Dodson,Chad S",1,2.94,82,1,7,17,11,13,13,4,8,4,4
 2009 Fall,PSYC,1010,Introductory Psychology,"Dodson,Chad S",2,2.74,71,0,4,10,13,11,6,10,6,4,7
 2009 Fall,PSYC,2100,Introduction to Learning,"Best,Phillip J",1,2.91,47,0,9,7,5,6,2,7,7,1,3
@@ -3014,12 +3014,12 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,SOC,2230,Criminology,"McConnell Jr.,Robert D.",100,3.23,89,4,14,15,8,33,3,4,5,0,3
 2009 Fall,SOC,2470,Amer Society & Popular Culture,"Shlossberg,Paul",1,3.34,58,1,12,12,10,11,4,2,2,1,3
 2009 Fall,SOC,2559,New Course: SOC,"Kovach,John",502,-,-,0,0,0,0,1,0,0,0,0,0
-2009 Fall,SOC,2559,New Course: SOC,"Polillo,Simone",001,3.39,26,0,7,6,2,7,1,1,1,0,1
-2009 Fall,SOC,2559,New Course: SOC,"Tober,Tara Leigh",002,2.84,45,0,9,7,7,4,1,1,7,1,8
+2009 Fall,SOC,2559,New Course: SOC,"Polillo,Simone",1,3.39,26,0,7,6,2,7,1,1,1,0,1
+2009 Fall,SOC,2559,New Course: SOC,"Tober,Tara Leigh",2,2.84,45,0,9,7,7,4,1,1,7,1,8
 2009 Fall,SOC,3020,Introduction to Social Theory,"Fuchs,Stephan",100,3.38,30,0,14,5,2,3,2,2,0,0,2
 2009 Fall,SOC,3120,Sociology Research Workshop,"Manning,Jason Philip",100,2.97,25,1,2,3,4,5,2,2,5,0,1
 2009 Fall,SOC,3130,Intro to Social Statistics,"Wilcox,William Bradford",100,3.27,22,2,1,8,2,3,3,1,0,0,2
-2009 Fall,SOC,3400,Gender and Sexuality,"Raymond,Claire",1,3.20,14,0,3,1,3,0,1,3,0,0,3
+2009 Fall,SOC,3400,Gender and Sexuality,"Raymond,Claire",1,3.2,14,0,3,1,3,0,1,3,0,0,3
 2009 Fall,SOC,3410,Race and Ethnic Relations,"Vickerman,Milton",1,3.58,19,0,8,4,4,1,1,1,0,0,0
 2009 Fall,SOC,3470,Sociology of Development,"Blumberg,Rae L",1,3.26,13,1,3,2,2,1,2,1,0,1,0
 2009 Fall,SOC,3559,New Course: SOC,"Snyder,Benjamin Harrison",1,3.37,14,0,1,7,1,2,0,2,0,0,1
@@ -3126,7 +3126,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,SPAN,3020,Composition,"Libbey,Allison Joyce",4,-,-,0,0,0,0,1,0,0,0,0,0
 2009 Fall,SPAN,3020,Composition,"Libbey,Allison Joyce",7,-,-,0,1,4,0,0,0,0,0,0,0
 2009 Fall,SPAN,3020,Composition,"Munoz Pina,Margarita",3,-,-,1,0,1,1,0,0,0,0,0,1
-2009 Fall,SPAN,3020,Composition,"Sakas,Karliana Brooks",2,4.00,11,4,7,0,0,0,0,0,0,0,0
+2009 Fall,SPAN,3020,Composition,"Sakas,Karliana Brooks",2,4,11,4,7,0,0,0,0,0,0,0,0
 2009 Fall,SPAN,3020,Composition,"Sakas,Karliana Brooks",5,-,-,3,2,0,0,0,0,0,0,0,0
 2009 Fall,SPAN,3020,Composition,"Stachura,Anne Marie",1,-,-,0,0,3,0,0,1,0,0,0,0
 2009 Fall,SPAN,3020,Composition,"Stachura,Anne Marie",6,-,-,0,2,1,0,1,0,0,0,0,0
@@ -3157,7 +3157,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,SPAN,3410,Suv Span Lit II (1700-Present),"Valle-Aparicio,J Eliseo",501,-,-,0,0,0,0,1,0,0,0,0,0
 2009 Fall,SPAN,3420,Latin Amer Lit I (Colonl-1900),"Hill,Ruth A",1,-,-,0,2,0,2,0,0,0,0,0,0
 2009 Fall,SPAN,3430,Latin Amer Lit II (1900-Pres),"Garner,Julia H",1,-,-,0,0,3,3,2,0,0,0,0,0
-2009 Fall,SPAN,3430,Latin Amer Lit II (1900-Pres),"Garner,Julia H",3,3.40,12,0,0,6,3,2,1,0,0,0,0
+2009 Fall,SPAN,3430,Latin Amer Lit II (1900-Pres),"Garner,Julia H",3,3.4,12,0,0,6,3,2,1,0,0,0,0
 2009 Fall,SPAN,3430,Latin Amer Lit II (1900-Pres),"Peris-Llorca,Jesus",501,-,-,0,0,3,0,0,0,0,0,0,0
 2009 Fall,SPAN,3430,Latin Amer Lit II (1900-Pres),"Shaw,Donald L",2,-,-,0,2,4,4,0,0,0,0,0,0
 2009 Fall,SPAN,3430,Latin Amer Lit II (1900-Pres),"Valle-Aparicio,J Eliseo",501,-,-,0,0,3,0,0,0,0,0,0,0
@@ -3214,25 +3214,25 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,STS,1010,"Engineering, Tech & Society","Neeley,Kathryn Angelyn",100,3.01,53,0,0,5,18,15,8,5,1,0,1
 2009 Fall,STS,2070,Utopias & Tech Society,"Baritaud,Catherine D",1,3.59,15,0,2,9,2,2,0,0,0,0,0
 2009 Fall,STS,2070,Utopias & Tech Society,"Baritaud,Catherine D",2,3.34,13,0,1,5,3,0,2,1,0,0,1
-2009 Fall,STS,2500,Top in Technology & Society,"Achilles,Manuela",009,-,-,0,4,4,0,0,0,0,0,0,0
-2009 Fall,STS,2500,Top in Technology & Society,"Brody,Daniel",007,3.59,19,1,2,10,4,2,0,0,0,0,0
-2009 Fall,STS,2500,Top in Technology & Society,"Cohen,Benjamin R",006,-,-,0,2,4,1,2,1,0,0,0,0
-2009 Fall,STS,2500,Top in Technology & Society,"Crawford,Richard D.",007,3.59,19,1,2,10,4,2,0,0,0,0,0
-2009 Fall,STS,2500,Top in Technology & Society,"Johnson,Deborah G",004,-,-,0,2,1,2,2,1,1,0,0,1
-2009 Fall,STS,2500,Top in Technology & Society,"Norton,Peter Daniel",001,3.27,11,0,1,3,3,3,0,0,1,0,0
-2009 Fall,STS,4010,Western Technology and Culture,"Brown,John Kennedy",001,3.43,23,0,2,10,4,6,1,0,0,0,0
-2009 Fall,STS,4010,Western Technology and Culture,"Brown,John Kennedy",002,3.28,17,0,1,6,4,4,0,1,1,0,0
-2009 Fall,STS,4010,Western Technology and Culture,"Carlson,W B",004,3.12,13,0,0,1,6,4,1,1,0,0,0
-2009 Fall,STS,4010,Western Technology and Culture,"Cohen,Benjamin R",005,3.37,21,0,3,3,10,4,1,0,0,0,0
-2009 Fall,STS,4010,Western Technology and Culture,"Cohen,Benjamin R",009,3.27,19,0,3,2,10,1,1,0,2,0,0
+2009 Fall,STS,2500,Top in Technology & Society,"Achilles,Manuela",9,-,-,0,4,4,0,0,0,0,0,0,0
+2009 Fall,STS,2500,Top in Technology & Society,"Brody,Daniel",7,3.59,19,1,2,10,4,2,0,0,0,0,0
+2009 Fall,STS,2500,Top in Technology & Society,"Cohen,Benjamin R",6,-,-,0,2,4,1,2,1,0,0,0,0
+2009 Fall,STS,2500,Top in Technology & Society,"Crawford,Richard D.",7,3.59,19,1,2,10,4,2,0,0,0,0,0
+2009 Fall,STS,2500,Top in Technology & Society,"Johnson,Deborah G",4,-,-,0,2,1,2,2,1,1,0,0,1
+2009 Fall,STS,2500,Top in Technology & Society,"Norton,Peter Daniel",1,3.27,11,0,1,3,3,3,0,0,1,0,0
+2009 Fall,STS,4010,Western Technology and Culture,"Brown,John Kennedy",1,3.43,23,0,2,10,4,6,1,0,0,0,0
+2009 Fall,STS,4010,Western Technology and Culture,"Brown,John Kennedy",2,3.28,17,0,1,6,4,4,0,1,1,0,0
+2009 Fall,STS,4010,Western Technology and Culture,"Carlson,W B",4,3.12,13,0,0,1,6,4,1,1,0,0,0
+2009 Fall,STS,4010,Western Technology and Culture,"Cohen,Benjamin R",5,3.37,21,0,3,3,10,4,1,0,0,0,0
+2009 Fall,STS,4010,Western Technology and Culture,"Cohen,Benjamin R",9,3.27,19,0,3,2,10,1,1,0,2,0,0
 2009 Fall,STS,4010,Western Technology and Culture,"Cohoon,Joanne Louise McGrath",100,3.38,50,0,14,14,4,10,2,1,1,1,3
-2009 Fall,STS,4010,Western Technology and Culture,"Jerolimov,Douglas",010,3.34,21,0,4,3,6,7,0,1,0,0,0
-2009 Fall,STS,4010,Western Technology and Culture,"Jerolimov,Douglas",011,3.40,15,0,2,4,5,3,1,0,0,0,0
-2009 Fall,STS,4010,Western Technology and Culture,"Norton,Peter Daniel",003,3.34,24,0,5,6,3,6,2,2,0,0,0
-2009 Fall,STS,4010,Western Technology and Culture,"Norton,Peter Daniel",008,3.30,27,1,2,7,8,6,1,1,0,1,0
+2009 Fall,STS,4010,Western Technology and Culture,"Jerolimov,Douglas",10,3.34,21,0,4,3,6,7,0,1,0,0,0
+2009 Fall,STS,4010,Western Technology and Culture,"Jerolimov,Douglas",11,3.4,15,0,2,4,5,3,1,0,0,0,0
+2009 Fall,STS,4010,Western Technology and Culture,"Norton,Peter Daniel",3,3.34,24,0,5,6,3,6,2,2,0,0,0
+2009 Fall,STS,4010,Western Technology and Culture,"Norton,Peter Daniel",8,3.3,27,1,2,7,8,6,1,1,0,1,0
 2009 Fall,STS,4010,Western Technology and Culture,"Pfaffenberger,Bryan",100,3.38,50,0,14,14,4,10,2,1,1,1,3
-2009 Fall,STS,4010,Western Technology and Culture,"Russell,Edmund P",006,3.36,25,0,1,9,7,7,1,0,0,0,0
-2009 Fall,STS,4010,Western Technology and Culture,"Russell,Edmund P",007,3.44,22,0,6,5,3,7,0,1,0,0,0
+2009 Fall,STS,4010,Western Technology and Culture,"Russell,Edmund P",6,3.36,25,0,1,9,7,7,1,0,0,0,0
+2009 Fall,STS,4010,Western Technology and Culture,"Russell,Edmund P",7,3.44,22,0,6,5,3,7,0,1,0,0,0
 2009 Fall,STS,4020,"The Engineer, Ethics & Society","Jerolimov,Douglas",1,3.23,12,0,3,3,2,3,0,0,0,0,1
 2009 Fall,STS,4510,Business of New Prod-Developm,"Eikner,Reid Vanmetre",2,3.56,28,0,1,18,7,2,0,0,0,0,0
 2009 Fall,STS,4510,Business of New Prod-Developm,"King,Michael L",1,3.85,27,6,10,9,2,0,0,0,0,0,0
@@ -3240,8 +3240,8 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,SWAG,2100,Intro to Gender Studies,"Luedtke,Karlin Rae",100,3.05,22,0,2,6,7,2,2,1,0,0,2
 2009 Fall,SWAG,2300,Wmn & Gender in the Deaf World,"Wood,Sandra Kay",1,-,-,0,0,0,0,0,2,0,0,0,0
 2009 Fall,SWAG,2559,New Course: SWAG,"Lane,Ann J",100,3.51,17,0,2,7,6,2,0,0,0,0,0
-2009 Fall,SWAG,2891,Issues Facing Adolescent Girls,"Lawrence,Edith C",1,4.00,13,0,12,0,0,0,0,0,0,0,1
-2009 Fall,SWAG,2891,Issues Facing Adolescent Girls,"Levy,Melissa Kim",1,4.00,13,0,12,0,0,0,0,0,0,0,1
+2009 Fall,SWAG,2891,Issues Facing Adolescent Girls,"Lawrence,Edith C",1,4,13,0,12,0,0,0,0,0,0,0,1
+2009 Fall,SWAG,2891,Issues Facing Adolescent Girls,"Levy,Melissa Kim",1,4,13,0,12,0,0,0,0,0,0,0,1
 2009 Fall,SWAG,3020,Gender in Muslim Lives,"Lavie,Smadar",1,-,-,0,1,1,0,2,1,1,0,0,0
 2009 Fall,SWAG,3200,"Women, Gender and Sports","Hagerman,Bonnie M",1,-,-,0,1,1,0,1,2,1,2,1,1
 2009 Fall,SWAG,3350,Gender Politics in Comp Perspe,"Walsh,Denise Marie",1,3.36,12,1,3,3,4,0,0,0,0,0,1
@@ -3252,7 +3252,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,SWAG,4320,Gender Politics in Africa,"Walsh,Denise Marie",1,-,-,0,2,0,1,0,0,0,0,0,0
 2009 Fall,SWAG,4559,New Course: SWAG,"Patel,Geeta H",1,-,-,1,0,2,0,0,0,0,0,0,0
 2009 Fall,SWAH,2010,Intermediate Swahili I,"Wairungu,Michael Gathonjia",1,-,-,0,3,3,0,0,0,0,0,0,0
-2009 Fall,SYS,2001,Systems Engineering Concepts,"Bailey,Robert Reid",2,3.50,14,2,2,3,4,2,1,0,0,0,0
+2009 Fall,SYS,2001,Systems Engineering Concepts,"Bailey,Robert Reid",2,3.5,14,2,2,3,4,2,1,0,0,0,0
 2009 Fall,SYS,2001,Systems Engineering Concepts,"Smith,Michael C",1,3.34,18,0,3,1,9,4,1,0,0,0,0
 2009 Fall,SYS,2057,Mgmnt of E-Commerce Systems,"Horowitz,Barry M",1,3.31,20,1,4,4,3,5,2,0,0,0,1
 2009 Fall,SYS,3001,Art & Science Systems Modeling,"Haimes,Yacov Y",1,-,-,0,1,3,0,1,0,0,0,0,0
@@ -3262,29 +3262,29 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,SYS,3023,Human Machine Interface,"Guerlain,Stephanie",1,2.95,16,0,0,2,4,5,1,3,1,0,0
 2009 Fall,SYS,3023,Human Machine Interface,"Guerlain,Stephanie",2,3.31,19,0,3,3,6,5,1,1,0,0,0
 2009 Fall,SYS,3055,Sys Engr Design Colloquium I,"Bailey,Robert Reid",1,3.98,37,0,34,3,0,0,0,0,0,0,0
-2009 Fall,SYS,4021,Linear Statistical Models,"Davis,Ginger M",001,3.07,51,1,9,5,3,18,5,3,6,1,0
-2009 Fall,SYS,4053,Systems Design I,"Bailey,Robert Reid",01,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,SYS,4053,Systems Design I,"Bailey,Robert Reid",02,-,-,0,0,1,1,0,0,0,0,0,0
-2009 Fall,SYS,4053,Systems Design I,"Beling,Peter Adam",03,-,-,0,4,0,0,0,0,0,0,0,0
-2009 Fall,SYS,4053,Systems Design I,"Brown,Donald E",07,-,-,0,1,1,1,0,0,0,0,0,0
-2009 Fall,SYS,4053,Systems Design I,"Cogill,Randy Lee",04,-,-,0,2,0,0,0,0,0,0,0,0
+2009 Fall,SYS,4021,Linear Statistical Models,"Davis,Ginger M",1,3.07,51,1,9,5,3,18,5,3,6,1,0
+2009 Fall,SYS,4053,Systems Design I,"Bailey,Robert Reid",1,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,SYS,4053,Systems Design I,"Bailey,Robert Reid",2,-,-,0,0,1,1,0,0,0,0,0,0
+2009 Fall,SYS,4053,Systems Design I,"Beling,Peter Adam",3,-,-,0,4,0,0,0,0,0,0,0,0
+2009 Fall,SYS,4053,Systems Design I,"Brown,Donald E",7,-,-,0,1,1,1,0,0,0,0,0,0
+2009 Fall,SYS,4053,Systems Design I,"Cogill,Randy Lee",4,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,SYS,4053,Systems Design I,"Cogill,Randy Lee",19,-,-,0,2,0,0,0,0,0,0,0,0
-2009 Fall,SYS,4053,Systems Design I,"Conklin,James Howard",05,-,-,0,3,1,0,0,0,0,0,0,0
-2009 Fall,SYS,4053,Systems Design I,"Conklin,James Howard",06,-,-,2,2,0,0,0,0,0,0,0,0
-2009 Fall,SYS,4053,Systems Design I,"Conklin,James Howard",07,-,-,0,1,1,1,0,0,0,0,0,0
-2009 Fall,SYS,4053,Systems Design I,"Crowther,Kenneth Gerald",08,-,-,0,3,0,0,0,0,0,0,0,0
-2009 Fall,SYS,4053,Systems Design I,"Crowther,Kenneth Gerald",09,-,-,0,3,0,0,0,0,0,0,0,0
+2009 Fall,SYS,4053,Systems Design I,"Conklin,James Howard",5,-,-,0,3,1,0,0,0,0,0,0,0
+2009 Fall,SYS,4053,Systems Design I,"Conklin,James Howard",6,-,-,2,2,0,0,0,0,0,0,0,0
+2009 Fall,SYS,4053,Systems Design I,"Conklin,James Howard",7,-,-,0,1,1,1,0,0,0,0,0,0
+2009 Fall,SYS,4053,Systems Design I,"Crowther,Kenneth Gerald",8,-,-,0,3,0,0,0,0,0,0,0,0
+2009 Fall,SYS,4053,Systems Design I,"Crowther,Kenneth Gerald",9,-,-,0,3,0,0,0,0,0,0,0,0
 2009 Fall,SYS,4053,Systems Design I,"Gerling,Gregory J",10,-,-,0,3,0,0,0,0,0,0,0,0
 2009 Fall,SYS,4053,Systems Design I,"Guerlain,Stephanie",11,-,-,0,3,1,0,0,0,0,0,0,0
 2009 Fall,SYS,4053,Systems Design I,"Guerlain,Stephanie",18,-,-,0,1,0,0,0,0,0,0,0,0
-2009 Fall,SYS,4053,Systems Design I,"Haimes,Yacov Y",09,-,-,0,3,0,0,0,0,0,0,0,0
+2009 Fall,SYS,4053,Systems Design I,"Haimes,Yacov Y",9,-,-,0,3,0,0,0,0,0,0,0,0
 2009 Fall,SYS,4053,Systems Design I,"Krzysztofowicz,Roman",20,-,-,1,0,0,0,0,0,0,0,0,0
 2009 Fall,SYS,4053,Systems Design I,"Lambert,James Hamilton",12,-,-,0,3,0,0,0,0,0,0,0,0
 2009 Fall,SYS,4053,Systems Design I,"Louis,Garrick E",13,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,SYS,4053,Systems Design I,"Patek,Stephen D",14,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,SYS,4053,Systems Design I,"Patek,Stephen D",15,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,SYS,4053,Systems Design I,"Scherer,William Theodore",16,-,-,0,4,0,0,0,0,0,0,0,0
-2009 Fall,SYS,4053,Systems Design I,"Smith,Michael C",02,-,-,0,0,1,1,0,0,0,0,0,0
+2009 Fall,SYS,4053,Systems Design I,"Smith,Michael C",2,-,-,0,0,1,1,0,0,0,0,0,0
 2009 Fall,SYS,4053,Systems Design I,"Smith,Michael C",17,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,SYS,4053,Systems Design I,"Wang,Jianping",15,-,-,0,2,0,0,0,0,0,0,0,0
 2009 Fall,SYS,4053,Systems Design I,"White,K P",17,-,-,0,1,0,0,0,0,0,0,0,0
@@ -3315,7 +3315,7 @@ Term Desc,Subject,Catalog Number,Class Title,Primary Instructor Name,Class Secti
 2009 Fall,TBTN,1010,Elementary Tibetan I,"Nepali,Tsetan",1,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,TBTN,2010,Intermediate Tibetan I,"Nepali,Tsetan",1,-,-,0,0,1,0,0,0,0,0,0,0
 2009 Fall,TBTN,5030,Advanced Modern Tibetan III,"Nepali,Tsetan",1,-,-,0,2,0,0,0,0,0,0,0,0
-2009 Fall,TBTN,5559,New Course: TBTN,"Nepali,Tsetan",01,-,-,0,1,0,0,0,0,0,0,0,0
+2009 Fall,TBTN,5559,New Course: TBTN,"Nepali,Tsetan",1,-,-,0,1,0,0,0,0,0,0,0,0
 2009 Fall,USEM,1570,University Seminar,"Beatley,Timothy",2,-,-,0,1,1,1,0,0,0,0,0,0
 2009 Fall,USEM,1570,University Seminar,"Dukes,E Franklin",4,-,-,0,0,2,1,0,0,0,0,0,0
 2009 Fall,USEM,1570,University Seminar,"Leonard,Rebecca Locke",5,-,-,0,0,1,1,0,0,0,0,0,0
