@@ -20,6 +20,7 @@ urlpatterns = [
          views.course_view, name='course'),
     path('instructor/<int:instructor_id>/',
          views.instructor_view, name='instructor'),
+    path('answers/check_duplicate/', views.qa.check_duplicate),
     path('reviews/new/', views.new_review, name='new_review'),
     path('reviews/new_question/', views.new_question, name='new_question'),
     path('reviews/new_answer/', views.new_answer, name='new_answer'),

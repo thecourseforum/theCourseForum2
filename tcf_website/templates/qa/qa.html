@@ -10,7 +10,11 @@
             {% endfor %}
         {% endif %}
     {% endfor %}
-    <form method="POST" action="{% url 'new_answer' %}">
+
+    <div class="alert alert-danger" id="duplicate-answer" style="display:none">
+        <p id="duplicate-answer">It looks like you've already submitted a answer for this question! If you'd like, you may edit your original response.</p>
+    </div>
+    <form method="POST" action="{% url 'new_answer' %}" id="answerForm">
         {% csrf_token %}
         <input type="text" name="text" id="1" value="">
         <input type="hidden" name="question" id="2" value="{{question.id}}">
@@ -20,7 +24,7 @@
               <option value="{{ form.instance.semester.id }}" selected>{{ form.instance.semester }}</option>
             </select>
           </div>
-        <input type="submit" value="Submit Answer">
+        <input type="submit" value="Submit Answer" id="submitBtn">
     </form>
 {% endfor %}
 
