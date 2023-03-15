@@ -77,7 +77,7 @@
                 </div>
               </div>
               <div class="card-header border-0">
-                  <img src="{% static 'blog/'|add:post.thumbnail_image %}" alt="Blog thumbnail image" style="width:200px">
+                  <img src="{% get_static_prefix %}blog/{{post.thumbnail_image}}" alt="Blog thumbnail image" style="width:200px">
               </div>
             </div>
           </a>

@@ -69,8 +69,8 @@ class CourseInstructorGradeAdmin(admin.ModelAdmin):
 
 
 class BlogPostAdmin(MarkdownxModelAdmin):
-    list_display = ['title', 'created_date', 'mod_date']
-    list_filter = ['created_date', 'mod_date']
+    list_display = ['title', 'created_at', 'updated_at']
+    list_filter = ['created_at', 'updated_at']
     search_fields = ['title']
     prepopulated_fields = {'slug': ('title',)}
 

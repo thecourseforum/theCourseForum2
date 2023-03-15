@@ -805,38 +805,31 @@ class Vote(models.Model):
         ]
 
 
-class DateCreateModMixin(models.Model):
-    """Date create/modified mixin (for posts).
-    """
-    class Meta:
-        abstract = True
-
-    created_date = models.DateTimeField(default=timezone.now)
-    mod_date = models.DateTimeField(blank=True, null=True)
-
-
-class BlogPost(DateCreateModMixin):
+class BlogPost(models.Model):
     """Blog post model.
     https://www.existenceundefined.com/blog/programming/1/how-to-use-django-markdownx-for-your-blog
     """
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    publish_at = models.DateTimeField(default=timezone.now, help_text='When the post will be \
+        published. If you want to schedule a post for the future, set this to a future date.')
 
     title = models.CharField(max_length=255)
-    subtitle = models.CharField(max_length=255)
+    subtitle = models.CharField(max_length=255, blank=True, null=True)
 
     slug = models.SlugField(
-        null=False,
         unique=True,
         help_text='The URL that the post will have. Match it to the headline, keep length at 3-5 \
             words, and use dashes between words. Example: "what-is-url-slug" \
                 (More info: https://rockcontent.com/blog/what-is-url-slug/)')
-    author = models.CharField(max_length=50)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     thumbnail_image = models.ImageField(default='placeholder.jpeg')
 
     body = MarkdownxField()
 
     def __str__(self):
         return self.title
-
     def get_absolute_url(self):
         """Returns url to the post"""
         print(reverse('post_detail', kwargs={'slug': self.slug}))

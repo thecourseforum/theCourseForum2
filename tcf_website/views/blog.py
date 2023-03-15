@@ -9,12 +9,12 @@ class BlogView(TemplateView):
     """Blog view."""
     template_name = 'blog/blog.html'
 
-    posts = BlogPost.objects.all().order_by('-created_date')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['featured_posts'] = self.posts[:3]
-        context['all_posts'] = self.posts
+        posts = BlogPost.objects.all().order_by('-created_at')
+        context['featured_posts'] = posts[:3]
+        context['all_posts'] = posts
         return context
 
 
