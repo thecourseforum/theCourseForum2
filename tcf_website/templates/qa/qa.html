@@ -1,6 +1,205 @@
 {% load static %}
 
-<h1>Questions and Answers:</h1>
+<div class="qa-container mb-5">
+    <div class="qa-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
+        <h3 class="qa-heading mb-0 mt-1 mr-4">9 Questions</h3>
+        <div class="qa-options d-flex flex-sm-row flex-column col p-0">
+            <a data-toggle="modal" data-target="#ask-question-modal" id="ask-question-button" class="btn bg-tcf-orange text-white mb-3">
+                <i class="fa fa-plus" aria-hidden="true"></i> Ask your Question!
+            </a>
+            <div class="ml-auto">
+                <div class="dropdown btn-group ml-sm-4">
+                    <button class="btn bg-white" disabled>Sort by</button>
+                    <button id="qa-sort-select" class="btn btn-primary dropdown-toggle" type="button" id="sortOptions"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                    <div class="dropdown-menu" aria-labelledby="sortOptions">
+                        <button id="" onclick="" class="dropdown-item" type="button">
+                            Most Helpful
+                        </button>
+                        <button id="" onclick="" class="dropdown-item" type="button">
+                            Most Recent
+                        </button>
+                        <button id="" onclick="" class="dropdown-item" type="button">
+                            Highest Rating
+                        </button>
+                        <button id="" onclick="" class="dropdown-item" type="button">
+                            Lowest Rating
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="modal fade" id="ask-question-modal" tabindex="-1" role="dialog" aria-labelledby="ask-question-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ask a Question</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col mb-3">
+                        <form method="POST" action="{% url 'new_question' %}">
+                            {% csrf_token %}
+                            <fieldset>
+                                <textarea class="form-control mb-3" name="text" id="1" rows="3"
+                                    placeholder="(Enter your question here!)" minlength="5" maxlength="5000"></textarea>
+                            </fieldset>
+                            
+                            <input type="hidden" name="course" id="2" value="{{course.id}}">
+                            <input type="hidden" name="instructor" id="3" value="{{instructor.id}}">
+                            <div class="row justify-content-center">
+                                <input type="submit" value="Submit your Question!" class="btn bg-tcf-orange text-white mb-3">
+                                    <i class="" aria-hidden="true"></i> 
+                                </input>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="row justify-content-center">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="qa container-lg px-0">
+        <ul class="questions-list list-unstyled">
+            {% for question in questions %}
+                <div id="{{question.id}}" class="question card mb-2">
+                    <div class="card-body text-left">
+                        <div class="row">
+                            <div class="question-body col-xs-12 col-md-12 col-lg-12">
+                                <div class="question-header">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="font-weight-bold text-tcf-orange">question semester</h6>
+                                        <h6 id="date" class="text-muted">question created date</h6>
+                                        <!-- <h6 class="font-weight-bold text-tcf-orange">{{ question.semester }}</h6>
+                                        <h6 id="date" class="text-muted">Updated {{ question.created|date:"n/d/y" }}</h6> -->
+                                    </div>
+                                </div>
+                                <div class="question-content mb-2">
+                                    <div class="question-text-body" id="questionText{{question.id}}">
+                                        <div class="question-text-full">{{ question.text|linebreaks }}</div>
+                                    </div>
+                                </div>
+                                <div class="question-footer row mt-3">
+                                    <div class="vote-container col-sm-4 d-flex align-items-end text-center text-muted flex-wrap">
+                                        <div class="mr-3 mr-sm-4">
+                                            <a><i class="fa fa-thumbs-up"></i></a>
+                                        </div>
+                                        <div class="mr-3 mr-sm-4">
+                                            <i class="fa fa-thumbs-down"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="question-answer-section mt-3">
+                                    <div class="answer-container ml-5">
+                                        aaa
+                                        <hr>
+                                        aaa
+                                        {% for question_id, answer_list in answers.items %}
+                                            {% if question.id == question_id %}
+                                                {% for answer in answer_list %}
+                                                    <p>{{ answer.text }}</p>
+                                                    {% if not forloop.last %}
+                                                        <hr>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <a data-toggle="modal" data-target="#answer-question-modal" class="btn bg-tcf-orange text-white justify-content-end mt-3">
+                                        Answer this Question!
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- <div class="alert alert-danger" id="duplicate-answer" style="display:none">
+                    <p id="duplicate-answer">It looks like you've already submitted a answer for this question! If you'd like, you may edit your original response.</p>
+                </div>
+                <form method="POST" action="{% url 'new_answer' %}" id="answerForm">
+                    {% csrf_token %}
+                    <input type="text" name="text" id="1" value="">
+                    <input type="hidden" name="question" id="2" value="{{question.id}}">
+                    <div class="form-group col-sm-6">
+                        <label for="semester" class="required-field">Semester</label>
+                        <select type="text" class="form-control" required id="semester" name="semester">
+                          <option value="{{ form.instance.semester.id }}" selected>{{ form.instance.semester }}</option>
+                        </select>
+                      </div>
+                    <input type="submit" value="Submit Answer" id="submitBtn">
+                </form> -->
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="modal fade" id="answer-question-modal" tabindex="-1" role="dialog" aria-labelledby="answer-question-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Answer a Question</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col mb-3">
+                        <div class="alert alert-danger" id="duplicate-answer" style="display:none">
+                            <p id="duplicate-answer">It looks like you've already submitted a answer for this question! If you'd like, you may edit your original response.</p>
+                        </div>
+                        <form method="POST" action="{% url 'new_answer' %}" id="answerForm">
+                            {% csrf_token %}
+                            <fieldset>
+                                <textarea class="form-control mb-3" name="text" id="1" value="" rows="3"
+                                    placeholder="(Enter your answer here!)" minlength="5" maxlength="5000"></textarea>
+                            </fieldset>
+                            <input type="hidden" name="question" id="2" value="{{question.id}}">
+                            <div class="row justify-content-center">
+                                <div class="row form-group col-sm-8 justify-content-center">
+                                    <label for="semester" class="required-field">Semester you took this class</label>
+                                    <select type="text" class="form-control" required id="semester" name="semester">
+                                      <option value="{{ form.instance.semester.id }}" selected>{{ form.instance.semester }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <input type="submit" value="Submit Answer" id="submitBtn" class="btn bg-tcf-orange text-white mb-3">
+                                    <i class="" aria-hidden="true"></i> 
+                                </input>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- <hr>
+                    <div class="form-group col mb-3">
+                        <textarea class="form-control" id="answertext" name="text" rows="3"
+                                placeholder="(Enter your answer here!)" minlength="100" maxlength="5000">{{ form.text.value }}</textarea>
+                    </div>
+                    <div class="row justify-content-center">
+                        <a href="" class="btn bg-tcf-orange text-white mb-3">
+                            <i class="" aria-hidden="true"></i> Submit your Answer!
+                        </a>
+                    </div>
+                    <br> -->
+                    <div class="row justify-content-center">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+<!-- <h1>Questions and Answers:</h1>
 {% for question in questions %}
     <p>{{question.text}}</p>
     {% for question_id, answer_list in answers.items %}
@@ -26,7 +225,7 @@
           </div>
         <input type="submit" value="Submit Answer" id="submitBtn">
     </form>
-{% endfor %}
+{% endfor %} -->
 
 <h1>Post a Question:</h1>
 <form method="POST" action="{% url 'new_question' %}">
