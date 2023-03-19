@@ -34,6 +34,11 @@ jQuery(function($) {
 $(document).ready(function() {
     $("#duplicate-answer").hide();
 
+    $(document).on("click", "#answerQuestionBtn", function() {
+        var questionId = $(this).data("id");
+        $("#answerForm #2").val(questionId);
+    });
+
     // Stop normal submit to check for duplicate answer with ajax request
     $("#answerForm").submit(function(e) {
         e.preventDefault();
