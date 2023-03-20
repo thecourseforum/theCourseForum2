@@ -7,8 +7,6 @@ class RecordMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        query = request.GET.get('q', '')
-
         if 'previous_paths' and 'previous_paths_titles' in request.COOKIES:
             previous_paths = request.COOKIES['previous_paths']
             # Converts string representation of list into list object
@@ -19,30 +17,26 @@ class RecordMiddleware(object):
             previous_paths_titles = ast.literal_eval(previous_paths_titles)
 
             if len(previous_paths) > 10:
-                previous_paths = previous_paths[len(previous_paths) - 10:]
-                previous_paths_titles = previous_paths_titles[len(previous_paths_titles) - 10:]
+                previous_paths = previous_paths[:10]
+                previous_paths_titles = previous_paths_titles[:10]
         else:
             previous_paths = []
             previous_paths_titles = []
-        if 'count' in request.COOKIES:
-            count = int(request.COOKIES['count'])
-        else:
-            count = 0
 
         response = self.get_response(request)
         if check_path(request.path):
-            previous_paths = [*set(previous_paths)]
-            previous_paths_titles = [*set(previous_paths_titles)]
-
-            response.set_cookie('count', count + 1)
-            previous_paths.append(request.build_absolute_uri())
+            # previous_paths.append(request.build_absolute_uri())
+            previous_paths.insert(0, request.build_absolute_uri())
+            previous_paths = list(dict.fromkeys(previous_paths))
             response.set_cookie('previous_paths', previous_paths)
 
             title = request.session.get('course_code')
             if request.session.get('instructor_fullname') is not None:
                 title += ' - ' + request.session.get('instructor_fullname')
-            title += ' - theCourseForum'
-            previous_paths_titles.append(title)
+
+            # previous_paths_titles.append(title)
+            previous_paths_titles.insert(0, title)
+            previous_paths_titles = list(dict.fromkeys(previous_paths_titles))
             response.set_cookie('previous_paths_titles', previous_paths_titles)
         return response
 

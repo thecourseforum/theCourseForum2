@@ -152,6 +152,7 @@ def course_view(request, mnemonic, course_number):
     ]
 
     request.session['course_code'] = course.code()
+    request.session['instructor_fullname'] = None
 
     return render(request, 'course/course.html',
                   {
