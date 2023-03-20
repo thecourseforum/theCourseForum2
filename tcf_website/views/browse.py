@@ -151,6 +151,8 @@ def course_view(request, mnemonic, course_number):
         (course.code, None, True),
     ]
 
+    request.session['course_code'] = course.code()
+
     return render(request, 'course/course.html',
                   {
                       'course': course,
@@ -249,6 +251,9 @@ def course_instructor(request, course_id, instructor_id):
                 times.append(time)
         section_info["sections"][section.sis_section_number] = {
             "type": section.section_type, "units": section.units, "times": times}
+
+    request.session['course_code'] = course.code()
+    request.session['instructor_fullname'] = instructor.full_name()
 
     return render(request, 'course/course_professor.html',
                   {

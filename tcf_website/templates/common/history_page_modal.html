@@ -1,0 +1,22 @@
+<!-- Login modal (imported in index.html) -->
+{% load static %}
+<div class="modal fade" id={{ path_id }} tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Recently Viewed</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    {% for path, title in previous_paths_and_titles %}
+                    <a class="card-text mb-3" href={{path}}>{{title}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
