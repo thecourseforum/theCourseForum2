@@ -71,6 +71,7 @@ TEMPLATES = [
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
                 'tcf_core.context_processors.base',
+                'tcf_core.context_processors.history_cookies',
             ],
         },
     },
