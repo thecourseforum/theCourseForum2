@@ -32,6 +32,9 @@ def history_cookies(request):
     else:
         count = 0
 
+    # previous_paths = reversed(previous_paths)
+    # previous_paths_titles = reversed(previous_paths_titles)
+
     return {
         'previous_paths': previous_paths,
         'count': count,
