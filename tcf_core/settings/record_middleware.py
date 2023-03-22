@@ -24,13 +24,13 @@ class RecordMiddleware(object):
             previous_paths_titles = []
 
         response = self.get_response(request)
-        if check_path(request.path):
+        if check_path(request.path) and request.session.get('instructor_fullname') is not None:
             # previous_paths.append(request.build_absolute_uri())
             previous_paths.insert(0, request.build_absolute_uri())
             previous_paths = list(dict.fromkeys(previous_paths))
             response.set_cookie('previous_paths', previous_paths)
 
-            title = request.session.get('course_code')
+            title = request.session.get('course_code') + ' - ' + request.session.get('course_title')
             if request.session.get('instructor_fullname') is not None:
                 title += ' - ' + request.session.get('instructor_fullname')
 
