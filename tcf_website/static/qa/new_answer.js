@@ -1,12 +1,9 @@
 jQuery(function($) {
-    console.log("hi world");
-
     /* Fetch semester data for Answer dropdown */
     // Clear & disable sequenced dropdowns
     clearDropdown("#semester");
 
     const paramsArr = window.location.pathname.split("/");
-    console.log(paramsArr);
 
     // Fetch all semester data from API
     var course = paramsArr[2];

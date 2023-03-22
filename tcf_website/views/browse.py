@@ -253,11 +253,11 @@ def course_instructor(request, course_id, instructor_id):
             "type": section.section_type, "units": section.units, "times": times}
 
     # QA Data
-
     questions = Question.objects.filter(course=course_id, instructor=instructor_id)
     answers = {}
     for question in questions:
-        answers[question.id] = Answer.objects.filter(question=question.id)
+        answers[question.id] = Answer.display_activity(question.id, request.user)
+    questions = Question.display_activity(course_id, instructor_id, request.user)
 
     return render(request, 'course/course_professor.html',
                   {

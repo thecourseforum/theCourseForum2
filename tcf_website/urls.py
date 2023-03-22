@@ -20,10 +20,7 @@ urlpatterns = [
          views.course_view, name='course'),
     path('instructor/<int:instructor_id>/',
          views.instructor_view, name='instructor'),
-    path('answers/check_duplicate/', views.qa.check_duplicate),
     path('reviews/new/', views.new_review, name='new_review'),
-    path('reviews/new_question/', views.new_question, name='new_question'),
-    path('reviews/new_answer/', views.new_answer, name='new_answer'),
     path('reviews/<int:pk>/delete/',
          views.DeleteReview.as_view(), name='delete_review'),
     path('reviews/<int:review_id>/edit/',
@@ -37,6 +34,15 @@ urlpatterns = [
     path('profile/<int:pk>/delete/',
          views.DeleteProfile.as_view(), name='delete_profile'),
     path('search/', views.search, name='search'),
+
+    # QA URLs
+    path('answers/check_duplicate/', views.qa.check_duplicate),
+    path('qa/new_question/', views.new_question, name='new_question'),
+    path('qa/new_answer/', views.new_answer, name='new_answer'),
+    path('questions/<int:question_id>/upvote/', views.upvote_question),
+    path('questions/<int:question_id>/downvote/', views.downvote_question),
+    path('answers/<int:answer_id>/upvote/', views.upvote_answer),
+    path('answers/<int:answer_id>/downvote/', views.downvote_answer),
 
     # API URLs
     path('api/', include('tcf_website.api.urls'), name='api'),
