@@ -3,8 +3,8 @@
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import redirect
 
 from ..models import Question, Answer
 
@@ -30,9 +30,29 @@ def new_question(request):
             instance.save()
 
             messages.success(request, f'Successfully added a question for {instance.course}!')
-            return redirect('browse')
-        return render(request, 'browse', {'form': form})
-    return render(request, 'browse')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+@login_required
+def upvote_question(request, question_id):
+    """Upvote a view."""
+    if request.method == 'POST':
+        question = Question.objects.get(pk=question_id)
+        question.upvote(request.user)
+        return JsonResponse({'ok': True})
+    return JsonResponse({'ok': False})
+
+
+@login_required
+def downvote_question(request, question_id):
+    """Downvote a view."""
+    if request.method == 'POST':
+        question = Question.objects.get(pk=question_id)
+        question.downvote(request.user)
+        return JsonResponse({'ok': True})
+    return JsonResponse({'ok': False})
 
 
 class AnswerForm(forms.ModelForm):
@@ -56,9 +76,9 @@ def new_answer(request):
             instance.save()
 
             messages.success(request, 'Successfully added a answer!')
-            return redirect('browse')
-        return render(request, 'browse', {'form': form})
-    return render(request, 'browse')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
 @login_required()
@@ -86,3 +106,23 @@ def check_duplicate(request):
         response = {"duplicate": False}
         return JsonResponse(response)
     return redirect('new_answer')
+
+
+@login_required
+def upvote_answer(request, answer_id):
+    """Upvote a view."""
+    if request.method == 'POST':
+        answer = Answer.objects.get(pk=answer_id)
+        answer.upvote(request.user)
+        return JsonResponse({'ok': True})
+    return JsonResponse({'ok': False})
+
+
+@login_required
+def downvote_answer(request, answer_id):
+    """Downvote a view."""
+    if request.method == 'POST':
+        answer = Answer.objects.get(pk=answer_id)
+        answer.downvote(request.user)
+        return JsonResponse({'ok': True})
+    return JsonResponse({'ok': False})
