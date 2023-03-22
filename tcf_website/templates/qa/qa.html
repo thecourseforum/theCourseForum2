@@ -41,13 +41,13 @@
                         <form method="POST" action="{% url 'new_question' %}">
                             {% csrf_token %}
                             <fieldset>
-                                <textarea class="form-control mb-3" name="text" id="1" rows="3"
+                                <textarea class="form-control mb-3" name="text" rows="3"
                                     placeholder="(Enter your question here!)" minlength="5" maxlength="5000"
                                     required></textarea>
                             </fieldset>
 
-                            <input type="hidden" name="course" id="2" value="{{course.id}}">
-                            <input type="hidden" name="instructor" id="3" value="{{instructor.id}}">
+                            <input type="hidden" name="course" value="{{course.id}}">
+                            <input type="hidden" name="instructor" value="{{instructor.id}}">
                             <div class="row justify-content-center">
                                 <input type="submit" value="Submit your Question!"
                                     class="btn bg-tcf-orange text-white mb-3">
@@ -97,7 +97,7 @@
                                     <div class="col">
                                         <div class="question-header">
                                             <div class="d-flex justify-content-between">
-                                                <h6></h6>
+                                                <h6>{{ question.created }}</h6>
                                                 <h6 id="date" class="text-muted">Updated {{ question.created|date:"n/d/y" }}</h6>
                                             </div>
                                         </div>
@@ -106,9 +106,61 @@
                                                 <div class="question-text-full">{{ question.text|linebreaks }}</div>
                                             </div>
                                         </div>
-                                        <div class="question-footer row mt-3">
+                                        <div class="question-footer mt-3">
+                                            <div class="d-flex justify-content-end">
+                                            {% if question.user == user %}
+                                                <div class="question-actions d-inline-flex">
+                                                    <a data-toggle="modal" class="question-edit h5 px-2 text-tcf-blue" type="button" 
+                                                        data-target="#edit-question-modal{{question.id}}" id="edit-question-button{{question_id}}">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                    </a>
+                                                    <a class="question-delete h5 pl-2 text-danger" type="button"
+                                                            data-toggle="modal" data-target="#deleteQuestionModal{{question.id}}">
+                                                    <i class="fa fa-trash-o"></i>
+                                                    </a>
+                                                    {% include "qa/delete_question_confirm_modal.html" with question_id=question.id %}
+                                                </div>
+                                            {% endif %}
+                                            </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="modal fade" id="edit-question-modal{{question.id}}" tabindex="-1" role="dialog" aria-labelledby="edit-question-label"
+                                aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Edit a Question</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="col mb-3">
+                                                <form method="POST" action="{% url 'edit_question' question_id=question.id %}">
+                                                    {% csrf_token %}
+                                                    <fieldset>
+                                                        <textarea class="form-control mb-3" name="text" rows="3"
+                                                            placeholder="(Enter your question here!)" minlength="5" maxlength="5000"
+                                                            required>{{ question.text }}</textarea>
+                                                    </fieldset>
+                            
+                                                    <input type="hidden" name="course" value="{{course.id}}">
+                                                    <input type="hidden" name="instructor" value="{{instructor.id}}">
+                                                    <div class="row justify-content-center">
+                                                        <input type="submit" value="Edit your Question!"
+                                                        class="btn bg-tcf-orange text-white mb-3">
+                                                        <i class="" aria-hidden="true"></i>
+                                                        </input>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="row justify-content-center">
+                                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 </div>
                             </div>
                             <div class="question-answer-section mt-3">
@@ -122,6 +174,7 @@
                                             <div class="answer-head">
                                                 <div class="d-flex justify-content-between">
                                                     <h6 class="text-tcf-orange text-start">{{ answer.semester }}</h6>
+                                                    <h6 id="date" class="text-muted">Updated {{ answer.created|date:"n/d/y" }}</h6>
                                                 </div>
                                             </div>
                                             <div class="answer-content">
@@ -148,7 +201,61 @@
                                                         <span class="downvoteCount">{{ answer.count_votes.downvotes }}</span>
                                                     </div>
                                                 </div>
-                                                <h6 id="date" class="text-muted">Updated {{ question.created|date:"n/d/y" }}</h6>
+                                                {% if answer.user == user %}
+                                                    <div class="answer-actions d-inline-flex">
+                                                        <a data-toggle="modal" type="button" class="answer-edit h5 px-2 text-tcf-blue" data-target="#edit-answer-modal{{answer.id}}" id="edit-answer-button{{answer_id}}">
+                                                            <i class="fas fa-pencil-alt"></i>
+                                                        </a>
+                                                        <a class="answer-delete h5 pl-2 text-danger" type="button"
+                                                                data-toggle="modal" data-target="#deleteAnswerModal{{answer.id}}">
+                                                        <i class="fa fa-trash-o"></i>
+                                                        </a>
+                                                        {% include "qa/delete_answer_confirm_modal.html" with answer_id=answer.id %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="edit-answer-modal{{answer.id}}" tabindex="-1" role="dialog"
+                                        aria-labelledby="edit-answer-label" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit an Answer</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="col mb-3">
+                                                        <form method="POST" action="{% url 'edit_answer' answer_id=answer.id%}" id="answerForm{{answer.id}}">
+                                                            {% csrf_token %}
+                                                            <fieldset>
+                                                                <textarea class="form-control mb-3" name="text" value="" rows="3"
+                                                                    placeholder="(Enter your answer here!)" minlength="5" maxlength="5000"
+                                                                    required>{{ answer.text }}</textarea>
+                                                            </fieldset>
+                                                            <input type="hidden" name="question" value="{{question.id}}">
+                                                            <div class="row justify-content-center">
+                                                                <div class="row form-group col-sm-8 justify-content-center">
+                                                                    <label for="semester" class="required-field">Semester you took this class</label>
+                                                                    <select type="text" class="form-control semester-dropdown" required id="semester{{answer.id}}-{{answer.semester.id}}" name="semester">
+                                                                        <option value="{{ form.instance.semester.id }}" selected>{{ form.instance.semester }}</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row justify-content-center">
+                                                                <input type="submit" value="Edit Answer" id="submitBtn{{answer.id}}"
+                                                                    class="btn bg-tcf-orange text-white mb-3">
+                                                                <i class="" aria-hidden="true"></i>
+                                                                </input>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="row justify-content-center">
+                                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -191,17 +298,16 @@
                         <form method="POST" action="{% url 'new_answer' %}" id="answerForm">
                             {% csrf_token %}
                             <fieldset>
-                                <textarea class="form-control mb-3" name="text" id="1" value="" rows="3"
+                                <textarea class="form-control mb-3" name="text" value="" rows="3"
                                     placeholder="(Enter your answer here!)" minlength="5" maxlength="5000"
                                     required></textarea>
                             </fieldset>
-                            <input type="hidden" name="question" id="2" value="{{question.id}}">
+                            <input type="hidden" name="question" value="{{question.id}}">
                             <div class="row justify-content-center">
                                 <div class="row form-group col-sm-8 justify-content-center">
                                     <label for="semester" class="required-field">Semester you took this class</label>
-                                    <select type="text" class="form-control" required id="semester" name="semester">
-                                        <option value="{{ form.instance.semester.id }}" selected>{{
-                                            form.instance.semester }}</option>
+                                    <select type="text" class="form-control semester-dropdown" required id="semester" name="semester">
+                                        <option value="{{ form.instance.semester.id }}" selected>{{ form.instance.semester }}</option>
                                     </select>
                                 </div>
                             </div>

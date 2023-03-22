@@ -13,4 +13,5 @@ from .profile import profile, reviews, DeleteProfile
 from .search import search
 from .discord import post_message
 from .qa import (new_question, new_answer, upvote_question,
-                 upvote_answer, downvote_question, downvote_answer)
+                 upvote_answer, downvote_question, downvote_answer,
+                 DeleteQuestion, DeleteAnswer, edit_question, edit_answer)

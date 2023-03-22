@@ -41,8 +41,12 @@ urlpatterns = [
     path('qa/new_answer/', views.new_answer, name='new_answer'),
     path('questions/<int:question_id>/upvote/', views.upvote_question),
     path('questions/<int:question_id>/downvote/', views.downvote_question),
+    path('questions/<int:pk>/delete/', views.DeleteQuestion.as_view(), name='delete_question'),
+    path('questions/<int:question_id>/edit/', views.edit_question, name='edit_question'),
     path('answers/<int:answer_id>/upvote/', views.upvote_answer),
     path('answers/<int:answer_id>/downvote/', views.downvote_answer),
+    path('answers/<int:pk>/delete/', views.DeleteAnswer.as_view(), name='delete_answer'),
+    path('answers/<int:answer_id>/edit/', views.edit_answer, name='edit_answer'),
 
     # API URLs
     path('api/', include('tcf_website.api.urls'), name='api'),

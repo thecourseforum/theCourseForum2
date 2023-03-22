@@ -1,7 +1,8 @@
-jQuery(function($) {
+function populateDropdown(dropdownID) {
     /* Fetch semester data for Answer dropdown */
     // Clear & disable sequenced dropdowns
-    clearDropdown("#semester");
+    clearDropdown(dropdownID);
+    const selectedSemID = parseInt(dropdownID.split("-")[1]);
 
     const paramsArr = window.location.pathname.split("/");
 
@@ -12,19 +13,27 @@ jQuery(function($) {
     $.getJSON(semEndpoint, function(data) {
         // Generate option tags
         $.each(data, function(i, semester) {
-            // Note: API returns semester list in reverse chronological order,
-            // Most recent 5 years only
             $("<option />", {
                 val: semester.id,
                 text: semester.season + " " + semester.year
-            }).appendTo("#semester");
+            }).appendTo(dropdownID);
+
+            if (selectedSemID === semester.id) {
+                $(dropdownID).val(semester.id);
+            }
         });
         return this;
     })
         .done(function() {
-            // Enable semester selector
-            $("#semester").prop("disabled", false);
+        // Enable semester selector
+            $(dropdownID).prop("disabled", false);
         });
+}
+
+jQuery(function($) {
+    // Get all dropdown ids in the semester dropdown class for edit answer forms, clear and populate each
+    var ids = $(".semester-dropdown").map(function(_, x) { return "#".concat(x.id); }).get();
+    ids.forEach((item) => populateDropdown(item));
 });
 
 // Below checks whether the user has already answered the question
