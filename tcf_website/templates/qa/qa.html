@@ -277,7 +277,7 @@
             </div>
             {% endfor %}
 
-            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#questionCollapse" aria-expanded="false" aria-controls="questionCollapse">
+            <button class="btn btn-primary" id="collapse-qa-button" value="show" type="button" data-toggle="collapse" data-target="#questionCollapse" aria-expanded="false" aria-controls="questionCollapse">
                 Show more questions
             </button>
             <div class="collapse" id="questionCollapse">
@@ -371,40 +371,4 @@
         $(this).removeAttr('href');
     });
     {% endif %}
-
-    questionIDToHide = []
-    // document.getElementsByClassName("qa-heading")[0].style.visibility = "hidden";
-    // $('.qa-heading').each(function (i, obj) {
-    //     obj.hidden = true;
-    //     obj.style.display = "none";
-    //     obj.style.visibility = "hidden";
-    //     // if(i > 0)
-    //     //     questionIDToHide.push(obj.id);
-    // });
-    // document.write(questionIDToHide);
-</script>
-
-<!--collapse questions-->
-<script type="text/javascript">
-    //document.getElementsByClassName("qa-heading")[0].style.visibility = "hidden";
-    document.getElementsByClassName("qa-heading").array.forEach(element => {
-        element.style.visibility = "hidden";
-    });
-    // $('.qa-container').each(function (i, obj) {
-    //     obj.hidden = true;
-    //     obj.style.display = "none";
-    //     obj.style.visibility = "hidden";
-    //     // if(i > 0)
-    //     //     questionIDToHide.push(obj.id);
-    // });
-    document.write(".......");
-    // document.write(questionIDToHide);
-    
-    // console.log("*******");
-    // document.getElementsByClassName("question").array.forEach(element => {
-    //     document.write("...");
-    //     document.write(element.id);
-    // });
-    // document.write(document.getElementsByClassName("question")[0]);
-    // document.write(document);
 </script>
