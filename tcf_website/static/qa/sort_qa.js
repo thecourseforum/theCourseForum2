@@ -12,17 +12,17 @@ function sortQA(btnID) {
     let prop = "";
     const asc = -1;
     switch (btnID) {
-        case "qa-votes-sort-btn":
-            label = "Most Helpful";
-            prop = "question-vote-count";
-            break;
-        case "qa-recent-sort-btn":
-            label = "Most Recent";
-            prop = "date";
-            break;
-        default:
-            console.log("error");
-            return;
+    case "qa-votes-sort-btn":
+        label = "Most Helpful";
+        prop = "question-vote-count";
+        break;
+    case "qa-recent-sort-btn":
+        label = "Most Recent";
+        prop = "date";
+        break;
+    default:
+        console.log("error");
+        return;
     }
     if (!$(htmlTag).hasClass("active")) {
         makeQAActive(htmlTag, label);
@@ -30,51 +30,39 @@ function sortQA(btnID) {
         sortHTML(".qa", ".question-container", prop, asc);
     }
 
-    collapseQA(3, false);
+    // collapse QA
+    collapseQA(3);
 }
 
-function collapseQA(numberShown, shownStatus) {
-    var ids = $(".question-container").map(function (_, x) { return "#".concat(x.id); }).get();
+function collapseQA(numberShown) {
+    var ids = $(".question-container").map(function(_, x) { return "#".concat(x.id); }).get();
     for (const [index, id] of ids.entries()) {
-        // show all elements when shownStatus is toggled
-        if (shownStatus) {
-            $(id).show();
+        if (index < numberShown) {
+            var detachedID = $(id).detach();
+            $('#questionShow').append(detachedID);
+        } else {
+            var detachedID = $(id).detach();
+            $('#questionCollapse').append(detachedID);
         }
-        // show only the first couple of QA elements when shownStatus is false
-        else {
-            if (index < numberShown) {
-                $(id).show();
-            }
-            else {
-                $(id).hide();
-            }
-        }
-    }
-
-    if(shownStatus){
-        $("#collapse-qa-button").val("hide");
-        $("#collapse-qa-button").html("Hide Questions");
-    }
-    else{
-        $("#collapse-qa-button").val("show");
-        $("#collapse-qa-button").html("Show All Questions");
     }
 }
 
 function sortAnswers(containerClass) {
-    var ids = $(containerClass).map(function (_, x) { return "#".concat(x.id); }).get();
+    var ids = $(containerClass).map(function(_, x) { return "#".concat(x.id); }).get();
     ids.forEach((item) => sortHTML(item, item.concat(" .answer"), "answer-vote-count", -1));
 }
 
 sortQA("qa-votes-sort-btn");
 document.getElementById("qa-votes-sort-btn").addEventListener("click", () => sortQA("qa-votes-sort-btn"));
 document.getElementById("qa-recent-sort-btn").addEventListener("click", () => sortQA("qa-recent-sort-btn"));
-document.getElementById("collapse-qa-button").addEventListener("click", function () {
-    console.log($("#collapse-qa-button").val())
-    if ($("#collapse-qa-button").val()==="hide"){
-        collapseQA(3, false);
-    }
-    else{
-        collapseQA(3, true);
+
+// collapse QA functionality
+document.getElementById("collapse-qa-button").addEventListener("click", function() {
+    if ($("#collapse-qa-button").val() === "hide") {
+        $("#collapse-qa-button").val("show");
+        $("#collapse-qa-button").html("Show All Questions");
+    } else {
+        $("#collapse-qa-button").val("hide");
+        $("#collapse-qa-button").html("Hide Questions");
     }
 });
