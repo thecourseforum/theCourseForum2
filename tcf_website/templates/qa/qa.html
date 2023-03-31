@@ -168,6 +168,7 @@
                                     <div class="answer-container ml-5" id="answer-container{{question.id}}">
                                         {% for question_id, answer_list in answers.items %}
                                         {% if question.id == question_id %}
+                                        <div id="answerShow{{question.id}}">
                                         {% for answer in answer_list %}
                                         <div class="answer" id="answer{{answer.id}}">
                                             <hr>
@@ -261,6 +262,14 @@
                                             </div>
                                         </div>
                                         {% endfor %}
+                                        </div>
+                                        <div class="collapse" id="answerCollapse{{question.id}}"></div>
+                                        {% if answer_list|length > 1 %}
+                                        <hr>
+                                        <div class="d-flex justify-content-center collapse-answer-button" id="collapse-answer-button{{question.id}}" value="show" type="button" data-toggle="collapse" data-target="#answerCollapse{{question.id}}" aria-expanded="false" aria-controls="answerCollapse{{question.id}}">
+                                            <i class="fa fa-chevron-down fa-lg text-center text-muted" id="collapse-answer-chevron{{question.id}}"></i>
+                                        </div>
+                                        {% endif %}
                                         {% endif %}
                                         {% endfor %}
                                     </div>
@@ -276,15 +285,30 @@
                         </div>
                     </div>
                 </div>
+                {% empty %}
+                <div class="card col p-5 text-center">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            No Questions and Answers <i class="far fa-frown-open fa-fw"></i>
+                        </h4>
+                        <p class="card-text">
+                            Get us started by writing a question!
+                        </p>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
-            <div class="collapse" id="questionCollapse">
-            </div>
+            <div class="collapse" id="questionCollapse"></div>
         </ul>
     </div>
-    <button class="btn btn-primary" id="collapse-qa-button" value="show" type="button" data-toggle="collapse" data-target="#questionCollapse" aria-expanded="false" aria-controls="questionCollapse">
+    {% if questions|length > 3 %}
+        <div class="card justify-content-center bg-tcf-shadow" id="collapse-qa-button" value="show" type="button" data-toggle="collapse" data-target="#questionCollapse" aria-expanded="false" aria-controls="questionCollapse">
+                <i class="fa fa-chevron-down fa-lg text-center text-white" id="collapse-chevron"></i>
+        </div>
+    {% endif %}
+    <!--button class="btn btn-primary" id="collapse-qa-button" value="show" type="button" data-toggle="collapse" data-target="#questionCollapse" aria-expanded="false" aria-controls="questionCollapse">
         Show All Questions
-    </button>
+    </button-->
 
     <div class="modal fade" id="answer-question-modal" tabindex="-1" role="dialog"
         aria-labelledby="answer-question-label" aria-hidden="true">
