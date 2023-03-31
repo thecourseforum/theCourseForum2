@@ -46,9 +46,34 @@ function collapseQA(numberShown) {
     }
 }
 
+function collapseAnswers(numberShown) {
+    var ids = $(".answer-container").map(function(_, x) { return x.id; }).get();
+    for (const id of ids) {
+        collapseQuestionAnswer(numberShown, parseInt(id.substring(16)));
+    }
+}
+
+function collapseQuestionAnswer(numberShown, questionID) {
+    const answerContainerID = "#answer-container" + questionID;
+    const showAnswerContainer = "#answerShow" + questionID;
+    const collapseAnswerContainer = "#answerCollapse" + questionID;
+
+    var answerIDs = $(answerContainerID.concat(" .answer")).map(function(_, x) { return "#".concat(x.id); }).get();
+
+    for (const [index, id] of answerIDs.entries()) {
+        var detachedID = $(id).detach();
+        if (index < numberShown) {
+            $(showAnswerContainer).append(detachedID);
+        } else {
+            $(collapseAnswerContainer).append(detachedID);
+        }
+    }
+}
+
 function sortAnswers(containerClass) {
     var ids = $(containerClass).map(function(_, x) { return "#".concat(x.id); }).get();
     ids.forEach((item) => sortHTML(item, item.concat(" .answer"), "answer-vote-count", -1));
+    collapseAnswers(1);
 }
 
 sortQA("qa-votes-sort-btn");
@@ -59,9 +84,34 @@ document.getElementById("qa-recent-sort-btn").addEventListener("click", () => so
 document.getElementById("collapse-qa-button").addEventListener("click", function() {
     if ($("#collapse-qa-button").val() === "hide") {
         $("#collapse-qa-button").val("show");
-        $("#collapse-qa-button").html("Show All Questions");
+        $("#collapse-chevron").removeClass("fa-chevron-up");
+        $("#collapse-chevron").addClass("fa-chevron-down");
+        // $("#collapse-qa-button p").html("Show All Questions");
     } else {
         $("#collapse-qa-button").val("hide");
-        $("#collapse-qa-button").html("Hide Questions");
+        $("#collapse-chevron").removeClass("fa-chevron-down");
+        $("#collapse-chevron").addClass("fa-chevron-up");
+        // $("#collapse-qa-button p").html("Hide Questions");
     }
+});
+
+function clickCollapseAnswer(collapseID) {
+    const questionID = parseInt(collapseID.substring(22));
+    const collapseButton = "#collapse-answer-button" + questionID;
+    const collapseChevron = "#collapse-answer-chevron" + questionID;
+
+    if ($(collapseButton).val() === "hide") {
+        $(collapseButton).val("show");
+        $(collapseChevron).removeClass("fa-chevron-up");
+        $(collapseChevron).addClass("fa-chevron-down");
+    } else {
+        $(collapseButton).val("hide");
+        $(collapseChevron).removeClass("fa-chevron-down");
+        $(collapseChevron).addClass("fa-chevron-up");
+    }
+}
+
+$(function() {
+    var ids = $(".collapse-answer-button").map(function(_, x) { return x.id; }).get();
+    ids.forEach((item) => document.getElementById(item).addEventListener("click", () => clickCollapseAnswer(item)));
 });
