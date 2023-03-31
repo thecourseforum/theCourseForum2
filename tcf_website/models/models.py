@@ -810,7 +810,7 @@ class Question(models.Model):
     placeholder = models.CharField(max_length=100, default="Enter your response here")
 
     def __str__(self):
-        return f"Question for {self.course} by {self.user}"
+        return f"Question for {self.course}"
 
     def count_votes(self):
         """Sum votes for review."""
@@ -906,7 +906,7 @@ class Answer(models.Model):
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, default=None)
 
     def __str__(self):
-        return f"Answer for {self.question} by {self.user}"
+        return f"Answer for {self.question}"
 
     def count_votes(self):
         """Sum votes for review."""
