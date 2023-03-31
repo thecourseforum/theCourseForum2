@@ -169,8 +169,8 @@
                                         {% for question_id, answer_list in answers.items %}
                                         {% if question.id == question_id %}
                                         {% for answer in answer_list %}
-                                        <hr>
                                         <div class="answer" id="answer{{answer.id}}">
+                                            <hr>
                                             <div class="answer-body col-xs-12 col-md-12 col-lg-12">
                                                 <div class="answer-head">
                                                     <div class="d-flex justify-content-between">
@@ -309,7 +309,7 @@
                                     placeholder="(Enter your answer here!)" minlength="5" maxlength="5000"
                                     required></textarea>
                             </fieldset>
-                            <input type="hidden" name="question" value="{{question.id}}">
+                            <input type="hidden" name="question" id="questionInput" value="{{ question.id }}">
                             <div class="row justify-content-center">
                                 <div class="row form-group col-sm-8 justify-content-center">
                                     <label for="semester" class="required-field">Semester you took this class</label>

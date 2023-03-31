@@ -37,12 +37,11 @@ function sortQA(btnID) {
 function collapseQA(numberShown) {
     var ids = $(".question-container").map(function(_, x) { return "#".concat(x.id); }).get();
     for (const [index, id] of ids.entries()) {
+        var detachedID = $(id).detach();
         if (index < numberShown) {
-            var detachedID = $(id).detach();
-            $('#questionShow').append(detachedID);
+            $("#questionShow").append(detachedID);
         } else {
-            var detachedID = $(id).detach();
-            $('#questionCollapse').append(detachedID);
+            $("#questionCollapse").append(detachedID);
         }
     }
 }
