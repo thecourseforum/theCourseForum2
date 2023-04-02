@@ -291,7 +291,7 @@ class Command(BaseCommand):
             'c_minus': data[8],
             'dfw': data[9],
             'total_enrolled': data[10],
-            'average': data[11],
+            'average': data[11] if data[11] > 0 else None,
         }
 
         if is_instructor_grade:
