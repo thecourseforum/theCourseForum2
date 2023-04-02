@@ -219,7 +219,7 @@ def course_instructor(request, course_id, instructor_id):
     # NOTE: Don't catch MultipleObjectsReturned because we want to be notified
     else:  # Fill in the data found
         # grades stats
-        data['average_gpa'] = round(grades_data.average, 2)
+        data['average_gpa'] = round(grades_data.average, 2) if grades_data.average else None
         fields = [
             'a_plus', 'a', 'a_minus',
             'b_plus', 'b', 'b_minus',
