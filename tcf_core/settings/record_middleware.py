@@ -16,9 +16,11 @@ class RecordMiddleware(object):
             # Converts string representation of list into list object
             previous_paths_titles = ast.literal_eval(previous_paths_titles)
 
-            if len(previous_paths) > 10:
-                previous_paths = previous_paths[:10]
-                previous_paths_titles = previous_paths_titles[:10]
+            # Keeps top 10 items in list
+            # Only keeps 9 here since 1 is inserted immediately after
+            if len(previous_paths) > 9:
+                previous_paths = previous_paths[:9]
+                previous_paths_titles = previous_paths_titles[:9]
         else:
             previous_paths = []
             previous_paths_titles = []
