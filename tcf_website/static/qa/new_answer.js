@@ -12,22 +12,28 @@ function populateDropdown(dropdownID) {
     var semEndpoint = `/api/semesters/?course=${course}&instructor=${instrID}`;
     $.getJSON(semEndpoint, function(data) {
         // Generate option tags
-        $.each(data, function(i, semester) {
-            $("<option />", {
-                val: semester.id,
-                text: semester.season + " " + semester.year
-            }).appendTo(dropdownID);
+        if(data.length===0){
+            $("#ask-question-button").addClass("disabled");
+            $(".answerQuestionBtn").addClass("disabled");
+        }
+        else{
+            $.each(data, function(i, semester) {
+                $("<option />", {
+                    val: semester.id,
+                    text: semester.season + " " + semester.year
+                }).appendTo(dropdownID);
 
-            if (selectedSemID === semester.id) {
-                $(dropdownID).val(semester.id);
-            }
-        });
+                if (selectedSemID === semester.id) {
+                    $(dropdownID).val(semester.id);
+                }
+            });
+        }
         return this;
     })
-        .done(function() {
-        // Enable semester selector
-            $(dropdownID).prop("disabled", false);
-        });
+    .done(function() {
+    // Enable semester selector
+        $(dropdownID).prop("disabled", false);
+    });
 }
 
 jQuery(function($) {
