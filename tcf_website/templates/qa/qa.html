@@ -8,8 +8,7 @@
     <div class="qa-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
         <h3 class="qa-heading mb-0 mt-1 mr-4">Questions</h3>
         <div class="qa-options d-flex flex-sm-row flex-column col p-0">
-            <a data-toggle="modal" data-target="#ask-question-modal" id="ask-question-button"
-                class="btn bg-tcf-orange text-white mb-3">
+            <a href="#loginModal" data-toggle="modal" id="ask-question-button" class="btn bg-tcf-orange text-white mb-3">
                 <i class="fa fa-plus" aria-hidden="true"></i> Ask your Question!
             </a>
             {% if questions %}
@@ -276,7 +275,7 @@
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-end">
-                                    <a data-toggle="modal" data-target="#answer-question-modal" data-id="{{ question.id }}"
+                                    <a href="#loginModal" data-toggle="modal" data-id="{{ question.id }}"
                                         class="btn bg-tcf-orange text-white justify-content-end mt-3 answerQuestionBtn"
                                         id="answerQuestionBtn">
                                         Answer this Question!
@@ -360,10 +359,12 @@
     </div>
 </div>
 
-<!--upvote/downvote feature for questions-->
+<!--upvote/downvote feature and login verification for questions-->
 <script type="module">
     import { handleQuestionVote, handleAnswerVote } from "{% static 'qa/qa.js' %}";
     {% if user.is_authenticated %}
+    $('#ask-question-button').attr("data-target", "#ask-question-modal");
+    $('#answerQuestionBtn').attr("data-target", "#answer-question-modal");
     $('.upvoteQuestion').each(function (i, obj) {
         $(this).click(() => {
             handleQuestionVote(obj.id.substring(7), true);
