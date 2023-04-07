@@ -4,7 +4,7 @@
 
 <script type="module" src="{% static 'qa/sort_qa.js' %}"></script>
 
-<div class="qa-container mb-5">
+<div class="qa-container mb-5 mt-3">
     <div class="qa-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
         <h3 class="qa-heading mb-0 mt-1 mr-4">Questions</h3>
         <div class="qa-options d-flex flex-sm-row flex-column col p-0">
@@ -12,17 +12,19 @@
                 class="btn bg-tcf-orange text-white mb-3">
                 <i class="fa fa-plus" aria-hidden="true"></i> Ask your Question!
             </a>
-            <div class="ml-auto">
-                <div class="dropdown btn-group ml-sm-4">
-                    <button class="btn bg-white" disabled>Sort by</button>
-                    <button id="qa-sort-select" class="btn btn-primary dropdown-toggle" type="button" id="sortOptions"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                    <div class="dropdown-menu" aria-labelledby="sortOptions">
-                        <button id="qa-votes-sort-btn" class="dropdown-item" type="button">Most Helpful</button>
-                        <button id="qa-recent-sort-btn" class="dropdown-item" type="button">Most Recent</button>
+            {% if questions %}
+                <div class="ml-auto">
+                    <div class="dropdown btn-group ml-sm-4">
+                        <button class="btn bg-white" disabled>Sort by</button>
+                        <button id="qa-sort-select" class="btn btn-primary dropdown-toggle" type="button" id="sortOptions"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div class="dropdown-menu" aria-labelledby="sortOptions">
+                            <button id="qa-votes-sort-btn" class="dropdown-item" type="button">Most Helpful</button>
+                            <button id="qa-recent-sort-btn" class="dropdown-item" type="button">Most Recent</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
         </div>
     </div>
 
@@ -97,8 +99,7 @@
                                         </div>
                                         <div class="col">
                                             <div class="question-header">
-                                                <div class="d-flex justify-content-between">
-                                                    <h6>{{ question.created }}</h6>
+                                                <div class="d-flex justify-content-end">
                                                     <h6 id="date" class="text-muted">Updated {{ question.created|date:"n/d/y" }}</h6>
                                                 </div>
                                             </div>
