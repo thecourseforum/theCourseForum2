@@ -270,7 +270,7 @@
                                                 {% if answer_list|length > 1 %}
                                                 <hr>
                                                 <div class="d-flex justify-content-center collapse-answer-button" id="collapse-answer-button{{question.id}}" value="show" type="button" data-toggle="collapse" data-target="#answerCollapse{{question.id}}" aria-expanded="false" aria-controls="answerCollapse{{question.id}}">
-                                                    <i class="fa fa-chevron-down fa-lg text-center text-muted" id="collapse-answer-chevron{{question.id}}"></i>
+                                                    <i class="fa fa-chevron-down fa-lg text-center text-muted collapse-answer-chevron" id="collapse-answer-chevron{{question.id}}"></i>
                                                 </div>
                                                 {% endif %}
                                                 {% endif %}
@@ -394,6 +394,11 @@
             handleAnswerVote(obj.id.substring(9), false);
         });
         $(this).removeAttr('href');
+    });
+    $('.collapse-answer-button').each(function () {
+        $(this).click(() => {
+            $("i", this).toggleClass("fa-chevron-down fa-chevron-up");
+        });
     });
     {% endif %}
 </script>
