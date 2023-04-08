@@ -165,114 +165,120 @@
                                     </div>
                                 </div>
                                 <div class="question-answer-section mt-3">
-                                    <div class="answer-container ml-5" id="answer-container{{question.id}}">
-                                        {% for question_id, answer_list in answers.items %}
-                                        {% if question.id == question_id %}
-                                        <div id="answerShow{{question.id}}">
-                                        {% for answer in answer_list %}
-                                        <div class="answer" id="answer{{answer.id}}">
-                                            <hr>
-                                            <div class="answer-body col-xs-12 col-md-12 col-lg-12">
-                                                <div class="answer-head">
-                                                    <div class="d-flex justify-content-between">
-                                                        <h6 class="text-tcf-orange text-start">{{ answer.semester }}</h6>
-                                                        <h6 id="date" class="text-muted">Updated {{ answer.created|date:"n/d/y" }}</h6>
+                                    <div class="row">
+                                        <div class="col-sm-1 d-flex"></div>
+                                        <div class="col">
+                                            <div class="answer-container" id="answer-container{{question.id}}">
+                                                {% for question_id, answer_list in answers.items %}
+                                                {% if question.id == question_id %}
+                                                <div id="answerShow{{question.id}}">
+                                                {% for answer in answer_list %}
+                                                <div class="answer" id="answer{{answer.id}}">
+                                                    <hr>
+                                                    <div class="answer-body">
+                                                        <div class="answer-head">
+                                                            <div class="d-flex justify-content-between">
+                                                                <h6 class="text-tcf-orange text-start">{{ answer.semester }}</h6>
+                                                                <h6 id="date" class="text-muted">Updated {{ answer.created|date:"n/d/y" }}</h6>
+                                                            </div>
+                                                        </div>
+                                                        <div class="answer-content">
+                                                            <p>{{ answer.text }}</p>
+                                                        </div>
+                                                        <div class="d-flex answer-footer justify-content-between">
+                                                            <div
+                                                                class="vote-container col-sm-4 d-flex align-items-end text-center text-muted flex-wrap">
+                                                                <span id="answer-vote-count" hidden>{{ answer.sum_a_votes }}</span>
+                                                                <div class="mr-3 mr-sm-4">
+                                                                    <a id="upvoteA{{answer.id}}" href="#loginModal"
+                                                                        data-toggle="modal"
+                                                                        class="upvoteAnswer {% if answer.user_a_vote == 1 %}active{% endif %}">
+                                                                        <i class="fa fa-thumbs-up"></i>
+                                                                    </a>
+                                                                    <span class="upvoteCount">{{ answer.count_votes.upvotes }}</span>
+                                                                </div>
+                                                                <div class="mr-3 mr-sm-4">
+                                                                    <a id="downvoteA{{answer.id}}" href="#loginModal"
+                                                                        data-toggle="modal"
+                                                                        class="downvoteAnswer {% if answer.user_a_vote == -1 %}active{% endif %}">
+                                                                        <i class="fa fa-thumbs-down"></i>
+                                                                    </a>
+                                                                    <span class="downvoteCount">{{ answer.count_votes.downvotes }}</span>
+                                                                </div>
+                                                            </div>
+                                                            {% if answer.user == user %}
+                                                                <div class="answer-actions d-inline-flex">
+                                                                    <a data-toggle="modal" type="button" class="answer-edit h5 px-2 text-tcf-blue" data-target="#edit-answer-modal{{answer.id}}" id="edit-answer-button{{answer_id}}">
+                                                                        <i class="fas fa-pencil-alt"></i>
+                                                                    </a>
+                                                                    <a class="answer-delete h5 pl-2 text-danger" type="button"
+                                                                            data-toggle="modal" data-target="#deleteAnswerModal{{answer.id}}">
+                                                                    <i class="fa fa-trash-o"></i>
+                                                                    </a>
+                                                                    {% include "qa/delete_answer_confirm_modal.html" with answer_id=answer.id %}
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="answer-content">
-                                                    <p>{{ answer.text }}</p>
-                                                </div>
-                                                <div class="d-flex answer-footer justify-content-between">
-                                                    <div
-                                                        class="vote-container col-sm-4 d-flex align-items-end text-center text-muted flex-wrap">
-                                                        <span id="answer-vote-count" hidden>{{ answer.sum_a_votes }}</span>
-                                                        <div class="mr-3 mr-sm-4">
-                                                            <a id="upvoteA{{answer.id}}" href="#loginModal"
-                                                                data-toggle="modal"
-                                                                class="upvoteAnswer {% if answer.user_a_vote == 1 %}active{% endif %}">
-                                                                <i class="fa fa-thumbs-up"></i>
-                                                            </a>
-                                                            <span class="upvoteCount">{{ answer.count_votes.upvotes }}</span>
-                                                        </div>
-                                                        <div class="mr-3 mr-sm-4">
-                                                            <a id="downvoteA{{answer.id}}" href="#loginModal"
-                                                                data-toggle="modal"
-                                                                class="downvoteAnswer {% if answer.user_a_vote == -1 %}active{% endif %}">
-                                                                <i class="fa fa-thumbs-down"></i>
-                                                            </a>
-                                                            <span class="downvoteCount">{{ answer.count_votes.downvotes }}</span>
-                                                        </div>
-                                                    </div>
-                                                    {% if answer.user == user %}
-                                                        <div class="answer-actions d-inline-flex">
-                                                            <a data-toggle="modal" type="button" class="answer-edit h5 px-2 text-tcf-blue" data-target="#edit-answer-modal{{answer.id}}" id="edit-answer-button{{answer_id}}">
-                                                                <i class="fas fa-pencil-alt"></i>
-                                                            </a>
-                                                            <a class="answer-delete h5 pl-2 text-danger" type="button"
-                                                                    data-toggle="modal" data-target="#deleteAnswerModal{{answer.id}}">
-                                                            <i class="fa fa-trash-o"></i>
-                                                            </a>
-                                                            {% include "qa/delete_answer_confirm_modal.html" with answer_id=answer.id %}
-                                                        </div>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal fade" id="edit-answer-modal{{answer.id}}" tabindex="-1" role="dialog"
-                                            aria-labelledby="edit-answer-label" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">Edit an Answer</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="col mb-3">
-                                                            <form method="POST" action="{% url 'edit_answer' answer_id=answer.id%}" id="answerForm{{answer.id}}">
-                                                                {% csrf_token %}
-                                                                <fieldset>
-                                                                    <textarea class="form-control mb-3" name="text" value="" rows="3"
-                                                                        placeholder="(Enter your answer here!)" minlength="5" maxlength="5000"
-                                                                        required>{{ answer.text }}</textarea>
-                                                                </fieldset>
-                                                                <input type="hidden" name="question" value="{{question.id}}">
-                                                                <div class="row justify-content-center">
-                                                                    <div class="row form-group col-sm-8 justify-content-center">
-                                                                        <label for="semester" class="required-field">Semester you took this class</label>
-                                                                        <select type="text" class="form-control semester-dropdown" required id="semester{{answer.id}}-{{answer.semester.id}}" name="semester">
-                                                                            <option value="{{ form.instance.semester.id }}" selected>{{ form.instance.semester }}</option>
-                                                                        </select>
-                                                                    </div>
+                                                <div class="modal fade" id="edit-answer-modal{{answer.id}}" tabindex="-1" role="dialog"
+                                                    aria-labelledby="edit-answer-label" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Edit an Answer</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="col mb-3">
+                                                                    <form method="POST" action="{% url 'edit_answer' answer_id=answer.id%}" id="answerForm{{answer.id}}">
+                                                                        {% csrf_token %}
+                                                                        <fieldset>
+                                                                            <textarea class="form-control mb-3" name="text" value="" rows="3"
+                                                                                placeholder="(Enter your answer here!)" minlength="5" maxlength="5000"
+                                                                                required>{{ answer.text }}</textarea>
+                                                                        </fieldset>
+                                                                        <input type="hidden" name="question" value="{{question.id}}">
+                                                                        <div class="row justify-content-center">
+                                                                            <div class="row form-group col-sm-8 justify-content-center">
+                                                                                <label for="semester" class="required-field">Semester you took this class</label>
+                                                                                <select type="text" class="form-control semester-dropdown" required id="semester{{answer.id}}-{{answer.semester.id}}" name="semester">
+                                                                                    <option value="{{ form.instance.semester.id }}" selected>{{ form.instance.semester }}</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row justify-content-center">
+                                                                            <input type="submit" value="Edit Answer" id="submitBtn{{answer.id}}"
+                                                                                class="btn bg-tcf-orange text-white mb-3">
+                                                                            <i class="" aria-hidden="true"></i>
+                                                                            </input>
+                                                                        </div>
+                                                                    </form>
                                                                 </div>
                                                                 <div class="row justify-content-center">
-                                                                    <input type="submit" value="Edit Answer" id="submitBtn{{answer.id}}"
-                                                                        class="btn bg-tcf-orange text-white mb-3">
-                                                                    <i class="" aria-hidden="true"></i>
-                                                                    </input>
+                                                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                                                                 </div>
-                                                            </form>
-                                                        </div>
-                                                        <div class="row justify-content-center">
-                                                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% endfor %}
+                                                </div>
+                                                <div class="collapse" id="answerCollapse{{question.id}}"></div>
+                                                {% if answer_list|length > 1 %}
+                                                <hr>
+                                                <div class="d-flex justify-content-center collapse-answer-button" id="collapse-answer-button{{question.id}}" value="show" type="button" data-toggle="collapse" data-target="#answerCollapse{{question.id}}" aria-expanded="false" aria-controls="answerCollapse{{question.id}}">
+                                                    <i class="fa fa-chevron-down fa-lg text-center text-muted" id="collapse-answer-chevron{{question.id}}"></i>
+                                                </div>
+                                                {% endif %}
+                                                {% endif %}
+                                                {% endfor %}
                                             </div>
                                         </div>
-                                        {% endfor %}
-                                        </div>
-                                        <div class="collapse" id="answerCollapse{{question.id}}"></div>
-                                        {% if answer_list|length > 1 %}
-                                        <hr>
-                                        <div class="d-flex justify-content-center collapse-answer-button" id="collapse-answer-button{{question.id}}" value="show" type="button" data-toggle="collapse" data-target="#answerCollapse{{question.id}}" aria-expanded="false" aria-controls="answerCollapse{{question.id}}">
-                                            <i class="fa fa-chevron-down fa-lg text-center text-muted" id="collapse-answer-chevron{{question.id}}"></i>
-                                        </div>
-                                        {% endif %}
-                                        {% endif %}
-                                        {% endfor %}
                                     </div>
+                                    
                                 </div>
                                 <div class="d-flex justify-content-end">
                                     <a href="#loginModal" data-toggle="modal" data-id="{{ question.id }}"
