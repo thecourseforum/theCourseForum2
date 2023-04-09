@@ -59,13 +59,13 @@ class SectionAdmin(admin.ModelAdmin):
 
 
 class CourseGradeAdmin(admin.ModelAdmin):
-    ordering = ['subdepartment', 'number', 'title']
-    search_fields = ['subdepartment', 'number']
+    ordering = ['course__subdepartment', 'course__number', 'course__title']
+    search_fields = ['course__subdepartment', 'course__number']
 
 
 class CourseInstructorGradeAdmin(admin.ModelAdmin):
-    ordering = ['last_name', 'first_name']
-    search_fields = ['first_name', 'last_name']
+    ordering = ['instructor__last_name', 'instructor__first_name']
+    search_fields = ['instructor__first_name', 'instructor__last_name']
 
 
 admin.site.register(Section, SectionAdmin)
