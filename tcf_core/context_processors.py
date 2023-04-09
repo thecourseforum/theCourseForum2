@@ -34,10 +34,14 @@ def history_cookies(request):
 
     previous_paths_titles = [title[:80] + '...' for title in previous_paths_titles]
 
+    previous_paths_and_titles = None
+    if len(previous_paths) > 0 and len(previous_paths_titles) > 0:
+        previous_paths_and_titles = zip(previous_paths, previous_paths_titles)
+
     return {
         'previous_paths': previous_paths,
         'count': count,
         'previous_path_titles': previous_paths_titles,
-        'previous_paths_and_titles': zip(previous_paths, previous_paths_titles)
+        'previous_paths_and_titles': previous_paths_and_titles
     }
 

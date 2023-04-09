@@ -85,6 +85,12 @@ def course_view_legacy(request, course_id):
 
 def course_view(request, mnemonic, course_number):
     """A new Course view that allows you to input mnemonic and number instead."""
+
+    # Clears previously saved course information
+    request.session['course_code'] = None
+    request.session['course_title'] = None
+    request.session['instructor_fullname'] = None
+
     # Redirect if the mnemonic is not all uppercase
     if mnemonic != mnemonic.upper():
         return redirect('course',
@@ -151,6 +157,8 @@ def course_view(request, mnemonic, course_number):
         (course.code, None, True),
     ]
 
+    # Saves information of course to session for recently viewed modal
+    print(course)
     request.session['course_code'] = course.code()
     request.session['course_title'] = course.title
     request.session['instructor_fullname'] = None
