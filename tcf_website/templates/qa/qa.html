@@ -267,58 +267,27 @@
                                                 {% endfor %}
                                                 </div>
                                                 <div class="collapse" id="answerCollapse{{question.id}}"></div>
-                                                <!-- {% if answer_list|length > 1 %} -->
                                                 <hr>
-                                                <!-- <div class="d-flex justify-content-center collapse-answer-button" id="collapse-answer-button{{question.id}}" value="show" type="button" data-toggle="collapse" data-target="#answerCollapse{{question.id}}" aria-expanded="false" aria-controls="answerCollapse{{question.id}}">
-                                                    <button class="btn bg-tcf-orange text-white" id="collapse-answer-chevron{{question.id}}">View more answers here</button>
-                                                </div> -->
-                                                <!-- <div class="d-flex justify-content-center collapse-answer-button" id="collapse-answer-button{{question.id}}" value="show" type="button" data-toggle="collapse" data-target="#answerCollapse{{question.id}}" aria-expanded="false" aria-controls="answerCollapse{{question.id}}">
-                                                    <i class="fa fa-chevron-down fa-lg text-center text-muted collapse-answer-chevron" id="collapse-answer-chevron{{question.id}}"></i>
-                                                </div> -->
-                                                <!-- {% endif %} -->
-
                                                 <div class="row d-flex justify-content-between">
-                                                    
-                                                    <!-- <div class="d-flex justify-content-between"> -->
-                                                        {% if answer_list|length > 1 %}
-                                                        <div class="d-flex collapse-answer-button" id="collapse-answer-button{{question.id}}" value="show" type="button" data-toggle="collapse" data-target="#answerCollapse{{question.id}}" aria-expanded="false" aria-controls="answerCollapse{{question.id}}">
-                                                            <button class="btn text-tcf-orange hover-tcf-orange mt-3 collapse-answer-chevron" id="collapse-answer-chevron{{question.id}}" style="border-color: var(--accent-color)">View more answers here</button>
-                                                        </div>
-                                                        <!-- <div class="d-flex justify-content-center collapse-answer-button" id="collapse-answer-button{{question.id}}" value="show" type="button" data-toggle="collapse" data-target="#answerCollapse{{question.id}}" aria-expanded="false" aria-controls="answerCollapse{{question.id}}">
-                                                            <i class="fa fa-chevron-down fa-lg text-center text-muted collapse-answer-chevron" id="collapse-answer-chevron{{question.id}}"></i>
-                                                        </div> -->
-                                                        {% else %}
-                                                        <div></div>
-                                                        {% endif %}
-                                                        <a href="#loginModal" data-toggle="modal" data-id="{{ question.id }}"
-                                                            class="btn bg-tcf-orange text-white justify-content-end mt-3 answerQuestionBtn"
-                                                            id="answerQuestionBtn">
-                                                            Answer this Question!
-                                                        </a>
-                                                    <!-- </div> -->
+                                                    {% if answer_list|length > 1 %}
+                                                    <div class="d-flex collapse-answer-button" id="collapse-answer-button{{question.id}}" value="show" type="button" data-toggle="collapse" data-target="#answerCollapse{{question.id}}" aria-expanded="false" aria-controls="answerCollapse{{question.id}}">
+                                                        <button class="btn text-tcf-orange hover-tcf-orange mt-3 collapse-answer-chevron" id="collapse-answer-chevron{{question.id}}" style="border-color: var(--accent-color)">View more answers here</button>
+                                                    </div>
+                                                    {% else %}
+                                                    <div></div>
+                                                    {% endif %}
+                                                    <a href="#loginModal" data-toggle="modal" data-id="{{ question.id }}"
+                                                        class="btn bg-tcf-orange text-white justify-content-end mt-3 answerQuestionBtn"
+                                                        id="answerQuestionBtn">
+                                                        Answer this Question!
+                                                    </a>
                                                 </div>
-
                                                 {% endif %}
                                                 {% endfor %}
                                             </div>
                                         </div>
                                     </div>
-                                    
                                 </div>
-                                <!-- <div class="row">
-                                    {% if answer_list|length > 1 %}
-                                    <div class="d-flex justify-content-start collapse-answer-button" id="collapse-answer-button{{question.id}}" value="show" type="button" data-toggle="collapse" data-target="#answerCollapse{{question.id}}" aria-expanded="false" aria-controls="answerCollapse{{question.id}}">
-                                        <button class="btn bg-tcf-orange text-white justify-content-start" id="collapse-answer-chevron{{question.id}}">View more answers here</button>
-                                    </div>
-                                    {% endif %}
-                                    <div class="d-flex justify-content-end">
-                                        <a href="#loginModal" data-toggle="modal" data-id="{{ question.id }}"
-                                            class="btn bg-tcf-orange text-white justify-content-end mt-3 answerQuestionBtn"
-                                            id="answerQuestionBtn">
-                                            Answer this Question!
-                                        </a>
-                                    </div>
-                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -341,26 +310,11 @@
     </div>
     <div class="d-flex justify-content-center">
         {% if questions|length > 3 %}
-        <!-- <div class="d-flex justify-content-center col-6" id="collapse-qa-button" value="show" type="button" data-toggle="collapse" data-target="#questionCollapse" aria-expanded="false" aria-controls="questionCollapse">
-                
-                <button class="btn text-tcf-orange hover-tcf-orange bg-white col-12" id="collapse-chevron" style="border-color: var(--accent-color)">
-                    <i class="fa fa-chevron-down fa-lg text-center text-tcf-orange"></i>
-                </button>
-        </div> -->
-
-        <!-- <div class="d-flex justify-content-center col-6" id="collapse-qa-button" value="show" type="button" data-toggle="collapse" data-target="#questionCollapse" aria-expanded="false" aria-controls="questionCollapse"> -->
-                
             <button class="btn text-tcf-orange hover-tcf-orange bg-white col-6" id="collapse-qa-button" value="show" type="button" data-toggle="collapse" data-target="#questionCollapse" aria-expanded="false" aria-controls="questionCollapse" style="border-color: var(--accent-color)">
                 <i class="fa fa-chevron-down fa-lg text-center text-tcf-orange" id="collapse-chevron"></i>
             </button>
-        <!-- </div> -->
         {% endif %}
     </div>
-    
-    <!--button class="btn btn-primary" id="collapse-qa-button" value="show" type="button" data-toggle="collapse" data-target="#questionCollapse" aria-expanded="false" aria-controls="questionCollapse">
-        Show All Questions
-    </button-->
-
     <div class="modal fade" id="answer-question-modal" tabindex="-1" role="dialog"
         aria-labelledby="answer-question-label" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -440,10 +394,5 @@
         });
         $(this).removeAttr('href');
     });
-    // $('.collapse-answer-button').each(function () {
-    //     $(this).click(() => {
-    //         $("i", this).toggleClass("fa-chevron-down fa-chevron-up");
-    //     });
-    // });
     {% endif %}
 </script>

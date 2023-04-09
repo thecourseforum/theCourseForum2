@@ -879,7 +879,7 @@ class Answer(models.Model):
         return f"Answer for {self.question}"
 
     def count_votes(self):
-        """Sum votes for review."""
+        """Sum votes for answers."""
         return self.voteanswer_set.aggregate(
             upvotes=Coalesce(models.Sum('value', filter=models.Q(value=1)), 0),
             downvotes=Coalesce(Abs(models.Sum('value', filter=models.Q(value=-1))), 0),
@@ -978,7 +978,7 @@ class VoteQuestion(models.Model):
         validators=[MinValueValidator(-1), MaxValueValidator(1)])
     # Vote user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # Vote review foreign key. Required.
+    # Vote question foreign key. Required.
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -1008,7 +1008,7 @@ class VoteAnswer(models.Model):
         validators=[MinValueValidator(-1), MaxValueValidator(1)])
     # Vote user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # Vote review foreign key. Required.
+    # Vote answer foreign key. Required.
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
 
     def __str__(self):
