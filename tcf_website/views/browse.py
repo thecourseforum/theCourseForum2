@@ -158,10 +158,10 @@ def course_view(request, mnemonic, course_number):
     ]
 
     # Saves information of course to session for recently viewed modal
-    print(course)
     request.session['course_code'] = course.code()
     request.session['course_title'] = course.title
     request.session['instructor_fullname'] = None
+
 
     return render(request, 'course/course.html',
                   {
