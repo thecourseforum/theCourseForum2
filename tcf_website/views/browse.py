@@ -95,7 +95,7 @@ def course_view(request, mnemonic, course_number):
         Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number)
     latest_semester = Semester.latest()
     instructors = Instructor.objects\
-        .filter(section__course=course).distinct()\
+        .filter(section__course=course, hidden=False).distinct()\
         .annotate(
             gpa=Avg('courseinstructorgrade__average',
                     filter=Q(courseinstructorgrade__course=course)),
@@ -221,20 +221,15 @@ def course_instructor(request, course_id, instructor_id):
     # NOTE: Don't catch MultipleObjectsReturned because we want to be notified
     else:  # Fill in the data found
         # grades stats
-        data['average_gpa'] = round(grades_data.average, 2)
+        data['average_gpa'] = round(grades_data.average, 2) if grades_data.average else None
         fields = [
             'a_plus', 'a', 'a_minus',
             'b_plus', 'b', 'b_minus',
             'c_plus', 'c', 'c_minus',
-            'd_plus', 'd', 'd_minus',
-            'f',
-            'ot', 'drop', 'withdraw',
+            'dfw', 'total_enrolled'
         ]
-        total = 0
         for field in fields:
             data[field] = getattr(grades_data, field)
-            total += data[field]
-        data['total_enrolled'] = total
 
     sections_taught = Section.objects.filter(
         course=course_id, instructors__in=Instructor.objects.filter(

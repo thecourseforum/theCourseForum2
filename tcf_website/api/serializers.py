@@ -85,13 +85,7 @@ class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
     c_plus = serializers.IntegerField(allow_null=True)
     c = serializers.IntegerField(allow_null=True)
     c_minus = serializers.IntegerField(allow_null=True)
-    d_plus = serializers.IntegerField(allow_null=True)
-    d = serializers.IntegerField(allow_null=True)
-    d_minus = serializers.IntegerField(allow_null=True)
-    f = serializers.IntegerField(allow_null=True)
-    ot = serializers.IntegerField(allow_null=True)
-    drop = serializers.IntegerField(allow_null=True)
-    withdraw = serializers.IntegerField(allow_null=True)
+    dfw = serializers.IntegerField(allow_null=True)
     total_enrolled = serializers.IntegerField(allow_null=True)
 
     class Meta:
@@ -107,9 +101,8 @@ class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
                   'average_amount_homework',
                   # grades
                   'a_plus', 'a', 'a_minus', 'b_plus', 'b', 'b_minus',
-                  'c_plus', 'c', 'c_minus', 'd_plus', 'd', 'd_minus',
-                  'f', 'ot', 'drop', 'withdraw', 'total_enrolled',
-                  'average_gpa']
+                  'c_plus', 'c', 'c_minus',
+                  'dfw', 'total_enrolled', 'average_gpa']
 
 
 class InstructorSerializer(serializers.ModelSerializer):

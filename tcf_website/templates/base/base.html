@@ -56,6 +56,19 @@
     $("#wrapper").toggleClass("toggled");
   });
 
+  /*
+    Toggle sidebar on tap with mobile devices
+  */
+  if ($(window).width() <= 576) {
+    $(document).on("click", function(e) {
+      if (e.target.id !== "sidebar-wrapper"
+          && !$(e.target).hasClass("navbar-toggler-icon")
+          && $("#wrapper").hasClass("toggled")) {
+        $("#wrapper").toggleClass("toggled");
+      }
+    });
+  }
+
   function getCookie(c_name) {
     if (document.cookie.length > 0) {
       c_start = document.cookie.indexOf(c_name + "=");
