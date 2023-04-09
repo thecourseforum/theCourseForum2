@@ -100,14 +100,15 @@ function clickCollapseAnswer(collapseID) {
     const collapseButton = "#collapse-answer-button" + questionID;
     const collapseChevron = "#collapse-answer-chevron" + questionID;
 
+    console.log("in clickCollapseAnswer()");
     if ($(collapseButton).val() === "hide") {
         $(collapseButton).val("show");
-        $(collapseChevron).removeClass("fa-chevron-up");
-        $(collapseChevron).addClass("fa-chevron-down");
+        // $(collapseChevron).removeClass("fa-chevron-up");
+        // $(collapseChevron).addClass("fa-chevron-down");
     } else {
         $(collapseButton).val("hide");
-        $(collapseChevron).removeClass("fa-chevron-down");
-        $(collapseChevron).addClass("fa-chevron-up");
+        // $(collapseChevron).removeClass("fa-chevron-down");
+        // $(collapseChevron).addClass("fa-chevron-up");
     }
 }
 
