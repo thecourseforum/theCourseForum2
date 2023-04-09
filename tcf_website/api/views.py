@@ -136,4 +136,3 @@ class QuestionViewSet(viewsets.ModelViewSet):
     """API endpoint that allows questions to be viewed or edited."""
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
-    # permission_classes = (IsAuthenticated,)
