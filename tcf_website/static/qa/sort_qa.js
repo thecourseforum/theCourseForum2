@@ -98,7 +98,7 @@ document.getElementById("collapse-qa-button").addEventListener("click", function
 function clickCollapseAnswer(collapseID) {
     const questionID = parseInt(collapseID.substring(22));
     const collapseButton = "#collapse-answer-button" + questionID;
-    const collapseChevron = "#collapse-answer-chevron" + questionID;
+    // const collapseChevron = "#collapse-answer-chevron" + questionID;
 
     console.log("in clickCollapseAnswer()");
     if ($(collapseButton).val() === "hide") {
