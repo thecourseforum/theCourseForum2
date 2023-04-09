@@ -12,6 +12,9 @@
             </div>
             <div class="modal-body">
                 <div class="text-center">
+                    {% if previous_paths_and_titles is None %}
+                        <p>No course sections viewed yet.</p>
+                    {% endif %}
                     {% for path, title in previous_paths_and_titles %}
                         <a class="card-text mb-3" href={{path}}>{{title}}</a>
                         <br>
