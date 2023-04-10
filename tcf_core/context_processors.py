@@ -15,7 +15,7 @@ def base(request):
 
 
 def history_cookies(request):
-    """Saves course section info loaded from cookies into the recently viewed modal context variables."""
+    """Puts history from cookies into context variables."""
     if 'previous_paths' in request.COOKIES:
         previous_paths = request.COOKIES['previous_paths']
         previous_paths = ast.literal_eval(previous_paths)
