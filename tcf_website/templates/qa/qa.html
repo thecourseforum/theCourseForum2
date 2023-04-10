@@ -369,7 +369,9 @@
     import { handleQuestionVote, handleAnswerVote } from "{% static 'qa/qa.js' %}";
     {% if user.is_authenticated %}
     $('#ask-question-button').attr("data-target", "#ask-question-modal");
-    $('#answerQuestionBtn').attr("data-target", "#answer-question-modal");
+    $('.answerQuestionBtn').each(function (i, obj) {
+        $(this).attr("data-target", "#answer-question-modal");
+    });
     $('.upvoteQuestion').each(function (i, obj) {
         $(this).click(() => {
             handleQuestionVote(obj.id.substring(7), true);
