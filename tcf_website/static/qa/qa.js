@@ -1,5 +1,4 @@
-function handleQAVote(elementID, isQuestion, isUpvote){
-
+function handleQAVote(elementID, isQuestion, isUpvote) {
     let elem;
     let otherElem;
     let endpoint;
@@ -10,33 +9,30 @@ function handleQAVote(elementID, isQuestion, isUpvote){
     let downvoteCountElem;
     let totalCountElem;
 
-    if(isQuestion){
+    if (isQuestion) {
         upvoteCountElem = $(`#question${elementID} .upvoteCount`);
         downvoteCountElem = $(`#question${elementID} .downvoteCount`);
         totalCountElem = $(`#question${elementID} #question-vote-count`);
 
-        if (isUpvote){
+        if (isUpvote) {
             elem = $(`#question${elementID} .upvoteQuestion`);
             otherElem = $(`#question${elementID} .downvoteQuestion`);
             endpoint = `/questions/${elementID}/upvote/`;
-        }
-        else{
+        } else {
             elem = $(`#question${elementID} .downvoteQuestion`);
             otherElem = $(`#question${elementID} .upvoteQuestion`);
             endpoint = `/questions/${elementID}/downvote/`;
         }
-    }
-    else{
+    } else {
         upvoteCountElem = $(`#answer${elementID} .upvoteCount`);
         downvoteCountElem = $(`#answer${elementID} .downvoteCount`);
         totalCountElem = $(`#answer${elementID} #answer-vote-count`);
 
-        if (isUpvote){
+        if (isUpvote) {
             elem = $(`#answer${elementID} .upvoteAnswer`);
             otherElem = $(`#answer${elementID} .downvoteAnswer`);
             endpoint = `/answers/${elementID}/upvote/`;
-        }
-        else{
+        } else {
             elem = $(`#answer${elementID} .downvoteAnswer`);
             otherElem = $(`#answer${elementID} .upvoteAnswer`);
             endpoint = `/answers/${elementID}/downvote/`;
@@ -47,7 +43,6 @@ function handleQAVote(elementID, isQuestion, isUpvote){
     const downvoteCount = parseInt(downvoteCountElem.text());
 
     if (isUpvote) {
-
         // If already upvoted, subtract 1.
         if (elem.hasClass("active")) {
             newUpvoteCount = upvoteCount - 1;
