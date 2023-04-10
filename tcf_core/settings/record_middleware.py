@@ -1,6 +1,5 @@
-import ast
-
 """Middleware for recording cookie information."""
+import ast
 
 
 class RecordMiddleware:  # pylint: disable=too-few-public-methods
