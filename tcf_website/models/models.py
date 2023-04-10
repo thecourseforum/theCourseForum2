@@ -772,7 +772,7 @@ class Question(models.Model):
     Belongs to a User.
     Has a course and instructor.
     """
-    text = models.CharField(max_length=255)
+    text = models.TextField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, default=None)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
