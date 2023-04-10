@@ -1,13 +1,14 @@
 import ast
+"""Middleware for recording cookie information."""
 
 
-class RecordMiddleware(object):
-
+class RecordMiddleware():
+    """Records information about course section info into cookies."""
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        if 'previous_paths' and 'previous_paths_titles' in request.COOKIES:
+        if 'previous_paths_titles' in request.COOKIES:
             previous_paths = request.COOKIES['previous_paths']
             # Converts string representation of list into list object
             previous_paths = ast.literal_eval(previous_paths)
@@ -46,6 +47,7 @@ class RecordMiddleware(object):
 # returns false on api and browse paths
 # only returns true for paths that include "/course/" in some portion of it
 def check_path(request_path):
+    """Checks the first path ("/path/...") for invalid paths."""
     if "course" not in request_path:
         return False
     if len(request_path) <= 1:
