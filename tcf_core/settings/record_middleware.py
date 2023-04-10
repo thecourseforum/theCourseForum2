@@ -1,9 +1,11 @@
 import ast
+
 """Middleware for recording cookie information."""
 
 
-class RecordMiddleware():
+class RecordMiddleware:  # pylint: disable=too-few-public-methods
     """Records information about course section info into cookies."""
+
     def __init__(self, get_response):
         self.get_response = get_response
 
