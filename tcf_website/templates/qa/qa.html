@@ -366,7 +366,7 @@
 
 <!--upvote/downvote feature and login verification for questions-->
 <script type="module">
-    import { handleQuestionVote, handleAnswerVote } from "{% static 'qa/qa.js' %}";
+    import { handleQAVote } from "{% static 'qa/qa.js' %}";
     {% if user.is_authenticated %}
     $('#ask-question-button').attr("data-target", "#ask-question-modal");
     $('.answerQuestionBtn').each(function (i, obj) {
@@ -374,25 +374,25 @@
     });
     $('.upvoteQuestion').each(function (i, obj) {
         $(this).click(() => {
-            handleQuestionVote(obj.id.substring(7), true);
+            handleQAVote(obj.id.substring(7), true, true);
         });
         $(this).removeAttr('href');
     });
     $('.downvoteQuestion').each(function (i, obj) {
         $(this).click(() => {
-            handleQuestionVote(obj.id.substring(9), false);
+            handleQAVote(obj.id.substring(9), true, false);
         });
         $(this).removeAttr('href');
     });
     $('.upvoteAnswer').each(function (i, obj) {
         $(this).click(() => {
-            handleAnswerVote(obj.id.substring(7), true);
+            handleQAVote(obj.id.substring(7), false, true);
         });
         $(this).removeAttr('href');
     });
     $('.downvoteAnswer').each(function (i, obj) {
         $(this).click(() => {
-            handleAnswerVote(obj.id.substring(9), false);
+            handleQAVote(obj.id.substring(9), false, false);
         });
         $(this).removeAttr('href');
     });

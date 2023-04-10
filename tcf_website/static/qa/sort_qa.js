@@ -86,29 +86,21 @@ document.getElementById("collapse-qa-button").addEventListener("click", function
         $("#collapse-qa-button").val("show");
         $("#collapse-chevron").removeClass("fa-chevron-up");
         $("#collapse-chevron").addClass("fa-chevron-down");
-        // $("#collapse-qa-button p").html("Show All Questions");
     } else {
         $("#collapse-qa-button").val("hide");
         $("#collapse-chevron").removeClass("fa-chevron-down");
         $("#collapse-chevron").addClass("fa-chevron-up");
-        // $("#collapse-qa-button p").html("Hide Questions");
     }
 });
 
 function clickCollapseAnswer(collapseID) {
     const questionID = parseInt(collapseID.substring(22));
     const collapseButton = "#collapse-answer-button" + questionID;
-    // const collapseChevron = "#collapse-answer-chevron" + questionID;
 
-    console.log("in clickCollapseAnswer()");
     if ($(collapseButton).val() === "hide") {
         $(collapseButton).val("show");
-        // $(collapseChevron).removeClass("fa-chevron-up");
-        // $(collapseChevron).addClass("fa-chevron-down");
     } else {
         $(collapseButton).val("hide");
-        // $(collapseChevron).removeClass("fa-chevron-down");
-        // $(collapseChevron).addClass("fa-chevron-up");
     }
 }
 
