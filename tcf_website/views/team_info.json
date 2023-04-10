@@ -176,6 +176,24 @@
       "role": "VP | Marketing & Design",
       "class": "2025",
       "img_filename": "MAD_Rachita_Pathipati.webp"
+    },
+    {
+      "name": "Jasmine Senesombath",
+      "role": "Designer",
+      "class": "2024",
+      "img_filename": "DM_Jasmine_Senesombath.jpg"
+    },
+    {
+      "name": "Ananya Raam",
+      "role": "Designer",
+      "class": "2025",
+      "img_filename": "DM_Ananya_Raam.jpeg"
+    },
+    {
+      "name": "Chai Zhang",
+      "role": "Designer",
+      "class": "2025",
+      "img_filename": "DM_Chai_Zhang.JPG"
     }
   ]
 }
