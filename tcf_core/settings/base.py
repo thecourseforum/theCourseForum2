@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'tcf_core.settings.record_middleware.RecordMiddleware'
 ]
 
 ROOT_URLCONF = 'tcf_core.urls'
@@ -70,6 +71,7 @@ TEMPLATES = [
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
                 'tcf_core.context_processors.base',
+                'tcf_core.context_processors.history_cookies',
             ],
         },
     },
