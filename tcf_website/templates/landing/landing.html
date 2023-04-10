@@ -26,6 +26,10 @@
         <img class="logo" src="{% static 'base/img/new_logo.png' %}" alt="theCourseForum logo">
         <h4 class="text-tcf-indigo ml-2">theCourseForum</h4>
       </a>
+
+        <!-- tCF History Popup -->
+        <a class="ml-auto nav-link fa fa-clock-o" href="#historyPage" data-toggle="modal"></a>
+
       <!-- tCF profile dropdown -->
       <div class="account-settings">
         {% if user.is_authenticated %}
