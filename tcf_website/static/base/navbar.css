@@ -59,6 +59,12 @@
     }
 }
 
+.badge-history-page {
+    position: relative;
+    top: -22px;
+    left: 44px;
+}
+
 .navbar-toggler.menu {
     margin-left: 16px;
     margin-right: 8px;

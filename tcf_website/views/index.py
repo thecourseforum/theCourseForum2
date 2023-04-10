@@ -23,7 +23,6 @@ def index(request):
                        'FAQs': faqs,
                        'visited': request.session.get('visited', False)})
     request.session['visited'] = True
-
     return response
 
 
