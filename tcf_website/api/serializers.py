@@ -1,7 +1,7 @@
 """DRF Serializers"""
 from rest_framework import serializers
 from ..models import (Course, Department, School, Instructor, Semester,
-                      Subdepartment, Question)
+                      Subdepartment)
 
 
 class SemesterSerializer(serializers.ModelSerializer):
@@ -110,10 +110,3 @@ class InstructorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instructor
         fields = '__all__'
-
-
-class QuestionSerializer(serializers.ModelSerializer):
-    """DRF Serializer for Question"""
-    class Meta:
-        model = Question
-        fields = ['text', 'course', 'user', 'created', 'placeholder']
