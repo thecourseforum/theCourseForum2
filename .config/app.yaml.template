@@ -41,3 +41,6 @@ env_variables:
     # discord
     DISCORD_URL_BUG: "${DISCORD_URL_BUG}"
     DISCORD_URL_FEEDBACK: "${DISCORD_URL_FEEDBACK}"
+    # email for account verification
+    EMAIL_HOST_USER: "${EMAIL_HOST_USER}"
+    EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"
