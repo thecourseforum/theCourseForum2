@@ -10,7 +10,6 @@ router.register(r'subdepartments', views.SubdepartmentViewSet)
 router.register(r'courses', views.CourseViewSet)
 router.register(r'instructors', views.InstructorViewSet)
 router.register(r'semesters', views.SemesterViewSet)
-router.register(r'questions', views.QuestionViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
