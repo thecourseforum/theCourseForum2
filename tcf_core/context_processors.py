@@ -28,11 +28,6 @@ def history_cookies(request):
     else:
         previous_paths_titles = ''
 
-    if 'count' in request.COOKIES:
-        count = request.COOKIES['count']
-    else:
-        count = 0
-
     previous_paths_titles = [title[:80] + '...' for title in previous_paths_titles]
 
     previous_paths_and_titles = None
@@ -41,7 +36,6 @@ def history_cookies(request):
 
     return {
         'previous_paths': previous_paths,
-        'count': count,
         'previous_path_titles': previous_paths_titles,
         'previous_paths_and_titles': previous_paths_and_titles
     }
