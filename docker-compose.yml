@@ -25,7 +25,7 @@ services:
       - ./db:/app
     image: postgres:12.2
     restart: always
-    container_name: ${DB_HOST}
+    container_name: tcf_db
     env_file:
       - ./.env
     command: -p ${DB_PORT}
