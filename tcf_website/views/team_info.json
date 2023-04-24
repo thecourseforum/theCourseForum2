@@ -1,83 +1,66 @@
 {
   "executive_team": [
     {
-      "name": "Jack Liu",
+      "name": "AJ Nye",
       "role": "President | Product Lead",
-      "class": "2023",
-      "img_filename": "ENG_Jack_Liu.webp"
-    },
-    {
-      "name": "Jules Le Menestrel",
-      "role": "VP | Product Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Jules_LeMenestrel.webp"
-    },
-    {
-      "name": "Khushi Chawla",
-      "role": "VP | Product Engineering",
-      "class": "2024",
-      "img_filename": "ENG_Khushi_Chawla.webp"
-    },
-    {
-      "name": "Alex Shen",
-      "role": "VP | Infrastructure Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Alex_Shen.webp"
+      "class": "2025",
+      "img_filename": "ENG_AJ_Nye.jpg",
+      "github": "ajnye9"
     },
     {
       "name": "Ann Li",
       "role": "VP | Infrastructure Engineering",
       "class": "2024",
-      "img_filename": "ENG_Ann_Li.jpg"
+      "img_filename": "ENG_Ann_Li.jpg",
+      "github": "Ann924"
+    },
+    {
+      "name": "Barrett Ruth",
+      "role": "VP | Infrastructure Engineering",
+      "class": "2026",
+      "img_filename": "ENG_Barrett_Ruth.jpg",
+      "github": "barrett-ruth"
+    },
+    {
+      "name": "Oliver Song",
+      "role": "VP | Product Engineering",
+      "class": "2024",
+      "img_filename": "ENG_Oliver_Song.jpg"
     },
     {
       "name": "Rachita Pathipati",
-      "role": "VP | Marketing & Design",
+      "role": "VP | Product Engineering",
       "class": "2025",
       "img_filename": "MAD_Rachita_Pathipati.webp"
     },
     {
-      "name": "AJ Nye",
-      "role": "Secretary | Operations Lead",
+      "name": "Ananya Raam",
+      "role": "VP | Design",
       "class": "2025",
-      "img_filename": "ENG_AJ_Nye.jpg"
+      "img_filename": "DM_Ananya_Raam.jpeg"
     },
     {
-      "name": "Oliver Song",
-      "role": "Treasurer | Business Lead",
+      "name": "Chai Zhang",
+      "role": "VP | Marketing",
+      "class": "2025",
+      "img_filename": "DM_Chai_Zhang.JPG"
+    },
+    {
+      "name": "Caesar Ning",
+      "role": "Treasurer",
       "class": "2024",
-      "img_filename": "ENG_Oliver_Song.jpg"
+      "img_filename": "ENG_Caesar_Ning.jpg",
+      "github": "Caesarsyning"
+    },
+    {
+      "name": "Hari Gajjala",
+      "role": "Data Manager",
+      "class": "2026",
+      "img_filename": "ENG_Hari_Gajjala.JPG",
+      "github": "hari-gajjala"
     }
   ],
   "engineering_team": [
-    {
-      "name": "Jack Liu",
-      "role": "President",
-      "class": "2023",
-      "img_filename": "ENG_Jack_Liu.jpg",
-      "github": "jackliu612"
-    },
-    {
-      "name": "Jules Le Menestrel",
-      "role": "VP of Product Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Jules_LeMenestrel.jpg",
-      "github": "julesfll"
-    },
-    {
-      "name": "Alex Shen",
-      "role": "VP of Infrastructure Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Alex_Shen.jpg",
-      "github": "alex-shen1"
-    },
-    {
-      "name": "Khushi Chawla",
-      "role": "VP of Product Engineering",
-      "class": "2023",
-      "img_filename": "ENG_Khushi_Chawla.jpg",
-      "github": "khushic"
-    },
     {
       "name": "AJ Nye",
       "role": "Secretary",

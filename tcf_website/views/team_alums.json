@@ -70,6 +70,31 @@
       "group_name": "Class of 2023",
       "members": [
         {
+          "name": "Jack Liu",
+          "role": "President",
+          "class": "2023",
+          "img_filename": "ENG_Jack_Liu.webp"
+        },
+        {
+          "name": "Alex Shen",
+          "role": "President",
+          "class": "2023",
+          "img_filename": "ENG_Alex_Shen.webp"
+        },
+        {
+          "name": "Jules Le Menestrel",
+          "role": "President",
+          "class": "2023",
+          "img_filename": "ENG_Jules_LeMenestrel.webp"
+        },
+        {
+          "name": "Khushi Chawla",
+          "role": "VP of Product Engineering",
+          "class": "2023",
+          "img_filename": "ENG_Khushi_Chawla.jpg",
+          "github": "khushic"
+        },
+        {
           "name": "Arjun Kumar",
           "role": "Developer",
           "class": "2023",
