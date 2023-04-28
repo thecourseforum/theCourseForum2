@@ -20,6 +20,14 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
+    <!-- tCF History Popup -->
+    <div class="nav-item">
+      <span class="badge-history-page badge badge-pill badge-info ml-2">New</span>
+    </div>
+    <div class="nav-item">
+      <a class="nav-link fa fa-clock-o" href="#historyPage" data-toggle="modal"></a>
+    </div>
+
     <!-- tCF profile dropdown -->
     <div class="account-settings">
       {% if user.is_authenticated %}
@@ -42,3 +50,11 @@
     </div>
   </nav>
 </header>
+
+<script>
+// When the user clicks on <div>, open the popup
+function myFunction() {
+  var popup = document.getElementById("myPopup");
+  popup.classList.toggle("show");
+}
+</script>

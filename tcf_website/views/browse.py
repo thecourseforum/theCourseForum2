@@ -21,7 +21,9 @@ from ..models import (
     Semester,
     Instructor,
     Review,
-    CourseInstructorGrade)
+    CourseInstructorGrade,
+    Question,
+    Answer)
 
 
 def browse(request):
@@ -85,6 +87,12 @@ def course_view_legacy(request, course_id):
 
 def course_view(request, mnemonic, course_number):
     """A new Course view that allows you to input mnemonic and number instead."""
+
+    # Clears previously saved course information
+    request.session['course_code'] = None
+    request.session['course_title'] = None
+    request.session['instructor_fullname'] = None
+
     # Redirect if the mnemonic is not all uppercase
     if mnemonic != mnemonic.upper():
         return redirect('course',
@@ -93,7 +101,7 @@ def course_view(request, mnemonic, course_number):
         Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number)
     latest_semester = Semester.latest()
     instructors = Instructor.objects\
-        .filter(section__course=course).distinct()\
+        .filter(section__course=course, hidden=False).distinct()\
         .annotate(
             gpa=Avg('courseinstructorgrade__average',
                     filter=Q(courseinstructorgrade__course=course)),
@@ -112,14 +120,14 @@ def course_view(request, mnemonic, course_number):
                 Case(
                     When(
                         section__semester=latest_semester,
-                        then=('section__section_times')),
+                        then='section__section_times'),
                     output_field=CharField()),
                 distinct=True),
             section_nums=ArrayAgg(
                 Case(
                     When(
                         section__semester=latest_semester,
-                        then=('section__sis_section_number')),
+                        then='section__sis_section_number'),
                     output_field=CharField()),
                 distinct=True),
         )
@@ -151,6 +159,12 @@ def course_view(request, mnemonic, course_number):
         (course.code, None, True),
     ]
 
+    # Saves information of course to session for recently viewed modal
+    request.session['course_code'] = course.code()
+    request.session['course_title'] = course.title
+    request.session['instructor_fullname'] = None
+
+
     return render(request, 'course/course.html',
                   {
                       'course': course,
@@ -175,7 +189,7 @@ def course_instructor(request, course_id, instructor_id):
     # Find the total number of reviews (with or without text) for the given course
     num_reviews = Review.objects.filter(instructor=instructor_id, course=course_id).count()
 
-    # Filter out reviews with no text.
+    # Filter out reviews with no text and hidden field true.
     reviews = Review.display_reviews(course_id, instructor_id, request.user)
     dept = course.subdepartment.department
 
@@ -219,20 +233,15 @@ def course_instructor(request, course_id, instructor_id):
     # NOTE: Don't catch MultipleObjectsReturned because we want to be notified
     else:  # Fill in the data found
         # grades stats
-        data['average_gpa'] = round(grades_data.average, 2)
+        data['average_gpa'] = round(grades_data.average, 2) if grades_data.average else None
         fields = [
             'a_plus', 'a', 'a_minus',
             'b_plus', 'b', 'b_minus',
             'c_plus', 'c', 'c_minus',
-            'd_plus', 'd', 'd_minus',
-            'f',
-            'ot', 'drop', 'withdraw',
+            'dfw', 'total_enrolled'
         ]
-        total = 0
         for field in fields:
             data[field] = getattr(grades_data, field)
-            total += data[field]
-        data['total_enrolled'] = total
 
     sections_taught = Section.objects.filter(
         course=course_id, instructors__in=Instructor.objects.filter(
@@ -250,6 +259,17 @@ def course_instructor(request, course_id, instructor_id):
         section_info["sections"][section.sis_section_number] = {
             "type": section.section_type, "units": section.units, "times": times}
 
+    request.session['course_code'] = course.code()
+    request.session['course_title'] = course.title
+    request.session['instructor_fullname'] = instructor.full_name()
+
+    # QA Data
+    questions = Question.objects.filter(course=course_id, instructor=instructor_id)
+    answers = {}
+    for question in questions:
+        answers[question.id] = Answer.display_activity(question.id, request.user)
+    questions = Question.display_activity(course_id, instructor_id, request.user)
+
     return render(request, 'course/course_professor.html',
                   {
                       'course': course,
@@ -261,7 +281,9 @@ def course_instructor(request, course_id, instructor_id):
                       'breadcrumbs': breadcrumbs,
                       'data': json.dumps(data),
                       'section_info': section_info,
-                      'display_times': Semester.latest() == section_last_taught.semester
+                      'display_times': Semester.latest() == section_last_taught.semester,
+                      'questions': questions,
+                      'answers': answers
                   })
 
 

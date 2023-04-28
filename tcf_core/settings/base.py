@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'tcf_core.settings.record_middleware.RecordMiddleware'
 ]
 
 ROOT_URLCONF = 'tcf_core.urls'
@@ -70,6 +71,7 @@ TEMPLATES = [
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
                 'tcf_core.context_processors.base',
+                'tcf_core.context_processors.history_cookies',
             ],
         },
     },
@@ -141,6 +143,7 @@ DATABASES = {
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.email.EmailAuth',
     'django.contrib.auth.backends.ModelBackend',
 )
 # TODO: Look into options like SOCIAL_AUTH_LOGIN_ERROR_URL or LOGIN_ERROR_URL
@@ -148,18 +151,29 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['virginia.edu']
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy('browse')
-LOGIN_URL = reverse_lazy('social:begin', args=['google-oauth2'])
+
+SOCIAL_AUTH_EMAIL_FORM_URL = '/'
+EMAIL_VALIDATION_URL = 'email_verification'
+SOCIAL_AUTH_EMAIL_VALIDATION_FUNCTION = 'tcf_core.auth_pipeline.validate_email'
+SOCIAL_AUTH_EMAIL_AUTH_WHITELISTED_DOMAINS = ['virginia.edu']
+
+WHITELISTED_DOMAINS = ['virginia.edu']
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_LOGIN_URL = reverse_lazy('social:begin', args=['google-oauth2'])
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 SOCIAL_AUTH_PIPELINE = (
+    'tcf_core.auth_pipeline.password_validation',
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
     'tcf_core.auth_pipeline.auth_allowed',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
+    'social_core.pipeline.mail.mail_validation',
     'social_core.pipeline.social_auth.associate_by_email',
     'tcf_core.auth_pipeline.collect_extra_info',
     'tcf_core.auth_pipeline.create_user',
     'social_core.pipeline.social_auth.associate_user',
+    'tcf_core.auth_pipeline.check_user_password',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
@@ -208,6 +222,14 @@ REST_FRAMEWORK = {
 # Discord bot settings
 DISCORD_URL_BUG = env.str('DISCORD_URL_BUG')
 DISCORD_URL_FEEDBACK = env.str('DISCORD_URL_FEEDBACK')
+
+# Automated email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
 
 # Use Bootstrap class names for Django message tags
 MESSAGE_TAGS = {

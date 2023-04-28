@@ -43,7 +43,10 @@
   {% block body %}{% endblock %}
 
   <!-- Login modal -->
-  {% include "login/login_modal.html" %}
+  {% include "login/login_modal.html" with path_id="loginModal" path=request.get_full_path %}
+
+  <!-- History Page modal -->
+  {% include "common/history_page_modal.html" with path_id="historyPage" path=request.get_full_path %}
 
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54T5TXX"
