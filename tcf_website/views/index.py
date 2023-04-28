@@ -23,7 +23,6 @@ def index(request):
                        'FAQs': faqs,
                        'visited': request.session.get('visited', False)})
     request.session['visited'] = True
-
     return response
 
 
@@ -51,7 +50,6 @@ class AboutView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['executive_team'] = self.team_info['executive_team']
-        context['chairs'] = self.team_info['chairs']
         context['engineering_team'] = self.team_info['engineering_team']
         context['marketing_team'] = self.team_info['marketing_team']
         context['founders'] = self.alum_info['founders']
