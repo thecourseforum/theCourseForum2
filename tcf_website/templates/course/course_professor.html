@@ -32,19 +32,19 @@
                       <h4 class="m-0 text-tcf-indigo"
                           tabindex="0" data-toggle="tooltip" data-placement="bottom"
                           title="View instructor profile">
-                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <i class="mr-2 fa fa-user mt-3" aria-hidden="true"></i>
+                        <p class = "instructor-select p-1 btn-lg float-right">{{ instructor.last_name }}, {{ instructor.first_name }}</p>
                       </h4>
                     </a>
 
                     <!-- Instructor Dropdown -->
                     <div class="instructor dropdown">
-                      <a class="instructor-select btn btn-lg text-tcf-orange p-0 mt-1 dropdown-toggle" href="#"
+                      <a class="instructor-dropdown btn btn-sm btn-outline-primary text-tcf-orange mt-2" href="#"
                          role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                         aria-haspopup="true" aria-expanded="false">
-                         {{ instructor.last_name }}, {{ instructor.first_name }}
+                         aria-haspopup="true" aria-expanded="false">▼
                       </a>
 
-                      <div id="instructorMenu" class="instructor-menu dropdown-menu w-100" aria-labelledby="dropdownMenuLink" disabled>
+                      <div id="instructorMenu" class="instructor-menu dropdown-menu w-200" aria-labelledby="dropdownMenuLink" disabled>
                         <!-- To be populated by instr_data.js script -->
                       </div>
                     </div>
