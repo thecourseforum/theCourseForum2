@@ -26,4 +26,4 @@ dump="digitalocean_dump_$(date '+%m-%Y').sql"
 
 pg_dump "$conn" > "$dump"
 
-# gdrive upload --parent "$GDRIVE_FOLDER_ID" "$dump"
+gdrive upload --parent "$GDRIVE_FOLDER_ID" "$dump"
