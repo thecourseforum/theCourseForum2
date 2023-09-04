@@ -3,9 +3,13 @@ import os
 import json
 import statistics
 import requests
+from django.contrib.postgres.search import TrigramSimilarity, TrigramWordSimilarity
+from django.db.models import Q
+from django.db.models.functions import Greatest
+from django.forms import model_to_dict
 
 from django.shortcuts import render
-from ..models import Subdepartment
+from ..models import Subdepartment, Instructor
 
 
 def search(request):
@@ -17,6 +21,12 @@ def search(request):
     # Fetch Elasticsearch data
     courses = fetch_courses(query)
     instructors = fetch_instructors(query)
+
+    instructors_2 = fetch_trigram(query)
+
+    # print(json.dumps(courses))
+    print(json.dumps(instructors))
+    print("2", instructors_2)
 
     courses_first = decide_order(query, courses, instructors)
 
@@ -81,6 +91,19 @@ def fetch_instructors(query):
     response = fetch_elasticsearch(api_endpoint, algorithm)
     return format_response(response)
 
+
+def fetch_trigram(query):
+    # results = Instructor.objects.filter(
+    #     Q(first_name__trigram_similar=query) |
+    #     Q(last_name__trigram_similar=query) |
+    #     Q(email__trigram_similar=query)
+    # )
+    results = Instructor.objects.annotate(similarity=Greatest(
+        TrigramWordSimilarity(query, 'first_name'),
+        TrigramWordSimilarity(query, 'last_name'),
+        TrigramWordSimilarity(query, 'email')
+    )).filter(similarity__gte=0.2).order_by('-similarity')
+    return [{'score': c.similarity, **model_to_dict(c)} for c in results[:20]]
 
 def fetch_elasticsearch(api_endpoint, algorithm):
     """Requests a Document API using a specific search algorithm."""
