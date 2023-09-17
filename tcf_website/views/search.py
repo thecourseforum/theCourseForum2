@@ -98,6 +98,7 @@ def fetch_trigram(query):
     #     Q(last_name__trigram_similar=query) |
     #     Q(email__trigram_similar=query)
     # )
+    # TODO: only select necessary fields for rendered data
     results = Instructor.objects.annotate(similarity=Greatest(
         TrigramWordSimilarity(query, 'first_name'),
         TrigramWordSimilarity(query, 'last_name'),
