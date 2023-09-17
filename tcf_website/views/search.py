@@ -102,8 +102,8 @@ def fetch_trigram(query):
         TrigramWordSimilarity(query, 'first_name'),
         TrigramWordSimilarity(query, 'last_name'),
         TrigramWordSimilarity(query, 'email')
-    )).filter(similarity__gte=0.2).order_by('-similarity')
-    return [{'score': c.similarity, **model_to_dict(c)} for c in results[:20]]
+    )).filter(similarity__gte=0.2).order_by('-similarity')[:20]
+    return [{'score': c.similarity, **model_to_dict(c)} for c in results]
 
 def fetch_elasticsearch(api_endpoint, algorithm):
     """Requests a Document API using a specific search algorithm."""
