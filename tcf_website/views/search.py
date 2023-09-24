@@ -37,7 +37,7 @@ def search(request):
     print(instructor)
 
     # courses_first = decide_order(query, courses, instructors)
-    courses_first2 = decide_order(query, courses_2, instructors_2)
+    courses_first2 = decide_order2(query, courses_2, instructors_2)
 
     # Set arguments for template view
     # args = set_arguments(query, courses, instructors, courses_first2)
@@ -72,7 +72,7 @@ def compute_zscore(scores):
         mean = statistics.mean(scores)
 
         stddev = statistics.stdev(scores, mean)
-    
+        print()
         if stddev == 0:
             stddev = 1
         z_score = scores[0] - mean
@@ -84,6 +84,33 @@ def compute_zscore(scores):
         return 0
 
     return -1
+
+def decide_order2(query, courses, instructors):
+    """Decides if courses or instructors should be displayed first.
+    Returns True if courses should be prioritized, False if instructors should be prioritized """
+
+    # Calculate average similarity for courses
+    courses_avg = compute_avg_similarity([x['score'] for x in courses['results']])
+
+    # Calculate average similarity for instructors
+    instructors_avg = compute_avg_similarity([x['score'] for x in instructors['results']])
+
+    # Define a threshold for the minimum average similarity score. This value can be adjusted.
+    THRESHOLD = 0.5
+
+    # Prioritize courses for short queries or if their average similarity score is significantly higher
+    if len(query) <= 4 or (courses_avg > instructors_avg and courses_avg > THRESHOLD):
+        return True
+
+    return False
+
+
+def compute_avg_similarity(scores):
+    """Computes and returns the average similarity score."""
+    if not scores:
+        return 0
+    return sum(scores) / len(scores)
+
 
 
 def fetch_courses(query):
