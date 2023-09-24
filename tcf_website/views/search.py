@@ -4,12 +4,11 @@ import json
 import statistics
 import requests
 from django.contrib.postgres.search import TrigramSimilarity, TrigramWordSimilarity
-from django.db.models import Q
-from django.db.models.functions import Greatest
+from django.db.models import Q,  F, FloatField, ExpressionWrapper, CharField
+from django.db.models.functions import Greatest, Cast
 from django.forms import model_to_dict
-
 from django.shortcuts import render
-from ..models import Subdepartment, Instructor
+from ..models import Subdepartment, Instructor, Course
 
 
 def search(request):
@@ -22,11 +21,17 @@ def search(request):
     courses = fetch_courses(query)
     instructors = fetch_instructors(query)
 
-    instructors_2 = fetch_trigram(query)
+    instructors_2 = fetch_trigram_instructors(query)
+    courses_2 = fetch_trigram_courses(query)
 
     # print(json.dumps(courses))
-    print(json.dumps(instructors))
-    print("2", instructors_2)
+    print(json.dumps(courses))
+    print("2", '\n')
+    for i in instructors_2:
+        print(i['first_name'],i['last_name'])
+    print("Course", '\n')
+    for j in courses_2:
+        print(j['title'],j['number'])
 
     courses_first = decide_order(query, courses, instructors)
 
@@ -92,7 +97,7 @@ def fetch_instructors(query):
     return format_response(response)
 
 
-def fetch_trigram(query):
+def fetch_trigram_instructors(query):
     # results = Instructor.objects.filter(
     #     Q(first_name__trigram_similar=query) |
     #     Q(last_name__trigram_similar=query) |
@@ -105,6 +110,23 @@ def fetch_trigram(query):
         TrigramWordSimilarity(query, 'email')
     )).filter(similarity__gte=0.2).order_by('-similarity')[:20]
     return [{'score': c.similarity, **model_to_dict(c)} for c in results]
+
+def fetch_trigram_courses(query):
+    TITLE_WEIGHT = 1.5
+
+    results = Course.objects.annotate(
+        title_similarity=TrigramWordSimilarity(query, 'title'),
+        number_similarity=TrigramWordSimilarity(query, Cast('number', CharField()))
+    ).annotate(
+        total_similarity=ExpressionWrapper(
+            F('title_similarity') * TITLE_WEIGHT + F('number_similarity'),
+            output_field=FloatField()
+        )
+    ).filter(total_similarity__gte=0.2).order_by('-total_similarity')[:20]
+
+    return [{'score': c.total_similarity, **model_to_dict(c)} for c in results]
+    
+                                      
 
 def fetch_elasticsearch(api_endpoint, algorithm):
     """Requests a Document API using a specific search algorithm."""
