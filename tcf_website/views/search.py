@@ -3,9 +3,10 @@ import os
 import json
 import statistics
 import requests
+import re
 from django.contrib.postgres.search import TrigramSimilarity, TrigramWordSimilarity
-from django.db.models import Q,  F, FloatField, ExpressionWrapper, CharField
-from django.db.models.functions import Greatest, Cast
+from django.db.models import Q,  F, FloatField, ExpressionWrapper, CharField, Value
+from django.db.models.functions import Greatest, Cast, Concat
 from django.forms import model_to_dict
 from django.shortcuts import render
 from ..models import Subdepartment, Instructor, Course
@@ -16,27 +17,31 @@ def search(request):
 
     # Set query
     query = request.GET.get('q', '')
-
+    match = re.match(r'([a-zA-Z]*)\s*(\d*)', query)
+    if match:
+        title_part, number_part = match.groups()
+    else:
+        # Handle cases where the query doesn't match the expected format
+        title_part, number_part = query, ''
     # Fetch Elasticsearch data
-    courses = fetch_courses(query)
-    instructors = fetch_instructors(query)
+    # courses = fetch_courses(query)
+    # instructors = fetch_instructors(query)
 
     instructors_2 = fetch_trigram_instructors(query)
-    courses_2 = fetch_trigram_courses(query)
+    courses_2 = fetch_trigram_courses(title_part,number_part)
 
-    # print(json.dumps(courses))
-    print(json.dumps(courses))
-    print("2", '\n')
-    for i in instructors_2:
-        print(i['first_name'],i['last_name'])
-    print("Course", '\n')
-    for j in courses_2:
-        print(j['title'],j['number'])
+    # for testing
+    course = json.dumps(courses_2,indent=4)
+    instructor =json.dumps(instructors_2,indent=4)
+    print(course)
+    print(instructor)
 
-    courses_first = decide_order(query, courses, instructors)
+    # courses_first = decide_order(query, courses, instructors)
+    courses_first2 = decide_order(query, courses_2, instructors_2)
 
     # Set arguments for template view
-    args = set_arguments(query, courses, instructors, courses_first)
+    # args = set_arguments(query, courses, instructors, courses_first2)
+    args = set_arguments(query, courses_2, instructors_2, courses_first2)
     context_vars = args
 
     # Load template view
@@ -67,7 +72,7 @@ def compute_zscore(scores):
         mean = statistics.mean(scores)
 
         stddev = statistics.stdev(scores, mean)
-
+    
         if stddev == 0:
             stddev = 1
         z_score = scores[0] - mean
@@ -98,25 +103,32 @@ def fetch_instructors(query):
 
 
 def fetch_trigram_instructors(query):
-    # results = Instructor.objects.filter(
-    #     Q(first_name__trigram_similar=query) |
-    #     Q(last_name__trigram_similar=query) |
-    #     Q(email__trigram_similar=query)
-    # )
-    # TODO: only select necessary fields for rendered data
-    results = Instructor.objects.annotate(similarity=Greatest(
-        TrigramWordSimilarity(query, 'first_name'),
-        TrigramWordSimilarity(query, 'last_name'),
-        TrigramWordSimilarity(query, 'email')
-    )).filter(similarity__gte=0.2).order_by('-similarity')[:20]
-    return [{'score': c.similarity, **model_to_dict(c)} for c in results]
+    results = Instructor.objects.annotate(
+        full_name=Concat('first_name', Value(' '), 'last_name')).annotate(
+        similarity=TrigramWordSimilarity(query, 'full_name')
+    ).filter( similarity__gte=0.2).order_by('-similarity')[:20]
 
-def fetch_trigram_courses(query):
+    # Formatting results similar to Elastic search response
+    formatted_results = [{
+        "_meta": {
+            "id": str(instructor.pk),
+            "score": instructor.similarity
+        },
+        "first_name": {"raw": instructor.first_name},
+        "last_name": {"raw": instructor.last_name},
+        "email": {"raw": instructor.email},
+        "website": {"raw": instructor.website if hasattr(instructor, 'website') else None},
+    } for instructor in results]
+
+    return format_response2({"results": formatted_results, "meta": {"engine": {"name": "tcf-instructors"}}})
+
+
+def fetch_trigram_courses(title, number):
     TITLE_WEIGHT = 1.5
 
     results = Course.objects.annotate(
-        title_similarity=TrigramWordSimilarity(query, 'title'),
-        number_similarity=TrigramWordSimilarity(query, Cast('number', CharField()))
+        title_similarity=TrigramWordSimilarity(title, 'subdepartment__mnemonic'),
+        number_similarity=TrigramWordSimilarity(number, Cast('number', CharField()))
     ).annotate(
         total_similarity=ExpressionWrapper(
             F('title_similarity') * TITLE_WEIGHT + F('number_similarity'),
@@ -124,7 +136,20 @@ def fetch_trigram_courses(query):
         )
     ).filter(total_similarity__gte=0.2).order_by('-total_similarity')[:20]
 
-    return [{'score': c.total_similarity, **model_to_dict(c)} for c in results]
+    # Formatting results similar to Elastic search response
+    formatted_results = [{
+        "_meta": {
+            "id": str(course.pk),
+            "score": course.total_similarity
+        },
+        "title": {"raw": course.title},
+        "number": {"raw": course.number},
+        "mnemonic": {"raw": course.subdepartment.mnemonic + " " + str(course.number)},
+        "description": {"raw": course.description}
+    } for course in results]
+
+    return format_response2({"results": formatted_results, "meta": {"engine": {"name": "tcf-courses"}}})
+
     
                                       
 
@@ -210,6 +235,29 @@ def format_response(response):
     body = json.loads(response.text)
     engine = body.get("meta").get("engine").get("name")
     results = body.get("results")
+    if engine == "tcf-courses":
+        formatted["results"] = format_courses(results)
+    elif engine == "tcf-instructors":
+        formatted["results"] = format_instructors(results)
+    else:
+        formatted["error"] = True
+        formatted["message"] = "Unknown engine, please verify engine exists"
+
+    return formatted
+
+def format_response2(response):
+    """Formats an Elastic search endpoint response."""
+    formatted = {
+        "error": False,
+        "results": []
+    }
+    if "error" in response:
+        formatted["error"] = True
+        return formatted
+
+
+    engine = response.get("meta").get("engine").get("name")
+    results = response.get("results")
     if engine == "tcf-courses":
         formatted["results"] = format_courses(results)
     elif engine == "tcf-instructors":
