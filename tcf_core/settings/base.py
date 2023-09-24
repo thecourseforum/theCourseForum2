@@ -182,15 +182,6 @@ SOCIAL_AUTH_USER_MODEL = 'tcf_website.User'
 
 AUTH_USER_MODEL = 'tcf_website.User'
 
-# Read-only access to Elastic
-ES_PUBLIC_API_KEY = env.str('ES_PUBLIC_API_KEY')
-
-# ElasticSearch access
-ELASTICSEARCH_ENDPOINT = env.str('ELASTICSEARCH_ENDPOINT')
-
-# Read-write access to Elastic
-ES_PRIVATE_API_KEY = env.str('ES_PRIVATE_API_KEY', default='')
-
 # Logging configuration (from https://docs.djangoproject.com/en/3.1/topics/logging/)
 LOGGING = {
     'version': 1,
