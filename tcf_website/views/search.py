@@ -130,10 +130,11 @@ def fetch_instructors(query):
 
 
 def fetch_trigram_instructors(query):
-    results = Instructor.objects.annotate(
+    results = (Instructor.objects.only('first_name','last_name')
+               .annotate(
         full_name=Concat('first_name', Value(' '), 'last_name')).annotate(
         similarity=TrigramWordSimilarity(query, 'full_name')
-    ).filter( similarity__gte=0.2).order_by('-similarity')[:20]
+    ).filter( similarity__gte=0.1).order_by('-similarity')[:20])
 
     # Formatting results similar to Elastic search response
     formatted_results = [{
@@ -151,17 +152,25 @@ def fetch_trigram_instructors(query):
 
 
 def fetch_trigram_courses(title, number):
-    TITLE_WEIGHT = 1.5
-
-    results = Course.objects.annotate(
-        title_similarity=TrigramWordSimilarity(title, 'subdepartment__mnemonic'),
-        number_similarity=TrigramWordSimilarity(number, Cast('number', CharField()))
+    MNEMONIC_WEIGHT = 1.5
+    NUMBER_WEIGHT = 1
+    TITLE_WEIGHT = 1
+    if number!= "":
+        TITLE_WEIGHT = 0
+    else:
+        NUMBER_WEIGHT =0
+    results = (Course.objects.select_related('subdepartment')
+    .only('title','number','subdepartment__mnemonic','description')
+        .annotate(
+        mnemonic_similarity=TrigramWordSimilarity(title, 'subdepartment__mnemonic'),
+        number_similarity=TrigramWordSimilarity(number, Cast('number', CharField())),
+        title_similarity=TrigramWordSimilarity(title, Cast('title', CharField()))
     ).annotate(
         total_similarity=ExpressionWrapper(
-            F('title_similarity') * TITLE_WEIGHT + F('number_similarity'),
+            F('mnemonic_similarity') * MNEMONIC_WEIGHT + F('number_similarity')*NUMBER_WEIGHT +  F('title_similarity')*TITLE_WEIGHT ,
             output_field=FloatField()
         )
-    ).filter(total_similarity__gte=0.2).order_by('-total_similarity')[:20]
+    ).filter(total_similarity__gte=0.1).order_by('-total_similarity')[:20])
 
     # Formatting results similar to Elastic search response
     formatted_results = [{
