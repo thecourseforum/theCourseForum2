@@ -1,5 +1,4 @@
 """Views for search results"""
-
 import re
 import statistics
 
@@ -16,7 +15,9 @@ def search(request):
 
     # Set query
     query = request.GET.get("q", "")
-    match = re.match(r"([a-zA-Z]{2,})\s*(\d*)", query)
+    # courses are at least 3 digits long
+    # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
+    match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
     if match:
         title_part, number_part = match.groups()
     else:
