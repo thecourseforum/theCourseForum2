@@ -5,35 +5,43 @@ from django.template.loader import render_to_string
 from django.views.generic.base import TemplateView
 
 
-def index(request):
+class IndexView(TemplateView):
     """
     Index view.
 
     Redirect to landing page if user not authorized.
     """
+    template_name = 'landing/landing.html'
 
     # Load "About Team" data from json file
     with open('tcf_website/views/team_info.json', encoding='UTF-8') as data_file:
         team_info = json.load(data_file)
+
     # Load FAQ data from json file, evaluating tags and filters
     rendered = render_to_string('landing/_faqs.json')
     faqs = json.loads(rendered)
-    response = render(request, 'landing/landing.html',
-                      {'executive_team': team_info['executive_team'],
-                       'FAQs': faqs,
-                       'visited': request.session.get('visited', False)})
-    request.session['visited'] = True
-    return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['executive_team'] = self.team_info['executive_team']
+        context['FAQs'] = self.faqs
+        context['visited'] = self.request.session.get('visited', False)
+        self.request.session['visited'] = True
+        return context
 
 
-def privacy(request):
-    """Privacy view."""
-    return render(request, 'about/privacy.html')
+class PrivacyView(TemplateView):
+    """
+    Privacy view.
+    """
+    template_name = 'about/privacy.html'
 
 
-def terms(request):
-    """Terms view."""
-    return render(request, 'about/terms.html')
+class TermsView(TemplateView):
+    """
+    Terms view.
+    """
+    template_name = 'about/terms.html'
 
 
 class AboutView(TemplateView):

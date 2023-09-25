@@ -6,10 +6,10 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.IndexView.as_view(), name='index'),
     path('about/', views.AboutView.as_view(), name='about'),
-    path('privacy/', views.privacy, name='privacy'),
-    path('terms/', views.terms, name='terms'),
+    path('privacy/', views.PrivacyView.as_view(), name='privacy'),
+    path('terms/', views.TermsView.as_view(), name='terms'),
     path('ads.txt/', views.ads, name='ads'),
     path('browse/', views.browse, name='browse'),
     path('department/<int:dept_id>/', views.department, name='department'),
