@@ -63,7 +63,7 @@ def department(request, dept_id):
     # Get the most recent semester
     latest_semester = Semester.latest()
 
-    # Navigation breadcrimbs
+    # Navigation breadcrumbs
     breadcrumbs = [
         (dept.school.name, reverse('browse'), False),
         (dept.name, None, True)
