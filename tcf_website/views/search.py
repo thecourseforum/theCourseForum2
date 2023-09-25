@@ -124,6 +124,7 @@ def fetch_courses(title, number):
     TITLE_WEIGHT = 1
     if number != "":
         TITLE_WEIGHT = 0
+        MNEMONIC_WEIGHT = 1
     else:
         NUMBER_WEIGHT = 0
     results = (
