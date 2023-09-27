@@ -1,6 +1,5 @@
 """Views for index and about pages."""
 import json
-from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.views.generic.base import TemplateView
 
@@ -14,17 +13,17 @@ class IndexView(TemplateView):
     template_name = 'landing/landing.html'
 
     # Load "About Team" data from json file
-    with open('tcf_website/views/team_info.json', encoding='UTF-8') as data_file:
-        team_info = json.load(data_file)
-
-    # Load FAQ data from json file, evaluating tags and filters
-    rendered = render_to_string('landing/_faqs.json')
-    faqs = json.loads(rendered)
-
     def get_context_data(self, **kwargs):
+        with open('tcf_website/views/team_info.json', encoding='UTF-8') as data_file:
+            team_info = json.load(data_file)
+
+        # Load FAQ data from json file, evaluating tags and filters
+        rendered = render_to_string('landing/_faqs.json')
+        faqs = json.loads(rendered)
+
         context = super().get_context_data(**kwargs)
-        context['executive_team'] = self.team_info['executive_team']
-        context['FAQs'] = self.faqs
+        context['executive_team'] = team_info['executive_team']
+        context['FAQs'] = faqs
         context['visited'] = self.request.session.get('visited', False)
         self.request.session['visited'] = True
         return context
