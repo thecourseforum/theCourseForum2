@@ -5,7 +5,7 @@
 /* Use these variables in CSS stylesheets */
 :root {
 --main-color: #274F97;        /* Indigo/Dark blue */
---secondary-color: #6b95d1;   /* Light blue */
+--secondary-color: #4077C4;
 --accent-color: #D75626;      /* Orange */
 --dark-color: #545454;        /* Dark grey, for headers/buttons */
 --shadow-color: #a6a6a6;      /* Medium grey, used for shadows */
@@ -56,6 +56,7 @@ ul {
 /* To remove auto blue underline formatting from an anchor tag */
 .link-unstyled, .link-unstyled:link, .link-unstyled:hover {
  color: inherit;
+ all: unset;
  text-decoration: inherit;
 }
 
