@@ -1,7 +1,7 @@
 # Based on https://github.com/actions/starter-workflows/blob/main/ci/django.yml
 name: Continuous Integration
 
-on:
+on: 
   pull_request:
     branches:
       - '*'
