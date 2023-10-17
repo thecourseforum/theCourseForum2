@@ -35,7 +35,7 @@ def browse(request):
 
     # Other schools besides CLAS, SEAS, and Misc.
     other_schools = School.objects.exclude(pk__in=excluded_list).order_by('name')
-    
+
     return render(request, 'browse/browse.html', {
         'CLAS': clas,
         'SEAS': seas,
