@@ -32,21 +32,14 @@ def browse(request):
     seas = School.objects.get(name="School of Engineering & Applied Science")
 
     excluded_list = [clas.pk, seas.pk]
-    # Get the Misc category so it can be appended at the end (if it exists)
-    try:
-        misc_school = School.objects.get(name="Miscellaneous")
-        excluded_list.append(misc_school.pk)
-    except ObjectDoesNotExist:
-        misc_school = None
 
     # Other schools besides CLAS, SEAS, and Misc.
-    other_schools = School.objects.exclude(pk__in=excluded_list)
-
+    other_schools = School.objects.exclude(pk__in=excluded_list).order_by('name')
+    
     return render(request, 'browse/browse.html', {
         'CLAS': clas,
         'SEAS': seas,
         'other_schools': other_schools,
-        'misc_school': misc_school
     })
 
 
