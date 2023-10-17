@@ -21,3 +21,7 @@
     background-color: var(--secondary-color);
     color: white;
 }
+
+.school-body {
+    padding: 1.25rem;
+}
