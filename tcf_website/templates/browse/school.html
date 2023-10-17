@@ -9,7 +9,7 @@
         </div>
         <div class="clearfix"></div>
     </div>
-    <div class="card-body collapse show" id="school-{{ school.id }}">
+    <div class="school-body collapse show" id="school-{{ school.id }}">
         <ul class="department-list">
             {% for d in school.department_set.all|dictsort:"name" %}
                 <li>
