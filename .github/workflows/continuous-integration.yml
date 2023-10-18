@@ -61,7 +61,7 @@ jobs:
       code-coverage: ${{ steps.coverage.outputs.percentage }}
     services:
       postgres:
-        image: postgres:12.2
+        image: postgres:15.4
         env:
           POSTGRES_USER: ${{ env.DB_USER}}
           POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
