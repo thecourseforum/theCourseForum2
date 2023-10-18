@@ -164,6 +164,13 @@
       "class": "2025",
       "img_filename": "ENG_Zohaib_Khalid.jpg",
       "github": "zohaibk04"
+    },
+    {
+      "name": "Blaire Zhao", 
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Blaire_Zhao.jpg",
+      "github": "blairezh"
     }
   ],
   "marketing_team": [
