@@ -159,11 +159,18 @@
       "github": "nehagb99"
     },
     {
-      "name": "Zohaib Khalid", 
+      "name": "Zohaib Khalid",
       "role": "Developer",
       "class": "2025",
       "img_filename": "ENG_Zohaib_Khalid.jpg",
       "github": "zohaibk04"
+    },
+    {
+      "name": "Artie Humphreys",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Artie_Humphreys.jpg",
+      "github": "artiehumphreys"
     }
   ],
   "marketing_team": [
