@@ -23,13 +23,21 @@
         <hr>
       </a>
       {% else %}
-      <a href="#newReviewLoginModal" data-toggle="modal"
+      <!-- <a href="#newReviewLoginModal" data-toggle="modal"
        class="list-group-item list-group-item-action pb-0
        {% if request.resolver_match.url_name == 'new_review' %}active{% endif %}">
         <h4><i class="fa fa-pencil-square-o fa-fw"></i></h4>
         <p>Review</p>
         <hr>
+      </a> -->
+
+      <a href="#loginModal" data-toggle="modal"
+      class="list-group-item list-group-item-action
+      {% if request.resolver_match.url_name == 'login' %}active{% endif %}">
+        <h4><i class="fa fa-pencil-square-o fa-fw"></i></h4>
+        <p>Review</p>
       </a>
+      
       {% endif %}
     </li>
     <li>
