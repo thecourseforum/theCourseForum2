@@ -5,103 +5,79 @@
       "role": "President | Product Lead",
       "class": "2025",
       "img_filename": "ENG_AJ_Nye.jpg",
-      "github": "ajnye9"
+      "github": "ajnye9",
+      "linkedin": "andrew-james-nye"
     },
     {
       "name": "Ann Li",
       "role": "VP | Infrastructure Engineering",
       "class": "2024",
       "img_filename": "ENG_Ann_Li.jpg",
-      "github": "Ann924"
+      "github": "Ann924",
+      "linkedin": "ann-li924"
     },
     {
       "name": "Barrett Ruth",
       "role": "VP | Infrastructure Engineering",
       "class": "2026",
       "img_filename": "ENG_Barrett_Ruth.jpg",
-      "github": "barrett-ruth"
+      "github": "barrett-ruth",
+      "linkedin": "barrett-ruth"
     },
     {
       "name": "Oliver Song",
       "role": "VP | Product Engineering",
       "class": "2024",
-      "img_filename": "ENG_Oliver_Song.jpg"
+      "img_filename": "ENG_Oliver_Song.jpg",
+      "github": "obs4qqf",
+      "linkedin": "oliver-song-uva"
     },
     {
       "name": "Rachita Pathipati",
       "role": "VP | Product Engineering",
       "class": "2025",
-      "img_filename": "MAD_Rachita_Pathipati.webp"
+      "img_filename": "MAD_Rachita_Pathipati.webp",
+      "linkedin": "rachita-pathipati"
     },
     {
       "name": "Ananya Raam",
       "role": "VP | Design",
       "class": "2025",
-      "img_filename": "DM_Ananya_Raam.jpeg"
+      "img_filename": "DM_Ananya_Raam.jpeg",
+      "linkedin": "ananya-raam"
     },
     {
       "name": "Chai Zhang",
       "role": "VP | Marketing",
       "class": "2025",
-      "img_filename": "DM_Chai_Zhang.JPG"
+      "img_filename": "DM_Chai_Zhang.JPG",
+      "linkedin": "chai-zhang"
     },
     {
       "name": "Jasmine Senesombath",
       "role": "Secretary | Operations Lead",
       "class": "2024",
-      "img_filename": "DM_Jasmine_Senesombath.jpg"
+      "img_filename": "DM_Jasmine_Senesombath.jpg",
+      "linkedin": "jasmine-senesombath"
     },
     {
       "name": "Caesar Ning",
       "role": "Treasurer",
       "class": "2024",
       "img_filename": "ENG_Caesar_Ning.jpg",
-      "github": "Caesarsyning"
+      "github": "Caesarsyning",
+      "linkedin": "siyuan-ning"
     },
     {
       "name": "Hari Gajjala",
       "role": "Data Manager",
       "class": "2026",
       "img_filename": "ENG_Hari_Gajjala.JPG",
-      "github": "hari-gajjala"
+      "github": "hari-gajjala",
+      "linkedin": "hari-gajjala"
     }
   ],
   "engineering_team": [
-    {
-      "name": "AJ Nye",
-      "role": "Secretary",
-      "class": "2025",
-      "img_filename": "ENG_AJ_Nye.jpg",
-      "github": "ajnye"
-    },
-    {
-      "name": "Oliver Song",
-      "role": "Treasurer",
-      "class": "2024",
-      "img_filename": "ENG_Oliver_Song.jpg",
-      "github": "obs4qqf"
-    },
-    {
-      "name": "Ann Li",
-      "role": "VP Infrastructure Engineering",
-      "class": "2024",
-      "img_filename": "ENG_Ann_Li.jpg",
-      "github": "Ann924"
-    },
-    {
-      "name": "Raffi Khondaker",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Raffi_Khondaker.jpeg",
-      "github": "therealraffi"
-    },
-    {
-      "name": "Barrett Ruth",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Barrett_Ruth.jpg",
-      "github": "barrett-ruth"
-    },
     {
       "name": "Lilian Zhang",
       "role": "Developer",
@@ -110,39 +86,11 @@
       "github": "lilizhhh"
     },
     {
-      "name": "Tommy Lam",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Tommy_Lam.jpg",
-      "github": "t0mmylam"
-    },
-    {
-      "name": "Samyak Thapa",
-      "role": "Developer",
-      "class": "2025",
-      "img_filename": "ENG_Samyak_Thapa.jpg",
-      "github": "SRT-13"
-    },
-    {
       "name": "Param Patel",
       "role": "Developer",
       "class": "2025",
       "img_filename": "ENG_PARAM_PATEL.jpg",
       "github": "param23403"
-    },
-    {
-      "name": "Hari Gajjala",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Hari_Gajjala.JPG",
-      "github": "hari-gajjala"
-    },
-    {
-      "name": "Caesar Ning",
-      "role": "Developer",
-      "class": "2024",
-      "img_filename": "ENG_Caesar_Ning.jpg",
-      "github": "Caesarsyning"
     },
     {
       "name": "Ankit Poudyal",
@@ -224,28 +172,25 @@
   ],
   "marketing_team": [
     {
-      "name": "Rachita Pathipati",
-      "role": "VP | Marketing & Design",
-      "class": "2025",
-      "img_filename": "MAD_Rachita_Pathipati.webp"
-    },
-    {
       "name": "Jasmine Senesombath",
       "role": "Designer",
       "class": "2024",
-      "img_filename": "DM_Jasmine_Senesombath.jpg"
+      "img_filename": "DM_Jasmine_Senesombath.jpg",
+      "linkedin": "jasmine-senesombath"
     },
     {
       "name": "Ananya Raam",
       "role": "Designer",
       "class": "2025",
-      "img_filename": "DM_Ananya_Raam.jpeg"
+      "img_filename": "DM_Ananya_Raam.jpeg",
+      "linkedin": "ananya-raam"
     },
     {
       "name": "Chai Zhang",
       "role": "Designer",
       "class": "2025",
-      "img_filename": "DM_Chai_Zhang.JPG"
+      "img_filename": "DM_Chai_Zhang.JPG",
+      "linkedin": "chai-zhang"
     }
   ]
 }

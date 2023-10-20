@@ -9,17 +9,20 @@
       <div class="container">
         <h3>Executive Team</h3>
         <hr/>
-        <div class="row text-left">
+        <div class="row text-left d-flex justify-content-center">
           {% for member in executive_team %}
             <div class="col-lg-4 col-sm-6 d-flex">
               <div class="member card mb-4 shadow-sm flex-fill">
                 <div class="pfp">
                   <img class="card-img-top" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
                 </div>
-                <div class="card-body">
-                  <h5 class="card-text">{{ member.name }}</h5>
-                  <p class="card-text small">{{ member.role }}</p>
-                  <p class="card-text small text-muted">Class of {{ member.class }} </p>
+                <div class="card-body d-flex justify-content-between">
+                  <span>
+                    <h5 class="card-text">{{ member.name }}</h5>
+                    <p class="card-text small">{{ member.role }}</p>
+                    <p class="card-text small text-muted">Class of {{ member.class }}</p>
+                  </span>
+                  {% include 'about/social_links.html' with exec=True %}
                 </div>
               </div>
             </div>
@@ -32,7 +35,7 @@
       <div class="container">
         <h3>Engineering Team</h3>
         <hr/>
-        <div class="row text-left">
+        <div class="row text-left d-flex justify-content-center">
           {% for member in engineering_team %}
             <div class="col-lg-3 col-sm-6 d-flex">
               <div class="member card mb-4 shadow-sm flex-fill">
@@ -44,9 +47,7 @@
                     <h5 class="card-text">{{ member.name }}</h5>
                     <p class="card-text small text-muted">Class of {{ member.class }}</p>
                   </span>
-                  <a class="text-muted" href="https://github.com/{{ member.github }}">
-                    <h4><i class="fa fa-github"></i></h4>
-                  </a>
+                  {% include 'about/social_links.html' %}
                 </div>
               </div>
             </div>
@@ -59,16 +60,19 @@
       <div class="container">
         <h3>Marketing & Design Team</h3>
         <hr/>
-        <div class="row text-left">
+        <div class="row text-left d-flex justify-content-center">
           {% for member in marketing_team %}
             <div class="col-lg-3 col-sm-6 d-flex">
               <div class="member card mb-4 shadow-sm flex-fill">
                 <div class="pfp">
                   <img class="card-img-top" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
                 </div>
-                <div class="card-body">
-                  <h5 class="card-text">{{ member.name }}</h5>
-                  <p class="card-text small text-muted">Class of {{ member.class }}</p>
+                <div class="card-body d-flex justify-content-between">
+                  <span>
+                    <h5 class="card-text">{{ member.name }}</h5>
+                    <p class="card-text small text-muted">Class of {{ member.class }}</p>
+                  </span>
+                  {% include 'about/social_links.html' %}
                 </div>
               </div>
             </div>

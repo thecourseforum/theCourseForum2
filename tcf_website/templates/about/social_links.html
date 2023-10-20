@@ -1,0 +1,20 @@
+<span class="flex flex-col space-y-2">
+  {% if member.github %}
+    <a class="text-muted" href="https://github.com/{{ member.github }}" target="_blank">
+      {% if exec %}
+        <h4><i class="fa fa-github"></i></h4>
+      {% else %}
+        <h5><i class="fa fa-github"></i></h5>
+      {% endif %}
+    </a>
+  {% endif %}
+  {% if member.linkedin %}
+    <a class="text-muted" href="https://linkedin.com/in/{{ member.linkedin }}" target="_blank">
+      {% if exec %}
+        <h4><i class="fa fa-linkedin"></i></h4>
+      {% else %}
+        <h5><i class="fa fa-linkedin"></i></h5>
+      {% endif %}
+    </a>
+  {% endif %}
+</span>
