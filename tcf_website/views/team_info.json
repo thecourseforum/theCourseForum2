@@ -159,6 +159,34 @@
       "github": "nehagb99"
     },
     {
+      "name": "Bryan Katuari",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Bryan_Katuari.jpg",
+      "github": "bryankatuari"
+    },
+    {
+      "name": "Luke Kohler",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Luke_Kohler.jpeg",
+      "github": "ldkohler"
+    },
+    {
+      "name": "Vincent Song",
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Vincent_Song.jpg",
+      "github": "vsong15"
+    },
+    {
+      "name": "Arthur Wu",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Arthur_Wu.jpg",
+      "github": "arthurwu1227"
+    },
+    {
       "name": "Zohaib Khalid", 
       "role": "Developer",
       "class": "2025",
@@ -166,11 +194,19 @@
       "github": "zohaibk04"
     },
     {
+
       "name": "Blaire Zhao", 
       "role": "Developer",
       "class": "2026",
       "img_filename": "ENG_Blaire_Zhao.jpg",
       "github": "blairezh"
+    },
+    {
+      "name": "Junho Lee", 
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Junho_Lee.jpg",
+      "github": "junholee6a"
     }
   ],
   "marketing_team": [
