@@ -15,6 +15,29 @@
   ],
   "contributors": [
     {
+      "group_name": "Class of 2026",
+      "members": [
+        {
+          "name": "Tommy Lam",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Tommy_Lam.jpg"
+        },
+        {
+          "name": "Raffi Khondaker",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Raffi_Khondaker.jpeg"
+        },
+        {
+          "name": "Samyak Thapa",
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "ENG_Samyak_Thapa.jpg"
+        }
+      ]
+    },
+    {
       "group_name": "Class of 2025",
       "members": [
         {
