@@ -228,6 +228,13 @@
       "img_filename": "ENG_Junho_Lee.jpg",
       "github": "junholee6a"
     }
+    ,
+    {
+      "name": "Ja-Zhua Cheng",
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Ja-Zhua_Cheng.jpeg"
+    }
   ],
   "marketing_team": [
     {
@@ -254,5 +261,6 @@
       "class": "2025",
       "img_filename": "DM_Chai_Zhang.JPG"
     }
+    
   ]
 }
