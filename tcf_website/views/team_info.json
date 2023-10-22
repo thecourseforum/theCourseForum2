@@ -208,6 +208,13 @@
       "github": "zohaibk04"
     },
     {
+      "name": "Kingsley Kim",
+      "role:": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Kingsley_Kim.jpg",
+      "github": "kingsleykimm"
+    },
+    {
       "name": "Riley Fletcher",
       "role": "Developer",
       "class": "2025",
@@ -241,6 +248,26 @@
       "role": "Developer",
       "class": "2025",
       "img_filename": "ENG_Ja-Zhua_Cheng.jpeg"
+    }
+    ,
+    {
+      "name": "Justin Park",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Justin_Park.jpg"
+    },
+    {
+      "name": "Vivian Gao",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Vivian_Gao.jpg"
+    },
+    {
+      "name": "Jay Lalwani",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Jay_Lalwani.jpg",
+      "github": "Jay-Lalwani"
     }
   ],
   "marketing_team": [
