@@ -8,7 +8,7 @@ function togglePieChart() {
     if (myChart) {
         myChart.destroy();
     }
-    document.getElementById("canvas-parent").style.width = "95%";
+    document.getElementById("canvas-parent").style.width = "290px";
     // eslint-disable-next-line no-new,no-undef
     myChart = new Chart(ctx, pieConfig);
 };
