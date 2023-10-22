@@ -254,6 +254,13 @@
       "role": "Developer",
       "class": "2027",
       "img_filename": "ENG_Vivian_Gao.jpg"
+    },
+    {
+      "name": "Jay Lalwani",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Jay_Lalwani.jpg",
+      "github": "Jay-Lalwani"
     }
   ],
   "marketing_team": [
