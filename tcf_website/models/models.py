@@ -777,7 +777,6 @@ class Question(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, default=None)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
-    placeholder = models.CharField(max_length=100, default="Enter your response here")
 
     def __str__(self):
         return f"Question for {self.course}"
