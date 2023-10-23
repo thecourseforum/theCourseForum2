@@ -187,7 +187,7 @@ const createChart = gradesData => {
         type: "pie",
         data: chartData,
         options: {
-            cutoutPercentage: 65,
+            cutoutPercentage: 0,
             responsive: true,
             aspectRatio: 1,
             tooltips: {
