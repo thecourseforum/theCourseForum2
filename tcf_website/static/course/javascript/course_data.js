@@ -187,7 +187,7 @@ const createChart = gradesData => {
         type: "pie",
         data: chartData,
         options: {
-            cutoutPercentage: 65,
+            cutoutPercentage: 1,
             responsive: true,
             aspectRatio: 1,
             tooltips: {
@@ -228,7 +228,7 @@ const createChart = gradesData => {
                     // position to draw label, available value is 'default', 'border' and 'outside'
                     // bar chart ignores this
                     // default is 'default'
-                    position: "border",
+                    position: "default",
 
                     // draw label even it's overlap, default is true
                     // bar chart ignores this
