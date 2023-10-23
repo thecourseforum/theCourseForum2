@@ -228,7 +228,7 @@ const createChart = gradesData => {
                     // position to draw label, available value is 'default', 'border' and 'outside'
                     // bar chart ignores this
                     // default is 'default'
-                    position: "default",
+                    position: "border",
 
                     // draw label even it's overlap, default is true
                     // bar chart ignores this
