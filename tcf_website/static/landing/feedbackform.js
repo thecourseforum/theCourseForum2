@@ -3,18 +3,19 @@ import { validateForm } from "../common/form.js";
 function submit(event) {
     var form = document.getElementById("feedbackform");
     var valid = validateForm(form);
-    if (valid === true) {
-        postToDiscord(event);
-    }
-}
 
-function postToDiscord(event) {
     var fname = $("#inputFname").val();
     var lname = $("#inputLname").val();
     var email = $("#inputEmail").val();
     var title = $("#inputTitle").val();
     var message = $("#inputMessage").val();
 
+    if (valid === true && email.endsWith("@virginia.edu")) {
+        postToDiscord(event, fname, lname, email, title, message);
+    }
+}
+
+function postToDiscord(event, fname, lname, email, title, message) {
     var data = {
         type: "feedback",
         content: "Feedback submitted" +
