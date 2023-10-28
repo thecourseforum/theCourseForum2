@@ -8,6 +8,10 @@ function validateForm(form) {
     }
     form.classList.add("was-validated");
 
+    var email = $("#inputEmail").val();
+    if (email.endsWith("@virginia.edu", 3)) {
+        valid = false;
+    }
     return valid;
 }
 
