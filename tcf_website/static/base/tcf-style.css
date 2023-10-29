@@ -44,6 +44,7 @@ a:hover,
 .hover-tcf-orange:hover {
   color: var(--accent-color);
   text-decoration: none;
+  cursor: pointer;
 }
 ul {
     padding: 0;
