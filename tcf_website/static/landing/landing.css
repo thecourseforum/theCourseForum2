@@ -175,6 +175,10 @@ ul.list-inline.mb-0 li a {
 }
 
 ul.list-inline.mb-0 li h5 {
-  transform: translateY(5%);
+  transform: translateY(0.05rem);
   vertical-align: middle;
+}
+
+ul.list-inline.mb-0 {
+  transform: translateY(0.065rem);
 }
