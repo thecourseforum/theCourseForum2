@@ -41,15 +41,15 @@
         <hr>
       </a>
     </li>
-    <!-- <li> -->
-    <!--   <a href="#bugModal" data-toggle="modal" data-target="#bugModal" id="bugFormOpen" -->
-    <!--      class="list-group-item list-group-item-action pb-0 -->
-    <!--      {% if request.resolver_match.url_name == 'feedback' %}active{% endif %}"> -->
-    <!--     <h4><i class="fa fa-thumbs-up fa-fw"></i></h4> -->
-    <!--     <p>Feedback</p> -->
-    <!--     <hr> -->
-    <!--   </a> -->
-    <!-- </li> -->
+    <li>
+      <a href="#bugModal" data-toggle="modal" data-target="#bugModal" id="bugFormOpen" 
+        class="list-group-item list-group-item-action pb-0 
+        {% if request.resolver_match.url_name == 'feedback' %}active{% endif %}"> 
+        <h4><i class="fa fa-thumbs-up fa-fw"></i></h4> 
+        <p>Feedback</p>
+        <hr>
+      </a>
+    </li>
     <!-- tCF profile dropdown when navbar collapses -->
     <li>
     {% if user.is_authenticated %}
