@@ -2,9 +2,11 @@ import { validateForm } from "../common/form.js";
 
 function submitForm() {
     var form = document.getElementById("bugform");
-    var valid = validateForm(form);
+    var email = $("emailField").val();
+    var description = $("#descriptionField").val();
+    var valid = validateForm(form, email);
     if (valid === true) {
-        postToDiscord();
+        postToDiscord(email, description);
         // close form after submit
         $("#bugModal").modal("toggle");
         $("#confirmationModal").modal("toggle");
@@ -13,10 +15,10 @@ function submitForm() {
 
 function resetForm() {
     var form = document.getElementById("bugform");
-    form.classList.remove("was-validated");
     var emailField = document.getElementById("emailField");
-    emailField.value = "";
     var descriptionField = document.getElementById("descriptionField");
+    form.classList.remove("was-validated");
+    emailField.value = "";
     descriptionField.value = "";
 
     for (var i = 1; i <= 4; i++) {
@@ -25,10 +27,8 @@ function resetForm() {
     }
 }
 
-function postToDiscord() {
+function postToDiscord(email, description) {
     var url = window.location.href;
-    var email = $("#emailField").val();
-    var description = $("#descriptionField").val();
     var categories = "";
     for (var i = 1; i <= 4; i++) {
         var id = "#category" + i;
