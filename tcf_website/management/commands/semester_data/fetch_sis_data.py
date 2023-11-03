@@ -7,3 +7,32 @@ download.
 Potential todo: create a cron job that runs this script and
 `load_semester` every now and then so we don't have to do this.
 """
+# format -ClassNumber,Mnemonic,Number,Section,Type,Units,Instructor1,Days1,Room1,MeetingDates1,Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,Description
+# example call url
+# -https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassDetails?institution=UVA01&term=1242&class_nbr=16634&
+import requests
+import json
+
+# url to find all courses in department for a semester to update semester Replace 1228 with the appropriate term.
+# The formula is “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
+# todo find out which is used for jterm/summer probably 0,4, or 6?
+# https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearchOptions?institution=UVA01&term=1228
+
+
+def make_class_request(url):
+    """
+    input: url
+    output: json object of filtered class data
+    functionality: connects with sis API
+    """
+    try:
+        apiResponse = requests.get(url)
+        data = json.loads(apiResponse.text)
+        print(data)
+    except Exception as e:
+        print(e)
+
+
+make_class_request(
+    'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.'
+    'FieldFormula.IScript_ClassDetails?institution=UVA01&term=1242&class_nbr=16634')
