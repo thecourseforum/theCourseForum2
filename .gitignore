@@ -10,7 +10,7 @@ __pycache__/*
 *.sql
 !db/*.sql
 # Environment variables
-.env*do
+.env*
 !.config/.env.example
 # Static files collected by Django
 /static/
