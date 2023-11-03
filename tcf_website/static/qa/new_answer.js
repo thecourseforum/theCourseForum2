@@ -50,7 +50,6 @@ $(document).ready(function() {
         var questionText = $(this).data("text");
         $("#answerForm #questionText").val(questionText);
         $("#answerForm #questionInput").val(questionId);
-
     });
 
     // Stop normal submit to check for duplicate answer with ajax request
