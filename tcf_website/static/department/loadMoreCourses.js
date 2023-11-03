@@ -1,11 +1,11 @@
 async function loadPage(subdepartmentId, url) {
     if (url === null) {
-        hideSpinner(subdepartmentId);
+        hidePlaceholder(subdepartmentId);
         return;
     };
     const courses = await fetch(url).then(res => res.json());
     if (courses.detail === "Invalid page.") {
-        hideSpinner(subdepartmentId);
+        hidePlaceholder(subdepartmentId);
     } else {
         const element = document.getElementById(`courses-sd-${subdepartmentId}`);
         const htmlArray = [];
@@ -78,8 +78,8 @@ function emdashOrTwoDecimals(number) {
     return number === null ? "\u2014" : (Math.round(number * 100) / 100).toFixed(2);
 }
 
-function hideSpinner(subdepartmentId) {
-    document.getElementById(`spinner-sd-${subdepartmentId}`).remove();
+function hidePlaceholder(subdepartmentId) {
+    document.getElementById(`placeholder-${subdepartmentId}`).remove();
 }
 
 export { loadPage };

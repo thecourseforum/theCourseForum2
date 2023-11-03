@@ -24,9 +24,11 @@
             <h1 class="my-3">{{ sd.name }}</h1>
             <ul class="course-list" id="courses-sd-{{sd.id}}">
             </ul>
-            <div class="text-center" id="spinner-sd-{{sd.id}}">
-                <div class="spinner-border" role="status" >
-                    <span class="sr-only">Loading...</span>
+            <div class="text-center" id="placeholder-{{sd.id}}">
+                <div role="status" >
+                    {% include "common/loading_card.html" %}
+                    {% include "common/loading_card.html" %}
+                    {% include "common/loading_card.html" %}
                 </div>
             </div>
         </div>
@@ -46,3 +48,4 @@
     {% endfor %}
 </script>
 {% endblock %}
+

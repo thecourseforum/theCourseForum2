@@ -47,7 +47,10 @@ $(document).ready(function() {
 
     $(document).on("click", "#answerQuestionBtn", function() {
         var questionId = $(this).data("id");
+        var questionText = $(this).data("text");
+        $("#answerForm #questionText").val(questionText);
         $("#answerForm #questionInput").val(questionId);
+
     });
 
     // Stop normal submit to check for duplicate answer with ajax request
