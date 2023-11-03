@@ -170,15 +170,12 @@ header.masthead h1 {
 }
 
 /* Social Media Icons */
-ul.list-inline.mb-0 li a {
+ul.list-inline.mb-0 li a i {
   vertical-align: middle;
+  transform: translateY(0.075rem);
 }
 
 ul.list-inline.mb-0 li h5 {
-  transform: translateY(0.05rem);
+  transform: translateY(0.25rem);
   vertical-align: middle;
-}
-
-ul.list-inline.mb-0 {
-  transform: translateY(0.065rem);
 }
