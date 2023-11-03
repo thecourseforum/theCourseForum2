@@ -46,9 +46,7 @@ $(document).ready(function() {
     $("#duplicate-answer").hide();
 
     $(document).on("click", "#answerQuestionBtn", function() {
-        var questionId = $(this).data("id");
-        var questionText = $(this).data("text");
-        $("#answerForm #questionText").val(questionText);
+        var questionId = $(this).data("id");;
         $("#answerForm #questionInput").val(questionId);
     });
 
