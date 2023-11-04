@@ -52,8 +52,15 @@ def find_all_subjects(semester='1238'):
 
 
 def find_all_classes_in_subject(semester):  # this function will be incredibly slow
+    """
+        input: semester using the formula  “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
+        output: set of all course numbers
+        functionality: connects with sis API and uses the given list of all subjects to look at all classes each
+            department offers to find all the unique course numbers. This will be used when querying each class
+            individually.
+        """
     all_subjects = find_all_subjects(semester)
-    all_class_nums = []
+    all_class_nums = set({})
     for subject in all_subjects:
         page = 1
         while True:
@@ -73,7 +80,7 @@ def find_all_classes_in_subject(semester):  # this function will be incredibly s
                 print(e)
                 break
             for course in data:
-                all_class_nums.append(course['class_nbr'])
+                all_class_nums.add(course['class_nbr'])
             page += 1
 
 
