@@ -12,24 +12,23 @@ resizable_images_team = []
 for folder_path in folders:
     folder_name = os.path.basename(folder_path)
     for filename in os.listdir(folder_path):
-        if filename.endswith(('.jpg', '.jpeg', '.png', '.webp')):
-            image_path = os.path.join(folder_path, filename)
-            try:
-                with Image.open(image_path) as img:
-                    width, height = img.size
-                    dimensions = f"{width}x{height}"
-                    if width == 800 and height == 800:
-                        if folder_name == "alum-pfps":
-                            eight_hundred_images_alum.append((filename, dimensions))
-                        elif folder_name == "team-pfps":
-                            eight_hundred_images_team.append((filename, dimensions))
-                    elif width > 800 or height > 800:
-                        if folder_name == "alum-pfps":
-                            resizable_images_alum.append((filename, dimensions))
-                        elif folder_name == "team-pfps":
-                            resizable_images_team.append((filename, dimensions))
-            except Exception as e:
-                print(f"Error processing {filename}: {str(e)}")
+        image_path = os.path.join(folder_path, filename)
+        try:
+            with Image.open(image_path) as img:
+                width, height = img.size
+                dimensions = f"{width}x{height}"
+                if width == 800 and height == 800:
+                    if folder_name == "alum-pfps":
+                        eight_hundred_images_alum.append((filename, dimensions))
+                    elif folder_name == "team-pfps":
+                        eight_hundred_images_team.append((filename, dimensions))
+                elif width > 800 or height > 800:
+                    if folder_name == "alum-pfps":
+                        resizable_images_alum.append((filename, dimensions))
+                    elif folder_name == "team-pfps":
+                        resizable_images_team.append((filename, dimensions))
+        except Exception as e:
+            print(f"Error processing {filename}: {str(e)}")
 
 print("alum-pfps")
 
