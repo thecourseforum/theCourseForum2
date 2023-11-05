@@ -51,37 +51,32 @@ def find_all_subjects(semester='1238'):
         print(e)
 
 
-def find_all_classes_in_subject(semester):  # this function will be incredibly slow
+def find_all_class_numbers(semester):  # this function will be incredibly slow
     """
-        input: semester using the formula  “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
-        output: set of all course numbers
-        functionality: connects with sis API and uses the given list of all subjects to look at all classes each
-            department offers to find all the unique course numbers. This will be used when querying each class
-            individually.
-        """
-    all_subjects = find_all_subjects(semester)
-    all_class_nums = set({})
-    for subject in all_subjects:
-        page = 1
-        while True:
-            url = (
-                'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.'
-                'IScript_ClassSearch?institution=UVA01&term=1228&subject=' +
-                subject +
-                '&page=' +
-                str(page))
-            try:
-                apiResponse = requests.get(url)
-                data = json.loads(apiResponse.text)
-                if data == []:
-                    break
-                print(data)
-            except Exception as e:
-                print(e)
+    input: semester using the formula  “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
+    output: set of all course numbers
+    functionality: connects with sis API and uses the given list of all subjects to look at all classes each
+        department offers to find all the unique course numbers. This will be used when querying each class
+        individually.
+    """
+
+    all_classes = []
+    page = 1
+    while True:
+        url = (
+            'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.' +
+            'FieldFormula.IScript_ClassSearch?institution=UVA01&term=' + semester + '&page=' + page)
+        try:
+            apiResponse = requests.get(url)
+            data = json.loads(apiResponse.text)
+            if data == []:
                 break
-            for course in data:
-                all_class_nums.add(course['class_nbr'])
-            page += 1
+        except Exception as e:
+            print(e)
+            break
+        for course in data:
+            all_classes.append(course['class_nbr'])
+        page += 1
 
 
 def compile_all_class_data(semester):
@@ -105,6 +100,3 @@ def make_class_request(url):
 
 def write_csv(list_of_classes):
     pass
-# make_class_request(
-#     'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.'
-#     'FieldFormula.IScript_ClassDetails?institution=UVA01&term=1242&class_nbr=16634')
