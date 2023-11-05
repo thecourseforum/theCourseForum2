@@ -48,3 +48,32 @@
 .login-button:focus {
     outline: none;
 }
+
+/* Placeholder CSS for Microsoft Auth Button */
+/* Normal */
+.microsoft-login-button {
+    background: url('./placeholder_microsoft_button.png') 764px;
+    border: none;
+    width: 382px;
+    height: 92px;
+    padding: 0px;
+}
+
+/* Hovering */
+.microsoft-login-button:hover {
+    background: url('./placeholder_microsoft_button.png') 1146px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Pressed */
+.microsoft-login-button:active {
+    background: url('./placeholder_microsoft_button.png') 382px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Pressed but dragged cursor away */
+.microsoft-login-button:focus {
+    outline: none;
+}
