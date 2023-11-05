@@ -79,7 +79,38 @@ def find_all_class_numbers(semester):  # this function will be incredibly slow
         page += 1
 
 
-def compile_all_class_data(semester):
+def compile_all_class_data(course_numbers, semester):
+    """
+        input: course numbers, semester 
+        output: list of course dictionaries to be used for file writing
+        functionality: create a list of all the course data stored in dictionaries to be able to write to a csv file.
+    """
+    course_list = []
+    for course_number in course_numbers:
+        url = f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassDetails?institution=UVA01&term={semester}&class_nbr={course_number}"
+        
+        try:
+            apiResponse = requests.get(url)
+            data = json.loads(apiResponse.text)
+            if data == []:
+                break
+        except Exception as e:
+            print(e)
+            break
+
+        class_details = data["section_info"]["class_details"]
+        course_dictionary = {
+            "ClassNumber": course_number,
+            "Mnemonic": class_details["subject"],
+            "Number": class_details["catalog_nbr"],
+            # Parser needs to be updated as uses full word instead of abbriveation (Lecture instead of LEC)
+            "Section": class_details["component"],
+            "Type": ,
+            "Units",
+            "Instructor1","Days1","Room1","MeetingDates1",Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,Description
+
+        }
+        course_list.append(course_dictionary)
     pass
 
 
