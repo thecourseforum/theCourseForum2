@@ -3,8 +3,8 @@ import re
 import statistics
 
 from django.contrib.postgres.search import TrigramWordSimilarity
-from django.db.models import CharField, ExpressionWrapper, F, FloatField, Value
-from django.db.models.functions import Cast, Concat
+from django.db.models import CharField, ExpressionWrapper, F, FloatField, Value, Q
+from django.db.models.functions import Cast, Concat, Length
 from django.shortcuts import render
 
 from ..models import Course, Instructor, Subdepartment
@@ -146,9 +146,11 @@ def fetch_courses(title, number):
                 output_field=FloatField(),
             )
         )
-        .filter(total_similarity__gte=0.2)
+        .filter(total_similarity__gte=0.2).filter(Q(number__isnull=True) | Q(number__regex=r'^\d{4}$'))
         .order_by("-total_similarity")[:20]
     )
+
+    print(results)
 
     # Formatting results similar to Elastic search response
     formatted_results = [
@@ -163,6 +165,9 @@ def fetch_courses(title, number):
         }
         for course in results
     ]
+
+    for each in formatted_results:
+        print(each.get("number"))
 
     return format_response(
         {"results": formatted_results, "meta": {"engine": {"name": "tcf-courses"}}}
