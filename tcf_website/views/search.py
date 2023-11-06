@@ -2,9 +2,10 @@
 import re
 import statistics
 
+from datetime import timedelta
 from django.contrib.postgres.search import TrigramWordSimilarity
-from django.db.models import CharField, ExpressionWrapper, F, FloatField, Value, Q
-from django.db.models.functions import Cast, Concat, Length
+from django.db.models import CharField, ExpressionWrapper, F, FloatField, Value, Q, DateField, Case, When, Value
+from django.db.models.functions import Cast, Concat, Length, Now
 from django.shortcuts import render
 
 from ..models import Course, Instructor, Subdepartment
@@ -128,6 +129,7 @@ def fetch_courses(title, number):
         MNEMONIC_WEIGHT = 1
     else:
         NUMBER_WEIGHT = 0
+
     results = (
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
@@ -146,11 +148,12 @@ def fetch_courses(title, number):
                 output_field=FloatField(),
             )
         )
-        .filter(total_similarity__gte=0.2).filter(Q(number__isnull=True) | Q(number__regex=r'^\d{4}$'))
-        .order_by("-total_similarity")[:20]
+        .filter(total_similarity__gte=0.2)
+        .filter(Q(number__isnull=True) | Q(number__regex=r'^\d{4}$'))
+        .exclude(semester_last_taught_id__lt=48)
+        .order_by("-total_similarity")
+        [:20]
     )
-
-    print(results)
 
     # Formatting results similar to Elastic search response
     formatted_results = [
@@ -166,8 +169,8 @@ def fetch_courses(title, number):
         for course in results
     ]
 
-    for each in formatted_results:
-        print(each.get("number"))
+    for result in results:
+        print(result.title + str(result.semester_last_taught_id))
 
     return format_response(
         {"results": formatted_results, "meta": {"engine": {"name": "tcf-courses"}}}
