@@ -12,6 +12,7 @@ from django import forms
 from django.forms import ModelForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.contrib.auth import logout
 from .browse import safe_round
 from ..models import Review, User
 
@@ -82,6 +83,13 @@ class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView)
     """User deletion view."""
     model = User
     success_url = reverse_lazy('browse')
+
+    def form_valid(self, form):
+        """Override DeleteView's function to just call logout before deleting"""
+        # form_valid() is overrideen instead of delete() since it's more in line
+        # with what Django expects
+        logout(self.request)
+        return super().form_valid(form)
 
     def get_object(self):  # pylint: disable=arguments-differ
         """Override DeleteView's function to validate profile belonging to user."""
