@@ -1,11 +1,11 @@
 .rating-card-link {
     background-color: var(--secondary-color);
-    color: #EBEBEB;
+    color: white;
 }
 
 .rating-card-link:hover {
     background-color: var(--main-color);
-    color: #EBEBEB;
+    color: var(--background-color);
 }
 
 .rating-card, .rating-card-link {

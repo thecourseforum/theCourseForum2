@@ -107,6 +107,27 @@
       "github": "nehagb99"
     },
     {
+      "name": "Ruiyu Zhang",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Ruiyu_Zhang.jpg",
+      "github": "RuiyuZhang69"
+    },
+    {
+      "name": "Kyle Durrer",
+      "role": "Developer",
+      "class": "2024",
+      "img_filename": "ENG_Kyle_Durrer.jpg",
+      "github": "kmd2zjw"
+    }, 
+    {
+      "name": "Alex Yung",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Alex_Yung.jpg",
+      "github": "alex-yung-github"
+    },
+    {
       "name": "Bryan Katuari",
       "role": "Developer",
       "class": "2026",
@@ -142,6 +163,13 @@
       "github": "zohaibk04"
     },
     {
+      "name": "Kingsley Kim",
+      "role:": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Kingsley_Kim.jpg",
+      "github": "kingsleykimm"
+    },
+    {
       "name": "Riley Fletcher",
       "role": "Developer",
       "class": "2025",
@@ -169,6 +197,54 @@
       "img_filename": "ENG_Junho_Lee.jpg",
       "github": "junholee6a"
     }
+    ,
+    {
+      "name": "Ja-Zhua Cheng",
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Ja-Zhua_Cheng.jpeg"
+    }
+    ,
+    {
+      "name": "Justin Park",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Justin_Park.jpg"
+    },
+    {
+      "name": "Vivian Gao",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Vivian_Gao.jpg"
+    },
+    {
+      "name": "Jay Lalwani",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Jay_Lalwani.jpg",
+      "github": "Jay-Lalwani"
+    },
+    {
+      "name": "Olivia Seto", 
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Olivia_Seto.jpg",
+      "github": "oliviaseto"
+    },
+    {
+      "name": "Sebastian Wiktorowicz",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Sebastian_Wiktorowicz.png",
+      "github": "SebastianWikt"
+    },
+    {
+      "name": "Tino Martella",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Tino_Martella.jpg",
+      "github": "Tino-Martella"
+    }
   ],
   "marketing_team": [
     {
@@ -192,5 +268,6 @@
       "img_filename": "DM_Chai_Zhang.JPG",
       "linkedin": "chai-zhang"
     }
+    
   ]
 }
