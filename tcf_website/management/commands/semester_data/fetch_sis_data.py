@@ -91,10 +91,10 @@ def compile_class_data(course_number, semester):
         apiResponse = requests.get(url)
         data = json.loads(apiResponse.text)
         if data == []:
-            break
+            return None
     except Exception as e:
         print(e)
-        break
+        return None
 
     class_details = data["section_info"]["class_details"]
     course_dictionary = {
@@ -103,16 +103,15 @@ def compile_class_data(course_number, semester):
         "Number": class_details["catalog_nbr"],
         "Section": class_details["class_section"],
         # For Type, Parser needs to be updated to use abbriveation instead of full word (LEC instead of Lecture)
-        "Type": 
-        switch(class_details["component"]) {
-            case "LEC": "Lecture";
-            case "DIS": "Discussion";
-            case "LAB": "Laboratory";
-            default: class_details["component"];
-        },
+        "Type": {
+        "LEC": "Lecture",
+        "DIS": "Discussion",
+        "LAB": "Laboratory"
+        }.get(class_details["component"], class_details["component"]),
         # "units": "1 - 12 units" to "1 - 12", "units": "3 units" to "3"
         "Units": class_details["units"][0:class_details["units"].find("u") - 1],
-        "Instructor1": ,"Days1","Room1","MeetingDates1",Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,Description
+        "Instructor1": data["meetings"][0]["instructor"],
+        #,"Days1","Room1","MeetingDates1",Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,Description
 
     }
     return course_dictionary
