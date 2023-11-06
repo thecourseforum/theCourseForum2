@@ -30,7 +30,6 @@ class SubdepartmentViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Subdepartment.objects.all()
     serializer_class = SubdepartmentSerializer
 
-
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     """DRF ViewSet for Course"""
     queryset = Course.objects\
@@ -38,44 +37,51 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = FlexiblePagination
     filterset_fields = ['subdepartment']
 
-    def get_queryset(self):
-        queryset = self.queryset
+    @print_queries
+    def get_queryset(self): # does the filterset get applied before or after this?
+        queryset = super().get_queryset()
+        if 'recent' in self.request.query_params:
+            latest_semester = Semester.latest()
+            queryset = queryset.filter(
+                semester_last_taught__year__gte=latest_semester.year - 5
+            )
+
         if 'allstats' in self.request.query_params:
-            queryset = queryset\
-                .prefetch_related('review_set')\
-                .annotate(
-                    # ratings
-                    average_instructor=Avg('review__instructor_rating'),
-                    average_fun=Avg('review__enjoyability'),
-                    average_recommendability=Avg('review__recommendability'),
-                    average_difficulty=Avg('review__difficulty'),
-                    average_rating=(
-                        Avg('review__instructor_rating') +
-                        Avg('review__enjoyability') +
-                        Avg('review__recommendability')
-                    ) / 3,
-                    # workload
-                    average_hours_per_week=Avg('review__hours_per_week'),
-                    average_amount_reading=Avg('review__amount_reading'),
-                    average_amount_writing=Avg('review__amount_writing'),
-                    average_amount_group=Avg('review__amount_group'),
-                    average_amount_homework=Avg('review__amount_homework'),
-                    # grades
-                    # TODO: average_gpa should be fixed
-                    average_gpa=Avg('coursegrade__average', distinct=True),
-                    a_plus=Sum('coursegrade__a_plus', distinct=True),
-                    a=Sum('coursegrade__a', distinct=True),
-                    a_minus=Sum('coursegrade__a_minus', distinct=True),
-                    b_plus=Sum('coursegrade__b_plus', distinct=True),
-                    b=Sum('coursegrade__b', distinct=True),
-                    b_minus=Sum('coursegrade__b_minus', distinct=True),
-                    c_plus=Sum('coursegrade__c_plus', distinct=True),
-                    c=Sum('coursegrade__c', distinct=True),
-                    c_minus=Sum('coursegrade__c_minus', distinct=True),
-                    dfw=Sum('coursegrade__dfw', distinct=True),
-                    total_enrolled=Sum('coursegrade__total_enrolled',
-                                       distinct=True),
-                )
+                queryset = queryset\
+                    .prefetch_related('review_set')\
+                    .annotate(
+                        # ratings
+                        average_instructor=Avg('review__instructor_rating'),
+                        average_fun=Avg('review__enjoyability'),
+                        average_recommendability=Avg('review__recommendability'),
+                        average_difficulty=Avg('review__difficulty'),
+                        average_rating=(
+                            Avg('review__instructor_rating') +
+                            Avg('review__enjoyability') +
+                            Avg('review__recommendability')
+                        ) / 3,
+                        # workload
+                        average_hours_per_week=Avg('review__hours_per_week'),
+                        average_amount_reading=Avg('review__amount_reading'),
+                        average_amount_writing=Avg('review__amount_writing'),
+                        average_amount_group=Avg('review__amount_group'),
+                        average_amount_homework=Avg('review__amount_homework'),
+                        # grades
+                        # TODO: average_gpa should be fixed
+                        average_gpa=Avg('coursegrade__average', distinct=True),
+                        a_plus=Sum('coursegrade__a_plus', distinct=True),
+                        a=Sum('coursegrade__a', distinct=True),
+                        a_minus=Sum('coursegrade__a_minus', distinct=True),
+                        b_plus=Sum('coursegrade__b_plus', distinct=True),
+                        b=Sum('coursegrade__b', distinct=True),
+                        b_minus=Sum('coursegrade__b_minus', distinct=True),
+                        c_plus=Sum('coursegrade__c_plus', distinct=True),
+                        c=Sum('coursegrade__c', distinct=True),
+                        c_minus=Sum('coursegrade__c_minus', distinct=True),
+                        dfw=Sum('coursegrade__dfw', distinct=True),
+                        total_enrolled=Sum('coursegrade__total_enrolled',
+                                        distinct=True),
+                    )
         elif 'simplestats' in self.request.query_params:
             queryset = queryset\
                 .prefetch_related('review_set')\
@@ -87,11 +93,6 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                         Avg('review__enjoyability') +
                         Avg('review__recommendability')
                     ) / 3)
-        if 'recent' in self.request.query_params:
-            latest_semester = Semester.latest()
-            queryset = queryset.filter(
-                semester_last_taught__year__gte=latest_semester.year - 5
-            )
         return queryset.order_by('number')
 
     def get_serializer_class(self):
@@ -129,4 +130,4 @@ class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
         if 'instructor' in self.request.query_params:
             params['section__instructors'] = self.request.query_params['instructor']
         # Returns filtered, unique semesters in reverse chronological order
-        return self.queryset.filter(**params).distinct().order_by('-number')
+        return super.get_queryset().filter(**params).distinct().order_by('-number')
