@@ -4,8 +4,9 @@ import statistics
 
 from datetime import timedelta
 from django.contrib.postgres.search import TrigramWordSimilarity
-from django.db.models import CharField, ExpressionWrapper, F, FloatField, Value, Q, DateField, Case, When, Value
-from django.db.models.functions import Cast, Concat, Length, Now
+from django.db.models import CharField, ExpressionWrapper, F, FloatField, Value, Q
+from django.db.models import Value
+from django.db.models.functions import Cast, Concat
 from django.shortcuts import render
 
 from ..models import Course, Instructor, Subdepartment
@@ -149,7 +150,9 @@ def fetch_courses(title, number):
             )
         )
         .filter(total_similarity__gte=0.2)
+        # filters out classes with 3 digit class numbers (old naming system)
         .filter(Q(number__isnull=True) | Q(number__regex=r'^\d{4}$'))
+        # filters out classes that haven't been taught since Fall 2020
         .exclude(semester_last_taught_id__lt=48)
         .order_by("-total_similarity")
         [:20]
@@ -168,9 +171,6 @@ def fetch_courses(title, number):
         }
         for course in results
     ]
-
-    for result in results:
-        print(result.title + str(result.semester_last_taught_id))
 
     return format_response(
         {"results": formatted_results, "meta": {"engine": {"name": "tcf-courses"}}}
