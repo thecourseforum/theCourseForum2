@@ -15,3 +15,4 @@ class HandleExceptionsMiddleware:
         print('Error on Load')
         print("Internal Server Error: " + request.get_full_path(), file=sys.stderr)
         print(traceback.format_exc(), file=sys.stderr)
+        print(exception)
