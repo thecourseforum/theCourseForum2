@@ -52,7 +52,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'tcf_core.settings.record_middleware.RecordMiddleware'
+    'tcf_core.settings.handle_exceptions_middleware.HandleExceptionsMiddleware',
+    'tcf_core.settings.record_middleware.RecordMiddleware',
 ]
 
 ROOT_URLCONF = 'tcf_core.urls'
