@@ -13,8 +13,8 @@ class HandleExceptionsMiddleware:
 
         return response
 
-    # Gets and prints out all errors to terminal for tracking
     def process_exception(self, request, exception):
+        """Gets and prints out all errors to terminal for tracking"""
         print('Error on Load')
         print("Internal Server Error: " + request.get_full_path(), file=sys.stderr)
         print(traceback.format_exc(), file=sys.stderr)
