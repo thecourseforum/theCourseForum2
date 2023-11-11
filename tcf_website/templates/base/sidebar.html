@@ -23,7 +23,7 @@
         <hr>
       </a>
       {% else %}
-      <a href="#newReviewLoginModal" data-toggle="modal"
+      <a href="#loginModal" data-toggle="modal"
        class="list-group-item list-group-item-action pb-0
        {% if request.resolver_match.url_name == 'new_review' %}active{% endif %}">
         <h4><i class="fa fa-pencil-square-o fa-fw"></i></h4>
@@ -41,15 +41,15 @@
         <hr>
       </a>
     </li>
-    <li>
-      <a href="#bugModal" data-toggle="modal" data-target="#bugModal" id="bugFormOpen"
-         class="list-group-item list-group-item-action pb-0
-         {% if request.resolver_match.url_name == 'feedback' %}active{% endif %}">
-        <h4><i class="fa fa-thumbs-up fa-fw"></i></h4>
-        <p>Feedback</p>
-        <hr>
-      </a>
-    </li>
+    <!-- <li> -->
+    <!--   <a href="#bugModal" data-toggle="modal" data-target="#bugModal" id="bugFormOpen" -->
+    <!--      class="list-group-item list-group-item-action pb-0 -->
+    <!--      {% if request.resolver_match.url_name == 'feedback' %}active{% endif %}"> -->
+    <!--     <h4><i class="fa fa-thumbs-up fa-fw"></i></h4> -->
+    <!--     <p>Feedback</p> -->
+    <!--     <hr> -->
+    <!--   </a> -->
+    <!-- </li> -->
     <!-- tCF profile dropdown when navbar collapses -->
     <li>
     {% if user.is_authenticated %}
@@ -79,17 +79,17 @@
   <div class="footer text-center small">
     <ul class="icon-section">
       <li class="icon-wrapper left-icon">
-          <a href="https://discord.gg/tAjzH7eyvW">
+          <a href="https://discord.gg/tAjzH7eyvW" aria-label="theCourseForum Discord">
               <i class="fab fa-discord fa-fw"></i>
           </a>
       </li>
       <li class="icon-wrapper left-icon">
-          <a href="https://www.facebook.com/thecourseforum">
+          <a href="https://www.facebook.com/thecourseforum" aria-label="theCourseForum Facebook">
               <i class="fab fa-facebook fa-fw"></i>
           </a>
       </li>
       <li class="icon-wrapper right-icon">
-          <a href="https://www.instagram.com/thecourseforum_uva/">
+          <a href="https://www.instagram.com/thecourseforum_uva/" aria-label="theCourseForum Instagram">
               <i class="fab fa-instagram fa-fw"></i>
           </a>
       </li>
