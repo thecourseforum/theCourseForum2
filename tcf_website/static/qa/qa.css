@@ -1,27 +1,33 @@
-.question .upvoteQuestion, .question .downvoteQuestion {
-    font-size: 1.3rem;
-    color: #aaa;
-    cursor: pointer;
+.question .upvoteQuestion,
+.question .downvoteQuestion {
+  font-size: 1.3rem;
+  color: #aaa;
+  cursor: pointer;
 }
 
-.question .upvoteQuestion.active, .question .upvoteQuestion:hover {
-    color: dodgerblue;
+.question .upvoteQuestion.active,
+.question .upvoteQuestion:hover {
+  color: dodgerblue;
 }
 
-.question .downvoteQuestion.active, .question .downvoteQuestion:hover {
-    color: rgb(215, 86, 38);
+.question .downvoteQuestion.active,
+.question .downvoteQuestion:hover {
+  color: rgb(215, 86, 38);
 }
 
-.answer .upvoteAnswer, .answer .downvoteAnswer {
-    font-size: 1.3rem;
-    color: #aaa;
-    cursor: pointer;
+.answer .upvoteAnswer,
+.answer .downvoteAnswer {
+  font-size: 1.3rem;
+  color: #aaa;
+  cursor: pointer;
 }
 
-.answer .upvoteAnswer.active, .answer .upvoteAnswer:hover {
-    color: dodgerblue;
+.answer .upvoteAnswer.active,
+.answer .upvoteAnswer:hover {
+  color: dodgerblue;
 }
 
-.answer .downvoteAnswer.active, .answer .downvoteAnswer:hover {
-    color: rgb(215, 86, 38);
+.answer .downvoteAnswer.active,
+.answer .downvoteAnswer:hover {
+  color: rgb(215, 86, 38);
 }

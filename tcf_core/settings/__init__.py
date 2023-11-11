@@ -14,12 +14,14 @@ def custom_recording_logic(request):
 
     This can be replaced by a lambda function, but autopep8 won't allow that :(
     """
-    return not request.path.startswith('/api')
+    return not request.path.startswith("/api")
 
 
 # Performance profiling for non-API views during development
-if os.environ.get('DJANGO_SETTINGS_MODULE') not in [
-        'tcf_core.settings.dev', 'tcf_core.settings.prod']:
-    INSTALLED_APPS.append('silk')
-    MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
+if os.environ.get("DJANGO_SETTINGS_MODULE") not in [
+    "tcf_core.settings.dev",
+    "tcf_core.settings.prod",
+]:
+    INSTALLED_APPS.append("silk")
+    MIDDLEWARE.append("silk.middleware.SilkyMiddleware")
     SILKY_INTERCEPT_FUNC = custom_recording_logic
