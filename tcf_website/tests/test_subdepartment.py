@@ -3,8 +3,8 @@
 
 from django.test import TestCase
 
-from .test_utils import setup, create_new_semester
 from ..models import Course
+from .test_utils import create_new_semester, setup
 
 
 class SubdepartmentTestCase(TestCase):

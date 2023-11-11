@@ -4,14 +4,14 @@
 from urllib.parse import urlencode
 
 from django.contrib.messages import get_messages
+from django.db import IntegrityError
 from django.forms.models import model_to_dict
 from django.test import TestCase
 from django.urls import reverse
-from django.db import IntegrityError
 
-from ..models import Vote, Review
-from .test_utils import setup, suppress_request_warnings
+from ..models import Review, Vote
 from ..views.review import ReviewForm
+from .test_utils import setup, suppress_request_warnings
 
 
 class EditReviewTests(TestCase):

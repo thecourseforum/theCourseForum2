@@ -4,16 +4,17 @@ Loads grade data from CSV files into database
 """
 import os
 import re
+
 import numpy as np
 import pandas as pd
+from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
-from django.core.management.base import BaseCommand
 from tcf_website.models import (
     Course,
-    Instructor,
     CourseGrade,
     CourseInstructorGrade,
+    Instructor,
 )
 
 # Location of our grade data CSVs

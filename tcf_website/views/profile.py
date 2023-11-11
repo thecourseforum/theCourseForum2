@@ -1,22 +1,23 @@
 """Views for user profile."""
 
-from django.shortcuts import render
-from django.views import generic
+from django import forms
+from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import (
+from django.contrib.auth.mixins import (  # For class-based views
     LoginRequiredMixin,
-)  # For class-based views
+)
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
-from django.contrib import messages
 from django.db.models import Avg, Count, Q
-from django import forms
 from django.forms import ModelForm
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.contrib.auth import logout
-from .browse import safe_round
+from django.views import generic
+
 from ..models import Review, User
+from .browse import safe_round
 
 
 class ProfileForm(ModelForm):

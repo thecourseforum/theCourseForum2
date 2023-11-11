@@ -3,6 +3,7 @@ from django.core import management
 from django.test import TestCase
 
 from tcf_website.models import CourseGrade, CourseInstructorGrade
+
 from .test_utils import setup
 
 

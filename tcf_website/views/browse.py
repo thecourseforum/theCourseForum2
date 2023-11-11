@@ -5,25 +5,25 @@
 import json
 from typing import Any, Dict, List
 
-from django.db.models import Avg, CharField, F, Max, Q, Value, Case, When
+from django.contrib.postgres.aggregates.general import ArrayAgg
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Avg, Case, CharField, F, Max, Q, Value, When
 from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.postgres.aggregates.general import ArrayAgg
 
 from ..models import (
-    School,
-    Department,
+    Answer,
     Course,
+    CourseInstructorGrade,
+    Department,
+    Instructor,
+    Question,
+    Review,
+    School,
     Section,
     Semester,
-    Instructor,
-    Review,
-    CourseInstructorGrade,
-    Question,
-    Answer,
 )
 
 

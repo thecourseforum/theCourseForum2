@@ -2,7 +2,7 @@
 """DRF Viewsets"""
 from django.db.models import Avg, Sum
 from rest_framework import viewsets
-from .filters import InstructorFilter
+
 from ..models import (
     Course,
     Department,
@@ -11,15 +11,16 @@ from ..models import (
     Semester,
     Subdepartment,
 )
+from .filters import InstructorFilter
 from .paginations import FlexiblePagination
 from .serializers import (
+    CourseAllStatsSerializer,
     CourseSerializer,
     CourseSimpleStatsSerializer,
-    CourseAllStatsSerializer,
     DepartmentSerializer,
     InstructorSerializer,
-    SemesterSerializer,
     SchoolSerializer,
+    SemesterSerializer,
     SubdepartmentSerializer,
 )
 

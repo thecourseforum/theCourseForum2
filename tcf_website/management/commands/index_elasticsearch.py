@@ -1,11 +1,11 @@
 """Management command that loads courses and instructors into Elasticsearch"""
+import json
+import os
 from datetime import datetime
 
-import os
-import json
 import requests
-
 from django.core.management.base import BaseCommand, CommandError
+
 from tcf_website.models import Course, Instructor
 
 

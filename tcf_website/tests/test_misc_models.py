@@ -3,8 +3,8 @@
 
 from django.test import TestCase
 
-from .test_utils import setup
 from ..models import Vote
+from .test_utils import setup
 
 
 class MiscModelsTestCase(TestCase):

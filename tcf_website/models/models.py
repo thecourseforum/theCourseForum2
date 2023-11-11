@@ -2,10 +2,10 @@
 
 """TCF Database models."""
 
-from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
-from django.db.models.functions import Coalesce, Abs
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from django.db.models.functions import Abs, Coalesce
 
 
 class School(models.Model):

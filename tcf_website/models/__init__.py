@@ -6,18 +6,18 @@
 # https://docs.djangoproject.com/en/3.0/topics/db/models/#organizing-models-in-a-package
 
 from .models import (
-    School,
-    Department,
-    Subdepartment,
-    User,
-    Instructor,
-    Semester,
+    Answer,
     Course,
-    Section,
-    Review,
-    Vote,
     CourseGrade,
     CourseInstructorGrade,
+    Department,
+    Instructor,
     Question,
-    Answer,
+    Review,
+    School,
+    Section,
+    Semester,
+    Subdepartment,
+    User,
+    Vote,
 )

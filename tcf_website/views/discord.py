@@ -1,6 +1,7 @@
 """Posting to Discord"""
-import os
 import json
+import os
+
 import requests
 from django.http import JsonResponse
 

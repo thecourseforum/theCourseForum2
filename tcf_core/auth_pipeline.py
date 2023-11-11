@@ -4,13 +4,14 @@
 # pylint: disable=line-too-long
 """Custom authentication pipeline steps."""
 
-from social_core.pipeline.partial import partial
-from django.shortcuts import redirect, render
+from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
+from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.conf import settings
+from social_core.pipeline.partial import partial
+
 from tcf_website.models import User
 
 

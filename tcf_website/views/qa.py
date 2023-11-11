@@ -1,20 +1,21 @@
 """View for question and answer creation."""
 
 import datetime
+
 from django import forms
-from django.urls import reverse_lazy
-from django.views import generic
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse, HttpResponseRedirect
-from django.contrib.auth.mixins import (
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import (  # For class-based views
     LoginRequiredMixin,
-)  # For class-based views
+)
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect, get_object_or_404
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
+from django.views import generic
 
-from ..models import Question, Answer
+from ..models import Answer, Question
 
 
 class QuestionForm(forms.ModelForm):

@@ -1,5 +1,6 @@
 """"Custom DRF pagination classes"""
 from django_filters import FilterSet, NumberFilter
+
 from ..models import Instructor, Semester
 
 # pylint: disable=unused-argument

@@ -4,6 +4,7 @@ in semester-by-semester files. This script probably won't ever be run again, but
 may come in handy if we ever need to break up a big data file by semester.
 """
 from sys import argv
+
 from pandas import read_csv
 
 raw_data = read_csv(argv[1], encoding="ISO-8859-1")

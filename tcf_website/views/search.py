@@ -1,10 +1,11 @@
 """Views for search results"""
-import os
 import json
+import os
 import statistics
-import requests
 
+import requests
 from django.shortcuts import render
+
 from ..models import Subdepartment
 
 

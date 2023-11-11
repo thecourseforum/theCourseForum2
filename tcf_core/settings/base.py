@@ -2,9 +2,9 @@
 """Base Django settings for tcf_core project."""
 import os
 
-from django.urls import reverse_lazy
-from django.contrib.messages import constants as messages
 import environ
+from django.contrib.messages import constants as messages
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(

@@ -1,17 +1,17 @@
 """View pertaining to review creation/viewing."""
 
 from django import forms
-from django.views import generic
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import (
+from django.contrib.auth.mixins import (  # For class-based views
     LoginRequiredMixin,
-)  # For class-based views
+)
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
-from django.contrib import messages
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.views import generic
 
 from ..models import Review
 

@@ -1,10 +1,10 @@
+import traceback
+
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connections
 
 from tcf_website.legacy_models import *
 from tcf_website.models import *
-
-import traceback
 
 
 class Command(BaseCommand):

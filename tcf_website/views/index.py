@@ -1,5 +1,6 @@
 """Views for index and about pages."""
 import json
+
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.views.generic.base import TemplateView

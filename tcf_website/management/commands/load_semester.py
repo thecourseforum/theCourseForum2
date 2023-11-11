@@ -1,10 +1,10 @@
 import os
 import re
 
-from tqdm import tqdm
 import pandas as pd
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from tqdm import tqdm
 
 from tcf_website.models import *
 

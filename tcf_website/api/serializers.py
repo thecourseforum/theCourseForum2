@@ -1,10 +1,11 @@
 """DRF Serializers"""
 from rest_framework import serializers
+
 from ..models import (
     Course,
     Department,
-    School,
     Instructor,
+    School,
     Semester,
     Subdepartment,
 )

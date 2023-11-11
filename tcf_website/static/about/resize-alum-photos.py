@@ -1,5 +1,6 @@
-from PIL import Image
 import os
+
+from PIL import Image
 
 folders = [
     "tcf_website/static/about/team-pfps",
