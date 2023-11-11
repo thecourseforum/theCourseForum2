@@ -12,7 +12,6 @@ body {
   background-color: var(--main-color);
   position: fixed;
   z-index: 9999;
-  filter: brightness(85%);
 }
 
 #sidebar-wrapper .list-group {
@@ -27,7 +26,7 @@ body {
 
 #sidebar-wrapper .list-group-item, .footer, .footer a {
   background-color: var(--main-color);
-  color: var(--background-color);
+  color: white;
   border: 0rem;
 }
 
