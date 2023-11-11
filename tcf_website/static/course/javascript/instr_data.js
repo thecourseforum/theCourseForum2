@@ -6,8 +6,8 @@
 // Executed when DOM is ready
 jQuery(function ($) {
   /* Fetch instructor data for given course */
-  var pageSize = "1000";
-  var instrEndpoint =
+  const pageSize = "1000";
+  const instrEndpoint =
     `/api/instructors/?course=${window.courseID}` + `&page_size=${pageSize}`;
   // var courseID is from global var in template
   $.getJSON(instrEndpoint, function (data) {

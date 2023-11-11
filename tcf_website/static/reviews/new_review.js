@@ -25,7 +25,7 @@ jQuery(function ($) {
   }
 
   // Fetch all subdepartment data from API
-  var subdeptEndpoint = "/api/subdepartments/";
+  const subdeptEndpoint = "/api/subdepartments/";
   $.getJSON(subdeptEndpoint, function (data) {
     // Sort departments alphabetically by mnemonic
     data.sort(function (a, b) {
@@ -33,7 +33,7 @@ jQuery(function ($) {
     });
 
     // Generate option tags
-    $.each(data, function (i, subdept) {
+    $.each(data, function (_, subdept) {
       $("<option />", {
         val: subdept.id,
         text: subdept.mnemonic + " | " + subdept.name,
@@ -63,13 +63,13 @@ jQuery(function ($) {
     clearDropdown("#semester");
 
     // Fetch course data from API, based on selected subdepartment
-    var subdeptID = $("#subject").val();
-    var pageSize = "1000";
-    var courseEndpoint = `/api/courses/?subdepartment=${subdeptID}
+    const subdeptID = $("#subject").val();
+    const pageSize = "1000";
+    const courseEndpoint = `/api/courses/?subdepartment=${subdeptID}
                               &page_size=${pageSize}&recent`;
     $.getJSON(courseEndpoint, function (data) {
       // Generate option tags
-      $.each(data.results, function (i, course) {
+      $.each(data.results, function (_, course) {
         $("<option />", {
           val: course.id,
           text: course.number + " | " + course.title,
@@ -97,15 +97,15 @@ jQuery(function ($) {
     clearDropdown("#semester");
 
     // Fetch instructor data from API, based on selected course
-    var course = $("#course").val();
-    var pageSize = "1000";
-    var instrEndpoint =
+    const course = $("#course").val();
+    const pageSize = "1000";
+    const instrEndpoint =
       `/api/instructors/?course=${course}` + `&page_size=${pageSize}`;
     $.getJSON(instrEndpoint, function (data) {
       clearDropdown("#instructor"); // Empty dropdown
 
       // Generate option tags
-      $.each(data.results, function (i, instr) {
+      $.each(data.results, function (_, instr) {
         $("<option />", {
           val: instr.id,
           text: instr.last_name + ", " + instr.first_name,
@@ -131,12 +131,12 @@ jQuery(function ($) {
     clearDropdown("#semester");
 
     // Fetch all semester data from API
-    var course = $("#course").val();
-    var instrID = $("#instructor").val();
-    var semEndpoint = `/api/semesters/?course=${course}&instructor=${instrID}`;
+    const course = $("#course").val();
+    const instrID = $("#instructor").val();
+    const semEndpoint = `/api/semesters/?course=${course}&instructor=${instrID}`;
     $.getJSON(semEndpoint, function (data) {
       // Generate option tags
-      $.each(data, function (i, semester) {
+      $.each(data, function (_, semester) {
         // Note: API returns semester list in reverse chronological order,
         // Most recent 5 years only
         $("<option />", {
@@ -155,9 +155,9 @@ jQuery(function ($) {
   $("#reviewtext").on("keyup keypress keydown", function () {
     // Need all these different events so it works dynamically
     // Used .trim() to remove leading and trailing spaces
-    var review = $("#reviewtext").val().trim();
-    var numberOfWords = countNumberOfWords(review);
-    var encouragedWordCount = 150;
+    const review = $("#reviewtext").val().trim();
+    const numberOfWords = countNumberOfWords(review);
+    const encouragedWordCount = 150;
 
     // Set the width of the bar to the what percent of the encouraged word count the current review is (Used an outer container's width to ensure it scales properly to mobile)
     $("#review-progressbar").width(
@@ -165,7 +165,7 @@ jQuery(function ($) {
     );
 
     // String Form of the number of words out of the encouraged word count
-    var numberOfWordsInMessage =
+    const numberOfWordsInMessage =
       "(" +
       numberOfWords.toString() +
       "/" +
@@ -225,16 +225,16 @@ function countNumberOfWords(review) {
     return 0;
   }
   // Create an array of all the words
-  var arrayOfWords = review.split(" ");
+  const arrayOfWords = review.split(" ");
 
   // Used to keep track of all "words" with no letters in them
-  var countNonAlphaWords = 0;
+  let countNonAlphaWords = 0;
 
   // Iterate through all words and letters within the words
-  for (var i = 0; i < arrayOfWords.length; i++) {
+  for (let i = 0; i < arrayOfWords.length; i++) {
     // Tracks if the word is all non letter characters
-    var allNonAlpha = true;
-    for (var j = 0; j < arrayOfWords[i].length; j++) {
+    let allNonAlpha = true;
+    for (let j = 0; j < arrayOfWords[i].length; j++) {
       if (
         arrayOfWords[i][j].toUpperCase() >= "A" &&
         arrayOfWords[i][j].toUpperCase() <= "Z"

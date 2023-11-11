@@ -35,13 +35,13 @@ function sortQA(btnID) {
 }
 
 function collapseQA(numberShown) {
-  var ids = $(".question-container")
+  const ids = $(".question-container")
     .map(function (_, x) {
       return "#".concat(x.id);
     })
     .get();
   for (const [index, id] of ids.entries()) {
-    var detachedID = $(id).detach();
+    const detachedID = $(id).detach();
     if (index < numberShown) {
       $("#questionShow").append(detachedID);
     } else {
@@ -51,7 +51,7 @@ function collapseQA(numberShown) {
 }
 
 function collapseAnswers(numberShown) {
-  var ids = $(".answer-container")
+  const ids = $(".answer-container")
     .map(function (_, x) {
       return x.id;
     })
@@ -66,14 +66,14 @@ function collapseQuestionAnswer(numberShown, questionID) {
   const showAnswerContainer = "#answerShow" + questionID;
   const collapseAnswerContainer = "#answerCollapse" + questionID;
 
-  var answerIDs = $(answerContainerID.concat(" .answer"))
+  const answerIDs = $(answerContainerID.concat(" .answer"))
     .map(function (_, x) {
       return "#".concat(x.id);
     })
     .get();
 
   for (const [index, id] of answerIDs.entries()) {
-    var detachedID = $(id).detach();
+    const detachedID = $(id).detach();
     if (index < numberShown) {
       $(showAnswerContainer).append(detachedID);
     } else {
@@ -83,7 +83,7 @@ function collapseQuestionAnswer(numberShown, questionID) {
 }
 
 function sortAnswers(containerClass) {
-  var ids = $(containerClass)
+  const ids = $(containerClass)
     .map(function (_, x) {
       return "#".concat(x.id);
     })
@@ -129,7 +129,7 @@ function clickCollapseAnswer(collapseID) {
 }
 
 $(function () {
-  var ids = $(".collapse-answer-button")
+  const ids = $(".collapse-answer-button")
     .map(function (_, x) {
       return x.id;
     })

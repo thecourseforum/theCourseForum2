@@ -134,7 +134,7 @@ const selectOrderOfSort = (asc, id, sortName) => {
   /* sortClasses takes in a comparing function (defined below) and reorders the classes appropriately
        comparator needed for both ascending and descending as any classes with null values should be at the end of the list either order
     */
-  var arrow = "";
+  let arrow = "";
   sortClasses(cmpByProp(activeSort, asc));
   if (asc === 1) {
     arrow = " &#11014;"; // Up arrow (dummy Unicode value replace with the real one)
@@ -145,8 +145,8 @@ const selectOrderOfSort = (asc, id, sortName) => {
 };
 
 const sortClasses = (cmp) => {
-  $("ul.course-list").each(function (a) {
-    var li = $(this).children("li");
+  $("ul.course-list").each(function (_) {
+    const li = $(this).children("li");
     li.detach().sort(cmp);
     $(this).append(li);
   });

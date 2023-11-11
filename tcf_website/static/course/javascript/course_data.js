@@ -1,8 +1,8 @@
-var barConfig;
-var pieConfig;
-var myChart;
-var totalSum;
-var ctx = document.getElementById("myChart");
+let barConfig;
+let pieConfig;
+let myChart;
+let totalSum;
+const ctx = document.getElementById("myChart");
 
 function togglePieChart() {
   if (myChart) {
@@ -250,11 +250,11 @@ const createChart = (gradesData) => {
       tooltips: {
         callbacks: {
           label: function (tooltipItem, data) {
-            var dataset = data.datasets[0];
-            var percent = Math.round(
+            const dataset = data.datasets[0];
+            const percent = Math.round(
               (dataset.data[tooltipItem.index] / totalSum) * 100,
             );
-            var label = data.labels[tooltipItem.index];
+            let label = data.labels[tooltipItem.index];
             if (tooltipItem.index === 9) {
               label = "D/F/Withdraw";
             }

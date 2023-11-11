@@ -6,7 +6,7 @@
 // asc = 1 for ascending, asc = -1 for descending
 function sortHTML(container, items, prop, asc = 1) {
   const cmp = cmpByProp(prop, asc);
-  var objs = $(items);
+  const objs = $(items);
   objs.detach().sort(cmp);
   $(container).append(objs);
 }

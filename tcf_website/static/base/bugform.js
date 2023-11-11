@@ -1,8 +1,8 @@
 import { validateForm } from "../common/form.js";
 
 function submitForm() {
-  var form = document.getElementById("bugform");
-  var valid = validateForm(form);
+  const form = document.getElementById("bugform");
+  const valid = validateForm(form);
   if (valid === true) {
     postToDiscord();
     // close form after submit
@@ -12,31 +12,31 @@ function submitForm() {
 }
 
 function resetForm() {
-  var form = document.getElementById("bugform");
+  const form = document.getElementById("bugform");
   form.classList.remove("was-validated");
-  var emailField = document.getElementById("emailField");
+  const emailField = document.getElementById("emailField");
   emailField.value = "";
-  var descriptionField = document.getElementById("descriptionField");
+  const descriptionField = document.getElementById("descriptionField");
   descriptionField.value = "";
 
-  for (var i = 1; i <= 4; i++) {
-    var id = "#category" + i;
+  for (let i = 1; i <= 4; i++) {
+    const id = "#category" + i;
     $(id).prop("checked", false);
   }
 }
 
 function postToDiscord() {
-  var url = window.location.href;
-  var email = $("#emailField").val();
-  var description = $("#descriptionField").val();
-  var categories = "";
-  for (var i = 1; i <= 4; i++) {
-    var id = "#category" + i;
+  const url = window.location.href;
+  const email = $("#emailField").val();
+  const description = $("#descriptionField").val();
+  let categories = "";
+  for (let i = 1; i <= 4; i++) {
+    const id = "#category" + i;
     if ($(id).is(":checked")) {
       categories += "[" + $(id).val() + "]";
     }
   }
-  var data = {
+  const data = {
     type: "bug",
     content:
       "Bug Found! \n**URL:** " +
@@ -52,7 +52,7 @@ function postToDiscord() {
   $.ajax({
     type: "GET",
     url: "/discord/",
-    data: data,
+    data,
   });
 }
 
