@@ -3,7 +3,7 @@ COPY . /app/
 WORKDIR /app
 ENV PYTHONUNBUFFERED=1
 RUN apt-get update && \
-	curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+	curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
 	apt-get install -y --no-install-recommends \
 		libpq-dev \
 		build-essential \
