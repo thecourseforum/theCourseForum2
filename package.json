@@ -3,14 +3,6 @@
   "version": "2.0.0",
   "description": "[![Build Status](https://github.com/thecourseforum/theCourseForum2/workflows/Continuous%20Integration/badge.svg?branch=master)](https://github.com/thecourseforum/theCourseForum2/actions?query=workflow%3A%22Continuous+Integration%22+branch%3Amaster)",
   "main": "index.js",
-  "dependencies": {
-    "eslint": "^7.9.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,5 +15,14 @@
   "bugs": {
     "url": "https://github.com/thecourseforum/theCourseForum2/issues"
   },
-  "homepage": "https://github.com/thecourseforum/theCourseForum2#readme"
+  "homepage": "https://github.com/thecourseforum/theCourseForum2#readme",
+  "devDependencies": {
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-promise": "^6.1.1"
+  }
 }
