@@ -11,8 +11,6 @@ from .base import *
 def custom_recording_logic(request):
     """
     Exclude API views for django-silk
-
-    This can be replaced by a lambda function, but autopep8 won't allow that :(
     """
     return not request.path.startswith('/api')
 
