@@ -64,7 +64,7 @@ jQuery(function($) {
 
         // Fetch course data from API, based on selected subdepartment
         var subdeptID = $("#subject").val();
-        var pageSize = "1000";
+        var pageSize = "100";
         var courseEndpoint = `/api/courses/?subdepartment=${subdeptID}
                               &page_size=${pageSize}&recent`;
         $.getJSON(courseEndpoint, function(data) {
@@ -99,7 +99,7 @@ jQuery(function($) {
 
         // Fetch instructor data from API, based on selected course
         var course = $("#course").val();
-        var pageSize = "1000";
+        var pageSize = "100";
         var instrEndpoint = `/api/instructors/?course=${course}` +
             `&page_size=${pageSize}`;
         $.getJSON(instrEndpoint, function(data) {
