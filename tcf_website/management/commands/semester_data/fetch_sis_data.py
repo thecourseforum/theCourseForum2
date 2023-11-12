@@ -27,42 +27,48 @@ import csv
 # finds all departments in a term:
 # https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearchOptions?institution=UVA01&term=1228
 
-def retrieve_semester_courses(semester): # very slow
+
+def retrieve_semester_courses(semester):  # very slow
     """
     input: semester using the formula  “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
-    output: set of all course numbers
-    functionality: connects with sis API and uses the given list of all subjects to look at all classes each
-        department offers to find all the unique course numbers. This will be used when querying each class
-        individually.
-    """
-
+    output: list of dictionaries where each dictionary is all a course's information for the csv writing
+    functionality: connects with sis API and looks at each class. It finds each course's course-number then passes it to compile_course_data
+     which returns a dictionary of all of a course's information, which is added to a list containing the course info for all classes.
+     This is done using a page by page approach where all the courses are analyzed one page at a time."""
+    semester_url = (
+        'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.' +
+        'FieldFormula.IScript_ClassSearch?institution=UVA01&term=' +
+        semester +
+        '&page=')
     all_classes = []
-    page = 1
-    while True:
-        url = (
-            'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.' +
-            'FieldFormula.IScript_ClassSearch?institution=UVA01&term=' + semester + '&page=' + str(page))
+    page = 1  # Page is initially 1
+    while True:  # Loops through every page and extracts classes until it runs out of pages when the while breaks
+        page_url = semester_url + str(page)
         try:
-            apiResponse = requests.get(url)
-            data = json.loads(apiResponse.text)
-            if data == []:
+            apiResponse = requests.get(page_url)
+            page_data = json.loads(apiResponse.text)
+            if not page_data:  # checks to see if there is no data for that page which means that all
+                # data has been extracted from previous pages so the loop breaks
                 break
         except Exception as e:
             print(e)
             break
-        for course in data:
-            all_classes.append(compile_course_data(course['class_nbr'], semester))
-        page += 1
+        for course in page_data:  # loops through every course on the page and calls compile_course_data and adds output to list
+            # calls function to create dict of class info
+            class_data = compile_course_data(course['class_nbr'], semester)
+            all_classes.append(class_data)  # adds dict to list of all classes
+        page += 1  # Incrementing page count so next query will be on next page
     return all_classes
+
 
 def compile_course_data(course_number, semester):
     """
-        input: course number, semester 
+        input: course number, semester
         output: course dictionaries to be used for file writing
         functionality: request and organize course data in dictionaries to be able to write to a csv file.
     """
     url = f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassDetails?institution=UVA01&term={semester}&class_nbr={course_number}"
-    
+
     try:
         apiResponse = requests.get(url)
         data = json.loads(apiResponse.text)
@@ -82,11 +88,12 @@ def compile_course_data(course_number, semester):
         "Mnemonic": class_details["subject"],
         "Number": class_details["catalog_nbr"],
         "Section": class_details["class_section"],
-        # For Type, Parser needs to be updated to use abbriveation instead of full word (LEC instead of Lecture)
+        # For Type, Parser needs to be updated to use abbriveation instead of full
+        # word (LEC instead of Lecture)
         "Type": {
-        "LEC": "Lecture",
-        "DIS": "Discussion",
-        "LAB": "Laboratory"
+            "LEC": "Lecture",
+            "DIS": "Discussion",
+            "LAB": "Laboratory"
         }.get(class_details["component"], class_details["component"]),
         "Units": class_details["units"][0:class_details["units"].find("u") - 1],
         "Instructor1": ", ".join(instructor["name"] for instructor in meetings[0]["instructors"] if instructor["name"] != "-") if meetings[0] else "",
@@ -115,6 +122,7 @@ def compile_course_data(course_number, semester):
     }
     return course_dictionary
 
+
 def write_csv(courseList, filename):
     fieldnames = list(courseList[0].keys())
     csv_filename = filename + ".csv"
@@ -124,13 +132,16 @@ def write_csv(courseList, filename):
         for course in courseList:
             writer.writerow(course)
 
+
 write_csv(retrieve_semester_courses("1228"), "SIS_2022_fall")
 
 # test SIS data against Lous List data (remove function later)
+
+
 def compare_csv_files():
-    with open('SIS_2022_fall.csv', 'r') as sis_file: # need to have created SIS file
+    with open('SIS_2022_fall.csv', 'r') as sis_file:  # need to have created SIS file
         sis_reader = csv.reader(sis_file)
-        with open('2022_fall.csv', 'r') as lous_file: # need to have moved file to current directory (/theCourseForum2)
+        with open('2022_fall.csv', 'r') as lous_file:  # need to have moved file to current directory (/theCourseForum2)
             local_reader = csv.reader(lous_file)
             for sis_row, local_row in zip(sis_reader, local_reader):
                 if sis_row != local_row:
@@ -138,5 +149,6 @@ def compare_csv_files():
                     print("SIS row: ", sis_row)
                     print("Local row: ", local_row)
                     input("Enter to continue...\n")
+
 
 compare_csv_files()
