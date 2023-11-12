@@ -17,3 +17,9 @@ if os.environ.get('DJANGO_SETTINGS_MODULE') == 'tcf_core.settings.prod':
 
     # Use secure connection for database access
     DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
+
+    # cached memcache
+    # see: https://docs.djangoproject.com/en/4.2/topics/cache/#memcached
+    CACHES['default'] = {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
+    }
