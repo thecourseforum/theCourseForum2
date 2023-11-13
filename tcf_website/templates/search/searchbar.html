@@ -18,18 +18,14 @@
     var searchInput = document.getElementById('search-input');
 
     searchInput.addEventListener('input', function () {
-      console.log("hi");
       var query = searchInput.value;
 
-      if (query.length >= 2) {  // Optional: Set a minimum length before triggering autocomplete
+      if (query.length >= 2) {
         fetch('/autocomplete/?q=' + encodeURIComponent(query))
-          .then(response => response.text())
+          .then(response => response.json())
           .then(data => {
             console.log("raw: " + data);
             return JSON.parse(data);
-          })
-          .then(parsedData => {
-            console.log(parsedData.results);
           })
           .catch(error => console.error('Error:', error));
       }
