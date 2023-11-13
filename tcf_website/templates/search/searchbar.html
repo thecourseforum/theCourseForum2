@@ -11,21 +11,25 @@
       </button>
     </div>
   </div>
+
+  <div id="autocomplete-results" class="autocomplete-results"></div>
 </form>
 
 <script>
+  var autocompleteResults = document.getElementById('autocomplete-results');
   document.addEventListener('DOMContentLoaded', function () {
     var searchInput = document.getElementById('search-input');
 
     searchInput.addEventListener('input', function () {
       var query = searchInput.value;
 
-      if (query.length >= 2) {
+      if (query.length >= 1) {
         fetch('/autocomplete/?q=' + encodeURIComponent(query))
           .then(response => response.json())
           .then(data => {
             if (typeof data === 'object' && data.results) {
               console.log("Autocomplete results:", data.results);
+              displayAutocompleteResults(data.results);
             } else {
               console.error('Invalid JSON format in response:', data);
             }
@@ -34,4 +38,19 @@
       }
     });
   });
+
+  function displayAutocompleteResults(results) {
+    autocompleteResults.innerHTML = '';
+
+    results.forEach(function (result) {
+      var resultElement = document.createElement('div');
+      resultElement.classList.add('autocomplete-result');
+      resultElement.innerHTML = `<p>${result.title}</p>`;
+      resultElement.addEventListener('click', function () {
+        searchInput.value = `${result.title}`;
+        autocompleteResults.innerHTML = '';
+      });
+      autocompleteResults.appendChild(resultElement);
+    });
+  }
 </script>
