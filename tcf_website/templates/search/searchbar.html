@@ -24,8 +24,11 @@
         fetch('/autocomplete/?q=' + encodeURIComponent(query))
           .then(response => response.json())
           .then(data => {
-            console.log("raw: " + data);
-            return JSON.parse(data);
+            if (typeof data === 'object' && data.results) {
+              console.log("Autocomplete results:", data.results);
+            } else {
+              console.error('Invalid JSON format in response:', data);
+            }
           })
           .catch(error => console.error('Error:', error));
       }
