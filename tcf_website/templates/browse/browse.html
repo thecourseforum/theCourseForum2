@@ -1,5 +1,6 @@
 {% extends "base/base.html" %}
 {% load static %}
+{% load cache %}
 
 {% block title %}Browse - theCourseForum{% endblock %}
 
@@ -8,9 +9,7 @@
 {% endblock %}
 
 {% block content %}
-    {% comment %} <div class="container">
-        {% include "../common/notification.html" %}
-    </div> {% endcomment %}
+    {% cache 100000 courseDepartmentsList %}
     <div class="browse container">
         {% include "../common/qa_form_banner.html" %}
         {% include "../common/leaderboard_ad.html" with ad_slot="9691204298" %}
@@ -29,4 +28,5 @@
 
         </div>
     </div>
+    {% endcache %}
 {% endblock %}
