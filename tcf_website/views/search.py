@@ -8,6 +8,7 @@ from django.db.models import CharField, ExpressionWrapper, F, FloatField, Value,
 from django.db.models import Value
 from django.db.models.functions import Cast, Concat
 from django.shortcuts import render
+from django.http import JsonResponse
 
 from ..models import Course, Instructor, Subdepartment
 
@@ -283,11 +284,6 @@ def autocomplete(request):
         title_part, number_part = query, ""
     courses = get_courses(title_part, number_part, 5)
 
-    context = {
-        'courses': courses,
-    }
+    data = list(courses.values())
 
-    print(context)
-
-    # Load template view
-    return render(request, "search/searchbar.html", context)
+    return JsonResponse({'results': data})
