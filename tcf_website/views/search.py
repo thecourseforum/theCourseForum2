@@ -27,7 +27,7 @@ def search(request):
         title_part, number_part = query, ""
 
     instructors = fetch_instructors(query)
-    courses = fetch_courses(title_part, number_part)
+    courses = fetch_courses(title_part, number_part, 20)
 
     courses_first = decide_order(query, courses, instructors)
 
@@ -120,7 +120,7 @@ def fetch_instructors(query):
     )
 
 
-def fetch_courses(title, number):
+def fetch_courses(title, number, numberOfResults):
     """Get course data using Django Trigram similarity"""
     MNEMONIC_WEIGHT = 1.5
     NUMBER_WEIGHT = 1
@@ -155,7 +155,7 @@ def fetch_courses(title, number):
         # filters out classes that haven't been taught since Fall 2020
         .exclude(semester_last_taught_id__lt=48)
         .order_by("-total_similarity")
-        [:20]
+        [:numberOfResults]
     )
 
     # Formatting results similar to Elastic search response
