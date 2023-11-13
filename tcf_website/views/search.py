@@ -122,6 +122,28 @@ def fetch_instructors(query):
 
 def fetch_courses(title, number, numberOfResults):
     """Get course data using Django Trigram similarity"""
+    results = get_courses(title, number, numberOfResults)
+
+    # Formatting results similar to Elastic search response
+    formatted_results = [
+        {
+            "_meta": {"id": str(course.pk), "score": course.total_similarity},
+            "title": {"raw": course.title},
+            "number": {"raw": course.number},
+            "mnemonic": {
+                "raw": course.subdepartment.mnemonic + " " + str(course.number)
+            },
+            "description": {"raw": course.description},
+        }
+        for course in results
+    ]
+
+    return format_response(
+        {"results": formatted_results, "meta": {"engine": {"name": "tcf-courses"}}}
+    )
+
+
+def get_courses(title, number, numberOfResults):
     MNEMONIC_WEIGHT = 1.5
     NUMBER_WEIGHT = 1
     TITLE_WEIGHT = 1
@@ -158,23 +180,7 @@ def fetch_courses(title, number, numberOfResults):
         [:numberOfResults]
     )
 
-    # Formatting results similar to Elastic search response
-    formatted_results = [
-        {
-            "_meta": {"id": str(course.pk), "score": course.total_similarity},
-            "title": {"raw": course.title},
-            "number": {"raw": course.number},
-            "mnemonic": {
-                "raw": course.subdepartment.mnemonic + " " + str(course.number)
-            },
-            "description": {"raw": course.description},
-        }
-        for course in results
-    ]
-
-    return format_response(
-        {"results": formatted_results, "meta": {"engine": {"name": "tcf-courses"}}}
-    )
+    return results
 
 
 def format_response(response):
@@ -263,6 +269,7 @@ def group_by_dept(courses):
 
 def autocomplete(request):
     """Fetch autocomplete results"""
+    print("hi")
 
     # Set query
     query = request.GET.get("q", "")
@@ -274,15 +281,13 @@ def autocomplete(request):
     else:
         # Handle cases where the query doesn't match the expected format
         title_part, number_part = query, ""
+    courses = get_courses(title_part, number_part, 5)
 
-    instructors = fetch_instructors(query)
-    courses = fetch_courses(title_part, number_part, 5)
+    context = {
+        'courses': courses,
+    }
 
-    courses_first = decide_order(query, courses, instructors)
-
-    # Set arguments for template view
-    args = set_arguments(query, courses, instructors, courses_first)
-    context_vars = args
+    print(context)
 
     # Load template view
-    return render(request, "search/search.html", context_vars)
+    return render(request, "search/searchbar.html", context)
