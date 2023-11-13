@@ -1,9 +1,43 @@
 <!-- tCF search -->
 <!-- To be imported into templates (navbar, landing page) -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var searchInput = document.getElementById("search-input");
+
+    searchInput.addEventListener("input", function () {
+      var inputValue = searchInput.value.trim();
+
+      console.log("hi");
+
+      if (inputValue.length >= 2) {
+        fetch("/autocomplete/?q=" + inputValue)
+          .then(response => response.json())
+          .then(data => updateAutocompleteResults(data.results))
+          .catch(error => console.error("Error fetching autocomplete results:", error));
+      }
+
+    });
+
+    function updateAutocompleteResults(results) {
+
+      var suggestionsContainer = document.getElementById("suggestions");
+
+      suggestionsContainer.innerHTML = "";
+
+      results.forEach(function (result) {
+        var suggestionElement = document.createElement("div");
+        suggestionElement.textContent = result;
+        suggestionsContainer.appendChild(suggestionElement);
+      });
+
+      suggestionsContainer.style.display = "block";
+    }
+  });
+</script>
 <form class="form-inline flex-grow-1" action="/search" method="get">
   <div class="input-group flex-grow-1">
-    <input type="search" class="form-control border border-right-0" placeholder="Search for a class or professor..."
-      aria-label="Search" name="q" value="{{query}}">
+    <input type="search" id="search-input" class="form-control border border-right-0"
+      placeholder="Search for a class or professor..." aria-label="Search" name="q" value="{{query}}">
     <div class="input-group-append">
       <button class="btn btn-outline-secondary border border-left-0" id="search-button" type="submit">
         <i class="fa fa-search" aria-hidden="true"></i>
@@ -11,3 +45,7 @@
     </div>
   </div>
 </form>
+
+<div id="suggestions" style="display: none;">
+  <!-- Suggestions will be dynamically added here -->
+</div>
