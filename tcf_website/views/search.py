@@ -259,3 +259,30 @@ def group_by_dept(courses):
         grouped_courses[course_dept]["courses"].append(course)
 
     return grouped_courses
+
+
+def autocomplete(request):
+    """Fetch autocomplete results"""
+
+    # Set query
+    query = request.GET.get("q", "")
+    # courses are at least 3 digits long
+    # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
+    match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
+    if match:
+        title_part, number_part = match.groups()
+    else:
+        # Handle cases where the query doesn't match the expected format
+        title_part, number_part = query, ""
+
+    instructors = fetch_instructors(query)
+    courses = fetch_courses(title_part, number_part, 5)
+
+    courses_first = decide_order(query, courses, instructors)
+
+    # Set arguments for template view
+    args = set_arguments(query, courses, instructors, courses_first)
+    context_vars = args
+
+    # Load template view
+    return render(request, "search/search.html", context_vars)
