@@ -143,9 +143,9 @@ write_csv(retrieve_semester_courses("1232"), "SIS_2023_spring")
 
 
 def compare_csv_files():
-    with open('SIS_2023_spring.csv', 'r') as sis_file:  # need to have created SIS file
+    with open('SIS_2023_spring.csv', 'r') as sis_file:
         sis_reader = csv.reader(sis_file)
-        with open('tcf_website/management/commands/semester_data/csv/2023_spring.csv', 'r') as lous_file:  # need to have moved file to current directory (/theCourseForum2)
+        with open('tcf_website/management/commands/semester_data/csv/2023_spring.csv', 'r') as lous_file:
             local_reader = csv.reader(lous_file)
             for sis_row, local_row in zip(sis_reader, local_reader):
                 if sis_row != local_row:
