@@ -42,7 +42,7 @@ def retrieve_semester_courses(semester):  # very slow
         '&page=')
     all_classes = []
     page = 1  # Page is initially 1
-    while True:  # Loops through every page and extracts classes until it runs out of pages when the while breaks
+    while page==1:  # loads the first 100 courses (page 1) # Loops through every page and extracts classes until it runs out of pages when the while breaks
         page_url = semester_url + str(page)
         try:
             apiResponse = requests.get(page_url)
@@ -56,6 +56,8 @@ def retrieve_semester_courses(semester):  # very slow
         for course in page_data:  # loops through every course on the page and calls compile_course_data and adds output to list
             # calls function to create dict of class info
             class_data = compile_course_data(course['class_nbr'], semester)
+            if not class_data:
+                continue
             all_classes.append(class_data)  # adds dict to list of all classes
         page += 1  # Incrementing page count so next query will be on next page
     return all_classes
@@ -81,6 +83,8 @@ def compile_course_data(course_number, semester):
     class_details = data["section_info"]["class_details"]
     meetings = [None, None, None, None]
     for index, meeting in enumerate(data["section_info"]["meetings"]):
+        if index > 3:
+            break
         meetings[index] = meeting
     class_availability = data["section_info"]["class_availability"]
     course_dictionary = {
@@ -133,15 +137,15 @@ def write_csv(courseList, filename):
             writer.writerow(course)
 
 
-write_csv(retrieve_semester_courses("1228"), "SIS_2022_fall")
+write_csv(retrieve_semester_courses("1232"), "SIS_2023_spring")
 
 # test SIS data against Lous List data (remove function later)
 
 
 def compare_csv_files():
-    with open('SIS_2022_fall.csv', 'r') as sis_file:  # need to have created SIS file
+    with open('SIS_2023_spring.csv', 'r') as sis_file:  # need to have created SIS file
         sis_reader = csv.reader(sis_file)
-        with open('2022_fall.csv', 'r') as lous_file:  # need to have moved file to current directory (/theCourseForum2)
+        with open('tcf_website/management/commands/semester_data/csv/2023_spring.csv', 'r') as lous_file:  # need to have moved file to current directory (/theCourseForum2)
             local_reader = csv.reader(lous_file)
             for sis_row, local_row in zip(sis_reader, local_reader):
                 if sis_row != local_row:
