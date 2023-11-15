@@ -13,19 +13,19 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
-from django.conf import settings
 
 urlpatterns = [
-    path('', include('tcf_website.urls')),
-    path('oauth/', include('social_django.urls')),
-    path('admin/', admin.site.urls),
+    path("", include("tcf_website.urls")),
+    path("oauth/", include("social_django.urls")),
+    path("admin/", admin.site.urls),
 ]
 
 # Paths available only in development
 # https://github.com/jazzband/django-silk/issues/306#issuecomment-438292478
-if 'silk' in settings.INSTALLED_APPS:
+if "silk" in settings.INSTALLED_APPS:
     urlpatterns = [
-        path('silk/', include('silk.urls', namespace='silk')),
+        path("silk/", include("silk.urls", namespace="silk")),
     ] + urlpatterns

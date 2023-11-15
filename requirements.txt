@@ -14,6 +14,7 @@ django-filter~=21.1
 coverage
 
 # Linting
+pre-commit==3.5.0
 pylint>=2.4.4
 pylint-django>=2.0.14
 html-linter>=0.4.0

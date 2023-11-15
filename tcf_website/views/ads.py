@@ -10,5 +10,5 @@ def ads(request):
     as part of the authorized digital sellers specification.
     https://iabtechlab.com/ads-txt/
     """
-    line = 'google.com, pub-1816162577232603, DIRECT, f08c47fec0942fa0'
+    line = "google.com, pub-1816162577232603, DIRECT, f08c47fec0942fa0"
     return HttpResponse(line)
