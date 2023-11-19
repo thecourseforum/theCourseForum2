@@ -773,6 +773,28 @@ class Question(models.Model):
     Has a course and instructor.
     """
     text = models.TextField()
+    # TODO: notes below
+    """
+    11/19
+    current thoughts:
+    - each tag is a field in question/answer
+        - each is a manytomanyfield() with the corresponding model
+    - general is null for everything
+    - same for answer
+    - recommended tags for answer based on question's tags
+
+    Brainstorming notes:
+    How to do tags? Do we keep course/instructor fields
+    Many to many between tags and questions
+       ManyToManyField()
+    nested tagging?
+       Tags related to other tags?
+       Tags reference course
+       Tag type labeling type of tags
+    multiple professors
+    general tag? hardcode to sort everything
+    section?
+    """
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, default=None)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
