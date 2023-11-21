@@ -1,6 +1,21 @@
 <!-- tCF search -->
 <!-- To be imported into templates (navbar, landing page) -->
 <!-- Update your search form -->
+
+<head>
+  <style>
+    .autocomplete-result {
+      padding: 0.5rem;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+    }
+
+    .autocomplete-result:hover {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+  </style>
+</head>
 <form class="form-inline flex-grow-1" action="/search" method="get">
   <div class="input-group flex-grow-1">
     <input id="search-input" type="search" class="form-control border border-right-0"
@@ -14,13 +29,14 @@
 </form>
 
 <div class="search-results" id="autocomplete-results" class="autocomplete-results" style="  position: absolute;
-top: 100%;
-left: 7em;
-width: 74.75%;
+top: 4.375rem;
+left: 7rem;
+width: 56.5rem;
 z-index: 1000;
 background: white; 
 border: 1px solid #ddd;
-box-shadow: 0px 4px 6px rgba(0,0,0,0.1); "></div>
+box-shadow: 0px 4px 6px rgba(0,0,0,0.1); 
+"></div>
 
 <script>
   var autocompleteResults = document.getElementById('autocomplete-results');
@@ -63,7 +79,6 @@ box-shadow: 0px 4px 6px rgba(0,0,0,0.1); "></div>
       resultElement.classList.add('autocomplete-result');
       resultElement.setAttribute('tabindex', '0');
       resultElement.textContent = result.title;
-      resultElement.style.cursor = 'pointer';
       resultElement.addEventListener('click', function () {
         searchInput.value = result.title;
         autocompleteResults.innerHTML = '';
