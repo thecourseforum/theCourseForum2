@@ -78,7 +78,7 @@ box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
       var resultElement = document.createElement('div');
       resultElement.classList.add('autocomplete-result');
       resultElement.setAttribute('tabindex', '0');
-      resultElement.textContent = result.title;
+      resultElement.textContent = result.title
       resultElement.addEventListener('click', function () {
         searchInput.value = result.title;
         autocompleteResults.innerHTML = '';
