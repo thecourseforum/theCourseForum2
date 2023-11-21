@@ -46,13 +46,21 @@
   function displayAutocompleteResults(results) {
     autocompleteResults.innerHTML = '';
 
+    if (results.length === 0) {
+      autocompleteResults.innerHTML = '<div class="autocomplete-result">No results found</div>';
+      return;
+    }
+
     results.forEach(function (result) {
       var resultElement = document.createElement('div');
       resultElement.classList.add('autocomplete-result');
-      resultElement.innerHTML = `<p>${result.title}</p>`;
+      resultElement.setAttribute('tabindex', '0');
+      resultElement.textContent = result.title;
+      resultElement.style.cursor = 'pointer';
       resultElement.addEventListener('click', function () {
-        searchInput.value = `${result.title}`;
+        searchInput.value = result.title;
         autocompleteResults.innerHTML = '';
+        searchInput.form.submit();
       });
       autocompleteResults.appendChild(resultElement);
     });
