@@ -25,3 +25,7 @@ django-heroku
 
 # GAE Prod
 uwsgi
+
+# microsoft auth
+pyyaml
+msal

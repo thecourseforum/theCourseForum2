@@ -67,5 +67,7 @@ urlpatterns = [
         name="load_microsoft_verification"),
     path('register', TemplateView.as_view(template_name='login/register_form.html'), \
          name="register"),
-    path('register/email', views.auth.email_verification, name="email_verification")
+    path('register/email', views.auth.email_verification, name="email_verification"),
+    path('login/microsoft', views.auth.microsoft_login, name='microsoft_login'),
+    path('callback/', views.auth.callback, name='callback')
 ]
