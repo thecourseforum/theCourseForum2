@@ -284,4 +284,6 @@ def autocomplete(request):
 
     data = list(courses.values())
 
+    print(data)
+
     return JsonResponse({'results': data})
