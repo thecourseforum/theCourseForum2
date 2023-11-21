@@ -284,9 +284,9 @@ def autocomplete(request):
 
     data = list(courses.values())
 
-    similarity_threshold = 0.25
+    similarity_threshold = 0.75
 
     filtered_courses = [
-        course for course in data if (course['title_similarity'] > similarity_threshold or course['number_similarity'] > similarity_threshold or course['mnemonic_similarity'] > similarity_threshold)]
+        course for course in data if (course['total_similarity'] > similarity_threshold)]
 
     return JsonResponse({'results': filtered_courses})
