@@ -8,20 +8,28 @@
   {% with request.resolver_match.view_name as view_name %}
     <!-- Redirect back to same page only if not on login error page -->
     {% if view_name != 'tcf_website.views.auth.login_error' %}
+        <!-- Google Login Button -->
         <a class="login-button-wrapper"
            href="{% url 'social:begin' 'google-oauth2' %}?next={{path}}">
-            <button class="login-button"></button>
+            <button class="btn btn-primary google-login-button">
+                <i class="fab fa-google"></i> Sign in with Google
+            </button>
         </a>
-        <!-- <a class="login-button-wrapper">
-         <button class="microsoft-login-button></button> </a> -->
-         <a> 
-          <button></button>
-         </a>
+        <!-- Microsoft Login Button -->
+        <a class="login-button-wrapper"
+           href="{% url 'microsoft_login' %}">
+            <button class="btn btn-secondary microsoft-login-button">
+                <i class="fab fa-microsoft"></i> Sign in with Microsoft
+            </button>
+        </a>
     {% else %}
+        <!-- Google Login Button (Error Page) -->
         <a class="login-button-wrapper"
            href="{% url 'social:begin' 'google-oauth2' %}">
-            <button class="login-button"></button>
-      </a>
+            <button class="btn btn-primary google-login-button">
+                <i class="fab fa-google"></i> Login with Google
+            </button>
+        </a>
     {% endif %}
   {% endwith %}
 </div>

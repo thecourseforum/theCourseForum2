@@ -6,74 +6,77 @@
 */
 
 .login-button-container {
-    display: grid;
-    grid-auto-columns: minmax(10px, auto);
-    grid-auto-rows: minmax(10px, auto);
-    justify-items: center;
+    display: flex;
+    justify-content: center;
     margin-top: 20px;
+    gap: 15px; /* Adjust the space between buttons */
+}
+
+/* Google Login Button */
+.google-login-button {
+    background-color: #E3E8F1; /* Google's brand color */
+    color: black;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.google-login-button:hover {
+    background-color: #D2DCE6;
+    color: black;
+    cursor: pointer;
+}
+
+.google-login-button i {
+    margin-right: 8px; /* Spacing between icon and text */
+}
+
+/* Microsoft Login Button */
+.microsoft-login-button {
+    background-color: #E3E8F1; /* Google's brand color */
+    color: black;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.microsoft-login-button:hover {
+    background-color: #D2DCE6;
+    color: black;
+    cursor: pointer;
+}
+
+.microsoft-login-button i {
+    margin-right: 8px; /* Spacing between icon and text */
+}
+
+.fa-google {
+    background: conic-gradient(from -45deg, #ea4335 110deg, #4285f4 90deg 180deg, #34a853 180deg 270deg, #fbbc05 270deg) 73% 55%/150% 150% no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
   }
 
-.login-button-wrapper {
-    grid-row: 1;
-    grid-column: 1;
-    width: 382px;
-    height: 92px;
-    transform: scale(0.7);
-}
-
-/* Normal */
-.login-button {
-    background: url('./google_login_spritesheet.png') 764px;
-    border: none;
-    width: 382px;
-    height: 92px;
-    padding: 0px;
-}
-
-/* Hovering */
-.login-button:hover {
-    background: url('./google_login_spritesheet.png') 1146px;
-    outline: none;
-    cursor: pointer;
-}
-
-/* Pressed */
-.login-button:active {
-    background: url('./google_login_spritesheet.png') 382px;
-    outline: none;
-    cursor: pointer;
-}
-
-/* Pressed but dragged cursor away */
-.login-button:focus {
-    outline: none;
-}
-
-/* Placeholder CSS for Microsoft Auth Button */
-/* Normal */
-.microsoft-login-button {
-    background: url('./placeholder_microsoft_button.png') 764px;
-    border: none;
-    width: 382px;
-    height: 92px;
-    padding: 0px;
-}
-
-/* Hovering */
-.microsoft-login-button:hover {
-    background: url('./placeholder_microsoft_button.png') 1146px;
-    outline: none;
-    cursor: pointer;
-}
-
-/* Pressed */
-.microsoft-login-button:active {
-    background: url('./placeholder_microsoft_button.png') 382px;
-    outline: none;
-    cursor: pointer;
-}
-
-/* Pressed but dragged cursor away */
-.microsoft-login-button:focus {
-    outline: none;
+  .fa-microsoft {
+    background: linear-gradient(to bottom, 
+                  #f25022 50%, #7fba00 50%) left,
+                linear-gradient(to bottom, 
+                  #00a4ef 50%, #ffb900 50%) right;
+    background-size: 50% 100%;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
 }

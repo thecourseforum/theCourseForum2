@@ -27,3 +27,8 @@ db/*.sql
 .coverage
 # ESLint cache
 .eslintcache
+
+# OAuth 
+oauth_settings.yml
+oauth_settings.yml
+oauth_settings.yml
