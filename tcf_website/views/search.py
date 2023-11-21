@@ -270,8 +270,6 @@ def group_by_dept(courses):
 
 def autocomplete(request):
     """Fetch autocomplete results"""
-    print("hi")
-
     # Set query
     query = request.GET.get("q", "")
     # courses are at least 3 digits long
@@ -285,5 +283,7 @@ def autocomplete(request):
     courses = get_courses(title_part, number_part, 5)
 
     data = list(courses.values())
+
+    print(data)
 
     return JsonResponse({'results': data})
