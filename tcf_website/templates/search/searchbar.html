@@ -14,6 +14,11 @@
       background-color: #f0f0f0;
       color: #333;
     }
+
+    .homepage-autocomplete {
+      left: 5%;
+      width: 90%;
+    }
   </style>
 </head>
 <form class="form-inline flex-grow-1" action="/search" method="get">
@@ -42,6 +47,16 @@ box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
   var autocompleteResults = document.getElementById('autocomplete-results');
   var searchInput = document.getElementById("search-input");
   document.addEventListener('DOMContentLoaded', function () {
+    var path = window.location.pathname;
+    if (path === '/') {
+      autocompleteResults.style.left = '2.15%';
+      autocompleteResults.style.width = '90%';
+      autocompleteResults.style.textAlign = "LEFT";
+    }
+    else if (path.startsWith('/search')) {
+      autocompleteResults.style.left = '9%';
+      autocompleteResults.style.width = '72%';
+    }
 
     searchInput.addEventListener('input', function () {
       var query = searchInput.value;
@@ -78,7 +93,7 @@ box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
       var resultElement = document.createElement('div');
       resultElement.classList.add('autocomplete-result');
       resultElement.setAttribute('tabindex', '0');
-      resultElement.textContent = result.title
+      resultElement.textContent = result.title;
       resultElement.addEventListener('click', function () {
         searchInput.value = result.title;
         autocompleteResults.innerHTML = '';
