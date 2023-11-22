@@ -285,7 +285,6 @@ def autocomplete(request):
     data = sorted(list(courses.values('id', 'title', 'number', 'total_similarity')),
                   key=compare, reverse=True)
 
-    print(data)
     similarity_threshold = 0.75
 
     filtered_courses = [
