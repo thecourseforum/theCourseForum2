@@ -282,11 +282,17 @@ def autocomplete(request):
         title_part, number_part = query, ""
     courses = get_courses(title_part, number_part, 5)
 
-    data = list(courses.values())
+    data = sorted(list(courses.values('id', 'title', 'number', 'total_similarity')),
+                  key=compare, reverse=True)
 
+    print(data)
     similarity_threshold = 0.75
 
     filtered_courses = [
         course for course in data if (course['total_similarity'] > similarity_threshold)]
 
     return JsonResponse({'results': filtered_courses})
+
+
+def compare(course):
+    return course['total_similarity']
