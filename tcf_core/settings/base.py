@@ -166,6 +166,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
     'tcf_core.auth_pipeline.auth_allowed',
+    'tcf_core.auth_pipeline.validate_email',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
     'social_core.pipeline.mail.mail_validation',
