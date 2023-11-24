@@ -11,7 +11,7 @@ $ git clone https://github.com/thecourseforum/theCourseForum2.git && cd theCours
 $ docker compose up
 ```
 4. Wait for the Django server to finish building (i.e. `tcf_django | Watching for file changes with StatReloader` is visible in stdout).
-5. Download and place the latest database backup from Google Drive ("tCF/Engineer/db/latest.sql") in the `db/` folder.
+5. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) from Google Drive in the `db/` folder.
 6. Update the database according to your operating system:
 
 MacOS/Linux:
