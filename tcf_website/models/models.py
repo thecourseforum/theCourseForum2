@@ -140,6 +140,10 @@ class User(AbstractUser):
             )
         ).order_by('-created')
 
+    def schedules(self):
+        """Return user schedules"""
+        return self.schedule_set.all()
+
 
 class Instructor(models.Model):
     """Instructor model.
@@ -1024,3 +1028,40 @@ class VoteAnswer(models.Model):
                 name='unique vote per user and answer',
             )
         ]
+
+
+class Schedule(models.Model):
+    """Schedule Model.
+
+    Belongs to a user.
+    Has a name.
+
+    """
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+    def get_scheduled_courses(self):
+        """
+        Return scheduled courses associated with this schedule,
+        including details about the section and instructor.
+        """
+        return self.scheduledcourse_set.select_related('section', 'instructor').all()
+
+
+class ScheduledCourse(models.Model):
+    """ScheduledCourse Model.
+
+    Belongs to a schedule and a course section.
+    Has a time and instructor.
+
+    """
+    # Schedule model foreign key. Required.
+    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
+    # Section model foreign key. Required.
+    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    # Instructor for the section. Required.
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    time = models.CharField(max_length=255)
