@@ -4,6 +4,8 @@ services:
   web:
     build: .
     command: bash -c "
+      npm install --no-fund --no-audit &&
+      pip install --upgrade -r requirements.txt &&
       python3 manage.py migrate &&
       python3 manage.py collectstatic --noinput &&
       python3 manage.py invalidate_cachalot tcf_website &&
@@ -15,15 +17,19 @@ services:
     ports:
       - '8000:8000'
     container_name: tcf_django
+    env_file:
+      - .env
     restart: always
   db:
-    image: postgres:15.4
     volumes:
       - ./db:/app
+    image: postgres:15.4
     restart: always
     container_name: tcf_db
+    env_file:
+      - ./.env
+    command: -p ${DB_PORT}
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-      POSTGRES_PORT: ${DB_PORT}
