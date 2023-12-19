@@ -14,8 +14,6 @@ RUN apt-get update && \
 		unattended-upgrades \
 		nodejs && \
 	rm -rf /var/lib/apt/lists/*
-RUN npm install
+RUN curl -sSL https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /wait-for-it.sh && chmod +x /wait-for-it.sh
+RUN npm install --no-fund --no-audit
 RUN pip3 install -r requirements.txt --disable-pip-version-check --no-cache-dir
-RUN python3 manage.py migrate && \
-    python3 manage.py collectstatic --noinput && \
-    python3 manage.py invalidate_cachalot tcf_website
