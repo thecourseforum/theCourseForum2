@@ -8,7 +8,6 @@ tqdm>=4.45.0
 django-cachalot
 requests~=2.26.0
 django-environ
-django-silk
 djangorestframework
 django-filter~=21.1
 coverage
@@ -18,6 +17,9 @@ pylint>=2.4.4
 pylint-django>=2.0.14
 autopep8>=1.5.1
 html-linter>=0.4.0
+mypy==1.7.1
+mypy-extensions==1.0.0
+django-stubs==4.2.7
 
 # Heroku setup
 gunicorn

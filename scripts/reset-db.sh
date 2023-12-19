@@ -3,8 +3,8 @@
 DB_FILE="${DB_FILE:-db/latest.sql}"
 
 if [ ! -f "$DB_FILE" ]; then 
-  echo 'Database file db/latest.sql not found.'
-  echo 'Ensure the latest db file is downloaded and located in "db/latest.sql".'
+  echo "Database file '$DB_FILE' not found."
+  echo "Ensure the latest db file is downloaded and located in '$DB_FILE'."
   echo 'The latest backup can be found in the Google Drive at "tCF/Engineering/DB/latest.sql".'
   exit 1
 fi
