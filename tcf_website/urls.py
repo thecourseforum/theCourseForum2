@@ -50,6 +50,7 @@ urlpatterns = [
 
     # PERSONALIZATION URLs
     path('schedule/', views.view_schedules, name='schedule'),
+    path('schedule/new/', views.new_schedule, name='new_schedule'),
 
     # API URLs
     path('api/', include('tcf_website.api.urls'), name='api'),
