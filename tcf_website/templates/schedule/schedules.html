@@ -1,0 +1,21 @@
+{% load static %}
+
+{% block title %}Make a Schedule - theCourseForum{% endblock %}
+
+{% block content %}
+
+<div class="schedule-list">
+    <!-- where to list the schedules -->
+    <ul class="review-list list-unstyled">
+        {% for s in reviews %}
+        <li>
+            
+            example
+        </li>
+        {% empty %}
+        <div>nothing to show here</div>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
