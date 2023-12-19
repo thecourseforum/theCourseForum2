@@ -7,13 +7,12 @@
 <div class="schedule-list">
     <!-- where to list the schedules -->
     <ul class="review-list list-unstyled">
-        {% for s in reviews %}
+        {% for s in schedules %}
         <li>
-            
-            example
+            {% include "schedule/schedule.html" with profile=profile schedule=s %}
         </li>
         {% empty %}
-        <div>nothing to show here</div>
+        <div>You haven't made any schedules yet!</div>
         {% endfor %}
     </ul>
 </div>
