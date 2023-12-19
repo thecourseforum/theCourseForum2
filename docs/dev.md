@@ -24,6 +24,13 @@ $ scripts\reset-db.bat
 ```
 7. Ensure the website is up running and functional at `localhost:8000`.
 
+## [Useful Commands](docs/useful-commands.md)
+
+## Common Issues
+
+- Docker build error `=> CANCELED [internal] load build context`
+  - This occurs because of a Windows compatibility issue with Docker. As of December 19, 2023, downgrade Docker to [version 4.19](https://docs.docker.com/desktop/release-notes/#4190), then re-build the project.
+
 ## Stack
 
 The application stack is listed below. These technologies were chosen because they are robust and align with the stack that UVA students learn in courses.
