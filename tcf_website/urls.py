@@ -48,6 +48,9 @@ urlpatterns = [
     path('answers/<int:pk>/delete/', views.DeleteAnswer.as_view(), name='delete_answer'),
     path('answers/<int:answer_id>/edit/', views.edit_answer, name='edit_answer'),
 
+    # PERSONALIZATION URLs
+    path('schedule/', views.view_schedules, name='schedule'),
+
     # API URLs
     path('api/', include('tcf_website.api.urls'), name='api'),
 

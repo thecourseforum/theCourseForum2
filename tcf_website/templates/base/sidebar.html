@@ -33,6 +33,17 @@
       {% endif %}
     </li>
     <li>
+      {% if user.is_authenticated %}
+      <a href="{% url 'schedule' %}"
+         class="list-group-item list-group-item-action pb-0
+         {% if request.resolver_match.url_name == 'schedule' %}active{% endif %}">
+        <h4><i class="fas fa-calendar-days fa-fw"></i></h4>
+        <p>Schedule</p>
+        <hr>
+      </a>
+      {% endif %}
+    </li>
+    <li>
       <a href="{% url 'about' %}"
          class="list-group-item list-group-item-action pb-0
          {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
