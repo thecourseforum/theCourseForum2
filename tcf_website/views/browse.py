@@ -85,21 +85,8 @@ def course_view_legacy(request, course_id):
                     course_number=course.number)
 
 
-def course_view(request, mnemonic, course_number):
-    """A new Course view that allows you to input mnemonic and number instead."""
-
-    # Clears previously saved course information
-    request.session['course_code'] = None
-    request.session['course_title'] = None
-    request.session['instructor_fullname'] = None
-
-    # Redirect if the mnemonic is not all uppercase
-    if mnemonic != mnemonic.upper():
-        return redirect('course',
-                        mnemonic=mnemonic.upper(), course_number=course_number)
-    course = get_object_or_404(
-        Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number)
-    latest_semester = Semester.latest()
+def load_secs_helper(course, latest_semester):
+    """Helper function for course_view and for a view in schedule.py"""
     instructors = Instructor.objects\
         .filter(section__course=course, hidden=False).distinct()\
         .annotate(
@@ -140,6 +127,26 @@ def course_view(request, mnemonic, course_number):
                     i.times[str(i.section_nums[idx])] = i.section_times[idx][:-1].split(",")
         if i.section_nums.count(None) > 0:
             i.section_nums.remove(None)
+
+    return instructors
+
+
+def course_view(request, mnemonic, course_number):
+    """A new Course view that allows you to input mnemonic and number instead."""
+
+    # Clears previously saved course information
+    request.session['course_code'] = None
+    request.session['course_title'] = None
+    request.session['instructor_fullname'] = None
+
+    # Redirect if the mnemonic is not all uppercase
+    if mnemonic != mnemonic.upper():
+        return redirect('course',
+                        mnemonic=mnemonic.upper(), course_number=course_number)
+    course = get_object_or_404(
+        Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number)
+    latest_semester = Semester.latest()
+    instructors = load_secs_helper(course, latest_semester)
 
     taught_this_semester = Section.objects.filter(course=course, semester=latest_semester).exists()
 

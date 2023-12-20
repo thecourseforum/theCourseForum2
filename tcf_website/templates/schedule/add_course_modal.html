@@ -1,0 +1,84 @@
+<div class="modal fade" id="addCourseModal" tabindex="-1" role="dialog" aria-labelledby="addCourseModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Select a Section for <strong>{{course}}</strong></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <p>Schedule ID: <span id="scheduleId"></span></p>
+            <p>User ID: {{user_id}}</p>
+
+            <form id="select_section_form" method="POST" data-course-id="{{ course.id }}">
+                {% csrf_token %}
+                
+
+            </form>
+
+        </div>
+        <!-- <div class="modal-footer">
+          
+        </div> -->
+      </div>
+    </div>
+</div>
+
+{% block js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('select_schedule_form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        var selectedSchedule = form.querySelector('input[type="radio"][name="selected_schedules"]:checked').value;
+        var courseId = form.getAttribute('data-course-id');
+
+        fetch("{% url 'modal_load_sections' %}?course_id=" + courseId, {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': '{{csrf_token}}'
+            }
+        })
+        .then(resp => resp.json())
+        .then(data => {
+            document.getElementById('scheduleId').textContent = selectedSchedule;
+            console.log(data)
+
+            // iterate over all returned instructors and create the html cards for them
+            // TODO: check to see if something is returned and that it's not null
+            for(const [insId, insInfo] of Object.entries(data)) {
+                var instructorDiv = document.createElement('div');
+                instructorDiv.className = "modal_instructor_card";
+                instructorDiv.id = "modal_instructor_card" + insId;
+
+                var instructorName = document.createElement('h6');
+                instructorName.textContent = insInfo.name;
+                instructorDiv.appendChild(instructorName);
+
+                var sectionsList = document.createElement('ul');
+
+                insInfo["sec_nums"].forEach(section => {
+                    var li = document.createElement('li');
+                    li.textContent = section;  // Assuming each section is a string
+                    sectionsList.appendChild(li);
+                });
+                
+                instructorDiv.appendChild(sectionsList);
+                document.getElementById('select_section_form').appendChild(instructorDiv);
+            }
+            
+            // close the select schedule modal and then open the course modal
+            $('#selectScheduleModal').modal('hide');
+            setTimeout(function() {
+                $('#addCourseModal').modal('show');
+            }, 500);
+        })
+        .catch(error => console.error('Error:', error));
+
+    })
+
+})
+</script>
+{% endblock %}
