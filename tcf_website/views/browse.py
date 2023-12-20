@@ -105,16 +105,56 @@ def course_view_legacy(request, course_id):
     )
 
 
-def course_view(
-    request,
-    mnemonic: str,
-    course_number: int,
-    instructor_recency=None,
-):
-    """A new Course view that allows you to input mnemonic and number instead."""
+def load_secs_helper(course, latest_semester):
+    """Helper function for course_view and for a view in schedule.py"""
+    instructors = (
+        Instructor.objects.filter(section__course=course, hidden=False)
+        .distinct()
+        .annotate(
+            gpa=Avg(
+                "courseinstructorgrade__average", filter=Q(courseinstructorgrade__course=course)
+            ),
+            difficulty=Avg("review__difficulty", filter=Q(review__course=course)),
+            rating=(
+                Avg("review__instructor_rating", filter=Q(review__course=course))
+                + Avg("review__enjoyability", filter=Q(review__course=course))
+                + Avg("review__recommendability", filter=Q(review__course=course))
+            )
+            / 3,
+            semester_last_taught=Max("section__semester", filter=Q(section__course=course)),
+            # ArrayAgg:
+            # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
+            section_times=ArrayAgg(
+                Case(
+                    When(section__semester=latest_semester, then="section__section_times"),
+                    output_field=CharField(),
+                ),
+                distinct=True,
+            ),
+            section_nums=ArrayAgg(
+                Case(
+                    When(section__semester=latest_semester, then="section__sis_section_number"),
+                    output_field=CharField(),
+                ),
+                distinct=True,
+            ),
+        )
+    )
 
-    if not instructor_recency:
-        instructor_recency = str(Semester.latest())
+    for i in instructors:
+        if i.section_times[0] is not None and i.section_nums[0] is not None:
+            i.times = {}
+            for idx, _ in enumerate(i.section_times):
+                if i.section_times[idx] is not None and i.section_nums[idx] is not None:
+                    i.times[str(i.section_nums[idx])] = i.section_times[idx][:-1].split(",")
+        if i.section_nums.count(None) > 0:
+            i.section_nums.remove(None)
+
+    return instructors
+
+
+def course_view(request, mnemonic, course_number):
+    """A new Course view that allows you to input mnemonic and number instead."""
 
     # Clears previously saved course information
     request.session["course_code"] = None
@@ -124,20 +164,13 @@ def course_view(
     # Redirect if the mnemonic is not all uppercase
     if mnemonic != mnemonic.upper():
         return redirect("course", mnemonic=mnemonic.upper(), course_number=course_number)
-
     course = get_object_or_404(
-        Course,
-        subdepartment__mnemonic=mnemonic.upper(),
-        number=course_number,
+        Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number
     )
     latest_semester = Semester.latest()
-    recent = str(latest_semester) == instructor_recency
+    instructors = load_secs_helper(course, latest_semester)
 
-    # Fetch sorting variables
-    sortby = request.GET.get("sortby", "last_taught")
-    order = request.GET.get("order", "desc")
-
-    instructors = course.sort_instructors_by_key(latest_semester, recent, order, sortby)
+    taught_this_semester = Section.objects.filter(course=course, semester=latest_semester).exists()
 
     # Note: Could be simplified further
 
