@@ -5,16 +5,64 @@
 {% block content %}
 
 <div class="schedule-list">
-    <!-- where to list the schedules -->
-    <ul class="review-list list-unstyled">
-        {% for s in schedules %}
-        <li>
-            {% include "schedule/schedule.html" with profile=profile schedule=s %}
-        </li>
-        {% empty %}
-        <div>You haven't made any schedules yet!</div>
-        {% endfor %}
-    </ul>
+    <!-- list the schedules for the user -->
+    {% if select %}
+        <!-- this schedule list is for selecting a schedule and peforming some action with the url param -->
+        <form id="select_schedule_form" action="{% url url_param %}" method="POST" data-course-id="{{ course.id }}">
+            {% csrf_token %}
+            {% for s in schedules %}
+            <div class="radio">
+                <label>
+                    <input type="radio" name="selected_schedules" value="{{s.id}}">
+                    {{s.name}}
+                </label>
+                {% include "schedule/schedule.html" with profile=profile schedule=s %}
+            </div>
+            {% empty %}
+            <!-- TODO: either present a link to the user to make a schedule or allow them to make one here in the modal -->
+            <div>You haven't made any schedules yet!</div>
+            {% endfor %}
+            <div class="ml-sm-auto d-flex justify-content-end">
+                <button id="schedule_select_btn"  type="submit" value="Submit" class="btn btn-primary" disabled>
+                    Submit
+                </button>
+            </div>
+        </form>
+    {% else %}
+        <!-- this schedule list is just for listing the user's schedules -->
+        <ul class="review-list list-unstyled">
+            {% for s in schedules %}
+            <li>
+                {% include "schedule/schedule.html" with profile=profile schedule=s %}
+            </li>
+            {% empty %}
+            <div>You haven't made any schedules yet!</div>
+            {% endfor %}
+        </ul>
+    {% endif %}
 </div>
 
+
 {% endblock %}
+
+
+{% if select %}
+{% block js %}
+{# This javascript will make sure one is selected in the select form #}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // prevent a submission with no selected values
+        var radios = document.querySelectorAll('input[type="radio"][name="selected_schedules"]');
+        var submitButton = document.getElementById('schedule_select_btn');
+
+        radios.forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                submitButton.disabled = false;
+            });
+        });
+    })
+
+    
+</script>
+{% endblock %}
+{% endif %}
