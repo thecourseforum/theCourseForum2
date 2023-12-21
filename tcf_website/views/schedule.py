@@ -12,7 +12,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from .browse import load_secs_helper
 
-from ..models import Schedule, User, Course, Semester
+from ..models import Schedule, User, Course, Semester, ScheduledCourse
 
 
 class ScheduleForm(forms.ModelForm):
@@ -27,9 +27,17 @@ class ScheduleForm(forms.ModelForm):
             'name', 'user_id'
         ]
 
-    # def __init__(self, *args, **kwargs):
-    #     super(ScheduleForm, self).__init__(*args, **kwargs)
-    #     self.fields['user_id'].required = False
+
+class SectionForm(forms.ModelForm):
+    '''
+    Django form for adding a course to a schedule
+    '''
+
+    class Meta:
+        model = ScheduledCourse
+        fields = [
+            'schedule', 'section', 'instructor', 'time'
+        ]
 
 
 @login_required
@@ -82,12 +90,15 @@ def modal_load_sections(request):
         course, latest_semester).filter(
         semester_last_taught=latest_semester.id)
 
-    # print(instructors)
     for i in instructors:
         temp = {}
         data[i.id] = temp
-        temp["sec_nums"] = list(i.section_nums)
-        temp["sec_times"] = list(i.section_times)
+
+        # decode the string in section_details and take skip strings without a time or section_id
+        encoded_sections = [x for x in i.section_details if x.split(
+            ' /% ')[2] != '' and x.split(' /% ')[1] != '']
+
+        temp["sections"] = encoded_sections
         temp["name"] = i.first_name + " " + i.last_name
 
     return JsonResponse(data)
