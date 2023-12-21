@@ -1285,4 +1285,5 @@ class ScheduledCourse(models.Model):
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
     # Instructor for the section. Required.
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    # Time of the section. Required.
     time = models.CharField(max_length=255)
