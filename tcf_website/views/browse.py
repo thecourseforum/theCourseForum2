@@ -6,7 +6,7 @@ import json
 from typing import Any, Dict, List
 
 from django.db.models import Avg, CharField, F, Max, Q, Value, Case, When
-from django.db.models.functions import Concat
+from django.db.models.functions import Concat, Cast
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -116,6 +116,25 @@ def load_secs_helper(course, latest_semester):
                         section__semester=latest_semester,
                         then='section__sis_section_number'),
                     output_field=CharField()),
+                distinct=True),
+            section_details=ArrayAgg(
+                # this is to get sections in this format: section.id /%
+                # section.section_num /% section.time
+                Concat(
+                    Cast('section__id', CharField()),
+                    Value(' /% '),
+                    Case(
+                        When(
+                            section__semester=latest_semester,
+                            then=Cast('section__sis_section_number', CharField())
+                        ),
+                        default=Value(''),
+                        output_field=CharField()
+                    ),
+                    Value(' /% '),
+                    'section__section_times',
+                    output_field=CharField()
+                ),
                 distinct=True),
         )
 
