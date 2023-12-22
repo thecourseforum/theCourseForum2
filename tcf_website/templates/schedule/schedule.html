@@ -10,7 +10,26 @@
 
                 <ul id="schedule_card_courses">
                     {% for course in courses %}
-                        <li>{{course}}</li>
+                        <li>
+                            <div class="schedule_course_card">
+                                <h6 class="schedule_course_card_header">{{course}}</h6>
+                                <div class="schedule_course_card_content">
+                                    {{course.user}}
+                                    <div>
+                                        {{course.instructor}}
+
+                                    </div>
+                                    <div>
+                                    {{course.section}}
+                                        
+                                    </div>
+                                    <div>
+                                        
+                                        {{course.time}}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
                     {% empty %}
                         <p>You have no classes!</p>
                     {% endfor %}
