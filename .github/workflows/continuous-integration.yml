@@ -1,10 +1,10 @@
 # Based on https://github.com/actions/starter-workflows/blob/main/ci/django.yml
 name: Continuous Integration
 
-on: 
+on:
   pull_request:
     branches:
-      - '*'
+      - "*"
   # The following is needed to run tests upon direct push to dev or master
   push:
     branches: [dev, master]
@@ -15,18 +15,18 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   DEBUG: 1
   # database
-  DB_NAME: tcf_db  # arbitrary string
-  DB_USER: postgres  # default user
-  DB_PASSWORD: postgres  # default password
-  DB_HOST: localhost  # required for GitHub Actions
-  DB_PORT: 5432  # default port
+  DB_NAME: tcf_db # arbitrary string
+  DB_USER: postgres # default user
+  DB_PASSWORD: postgres # default password
+  DB_HOST: localhost # required for GitHub Actions
+  DB_PORT: 5432 # default port
   # social-auth-app-django
   SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
   SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
   # elasticsearch
   ES_PUBLIC_API_KEY: ${{ secrets.ES_PUBLIC_API_KEY }}
   ELASTICSEARCH_ENDPOINT: ${{ secrets.ELASTICSEARCH_ENDPOINT }}
-  ES_PRIVATE_API_KEY: ""  # no write access to elasticsearch in CI
+  ES_PRIVATE_API_KEY: "" # no write access to elasticsearch in CI
   # discord
   DISCORD_URL_BUG: ${{ secrets.DISCORD_URL_BUG }}
   DISCORD_URL_FEEDBACK: ${{ secrets.DISCORD_URL_FEEDBACK }}
@@ -81,7 +81,7 @@ jobs:
       - name: Install Python packages, excluding the unnecessary ones
         run: |
           python -m pip install --upgrade pip
-          sed -i '/\(lint\|autopep8\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
+          sed -i '/\(lint\|mypy\|autopep8\|gunicorn\|django\-heroku\|django\-stubs\|uwsgi\)/d' requirements.txt
           pip install -r requirements.txt
 
       - name: Migrations & Tests
