@@ -24,6 +24,6 @@
         </div>
     </div>
     <!-- {% include "reviews/review_stats.html" with total_reviews_written=total_reviews_written total_review_upvotes=total_review_upvotes average_review_rating=average_review_rating %} -->
-    {% include "schedule/schedules.html" with schedules=user.schedules profile=True select=False%}
+    {% include "schedule/schedules.html" with schedules=schedules courses=courses profile=True select=False%}
 </div>
 {% endblock %}

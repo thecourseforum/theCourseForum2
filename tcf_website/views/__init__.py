@@ -28,5 +28,10 @@ from .qa import (
     upvote_question,
 )
 from .review import DeleteReview, downvote, edit_review, new_review, upvote
-from .schedule import modal_load_sections, new_schedule, view_schedules
+from .schedule import (
+    modal_load_sections,
+    new_schedule,
+    schedule_add_course,
+    view_schedules,
+)
 from .search import search

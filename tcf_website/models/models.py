@@ -1287,3 +1287,6 @@ class ScheduledCourse(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     # Time of the section. Required.
     time = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f'{self.section.course} | {self.instructor}'
