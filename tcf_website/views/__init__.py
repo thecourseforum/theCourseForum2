@@ -15,4 +15,4 @@ from .discord import post_message
 from .qa import (new_question, new_answer, upvote_question,
                  upvote_answer, downvote_question, downvote_answer,
                  DeleteQuestion, DeleteAnswer, edit_question, edit_answer)
-from .schedule import (view_schedules, new_schedule, modal_load_sections)
+from .schedule import (view_schedules, new_schedule, modal_load_sections, schedule_add_course)

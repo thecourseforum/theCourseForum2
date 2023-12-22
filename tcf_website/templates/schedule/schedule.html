@@ -6,9 +6,29 @@
         <div class="row">
             <!-- schedule Main Content -->
             <div class="schedule-body col-xs-12 col-md-12 col-lg-12">
-                
                 {{schedule.name}}
+
+                <ul id="schedule_card_courses">
+                    {% for course in courses %}
+                        <li>{{course}}</li>
+                    {% empty %}
+                        <p>You have no classes!</p>
+                    {% endfor %}
+
+                </ul>
             </div>
         </div>
     </div>
 </div>
+
+{% block js %}
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var coursesList = document.getElementById('schedule_card_courses');
+
+        // fetch()
+    })
+
+</script>
+{% endblock %}
