@@ -3,12 +3,12 @@ version: '3'
 services:
   web:
     build: .
-    command: bash -c "
-      python3 manage.py migrate &&
-      python3 manage.py collectstatic --noinput &&
-      python3 manage.py invalidate_cachalot tcf_website &&
-      echo Starting Django Server... &&
-      python3 manage.py runserver 0.0.0.0:8000"
+    command: bash -c "/wait-for-it.sh tcf_db:${DB_PORT} -- && \
+              python manage.py migrate && \
+              python manage.py collectstatic --noinput && \
+              python manage.py invalidate_cachalot tcf_website && \
+              echo 'Starting Django Server...' && \
+              python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
       - /app/db/  # exclude the subfolder to prevent potential interference
@@ -16,6 +16,8 @@ services:
       - '8000:8000'
     container_name: tcf_django
     restart: always
+    depends_on:
+      - db
   db:
     image: postgres:15.4
     volumes:
