@@ -139,7 +139,7 @@ def schedule_add_course(request):
             schedule_id = form.cleaned_data['schedule'].id  # get the schedule's primary key
             instructor_id = form.cleaned_data['instructor'].id  # get the instructor's primary key
             section_id = form.cleaned_data['section'].id  # get the section's primary key
-            course_time = form.cleaned_data['section']
+            course_time = form.cleaned_data['time']
 
             # update the form object with the related objects returned from the database
             # Note: there might be some optimzation where we could do the request in
