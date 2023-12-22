@@ -17,16 +17,16 @@
         <div class="modal-body">
             <p>User ID: {{user_id}}</p>
 
-            <form id="select_section_form" method="POST" data-course-id="{{ course.id }}">
+            <form id="select_section_form" action="{% url 'schedule_add_course' %}" method="POST" data-course-id="{{ course.id }}">
                 {% csrf_token %}
-                <input type="hidden" id="schedule_id_input" value="">
+                <input type="hidden" id="schedule_id_input" name="schedule_id" value="">
                 
             </form>
 
         </div>
         <div class="modal-footer">
-            <button id="section_select_btn" form="select_schedule_form" type="submit" value="Submit" class="btn btn-primary" disabled>
-                Submit
+            <button id="section_select_btn" form="select_section_form" type="submit" value="Submit" class="btn btn-primary" disabled>
+                Confirm
             </button>
         </div>
       </div>
@@ -50,12 +50,13 @@
             })
             .then(resp => resp.json())
             .then(data => {
-                document.getElementById('schedule_id_input').value = selectedSchedule.id;
+                document.getElementById('schedule_id_input').value = selectedSchedule;
                 section_form = document.getElementById('select_section_form');
 
                 // iterate over all returned instructors and create the html cards for them
                 // TODO: check to see if something is returned and that it's not null
                 for(const [insId, insInfo] of Object.entries(data)) {
+                    // create the card that will contain all info for a given instructor
                     var instructorDiv = document.createElement('div');
                     instructorDiv.className = "modal_instructor_card";
                     instructorDiv.id = "modal_instructor_card" + insId;
@@ -71,18 +72,20 @@
                     instructorId.value = insId;
 
                     var sectionsList = document.createElement('ul');
-                    
-                    console.log(data);
 
                     insInfo["sections"].forEach(encoded_section => {
-                        var section = encoded_section.split(" /% ")
+                        var decoded_section = encoded_section.split(" /% ")
+                        var section_id = decoded_section[0];
+                        var section_num = decoded_section[1];
+                        var section_time = decoded_section[2].slice(0,-1);
+
                         var li = document.createElement('li');
-                        li.textContent = section[2].slice(0,-1);  // Assuming each section is a string
                         var lab = document.createElement('label');
+                        lab.textContent = section_time;
                         var input = document.createElement('input');
                         input.type = "radio";
-                        input.name = "selected_courses";
-                        input.value = `{"instructor": ${insId}, ""}`;
+                        input.name = "selected_course";
+                        input.value = `{"instructor": ${insId}, "section": ${section_id}, "section_time":"${section_time}"}`;
 
                         lab.appendChild(input);
                         li.appendChild(lab);
@@ -98,7 +101,7 @@
                 $('#selectScheduleModal').modal('hide');
                 setTimeout(function() {
                     $('#addCourseModal').modal('show');
-                }, 500);
+                }, 400);
             })
             .catch(error => console.error('Error:', error));
 
@@ -124,6 +127,25 @@
         // Initial check in case the form is pre-filled
         updateButtonState();
     });
+
+    // this will use a listener to send the form data to the view
+    document.getElementById('select_section_form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(resp => {
+            if (resp.ok) {
+                $('#addCourseModal').modal('hide');
+            } else {
+                console.error("There was an error");
+            }
+        })
+    })
 
 </script>
 {% endblock %}

@@ -1,4 +1,5 @@
 """View pertaining to schedule creation/viewing."""
+import json
 
 from django import forms
 # from django.views import generic
@@ -10,9 +11,10 @@ from django.contrib import messages
 from django.http import JsonResponse
 # from django.shortcuts import get_object_or_404, render, redirect
 from django.shortcuts import render, redirect
-from .browse import load_secs_helper
+from django.db.models import Prefetch
 
-from ..models import Schedule, User, Course, Semester, ScheduledCourse
+from .browse import load_secs_helper
+from ..models import Schedule, User, Course, Semester, ScheduledCourse, Instructor, Section
 
 
 class ScheduleForm(forms.ModelForm):
@@ -43,10 +45,22 @@ class SectionForm(forms.ModelForm):
 @login_required
 def view_schedules(request):
     '''
-    get all schedules for a given user
+    get all schedules, and the related courses, for a given user
     '''
 
-    return render(request, 'schedule/user_schedules.html')
+    schedules = Schedule.objects.prefetch_related(
+        Prefetch(
+            'scheduledcourse_set',
+            queryset=ScheduledCourse.objects.select_related('section', 'instructor')
+        )
+    )
+    courses_context = {}
+
+    for s in schedules:
+        courses_context[s.id] = s.get_scheduled_courses()
+
+    return render(request, 'schedule/user_schedules.html',
+                  {"schedules": schedules, "courses": courses_context})
 
 
 @login_required
@@ -102,3 +116,42 @@ def modal_load_sections(request):
         temp["name"] = i.first_name + " " + i.last_name
 
     return JsonResponse(data)
+
+
+@login_required
+def schedule_add_course(request):
+    ''' Add a course to a schedule '''
+
+    if request.method == "POST":
+        combined_section_info = json.loads(request.POST['selected_course'])
+        form_data = {
+            'schedule': request.POST['schedule_id'],
+            'instructor': int(combined_section_info['instructor']),
+            'section': int(combined_section_info['section']),
+            'time': combined_section_info['section_time']
+        }
+        # make form object with our passed in data
+        form = SectionForm(form_data)
+
+        if form.is_valid():
+            scheduled_course = form.save(commit=False)
+            # extract id's for all related fields
+            schedule_id = form.cleaned_data['schedule'].id  # get the schedule's primary key
+            instructor_id = form.cleaned_data['instructor'].id  # get the instructor's primary key
+            section_id = form.cleaned_data['section'].id  # get the section's primary key
+            course_time = form.cleaned_data['section']
+
+            # update the form object with the related objects returned from the database
+            # Note: there might be some optimzation where we could do the request in
+            # bulk instead of 4 seperate queries
+            scheduled_course.schedule = Schedule.objects.get(id=schedule_id)
+            scheduled_course.instructor = Instructor.objects.get(id=instructor_id)
+            scheduled_course.section = Section.objects.get(id=section_id)
+            scheduled_course.time = course_time
+            scheduled_course.save()
+        else:
+            messages.error(request, "Invalid form data")
+            return JsonResponse({'status': 'error'}, status=400)
+
+    messages.success(request, "Succesfully added course!")
+    return JsonResponse({'status': 'success'})
