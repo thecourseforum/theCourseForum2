@@ -83,6 +83,7 @@ urlpatterns = [
     path("schedule/", views.view_schedules, name="schedule"),
     path("schedule/new/", views.new_schedule, name="new_schedule"),
     path("schedule/modal/sections", views.modal_load_sections, name="modal_load_sections"),
+    path("schedule/add_course", views.schedule_add_course, name="schedule_add_course"),
     # API URLs
     path("api/", include("tcf_website.api.urls"), name="api"),
     # AUTH URLS

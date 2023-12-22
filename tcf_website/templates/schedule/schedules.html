@@ -1,3 +1,4 @@
+{% load custom_tags %}
 {% load static %}
 
 {% block title %}Make a Schedule - theCourseForum{% endblock %}
@@ -16,7 +17,7 @@
                     <input type="radio" name="selected_schedules" value="{{s.id}}">
                     {{s.name}}
                 </label>
-                {% include "schedule/schedule.html" with profile=profile schedule=s %}
+                {% include "schedule/schedule.html" with profile=profile courses=s.scheduledcourse_set.all %}
             </div>
             {% empty %}
             <!-- TODO: either present a link to the user to make a schedule or allow them to make one here in the modal -->
@@ -33,7 +34,7 @@
         <ul class="review-list list-unstyled">
             {% for s in schedules %}
             <li>
-                {% include "schedule/schedule.html" with profile=profile schedule=s %}
+                {% include "schedule/schedule.html" with profile=profile courses=courses|get_item:s.id schedule=s %}
             </li>
             {% empty %}
             <div>You haven't made any schedules yet!</div>
