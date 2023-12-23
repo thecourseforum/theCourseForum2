@@ -79,11 +79,30 @@ def new_schedule(request):
                 messages.error(request, "There was an error")
                 return render(request, 'schedule/new_schedule.html', {"form": form})
             schedule.save()
-            messages.success(request, "Succesfully created schedule!")
+            messages.success(request, "Successfully created schedule!")
             return redirect('schedule')
     else:
         form = ScheduleForm()
     return render(request, 'schedule/new_schedule.html', {"form": form})
+
+
+@login_required
+def delete_schedule(request):
+    '''
+    Delete a schedule or multiple schedules
+    '''
+    # we use POST since forms don't support the DELETE method
+    if request.method == 'POST':
+        # Retrieve IDs from POST data
+        schedule_ids = request.POST.getlist('selected_schedules')
+
+        # Perform bulk delete
+        deleted_count, _ = Schedule.objects.filter(id__in=schedule_ids).delete()
+        if deleted_count == 0:
+            messages.error(request, "No schedules were deleted.")
+        else:
+            messages.success(request, f"Successfully deleted {deleted_count} schedules")
+    return redirect('schedule')
 
 
 @login_required

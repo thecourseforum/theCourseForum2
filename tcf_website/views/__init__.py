@@ -29,6 +29,7 @@ from .qa import (
 )
 from .review import DeleteReview, downvote, edit_review, new_review, upvote
 from .schedule import (
+    delete_schedule,
     modal_load_sections,
     new_schedule,
     schedule_add_course,
