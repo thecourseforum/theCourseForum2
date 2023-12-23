@@ -1,0 +1,57 @@
+<div class="modal fade" id="deleteScheduleModal" tabindex="-1" role="dialog" aria-labelledby="deleteScheduleModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete Schedule</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form id="delete_schedule_form" action="{% url 'delete_schedule' %}" method="POST" data-course-id="{{ course.id }}">
+                {% csrf_token %}
+                {% for s in schedules %}
+                <div class="radio">
+                    <label>
+                        <input type="checkbox" name="selected_schedules" value="{{s.id}}">
+                        {{s.name}}
+                    </label>
+                    {% include "schedule/schedule.html" with profile=profile courses=s.scheduledcourse_set.all %}
+                </div>
+                {% empty %}
+                <div>You haven't made any schedules yet!</div>
+                {% endfor %}
+                <div class="ml-sm-auto d-flex justify-content-end">
+                    <button id="schedule_select_btn"  type="submit" value="Submit" class="btn btn-primary" disabled>
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+{% block js %}
+{# This javascript will make sure one is selected in the select form #}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // prevent a submission with no selected values
+        var checkboxes = document.querySelectorAll('input[type="checkbox"][name="selected_schedules"]');
+        var submitButton = document.getElementById('schedule_select_btn');
+
+        function updateButtonState() {
+            // Check if at least one checkbox is checked
+            var isAnyCheckboxChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+            submitButton.disabled = !isAnyCheckboxChecked;
+        }
+
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', updateButtonState);
+        });
+
+        updateButtonState();
+    })
+    
+</script>
+{% endblock %}
