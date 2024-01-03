@@ -13,7 +13,7 @@
     <!-- list the schedules for the user -->
     {% if select %}
         <!-- this schedule list is for selecting a schedule and peforming some action with the url param -->
-        <form id="select_schedule_form" action="{% url url_param %}" method="POST" data-course-id="{{ course.id }}">
+        <form id="select_schedule_form" action="{% url url_param %}" method="POST">
             {% csrf_token %}
             {% for s in schedules %}
             <div class="schedule_radio_option">
@@ -21,7 +21,7 @@
                     <input class="schedule_radio_input" type="radio" name="selected_schedules" value="{{s.id}}">
                     <div>
                         <span class="label_text">{{s.name}}</span>
-                        {% include "schedule/schedule.html" with profile=profile courses=s.scheduledcourse_set.all %}
+                        {% include "schedule/schedule.html" with courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id %}
 
                     </div>
                 </label>
@@ -32,7 +32,7 @@
             {% endfor %}
             <div class="ml-sm-auto d-flex justify-content-end">
                 <button id="schedule_select_btn"  type="submit" value="Submit" class="btn btn-primary" disabled>
-                    Submit
+                    Continue
                 </button>
             </div>
         </form>
@@ -41,7 +41,7 @@
         <ul class="review-list list-unstyled">
             {% for s in schedules %}
             <li>
-                {% include "schedule/schedule.html" with profile=profile courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id schedule=s %}
+                {% include "schedule/schedule.html" with courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id schedule=s %}
             </li>
             {% empty %}
             <div>You haven't made any schedules yet!</div>
@@ -58,7 +58,7 @@
 {% block js %}
 {# This javascript will make sure one is selected in the select form #}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    $(document).ready(function() {
         // prevent a submission with no selected values
         var radios = document.querySelectorAll('input[type="radio"][name="selected_schedules"]');
         var submitButton = document.getElementById('schedule_select_btn');
@@ -68,8 +68,7 @@
                 submitButton.disabled = false;
             });
         });
-    })
-
+    });
     
 </script>
 {% endblock %}

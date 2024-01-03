@@ -43,9 +43,9 @@ class SectionForm(forms.ModelForm):
 
 
 @login_required
-def view_schedules(request):
+def schedule_data_helper(request):
     '''
-    get all schedules, and the related courses, for a given user
+    this helper method is for getting schedule data for a request.
     '''
 
     schedules = Schedule.objects.prefetch_related(
@@ -59,19 +59,53 @@ def view_schedules(request):
     difficulty_context = {}
 
     # iterate over the schedules for this request in order to set up the context
+    # this could also be optimized for the database by combining these queries
     for s in schedules:
         courses_context[s.id] = s.get_scheduled_courses()
         ratings_context[s.id] = s.average_rating_for_schedule()
         difficulty_context[s.id] = s.average_schedule_difficulty()
-        # print(s.average_schedule_difficulty())
-        # print( s.average_rating_for_schedule())
+
+    ret = {"schedules": schedules,
+           "courses": courses_context,
+           "ratings": ratings_context,
+           "difficulty": difficulty_context}
+
+    return ret
+
+
+def view_schedules(request):
+    '''
+    get all schedules, and the related courses, for a given user
+    '''
+
+    schedule_context = schedule_data_helper(request)
 
     return render(request,
                   'schedule/user_schedules.html',
-                  {"schedules": schedules,
-                   "courses": courses_context,
-                   "ratings": ratings_context,
-                   "difficulty": difficulty_context})
+                  schedule_context)
+
+
+def view_schedules_modal(request, mode):
+    '''
+    get all schedules and display in the modal.
+
+    the "mode" parameter in the url specfies which modal to render
+    '''
+
+    schedule_context = schedule_data_helper(request)
+    if mode == "add_course":
+        # add necessary context variables for the select_schedule_modal template
+        schedule_context['profile'] = True
+        schedule_context['select'] = True
+        schedule_context['url_param'] = 'schedule'
+        # as of now, this endpoint is used as a means to load modal content and not the modal itself
+        return render(request,
+                      'schedule/schedules.html',
+                      schedule_context)
+    # redirect if there is no mode parameter
+    # NOTE: there might be a better way to handle this error
+    messages.error(request, "Missing mode parameter from query string")
+    return redirect('schedule')
 
 
 @login_required
