@@ -140,7 +140,7 @@
         })
         .then(resp => {
             if (resp.ok) {
-                $('#addCourseModal').modal('hide');
+                location.reload();
             } else {
                 console.error("There was an error");
             }

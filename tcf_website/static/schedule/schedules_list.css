@@ -1,0 +1,23 @@
+.schedule_radio_option {
+    width: 100%;
+}
+
+.schedule_radio_option label {
+    display: flex; 
+    align-items: center;
+    cursor: pointer; 
+    padding: 10px; 
+}
+
+.schedule_radio_input {
+    margin-right: 10px; /* Adjust the space between the radio button and the label text */
+}
+
+.schedule_course_card {
+    display: flex;
+    border: 3px solid grey;
+}
+
+/* .radio label > * {
+    margin-right: 10px;
+} */
