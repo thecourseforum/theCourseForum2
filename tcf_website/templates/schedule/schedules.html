@@ -1,6 +1,10 @@
 {% load custom_tags %}
 {% load static %}
 
+{% block styles %}
+<link rel="stylesheet" href="{% static 'schedule/schedules_list.css' %}" />
+{% endblock %}
+
 {% block title %}Make a Schedule - theCourseForum{% endblock %}
 
 {% block content %}
@@ -12,12 +16,15 @@
         <form id="select_schedule_form" action="{% url url_param %}" method="POST" data-course-id="{{ course.id }}">
             {% csrf_token %}
             {% for s in schedules %}
-            <div class="radio">
+            <div class="schedule_radio_option">
                 <label>
-                    <input type="radio" name="selected_schedules" value="{{s.id}}">
-                    {{s.name}}
+                    <input class="schedule_radio_input" type="radio" name="selected_schedules" value="{{s.id}}">
+                    <div>
+                        <span class="label_text">{{s.name}}</span>
+                        {% include "schedule/schedule.html" with profile=profile courses=s.scheduledcourse_set.all %}
+
+                    </div>
                 </label>
-                {% include "schedule/schedule.html" with profile=profile courses=s.scheduledcourse_set.all %}
             </div>
             {% empty %}
             <!-- TODO: either present a link to the user to make a schedule or allow them to make one here in the modal -->
@@ -34,7 +41,7 @@
         <ul class="review-list list-unstyled">
             {% for s in schedules %}
             <li>
-                {% include "schedule/schedule.html" with profile=profile courses=courses|get_item:s.id schedule=s %}
+                {% include "schedule/schedule.html" with profile=profile courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id schedule=s %}
             </li>
             {% empty %}
             <div>You haven't made any schedules yet!</div>

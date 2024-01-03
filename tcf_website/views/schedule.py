@@ -55,12 +55,23 @@ def view_schedules(request):
         )
     )
     courses_context = {}
+    ratings_context = {}
+    difficulty_context = {}
 
+    # iterate over the schedules for this request in order to set up the context
     for s in schedules:
         courses_context[s.id] = s.get_scheduled_courses()
+        ratings_context[s.id] = s.average_rating_for_schedule()
+        difficulty_context[s.id] = s.average_schedule_difficulty()
+        # print(s.average_schedule_difficulty())
+        # print( s.average_rating_for_schedule())
 
-    return render(request, 'schedule/user_schedules.html',
-                  {"schedules": schedules, "courses": courses_context})
+    return render(request,
+                  'schedule/user_schedules.html',
+                  {"schedules": schedules,
+                   "courses": courses_context,
+                   "ratings": ratings_context,
+                   "difficulty": difficulty_context})
 
 
 @login_required
