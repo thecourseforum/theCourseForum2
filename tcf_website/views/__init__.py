@@ -3,7 +3,7 @@
 # See
 # https://docs.djangoproject.com/en/3.0/topics/db/models/#organizing-models-in-a-package
 
-from .auth import login, login_error, password_error, logout, collect_extra_info
+from .auth import login, login_error, password_error, logout
 from .ads import ads
 from .index import index, privacy, terms, AboutView
 from .browse import (browse, department, course_view_legacy, course_view,

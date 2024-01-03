@@ -49,22 +49,22 @@ class ExtraUserInfoForm(forms.Form):
                 'value': current_yr}))
 
 
-def collect_extra_info(request, method):
-    """Extra sign up info collection view."""
-    if request.method == 'POST':
-        form = ExtraUserInfoForm(request.POST)
-        if form.is_valid():
-            # because of FIELDS_STORED_IN_SESSION, this will get copied
-            # to the request dictionary when the pipeline is resumed
-            request.session['grad_year'] = form.cleaned_data['grad_year']
-
-            # once we have the grad_year stashed in the session, we can
-            # tell the pipeline to resume by using the "complete" endpoint
-            return redirect(reverse('social:complete', args=[method]))
-    else:
-        form = ExtraUserInfoForm()
-
-    return render(request, "login/extra_info_form.html", {'form': form})
+# def collect_extra_info(request, method):
+#     """Extra sign up info collection view."""
+#     if request.method == 'POST':
+#         form = ExtraUserInfoForm(request.POST)
+#         if form.is_valid():
+#             # because of FIELDS_STORED_IN_SESSION, this will get copied
+#             # to the request dictionary when the pipeline is resumed
+#             request.session['grad_year'] = form.cleaned_data['grad_year']
+#
+#             # once we have the grad_year stashed in the session, we can
+#             # tell the pipeline to resume by using the "complete" endpoint
+#             return redirect(reverse('social:complete', args=[method]))
+#     else:
+#         form = ExtraUserInfoForm()
+#
+#     return render(request, "login/extra_info_form.html", {'form': form})
 
 
 def unauthenticated_index(request):

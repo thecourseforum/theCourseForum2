@@ -58,7 +58,7 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('login/error/', views.login_error),
     path('login/password_error/', views.password_error),
-    path('login/collect_extra_info/<str:method>', views.collect_extra_info),
+    # path('login/collect_extra_info/<str:method>', views.collect_extra_info),
     path('accounts/login/', views.login),
     path('logout/', views.logout, name='logout'),
     path(
