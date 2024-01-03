@@ -1,3 +1,6 @@
+{% load custom_tags %}
+{% load static %}
+
 <div class="modal fade" id="deleteScheduleModal" tabindex="-1" role="dialog" aria-labelledby="deleteScheduleModal" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -8,7 +11,7 @@
           </button>
         </div>
         <div class="modal-body">
-            <form id="delete_schedule_form" action="{% url 'delete_schedule' %}" method="POST" data-course-id="{{ course.id }}">
+            <form id="delete_schedule_form" action="{% url 'delete_schedule' %}" method="POST">
                 {% csrf_token %}
                 {% for s in schedules %}
                 <div class="radio">
@@ -16,14 +19,14 @@
                         <input type="checkbox" name="selected_schedules" value="{{s.id}}">
                         {{s.name}}
                     </label>
-                    {% include "schedule/schedule.html" with profile=profile courses=s.scheduledcourse_set.all %}
+                    {% include "schedule/schedule.html" with courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id %}
                 </div>
                 {% empty %}
                 <div>You haven't made any schedules yet!</div>
                 {% endfor %}
                 <div class="ml-sm-auto d-flex justify-content-end">
                     <button id="schedule_select_btn"  type="submit" value="Submit" class="btn btn-primary" disabled>
-                        Submit
+                        Confirm
                     </button>
                 </div>
             </form>
