@@ -20,4 +20,5 @@ from .schedule import (
     new_schedule,
     delete_schedule,
     modal_load_sections,
-    schedule_add_course)
+    schedule_add_course,
+    view_schedules_modal)
