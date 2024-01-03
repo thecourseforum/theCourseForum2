@@ -21,6 +21,8 @@ from django.db.models import (
 )
 from django.db.models.functions import Abs, Coalesce, Round
 
+# pylint: disable=line-too-long
+
 
 class School(models.Model):
     """School model.
@@ -1270,6 +1272,69 @@ class Schedule(models.Model):
         including details about the section and instructor.
         """
         return self.scheduledcourse_set.select_related('section', 'instructor').all()
+
+    def average_rating_for_schedule(self):
+        """Compute average rating for all courses in a schedule.
+
+        Rating is defined as the average of recommendability,
+        instructor rating, and enjoyability."""
+        # Aggregate average ratings for each instructor-section pair
+        aggregated_ratings = ScheduledCourse.objects.filter(
+            schedule=self).annotate(
+            related_course_id=models.F('section__course_id'),
+            related_instructor_id=models.F('instructor_id'),
+            related_section_id=models.F('section_id')).values(
+            'related_course_id',
+            'related_instructor_id',
+            'related_section_id').annotate(
+                avg_recommendability=models.Avg(
+                    'section__course__review__recommendability',
+                    filter=models.Q(
+                        section__course__review__instructor=models.F('related_instructor_id'))),
+            avg_instructor_rating=models.Avg(
+                    'section__course__review__instructor_rating',
+                    filter=models.Q(
+                        section__course__review__instructor=models.F('related_instructor_id'))),
+            avg_enjoyability=models.Avg(
+                    'section__course__review__enjoyability',
+                    filter=models.Q(
+                        section__course__review__instructor=models.F('related_instructor_id'))))
+
+        # Compute the overall average across all instructor-section pairs
+        total_ratings = 0
+        count = 0
+
+        for rating in aggregated_ratings:
+            if all(
+                key in rating for key in [
+                    'avg_recommendability',
+                    'avg_instructor_rating',
+                    'avg_enjoyability']):
+                total_ratings += sum([rating['avg_recommendability'] or 0,
+                                      rating['avg_instructor_rating'] or 0,
+                                      rating['avg_enjoyability'] or 0])
+                count += 3  # Since we're summing three ratings for each course
+
+        return total_ratings / count if count > 0 else None
+
+    def average_schedule_difficulty(self):
+        """Compute average difficulty score."""
+
+        result = ScheduledCourse.objects.filter(
+            schedule=self
+        ).annotate(
+            course_id=models.F('section__course_id'),  # Reference to the course
+            related_instructor_id=models.F('instructor_id')    # Reference to the instructor
+        ).values(
+            'course_id', 'related_instructor_id'
+        ).annotate(
+            avg_difficulty=models.Avg('section__course__review__difficulty',
+                                      filter=models.Q(section__course__review__instructor_id=models.F('related_instructor_id')))
+        ).aggregate(
+            overall_avg_difficulty=models.Avg('avg_difficulty')
+        )
+
+        return result.get('overall_avg_difficulty')
 
 
 class ScheduledCourse(models.Model):
