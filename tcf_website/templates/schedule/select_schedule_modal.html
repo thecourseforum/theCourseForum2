@@ -38,6 +38,8 @@
             if (form) {
                 form.addEventListener('submit', function(event) {
                     event.preventDefault();
+                    document.getElementById('schedule_select_btn').disabled = true;  // prevent a double submission
+
                     var selectedSchedule = form.querySelector('input[type="radio"][name="selected_schedules"]:checked').value;
                     var courseId = form.getAttribute('data-course-id');
 
@@ -96,7 +98,7 @@
                             section_form.appendChild(instructorDiv);
                         }
 
-                        // close the select schedule modal and then open the course modal
+                        // close the select schedule modal and then open the add course modal
                         $('#selectScheduleModal').modal('hide');
                         setTimeout(function() {
                             $('#addCourseModal').modal('show');
@@ -127,6 +129,8 @@
                 // this will use a listener to send the form data to the view
                 sectionForm.addEventListener('submit', function(event) {
                     event.preventDefault();
+                    // prevent double submission
+                    submitButton.disabled = true;
 
                     var formData = new FormData(this);
 
@@ -138,6 +142,7 @@
                         if (resp.ok) {
                             location.reload();
                         } else {
+                            submitButton.disabled = false;
                             console.error("There was an error");
                         }
                     })
