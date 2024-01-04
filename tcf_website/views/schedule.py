@@ -79,8 +79,12 @@ def view_schedules(request):
     '''
     get all schedules, and the related courses, for a given user
     '''
-
     schedule_context = schedule_data_helper(request)
+
+    # add an empty schedule form into the context
+    # to be used in the create_schedule_modal
+    form = ScheduleForm()
+    schedule_context['form'] = form
 
     return render(request,
                   'schedule/user_schedules.html',
@@ -124,7 +128,7 @@ def new_schedule(request):
             schedule.user = User.objects.get(id=user_id)
             if user_id == "" or schedule.user is None:
                 messages.error(request, "There was an error")
-                return render(request, 'schedule/new_schedule.html', {"form": form})
+                return render(request, 'schedule/user_schedules.html', {"form": form})
             schedule.save()
             messages.success(request, "Successfully created schedule!")
             return redirect('schedule')
@@ -132,8 +136,7 @@ def new_schedule(request):
         # if schedule isn't getting saved, then don't do anything
         # for part two of the this project, load the actual course builder page
         form = ScheduleForm()
-    return render(request, {"form": form})
-    # return render(request, 'schedule/schedule_builder.html', {"form": form})
+    return render(request, 'schedule/schedule_builder.html', {"form": form})
 
 
 @login_required
