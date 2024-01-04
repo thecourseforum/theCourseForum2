@@ -16,6 +16,8 @@ from django.db.models import Prefetch
 from .browse import load_secs_helper
 from ..models import Schedule, User, Course, Semester, ScheduledCourse, Instructor, Section
 
+# pylint: disable=line-too-long
+
 
 class ScheduleForm(forms.ModelForm):
     '''
@@ -127,8 +129,11 @@ def new_schedule(request):
             messages.success(request, "Successfully created schedule!")
             return redirect('schedule')
     else:
+        # if schedule isn't getting saved, then don't do anything
+        # for part two of the this project, load the actual course builder page
         form = ScheduleForm()
-    return render(request, 'schedule/new_schedule.html', {"form": form})
+    return render(request, {"form": form})
+    # return render(request, 'schedule/schedule_builder.html', {"form": form})
 
 
 @login_required
@@ -140,13 +145,16 @@ def delete_schedule(request):
     if request.method == 'POST':
         # Retrieve IDs from POST data
         schedule_ids = request.POST.getlist('selected_schedules')
+        schedule_count = len(schedule_ids)
 
         # Perform bulk delete
         deleted_count, _ = Schedule.objects.filter(id__in=schedule_ids).delete()
         if deleted_count == 0:
             messages.error(request, "No schedules were deleted.")
         else:
-            messages.success(request, f"Successfully deleted {deleted_count} schedules")
+            messages.success(
+                request,
+                f"Successfully deleted {schedule_count} schedules and {deleted_count - schedule_count} courses")
     return redirect('schedule')
 
 
