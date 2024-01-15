@@ -25,8 +25,8 @@
                 <h1 class="mr-md-3 text-nowrap">{{ course.code }}</h1>
                 <h2>{{ course.title }}</h2>
                 <div class="ml-sm-auto d-flex justify-content-end">
-                    <a class="ml-2 mt-2 btn bg-tcf-orange text-white" id="show_schedule_modal_button" type="button"
-                    class="show_schedule_modal_button"  data-toggle="modal" data-target="#selectScheduleModal" >
+                    <a class="ml-2 mt-2 btn bg-tcf-orange text-white" id="open_select_modal_button" type="button"
+                    class="open_select_modal_button"  data-toggle="modal" data-target="#selectScheduleModal" >
                         <i class="fas fa-plus" aria-hidden="true"></i> Add to Schedule 
                     </a>
                     {% include "schedule/select_schedule_modal.html" with user_id=user.id mode="add_course"%}

@@ -1,3 +1,5 @@
+{% load static %}
+
 <div class="modal fade" id="selectScheduleModal" tabindex="-1" role="dialog" aria-labelledby="selectScheduleModal" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -18,145 +20,30 @@
 
 {% block js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'schedule/load_schedule_select.js' %}"></script>
 <script>
     $(document).ready(function() {
-        function loadModal() {
-            $.ajax({
-                url: "{% url 'modal_load_schedules' mode='add_course' %}", 
-                success: function(data) {
-                    $('#modal-body').html(data);  // Insert the response data into the modal
-                    document.getElementById("select_schedule_form").setAttribute('data-course-id', '{{course.id}}');
-                    $('#selectScheduleModal').modal('show');        // Show the modal
-                    attachEventListenersToModalContent();
-                }
-            });
-        }
-
-        // Function to attach event listeners to the modal content
-        function attachEventListenersToModalContent() {
-            var form = document.getElementById('select_schedule_form');
-            if (form) {
-                form.addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    document.getElementById('schedule_select_btn').disabled = true;  // prevent a double submission
-
-                    var selectedSchedule = form.querySelector('input[type="radio"][name="selected_schedules"]:checked').value;
-                    var courseId = form.getAttribute('data-course-id');
-
-                    fetch("{% url 'modal_load_sections' %}?course_id=" + courseId, {
-                        method: 'GET',
-                        headers: {
-                            'X-CSRFToken': '{{csrf_token}}'
-                        }
-                    })
-                    .then(resp => resp.json())
-                    .then(data => {
-                        document.getElementById('schedule_id_input').value = selectedSchedule;
-                        section_form = document.getElementById('select_section_form');
-
-                        // iterate over all returned instructors and create the html cards for them
-                        // TODO: check to see if something is returned and that it's not null
-                        for(const [insId, insInfo] of Object.entries(data)) {
-                            // create the card that will contain all info for a given instructor
-                            var instructorDiv = document.createElement('div');
-                            instructorDiv.className = "modal_instructor_card";
-                            instructorDiv.id = "modal_instructor_card" + insId;
-
-                            // create the title of the card as the instructor's name
-                            var instructorName = document.createElement('h6');
-                            instructorName.textContent = insInfo.name;
-                            instructorDiv.appendChild(instructorName);
-
-                            // create a hidden input to store the instructor's id
-                            var instructorId = document.createElement('input');
-                            instructorId.type = "hidden";
-                            instructorId.value = insId;
-
-                            var sectionsList = document.createElement('ul');
-
-                            insInfo["sections"].forEach(encoded_section => {
-                                var decoded_section = encoded_section.split(" /% ")
-                                var section_id = decoded_section[0];
-                                var section_num = decoded_section[1];
-                                var section_time = decoded_section[2].slice(0,-1);
-
-                                var li = document.createElement('li');
-                                var lab = document.createElement('label');
-                                lab.textContent = section_time;
-                                var input = document.createElement('input');
-                                input.type = "radio";
-                                input.name = "selected_course";
-                                input.value = `{"instructor": ${insId}, "section": ${section_id}, "section_time":"${section_time}"}`;
-
-                                lab.appendChild(input);
-                                li.appendChild(lab);
-                                sectionsList.appendChild(li);
-                            });
-
-                            
-                            instructorDiv.appendChild(sectionsList);
-                            section_form.appendChild(instructorDiv);
-                        }
-
-                        // close the select schedule modal and then open the add course modal
-                        $('#selectScheduleModal').modal('hide');
-                        setTimeout(function() {
-                            $('#addCourseModal').modal('show');
-                        }, 400);
-                    })
-                    .catch(error => console.error('Error:', error));
-                        });
-            }
-
-            var sectionForm = document.getElementById('select_section_form');
-            if (sectionForm) {
-                // this will prevent a submit without a selection
-                var submitButton = document.getElementById('section_select_btn');
-
-                // Function to check the inputs and enable the button if criteria is met
-                function updateButtonState() {
-                    var inputs = sectionForm.querySelectorAll('input[type="radio"]');
-                    var isAnyInputFilled = Array.from(inputs).some(radio => radio.checked);
-                    submitButton.disabled = !isAnyInputFilled;
-                }
-
-                // Event listener for changes in the form
-                sectionForm.addEventListener('change', updateButtonState);
-
-                // Initial check in case the form is pre-filled
-                updateButtonState();
-
-                // this will use a listener to send the form data to the view
-                sectionForm.addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    // prevent double submission
-                    submitButton.disabled = true;
-
-                    var formData = new FormData(this);
-
-                    fetch(this.action, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(resp => {
-                        if (resp.ok) {
-                            location.reload();
-                        } else {
-                            submitButton.disabled = false;
-                            console.error("There was an error");
-                        }
-                    })
-                })
-            }
+        // urls variables that get passed into the static JS file
+        var modal_fetch_url = "{% url 'modal_load_schedules' mode=mode %}";
+        var modal_submit_url = "";
+        var next_modal_id = "";
+        if( '{{mode}}' == "add_course"){
+            modal_submit_url = "{% url 'modal_load_sections' %}?course_id=";
+            next_modal_id = '#addCourseModal';
+        } else if( '{{mode}}' == "edit_schedule") {
+            modal_submit_url = "{% url 'edit_schedule' %}";
+			next_modal_id = '#editScheduleModal';
+        } else {
+            console.error("invalid or missing mode");
         }
 
         // Event listener for the button
-        $('#show_schedule_modal_button').on('click', function() {
-            loadModal();
+        $('#open_select_modal_button').on('click', function() {
+            // this function is in the static file included in this template
+            loadModal(modal_fetch_url, modal_submit_url, next_modal_id,'{{ course.id }}');
         });
 
     });
 
 </script>
 {% endblock %}
-
