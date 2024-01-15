@@ -17,6 +17,7 @@ from .browse import load_secs_helper
 from ..models import Schedule, User, Course, Semester, ScheduledCourse, Instructor, Section
 
 # pylint: disable=line-too-long
+# pylint: disable=no-else-return
 
 
 class ScheduleForm(forms.ModelForm):
@@ -97,21 +98,34 @@ def view_schedules_modal(request, mode):
 
     the "mode" parameter in the url specfies which modal to render
     '''
+    # NOTE: as of now, this endpoint is used as a means to load modal content
+    # and not the modal itself
 
     schedule_context = schedule_data_helper(request)
     if mode == "add_course":
         # add necessary context variables for the select_schedule_modal template
         schedule_context['profile'] = True
         schedule_context['select'] = True
+        schedule_context['mode'] = mode  # pass back the mode used for the request
         schedule_context['url_param'] = 'schedule'
-        # as of now, this endpoint is used as a means to load modal content and not the modal itself
+
         return render(request,
                       'schedule/schedules.html',
                       schedule_context)
-    # redirect if there is no mode parameter
-    # NOTE: there might be a better way to handle this error
-    messages.error(request, "Missing mode parameter from query string")
-    return redirect('schedule')
+    elif mode == "edit_schedule":
+        # this mode is for loading schedules into the edit_schedule_modal template
+        schedule_context['select'] = True
+        schedule_context['url_param'] = 'schedule'
+        schedule_context['mode'] = mode  # pass back the mode used for the request
+
+        return render(request,
+                      'schedule/schedules.html',
+                      schedule_context)
+    else:
+        # redirect if there is no mode parameter
+        # NOTE: there might be a better way to handle this error
+        messages.error(request, "Missing or invalid mode parameter from query string")
+        return redirect('schedule')
 
 
 @login_required
@@ -158,6 +172,19 @@ def delete_schedule(request):
             messages.success(
                 request,
                 f"Successfully deleted {schedule_count} schedules and {deleted_count - schedule_count} courses")
+    return redirect('schedule')
+
+
+@login_required
+def edit_schedule(request):
+    '''
+    Edit a schedule based on a selected schedule, and the changes passed in
+    '''
+    ret = {}
+    if request.method == 'GET':
+        ret['mode'] = 'edit'
+        return JsonResponse(ret)
+
     return redirect('schedule')
 
 
