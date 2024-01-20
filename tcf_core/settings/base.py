@@ -243,3 +243,11 @@ MESSAGE_TAGS = {
 
 # Required in Django 3.2+ (See https://stackoverflow.com/a/66971803)
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+# Caching
+# See: https://docs.djangoproject.com/en/4.2/topics/cache/#memcached
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
