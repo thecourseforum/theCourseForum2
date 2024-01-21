@@ -269,6 +269,8 @@ def group_by_dept(courses):
 
 
 def autocomplete(request):
+    # TODO:
+    # Fix error when old /autocomplete requests aren't processed until the user stops tpying
     """Fetch autocomplete results"""
     # Set query
     query = request.GET.get("q", "")
