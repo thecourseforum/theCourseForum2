@@ -125,9 +125,12 @@ def fetch_courses(title, number):
     MNEMONIC_WEIGHT = 1.5
     NUMBER_WEIGHT = 1
     TITLE_WEIGHT = 1
+
+    # search query of form "<MNEMONIC><NUMBER>"
     if number != "":
         TITLE_WEIGHT = 0
         MNEMONIC_WEIGHT = 1
+    # otherwise, "title" is entire query
     else:
         NUMBER_WEIGHT = 0
 
