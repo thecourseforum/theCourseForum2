@@ -45,6 +45,7 @@ box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
 <script>
   var autocompleteResults = document.getElementById('autocomplete-results');
   var searchInput = document.getElementById("search-input");
+  var latestRequestTime, currentRequestTime;
   document.addEventListener('DOMContentLoaded', function () {
     var path = window.location.pathname;
     if (path === '/') {
@@ -58,6 +59,8 @@ box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
     }
 
     searchInput.addEventListener('input', function () {
+      var latestRequestTime = Date.now();
+      currentRequestTime = latestRequestTime;
       var query = searchInput.value;
 
       debounceTimeout = setTimeout(function () {
@@ -65,11 +68,8 @@ box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
           fetch('/autocomplete/?q=' + encodeURIComponent(query))
             .then(response => response.json())
             .then(data => {
-              if (data && Array.isArray(data.results)) {
-                console.log("Autocomplete results:", data.results);
+              if (data && Array.isArray(data.results) && currentRequestTime == latestRequestTime) {
                 displayAutocompleteResults(data.results);
-              } else {
-                console.error('Invalid JSON format in response:', data);
               }
             })
             .catch(error => console.error('Error:', error));
