@@ -99,7 +99,7 @@ def fetch_instructors(query):
         .annotate(full_name=Concat("first_name", Value(" "), "last_name"))
         .annotate(similarity=TrigramWordSimilarity(query, "full_name"))
         .filter(similarity__gte=0.2)
-        .order_by("-similarity")[:20]
+        .order_by("-similarity")[:10]
     )
     # Formatting results similar to Elastic search response
     formatted_results = [
@@ -155,7 +155,7 @@ def fetch_courses(title, number):
         # filters out classes that haven't been taught since Fall 2020
         .exclude(semester_last_taught_id__lt=48)
         .order_by("-total_similarity")
-        [:20]
+        [:10]
     )
 
     # Formatting results similar to Elastic search response
