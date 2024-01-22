@@ -1,0 +1,31 @@
+<!--QUESTION FORM-->
+<!--Can visualize on page: .../qa/new_question/-->
+
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Write a Question - theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'reviews/new_review.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<div class="new-question container text-left mx-auto">
+  <h1 class="h2 mt-2 mb-4">Write a question</h1>
+  <!-- TODO: Adapt reviews content format to questions form layout -->
+  <div class="card">
+    <form class="card-body px-md-5" id="questionForm" action="{% url 'new_question' %}" method="POST">
+        {% csrf_token %}
+        {% include 'reviews/review_form_content.html' %}
+        {% include 'reviews/duplicate_review_modal.html' %}
+        {% include 'reviews/zero_hours_modal.html' %}
+        <div class="new-question-submit row py-4">
+          <button type="submit" class="btn btn-primary mx-auto" id="submitBtn">Submit Review</button>
+        </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

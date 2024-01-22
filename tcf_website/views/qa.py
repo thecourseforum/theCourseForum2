@@ -10,7 +10,7 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 
 from ..models import Question, Answer
 
@@ -55,8 +55,20 @@ class DeleteQuestion(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView
 @login_required
 def new_question(request):
     """Question creation view."""
-
+    # Collect form data into Question model instance.
     if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        """if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            # TODO: extend field
+            instance.save()
+            return redirect('qa')"""
+        return render(request, 'qa/new_question.html', {'form': form})
+    return render(request, 'qa/new_question.html')
+
+    # Old Q&A Functionality
+    """if request.method == 'POST':
         form = QuestionForm(request.POST)
 
         if form.is_valid():
@@ -68,7 +80,7 @@ def new_question(request):
             messages.success(request, f'Successfully added a question for {instance.course}!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))"""
 
 
 @login_required
