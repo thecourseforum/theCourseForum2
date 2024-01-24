@@ -19,7 +19,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        TrigramExtension(),
         migrations.CreateModel(
             name='User',
             fields=[
