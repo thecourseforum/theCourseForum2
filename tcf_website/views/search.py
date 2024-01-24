@@ -285,19 +285,14 @@ def autocomplete(request):
 
     instructorData = fetch_instructors(query)['results']
     for each in instructorData:
-        each['total_similarity'] = each.pop('score')
+        each['total_similarity'] = each.pop('score')/2
 
     courses = get_courses(title_part, number_part, 5)
-
     courseData = list(courses.values('id', 'title', 'number', 'total_similarity'))
 
-    # combined = instructorData + courseData
+    combined = instructorData + courseData
 
-    print(instructorData)
-
-    data = sorted(courseData, key=compare, reverse=True)
-
-    print(data)
+    data = sorted(combined, key=compare, reverse=True)[:5]
 
     return JsonResponse({'results': data})
 
