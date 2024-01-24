@@ -284,8 +284,9 @@ def autocomplete(request):
         title_part, number_part = query, ""
 
     instructorData = fetch_instructors(query)['results']
-    for each in instructorData:
-        each['total_similarity'] = each.pop('score')/2
+    for instructor in instructorData:
+        instructor['total_similarity'] = instructor.pop('score')/2
+        instructor['title'] = instructor.pop('first_name') + " " + instructor.pop('last_name')
 
     courses = get_courses(title_part, number_part, 5)
     courseData = list(courses.values('id', 'title', 'number', 'total_similarity'))
