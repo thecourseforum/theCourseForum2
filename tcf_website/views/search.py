@@ -282,10 +282,22 @@ def autocomplete(request):
     else:
         # Handle cases where the query doesn't match the expected format
         title_part, number_part = query, ""
+
+    instructorData = fetch_instructors(query)['results']
+    for each in instructorData:
+        each['total_similarity'] = each.pop('score')
+
     courses = get_courses(title_part, number_part, 5)
 
-    data = sorted(list(courses.values('id', 'title', 'number', 'total_similarity')),
-                  key=compare, reverse=True)
+    courseData = list(courses.values('id', 'title', 'number', 'total_similarity'))
+
+    # combined = instructorData + courseData
+
+    print(instructorData)
+
+    data = sorted(courseData, key=compare, reverse=True)
+
+    print(data)
 
     return JsonResponse({'results': data})
 
