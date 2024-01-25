@@ -283,7 +283,9 @@ def autocomplete(request):
         # Handle cases where the query doesn't match the expected format
         title_part, number_part = query, ""
 
+    # fetching instructor results from query
     instructorData = fetch_instructors(query)['results']
+    # normalizing instructor data
     for instructor in instructorData:
         instructor['total_similarity'] = instructor.pop('score')/2
         instructor['title'] = instructor.pop('first_name') + " " + instructor.pop('last_name')
@@ -293,6 +295,7 @@ def autocomplete(request):
 
     combined = instructorData + courseData
 
+    # sort the top results using the compare function
     data = sorted(combined, key=compare, reverse=True)[:5]
 
     return JsonResponse({'results': data})
