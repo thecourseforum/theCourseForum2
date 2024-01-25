@@ -1310,9 +1310,15 @@ class Schedule(models.Model):
                     'avg_recommendability',
                     'avg_instructor_rating',
                     'avg_enjoyability']):
-                total_ratings += sum([rating['avg_recommendability'] or 0,
+                summed_ratings = sum([rating['avg_recommendability'] or 0,
                                       rating['avg_instructor_rating'] or 0,
                                       rating['avg_enjoyability'] or 0])
+                # if summed_ratings is zero, just continue
+                # in order to provide better UX, could return some indication that courses
+                # were skipped in the calculation
+                if summed_ratings == 0:
+                    continue
+                total_ratings += summed_ratings
                 count += 3  # Since we're summing three ratings for each course
 
         return total_ratings / count if count > 0 else None
