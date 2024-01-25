@@ -18,6 +18,7 @@ from ..models import Schedule, User, Course, Semester, ScheduledCourse, Instruct
 
 # pylint: disable=line-too-long
 # pylint: disable=no-else-return
+# pylint: disable=consider-using-generator
 
 
 class ScheduleForm(forms.ModelForm):
@@ -57,21 +58,24 @@ def schedule_data_helper(request):
             queryset=ScheduledCourse.objects.select_related('section', 'instructor')
         )
     )
-    courses_context = {}
-    ratings_context = {}
-    difficulty_context = {}
+    courses_context = {}  # contains the joined table for Schedule and ScheduledCourse models
+    ratings_context = {}  # contains aggregated ratings for schedules, using the model's method
+    difficulty_context = {}  # contains aggregated difficulty of schedules, using the model's method
+    credits_context = {}  # contains the total credits of schedules, calculated in this view
 
     # iterate over the schedules for this request in order to set up the context
     # this could also be optimized for the database by combining these queries
     for s in schedules:
         courses_context[s.id] = s.get_scheduled_courses()
+        credits_context[s.id] = sum([int(course.section.units) for course in courses_context[s.id]])
         ratings_context[s.id] = s.average_rating_for_schedule()
         difficulty_context[s.id] = s.average_schedule_difficulty()
 
     ret = {"schedules": schedules,
            "courses": courses_context,
            "ratings": ratings_context,
-           "difficulty": difficulty_context}
+           "difficulty": difficulty_context,
+           "credits": credits_context}
 
     return ret
 

@@ -1050,6 +1050,8 @@ class Schedule(models.Model):
         Return scheduled courses associated with this schedule,
         including details about the section and instructor.
         """
+        # NOTE: this returns all fields (because of the all), could reduce the weight
+        # of this request by including only required fields.
         return self.scheduledcourse_set.select_related('section', 'instructor').all()
 
     def average_rating_for_schedule(self):

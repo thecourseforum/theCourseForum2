@@ -21,7 +21,7 @@
                     <input class="schedule_radio_input" type="radio" name="selected_schedules" value="{{s.id}}">
                     <div>
                         <span class="label_text">{{s.name}}</span>
-                        {% include "schedule/schedule.html" with courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id %}
+                        {% include "schedule/schedule.html" with courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id credits=credits|get_item:s.id %}
 
                     </div>
                 </label>
@@ -41,7 +41,7 @@
         <ul class="review-list list-unstyled">
             {% for s in schedules %}
             <li>
-                {% include "schedule/schedule.html" with courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id schedule=s %}
+                {% include "schedule/schedule.html" with courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id schedule=s credits=credits|get_item:s.id %}
             </li>
             {% empty %}
             <div>You haven't made any schedules yet!</div>
