@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="{% static 'login/login_button.css' %}"/>
 {% endblock %}
 
-<form action="{% url 'social:complete' 'email' %}" method="post">
+<form action="{% url 'social:complete' 'openid' %}" method="post">
     {% csrf_token %}
     <div class="form-group">
         <label for="email">Email</label>

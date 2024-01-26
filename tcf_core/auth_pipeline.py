@@ -23,7 +23,7 @@ def auth_allowed(backend, details, response, *args, **kwargs):
 
 def password_validation(backend, details, request, response, *args, **kwargs):
     """Route unallowed auth attempts to error page."""
-    if backend.name != 'email':
+    if backend.name != 'openid':
         return
     if not response.get('login'):
         if response.get('password') != response.get('password_confirm'):
@@ -76,10 +76,11 @@ def create_user(strategy, details, backend, user=None, *args, **kwargs):
     """
     # User has registered previously.
     if user:
-        if backend.name == 'email':
+        if backend.name == 'openid':
             details['fullname'] = user.full_name()
             details['first_name'] = user.first_name
             details['last_name'] = user.last_name
+            details['username'] = kwargs.get('email', details.get('email')).split('@')[0]
         return {'is_new': False, 'details': details}
 
     fields = dict((name, kwargs.get(name, details.get(name)))
@@ -104,7 +105,7 @@ def check_user_password(strategy, backend, user, is_new=False, password="", *arg
     Saves password to user object if a new user (registering).
     Otherwise, validates given password is correct.
     """
-    if backend.name != 'email':
+    if backend.name != 'openid':
         return
 
     if is_new:

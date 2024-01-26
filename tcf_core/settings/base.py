@@ -144,7 +144,7 @@ DATABASES = {
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
-    'social_core.backends.email.EmailAuth',
+    'social_core.backends.open_id.OpenIdAuth',
     'django.contrib.auth.backends.ModelBackend',
 )
 # TODO: Look into options like SOCIAL_AUTH_LOGIN_ERROR_URL or LOGIN_ERROR_URL
