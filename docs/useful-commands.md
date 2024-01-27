@@ -25,7 +25,7 @@ reviews = list(Review.objects.filter(text__icontains='<review drive tag>'))
 # However many winners (consult marketing)
 total_winners = 3
 
-winners = random.sample(reviews, total_winners))
+winners = reviews.order_by('?')[:total_winners]
 ```
 
 - Finally, send all winners to the marketing team.
