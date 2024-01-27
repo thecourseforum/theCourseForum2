@@ -55,7 +55,7 @@ env $(cat .env.prod | grep -v '^#' | xargs) sh scripts/dump.sh
 1. Build the project
 
 - Switch to master
-- Use production `.env.prod` credentials - consult exec for access
+- Use production `.env.prod` credentials (consult exec for access)
 - Build normally
 
 2. Retrieve the latest semesterly grade data if required:
