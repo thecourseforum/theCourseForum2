@@ -7,9 +7,9 @@ function populateDropdown(dropdownID) {
     const paramsArr = window.location.pathname.split("/");
 
     // Fetch all semester data from API
-    var course = paramsArr[2];
-    var instrID = paramsArr[3];
-    var semEndpoint = `/api/semesters/?course=${course}&instructor=${instrID}`;
+    const course = paramsArr[2];
+    const instrID = paramsArr[3];
+    const semEndpoint = `/api/semesters/?course=${course}&instructor=${instrID}`;
     $.getJSON(semEndpoint, function(data) {
         // Generate option tags
         if (data.length === 0) {
@@ -37,7 +37,7 @@ function populateDropdown(dropdownID) {
 
 jQuery(function($) {
     // Get all dropdown ids in the semester dropdown class for edit answer forms, clear and populate each
-    var ids = $(".semester-dropdown").map(function(_, x) { return "#".concat(x.id); }).get();
+    const ids = $(".semester-dropdown").map(function(_, x) { return "#".concat(x.id); }).get();
     ids.forEach((item) => populateDropdown(item));
 });
 
@@ -46,7 +46,7 @@ $(document).ready(function() {
     $("#duplicate-answer").hide();
 
     $(document).on("click", "#answerQuestionBtn", function() {
-        var questionId = $(this).data("id");
+        const questionId = $(this).data("id");
         $("#answerForm #questionInput").val(questionId);
     });
 
