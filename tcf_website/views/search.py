@@ -299,12 +299,13 @@ def autocomplete(request):
 
 
 def compare(course):
-    print(course)
     similarity_threshold = 0.75
 
     try:
+        # for courses
         result = course['score'] if course['score'] > similarity_threshold else float('-inf')
     except:
+        # for instructors
         result = course['total_similarity'] if course['total_similarity'] > similarity_threshold else float(
             '-inf')
     return result
