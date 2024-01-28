@@ -47,7 +47,7 @@ $ sh scripts/reset-db.sh <file>.sql
 Windows:
 
 ```console
-$ scripts\reset-db.bat <file.sql>
+$ scripts\reset-db.bat <file>.sql
 ```
 
 7. Ensure the website is up, running, and functional at `localhost:8000`.
