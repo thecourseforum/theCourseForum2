@@ -39,13 +39,13 @@ $ docker compose up
 MacOS/Linux:
 
 ```console
-$ sh scripts/reset-db.sh <file>.sql
+$ sh scripts/reset-db.sh db/<file>.sql
 ```
 
 Windows:
 
 ```console
-$ scripts\reset-db.bat <file>.sql
+$ scripts\reset-db.bat db/<file>.sql
 ```
 
 7. Ensure the website is up, running, and functional at `localhost:8000`.
