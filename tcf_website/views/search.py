@@ -28,7 +28,7 @@ def search(request):
         title_part, number_part = query, ""
 
     instructors = fetch_instructors(query)
-    courses = fetch_courses(title_part, number_part, 20)
+    courses = fetch_courses(title_part, number_part)
 
     courses_first = decide_order(query, courses, instructors)
 
@@ -100,7 +100,7 @@ def fetch_instructors(query):
         .annotate(full_name=Concat("first_name", Value(" "), "last_name"))
         .annotate(similarity=TrigramWordSimilarity(query, "full_name"))
         .filter(similarity__gte=0.2)
-        .order_by("-similarity")[:20]
+        .order_by("-similarity")[:10]
     )
     # Formatting results similar to Elastic search response
     formatted_results = [
@@ -121,36 +121,17 @@ def fetch_instructors(query):
     )
 
 
-def fetch_courses(title, number, numberOfResults):
+def fetch_courses(title, number):
     """Get course data using Django Trigram similarity"""
-    results = get_courses(title, number, numberOfResults)
-
-    # Formatting results similar to Elastic search response
-    formatted_results = [
-        {
-            "_meta": {"id": str(course.pk), "score": course.total_similarity},
-            "title": {"raw": course.title},
-            "number": {"raw": course.number},
-            "mnemonic": {
-                "raw": course.subdepartment.mnemonic + " " + str(course.number)
-            },
-            "description": {"raw": course.description},
-        }
-        for course in results
-    ]
-
-    return format_response(
-        {"results": formatted_results, "meta": {"engine": {"name": "tcf-courses"}}}
-    )
-
-
-def get_courses(title, number, numberOfResults):
     MNEMONIC_WEIGHT = 1.5
     NUMBER_WEIGHT = 1
     TITLE_WEIGHT = 1
+
+    # search query of form "<MNEMONIC><NUMBER>"
     if number != "":
         TITLE_WEIGHT = 0
         MNEMONIC_WEIGHT = 1
+    # otherwise, "title" is entire query
     else:
         NUMBER_WEIGHT = 0
 
@@ -178,10 +159,26 @@ def get_courses(title, number, numberOfResults):
         # filters out classes that haven't been taught since Fall 2020
         .exclude(semester_last_taught_id__lt=48)
         .order_by("-total_similarity")
-        [:numberOfResults]
+        [:10]
     )
 
-    return results
+    # Formatting results similar to Elastic search response
+    formatted_results = [
+        {
+            "_meta": {"id": str(course.pk), "score": course.total_similarity},
+            "title": {"raw": course.title},
+            "number": {"raw": course.number},
+            "mnemonic": {
+                "raw": course.subdepartment.mnemonic + " " + str(course.number)
+            },
+            "description": {"raw": course.description},
+        }
+        for course in results
+    ]
+
+    return format_response(
+        {"results": formatted_results, "meta": {"engine": {"name": "tcf-courses"}}}
+    )
 
 
 def format_response(response):
@@ -290,8 +287,8 @@ def autocomplete(request):
         instructor['total_similarity'] = instructor.pop('score')/2
         instructor['title'] = instructor.pop('first_name') + " " + instructor.pop('last_name')
 
-    courses = get_courses(title_part, number_part, 5)
-    courseData = list(courses.values('id', 'title', 'number', 'total_similarity'))
+    courses = fetch_courses(title_part, number_part)
+    courseData = list(courses['results'])
 
     combined = instructorData + courseData
 
@@ -302,5 +299,12 @@ def autocomplete(request):
 
 
 def compare(course):
+    print(course)
     similarity_threshold = 0.75
-    return course['total_similarity'] if course['total_similarity'] > similarity_threshold else float('-inf')
+
+    try:
+        result = course['score'] if course['score'] > similarity_threshold else float('-inf')
+    except:
+        result = course['total_similarity'] if course['total_similarity'] > similarity_threshold else float(
+            '-inf')
+    return result
