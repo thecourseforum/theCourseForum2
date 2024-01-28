@@ -3,16 +3,15 @@
 ## Setup
 
 1. Ensure your system has [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), Node, Python, PostgreSQL, and [Docker](https://docs.docker.com/install/) installed.
-2. Download the `.env` secrets file in the project root from the [secrets repo](https://github.com/thecourseforum/tCF-Secrets/blob/master/.env).
-
-- _**Note**_: the file should be named exactly `.env`, not `.env.txt` or `env.txt` - rename if necessary.
-
-3. Clone the project:
+2. Clone the project:
 
 ```console
 $ git clone https://github.com/thecourseforum/theCourseForum2.git
 $ cd theCourseForum
 ```
+
+3. Download the `.env` secrets file from the [secrets repo](https://github.com/thecourseforum/tCF-Secrets/blob/master/.env) and place it in the project root.
+- _**Note**_: the file should be named exactly `.env`, not `.env.txt` or `env.txt` - rename if necessary.
 
 4. Install python dependencies for your local environment:
 
