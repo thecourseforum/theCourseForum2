@@ -10,7 +10,7 @@ $ git clone https://github.com/thecourseforum/theCourseForum2.git
 $ cd theCourseForum
 ```
 
-3. Download the `.env` secrets file from the [secrets repo](https://github.com/thecourseforum/tCF-Secrets/blob/master/.env) and place it in the project root.
+3. Download the `.env` secrets file from the [secrets repo](https://github.com/thecourseforum/tCF-env/blob/main/.env) and place it in the project root.
 - _**Note**_: the file should be named exactly `.env`, not `.env.txt` or `env.txt` - rename if necessary.
 
 4. Install python and node dependencies for your local environment:
