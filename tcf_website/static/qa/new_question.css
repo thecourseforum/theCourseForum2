@@ -1,0 +1,8 @@
+.question-heading {
+    color: var(--accent-color);
+}
+
+.required-field::after {
+    content: " *";
+    color: red;
+}

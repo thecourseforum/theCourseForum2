@@ -7,22 +7,49 @@
 {% block title %}Write a Question - theCourseForum{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'reviews/new_review.css' %}" />
+<link rel="stylesheet" href="{% static 'qa/new_question.css' %}" />
 {% endblock %}
 
 {% block content %}
-
 <div class="new-question container text-left mx-auto">
-  <h1 class="h2 mt-2 mb-4">Write a question</h1>
+  <h1 class="h2 mt-2 mb-4">Ask a question</h1>
   <!-- TODO: Adapt reviews content format to questions form layout -->
   <div class="card">
     <form class="card-body px-md-5" id="questionForm" action="{% url 'new_question' %}" method="POST">
+      <div class="new-qa-course">
+        <h2 class="h4 question-form-header form-group mt-4 mb-2 question-heading">
+          Which class are you asking about?</h2>
+        <div class="form-group">
+          <p class="small">You can type or use Arrowkeys+Enter to select.</p>
+        </div>
+
+        <ul class="nav nav-tabs mb-3">
+          <li class="nav-item">
+            <a class="nav-link active" id="specificQuestion" data-toggle="tab" href="#specificQuestionTab"
+              style="font-size: 18px;">Course Specific</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="generalQuestion" data-toggle="tab" href="#generalQuestionTab"
+              style="font-size: 18px;">General</a>
+          </li>
+        </ul>
+
         {% csrf_token %}
-        {% include 'reviews/review_form_content.html' %}
-        {% include 'reviews/duplicate_review_modal.html' %}
-        {% include 'reviews/zero_hours_modal.html' %}
-        <div class="new-question-submit row py-4">
-          <button type="submit" class="btn btn-primary mx-auto" id="submitBtn">Submit Review</button>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="specificQuestionTab" role="tabpanel" aria-labelledby="specific-question-tab">
+            {% include 'qa/question_form_content.html' %}
+            <div class="new-question-submit row py-4">
+              <button type="submit" class="btn btn-primary mx-auto" id="submitBtn">Post Question</button>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="generalQuestionTab" role="tabpanel" aria-labelledby="general-question-tab">
+            <p>PLACEHOLDER FOR GENERAL QUESTION</p>
+            <div class="new-question-submit row py-4">
+              <button type="submit" class="btn btn-primary mx-auto" id="submitBtn">Post Question</button>
+            </div>
+          </div>
+          
         </div>
     </form>
   </div>

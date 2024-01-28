@@ -1,0 +1,48 @@
+<!-- Class Info -->
+<div>
+    <!-- TODO: figure out matching model -->
+    <div class="form-row mb-3">
+        <div class="form-group col-sm-6">
+            <label for="school" class="required-field">School</label>
+            <select type="text" class="form-control" required id="school" name="school">
+                <option value="{{ form.instance.school.id }}" selected>{{ form.instance.school }}</option>
+            </select>
+        </div>
+        <div class="form-group col-sm-6">
+            <label for="subject" class="required-field">Subject</label>
+            <select type="text" class="form-control" required id="subject" name="subject">
+                <option selected>{{ form.instance.course.subdepartment.mnemonic }} | {{
+                    form.instance.course.subdepartment.name}} </option>
+            </select>
+        </div>
+    </div>
+    <div class="form-row mb-3">
+        <div class="form-group col-sm-6">
+            <label for="course" class="required-field">Course</label>
+            <select type="text" class="form-control" required id="course" name="course">
+                <option value="{{ form.instance.course.id }}" selected>{{ form.instance.course.number }} | {{
+                    form.instance.course.title }}</option>
+            </select>
+        </div>
+        <div class="form-group col-sm-6">
+            <label for="instructor" class="required-field">Instructor</label>
+            <select type="text" class="form-control" required id="instructor" name="instructor">
+                <option value="{{ form.instance.instructor.id }}" selected>{{ form.instance.instructor.last_name }}, {{
+                    form.instance.instructor.first_name }}</option>
+            </select>
+        </div>
+    </div>
+    <hr>
+
+    <!-- Question written content -->
+    <div id="review-form-div" class="new-review-content form-row mb-3">
+        <h2 class="h4 review-form-header form-group col-12 my-4">
+            What would you like to ask?</h2>
+        <div class="form-group col mb-3">
+            <textarea class="form-control" id="reviewtext" name="text" rows="5"
+                placeholder="(Enter your question here!)" minlength="10"
+                maxlength="300">{{ form.text.value }}</textarea>
+        </div>
+    </div>
+    <hr>
+</div>
