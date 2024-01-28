@@ -1,3 +1,4 @@
+black==23.12.1
 Django==4.2.8
 coverage==7.3.3
 django-cachalot==2.6.1
@@ -8,10 +9,13 @@ django-stubs==4.2.7
 djangorestframework==3.14.0
 gunicorn==21.2.0
 html-linter==0.4.0
+isort==5.13.2
 mypy-extensions==1.0.0
 mypy==1.7.1
 numpy==1.26.2
 pandas==2.1.4
+pre-commit==3.6.0
+prettier==0.0.7
 psycopg2==2.9.9
 pylint-django==2.5.5
 pylint==3.0.3
