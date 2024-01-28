@@ -23,6 +23,7 @@ $ npm install
 5. Install `pre-commit` to ensure your commit pasts formatting and linting:
 
 ```console
+# run this if you configured a pre-commit hook from the old wiki setup
 $ git config --unset-all core.hooksPath
 $ pre-commit install
 ```
