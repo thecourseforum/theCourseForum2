@@ -16,7 +16,6 @@ $ cd theCourseForum
 4. Install python dependencies for your local environment:
 
 ```console
-$ virtualenv venv # use a virtual environment (if desired)
 $ pip install -r requirements.txt
 ```
 
