@@ -9,7 +9,7 @@ Enable the review drive banner by reverting [this commit](https://github.com/the
 - Use Python via Django's builtin management shell:
 
 ```console
-docker exec -it tcf_django python manage.py shell
+$ docker exec -it tcf_django python manage.py shell
 ```
 
 - Select all relevant reviews:
@@ -37,13 +37,13 @@ To alter/inspect the production database directly, first use the production `.en
 - Use Python via Django's builtin management shell:
 
 ```console
-docker exec -it tcf_django python manage.py shell
+$ docker exec -it tcf_django python manage.py shell
 ```
 
 - Use SQL and production credentials to dump the production database manually wherever desired (`db/prod.sql` is used by default):
 
 ```console
-env $(cat .env.prod | grep -v '^#' | xargs) sh scripts/dump.sh
+$ env $(cat .env.prod | grep -v '^#' | xargs) sh scripts/dump.sh
 ```
 
 **_NOTE_**: Windows users won't be able to use the above CLI hack - substitute in the environment variables manually.
@@ -63,9 +63,9 @@ env $(cat .env.prod | grep -v '^#' | xargs) sh scripts/dump.sh
 - Fetch the data from Lou's List (specify the year and season accordingly):
 
 ```
-cd tcf_website/management/commands/semester_data
-python fetch_data.py <year> {spring,summer,fall,january}
-cd -
+$ cd tcf_website/management/commands/semester_data
+$ python fetch_data.py <year> {spring,summer,fall,january}
+$ cd -
 ```
 
 - If necessary, move the csv to `tcf_website/management/commands/grade_data/csv/<year>_<season>.csv`.
@@ -75,13 +75,13 @@ cd -
 A normal update may look like the following:
 
 ```console
-docker exec -it tcf_django python manage.py load_grades <year>_<season>.csv
+$ docker exec -it tcf_django python manage.py load_grades <year>_<season>.csv
 ```
 
 5. Update ElasticSearch to reflect the latest database changes:
 
 ```
-docker exec tcf_django python manage.py index_elasticsearch
+$ docker exec tcf_django python manage.py index_elasticsearch
 ```
 
 **_NOTE_**: this command may take +1 hour(s) to run, so plan accordingly!
