@@ -50,7 +50,7 @@ $ scripts\reset-db.bat db/latest.sql
 
 7. Ensure the website is up, running, and functional at `localhost:8000`.
 
-## [Useful Commands](docs/useful-commands.md)
+## [Useful Commands](useful-commands.md)
 
 ## Common Issues
 
