@@ -883,7 +883,9 @@ class Question(models.Model):
                 ),
             )
         return question.order_by("-created")
-
+    
+#Tag class for organizing (TO UPDATE LATER)
+#class Tag(models.model):
 
 class Answer(models.Model):
     """Answer model.
