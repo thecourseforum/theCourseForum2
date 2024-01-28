@@ -15,12 +15,19 @@ repos:
         files: \.py$
         pass_filenames: false
 
-      - id: eslint-prettier
-        name: ESLint with Prettier
-        entry: docker exec tcf_django npx eslint --cache --fix -c .config/.eslintrc.yml --ext .js,.css,.md tcf_website/static/
+      - id: eslint
+        name: ESLint
+        entry: docker exec tcf_django npx eslint --cache --fix -c .config/.eslintrc.yml tcf_website/static/
         language: system
-        files: \.(js|css|md)$
+        files: \.js$
         pass_filenames: false
+
+      - id: prettier
+        name: Prettier
+        entry: docker exec tcf_django npx prettier --write
+        language: system
+        files: \.(css|js|md)$
+        pass_filenames: true
 
       # these are acting up - don't know why
       # - id: django-tests
