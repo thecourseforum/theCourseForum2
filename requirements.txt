@@ -1,5 +1,4 @@
 Django==4.2.8
-autopep8==2.0.4
 coverage==7.3.3
 django-cachalot==2.6.1
 django-environ==0.11.2
