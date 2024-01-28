@@ -3,21 +3,24 @@ repos:
     hooks:
       - id: black
         name: Black
-        entry: docker exec tcf_django black --line-length 80
+        entry: docker exec tcf_django black --line-length 80 .
         language: system
         files: \.py$
+        pass_filenames: false
 
       - id: isort
         name: isort
-        entry: docker exec tcf_django isort --profile black --line-length 80
+        entry: docker exec tcf_django isort --profile black --line-length 80 .
         language: system
         files: \.py$
+        pass_filenames: false
 
       - id: eslint-prettier
         name: ESLint with Prettier
         entry: docker exec tcf_django npx eslint --cache --fix -c .config/.eslintrc.yml --ext .js,.css,.md tcf_website/static/
         language: system
         files: \.(js|css|md)$
+        pass_filenames: false
 
       - id: django-tests
         name: Django Tests
