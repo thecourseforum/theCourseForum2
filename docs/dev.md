@@ -4,25 +4,53 @@
 
 1. Ensure your system has [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), Node, Python, PostgreSQL, and [Docker](https://docs.docker.com/install/) installed.
 2. Download the `.env` secrets file in the project root from the [secrets repo](https://github.com/thecourseforum/tCF-Secrets/blob/master/.env).
-- *__Note__*: the file should be named exactly `.env`, not `.env.txt` or `env.txt` - rename if necessary.
-3. Clone then build the project:
+
+- _**Note**_: the file should be named exactly `.env`, not `.env.txt` or `env.txt` - rename if necessary.
+
+3. Clone the project:
+
 ```console
-$ git clone https://github.com/thecourseforum/theCourseForum2.git && cd theCourseForum
+$ git clone https://github.com/thecourseforum/theCourseForum2.git
+$ cd theCourseForum
+```
+
+4. Install python dependencies for your local environment:
+
+```console
+$ virtualenv venv # use a virtual environment (if desired)
+$ pip install -r requirements.txt
+```
+
+5. Install `pre-commit` to ensure your commit pasts formatting and linting:
+
+```console
+$ git config --unset-all core.hooksPath
+$ pre-commit install
+```
+
+6. Build the project:
+
+```console
 $ docker compose up
 ```
-4. Wait for the Django server to finish building (i.e. `tcf_django | Watching for file changes with StatReloader` is visible in stdout).
-5. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) from Google Drive in the `db/` folder.
-6. Update the database according to your operating system:
+
+7. Wait for the Django server to finish building (i.e. `tcf_django | Watching for file changes with StatReloader` is visible in stdout).
+8. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) from Google Drive into `db/<file>.sql` in your local repo.
+9. Update the database according to your operating system:
 
 MacOS/Linux:
+
 ```console
-$ sh scripts/reset-db.sh
+$ sh scripts/reset-db.sh <file>.sql
 ```
+
 Windows:
+
 ```console
-$ scripts\reset-db.bat
+$ scripts\reset-db.bat <file.sql>
 ```
-7. Ensure the website is up running and functional at `localhost:8000`.
+
+7. Ensure the website is up, running, and functional at `localhost:8000`.
 
 ## [Useful Commands](docs/useful-commands.md)
 
