@@ -33,19 +33,19 @@ $ docker compose up
 ```
 
 7. Wait for the Django server to finish building (i.e. `tcf_django | Watching for file changes with StatReloader` is visible in stdout).
-8. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) from Google Drive into `db/<file>.sql` in your local repo.
+8. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) from Google Drive into `db/latest.sql` in your local repo.
 9. Update the database according to your operating system:
 
 MacOS/Linux:
 
 ```console
-$ sh scripts/reset-db.sh db/<file>.sql
+$ sh scripts/reset-db.sh db/latest.sql
 ```
 
 Windows:
 
 ```console
-$ scripts\reset-db.bat db/<file>.sql
+$ scripts\reset-db.bat db/latest.sql
 ```
 
 7. Ensure the website is up, running, and functional at `localhost:8000`.
