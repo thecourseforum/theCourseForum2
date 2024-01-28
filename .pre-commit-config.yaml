@@ -9,7 +9,7 @@ repos:
         pass_filenames: false
 
       - id: isort
-        name: isort
+        name: Isort
         entry: docker exec tcf_django isort --profile black --line-length 80 .
         language: system
         files: \.py$
@@ -28,6 +28,13 @@ repos:
         language: system
         files: \.(css|js|md)$
         pass_filenames: true
+
+      - id: pylint
+        name: Pylint
+        entry: docker exec tcf_django pylint --jobs=0 -s no --load-plugins pylint_django --django-settings-module=tcf_core.settings tcf_website tcf_core
+        language: system
+        files: \.py$
+        pass_filenames: false
 
       # these are acting up - don't know why
       # - id: django-tests
