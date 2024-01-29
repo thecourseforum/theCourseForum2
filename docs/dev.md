@@ -31,13 +31,13 @@ $ docker compose up
 7. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) from Google Drive into `db/latest.sql` in your local repo.
 8. Update the database according to your operating system:
 
-MacOS/Linux:
+MacOS/Linux (or Windows, if you're using Git-Bash):
 
 ```console
 $ sh scripts/reset-db.sh db/latest.sql
 ```
 
-Windows:
+Windows (Command Prompt or PowerShell):
 
 ```console
 $ scripts\reset-db.bat db\latest.sql
