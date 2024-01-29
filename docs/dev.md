@@ -21,9 +21,10 @@ $ git config --unset-all core.hooksPath # run this if you configured a hook from
 $ pre-commit install
 ```
 
-5. Build the project:
+5. Build the project
 
 ```console
+$ docker compose build --no-cache
 $ docker compose up
 ```
 
