@@ -17,9 +17,8 @@ $ cd theCourseForum
 
 ```console
 $ npm install
-$ pip install -r requirements.txt
 $ git config --unset-all core.hooksPath # run this if you configured a hook from the old wiki setup
-$ pre-commit install
+$ pip install pre-commit && pre-commit install
 ```
 
 5. Build the project
