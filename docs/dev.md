@@ -16,7 +16,6 @@ $ cd theCourseForum
 4. Install `pre-commit` and associated dependencies to ensure your commit pasts formatting and linting:
 
 ```console
-$ npm install
 $ git config --unset-all core.hooksPath # run this if you configured a hook from the old wiki setup
 $ pip install pre-commit && pre-commit install
 ```
