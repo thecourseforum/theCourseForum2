@@ -36,6 +36,15 @@ repos:
         files: \.py$
         pass_filenames: false
 
+      - id: coverage
+        name: Coverage
+        entry: docker exec tcf_django coverage run manage.py test --keepdb
+        language: system
+        files: \.py$
+        pass_filenames: false
+
+
+
       # these are acting up - don't know why
       # - id: django-tests
       #   name: Django Tests
