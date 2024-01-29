@@ -23,7 +23,7 @@ $ pip install pre-commit && pre-commit install
 5. Build the project
 
 ```console
-$ docker compose build --no-cache
+$ docker compose build --no-cache # from scratch (only necessary the first time)
 $ docker compose up
 ```
 
