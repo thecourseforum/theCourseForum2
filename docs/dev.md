@@ -11,6 +11,7 @@ $ cd theCourseForum
 ```
 
 3. Download the `.env` secrets file from the [secrets repo](https://github.com/thecourseforum/tCF-env/blob/main/.env) and place it in the project root.
+
 - _**Note**_: the file should be named exactly `.env`, not `.env.txt` or `env.txt` - rename if necessary.
 
 4. Install `pre-commit` and associated dependencies to ensure your commit pasts formatting and linting:
