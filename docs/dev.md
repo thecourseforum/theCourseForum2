@@ -40,7 +40,7 @@ $ sh scripts/reset-db.sh db/latest.sql
 Windows:
 
 ```console
-$ scripts\reset-db.bat db/latest.sql
+$ scripts\reset-db.bat db\latest.sql
 ```
 
 9. Ensure the website is up, running, and functional at `localhost:8000`.
