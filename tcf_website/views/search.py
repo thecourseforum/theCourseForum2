@@ -266,8 +266,6 @@ def group_by_dept(courses):
 
 
 def autocomplete(request):
-    # TODO:
-    # Fix error when old /autocomplete requests aren't processed until the user stops tpying
     """Fetch autocomplete results"""
     # Set query
     query = request.GET.get("q", "")
@@ -284,28 +282,28 @@ def autocomplete(request):
     instructorData = fetch_instructors(query)['results']
     # normalizing instructor data
     for instructor in instructorData:
-        instructor['total_similarity'] = instructor.pop('score')/2
+        instructor['score'] = instructor.pop('score')/2
         instructor['title'] = instructor.pop('first_name') + " " + instructor.pop('last_name')
 
     courses = fetch_courses(title_part, number_part)
     courseData = list(courses['results'])
 
-    combined = instructorData + courseData
+    combinedData = instructorData + courseData
 
     # sort the top results using the compare function
-    data = sorted(combined, key=compare, reverse=True)[:5]
+    topResults = sorted(combinedData, key=compare, reverse=True)[:5]
 
-    return JsonResponse({'results': data})
+    return JsonResponse({'results': topResults})
 
 
-def compare(course):
+def compare(result):
     similarity_threshold = 0.75
 
     try:
-        # for courses
-        result = course['score'] if course['score'] > similarity_threshold else float('-inf')
-    except:
-        # for instructors
-        result = course['total_similarity'] if course['total_similarity'] > similarity_threshold else float(
+        meetsThreshold = result['score'] if result['score'] > similarity_threshold else float(
             '-inf')
-    return result
+    except:
+        # in case some data is formatted the old way
+        meetsThreshold = result['total_similarity'] if result['total_similarity'] > similarity_threshold else float(
+            '-inf')
+    return meetsThreshold
