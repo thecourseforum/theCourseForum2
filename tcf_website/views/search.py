@@ -282,7 +282,7 @@ def autocomplete(request):
     instructorData = fetch_instructors(query)['results']
     # normalizing instructor data
     for instructor in instructorData:
-        instructor['score'] = instructor.pop('score')/2
+        instructor['score'] = instructor.pop('score')/2.5
         instructor['title'] = instructor.pop('first_name') + " " + instructor.pop('last_name')
 
     courses = fetch_courses(title_part, number_part)
