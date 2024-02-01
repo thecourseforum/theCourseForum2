@@ -85,6 +85,49 @@
             </ul>
         </div>
     </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Function to get recommendations via AJAX
+            function getRecommendations(courseName) {
+                $.ajax({
+                    type: 'GET',
+                    url: '{% url "get_recommendations_ajax" %}',  // Update with your URL pattern
+                    data: { course_name: courseName },
+                    dataType: 'json',
+                    success: function (data) {
+                        // Update HTML with recommendations
+                        updateRecommendations(data.recommendations);
+                    },
+                    error: function (error) {
+                        console.error('Error fetching recommendations:', error);
+                    }
+                });
+            }
+
+            // Function to update HTML with recommendations
+            function updateRecommendations(recommendations) {
+                var recommendationsList = $('#recommendations-list');
+                recommendationsList.empty();  // Clear previous recommendations
+
+                // Append new recommendations to the list
+                for (var i = 0; i < recommendations.length; i++) {
+                    var listItem = $('<li>').text(recommendations[i]);
+                    recommendationsList.append(listItem);
+                }
+            }
+
+            // Trigger the AJAX request on some event (e.g., button click)
+            $('#yourButtonId').click(function () {
+                var courseName = prompt('Enter your course name:');
+                if (courseName) {
+                    getRecommendations(courseName);
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block js %}
