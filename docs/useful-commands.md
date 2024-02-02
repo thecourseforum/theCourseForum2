@@ -88,3 +88,11 @@ $ docker exec tcf_django python manage.py index_elasticsearch
 
 6. Commit the semesterly data to the repo
 7. Remove production credentialing (use `.env` credentials like normal)
+
+## Formatting the Codebase
+
+Simply run the format script (a `.bat` file is available for Windows):
+
+```console
+$ sh scripts/format.sh
+```
