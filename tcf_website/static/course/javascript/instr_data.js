@@ -1,17 +1,17 @@
 /*
  * Dropdown data population for the course-instructor page
  * Author: j-alicia-long, 12/13/2020
-*/
+ */
 
 // Executed when DOM is ready
 jQuery(function($) {
     /* Fetch instructor data for given course */
     const pageSize = "1000";
-    const instrEndpoint = `/api/instructors/?course=${window.courseID}` +
-        `&page_size=${pageSize}`;
+    const instrEndpoint =
+    `/api/instructors/?course=${window.courseID}` + `&page_size=${pageSize}`;
     // var courseID is from global var in template
     $.getJSON(instrEndpoint, function(data) {
-        // Generate dropdown links
+    // Generate dropdown links
         $.each(data.results, function(i, instr) {
             $("<a />", {
                 id: `instr-${instr.id}`,
@@ -21,9 +21,8 @@ jQuery(function($) {
             }).appendTo("#instructorMenu");
         });
         return this;
-    })
-        .done(function() {
-            // Enable instructor selector
-            $("#instructorMenu").prop("disabled", false);
-        });
+    }).done(function() {
+    // Enable instructor selector
+        $("#instructorMenu").prop("disabled", false);
+    });
 });
