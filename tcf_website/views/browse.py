@@ -277,6 +277,7 @@ def course_instructor(request, course_id, instructor_id):
         data["average_gpa"] = (
             round(grades_data.average, 2) if grades_data.average else None
         )
+        # pylint: disable=duplicate-code
         fields = [
             "a_plus",
             "a",
