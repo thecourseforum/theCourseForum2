@@ -11,7 +11,7 @@ function togglePieChart() {
     document.getElementById("canvas-parent").style.width = "290px";
     // eslint-disable-next-line no-new,no-undef
     myChart = new Chart(ctx, pieConfig);
-};
+}
 
 function toggleBarChart() {
     if (myChart) {
@@ -20,7 +20,7 @@ function toggleBarChart() {
     document.getElementById("canvas-parent").style.width = "95%";
     // eslint-disable-next-line no-new,no-undef
     myChart = new Chart(ctx, barConfig);
-};
+}
 
 $(".pieToBar").click(function() {
     if (document.getElementById("toggle-btn").value === "bar") {
@@ -36,12 +36,24 @@ $(".pieToBar").click(function() {
     }
 });
 
-const loadData = data => {
+const loadData = (data) => {
     // order in the input data
     /* eslint-disable camelcase */
-    const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, dfw } = data;
+    const { a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, dfw } =
+    data;
     // order we want for the pie chart
-    const grades_data = [a_plus, a, a_minus, b_plus, b, b_minus, c_plus, c, c_minus, dfw];
+    const grades_data = [
+        a_plus,
+        a,
+        a_minus,
+        b_plus,
+        b,
+        b_minus,
+        c_plus,
+        c,
+        c_minus,
+        dfw
+    ];
 
     // Calculate total number of students
     totalSum = grades_data.reduce((total, num) => total + num, 0);
@@ -50,65 +62,106 @@ const loadData = data => {
     /* eslint-enable camelcase */
     createChart(grades_data);
 
-    const formatWorkload = x => `${100 * x / data.average_hours_per_week}%`;
+    const formatWorkload = (x) => `${(100 * x) / data.average_hours_per_week}%`;
     // Subtracting 0.8 from both the numerators and the denominator
     // so that the rating of 1 does look like a low one
-    const formatRating = x => `${100 * (x - 0.8) / (5 - 0.8)}%`;
+    const formatRating = (x) => `${(100 * (x - 0.8)) / (5 - 0.8)}%`;
 
     // Change display if there is no data
-    if (exist(data.average_gpa)) { $(".gpa-text").html(data.average_gpa === 0.0 ? "Pass/Fail" : `${data.average_gpa} GPA`); }
-    if (exist(data.total_enrolled)) { $(".students-text").html(`${data.total_enrolled} Students`); } else {
+    if (exist(data.average_gpa)) {
+        $(".gpa-text").html(
+            data.average_gpa === 0.0 ? "Pass/Fail" : `${data.average_gpa} GPA`
+        );
+    }
+    if (exist(data.total_enrolled)) {
+        $(".students-text").html(`${data.total_enrolled} Students`);
+    } else {
         $(".students-text").remove();
         $(".chart-button").remove();
     }
 
     // Summary numbers
-    if (exist(data.average_rating)) { $(".rating-num").html(data.average_rating); }
-    if (exist(data.average_hours_per_week)) { $(".hours-num").html(data.average_hours_per_week); }
+    if (exist(data.average_rating)) {
+        $(".rating-num").html(data.average_rating);
+    }
+    if (exist(data.average_hours_per_week)) {
+        $(".hours-num").html(data.average_hours_per_week);
+    }
     // Rating numbers
-    if (exist(data.average_instructor)) { $(".instructor-num").html(data.average_instructor); }
-    if (exist(data.average_fun)) { $(".fun-num").html(data.average_fun); }
-    if (exist(data.average_difficulty)) { $(".difficulty-num").html(data.average_difficulty); }
-    if (exist(data.average_recommendability)) { $(".recommend-num").html(data.average_recommendability); }
+    if (exist(data.average_instructor)) {
+        $(".instructor-num").html(data.average_instructor);
+    }
+    if (exist(data.average_fun)) {
+        $(".fun-num").html(data.average_fun);
+    }
+    if (exist(data.average_difficulty)) {
+        $(".difficulty-num").html(data.average_difficulty);
+    }
+    if (exist(data.average_recommendability)) {
+        $(".recommend-num").html(data.average_recommendability);
+    }
     // Workload numbers
-    if (exist(data.average_amount_reading)) { $(".reading-num").html(data.average_amount_reading); }
-    if (exist(data.average_amount_writing)) { $(".writing-num").html(data.average_amount_writing); }
-    if (exist(data.average_amount_group)) { $(".group-num").html(data.average_amount_group); }
-    if (exist(data.average_amount_homework)) { $(".homework-num").html(data.average_amount_homework); }
+    if (exist(data.average_amount_reading)) {
+        $(".reading-num").html(data.average_amount_reading);
+    }
+    if (exist(data.average_amount_writing)) {
+        $(".writing-num").html(data.average_amount_writing);
+    }
+    if (exist(data.average_amount_group)) {
+        $(".group-num").html(data.average_amount_group);
+    }
+    if (exist(data.average_amount_homework)) {
+        $(".homework-num").html(data.average_amount_homework);
+    }
 
     // Rating bars
-    if (exist(data.average_instructor)) { $(".instructor-bar").width(formatRating(data.average_instructor)); }
-    if (exist(data.average_fun)) { $(".fun-bar").width(formatRating(data.average_fun)); }
-    if (exist(data.average_difficulty)) { $(".difficulty-bar").width(formatRating(data.average_difficulty)); }
-    if (exist(data.average_recommendability)) { $(".recommend-bar").width(formatRating(data.average_recommendability)); }
+    if (exist(data.average_instructor)) {
+        $(".instructor-bar").width(formatRating(data.average_instructor));
+    }
+    if (exist(data.average_fun)) {
+        $(".fun-bar").width(formatRating(data.average_fun));
+    }
+    if (exist(data.average_difficulty)) {
+        $(".difficulty-bar").width(formatRating(data.average_difficulty));
+    }
+    if (exist(data.average_recommendability)) {
+        $(".recommend-bar").width(formatRating(data.average_recommendability));
+    }
     // Workload bars
-    if (exist(data.average_amount_reading)) { $(".reading-bar").width(formatWorkload(data.average_amount_reading)); }
-    if (exist(data.average_amount_writing)) { $(".writing-bar").width(formatWorkload(data.average_amount_writing)); }
-    if (exist(data.average_amount_group)) { $(".group-bar").width(formatWorkload(data.average_amount_group)); }
-    if (exist(data.average_amount_homework)) { $(".homework-bar").width(formatWorkload(data.average_amount_homework)); }
+    if (exist(data.average_amount_reading)) {
+        $(".reading-bar").width(formatWorkload(data.average_amount_reading));
+    }
+    if (exist(data.average_amount_writing)) {
+        $(".writing-bar").width(formatWorkload(data.average_amount_writing));
+    }
+    if (exist(data.average_amount_group)) {
+        $(".group-bar").width(formatWorkload(data.average_amount_group));
+    }
+    if (exist(data.average_amount_homework)) {
+        $(".homework-bar").width(formatWorkload(data.average_amount_homework));
+    }
 };
 
-const createChart = gradesData => {
+const createChart = (gradesData) => {
     const chartData = {
-        datasets: [{
-            data: gradesData,
-            backgroundColor: [
-                "#182D66", // A+
-                "#274F97", // A
-                "#4467B6", // A-
-                "#5D83D1", // B+
-                "#6E98E4", // B
-                "#8FA9DF", // B-
-                "#DAA38E", // C+
-                "#DD734C", // C
-                "#D75626", // C-
-                "#BE4B20" // DFW
-            ]
-        }],
-        labels: [
-            "A+", "A", "A-", "B+", "B", "B-",
-            "C+", "C", "C-", "DFW"
-        ]
+        datasets: [
+            {
+                data: gradesData,
+                backgroundColor: [
+                    "#182D66", // A+
+                    "#274F97", // A
+                    "#4467B6", // A-
+                    "#5D83D1", // B+
+                    "#6E98E4", // B
+                    "#8FA9DF", // B-
+                    "#DAA38E", // C+
+                    "#DD734C", // C
+                    "#D75626", // C-
+                    "#BE4B20" // DFW
+                ]
+            }
+        ],
+        labels: ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "DFW"]
     };
 
     // Generate configuration for Bar Chart with chartData
@@ -126,26 +179,30 @@ const createChart = gradesData => {
                 display: false
             },
             scales: {
-                xAxes: [{
-                    ticks: {
-                        autoSkip: false
-                    },
-                    gridLines: {
-                        drawOnChartArea: false
+                xAxes: [
+                    {
+                        ticks: {
+                            autoSkip: false
+                        },
+                        gridLines: {
+                            drawOnChartArea: false
+                        }
                     }
-                }],
-                yAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        labelString: "Number of Students"
-                    },
-                    ticks: {
-                        beginAtZero: true
-                    },
-                    gridLines: {
-                        drawOnChartArea: true
+                ],
+                yAxes: [
+                    {
+                        scaleLabel: {
+                            display: true,
+                            labelString: "Number of Students"
+                        },
+                        ticks: {
+                            beginAtZero: true
+                        },
+                        gridLines: {
+                            drawOnChartArea: true
+                        }
                     }
-                }]
+                ]
             },
             plugins: {
                 labels: {
@@ -194,7 +251,9 @@ const createChart = gradesData => {
                 callbacks: {
                     label: function(tooltipItem, data) {
                         const dataset = data.datasets[0];
-                        const percent = Math.round((dataset.data[tooltipItem.index] / totalSum) * 100);
+                        const percent = Math.round(
+                            (dataset.data[tooltipItem.index] / totalSum) * 100
+                        );
                         let label = data.labels[tooltipItem.index];
                         if (tooltipItem.index === 9) {
                             label = "D/F/Withdraw";
@@ -254,7 +313,7 @@ const createChart = gradesData => {
     myChart = new Chart(ctx, pieConfig);
 };
 
-const exist = data => {
+const exist = (data) => {
     return data !== null && data !== undefined;
 };
 export { loadData };

@@ -38,10 +38,15 @@ function postToDiscord() {
     }
     const data = {
         type: "bug",
-        content: "Bug Found! \n**URL:** " + url +
-        "\n**Description**: \n" + description +
-        "\n**Categories: **" + categories +
-        "\n**Email:** " + email
+        content:
+      "Bug Found! \n**URL:** " +
+      url +
+      "\n**Description**: \n" +
+      description +
+      "\n**Categories: **" +
+      categories +
+      "\n**Email:** " +
+      email
     };
 
     $.ajax({
@@ -51,5 +56,9 @@ function postToDiscord() {
     });
 }
 
-document.getElementById("bugSubmitBtn").addEventListener("click", submitForm, false);
-document.getElementById("bugFormOpen").addEventListener("click", resetForm, false);
+document
+    .getElementById("bugSubmitBtn")
+    .addEventListener("click", submitForm, false);
+document
+    .getElementById("bugFormOpen")
+    .addEventListener("click", resetForm, false);
