@@ -2,8 +2,8 @@ async function loadPage(subdepartmentId, url) {
     if (url === null) {
         hideSpinner(subdepartmentId);
         return;
-    };
-    const courses = await fetch(url).then(res => res.json());
+    }
+    const courses = await fetch(url).then((res) => res.json());
     if (courses.detail === "Invalid page.") {
         hideSpinner(subdepartmentId);
     } else {
@@ -75,7 +75,9 @@ function generateCourseCardHTML(course) {
 
 function emdashOrTwoDecimals(number) {
     // \u2014 is an em-dash
-    return number === null ? "\u2014" : (Math.round(number * 100) / 100).toFixed(2);
+    return number === null
+        ? "\u2014"
+        : (Math.round(number * 100) / 100).toFixed(2);
 }
 
 function hideSpinner(subdepartmentId) {

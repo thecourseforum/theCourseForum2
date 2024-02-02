@@ -35,7 +35,11 @@ function sortQA(btnID) {
 }
 
 function collapseQA(numberShown) {
-    const ids = $(".question-container").map(function(_, x) { return "#".concat(x.id); }).get();
+    const ids = $(".question-container")
+        .map(function(_, x) {
+            return "#".concat(x.id);
+        })
+        .get();
     for (const [index, id] of ids.entries()) {
         const detachedID = $(id).detach();
         if (index < numberShown) {
@@ -47,7 +51,11 @@ function collapseQA(numberShown) {
 }
 
 function collapseAnswers(numberShown) {
-    const ids = $(".answer-container").map(function(_, x) { return x.id; }).get();
+    const ids = $(".answer-container")
+        .map(function(_, x) {
+            return x.id;
+        })
+        .get();
     for (const id of ids) {
         collapseQuestionAnswer(numberShown, parseInt(id.substring(16)));
     }
@@ -58,7 +66,11 @@ function collapseQuestionAnswer(numberShown, questionID) {
     const showAnswerContainer = "#answerShow" + questionID;
     const collapseAnswerContainer = "#answerCollapse" + questionID;
 
-    const answerIDs = $(answerContainerID.concat(" .answer")).map(function(_, x) { return "#".concat(x.id); }).get();
+    const answerIDs = $(answerContainerID.concat(" .answer"))
+        .map(function(_, x) {
+            return "#".concat(x.id);
+        })
+        .get();
 
     for (const [index, id] of answerIDs.entries()) {
         const detachedID = $(id).detach();
@@ -71,27 +83,39 @@ function collapseQuestionAnswer(numberShown, questionID) {
 }
 
 function sortAnswers(containerClass) {
-    const ids = $(containerClass).map(function(_, x) { return "#".concat(x.id); }).get();
-    ids.forEach((item) => sortHTML(item, item.concat(" .answer"), "answer-vote-count", -1));
+    const ids = $(containerClass)
+        .map(function(_, x) {
+            return "#".concat(x.id);
+        })
+        .get();
+    ids.forEach((item) =>
+        sortHTML(item, item.concat(" .answer"), "answer-vote-count", -1)
+    );
     collapseAnswers(1);
 }
 
 sortQA("qa-votes-sort-btn");
-document.getElementById("qa-votes-sort-btn").addEventListener("click", () => sortQA("qa-votes-sort-btn"));
-document.getElementById("qa-recent-sort-btn").addEventListener("click", () => sortQA("qa-recent-sort-btn"));
+document
+    .getElementById("qa-votes-sort-btn")
+    .addEventListener("click", () => sortQA("qa-votes-sort-btn"));
+document
+    .getElementById("qa-recent-sort-btn")
+    .addEventListener("click", () => sortQA("qa-recent-sort-btn"));
 
 // collapse QA functionality
-document.getElementById("collapse-qa-button").addEventListener("click", function() {
-    if ($("#collapse-qa-button").val() === "hide") {
-        $("#collapse-qa-button").val("show");
-        $("#collapse-chevron").removeClass("fa-chevron-up");
-        $("#collapse-chevron").addClass("fa-chevron-down");
-    } else {
-        $("#collapse-qa-button").val("hide");
-        $("#collapse-chevron").removeClass("fa-chevron-down");
-        $("#collapse-chevron").addClass("fa-chevron-up");
-    }
-});
+document
+    .getElementById("collapse-qa-button")
+    .addEventListener("click", function() {
+        if ($("#collapse-qa-button").val() === "hide") {
+            $("#collapse-qa-button").val("show");
+            $("#collapse-chevron").removeClass("fa-chevron-up");
+            $("#collapse-chevron").addClass("fa-chevron-down");
+        } else {
+            $("#collapse-qa-button").val("hide");
+            $("#collapse-chevron").removeClass("fa-chevron-down");
+            $("#collapse-chevron").addClass("fa-chevron-up");
+        }
+    });
 
 function clickCollapseAnswer(collapseID) {
     const questionID = parseInt(collapseID.substring(22));
@@ -105,6 +129,14 @@ function clickCollapseAnswer(collapseID) {
 }
 
 $(function() {
-    const ids = $(".collapse-answer-button").map(function(_, x) { return x.id; }).get();
-    ids.forEach((item) => document.getElementById(item).addEventListener("click", () => clickCollapseAnswer(item)));
+    const ids = $(".collapse-answer-button")
+        .map(function(_, x) {
+            return x.id;
+        })
+        .get();
+    ids.forEach((item) =>
+        document
+            .getElementById(item)
+            .addEventListener("click", () => clickCollapseAnswer(item))
+    );
 });
