@@ -2,7 +2,7 @@
  * Cascading dropdown data population for the "new review" form
  * in review.py and reviews/new_review.html
  * Author: j-alicia-long, 11/22/2020
-*/
+ */
 
 // Executed when DOM is ready
 jQuery(function($) {
@@ -27,7 +27,7 @@ jQuery(function($) {
     // Fetch all subdepartment data from API
     const subdeptEndpoint = "/api/subdepartments/";
     $.getJSON(subdeptEndpoint, function(data) {
-        // Sort departments alphabetically by mnemonic
+    // Sort departments alphabetically by mnemonic
         data.sort(function(a, b) {
             return a.mnemonic.localeCompare(b.mnemonic);
         });
@@ -46,18 +46,18 @@ jQuery(function($) {
             }
         });
         return this;
-    })
-        .done(function() { // Second callback
-            // Enable subject selector, disable the following
-            $("#subject").prop("disabled", false);
-            $("#course").prop("disabled", true);
-            $("#instructor").prop("disabled", true);
-            $("#semester").prop("disabled", true);
-        });
+    }).done(function() {
+    // Second callback
+    // Enable subject selector, disable the following
+        $("#subject").prop("disabled", false);
+        $("#course").prop("disabled", true);
+        $("#instructor").prop("disabled", true);
+        $("#semester").prop("disabled", true);
+    });
 
     /* Fetch course data on subject select */
     $("#subject").change(function() {
-        // Clear & disable sequenced dropdowns
+    // Clear & disable sequenced dropdowns
         clearDropdown("#course");
         clearDropdown("#instructor");
         clearDropdown("#semester");
@@ -82,26 +82,25 @@ jQuery(function($) {
                 }
             });
             return this;
-        })
-            .done(function() {
-                // Enable course selector, disable the following
-                $("#course").prop("disabled", false);
-                $("#instructor").prop("disabled", true);
-                $("#semester").prop("disabled", true);
-            });
+        }).done(function() {
+            // Enable course selector, disable the following
+            $("#course").prop("disabled", false);
+            $("#instructor").prop("disabled", true);
+            $("#semester").prop("disabled", true);
+        });
     });
 
     /* Fetch instructor data on course select */
     $("#course").change(function() {
-        // Clear & disable sequenced dropdowns
+    // Clear & disable sequenced dropdowns
         clearDropdown("#instructor");
         clearDropdown("#semester");
 
         // Fetch instructor data from API, based on selected course
         const course = $("#course").val();
         const pageSize = "1000";
-        const instrEndpoint = `/api/instructors/?course=${course}` +
-            `&page_size=${pageSize}`;
+        const instrEndpoint =
+      `/api/instructors/?course=${course}` + `&page_size=${pageSize}`;
         $.getJSON(instrEndpoint, function(data) {
             clearDropdown("#instructor"); // Empty dropdown
 
@@ -119,17 +118,16 @@ jQuery(function($) {
                 }
             });
             return this;
-        })
-            .done(function() {
-                // Enable instructor selector, disable the following
-                $("#instructor").prop("disabled", false);
-                $("#semester").prop("disabled", true);
-            });
+        }).done(function() {
+            // Enable instructor selector, disable the following
+            $("#instructor").prop("disabled", false);
+            $("#semester").prop("disabled", true);
+        });
     });
 
     /* Fetch semester data on instructor select */
     $("#instructor").change(function() {
-        // Clear & disable sequenced dropdowns
+    // Clear & disable sequenced dropdowns
         clearDropdown("#semester");
 
         // Fetch all semester data from API
@@ -147,41 +145,76 @@ jQuery(function($) {
                 }).appendTo("#semester");
             });
             return this;
-        })
-            .done(function() {
-                // Enable semester selector
-                $("#semester").prop("disabled", false);
-            });
+        }).done(function() {
+            // Enable semester selector
+            $("#semester").prop("disabled", false);
+        });
     });
 
     // Review Progress Bar
-    $("#reviewtext").on("keyup keypress keydown", function() { // Need all these different events so it works dynamically
-        // Used .trim() to remove leading and trailing spaces
+    $("#reviewtext").on("keyup keypress keydown", function() {
+    // Need all these different events so it works dynamically
+    // Used .trim() to remove leading and trailing spaces
         const review = $("#reviewtext").val().trim();
         const numberOfWords = countNumberOfWords(review);
         const encouragedWordCount = 150;
 
         // Set the width of the bar to the what percent of the encouraged word count the current review is (Used an outer container's width to ensure it scales properly to mobile)
-        $("#review-progressbar").width(($("#review-form-div").width()) * (numberOfWords / encouragedWordCount));
+        $("#review-progressbar").width(
+            $("#review-form-div").width() * (numberOfWords / encouragedWordCount)
+        );
 
         // String Form of the number of words out of the encouraged word count
-        const numberOfWordsInMessage = "(" + numberOfWords.toString() + "/" + encouragedWordCount.toString() + ")";
+        const numberOfWordsInMessage =
+      "(" +
+      numberOfWords.toString() +
+      "/" +
+      encouragedWordCount.toString() +
+      ")";
 
         // Different progress bar colors and messages depending on the current word count
         if (numberOfWords < encouragedWordCount / 3) {
             // Originally a django progress bar with danger for red so need to remove that to change colors
             $("#review-progressbar").removeClass("progress-bar bg-danger");
             $("#review-progressbar").css("background-color", "#FFB3BA");
-            $("#progressbar-message").html(numberOfWordsInMessage + " Your review is under " + (encouragedWordCount / 3).toString() + " words. Aim for " + encouragedWordCount.toString() + " or more!");
-        } else if (numberOfWords >= encouragedWordCount / 3 && numberOfWords < 2 * encouragedWordCount / 3) {
+            $("#progressbar-message").html(
+                numberOfWordsInMessage +
+          " Your review is under " +
+          (encouragedWordCount / 3).toString() +
+          " words. Aim for " +
+          encouragedWordCount.toString() +
+          " or more!"
+            );
+        } else if (
+            numberOfWords >= encouragedWordCount / 3 &&
+      numberOfWords < (2 * encouragedWordCount) / 3
+        ) {
             $("#review-progressbar").css("background-color", "#FFDAC1");
-            $("#progressbar-message").html(numberOfWordsInMessage + " Good job getting to " + (encouragedWordCount / 3).toString() + " words, keep going!");
-        } else if (numberOfWords >= 2 * encouragedWordCount / 3 && numberOfWords < encouragedWordCount) {
+            $("#progressbar-message").html(
+                numberOfWordsInMessage +
+          " Good job getting to " +
+          (encouragedWordCount / 3).toString() +
+          " words, keep going!"
+            );
+        } else if (
+            numberOfWords >= (2 * encouragedWordCount) / 3 &&
+      numberOfWords < encouragedWordCount
+        ) {
             $("#review-progressbar").css("background-color", "#FFF5BA");
-            $("#progressbar-message").html(numberOfWordsInMessage + " " + (2 * encouragedWordCount / 3).toString() + " words! You're so close to the " + encouragedWordCount.toString() + " mark!");
+            $("#progressbar-message").html(
+                numberOfWordsInMessage +
+          " " +
+          ((2 * encouragedWordCount) / 3).toString() +
+          " words! You're so close to the " +
+          encouragedWordCount.toString() +
+          " mark!"
+            );
         } else if (numberOfWords >= encouragedWordCount) {
             $("#review-progressbar").css("background-color", "#B5EAD7");
-            $("#progressbar-message").html(numberOfWordsInMessage + " Thank you for your in depth review. The tCF team and other users appreciate your effort!");
+            $("#progressbar-message").html(
+                numberOfWordsInMessage +
+          " Thank you for your in depth review. The tCF team and other users appreciate your effort!"
+            );
         }
     });
 });
@@ -199,10 +232,13 @@ function countNumberOfWords(review) {
 
     // Iterate through all words and letters within the words
     for (let i = 0; i < arrayOfWords.length; i++) {
-        // Tracks if the word is all non letter characters
+    // Tracks if the word is all non letter characters
         let allNonAlpha = true;
         for (let j = 0; j < arrayOfWords[i].length; j++) {
-            if (arrayOfWords[i][j].toUpperCase() >= "A" && arrayOfWords[i][j].toUpperCase() <= "Z") {
+            if (
+                arrayOfWords[i][j].toUpperCase() >= "A" &&
+        arrayOfWords[i][j].toUpperCase() <= "Z"
+            ) {
                 allNonAlpha = false;
             }
         }

@@ -1,26 +1,25 @@
+import traceback
+
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connections
-
 from tqdm import tqdm
-import traceback
 
 from tcf_website.legacy_models import *
 from tcf_website.models import *
 
-import traceback
-
 
 class Command(BaseCommand):
-    help = 'Imports data from legacy database into default database'
+    help = "Imports data from legacy database into default database"
 
     def migrate(
-            self,
-            legacy_class,
-            new_class,
-            field_map,
-            unique_fields,
-            reverse=False,
-            after_func=None):
+        self,
+        legacy_class,
+        new_class,
+        field_map,
+        unique_fields,
+        reverse=False,
+        after_func=None,
+    ):
 
         def not_yet_created(obj):
 
@@ -32,14 +31,22 @@ class Command(BaseCommand):
                         return False
                 return getattr(obj, old_field)
 
-            return len(new_class.objects.filter(**{f"{new_field}__exact": get_or_call(
-                old_field) for new_field, old_field in unique_fields.items()})) == 0
+            return (
+                len(
+                    new_class.objects.filter(
+                        **{
+                            f"{new_field}__exact": get_or_call(old_field)
+                            for new_field, old_field in unique_fields.items()
+                        }
+                    )
+                )
+                == 0
+            )
 
         if not reverse:
-            objects = legacy_class.objects.using('legacy').all()
+            objects = legacy_class.objects.using("legacy").all()
         else:
-            objects = legacy_class.objects.using(
-                'legacy').all().order_by('-pk')
+            objects = legacy_class.objects.using("legacy").all().order_by("-pk")
 
         for obj in objects:
             if not_yet_created(obj):
@@ -136,34 +143,47 @@ class Command(BaseCommand):
 
         course = Course.objects.get(
             number=review.course.course_number,
-            subdepartment__mnemonic=review.course.subdepartment.mnemonic
+            subdepartment__mnemonic=review.course.subdepartment.mnemonic,
         )
 
-        amount_reading = min(
-            20, review.amount_reading) if review.amount_reading else 0
-        amount_writing = min(
-            20, review.amount_writing) if review.amount_writing else 0
-        amount_group = min(
-            20, review.amount_group) if review.amount_group else 0
-        amount_homework = min(
-            20, review.amount_homework) if review.amount_homework else 0
+        amount_reading = (
+            min(20, review.amount_reading) if review.amount_reading else 0
+        )
+        amount_writing = (
+            min(20, review.amount_writing) if review.amount_writing else 0
+        )
+        amount_group = (
+            min(20, review.amount_group) if review.amount_group else 0
+        )
+        amount_homework = (
+            min(20, review.amount_homework) if review.amount_homework else 0
+        )
 
-        hours_per_week = amount_reading + amount_writing + amount_group + amount_homework
+        hours_per_week = (
+            amount_reading + amount_writing + amount_group + amount_homework
+        )
 
         try:
             semester = Semester.objects.get(number=review.semester.number)
         except Exception:
             semester = self.get_most_recent_semester(
-                course, instructor, review.created_at)
+                course, instructor, review.created_at
+            )
 
-        instructor_rating = min(5, round(
-            review.professor_rating)) if review.professor_rating else 3
-        difficulty = min(5, round(
-            review.difficulty)) if review.difficulty else 3
-        recommendability = min(5, round(
-            review.recommend)) if review.recommend else 3
-        enjoyability = min(5, round(
-            review.enjoyability)) if review.enjoyability else 3
+        instructor_rating = (
+            min(5, round(review.professor_rating))
+            if review.professor_rating
+            else 3
+        )
+        difficulty = (
+            min(5, round(review.difficulty)) if review.difficulty else 3
+        )
+        recommendability = (
+            min(5, round(review.recommend)) if review.recommend else 3
+        )
+        enjoyability = (
+            min(5, round(review.enjoyability)) if review.enjoyability else 3
+        )
 
         r, created = Review.objects.get_or_create(
             text=review.comment,
@@ -248,21 +268,22 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        self.schools = Schools.objects.using('legacy').all()
-        self.departments = Departments.objects.using('legacy').all()
-        self.subdepartments = Subdepartments.objects.using('legacy').all()
-        self.courses = Courses.objects.using('legacy').all()
-        self.sections = Sections.objects.using('legacy').all()
-        self.professors = Professors.objects.using('legacy').all()
-        self.users = Users.objects.using('legacy').all()
-        self.students = Students.objects.using('legacy').all()
-        self.reviews = Reviews.objects.using('legacy').all()
-        self.votes = Votes.objects.using('legacy').all()
-        self.semesters = Semesters.objects.using('legacy').all()
+        self.schools = Schools.objects.using("legacy").all()
+        self.departments = Departments.objects.using("legacy").all()
+        self.subdepartments = Subdepartments.objects.using("legacy").all()
+        self.courses = Courses.objects.using("legacy").all()
+        self.sections = Sections.objects.using("legacy").all()
+        self.professors = Professors.objects.using("legacy").all()
+        self.users = Users.objects.using("legacy").all()
+        self.students = Students.objects.using("legacy").all()
+        self.reviews = Reviews.objects.using("legacy").all()
+        self.votes = Votes.objects.using("legacy").all()
+        self.semesters = Semesters.objects.using("legacy").all()
 
-        UNKNOWN_SCHOOL, _ = School.objects.get_or_create(name='UNKNOWN')
+        UNKNOWN_SCHOOL, _ = School.objects.get_or_create(name="UNKNOWN")
         UNKNOWN_DEPT, _ = Department.objects.get_or_create(
-            name='UNKNOWN', school=UNKNOWN_SCHOOL)
+            name="UNKNOWN", school=UNKNOWN_SCHOOL
+        )
 
         self.migrate_reviews()
 

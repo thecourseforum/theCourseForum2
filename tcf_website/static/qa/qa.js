@@ -43,29 +43,29 @@ function handleQAVote(elementID, isQuestion, isUpvote) {
     const downvoteCount = parseInt(downvoteCountElem.text());
 
     if (isUpvote) {
-        // If already upvoted, subtract 1.
+    // If already upvoted, subtract 1.
         if (elem.hasClass("active")) {
             newUpvoteCount = upvoteCount - 1;
             newDownvoteCount = downvoteCount;
-        // If already downvoted, add 1 to upvote and subtract 1 from downvote.
+            // If already downvoted, add 1 to upvote and subtract 1 from downvote.
         } else if (otherElem.hasClass("active")) {
             newUpvoteCount = upvoteCount + 1;
             newDownvoteCount = downvoteCount - 1;
-        // Otherwise add 1.
+            // Otherwise add 1.
         } else {
             newUpvoteCount = upvoteCount + 1;
             newDownvoteCount = downvoteCount;
         }
     } else {
-        // If already downvoted, add 1.
+    // If already downvoted, add 1.
         if (elem.hasClass("active")) {
             newDownvoteCount = downvoteCount - 1;
             newUpvoteCount = upvoteCount;
-        // If already upvoted, add 1 to downvote and subtract 1 from upvote.
+            // If already upvoted, add 1 to downvote and subtract 1 from upvote.
         } else if (otherElem.hasClass("active")) {
             newDownvoteCount = downvoteCount + 1;
             newUpvoteCount = upvoteCount - 1;
-        // Otherwise subtract 1.
+            // Otherwise subtract 1.
         } else {
             newDownvoteCount = downvoteCount + 1;
             newUpvoteCount = upvoteCount;

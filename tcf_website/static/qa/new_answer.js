@@ -11,7 +11,7 @@ function populateDropdown(dropdownID) {
     const instrID = paramsArr[3];
     const semEndpoint = `/api/semesters/?course=${course}&instructor=${instrID}`;
     $.getJSON(semEndpoint, function(data) {
-        // Generate option tags
+    // Generate option tags
         if (data.length === 0) {
             $("#ask-question-button").addClass("disabled");
             $(".answerQuestionBtn").addClass("disabled");
@@ -28,16 +28,19 @@ function populateDropdown(dropdownID) {
             });
         }
         return this;
-    })
-        .done(function() {
-            // Enable semester selector
-            $(dropdownID).prop("disabled", false);
-        });
+    }).done(function() {
+    // Enable semester selector
+        $(dropdownID).prop("disabled", false);
+    });
 }
 
 jQuery(function($) {
     // Get all dropdown ids in the semester dropdown class for edit answer forms, clear and populate each
-    const ids = $(".semester-dropdown").map(function(_, x) { return "#".concat(x.id); }).get();
+    const ids = $(".semester-dropdown")
+        .map(function(_, x) {
+            return "#".concat(x.id);
+        })
+        .get();
     ids.forEach((item) => populateDropdown(item));
 });
 

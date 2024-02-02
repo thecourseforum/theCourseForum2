@@ -1,29 +1,29 @@
 /* For the Review Form in new_review.html and edit_review.html */
 
-.new-review .review-form-header{
+.new-review .review-form-header {
   color: var(--accent-color);
 }
 
-.new-review select:disabled{
+.new-review select:disabled {
   color: var(--shadow-color);
   background-color: var(--shaded-color);
 }
 
 .required-field::after {
-    content: " *";
-    color: red;
+  content: " *";
+  color: red;
 }
 
 /* Change tooltip */
 .tooltip-inner {
-    margin-left: 4rem;
-    /* background-color: var(--dark-color) !important; */
+  margin-left: 4rem;
+  /* background-color: var(--dark-color) !important; */
 }
 
 .progress {
-    height: 15px;
+  height: 15px;
 }
 
 #progressbar-message {
-    margin-bottom: 0px;
+  margin-bottom: 0px;
 }

@@ -17,7 +17,8 @@ function cmpByProp(prop, asc) {
         let valA = a.querySelector(id).innerHTML.trim();
         let valB = b.querySelector(id).innerHTML.trim();
 
-        if (prop === "date") { // convert date string to int
+        if (prop === "date") {
+            // convert date string to int
             valA = dateToInt(valA);
             valB = dateToInt(valB);
         } else if (prop === "recency") {
@@ -31,7 +32,8 @@ function cmpByProp(prop, asc) {
             } catch (err) {
                 return -1;
             }
-        } else { // extract number from string
+        } else {
+            // extract number from string
             try {
                 valA = parseFloat(valA.match(/-?[0-9]\d*(\.\d+)?/)[0]);
             } catch (err) {
@@ -71,7 +73,8 @@ function getSessionNum(sessionStr) {
         return parseFloat(year + "2");
     } else if (session === "Fall") {
         return parseFloat(year + "3");
-    } else { // Unexpected sessions sorted last
+    } else {
+    // Unexpected sessions sorted last
         return parseFloat(year + "4");
     }
 }

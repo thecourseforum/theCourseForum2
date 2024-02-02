@@ -1,13 +1,15 @@
 """Tests for Django management commands"""
+
 from django.core import management
 from django.test import TestCase
 
 from tcf_website.models import CourseGrade, CourseInstructorGrade
+
 from .test_utils import setup
 
 
 class LoadGradesTestCase(TestCase):
-    """ Tests for the load_grades command. Uses the test_data.csv file, which holds dummy
+    """Tests for the load_grades command. Uses the test_data.csv file, which holds dummy
     data for two sections of the same course taught by the same instructor."""
 
     @classmethod
@@ -17,13 +19,16 @@ class LoadGradesTestCase(TestCase):
         # Clearing is required to pass tests
         CourseGrade.objects.all().delete()
         CourseInstructorGrade.objects.all().delete()
-        management.call_command('load_grades', 'test/test_data', '--suppress-tqdm', verbosity=0)
+        management.call_command(
+            "load_grades", "test/test_data", "--suppress-tqdm", verbosity=0
+        )
         cls.cg = CourseGrade.objects.first()
         cls.cig = CourseInstructorGrade.objects.first()
 
     def test_no_duplicates(self):
         """Make sure only one instance of CourseGrade and CourseInstructorGrade were created.
-        In particular, make sure that the blank row does *not* have an object created for it."""
+        In particular, make sure that the blank row does *not* have an object created for it.
+        """
         self.assertEqual(CourseGrade.objects.count(), 1)
         self.assertEqual(CourseInstructorGrade.objects.count(), 1)
 
@@ -62,23 +67,24 @@ class LoadGradesTestCase(TestCase):
     def test_matching_data(self):
         """Make sure both instances match each other"""
         for field in [
-            'a_plus',
-            'a',
-            'a_minus',
-            'b_plus',
-            'b',
-            'b_minus',
-            'c_plus',
-            'c',
-            'c_minus',
-                'dfw']:
+            "a_plus",
+            "a",
+            "a_minus",
+            "b_plus",
+            "b",
+            "b_minus",
+            "c_plus",
+            "c",
+            "c_minus",
+            "dfw",
+        ]:
             cg_field = getattr(self.cg, field)
             cig_field = getattr(self.cig, field)
             self.assertEqual(cg_field, cig_field)
 
 
 class LoadGradesMissingAggregate(TestCase):
-    """ Tests case when aggregate data (Course GPA/# Students) is not provided."""
+    """Tests case when aggregate data (Course GPA/# Students) is not provided."""
 
     @classmethod
     def setUpClass(cls):
@@ -87,10 +93,11 @@ class LoadGradesMissingAggregate(TestCase):
         CourseGrade.objects.all().delete()
         CourseInstructorGrade.objects.all().delete()
         management.call_command(
-            'load_grades',
-            'test/missing_aggregate',
-            '--suppress-tqdm',
-            verbosity=0)
+            "load_grades",
+            "test/missing_aggregate",
+            "--suppress-tqdm",
+            verbosity=0,
+        )
         cls.cg = CourseGrade.objects.first()
         cls.cig = CourseInstructorGrade.objects.first()
 
@@ -101,7 +108,7 @@ class LoadGradesMissingAggregate(TestCase):
 
 
 class LoadGradesMissingDistribution(TestCase):
-    """ Tests case when distribution data is not provided."""
+    """Tests case when distribution data is not provided."""
 
     @classmethod
     def setUpClass(cls):
@@ -110,10 +117,11 @@ class LoadGradesMissingDistribution(TestCase):
         CourseGrade.objects.all().delete()
         CourseInstructorGrade.objects.all().delete()
         management.call_command(
-            'load_grades',
-            'test/missing_distribution',
-            '--suppress-tqdm',
-            verbosity=0)
+            "load_grades",
+            "test/missing_distribution",
+            "--suppress-tqdm",
+            verbosity=0,
+        )
         cls.cg = CourseGrade.objects.first()
         cls.cig = CourseInstructorGrade.objects.first()
 

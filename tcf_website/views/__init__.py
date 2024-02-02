@@ -3,15 +3,30 @@
 # See
 # https://docs.djangoproject.com/en/3.0/topics/db/models/#organizing-models-in-a-package
 
-from .auth import login, login_error, password_error, logout, collect_extra_info
 from .ads import ads
-from .index import index, privacy, terms, AboutView
-from .browse import (browse, department, course_view_legacy, course_view,
-                     course_instructor, instructor_view)
-from .review import new_review, DeleteReview, upvote, downvote, edit_review
-from .profile import profile, reviews, DeleteProfile
-from .search import search
+from .auth import collect_extra_info, login, login_error, logout, password_error
+from .browse import (
+    browse,
+    course_instructor,
+    course_view,
+    course_view_legacy,
+    department,
+    instructor_view,
+)
 from .discord import post_message
-from .qa import (new_question, new_answer, upvote_question,
-                 upvote_answer, downvote_question, downvote_answer,
-                 DeleteQuestion, DeleteAnswer, edit_question, edit_answer)
+from .index import AboutView, index, privacy, terms
+from .profile import DeleteProfile, profile, reviews
+from .qa import (
+    DeleteAnswer,
+    DeleteQuestion,
+    downvote_answer,
+    downvote_question,
+    edit_answer,
+    edit_question,
+    new_answer,
+    new_question,
+    upvote_answer,
+    upvote_question,
+)
+from .review import DeleteReview, downvote, edit_review, new_review, upvote
+from .search import search
