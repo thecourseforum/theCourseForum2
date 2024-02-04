@@ -2,10 +2,10 @@
 
 """TCF Database models."""
 
-from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
-from django.db.models.functions import Coalesce, Abs
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from django.db.models.functions import Abs, Coalesce
 
 
 class School(models.Model):
@@ -13,6 +13,7 @@ class School(models.Model):
 
     Has many departments.
     """
+
     # School name. Required.
     name = models.CharField(max_length=255, unique=True)
     # Description of school. Optional.
@@ -32,6 +33,7 @@ class Department(models.Model):
     Has many Subdepartments.
     Has many Instructors.
     """
+
     # Department name. Required.
     name = models.CharField(max_length=255)
     # Department description. Optional.
@@ -47,13 +49,12 @@ class Department(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['school']),
+            models.Index(fields=["school"]),
         ]
 
         constraints = [
             models.UniqueConstraint(
-                fields=['name', 'school'],
-                name='unique departments per school'
+                fields=["name", "school"], name="unique departments per school"
             )
         ]
 
@@ -67,6 +68,7 @@ class Subdepartment(models.Model):
     Belongs to a Department.
     Has many Courses.
     """
+
     # Subdepartment name. Required.
     name = models.CharField(max_length=255)
     # Subdepartment description. Optional.
@@ -84,22 +86,24 @@ class Subdepartment(models.Model):
         """Return courses within last 5 years."""
         latest_semester = Semester.latest()
         return self.course_set.filter(
-            semester_last_taught__year__gte=latest_semester.year - 5).order_by("number")
+            semester_last_taught__year__gte=latest_semester.year - 5
+        ).order_by("number")
 
     def has_current_course(self):
         """Return True if subdepartment has a course in current semester."""
         return self.course_set.filter(
-            section__semester=Semester.latest()).exists()
+            section__semester=Semester.latest()
+        ).exists()
 
     class Meta:
         indexes = [
-            models.Index(fields=['department']),
+            models.Index(fields=["department"]),
         ]
 
         constraints = [
             models.UniqueConstraint(
-                fields=['mnemonic', 'department'],
-                name='unique subdepartment mnemonics per department'
+                fields=["mnemonic", "department"],
+                name="unique subdepartment mnemonics per department",
             )
         ]
 
@@ -109,6 +113,7 @@ class User(AbstractUser):
 
     Has many Reviews.
     """
+
     # User computing ID. Not required by database schema, but is
     # necessary. Should be created during authentication pipeline.
     computing_id = models.CharField(max_length=20, unique=True, blank=True)
@@ -116,7 +121,8 @@ class User(AbstractUser):
     # necessary. Should be created during authentication pipeline.
     graduation_year = models.IntegerField(
         validators=[MinValueValidator(2000), MaxValueValidator(2999)],
-        blank=True, null=True
+        blank=True,
+        null=True,
     )
 
     def __str__(self):
@@ -130,15 +136,13 @@ class User(AbstractUser):
         """Return user reviews sorted by creation date."""
         return self.review_set.annotate(
             sum_votes=models.functions.Coalesce(
-                models.Sum('vote__value'),
-                models.Value(0)
+                models.Sum("vote__value"), models.Value(0)
             ),
             user_vote=models.functions.Coalesce(
-                models.Sum('vote__value',
-                           filter=models.Q(vote__user=self)),
-                models.Value(0)
-            )
-        ).order_by('-created')
+                models.Sum("vote__value", filter=models.Q(vote__user=self)),
+                models.Value(0),
+            ),
+        ).order_by("-created")
 
 
 class Instructor(models.Model):
@@ -177,14 +181,16 @@ class Instructor(models.Model):
         Rating is defined as the average of recommendability,
         instructor rating, and enjoyability."""
         ratings = Review.objects.filter(
-            course=course, instructor=self).aggregate(
-            models.Avg('recommendability'),
-            models.Avg('instructor_rating'),
-            models.Avg('enjoyability'))
+            course=course, instructor=self
+        ).aggregate(
+            models.Avg("recommendability"),
+            models.Avg("instructor_rating"),
+            models.Avg("enjoyability"),
+        )
 
-        recommendability = ratings.get('recommendability__avg')
-        instructor_rating = ratings.get('instructor_rating__avg')
-        enjoyability = ratings.get('enjoyability__avg')
+        recommendability = ratings.get("recommendability__avg")
+        instructor_rating = ratings.get("instructor_rating__avg")
+        enjoyability = ratings.get("enjoyability__avg")
 
         # Return None if one component is absent.
         if not recommendability or not instructor_rating or not enjoyability:
@@ -194,63 +200,63 @@ class Instructor(models.Model):
 
     def average_difficulty_for_course(self, course):
         """Compute average difficulty score."""
-        return Review.objects.filter(
-            course=course, instructor=self).aggregate(
-            models.Avg('difficulty'))['difficulty__avg']
+        return Review.objects.filter(course=course, instructor=self).aggregate(
+            models.Avg("difficulty")
+        )["difficulty__avg"]
 
     def average_enjoyability_for_course(self, course):
         """Computer average enjoyability"""
-        return Review.objects.filter(
-            course=course, instructor=self).aggregate(
-            models.Avg('enjoyability'))['enjoyability__avg']
+        return Review.objects.filter(course=course, instructor=self).aggregate(
+            models.Avg("enjoyability")
+        )["enjoyability__avg"]
 
     def average_instructor_rating_for_course(self, course):
         """Computer average instructor rating"""
-        return Review.objects.filter(
-            course=course, instructor=self).aggregate(
-            models.Avg('instructor_rating'))['instructor_rating__avg']
+        return Review.objects.filter(course=course, instructor=self).aggregate(
+            models.Avg("instructor_rating")
+        )["instructor_rating__avg"]
 
     def average_recommendability_for_course(self, course):
         """Computer average recommendability"""
-        return Review.objects.filter(
-            course=course, instructor=self).aggregate(
-            models.Avg('recommendability'))['recommendability__avg']
+        return Review.objects.filter(course=course, instructor=self).aggregate(
+            models.Avg("recommendability")
+        )["recommendability__avg"]
 
     def average_hours_for_course(self, course):
         """Compute average hrs/wk."""
-        return Review.objects.filter(
-            course=course, instructor=self).aggregate(
-            models.Avg('hours_per_week'))['hours_per_week__avg']
+        return Review.objects.filter(course=course, instructor=self).aggregate(
+            models.Avg("hours_per_week")
+        )["hours_per_week__avg"]
 
     def average_reading_hours_for_course(self, course):
         """Compute average reading hrs/wk."""
-        return Review.objects.filter(
-            course=course, instructor=self).aggregate(
-            models.Avg('amount_reading'))['amount_reading__avg']
+        return Review.objects.filter(course=course, instructor=self).aggregate(
+            models.Avg("amount_reading")
+        )["amount_reading__avg"]
 
     def average_writing_hours_for_course(self, course):
         """Compute average writing hrs/wk."""
-        return Review.objects.filter(
-            course=course, instructor=self).aggregate(
-            models.Avg('amount_writing'))['amount_writing__avg']
+        return Review.objects.filter(course=course, instructor=self).aggregate(
+            models.Avg("amount_writing")
+        )["amount_writing__avg"]
 
     def average_group_hours_for_course(self, course):
         """Compute average group work hrs/wk."""
-        return Review.objects.filter(
-            course=course, instructor=self).aggregate(
-            models.Avg('amount_group'))['amount_group__avg']
+        return Review.objects.filter(course=course, instructor=self).aggregate(
+            models.Avg("amount_group")
+        )["amount_group__avg"]
 
     def average_other_hours_for_course(self, course):
         """Compute average other HW hrs/wk."""
-        return Review.objects.filter(
-            course=course, instructor=self).aggregate(
-            models.Avg('amount_homework'))['amount_homework__avg']
+        return Review.objects.filter(course=course, instructor=self).aggregate(
+            models.Avg("amount_homework")
+        )["amount_homework__avg"]
 
     def average_gpa_for_course(self, course):
         """Compute average GPA"""
         return CourseInstructorGrade.objects.filter(
-            course=course, instructor=self).aggregate(
-            models.Avg('average'))['average__avg']
+            course=course, instructor=self
+        ).aggregate(models.Avg("average"))["average__avg"]
 
     def taught_courses(self):
         """Returns all sections taught by Instructor."""
@@ -261,13 +267,14 @@ class Instructor(models.Model):
     def average_rating(self):
         """Compute average rating for all this Instructor's Courses"""
         ratings = Review.objects.filter(instructor=self).aggregate(
-            models.Avg('recommendability'),
-            models.Avg('instructor_rating'),
-            models.Avg('enjoyability'))
+            models.Avg("recommendability"),
+            models.Avg("instructor_rating"),
+            models.Avg("enjoyability"),
+        )
 
-        recommendability = ratings.get('recommendability__avg')
-        instructor_rating = ratings.get('instructor_rating__avg')
-        enjoyability = ratings.get('enjoyability__avg')
+        recommendability = ratings.get("recommendability__avg")
+        instructor_rating = ratings.get("instructor_rating__avg")
+        enjoyability = ratings.get("enjoyability__avg")
 
         # Return None if one component is absent.
         if not recommendability or not instructor_rating or not enjoyability:
@@ -277,14 +284,15 @@ class Instructor(models.Model):
 
     def average_difficulty(self):
         """Compute average difficulty for all this Instructor's Courses"""
-        return Review.objects.filter(
-            instructor=self).aggregate(
-            models.Avg('difficulty'))['difficulty__avg']
+        return Review.objects.filter(instructor=self).aggregate(
+            models.Avg("difficulty")
+        )["difficulty__avg"]
 
     def average_gpa(self):
         """Compute average GPA for all this Instructor's Courses"""
         return CourseInstructorGrade.objects.filter(instructor=self).aggregate(
-            models.Avg('average'))['average__avg']
+            models.Avg("average")
+        )["average__avg"]
 
 
 class Semester(models.Model):
@@ -296,15 +304,16 @@ class Semester(models.Model):
 
     # Enumeration of possible seasons.
     SEASONS = (
-        ('FALL', 'Fall'),
-        ('JANUARY', 'January'),
-        ('SPRING', 'Spring'),
-        ('SUMMER', 'Summer'),
+        ("FALL", "Fall"),
+        ("JANUARY", "January"),
+        ("SPRING", "Spring"),
+        ("SUMMER", "Summer"),
     )
 
     # Semester year. Required.
     year = models.IntegerField(
-        validators=[MinValueValidator(2000), MaxValueValidator(2999)])
+        validators=[MinValueValidator(2000), MaxValueValidator(2999)]
+    )
     # Semester season. Required.
     season = models.CharField(max_length=7, choices=SEASONS)
 
@@ -323,8 +332,8 @@ class Semester(models.Model):
     1166 - Summer 2016.
     """
     number = models.IntegerField(
-        help_text="As defined in SIS/Lou's List",
-        unique=True)
+        help_text="As defined in SIS/Lou's List", unique=True
+    )
 
     def __repr__(self):
         return f"{self.year} {self.season.title()} ({self.number})"
@@ -343,14 +352,13 @@ class Semester(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['year', 'season']),
-            models.Index(fields=['number']),
+            models.Index(fields=["year", "season"]),
+            models.Index(fields=["number"]),
         ]
 
         constraints = [
             models.UniqueConstraint(
-                fields=['season', 'year'],
-                name='unique semesters'
+                fields=["season", "year"], name="unique semesters"
             )
         ]
 
@@ -369,13 +377,13 @@ class Course(models.Model):
     description = models.TextField(blank=True)
     # Course number. Required.
     number = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(99999)])
+        validators=[MinValueValidator(0), MaxValueValidator(99999)]
+    )
 
     # Subdepartment foreign key. Required.
     subdepartment = models.ForeignKey(Subdepartment, on_delete=models.CASCADE)
     # Semester that the course was most recently taught.
-    semester_last_taught = models.ForeignKey(
-        Semester, on_delete=models.CASCADE)
+    semester_last_taught = models.ForeignKey(Semester, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.subdepartment.mnemonic} {self.number} | {self.title}"
@@ -396,23 +404,29 @@ class Course(models.Model):
         pre_req = ""
         if "Prerequisite" in self.description:
             # Get pre_req from beginning to end
-            from_pre_req_to_end = self.description[self.description.find("Prerequisite"):]
+            from_pre_req_to_end = self.description[
+                self.description.find("Prerequisite") :
+            ]
             # Get rid of title of "Prerequisite"
-            pre_req_no_title = from_pre_req_to_end[from_pre_req_to_end.find(":") + 1:]
+            pre_req_no_title = from_pre_req_to_end[
+                from_pre_req_to_end.find(":") + 1 :
+            ]
 
             # Check if in-line or not for pre_req
             if pre_req_no_title.find(".") > 0:
-                pre_req = pre_req_no_title[:pre_req_no_title.find(".")]
+                pre_req = pre_req_no_title[: pre_req_no_title.find(".")]
             else:
                 pre_req = pre_req_no_title
 
             # Check whether it is inline or at end for extracting course_description_without_pre_req
             if from_pre_req_to_end.find(".") > 0:
                 course_description_without_pre_req = self.description.replace(
-                    from_pre_req_to_end[:from_pre_req_to_end.find(".") + 1], "")
+                    from_pre_req_to_end[: from_pre_req_to_end.find(".") + 1], ""
+                )
             else:
                 course_description_without_pre_req = self.description.replace(
-                    from_pre_req_to_end, "")
+                    from_pre_req_to_end, ""
+                )
 
         return (pre_req, course_description_without_pre_req)
 
@@ -422,8 +436,10 @@ class Course(models.Model):
 
     def eval_link(self):
         """Returns link to student eval page for that class"""
-        link = f"https://evals.itc.virginia.edu/course-selectionguide/pages/SGMain.jsp?cmp=" \
-               f"{self.subdepartment.mnemonic},{self.number}"
+        link = (
+            f"https://evals.itc.virginia.edu/course-selectionguide/pages/SGMain.jsp?cmp="
+            f"{self.subdepartment.mnemonic},{self.number}"
+        )
         return link
 
     def is_recent(self):
@@ -436,13 +452,14 @@ class Course(models.Model):
         Rating is defined as the average of recommendability,
         instructor rating, and enjoyability."""
         ratings = Review.objects.filter(course=self).aggregate(
-            models.Avg('recommendability'),
-            models.Avg('instructor_rating'),
-            models.Avg('enjoyability'))
+            models.Avg("recommendability"),
+            models.Avg("instructor_rating"),
+            models.Avg("enjoyability"),
+        )
 
-        recommendability = ratings.get('recommendability__avg')
-        instructor_rating = ratings.get('instructor_rating__avg')
-        enjoyability = ratings.get('enjoyability__avg')
+        recommendability = ratings.get("recommendability__avg")
+        instructor_rating = ratings.get("instructor_rating__avg")
+        enjoyability = ratings.get("enjoyability__avg")
 
         # Return None if one component is absent.
         if not recommendability or not instructor_rating or not enjoyability:
@@ -453,7 +470,8 @@ class Course(models.Model):
     def average_difficulty(self):
         """Compute average difficulty score."""
         return Review.objects.filter(course=self).aggregate(
-            models.Avg('difficulty'))['difficulty__avg']
+            models.Avg("difficulty")
+        )["difficulty__avg"]
 
     def review_count(self):
         """Compute total number of course reviews."""
@@ -461,13 +479,13 @@ class Course(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['subdepartment', 'number']),
+            models.Index(fields=["subdepartment", "number"]),
         ]
 
         constraints = [
             models.UniqueConstraint(
-                fields=['subdepartment', 'number'],
-                name='unique course subdepartment and number'
+                fields=["subdepartment", "number"],
+                name="unique course subdepartment and number",
             )
         ]
 
@@ -493,7 +511,8 @@ class CourseGrade(models.Model):
 
 class CourseInstructorGrade(models.Model):
     instructor = models.ForeignKey(
-        Instructor, on_delete=models.CASCADE, null=True)
+        Instructor, on_delete=models.CASCADE, null=True
+    )
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     average = models.FloatField(default=0.0, null=True)
     a_plus = models.IntegerField(default=0)
@@ -509,8 +528,10 @@ class CourseInstructorGrade(models.Model):
     total_enrolled = models.IntegerField(default=0)
 
     def __str__(self):
-        return (f"{self.instructor.first_name} {self.instructor.last_name} "
-                f"{self.course.subdepartment.mnemonic} {self.course.number} {self.average}")
+        return (
+            f"{self.instructor.first_name} {self.instructor.last_name} "
+            f"{self.course.subdepartment.mnemonic} {self.course.number} {self.average}"
+        )
 
 
 class Section(models.Model):
@@ -544,19 +565,21 @@ class Section(models.Model):
     section_times = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return f"{self.course} | {self.semester} | " \
-               f"{', '.join(str(i) for i in self.instructors.all())}"
+        return (
+            f"{self.course} | {self.semester} | "
+            f"{', '.join(str(i) for i in self.instructors.all())}"
+        )
 
     class Meta:
         indexes = [
-            models.Index(fields=['semester', 'course']),
-            models.Index(fields=['course']),
+            models.Index(fields=["semester", "course"]),
+            models.Index(fields=["course"]),
         ]
 
         constraints = [
             models.UniqueConstraint(
-                fields=['sis_section_number', 'semester'],
-                name='unique sections per semesters'
+                fields=["sis_section_number", "semester"],
+                name="unique sections per semesters",
             )
         ]
 
@@ -605,19 +628,24 @@ class Review(models.Model):
     # TODO: make validators/tests to ensure hours_per_week is the sum, or just
     #  remove it entirely from the model and replace w/ function
     hours_per_week = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(80)])
+        validators=[MinValueValidator(0), MaxValueValidator(80)]
+    )
     # Review hours of reading per week. Required.
     amount_reading = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(20)])
+        validators=[MinValueValidator(0), MaxValueValidator(20)]
+    )
     # Review hours of writing per week. Required.
     amount_writing = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(20)])
+        validators=[MinValueValidator(0), MaxValueValidator(20)]
+    )
     # Review hours of group work per week. Required.
     amount_group = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(20)])
+        validators=[MinValueValidator(0), MaxValueValidator(20)]
+    )
     # Review hours of homework per week. Required.
     amount_homework = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(20)])
+        validators=[MinValueValidator(0), MaxValueValidator(20)]
+    )
 
     # Review created date. Required.
     created = models.DateTimeField(auto_now_add=True)
@@ -630,14 +658,17 @@ class Review(models.Model):
     # does this get used anywhere? not sure
     def average(self):
         """Average score for review."""
-        return (self.instructor_rating +
-                self.recommendability + self.enjoyability) / 3
+        return (
+            self.instructor_rating + self.recommendability + self.enjoyability
+        ) / 3
 
     def count_votes(self):
         """Sum votes for review."""
         return self.vote_set.aggregate(
-            upvotes=Coalesce(models.Sum('value', filter=models.Q(value=1)), 0),
-            downvotes=Coalesce(Abs(models.Sum('value', filter=models.Q(value=-1))), 0),
+            upvotes=Coalesce(models.Sum("value", filter=models.Q(value=1)), 0),
+            downvotes=Coalesce(
+                Abs(models.Sum("value", filter=models.Q(value=-1))), 0
+            ),
         )
 
     def upvote(self, user):
@@ -695,22 +726,22 @@ class Review(models.Model):
     @staticmethod
     def display_reviews(course_id, instructor_id, user):
         """Prepare review list for course-instructor page."""
-        reviews = Review.objects.filter(
-            instructor=instructor_id,
-            course=course_id,
-            hidden=False
-        ).exclude(text="").annotate(
-            sum_votes=models.functions.Coalesce(
-                models.Sum('vote__value'),
-                models.Value(0)
-            ),
+        reviews = (
+            Review.objects.filter(
+                instructor=instructor_id, course=course_id, hidden=False
+            )
+            .exclude(text="")
+            .annotate(
+                sum_votes=models.functions.Coalesce(
+                    models.Sum("vote__value"), models.Value(0)
+                ),
+            )
         )
         if user.is_authenticated:
             reviews = reviews.annotate(
                 user_vote=models.functions.Coalesce(
-                    models.Sum('vote__value',
-                               filter=models.Q(vote__user=user)),
-                    models.Value(0)
+                    models.Sum("vote__value", filter=models.Q(vote__user=user)),
+                    models.Value(0),
                 ),
             )
         return reviews.order_by("-created")
@@ -721,8 +752,8 @@ class Review(models.Model):
     class Meta:
         # Improve scanning of reviews by course and instructor.
         indexes = [
-            models.Index(fields=['course', 'instructor']),
-            models.Index(fields=['user', '-created']),
+            models.Index(fields=["course", "instructor"]),
+            models.Index(fields=["user", "-created"]),
         ]
 
         # Some of the tCF 1.0 data did not honor this constraint.
@@ -743,9 +774,11 @@ class Vote(models.Model):
     Belongs to a User.
     Has a review.
     """
+
     # Vote value. Required.
     value = models.IntegerField(
-        validators=[MinValueValidator(-1), MaxValueValidator(1)])
+        validators=[MinValueValidator(-1), MaxValueValidator(1)]
+    )
     # Vote user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     # Vote review foreign key. Required.
@@ -756,13 +789,13 @@ class Vote(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['review']),
+            models.Index(fields=["review"]),
         ]
 
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'review'],
-                name='unique vote per user and review',
+                fields=["user", "review"],
+                name="unique vote per user and review",
             )
         ]
 
@@ -772,9 +805,12 @@ class Question(models.Model):
     Belongs to a User.
     Has a course and instructor.
     """
+
     text = models.TextField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, default=None)
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, default=None
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -784,8 +820,10 @@ class Question(models.Model):
     def count_votes(self):
         """Sum votes for review."""
         return self.votequestion_set.aggregate(
-            upvotes=Coalesce(models.Sum('value', filter=models.Q(value=1)), 0),
-            downvotes=Coalesce(Abs(models.Sum('value', filter=models.Q(value=-1))), 0),
+            upvotes=Coalesce(models.Sum("value", filter=models.Q(value=1)), 0),
+            downvotes=Coalesce(
+                Abs(models.Sum("value", filter=models.Q(value=-1))), 0
+            ),
         )
 
     def upvote(self, user):
@@ -843,21 +881,23 @@ class Question(models.Model):
     @staticmethod
     def display_activity(course_id, instructor_id, user):
         """Prepare review list for course-instructor page."""
-        question = Question.objects.filter(
-            instructor=instructor_id,
-            course=course_id
-        ).exclude(text="").annotate(
-            sum_q_votes=models.functions.Coalesce(
-                models.Sum('votequestion__value'),
-                models.Value(0)
-            ),
+        question = (
+            Question.objects.filter(instructor=instructor_id, course=course_id)
+            .exclude(text="")
+            .annotate(
+                sum_q_votes=models.functions.Coalesce(
+                    models.Sum("votequestion__value"), models.Value(0)
+                ),
+            )
         )
         if user.is_authenticated:
             question = question.annotate(
                 user_q_vote=models.functions.Coalesce(
-                    models.Sum('votequestion__value',
-                               filter=models.Q(votequestion__user=user)),
-                    models.Value(0)
+                    models.Sum(
+                        "votequestion__value",
+                        filter=models.Q(votequestion__user=user),
+                    ),
+                    models.Value(0),
                 ),
             )
         return question.order_by("-created")
@@ -868,11 +908,14 @@ class Answer(models.Model):
     Belongs to a User.
     Has a question.
     """
+
     text = models.TextField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
-    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, default=None)
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, default=None
+    )
 
     def __str__(self):
         return f"Answer for {self.question}"
@@ -880,8 +923,10 @@ class Answer(models.Model):
     def count_votes(self):
         """Sum votes for answers."""
         return self.voteanswer_set.aggregate(
-            upvotes=Coalesce(models.Sum('value', filter=models.Q(value=1)), 0),
-            downvotes=Coalesce(Abs(models.Sum('value', filter=models.Q(value=-1))), 0),
+            upvotes=Coalesce(models.Sum("value", filter=models.Q(value=1)), 0),
+            downvotes=Coalesce(
+                Abs(models.Sum("value", filter=models.Q(value=-1))), 0
+            ),
         )
 
     def upvote(self, user):
@@ -939,20 +984,23 @@ class Answer(models.Model):
     @staticmethod
     def display_activity(question_id, user):
         """Prepare answers for course-instructor page."""
-        answer = Answer.objects.filter(
-            question=question_id
-        ).exclude(text="").annotate(
-            sum_a_votes=models.functions.Coalesce(
-                models.Sum('voteanswer__value'),
-                models.Value(0)
-            ),
+        answer = (
+            Answer.objects.filter(question=question_id)
+            .exclude(text="")
+            .annotate(
+                sum_a_votes=models.functions.Coalesce(
+                    models.Sum("voteanswer__value"), models.Value(0)
+                ),
+            )
         )
         if user.is_authenticated:
             answer = answer.annotate(
                 user_a_vote=models.functions.Coalesce(
-                    models.Sum('voteanswer__value',
-                               filter=models.Q(voteanswer__user=user)),
-                    models.Value(0)
+                    models.Sum(
+                        "voteanswer__value",
+                        filter=models.Q(voteanswer__user=user),
+                    ),
+                    models.Value(0),
                 ),
             )
         return answer.order_by("-created")
@@ -960,8 +1008,8 @@ class Answer(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'question'],
-                name='unique answer per user and question',
+                fields=["user", "question"],
+                name="unique answer per user and question",
             )
         ]
 
@@ -972,9 +1020,11 @@ class VoteQuestion(models.Model):
     Belongs to a User.
     Has a question.
     """
+
     # Vote value. Required.
     value = models.IntegerField(
-        validators=[MinValueValidator(-1), MaxValueValidator(1)])
+        validators=[MinValueValidator(-1), MaxValueValidator(1)]
+    )
     # Vote user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     # Vote question foreign key. Required.
@@ -985,13 +1035,13 @@ class VoteQuestion(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['question']),
+            models.Index(fields=["question"]),
         ]
 
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'question'],
-                name='unique vote per user and question',
+                fields=["user", "question"],
+                name="unique vote per user and question",
             )
         ]
 
@@ -1002,9 +1052,11 @@ class VoteAnswer(models.Model):
     Belongs to a User.
     Has a question.
     """
+
     # Vote value. Required.
     value = models.IntegerField(
-        validators=[MinValueValidator(-1), MaxValueValidator(1)])
+        validators=[MinValueValidator(-1), MaxValueValidator(1)]
+    )
     # Vote user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     # Vote answer foreign key. Required.
@@ -1015,12 +1067,12 @@ class VoteAnswer(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['answer']),
+            models.Index(fields=["answer"]),
         ]
 
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'answer'],
-                name='unique vote per user and answer',
+                fields=["user", "answer"],
+                name="unique vote per user and answer",
             )
         ]

@@ -1,55 +1,59 @@
 import os
 import re
 
-from tqdm import tqdm
 import pandas as pd
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from tqdm import tqdm
 
 from tcf_website.models import *
 
 
 class Command(BaseCommand):
-    help = 'Imports data from lous list csv\'s into default database'
+    help = "Imports data from lous list csv's into default database"
 
     def add_arguments(self, parser):
 
         # Named (optional) arguments
         parser.add_argument(
-            '--verbose',
-            action='store_true',
-            help='Verbose output',
+            "--verbose",
+            action="store_true",
+            help="Verbose output",
         )
 
         parser.add_argument(
-            'semester',
+            "semester",
             help='Semester to update (e.g. "2019_FALL").\nIf you wish to reload all semesters (potentially dangerous!) then put "ALL_DANGEROUS" as the value of this argument.\nMake sure that the new semester data is downloaded via `semester_data/fetch_data.py` before running this command.',
-            type=str
+            type=str,
         )
 
     def handle(self, *args, **options):
 
-        self.verbose = options['verbose']
+        self.verbose = options["verbose"]
 
-        self.UNKNOWN_SCHOOL, _ = School.objects.get_or_create(name='Miscellaneous')
+        self.UNKNOWN_SCHOOL, _ = School.objects.get_or_create(
+            name="Miscellaneous"
+        )
         self.UNKNOWN_DEPT, _ = Department.objects.get_or_create(
-            name='Miscellaneous', school=self.UNKNOWN_SCHOOL)
-        self.STAFF, _ = Instructor.objects.get_or_create(last_name='Staff')
+            name="Miscellaneous", school=self.UNKNOWN_SCHOOL
+        )
+        self.STAFF, _ = Instructor.objects.get_or_create(last_name="Staff")
 
-        self.data_dir = 'tcf_website/management/commands/semester_data/csv/'
+        self.data_dir = "tcf_website/management/commands/semester_data/csv/"
 
-        semester = options['semester']
+        semester = options["semester"]
 
-        if semester == 'ALL_DANGEROUS':
+        if semester == "ALL_DANGEROUS":
             for file in sorted(os.listdir(self.data_dir)):
                 self.load_semester_file(file)
-        elif semester == 'FIX_LAST_TAUGHT_SEMESTERS':
+        elif semester == "FIX_LAST_TAUGHT_SEMESTERS":
             # This should be done automatically when loading a semester,
             # but run this command if you notice that it hasn't been done.
             sections = Section.objects.all()
             for section in tqdm(sections, total=sections.count()):
                 if section.semester.is_after(
-                        section.course.semester_last_taught):
+                    section.course.semester_last_taught
+                ):
                     section.course.semester_last_taught = section.semester
                     section.course.save()
                     section.save()
@@ -60,14 +64,11 @@ class Command(BaseCommand):
 
     def clean(self, df):
         return df.dropna(
-            subset=[
-                'Mnemonic',
-                'ClassNumber',
-                'Number',
-                'Section'])
+            subset=["Mnemonic", "ClassNumber", "Number", "Section"]
+        )
 
     def load_semester_file(self, file):
-        year, semester = file.split('.')[0].split('_')
+        year, semester = file.split(".")[0].split("_")
         year = int(year)
         season = semester.upper()
 
@@ -86,12 +87,9 @@ class Command(BaseCommand):
 
     def load_semester(self, year, season):
         year_code = str(year)[-2:]
-        season_code = {
-            'FALL': 8,
-            'SUMMER': 6,
-            'SPRING': 2,
-            'JANUARY': 1
-        }[season]
+        season_code = {"FALL": 8, "SUMMER": 6, "SPRING": 2, "JANUARY": 1}[
+            season
+        ]
         semester_code = int(f"1{year_code}{season_code}")
 
         sem, created = Semester.objects.get_or_create(
@@ -110,29 +108,29 @@ class Command(BaseCommand):
 
     def load_section_row(self, semester, row):
         try:
-            mnemonic = row['Mnemonic']  # may NOT be missing
-            sis_number = row['ClassNumber']  # may NOT be missing
+            mnemonic = row["Mnemonic"]  # may NOT be missing
+            sis_number = row["ClassNumber"]  # may NOT be missing
             # strip out non-numeric characters.
             # may NOT be missing
-            course_number = re.sub('[^0-9]', '', str(row['Number']))
-            section_number = row['Section']  # may NOT be missing
+            course_number = re.sub("[^0-9]", "", str(row["Number"]))
+            section_number = row["Section"]  # may NOT be missing
 
-            units = row['Units']  # may be empty/nan
-            title = row['Title']  # may be empty/nan
-            topic = row['Topic']  # may be empty/nan
-            description = row['Description']  # may be empty/nan
-            section_type = row['Type']  # may be empty/nan
+            units = row["Units"]  # may be empty/nan
+            title = row["Title"]  # may be empty/nan
+            topic = row["Topic"]  # may be empty/nan
+            description = row["Description"]  # may be empty/nan
+            section_type = row["Type"]  # may be empty/nan
 
             # may include staff, may be empty
-            instructor_names = row[['Instructor1',
-                                    'Instructor2',
-                                    'Instructor3',
-                                    'Instructor4']].dropna().array
+            instructor_names = (
+                row[
+                    ["Instructor1", "Instructor2", "Instructor3", "Instructor4"]
+                ]
+                .dropna()
+                .array
+            )
 
-            times = row[['Days1',
-                         'Days2',
-                         'Days3',
-                         'Days4']].dropna().array
+            times = row[["Days1", "Days2", "Days3", "Days4"]].dropna().array
 
             section_times = ""
             for i in range(len(times)):
@@ -145,7 +143,8 @@ class Command(BaseCommand):
 
         sd = self.load_subdepartment(mnemonic)
         course = self.load_course(
-            title, description, semester, sd, course_number)
+            title, description, semester, sd, course_number
+        )
         instructors = self.load_instructors(instructor_names)
         section = self.load_section(
             sis_number,
@@ -155,7 +154,8 @@ class Command(BaseCommand):
             topic,
             units,
             section_type,
-            section_times)
+            section_times,
+        )
 
     def load_subdepartment(self, mnemonic):
 
@@ -178,15 +178,14 @@ class Command(BaseCommand):
     def load_course(self, title, description, semester, subdepartment, number):
 
         params = {}
-        fields = {'title', 'description', 'subdepartment', 'number'}
+        fields = {"title", "description", "subdepartment", "number"}
         for k, v in locals().items():
             if k in fields and not pd.isnull(v):
                 params[k] = v
 
         try:
             course = Course.objects.get(
-                subdepartment=subdepartment,
-                number=number
+                subdepartment=subdepartment, number=number
             )
             if self.verbose:
                 print(f"Retrieved {course}")
@@ -222,13 +221,13 @@ class Command(BaseCommand):
         # In some old data files, multiple professors are in a single column
         fixed_instructor_names = []
         for name in instructor_names:
-            for split_name in name.split(','):
+            for split_name in name.split(","):
                 stripped = split_name.strip()
-                if stripped != '':
+                if stripped != "":
                     fixed_instructor_names.append(stripped)
 
         for name in fixed_instructor_names:
-            if name in {'Staff', 'Faculty Staff', 'Faculty'} or name.isspace():
+            if name in {"Staff", "Faculty Staff", "Faculty"} or name.isspace():
                 instructors.add(self.STAFF)
             else:
                 names = name.split()
@@ -254,15 +253,16 @@ class Command(BaseCommand):
         return instructors
 
     def load_section(
-            self,
-            sis_section_number,
-            instructors,
-            semester,
-            course,
-            topic,
-            units,
-            section_type,
-            section_times):
+        self,
+        sis_section_number,
+        instructors,
+        semester,
+        course,
+        topic,
+        units,
+        section_type,
+        section_times,
+    ):
 
         # Separating out unique fields lets us search for a given section number in
         # a semester (which are unique) and then update it with new fields as necessary.
@@ -273,16 +273,10 @@ class Command(BaseCommand):
         params = {}
 
         unique_fields = {
-            'sis_section_number',
-            'semester',
+            "sis_section_number",
+            "semester",
         }
-        fields = {
-            'course',
-            'topic',
-            'units',
-            'section_type',
-            'section_times'
-        }
+        fields = {"course", "topic", "units", "section_type", "section_times"}
 
         for key, value in locals().items():
             if key in unique_fields and not pd.isnull(value):

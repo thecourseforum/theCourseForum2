@@ -28,8 +28,9 @@ const sortByNumber = () => {
         $("#diff-sort-btn").html("Difficulty");
         $("#gpa-sort-btn").html("GPA");
         $("#number-sort-btn").addClass("active");
-        // Choose default order
-    } else { // Already selected so simply reverse the order of sorting (ascending vs descending)
+    // Choose default order
+    } else {
+    // Already selected so simply reverse the order of sorting (ascending vs descending)
         sortNumberAsc *= -1;
     }
     selectOrderOfSort(sortNumberAsc, "#number-sort-btn", "Course ID");
@@ -38,7 +39,7 @@ const sortByNumber = () => {
 const sortByRating = () => {
     activeSort = "rating";
     if (!$("#rating-sort-btn").hasClass("active")) {
-        // Checks whether toolbar is reused on departments page (which has course ID sort button)
+    // Checks whether toolbar is reused on departments page (which has course ID sort button)
         if ($("#number-sort-btn").length) {
             $("#number-sort-btn").removeClass("active");
             $("#number-sort-btn").html("Course ID");
@@ -107,7 +108,7 @@ const sortByGpa = () => {
 const sortByRecency = (event, sortOnce) => {
     activeSort = "recency";
     if (!$("#recency-sort-btn").hasClass("active")) {
-        // No button checks necessary as function only used on 1 page
+    // No button checks necessary as function only used on 1 page
         $("#rating-sort-btn").removeClass("active");
         $("#diff-sort-btn").removeClass("active");
         $("#gpa-sort-btn").removeClass("active");
@@ -118,7 +119,8 @@ const sortByRecency = (event, sortOnce) => {
     } else {
         sortRecencyAsc *= -1;
     }
-    if (sortOnce) { // Sorting order never changes with single recency sort
+    if (sortOnce) {
+    // Sorting order never changes with single recency sort
         sortRecencyAsc = -1;
     }
     selectOrderOfSort(sortRecencyAsc, "#recency-sort-btn", "Last Taught");
@@ -150,4 +152,10 @@ const sortClasses = (cmp) => {
     });
 };
 
-export { sortByNumber, sortByRating, sortByDifficulty, sortByGpa, sortByRecency };
+export {
+    sortByNumber,
+    sortByRating,
+    sortByDifficulty,
+    sortByGpa,
+    sortByRecency
+};
