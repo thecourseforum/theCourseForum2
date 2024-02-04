@@ -766,7 +766,17 @@ class Vote(models.Model):
             )
         ]
 
+#Tag class for organizing
+class Tag(models.model):
+    """Tag model.
+    Many to many relationship with Question"""
 
+    School = models.ForeignKey(School,on_delete=models.CASCADE)
+    Department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    Course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    Instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    Semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    
 class Question(models.Model):
     """Question model.
     Belongs to a User.
@@ -802,7 +812,7 @@ class Question(models.Model):
 
     #Tags for questions
 
-    tag = models.ManyToManyField(Tag);
+    tag = models.ManyToManyField(Tag)
 
     def __str__(self):
         return f"Question for {self.course}"
@@ -887,17 +897,6 @@ class Question(models.Model):
                 ),
             )
         return question.order_by("-created")
-    
-#Tag class for organizing
-class Tag(models.model):
-    """Tag model.
-    Many to many relationship with Question"""
-
-    School = models.ForeignKey(School,on_delete=models.CASCADE)
-    Department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    Course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    Instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
-    Semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
 
 
 class Answer(models.Model):
