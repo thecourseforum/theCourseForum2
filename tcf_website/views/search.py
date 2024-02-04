@@ -51,17 +51,22 @@ def decide_order(query, courses, instructors):
     Returns True if courses should be prioritized, False if instructors should be prioritized
     """
 
-    # Calculate z-score for courses
-    courses_z = compute_zscore([x["score"] for x in courses["results"]])
+    # Calculate average similarity for courses
+    courses_avg = compute_avg_similarity([x["score"] for x in courses["results"]])
 
-    # Calculate z-score for instructors
-    instructors_z = compute_zscore([x["score"] for x in instructors["results"]])
+    # Calculate average similarity for instructors
+    instructors_avg = compute_avg_similarity(
+        [x["score"] for x in instructors["results"]]
+    )
 
-    # Likely an abbreviation if 4 letters or less
-    if len(query) <= 4 and courses_z > 0:
+    # Define a threshold for the minimum average similarity score. This value can be adjusted.
+    THRESHOLD = 0.5
+
+    # Prioritize courses for short queries or if their average similarity score is significantly higher
+    if len(query) <= 4 or (courses_avg > instructors_avg and courses_avg > THRESHOLD):
         return True
 
-    return courses_z >= instructors_z
+    return False
 
 
 def compute_zscore(scores):
