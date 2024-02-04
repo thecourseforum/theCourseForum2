@@ -888,7 +888,7 @@ class Question(models.Model):
             )
         return question.order_by("-created")
     
-#Tag class for organizing (TO UPDATE LATER)
+#Tag class for organizing
 class Tag(models.model):
     """Tag model.
     Many to many relationship with Question"""
