@@ -1,11 +1,17 @@
 """Views for search results"""
+
 import re
 import statistics
 
-from datetime import timedelta
 from django.contrib.postgres.search import TrigramWordSimilarity
-from django.db.models import CharField, ExpressionWrapper, F, FloatField, Value, Q
-from django.db.models import Value
+from django.db.models import (
+    CharField,
+    ExpressionWrapper,
+    F,
+    FloatField,
+    Q,
+    Value,
+)
 from django.db.models.functions import Cast, Concat
 from django.shortcuts import render
 
@@ -17,6 +23,7 @@ def search(request):
 
     # Set query
     query = request.GET.get("q", "")
+
     # courses are at least 3 digits long
     # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
     match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
@@ -39,6 +46,24 @@ def search(request):
     return render(request, "search/search.html", context_vars)
 
 
+def decide_order(query, courses, instructors):
+    """Decides if courses or instructors should be displayed first.
+    Returns True if courses should be prioritized, False if instructors should be prioritized
+    """
+
+    # Calculate z-score for courses
+    courses_z = compute_zscore([x["score"] for x in courses["results"]])
+
+    # Calculate z-score for instructors
+    instructors_z = compute_zscore([x["score"] for x in instructors["results"]])
+
+    # Likely an abbreviation if 4 letters or less
+    if len(query) <= 4 and courses_z > 0:
+        return True
+
+    return courses_z >= instructors_z
+
+
 def compute_zscore(scores):
     """Computes and returns the z_score from the list
     and gets the z-score of the highest z-score."""
@@ -57,29 +82,6 @@ def compute_zscore(scores):
         return 0
 
     return -1
-
-
-def decide_order(query, courses, instructors):
-    """Decides if courses or instructors should be displayed first.
-    Returns True if courses should be prioritized, False if instructors should be prioritized
-    """
-
-    # Calculate average similarity for courses
-    courses_avg = compute_avg_similarity([x["score"] for x in courses["results"]])
-
-    # Calculate average similarity for instructors
-    instructors_avg = compute_avg_similarity(
-        [x["score"] for x in instructors["results"]]
-    )
-
-    # Define a threshold for the minimum average similarity score. This value can be adjusted.
-    THRESHOLD = 0.5
-
-    # Prioritize courses for short queries or if their average similarity score is significantly higher
-    if len(query) <= 4 or (courses_avg > instructors_avg and courses_avg > THRESHOLD):
-        return True
-
-    return False
 
 
 def compute_avg_similarity(scores):
@@ -109,14 +111,21 @@ def fetch_instructors(query):
             "last_name": {"raw": instructor.last_name},
             "email": {"raw": instructor.email},
             "website": {
-                "raw": instructor.website if hasattr(instructor, "website") else None
+                "raw": (
+                    instructor.website
+                    if hasattr(instructor, "website")
+                    else None
+                )
             },
         }
         for instructor in results
     ]
 
     return format_response(
-        {"results": formatted_results, "meta": {"engine": {"name": "tcf-instructors"}}}
+        {
+            "results": formatted_results,
+            "meta": {"engine": {"name": "tcf-instructors"}},
+        }
     )
 
 
@@ -138,11 +147,15 @@ def fetch_courses(title, number):
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
-            mnemonic_similarity=TrigramWordSimilarity(title, "subdepartment__mnemonic"),
+            mnemonic_similarity=TrigramWordSimilarity(
+                title, "subdepartment__mnemonic"
+            ),
             number_similarity=TrigramWordSimilarity(
                 number, Cast("number", CharField())
             ),
-            title_similarity=TrigramWordSimilarity(title, Cast("title", CharField())),
+            title_similarity=TrigramWordSimilarity(
+                title, Cast("title", CharField())
+            ),
         )
         .annotate(
             total_similarity=ExpressionWrapper(
@@ -154,11 +167,10 @@ def fetch_courses(title, number):
         )
         .filter(total_similarity__gte=0.2)
         # filters out classes with 3 digit class numbers (old naming system)
-        .filter(Q(number__isnull=True) | Q(number__regex=r'^\d{4}$'))
+        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
         # filters out classes that haven't been taught since Fall 2020
         .exclude(semester_last_taught_id__lt=48)
-        .order_by("-total_similarity")
-        [:10]
+        .order_by("-total_similarity")[:10]
     )
 
     # Formatting results similar to Elastic search response
@@ -176,7 +188,10 @@ def fetch_courses(title, number):
     ]
 
     return format_response(
-        {"results": formatted_results, "meta": {"engine": {"name": "tcf-courses"}}}
+        {
+            "results": formatted_results,
+            "meta": {"engine": {"name": "tcf-courses"}},
+        }
     )
 
 

@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tcf_website', '0003_question_answer_and_more'),
+        ("tcf_website", "0003_question_answer_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='question',
-            name='placeholder',
-            field=models.CharField(default='Enter your response here', max_length=100),
+            model_name="question",
+            name="placeholder",
+            field=models.CharField(
+                default="Enter your response here", max_length=100
+            ),
         ),
     ]

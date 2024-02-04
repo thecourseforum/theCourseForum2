@@ -23,5 +23,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-standard": "^5.0.0"
+  },
+  "dependencies": {
+    "prettier": "^3.2.4"
   }
 }
