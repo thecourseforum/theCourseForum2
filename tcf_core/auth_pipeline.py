@@ -129,3 +129,11 @@ def validate_email(strategy, backend, code, partial_token):
             [code.email],
             fail_silently=False,
         )
+
+# Disable the deletion of partial tokens
+from social_django.storage import DjangoPartialMixin
+
+@classmethod
+def no_op(cls, *args, **kwargs):
+    pass
+DjangoPartialMixin.destroy = no_op
