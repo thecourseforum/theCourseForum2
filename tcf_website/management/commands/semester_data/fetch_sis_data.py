@@ -42,26 +42,27 @@ def retrieve_semester_courses(semester):  # very slow
         '&page=')
     all_classes = []
     page = 1  # Page is initially 1
-    while True:  # loads the first 100 courses (page 1) # Loops through every page and extracts classes until it runs out of pages when the while breaks
-        print(page)
+    while True:  # loads the first 100 courses (page 1)
+        # Loops through every page and extracts classes until it runs out of pages
+        # when the while breaks
         page_url = semester_url + str(page)
         try:
             apiResponse = requests.get(page_url)
             page_data = json.loads(apiResponse.text)
-            if not page_data:  # checks to see if there is no data for that page which means that all
-                # data has been extracted from previous pages so the loop breaks
-                break
-        except Exception as e:
-            print(e)
+        except requests.exceptions.RequestException as e:
+            print(f'An error occurred: {e}')
             break
+        if not page_data:  # checks to see if there is no data for that page which means that all
+            # data has been extracted from previous pages so the loop breaks
+            break
+
         for course in page_data:  # loops through every course on the page and calls compile_course_data and adds output to list
             # calls function to create dict of class info
             class_data = compile_course_data(course['class_nbr'], semester)
             if not class_data:
                 continue
             all_classes.append(class_data)  # adds dict to list of all classes
-        print("Writing to CSV")
-        write_csv(all_classes, f"SIS_2023_spring") # write in chunks to save memory
+        write_csv(all_classes, f"SIS_2023_spring")  # write in chunks to save memory
         all_classes = []  # resets list of classes to empty
         page += 1  # Incrementing page count so next query will be on next page
     return None
@@ -77,11 +78,12 @@ def compile_course_data(course_number, semester):
 
     try:
         apiResponse = requests.get(url)
-        data = json.loads(apiResponse.text)
-        if data == []:
-            return None
-    except Exception as e:
-        print(e)
+    except requests.exceptions.RequestException as e:
+        print(f'An error occurred: {e}')
+        return None
+
+    data = json.loads(apiResponse.text)
+    if not data:  # no response for the class
         return None
 
     class_details = data["section_info"]["class_details"]
@@ -103,7 +105,7 @@ def compile_course_data(course_number, semester):
             "DIS": "Discussion",
             "LAB": "Laboratory"
         }.get(class_details["component"], class_details["component"]),
-        "Units": class_details["units"][0:class_details["units"].find("u") - 1],
+        "Units": class_details["units"][0:class_details["units"].find("units") - 1],
         "Instructor1": ", ".join(instructor["name"] for instructor in meetings[0]["instructors"] if instructor["name"] != "-") if meetings[0] else "",
         "Days1": meetings[0]["meets"] if meetings[0]["meets"] != "-" else "TBA",
         "Room1": meetings[0]["room"] if meetings[0]["room"] != "-" else "TBA",
@@ -131,14 +133,14 @@ def compile_course_data(course_number, semester):
     return course_dictionary
 
 
-def write_csv(courseList, filename):
-    fieldnames = list(courseList[0].keys())
+def write_csv(course_list, filename):
+    fieldnames = list(course_list[0].keys())
     csv_filename = filename + ".csv"
     with open(csv_filename, 'a', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         if csvfile.tell() == 0:
             writer.writeheader()
-        for course in courseList:
+        for course in course_list:
             writer.writerow(course)
 
 
