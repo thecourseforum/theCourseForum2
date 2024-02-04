@@ -52,7 +52,7 @@ class DeleteQuestion(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView
         return f"Successfully deleted your question for {str(course)} and {str(instructor)}!"
 
 
-@login_required
+# @login_required
 def new_question(request):
     """Question creation view."""
     # Collect form data into Question model instance.
