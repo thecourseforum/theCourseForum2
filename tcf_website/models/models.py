@@ -769,14 +769,16 @@ class Vote(models.Model):
 #Tag class for organizing
 class Tag(models.model):
     """Tag model.
-    Many to many relationship with Question"""
-
+    Many to many relationship with Question
+    has school, department, course, instructor and semester
+    """
+    #can be changed later to have multiple elements of one field selected (i.e. multiple instructors/courses)
     School = models.ForeignKey(School,on_delete=models.CASCADE)
     Department = models.ForeignKey(Department, on_delete=models.CASCADE)
     Course = models.ForeignKey(Course, on_delete=models.CASCADE)
     Instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     Semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
-    
+
 class Question(models.Model):
     """Question model.
     Belongs to a User.
@@ -811,7 +813,6 @@ class Question(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     #Tags for questions
-
     tag = models.ManyToManyField(Tag)
 
     def __str__(self):
