@@ -63,7 +63,8 @@ def decide_order(query, courses, instructors):
     # Define a threshold for the minimum average similarity score. This value can be adjusted.
     THRESHOLD = 0.5
 
-    # Prioritize courses for short queries or if their average similarity score is significantly higher
+    # Prioritize courses for short queries or if their average similarity
+    # score is significantly higher
     if len(query) <= 4 or (courses_avg > instructors_avg and courses_avg > THRESHOLD):
         return True
 
