@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 """Views for search results"""
 
 import re
