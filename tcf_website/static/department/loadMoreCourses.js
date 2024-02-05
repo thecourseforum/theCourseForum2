@@ -1,28 +1,28 @@
 async function loadPage(subdepartmentId, url) {
-    if (url === null) {
-        hideSpinner(subdepartmentId);
-        return;
-    }
-    const courses = await fetch(url).then((res) => res.json());
-    if (courses.detail === "Invalid page.") {
-        hideSpinner(subdepartmentId);
-    } else {
-        const element = document.getElementById(`courses-sd-${subdepartmentId}`);
-        const htmlArray = [];
-        courses.results.forEach((course) => {
-            const html = generateCourseCardHTML(course);
-            htmlArray.push(html);
-        });
-        element.insertAdjacentHTML("beforeend", htmlArray.join(""));
-        loadPage(subdepartmentId, courses.next);
-    }
+  if (url === null) {
+    hideSpinner(subdepartmentId);
+    return;
+  }
+  const courses = await fetch(url).then((res) => res.json());
+  if (courses.detail === "Invalid page.") {
+    hideSpinner(subdepartmentId);
+  } else {
+    const element = document.getElementById(`courses-sd-${subdepartmentId}`);
+    const htmlArray = [];
+    courses.results.forEach((course) => {
+      const html = generateCourseCardHTML(course);
+      htmlArray.push(html);
+    });
+    element.insertAdjacentHTML("beforeend", htmlArray.join(""));
+    loadPage(subdepartmentId, courses.next);
+  }
 }
 
 function generateCourseCardHTML(course) {
-    const rating = emdashOrTwoDecimals(course.average_rating);
-    const difficulty = emdashOrTwoDecimals(course.average_difficulty);
-    const gpa = emdashOrTwoDecimals(course.average_gpa);
-    return `
+  const rating = emdashOrTwoDecimals(course.average_rating);
+  const difficulty = emdashOrTwoDecimals(course.average_difficulty);
+  const gpa = emdashOrTwoDecimals(course.average_gpa);
+  return `
         <li class="${course.is_recent ? "" : "old"}">
             <div class="card rating-card mb-2">
                 <div class="row no-gutters">
@@ -74,14 +74,14 @@ function generateCourseCardHTML(course) {
 }
 
 function emdashOrTwoDecimals(number) {
-    // \u2014 is an em-dash
-    return number === null
-        ? "\u2014"
-        : (Math.round(number * 100) / 100).toFixed(2);
+  // \u2014 is an em-dash
+  return number === null
+    ? "\u2014"
+    : (Math.round(number * 100) / 100).toFixed(2);
 }
 
 function hideSpinner(subdepartmentId) {
-    document.getElementById(`spinner-sd-${subdepartmentId}`).remove();
+  document.getElementById(`spinner-sd-${subdepartmentId}`).remove();
 }
 
 export { loadPage };
