@@ -88,26 +88,6 @@ def decide_order(query, courses, instructors):
     return False
 
 
-def compute_zscore(scores):
-    """Computes and returns the z_score from the list
-    and gets the z-score of the highest z-score."""
-    if len(scores) > 1:
-        mean = statistics.mean(scores)
-
-        stddev = statistics.stdev(scores, mean)
-        if stddev == 0:
-            stddev = 1
-        z_score = scores[0] - mean
-        z_score /= stddev
-
-        return z_score
-    # Returns 0 for only one item (can't compute z-score) or -1 if no items
-    if len(scores) == 1:
-        return 0
-
-    return -1
-
-
 def compute_avg_similarity(scores):
     """Computes and returns the average similarity score."""
     length = 0
