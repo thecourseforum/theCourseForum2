@@ -63,9 +63,19 @@ def decide_order(query, courses, instructors):
     # Define a threshold for the minimum average similarity score. This value can be adjusted.
     THRESHOLD = 0.5
 
+    # If there is a perfect match for any part of the professor's name, return that
+    # unless it also perfectly matches a course
+    if len(instructors["results"]) > 0 and instructors["results"][0]["score"] == 1.0 \
+            and (len(courses["results"]) <= 0 or instructors["results"][0]["score"] >= courses["results"][0]["score"]):
+        return False
+
     # Prioritize courses for short queries or if their average similarity
     # score is significantly higher
     if len(query) <= 4 or (courses_avg > instructors_avg and courses_avg > THRESHOLD):
+        return True
+
+    # Prioritize courses if professor search result length is 0, regardless of course results
+    if len(instructors["results"]) <= 0:
         return True
 
     return False
