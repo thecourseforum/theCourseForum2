@@ -2,7 +2,6 @@
 """Views for search results"""
 
 import re
-import statistics
 
 from django.contrib.postgres.search import TrigramWordSimilarity
 from django.db.models import (
