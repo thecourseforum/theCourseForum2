@@ -34,24 +34,24 @@
 }
 
 .pfp {
-    overflow: hidden;
+  overflow: hidden;
 }
-.pfp img{
-    transition: all 0.5s ease;
+.pfp img {
+  transition: all 0.5s ease;
 }
-.pfp:hover img{
-    transform: scale(1.1);
+.pfp:hover img {
+  transform: scale(1.1);
 }
-.member:hover{
-    box-shadow: 2px 2px 5px #888888 !important;
+.member:hover {
+  box-shadow: 2px 2px 5px #888888 !important;
 }
 
-.fit-image{
+.fit-image {
   width: 100%;
   object-fit: cover;
 }
 
-.history-img{
+.history-img {
   overflow: hidden;
   opacity: 0.8;
 }

@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 """Views for search results"""
 import re
 import statistics
@@ -6,6 +7,16 @@ from datetime import timedelta
 from django.contrib.postgres.search import TrigramWordSimilarity
 from django.db.models import CharField, ExpressionWrapper, F, FloatField, Value, Q
 from django.db.models import Value
+from django.db.models.functions import Cast, Concat
+from django.contrib.postgres.search import TrigramWordSimilarity
+from django.db.models import (
+    CharField,
+    ExpressionWrapper,
+    F,
+    FloatField,
+    Q,
+    Value,
+)
 from django.db.models.functions import Cast, Concat
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -29,6 +40,7 @@ def search(request):
 
     instructors = fetch_instructors(query)
     courses = fetch_courses(title_part, number_part)
+    courses = fetch_courses(title_part, number_part)
 
     courses_first = decide_order(query, courses, instructors)
 
@@ -38,26 +50,6 @@ def search(request):
 
     # Load template view
     return render(request, "search/search.html", context_vars)
-
-
-def compute_zscore(scores):
-    """Computes and returns the z_score from the list
-    and gets the z-score of the highest z-score."""
-    if len(scores) > 1:
-        mean = statistics.mean(scores)
-
-        stddev = statistics.stdev(scores, mean)
-        if stddev == 0:
-            stddev = 1
-        z_score = scores[0] - mean
-        z_score /= stddev
-
-        return z_score
-    # Returns 0 for only one item (can't compute z-score) or -1 if no items
-    if len(scores) == 1:
-        return 0
-
-    return -1
 
 
 def decide_order(query, courses, instructors):
@@ -76,8 +68,26 @@ def decide_order(query, courses, instructors):
     # Define a threshold for the minimum average similarity score. This value can be adjusted.
     THRESHOLD = 0.5
 
-    # Prioritize courses for short queries or if their average similarity score is significantly higher
+    # Scores of the closest match for both
+    first_instructor_score = 0
+    first_course_score = 0
+    if len(instructors["results"]) > 0:
+        first_instructor_score = instructors["results"][0]["score"]
+    if len(courses["results"]) > 0:
+        first_course_score = courses["results"][0]["score"]
+
+    # If there is a perfect match for any part of the professor's name, return that
+    # unless it also perfectly matches a course
+    if first_instructor_score == 1.0 and first_instructor_score >= first_course_score:
+        return False
+
+    # Prioritize courses for short queries or if their average similarity
+    # score is significantly higher
     if len(query) <= 4 or (courses_avg > instructors_avg and courses_avg > THRESHOLD):
+        return True
+
+    # Prioritize courses if professor search result length is 0, regardless of course results
+    if len(instructors["results"]) <= 0:
         return True
 
     return False
@@ -110,14 +120,21 @@ def fetch_instructors(query):
             "last_name": {"raw": instructor.last_name},
             "email": {"raw": instructor.email},
             "website": {
-                "raw": instructor.website if hasattr(instructor, "website") else None
+                "raw": (
+                    instructor.website
+                    if hasattr(instructor, "website")
+                    else None
+                )
             },
         }
         for instructor in results
     ]
 
     return format_response(
-        {"results": formatted_results, "meta": {"engine": {"name": "tcf-instructors"}}}
+        {
+            "results": formatted_results,
+            "meta": {"engine": {"name": "tcf-instructors"}},
+        }
     )
 
 
@@ -139,11 +156,15 @@ def fetch_courses(title, number):
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
-            mnemonic_similarity=TrigramWordSimilarity(title, "subdepartment__mnemonic"),
+            mnemonic_similarity=TrigramWordSimilarity(
+                title, "subdepartment__mnemonic"
+            ),
             number_similarity=TrigramWordSimilarity(
                 number, Cast("number", CharField())
             ),
-            title_similarity=TrigramWordSimilarity(title, Cast("title", CharField())),
+            title_similarity=TrigramWordSimilarity(
+                title, Cast("title", CharField())
+            ),
         )
         .annotate(
             total_similarity=ExpressionWrapper(
@@ -155,11 +176,10 @@ def fetch_courses(title, number):
         )
         .filter(total_similarity__gte=0.2)
         # filters out classes with 3 digit class numbers (old naming system)
-        .filter(Q(number__isnull=True) | Q(number__regex=r'^\d{4}$'))
+        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
         # filters out classes that haven't been taught since Fall 2020
         .exclude(semester_last_taught_id__lt=48)
-        .order_by("-total_similarity")
-        [:10]
+        .order_by("-total_similarity")[:10]
     )
 
     # Formatting results similar to Elastic search response
@@ -177,17 +197,23 @@ def fetch_courses(title, number):
     ]
 
     return format_response(
-        {"results": formatted_results, "meta": {"engine": {"name": "tcf-courses"}}}
+        {
+            "results": formatted_results,
+            "meta": {"engine": {"name": "tcf-courses"}},
+        }
     )
 
 
 def format_response(response):
     """Formats an Elastic search endpoint response."""
     formatted = {"error": False, "results": []}
+    formatted = {"error": False, "results": []}
     if "error" in response:
         formatted["error"] = True
         return formatted
 
+    engine = response.get("meta").get("engine").get("name")
+    results = response.get("results")
     engine = response.get("meta").get("engine").get("name")
     results = response.get("results")
     if engine == "tcf-courses":
