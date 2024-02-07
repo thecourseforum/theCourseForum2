@@ -1,10 +1,12 @@
 """Views for search results"""
-import os
-import json
-import statistics
-import requests
 
+import json
+import os
+import statistics
+
+import requests
 from django.shortcuts import render
+
 from ..models import Subdepartment
 
 
@@ -12,7 +14,7 @@ def search(request):
     """Search results view."""
 
     # Set query
-    query = request.GET.get('q', '')
+    query = request.GET.get("q", "")
 
     # Fetch Elasticsearch data
     courses = fetch_courses(query)
@@ -25,18 +27,19 @@ def search(request):
     context_vars = args
 
     # Load template view
-    return render(request, 'search/search.html', context_vars)
+    return render(request, "search/search.html", context_vars)
 
 
 def decide_order(query, courses, instructors):
     """Decides if courses or instructors should be displayed first.
-    Returns True if courses should be prioritized, False if instructors should be prioritized """
+    Returns True if courses should be prioritized, False if instructors should be prioritized
+    """
 
     # Calculate z-score for courses
-    courses_z = compute_zscore([x['score'] for x in courses['results']])
+    courses_z = compute_zscore([x["score"] for x in courses["results"]])
 
     # Calculate z-score for instructors
-    instructors_z = compute_zscore([x['score'] for x in instructors['results']])
+    instructors_z = compute_zscore([x["score"] for x in instructors["results"]])
 
     # Likely an abbreviation if 4 letters or less
     if len(query) <= 4 and courses_z > 0:
@@ -47,7 +50,7 @@ def decide_order(query, courses, instructors):
 
 def compute_zscore(scores):
     """Computes and returns the z_score from the list
-     and gets the z-score of the highest z-score."""
+    and gets the z-score of the highest z-score."""
     if len(scores) > 1:
         mean = statistics.mean(scores)
 
@@ -68,7 +71,7 @@ def compute_zscore(scores):
 
 def fetch_courses(query):
     """Gets Elasticsearch course data."""
-    api_endpoint = os.environ['ELASTICSEARCH_ENDPOINT'] + 'tcf-courses/search'
+    api_endpoint = os.environ["ELASTICSEARCH_ENDPOINT"] + "tcf-courses/search"
     algorithm = rank_course(query)
     response = fetch_elasticsearch(api_endpoint, algorithm)
     return format_response(response)
@@ -76,7 +79,9 @@ def fetch_courses(query):
 
 def fetch_instructors(query):
     """Gets Elasticsearch instructor data."""
-    api_endpoint = os.environ['ELASTICSEARCH_ENDPOINT'] + 'tcf-instructors/search'
+    api_endpoint = (
+        os.environ["ELASTICSEARCH_ENDPOINT"] + "tcf-instructors/search"
+    )
     algorithm = rank_instructor(query)
     response = fetch_elasticsearch(api_endpoint, algorithm)
     return format_response(response)
@@ -84,38 +89,33 @@ def fetch_instructors(query):
 
 def fetch_elasticsearch(api_endpoint, algorithm):
     """Requests a Document API using a specific search algorithm."""
-    api_key = os.environ['ES_PUBLIC_API_KEY']
+    api_key = os.environ["ES_PUBLIC_API_KEY"]
     https_headers = {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + api_key
+        "Authorization": "Bearer " + api_key,
     }
     try:
         response = requests.get(
-            url=api_endpoint,
-            headers=https_headers,
-            params=algorithm,
-            timeout=5
+            url=api_endpoint, headers=https_headers, params=algorithm, timeout=5
         )
         if response.status_code != 200:
             response = {
                 "error": True,
-                "message": "GET request failed w/ status code " +
-                           str(response.status_code)
+                "message": "GET request failed w/ status code "
+                + str(response.status_code),
             }
         return response
     except requests.RequestException as error:
         response = {
             "error": True,
-            "message": "GET request failed w/ error " + str(error)
+            "message": "GET request failed w/ error " + str(error),
         }
         return response
 
 
 def rank_instructor(query):
     """Returns the instructors search algorithm."""
-    algorithm = {
-        "query": query
-    }
+    algorithm = {"query": query}
     return algorithm  # improve algorithm later
 
 
@@ -153,10 +153,7 @@ def rank_course(query):
 
 def format_response(response):
     """Formats an Elastic search endpoint response."""
-    formatted = {
-        "error": False,
-        "results": []
-    }
+    formatted = {"error": False, "results": []}
     if "error" in response:
         formatted["error"] = True
         return formatted
@@ -209,11 +206,9 @@ def format_instructors(results):
 
 def set_arguments(query, courses, instructors, courses_first):
     """Sets the search template arguments."""
-    args = {
-        "query": query
-    }
+    args = {"query": query}
     if not courses["error"]:
-        args["courses"] = group_by_dept(courses['results'])
+        args["courses"] = group_by_dept(courses["results"])
     if not instructors["error"]:
         args["instructors"] = instructors["results"]
 
@@ -227,14 +222,14 @@ def group_by_dept(courses):
     """Groups courses by their department and adds relevant data."""
     grouped_courses = {}
     for course in courses:
-        course_dept = course['mnemonic'][:course['mnemonic'].index(' ')]
+        course_dept = course["mnemonic"][: course["mnemonic"].index(" ")]
         if course_dept not in grouped_courses:
             subdept = Subdepartment.objects.filter(mnemonic=course_dept)[0]
             # should only ever have one returned with that mnemonic
             grouped_courses[course_dept] = {
                 "subdept_name": subdept.name,
                 "dept_id": subdept.department_id,
-                "courses": []
+                "courses": [],
             }
         grouped_courses[course_dept]["courses"].append(course)
 

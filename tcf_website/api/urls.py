@@ -14,5 +14,4 @@ router.register(r'semesters', views.SemesterViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('get_recommendations_ajax/', views.get_recommendations_ajax, name='get_recommendations_ajax'),
 ]
