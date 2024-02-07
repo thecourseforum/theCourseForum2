@@ -4,14 +4,14 @@
 
 /* Use these variables in CSS stylesheets */
 :root {
---main-color: #274F97;        /* Indigo/Dark blue */
---secondary-color: #4077C4;
---accent-color: #D75626;      /* Orange */
---dark-color: #545454;        /* Dark grey, for headers/buttons */
---shadow-color: #a6a6a6;      /* Medium grey, used for shadows */
---shaded-color: #cfcfcf;      /* Medium light grey, used for shading */
---background-color: #EBEBEB;  /* Light grey, used for backgrounds */
-/* Note: Can use Bootstrap "light" color and white color */
+  --main-color: #274f97; /* Indigo/Dark blue */
+  --secondary-color: #4077c4;
+  --accent-color: #d75626; /* Orange */
+  --dark-color: #545454; /* Dark grey, for headers/buttons */
+  --shadow-color: #a6a6a6; /* Medium grey, used for shadows */
+  --shaded-color: #cfcfcf; /* Medium light grey, used for shading */
+  --background-color: #ebebeb; /* Light grey, used for backgrounds */
+  /* Note: Can use Bootstrap "light" color and white color */
 }
 
 /*************DEFAULT STYLES**************/
@@ -28,17 +28,18 @@ h6,
 .h5,
 .h6 {
   /* Default heading font: Lato (others are fallbacks) */
-  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 body {
   /* Body text font: Open Sans */
-  font-family: 'Open Sans', 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial,
+    sans-serif;
   font-weight: 500;
 }
 
 a {
-    color: inherit;
+  color: inherit;
 }
 a:hover,
 .hover-tcf-orange:hover {
@@ -47,80 +48,80 @@ a:hover,
   cursor: pointer;
 }
 ul {
-    padding: 0;
-    list-style-type: none;
+  padding: 0;
+  list-style-type: none;
 }
-
 
 /*************UTILITY CLASSES**************/
 
 /* To remove auto blue underline formatting from an anchor tag */
-.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
- color: inherit;
- all: unset;
- text-decoration: inherit;
+.link-unstyled,
+.link-unstyled:link,
+.link-unstyled:hover {
+  color: inherit;
+  all: unset;
+  text-decoration: inherit;
 }
-
 
 /*************COLOR CLASSES**************/
 /* Use these utility classes in HTML tag class styling  */
 
 /* Main color: Indigo/Dark blue */
 .text-tcf-indigo {
-color: var(--main-color);
+  color: var(--main-color);
 }
 .bg-tcf-indigo {
-background-color: var(--main-color);
+  background-color: var(--main-color);
 }
 .border-tcf-indigo {
-border-color: var(--main-color);
+  border-color: var(--main-color);
 }
 
 /* Secondary color: Light blue */
 .text-tcf-blue {
-color: var(--secondary-color);
+  color: var(--secondary-color);
 }
 .bg-tcf-blue {
-background-color: var(--secondary-color);
+  background-color: var(--secondary-color);
 }
 
 /* Accent color: Orange */
 .text-tcf-orange {
-color: var(--accent-color);
+  color: var(--accent-color);
 }
 .bg-tcf-orange {
-background-color: var(--accent-color);
+  background-color: var(--accent-color);
 }
 
 /* Dark accent color: Chalkboard */
 .text-tcf-chalkboard {
-color: var(--dark-color);
+  color: var(--dark-color);
 }
 .bg-tcf-chalkboard {
-background-color: var(--dark-color);
+  background-color: var(--dark-color);
 }
 .border-tcf-chalkboard {
-border-color: var(--dark-color);
+  border-color: var(--dark-color);
 }
 
 .text-tcf-shadow {
-color: var(--shadow-color);
+  color: var(--shadow-color);
 }
 .bg-tcf-shadow {
-background-color: var(--shadow-color);
+  background-color: var(--shadow-color);
 }
 .border-tcf-shadow {
-border-color: var(--shadow-color);
+  border-color: var(--shadow-color);
 }
 
 .text-tcf-background {
-color: var(--background-color);
+  color: var(--background-color);
 }
 .bg-tcf-background {
-background-color: var(--background-color);
+  background-color: var(--background-color);
 }
 .border-tcf-background {
-border-color: var(--background-color);
+  border-color: var(--background-color);
 }
 
 /* Note: Can use Bootstrap "light" color

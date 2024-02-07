@@ -1,327 +1,327 @@
 /* Instructor info row */
-.course-instructor-header .instructor-info .instructor-select{
-   font-size: 28px;
+.course-instructor-header .instructor-info .instructor-select {
+  font-size: 28px;
 }
 @media (max-width: 900px) {
-  .course-instructor-header .instructor-info .instructor-select{
+  .course-instructor-header .instructor-info .instructor-select {
     font-size: 22px;
   }
 }
-.course-instructor-header .instructor-menu{
-   box-shadow: 1px 1px 10px rgba(0,0,0,0.2);
+.course-instructor-header .instructor-menu {
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
 }
 /* Change tooltip alignment */
 @media (min-width: 768px) {
   .tooltip-inner {
-      margin-left: 8.15rem;
+    margin-left: 8.15rem;
   }
 }
 
 .course-info-container {
-    width: 100%;
-    margin-bottom: 50px;
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    row-gap: 10px;
+  width: 100%;
+  margin-bottom: 50px;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
 }
 
 .times-info-container {
-    width: 100%;
-    display: flex;
+  width: 100%;
+  display: flex;
 }
 
 .grades-ratings-container {
-    width: 100%;
-    height: 300px;
-    display: flex;
-    gap: 10px;
+  width: 100%;
+  height: 300px;
+  display: flex;
+  gap: 10px;
 }
 
 .grades-container {
-    position: relative;
-    width: 45%;
-    height: 100%;
-    flex-shrink: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    z-index: 0;
+  position: relative;
+  width: 45%;
+  height: 100%;
+  flex-shrink: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  z-index: 0;
 }
 
 .chart-container {
-    width: 90%;
-    height: 90%;
-    position: relative;
+  width: 90%;
+  height: 90%;
+  position: relative;
 }
 
-.chart-button{
-   position: absolute;
-   bottom: 10px;
-   right: 10px;
-   display: flex;
+.chart-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
 }
 
 .ratings-container {
-    height: 100%;
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
-    gap: 10px;
+  height: 100%;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .ratings-row {
-    display: flex;
-    height: 50%;
+  display: flex;
+  height: 50%;
 }
 
 .rating-card {
-    height: 100%;
-    background-color: white;
-    width: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+  height: 100%;
+  background-color: white;
+  width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .rating-card-num {
-    font-size: 42px;
-    color: #D75626
+  font-size: 42px;
+  color: #d75626;
 }
 
 .rating-card-desc {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 .info-container {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    background-color: white;
-    height: 100%;
-    margin-left: 10px;
-    padding-top: 6px;
-    padding-bottom: 6px;
-    padding-left: 8px;
-    justify-content: space-around;
-    min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background-color: white;
+  height: 100%;
+  margin-left: 10px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 8px;
+  justify-content: space-around;
+  min-width: 250px;
 }
 
 .absolute-center {
-    position: absolute;
-    top: auto; left: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+  position: absolute;
+  top: auto;
+  left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .bottom-center {
-    position: absolute;
-    bottom: 10px; left: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+  position: absolute;
+  bottom: 10px;
+  left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .gpa-text {
-    color: #384676;
-    font-size: 28px;
-    margin: 0;
+  color: #384676;
+  font-size: 28px;
+  margin: 0;
 }
 
 .students-text {
-    color: #56679d;
-    font-size: 16px;
-    margin: 0;
+  color: #56679d;
+  font-size: 16px;
+  margin: 0;
 }
 
 .info-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.info-title{
-    font-size: 14px;
-    width: 130px;
-    padding-left: 5px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
+.info-title {
+  font-size: 14px;
+  width: 130px;
+  padding-left: 5px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .info-bar .progress {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 .info-bar .progress-bar {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .info-num {
-    display: flex;
-    justify-content: flex-end;
-    width: 70px;
-    padding-right: 10px;
+  display: flex;
+  justify-content: flex-end;
+  width: 70px;
+  padding-right: 10px;
 }
 
-.info-bar{
-    flex-grow: 1;
-    flex-shrink: 1;
+.info-bar {
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 
 @media (max-width: 1100px) {
-    .chart-container { 
-        max-width: 600px; 
-    }
-
-    .grades-ratings-container {
-      flex-direction: column;
-      height: 650px;
-    }
-
-    .grades-container{
-        height: 50%;
-        width: 100%;
-    }
-
-    .ratings-container{
-        height: 50%;
-    }
-
-    .info-container{
-        margin-right: 0;
-    }
-
-    .gpa-text{
-        font-size: 24px;
-    }
-    .students-text{
-        font-size: 14;
-    }
+  .chart-container {
+    max-width: 600px;
   }
 
-  @media(max-width: 800px){
-      .info-num{
-          width: 60px;
-      }
+  .grades-ratings-container {
+    flex-direction: column;
+    height: 650px;
   }
 
-  @media(max-width: 500px){
-    .ratings-container{
-        height: 200px;
-    }
-    .ratings-container{
-        height: 38%;
-    }
-    .grades-container{
-        height: 62%;
-    }
-    .rating-card-num{
-        font-size: 24px;
-    }
-    .rating-card-desc{
-        font-size: 14px;
-    }
-    .info-title {
-        font-size: 12px;
-        width: 120px;
-    }
-    .info-num{
-        font-size: 14px;
-        width: 30;
-    }
-    .progress{
-        height: 14px;
-    }
+  .grades-container {
+    height: 50%;
+    width: 100%;
   }
 
-  @media(max-width: 410px){
-    .grades-ratings-container{
-        height: 400px;
-    }
-
-    .grades-container{
-        height: 50%;
-    }
-
-    .chart-container{
-        width: 175px;
-    }
-    .ratings-container{
-        height: 50%;
-    }
-    .rating-card-num{
-        font-size: 16px;
-    }
-    .rating-card-desc{
-        font-size: 10px;
-    }
-    .info-title {
-        font-size: 10px;
-        width: 90;
-    }
-    .info-container {
-        font-size: 10px;
-    }
-    .info-num{
-        font-size: 10px;
-    }
-    .progress{
-        height: 10px;
-    }
-
-    .gpa-text{
-        font-size: 18px;
-    }
-    .students-text{
-        font-size: 12px;
-    }
-    .info-container {
-        width: 250px;
-        flex-shrink: 1;
-        min-width: 0;
-    }
-    .rating-card{
-        width: 70px;
-        min-width: 80px;
-        flex-grow: 1;
-        flex-shrink: 1
-    }
-    .grades-container{
-        margin-bottom: 0;
-    }
-
+  .ratings-container {
+    height: 50%;
   }
 
-  @media(max-width: 380px){
-    .info-bar{
-        width: 50%;
-        flex-shrink:2;
-        margin-right: 0;
-        padding-right: 0;
-    }
-    .info-num{
-        margin-left: 2;
-    }
-
+  .info-container {
+    margin-right: 0;
   }
 
-  .rotated {
-      transform: rotateZ(90deg);
+  .gpa-text {
+    font-size: 24px;
+  }
+  .students-text {
+    font-size: 14;
+  }
+}
+
+@media (max-width: 800px) {
+  .info-num {
+    width: 60px;
+  }
+}
+
+@media (max-width: 500px) {
+  .ratings-container {
+    height: 200px;
+  }
+  .ratings-container {
+    height: 38%;
+  }
+  .grades-container {
+    height: 62%;
+  }
+  .rating-card-num {
+    font-size: 24px;
+  }
+  .rating-card-desc {
+    font-size: 14px;
+  }
+  .info-title {
+    font-size: 12px;
+    width: 120px;
+  }
+  .info-num {
+    font-size: 14px;
+    width: 30;
+  }
+  .progress {
+    height: 14px;
+  }
+}
+
+@media (max-width: 410px) {
+  .grades-ratings-container {
+    height: 400px;
   }
 
-  #sectionInfo {
-      /* margin-top set by JS */
-      transition: margin-top cubic-bezier(1, 0, 1, 1) 0.3s;
+  .grades-container {
+    height: 50%;
   }
 
-  #sectionInfo.show {
-      /* margin-top set by JS */
-      transition: margin-top cubic-bezier(0, 1, 1, 1) 0.3s;
+  .chart-container {
+    width: 175px;
   }
+  .ratings-container {
+    height: 50%;
+  }
+  .rating-card-num {
+    font-size: 16px;
+  }
+  .rating-card-desc {
+    font-size: 10px;
+  }
+  .info-title {
+    font-size: 10px;
+    width: 90;
+  }
+  .info-container {
+    font-size: 10px;
+  }
+  .info-num {
+    font-size: 10px;
+  }
+  .progress {
+    height: 10px;
+  }
+
+  .gpa-text {
+    font-size: 18px;
+  }
+  .students-text {
+    font-size: 12px;
+  }
+  .info-container {
+    width: 250px;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+  .rating-card {
+    width: 70px;
+    min-width: 80px;
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+  .grades-container {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .info-bar {
+    width: 50%;
+    flex-shrink: 2;
+    margin-right: 0;
+    padding-right: 0;
+  }
+  .info-num {
+    margin-left: 2;
+  }
+}
+
+.rotated {
+  transform: rotateZ(90deg);
+}
+
+#sectionInfo {
+  /* margin-top set by JS */
+  transition: margin-top cubic-bezier(1, 0, 1, 1) 0.3s;
+}
+
+#sectionInfo.show {
+  /* margin-top set by JS */
+  transition: margin-top cubic-bezier(0, 1, 1, 1) 0.3s;
+}

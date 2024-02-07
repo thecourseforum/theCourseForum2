@@ -5,17 +5,17 @@ body {
 #sidebar-wrapper {
   height: calc(100vh - 70px); /* Subtract height of navbar */
   margin-left: -15rem;
-  -webkit-transition: margin-left .25s;
-  -moz-transition: margin-left .25s;
-  -o-transition: margin-left .25s;
-  transition: margin-left .25s;
+  -webkit-transition: margin-left 0.25s;
+  -moz-transition: margin-left 0.25s;
+  -o-transition: margin-left 0.25s;
+  transition: margin-left 0.25s;
   background-color: var(--main-color);
   position: fixed;
   z-index: 9999;
 }
 
 #sidebar-wrapper .list-group {
-  width: var(--sidebar-width);      /* From base.css */
+  width: var(--sidebar-width); /* From base.css */
   margin-top: 2rem;
 }
 
@@ -24,7 +24,9 @@ body {
   margin-bottom: 0rem;
 }
 
-#sidebar-wrapper .list-group-item, .footer, .footer a {
+#sidebar-wrapper .list-group-item,
+.footer,
+.footer a {
   background-color: var(--main-color);
   color: white;
   border: 0rem;
@@ -37,13 +39,13 @@ body {
   filter: brightness(125%);
 }
 
-#sidebar-wrapper .icon-section{
+#sidebar-wrapper .icon-section {
   width: 100%;
-  padding: 0rem .5rem 1rem;
+  padding: 0rem 0.5rem 1rem;
 }
 
-#sidebar-wrapper .icon-wrapper{
-  display:inline-block;
+#sidebar-wrapper .icon-wrapper {
+  display: inline-block;
   width: 33%;
 }
 
@@ -51,11 +53,11 @@ body {
   font-size: 1.25rem;
 }
 
-#sidebar-wrapper .left-icon{
+#sidebar-wrapper .left-icon {
   float: left;
 }
 
-#sidebar-wrapper .right-icon{
+#sidebar-wrapper .right-icon {
   float: right;
 }
 

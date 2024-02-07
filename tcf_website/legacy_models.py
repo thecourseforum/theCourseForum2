@@ -23,7 +23,7 @@ class BookRequirements(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'book_requirements'
+        db_table = "book_requirements"
 
 
 class Books(models.Model):
@@ -57,7 +57,7 @@ class Books(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'books'
+        db_table = "books"
 
 
 class BooksUsers(models.Model):
@@ -66,7 +66,7 @@ class BooksUsers(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'books_users'
+        db_table = "books_users"
 
 
 class Bugs(models.Model):
@@ -79,7 +79,7 @@ class Bugs(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'bugs'
+        db_table = "bugs"
 
 
 class CalendarSections(models.Model):
@@ -88,7 +88,7 @@ class CalendarSections(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'calendar_sections'
+        db_table = "calendar_sections"
 
 
 class Subdepartments(models.Model):
@@ -103,7 +103,7 @@ class Subdepartments(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'subdepartments'
+        db_table = "subdepartments"
 
 
 class Semesters(models.Model):
@@ -112,10 +112,8 @@ class Semesters(models.Model):
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     year = models.DecimalField(
-        max_digits=10,
-        decimal_places=5,
-        blank=True,
-        null=True)
+        max_digits=10, decimal_places=5, blank=True, null=True
+    )
     # created_at = models.DateTimeField()
     # updated_at = models.DateTimeField()
 
@@ -124,7 +122,7 @@ class Semesters(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'semesters'
+        db_table = "semesters"
 
 
 class Schools(models.Model):
@@ -135,7 +133,7 @@ class Schools(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'schools'
+        db_table = "schools"
 
 
 class Users(models.Model):
@@ -144,14 +142,12 @@ class Users(models.Model):
     old_password = models.CharField(max_length=255, blank=True, null=True)
     # student_id = models.IntegerField(blank=True, null=True)
     student = models.ForeignKey(
-        'Students',
-        db_column='student_id',
-        on_delete=models.CASCADE)
+        "Students", db_column="student_id", on_delete=models.CASCADE
+    )
     # professor_id = models.IntegerField(blank=True, null=True)
     professor = models.ForeignKey(
-        'Professors',
-        db_column='professor_id',
-        on_delete=models.CASCADE)
+        "Professors", db_column="professor_id", on_delete=models.CASCADE
+    )
     subscribed_to_email = models.IntegerField(blank=True, null=True)
     # created_at = models.DateTimeField()
     # updated_at = models.DateTimeField()
@@ -159,17 +155,16 @@ class Users(models.Model):
     last_name = models.CharField(max_length=255, blank=True, null=True)
     encrypted_password = models.CharField(max_length=255)
     reset_password_token = models.CharField(
-        max_length=255, blank=True, null=True)
+        max_length=255, blank=True, null=True
+    )
     # reset_password_sent_at = models.DateTimeField(blank=True, null=True)
     # remember_created_at = models.DateTimeField(blank=True, null=True)
     sign_in_count = models.IntegerField(blank=True, null=True)
     # current_sign_in_at = models.DateTimeField(blank=True, null=True)
     # last_sign_in_at = models.DateTimeField(blank=True, null=True)
-    current_sign_in_ip = models.CharField(
-        max_length=255, blank=True, null=True)
+    current_sign_in_ip = models.CharField(max_length=255, blank=True, null=True)
     last_sign_in_ip = models.CharField(max_length=255, blank=True, null=True)
-    confirmation_token = models.CharField(
-        max_length=255, blank=True, null=True)
+    confirmation_token = models.CharField(max_length=255, blank=True, null=True)
     # confirmed_at = models.DateTimeField(blank=True, null=True)
     # confirmation_sent_at = models.DateTimeField(blank=True, null=True)
     unconfirmed_email = models.CharField(max_length=255, blank=True, null=True)
@@ -179,28 +174,25 @@ class Users(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'users'
+        db_table = "users"
 
 
 class Students(models.Model):
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     grad_year = models.DecimalField(
-        max_digits=10,
-        decimal_places=5,
-        blank=True,
-        null=True)
+        max_digits=10, decimal_places=5, blank=True, null=True
+    )
     # user_id = models.IntegerField(blank=True, null=True)
     user = models.ForeignKey(
-        Users,
-        db_column='user_id',
-        on_delete=models.CASCADE)
+        Users, db_column="user_id", on_delete=models.CASCADE
+    )
     # created_at = models.DateTimeField()
     # updated_at = models.DateTimeField()
 
     class Meta:
         managed = False
-        db_table = 'students'
+        db_table = "students"
 
 
 class Courses(models.Model):
@@ -209,20 +201,19 @@ class Courses(models.Model):
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     course_number = models.DecimalField(
-        max_digits=10, decimal_places=5, blank=True, null=True)
+        max_digits=10, decimal_places=5, blank=True, null=True
+    )
     # subdepartment_id = models.IntegerField(blank=True, null=True)
     subdepartment = models.ForeignKey(
-        Subdepartments,
-        db_column='subdepartment_id',
-        on_delete=models.CASCADE)
+        Subdepartments, db_column="subdepartment_id", on_delete=models.CASCADE
+    )
     # created_at = models.DateTimeField()
     # updated_at = models.DateTimeField()
     title_changed = models.IntegerField(blank=True, null=True)
     # last_taught_semester_id = models.IntegerField(blank=True, null=True)
     last_taught_semester = models.ForeignKey(
-        Semesters,
-        db_column='last_taught_semester_id',
-        on_delete=models.CASCADE)
+        Semesters, db_column="last_taught_semester_id", on_delete=models.CASCADE
+    )
 
     def __str__(self):
         try:
@@ -232,7 +223,7 @@ class Courses(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'courses'
+        db_table = "courses"
 
 
 class Sections(models.Model):
@@ -246,26 +237,26 @@ class Sections(models.Model):
     section_type = models.CharField(max_length=255, blank=True, null=True)
     # course_id = models.IntegerField(blank=True, null=True)
     course = models.ForeignKey(
-        Courses,
-        db_column='course_id',
-        on_delete=models.CASCADE)
+        Courses, db_column="course_id", on_delete=models.CASCADE
+    )
     # semester_id = models.IntegerField(blank=True, null=True)
     semester = models.ForeignKey(
-        Semesters,
-        db_column='semester_id',
-        on_delete=models.CASCADE)
+        Semesters, db_column="semester_id", on_delete=models.CASCADE
+    )
 
     created_at = models.IntegerField(
-        db_column='created_at', blank=True, null=True)
+        db_column="created_at", blank=True, null=True
+    )
     updated_at = models.IntegerField(
-        db_column='updated_at', blank=True, null=True)
+        db_column="updated_at", blank=True, null=True
+    )
 
     def __str__(self):
         return f"{self.course} {self.semester}"
 
     class Meta:
         managed = False
-        db_table = 'sections'
+        db_table = "sections"
 
 
 class CoursesUsers(models.Model):
@@ -273,17 +264,15 @@ class CoursesUsers(models.Model):
     # user_id = models.IntegerField(blank=True, null=True)
 
     course = models.ForeignKey(
-        Courses,
-        db_column='course_id',
-        on_delete=models.CASCADE)
+        Courses, db_column="course_id", on_delete=models.CASCADE
+    )
     user = models.ForeignKey(
-        Users,
-        db_column='user_id',
-        on_delete=models.CASCADE)
+        Users, db_column="user_id", on_delete=models.CASCADE
+    )
 
     class Meta:
         managed = False
-        db_table = 'courses_users'
+        db_table = "courses_users"
 
 
 class DayTimes(models.Model):
@@ -295,7 +284,7 @@ class DayTimes(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'day_times'
+        db_table = "day_times"
 
 
 class DayTimesSections(models.Model):
@@ -305,23 +294,22 @@ class DayTimesSections(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'day_times_sections'
+        db_table = "day_times_sections"
 
 
 class Departments(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
     # school_id = models.IntegerField(blank=True, null=True)
     school = models.ForeignKey(
-        Schools,
-        db_column='school_id',
-        on_delete=models.CASCADE)
+        Schools, db_column="school_id", on_delete=models.CASCADE
+    )
     # created_at = models.DateTimeField()
     # updated_at = models.DateTimeField()
-#
+    #
 
     class Meta:
         managed = False
-        db_table = 'departments'
+        db_table = "departments"
 
     def __str__(self):
         return f"{self.name}"
@@ -332,17 +320,15 @@ class DepartmentsSubdepartments(models.Model):
     # subdepartment_id = models.IntegerField(blank=True, null=True)
 
     department = models.ForeignKey(
-        Departments,
-        db_column='department_id',
-        on_delete=models.CASCADE)
+        Departments, db_column="department_id", on_delete=models.CASCADE
+    )
     subdepartment = models.ForeignKey(
-        Subdepartments,
-        db_column='subdepartment_id',
-        on_delete=models.CASCADE)
+        Subdepartments, db_column="subdepartment_id", on_delete=models.CASCADE
+    )
 
     class Meta:
         managed = False
-        db_table = 'departments_subdepartments'
+        db_table = "departments_subdepartments"
 
 
 class Grades(models.Model):
@@ -351,10 +337,8 @@ class Grades(models.Model):
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     gpa = models.DecimalField(
-        max_digits=10,
-        decimal_places=5,
-        blank=True,
-        null=True)
+        max_digits=10, decimal_places=5, blank=True, null=True
+    )
     count_a = models.IntegerField(blank=True, null=True)
     count_aminus = models.IntegerField(blank=True, null=True)
     count_bplus = models.IntegerField(blank=True, null=True)
@@ -377,7 +361,7 @@ class Grades(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'grades'
+        db_table = "grades"
 
 
 class Locations(models.Model):
@@ -387,7 +371,7 @@ class Locations(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'locations'
+        db_table = "locations"
 
 
 class Majors(models.Model):
@@ -397,7 +381,7 @@ class Majors(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'majors'
+        db_table = "majors"
 
 
 class ProfessorSalary(models.Model):
@@ -409,7 +393,7 @@ class ProfessorSalary(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'professor_salary'
+        db_table = "professor_salary"
 
 
 class Professors(models.Model):
@@ -419,14 +403,12 @@ class Professors(models.Model):
     email_alias = models.CharField(max_length=255, blank=True, null=True)
     # department_id = models.IntegerField(blank=True, null=True)
     department = models.ForeignKey(
-        Departments,
-        db_column='department_id',
-        on_delete=models.CASCADE)
+        Departments, db_column="department_id", on_delete=models.CASCADE
+    )
     # user_id = models.IntegerField(blank=True, null=True)
     user = models.ForeignKey(
-        Users,
-        db_column='user_id',
-        on_delete=models.CASCADE)
+        Users, db_column="user_id", on_delete=models.CASCADE
+    )
     # created_at = models.DateTimeField()
     # updated_at = models.DateTimeField()
     middle_name = models.CharField(max_length=255, blank=True, null=True)
@@ -449,7 +431,7 @@ class Professors(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'professors'
+        db_table = "professors"
 
 
 class Reviews(models.Model):
@@ -458,52 +440,52 @@ class Reviews(models.Model):
     # course_professor = models.ForeignKey(Professors, db_column='course_professor_id', on_delete=models.CASCADE)
     # student_id = models.IntegerField(blank=True, null=True)
     user = models.ForeignKey(
-        Users,
-        db_column='student_id',
-        on_delete=models.CASCADE)
+        Users, db_column="student_id", on_delete=models.CASCADE
+    )
     # semester_id = models.IntegerField(blank=True, null=True)
     semester = models.ForeignKey(
-        Semesters,
-        db_column='semester_id',
-        on_delete=models.CASCADE,
-        null=True)
+        Semesters, db_column="semester_id", on_delete=models.CASCADE, null=True
+    )
     created_at = models.DateTimeField()
     # updated_at = models.DateTimeField(null=True)
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     professor_rating = models.DecimalField(
-        max_digits=11, decimal_places=2, blank=True, null=True)
+        max_digits=11, decimal_places=2, blank=True, null=True
+    )
     enjoyability = models.IntegerField(blank=True, null=True)
     difficulty = models.IntegerField(blank=True, null=True)
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     amount_reading = models.DecimalField(
-        max_digits=11, decimal_places=2, blank=True, null=True)
+        max_digits=11, decimal_places=2, blank=True, null=True
+    )
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     amount_writing = models.DecimalField(
-        max_digits=11, decimal_places=2, blank=True, null=True)
+        max_digits=11, decimal_places=2, blank=True, null=True
+    )
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     amount_group = models.DecimalField(
-        max_digits=11, decimal_places=2, blank=True, null=True)
+        max_digits=11, decimal_places=2, blank=True, null=True
+    )
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
     amount_homework = models.DecimalField(
-        max_digits=11, decimal_places=2, blank=True, null=True)
+        max_digits=11, decimal_places=2, blank=True, null=True
+    )
     only_tests = models.IntegerField(blank=True, null=True)
     recommend = models.IntegerField(blank=True, null=True)
     ta_name = models.CharField(max_length=255, blank=True, null=True)
     # course_id = models.IntegerField(blank=True, null=True)
     course = models.ForeignKey(
-        Courses,
-        db_column='course_id',
-        on_delete=models.CASCADE)
+        Courses, db_column="course_id", on_delete=models.CASCADE
+    )
     # professor_id = models.IntegerField(blank=True, null=True)
     professor = models.ForeignKey(
-        Professors,
-        db_column='professor_id',
-        on_delete=models.CASCADE)
+        Professors, db_column="professor_id", on_delete=models.CASCADE
+    )
     deleted = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
@@ -511,7 +493,7 @@ class Reviews(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'reviews'
+        db_table = "reviews"
 
 
 class Schedules(models.Model):
@@ -523,7 +505,7 @@ class Schedules(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'schedules'
+        db_table = "schedules"
 
 
 class SchedulesSections(models.Model):
@@ -532,7 +514,7 @@ class SchedulesSections(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'schedules_sections'
+        db_table = "schedules_sections"
 
 
 class SchemaMigrations(models.Model):
@@ -540,29 +522,29 @@ class SchemaMigrations(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'schema_migrations'
+        db_table = "schema_migrations"
 
 
 class SectionProfessors(models.Model):
     # section_id = models.IntegerField(blank=True, null=True)
     # professor_id = models.IntegerField(blank=True, null=True)
     created_at = models.IntegerField(
-        db_column='created_at', blank=True, null=True)
+        db_column="created_at", blank=True, null=True
+    )
     updated_at = models.IntegerField(
-        db_column='updated_at', blank=True, null=True)
+        db_column="updated_at", blank=True, null=True
+    )
 
     section = models.ForeignKey(
-        Sections,
-        db_column='section_id',
-        on_delete=models.CASCADE)
+        Sections, db_column="section_id", on_delete=models.CASCADE
+    )
     professor = models.ForeignKey(
-        Professors,
-        db_column='professor_id',
-        on_delete=models.CASCADE)
+        Professors, db_column="professor_id", on_delete=models.CASCADE
+    )
 
     class Meta:
         managed = False
-        db_table = 'section_professors'
+        db_table = "section_professors"
 
 
 class Settings(models.Model):
@@ -575,7 +557,7 @@ class Settings(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'settings'
+        db_table = "settings"
 
 
 class Stats(models.Model):
@@ -590,7 +572,7 @@ class Stats(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'stats'
+        db_table = "stats"
 
 
 class StudentMajors(models.Model):
@@ -601,7 +583,7 @@ class StudentMajors(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'student_majors'
+        db_table = "student_majors"
 
 
 class TextbookTransactions(models.Model):
@@ -617,21 +599,19 @@ class TextbookTransactions(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'textbook_transactions'
+        db_table = "textbook_transactions"
 
 
 class Votes(models.Model):
     vote = models.IntegerField()
     review = models.ForeignKey(
-        Reviews,
-        db_column='voteable_id',
-        on_delete=models.CASCADE)
+        Reviews, db_column="voteable_id", on_delete=models.CASCADE
+    )
     voteable_type = models.CharField(max_length=255)
     # voter_id = models.IntegerField(blank=True, null=True)
     user = models.ForeignKey(
-        Users,
-        db_column='voter_id',
-        on_delete=models.CASCADE, null=True)
+        Users, db_column="voter_id", on_delete=models.CASCADE, null=True
+    )
     voter_type = models.CharField(max_length=255, blank=True, null=True)
     # created_at = models.DateTimeField(blank=True, null=True)
     # updated_at = models.DateTimeField(blank=True, null=True)
@@ -644,4 +624,4 @@ class Votes(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'votes'
+        db_table = "votes"
