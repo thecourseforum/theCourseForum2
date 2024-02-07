@@ -2,17 +2,19 @@ import boto3
 from botocore.exceptions import NoCredentialsError
 import pandas as pd
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 import difflib
 from io import BytesIO
-import json
-from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+
 
 
 N = 5
 access_key = 'DO00YNY32DLHVFM9BY7V'
 secret_key = 'AOtDYKQLo8btebbC45EeZ/oMUr+oqgeVt7lc08Xbe/c'
+
+from ..models import (
+    Course,
+)
 
 def load_similarity_matrix_from_spaces(space_name, object_key):
     try:
@@ -73,7 +75,7 @@ def recommend_classes(similarity_matrix, spring_data, course_name):
     # Example: Return top N recommendations
     return displayedSuggestions
 
-def getRecommendations(course_name):
+def getRecommendationsHelper(course_name):
     # Replace with your DigitalOcean Space name, access key, and secret key
     space_name = 'recommender'
 
@@ -86,8 +88,8 @@ def getRecommendations(course_name):
     # Load data
     spring_data = pd.read_csv('../management/commands/semester_data/csv/2024_spring.csv')
 
-    # Get user input
-    course_name = input('Enter your course name: ')
+    # For testing python file individually
+    # course_name = input('Enter your course name: ')
 
     # Get recommendations
     recommendations = recommend_classes(similarity_matrix, spring_data, course_name)
@@ -95,14 +97,18 @@ def getRecommendations(course_name):
     # Print for debugging
     # for i, recommendation in enumerate(recommendations):
     #     print(f"{i + 1}. {recommendation}")
-    recommendations_json = json.dumps(recommendations)
-    return recommendations_json
+    return recommendations
 
-def get_recommendations_ajax(request):
-    course_name = request.GET.get('course_name', '')
-    recommendations = getRecommendations(course_name)
-    return JsonResponse({'recommendations': recommendations})
+def get_recommendations(request, mnemonic, course_number):
+    course = get_object_or_404(
+        Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number)
+    request.session['course_code'] = course.code()
+    recommendations = getRecommendationsHelper(course)
+    return render(request, 'course/course.html',
+                  {
+                      'recommendations': recommendations
+                  })
 
-#For Testing:
+# For Testing:
 # if __name__ == "__main__":
-#     getRecommendations("Data Structures and Algorithms 1")
+#     print(getRecommendationHelpers("Data Structures and Algorithms 1"))
