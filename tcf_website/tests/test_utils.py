@@ -4,6 +4,7 @@
 """Common testing utilities."""
 
 import logging
+
 from ..models import *
 
 
@@ -12,63 +13,53 @@ def setup(obj):
 
     obj.school = School.objects.create(name="School of Hard Knocks")
     obj.department = Department.objects.create(
-        name="Computer Science",
-        school=obj.school
+        name="Computer Science", school=obj.school
     )
     obj.subdepartment = Subdepartment.objects.create(
-        name="Computer Science",
-        mnemonic="CS",
-        department=obj.department
+        name="Computer Science", mnemonic="CS", department=obj.department
     )
     obj.semester = Semester.objects.create(
-        year=2020,
-        season='FALL',
-        number=1208
+        year=2020, season="FALL", number=1208
     )
     obj.past_semester = Semester.objects.create(
-        year=2010,
-        season='FALL',
-        number=1108
+        year=2010, season="FALL", number=1108
     )
-    obj.incomplete_semester = Semester.objects.create(
-        year=2019,
-        number=1198
-    )
+    obj.incomplete_semester = Semester.objects.create(year=2019, number=1198)
 
     obj.course = Course.objects.create(
         title="Software Testing",
         description="Super advanced and smart tests.",
         number=1420,
         subdepartment=obj.subdepartment,
-        semester_last_taught=obj.semester
+        semester_last_taught=obj.semester,
     )
     obj.course2 = Course.objects.create(
         title="Algorithms",
         description="Super hard algorithms.",
         number=1421,
         subdepartment=obj.subdepartment,
-        semester_last_taught=obj.semester
+        semester_last_taught=obj.semester,
     )
     obj.course3 = Course.objects.create(
         title="Program & Data Structures",
         description="Many complicated data structures.",
         number=1422,
         subdepartment=obj.subdepartment,
-        semester_last_taught=obj.past_semester
+        semester_last_taught=obj.past_semester,
     )
     obj.course4 = Course.objects.create(
         title="Operating Systems",
         description="Very low-level stuff.",
         number=1423,
         subdepartment=obj.subdepartment,
-        semester_last_taught=obj.past_semester
+        semester_last_taught=obj.past_semester,
     )
     obj.course5 = Course.objects.create(
         title="Introduction to Programming",
         description="Intro.",
         number=1424,
         subdepartment=obj.subdepartment,
-        semester_last_taught=obj.past_semester
+        semester_last_taught=obj.past_semester,
     )
 
     obj.user1 = User.objects.create(
@@ -77,50 +68,42 @@ def setup(obj):
         computing_id="tcf2yay",
         first_name="Taylor",
         last_name="Comb",
-        graduation_year=2023
+        graduation_year=2023,
     )
     obj.user2 = User.objects.create(
-        username="tcf3yay",
-        computing_id="tcf3yay",
-        last_name="NoFirstName"
+        username="tcf3yay", computing_id="tcf3yay", last_name="NoFirstName"
     )
     obj.user3 = User.objects.create(
         username="bnf89798",
         computing_id="bnf89798",
         first_name="Bam",
-        last_name="Friedman"
+        last_name="Friedman",
     )
     obj.user4 = User.objects.create(
         username="kik878",
         computing_id="kik878",
         first_name="Kjell",
-        last_name="Kool"
+        last_name="Kool",
     )
 
     obj.instructor = Instructor.objects.create(
-        last_name="Jefferson",
-        first_name="Tom",
-        email="tjt3rea@virginia.edu"
+        last_name="Jefferson", first_name="Tom", email="tjt3rea@virginia.edu"
     )
 
     obj.section_course = Section.objects.create(
-        course=obj.course,
-        semester=obj.semester,
-        sis_section_number=312312
+        course=obj.course, semester=obj.semester, sis_section_number=312312
     )
 
     obj.section_course.instructors.set(
-        Instructor.objects.filter(
-            pk=obj.instructor.pk))
+        Instructor.objects.filter(pk=obj.instructor.pk)
+    )
 
     obj.section_course2 = Section.objects.create(
-        course=obj.course2,
-        semester=obj.semester,
-        sis_section_number=31232
+        course=obj.course2, semester=obj.semester, sis_section_number=31232
     )
     obj.section_course2.instructors.set(
-        Instructor.objects.filter(
-            pk=obj.instructor.pk))
+        Instructor.objects.filter(pk=obj.instructor.pk)
+    )
 
     obj.instructor_grade = CourseInstructorGrade.objects.create(
         instructor=obj.instructor,
@@ -129,20 +112,15 @@ def setup(obj):
     )
 
     obj.instructor_grade2 = CourseInstructorGrade.objects.create(
-        instructor=obj.instructor,
-        course=obj.course,
-        average=3.2
+        instructor=obj.instructor, course=obj.course, average=3.2
     )
 
     obj.instructor_grade3 = CourseInstructorGrade.objects.create(
-        instructor=obj.instructor,
-        course=obj.course2,
-        average=3.9
+        instructor=obj.instructor, course=obj.course2, average=3.9
     )
 
     obj.instructor2 = Instructor.objects.create(
-        first_name="No",
-        last_name="Email"
+        first_name="No", last_name="Email"
     )
 
     obj.review1 = Review.objects.create(
@@ -159,7 +137,7 @@ def setup(obj):
         amount_group=20,
         amount_reading=20,
         amount_writing=20,
-        amount_homework=20
+        amount_homework=20,
     )
 
     obj.review2 = Review.objects.create(
@@ -176,7 +154,7 @@ def setup(obj):
         amount_group=1,
         amount_reading=2,
         amount_writing=0,
-        amount_homework=0
+        amount_homework=0,
     )
 
     obj.review3 = Review.objects.create(
@@ -193,7 +171,7 @@ def setup(obj):
         amount_group=1,
         amount_reading=2,
         amount_writing=3,
-        amount_homework=0
+        amount_homework=0,
     )
 
     obj.review4 = Review.objects.create(
@@ -210,7 +188,7 @@ def setup(obj):
         amount_group=1,
         amount_reading=2,
         amount_writing=0,
-        amount_homework=2
+        amount_homework=2,
     )
 
     obj.review5 = Review.objects.create(
@@ -227,7 +205,7 @@ def setup(obj):
         amount_group=0,
         amount_reading=2,
         amount_writing=0,
-        amount_homework=0
+        amount_homework=0,
     )
 
     obj.review6 = Review.objects.create(
@@ -244,38 +222,29 @@ def setup(obj):
         amount_group=1,
         amount_reading=2,
         amount_writing=1,
-        amount_homework=0
+        amount_homework=0,
     )
 
     obj.course_grade = CourseGrade.objects.create(
-        course=obj.course,
-        average=2.9
+        course=obj.course, average=2.9
     )
 
     obj.upvote_review1 = Vote.objects.create(
-        value=1,
-        user=obj.user1,
-        review=obj.review1
+        value=1, user=obj.user1, review=obj.review1
     )
 
     obj.upvote_review1_2 = Vote.objects.create(
-        value=1,
-        user=obj.user2,
-        review=obj.review1
+        value=1, user=obj.user2, review=obj.review1
     )
     obj.downvote_review1 = Vote.objects.create(
-        value=-1,
-        user=obj.user3,
-        review=obj.review1
+        value=-1, user=obj.user3, review=obj.review1
     )
 
 
 def create_new_semester(self, year):
     """Helper method to modify current semester"""
     self.semester = Semester.objects.create(
-        year=year,
-        season='FALL',
-        number=f'1{year % 100}8'
+        year=year, season="FALL", number=f"1{year % 100}8"
     )
 
 
@@ -288,7 +257,7 @@ def suppress_request_warnings(original_function):
 
     def new_function(*args, **kwargs):
         # raise logging level to ERROR
-        logger = logging.getLogger('django.request')
+        logger = logging.getLogger("django.request")
         previous_logging_level = logger.getEffectiveLevel()
         logger.setLevel(logging.ERROR)
         # trigger original function that would throw warning

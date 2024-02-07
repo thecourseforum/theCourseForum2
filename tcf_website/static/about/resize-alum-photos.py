@@ -1,7 +1,11 @@
-from PIL import Image
 import os
 
-folders = ['tcf_website/static/about/team-pfps', 'tcf_website/static/about/alum-pfps']
+from PIL import Image
+
+folders = [
+    "tcf_website/static/about/team-pfps",
+    "tcf_website/static/about/alum-pfps",
+]
 
 eight_hundred_images_alum = []
 resizable_images_alum = []
@@ -50,14 +54,25 @@ print("Images that are not 800x800 but are resizable:")
 for filename, dimensions in resizable_images_team:
     print(f"    {filename} ({dimensions})")
 
-for folder_name, images in [("alum-pfps", resizable_images_alum), ("team-pfps", resizable_images_team)]:
+for folder_name, images in [
+    ("alum-pfps", resizable_images_alum),
+    ("team-pfps", resizable_images_team),
+]:
     print(f"Resizing images in {folder_name} folder:")
     for filename, dimensions in images:
-        user_input = input(f"Do you want to resize {filename} ({dimensions}) to 800x800? (Y/N): ")
-        if user_input.lower() == 'y':
-            with Image.open(f'tcf_website/static/about/{folder_name}/{filename}') as img:
+        user_input = input(
+            f"Do you want to resize {filename} ({dimensions}) to 800x800? (Y/N): "
+        )
+        if user_input.lower() == "y":
+            with Image.open(
+                f"tcf_website/static/about/{folder_name}/{filename}"
+            ) as img:
                 img = img.resize((800, 800), Image.ANTIALIAS)
-                img.save(os.path.join(f'tcf_website/static/about/{folder_name}/{filename}'))
+                img.save(
+                    os.path.join(
+                        f"tcf_website/static/about/{folder_name}/{filename}"
+                    )
+                )
             print(f"{filename} resized to 800x800")
         else:
             print(f"{filename} not resized")

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tcf_website', '0002_section_section_times'),
+        ("tcf_website", "0002_section_section_times"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='review',
-            name='hidden',
+            model_name="review",
+            name="hidden",
             field=models.BooleanField(default=False),
         ),
     ]
