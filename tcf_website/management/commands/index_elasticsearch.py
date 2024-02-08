@@ -12,29 +12,21 @@ from tcf_website.models import Course, Instructor
 
 class Command(BaseCommand):
     """Indexes the Elastic AppSearch instance w/ Course and Instructor data.
-
     Author: Bradley Knaysi
-
     Created: April 19th, 2020
-
     How To Use:
-
         $ cd theCourseForum2/
         $ docker-compose up
-
         open a new terminal
-
         $ cd theCourseForum2/
         $ docker exec -it tcf_django bash
         $ python3 manage.py index_elasticsearch
-
     WARNING: This should only be done by an Executive Team member each semester
     after new course and instructor data are added to the tcf_db. Note that the
     Elastic portal takes 1 to 2 minutes to fully reflect changes. You can run this as
     many times as you want! It updates a document in Elastic if it already exists and
     adds the document if it didn't. Additionally, this can only be run from a production
     environment due to its reliance on production environment variables (tcf secrets).
-
     """
 
     help = (
