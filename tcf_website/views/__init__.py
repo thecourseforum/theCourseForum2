@@ -30,4 +30,3 @@ from .qa import (
     upvote_question,
 )
 from .review import DeleteReview, downvote, edit_review, new_review, upvote
-from .search import search

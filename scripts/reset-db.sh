@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Make sure to set the DB_FILE environment variable to the name of your SQL dump
 DB_FILE="${DB_FILE:-db/latest.sql}"
