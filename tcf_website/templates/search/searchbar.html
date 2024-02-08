@@ -15,14 +15,13 @@
       color: #333;
     }
 
-    .homepage-autocomplete {
-      left: 5%;
-      width: 90%;
+    .search-results {
+      width: auto;
     }
   </style>
 </head>
 <form class="form-inline flex-grow-1" action="/search" method="get">
-  <div class="input-group flex-grow-1">
+  <div class="input-group flex-grow-1" style="position: relative;">
     <input id="search-input" type="search" class="form-control border border-right-0"
       placeholder="Search for a class or professor..." aria-label="Search" name="q" value="{{query}}">
     <div class="input-group-append">
@@ -30,33 +29,24 @@
         <i class="fa fa-search" aria-hidden="true"></i>
       </button>
     </div>
+    <div class="search-results" id="autocomplete-results" style="
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgb(255, 255, 255);
+      box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+    "></div>
   </div>
 </form>
 
-<div class="search-results" id="autocomplete-results" class="autocomplete-results" style="  position: absolute;
-top: 100%;
-left: 9%;
-width: 72%;
-z-index: 1000;
-background: rgb(248, 248, 248); 
-box-shadow: 0px 4px 6px rgba(0,0,0,0.1); 
-"></div>
 
 <script>
   var autocompleteResults = document.getElementById('autocomplete-results');
   var searchInput = document.getElementById("search-input");
   var latestRequestTime, currentRequestTime;
   document.addEventListener('DOMContentLoaded', function () {
-    var path = window.location.pathname;
-    if (path === '/') {
-      autocompleteResults.style.left = '2.25%';
-      autocompleteResults.style.width = '90%';
-      autocompleteResults.style.textAlign = "LEFT";
-    }
-    else if (path.startsWith('/search')) {
-      autocompleteResults.style.left = '9%';
-      autocompleteResults.style.width = '72%';
-    }
 
     searchInput.addEventListener('input', function () {
       var latestRequestTime = Date.now();
