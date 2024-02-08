@@ -1,13 +1,7 @@
 # pylint: disable=invalid-name
 """Views for search results"""
 import re
-import statistics
 
-from datetime import timedelta
-from django.contrib.postgres.search import TrigramWordSimilarity
-from django.db.models import CharField, ExpressionWrapper, F, FloatField, Value, Q
-from django.db.models import Value
-from django.db.models.functions import Cast, Concat
 from django.contrib.postgres.search import TrigramWordSimilarity
 from django.db.models import (
     CharField,
@@ -18,8 +12,8 @@ from django.db.models import (
     Value,
 )
 from django.db.models.functions import Cast, Concat
-from django.shortcuts import render
 from django.http import JsonResponse
+from django.shortcuts import render
 
 from ..models import Course, Instructor, Subdepartment
 
@@ -322,14 +316,16 @@ def autocomplete(request):
     return JsonResponse({'results': topResults})
 
 
+# pylint: disable=missing-function-docstring
 def compare(result):
     similarity_threshold = 0.75
 
+    meetsThreshold = float('-inf')
+
     try:
-        meetsThreshold = result['score'] if result['score'] > similarity_threshold else float(
-            '-inf')
-    except:
-        # in case some data is formatted the old way
-        meetsThreshold = result['total_similarity'] if result['total_similarity'] > similarity_threshold else float(
-            '-inf')
+        if result['score'] > similarity_threshold:
+            meetsThreshold = result['score']
+    except Exception as _: # pylint: disable=broad-exception-caught
+        if result['total_similarity'] > similarity_threshold:
+            meetsThreshold = result['total_similarity']
     return meetsThreshold
