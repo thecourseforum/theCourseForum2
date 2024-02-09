@@ -67,7 +67,9 @@ def schedule_data_helper(request):
     # this could also be optimized for the database by combining these queries
     for s in schedules:
         courses_context[s.id] = s.get_scheduled_courses()
-        credits_context[s.id] = sum([int(course.section.units) for course in courses_context[s.id]])
+        # if a course doesn't have any units, just default to three
+        credits_context[s.id] = sum([int(course.section.units) if int(
+            course.section.units) != 0 else 3 for course in courses_context[s.id]])
         ratings_context[s.id] = s.average_rating_for_schedule()
         difficulty_context[s.id] = s.average_schedule_difficulty()
 
