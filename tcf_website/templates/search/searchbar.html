@@ -100,9 +100,11 @@
       resultElement.setAttribute('tabindex', '0');
       resultElement.textContent = result.title;
       resultElement.addEventListener('click', function () {
-        searchInput.value = result.title;
-        autocompleteResults.innerHTML = '';
-        searchInput.form.submit();
+        if (result.mnemonic === undefined) {
+          window.location.replace(window.location.origin + '/instructor/' + result.id);
+        } else {
+          window.location.replace(window.location.origin + '/course/' + result.mnemonic.replace(' ', '/'));
+        }
       });
       autocompleteResults.appendChild(resultElement);
     });
