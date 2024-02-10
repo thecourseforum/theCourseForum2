@@ -2,6 +2,8 @@
 <!-- To be imported into templates (navbar, landing page) -->
 <!-- Update your search form -->
 
+{% load static %}
+
 <head>
   <style>
     .autocomplete-result {
@@ -42,8 +44,10 @@
   </div>
 </form>
 
+<script type="module" src="{% static 'search/search_autocomplete.js' %}"></script>
 
-<script>
+
+<!-- <script>
   var autocompleteResults = document.getElementById('autocomplete-results');
   var searchInput = document.getElementById("search-input");
   var latestRequestTime, currentRequestTime;
@@ -107,4 +111,4 @@
       autocompleteResults.appendChild(resultElement);
     });
   }
-</script>
+</script> -->
