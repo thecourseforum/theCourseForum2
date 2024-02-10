@@ -15,6 +15,13 @@
       "github": "Ann924"
     },
     {
+      "name": "Barrett Ruth",
+      "role": "VP | Infrastructure Engineering",
+      "class": "2026",
+      "img_filename": "ENG_Barrett_Ruth.jpg",
+      "github": "barrett-ruth"
+    },
+    {
       "name": "Oliver Song",
       "role": "VP | Product Engineering",
       "class": "2024",
@@ -87,6 +94,13 @@
       "class": "2026",
       "img_filename": "ENG_Raffi_Khondaker.jpeg",
       "github": "therealraffi"
+    },
+    {
+      "name": "Barrett Ruth",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Barrett_Ruth.jpg",
+      "github": "barrett-ruth"
     },
     {
       "name": "Lilian Zhang",
