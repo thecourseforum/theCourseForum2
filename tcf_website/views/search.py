@@ -34,7 +34,6 @@ def search(request):
 
     instructors = fetch_instructors(query)
     courses = fetch_courses(title_part, number_part)
-    courses = fetch_courses(title_part, number_part)
 
     courses_first = decide_order(query, courses, instructors)
 
