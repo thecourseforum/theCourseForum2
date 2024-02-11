@@ -51,7 +51,9 @@ def decide_order(query, courses, instructors):
     """
 
     # Calculate average similarity for courses
-    courses_avg = compute_avg_similarity([x["score"] for x in courses["results"]])
+    courses_avg = compute_avg_similarity(
+        [x["score"] for x in courses["results"]]
+    )
 
     # Calculate average similarity for instructors
     instructors_avg = compute_avg_similarity(
@@ -71,12 +73,17 @@ def decide_order(query, courses, instructors):
 
     # If there is a perfect match for any part of the professor's name, return that
     # unless it also perfectly matches a course
-    if first_instructor_score == 1.0 and first_instructor_score >= first_course_score:
+    if (
+        first_instructor_score == 1.0
+        and first_instructor_score >= first_course_score
+    ):
         return False
 
     # Prioritize courses for short queries or if their average similarity
     # score is significantly higher
-    if len(query) <= 4 or (courses_avg > instructors_avg and courses_avg > THRESHOLD):
+    if len(query) <= 4 or (
+        courses_avg > instructors_avg and courses_avg > THRESHOLD
+    ):
         return True
 
     # Prioritize courses if professor search result length is 0, regardless of course results
@@ -200,7 +207,6 @@ def fetch_courses(title, number):
 def format_response(response):
     """Formats an Elastic search endpoint response."""
     formatted = {"error": False, "results": []}
-    formatted = {"error": False, "results": []}
     if "error" in response:
         formatted["error"] = True
         return formatted
@@ -298,33 +304,35 @@ def autocomplete(request):
         title_part, number_part = query, ""
 
     # fetching instructor results from query
-    instructorData = fetch_instructors(query)['results']
+    instructorData = fetch_instructors(query)["results"]
     # normalizing instructor data
     for instructor in instructorData:
-        instructor['score'] = instructor.pop('score')/2.5
-        instructor['title'] = instructor.pop('first_name') + " " + instructor.pop('last_name')
+        instructor["score"] = instructor.pop("score") / 2.5
+        instructor["title"] = (
+            instructor.pop("first_name") + " " + instructor.pop("last_name")
+        )
 
     courses = fetch_courses(title_part, number_part)
-    courseData = list(courses['results'])
+    courseData = list(courses["results"])
 
     combinedData = instructorData + courseData
 
     # sort the top results using the compare function
     topResults = sorted(combinedData, key=compare, reverse=True)[:5]
 
-    return JsonResponse({'results': topResults})
+    return JsonResponse({"results": topResults})
 
 
 # pylint: disable=missing-function-docstring
 def compare(result):
     similarity_threshold = 0.75
 
-    meetsThreshold = float('-inf')
+    meetsThreshold = float("-inf")
 
     try:
-        if result['score'] > similarity_threshold:
-            meetsThreshold = result['score']
-    except Exception as _: # pylint: disable=broad-exception-caught
-        if result['total_similarity'] > similarity_threshold:
-            meetsThreshold = result['total_similarity']
+        if result["score"] > similarity_threshold:
+            meetsThreshold = result["score"]
+    except Exception as _:  # pylint: disable=broad-exception-caught
+        if result["total_similarity"] > similarity_threshold:
+            meetsThreshold = result["total_similarity"]
     return meetsThreshold
