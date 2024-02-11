@@ -64,7 +64,7 @@ jobs:
           python manage.py migrate
 
       - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v2
         with:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
@@ -76,7 +76,7 @@ jobs:
         run: envsubst < .config/app.yaml.template > app.yaml
 
       - name: Deploy to Google App Engine
-        uses: google-github-actions/deploy-appengine@main
+        uses: google-github-actions/deploy-appengine@v1
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
