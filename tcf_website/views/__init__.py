@@ -13,7 +13,6 @@ from .browse import (
     department,
     instructor_view,
 )
-from .search import search, autocomplete
 from .discord import post_message
 from .index import AboutView, index, privacy, terms
 from .profile import DeleteProfile, profile, reviews
@@ -30,3 +29,4 @@ from .qa import (
     upvote_question,
 )
 from .review import DeleteReview, downvote, edit_review, new_review, upvote
+from .search import autocomplete, search
