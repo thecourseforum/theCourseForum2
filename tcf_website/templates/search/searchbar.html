@@ -63,13 +63,18 @@
     searchInput.addEventListener('input', adjustAutocompleteWidth);
     window.addEventListener('resize', adjustAutocompleteWidth);
 
+    var onCooldown = false;
+    var debounceTimeout = undefined;
     searchInput.addEventListener('input', function () {
       var latestRequestTime = Date.now();
       currentRequestTime = latestRequestTime;
       var query = searchInput.value;
 
+      if (debounceTimeout !== undefined) {
+        clearTimeout(debounceTimeout);
+      }
       debounceTimeout = setTimeout(function () {
-        if (query.length >= 1) {
+        if (query.length >= 1 && !onCooldown) {
           fetch('/autocomplete/?q=' + encodeURIComponent(query))
             .then(response => response.json())
             .then(data => {
@@ -78,10 +83,14 @@
               }
             })
             .catch(error => console.error('Error:', error));
+          onCooldown = true;
+          setTimeout(function () {
+            onCooldown = false;
+          }, 100);
         } else {
           autocompleteResults.innerHTML = '';
         }
-      }, 50);
+      }, 100);
     });
   });
 
