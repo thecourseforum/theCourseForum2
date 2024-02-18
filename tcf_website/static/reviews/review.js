@@ -69,9 +69,9 @@ export { handleVote };
 $(function() {
     // On browser window resize, refresh collapser threshold for each review card
     $(".review").each(function(i, review) {
-        var visibleReviewBody = $(this).find("div.review-text-body");
-        var fullReviewText = $(this).find("p.review-text-full");
-        var reviewCollapseLink = $(this).find("a.review-collapse-link");
+        const visibleReviewBody = $(this).find("div.review-text-body");
+        const fullReviewText = $(this).find("p.review-text-full");
+        const reviewCollapseLink = $(this).find("a.review-collapse-link");
 
         // Long review
         if (visibleReviewBody.height() < fullReviewText.height()) {

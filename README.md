@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./tcf_website/static/base/img/new_logo.png" alt="logo" width="200"/>
+    <img src="./tcf_website/static/base/img/new_logo.svg" alt="logo" width="200"/>
 </p>
 
 <h1 align="center">theCourseForum2</h1>

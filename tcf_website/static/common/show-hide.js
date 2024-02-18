@@ -1,4 +1,3 @@
-
 const showOld = () => {
     $("#hide-btn").removeClass("active");
     $("#show-btn").addClass("active");
