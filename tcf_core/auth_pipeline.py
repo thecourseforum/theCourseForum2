@@ -11,7 +11,6 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from social_core.pipeline.partial import partial
 from social_core.strategy import BaseStrategy
 
 from tcf_website.models import User
@@ -46,17 +45,15 @@ def password_validation(backend, details, request, response, *args, **kwargs):
             return redirect("/login/password_error", error=True)
     return {"password": response.get("password")}
 
-# Make BaseStrategy.validate_email() always return true, so that
+# Make BaseStrategy.validate_email() always return True, so that
 # social_core.pipeline.mail.mail_validation can be run multiple times
-def always_true(*args, **kwargs):
-    return True
-BaseStrategy.validate_email = always_true
+BaseStrategy.validate_email = lambda *args, **kwargs: True
 
-# Wrapper over strategy.clean_partial_pipeline() to implement partial token persistence
 def partial_token_persistence(orig_func):
+    """Wrapper over strategy.clean_partial_pipeline() to implement partial token persistence."""
     @wraps(orig_func)
     def new_func(self, *args, **kwargs):
-        if (self.session.get('persist_partial_token', default=False)):
+        if self.session.get('persist_partial_token', default=False):
             # Persist partial token
             pass
         else:
