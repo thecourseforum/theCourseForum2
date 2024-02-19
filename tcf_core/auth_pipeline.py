@@ -4,13 +4,14 @@
 # pylint: disable=line-too-long
 """Custom authentication pipeline steps."""
 
+from functools import wraps
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from social_core.pipeline.partial import partial
+from social_core.strategy import BaseStrategy
 
 from tcf_website.models import User
 
@@ -44,12 +45,31 @@ def password_validation(backend, details, request, response, *args, **kwargs):
             return redirect("/login/password_error", error=True)
     return {"password": response.get("password")}
 
+# Make BaseStrategy.validate_email() always return True, so that
+# social_core.pipeline.mail.mail_validation can be run multiple times
+BaseStrategy.validate_email = lambda *args, **kwargs: True
 
-@partial
+def partial_token_persistence(orig_func):
+    """Wrapper over strategy.clean_partial_pipeline() to implement partial token persistence."""
+    @wraps(orig_func)
+    def new_func(self, *args, **kwargs):
+        if self.session.get('persist_partial_token', default=False):
+            # Persist partial token
+            pass
+        else:
+            # Delete partial token
+            orig_func(self, *args, **kwargs)
+    return new_func
+BaseStrategy.clean_partial_pipeline = partial_token_persistence(BaseStrategy.clean_partial_pipeline)
+
 def collect_extra_info(
     strategy, backend, request, details, user=None, *args, **kwargs
 ):
     """Collect extra information on sign up."""
+
+    # Disable partial token persistence
+    strategy.session_set('persist_partial_token', False)
+
     if user:
         return {"is_new": False}
 
@@ -57,11 +77,18 @@ def collect_extra_info(
     # because it exists in FIELDS_STORED_IN_SESSION
     grad_year = strategy.session_get("grad_year", None)
     if not grad_year:
+        # If grad year isn't available yet, persist the current partial token
+        strategy.session_set('persist_partial_token', True)
+
         # if we return something besides a dict or None, then that is
         # returned to the user -- in this case we will redirect to a
         # view that can be used to get a password
-        return redirect(f"/login/collect_extra_info/{backend.name}")
-
+        return redirect(f"/login/collect_extra_info/{backend.name}"
+                        + "?verification_code="
+                        + request.GET['verification_code']
+                        + "&partial_token="
+                        + request.GET['partial_token']
+                        )
 
 USER_FIELDS = ["email", "username"]
 
