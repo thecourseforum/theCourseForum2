@@ -80,7 +80,7 @@ $ docker exec -it tcf_django python manage.py load_grades <year>_<season>.csv
 
 5. Update ElasticSearch to reflect the latest database changes:
 
-```
+```console
 $ docker exec tcf_django python manage.py index_elasticsearch
 ```
 
@@ -88,6 +88,18 @@ $ docker exec tcf_django python manage.py index_elasticsearch
 
 6. Commit the semesterly data to the repo
 7. Remove production credentialing (use `.env` credentials like normal)
+
+## Loading Semester Data
+
+Load semester data from Lou's List (soon to be straight from the SIS API) using the provided Django management command:
+
+```console
+$ docker exec -it tcf_django python manage.py load_semester <year>_<season>
+```
+
+See [load_semester.py](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/load_semester.py) for more information.
+
+## [Requesting Grade Data/FOIA Requests](docs/grade-data.md)
 
 ## Formatting the Codebase
 
