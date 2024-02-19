@@ -44,12 +44,12 @@ jobs:
       # because that's how `workflow_run` works at the moment
       # https://github.community/t/workflow-run-not-working-as-expected/139342
       - name: Checkout `master`
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Set up Python ${{ env.PYTHON_TARGET }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON_TARGET }}
 
@@ -64,7 +64,7 @@ jobs:
           python manage.py migrate
 
       - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+        uses: google-github-actions/setup-gcloud@v0
         with:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
@@ -85,7 +85,7 @@ jobs:
     needs: [deploy]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
 
       - name: Send a message to tCF Discord Server when deployment is finished
         env:
