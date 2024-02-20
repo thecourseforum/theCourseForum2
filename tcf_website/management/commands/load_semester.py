@@ -36,7 +36,7 @@ class Command(BaseCommand):
             name='Miscellaneous', school=self.UNKNOWN_SCHOOL)
         self.STAFF, _ = Instructor.objects.get_or_create(last_name='Staff')
 
-        self.data_dir = 'tcf_website/management/commands/semester_data/csv/'
+        self.data_dir = 'tcf_website/management/commands/semester_data/sis_csv/'
 
         semester = options['semester']
 
