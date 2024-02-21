@@ -13,6 +13,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 import social_core.pipeline.mail
 from social_core.exceptions import InvalidEmail
+from social_core.strategy import BaseStrategy
 
 from tcf_website.models import User
 
@@ -46,8 +47,8 @@ def password_validation(backend, details, request, response, *args, **kwargs):
             return redirect("/login/password_error", error=True)
     return {"password": response.get("password")}
 
-# Wrapper for social_core.pipeline.mail.mail_validation which ignores InvalidEmail exception
 def mail_validation(*args, **kwargs):
+    """Wrapper for social_core.pipeline.mail.mail_validation which ignores InvalidEmail exception."""
     result = None
     try:
         result = social_core.pipeline.mail.mail_validation(*args, **kwargs)
@@ -57,11 +58,9 @@ def mail_validation(*args, **kwargs):
 
 def implement_partial_token_persistence():
     """Apply a wrapper over strategy.clean_partial_pipeline() to implement partial token persistence."""
-    from social_core.strategy import BaseStrategy
-
     if hasattr(BaseStrategy.clean_partial_pipeline, 'wrapped'):
         return # already wrapped
-    
+
     def wrapper(orig_func):
         @wraps(orig_func)
         def new_func(self, *args, **kwargs):
@@ -72,7 +71,7 @@ def implement_partial_token_persistence():
                 # Delete partial token
                 orig_func(self, *args, **kwargs)
         return new_func
-    
+
     # Apply wrapper
     wrapped_func = wrapper(BaseStrategy.clean_partial_pipeline)
     wrapped_func.wrapped = True
