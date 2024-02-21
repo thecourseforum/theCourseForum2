@@ -11,7 +11,8 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from social_core.strategy import BaseStrategy
+import social_core.pipeline.mail
+from social_core.exceptions import InvalidEmail
 
 from tcf_website.models import User
 
@@ -45,22 +46,37 @@ def password_validation(backend, details, request, response, *args, **kwargs):
             return redirect("/login/password_error", error=True)
     return {"password": response.get("password")}
 
-# Make BaseStrategy.validate_email() always return True, so that
-# social_core.pipeline.mail.mail_validation can be run multiple times
-BaseStrategy.validate_email = lambda *args, **kwargs: True
+# Wrapper for social_core.pipeline.mail.mail_validation which ignores InvalidEmail exception
+def mail_validation(*args, **kwargs):
+    result = None
+    try:
+        result = social_core.pipeline.mail.mail_validation(*args, **kwargs)
+    except InvalidEmail:
+        pass # do nothing
+    return result
 
-def partial_token_persistence(orig_func):
-    """Wrapper over strategy.clean_partial_pipeline() to implement partial token persistence."""
-    @wraps(orig_func)
-    def new_func(self, *args, **kwargs):
-        if self.session.get('persist_partial_token', default=False):
-            # Persist partial token
-            pass
-        else:
-            # Delete partial token
-            orig_func(self, *args, **kwargs)
-    return new_func
-BaseStrategy.clean_partial_pipeline = partial_token_persistence(BaseStrategy.clean_partial_pipeline)
+def implement_partial_token_persistence():
+    """Apply a wrapper over strategy.clean_partial_pipeline() to implement partial token persistence."""
+    from social_core.strategy import BaseStrategy
+
+    if hasattr(BaseStrategy.clean_partial_pipeline, 'wrapped'):
+        return # already wrapped
+    
+    def wrapper(orig_func):
+        @wraps(orig_func)
+        def new_func(self, *args, **kwargs):
+            if self.session.get('persist_partial_token', default=False):
+                # Persist partial token
+                pass
+            else:
+                # Delete partial token
+                orig_func(self, *args, **kwargs)
+        return new_func
+    
+    # Apply wrapper
+    wrapped_func = wrapper(BaseStrategy.clean_partial_pipeline)
+    wrapped_func.wrapped = True
+    BaseStrategy.clean_partial_pipeline = wrapped_func
 
 def collect_extra_info(
     strategy, backend, request, details, user=None, *args, **kwargs
@@ -68,6 +84,7 @@ def collect_extra_info(
     """Collect extra information on sign up."""
 
     # Disable partial token persistence
+    implement_partial_token_persistence()
     strategy.session_set('persist_partial_token', False)
 
     if user:

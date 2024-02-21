@@ -170,7 +170,7 @@ SOCIAL_AUTH_PIPELINE = (
     "tcf_core.auth_pipeline.auth_allowed",
     "social_core.pipeline.social_auth.social_user",
     "social_core.pipeline.user.get_username",
-    "social_core.pipeline.mail.mail_validation",
+    "tcf_core.auth_pipeline.mail_validation",
     "social_core.pipeline.social_auth.associate_by_email",
     "tcf_core.auth_pipeline.collect_extra_info",
     "tcf_core.auth_pipeline.create_user",
