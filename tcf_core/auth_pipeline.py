@@ -47,19 +47,21 @@ def password_validation(backend, details, request, response, *args, **kwargs):
             return redirect("/login/password_error", error=True)
     return {"password": response.get("password")}
 
+
 def mail_validation(*args, **kwargs):
     """Wrapper for social_core.pipeline.mail.mail_validation which ignores InvalidEmail exception."""
     result = None
     try:
         result = social_core.pipeline.mail.mail_validation(*args, **kwargs)
     except InvalidEmail:
-        pass # do nothing
+        pass  # do nothing
     return result
+
 
 def implement_partial_token_persistence():
     """Apply a wrapper over strategy.clean_partial_pipeline() to implement partial token persistence."""
     if hasattr(BaseStrategy.clean_partial_pipeline, 'wrapped'):
-        return # already wrapped
+        return  # already wrapped
 
     def wrapper(orig_func):
         @wraps(orig_func)
@@ -76,6 +78,7 @@ def implement_partial_token_persistence():
     wrapped_func = wrapper(BaseStrategy.clean_partial_pipeline)
     wrapped_func.wrapped = True
     BaseStrategy.clean_partial_pipeline = wrapped_func
+
 
 def collect_extra_info(
     strategy, backend, request, details, user=None, *args, **kwargs
@@ -105,6 +108,7 @@ def collect_extra_info(
                         + "&partial_token="
                         + request.GET['partial_token']
                         )
+
 
 USER_FIELDS = ["email", "username"]
 
