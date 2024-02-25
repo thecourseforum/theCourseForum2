@@ -1,5 +1,5 @@
-import json
 import csv
+import json
 import requests
 
 from django.core.management.base import BaseCommand
@@ -23,10 +23,9 @@ class Command(BaseCommand):
         all_classes = []
         page = 1
         while True:
-            print(page)
             page_url = semester_url + str(page)
             try:
-                response = requests.get(page_url)
+                response = requests.get(page_url, timeout=10)  # Adding timeout argument to prevent hanging
                 page_data = json.loads(response.text)
             except requests.exceptions.RequestException as e:
                 self.stderr.write(f'An error occurred: {e}')
@@ -51,7 +50,7 @@ class Command(BaseCommand):
               f"FieldFormula.IScript_ClassDetails?institution=UVA01&term={semester}&class_nbr={course_number}"
 
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=10)  # Adding timeout argument
         except requests.exceptions.RequestException as e:
             return None
 
