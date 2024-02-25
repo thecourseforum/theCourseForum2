@@ -18,7 +18,7 @@
       "name": "Barrett Ruth",
       "role": "VP | Infrastructure Engineering",
       "class": "2026",
-      "img_filename": "ENG_Barrett_Ruth.jpg",
+      "img_filename": "ENG_Barrett_Ruth.webp",
       "github": "barrett-ruth"
     },
     {
@@ -99,7 +99,7 @@
       "name": "Barrett Ruth",
       "role": "Developer",
       "class": "2026",
-      "img_filename": "ENG_Barrett_Ruth.jpg",
+      "img_filename": "ENG_Barrett_Ruth.webp",
       "github": "barrett-ruth"
     },
     {
@@ -159,11 +159,143 @@
       "github": "nehagb99"
     },
     {
+      "name": "Ruiyu Zhang",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Ruiyu_Zhang.jpg",
+      "github": "RuiyuZhang69"
+    },
+    {
       "name": "Kyle Durrer",
       "role": "Developer",
       "class": "2024",
       "img_filename": "ENG_Kyle_Durrer.jpg",
       "github": "kmd2zjw"
+    }, 
+    {
+      "name": "Alex Yung",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Alex_Yung.jpg",
+      "github": "alex-yung-github"
+    },
+    {
+      "name": "Bryan Katuari",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Bryan_Katuari.jpg",
+      "github": "bryankatuari"
+    },
+    {
+      "name": "Luke Kohler",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Luke_Kohler.jpeg",
+      "github": "ldkohler"
+    },
+    {
+      "name": "Vincent Song",
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Vincent_Song.jpg",
+      "github": "vsong15"
+    },
+    {
+      "name": "Arthur Wu",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Arthur_Wu.jpg",
+      "github": "arthurwu1227"
+    },
+    {
+      "name": "Zohaib Khalid", 
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Zohaib_Khalid.jpg",
+      "github": "zohaibk04"
+    },
+    {
+      "name": "Kingsley Kim",
+      "role:": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Kingsley_Kim.jpg",
+      "github": "kingsleykimm"
+    },
+    {
+      "name": "Riley Fletcher",
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Riley_Fletcher.jpg",
+      "github": "nrfletcher"
+    },
+    {
+      "name": "Artie Humphreys",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Artie_Humphreys.jpg",
+      "github": "artiehumphreys"
+    },
+    {
+      "name": "Blaire Zhao", 
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Blaire_Zhao.jpg",
+      "github": "blairezh"
+    },
+    {
+      "name": "Junho Lee", 
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Junho_Lee.jpg",
+      "github": "junholee6a"
+    }
+    ,
+    {
+      "name": "Ja-Zhua Cheng",
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Ja-Zhua_Cheng.jpeg"
+    }
+    ,
+    {
+      "name": "Justin Park",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Justin_Park.jpg"
+    },
+    {
+      "name": "Vivian Gao",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Vivian_Gao.jpg"
+    },
+    {
+      "name": "Jay Lalwani",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Jay_Lalwani.jpg",
+      "github": "Jay-Lalwani"
+    },
+    {
+      "name": "Olivia Seto", 
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Olivia_Seto.jpg",
+      "github": "oliviaseto"
+    },
+    {
+      "name": "Sebastian Wiktorowicz",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Sebastian_Wiktorowicz.png",
+      "github": "SebastianWikt"
+    },
+    {
+      "name": "Tino Martella",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Tino_Martella.jpg",
+      "github": "Tino-Martella"
     }
   ],
   "marketing_team": [
@@ -191,5 +323,6 @@
       "class": "2025",
       "img_filename": "DM_Chai_Zhang.JPG"
     }
+    
   ]
 }
