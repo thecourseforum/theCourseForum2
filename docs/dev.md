@@ -23,7 +23,7 @@ $ docker compose up
 
 5. Wait for the Django server to finish building (i.e. `tcf_django | Watching for file changes with StatReloader` is visible in stdout).
 6. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) from Google Drive into `db/latest.sql` in your local repo.
-7. Update the database according to your operating system:
+7. Update the database:
 
 MacOS/Linux (or Windows, if you're using Git-Bash):
 
@@ -31,11 +31,7 @@ MacOS/Linux (or Windows, if you're using Git-Bash):
 $ sh scripts/reset-db.sh db/latest.sql
 ```
 
-Windows (Command Prompt or PowerShell):
-
-```console
-$ scripts\reset-db.bat db\latest.sql
-```
+If you're on windows, open up `scripts/reset-db.sh` and run the commands manually (sorry)
 
 8. Ensure the website is up, running, and functional at `localhost:8000`.
 
