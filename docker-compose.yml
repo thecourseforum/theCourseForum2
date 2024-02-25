@@ -1,35 +1,35 @@
-version: '3'
+version: "3"
 
 services:
   web:
     build: .
-    command: bash -c "
-      npm install --no-fund --no-audit &&
-      pip install --upgrade -r requirements.txt &&
-      python3 manage.py migrate &&
-      python3 manage.py collectstatic --noinput &&
-      python3 manage.py invalidate_cachalot tcf_website &&
-      echo Starting Django Server... &&
-      python3 manage.py runserver 0.0.0.0:8000"
+    command:
+      bash -c "if [ \"${ENVIRONMENT}\" = 'dev' ]; then /wait-for-it.sh tcf_db:${DB_PORT} || exit 1; fi && \
+      python manage.py migrate && \
+      python manage.py collectstatic --noinput && \
+      python manage.py invalidate_cachalot tcf_website && \
+      echo 'Starting Django Server...' && \
+      python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
-      - /app/db/  # exclude the subfolder to prevent potential interference
+      - /app/db/ # exclude the subfolder to prevent potential interference
+      - node_modules:/app/node_modules
     ports:
-      - '8000:8000'
+      - "8000:8000"
     container_name: tcf_django
-    env_file:
-      - .env
     restart: always
+    depends_on:
+      - db
   db:
+    image: postgres:15.4
     volumes:
       - ./db:/app
-    image: postgres:15.4
     restart: always
     container_name: tcf_db
-    env_file:
-      - ./.env
-    command: -p ${DB_PORT}
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PORT: ${DB_PORT}
+volumes:
+  node_modules:
