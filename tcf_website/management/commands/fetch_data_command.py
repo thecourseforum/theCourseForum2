@@ -1,9 +1,12 @@
+"""
+Django management command to fetch data from SIS API and convert it into a CSV file.
+"""
+import os
 import csv
 import json
 import requests
 
 from django.core.management.base import BaseCommand
-
 
 class Command(BaseCommand):
     help = 'Fetches data from SIS API for the specified semester and saves it to a CSV file'
@@ -16,7 +19,9 @@ class Command(BaseCommand):
         self.stdout.write(f"Fetching data for semester {semester}...")
 
         semester_url = (
-            f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch?institution=UVA01&term={semester}&page="
+            f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/"
+            f"WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch?"
+            f"institution=UVA01&term={semester}&page="
         )
 
         all_classes = []
@@ -24,7 +29,7 @@ class Command(BaseCommand):
         while True:
             page_url = semester_url + str(page)
             try:
-                response = requests.get(page_url, timeout=10)  # Adding timeout argument to prevent hanging
+                response = requests.get(page_url, timeout=30)
                 page_data = json.loads(response.text)
             except requests.exceptions.RequestException as e:
                 self.stderr.write(f'An error occurred: {e}')
@@ -45,11 +50,22 @@ class Command(BaseCommand):
 
     @staticmethod
     def compile_course_data(course_number, semester):
-        url = f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassDetails?institution=UVA01&term={semester}&class_nbr={course_number}"
+        """
+        Compiles course data from SIS API response.
+
+        :param course_number: The course number.
+        :param semester: The semester.
+        :return: Dictionary containing course information.
+        """
+        url = (
+            f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/"
+            f"WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassDetails?"
+            f"institution=UVA01&term={semester}&class_nbr={course_number}"
+        )
 
         try:
-            response = requests.get(url, timeout=10)  # Adding timeout argument
-        except requests.exceptions.RequestException as e:
+            response = requests.get(url, timeout=30)
+        except requests.exceptions.RequestException:
             return None
 
         data = json.loads(response.text)
@@ -74,19 +90,27 @@ class Command(BaseCommand):
                 "LAB": "Laboratory"
             }.get(class_details["component"], class_details["component"]),
             "Units": class_details["units"][0:class_details["units"].find("units") - 1],
-            "Instructor1": ", ".join(instructor["name"] for instructor in meetings.get(0)["instructors"] if instructor["name"] != "-") if meetings.get(0) else "",
+            "Instructor1": ", ".join(
+                instructor["name"] for instructor in meetings.get(0)["instructors"]
+                if instructor["name"] != "-") if meetings.get(0) else "",
             "Days1": meetings.get(0)["meets"] if meetings.get(0)["meets"] != "-" else "TBA",
             "Room1": meetings.get(0)["room"] if meetings.get(0)["room"] != "-" else "TBA",
             "MeetingDates1": meetings.get(0)["date_range"] if meetings.get(0) else "",
-            "Instructor2": ", ".join(instructor["name"] for instructor in meetings.get(1)["instructors"] if instructor["name"] != "-") if meetings.get(1) else "",
+            "Instructor2": ", ".join(
+                instructor["name"] for instructor in meetings.get(1)["instructors"]
+                if instructor["name"] != "-") if meetings.get(1) else "",
             "Days2": meetings.get(1)["meets"] if meetings.get(1) else "",
             "Room2": meetings.get(1)["room"] if meetings.get(1) else "",
             "MeetingDates2": meetings.get(1)["date_range"] if meetings.get(1) else "",
-            "Instructor3": ", ".join(instructor["name"] for instructor in meetings.get(2)["instructors"] if instructor["name"] != "-") if meetings.get(2) else "",
+            "Instructor3": ", ".join(
+                instructor["name"] for instructor in meetings.get(2)["instructors"]
+                if instructor["name"] != "-") if meetings.get(2) else "",
             "Days3": meetings.get(2)["meets"] if meetings.get(2) else "",
             "Room3": meetings.get(2)["room"] if meetings.get(2) else "",
             "MeetingDates3": meetings.get(2)["date_range"] if meetings.get(2) else "",
-            "Instructor4": ", ".join(instructor["name"] for instructor in meetings.get(3)["instructors"] if instructor["name"] != "-") if meetings.get(3) else "",
+            "Instructor4": ", ".join(
+                instructor["name"] for instructor in meetings.get(3)["instructors"]
+                if instructor["name"] != "-") if meetings.get(3) else "",
             "Days4": meetings.get(3)["meets"] if meetings.get(3) else "",
             "Room4": meetings.get(3)["room"] if meetings.get(3) else "",
             "MeetingDates4": meetings.get(3)["date_range"] if meetings.get(3) else "",
@@ -96,15 +120,23 @@ class Command(BaseCommand):
             "Enrollment": class_availability["enrollment_total"],
             "EnrollmentLimit": class_availability["class_capacity"],
             "Waitlist": class_availability["wait_list_total"],
-            "Description": data["section_info"]["catalog_descr"]["crse_catalog_description"].replace("\n", " ").replace("\r", " ")
+            "Description": data["section_info"]["catalog_descr"]["crse_catalog_description"]
+            .replace("\n", " ").replace("\r", " ")
         }
         return course_dictionary
 
     @staticmethod
     def write_to_csv(course_list, filename):
+        """
+        Writes course data to a CSV file.
+
+        :param course_list: List of dictionaries containing course information.
+        :param filename: Name of the CSV file.
+        """
         fieldnames = list(course_list[0].keys())
-        csv_filename = filename + ".csv"
-        with open(csv_filename, 'a', newline='') as csvfile:
+        csv_directory = "tcf_website/management/commands/semester_data/csv/"
+        csv_path = os.path.join(csv_directory, filename + ".csv")
+        with open(csv_path, 'a', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             if csvfile.tell() == 0:
                 writer.writeheader()
