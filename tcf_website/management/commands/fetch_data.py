@@ -5,6 +5,7 @@ import os
 import csv
 import json
 import requests
+from tqdm import tqdm
 
 from django.core.management.base import BaseCommand
 
@@ -41,6 +42,7 @@ class Command(BaseCommand):
         all_classes = []
         page = 1
         while True:
+            self.stdout.write(f"\nFetching page {page}...")
             page_url = semester_url + str(page)
             try:
                 response = requests.get(page_url, timeout=300)
@@ -52,7 +54,7 @@ class Command(BaseCommand):
             if not page_data:
                 break
 
-            for course in page_data:
+            for course in tqdm(page_data):
                 class_data = self.compile_course_data(course['class_nbr'], sem_code)
                 if class_data:
                     all_classes.append(class_data)
