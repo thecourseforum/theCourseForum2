@@ -9,6 +9,15 @@ import requests
 from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
+    """
+    Command to fetch data from SIS API for the specified semester and save it to a CSV file.
+
+    Usage:
+    docker exec -it tcf_django python3 manage.py fetch_data <senester_code>
+
+    Example:
+    docker exec -it tcf_django python3 manage.py fetch_data "1232"
+    """
     help = 'Fetches data from SIS API for the specified semester and saves it to a CSV file'
 
     def add_arguments(self, parser):
