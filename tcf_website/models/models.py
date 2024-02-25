@@ -767,7 +767,7 @@ class Vote(models.Model):
         ]
 
 #Tag class for organizing
-class Tag(models.model):
+class Tag(models.Model):
     """Tag model.
     Many to many relationship with Question
     has school, department, course, instructor and semester
