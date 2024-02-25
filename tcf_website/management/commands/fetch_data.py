@@ -13,24 +13,29 @@ class Command(BaseCommand):
     Command to fetch data from SIS API for the specified semester and save it to a CSV file.
 
     Usage:
-    docker exec -it tcf_django python3 manage.py fetch_data <senester_code>
+    docker exec -it tcf_django python3 manage.py fetch_data "<year> <season>"
 
     Example:
-    docker exec -it tcf_django python3 manage.py fetch_data "1232"
+    docker exec -it tcf_django python3 manage.py fetch_data "2023 spring"
     """
     help = 'Fetches data from SIS API for the specified semester and saves it to a CSV file'
 
     def add_arguments(self, parser):
-        parser.add_argument('semester', type=str, help='Semester code (e.g., "1232")')
+        parser.add_argument('semester', type=str, help='<year> <season>(e.g., "2023 spring")')
 
     def handle(self, *args, **kwargs):
-        semester = kwargs['semester']
-        self.stdout.write(f"Fetching data for semester {semester}...")
+        year, season = kwargs['semester'].split()
+        season = season.lower()
+        season_numbers = {"fall": 8, "summer": 6, "spring": 2, "january": 1}
+        year_code = str(year)[-2:]
+        sem_code = f"1{year_code}{season_numbers.get(season)}"
+
+        self.stdout.write(f"Fetching course data for {year} {season}...")
 
         semester_url = (
             f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/"
             f"WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch?"
-            f"institution=UVA01&term={semester}&page="
+            f"institution=UVA01&term={sem_code}&page="
         )
 
         all_classes = []
@@ -38,7 +43,7 @@ class Command(BaseCommand):
         while True:
             page_url = semester_url + str(page)
             try:
-                response = requests.get(page_url, timeout=30)
+                response = requests.get(page_url, timeout=300)
                 page_data = json.loads(response.text)
             except requests.exceptions.RequestException as e:
                 self.stderr.write(f'An error occurred: {e}')
@@ -48,32 +53,32 @@ class Command(BaseCommand):
                 break
 
             for course in page_data:
-                class_data = self.compile_course_data(course['class_nbr'], semester)
+                class_data = self.compile_course_data(course['class_nbr'], sem_code)
                 if class_data:
                     all_classes.append(class_data)
-            self.write_to_csv(all_classes, f"SIS_{semester}")
+            self.write_to_csv(all_classes, year, season)
             all_classes = []
             page += 1
 
         self.stdout.write(self.style.SUCCESS("Data fetching complete."))
 
     @staticmethod
-    def compile_course_data(course_number, semester):
+    def compile_course_data(course_number, sem_code):
         """
         Compiles course data from SIS API response.
 
         :param course_number: The course number.
-        :param semester: The semester.
+        :param sem_code: The semester code.
         :return: Dictionary containing course information.
         """
         url = (
             f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/"
             f"WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassDetails?"
-            f"institution=UVA01&term={semester}&class_nbr={course_number}"
+            f"institution=UVA01&term={sem_code}&class_nbr={course_number}"
         )
 
         try:
-            response = requests.get(url, timeout=30)
+            response = requests.get(url, timeout=300)
         except requests.exceptions.RequestException:
             return None
 
@@ -135,16 +140,18 @@ class Command(BaseCommand):
         return course_dictionary
 
     @staticmethod
-    def write_to_csv(course_list, filename):
+    def write_to_csv(course_list, year, season):
         """
         Writes course data to a CSV file.
 
         :param course_list: List of dictionaries containing course information.
-        :param filename: Name of the CSV file.
+        :param year: The year of the semester.
+        :param season: The season of the semester.
         """
+        filename = f"{year}_{season}.csv"
         fieldnames = list(course_list[0].keys())
-        csv_directory = "tcf_website/management/commands/semester_data/csv/"
-        csv_path = os.path.join(csv_directory, filename + ".csv")
+        csv_directory = "tcf_website/management/commands/semester_data/sis_csv/"
+        csv_path = os.path.join(csv_directory, filename)
         with open(csv_path, 'a', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             if csvfile.tell() == 0:
