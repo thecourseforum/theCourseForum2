@@ -16,8 +16,7 @@ class Command(BaseCommand):
         self.stdout.write(f"Fetching data for semester {semester}...")
 
         semester_url = (
-            'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.'
-            f'FieldFormula.IScript_ClassSearch?institution=UVA01&term={semester}&page='
+            f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch?institution=UVA01&term={semester}&page="
         )
 
         all_classes = []
@@ -46,8 +45,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def compile_course_data(course_number, semester):
-        url = f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH." \
-              f"FieldFormula.IScript_ClassDetails?institution=UVA01&term={semester}&class_nbr={course_number}"
+        url = f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassDetails?institution=UVA01&term={semester}&class_nbr={course_number}"
 
         try:
             response = requests.get(url, timeout=10)  # Adding timeout argument
@@ -59,7 +57,7 @@ class Command(BaseCommand):
             return None
 
         class_details = data["section_info"]["class_details"]
-        meetings = [None, None, None, None]
+        meetings = {0: None, 1: None, 2: None, 3: None}
         for index, meeting in enumerate(data["section_info"]["meetings"]):
             if index > 3:
                 break
@@ -76,38 +74,29 @@ class Command(BaseCommand):
                 "LAB": "Laboratory"
             }.get(class_details["component"], class_details["component"]),
             "Units": class_details["units"][0:class_details["units"].find("units") - 1],
-            "Instructor1": ", ".join(
-                instructor["name"] for instructor in meetings[0]["instructors"] if instructor["name"] != "-"
-            ) if meetings[0] else "",
-            "Days1": meetings[0]["meets"] if meetings[0]["meets"] != "-" else "TBA",
-            "Room1": meetings[0]["room"] if meetings[0]["room"] != "-" else "TBA",
-            "MeetingDates1": meetings[0]["date_range"] if meetings[0] else "",
-            "Instructor2": ", ".join(
-                instructor["name"] for instructor in meetings[1]["instructors"] if instructor["name"] != "-"
-            ) if meetings[1] else "",
-            "Days2": meetings[1]["meets"] if meetings[1] else "",
-            "Room2": meetings[1]["room"] if meetings[1] else "",
-            "MeetingDates2": meetings[1]["date_range"] if meetings[1] else "",
-            "Instructor3": ", ".join(
-                instructor["name"] for instructor in meetings[2]["instructors"] if instructor["name"] != "-"
-            ) if meetings[2] else "",
-            "Days3": meetings[2]["meets"] if meetings[2] else "",
-            "Room3": meetings[2]["room"] if meetings[2] else "",
-            "MeetingDates3": meetings[2]["date_range"] if meetings[2] else "",
-            "Instructor4": ", ".join(
-                instructor["name"] for instructor in meetings[3]["instructors"] if instructor["name"] != "-"
-            ) if meetings[3] else "",
-            "Days4": meetings[3]["meets"] if meetings[3] else "",
-            "Room4": meetings[3]["room"] if meetings[3] else "",
-            "MeetingDates4": meetings[3]["date_range"] if meetings[3] else "",
+            "Instructor1": ", ".join(instructor["name"] for instructor in meetings.get(0)["instructors"] if instructor["name"] != "-") if meetings.get(0) else "",
+            "Days1": meetings.get(0)["meets"] if meetings.get(0)["meets"] != "-" else "TBA",
+            "Room1": meetings.get(0)["room"] if meetings.get(0)["room"] != "-" else "TBA",
+            "MeetingDates1": meetings.get(0)["date_range"] if meetings.get(0) else "",
+            "Instructor2": ", ".join(instructor["name"] for instructor in meetings.get(1)["instructors"] if instructor["name"] != "-") if meetings.get(1) else "",
+            "Days2": meetings.get(1)["meets"] if meetings.get(1) else "",
+            "Room2": meetings.get(1)["room"] if meetings.get(1) else "",
+            "MeetingDates2": meetings.get(1)["date_range"] if meetings.get(1) else "",
+            "Instructor3": ", ".join(instructor["name"] for instructor in meetings.get(2)["instructors"] if instructor["name"] != "-") if meetings.get(2) else "",
+            "Days3": meetings.get(2)["meets"] if meetings.get(2) else "",
+            "Room3": meetings.get(2)["room"] if meetings.get(2) else "",
+            "MeetingDates3": meetings.get(2)["date_range"] if meetings.get(2) else "",
+            "Instructor4": ", ".join(instructor["name"] for instructor in meetings.get(3)["instructors"] if instructor["name"] != "-") if meetings.get(3) else "",
+            "Days4": meetings.get(3)["meets"] if meetings.get(3) else "",
+            "Room4": meetings.get(3)["room"] if meetings.get(3) else "",
+            "MeetingDates4": meetings.get(3)["date_range"] if meetings.get(3) else "",
             "Title": class_details["course_title"],
             "Topic": class_details["topic"],
             "Status": class_details["status"],
             "Enrollment": class_availability["enrollment_total"],
             "EnrollmentLimit": class_availability["class_capacity"],
             "Waitlist": class_availability["wait_list_total"],
-            "Description": data["section_info"]["catalog_descr"]["crse_catalog_description"]
-                             .replace("\n", " ").replace("\r", " ")
+            "Description": data["section_info"]["catalog_descr"]["crse_catalog_description"].replace("\n", " ").replace("\r", " ")
         }
         return course_dictionary
 
