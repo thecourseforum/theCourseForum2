@@ -18,7 +18,7 @@
       "name": "Barrett Ruth",
       "role": "VP | Infrastructure Engineering",
       "class": "2026",
-      "img_filename": "ENG_Barrett_Ruth.jpg",
+      "img_filename": "ENG_Barrett_Ruth.webp",
       "github": "barrett-ruth"
     },
     {
@@ -99,7 +99,7 @@
       "name": "Barrett Ruth",
       "role": "Developer",
       "class": "2026",
-      "img_filename": "ENG_Barrett_Ruth.jpg",
+      "img_filename": "ENG_Barrett_Ruth.webp",
       "github": "barrett-ruth"
     },
     {
@@ -289,6 +289,13 @@
       "class": "2026",
       "img_filename": "ENG_Sebastian_Wiktorowicz.png",
       "github": "SebastianWikt"
+    },
+    {
+      "name": "Tino Martella",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Tino_Martella.jpg",
+      "github": "Tino-Martella"
     }
   ],
   "marketing_team": [

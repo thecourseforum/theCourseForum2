@@ -8,12 +8,12 @@
 }
 
 .review-content a.collapsed::after {
-  content: '...See More';
+  content: "...See More";
   color: var(--secondary-color);
 }
 
 .review-content a:not(.collapsed)::after {
-  content: 'See Less';
+  content: "See Less";
   color: var(--secondary-color);
 }
 
@@ -21,18 +21,21 @@
   padding: 20px 30px;
 }
 
-.review .upvote, .review .downvote {
-    font-size: 1.3rem;
-    color: #aaa;
-    cursor: pointer;
+.review .upvote,
+.review .downvote {
+  font-size: 1.3rem;
+  color: #aaa;
+  cursor: pointer;
 }
 
-.review .upvote.active, .review .upvote:hover {
-    color: dodgerblue;
+.review .upvote.active,
+.review .upvote:hover {
+  color: dodgerblue;
 }
 
-.review .downvote.active, .review .downvote:hover {
-    color: rgb(215, 86, 38);
+.review .downvote.active,
+.review .downvote:hover {
+  color: rgb(215, 86, 38);
 }
 
 .tooltip-inner {
