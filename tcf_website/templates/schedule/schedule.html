@@ -11,10 +11,10 @@
                 <p>Schedule difficulty: {{difficulty|floatformat:2}}</p>
                 <p>Credits: {{credits}}</p>
 
-                <ul id="schedule_card_courses">
+                <ul class="schedule_card_courses">
                     {% for course in courses %}
                         <li>
-                            <div class="schedule_course_card">
+                            <div id="schedule-{{schedule.id}}" class="schedule_course_card">
                                 <h6 class="schedule_course_card_header">{{course}}</h6>
                                 <div class="schedule_course_card_content">
                                     {{course.user}}
@@ -42,7 +42,36 @@
 
 {% block js %}
 <script src="{% static 'schedule/parse_time.js' %}"></script>
-<script>
+<script type="text/javascript">
+
+var compiled_schedule = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    const scheduleID = "{{schedule.id}}"
+    if (scheduleID == "") {
+        return 0;
+    }
+    var scheduleId = `schedule-${scheduleID}`;
+    // Find all course cards
+    const courseCards = document.querySelectorAll(`#${scheduleId} .schedule_course_card_content`);
+    console.log("one schedule" + scheduleID);
+    let times = [];
+    courseCards.forEach(card => {
+        // Assuming the time is always in the third div inside the card
+        const timeDiv = card.querySelector('div:nth-child(3)');
+        if (timeDiv) {
+            const timeString = timeDiv.textContent.trim();
+
+            // add to time string array
+            times.push(timeString);
+
+        }
+    });
+    compiled_schedule = consolidateTimes(times);
+    console.log(compiled_schedule);
+    console.log(checkConflict("MoTuWeTh 1:00pm - 1:50pm", compiled_schedule));
+});
 
 
 </script>
