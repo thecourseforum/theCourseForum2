@@ -32,6 +32,12 @@ class Command(BaseCommand):
         sem_code = f"1{year_code}{season_numbers.get(season)}"
 
         self.stdout.write(f"Fetching course data for {year} {season}...")
+        
+        filename = f"{year}_{season}.csv"
+        csv_directory = "tcf_website/management/commands/semester_data/sis_csv/"
+        csv_path = os.path.join(csv_directory, filename)
+        if os.path.exists(csv_path):
+            os.remove(csv_path)
 
         semester_url = (
             f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/"
@@ -58,7 +64,7 @@ class Command(BaseCommand):
                 class_data = self.compile_course_data(course['class_nbr'], sem_code)
                 if class_data:
                     all_classes.append(class_data)
-            self.write_to_csv(all_classes, year, season)
+            self.write_to_csv(all_classes, csv_path)
             all_classes = []
             page += 1
 
@@ -142,18 +148,14 @@ class Command(BaseCommand):
         return course_dictionary
 
     @staticmethod
-    def write_to_csv(course_list, year, season):
+    def write_to_csv(course_list, csv_path):
         """
         Writes course data to a CSV file.
 
         :param course_list: List of dictionaries containing course information.
-        :param year: The year of the semester.
-        :param season: The season of the semester.
+        :param csv_path: Path to the CSV file.
         """
-        filename = f"{year}_{season}.csv"
         fieldnames = list(course_list[0].keys())
-        csv_directory = "tcf_website/management/commands/semester_data/sis_csv/"
-        csv_path = os.path.join(csv_directory, filename)
         with open(csv_path, 'a', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             if csvfile.tell() == 0:
