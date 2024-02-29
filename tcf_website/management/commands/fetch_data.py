@@ -1,41 +1,46 @@
 """
 Django management command to fetch data from SIS API and convert it into a CSV file.
 """
-import os
+
 import csv
 import json
+import os
+
 import requests
+from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
-from django.core.management.base import BaseCommand
+COURSE_DATA_DIR = "tcf_website/management/commands/semester_data/sis_csv/"
+SEASON_NUMBERS = {"fall": 8, "summer": 6, "spring": 2, "january": 1}
 
 class Command(BaseCommand):
     """
     Command to fetch data from SIS API for the specified semester and save it to a CSV file.
 
     Usage:
-    docker exec -it tcf_django python3 manage.py fetch_data "<year> <season>"
+    docker exec -it tcf_django python3 manage.py fetch_data "<year>_<season>"
 
     Example:
-    docker exec -it tcf_django python3 manage.py fetch_data "2023 spring"
+    docker exec -it tcf_django python3 manage.py fetch_data "2023_spring"
     """
-    help = 'Fetches data from SIS API for the specified semester and saves it to a CSV file'
+
+    help = "Fetches data from SIS API for the specified semester and saves it to a CSV file"
 
     def add_arguments(self, parser):
-        parser.add_argument('semester', type=str, help='<year> <season>(e.g., "2023 spring")')
+        parser.add_argument(
+            "semester", type=str, help='<year>_<season>(e.g., "2023_spring")'
+        )
 
     def handle(self, *args, **kwargs):
-        year, season = kwargs['semester'].split()
+        year, season = kwargs["semester"].split("_")
         season = season.lower()
-        season_numbers = {"fall": 8, "summer": 6, "spring": 2, "january": 1}
         year_code = str(year)[-2:]
-        sem_code = f"1{year_code}{season_numbers.get(season)}"
+        sem_code = f"1{year_code}{SEASON_NUMBERS.get(season)}"
 
         self.stdout.write(f"Fetching course data for {year} {season}...")
-        
+
         filename = f"{year}_{season}.csv"
-        csv_directory = "tcf_website/management/commands/semester_data/sis_csv/"
-        csv_path = os.path.join(csv_directory, filename)
+        csv_path = os.path.join(COURSE_DATA_DIR, filename)
         if os.path.exists(csv_path):
             os.remove(csv_path)
 
@@ -54,14 +59,16 @@ class Command(BaseCommand):
                 response = requests.get(page_url, timeout=300)
                 page_data = json.loads(response.text)
             except requests.exceptions.RequestException as e:
-                self.stderr.write(f'An error occurred: {e}')
+                self.stderr.write(f"An error occurred: {e}")
                 break
 
             if not page_data:
                 break
 
             for course in tqdm(page_data):
-                class_data = self.compile_course_data(course['class_nbr'], sem_code)
+                class_data = self.compile_course_data(
+                    course["class_nbr"], sem_code
+                )
                 if class_data:
                     all_classes.append(class_data)
             self.write_to_csv(all_classes, csv_path)
@@ -96,11 +103,14 @@ class Command(BaseCommand):
 
         class_details = data["section_info"]["class_details"]
         meetings = {0: None, 1: None, 2: None, 3: None}
+
         for index, meeting in enumerate(data["section_info"]["meetings"]):
             if index > 3:
                 break
             meetings[index] = meeting
+
         class_availability = data["section_info"]["class_availability"]
+
         course_dictionary = {
             "ClassNumber": course_number,
             "Mnemonic": class_details["subject"],
@@ -109,41 +119,86 @@ class Command(BaseCommand):
             "Type": {
                 "LEC": "Lecture",
                 "DIS": "Discussion",
-                "LAB": "Laboratory"
+                "LAB": "Laboratory",
             }.get(class_details["component"], class_details["component"]),
-            "Units": class_details["units"][0:class_details["units"].find("units") - 1],
-            "Instructor1": ", ".join(
-                instructor["name"] for instructor in meetings.get(0)["instructors"]
-                if instructor["name"] != "-") if meetings.get(0) else "",
-            "Days1": meetings.get(0)["meets"] if meetings.get(0)["meets"] != "-" else "TBA",
-            "Room1": meetings.get(0)["room"] if meetings.get(0)["room"] != "-" else "TBA",
-            "MeetingDates1": meetings.get(0)["date_range"] if meetings.get(0) else "",
-            "Instructor2": ", ".join(
-                instructor["name"] for instructor in meetings.get(1)["instructors"]
-                if instructor["name"] != "-") if meetings.get(1) else "",
+            "Units": class_details["units"][
+                0 : class_details["units"].find("units") - 1
+            ],
+            "Instructor1": (
+                ", ".join(
+                    instructor["name"]
+                    for instructor in meetings.get(0)["instructors"]
+                    if instructor["name"] != "-"
+                )
+                if meetings.get(0)
+                else ""
+            ),
+            "Days1": (
+                meetings.get(0)["meets"]
+                if meetings.get(0)["meets"] != "-"
+                else "TBA"
+            ),
+            "Room1": (
+                meetings.get(0)["room"]
+                if meetings.get(0)["room"] != "-"
+                else "TBA"
+            ),
+            "MeetingDates1": (
+                meetings.get(0)["date_range"] if meetings.get(0) else ""
+            ),
+            "Instructor2": (
+                ", ".join(
+                    instructor["name"]
+                    for instructor in meetings.get(1)["instructors"]
+                    if instructor["name"] != "-"
+                )
+                if meetings.get(1)
+                else ""
+            ),
             "Days2": meetings.get(1)["meets"] if meetings.get(1) else "",
             "Room2": meetings.get(1)["room"] if meetings.get(1) else "",
-            "MeetingDates2": meetings.get(1)["date_range"] if meetings.get(1) else "",
-            "Instructor3": ", ".join(
-                instructor["name"] for instructor in meetings.get(2)["instructors"]
-                if instructor["name"] != "-") if meetings.get(2) else "",
+            "MeetingDates2": (
+                meetings.get(1)["date_range"] if meetings.get(1) else ""
+            ),
+            "Instructor3": (
+                ", ".join(
+                    instructor["name"]
+                    for instructor in meetings.get(2)["instructors"]
+                    if instructor["name"] != "-"
+                )
+                if meetings.get(2)
+                else ""
+            ),
             "Days3": meetings.get(2)["meets"] if meetings.get(2) else "",
             "Room3": meetings.get(2)["room"] if meetings.get(2) else "",
-            "MeetingDates3": meetings.get(2)["date_range"] if meetings.get(2) else "",
-            "Instructor4": ", ".join(
-                instructor["name"] for instructor in meetings.get(3)["instructors"]
-                if instructor["name"] != "-") if meetings.get(3) else "",
+            "MeetingDates3": (
+                meetings.get(2)["date_range"] if meetings.get(2) else ""
+            ),
+            "Instructor4": (
+                ", ".join(
+                    instructor["name"]
+                    for instructor in meetings.get(3)["instructors"]
+                    if instructor["name"] != "-"
+                )
+                if meetings.get(3)
+                else ""
+            ),
             "Days4": meetings.get(3)["meets"] if meetings.get(3) else "",
             "Room4": meetings.get(3)["room"] if meetings.get(3) else "",
-            "MeetingDates4": meetings.get(3)["date_range"] if meetings.get(3) else "",
+            "MeetingDates4": (
+                meetings.get(3)["date_range"] if meetings.get(3) else ""
+            ),
             "Title": class_details["course_title"],
             "Topic": class_details["topic"],
             "Status": class_details["status"],
             "Enrollment": class_availability["enrollment_total"],
             "EnrollmentLimit": class_availability["class_capacity"],
             "Waitlist": class_availability["wait_list_total"],
-            "Description": data["section_info"]["catalog_descr"]["crse_catalog_description"]
-            .replace("\n", " ").replace("\r", " ")
+            "Description": data["section_info"]["catalog_descr"][
+                "crse_catalog_description"
+            ]
+            .replace("\n", " ")
+            .replace("\r", " "),
         }
         return course_dictionary
 
@@ -156,7 +211,7 @@ class Command(BaseCommand):
         :param csv_path: Path to the CSV file.
         """
         fieldnames = list(course_list[0].keys())
-        with open(csv_path, 'a', newline='', encoding='utf-8') as csvfile:
+        with open(csv_path, "a", newline="", encoding="utf-8") as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             if csvfile.tell() == 0:
                 writer.writeheader()
