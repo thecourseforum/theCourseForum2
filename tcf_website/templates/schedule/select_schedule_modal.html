@@ -28,7 +28,7 @@
         var modal_submit_url = "";
         var next_modal_id = "";
         if( '{{mode}}' == "add_course"){
-            modal_submit_url = "{% url 'modal_load_sections' %}?course_id=";
+            modal_submit_url = "{% url 'modal_load_sections' %}";
             next_modal_id = '#addCourseModal';
         } else if( '{{mode}}' == "edit_schedule") {
             modal_submit_url = "{% url 'edit_schedule' %}";
