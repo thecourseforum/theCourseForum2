@@ -14,7 +14,6 @@ function stringTimeToInt(stringTime) {
 }
 
 function parseTime(time_string) {
-    //console.log(time_string);
     time_string = time_string.split(","); //split lab times / discussion times / lecture times
     let weekday_meeting_times = Array.apply(null, Array(5)).map(function () {}) //index 0 = monday, index 1 = tuesday, index 2 = wednesday, index 3 = thursday, index 4 = friday
     for(let i=0; i<weekday_meeting_times.length;i++)
@@ -82,14 +81,12 @@ function checkConflict(newTime, times) {
     // this method will return true if there is conflict with the list of times passed in and the newTime
     new_time_meeting_times = parseTime(newTime);
     consolidated_times = times;
-    console.log("Overall schedule: ", consolidated_times);
-    console.log("New time to check: ", new_time_meeting_times);
+
     for (var day = 0; day < new_time_meeting_times.length; day++) {
         if (consolidated_times[day].length == 0) {
             continue;
         }
         dayInSchedule = consolidated_times[day][0];
-        console.log("Already made schedule day: ", dayInSchedule);
 
         if (new_time_meeting_times[day].length == 0 || dayInSchedule.length == 0) { // skip over empty days in new time meeting times
             continue;
@@ -97,7 +94,6 @@ function checkConflict(newTime, times) {
         // TODO: 12 PM TIME CHECK DOESN'T WORK
         for (var period = 0; period < new_time_meeting_times[day].length; period++){ // period for proposed class
             for (var period_in_schedule = 0; period_in_schedule < dayInSchedule.length; period_in_schedule++){ // period_in for exisiting schedule
-                console.log(new_time_meeting_times[day][period][0], dayInSchedule[period_in_schedule][1], dayInSchedule[period_in_schedule], period_in_schedule);
                 var beginsBefore = new_time_meeting_times[day][period][0] <= dayInSchedule[period_in_schedule][1];
                 var endsAfter = new_time_meeting_times[day][period][1] >= dayInSchedule[period_in_schedule][0];
                 if (beginsBefore && endsAfter) { 
