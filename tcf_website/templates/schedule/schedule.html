@@ -48,14 +48,14 @@ var compiled_schedule = [];
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    const scheduleID = "{{schedule.id}}"
+    const scheduleID = "{{schedule.id}}";
     if (scheduleID == "") {
         return 0;
     }
     var scheduleId = `schedule-${scheduleID}`;
     // Find all course cards
     const courseCards = document.querySelectorAll(`#${scheduleId} .schedule_course_card_content`);
-    console.log("one schedule" + scheduleID);
+
     let times = [];
     courseCards.forEach(card => {
         // Assuming the time is always in the third div inside the card
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     compiled_schedule = consolidateTimes(times);
     console.log(compiled_schedule);
-    console.log(checkConflict("MoTuWeTh 1:00pm - 1:50pm", compiled_schedule));
+    console.log(checkConflict("TuWe 10:51am - 12:29pm", compiled_schedule));
 });
 
 

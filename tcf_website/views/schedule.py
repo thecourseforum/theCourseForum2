@@ -47,6 +47,19 @@ class SectionForm(forms.ModelForm):
 
 
 @login_required
+def get_schedule(schedule):
+    ret = [0]*4
+    ret[0] = schedule.get_scheduled_courses()
+    # if a course doesn't have any units, just default to three
+    ret[1] = sum([int(course.section.units) if int(
+        course.section.units) != 0 else 3 for course in ret[0]])
+    ret[2] = schedule.average_rating_for_schedule()
+    ret[3] = schedule.average_schedule_difficulty()
+
+    return ret
+
+
+@login_required
 def schedule_data_helper(request):
     '''
     this helper method is for getting schedule data for a request.
@@ -66,12 +79,12 @@ def schedule_data_helper(request):
     # iterate over the schedules for this request in order to set up the context
     # this could also be optimized for the database by combining these queries
     for s in schedules:
-        courses_context[s.id] = s.get_scheduled_courses()
+        s_data = get_schedule(s)
+        courses_context[s.id] = s_data[0]
         # if a course doesn't have any units, just default to three
-        credits_context[s.id] = sum([int(course.section.units) if int(
-            course.section.units) != 0 else 3 for course in courses_context[s.id]])
-        ratings_context[s.id] = s.average_rating_for_schedule()
-        difficulty_context[s.id] = s.average_schedule_difficulty()
+        credits_context[s.id] = s_data[1]
+        ratings_context[s.id] = s_data[2]
+        difficulty_context[s.id] = s_data[3]
 
     ret = {"schedules": schedules,
            "courses": courses_context,
@@ -197,17 +210,19 @@ def edit_schedule(request):
 @login_required
 def modal_load_sections(request):
     '''
-    Load the professors and section times for a course when adding to schedule from the modal
+    Load the instructors and section times for a course, and the schedule, when adding to schedule from the modal
     '''
-    course_id = request.GET.get('course_id')
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    course_id = body['course_id']
+    schedule_id = body['schedule_id']
+
+    # get the course based off passed in course_id
     course = Course.objects.get(pk=course_id)
     latest_semester = Semester.latest()
 
     data = {}
-    # section_last_taught = Section.objects\
-    #     .filter(course=course_id, instructors=instructor_id)\
-    #     .order_by('semester')\
-    #     .last()
     instructors = load_secs_helper(
         course, latest_semester).filter(
         semester_last_taught=latest_semester.id)
@@ -217,27 +232,46 @@ def modal_load_sections(request):
         data[i.id] = temp
 
         # decode the string in section_details and take skip strings without a time or section_id
-        encoded_sections = [x for x in i.section_details if x.split(
-            ' /% ')[2] != '' and x.split(' /% ')[1] != '']
+        encoded_sections = [x.split(' /% ') for x in i.section_details if x.split(' /% ')[2] != '' and x.split(' /% ')[1] != '']
+
+        # strip the traling comma
+        for section in encoded_sections:
+            if section[2].endswith(','):
+                section[2] = section[2].rstrip(',')
 
         temp["sections"] = encoded_sections
         temp["name"] = i.first_name + " " + i.last_name
-
-    return JsonResponse(data)
+    
+    schedule = Schedule.objects.get(pk=schedule_id)
+    schedule_data = get_schedule(schedule)
+    context = {
+        'instructors_data': data,
+        'schedule_courses': schedule_data[0],
+        'schedule_credits': schedule_data[1],
+        'schedule_ratings': schedule_data[2],
+        'schedule_difficulty': schedule_data[3]
+        }
+    return render(request, "schedule/schedule_with_sections.html", context)
 
 
 @login_required
 def schedule_add_course(request):
-    ''' Add a course to a schedule '''
+    ''' Add a course to a schedule, the request should be FormData for the SectionForm class '''
 
     if request.method == "POST":
-        combined_section_info = json.loads(request.POST['selected_course'])
+        # Parse the JSON-encoded 'selected_course' field
+        try:
+            selected_course = json.loads(request.POST.get('selected_course', '{}'))  # Default to empty dict if not found
+        except json.JSONDecodeError as e:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON data'}, status=400)
+        
         form_data = {
-            'schedule': request.POST['schedule_id'],
-            'instructor': int(combined_section_info['instructor']),
-            'section': int(combined_section_info['section']),
-            'time': combined_section_info['section_time']
+            'schedule': request.POST.get('schedule_id'),
+            'instructor': int(selected_course.get('instructor')),
+            'section': int(selected_course.get('section')),
+            'time': selected_course.get('section_time')
         }
+        
         # make form object with our passed in data
         form = SectionForm(form_data)
 

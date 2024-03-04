@@ -1,0 +1,29 @@
+{% load custom_tags %}
+{% load static %}
+{% block content %}
+<div>
+    {% include "schedule/schedule.html" with courses=schedule_courses rating=schedule_ratings difficulty=schedule_difficulty credits=schedule_credits %}
+</div>
+<form id="select_section_form" action="{% url 'schedule_add_course' %}" method="POST" data-course-id="{{ course.id }}">     
+            
+    {% csrf_token %}
+    <input type="hidden" id="schedule_id_input" name="schedule_id" value="">
+    {% for insId, insInfo in instructors_data.items %}
+    <div class="modal_instructor_card" id="modal_instructor_card{{ insId }}">
+        <h6>{{ insInfo.name }}</h6>
+        <input type="hidden" value="{{ insId }}">
+        <ul>
+            {% for section in insInfo.sections %}
+            <li>
+                <label>
+                    {{ section.2 }}
+                    <input type="radio" name="selected_course" value='{"instructor": "{{ insId }}", "section": "{{ section.0 }}", "section_time":"{{ section.2 }}"}'>
+                </label>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endfor %}
+</form>
+
+{% endblock %}
