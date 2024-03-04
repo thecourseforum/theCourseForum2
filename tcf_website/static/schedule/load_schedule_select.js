@@ -42,19 +42,24 @@ function generalModalListeners() {
             event.preventDefault();
             // prevent double submission
             submitButton.disabled = true;
-
+            
             var formData = new FormData(this);
             fetch(this.action, {
                 method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
                 body: formData
             })
                 .then(resp => {
                     if (resp.ok) {
                         location.reload();
-                    } else {
-                        submitButton.disabled = false;
-                        console.error("There was an error");
                     }
+                })
+                .catch(error => {
+                    submitButton.disabled = false;
+                    console.error("Error:", error);
+                    alert("Something went wrong");
                 });
         });
     }
@@ -72,92 +77,39 @@ function attachEventListenersToModalContent(fetch_url, next_modal_id) {
             var selectedSchedule = form.querySelector('input[type="radio"][name="selected_schedules"]:checked').value;
             var courseId = form.getAttribute("data-course-id");
 
-            // add the courseId into the url's query string
-            fetch_url += courseId;
+            requestBody = {};
+            requestBody['course_id'] = courseId;
+            requestBody['schedule_id'] = selectedSchedule;
 
             fetch(fetch_url, {
-                method: "GET"
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify(requestBody)
             })
-                .then(resp => resp.json())
-                .then(data => {
-                    if (data.mode === "edit") {
-                        schedule_edit_submit(selectedSchedule, next_modal_id, data);
-                    } else {
-                        course_add_submit(selectedSchedule, next_modal_id, data);
-                    }
+                .then(resp => resp.text())
+                .then(html => {
+                    // insert the returned HTML and update hidden schedule ID
+                    $("#schedule_and_sections").html(html);
+                    document.getElementById("schedule_id_input").value = selectedSchedule;
+
+                    // close the select schedule modal and then open the next modal
+                    $("#selectScheduleModal").modal("hide");
+                    setTimeout(function() {
+                        $(next_modal_id).modal("show");
+                    }, 400);
+
+                    // add the general modal listeners
+                    generalModalListeners();
                 })
                 .catch(error => {
                     console.error("Error:", error);
                     alert("Something went wrong");
                 });
         });
+
     }
 
-    // add the general modal listeners
-    generalModalListeners();
-}
-
-function schedule_edit_submit(selectedSchedule, next_modal_id, data) {
-    // this function is for handling the modal when the content is for editting a schedule
-
-    // set hidden field for on the edit_schedule_modal form
-    document.getElementById("schedule_id_input").value = selectedSchedule;
-    section_form = document.getElementById("select_section_form");
-}
-
-function course_add_submit(selectedSchedule, next_modal_id, data) {
-    // this function is for handling the modal when the content is for adding a course
-
-    // set hidden field for on the add_course_modal form
-    document.getElementById("schedule_id_input").value = selectedSchedule;
-    section_form = document.getElementById("select_section_form");
-
-    // iterate over all returned instructors and create the html cards for them
-    // TODO: check to see if something is returned and that it's not null
-    for (const [insId, insInfo] of Object.entries(data)) {
-        // create the card that will contain all info for a given instructor
-        var instructorDiv = document.createElement("div");
-        instructorDiv.className = "modal_instructor_card";
-        instructorDiv.id = "modal_instructor_card" + insId;
-
-        // create the title of the card as the instructor's name
-        var instructorName = document.createElement("h6");
-        instructorName.textContent = insInfo.name;
-        instructorDiv.appendChild(instructorName);
-
-        // create a hidden input to store the instructor's id
-        var instructorId = document.createElement("input");
-        instructorId.type = "hidden";
-        instructorId.value = insId;
-
-        var sectionsList = document.createElement("ul");
-
-        insInfo.sections.forEach(encoded_section => {
-            var decoded_section = encoded_section.split(" /% ");
-            var section_id = decoded_section[0];
-            var section_num = decoded_section[1];
-            var section_time = decoded_section[2].slice(0, -1);
-
-            var li = document.createElement("li");
-            var lab = document.createElement("label");
-            lab.textContent = section_time;
-            var input = document.createElement("input");
-            input.type = "radio";
-            input.name = "selected_course";
-            input.value = `{"instructor": ${insId}, "section": ${section_id}, "section_time":"${section_time}"}`;
-
-            lab.appendChild(input);
-            li.appendChild(lab);
-            sectionsList.appendChild(li);
-        });
-
-        instructorDiv.appendChild(sectionsList);
-        section_form.appendChild(instructorDiv);
-    }
-
-    // close the select schedule modal and then open the next modal
-    $("#selectScheduleModal").modal("hide");
-    setTimeout(function() {
-        $(next_modal_id).modal("show");
-    }, 400);
 }
