@@ -246,6 +246,7 @@ def modal_load_sections(request):
     schedule_data = get_schedule(schedule)
     context = {
         'instructors_data': data,
+        'schedule': schedule,
         'schedule_courses': schedule_data[0],
         'schedule_credits': schedule_data[1],
         'schedule_ratings': schedule_data[2],

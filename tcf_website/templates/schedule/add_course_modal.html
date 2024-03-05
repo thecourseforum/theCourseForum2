@@ -16,12 +16,12 @@
         </div>
         <div class="modal-body">
 
-          <!-- This gets filled out by a view that returns a render of a template and then is inserted here-->
+          <!-- This gets filled out by a view that returns a render of a template and is then inserted here-->
           <div id="schedule_and_sections"></div>
 
         </div>
         <div class="modal-footer">
-            <button id="section_select_btn" form="select_section_form" type="submit" value="Submit" class="btn btn-primary" disabled>
+            <button id="section_select_btn" form="select_section_form" type="submit" value="Submit" class="btn btn-primary" disabled >
                 Confirm
             </button>
         </div>
@@ -30,19 +30,57 @@
 </div>
 
 <script src="{% static 'schedule/parse_time.js' %}"></script>
-<!-- <script>
-document.addEventListener('DOMContentLoaded', function () {
-  var submitButton = document.getElementById("section_select_btn");
-  submitButton.addEventListener('click', function (event) {
-    var checkPassed = yourCheckFunction(); 
-    
-    if (!checkPassed) {
-      event.preventDefault(); // Prevent the form from submitting.
-      // Optionally, alert the user why the form is not submitting.
-      alert('Your check did not pass. Please correct the errors and try again.');
-    }
-    // If checkPassed is true, the form will submit as normal.
-  });
+<script>
 
-});
-</script> -->
+  
+  function submitSectionSelect() {
+    //this will use a listener to send the form data to the view
+    var sectionForm = document.getElementById("select_section_form");
+    sectionForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+      // prevent double submission
+      var submitButton = document.getElementById("section_select_btn");
+      submitButton.disabled = true;
+
+      // retrieve the data from the form, parse into a json, and extract the section time
+      var formData = new FormData(this);
+      const parsedFormData = JSON.parse(formData.get('selected_course'))
+      isConflict = checkConflictWrapper(parsedFormData['section_time']);
+
+      if(isConflict){
+        // if there is a conflict, alert the user and return
+        event.preventDefault();
+        alert("Error: new course has a time conflict with this schedule. Select another section time and try again.")
+
+        return;
+      } 
+      fetch(this.action, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: formData
+      })
+      .then(resp => {
+        if (resp.ok) {
+          location.reload();
+        }
+      })
+      .catch(error => {
+        submitButton.disabled = false;
+        console.error("Error:", error);
+        alert("Something went wrong");
+      });
+          
+      });
+  }
+    
+  var modal = document.getElementById('addCourseModal');
+  modal.addEventListener('modalLoaded', function(event) {
+    // add the submit event listener
+    submitSectionSelect();
+    // This function is in the schedule template, and simply serializes the schedule's times
+    makeSerialSchedule();
+  })
+
+</script>
