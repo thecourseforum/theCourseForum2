@@ -1,8 +1,9 @@
 {% load custom_tags %}
 {% load static %}
 {% block content %}
+
 <div>
-    {% include "schedule/schedule.html" with courses=schedule_courses rating=schedule_ratings difficulty=schedule_difficulty credits=schedule_credits %}
+    {% include "schedule/schedule.html" with schedule=schedule courses=schedule_courses rating=schedule_ratings difficulty=schedule_difficulty credits=schedule_credits %}
 </div>
 <form id="select_section_form" action="{% url 'schedule_add_course' %}" method="POST" data-course-id="{{ course.id }}">     
             

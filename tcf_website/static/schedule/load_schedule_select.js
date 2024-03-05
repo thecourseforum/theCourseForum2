@@ -1,5 +1,8 @@
 /* eslint-disable */
 
+// import the functions from the parse time files
+//import { stringTimeToInt, parseTime, consolidateTimes, checkConflict } from './parse_time.js';
+
 function loadModal(modalFetchUrl, modalSubmitUrl, nextModalId, courseId) {
     // this AJAX request gets the html data to load into the modal
     // - modalFetchUrl : this parameter is the intial url request into the modal
@@ -37,31 +40,7 @@ function generalModalListeners() {
         // Initial check in case the form is pre-filled
         updateButtonState();
 
-        // this will use a listener to send the form data to the view
-        sectionForm.addEventListener("submit", function(event) {
-            event.preventDefault();
-            // prevent double submission
-            submitButton.disabled = true;
-            
-            var formData = new FormData(this);
-            fetch(this.action, {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": getCookie("csrftoken")
-                },
-                body: formData
-            })
-                .then(resp => {
-                    if (resp.ok) {
-                        location.reload();
-                    }
-                })
-                .catch(error => {
-                    submitButton.disabled = false;
-                    console.error("Error:", error);
-                    alert("Something went wrong");
-                });
-        });
+        
     }
 }
 
@@ -74,9 +53,11 @@ function attachEventListenersToModalContent(fetch_url, next_modal_id) {
             event.preventDefault();
             document.getElementById("schedule_select_btn").disabled = true; // prevent a double submission
 
+            // get the related data from the form
             var selectedSchedule = form.querySelector('input[type="radio"][name="selected_schedules"]:checked').value;
             var courseId = form.getAttribute("data-course-id");
-
+            
+            // prepare the request body
             requestBody = {};
             requestBody['course_id'] = courseId;
             requestBody['schedule_id'] = selectedSchedule;
@@ -98,11 +79,17 @@ function attachEventListenersToModalContent(fetch_url, next_modal_id) {
                     // close the select schedule modal and then open the next modal
                     $("#selectScheduleModal").modal("hide");
                     setTimeout(function() {
+                        // show the modal and then dispatch an event to the modal to
+                        // let it know when to attach the submit event listener
                         $(next_modal_id).modal("show");
+                        var modal = document.getElementById(next_modal_id.substring(1));
+                        var modalEvent = new Event("modalLoaded");
+                        modal.dispatchEvent(modalEvent);
                     }, 400);
 
                     // add the general modal listeners
                     generalModalListeners();
+
                 })
                 .catch(error => {
                     console.error("Error:", error);
