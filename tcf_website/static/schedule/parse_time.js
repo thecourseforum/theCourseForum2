@@ -86,16 +86,16 @@ function checkConflict(newTime, times) {
         if (consolidated_times[day].length == 0) {
             continue;
         }
-        dayInSchedule = consolidated_times[day][0];
+        dayInSchedule = consolidated_times[day];
 
         if (new_time_meeting_times[day].length == 0 || dayInSchedule.length == 0) { // skip over empty days in new time meeting times
             continue;
         }
-        // TODO: 12 PM TIME CHECK DOESN'T WORK
+
         for (var period = 0; period < new_time_meeting_times[day].length; period++){ // period for proposed class
             for (var period_in_schedule = 0; period_in_schedule < dayInSchedule.length; period_in_schedule++){ // period_in for exisiting schedule
-                var beginsBefore = new_time_meeting_times[day][period][0] <= dayInSchedule[period_in_schedule][1];
-                var endsAfter = new_time_meeting_times[day][period][1] >= dayInSchedule[period_in_schedule][0];
+                var beginsBefore = new_time_meeting_times[day][period][0] <= dayInSchedule[period_in_schedule][0][1];
+                var endsAfter = new_time_meeting_times[day][period][1] >= dayInSchedule[period_in_schedule][0][0];
                 if (beginsBefore && endsAfter) { 
                     return true;
                 } 
