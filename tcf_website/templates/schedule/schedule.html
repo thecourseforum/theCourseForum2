@@ -11,7 +11,7 @@
                 <p>Schedule difficulty: {{difficulty|floatformat:2}}</p>
                 <p>Credits: {{credits}}</p>
 
-                <ul class="schedule_card_courses">
+                <ul id="schedule_courses-{{schedule.id}}" class="schedule_card_courses">
                     {% for course in courses %}
                         <li>
                             <div id="schedule-{{schedule.id}}" class="schedule_course_card">
@@ -45,33 +45,42 @@
 <script type="text/javascript">
 
 var compiled_schedule = [];
+function makeSerialSchedule() {
+    // this method is called from other templates, and it populates the compiled_schedule array with the course times
+    // there is a potential improvement to use the courses context variable instead of pulling from the html
 
-document.addEventListener('DOMContentLoaded', function() {
-
-    const scheduleID = "{{schedule.id}}";
-    if (scheduleID == "") {
-        return 0;
-    }
-    var scheduleId = `schedule-${scheduleID}`;
-    // Find all course cards
-    const courseCards = document.querySelectorAll(`#${scheduleId} .schedule_course_card_content`);
-
+    const parent = document.getElementById("schedule_courses-{{schedule.id}}");
+    const courseCards = parent.querySelectorAll('.schedule_course_card');
+    //const courseCards = document.querySelectorAll("schedule-{{schedule.id}}");
     let times = [];
+
+    // if there are no courses for the schedule, return early
+    if (!courseCards) {return;}
+
     courseCards.forEach(card => {
         // Assuming the time is always in the third div inside the card
-        const timeDiv = card.querySelector('div:nth-child(3)');
+        const timeDiv = card.querySelector('.schedule_course_card_content > div:nth-child(3)');
         if (timeDiv) {
             const timeString = timeDiv.textContent.trim();
-
+    
             // add to time string array
             times.push(timeString);
-
         }
     });
     compiled_schedule = consolidateTimes(times);
-    console.log(compiled_schedule);
-    console.log(checkConflict("TuWe 10:51am - 12:29pm", compiled_schedule));
-});
+    
+}
+
+function checkConflictWrapper(newTime) {
+    // this function should always be called after making the serialized schedule
+    if(! compiled_schedule){
+        // this condition either means the schedule is empty or this function is improperly used.
+        return false;
+    }
+    // call checkConflict(), which is located in the parse_time.js static file
+    res = checkConflict(newTime, compiled_schedule);
+    return res;
+}
 
 
 </script>
