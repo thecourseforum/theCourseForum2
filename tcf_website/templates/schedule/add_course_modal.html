@@ -14,7 +14,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">
+        <div id="second-modal-body" class="modal-body">
 
           <!-- This gets filled out by a view that returns a render of a template and is then inserted here-->
           <div id="schedule_and_sections"></div>
@@ -31,6 +31,30 @@
 
 <script src="{% static 'schedule/parse_time.js' %}"></script>
 <script>
+
+  function buttonDoubleSubmit() {
+    // this function is for preventing a double submit
+    var sectionForm = document.getElementById("select_section_form");
+
+    // this will prevent a submit without a selection
+    var submitButton = document.getElementById("section_select_btn");
+    
+    // Function to check the inputs and enable the button if criteria is met
+    function updateButtonState() {
+      console.log("changing the state")
+      var inputs = sectionForm.querySelectorAll('input[type="radio"]');
+      var isAnyInputFilled = Array.from(inputs).some(radio => radio.checked);
+      console.log(isAnyInputFilled)
+      submitButton.disabled = !isAnyInputFilled;
+    }
+
+    // Event listener for changes in the form
+    sectionForm.addEventListener("change", updateButtonState);
+
+    // Initial check in case the form is pre-filled
+    updateButtonState();
+
+  };
 
   
   function submitSectionSelect() {
@@ -81,6 +105,8 @@
     submitSectionSelect();
     // This function is in the schedule template, and simply serializes the schedule's times
     makeSerialSchedule();
+
+    buttonDoubleSubmit();
   })
 
 </script>

@@ -51,7 +51,6 @@ function makeSerialSchedule() {
 
     const parent = document.getElementById("schedule_courses-{{schedule.id}}");
     const courseCards = parent.querySelectorAll('.schedule_course_card');
-    //const courseCards = document.querySelectorAll("schedule-{{schedule.id}}");
     let times = [];
 
     // if there are no courses for the schedule, return early
@@ -74,7 +73,7 @@ function makeSerialSchedule() {
 function checkConflictWrapper(newTime) {
     // this function should always be called after making the serialized schedule
     if(! compiled_schedule){
-        // this condition either means the schedule is empty or this function is improperly used.
+        // this condition either means the schedule is empty or this function was improperly called.
         return false;
     }
     // call checkConflict(), which is located in the parse_time.js static file
