@@ -18,31 +18,6 @@ function loadModal(modalFetchUrl, modalSubmitUrl, nextModalId, courseId) {
     });
 }
 
-function generalModalListeners() {
-    // this function is for the general functionality of the modal
-    // for example: preventing double submission, enforcing one selecton
-
-    var sectionForm = document.getElementById("select_section_form");
-    if (sectionForm) {
-        // this will prevent a submit without a selection
-        var submitButton = document.getElementById("section_select_btn");
-
-        // Function to check the inputs and enable the button if criteria is met
-        function updateButtonState() {
-            var inputs = sectionForm.querySelectorAll('input[type="radio"]');
-            var isAnyInputFilled = Array.from(inputs).some(radio => radio.checked);
-            submitButton.disabled = !isAnyInputFilled;
-        }
-
-        // Event listener for changes in the form
-        sectionForm.addEventListener("change", updateButtonState);
-
-        // Initial check in case the form is pre-filled
-        updateButtonState();
-
-        
-    }
-}
 
 function attachEventListenersToModalContent(fetch_url, next_modal_id) {
     // the fetch_url is the endpoint for loading the content into the modal
@@ -56,11 +31,18 @@ function attachEventListenersToModalContent(fetch_url, next_modal_id) {
             // get the related data from the form
             var selectedSchedule = form.querySelector('input[type="radio"][name="selected_schedules"]:checked').value;
             var courseId = form.getAttribute("data-course-id");
-            
+
             // prepare the request body
             requestBody = {};
-            requestBody['course_id'] = courseId;
             requestBody['schedule_id'] = selectedSchedule;
+            
+            if (fetch_url == '/schedule/modal/editor') {
+                // if the fetch URL is for loading the editor, proceed
+            }
+            else {
+                // else the other option is for loading the course sections
+                requestBody['course_id'] = courseId;
+            }
 
             fetch(fetch_url, {
                 method: "POST",
@@ -73,9 +55,8 @@ function attachEventListenersToModalContent(fetch_url, next_modal_id) {
                 .then(resp => resp.text())
                 .then(html => {
                     // insert the returned HTML and update hidden schedule ID
-                    $("#schedule_and_sections").html(html);
-                    document.getElementById("schedule_id_input").value = selectedSchedule;
-
+                    $("#second-modal-body").html(html);
+                    
                     // close the select schedule modal and then open the next modal
                     $("#selectScheduleModal").modal("hide");
                     setTimeout(function() {
@@ -86,9 +67,6 @@ function attachEventListenersToModalContent(fetch_url, next_modal_id) {
                         var modalEvent = new Event("modalLoaded");
                         modal.dispatchEvent(modalEvent);
                     }, 400);
-
-                    // add the general modal listeners
-                    generalModalListeners();
 
                 })
                 .catch(error => {
