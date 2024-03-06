@@ -10,36 +10,23 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">
-            <form id="edit_schedule_form" action="{% url 'edit_schedule' %}" method="PUT">
-                {% csrf_token %}
-  
-
-                <input type="hidden" id="schedule_id_input" name="schedule_id" value="">
-                <div class="ml-sm-auto d-flex justify-content-end">
-                    <button id="schedule_edit_btn"  type="submit" value="Submit" class="btn btn-primary">
-                        Save
-                    </button>
-                </div>
-            </form>
+        <div id="second-modal-body" class="modal-body">
+          
         </div>
+            <div class="modal-footer">
+              <button id="schedule_edit_btn" form="edit_schedule_form" type="submit" value="Submit" class="btn btn-primary">
+                Save
+              </button>
+            </div>
       </div>
     </div>
 </div>
 
-<!-- {% block js%}
-<script>
-  // prevent an empty/default submission
-  document.addEventListener('DOMContentLoaded', function() {
-      var form = document.getElementById('edit_schedule_form');
-      var textInput = document.getElementById('name');
 
-      form.addEventListener('submit', function(event) {
-          if (!textInput.value.trim()) {
-              event.preventDefault(); // Prevent form submission
-              alert('Please give your schedule a name'); // Alert or any other feedback mechanism
-          }
-      });
-  });
+<script>
+  // const submitButton = document.getElementById('schedule_edit_btn');
+  // submitButton.addEventListener('DOMContentLoaded', function() {
+  //   event.preventDefault();
+  //   console.log("submitted");
+  // });
 </script>
-{% endblock %} -->
