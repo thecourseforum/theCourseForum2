@@ -207,7 +207,6 @@ def modal_load_editor(request):
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
     schedule_id = body['schedule_id']
-    print(schedule_id)
     schedule = Schedule.objects.get(pk=schedule_id)
     schedule_data = get_schedule(schedule)
     context = {

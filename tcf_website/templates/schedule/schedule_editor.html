@@ -45,7 +45,6 @@
     // attach an event listener to every remove button
     document.querySelectorAll('.remove-course-btn').forEach(button => {
         button.addEventListener('click', function () {
-            console.log("this was clicked");
             const courseRow = this.closest('.course-row');
 
             // Create a hidden input to indicate that this course ID should be removed
@@ -58,17 +57,6 @@
             courseRow.appendChild(hiddenInput);
             courseRow.style.display = 'none'; // Simply remove the row from the table
         });
-    });
-
-    const sectionForm = document.getElementById("edit_schedule_form");
-    sectionForm.addEventListener('submit', function(event) {
-        // make sure the name input is filled out 
-        const nameInput = document.getElementById('schedule_name_input');
-        if (nameInput.value == "") {
-            event.preventDefault();
-            alert("Invalid Schedule Name");
-        }
-        
     });
 
 </script>

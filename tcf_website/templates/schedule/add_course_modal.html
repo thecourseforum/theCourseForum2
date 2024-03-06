@@ -41,10 +41,8 @@
     
     // Function to check the inputs and enable the button if criteria is met
     function updateButtonState() {
-      console.log("changing the state")
       var inputs = sectionForm.querySelectorAll('input[type="radio"]');
       var isAnyInputFilled = Array.from(inputs).some(radio => radio.checked);
-      console.log(isAnyInputFilled)
       submitButton.disabled = !isAnyInputFilled;
     }
 
