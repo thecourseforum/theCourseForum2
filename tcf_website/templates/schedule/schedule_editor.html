@@ -1,0 +1,74 @@
+{% load custom_tags %}
+{% load static %}
+{% block content %}
+
+<div>
+    {% include "schedule/schedule.html" with schedule=schedule courses=schedule_courses rating=schedule_ratings difficulty=schedule_difficulty credits=schedule_credits %}
+</div>
+<form id="edit_schedule_form" action="{% url 'edit_schedule' %}" method="POST" data-course-id="{{ course.id }}">
+    {% csrf_token %}
+    
+    <input type="hidden" id="schedule_id_input" name="schedule_id" value="{{schedule.id}}">
+    <div>
+        <label for="schedule_name_input">Schedule Name: </label>
+        <input type="text" id="schedule_name_input" name="schedule_name" value="{{schedule.name}}">
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Instructor</th>
+                <th scope="col">Time</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody id="courses_lists">
+            {% for course in schedule_courses %}
+                <tr class="course-row" course_id="{{course.id}}">
+                    <!-- <input type="hidden" id="course_id_input" name="course_id" value="{{course.id}}"> -->
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{course.instructor}}</td>
+                    <td>{{course.time}}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger remove-course-btn">Remove Course</button>
+                    </td>
+                </tr>
+            {% endfor %}
+    
+            </tbody>
+    </table>
+
+</form>
+
+{% endblock %}
+<script>
+    // attach an event listener to every remove button
+    document.querySelectorAll('.remove-course-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            console.log("this was clicked");
+            const courseRow = this.closest('.course-row');
+
+            // Create a hidden input to indicate that this course ID should be removed
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'removed_course_ids[]'; // Use array syntax for the name to handle multiple removed courses
+            hiddenInput.value = courseRow.getAttribute('course_id');
+
+            // Append the hidden input to the form (assuming your form has a specific ID)
+            courseRow.appendChild(hiddenInput);
+            courseRow.style.display = 'none'; // Simply remove the row from the table
+        });
+    });
+
+    const sectionForm = document.getElementById("edit_schedule_form");
+    sectionForm.addEventListener('submit', function(event) {
+        // make sure the name input is filled out 
+        const nameInput = document.getElementById('schedule_name_input');
+        if (nameInput.value == "") {
+            event.preventDefault();
+            alert("Invalid Schedule Name");
+        }
+        
+    });
+
+</script>

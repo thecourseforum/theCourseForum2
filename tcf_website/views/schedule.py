@@ -195,14 +195,56 @@ def delete_schedule(request):
 
 
 @login_required
+def modal_load_editor(request):
+    '''
+    Edit a schedule based on a selected schedule, and the changes passed in
+    '''
+
+    if request.method != 'POST':
+        messages.error(request, f"Invalid request method: {request.method}")
+        return
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    schedule_id = body['schedule_id']
+    print(schedule_id)
+    schedule = Schedule.objects.get(pk=schedule_id)
+    schedule_data = get_schedule(schedule)
+    context = {
+        'schedule': schedule,
+        'schedule_courses': schedule_data[0],
+        'schedule_credits': schedule_data[1],
+        'schedule_ratings': schedule_data[2],
+        'schedule_difficulty': schedule_data[3]
+        }
+    return render(request, "schedule/schedule_editor.html", context)
+
+
+@login_required
 def edit_schedule(request):
     '''
     Edit a schedule based on a selected schedule, and the changes passed in
     '''
-    ret = {}
-    if request.method == 'GET':
-        ret['mode'] = 'edit'
-        return JsonResponse(ret)
+
+    if request.method != 'POST':
+        messages.error(request, f"Invalid request method: {request.method}")
+        return JsonResponse({'status': 'Method Not Allowed'}, status=405)
+    
+    # get the related schedule and see if we need to update it's name
+    schedule = Schedule.objects.get(pk=request.POST['schedule_id'])
+    if schedule.name != request.POST['schedule_name']:
+
+        schedule.name = request.POST['schedule_name']
+        schedule.save()
+    
+    # get the ScheduledCourse id's to remove from this schedule
+    course_ids = request.POST.getlist('removed_course_ids[]')
+    if course_ids:
+        ScheduledCourse.objects.filter(id__in=course_ids).delete()
+
+    messages.success(
+                request,
+                f"Successfully made changes to {schedule.name}")
 
     return redirect('schedule')
 
