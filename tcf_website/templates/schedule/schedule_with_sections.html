@@ -8,7 +8,7 @@
 <form id="select_section_form" action="{% url 'schedule_add_course' %}" method="POST" data-course-id="{{ course.id }}">     
             
     {% csrf_token %}
-    <input type="hidden" id="schedule_id_input" name="schedule_id" value="">
+    <input type="hidden" id="schedule_id_input" name="schedule_id" value="{{schedule.id}}">
     {% for insId, insInfo in instructors_data.items %}
     <div class="modal_instructor_card" id="modal_instructor_card{{ insId }}">
         <h6>{{ insInfo.name }}</h6>
