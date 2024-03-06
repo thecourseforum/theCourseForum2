@@ -22,28 +22,28 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{% static 'schedule/load_schedule_select.js' %}"></script>
 <script>
-    $(document).ready(function() {
-        // urls variables that get passed into the static JS file
-        var modal_fetch_url = "{% url 'modal_load_schedules' mode=mode %}";
-        var modal_submit_url = "";
-        var next_modal_id = "";
-        if( '{{mode}}' == "add_course"){
-            modal_submit_url = "{% url 'modal_load_sections' %}";
-            next_modal_id = '#addCourseModal';
-        } else if( '{{mode}}' == "edit_schedule") {
-            modal_submit_url = "{% url 'edit_schedule' %}";
-			next_modal_id = '#editScheduleModal';
-        } else {
-            console.error("invalid or missing mode");
-        }
+  $(document).ready(function() {
+    // urls variables that get passed into the static JS file
+    var modal_fetch_url = "{% url 'modal_load_schedules' mode=mode %}";
+    var modal_submit_url = "";
+    var next_modal_id = "";
+    if( '{{mode}}' == "add_course"){
+      modal_submit_url = "{% url 'modal_load_sections' %}";
+      next_modal_id = '#addCourseModal';
+    } else if( '{{mode}}' == "edit_schedule") {
+      modal_submit_url = "{% url 'modal_load_editor' %}";
+      next_modal_id = '#editScheduleModal';
+    } else {
+      console.error("invalid or missing mode");
+    }
 
-        // Event listener for the button
-        $('#open_select_modal_button').on('click', function() {
-            // this function is in the static file included in this template
-            loadModal(modal_fetch_url, modal_submit_url, next_modal_id,'{{ course.id }}');
-        });
-
+    // Event listener for the button
+    $('#open_select_modal_button').on('click', function() {
+      // this function is in the static file included in this template
+      loadModal(modal_fetch_url, modal_submit_url, next_modal_id,'{{ course.id }}');
     });
+
+  });
 
 </script>
 {% endblock %}
