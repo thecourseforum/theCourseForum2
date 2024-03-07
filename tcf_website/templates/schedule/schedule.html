@@ -1,5 +1,4 @@
 {% load static %}
-<!-- <link rel="stylesheet" href="{% static 'reviews/review.css' %}" /> -->
 
 <div id="schedule{{schedule.id}}" class="schedule card mb-2">
     <div class="card-body text-left">
@@ -7,14 +6,14 @@
             <!-- schedule Main Content -->
             <div class="schedule-body col-xs-12 col-md-12 col-lg-12">
                 {{schedule.name}}
-                <p>Schedule rating: {{rating|floatformat:2}}</p>
-                <p>Schedule difficulty: {{difficulty|floatformat:2}}</p>
-                <p>Credits: {{credits}}</p>
+                <p id="ScheduleRating-{{mode}}">Schedule rating: {{rating|floatformat:2}}</p>
+                <p id="ScheduleDifficulty-{{mode}}">Schedule difficulty: {{difficulty|floatformat:2}}</p>
+                <p id="ScheduleCredits-{{mode}}">Credits: {{credits}}</p>
 
                 <ul id="schedule_courses-{{schedule.id}}" class="schedule_card_courses">
                     {% for course in courses %}
                         <li>
-                            <div id="schedule-{{schedule.id}}" class="schedule_course_card">
+                            <div id="ScheduledCourse-{{course.id}}{{mode}}" class="schedule_course_card">
                                 <h6 class="schedule_course_card_header">{{course}}</h6>
                                 <div class="schedule_course_card_content">
                                     {{course.user}}

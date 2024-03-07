@@ -5,7 +5,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models.functions import Abs, Coalesce
+from django.db.models.functions import Cast, Abs, Coalesce
 
 # pylint: disable=line-too-long
 
@@ -1096,16 +1096,83 @@ class Schedule(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def get_schedule(self, details=False):
+        """Get the schedule and all its related information"""
+        # NOTE: there may be a way to combine all of these methods into
+        #       one query, but it would be very complicated
+        ret = [0]*4
+        ret[0] = self.get_scheduled_courses(details)
+        # if a course doesn't have any units, just default to three
+        ret[1] = sum([int(course.section.units) if int(
+            course.section.units) != 0 else 3 for course in ret[0]])
+        ret[2] = self.average_rating_for_schedule()
+        ret[3] = self.average_schedule_difficulty()
 
-    def get_scheduled_courses(self):
+        return ret
+
+    def get_scheduled_courses(self, details):
         """
         Return scheduled courses associated with this schedule,
         including details about the section and instructor.
         """
         # NOTE: this returns all fields (because of the all), could reduce the weight
         # of this request by including only required fields.
-        return self.scheduledcourse_set.select_related('section', 'instructor').all()
+        
+        queryset = self.scheduledcourse_set.select_related('section', 'instructor')
+    
+        # if more details per ScheduleCourse are requried, annotate and add the requried details
+        if details:
+            queryset = queryset.annotate(
+                # cast the units to a integer field
+                units_casted=Cast('section__units', output_field=models.IntegerField()),
+                credits=models.Case(
+                    # verify that the credits are greater than valid else default to 3
+                    models.When(units_casted__gt=0, then='units_casted'),
+                    default=models.Value(3),
+                    output_field=models.IntegerField()
+                ),
+                avg_recommendability=Coalesce(models.Avg(
+                    'section__course__review__recommendability',
+                    filter=models.Q(section__course__review__instructor=models.F('instructor'))
+                ), models.Value(0.0)),
+                avg_instructor_rating=Coalesce(models.Avg(
+                    'section__course__review__instructor_rating',
+                    filter=models.Q(section__course__review__instructor=models.F('instructor'))
+                ), models.Value(0.0)),
+                avg_enjoyability=Coalesce(models.Avg(
+                    'section__course__review__enjoyability',
+                    filter=models.Q(section__course__review__instructor=models.F('instructor'))
+                ), models.Value(0.0)),
+                difficulty=Coalesce(models.Avg('section__course__review__difficulty',
+                    filter=models.Q(section__course__review__instructor_id=models.F('instructor'))
+                ),models.Value(0.0)),
+            ).annotate(
+                total_rating = models.ExpressionWrapper(
+                    (models.F('avg_recommendability') + 
+                     models.F('avg_instructor_rating') + 
+                     models.F('avg_enjoyability')) 
+                     / models.Value(3),
+                    output_field=models.FloatField()
+                )
+            )
+        
+        return queryset
 
+    def calculate_total_rating(self, rating):
+            '''Calculate the average rating across all categories'''
+            total, count = 0, 0
+            if rating['avg_recommendability'] is not None:
+                total += rating['avg_recommendability']
+                count += 1
+            if rating['avg_instructor_rating'] is not None:
+                total += rating['avg_instructor_rating']
+                count += 1
+            if rating['avg_enjoyability'] is not None:
+                total += rating['avg_enjoyability']
+                count += 1
+            return total / count if count > 0 else None
+    
     def average_rating_for_schedule(self):
         """Compute average rating for all courses in a schedule.
 
@@ -1143,16 +1210,14 @@ class Schedule(models.Model):
                     'avg_recommendability',
                     'avg_instructor_rating',
                     'avg_enjoyability']):
-                summed_ratings = sum([rating['avg_recommendability'] or 0,
-                                      rating['avg_instructor_rating'] or 0,
-                                      rating['avg_enjoyability'] or 0])
+                summed_ratings = self.calculate_total_rating(rating)
                 # if summed_ratings is zero, just continue
                 # in order to provide better UX, could return some indication that courses
                 # were skipped in the calculation
-                if summed_ratings == 0:
+                if not summed_ratings:
                     continue
                 total_ratings += summed_ratings
-                count += 3  # Since we're summing three ratings for each course
+                count += 1  # Since we're summing three ratings for each course
 
         return total_ratings / count if count > 0 else None
 
@@ -1174,7 +1239,7 @@ class Schedule(models.Model):
         )
 
         return result.get('overall_avg_difficulty')
-
+    
 
 class ScheduledCourse(models.Model):
     """ScheduledCourse Model.
