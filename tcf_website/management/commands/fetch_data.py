@@ -35,7 +35,7 @@ class Command(BaseCommand):
         year, season = kwargs["semester"].split("_")
         season = season.lower()
         year_code = str(year)[-2:]
-        sem_code = f"1{year_code}{SEASON_NUMBERS.get(season)}"
+        sem_code = f"1{year_code}{SEASON_NUMBERS.get(season)}" #1 represents 21st century in querying
 
         self.stdout.write(f"Fetching course data for {year} {season}...")
 
