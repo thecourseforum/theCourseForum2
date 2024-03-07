@@ -47,19 +47,6 @@ class SectionForm(forms.ModelForm):
 
 
 @login_required
-def get_schedule(schedule):
-    ret = [0]*4
-    ret[0] = schedule.get_scheduled_courses()
-    # if a course doesn't have any units, just default to three
-    ret[1] = sum([int(course.section.units) if int(
-        course.section.units) != 0 else 3 for course in ret[0]])
-    ret[2] = schedule.average_rating_for_schedule()
-    ret[3] = schedule.average_schedule_difficulty()
-
-    return ret
-
-
-@login_required
 def schedule_data_helper(request):
     '''
     this helper method is for getting schedule data for a request.
@@ -79,7 +66,7 @@ def schedule_data_helper(request):
     # iterate over the schedules for this request in order to set up the context
     # this could also be optimized for the database by combining these queries
     for s in schedules:
-        s_data = get_schedule(s)
+        s_data = s.get_schedule()
         courses_context[s.id] = s_data[0]
         # if a course doesn't have any units, just default to three
         credits_context[s.id] = s_data[1]
@@ -208,7 +195,8 @@ def modal_load_editor(request):
     body = json.loads(body_unicode)
     schedule_id = body['schedule_id']
     schedule = Schedule.objects.get(pk=schedule_id)
-    schedule_data = get_schedule(schedule)
+    schedule_data = schedule.get_schedule(True)
+
     context = {
         'schedule': schedule,
         'schedule_courses': schedule_data[0],
@@ -284,7 +272,7 @@ def modal_load_sections(request):
         temp["name"] = i.first_name + " " + i.last_name
     
     schedule = Schedule.objects.get(pk=schedule_id)
-    schedule_data = get_schedule(schedule)
+    schedule_data = schedule.get_schedule()
     context = {
         'instructors_data': data,
         'schedule': schedule,
