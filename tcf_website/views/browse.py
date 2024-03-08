@@ -137,7 +137,7 @@ def load_secs_helper(course, latest_semester):
                 distinct=True),
             section_details=ArrayAgg(
                 # this is to get sections in this format: section.id /%
-                # section.section_num /% section.time
+                # section.section_num /% section.time /% section_type
                 Concat(
                     Cast('section__id', CharField()),
                     Value(' /% '),
@@ -151,6 +151,8 @@ def load_secs_helper(course, latest_semester):
                     ),
                     Value(' /% '),
                     'section__section_times',
+                    Value(' /% '),
+                    'section__section_type',
                     output_field=CharField()
                 ),
                 distinct=True),
