@@ -14,6 +14,7 @@ Potential todo: create a cron job that runs this script and
 
 import csv
 import json
+import backoff
 
 # format -ClassNumber,Mnemonic,Number,Section,Type,Units,Instructor1,Days1,Room1,MeetingDates1,Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,Description
 # example call url
@@ -28,7 +29,9 @@ import requests
 # finds all departments in a term:
 # https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearchOptions?institution=UVA01&term=1228
 
-
+@backoff.on_exception(backoff.expo,
+                      (requests.exceptions.Timeout,
+                       requests.exceptions.ConnectionError))
 def retrieve_semester_courses(semester):  # very slow
     """
     input: semester using the formula  “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
@@ -67,6 +70,7 @@ def retrieve_semester_courses(semester):  # very slow
             page_data
         ):  # loops through every course on the page and calls compile_course_data and adds output to list
             # calls function to create dict of class info
+
             class_data = compile_course_data(course["class_nbr"], semester)
             if not class_data:
                 continue
