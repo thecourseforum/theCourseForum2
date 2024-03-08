@@ -1273,13 +1273,7 @@ class Schedule(models.Model):
         #       one query, but it would be very complicated
         ret = [0] * 4
         ret[0] = self.get_scheduled_courses(details)
-        # if a course doesn't have any units, just default to three
-        ret[1] = sum(
-            [
-                int(course.section.units) if int(course.section.units) != 0 else 3
-                for course in ret[0]
-            ]
-        )
+        ret[1] = sum([int(course.section.units) for course in ret[0]])
         ret[2] = self.average_rating_for_schedule()
         ret[3] = self.average_schedule_difficulty()
 

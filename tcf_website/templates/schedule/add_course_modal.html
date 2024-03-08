@@ -1,11 +1,11 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'schedule/course_section_modal.css' %}" />
+
 {% endblock %}
 
 <div class="modal fade" id="addCourseModal" tabindex="-1" role="dialog" aria-labelledby="addCourseModal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
 
         <div class="modal-header">
@@ -16,8 +16,6 @@
         </div>
         <div id="second-modal-body" class="modal-body">
 
-          <!-- This gets filled out by a view that returns a render of a template and is then inserted here-->
-          <div id="schedule_and_sections"></div>
 
         </div>
         <div class="modal-footer">
