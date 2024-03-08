@@ -6,6 +6,7 @@ import csv
 import json
 import os
 
+import backoff
 import requests
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
@@ -30,6 +31,10 @@ class Command(BaseCommand):
         parser.add_argument(
             "semester", type=str, help='<year>_<season>(e.g., "2023_spring")'
         )
+
+    @backoff.on_exception(backoff.expo,
+                          (requests.exceptions.Timeout,
+                           requests.exceptions.ConnectionError))
 
     def handle(self, *args, **kwargs):
         year, season = kwargs["semester"].split("_")
