@@ -1,30 +1,64 @@
 {% load custom_tags %}
 {% load static %}
 {% block content %}
-
-<div>
-    {% include "schedule/schedule.html" with schedule=schedule courses=schedule_courses rating=schedule_ratings difficulty=schedule_difficulty credits=schedule_credits %}
-</div>
-<form id="select_section_form" action="{% url 'schedule_add_course' %}" method="POST" data-course-id="{{ course.id }}">     
-            
-    {% csrf_token %}
-    <input type="hidden" id="schedule_id_input" name="schedule_id" value="{{schedule.id}}">
-    {% for insId, insInfo in instructors_data.items %}
-    <div class="modal_instructor_card" id="modal_instructor_card{{ insId }}">
-        <h6>{{ insInfo.name }}</h6>
-        <input type="hidden" value="{{ insId }}">
-        <ul>
-            {% for section in insInfo.sections %}
-            <li>
-                <label>
-                    {{ section.2 }}
-                    <input type="radio" name="selected_course" value='{"instructor": "{{ insId }}", "section": "{{ section.0 }}", "section_time":"{{ section.2 }}"}'>
-                </label>
-            </li>
-            {% endfor %}
-        </ul>
+<link rel="stylesheet" href="{% static 'schedule/schedule_with_sections.css' %}" />
+<div id="schedule_sections_container" class="container">
+    <div>
+        {% include "schedule/schedule.html" with schedule=schedule courses=schedule_courses rating=schedule_ratings difficulty=schedule_difficulty credits=schedule_credits %}
     </div>
-{% endfor %}
-</form>
+    <form id="select_section_form" action="{% url 'schedule_add_course' %}" method="POST" data-course-id="{{ course.id }}">     
+                
+        {% csrf_token %}
+        <input type="hidden" id="schedule_id_input" name="schedule_id" value="{{schedule.id}}">
+        {% for insId, insInfo in instructors_data.items %}
+        <div class="modal_instructor_card" id="modal_instructor_card{{ insId }}">
+            <input type="hidden" value="{{ insId }}">
+            <div class="instructor_name_label">
+                {{ insInfo.name }}
+                <a class="collapse_section" data-toggle="collapse" href="#Sections-{{insId}}" role="button" aria-expanded="true" aria-controls="Sections-{{insId}}">
+                    <i class="fa fa-chevron-up" aria-hidden="true" ></i>
+                </a>
+            </div>
+            <ul id="Sections-{{insId}}" class="Sections">
+                {% for section in insInfo.sections %}
+                <li class="section">
+                    <label>
+                        <input type="radio" name="selected_course" value='{"instructor": "{{ insId }}", "section": "{{ section.0 }}", "section_time":"{{ section.2 }}"}'>
+                        {{section.3}}
+                        {{ section.2 }}
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+    </form>
+</div>
 
 {% endblock %}
+<script>
+    // reset the sections
+    $(document).ready(function () {
+        $('.Sections').collapse();
+    });
+
+    // adding the java script to allow collapse functionalitity
+    // TODO: clear form when we hide a card (and change submit button) and 
+    //      keep state up to date when we double click the collapse icon
+    document.querySelectorAll(".collapse_section").forEach(section => {
+        section.addEventListener("click", event => {
+            const icon = section.querySelector("i"); 
+            if (icon) {
+                if (icon.classList.contains('fa-chevron-up')) {
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                    //document.getElementById('select_section_form').reset();
+                } else {
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                }
+            }
+        })
+
+    });
+</script>
