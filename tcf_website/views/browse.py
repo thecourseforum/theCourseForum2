@@ -153,6 +153,8 @@ def load_secs_helper(course, latest_semester):
                     'section__section_times',
                     Value(' /% '),
                     'section__section_type',
+                    Value(' /% '),
+                    'section__units',
                     output_field=CharField()
                 ),
                 distinct=True),

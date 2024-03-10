@@ -3,8 +3,8 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'schedule/schedule_with_sections.css' %}" />
 <div id="schedule_sections_container" class="container">
-    <div>
-        {% include "schedule/schedule.html" with schedule=schedule courses=schedule_courses rating=schedule_ratings difficulty=schedule_difficulty credits=schedule_credits %}
+    <div id="schedule_wrapper">
+        {% include "schedule/schedule.html" with schedule=schedule mode="edit" courses=schedule_courses rating=schedule_ratings difficulty=schedule_difficulty credits=schedule_credits %}
     </div>
     <form id="select_section_form" action="{% url 'schedule_add_course' %}" method="POST" data-course-id="{{ course.id }}">     
                 
@@ -23,7 +23,9 @@
                 {% for section in insInfo.sections %}
                 <li class="section">
                     <label>
-                        <input type="radio" name="selected_course" value='{"instructor": "{{ insId }}", "section": "{{ section.0 }}", "section_time":"{{ section.2 }}"}'>
+                        <input type="radio" name="selected_course" value='{ "instructor": "{{ insId }}", "section": "{{ section.0 }}", 
+                        "section_time":"{{ section.2 }}", "rating": "{{insInfo.rating}}", "difficulty": "{{insInfo.difficulty}}", "credits": "{{section.4}}",
+                        "instructor_name": "{{insInfo.name}}", "section_type": "{{section.3}}" }'>
                         {{section.3}}
                         {{ section.2 }}
                     </label>
@@ -61,4 +63,31 @@
         })
 
     });
+
+    function selectionChange() {
+        // handle a selection change in the form
+        const thisForm = document.getElementById('select_section_form');
+        const scheduleWrapper = document.getElementById('schedule_wrapper');
+        var selectedCourse = thisForm.querySelector('input[type="radio"]:checked');
+        let courseJSON = JSON.parse(selectedCourse.value);
+
+        // retrieve a recently added course through the id of the list element in 
+        //  the Schedule template, if there is one then remove it
+        let recentCourse = document.getElementById('selectedSectionTentative');
+        if (recentCourse) {
+            recentCourse.remove();
+        }
+        
+        // These functions are in the schedule template
+        addCourse(courseJSON);
+        updateStats();
+
+    }
+    
+    modal.addEventListener('modalLoaded', function(event) {
+        // this event is sent from the static file that handles loading the modals
+        const thisForm = document.getElementById('select_section_form');
+        thisForm.addEventListener('change', selectionChange);
+    })
+
 </script>

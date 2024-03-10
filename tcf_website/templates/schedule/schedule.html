@@ -1,19 +1,37 @@
 {% load static %}
 
-<div id="schedule{{schedule.id}}" class="schedule card mb-2">
+<link rel="stylesheet" href="{% static 'schedule/schedule.css' %}" />
+<div id="schedule{{schedule.id}}{{mode}}" class="schedule card mb-2">
     <div class="card-body text-left">
         <div class="row">
             <!-- schedule Main Content -->
+            <div class="scheduleCardHeader">
+                <h4>{{schedule.name}}</h4>
+                <div class="scheduleStats">
+                    <div class="scheduleStatItem">
+                        <i class="fa fa-star fa-fw" aria-hidden="true"></i>
+                        <p id="ScheduleRating-{{schedule.id}}" class="scheduleRating">{{rating|floatformat:2}}</p>
+                    </div>
+                    <div class="scheduleStatItem">
+                        <i class="fa fa-dumbbell fa-fw" aria-hidden="true"></i>
+                        <p id="ScheduleDifficulty-{{schedule.id}}" class="scheduleDifficulty">{{difficulty|floatformat:2}}</p>
+                    </div>
+                    <div class="scheduleStatItem">
+                        <i class="fas fa-clock" aria-hidden="true"></i>
+                        <p id="ScheduleCredits-{{schedule.id}}" class="scheduleCredits">{{credits}}</p>
+                    </div>
+                    <div class="scheduleStatItem">
+                        <i class="fas fa-chart-bar" aria-hidden="true"></i>
+                        <p id="ScheduleGPA-{{schedule.id}}" class="scheduleGPA"></p>
+                    </div>
+                </div>
+            </div>
             <div class="schedule-body col-xs-12 col-md-12 col-lg-12">
-                {{schedule.name}}
-                <p id="ScheduleRating-{{mode}}">Schedule rating: {{rating|floatformat:2}}</p>
-                <p id="ScheduleDifficulty-{{mode}}">Schedule difficulty: {{difficulty|floatformat:2}}</p>
-                <p id="ScheduleCredits-{{mode}}">Credits: {{credits}}</p>
 
                 <ul id="schedule_courses-{{schedule.id}}" class="schedule_card_courses">
                     {% for course in courses %}
                         <li>
-                            <div id="ScheduledCourse-{{course.id}}{{mode}}" class="schedule_course_card">
+                            <div id="ScheduledCourse-{{course.id}}{{mode}}" class="schedule_course_card" course_rating="{{course.total_rating}}" course_diff="{{course.difficulty}}" course_credits="{{course.credits}}">
                                 <h6 class="schedule_course_card_header">{{course}}</h6>
                                 <div class="schedule_course_card_content">
                                     {{course.user}}
@@ -43,44 +61,134 @@
 </div>
 
 {% block js %}
+{% if mode == "edit" %}
+<script>
+    // Only include this javascript when editing this schedule
+    function updateStats() {
+        // this function will take the courses included in the course table
+        // and recalculate the ratings, difficulty, and credit totals
+        let this_schedule = document.getElementById("schedule{{schedule.id}}edit");
+
+        let rating = 0;  // the running total of ratings for the current schedule
+        let r_count = 0;  // the count of the number of valid course rows for ratings
+        let credit = 0;  // the running total of credits for the current schedule
+        let difficulty = 0;  // the running total of difficultys for the current schedule
+        let d_count = 0;  // the count of the number of valid course rows for difficultys
+
+
+        // get the course rows from the table
+        let courses = this_schedule.querySelectorAll('.schedule_course_card');
+        courses.forEach(course => {
+            let courseRating = parseFloat(course.getAttribute("course_rating"));
+            let courseCredits = parseInt(course.getAttribute("course_credits"));
+            let courseDifficulty = parseFloat(course.getAttribute("course_diff"));
+
+            // if there is a valid rating and difficulty, increment it's count and accumulate
+            if (courseRating){
+                rating += courseRating
+                r_count++;
+            }
+            if (courseDifficulty){
+                difficulty += courseDifficulty
+                d_count++;
+            }
+            credit += courseCredits
+        });
+        // See if rating and difficulty were changed
+        if (rating) {
+            rating = rating / r_count;
+        }
+        if (difficulty) {
+            difficulty = difficulty / d_count;
+        }
+        
+        // fetch the schedule rating HTML element from the schedule template that is loaded into this page
+        const scheduleRating = this_schedule.querySelector('.scheduleRating');
+        scheduleRating.innerText = "Schedule rating: "+ rating.toFixed(2);
+
+        const scheduleCredits = this_schedule.querySelector('.scheduleCredits');
+        scheduleCredits.innerText = "Credits: "+ credit;
+
+        const scheduleDifficulty = this_schedule.querySelector('.scheduleDifficulty');
+        scheduleDifficulty.innerText = "Schedule difficulty: "+ difficulty.toFixed(2);
+    }
+
+    function addCourse(course) {
+        // dyanmically add a course to the schedule 
+        // NOTE: Currently only used for adding temporary courses to the schedule card
+
+        const scheduleId = '{{schedule.id}}';
+        let this_schedule = document.getElementById("schedule{{schedule.id}}edit");
+        let this_schedule_courses = this_schedule.querySelector("#schedule_courses-{{schedule.id}}");
+
+        // notice we mark this newly added list element with a ID
+        let courseCardHTML = `
+            <li id="selectedSectionTentative">
+                <div id="ScheduledCourse-${course.rating}edit" class="schedule_course_card" course_rating="${course.rating}" course_diff="${course.difficulty}" course_credits="${course.credits}">
+                    <h6 class="schedule_course_card_header">TEMP FIELD</h6>
+                    <div class="schedule_course_card_content">
+                        
+                        <div>
+                            ${course.instructor_name}
+                        </div>
+                        <div>
+                            ${course.section}
+                        </div>
+                        <div>
+                            ${course.section_time}
+                        </div>
+                        <div>
+                            ${course.section_type}
+                        </div>
+                    </div>
+                </div>
+            </li>
+        `;
+        // Append the constructed HTML to the this_schedule_courses
+        this_schedule_courses.insertAdjacentHTML('beforeend', courseCardHTML);
+    }
+
+</script>
+{% endif %}
 <script type="text/javascript">
 
-var compiled_schedule = [];
-function makeSerialSchedule() {
-    // this method is called from other templates, and it populates the compiled_schedule array with the course times
-    // there is a potential improvement to use the courses context variable instead of pulling from the html
+    var compiled_schedule = [];
+    function makeSerialSchedule() {
+        // this method is called from other templates, and it populates the compiled_schedule array with the course times
+        // there is a potential improvement to use the courses context variable instead of pulling from the html
 
-    const parent = document.getElementById("schedule_courses-{{schedule.id}}");
-    const courseCards = parent.querySelectorAll('.schedule_course_card');
-    let times = [];
+        const parent = document.getElementById("schedule_courses-{{schedule.id}}");
+        const courseCards = parent.querySelectorAll('.schedule_course_card');
+        let times = [];
 
-    // if there are no courses for the schedule, return early
-    if (!courseCards) {return;}
+        // if there are no courses for the schedule, return early
+        if (!courseCards) {return;}
 
-    courseCards.forEach(card => {
-        // Assuming the time is always in the third div inside the card
-        const timeDiv = card.querySelector('.schedule_course_card_content > div:nth-child(3)');
-        if (timeDiv) {
-            const timeString = timeDiv.textContent.trim();
-    
-            // add to time string array
-            times.push(timeString);
-        }
-    });
-    compiled_schedule = consolidateTimes(times);
-    
-}
-
-function checkConflictWrapper(newTime) {
-    // this function should always be called after making the serialized schedule
-    if(! compiled_schedule){
-        // this condition either means the schedule is empty or this function was improperly called.
-        return false;
+        courseCards.forEach(card => {
+            // Assuming the time is always in the third div inside the card
+            const timeDiv = card.querySelector('.schedule_course_card_content > div:nth-child(3)');
+            if (timeDiv) {
+                const timeString = timeDiv.textContent.trim();
+        
+                // add to time string array
+                times.push(timeString);
+            }
+        });
+        compiled_schedule = consolidateTimes(times);
+        
     }
-    // call checkConflict(), which is located in the parse_time.js static file
-    res = checkConflict(newTime, compiled_schedule);
-    return res;
-}
+
+    function checkConflictWrapper(newTime) {
+        // this function should always be called after making the serialized schedule
+        if(! compiled_schedule){
+            // this condition either means the schedule is empty or this function was improperly called.
+            return false;
+        }
+        // call checkConflict(), which is located in the parse_time.js static file
+        res = checkConflict(newTime, compiled_schedule);
+        return res;
+    }
+
 
 
 </script>
