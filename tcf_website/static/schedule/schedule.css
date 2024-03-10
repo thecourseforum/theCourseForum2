@@ -1,0 +1,26 @@
+.scheduleCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    width: 100%;
+}
+
+.scheduleCardHeader > h4 {
+    margin-right: auto;
+}
+
+.scheduleStats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.scheduleStatItem {
+    display: flex;
+    align-items: center;
+    gap: 5px; 
+
+}
