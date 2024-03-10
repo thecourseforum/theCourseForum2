@@ -1,8 +1,8 @@
-# #!/bin/sh
+#!/bin/sh
 
-# # List of files staged for commit
-# changing_files=`git diff --cached --name-status | awk '$1 != "D" { print $2 }'`
-# passing=true
+# List of files staged for commit
+changing_files=`git diff --cached --name-status | awk '$1 != "D" { print $2 }'`
+passing=true
 
 # # Autoformat (autopep8) and Pylint
 # if `echo $changing_files | grep -q .py` ; then

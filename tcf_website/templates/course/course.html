@@ -62,6 +62,26 @@
 
             <br/>
 
+            <h2> Related Courses: </h2>
+
+            <!-- Button to toggle dropdown -->
+            <button onclick="toggleDropdown()" class="btn btn-primary">Toggle Dropdown</button>
+            <!-- Dropdown for recommendation content -->
+            {% load custom_filters %}
+            <div id="dropdownContent" class="dropdown-content" style="display: none;">
+                <br/>
+                <ul class ="instructor-list course-list">
+                    {% for i in recommendation_names %}
+                        <li>
+                            <a href="{% url 'course' mnemonic=recommendation_mnemonics|get_item:forloop.counter0 course_number=recommendation_numbers|get_item:forloop.counter0 %}">{{ i }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <br/>
+
+            <!-- Page content -->
             {% if not taught_this_semester %}
                 <div class="new card col p-5 text-center">
                     <div class="card-body">
@@ -83,60 +103,12 @@
                     </li>
                 {% endfor %}
             </ul>
-
-            <ul class ="instructor-list course-list">
-                {% for i in recommendations %}
-                    <li>
-                        {{i}}
-                    </li>
-                {% endfor %}
-            </ul>
+            
         </div>
     </div>
 
+    {% endblock %}
 
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            // Function to get recommendations via AJAX
-            function getRecommendations(courseName) {
-                $.ajax({
-                    type: 'GET',
-                    url: '{% url "get_recommendations_ajax" %}',  // Update with your URL pattern
-                    data: { course_name: courseName },
-                    dataType: 'json',
-                    success: function (data) {
-                        // Update HTML with recommendations
-                        updateRecommendations(data.recommendations);
-                    },
-                    error: function (error) {
-                        console.error('Error fetching recommendations:', error);
-                    }
-                });
-            }
-
-            // Function to update HTML with recommendations
-            function updateRecommendations(recommendations) {
-                var recommendationsList = $('#recommendations-list');
-                recommendationsList.empty();  // Clear previous recommendations
-
-                // Append new recommendations to the list
-                for (var i = 0; i < recommendations.length; i++) {
-                    var listItem = $('<li>').text(recommendations[i]);
-                    recommendationsList.append(listItem);
-                }
-            }
-
-            // Trigger the AJAX request on some event (e.g., button click)
-            $('#yourButtonId').click(function () {
-                var courseName = prompt('Enter your course name:');
-                if (courseName) {
-                    getRecommendations(courseName);
-                }
-            });
-        });
-    </script>
-{% endblock %}
 
 {% block js %}
     <script type="module" src="{% static 'common/bind-show-hide.js' %}"></script>
@@ -148,4 +120,19 @@
             $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
+
+    <!-- Dropdown toggle -->
+    <script>
+        function toggleDropdown() {
+            var dropdown = document.getElementById("dropdownContent");
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+            } else {
+                dropdown.style.display = "block";
+            }
+        }
+    </script>
 {% endblock %}
+
+
+
