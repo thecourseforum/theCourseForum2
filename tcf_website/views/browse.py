@@ -12,7 +12,7 @@ from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from .recommender import getRecommendationsHelper
+from .recommender import get_recommendations_helper
 
 from ..models import (
     Answer,
@@ -198,7 +198,7 @@ def course_view(request, mnemonic, course_number):
     request.session["course_title"] = course.title
     request.session["instructor_fullname"] = None
 
-    recommendations = getRecommendationsHelper(course.title)
+    recommendations = get_recommendations_helper(course.title)
 
     return render(
         request,
@@ -209,7 +209,9 @@ def course_view(request, mnemonic, course_number):
             "latest_semester": latest_semester,
             "breadcrumbs": breadcrumbs,
             "taught_this_semester": taught_this_semester,
-            "recommendations":recommendations
+            'recommendation_names': recommendations[0],
+            'recommendation_mnemonics':recommendations[1],
+            'recommendation_numbers':recommendations[2]
         },
     )
 
