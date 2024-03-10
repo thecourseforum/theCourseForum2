@@ -1267,39 +1267,28 @@ class Schedule(models.Model):
     def __str__(self):
         return self.name
 
-    def get_schedule(self, details=False):
+    def get_schedule(self):
         """Get the schedule and all its related information"""
         # NOTE: there may be a way to combine all of these methods into
         #       one query, but it would be very complicated
         ret = [0] * 4
-        ret[0] = self.get_scheduled_courses(details)
+        ret[0] = self.get_scheduled_courses()
         ret[1] = sum([int(course.section.units) for course in ret[0]])
         ret[2] = self.average_rating_for_schedule()
         ret[3] = self.average_schedule_difficulty()
 
         return ret
 
-    def get_scheduled_courses(self, details):
+    def get_scheduled_courses(self):
         """
         Return scheduled courses associated with this schedule,
         including details about the section and instructor.
         """
-        # NOTE: this returns all fields (because of the all), could reduce the weight
-        # of this request by including only required fields.
 
-        queryset = self.scheduledcourse_set.select_related("section", "instructor")
-
-        # if more details per ScheduleCourse are requried, annotate and add the requried details
-        if details:
-            queryset = queryset.annotate(
-                # cast the units to a integer field
-                units_casted=Cast("section__units", output_field=models.IntegerField()),
-                credits=models.Case(
-                    # verify that the credits are greater than valid else default to 3
-                    models.When(units_casted__gt=0, then="units_casted"),
-                    default=models.Value(3),
-                    output_field=models.IntegerField(),
-                ),
+        queryset = (
+            self.scheduledcourse_set.select_related("section", "instructor")
+            .annotate(
+                credits=Cast("section__units", output_field=models.IntegerField()),
                 avg_recommendability=Coalesce(
                     models.Avg(
                         "section__course__review__recommendability",
@@ -1330,7 +1319,8 @@ class Schedule(models.Model):
                     ),
                     models.Value(0.0),
                 ),
-            ).annotate(
+            )
+            .annotate(
                 total_rating=models.ExpressionWrapper(
                     (
                         models.F("avg_recommendability")
@@ -1341,6 +1331,7 @@ class Schedule(models.Model):
                     output_field=models.FloatField(),
                 )
             )
+        )
 
         return queryset
 
