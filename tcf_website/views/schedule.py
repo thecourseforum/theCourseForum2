@@ -68,7 +68,6 @@ def schedule_data_helper(request):
     for s in schedules:
         s_data = s.get_schedule()
         courses_context[s.id] = s_data[0]
-        # if a course doesn't have any units, just default to three
         credits_context[s.id] = s_data[1]
         ratings_context[s.id] = s_data[2]
         difficulty_context[s.id] = s_data[3]
@@ -112,7 +111,7 @@ def view_schedules_modal(request, mode):
         # add necessary context variables for the select_schedule_modal template
         schedule_context['profile'] = True
         schedule_context['select'] = True
-        schedule_context['mode'] = mode  # pass back the mode used for the request
+        schedule_context['mode'] = mode 
         schedule_context['url_param'] = 'schedule'
 
         return render(request,
@@ -195,7 +194,7 @@ def modal_load_editor(request):
     body = json.loads(body_unicode)
     schedule_id = body['schedule_id']
     schedule = Schedule.objects.get(pk=schedule_id)
-    schedule_data = schedule.get_schedule(True)
+    schedule_data = schedule.get_schedule()
 
     context = {
         'schedule': schedule,
@@ -270,6 +269,8 @@ def modal_load_sections(request):
 
         temp["sections"] = encoded_sections
         temp["name"] = i.first_name + " " + i.last_name
+        temp["rating"] = i.rating
+        temp["difficulty"] = i.difficulty
     
     schedule = Schedule.objects.get(pk=schedule_id)
     schedule_data = schedule.get_schedule()

@@ -25,7 +25,7 @@
         </thead>
         <tbody id="courses_lists">
             {% for course in schedule_courses %}
-                <tr class="course-row" course_id="{{course.id}}" course_rating="{{course.total_rating}}" course_diff="{{course.difficulty}}" course_credits="{{course.credits}}">
+                <tr class="course-row" course_id="{{course.id}}">
                     <th scope="row">{{forloop.counter}}</th>
                     <td>{{course.instructor}}</td>
                     <td>{{course.time}}</td>
@@ -44,56 +44,6 @@
 {% endblock %}
 <script src="{% static 'schedule/parse_time.js' %}"></script>
 <script>
-
-    function updateStats() {
-        // this function will take the courses included in the course table
-        // and recalculate the ratings, difficulty, and credit totals
-        // NOTE: the criteria for which courses to remove is when they are hidden
-
-        let rating = 0;  // the running total of ratings for the current schedule
-        let r_count = 0;  // the count of the number of valid course rows for ratings
-        let credit = 0;  // the running total of credits for the current schedule
-        let difficulty = 0;  // the running total of difficultys for the current schedule
-        let d_count = 0;  // the count of the number of valid course rows for difficultys
-
-        // get the course rows from the table, and filter the ones that are hidden
-        let courses = Array.from(document.querySelectorAll('.course-row')).filter(function(course) {
-            return window.getComputedStyle(course).display !== 'none'
-        });
-        courses.forEach(course => {
-            let courseRating = parseFloat(course.getAttribute("course_rating"));
-            let courseCredits = parseInt(course.getAttribute("course_credits"));
-            let courseDifficulty = parseFloat(course.getAttribute("course_diff"));
-
-            // if there is a valid rating and difficulty, increment it's count and accumulate
-            if (courseRating){
-                rating += courseRating
-                r_count++;
-            }
-            if (courseDifficulty){
-                difficulty += courseDifficulty
-                d_count++;
-            }
-            credit += courseCredits
-        });
-        // See if rating and difficulty were changed
-        if (rating) {
-            rating = rating / r_count;
-        }
-        if (difficulty) {
-            difficulty = difficulty / d_count;
-        }
-        
-        // fetch the schedule rating HTML element from the schedule template that is loaded into this page
-        const scheduleRating = document.getElementById('ScheduleRating-edit');
-        scheduleRating.innerText = "Schedule Rating: "+ rating.toFixed(2);
-
-        const scheduleCredits = document.getElementById('ScheduleCredits-edit');
-        scheduleCredits.innerText = "Credits: "+ credit;
-
-        const scheduleDifficulty = document.getElementById('ScheduleDifficulty-edit');
-        scheduleDifficulty.innerText = "Schedule Difficulty: "+ difficulty.toFixed(2);
-    }
 
     // attach an event listener to every remove button
     document.querySelectorAll('.remove-course-btn').forEach(button => {
@@ -116,7 +66,7 @@
             const scheduledCourse = document.getElementById(`ScheduledCourse-${courseId}edit`);
             scheduledCourse.remove(); // Remove the course in the schedule card
 
-            updateStats(); // update the labels for the schedule card
+            updateStats(); // this method is included in the schedule template
         });
     });
 
