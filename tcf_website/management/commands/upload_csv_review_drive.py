@@ -63,6 +63,7 @@ class Command(BaseCommand):
             return
         semester = semester_query.first()
 
+        # Needs to be created ahead of time in the db
         dummy_account = User.objects.filter(computing_id__iexact='reviewdrive')
         if dummy_account.count() <= 0:
             print('ERROR: DUMMY ACCOUNT NOT FOUND')
@@ -70,6 +71,7 @@ class Command(BaseCommand):
 
         if verbose:
             print('Starting file upload...')
+
         file = open(os.path.join(DATA_DIR, filename), mode='r')
         csv_file = csv.reader(file)
 
@@ -94,6 +96,7 @@ class Command(BaseCommand):
                 account = account_query.first()
             else:
                 account = dummy_account.first()
+
             subdepartment_query = Subdepartment.objects.filter(mnemonic__iexact=mnemonic)
             if subdepartment_query.count() <= 0:
                 print('Subdepartment not found for', mnemonic, num, email, instructor, 'skipping...')
@@ -105,6 +108,8 @@ class Command(BaseCommand):
             if verbose:
                 print(subdepartment_query.first(), course_query.first())
 
+            # Use only last name if list is size of 1
+            # Some professors only have last name in the database
             if len(instructor) > 1:
                 instructor_query = Instructor.objects.filter(first_name__iexact=instructor[0],
                                                              last_name__iexact=instructor[1])
@@ -115,14 +120,15 @@ class Command(BaseCommand):
                 print('Instructor not found for', mnemonic, num, email, instructor, 'skipping...')
                 continue
 
-            # CSV must be formatted EXACTLY in order
             review_content = line[5].strip()
+
             # Confirm the review is not already in the database
             review_query = Review.objects.filter(text__iexact=review_content)
             if review_query.count() > 0:
                 print('REVIEW ALREADY IN DATABASE FOR', mnemonic, num, email, instructor, 'skipping...')
                 continue
 
+            # CSV must be formatted EXACTLY in order
             instructor_rating = int(line[6].strip())
             enjoyability = int(line[7].strip())
             recommendability = int(line[8].strip())
