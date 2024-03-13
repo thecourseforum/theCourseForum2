@@ -2,7 +2,7 @@ import csv
 import os
 from datetime import datetime
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from tcf_website.models import *
 
@@ -59,13 +59,12 @@ class Command(BaseCommand):
         year = options["year"]
 
         # Get semester object from args
-        semester_query = Semester.objects.filter(
+        semester = Semester.objects.filter(
             season=season.upper(), year=year
-        )
-        if semester_query.count() <= 0:
+        ).first()
+        if semester.count() <= 0:
             print("ERROR: Semester not found")
             return
-        semester = semester_query.first()
 
         # Needs to be created ahead of time in the db
         dummy_account = User.objects.filter(computing_id__iexact="reviewdrive")
@@ -87,24 +86,22 @@ class Command(BaseCommand):
             email = line[1].strip()
             mnemonic = line[2].strip()
             num = int(line[3].strip())
-            instructor = line[4].strip().split(" ", 1)
+            instructor_arr = line[4].strip().split(" ", 1)
 
             if verbose:
                 print(email, mnemonic, num, instructor)
 
             # Use account if found. Otherwise, use dummy user
-            account_query = User.objects.filter(email=email)
-            if account_query.count() > 0:
-                if verbose:
-                    print("Account already found for", email)
-                account = account_query.first()
-            else:
+            account = User.objects.filter(email=email).first()
+            if account is not None and verbose:
+                print("Account already found for", email)
+            elif account is None:
                 account = dummy_account.first()
 
-            subdepartment_query = Subdepartment.objects.filter(
+            subdepartment = Subdepartment.objects.filter(
                 mnemonic__iexact=mnemonic
-            )
-            if subdepartment_query.count() <= 0:
+            ).first()
+            if subdepartment is None:
                 print(
                     "Subdepartment not found for",
                     mnemonic,
@@ -114,10 +111,11 @@ class Command(BaseCommand):
                     "skipping...",
                 )
                 continue
-            course_query = Course.objects.filter(
-                subdepartment=subdepartment_query.first(), number=num
-            )
-            if course_query.count() <= 0:
+
+            course = Course.objects.filter(
+                subdepartment=subdepartment, number=num
+            ).first()
+            if course is None:
                 print(
                     "Course not found for",
                     mnemonic,
@@ -128,21 +126,21 @@ class Command(BaseCommand):
                 )
                 continue
             if verbose:
-                print(subdepartment_query.first(), course_query.first())
+                print(subdepartment, course)
 
             # Use only last name if list is size of 1
             # Some professors only have last name in the database
-            if len(instructor) > 1:
-                instructor_query = Instructor.objects.filter(
-                    first_name__iexact=instructor[0],
-                    last_name__iexact=instructor[1],
-                )
+            if len(instructor_arr) > 1:
+                instructor = Instructor.objects.filter(
+                    first_name__iexact=instructor_arr[0],
+                    last_name__iexact=instructor_arr[1],
+                ).first()
             else:
-                instructor_query = Instructor.objects.filter(
-                    first_name__iexact=instructor[0]
-                )
+                instructor = Instructor.objects.filter(
+                    last_name__iexact=instructor_arr[0]
+                ).first()
 
-            if instructor_query.count() <= 0:
+            if instructor is None:
                 print(
                     "Instructor not found for",
                     mnemonic,
@@ -156,8 +154,7 @@ class Command(BaseCommand):
             review_content = line[5].strip()
 
             # Confirm the review is not already in the database
-            review_query = Review.objects.filter(text__iexact=review_content)
-            if review_query.count() > 0:
+            if Review.objects.filter(text__iexact=review_content).count() > 0:
                 print(
                     "REVIEW ALREADY IN DATABASE FOR",
                     mnemonic,
@@ -192,8 +189,8 @@ class Command(BaseCommand):
             review = Review(
                 text=review_content,
                 user=account,
-                course=course_query.first(),
-                instructor=instructor_query.first(),
+                course=course,
+                instructor=instructor,
                 semester=semester,
                 instructor_rating=instructor_rating,
                 difficulty=difficulty,
