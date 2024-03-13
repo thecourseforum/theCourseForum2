@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tcf_website', '0010_trigram_extension'),
+        ("tcf_website", "0010_trigram_extension"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='review',
-            name='email',
-            field=models.CharField(default=''),
+            model_name="review",
+            name="email",
+            field=models.CharField(default=""),
         ),
     ]
