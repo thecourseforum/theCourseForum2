@@ -1,3 +1,7 @@
+"""Command for uploading CSV review drive files to the database."""
+
+# pylint: disable=no-member, too-many-locals, too-many-branches, too-many-statements
+
 import csv
 import os
 from datetime import datetime
@@ -11,6 +15,7 @@ DATA_DIR = "tcf_website/management/commands/review_drive_responses/"
 
 
 class Command(BaseCommand):
+    """Command that is run for CSV upload."""
     # Run this command using
     # `docker exec -it tcf_django python3 manage.py upload_csv_review_drive <params>`
     # Required parameters: [filename] [season] [years]
@@ -85,6 +90,7 @@ class Command(BaseCommand):
 
 
 def create_reviews(verbose, filename, semester, dummy_account):
+    """Creates reviews based on CSV info."""
     with open(os.path.join(DATA_DIR, filename), mode="r", encoding='utf-8') as file:
         csv_file = csv.reader(file)
 
