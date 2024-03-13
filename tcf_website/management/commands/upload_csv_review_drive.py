@@ -1,11 +1,13 @@
+import csv
+import os
+from datetime import datetime
+
 from django.core.management.base import BaseCommand, CommandError
 
 from tcf_website.models import *
-from datetime import datetime
-import csv
-import os
 
 DATA_DIR = "tcf_website/management/commands/review_drive_responses/"
+
 
 class Command(BaseCommand):
 
@@ -16,14 +18,16 @@ class Command(BaseCommand):
     # Visually check that CS department has been moved to E School and that
     # other schools have been split up.
 
-    help = "Uploads CSV from /review_drive_responses/ in the format of Time, Email, Mnemonic, Number, Name, Review, " \
-           "Rating, Enjoyable, Recommendation, Difficulty, Reading Hours, Writing Hours, Group work Hours, Misc Hours"
+    help = (
+        "Uploads CSV from /review_drive_responses/ in the format of Time, Email, Mnemonic, Number, Name, Review, "
+        "Rating, Enjoyable, Recommendation, Difficulty, Reading Hours, Writing Hours, Group work Hours, Misc Hours"
+    )
 
     def add_arguments(self, parser):
         parser.add_argument(
             "filename",
             help=(
-                'Filepath of csv to upload in /review_drive_responses/'
+                "Filepath of csv to upload in /review_drive_responses/"
                 "Must be in correct format."
             ),
             type=str,
@@ -31,15 +35,13 @@ class Command(BaseCommand):
         parser.add_argument(
             "season",
             help=(
-                'What season the reviews took place i.e. Fall, January, Spring, Summer'
+                "What season the reviews took place i.e. Fall, January, Spring, Summer"
             ),
             type=str,
         )
         parser.add_argument(
             "year",
-            help=(
-                'Year of reviews i.e. 2024'
-            ),
+            help=("Year of reviews i.e. 2024"),
             type=int,
         )
 
@@ -57,22 +59,24 @@ class Command(BaseCommand):
         year = options["year"]
 
         # Get semester object from args
-        semester_query = Semester.objects.filter(season=season.upper(), year=year)
+        semester_query = Semester.objects.filter(
+            season=season.upper(), year=year
+        )
         if semester_query.count() <= 0:
-            print('ERROR: Semester not found')
+            print("ERROR: Semester not found")
             return
         semester = semester_query.first()
 
         # Needs to be created ahead of time in the db
-        dummy_account = User.objects.filter(computing_id__iexact='reviewdrive')
+        dummy_account = User.objects.filter(computing_id__iexact="reviewdrive")
         if dummy_account.count() <= 0:
-            print('ERROR: DUMMY ACCOUNT NOT FOUND')
+            print("ERROR: DUMMY ACCOUNT NOT FOUND")
             return
 
         if verbose:
-            print('Starting file upload...')
+            print("Starting file upload...")
 
-        file = open(os.path.join(DATA_DIR, filename), mode='r')
+        file = open(os.path.join(DATA_DIR, filename), mode="r")
         csv_file = csv.reader(file)
 
         for i, line in enumerate(csv_file):
@@ -83,7 +87,7 @@ class Command(BaseCommand):
             email = line[1].strip()
             mnemonic = line[2].strip()
             num = int(line[3].strip())
-            instructor = line[4].strip().split(' ', 1)
+            instructor = line[4].strip().split(" ", 1)
 
             if verbose:
                 print(email, mnemonic, num, instructor)
@@ -92,18 +96,36 @@ class Command(BaseCommand):
             account_query = User.objects.filter(email=email)
             if account_query.count() > 0:
                 if verbose:
-                    print('Account already found for', email)
+                    print("Account already found for", email)
                 account = account_query.first()
             else:
                 account = dummy_account.first()
 
-            subdepartment_query = Subdepartment.objects.filter(mnemonic__iexact=mnemonic)
+            subdepartment_query = Subdepartment.objects.filter(
+                mnemonic__iexact=mnemonic
+            )
             if subdepartment_query.count() <= 0:
-                print('Subdepartment not found for', mnemonic, num, email, instructor, 'skipping...')
+                print(
+                    "Subdepartment not found for",
+                    mnemonic,
+                    num,
+                    email,
+                    instructor,
+                    "skipping...",
+                )
                 continue
-            course_query = Course.objects.filter(subdepartment=subdepartment_query.first(), number=num)
+            course_query = Course.objects.filter(
+                subdepartment=subdepartment_query.first(), number=num
+            )
             if course_query.count() <= 0:
-                print('Course not found for', mnemonic, num, email, instructor, 'skipping...')
+                print(
+                    "Course not found for",
+                    mnemonic,
+                    num,
+                    email,
+                    instructor,
+                    "skipping...",
+                )
                 continue
             if verbose:
                 print(subdepartment_query.first(), course_query.first())
@@ -111,13 +133,24 @@ class Command(BaseCommand):
             # Use only last name if list is size of 1
             # Some professors only have last name in the database
             if len(instructor) > 1:
-                instructor_query = Instructor.objects.filter(first_name__iexact=instructor[0],
-                                                             last_name__iexact=instructor[1])
+                instructor_query = Instructor.objects.filter(
+                    first_name__iexact=instructor[0],
+                    last_name__iexact=instructor[1],
+                )
             else:
-                instructor_query = Instructor.objects.filter(first_name__iexact=instructor[0])
+                instructor_query = Instructor.objects.filter(
+                    first_name__iexact=instructor[0]
+                )
 
             if instructor_query.count() <= 0:
-                print('Instructor not found for', mnemonic, num, email, instructor, 'skipping...')
+                print(
+                    "Instructor not found for",
+                    mnemonic,
+                    num,
+                    email,
+                    instructor,
+                    "skipping...",
+                )
                 continue
 
             review_content = line[5].strip()
@@ -125,7 +158,14 @@ class Command(BaseCommand):
             # Confirm the review is not already in the database
             review_query = Review.objects.filter(text__iexact=review_content)
             if review_query.count() > 0:
-                print('REVIEW ALREADY IN DATABASE FOR', mnemonic, num, email, instructor, 'skipping...')
+                print(
+                    "REVIEW ALREADY IN DATABASE FOR",
+                    mnemonic,
+                    num,
+                    email,
+                    instructor,
+                    "skipping...",
+                )
                 continue
 
             # CSV must be formatted EXACTLY in order
@@ -137,15 +177,17 @@ class Command(BaseCommand):
             amount_writing = int(line[11].strip())
             amount_group = int(line[12].strip())
             amount_homework = int(line[13].strip())
-            hours_per_week = amount_reading + amount_writing + amount_group + amount_homework
+            hours_per_week = (
+                amount_reading + amount_writing + amount_group + amount_homework
+            )
 
-            created = datetime.strptime(line[0].strip(), '%m/%d/%Y %H:%M:%S')
+            created = datetime.strptime(line[0].strip(), "%m/%d/%Y %H:%M:%S")
             modified = datetime.now()
 
             if account == dummy_account.first():
                 review_email = email
             else:
-                review_email = ''
+                review_email = ""
 
             review = Review(
                 text=review_content,
@@ -164,11 +206,11 @@ class Command(BaseCommand):
                 amount_homework=amount_homework,
                 created=created,
                 modified=modified,
-                email=review_email
+                email=review_email,
             )
             review.save()
 
             if verbose:
-                print('Finished row', i)
+                print("Finished row", i)
 
-        print('All done!')
+        print("All done!")
