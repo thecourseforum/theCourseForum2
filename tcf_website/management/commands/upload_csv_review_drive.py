@@ -12,7 +12,8 @@ DATA_DIR = "tcf_website/management/commands/review_drive_responses/"
 
 class Command(BaseCommand):
     # Run this command using
-    # `docker exec -it tcf_django python3 manage.py upload_csv_review_drive [filename] [season] [year]`
+    # `docker exec -it tcf_django python3 manage.py upload_csv_review_drive <params>`
+    # Required parameters: [filename] [season] [years]
     # Optional flag --verbose can be set to show output of the script
     # Must be run in a separate terminal after already running docker-compose up
     # May have to restart the docker container for database changes to be visible on the site
@@ -20,8 +21,9 @@ class Command(BaseCommand):
     # other schools have been split up.
 
     help = (
-        "Uploads CSV from /review_drive_responses/ in the format of Time, Email, Mnemonic, Number, Name, Review, "
-        "Rating, Enjoyable, Recommendation, Difficulty, Reading Hours, Writing Hours, Group work Hours, Misc Hours"
+        "Uploads CSV from /review_drive_responses/ in the format of "
+        "Time, Email, Mnemonic, Number, Name, Review, Rating, Enjoyable, Recommendation, "
+        "Difficulty, Reading Hours, Writing Hours, Group work Hours, Misc Hours"
     )
 
     def add_arguments(self, parser):
@@ -42,7 +44,7 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "year",
-            help=("Year of reviews i.e. 2024"),
+            help="Year of reviews i.e. 2024",
             type=int,
         )
 
@@ -79,8 +81,11 @@ class Command(BaseCommand):
                                                      last_name='Drive')
 
         print("Starting file upload...")
+        create_reviews(verbose, filename, semester, dummy_account)
 
-        file = open(os.path.join(DATA_DIR, filename), mode="r", encoding='utf-8')
+
+def create_reviews(verbose, filename, semester, dummy_account):
+    with open(os.path.join(DATA_DIR, filename), mode="r", encoding='utf-8') as file:
         csv_file = csv.reader(file)
 
         for i, line in enumerate(csv_file):
@@ -130,8 +135,6 @@ class Command(BaseCommand):
                     "skipping...",
                 )
                 continue
-            if verbose:
-                print(subdepartment, course)
 
             # Use only last name if list is size of 1
             # Some professors only have last name in the database
