@@ -2,16 +2,17 @@ import csv
 import os
 from datetime import datetime
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from tcf_website.models import *
+from tcf_website.models import Instructor, Course, Subdepartment, User, Review, Semester
 
 DATA_DIR = "tcf_website/management/commands/review_drive_responses/"
 
 
 class Command(BaseCommand):
-
-    # Run this coomand using `sudo docker exec -it tcf_django python3 manage.py upload_csv_review_drive [filename] [season] [year]`
+    # Run this command using
+    # `docker exec -it tcf_django python3 manage.py upload_csv_review_drive [filename] [season] [year]`
     # Optional flag --verbose can be set to show output of the script
     # Must be run in a separate terminal after already running docker-compose up
     # May have to restart the docker container for database changes to be visible on the site
@@ -67,15 +68,19 @@ class Command(BaseCommand):
             return
 
         # Needs to be created ahead of time in the db
-        dummy_account = User.objects.filter(computing_id__iexact="reviewdrive")
-        if dummy_account.count() <= 0:
-            print("ERROR: DUMMY ACCOUNT NOT FOUND")
-            return
+        dummy_account = User.objects.filter(computing_id__iexact=settings.REVIEW_DRIVE_ID).first()
+        if dummy_account is None:
+            dummy_account = User.objects.create_user(computing_id=settings.REVIEW_DRIVE_ID,
+                                                     graduation_year=year,
+                                                     username=settings.REVIEW_DRIVE_ID,
+                                                     password=settings.REVIEW_DRIVE_PASSWORD,
+                                                     email=settings.REVIEW_DRIVE_EMAIL,
+                                                     first_name='Review',
+                                                     last_name='Drive')
 
-        if verbose:
-            print("Starting file upload...")
+        print("Starting file upload...")
 
-        file = open(os.path.join(DATA_DIR, filename), mode="r")
+        file = open(os.path.join(DATA_DIR, filename), mode="r", encoding='utf-8')
         csv_file = csv.reader(file)
 
         for i, line in enumerate(csv_file):
@@ -175,7 +180,7 @@ class Command(BaseCommand):
             amount_group = int(line[12].strip())
             amount_homework = int(line[13].strip())
             hours_per_week = (
-                amount_reading + amount_writing + amount_group + amount_homework
+                    amount_reading + amount_writing + amount_group + amount_homework
             )
 
             created = datetime.strptime(line[0].strip(), "%m/%d/%Y %H:%M:%S")
