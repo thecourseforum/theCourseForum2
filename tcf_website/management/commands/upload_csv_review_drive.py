@@ -105,7 +105,7 @@ def create_reviews(verbose, filename, semester, dummy_account):
             instructor_arr = line[4].strip().split(" ", 1)
 
             if verbose:
-                print(email, mnemonic, num, instructor)
+                print(email, mnemonic, num, instructor_arr)
 
             # Use account if found. Otherwise, use dummy user
             account = User.objects.filter(email=email).first()
@@ -123,7 +123,7 @@ def create_reviews(verbose, filename, semester, dummy_account):
                     mnemonic,
                     num,
                     email,
-                    instructor,
+                    instructor_arr,
                     "skipping...",
                 )
                 continue
@@ -137,7 +137,7 @@ def create_reviews(verbose, filename, semester, dummy_account):
                     mnemonic,
                     num,
                     email,
-                    instructor,
+                    instructor_arr,
                     "skipping...",
                 )
                 continue
@@ -160,7 +160,7 @@ def create_reviews(verbose, filename, semester, dummy_account):
                     mnemonic,
                     num,
                     email,
-                    instructor,
+                    instructor_arr,
                     "skipping...",
                 )
                 continue
@@ -174,7 +174,7 @@ def create_reviews(verbose, filename, semester, dummy_account):
                     mnemonic,
                     num,
                     email,
-                    instructor,
+                    instructor_arr,
                     "skipping...",
                 )
                 continue
