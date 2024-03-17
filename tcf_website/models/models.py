@@ -1119,8 +1119,9 @@ class Schedule(models.Model):
             total_grade_points += course_gpa * course_credits
             total_course_credits += course_credits
 
-        ret[4] = total_grade_points/total_course_credits
-
+        if total_course_credits:
+            ret[4] = total_grade_points/total_course_credits
+        else: ret[4] = 0.0
         return ret
 
     def get_scheduled_courses(self):
