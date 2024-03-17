@@ -100,13 +100,15 @@
                 {% load custom_filters %}
                 <div id="gridContent" class="grid-content">
                     <br>
-                    <div class="card-deck d-flex flex-wrap justify-content-between">
+                    <div class="row justify-content-center">
                         {% for i in recommendation_names %}
-                        <div class="card mb-3" style="width: 300px;">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ i }}</h5>
-                                <p class="card-text">{{ recommendation_descriptions|get_item:forloop.counter0 }}</p>
-                                <a href="{% url 'course' mnemonic=recommendation_mnemonics|get_item:forloop.counter0 course_number=recommendation_numbers|get_item:forloop.counter0 %}" class="btn btn-primary">View Course</a>
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ i }}</h5>
+                                    <p class="card-text">{{ recommendation_descriptions|get_item:forloop.counter0 }}</p>
+                                    <a href="{% url 'course' mnemonic=recommendation_mnemonics|get_item:forloop.counter0 course_number=recommendation_numbers|get_item:forloop.counter0 %}" class="btn btn-primary">View Course</a>
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
