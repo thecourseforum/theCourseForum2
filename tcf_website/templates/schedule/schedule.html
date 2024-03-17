@@ -22,7 +22,7 @@
                     </div>
                     <div class="scheduleStatItem">
                         <i class="fas fa-chart-bar" aria-hidden="true"></i>
-                        <p id="ScheduleGPA-{{schedule.id}}" class="scheduleGPA"></p>
+                        <p id="ScheduleGPA-{{schedule.id}}" class="scheduleGPA">{{gpa|floatformat:2}}</p>
                     </div>
                 </div>
             </div>
@@ -31,7 +31,8 @@
                 <ul id="schedule_courses-{{schedule.id}}" class="schedule_card_courses">
                     {% for course in courses %}
                         <li>
-                            <div id="ScheduledCourse-{{course.id}}{{mode}}" class="schedule_course_card" course_rating="{{course.total_rating}}" course_diff="{{course.difficulty}}" course_credits="{{course.credits}}">
+                            <div id="ScheduledCourse-{{course.id}}{{mode}}" class="schedule_course_card" course_rating="{{course.total_rating}}" 
+                            course_diff="{{course.difficulty}}" course_credits="{{course.credits}}" course_gpa="{{course.gpa}}">
                                 <h6 class="schedule_course_card_header">{{course}}</h6>
                                 <div class="schedule_course_card_content">
                                     {{course.user}}
@@ -46,6 +47,9 @@
                                     </div>
                                     <div>
                                         {{course.section.section_type}}
+                                    </div>
+                                    <div>
+                                        {{course.gpa|floatformat:2}}
                                     </div>
                                 </div>
                             </div>
@@ -74,6 +78,8 @@
         let credit = 0;  // the running total of credits for the current schedule
         let difficulty = 0;  // the running total of difficultys for the current schedule
         let d_count = 0;  // the count of the number of valid course rows for difficultys
+        let cumulative_grade_point = 0;  // the running total of grade point averages
+        let gpa_credits = 0;  // the running total of relavent credits for calculating weighted GPA
 
 
         // get the course rows from the table
@@ -82,35 +88,50 @@
             let courseRating = parseFloat(course.getAttribute("course_rating"));
             let courseCredits = parseInt(course.getAttribute("course_credits"));
             let courseDifficulty = parseFloat(course.getAttribute("course_diff"));
+            let courseGpa = parseFloat(course.getAttribute("course_gpa"));
 
             // if there is a valid rating and difficulty, increment it's count and accumulate
             if (courseRating){
-                rating += courseRating
+                rating += courseRating;
                 r_count++;
             }
             if (courseDifficulty){
-                difficulty += courseDifficulty
+                difficulty += courseDifficulty;
                 d_count++;
             }
-            credit += courseCredits
+
+            credit += courseCredits;
+            if (courseGpa) {
+                cumulative_grade_point += courseCredits * courseGpa;
+                gpa_credits += courseCredits;
+            }
+
         });
-        // See if rating and difficulty were changed
+        // See if rating, difficulty, and cumlative grade points were changed
         if (rating) {
             rating = rating / r_count;
         }
         if (difficulty) {
             difficulty = difficulty / d_count;
         }
+        let final_gpa = 0;
+        if (cumulative_grade_point) {
+            final_gpa = cumulative_grade_point / gpa_credits
+        }
         
         // fetch the schedule rating HTML element from the schedule template that is loaded into this page
         const scheduleRating = this_schedule.querySelector('.scheduleRating');
-        scheduleRating.innerText = "Schedule rating: "+ rating.toFixed(2);
-
-        const scheduleCredits = this_schedule.querySelector('.scheduleCredits');
-        scheduleCredits.innerText = "Credits: "+ credit;
+        scheduleRating.innerText = rating.toFixed(2);
 
         const scheduleDifficulty = this_schedule.querySelector('.scheduleDifficulty');
-        scheduleDifficulty.innerText = "Schedule difficulty: "+ difficulty.toFixed(2);
+        scheduleDifficulty.innerText = difficulty.toFixed(2);
+
+        const scheduleCredits = this_schedule.querySelector('.scheduleCredits');
+        scheduleCredits.innerText = credit;
+
+        const scheduleGPA = this_schedule.querySelector('.scheduleGPA');
+        scheduleGPA.innerText = (final_gpa).toFixed(2);
+
     }
 
     function addCourse(course) {
@@ -120,11 +141,11 @@
         const scheduleId = '{{schedule.id}}';
         let this_schedule = document.getElementById("schedule{{schedule.id}}edit");
         let this_schedule_courses = this_schedule.querySelector("#schedule_courses-{{schedule.id}}");
-
         // notice we mark this newly added list element with a ID
         let courseCardHTML = `
             <li id="selectedSectionTentative">
-                <div id="ScheduledCourse-${course.rating}edit" class="schedule_course_card" course_rating="${course.rating}" course_diff="${course.difficulty}" course_credits="${course.credits}">
+                <div id="ScheduledCourse-${course.rating}edit" class="schedule_course_card" course_rating="${course.rating}" 
+                course_diff="${course.difficulty}" course_credits="${course.credits}" course_gpa="${course.gpa}">
                     <h6 class="schedule_course_card_header">TEMP FIELD</h6>
                     <div class="schedule_course_card_content">
                         
@@ -139,6 +160,9 @@
                         </div>
                         <div>
                             ${course.section_type}
+                        </div>
+                        <div>
+                            ${course.gpa}
                         </div>
                     </div>
                 </div>

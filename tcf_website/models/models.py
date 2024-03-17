@@ -1101,11 +1101,25 @@ class Schedule(models.Model):
         """Get the schedule and all its related information"""
         # NOTE: there may be a way to combine all of these methods into
         #       one query, but it would be very complicated
-        ret = [0]*4
+        ret = [0]*5
         ret[0] = self.get_scheduled_courses()
         ret[1] = sum([int(course.section.units) for course in ret[0]])
         ret[2] = self.average_rating_for_schedule()
         ret[3] = self.average_schedule_difficulty()
+
+        total_grade_points = 0
+        total_course_credits = 0
+
+        # calculate weighted gpa based on credits
+        for course in ret[0]:
+            course_gpa = course.gpa
+            course_credits = course.credits if course.credits else 0
+
+            if not course_gpa: continue  # pass a given course if there is no gpa for it
+            total_grade_points += course_gpa * course_credits
+            total_course_credits += course_credits
+
+        ret[4] = total_grade_points/total_course_credits
 
         return ret
 
@@ -1141,8 +1155,18 @@ class Schedule(models.Model):
                 output_field=models.FloatField()
             )
         )
+
+        # Convert queryset to list to allow modifying each instance
+        scheduled_courses = list(queryset)
+
+        for scheduled_course in scheduled_courses:
+            # Use the average_gpa_for_course method to get the GPA
+            gpa = scheduled_course.instructor.average_gpa_for_course(scheduled_course.section.course)
+            # Store the GPA in an attribute of the ScheduledCourse instance
+            setattr(scheduled_course, 'gpa', gpa)
         
-        return queryset
+        
+        return scheduled_courses
 
     def calculate_total_rating(self, rating):
             '''Calculate the average rating across all categories'''
@@ -1225,6 +1249,17 @@ class Schedule(models.Model):
 
         return result.get('overall_avg_difficulty')
     
+    def average_schedule_gpa(self):
+        """Compute the average GPA for this schedule"""
+        """CourseInstructorGrade.objects.filter(
+            course=course, instructor=self
+        ).aggregate(models.Avg("average"))["average__avg"]"""
+
+        average_gpa = CourseInstructorGrade.objects.filter(
+            course__in=ScheduledCourse.objects.values_list('section__course', flat=True),
+            instructor__in =ScheduledCourse.objects.values_list('instructor', flat=True)
+        ).aggregate(models.Avg("average"))["average__avg"]
+        return average_gpa
 
 class ScheduledCourse(models.Model):
     """ScheduledCourse Model.
