@@ -70,7 +70,7 @@ class Command(BaseCommand):
         semester = Semester.objects.filter(
             season=season.upper(), year=year
         ).first()
-        if semester.count() <= 0:
+        if semester is None:
             print("ERROR: Semester not found")
             return
 
