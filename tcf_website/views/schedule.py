@@ -62,6 +62,7 @@ def schedule_data_helper(request):
     ratings_context = {}  # contains aggregated ratings for schedules, using the model's method
     difficulty_context = {}  # contains aggregated difficulty of schedules, using the model's method
     credits_context = {}  # contains the total credits of schedules, calculated in this view
+    gpa_context = {}  # contains the weighted gpa, calculated in the model function
 
     # iterate over the schedules for this request in order to set up the context
     # this could also be optimized for the database by combining these queries
@@ -71,12 +72,14 @@ def schedule_data_helper(request):
         credits_context[s.id] = s_data[1]
         ratings_context[s.id] = s_data[2]
         difficulty_context[s.id] = s_data[3]
+        gpa_context[s.id] = s_data[4]
 
     ret = {"schedules": schedules,
            "courses": courses_context,
            "ratings": ratings_context,
            "difficulty": difficulty_context,
-           "credits": credits_context}
+           "credits": credits_context,
+           "schedules_gpa": gpa_context}
 
     return ret
 
@@ -201,7 +204,8 @@ def modal_load_editor(request):
         'schedule_courses': schedule_data[0],
         'schedule_credits': schedule_data[1],
         'schedule_ratings': schedule_data[2],
-        'schedule_difficulty': schedule_data[3]
+        'schedule_difficulty': schedule_data[3],
+        'schedule_gpa': schedule_data[4]
         }
     return render(request, "schedule/schedule_editor.html", context)
 
@@ -271,6 +275,8 @@ def modal_load_sections(request):
         temp["name"] = i.first_name + " " + i.last_name
         temp["rating"] = i.rating
         temp["difficulty"] = i.difficulty
+        print(i.gpa)
+        temp["gpa"] = i.gpa
     
     schedule = Schedule.objects.get(pk=schedule_id)
     schedule_data = schedule.get_schedule()
@@ -280,7 +286,8 @@ def modal_load_sections(request):
         'schedule_courses': schedule_data[0],
         'schedule_credits': schedule_data[1],
         'schedule_ratings': schedule_data[2],
-        'schedule_difficulty': schedule_data[3]
+        'schedule_difficulty': schedule_data[3],
+        'schedule_gpa': schedule_data[4],
         }
     return render(request, "schedule/schedule_with_sections.html", context)
 
