@@ -55,6 +55,7 @@ def recommend_classes(similarity_matrix, spring_data, close_match, index_of_the_
     course_numbers = []
     inputCourseMnemonic = \
     spring_data[spring_data.index == (index_of_the_class + chunk_size * chunk_val)]['Mnemonic'].values[0]
+    inputCourseNumber = spring_data[spring_data.index == (index_of_the_class + chunk_size * chunk_val)]['Number'].values[0]
     for course in sorted_similar_courses:
         index = course[0]
         title_from_index = spring_data[spring_data.index == index]['Title'].values[0]
@@ -62,7 +63,7 @@ def recommend_classes(similarity_matrix, spring_data, close_match, index_of_the_
         number_from_index = spring_data[spring_data.index == index]['Number'].values[0]
         if (i < N + 1):
             if (title_from_index not in displayedSuggestions and title_from_index != close_match
-                    and mnemonic_from_index == inputCourseMnemonic):
+                    and mnemonic_from_index == inputCourseMnemonic and number_from_index >= inputCourseNumber):
                 displayedSuggestions.append(title_from_index)
                 course_mnemonics.append(mnemonic_from_index)
                 course_numbers.append(number_from_index)
