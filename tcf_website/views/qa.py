@@ -10,13 +10,25 @@ from django.contrib.auth.mixins import (  # For class-based views
 )
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
+from django.db.models.query import QuerySet
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import generic
+from django.views.generic.list import ListView
 
 from ..models import Answer, Question
 
+
+class QAView(ListView):
+    template_name = 'qa.html'
+    #context_object_name = 'questions'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['questions'] = Question.objects.all()
+        context['answers'] = Answer.objects.all()
+        return context
 
 class QuestionForm(forms.ModelForm):
     """Form for question creation"""

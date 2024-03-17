@@ -59,6 +59,7 @@ urlpatterns = [
     path("search/", views.search, name="search"),
     # QA URLs
     path("answers/check_duplicate/", views.qa.check_duplicate),
+    path("qa", views.qa.QAView.as_view(), name="qa"),
     path("qa/new_question/", views.new_question, name="new_question"),
     path("qa/new_answer/", views.new_answer, name="new_answer"),
     path("questions/<int:question_id>/upvote/", views.upvote_question),
