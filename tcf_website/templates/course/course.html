@@ -21,10 +21,16 @@
         </div>
 
         <div class="instructors container-lg mt-3">
-            <div class="d-md-flex align-items-baseline my-3">
-                <h1 class="mr-md-3 text-nowrap">{{ course.code }}</h1>
-                <h2>{{ course.title }}</h2>
+            <div class="d-md-flex justify-content-between align-items-baseline my-3">
+                <div class="text-left">
+                    <h1 class="mr-md-3 text-nowrap">{{ course.code }}</h1>
+                    <h2>{{ course.title }}</h2>
+                </div>
+                <div class="text-right">
+                    <button onclick="scrollToHeader()" class="btn btn-secondary">Related Courses</button>
+                </div>
             </div>
+            
 
             <!-- Course Description -->
             {% if course.description|length > 0 %}
@@ -62,27 +68,9 @@
 
             <br/>
 
-            <h2> Related Courses: </h2>
-
-            <!-- Button to toggle dropdown -->
-            <button onclick="toggleDropdown()" class="btn btn-primary">Toggle Dropdown</button>
-            <!-- Dropdown for recommendation content -->
-            {% load custom_filters %}
-            <div id="dropdownContent" class="dropdown-content" style="display: none;">
-                <br/>
-                <ul class ="instructor-list course-list">
-                    {% for i in recommendation_names %}
-                        <li>
-                            <a href="{% url 'course' mnemonic=recommendation_mnemonics|get_item:forloop.counter0 course_number=recommendation_numbers|get_item:forloop.counter0 %}">{{ i }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <br/>
-
             <!-- Page content -->
             {% if not taught_this_semester %}
+                <br/>
                 <div class="new card col p-5 text-center">
                     <div class="card-body">
                         <h4 class="card-title">
@@ -95,7 +83,9 @@
                 </div>
             {% endif %}
 
+
             <ul class="instructor-list course-list">
+                <br/>
                 {% for i in instructors %}
                     <li class="instructor {% if i.semester_last_taught != latest_semester %}old{% endif %}">
                         {% url 'course_instructor' course_id=course.pk instructor_id=i.pk as link %}
@@ -103,6 +93,26 @@
                     </li>
                 {% endfor %}
             </ul>
+            
+            <br/>
+            <div> 
+                <h2 id = "related-courses"> Related Courses: </h2>
+                {% load custom_filters %}
+                <div id="gridContent" class="grid-content">
+                    <br>
+                    <div class="card-deck d-flex flex-wrap justify-content-between">
+                        {% for i in recommendation_names %}
+                        <div class="card mb-3" style="width: 300px;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ i }}</h5>
+                                <p class="card-text">{{ recommendation_descriptions|get_item:forloop.counter0 }}</p>
+                                <a href="{% url 'course' mnemonic=recommendation_mnemonics|get_item:forloop.counter0 course_number=recommendation_numbers|get_item:forloop.counter0 %}" class="btn btn-primary">View Course</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
             
         </div>
     </div>
@@ -123,13 +133,9 @@
 
     <!-- Dropdown toggle -->
     <script>
-        function toggleDropdown() {
-            var dropdown = document.getElementById("dropdownContent");
-            if (dropdown.style.display === "block") {
-                dropdown.style.display = "none";
-            } else {
-                dropdown.style.display = "block";
-            }
+        function scrollToHeader() {
+            const header = document.getElementById('related-courses');
+            header.scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 {% endblock %}
