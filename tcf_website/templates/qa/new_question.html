@@ -23,7 +23,7 @@
           <p class="small">You can type or use Arrowkeys+Enter to select.</p>
         </div>
 
-        <ul class="nav nav-tabs mb-3">
+        <!--<ul class="nav nav-tabs mb-3">
           <li class="nav-item">
             <a class="nav-link active" id="specificQuestion" data-toggle="tab" href="#specificQuestionTab"
               style="font-size: 18px;">Course Specific</a>
@@ -32,7 +32,7 @@
             <a class="nav-link" id="generalQuestion" data-toggle="tab" href="#generalQuestionTab"
               style="font-size: 18px;">General</a>
           </li>
-        </ul>
+        </ul>-->
 
         {% csrf_token %}
         <div class="tab-content">
@@ -43,16 +43,20 @@
             </div>
           </div>
 
-          <div class="tab-pane fade" id="generalQuestionTab" role="tabpanel" aria-labelledby="general-question-tab">
+          <!--<div class="tab-pane fade" id="generalQuestionTab" role="tabpanel" aria-labelledby="general-question-tab">
             <p>PLACEHOLDER FOR GENERAL QUESTION</p>
             <div class="new-question-submit row py-4">
               <button type="submit" class="btn btn-primary mx-auto" id="submitBtn">Post Question</button>
             </div>
-          </div>
+          </div>-->
           
         </div>
     </form>
   </div>
 </div>
 
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="{% static 'qa/new_question.js' %}"></script>
 {% endblock %}
