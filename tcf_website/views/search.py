@@ -106,7 +106,6 @@ def fetch_instructors(query):
         .filter(similarity__gte=0.2)
         .order_by("-similarity")[:10]
     )
-    # Formatting results similar to Elastic search response
     formatted_results = [
         {
             "_meta": {"id": str(instructor.pk), "score": instructor.similarity},
@@ -176,7 +175,6 @@ def fetch_courses(title, number):
         .order_by("-total_similarity")[:10]
     )
 
-    # Formatting results similar to Elastic search response
     formatted_results = [
         {
             "_meta": {"id": str(course.pk), "score": course.total_similarity},
@@ -199,7 +197,7 @@ def fetch_courses(title, number):
 
 
 def format_response(response):
-    """Formats an Elastic search endpoint response."""
+    """Formats an Trigram response."""
     formatted = {"error": False, "results": []}
     if "error" in response:
         formatted["error"] = True
