@@ -19,7 +19,7 @@
                         <input type="checkbox" name="selected_schedules" value="{{s.id}}">
                         {{s.name}}
                     </label>
-                    {% include "schedule/schedule.html" with courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id credits=credits|get_item:s.id %}
+                    {% include "schedule/schedule.html" with gpa=schedules_gpa|get_item:s.id courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id credits=credits|get_item:s.id %}
                 </div>
                 {% empty %}
                 <div>You haven't made any schedules yet!</div>
