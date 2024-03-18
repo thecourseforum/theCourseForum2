@@ -78,16 +78,8 @@ A normal update may look like the following:
 $ docker exec -it tcf_django python manage.py load_grades <year>_<season>.csv
 ```
 
-5. Update ElasticSearch to reflect the latest database changes:
-
-```console
-$ docker exec tcf_django python manage.py index_elasticsearch
-```
-
-**_NOTE_**: this command may take +1 hour(s) to run, so plan accordingly!
-
-6. Commit the semesterly data to the repo
-7. Remove production credentialing (use `.env` credentials like normal)
+5. Commit the semesterly data to the repo
+6. Remove production credentialing (use `.env` credentials like normal)
 
 ## Loading Semester Data
 
