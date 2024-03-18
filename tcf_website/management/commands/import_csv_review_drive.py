@@ -112,7 +112,7 @@ def create_reviews(verbose, filename, semester, dummy_account):
             if account is not None and verbose:
                 print("Account already found for", email)
             elif account is None:
-                account = dummy_account.first()
+                account = dummy_account
 
             subdepartment = Subdepartment.objects.filter(
                 mnemonic__iexact=mnemonic
@@ -195,7 +195,7 @@ def create_reviews(verbose, filename, semester, dummy_account):
             created = datetime.strptime(line[0].strip(), "%m/%d/%Y %H:%M:%S")
             modified = datetime.now()
 
-            if account == dummy_account.first():
+            if account == dummy_account:
                 review_email = email
             else:
                 review_email = ""
