@@ -31,7 +31,7 @@
     {% include "schedule/edit_schedule_modal.html" with user_id=user.id %}
     {% include "schedule/create_schedule_modal.html" with user_id=user.id %}
     {% include "schedule/delete_schedule_modal.html" with schedules=schedules courses=courses user_id=user.id ratings=ratings difficulty=difficulty %}
-    {% include "schedule/schedules.html" with schedules=schedules courses=courses profile=True select=False %}
+
     <!-- this schedule list is just for listing the user's schedules -->
     <ul class="review-list list-unstyled">
         {% for s in schedules %}
