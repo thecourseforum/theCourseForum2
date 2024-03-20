@@ -8,10 +8,11 @@ from django.contrib.auth.decorators import login_required
 # from django.contrib.messages.views import SuccessMessageMixin
 # from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 # from django.shortcuts import get_object_or_404, render, redirect
 from django.shortcuts import render, redirect
 from django.db.models import Prefetch
+from django.template.loader import render_to_string
 
 from .browse import load_secs_helper
 from ..models import Schedule, User, Course, Semester, ScheduledCourse, Instructor, Section
@@ -100,40 +101,20 @@ def view_schedules(request):
                   schedule_context)
 
 
-def view_schedules_modal(request, mode):
+def view_select_schedules_modal(request, mode):
     '''
     get all schedules and display in the modal.
 
-    the "mode" parameter in the url specfies which modal to render
     '''
-    # NOTE: as of now, this endpoint is used as a means to load modal content
-    # and not the modal itself
-
     schedule_context = schedule_data_helper(request)
+
     if mode == "add_course":
-        # add necessary context variables for the select_schedule_modal template
-        schedule_context['profile'] = True
-        schedule_context['select'] = True
-        schedule_context['mode'] = mode 
-        schedule_context['url_param'] = 'schedule'
-
-        return render(request,
-                      'schedule/schedules.html',
-                      schedule_context)
-    elif mode == "edit_schedule":
-        # this mode is for loading schedules into the edit_schedule_modal template
-        schedule_context['select'] = True
-        schedule_context['url_param'] = 'schedule'
-        schedule_context['mode'] = mode  # pass back the mode used for the request
-
-        return render(request,
-                      'schedule/schedules.html',
-                      schedule_context)
+        schedule_context['mode'] = mode
     else:
-        # redirect if there is no mode parameter
-        # NOTE: there might be a better way to handle this error
-        messages.error(request, "Missing or invalid mode parameter from query string")
-        return redirect('schedule')
+        schedule_context['mode'] = "edit_schedule"
+    modal_content = render_to_string('schedule/select_schedule_modal.html', schedule_context, request)
+
+    return HttpResponse(modal_content)
 
 
 @login_required

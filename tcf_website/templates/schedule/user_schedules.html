@@ -27,10 +27,26 @@
             </a>
         </div>
     </div>
-    {% include "schedule/select_schedule_modal.html" with user_id=user.id mode="edit_schedule"%}
+    {% include "schedule/select_schedule_modal.html" with schedules=schedules user_id=user.id mode="edit_schedule"%}
     {% include "schedule/edit_schedule_modal.html" with user_id=user.id %}
     {% include "schedule/create_schedule_modal.html" with user_id=user.id %}
-    {% include "schedule/schedules.html" with schedules=schedules courses=courses profile=True select=False %}
     {% include "schedule/delete_schedule_modal.html" with schedules=schedules courses=courses user_id=user.id ratings=ratings difficulty=difficulty %}
+    {% include "schedule/schedules.html" with schedules=schedules courses=courses profile=True select=False %}
+    <!-- this schedule list is just for listing the user's schedules -->
+    <ul class="review-list list-unstyled">
+        {% for s in schedules %}
+        <li>
+            {% include "schedule/schedule.html" with courses=courses|get_item:s.id gpa=schedules_gpa|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id schedule=s credits=credits|get_item:s.id %}
+        </li>
+        {% empty %}
+        <div>You haven't made any schedules yet!</div>
+        {% endfor %}
+    </ul>
 </div>
+
+<script src="{% static 'schedule/schedule_select_script.js' %}"></script>
+<script>
+    // this function included in the schedule_select_script.js
+    document.addEventListener('DOMContentLoaded', modalFunctions("", "edit_schedule", "{% url 'modal_load_editor' %}"));
+</script>
 {% endblock %}
