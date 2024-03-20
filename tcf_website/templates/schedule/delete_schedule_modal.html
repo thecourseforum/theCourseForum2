@@ -25,7 +25,7 @@
                 <div>You haven't made any schedules yet!</div>
                 {% endfor %}
                 <div class="ml-sm-auto d-flex justify-content-end">
-                    <button id="schedule_select_btn"  type="submit" value="Submit" class="btn btn-primary" disabled>
+                    <button id="delete_schedule_select_btn"  type="submit" value="Submit" class="btn btn-primary" disabled>
                         Confirm
                     </button>
                 </div>
@@ -41,7 +41,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         // prevent a submission with no selected values
         var checkboxes = document.querySelectorAll('input[type="checkbox"][name="selected_schedules"]');
-        var submitButton = document.getElementById('schedule_select_btn');
+        var submitButton = document.getElementById('delete_schedule_select_btn');
 
         function updateButtonState() {
             // Check if at least one checkbox is checked
