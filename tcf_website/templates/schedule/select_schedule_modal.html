@@ -1,7 +1,8 @@
 {% load static %}
+{% load custom_tags %}
 
 <div class="modal fade" id="selectScheduleModal" tabindex="-1" role="dialog" aria-labelledby="selectScheduleModal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+  <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Select Schedule</h5>
@@ -10,40 +11,34 @@
           </button>
         </div>
         <div id="modal-body" class="modal-body">
-            
-        </div>
+          <form id="select_schedule_form" action="{% url 'schedule' %}" method="POST">
+            {% csrf_token %}
+            {% for s in schedules %}
+            <div class="schedule_radio_option">
+              <label>
+                    <input class="schedule_radio_input" type="radio" name="selected_schedules" value="{{s.id}}" onchange="enableSubmit()">
+                    <div>
+                      <span class="label_text">{{s.name}}</span>
+                        {% include "schedule/schedule.html" with schedule=s gpa=schedules_gpa|get_item:s.id courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id credits=credits|get_item:s.id %}
+
+                      </div>
+                </label>
+              </div>
+            {% empty %}
+            <!-- TODO: either present a link to the user to make a schedule or allow them to make one here in the modal -->
+            <div>{{schedules}}</div>
+            <div>You haven't made any schedules yet!</div>
+            {% endfor %}
+            <div class="ml-sm-auto d-flex justify-content-end">
+              <button id="schedule_select_btn"  type="submit" value="Submit" class="btn btn-primary" disabled>
+                    Continue
+                  </button>
+            </div>
+        </form>
+      </div>
       </div>
     </div>
 </div>
 
 
-
-{% block js %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{% static 'schedule/load_schedule_select.js' %}"></script>
-<script>
-  $(document).ready(function() {
-    // urls variables that get passed into the static JS file
-    var modal_fetch_url = "{% url 'modal_load_schedules' mode=mode %}";
-    var modal_submit_url = "";
-    var next_modal_id = "";
-    if( '{{mode}}' == "add_course"){
-      modal_submit_url = "{% url 'modal_load_sections' %}";
-      next_modal_id = '#addCourseModal';
-    } else if( '{{mode}}' == "edit_schedule") {
-      modal_submit_url = "{% url 'modal_load_editor' %}";
-      next_modal_id = '#editScheduleModal';
-    } else {
-      console.error("invalid or missing mode");
-    }
-
-    // Event listener for the button
-    $('#open_select_modal_button').on('click', function() {
-      // this function is in the static file included in this template
-      loadModal(modal_fetch_url, modal_submit_url, next_modal_id,'{{ course.id }}');
-    });
-
-  });
-
-</script>
-{% endblock %}
+<script src="{% static 'schedule/schedule_select_script.js' %}"></script>

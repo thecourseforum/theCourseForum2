@@ -34,5 +34,5 @@ from .schedule import (
     modal_load_editor,
     modal_load_sections,
     schedule_add_course,
-    view_schedules_modal,
+    view_select_schedules_modal,
 )

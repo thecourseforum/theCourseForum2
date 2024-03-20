@@ -1,9 +1,6 @@
 {% load custom_tags %}
 {% load static %}
 
-{% block styles %}
-<link rel="stylesheet" href="{% static 'schedule/schedules_list.css' %}" />
-{% endblock %}
 
 {% block content %}
 
@@ -34,17 +31,7 @@
                 </button>
             </div>
         </form>
-    {% else %}
-        <!-- this schedule list is just for listing the user's schedules -->
-        <ul class="review-list list-unstyled">
-            {% for s in schedules %}
-            <li>
-                {% include "schedule/schedule.html" with courses=courses|get_item:s.id gpa=schedules_gpa|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id schedule=s credits=credits|get_item:s.id %}
-            </li>
-            {% empty %}
-            <div>You haven't made any schedules yet!</div>
-            {% endfor %}
-        </ul>
+    
     {% endif %}
 </div>
 
@@ -54,20 +41,20 @@
 
 {% if select %}
 {% block js %}
-<script src="{% static 'schedule/parse_time.js' %}"></script>
+<!-- <script src="{% static 'schedule/parse_time.js' %}"></script> -->
 {# This javascript will make sure one is selected in the select form #}
 <script>
-    $(document).ready(function() {
-        // prevent a submission with no selected values
-        var radios = document.querySelectorAll('input[type="radio"][name="selected_schedules"]');
-        var submitButton = document.getElementById('schedule_select_btn');
+    // $(document).ready(function() {
+    //     // prevent a submission with no selected values
+    //     var radios = document.querySelectorAll('input[type="radio"][name="selected_schedules"]');
+    //     var submitButton = document.getElementById('schedule_select_btn');
 
-        radios.forEach(function(radio) {
-            radio.addEventListener('change', function() {
-                submitButton.disabled = false;
-            });
-        });
-    });
+    //     radios.forEach(function(radio) {
+    //         radio.addEventListener('change', function() {
+    //             submitButton.disabled = false;
+    //         });
+    //     });
+    // });
     
 </script>
 {% endblock %}
