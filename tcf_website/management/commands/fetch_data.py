@@ -14,6 +14,7 @@ from tqdm import tqdm
 COURSE_DATA_DIR = "tcf_website/management/commands/semester_data/sis_csv/"
 SEASON_NUMBERS = {"fall": 8, "summer": 6, "spring": 2, "january": 1}
 
+
 class Command(BaseCommand):
     """
     Command to fetch data from SIS API for the specified semester and save it to a CSV file.
@@ -32,15 +33,15 @@ class Command(BaseCommand):
             "semester", type=str, help='<year>_<season>(e.g., "2023_spring")'
         )
 
-    @backoff.on_exception(backoff.expo,
-                          (requests.exceptions.Timeout,
-                           requests.exceptions.ConnectionError))
-
+    @backoff.on_exception(
+        backoff.expo,
+        (requests.exceptions.Timeout, requests.exceptions.ConnectionError),
+    )
     def handle(self, *args, **kwargs):
         year, season = kwargs["semester"].split("_")
         season = season.lower()
         year_code = str(year)[-2:]
-        sem_code = f"1{year_code}{SEASON_NUMBERS.get(season)}" #1 represents 21st century in querying
+        sem_code = f"1{year_code}{SEASON_NUMBERS.get(season)}"  # 1 represents 21st century in querying
 
         self.stdout.write(f"Fetching course data for {year} {season}...")
 
