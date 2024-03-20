@@ -1,3 +1,5 @@
+from django.views.decorators.cache import cache_page
+
 # pylint: disable=invalid-name
 """Views for search results"""
 import re
@@ -290,6 +292,8 @@ def group_by_dept(courses):
     return grouped_courses
 
 
+# cache autocomplete results for 60s * 5 = 5min
+@cache_page(60 * 5)
 def autocomplete(request):
     """Fetch autocomplete results"""
     # Set query
