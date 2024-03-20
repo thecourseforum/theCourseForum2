@@ -1,7 +1,4 @@
-from django.views.decorators.cache import cache_page
-
-# pylint: disable=invalid-name
-"""Views for search results"""
+# pylint: disable=invalid-name,missing-module-docstring
 import re
 
 from django.contrib.postgres.search import TrigramWordSimilarity
@@ -16,6 +13,7 @@ from django.db.models import (
 from django.db.models.functions import Cast, Concat
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.decorators.cache import cache_page
 
 from ..models import Course, Instructor, Subdepartment
 
