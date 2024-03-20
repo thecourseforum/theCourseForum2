@@ -6,6 +6,8 @@
 {% block styles %}
     <link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
     <link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
+    <link rel="stylesheet" href="{% static 'schedule/schedule.css' %}" />
+
 {% endblock %}
 
 
@@ -29,7 +31,6 @@
                     class="open_select_modal_button"  data-toggle="modal" data-target="#selectScheduleModal" >
                         <i class="fas fa-plus" aria-hidden="true"></i> Add to Schedule 
                     </a>
-                    {% include "schedule/select_schedule_modal.html" with user_id=user.id mode="add_course"%}
                     {% include "schedule/add_course_modal.html" with user_id=user.id instructors=instructors course=course%}
                 </div>
             </div>
@@ -93,16 +94,41 @@
             </ul>
         </div>
     </div>
+    <div id="modal-target-course-page">
+
+    </div>
 {% endblock %}
 
 {% block js %}
     <script type="module" src="{% static 'common/bind-show-hide.js' %}"></script>
     <script type="module" src="{% static 'common/bind-sort.js' %}"></script>
+    <script src="{% static 'schedule/schedule_select_script.js' %}"></script>
 
     {#initializes Bootstrap tooltip#}
     <script>
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
+
+            var openSelectButton = document.getElementById("open_select_modal_button");
+            openSelectButton.addEventListener('click', function() {
+                let targetDiv = document.getElementById('modal-target-course-page');
+                targetDiv.innerHTML = "";
+                $.ajax({
+                    url: "{% url 'modal_load_schedules' mode='add_course' %}",
+                    success: function(data) {
+                        targetDiv.innerHTML = data;
+                        // this function is included in the static 'schedule_select_script.js' file
+                        modalFunctions("{{course.id}}", "add_course", "{% url 'modal_load_sections' %}")
+                        $("#selectScheduleModal").modal("show"); // Show the modal
+                    }
+                });
+
+            });
+
+            window.enableSubmit = function() {
+                var submitButton = document.getElementById('schedule_select_btn');
+                submitButton.disabled = false;
+            }
         });
     </script>
 {% endblock %}
