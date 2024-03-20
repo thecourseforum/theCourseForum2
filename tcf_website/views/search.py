@@ -292,8 +292,7 @@ def group_by_dept(courses):
     return grouped_courses
 
 
-# cache autocomplete results for 60s * 5 = 5min
-@cache_page(60 * 5)
+@cache_page(60 * 5)  # 5 min
 def autocomplete(request):
     """Fetch autocomplete results"""
     # Set query
