@@ -15,6 +15,8 @@ Potential todo: create a cron job that runs this script and
 import csv
 import json
 import backoff
+import sys
+import os
 
 # format -ClassNumber,Mnemonic,Number,Section,Type,Units,Instructor1,Days1,Room1,MeetingDates1,Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,Description
 # example call url
@@ -31,7 +33,9 @@ import requests
 
 @backoff.on_exception(backoff.expo,
                       (requests.exceptions.Timeout,
-                       requests.exceptions.ConnectionError))
+                       requests.exceptions.ConnectionError),max_tries=5)
+
+
 def retrieve_semester_courses(semester):  # very slow
     """
     input: semester using the formula  “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
@@ -70,17 +74,17 @@ def retrieve_semester_courses(semester):  # very slow
             page_data
         ):  # loops through every course on the page and calls compile_course_data and adds output to list
             # calls function to create dict of class info
-
+            print(course)
             class_data = compile_course_data(course["class_nbr"], semester)
             if not class_data:
                 continue
             all_classes.append(class_data)  # adds dict to list of all classes
-        write_csv(
-            all_classes, f"SIS_2023_spring"
+        write_to_csv(
+            all_classes
         )  # write in chunks to save memory
         all_classes = []  # resets list of classes to empty
         page += 1  # Incrementing page count so next query will be on next page
-    return None
+    print("finished successfully")
 
 
 def compile_course_data(course_number, semester):
@@ -186,10 +190,15 @@ def compile_course_data(course_number, semester):
     return course_dictionary
 
 
-def write_csv(course_list, filename):
+def write_to_csv(course_list):
+    """
+    Writes course data to a CSV file.
+
+    :param course_list: List of dictionaries containing course information.
+    """
+    print("writing")
     fieldnames = list(course_list[0].keys())
-    csv_filename = filename + ".csv"
-    with open(csv_filename, "a", newline="") as csvfile:
+    with open(csv_path, "a", newline="", encoding="utf-8") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         if csvfile.tell() == 0:
             writer.writeheader()
@@ -197,27 +206,49 @@ def write_csv(course_list, filename):
             writer.writerow(course)
 
 
-retrieve_semester_courses("1232")
+SEASON_NUMBERS = {"fall": 8, "summer": 6, "spring": 2, "january": 1}
+COURSE_DATA_DIR = "tcf_website/management/commands/semester_data/sis_csv/"
 
-# test SIS data against Lous List data (remove function later)
+arguments = sys.argv[1:]
+elements = arguments[0].split("_")
 
+if "--help" in arguments or "-h" in arguments:
+    sys.stdout.write("Fetches data from SIS API for the specified semester and saves it to a CSV file")
+elif not arguments[0]:
+        sys.stdout.write("No argument given. Give an argument in format: <year>_<season>")
+elif len(elements) != 2 or not elements[0].isdigit() or len(elements[0]) != 4 or elements[1].lower() not in SEASON_NUMBERS:
+        sys.stdout.write("Argument given in improper format. Give an argument in format: <year>_<season>")
+else: #correct arguments
+    year, season = arguments[0].split("_")
+    season = season.lower()
+    year_code = str(year)[-2:]
+    sem_code = f"1{year_code}{SEASON_NUMBERS.get(season)}"  # 1 represents 21st century in querying
+    sys.stdout.write(f"Fetching course data for {year} {season}...\n")
+    filename = f"{year}_{season}.csv"
+    csv_path = os.path.join(COURSE_DATA_DIR, filename)
 
-def compare_csv_files():
-    with open("SIS_2023_spring.csv", "r") as sis_file:
-        sis_reader = csv.reader(sis_file)
-        with open(
-            "tcf_website/management/commands/semester_data/csv/2023_spring.csv",
-            "r",
-        ) as lous_file:
-            local_reader = csv.reader(lous_file)
-            for sis_row, local_row in zip(sis_reader, local_reader):
-                for sis_col, local_col in zip(sis_row, local_row):
-                    if sis_col != local_col:
-                        print("Course #:", sis_row[0])
-                        print("Discrepancy:")
-                        print("SIS: ", sis_col)
-                        print("Lou's: ", local_col)
-                        input("Enter to continue...\n")
+    if os.path.exists(csv_path):
+        os.remove(csv_path)
+    os.makedirs(os.path.dirname(csv_path), exist_ok=True)
+    retrieve_semester_courses(sem_code)
 
-
-# compare_csv_files()
+## test SIS data against Lous List data (remove function later)
+# def compare_csv_files():
+#     with open("SIS_2023_spring.csv", "r") as sis_file:
+#         sis_reader = csv.reader(sis_file)
+#         with open(
+#             "tcf_website/management/commands/semester_data/csv/2023_spring.csv",
+#             "r",
+#         ) as lous_file:
+#             local_reader = csv.reader(lous_file)
+#             for sis_row, local_row in zip(sis_reader, local_reader):
+#                 for sis_col, local_col in zip(sis_row, local_row):
+#                     if sis_col != local_col:
+#                         print("Course #:", sis_row[0])
+#                         print("Discrepancy:")
+#                         print("SIS: ", sis_col)
+#                         print("Lou's: ", local_col)
+#                         input("Enter to continue...\n")
+#
+#
+# # compare_csv_files()
