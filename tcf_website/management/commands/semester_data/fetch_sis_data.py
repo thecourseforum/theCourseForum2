@@ -14,9 +14,10 @@ Potential todo: create a cron job that runs this script and
 
 import csv
 import json
-import backoff
-import sys
 import os
+import sys
+
+import backoff
 
 # format -ClassNumber,Mnemonic,Number,Section,Type,Units,Instructor1,Days1,Room1,MeetingDates1,Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,Description
 # example call url
@@ -31,11 +32,12 @@ import requests
 # finds all departments in a term:
 # https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearchOptions?institution=UVA01&term=1228
 
-@backoff.on_exception(backoff.expo,
-                      (requests.exceptions.Timeout,
-                       requests.exceptions.ConnectionError),max_tries=5)
 
-
+@backoff.on_exception(
+    backoff.expo,
+    (requests.exceptions.Timeout, requests.exceptions.ConnectionError),
+    max_tries=5,
+)
 def retrieve_semester_courses(semester):  # very slow
     """
     input: semester using the formula  “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
@@ -79,9 +81,7 @@ def retrieve_semester_courses(semester):  # very slow
             if not class_data:
                 continue
             all_classes.append(class_data)  # adds dict to list of all classes
-        write_to_csv(
-            all_classes
-        )  # write in chunks to save memory
+        write_to_csv(all_classes)  # write in chunks to save memory
         all_classes = []  # resets list of classes to empty
         page += 1  # Incrementing page count so next query will be on next page
     print("finished successfully")
@@ -213,12 +213,23 @@ arguments = sys.argv[1:]
 elements = arguments[0].split("_")
 
 if "--help" in arguments or "-h" in arguments:
-    sys.stdout.write("Fetches data from SIS API for the specified semester and saves it to a CSV file")
+    sys.stdout.write(
+        "Fetches data from SIS API for the specified semester and saves it to a CSV file"
+    )
 elif not arguments[0]:
-        sys.stdout.write("No argument given. Give an argument in format: <year>_<season>")
-elif len(elements) != 2 or not elements[0].isdigit() or len(elements[0]) != 4 or elements[1].lower() not in SEASON_NUMBERS:
-        sys.stdout.write("Argument given in improper format. Give an argument in format: <year>_<season>")
-else: #correct arguments
+    sys.stdout.write(
+        "No argument given. Give an argument in format: <year>_<season>"
+    )
+elif (
+    len(elements) != 2
+    or not elements[0].isdigit()
+    or len(elements[0]) != 4
+    or elements[1].lower() not in SEASON_NUMBERS
+):
+    sys.stdout.write(
+        "Argument given in improper format. Give an argument in format: <year>_<season>"
+    )
+else:  # correct arguments
     year, season = arguments[0].split("_")
     season = season.lower()
     year_code = str(year)[-2:]
