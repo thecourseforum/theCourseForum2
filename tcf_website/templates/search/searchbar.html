@@ -1,47 +1,13 @@
 <!-- tCF search -->
 <!-- To be imported into templates (navbar, landing page) -->
-<!-- Update your search form -->
-
-{% load static %}
-
-<head>
-  <style>
-    .autocomplete-result {
-      padding: 0.5rem;
-      border-bottom: 1px solid #ddd;
-      cursor: pointer;
-    }
-
-    .autocomplete-result:hover {
-      background-color: #f0f0f0;
-      color: #333;
-    }
-
-    .search-results {
-      width: auto;
-    }
-  </style>
-</head>
 <form class="form-inline flex-grow-1" action="/search" method="get">
-  <div class="input-group flex-grow-1" style="position: relative;">
-    <input id="search-input" type="search" class="form-control border border-right-0"
-      placeholder="Search for a class or professor..." aria-label="Search" name="q" value="{{query}}">
+  <div class="input-group flex-grow-1">
+    <input type="search" class="form-control border border-right-0"
+            placeholder="Search for a class or professor..." aria-label="Search" name="q" value="{{query}}">
     <div class="input-group-append">
-      <button class="btn btn-outline-secondary border border-left-0" id="search-button" type="submit">
-        <i class="fa fa-search" aria-hidden="true"></i>
+      <button class="btn btn-outline-secondary border border-left-0" id="search-button" aria-label="Search" type="submit">
+          <i class="fa fa-search" aria-hidden="true"></i>
       </button>
     </div>
-    <div class="search-results" id="autocomplete-results" style="
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      text-align: left;
-      z-index: 1000;
-      background: rgb(255, 255, 255);
-      box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
-    "></div>
   </div>
 </form>
-
-<script type="module" src="{% static 'search/search_autocomplete.js' %}"></script>
