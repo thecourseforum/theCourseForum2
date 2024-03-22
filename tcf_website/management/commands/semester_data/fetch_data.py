@@ -16,7 +16,7 @@ import csv
 import json
 import os
 import sys
-
+from tqdm import tqdm
 import backoff
 
 # format -ClassNumber,Mnemonic,Number,Section,Type,Units,Instructor1,Days1,Room1,MeetingDates1,Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,Description
@@ -38,7 +38,7 @@ import requests
     (requests.exceptions.Timeout, requests.exceptions.ConnectionError),
     max_tries=5,
 )
-def retrieve_semester_courses(semester):  # very slow
+def retrieve_semester_courses(sem_code):
     """
     input: semester using the formula  “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
     output: list of dictionaries where each dictionary is all a course's information for the csv writing
@@ -47,78 +47,77 @@ def retrieve_semester_courses(semester):  # very slow
      This is done using a page by page approach where all the courses are analyzed one page at a time.
     """
     semester_url = (
-        "https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH."
-        + "FieldFormula.IScript_ClassSearch?institution=UVA01&term="
-        + semester
-        + "&page="
+        f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/"
+        f"WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch?"
+        f"institution=UVA01&term={sem_code}&page="
     )
+
     all_classes = []
-    page = 1  # Page is initially 1
-    while True:  # loads the first 100 courses (page 1)
-        # Loops through every page and extracts classes until it runs out of pages
-        # when the while breaks
+    page = 1
+    while True:
+        print(f"\nFetching page {page}...")
         page_url = semester_url + str(page)
         try:
-            apiResponse = requests.get(page_url)
-            page_data = json.loads(apiResponse.text)
+            response = requests.get(page_url, timeout=300)
+            page_data = json.loads(response.text)
         except requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
             break
-        if (
-            not page_data
-        ):  # checks to see if there is no data for that page which means that all
-            # data has been extracted from previous pages so the loop breaks
+
+        if not page_data:
             break
 
-        for (
-            course
-        ) in (
-            page_data
-        ):  # loops through every course on the page and calls compile_course_data and adds output to list
-            # calls function to create dict of class info
-            print(course)
-            class_data = compile_course_data(course["class_nbr"], semester)
-            if not class_data:
-                continue
-            all_classes.append(class_data)  # adds dict to list of all classes
-        write_to_csv(all_classes)  # write in chunks to save memory
-        all_classes = []  # resets list of classes to empty
-        page += 1  # Incrementing page count so next query will be on next page
-    print("finished successfully")
+        for course in tqdm(page_data):
+            class_data = compile_course_data(
+                course["class_nbr"], sem_code
+            )
+            if class_data:
+                all_classes.append(class_data)
+        write_to_csv(all_classes)
+        all_classes = []
+        page += 1
+
+    print("Data fetching complete.")
 
 
-def compile_course_data(course_number, semester):
+def compile_course_data(course_number, sem_code):
     """
-    input: course number, semester
-    output: course dictionaries to be used for file writing
-    functionality: request and organize course data in dictionaries to be able to write to a csv file.
+    Compiles course data from SIS API response.
+
+    :param course_number: The course number.
+    :param sem_code: The semester code.
+    :return: Dictionary containing course information.
     """
-    url = f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassDetails?institution=UVA01&term={semester}&class_nbr={course_number}"
+    url = (
+        f"https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/"
+        f"WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassDetails?"
+        f"institution=UVA01&term={sem_code}&class_nbr={course_number}"
+    )
 
     try:
-        apiResponse = requests.get(url)
-    except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
+        response = requests.get(url, timeout=300)
+    except requests.exceptions.RequestException:
         return None
 
-    data = json.loads(apiResponse.text)
-    if not data:  # no response for the class
+    data = json.loads(response.text)
+    if not data:
         return None
 
     class_details = data["section_info"]["class_details"]
-    meetings = [None, None, None, None]
+    meetings = {0: None, 1: None, 2: None, 3: None}
+
     for index, meeting in enumerate(data["section_info"]["meetings"]):
         if index > 3:
             break
         meetings[index] = meeting
+
     class_availability = data["section_info"]["class_availability"]
+
     course_dictionary = {
         "ClassNumber": course_number,
         "Mnemonic": class_details["subject"],
         "Number": class_details["catalog_nbr"],
         "Section": class_details["class_section"],
-        # For Type, Parser needs to be updated to use abbriveation instead of full
-        # word (LEC instead of Lecture)
         "Type": {
             "LEC": "Lecture",
             "DIS": "Discussion",
@@ -130,51 +129,67 @@ def compile_course_data(course_number, semester):
         "Instructor1": (
             ", ".join(
                 instructor["name"]
-                for instructor in meetings[0]["instructors"]
+                for instructor in meetings.get(0)["instructors"]
                 if instructor["name"] != "-"
             )
-            if meetings[0]
+            if meetings.get(0)
             else ""
         ),
-        "Days1": meetings[0]["meets"] if meetings[0]["meets"] != "-" else "TBA",
-        "Room1": meetings[0]["room"] if meetings[0]["room"] != "-" else "TBA",
-        "MeetingDates1": meetings[0]["date_range"] if meetings[0] else "",
+        "Days1": (
+            meetings.get(0)["meets"]
+            if meetings.get(0)["meets"] != "-"
+            else "TBA"
+        ),
+        "Room1": (
+            meetings.get(0)["room"]
+            if meetings.get(0)["room"] != "-"
+            else "TBA"
+        ),
+        "MeetingDates1": (
+            meetings.get(0)["date_range"] if meetings.get(0) else ""
+        ),
         "Instructor2": (
             ", ".join(
                 instructor["name"]
-                for instructor in meetings[1]["instructors"]
+                for instructor in meetings.get(1)["instructors"]
                 if instructor["name"] != "-"
             )
-            if meetings[1]
+            if meetings.get(1)
             else ""
         ),
-        "Days2": meetings[1]["meets"] if meetings[1] else "",
-        "Room2": meetings[1]["room"] if meetings[1] else "",
-        "MeetingDates2": meetings[1]["date_range"] if meetings[1] else "",
+        "Days2": meetings.get(1)["meets"] if meetings.get(1) else "",
+        "Room2": meetings.get(1)["room"] if meetings.get(1) else "",
+        "MeetingDates2": (
+            meetings.get(1)["date_range"] if meetings.get(1) else ""
+        ),
         "Instructor3": (
             ", ".join(
                 instructor["name"]
-                for instructor in meetings[2]["instructors"]
+                for instructor in meetings.get(2)["instructors"]
                 if instructor["name"] != "-"
             )
-            if meetings[2]
+            if meetings.get(2)
             else ""
         ),
-        "Days3": meetings[2]["meets"] if meetings[2] else "",
-        "Room3": meetings[2]["room"] if meetings[2] else "",
-        "MeetingDates3": meetings[2]["date_range"] if meetings[2] else "",
+        "Days3": meetings.get(2)["meets"] if meetings.get(2) else "",
+        "Room3": meetings.get(2)["room"] if meetings.get(2) else "",
+        "MeetingDates3": (
+            meetings.get(2)["date_range"] if meetings.get(2) else ""
+        ),
         "Instructor4": (
             ", ".join(
                 instructor["name"]
-                for instructor in meetings[3]["instructors"]
+                for instructor in meetings.get(3)["instructors"]
                 if instructor["name"] != "-"
             )
-            if meetings[3]
+            if meetings.get(3)
             else ""
         ),
-        "Days4": meetings[3]["meets"] if meetings[3] else "",
-        "Room4": meetings[3]["room"] if meetings[3] else "",
-        "MeetingDates4": meetings[3]["date_range"] if meetings[3] else "",
+        "Days4": meetings.get(3)["meets"] if meetings.get(3) else "",
+        "Room4": meetings.get(3)["room"] if meetings.get(3) else "",
+        "MeetingDates4": (
+            meetings.get(3)["date_range"] if meetings.get(3) else ""
+        ),
         "Title": class_details["course_title"],
         "Topic": class_details["topic"],
         "Status": class_details["status"],
@@ -196,7 +211,7 @@ def write_to_csv(course_list):
 
     :param course_list: List of dictionaries containing course information.
     """
-    print("writing")
+    print("Writing to CSV...")
     fieldnames = list(course_list[0].keys())
     with open(csv_path, "a", newline="", encoding="utf-8") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -207,12 +222,15 @@ def write_to_csv(course_list):
 
 
 SEASON_NUMBERS = {"fall": 8, "summer": 6, "spring": 2, "january": 1}
-COURSE_DATA_DIR = "tcf_website/management/commands/semester_data/sis_csv/"
+COURSE_DATA_DIR = "sis_csv/"
 
 arguments = sys.argv[1:]
-elements = arguments[0].split("_")
 
-if "--help" in arguments or "-h" in arguments:
+if not arguments:
+    sys.stdout.write(
+        "No argument given. Give an argument in format: <year>_<season>"
+    )
+elif "--help" in arguments or "-h" in arguments:
     sys.stdout.write(
         "Fetches data from SIS API for the specified semester and saves it to a CSV file"
     )
@@ -221,7 +239,7 @@ elif not arguments[0]:
         "No argument given. Give an argument in format: <year>_<season>"
     )
 elif (
-    len(elements) != 2
+    len(elements:=arguments[0].split("_")) != 2
     or not elements[0].isdigit()
     or len(elements[0]) != 4
     or elements[1].lower() not in SEASON_NUMBERS
