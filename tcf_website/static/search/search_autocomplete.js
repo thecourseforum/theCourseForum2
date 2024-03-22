@@ -13,7 +13,7 @@ $(document).ready(function () {
   $searchInput.on("input", adjustAutocompleteWidth);
 
   let onCooldown = false;
-  let debounceTimeout = undefined;
+  let debounceTimeout;
 
   $searchInput.on("input", function () {
     const latestRequestTime = Date.now();
