@@ -12,13 +12,19 @@ $(document).ready(function () {
   $(window).on("resize", adjustAutocompleteWidth);
   $searchInput.on("input", adjustAutocompleteWidth);
 
+  let onCooldown = false;
+  let debounceTimeout = undefined;
+
   $searchInput.on("input", function () {
     const latestRequestTime = Date.now();
     currentRequestTime = latestRequestTime;
     const query = $(this).val();
 
-    setTimeout(function () {
-      if (query.length >= 1) {
+    if (debounceTimeout !== undefined) {
+      clearTimeout(debounceTimeout);
+    }
+    debounceTimeout = setTimeout(function () {
+      if (query.length >= 1 && !onCooldown) {
         $.ajax({
           url: "/autocomplete/?q=" + encodeURIComponent(query),
           type: "GET",
@@ -36,10 +42,14 @@ $(document).ready(function () {
             console.error("Error:", error);
           },
         });
+        onCooldown = true;
+        setTimeout(function () {
+          onCooldown = false;
+        }, 100);
       } else {
         $autocompleteResults.html("");
       }
-    }, 50);
+    }, 100);
   });
 
   function displayAutocompleteResults(results) {
@@ -59,9 +69,17 @@ $(document).ready(function () {
         tabindex: "0",
         text: result.title,
         click: function () {
-          $searchInput.val(result.title);
-          $autocompleteResults.empty();
-          $searchInput.closest("form").submit();
+          if (result.mnemonic === undefined) {
+            window.location.replace(
+              window.location.origin + "/instructor/" + result.id,
+            );
+          } else {
+            window.location.replace(
+              window.location.origin +
+                "/course/" +
+                result.mnemonic.replace(" ", "/"),
+            );
+          }
         },
       });
       $autocompleteResults.append($resultElement);
