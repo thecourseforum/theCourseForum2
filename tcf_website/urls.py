@@ -57,6 +57,7 @@ urlpatterns = [
         name="delete_profile",
     ),
     path("search/", views.search, name="search"),
+    path('autocomplete/', views.autocomplete, name='autocomplete'),
     # QA URLs
     path("answers/check_duplicate/", views.qa.check_duplicate),
     path("qa/new_question/", views.new_question, name="new_question"),

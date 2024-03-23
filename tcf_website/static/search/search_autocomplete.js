@@ -1,88 +1,73 @@
-$(document).ready(function () {
-  const $autocompleteResults = $("#autocomplete-results");
-  const $searchInput = $("#search-input");
-  let currentRequestTime;
+var autocompleteResults = document.getElementById('autocomplete-results');
+var searchInput = document.getElementById("search-input");
+var latestRequestTime, currentRequestTime;
 
-  function adjustAutocompleteWidth() {
-    const searchInputWidth = $searchInput.outerWidth();
-    $autocompleteResults.width(searchInputWidth);
-  }
+function adjustAutocompleteWidth() {
+  var searchInputWidth = searchInput.offsetWidth;
+
+  var autocompleteWidth = searchInputWidth
+  autocompleteResults.style.width = autocompleteWidth + 'px';
+}
+
+
+document.addEventListener('DOMContentLoaded', function () {
 
   adjustAutocompleteWidth();
-  $(window).on("resize", adjustAutocompleteWidth);
-  $searchInput.on("input", adjustAutocompleteWidth);
 
-  let onCooldown = false;
-  let debounceTimeout;
+  searchInput.addEventListener('input', adjustAutocompleteWidth);
+  window.addEventListener('resize', adjustAutocompleteWidth);
 
-  $searchInput.on("input", function () {
-    const latestRequestTime = Date.now();
+  var onCooldown = false;
+  var debounceTimeout = undefined;
+  searchInput.addEventListener('input', function () {
+    var latestRequestTime = Date.now();
     currentRequestTime = latestRequestTime;
-    const query = $(this).val();
+    var query = searchInput.value;
 
     if (debounceTimeout !== undefined) {
       clearTimeout(debounceTimeout);
     }
     debounceTimeout = setTimeout(function () {
       if (query.length >= 1 && !onCooldown) {
-        $.ajax({
-          url: "/autocomplete/?q=" + encodeURIComponent(query),
-          type: "GET",
-          dataType: "json",
-          success: function (data) {
-            if (
-              data &&
-              Array.isArray(data.results) &&
-              currentRequestTime === latestRequestTime
-            ) {
+        fetch('/autocomplete/?q=' + encodeURIComponent(query))
+          .then(response => response.json())
+          .then(data => {
+            if (data && Array.isArray(data.results) && currentRequestTime == latestRequestTime) {
               displayAutocompleteResults(data.results);
             }
-          },
-          error: function (error) {
-            console.error("Error:", error);
-          },
-        });
+          })
+          .catch(error => console.error('Error:', error));
         onCooldown = true;
         setTimeout(function () {
           onCooldown = false;
         }, 100);
       } else {
-        $autocompleteResults.html("");
+        autocompleteResults.innerHTML = '';
       }
     }, 100);
   });
-
-  function displayAutocompleteResults(results) {
-    console.log(results);
-    $autocompleteResults.empty();
-
-    if (results.length === 0) {
-      $autocompleteResults.html(
-        '<div class="autocomplete-result">No results found</div>',
-      );
-      return;
-    }
-
-    $.each(results, function (i, result) {
-      const $resultElement = $("<div></div>", {
-        class: "autocomplete-result",
-        tabindex: "0",
-        text: result.title,
-        click: function () {
-          if (result.mnemonic === undefined) {
-            window.location.replace(
-              window.location.origin + "/instructor/" + result.id,
-            );
-          } else {
-            window.location.replace(
-              window.location.origin +
-                "/course/" +
-                result.mnemonic.replace(" ", "/"),
-            );
-          }
-        },
-      });
-      $autocompleteResults.append($resultElement);
-    });
-  }
 });
+
+function displayAutocompleteResults(results) {
+  autocompleteResults.innerHTML = '';
+
+  if (results.length === 0) {
+    autocompleteResults.innerHTML = '<div class="autocomplete-result">No results found</div>';
+    return;
+  }
+
+  results.forEach(function (result) {
+    var resultElement = document.createElement('div');
+    resultElement.classList.add('autocomplete-result');
+    resultElement.setAttribute('tabindex', '0');
+    resultElement.textContent = result.title;
+    resultElement.addEventListener('click', function () {
+      if (result.mnemonic === undefined) {
+        window.location.replace(window.location.origin + '/instructor/' + result.id);
+      } else {
+        window.location.replace(window.location.origin + '/course/' + result.mnemonic.replace(' ', '/'));
+      }
+    });
+    autocompleteResults.appendChild(resultElement);
+  });
+}
