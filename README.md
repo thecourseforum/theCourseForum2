@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./tcf_website/static/base/img/new_logo.png" alt="logo" width="200"/>
+    <img src="./tcf_website/static/base/img/new_logo.svg" alt="logo" width="200"/>
 </p>
 
 <h1 align="center">theCourseForum2</h1>
@@ -25,15 +25,7 @@ Started 15 years ago, the project has grown monumentally. Over 10k users in the 
 
 _theCourseForum_ team is a group of students that contribute their time and effort to continue to improve the site for other students to use.
 
-## Stack
-
-The code stack is current standard technologies. They were chosen because they are robust and align with the stack that UVA students learn in courses.
-
-- Python
-- Django
-- PostgreSQL
-- Bootstrap 4
-- Javascript (jQuery)
+## [Developer Information](docs/dev.md)
 
 ## Want to get involved?
 

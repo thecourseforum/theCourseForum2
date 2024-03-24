@@ -1,6 +1,6 @@
 @echo off
 
-IF "%DB_FILE%"=="" SET DB_FILE=db/latest.sql
+IF "%DB_FILE%"=="" SET DB_FILE=db\latest.sql
 
 if not exist "%DB_FILE%" (
     echo Database file '%DB_FILE%' not found.

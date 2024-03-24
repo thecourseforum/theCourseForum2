@@ -1,8 +1,8 @@
 .user_delete {
-    align-items: end;
+  align-items: end;
 }
 
 .button-wrapper {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }

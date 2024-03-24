@@ -1,13 +1,13 @@
 .old {
-    display: none;
+  display: none;
 }
 .old.shown {
-    display: block;
+  display: block;
 }
 
 .new {
-    display: block;
+  display: block;
 }
 .new.hide {
-    display: none;
+  display: none;
 }

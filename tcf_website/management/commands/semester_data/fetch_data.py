@@ -15,32 +15,33 @@ def download_semester(year, season):
     # local_filename = url.split('/')[-1]
     # NOTE the stream=True parameter below
 
-    season_numbers = {
-        'fall': 8,
-        'summer': 6,
-        'spring': 2,
-        'january': 1
-    }
+    season_numbers = {"fall": 8, "summer": 6, "spring": 2, "january": 1}
 
     year_code = str(year)[-2:]  # 2019 -> '19'
 
     semester_code = f"1{year_code}{season_numbers[season]}"
 
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36',
-        'origin': 'https://louslist.org',
-        'referer': f'https://louslist.org/requestData.php?Semester={semester_code}&Type=Group&Group=CS'}
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36",
+        "origin": "https://louslist.org",
+        "referer": f"https://louslist.org/requestData.php?Semester={semester_code}&Type=Group&Group=CS",
+    }
 
     try:
 
-        with requests.post('https://louslist.org/deliverData.php', data={
-            'Group': 'CS',
-            'Semester': semester_code,
-            'Description': 'Yes',
-            'Extended': 'Yes',
-        }, stream=True, headers=headers) as r:
+        with requests.post(
+            "https://louslist.org/deliverData.php",
+            data={
+                "Group": "CS",
+                "Semester": semester_code,
+                "Description": "Yes",
+                "Extended": "Yes",
+            },
+            stream=True,
+            headers=headers,
+        ) as r:
             r.raise_for_status()
-            with open(f'csv/{year}_{season}.csv', 'wb') as f:
+            with open(f"csv/{year}_{season}.csv", "wb") as f:
                 for chunk in r.iter_content(chunk_size=8192):
                     if chunk:  # filter out keep-alive new chunks
                         f.write(chunk)
@@ -56,12 +57,12 @@ def download_semester(year, season):
 #         for season in ['january', 'spring', 'summer', 'fall']:
 #             download_semester(year, season)
 
-print('hi')
-download_semester(2022, 'spring')
-download_semester(2022, 'summer')
-download_semester(2022, 'fall')
-download_semester(2023, 'january')
-download_semester(2023, 'spring')
-download_semester(2023, 'summer')
-download_semester(2023, 'fall')
-print('bye')
+print("hi")
+download_semester(2022, "spring")
+download_semester(2022, "summer")
+download_semester(2022, "fall")
+download_semester(2023, "january")
+download_semester(2023, "spring")
+download_semester(2023, "summer")
+download_semester(2023, "fall")
+print("bye")
