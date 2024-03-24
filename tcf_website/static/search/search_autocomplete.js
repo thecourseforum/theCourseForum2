@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let onCooldown = false;
   let debounceTimeout;
   searchInput.addEventListener("input", function () {
-    const latestRequestTime = Date.now();
+    latestRequestTime = Date.now();
     currentRequestTime = latestRequestTime;
     const query = searchInput.value;
 
