@@ -1,71 +1,80 @@
-var autocompleteResults = document.getElementById('autocomplete-results');
-var searchInput = document.getElementById("search-input");
-var latestRequestTime, currentRequestTime;
+const autocompleteResults = document.getElementById("autocomplete-results");
+const searchInput = document.getElementById("search-input");
+let latestRequestTime, currentRequestTime;
 
 function adjustAutocompleteWidth() {
-  var searchInputWidth = searchInput.offsetWidth;
+  const searchInputWidth = searchInput.offsetWidth;
 
-  var autocompleteWidth = searchInputWidth
-  autocompleteResults.style.width = autocompleteWidth + 'px';
+  const autocompleteWidth = searchInputWidth;
+  autocompleteResults.style.width = autocompleteWidth + "px";
 }
 
-
-document.addEventListener('DOMContentLoaded', function () {
-
+document.addEventListener("DOMContentLoaded", function () {
   adjustAutocompleteWidth();
 
-  searchInput.addEventListener('input', adjustAutocompleteWidth);
-  window.addEventListener('resize', adjustAutocompleteWidth);
+  searchInput.addEventListener("input", adjustAutocompleteWidth);
+  window.addEventListener("resize", adjustAutocompleteWidth);
 
-  var onCooldown = false;
-  var debounceTimeout = undefined;
-  searchInput.addEventListener('input', function () {
-    var latestRequestTime = Date.now();
+  let onCooldown = false;
+  let debounceTimeout;
+  searchInput.addEventListener("input", function () {
+    const latestRequestTime = Date.now();
     currentRequestTime = latestRequestTime;
-    var query = searchInput.value;
+    const query = searchInput.value;
 
     if (debounceTimeout !== undefined) {
       clearTimeout(debounceTimeout);
     }
     debounceTimeout = setTimeout(function () {
       if (query.length >= 1 && !onCooldown) {
-        fetch('/autocomplete/?q=' + encodeURIComponent(query))
-          .then(response => response.json())
-          .then(data => {
-            if (data && Array.isArray(data.results) && currentRequestTime == latestRequestTime) {
+        fetch("/autocomplete/?q=" + encodeURIComponent(query))
+          .then((response) => response.json())
+          .then((data) => {
+            if (
+              data &&
+              Array.isArray(data.results) &&
+              currentRequestTime === latestRequestTime
+            ) {
               displayAutocompleteResults(data.results);
             }
           })
-          .catch(error => console.error('Error:', error));
+          .catch((error) => console.error("Error:", error));
         onCooldown = true;
         setTimeout(function () {
           onCooldown = false;
         }, 100);
       } else {
-        autocompleteResults.innerHTML = '';
+        autocompleteResults.innerHTML = "";
       }
     }, 100);
   });
 });
 
 function displayAutocompleteResults(results) {
-  autocompleteResults.innerHTML = '';
+  autocompleteResults.innerHTML = "";
 
   if (results.length === 0) {
-    autocompleteResults.innerHTML = '<div class="autocomplete-result">No results found</div>';
+    autocompleteResults.innerHTML =
+      '<div class="autocomplete-result">No results found</div>';
     return;
   }
 
   results.forEach(function (result) {
-    var resultElement = document.createElement('div');
-    resultElement.classList.add('autocomplete-result');
-    resultElement.setAttribute('tabindex', '0');
+    const resultElement = document.createElement("div");
+    resultElement.classList.add("autocomplete-result");
+    resultElement.setAttribute("tabindex", "0");
     resultElement.textContent = result.title;
-    resultElement.addEventListener('click', function () {
+    resultElement.addEventListener("click", function () {
       if (result.mnemonic === undefined) {
-        window.location.replace(window.location.origin + '/instructor/' + result.id);
+        window.location.replace(
+          window.location.origin + "/instructor/" + result.id,
+        );
       } else {
-        window.location.replace(window.location.origin + '/course/' + result.mnemonic.replace(' ', '/'));
+        window.location.replace(
+          window.location.origin +
+            "/course/" +
+            result.mnemonic.replace(" ", "/"),
+        );
       }
     });
     autocompleteResults.appendChild(resultElement);
