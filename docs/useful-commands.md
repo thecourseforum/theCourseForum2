@@ -89,6 +89,19 @@ $ docker exec tcf_django python manage.py index_elasticsearch
 6. Commit the semesterly data to the repo
 7. Remove production credentialing (use `.env` credentials like normal)
 
+## Downloading Semester Data
+
+Use the [fetch_data](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/fetch_data.py)
+script to load data for a specified semester from the SIS API. The resulting CSV
+is stored in `tcf_website/management/commands/semester_data/sis_csv`.
+For example, loading the 2024 fall semester:
+
+```sh
+$ cd tcf_website/management/commands/
+$ python fetch_data.py 2024_FALL
+$ cd -
+```
+
 ## Loading Semester Data
 
 Load semester data from Lou's List (soon to be straight from the SIS API) using the provided Django management command:

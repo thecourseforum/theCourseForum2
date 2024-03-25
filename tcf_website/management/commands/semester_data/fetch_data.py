@@ -264,7 +264,7 @@ def main() -> None:
         retrieve_and_write_semester_courses(csv_path, sem_code)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
 ## test SIS data against Lous List data (remove function later)
 # def compare_csv_files():
