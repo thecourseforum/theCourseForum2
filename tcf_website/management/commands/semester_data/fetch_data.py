@@ -1,11 +1,15 @@
 """
-This script downloads data from SIS API and converts it into
-a usable CSV file. However, in its current state we have to
-manually hardcode the year/season of the semester(s) we want to
-download.
+Fetch and save data from SIS API for a specified semester into a CSV file.
 
-Potential todo: create a cron job that runs this script and
-`load_semester` every now and then so we don't have to do this.
+Usage:
+cd tcf_website/management/commands/semester_data
+python fetch_data.py "<year>_<season>"
+cd -
+
+Example:
+cd tcf_website/management/commands/semester_data
+python fetch_data "2023_spring"
+cd -
 """
 
 # Classes intended stream finds each department, from there make a query to find each class in the department,
@@ -16,13 +20,14 @@ import csv
 import json
 import os
 import sys
-from tqdm import tqdm
+
 import backoff
 
 # format -ClassNumber,Mnemonic,Number,Section,Type,Units,Instructor1,Days1,Room1,MeetingDates1,Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,Description
 # example call url
 # -https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassDetails?institution=UVA01&term=1242&class_nbr=16634&
 import requests
+from tqdm import tqdm
 
 # url to find all courses in department for a semester to update semester Replace 1228 with the appropriate term.
 # The formula is “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
@@ -38,7 +43,7 @@ import requests
     (requests.exceptions.Timeout, requests.exceptions.ConnectionError),
     max_tries=5,
 )
-def retrieve_semester_courses(sem_code):
+def retrieve_and_write_semester_courses(csv_path, sem_code):
     """
     input: semester using the formula  “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
     output: list of dictionaries where each dictionary is all a course's information for the csv writing
@@ -68,12 +73,10 @@ def retrieve_semester_courses(sem_code):
             break
 
         for course in tqdm(page_data):
-            class_data = compile_course_data(
-                course["class_nbr"], sem_code
-            )
+            class_data = compile_course_data(course["class_nbr"], sem_code)
             if class_data:
                 all_classes.append(class_data)
-        write_to_csv(all_classes)
+        write_to_csv(csv_path, all_classes)
         all_classes = []
         page += 1
 
@@ -141,9 +144,7 @@ def compile_course_data(course_number, sem_code):
             else "TBA"
         ),
         "Room1": (
-            meetings.get(0)["room"]
-            if meetings.get(0)["room"] != "-"
-            else "TBA"
+            meetings.get(0)["room"] if meetings.get(0)["room"] != "-" else "TBA"
         ),
         "MeetingDates1": (
             meetings.get(0)["date_range"] if meetings.get(0) else ""
@@ -205,7 +206,7 @@ def compile_course_data(course_number, sem_code):
     return course_dictionary
 
 
-def write_to_csv(course_list):
+def write_to_csv(csv_path, course_list):
     """
     Writes course data to a CSV file.
 
@@ -224,43 +225,47 @@ def write_to_csv(course_list):
 SEASON_NUMBERS = {"fall": 8, "summer": 6, "spring": 2, "january": 1}
 COURSE_DATA_DIR = "sis_csv/"
 
-arguments = sys.argv[1:]
 
-if not arguments:
-    sys.stdout.write(
-        "No argument given. Give an argument in format: <year>_<season>"
-    )
-elif "--help" in arguments or "-h" in arguments:
-    sys.stdout.write(
-        "Fetches data from SIS API for the specified semester and saves it to a CSV file"
-    )
-elif not arguments[0]:
-    sys.stdout.write(
-        "No argument given. Give an argument in format: <year>_<season>"
-    )
-elif (
-    len(elements:=arguments[0].split("_")) != 2
-    or not elements[0].isdigit()
-    or len(elements[0]) != 4
-    or elements[1].lower() not in SEASON_NUMBERS
-):
-    sys.stdout.write(
-        "Argument given in improper format. Give an argument in format: <year>_<season>"
-    )
-else:  # correct arguments
-    year, season = arguments[0].split("_")
-    season = season.lower()
-    year_code = str(year)[-2:]
-    sem_code = f"1{year_code}{SEASON_NUMBERS.get(season)}"  # 1 represents 21st century in querying
-    sys.stdout.write(f"Fetching course data for {year} {season}...\n")
-    filename = f"{year}_{season}.csv"
-    csv_path = os.path.join(COURSE_DATA_DIR, filename)
+def main() -> None:
+    arguments = sys.argv[1:]
+    if not arguments:
+        sys.stdout.write(
+            "No argument given. Give an argument in format: <year>_<season>"
+        )
+    elif "--help" in arguments or "-h" in arguments:
+        sys.stdout.write(
+            "Fetches data from SIS API for the specified semester and saves it to a CSV file"
+        )
+    elif not arguments[0]:
+        sys.stdout.write(
+            "No argument given. Give an argument in format: <year>_<season>"
+        )
+    elif (
+        len(elements := arguments[0].split("_")) != 2
+        or not elements[0].isdigit()
+        or len(elements[0]) != 4
+        or elements[1].lower() not in SEASON_NUMBERS
+    ):
+        sys.stdout.write(
+            "Argument given in improper format. Give an argument in format: <year>_<season>"
+        )
+    else:  # correct arguments
+        year, season = arguments[0].split("_")
+        season = season.lower()
+        year_code = str(year)[-2:]
+        sem_code = f"1{year_code}{SEASON_NUMBERS.get(season)}"  # 1 represents 21st century in querying
+        sys.stdout.write(f"Fetching course data for {year} {season}...\n")
+        filename = f"{year}_{season}.csv"
+        csv_path = os.path.join(COURSE_DATA_DIR, filename)
 
-    if os.path.exists(csv_path):
-        os.remove(csv_path)
-    os.makedirs(os.path.dirname(csv_path), exist_ok=True)
-    retrieve_semester_courses(sem_code)
+        if os.path.exists(csv_path):
+            os.remove(csv_path)
+        os.makedirs(os.path.dirname(csv_path), exist_ok=True)
+        retrieve_and_write_semester_courses(csv_path, sem_code)
 
+
+if __name__ == '__main__':
+    main()
 ## test SIS data against Lous List data (remove function later)
 # def compare_csv_files():
 #     with open("SIS_2023_spring.csv", "r") as sis_file:
