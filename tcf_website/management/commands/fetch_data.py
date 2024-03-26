@@ -142,7 +142,7 @@ def compile_course_data(course_number, sem_code):
             meetings.get(0)["meets"]
             if meetings.get(0)["meets"] != "-"
             else "TBA"
-        ),
+        ).replace("AM", "am").replace("PM", "pm"),
         "Room1": (
             meetings.get(0)["room"] if meetings.get(0)["room"] != "-" else "TBA"
         ),
