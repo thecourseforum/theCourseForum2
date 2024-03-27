@@ -19,7 +19,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Abs, Coalesce, Round
+from django.db.models.functions import Cast, Abs, Coalesce, Round, Concat
 
 # pylint: disable=line-too-long
 
@@ -1301,49 +1301,34 @@ class Schedule(models.Model):
         Return scheduled courses associated with this schedule,
         including details about the section and instructor.
         """
-
-        queryset = (
-            self.scheduledcourse_set.select_related("section", "instructor")
-            .annotate(
-                credits=Cast("section__units", output_field=models.IntegerField()),
-                avg_recommendability=Coalesce(
-                    models.Avg(
-                        "section__course__review__recommendability",
-                        filter=models.Q(section__course__review__instructor=models.F("instructor")),
-                    ),
-                    models.Value(0.0),
-                ),
-                avg_instructor_rating=Coalesce(
-                    models.Avg(
-                        "section__course__review__instructor_rating",
-                        filter=models.Q(section__course__review__instructor=models.F("instructor")),
-                    ),
-                    models.Value(0.0),
-                ),
-                avg_enjoyability=Coalesce(
-                    models.Avg(
-                        "section__course__review__enjoyability",
-                        filter=models.Q(section__course__review__instructor=models.F("instructor")),
-                    ),
-                    models.Value(0.0),
-                ),
-                difficulty=Coalesce(
-                    models.Avg(
-                        "section__course__review__difficulty",
-                        filter=models.Q(
-                            section__course__review__instructor_id=models.F("instructor")
-                        ),
-                    ),
-                    models.Value(0.0),
-                ),
+        
+        queryset = self.scheduledcourse_set.select_related('section', 'instructor').annotate(
+            credits=Cast('section__units', output_field=models.IntegerField()),
+            avg_recommendability=Coalesce(models.Avg(
+                'section__course__review__recommendability',
+                filter=models.Q(section__course__review__instructor=models.F('instructor'))
+            ), models.Value(0.0)),
+            avg_instructor_rating=Coalesce(models.Avg(
+                'section__course__review__instructor_rating',
+                filter=models.Q(section__course__review__instructor=models.F('instructor'))
+            ), models.Value(0.0)),
+            avg_enjoyability=Coalesce(models.Avg(
+                'section__course__review__enjoyability',
+                filter=models.Q(section__course__review__instructor=models.F('instructor'))
+            ), models.Value(0.0)),
+            difficulty=Coalesce(models.Avg('section__course__review__difficulty',
+                filter=models.Q(section__course__review__instructor_id=models.F('instructor'))
+            ),models.Value(0.0)),
+            title=Concat(
+                models.F('section__course__subdepartment__mnemonic'), models.Value(' '),
+                models.F('section__course__number'),
+                output_field=models.CharField(),
             )
-            .annotate(
-                total_rating=models.ExpressionWrapper(
-                    (
-                        models.F("avg_recommendability")
-                        + models.F("avg_instructor_rating")
-                        + models.F("avg_enjoyability")
-                    )
+        ).annotate(
+            total_rating = models.ExpressionWrapper(
+                (models.F('avg_recommendability') + 
+                    models.F('avg_instructor_rating') + 
+                    models.F('avg_enjoyability')) 
                     / models.Value(3),
                     output_field=models.FloatField(),
                 )
@@ -1359,8 +1344,9 @@ class Schedule(models.Model):
                 scheduled_course.section.course
             )
             # Store the GPA in an attribute of the ScheduledCourse instance
-            setattr(scheduled_course, "gpa", gpa)
-
+            setattr(scheduled_course, 'gpa', gpa)
+        
+        print(scheduled_courses)
         return scheduled_courses
 
     def calculate_total_rating(self, rating):

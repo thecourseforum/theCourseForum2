@@ -9,20 +9,20 @@
                 <h4>{{schedule.name}}</h4>
                 <div class="scheduleStats">
                     <div class="scheduleStatItem">
-                        <i class="fa fa-star fa-fw" aria-hidden="true"></i>
-                        <p id="ScheduleRating-{{schedule.id}}" class="scheduleRating">{{rating|floatformat:2}}</p>
-                    </div>
-                    <div class="scheduleStatItem">
-                        <i class="fa fa-dumbbell fa-fw" aria-hidden="true"></i>
-                        <p id="ScheduleDifficulty-{{schedule.id}}" class="scheduleDifficulty">{{difficulty|floatformat:2}}</p>
+                        <i class="fas fa-chart-bar" aria-hidden="true"></i>
+                        <p id="ScheduleGPA-{{schedule.id}}" class="scheduleGPA">{{gpa|floatformat:2}}</p>
                     </div>
                     <div class="scheduleStatItem">
                         <i class="fas fa-clock" aria-hidden="true"></i>
                         <p id="ScheduleCredits-{{schedule.id}}" class="scheduleCredits">{{credits}}</p>
                     </div>
                     <div class="scheduleStatItem">
-                        <i class="fas fa-chart-bar" aria-hidden="true"></i>
-                        <p id="ScheduleGPA-{{schedule.id}}" class="scheduleGPA">{{gpa|floatformat:2}}</p>
+                        <i class="fa fa-star fa-fw" aria-hidden="true"></i>
+                        <p id="ScheduleRating-{{schedule.id}}" class="scheduleRating">{{rating|floatformat:2}}</p>
+                    </div>
+                    <div class="scheduleStatItem">
+                        <i class="fa fa-dumbbell fa-fw" aria-hidden="true"></i>
+                        <p id="ScheduleDifficulty-{{schedule.id}}" class="scheduleDifficulty">{{difficulty|floatformat:2}}</p>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                                         {{course.instructor}}
                                     </div>
                                     <div>
-                                        {{course.section}}
+                                        {{course.title}}
                                     </div>
                                     <div>
                                         {{course.time}}
