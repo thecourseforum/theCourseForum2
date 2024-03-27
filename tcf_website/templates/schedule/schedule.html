@@ -55,7 +55,7 @@
                             </div>
                         </li>
                     {% empty %}
-                        <p>You have no classes!</p>
+                        <label id="no_courses_label">Schedule has no courses!</label>
                     {% endfor %}
 
                 </ul>
@@ -137,6 +137,12 @@
     function addCourse(course) {
         // dyanmically add a course to the schedule 
         // NOTE: Currently only used for adding temporary courses to the schedule card
+
+        // remove the no courses label if it's on the DOM
+        let noCourseLabel = document.getElementById('no_courses_label');
+        if(noCourseLabel){
+            noCourseLabel.remove();
+        }
 
         const scheduleId = '{{schedule.id}}';
         let this_schedule = document.getElementById("schedule{{schedule.id}}edit");
