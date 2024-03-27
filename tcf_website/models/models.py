@@ -5,7 +5,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models.functions import Cast, Abs, Coalesce
+from django.db.models.functions import Cast, Abs, Coalesce, Concat
 
 # pylint: disable=line-too-long
 
@@ -1147,6 +1147,11 @@ class Schedule(models.Model):
             difficulty=Coalesce(models.Avg('section__course__review__difficulty',
                 filter=models.Q(section__course__review__instructor_id=models.F('instructor'))
             ),models.Value(0.0)),
+            title=Concat(
+                models.F('section__course__subdepartment__mnemonic'), models.Value(' '),
+                models.F('section__course__number'),
+                output_field=models.CharField(),
+            )
         ).annotate(
             total_rating = models.ExpressionWrapper(
                 (models.F('avg_recommendability') + 
@@ -1166,7 +1171,7 @@ class Schedule(models.Model):
             # Store the GPA in an attribute of the ScheduledCourse instance
             setattr(scheduled_course, 'gpa', gpa)
         
-        
+        print(scheduled_courses)
         return scheduled_courses
 
     def calculate_total_rating(self, rating):
