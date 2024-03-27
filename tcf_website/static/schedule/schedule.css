@@ -3,8 +3,8 @@
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
+    margin-left: 15px;
+    margin-right: 15px;
     width: 100%;
 }
 
@@ -14,8 +14,15 @@
 
 .scheduleStats {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-wrap: wrap;
+    width: 270px;
+    justify-content: flex-end;
+}
+
+.scheduleStatsGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .scheduleStatItem {
@@ -23,6 +30,14 @@
     align-items: center;
     gap: 5px; 
 
+}
+
+.gpaStatItem {
+    padding-right: 20px;
+}
+
+.unitStatItem {
+    width: 130px;
 }
 
 .schedule_radio_option {
