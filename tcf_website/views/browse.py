@@ -171,10 +171,6 @@ def course_view(request, mnemonic, course_number):
         if i.section_nums.count(None) > 0:
             i.section_nums.remove(None)
 
-    taught_this_semester = Section.objects.filter(
-        course=course, semester=latest_semester
-    ).exists()
-
     # Note: Wanted to use .annotate() but couldn't figure out a way
     # So created a dictionary on the fly to minimize database access
     semesters = {s.id: s for s in Semester.objects.all()}
@@ -205,7 +201,7 @@ def course_view(request, mnemonic, course_number):
             "instructors": instructors,
             "latest_semester": latest_semester,
             "breadcrumbs": breadcrumbs,
-            "taught_this_semester": taught_this_semester,
+            "taught_this_semester": course.is_recent(),
         },
     )
 

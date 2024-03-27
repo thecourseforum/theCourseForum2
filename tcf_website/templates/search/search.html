@@ -61,9 +61,7 @@
                   <div class="col-12">
                     <h5><a href="{% url 'department' dept_id=dept_data.dept_id %}">{{ dept }} / {{ dept_data.subdept_name }}</a></h5>
                       {% for c in dept_data.courses %}
-                        {% if c != dept_data.courses.0 %}
-                        {% endif %}
-                        <div class="list-group-item list-group-item-light text-dark p-2">
+                      <div class="list-group-item {% if c.recent %}list-group-item-light{% else %}list-group-item-secondary{% endif %} text-dark p-2">
                           <div class="row">
                             <div class="col-md-11 align-self-center">
                                 <a href="{% url 'course' mnemonic=c.mnemonic.split.0 course_number=c.number %}">
