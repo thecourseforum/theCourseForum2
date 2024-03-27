@@ -1234,7 +1234,7 @@ class Schedule(models.Model):
                 total_ratings += summed_ratings
                 count += 1  # Since we're summing three ratings for each course
 
-        return total_ratings / count if count > 0 else None
+        return total_ratings / count if count > 0 else 0.00
 
     def average_schedule_difficulty(self):
         """Compute average difficulty score."""
@@ -1252,8 +1252,8 @@ class Schedule(models.Model):
         ).aggregate(
             overall_avg_difficulty=models.Avg('avg_difficulty')
         )
-
-        return result.get('overall_avg_difficulty')
+        final_result = result.get('overall_avg_difficulty')
+        return final_result if final_result else 0.00
     
     def average_schedule_gpa(self):
         """Compute the average GPA for this schedule"""
