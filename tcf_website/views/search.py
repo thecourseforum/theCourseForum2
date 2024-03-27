@@ -17,7 +17,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.cache import cache_page
 
-from ..models import Course, Instructor, Subdepartment
+from ..models import Course, Instructor, Semester, Subdepartment
 
 
 def search(request):
@@ -184,6 +184,9 @@ def fetch_courses(title, number):
         .order_by("-total_similarity")[:10]
     )
 
+    # NOTE: not using Course.is_recent() to avoid DB queries
+    latest_semester = Semester.latest()
+
     formatted_results = [
         {
             "_meta": {"id": str(course.pk), "score": course.total_similarity},
@@ -193,6 +196,7 @@ def fetch_courses(title, number):
                 "raw": course.subdepartment.mnemonic + " " + str(course.number)
             },
             "description": {"raw": course.description},
+            "recent": course.semester_last_taught == latest_semester,
         }
         for course in results
     ]
@@ -236,6 +240,7 @@ def format_courses(results):
             "mnemonic": result.get("mnemonic").get("raw"),
             "description": result.get("description").get("raw"),
             "score": result.get("_meta").get("score"),
+            "recent": result.get("recent", True),
         }
         formatted.append(course)
     return formatted
