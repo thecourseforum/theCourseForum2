@@ -267,7 +267,7 @@ def main() -> None:
         )
     elif "--help" in arguments or "-h" in arguments:
         sys.stdout.write(
-            "Fetches data from SIS API for the specified semester and saves it to a CSV file"
+            "Fetches data from SIS API for the specified semester and saves it to a CSV file.\nUsage: cd tcf_website/management/commands; python3 fetch_data.py 2024_spring"
         )
     elif not arguments[0]:
         sys.stdout.write(
