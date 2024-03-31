@@ -27,8 +27,21 @@ class QAView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['questions'] = Question.objects.all()
-        context['answers'] = Answer.objects.all()
+
+        # Prepare Questions list
+        context["questions"] = Question.objects.all()
+
+        # TODO: fix below (need to change db I think)
+        #context['questions'] = Question.display_activity(self.request.user)
+
+        # Prepare Answers list
+        questions = Question.objects.all()
+        answers = {}
+        for question in questions:
+            answers[question.id] = Answer.display_activity(
+                question.id, self.request.user
+            )
+        context['answers'] = answers
         return context
 
 class QuestionForm(forms.ModelForm):
