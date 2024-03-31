@@ -1,27 +1,27 @@
 .schools {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 .department-list {
-    list-style-type: none;
-    padding: 0 0 0 10px;
+  list-style-type: none;
+  padding: 0 0 0 10px;
 }
 
 .font-weight-bold {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 @media (min-width: 768px) {
-    .department-list {
-        columns: 2;
-    }
+  .department-list {
+    columns: 2;
+  }
 }
 
 .school > .card-header {
-    background-color: var(--secondary-color);
-    color: white;
+  background-color: var(--secondary-color);
+  color: white;
 }
 
 .school-body {
-    padding: 1.25rem;
+  padding: 1.25rem;
 }

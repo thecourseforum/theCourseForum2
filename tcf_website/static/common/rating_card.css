@@ -1,21 +1,22 @@
 .rating-card-link {
-    background-color: var(--secondary-color);
-    color: white;
+  background-color: var(--secondary-color);
+  color: white;
 }
 
 .rating-card-link:hover {
-    background-color: var(--main-color);
-    color: var(--background-color);
+  background-color: var(--main-color);
+  color: var(--background-color);
 }
 
-.rating-card, .rating-card-link {
-    border-radius: 5px;
+.rating-card,
+.rating-card-link {
+  border-radius: 5px;
 }
 
 .rating-card .info {
-    font-size: 1.25rem;
+  font-size: 1.25rem;
 }
 
 small {
-    color: var(--accent-color);
+  color: var(--accent-color);
 }
