@@ -3,8 +3,6 @@
 
 <link rel="stylesheet" href="{% static 'qa/qa.css' %}" />
 
-<script type="module" src="{% static 'qa/sort_qa.js' %}"></script>
-
 {% block content %}
 <div class="qa-container mb-5 mt-3">
     <div class="qa-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
@@ -412,4 +410,9 @@
     });
     {% endif %}
 </script>
+
+<script type="module" src="{% static 'qa/sort_qa.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'qa/new_answer.js' %}"></script>
+
 {% endblock %}

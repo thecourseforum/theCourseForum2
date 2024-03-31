@@ -36,12 +36,17 @@ function populateDropdown(dropdownID) {
 
 jQuery(function ($) {
   // Get all dropdown ids in the semester dropdown class for edit answer forms, clear and populate each
+  console.log("jquery function");
   const ids = $(".semester-dropdown")
     .map(function (_, x) {
       return "#".concat(x.id);
     })
     .get();
-  ids.forEach((item) => populateDropdown(item));
+  ids.forEach((item) => {
+    console.log('Populate item');
+    console.log(item);
+    populateDropdown(item);
+  });
 });
 
 // Below checks whether the user has already answered the question
