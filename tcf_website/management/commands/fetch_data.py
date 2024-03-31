@@ -200,7 +200,7 @@ def compile_course_data(course_number, sem_code):
         "Description": data["section_info"]["catalog_descr"][
             "crse_catalog_description"
         ]
-        .replace("\n", " ")
+        .replace("\n", "")
         .replace("\r", " "),
     }
     return course_dictionary
@@ -223,7 +223,7 @@ def write_to_csv(csv_path, course_list):
 
 
 SEASON_NUMBERS = {"fall": 8, "summer": 6, "spring": 2, "january": 1}
-COURSE_DATA_DIR = "csv/"
+COURSE_DATA_DIR = "semester_data/sis_csv/"
 
 
 # test SIS data against Lous List data
@@ -235,17 +235,28 @@ def compare_csv_files(lous_list_file_path, sis_file_path):
             "r",
         ) as lous_file:
             local_reader = csv.reader(lous_file)
-            for sis_row, local_row in zip(sis_reader, local_reader):
-                for sis_col, local_col in zip(sis_row, local_row):
-                    if sis_col != local_col:
-                        print("Course #:", sis_row[0])
-                        print("Discrepancy:")
-                        print("SIS: ", sis_col)
-                        print("Lou's: ", local_col)
-                        input("Enter to continue...\n")
+            sis_dict = {}
+            for sis_row in sis_reader:
+                sis_dict[sis_row[0]] = sis_row
+            local_dict = {}
+            for local_row in local_reader:
+                local_dict[local_row[0]] = local_row
+            for key in sis_dict.keys():
+                if key in local_dict:
+                    if sis_dict[key] != local_dict[key]:
+                        for i in range(len(sis_dict[key])):
+                            if sis_dict[key][i] != local_dict[key][i]:
+                                print(f"Course #: {key}")
+                                print(f"Column: {sis_dict['ClassNumber'][i]}")
+                                print(f"SIS: {sis_dict[key][i]}")
+                                print(f"Local: {local_dict[key][i]}")
+                                input()
+                                break
+                else:
+                    print(f"Course {key} not in Lou's List\n")
 
 
-# compare_csv_files("csv/2024_fall.csv", "sis_csv/2024_fall.csv")
+# compare_csv_files("semester_data/csv/2024_fall.csv", "semester_data/sis_csv/2024_fall.csv")
 
 
 def main() -> None:
@@ -287,4 +298,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    compare_csv_files("semester_data/csv/2024_fall.csv", "semester_data/sis_csv/2024_fall.csv")
