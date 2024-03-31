@@ -22,31 +22,25 @@ class CourseTestCase(TestCase):
     def test_code(self):
         """Course code string."""
         code = self.course.code()
-        self.assertEqual(code, 'CS 1420')
+        self.assertEqual(code, "CS 1420")
 
     def test_is_recent(self):
         """Test for is_recent()."""
         self.assertTrue(self.course.is_recent())
 
-        Semester.objects.create(
-            year=2021,
-            season='JANUARY',
-            number=1211
-        )
+        Semester.objects.create(year=2021, season="JANUARY", number=1211)
 
         self.assertFalse(self.course.is_recent())
 
     def test_average_rating(self):
         """Test average rating."""
-        rating = (self.review1.average() +
-                  self.review2.average()) / 2
+        rating = (self.review1.average() + self.review2.average()) / 2
 
         self.assertAlmostEqual(self.course.average_rating(), rating, 4)
 
     def test_average_difficulty(self):
         """Test average difficulty."""
-        difficulty = (self.review1.difficulty +
-                      self.review2.difficulty) / 2
+        difficulty = (self.review1.difficulty + self.review2.difficulty) / 2
 
         self.assertAlmostEqual(self.course.average_difficulty(), difficulty, 4)
 
@@ -68,9 +62,10 @@ class CourseTestCase(TestCase):
         """Test CourseViewSet.get_queryset() with recent parameter
         and simplestats parameters"""
         client = Client()
-        response = client.get(path=reverse('course-list'),
-                              data={'simplestats': '', 'recent': ''})
-        courses = response.json()['results']
+        response = client.get(
+            path=reverse("course-list"), data={"simplestats": "", "recent": ""}
+        )
+        courses = response.json()["results"]
         self.assertEqual(len(courses), 2)
         serializer = CourseSimpleStatsSerializer(data=courses, many=True)
         self.assertTrue(serializer.is_valid())
@@ -81,9 +76,8 @@ class CourseTestCase(TestCase):
         """Test CourseViewSet.get_queryset() with recent parameter
         but without simplestats parameters"""
         client = Client()
-        response = client.get(path=reverse('course-list'),
-                              data={'recent': ''})
-        courses = response.json()['results']
+        response = client.get(path=reverse("course-list"), data={"recent": ""})
+        courses = response.json()["results"]
         self.assertEqual(len(courses), 2)
         serializer = CourseSimpleStatsSerializer(data=courses, many=True)
         self.assertFalse(serializer.is_valid())
@@ -95,10 +89,10 @@ class CourseTestCase(TestCase):
         but without recent parameters"""
         client = Client()
         response = client.get(
-            path=reverse('course-list'),
-            data={'simplestats': ''},
+            path=reverse("course-list"),
+            data={"simplestats": ""},
         )
-        courses = response.json()['results']
+        courses = response.json()["results"]
         self.assertEqual(len(courses), 5)
         serializer = CourseSimpleStatsSerializer(data=courses, many=True)
         self.assertTrue(serializer.is_valid())
@@ -109,8 +103,8 @@ class CourseTestCase(TestCase):
         """Test CourseViewSet.get_queryset() without recent parameter
         or simplestats parameters"""
         client = Client()
-        response = client.get(path=reverse('course-list'))
-        courses = response.json()['results']
+        response = client.get(path=reverse("course-list"))
+        courses = response.json()["results"]
         self.assertEqual(len(courses), 5)
         serializer = CourseSimpleStatsSerializer(data=courses, many=True)
         self.assertFalse(serializer.is_valid())
@@ -119,8 +113,10 @@ class CourseTestCase(TestCase):
 
     def test_student_eval_link(self):
         """Test if a student eval link matches up with a real link."""
-        eval_link = "https://evals.itc.virginia.edu/" + \
-            "course-selectionguide/pages/SGMain.jsp?cmp=CS,1420"
+        eval_link = (
+            "https://evals.itc.virginia.edu/"
+            + "course-selectionguide/pages/SGMain.jsp?cmp=CS,1420"
+        )
         # need to break into 2 lines because otherwise pylint gets mad
         # this link doesn't actually work because CS 420 is not a real class
         self.assertEqual(eval_link, self.course.eval_link())

@@ -19,7 +19,8 @@ class InstructorEdgeTestCase(TestCase):
         self.review2.delete()
 
         self.assertIsNone(
-            self.instructor.average_rating_for_course(self.course))
+            self.instructor.average_rating_for_course(self.course)
+        )
 
     def test_average_difficulty_for_course_no_reviews(self):
         """Test average difficulty for a particular course when there are no reviews."""
@@ -27,7 +28,8 @@ class InstructorEdgeTestCase(TestCase):
         self.review2.delete()
 
         self.assertIsNone(
-            self.instructor.average_rating_for_course(self.course))
+            self.instructor.average_rating_for_course(self.course)
+        )
 
     def test_average_enjoyability_for_course_no_reviews(self):
         """Test average enjoyability for a particular course when there are no reviews."""
@@ -35,7 +37,8 @@ class InstructorEdgeTestCase(TestCase):
         self.review2.delete()
 
         self.assertIsNone(
-            self.instructor.average_enjoyability_for_course(self.course))
+            self.instructor.average_enjoyability_for_course(self.course)
+        )
 
     def test_average_instructor_rating_for_course_no_reviews(self):
         """Test average instructor rating for a particular course when there are no reviews."""
@@ -43,8 +46,8 @@ class InstructorEdgeTestCase(TestCase):
         self.review2.delete()
 
         self.assertIsNone(
-            self.instructor.average_instructor_rating_for_course(
-                self.course))
+            self.instructor.average_instructor_rating_for_course(self.course)
+        )
 
     def test_average_recommendability_for_course_no_reviews(self):
         """Test average recommendability for a particular course when there are no reviews."""
@@ -52,17 +55,15 @@ class InstructorEdgeTestCase(TestCase):
         self.review2.delete()
 
         self.assertIsNone(
-            self.instructor.average_recommendability_for_course(
-                self.course))
+            self.instructor.average_recommendability_for_course(self.course)
+        )
 
     def test_average_hours_for_course_no_reviews(self):
         """Test average hours for a particular course when there are no reviews."""
         self.review1.delete()
         self.review2.delete()
 
-        self.assertIsNone(
-            self.instructor.average_hours_for_course(
-                self.course))
+        self.assertIsNone(self.instructor.average_hours_for_course(self.course))
 
     def test_average_reading_hours_for_course_no_reviews(self):
         """Test average reading hours for a particular course when there are no reviews."""
@@ -70,8 +71,8 @@ class InstructorEdgeTestCase(TestCase):
         self.review2.delete()
 
         self.assertIsNone(
-            self.instructor.average_reading_hours_for_course(
-                self.course))
+            self.instructor.average_reading_hours_for_course(self.course)
+        )
 
     def test_average_writing_hours_for_course_no_reviews(self):
         """Test average reading hours for a particular course when there are no reviews."""
@@ -79,8 +80,8 @@ class InstructorEdgeTestCase(TestCase):
         self.review2.delete()
 
         self.assertIsNone(
-            self.instructor.average_writing_hours_for_course(
-                self.course))
+            self.instructor.average_writing_hours_for_course(self.course)
+        )
 
     def test_average_group_hours_for_course_no_reviews(self):
         """Test average group hours for a particular course when there are no reviews."""
@@ -88,8 +89,8 @@ class InstructorEdgeTestCase(TestCase):
         self.review2.delete()
 
         self.assertIsNone(
-            self.instructor.average_group_hours_for_course(
-                self.course))
+            self.instructor.average_group_hours_for_course(self.course)
+        )
 
     def test_average_other_hours_for_course_no_reviews(self):
         """Test average other hours for a particular course when there are no reviews."""
@@ -97,17 +98,15 @@ class InstructorEdgeTestCase(TestCase):
         self.review2.delete()
 
         self.assertIsNone(
-            self.instructor.average_other_hours_for_course(
-                self.course))
+            self.instructor.average_other_hours_for_course(self.course)
+        )
 
     def test_average_gpa_for_course_no_grades(self):
         """Test average gpa for a particular course when there are no grades."""
         self.instructor_grade.delete()
         self.instructor_grade2.delete()
 
-        self.assertIsNone(
-            self.instructor.average_gpa_for_course(
-                self.course))
+        self.assertIsNone(self.instructor.average_gpa_for_course(self.course))
 
     def test_average_difficulty_no_reviews(self):
         """Test average difficulty for all instructor's courses when there are no reviews."""
@@ -133,12 +132,10 @@ class InstructorEdgeTestCase(TestCase):
 
     def test_instructor_name_no_email(self):
         """Test __str__ method in Instructor model when there is no email"""
-        self.assertEqual(
-            "No Email ()", str(self.instructor2))
+        self.assertEqual("No Email ()", str(self.instructor2))
 
     @suppress_request_warnings
     def test_instructor_view_404(self):
         """Test if instructor view returns a 404 status code when it should."""
-        response = self.client.post(
-            reverse('instructor', args=(99999999999,)))
+        response = self.client.post(reverse("instructor", args=(99999999999,)))
         self.assertEqual(response.status_code, 404)

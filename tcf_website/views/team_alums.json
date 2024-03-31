@@ -101,6 +101,18 @@
           "github": "khushic"
         },
         {
+          "name": "Nikhil Mahajan",
+          "role": "Data Manager",
+          "class": "2023",
+          "img_filename": "DM_Nikhil_Mahajan.webp"
+        },
+        {
+          "name": "Borja Ingle-Fernandez",
+          "role": "VP of Infrastructure Engineering",
+          "class": "2023",
+          "img_filename": "ENG_Borja_Ingle-Fernandez.webp"
+        },
+        {
           "name": "Arjun Kumar",
           "role": "Developer",
           "class": "2023",

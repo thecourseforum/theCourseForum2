@@ -1,9 +1,9 @@
+{% extends "base/base.html" %}
 {% load static %}
 
 <link rel="stylesheet" href="{% static 'qa/qa.css' %}" />
 
-<script type="module" src="{% static 'qa/sort_qa.js' %}"></script>
-
+{% block content %}
 <div class="qa-container mb-5 mt-3">
     <div class="qa-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
         <h3 class="qa-heading mb-0 mt-1 mr-4">Questions</h3>
@@ -47,8 +47,18 @@
                                     required></textarea>
                             </fieldset>
 
-                            <input type="hidden" name="course" value="{{course.id}}">
-                            <input type="hidden" name="instructor" value="{{instructor.id}}">
+                            <!--Temp replacement for question form-->
+                            <fieldset>
+                                <label>Course ID:</label>
+                                <input name="course" value="">
+                            </fieldset>
+
+                            <fieldset>
+                                <label>Instructor ID:</label>
+                                <input name="instructor" value="">
+                            </fieldset>
+                            <!--End of temp replacement-->
+
                             <div class="row justify-content-center">
                                 <input type="submit" value="Submit your Question!"
                                     class="btn bg-tcf-orange text-white mb-3">
@@ -146,8 +156,8 @@
                                                                 required>{{ question.text }}</textarea>
                                                         </fieldset>
                                 
-                                                        <input type="hidden" name="course" value="{{course.id}}">
-                                                        <input type="hidden" name="instructor" value="{{instructor.id}}">
+                                                        <input type="hidden" name="course" value="{{question.course.id}}">
+                                                        <input type="hidden" name="instructor" value="{{question.instructor.id}}">
                                                         <div class="row justify-content-center">
                                                             <input type="submit" value="Edit your Question!"
                                                             class="btn bg-tcf-orange text-white mb-3">
@@ -363,7 +373,9 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block js %}
 <!--upvote/downvote feature and login verification for questions-->
 <script type="module">
     import { handleQAVote } from "{% static 'qa/qa.js' %}";
@@ -398,3 +410,9 @@
     });
     {% endif %}
 </script>
+
+<script type="module" src="{% static 'qa/sort_qa.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'qa/new_answer.js' %}"></script>
+
+{% endblock %}
