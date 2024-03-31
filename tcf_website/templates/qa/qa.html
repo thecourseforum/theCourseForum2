@@ -49,8 +49,18 @@
                                     required></textarea>
                             </fieldset>
 
-                            <input type="hidden" name="course" value="{{course.id}}">
-                            <input type="hidden" name="instructor" value="{{instructor.id}}">
+                            <!--Temp replacement for question form-->
+                            <fieldset>
+                                <label>Course ID:</label>
+                                <input name="course" value="">
+                            </fieldset>
+
+                            <fieldset>
+                                <label>Instructor ID:</label>
+                                <input name="instructor" value="">
+                            </fieldset>
+                            <!--End of temp replacement-->
+
                             <div class="row justify-content-center">
                                 <input type="submit" value="Submit your Question!"
                                     class="btn bg-tcf-orange text-white mb-3">
@@ -148,8 +158,8 @@
                                                                 required>{{ question.text }}</textarea>
                                                         </fieldset>
                                 
-                                                        <input type="hidden" name="course" value="{{course.id}}">
-                                                        <input type="hidden" name="instructor" value="{{instructor.id}}">
+                                                        <input type="hidden" name="course" value="{{question.course.id}}">
+                                                        <input type="hidden" name="instructor" value="{{question.instructor.id}}">
                                                         <div class="row justify-content-center">
                                                             <input type="submit" value="Edit your Question!"
                                                             class="btn bg-tcf-orange text-white mb-3">
