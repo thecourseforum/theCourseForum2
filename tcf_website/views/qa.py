@@ -21,7 +21,8 @@ from ..models import Answer, Question
 
 
 class QAView(ListView):
-    template_name = 'qa.html'
+    template_name = 'qa/qa.html'
+    model = Question
     #context_object_name = 'questions'
 
     def get_context_data(self, **kwargs):
