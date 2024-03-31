@@ -223,7 +223,7 @@ def write_to_csv(csv_path, course_list):
 
 
 SEASON_NUMBERS = {"fall": 8, "summer": 6, "spring": 2, "january": 1}
-COURSE_DATA_DIR = "semester_data/sis_csv/"
+COURSE_DATA_DIR = "semester_data/csv/"
 
 
 # test SIS data against Lous List data
@@ -298,5 +298,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    # main()
-    compare_csv_files("semester_data/csv/2024_fall.csv", "semester_data/sis_csv/2024_fall.csv")
+    main()
