@@ -1,0 +1,66 @@
+<!--ANSWER FORM-->
+
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Answer a question - theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'qa/new_question.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<div class="new-answer container text-left mx-auto">
+    <h1 class="h2 mt-2 mb-4">Answer this question</h1>
+    <div class="card">
+        <form class="card-body px-md-5" id="answerForm" action="{% url 'new_answer' %}" method="POST">
+            <h2 class="h4 question-form-header form-group mt-4 mb-2 question-heading">
+                About Yourself </h2>
+            <div class="form-group">
+                <p class="small">You can type or use Arrowkeys+Enter to select.</p>
+            </div>
+            <div class="form-row mb-3">
+                <div class="form-group col-sm-6">
+                    <label for="school" class="required-field">Major</label>
+                    <select type="text" class="form-control" required id="major" name="major">
+                        <option value="{{ form.instance.school.department }}" selected> {{ form.instance.school.department}} </option>
+                    </select>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <label for="subject" class="required-field">Year</label>
+                    <select type="text" class="form-control" required id="subject" name="subject">
+                        <option>1st Year</option>
+                        <option>2nd Year</option>
+                        <option>3rd Year</option>
+                        <option>4th Year</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="form-group col-sm-6">
+                    <label for="course" class="required-field">Course</label>
+                    <select type="text" class="form-control" required id="course" name="course">
+                        <option value="{{ form.instance.course.id }}" selected>{{ form.instance.course.number }} | {{
+                            form.instance.course.title }}</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <label for="instructor" class="required-field">Semester Taken</label>
+                    <select type="text" class="form-control" required id="instructor" name="instructor">
+                        <option value="{{ form.instance.semester }}" selected>{{ form.instance.semester }} </option>
+                    </select>
+                </div>
+            </div>
+
+
+
+        </form>
+    </div>
+</div>
+
+{%endblock%}
