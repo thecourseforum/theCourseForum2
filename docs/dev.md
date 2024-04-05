@@ -14,23 +14,16 @@ $ cd theCourseForum
 
 - _**Note**_: the file should be named exactly `.env`, not `.env.txt` or `env.txt` - rename if necessary.
 
-4. Install `pre-commit` and associated dependencies to ensure your commit pasts formatting and linting:
-
-```console
-$ git config --unset-all core.hooksPath # run this if you configured a hook from the old wiki setup
-$ pip install pre-commit && pre-commit install
-```
-
-5. Build the project
+4. Build the project
 
 ```console
 $ docker compose build --no-cache # from scratch (only necessary the first time)
 $ docker compose up
 ```
 
-6. Wait for the Django server to finish building (i.e. `tcf_django | Watching for file changes with StatReloader` is visible in stdout).
-7. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) from Google Drive into `db/latest.sql` in your local repo.
-8. Update the database according to your operating system:
+5. Wait for the Django server to finish building (i.e. `tcf_django | Watching for file changes with StatReloader` is visible in stdout).
+6. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) from Google Drive into `db/latest.sql` in your local repo.
+7. Update the database:
 
 MacOS/Linux (or Windows, if you're using Git-Bash):
 
@@ -38,13 +31,9 @@ MacOS/Linux (or Windows, if you're using Git-Bash):
 $ sh scripts/reset-db.sh db/latest.sql
 ```
 
-Windows (Command Prompt or PowerShell):
+If you're on windows, open up `scripts/reset-db.sh` and run the commands manually (sorry)
 
-```console
-$ scripts\reset-db.bat db\latest.sql
-```
-
-9. Ensure the website is up, running, and functional at `localhost:8000`.
+8. Ensure the website is up, running, and functional at `localhost:8000`.
 
 ## [Useful Commands](useful-commands.md)
 
