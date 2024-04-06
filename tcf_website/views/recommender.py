@@ -5,11 +5,15 @@ import numpy as np
 import difflib
 from io import BytesIO
 from django.shortcuts import get_object_or_404, redirect, render
+import os
+# from dotenv import load_dotenv
+
+# load_dotenv()
 
 N = 5  # number of similar courses to print
 CHUNKS = 30  # number of chunks in digital ocean
-access_key = 'DO00YNY32DLHVFM9BY7V'
-secret_key = 'AOtDYKQLo8btebbC45EeZ/oMUr+oqgeVt7lc08Xbe/c'
+access_key = os.getenv("DO_ACCESS_KEY")
+secret_key = os.getenv("DO_SECRET_KEY")
 
 from ..models import (
     Course,
