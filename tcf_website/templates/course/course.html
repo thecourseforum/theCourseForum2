@@ -27,7 +27,9 @@
                     <h2>{{ course.title }}</h2>
                 </div>
                 <div class="text-right">
+                    {% if recommendation_names %}
                     <button onclick="scrollToHeader()" class="btn btn-secondary">Related Courses</button>
+                    {% endif %}
                 </div>
             </div>
             
@@ -96,6 +98,7 @@
             
             <br/>
             <div> 
+                {% if recommendation_names %}
                 <h2 id = "related-courses"> Related Courses: </h2>
                 {% load custom_filters %}
                 <div id="gridContent" class="grid-content">
@@ -106,7 +109,8 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ i }}</h5>
-                                    <p class="card-text">{{ recommendation_descriptions|get_item:forloop.counter0 }}</p>
+                                    <p class="card-text">Difficulty: {{ recommendation_difficulty|get_item:forloop.counter0|floatformat:"2" }}</br>
+                                    Rating: {{ recommendation_rec_ratings|get_item:forloop.counter0|floatformat:"2" }}</p>
                                     <a href="{% url 'course' mnemonic=recommendation_mnemonics|get_item:forloop.counter0 course_number=recommendation_numbers|get_item:forloop.counter0 %}" class="btn btn-primary">View Course</a>
                                 </div>
                             </div>
@@ -114,6 +118,7 @@
                         {% endfor %}
                     </div>
                 </div>
+                {% endif %}
             </div>
             
         </div>

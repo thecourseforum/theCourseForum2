@@ -89,6 +89,9 @@ def get_recommendations_helper(course_name):
     # finding the close match for the movie name given by the user
     find_close_match = difflib.get_close_matches(course_name, list_of_all_titles)
 
+    if(len(find_close_match) < 1):
+        return []
+    
     close_match = find_close_match[0]
 
     # finding the index of the movie with title
@@ -124,4 +127,4 @@ def get_recommendations(request, mnemonic, course_number):
 # For Testing:
 # Instructions: uncomment main below, comment out "from modules import" segment, and comment out "get_recommendations" function, comment correct load_csv function
 # if __name__ == "__main__":
-#     print(get_recommendations_helper("Data Structures and Algorithms 1"))
+#     print(get_recommendations_helper("Thermodynamics and Phase Equilibria of Materials"))
