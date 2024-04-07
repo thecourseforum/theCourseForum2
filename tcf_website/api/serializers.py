@@ -1,11 +1,20 @@
 """DRF Serializers"""
+
 from rest_framework import serializers
-from ..models import (Course, Department, School, Instructor, Semester,
-                      Subdepartment)
+
+from ..models import (
+    Course,
+    Department,
+    Instructor,
+    School,
+    Semester,
+    Subdepartment,
+)
 
 
 class SemesterSerializer(serializers.ModelSerializer):
     """DRF Serializer for Semester"""
+
     season = serializers.SerializerMethodField()
 
     def get_season(self, obj):
@@ -14,43 +23,48 @@ class SemesterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Semester
-        fields = '__all__'
+        fields = "__all__"
 
 
 class SchoolSerializer(serializers.ModelSerializer):
     """DRF Serializer for School"""
+
     class Meta:
         model = School
-        fields = '__all__'
+        fields = "__all__"
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
     """DRF Serializer for Department"""
+
     school = SchoolSerializer(read_only=True)
 
     class Meta:
         model = Department
-        fields = '__all__'
+        fields = "__all__"
 
 
 class SubdepartmentSerializer(serializers.ModelSerializer):
     """DRF Serializer for Subdepartment"""
+
     class Meta:
         model = Subdepartment
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CourseSerializer(serializers.ModelSerializer):
     """DRF Serializer for Course"""
+
     subdepartment = SubdepartmentSerializer(read_only=True)
 
     class Meta:
         model = Course
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CourseSimpleStatsSerializer(CourseSerializer):
     """DRF Serializer for Course including some review statistics"""
+
     semester_last_taught = SemesterSerializer(read_only=True)
     average_rating = serializers.FloatField(allow_null=True)
     average_difficulty = serializers.FloatField(allow_null=True)
@@ -58,13 +72,23 @@ class CourseSimpleStatsSerializer(CourseSerializer):
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'description', 'number', 'subdepartment',
-                  'semester_last_taught', 'average_rating',
-                  'average_difficulty', 'average_gpa', 'is_recent']
+        fields = [
+            "id",
+            "title",
+            "description",
+            "number",
+            "subdepartment",
+            "semester_last_taught",
+            "average_rating",
+            "average_difficulty",
+            "average_gpa",
+            "is_recent",
+        ]
 
 
 class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
     """DRF Serializer for Course including all review statistics"""
+
     # ratings
     average_instructor = serializers.FloatField(allow_null=True)
     average_fun = serializers.FloatField(allow_null=True)
@@ -90,23 +114,45 @@ class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'description', 'number', 'subdepartment',
-                  'semester_last_taught', 'is_recent',
-                  # ratings
-                  'average_rating', 'average_instructor', 'average_fun',
-                  'average_recommendability', 'average_difficulty',
-                  # workload
-                  'average_hours_per_week', 'average_amount_reading',
-                  'average_amount_writing', 'average_amount_group',
-                  'average_amount_homework',
-                  # grades
-                  'a_plus', 'a', 'a_minus', 'b_plus', 'b', 'b_minus',
-                  'c_plus', 'c', 'c_minus',
-                  'dfw', 'total_enrolled', 'average_gpa']
+        fields = [
+            "id",
+            "title",
+            "description",
+            "number",
+            "subdepartment",
+            "semester_last_taught",
+            "is_recent",
+            # ratings
+            "average_rating",
+            "average_instructor",
+            "average_fun",
+            "average_recommendability",
+            "average_difficulty",
+            # workload
+            "average_hours_per_week",
+            "average_amount_reading",
+            "average_amount_writing",
+            "average_amount_group",
+            "average_amount_homework",
+            # grades
+            "a_plus",
+            "a",
+            "a_minus",
+            "b_plus",
+            "b",
+            "b_minus",
+            "c_plus",
+            "c",
+            "c_minus",
+            "dfw",
+            "total_enrolled",
+            "average_gpa",
+        ]
 
 
 class InstructorSerializer(serializers.ModelSerializer):
     """DRF Serializer for Instructor"""
+
     class Meta:
         model = Instructor
-        fields = '__all__'
+        fields = "__all__"
