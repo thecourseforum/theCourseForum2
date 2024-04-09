@@ -13,9 +13,7 @@ from django.db.models import (
     Value,
 )
 from django.db.models.functions import Cast, Concat
-from django.http import JsonResponse
 from django.shortcuts import render
-from django.views.decorators.cache import cache_page
 
 from ..models import Course, Instructor, Subdepartment
 
@@ -54,9 +52,7 @@ def decide_order(query, courses, instructors):
     """
 
     # Calculate average similarity for courses
-    courses_avg = compute_avg_similarity(
-        [x["score"] for x in courses["results"]]
-    )
+    courses_avg = compute_avg_similarity([x["score"] for x in courses["results"]])
 
     # Calculate average similarity for instructors
     instructors_avg = compute_avg_similarity(
@@ -76,17 +72,12 @@ def decide_order(query, courses, instructors):
 
     # If there is a perfect match for any part of the professor's name, return that
     # unless it also perfectly matches a course
-    if (
-        first_instructor_score == 1.0
-        and first_instructor_score >= first_course_score
-    ):
+    if first_instructor_score == 1.0 and first_instructor_score >= first_course_score:
         return False
 
     # Prioritize courses for short queries or if their average similarity
     # score is significantly higher
-    if len(query) <= 4 or (
-        courses_avg > instructors_avg and courses_avg > THRESHOLD
-    ):
+    if len(query) <= 4 or (courses_avg > instructors_avg and courses_avg > THRESHOLD):
         return True
 
     # Prioritize courses if professor search result length is 0, regardless of course results
@@ -287,53 +278,3 @@ def group_by_dept(courses):
         grouped_courses[course_dept]["courses"].append(course)
 
     return grouped_courses
-
-
-# cache autocomplete results for 60s * 5 = 5min
-@cache_page(60 * 5)
-def autocomplete(request):
-    """Fetch autocomplete results"""
-    # Set query
-    query = request.GET.get("q", "")
-    # courses are at least 3 digits long
-    # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
-    match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
-    if match:
-        title_part, number_part = match.groups()
-    else:
-        # Handle cases where the query doesn't match the expected format
-        title_part, number_part = query, ""
-
-    # fetching instructor results from query
-    instructorData = fetch_instructors(query)["results"]
-    # normalizing instructor data
-    for instructor in instructorData:
-        instructor["score"] = instructor.pop("score") / 2.5
-        instructor["title"] = (
-            instructor.pop("first_name") + " " + instructor.pop("last_name")
-        )
-
-    courses = fetch_courses(title_part, number_part)
-    courseData = list(courses["results"])
-
-    combinedData = instructorData + courseData
-
-    # sort the top results using the compare function
-    topResults = sorted(combinedData, key=compare, reverse=True)[:5]
-
-    return JsonResponse({"results": topResults})
-
-
-# pylint: disable=missing-function-docstring
-def compare(result):
-    similarity_threshold = 0.75
-
-    meetsThreshold = float("-inf")
-
-    try:
-        if result["score"] > similarity_threshold:
-            meetsThreshold = result["score"]
-    except Exception as _:  # pylint: disable=broad-exception-caught
-        if result["total_similarity"] > similarity_threshold:
-            meetsThreshold = result["total_similarity"]
-    return meetsThreshold
