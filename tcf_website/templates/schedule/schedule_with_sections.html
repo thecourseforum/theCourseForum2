@@ -78,6 +78,9 @@
             recentCourse.remove();
         }
         
+        // round the gpa field
+        courseJSON.gpa = parseFloat(parseFloat(courseJSON.gpa).toFixed(2));
+
         // These functions are in the schedule template
         addCourse(courseJSON);
         updateStats();
