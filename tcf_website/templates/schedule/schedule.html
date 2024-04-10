@@ -60,33 +60,93 @@
                 </div>
             </div>
             <div class="schedule-body col-xs-12 col-md-12 col-lg-12">
-
                 <ul id="schedule_courses-{{schedule.id}}" class="schedule_card_courses">
                     {% for course in courses %}
-                        <li>
-                            <div id="ScheduledCourse-{{course.id}}{{mode}}" class="schedule_course_card" course_rating="{{course.total_rating}}" 
-                            course_diff="{{course.difficulty}}" course_credits="{{course.credits}}" course_gpa="{{course.gpa}}">
-                                <h6 class="schedule_course_card_header">{{course}}</h6>
-                                <div class="schedule_course_card_content">
-                                    {{course.user}}
-                                    <div>
-                                        {{course.instructor}}
-                                    </div>
-                                    <div>
-                                        {{course.title}}
-                                    </div>
-                                    <div>
-                                        {{course.time}}
-                                    </div>
-                                    <div>
-                                        {{course.section.section_type}}
-                                    </div>
-                                    <div>
-                                        {{course.gpa|floatformat:2}}
+                    <li>
+
+                        <div id="ScheduledCourse-{{course.id}}{{mode}}" course_rating="{{course.total_rating}}" 
+                        course_diff="{{course.difficulty}}" course_credits="{{course.credits}}" course_gpa="{{course.gpa}}" class="card schedule_course_card mb-2">
+                            <div class="row no-gutters">
+                                <div class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start schedule-card-link align-items-center ">
+                                    <div class="text-center text-lg-left">
+                                        <h4 id="title">{{ course.title }}</h4>
+                                        <h6>{{ course.instructor }}</h6>
+
                                     </div>
                                 </div>
+                              <div class="col-md-8">
+                                <div class="card-body">
+                                    <row>
+                                        <div class="col-12 text-center">
+                                            <small class="mb-0 text-uppercase">
+                                              Section Time
+                                            </small>
+                                              <p class="mb-1 info text-break" id="recency">{{course.time}}</p>
+                                          </div>
+                                    </row>
+                                  <div class="row justify-content-between text-center">
+                                      <div class="col-4 col-lg-2 text-nowrap">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fa fa-star fa-fw"></i>&nbsp;Rating
+                                        </small>
+                                        <p class="mb-0 info text-break">
+                                          {% if course.total_rating %}
+                                            {{ course.total_rating|floatformat:2 }}
+                                          {% else %}
+                                            &mdash;
+                                          {% endif %}
+                                        </p>
+                                      </div>
+                                      <div class="col-4 col-lg-2 text-nowrap">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fa fa-dumbbell fa-fw"></i>&nbsp;Difficulty
+                                        </small>
+                                        <p class="mb-0 info text-break">
+                                          {% if course.difficulty %}
+                                            {{ course.difficulty|floatformat:2 }}
+                                          {% else %}
+                                            &mdash;
+                                          {% endif %}
+                                        </p>
+                                      </div>
+                                      <div class="col-4 col-lg-2 text-nowrap">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fas fa-chart-bar"></i>&nbsp;GPA
+                                        </small>
+                                        <p class="mb-0 info text-break">
+                                          {% if course.gpa %}
+                                            {{ course.gpa|floatformat:2 }}
+                                          {% else %}
+                                            &mdash;
+                                          {% endif %}
+                                        </p>
+                                      </div>
+                                      <div class="col-12 col-md-5 col-lg-2 mr-1 text-nowrap">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fas fa-clock"></i>&nbsp;Units
+                                        </small>
+                                        <p class="mb-0 info text-break">
+                                          {% if course.credits %}
+                                              {{ course.credits }}
+                                          {% else %}
+                                            &mdash;
+                                          {% endif %}
+                                        </p>
+                                      </div>
+                                      <div class="col-12 col-md-8 col-lg-2 mr-4 text-nowrap">
+                                        <small class="mb-0 text-uppercase">
+                                          Section Type
+                                        </small>
+                                          <p class="mb-0 info" id="recency">{{course.section.section_type}}</p>
+                                      </div>
+                                  </div>
+                                  
+                                </div>
+                              </div>
                             </div>
-                        </li>
+                          </div>
+
+                    </li>
                     {% empty %}
                         <label id="no_courses_label">Schedule has no courses!</label>
                     {% endfor %}
@@ -183,29 +243,64 @@
         // notice we mark this newly added list element with a ID
         let courseCardHTML = `
             <li id="selectedSectionTentative">
-                <div id="ScheduledCourse-${course.rating}edit" class="schedule_course_card" course_rating="${course.rating}" 
-                course_diff="${course.difficulty}" course_credits="${course.credits}" course_gpa="${course.gpa}">
-                    <h6 class="schedule_course_card_header">TEMP FIELD</h6>
-                    <div class="schedule_course_card_content">
-                        
-                        <div>
-                            ${course.instructor_name}
-                        </div>
-                        <div>
-                            ${course.section}
-                        </div>
-                        <div>
-                            ${course.section_time}
-                        </div>
-                        <div>
-                            ${course.section_type}
-                        </div>
-                        <div>
-                            ${course.gpa}
-                        </div>
+                <div id="ScheduledCourse-${course.id}edit" course_rating="${course.rating}" 
+                            course_diff="${course.difficulty}" course_credits="${course.credits}" course_gpa="${course.gpa}" class="card schedule_course_card mb-2">
+                                <div class="row no-gutters">
+                                    <div class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start schedule-card-link align-items-center ">
+                                        <div class="text-center text-lg-left">
+                                            <h4 id="title">New Addition</h4>
+                                            <h6>${ course.instructor_name }</h6>
+    
+                                        </div>
+                                    </div>
+                                  <div class="col-md-8">
+                                    <div class="card-body">
+                                      <div class="row justify-content-between text-center">
+                                          <div class="col-4 col-lg-2 text-nowrap">
+                                            <small class="mb-0 text-uppercase">
+                                              <i class="fa fa-star fa-fw"></i>&nbsp;Rating
+                                            </small>
+                                            <p class="mb-0 info text-break">
+                                                ${ course.rating }
+                                            </p>
+                                          </div>
+                                          <div class="col-4 col-lg-2 text-nowrap">
+                                            <small class="mb-0 text-uppercase">
+                                              <i class="fa fa-dumbbell fa-fw"></i>&nbsp;Difficulty
+                                            </small>
+                                            <p class="mb-0 info text-break">
+                                                ${ course.difficulty }
+                                            </p>
+                                          </div>
+                                          <div class="col-4 col-lg-2 text-nowrap">
+                                            <small class="mb-0 text-uppercase">
+                                              <i class="fas fa-chart-bar"></i>&nbsp;GPA
+                                            </small>
+                                            <p class="mb-0 info text-break">
+                                                ${ course.gpa }
+                                            </p>
+                                          </div>
+                                          <div class="col-12 col-md-4 col-lg-2 text-nowrap">
+                                            <small class="mb-0 text-uppercase">
+                                              <i class="fas fa-clock"></i>&nbsp;Units
+                                            </small>
+                                            <p class="mb-0 info text-break">
+                                                  ${ course.credits }
+                                            </p>
+                                          </div>
+                                          <div class="col-12 col-md-8 col-lg-3">
+                                            <small class="mb-0 text-uppercase">
+                                              Section Type
+                                            </small>
+                                              <p class="mb-0 info" id="recency">${course.section_type}</p>
+                                          </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                     </div>
-                </div>
             </li>
+
         `;
         // Append the constructed HTML to the this_schedule_courses
         this_schedule_courses.insertAdjacentHTML('beforeend', courseCardHTML);
