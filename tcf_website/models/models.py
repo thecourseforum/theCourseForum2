@@ -1171,7 +1171,6 @@ class Schedule(models.Model):
             # Store the GPA in an attribute of the ScheduledCourse instance
             setattr(scheduled_course, 'gpa', gpa)
         
-        print(scheduled_courses)
         return scheduled_courses
 
     def calculate_total_rating(self, rating):
