@@ -108,7 +108,7 @@
                         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ i }}</h5>
+                                    <h5 class="card-title">{{recommendation_mnemonics|get_item:forloop.counter0}} {{recommendation_numbers|get_item:forloop.counter0}}: {{ i }}</h5>
                                     <p class="card-text">Difficulty: {{ recommendation_difficulty|get_item:forloop.counter0|floatformat:"2" }}</br>
                                     Rating: {{ recommendation_rec_ratings|get_item:forloop.counter0|floatformat:"2" }}</p>
                                     <a href="{% url 'course' mnemonic=recommendation_mnemonics|get_item:forloop.counter0 course_number=recommendation_numbers|get_item:forloop.counter0 %}" class="btn btn-primary">View Course</a>

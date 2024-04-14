@@ -10,7 +10,7 @@ import os
 
 # load_dotenv()
 
-N = 2  # number of similar courses to print
+N = 4  # number of similar courses to print
 CHUNKS = 30  # number of chunks in digital ocean
 access_key = os.getenv("DO_ACCESS_KEY")
 secret_key = os.getenv("DO_SECRET_KEY")
@@ -79,7 +79,7 @@ def recommend_classes(similarity_matrix, adjusted_index_of_the_class, index_to_c
     # getting a list of similar movies
     similarity_score = list(enumerate(similarity_matrix[adjusted_index_of_the_class]))
 
-    # sorting the movies based on their similarity score
+    # sorting the classes based on their similarity score
     sorted_similar_courses = sorted(similarity_score, key=lambda x: x[1], reverse=True)
     # print(sorted_similar_courses)
 
@@ -87,33 +87,40 @@ def recommend_classes(similarity_matrix, adjusted_index_of_the_class, index_to_c
     displayedSuggestions = []
     course_mnemonics = []
     course_numbers = []
+    course_titles = []
     inputCourseMnemonic = index_to_course_map[og_index_of_class][0]
     inputCourseNumber = index_to_course_map[og_index_of_class][1] 
-    # input_course = get_object_or_404(
-    #     Course, subdepartment__mnemonic=inputCourseMnemonic.upper().strip(), number=int(inputCourseNumber)
-    # )
+    displayedSuggestions.append(str(inputCourseMnemonic) + str(inputCourseNumber))
     for course in sorted_similar_courses:
         index = course[0]
         mnemonic_from_index = index_to_course_map[index][0]
         number_from_index = index_to_course_map[index][1]
-        print(mnemonic_from_index, number_from_index)
-        # similar_course = get_object_or_404(
-        #     Course, subdepartment__mnemonic=mnemonic_from_index.upper().strip(), number=int(number_from_index)
-        # )
-        # failtest = similar_course.title
-        title_from_index = "banana" + str(index)
+        # print(mnemonic_from_index, number_from_index)
+
+        identifier = str(mnemonic_from_index)+str(number_from_index)
+        if(identifier in displayedSuggestions):
+            continue
+        try:
+            similar_course = get_object_or_404(
+            Course, subdepartment__mnemonic=mnemonic_from_index.upper().strip(), number=int(number_from_index)
+            )   
+        except:
+            continue
+
+        title_from_index = similar_course.title
         if (i < N + 1):
-            if (title_from_index not in displayedSuggestions and title_from_index != 'tree'
+            if (identifier not in displayedSuggestions
                     and mnemonic_from_index == inputCourseMnemonic and number_from_index >= inputCourseNumber):
-                displayedSuggestions.append(title_from_index)
+                displayedSuggestions.append(identifier)
                 course_mnemonics.append(mnemonic_from_index)
                 course_numbers.append(number_from_index)
+                course_titles.append(title_from_index)
                 i += 1
         else:
             break
             # Example: Return top N recommendations
-        
-    return [displayedSuggestions, course_mnemonics, course_numbers]
+    # print(course_titles, course_mnemonics, course_numbers)
+    return [course_titles, course_mnemonics, course_numbers]
 
 
 def get_recommendations_helper(course_name, course_mnemonic, course_number):
