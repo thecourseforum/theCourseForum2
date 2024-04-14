@@ -108,8 +108,9 @@
                                         </div>
                                         <div class="col">
                                             <div class="question-header">
-                                                <div class="d-flex justify-content-end">
-                                                    <h6 id="date" class="text-muted">Updated {{ question.created|date:"n/d/y" }}</h6>
+                                                <div class="d-flex justify-content-left">
+                                                    <h6 id="course" class="btn btn-outline-info">{{ question.course.code }}</h6>
+                                                    <h6 id="instructor" class="btn btn-outline-info">{{ question.instructor.first_name }} {{ question.instructor.last_name }}</h6>
                                                 </div>
                                             </div>
                                             <div class="question-content mb-2">
@@ -132,6 +133,9 @@
                                                         {% include "qa/delete_question_confirm_modal.html" with question_id=question.id %}
                                                     </div>
                                                 {% endif %}
+                                                </div>
+                                                <div class="d-flex justify-content-end">
+                                                    <h6 id="date" class="text-muted">Updated {{ question.created|date:"n/d/y" }}</h6>
                                                 </div>
                                             </div>
                                         </div>
@@ -188,8 +192,7 @@
                                                     <div class="answer-body">
                                                         <div class="answer-head">
                                                             <div class="d-flex justify-content-between">
-                                                                <h6 class="text-tcf-orange text-start">{{ answer.semester }}</h6>
-                                                                <h6 id="date" class="text-muted">Updated {{ answer.created|date:"n/d/y" }}</h6>
+                                                                <h6 class="btn btn-outline-info">{{ answer.semester }}</h6>
                                                             </div>
                                                         </div>
                                                         <div class="answer-content">
@@ -228,6 +231,9 @@
                                                                     {% include "qa/delete_answer_confirm_modal.html" with answer_id=answer.id %}
                                                                 </div>
                                                             {% endif %}
+                                                        </div>
+                                                        <div class="d-flex answer-footer justify-content-end">
+                                                            <h6 id="date" class="text-muted">Updated {{ answer.created|date:"n/d/y" }}</h6>
                                                         </div>
                                                     </div>
                                                 </div>
