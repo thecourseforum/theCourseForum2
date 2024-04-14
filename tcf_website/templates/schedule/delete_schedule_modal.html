@@ -2,7 +2,7 @@
 {% load static %}
 
 <div class="modal fade" id="deleteScheduleModal" tabindex="-1" role="dialog" aria-labelledby="deleteScheduleModal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Delete Schedule</h5>
@@ -16,10 +16,12 @@
                 {% for s in schedules %}
                 <div class="radio">
                     <label>
-                        <input type="checkbox" name="selected_schedules" value="{{s.id}}">
-                        {{s.name}}
+                        <input type="checkbox" name="selected_schedules" value="{{s.id}}"> 
+                    
+                        {% include "schedule/schedule.html" with schedule=s gpa=schedules_gpa|get_item:s.id courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id credits=credits|get_item:s.id %}
+                        </input>
+                        
                     </label>
-                    {% include "schedule/schedule.html" with schedule=s gpa=schedules_gpa|get_item:s.id courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id credits=credits|get_item:s.id %}
                 </div>
                 {% empty %}
                 <div>You haven't made any schedules yet!</div>
