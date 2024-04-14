@@ -91,11 +91,11 @@
                                         </small>
                                         <p class="mb-0 info" id="recency">{{course.section.section_type}}</p>
                                       </div>
-                                      <div class="col-12 col-sm-8 col-lg-7 text-nowrap ">
+                                      <div class="col-12 col-sm-8 col-lg-7 text-nowrap">
                                         <small class="mb-0 text-uppercase">
                                           <i class="fas fa-hourglass"></i>&nbsp;Section Time
                                         </small>
-                                        <p class="mb-1 info text-break">{{course.time}}</p>
+                                        <p class="mb-1 info text-break course_time">{{course.time}}</p>
                                       </div>
                                       <div class="col-6 col-sm-4 col-lg-3 text-nowrap ">
                                         <small class="mb-0 text-uppercase">
@@ -343,7 +343,7 @@
 
         courseCards.forEach(card => {
             // Assuming the time is always in the third div inside the card
-            const timeDiv = card.querySelector('.schedule_course_card_content > div:nth-child(3)');
+            const timeDiv = card.querySelector('.course_time');
             if (timeDiv) {
                 const timeString = timeDiv.textContent.trim();
         
