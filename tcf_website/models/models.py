@@ -879,11 +879,10 @@ class Question(models.Model):
         )
 
     @staticmethod
-    def display_activity(course_id, instructor_id, user):
+    def display_activity(user):
         """Prepare review list for course-instructor page."""
         question = (
-            Question.objects.filter(instructor=instructor_id, course=course_id)
-            .exclude(text="")
+            Question.objects.exclude(text="")
             .annotate(
                 sum_q_votes=models.functions.Coalesce(
                     models.Sum("votequestion__value"), models.Value(0)
