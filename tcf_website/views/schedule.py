@@ -256,7 +256,6 @@ def modal_load_sections(request):
         temp["name"] = i.first_name + " " + i.last_name
         temp["rating"] = i.rating
         temp["difficulty"] = i.difficulty
-        print(i.gpa)
         temp["gpa"] = i.gpa
     
     schedule = Schedule.objects.get(pk=schedule_id)

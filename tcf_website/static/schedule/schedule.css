@@ -2,43 +2,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
     gap: 10px;
     margin-left: 15px;
     margin-right: 15px;
     margin-bottom: 15px;
-    width: 100%;
-}
-
-.scheduleCardHeader > h4 {
-    margin-right: auto;
-}
-
-.scheduleStats {
-    display: flex;
-    flex-wrap: wrap;
-    width: 270px;
-    justify-content: flex-end;
-}
-
-.scheduleStatsGroup {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.scheduleStatItem {
-    display: flex;
-    align-items: center;
-    gap: 5px; 
-
-}
-
-.gpaStatItem {
-    padding-right: 20px;
-}
-
-.unitStatItem {
-    width: 130px;
 }
 
 .schedule_radio_option {
@@ -82,7 +50,3 @@ font-size: 1.25rem;
 small{
     color: var(--accent-color);
 }
-
-/* .col-md-8 {
-    background-color: var(--background-color);
-} */
