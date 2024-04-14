@@ -3,6 +3,8 @@
 from django.urls import include, path
 from django.views.generic import TemplateView
 
+from django.contrib.auth import views as auth_views
+
 from . import views
 
 urlpatterns = [
@@ -109,4 +111,36 @@ urlpatterns = [
         views.auth.email_verification,
         name="email_verification",
     ),
+    # PASSWORD RESET URLS (used when logged out)
+    path(
+        "accounts/password_reset/",
+        auth_views.PasswordResetView.as_view(),
+        name="password_reset"
+    ),
+    path(
+        "accounts/password_reset_done/",
+        auth_views.PasswordResetDoneView.as_view(),
+        name="password_reset_done"
+    ),
+    path(
+        "accounts/password_reset_<uidb64>_<token>/",
+        auth_views.PasswordResetConfirmView.as_view(),
+        name="password_reset_confirm"
+    ),
+    path(
+        "accounts/password_reset_complete/",
+        auth_views.PasswordResetCompleteView.as_view(),
+        name="password_reset_complete"
+    ),
+    # PASSWORD CHANGE URLS (used when logged in)
+    path(
+        "accounts/password_change/",
+        auth_views.PasswordChangeView.as_view(),
+        name="password_change"
+    ),
+    path(
+        "accounts/password_change_done/",
+        auth_views.PasswordChangeDoneView.as_view(),
+        name="password_change_done"
+    )
 ]
