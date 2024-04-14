@@ -20,7 +20,7 @@ import csv
 import json
 import os
 import sys
-
+from concurrent.futures import ThreadPoolExecutor
 import backoff
 
 # format -ClassNumber,Mnemonic,Number,Section,Type,Units,Instructor1,Days1,Room1,MeetingDates1,Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,Description
@@ -37,6 +37,7 @@ from tqdm import tqdm
 # finds all departments in a term:
 # https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearchOptions?institution=UVA01&term=1228
 
+session = requests.session()
 
 @backoff.on_exception(
     backoff.expo,
@@ -57,13 +58,13 @@ def retrieve_and_write_semester_courses(csv_path, sem_code):
         f"institution=UVA01&term={sem_code}&page="
     )
 
-    all_classes = []
     page = 1
     while True:
         print(f"\nFetching page {page}...")
+        all_classes = []
         page_url = semester_url + str(page)
         try:
-            response = requests.get(page_url, timeout=300)
+            response = session.get(page_url, timeout=300)
             page_data = json.loads(response.text)
         except requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
@@ -72,12 +73,19 @@ def retrieve_and_write_semester_courses(csv_path, sem_code):
         if not page_data:
             break
 
-        for course in tqdm(page_data):
-            class_data = compile_course_data(course["class_nbr"], sem_code)
-            if class_data:
-                all_classes.append(class_data)
+        # for course in tqdm(page_data):
+        #     class_data = compile_course_data(course["class_nbr"], sem_code)
+        #     if class_data:
+        #         all_classes.append(class_data)
+
+        requests_to_make = [(course["class_nbr"], sem_code) for course in page_data]
+
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            all_classes = executor.map(lambda params: compile_course_data(*params), tqdm(requests_to_make))
+
+        all_classes = list(filter(lambda x: x is not None, all_classes))
+
         write_to_csv(csv_path, all_classes)
-        all_classes = []
         page += 1
 
     print("Data fetching complete.")
@@ -98,7 +106,7 @@ def compile_course_data(course_number, sem_code):
     )
 
     try:
-        response = requests.get(url, timeout=300)
+        response = session.get(url, timeout=300)
     except requests.exceptions.RequestException:
         return None
 
@@ -250,7 +258,6 @@ def compare_csv_files(lous_list_file_path, sis_file_path):
                                 print(f"Column: {sis_dict['ClassNumber'][i]}")
                                 print(f"SIS: {sis_dict[key][i]}")
                                 print(f"Local: {local_dict[key][i]}")
-                                input()
                                 break
                 else:
                     print(f"Course {key} not in Lou's List\n")
