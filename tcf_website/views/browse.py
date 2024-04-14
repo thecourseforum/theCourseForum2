@@ -201,7 +201,7 @@ def course_view(request, mnemonic, course_number):
     rec_ratings = []
     rec_gpas = []
     rec_difficulty = []
-    recommendations = get_recommendations_helper(course.title)
+    recommendations = get_recommendations_helper(course.title, mnemonic, course.number)
     if(len(recommendations) > 0):
         for i in range(len(recommendations[0])):
             temp_rec_number = recommendations[2][i]
