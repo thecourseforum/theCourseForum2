@@ -29,10 +29,7 @@ class QAView(ListView):
         context = super().get_context_data(**kwargs)
 
         # Prepare Questions list
-        context["questions"] = Question.objects.all()
-
-        # TODO: fix below (need to change db I think)
-        #context['questions'] = Question.display_activity(self.request.user)
+        context['questions'] = Question.display_activity(self.request.user)
 
         # Prepare Answers list
         questions = Question.objects.all()
