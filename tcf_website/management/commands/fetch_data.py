@@ -261,6 +261,9 @@ def compare_csv_files(lous_list_file_path, sis_file_path):
                                 break
                 else:
                     print(f"Course {key} not in Lou's List\n")
+            for key in local_dict.keys():
+                if key not in sis_dict:
+                    print(f"Course {key} not in SIS\n")
 
 
 # compare_csv_files("semester_data/csv/2024_fall.csv", "semester_data/sis_csv/2024_fall.csv")
