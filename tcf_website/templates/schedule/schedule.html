@@ -243,7 +243,6 @@
         if(noCourseLabel){
             noCourseLabel.remove();
         }
-        console.log(course)
         const scheduleId = '{{schedule.id}}';
         let this_schedule = document.getElementById("schedule{{schedule.id}}edit");
         let this_schedule_courses = this_schedule.querySelector("#schedule_courses-{{schedule.id}}");
@@ -346,7 +345,6 @@
             const timeDiv = card.querySelector('.course_time');
             if (timeDiv) {
                 const timeString = timeDiv.textContent.trim();
-        
                 // add to time string array
                 times.push(timeString);
             }
