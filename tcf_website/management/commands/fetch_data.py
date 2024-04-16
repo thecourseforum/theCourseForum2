@@ -21,6 +21,7 @@ import json
 import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
+
 import backoff
 
 # format -ClassNumber,Mnemonic,Number,Section,Type,Units,Instructor1,Days1,Room1,MeetingDates1,Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,Description
@@ -38,6 +39,7 @@ from tqdm import tqdm
 # https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearchOptions?institution=UVA01&term=1228
 
 session = requests.session()
+
 
 @backoff.on_exception(
     backoff.expo,
@@ -78,10 +80,15 @@ def retrieve_and_write_semester_courses(csv_path, sem_code):
         #     if class_data:
         #         all_classes.append(class_data)
 
-        requests_to_make = [(course["class_nbr"], sem_code) for course in page_data]
+        requests_to_make = [
+            (course["class_nbr"], sem_code) for course in page_data
+        ]
 
         with ThreadPoolExecutor(max_workers=20) as executor:
-            all_classes = executor.map(lambda params: compile_course_data(*params), tqdm(requests_to_make))
+            all_classes = executor.map(
+                lambda params: compile_course_data(*params),
+                tqdm(requests_to_make),
+            )
 
         all_classes = list(filter(lambda x: x is not None, all_classes))
 
@@ -150,7 +157,9 @@ def compile_course_data(course_number, sem_code):
             meetings.get(0)["meets"]
             if meetings.get(0)["meets"] != "-"
             else "TBA"
-        ).replace("AM", "am").replace("PM", "pm"),
+        )
+        .replace("AM", "am")
+        .replace("PM", "pm"),
         "Room1": (
             meetings.get(0)["room"] if meetings.get(0)["room"] != "-" else "TBA"
         ),
