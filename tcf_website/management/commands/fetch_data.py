@@ -2,12 +2,12 @@
 Fetch and save data from SIS API for a specified semester into a CSV file.
 
 Usage:
-cd tcf_website/management/commands/semester_data
+cd tcf_website/management/commands
 python fetch_data.py "<year>_<season>"
 cd -
 
 Example:
-cd tcf_website/management/commands/semester_data
+cd tcf_website/management/commands
 python fetch_data "2023_spring"
 cd -
 """
