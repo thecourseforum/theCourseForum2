@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 # from django.shortcuts import get_object_or_404, render, redirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Prefetch
 from django.template.loader import render_to_string
 
@@ -161,6 +161,29 @@ def delete_schedule(request):
             messages.success(
                 request,
                 f"Successfully deleted {schedule_count} schedules and {deleted_count - schedule_count} courses")
+    return redirect('schedule')
+
+
+@login_required
+def duplicate_schedule(request, schedule_id):
+    '''
+    Duplicate a scheulde given a schedule id in the request
+    '''
+    schedule = get_object_or_404(Schedule, pk=schedule_id)
+    schedule.pk = None  # reset the key so it will be recreated when it's saved
+    old_name = schedule.name
+    schedule.name = old_name + "_copy"
+    schedule.save()
+
+    courses = ScheduledCourse.objects.filter(schedule_id=schedule_id)
+    
+    for course in courses:
+        # loop through all courses and add them to the new schedule
+        course.pk = None
+        course.schedule = schedule
+        course.save()
+
+    messages.success(request, f"Successfully duplicated {old_name}")
     return redirect('schedule')
 
 
