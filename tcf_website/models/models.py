@@ -6,6 +6,10 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Abs, Coalesce
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVectorField
+
+
 
 
 class School(models.Model):
@@ -370,7 +374,7 @@ class Course(models.Model):
     Has many Sections.
     Has a Semester last taught.
     """
-
+    search = SearchVectorField(null=True)
     # Course title. Required.
     title = models.CharField(max_length=255)
     # Course description. Optional.
@@ -479,7 +483,7 @@ class Course(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["subdepartment", "number"]),
+            GinIndex(fields=['title', 'subdepartment', 'number'])
         ]
 
         constraints = [

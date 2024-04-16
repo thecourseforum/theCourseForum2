@@ -2,6 +2,7 @@
 """Views for search results"""
 
 import re
+from datetime import datetime
 
 from django.contrib.postgres.search import TrigramWordSimilarity
 from django.db.models import (
@@ -28,7 +29,7 @@ def search(request):
 
     # courses are at least 3 digits long
     # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
-    match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
+    match = re.match(r"([a-zA-Z]{2,})\s*(\d{4,})", query)
     if match:
         title_part, number_part = match.groups()
     else:
@@ -141,6 +142,7 @@ def fetch_instructors(query):
 
 
 def fetch_courses(title, number):
+    time1 = datetime.now()
     """Get course data using Django Trigram similarity"""
     MNEMONIC_WEIGHT = 1.5
     NUMBER_WEIGHT = 1
@@ -178,7 +180,7 @@ def fetch_courses(title, number):
         )
         .filter(total_similarity__gte=0.2)
         # filters out classes with 3 digit class numbers (old naming system)
-        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+        .filter(Q(number__isnull=True))
         # filters out classes that haven't been taught since Fall 2020
         .exclude(semester_last_taught_id__lt=48)
         .order_by("-total_similarity")[:10]
@@ -196,7 +198,8 @@ def fetch_courses(title, number):
         }
         for course in results
     ]
-
+    time2 = datetime.now()
+    print(time2-time1)
     return format_response(
         {
             "results": formatted_results,
