@@ -51,6 +51,9 @@ urlpatterns = [
     path("schedule/new/", views.new_schedule, name="new_schedule"),
     path("schedule/delete/", views.delete_schedule, name="delete_schedule"),
     path("schedule/edit/", views.edit_schedule, name="edit_schedule"),
+    path(
+        "schedule/duplicate/<int:schedule_id>/", views.duplicate_schedule, name="duplicate_schedule"
+    ),
     path("schedule/modal/editor", views.modal_load_editor, name="modal_load_editor"),
     path("schedule/modal/sections/", views.modal_load_sections, name="modal_load_sections"),
     path(

@@ -31,6 +31,7 @@ from .review import DeleteReview, downvote, edit_review, new_review, upvote
 from .schedule import (
     delete_schedule,
     edit_schedule,
+    duplicate_schedule,
     modal_load_editor,
     modal_load_sections,
     schedule_add_course,
