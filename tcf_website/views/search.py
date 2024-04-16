@@ -4,7 +4,7 @@
 import re
 from datetime import datetime
 
-from django.contrib.postgres.search import TrigramWordSimilarity
+from django.contrib.postgres.search import TrigramWordSimilarity, SearchQuery, SearchRank, SearchVector
 from django.db.models import (
     CharField,
     ExpressionWrapper,
@@ -12,6 +12,7 @@ from django.db.models import (
     FloatField,
     Q,
     Value,
+    TextField
 )
 from django.db.models.functions import Cast, Concat
 from django.http import JsonResponse
@@ -155,6 +156,18 @@ def fetch_courses(title, number):
     # otherwise, "title" is entire query
     else:
         NUMBER_WEIGHT = 0
+    
+    vector = (SearchVector("subdepartment__mnemonic", weight='B') +
+              SearchVector(Cast("number", TextField()), weight='C', config='simple') +
+              SearchVector("title", weight='A'))
+    query_string = f"{title} {number}" if number else title
+    query = SearchQuery(query_string, config='english')
+
+    results = Course.objects.annotate(
+        rank=SearchRank(vector, query)
+    )
+
+    print(results)
 
     results = (
         Course.objects.select_related("subdepartment")

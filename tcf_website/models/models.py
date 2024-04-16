@@ -7,7 +7,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Abs, Coalesce
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.search import SearchVectorField, SearchVector
 
 
 
@@ -480,10 +480,19 @@ class Course(models.Model):
     def review_count(self):
         """Compute total number of course reviews."""
         return self.review_set.count()
+    
+    def save(self, *args, **kwargs):
+        self.search = (
+            SearchVector('title', weight='A') +
+            SearchVector('description', weight='B') +
+            SearchVector(models.functions.Cast('number', models.TextField()), weight = 'C')
+        )
+        super().save(*args, **kwargs)
+
 
     class Meta:
         indexes = [
-            GinIndex(fields=['title', 'subdepartment', 'number'])
+            GinIndex(fields=['search'])
         ]
 
         constraints = [
