@@ -35,6 +35,7 @@ from .schedule import (
     new_schedule,
     delete_schedule,
     edit_schedule,
+    duplicate_schedule,
     modal_load_editor,
     modal_load_sections,
     schedule_add_course,
