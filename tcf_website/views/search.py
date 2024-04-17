@@ -165,8 +165,6 @@ def fetch_courses(title, number):
     time2 = datetime.now()
     print(f'Search took {time2 - time1}s')
 
-    print(results)
-
     formatted_results = [
         {
             # TODO: normalize score
@@ -309,12 +307,13 @@ def autocomplete(request):
 
 # pylint: disable=missing-function-docstring
 def compare(result):
-    similarity_threshold = 0.05
+    similarity_threshold = 0.10
 
     meetsThreshold = float("-inf")
 
     try:
         if result["score"] > similarity_threshold:
+            print(result['title'])
             meetsThreshold = result["score"]
     except Exception as _:  # pylint: disable=broad-exception-caught
         if result["total_similarity"] > similarity_threshold:
