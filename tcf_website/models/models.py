@@ -484,7 +484,7 @@ class Course(models.Model):
     def save(self, *args, **kwargs):
         self.search = (
             SearchVector('title', weight='A') +
-            SearchVector('description', weight='B') +
+            SearchVector('subdepartment', weight='B') +
             SearchVector(models.functions.Cast('number', models.TextField()), weight = 'C')
         )
         super().save(*args, **kwargs)
