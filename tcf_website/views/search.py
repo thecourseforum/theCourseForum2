@@ -113,6 +113,7 @@ def compute_avg_similarity(scores):
     return 0 if length == 0 else total / length
 
 
+# TODO indexing names
 def fetch_instructors(query):
     """Get instructor data using Django Trigram similarity"""
     results = (
@@ -310,6 +311,7 @@ def autocomplete(request):
 
 # pylint: disable=missing-function-docstring
 def compare(result):
+    # TODO: update threshold for indexing score
     similarity_threshold = 0.75
 
     meetsThreshold = float("-inf")
