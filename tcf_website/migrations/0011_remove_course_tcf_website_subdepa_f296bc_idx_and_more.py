@@ -8,7 +8,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("tcf_website", "0009_remove_question_placeholder"),
+        ("tcf_website", "0010_trigram_extension"),
     ]
 
     operations = [
