@@ -169,6 +169,8 @@ class Instructor(models.Model):
     departments = models.ManyToManyField(Department)
     # hidden professor. Required. Default visible.
     hidden = models.BooleanField(default=False)
+    
+    search = SearchVector(null = True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
@@ -297,6 +299,18 @@ class Instructor(models.Model):
         return CourseInstructorGrade.objects.filter(instructor=self).aggregate(
             models.Avg("average")
         )["average__avg"]
+    
+    def save(self, *args, **kwargs):
+        self.search = (
+            SearchVector('first_name', weight='A') +
+            SearchVector('last_name', weight='B')
+        )
+        super().save(*args, **kwargs)
+    
+    class Meta:
+        indexes = [
+            GinIndex(fields=['search'])
+        ]
 
 
 class Semester(models.Model):
