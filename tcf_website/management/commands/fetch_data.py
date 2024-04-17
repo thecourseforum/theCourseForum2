@@ -60,8 +60,28 @@ def retrieve_and_write_semester_courses(csv_path, sem_code):
         f"institution=UVA01&term={sem_code}&page="
     )
 
-    page = 1
-    while True:
+    min_pages = 1
+    max_pages = 200
+
+    # Binary search to find the total number of pages
+    while min_pages <= max_pages:
+        mid = (min_pages + max_pages) // 2
+        try:
+            response = session.get(semester_url + str(mid), timeout=300)
+            page_data = json.loads(response.text)
+        except requests.exceptions.RequestException as e:
+            print(f"An error occurred: {e}")
+            break
+
+        if not page_data:
+            max_pages = mid - 1
+        else:
+            min_pages = mid + 1
+
+    total_pages = max_pages
+    print(f"\nTotal number of pages: {total_pages}")
+
+    for page in tqdm(range(1, total_pages + 1)):
         print(f"\nFetching page {page}...")
         all_classes = []
         page_url = semester_url + str(page)
@@ -75,11 +95,6 @@ def retrieve_and_write_semester_courses(csv_path, sem_code):
         if not page_data:
             break
 
-        # for course in tqdm(page_data):
-        #     class_data = compile_course_data(course["class_nbr"], sem_code)
-        #     if class_data:
-        #         all_classes.append(class_data)
-
         requests_to_make = [
             (course["class_nbr"], sem_code) for course in page_data
         ]
@@ -87,7 +102,7 @@ def retrieve_and_write_semester_courses(csv_path, sem_code):
         with ThreadPoolExecutor(max_workers=20) as executor:
             all_classes = executor.map(
                 lambda params: compile_course_data(*params),
-                tqdm(requests_to_make),
+                requests_to_make,
             )
 
         all_classes = list(filter(lambda x: x is not None, all_classes))
