@@ -64,8 +64,10 @@ def retrieve_and_write_semester_courses(csv_path, sem_code):
     max_pages = 200
 
     # Binary search to find the total number of pages
+    print("\nBinary search for total pages in range [1, 200]:")
     while min_pages <= max_pages:
         mid = (min_pages + max_pages) // 2
+        print(f"\tChecking page {mid}")
         try:
             response = session.get(semester_url + str(mid), timeout=300)
             page_data = json.loads(response.text)
@@ -79,7 +81,7 @@ def retrieve_and_write_semester_courses(csv_path, sem_code):
             min_pages = mid + 1
 
     total_pages = max_pages
-    print(f"\nTotal number of pages: {total_pages}")
+    print(f"Total pages: {total_pages}")
 
     for page in tqdm(range(1, total_pages + 1)):
         # print(f"\nFetching page {page}...")
