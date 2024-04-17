@@ -48,31 +48,21 @@ def decide_order(query, courses, instructors):
     """
 
     print(instructors)
-    # TODO: this is horrible
-    # NOTE: trigram for instructors?
-    if all(instructor['score'] == 0 for instructor in instructors['results']):
+    if (
+        len(instructors["results"]) == 0
+        or instructors["results"][0]["score"] == 0
+    ):
         return True
+
+    # Prioritize perfect match for professor names
+    if instructors["results"][0]["score"] == 1.0:
+        return False
 
     courses_avg = compute_avg_similarity(
         [x["score"] for x in courses["results"]]
     )
 
-    if courses_avg == 0:
-        return False
-
-    instructors_avg = compute_avg_similarity(
-        [x["score"] for x in instructors["results"]]
-    )
-
-    if instructors_avg == 0:
-        return True
-
-    # Prioritize perfect match for professor names
-    first_instructor_score = instructors["results"][0]["score"]
-    if first_instructor_score == 1.0:
-        return False
-
-    return True
+    return courses_avg != 0
 
 
 def compute_avg_similarity(scores):
