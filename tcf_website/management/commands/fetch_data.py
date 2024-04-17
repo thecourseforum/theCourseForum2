@@ -82,7 +82,7 @@ def retrieve_and_write_semester_courses(csv_path, sem_code):
     print(f"\nTotal number of pages: {total_pages}")
 
     for page in tqdm(range(1, total_pages + 1)):
-        print(f"\nFetching page {page}...")
+        # print(f"\nFetching page {page}...")
         all_classes = []
         page_url = semester_url + str(page)
         try:
@@ -244,7 +244,7 @@ def write_to_csv(csv_path, course_list):
 
     :param course_list: List of dictionaries containing course information.
     """
-    print("Writing to CSV...")
+    # print("Writing to CSV...")
     fieldnames = list(course_list[0].keys())
     with open(csv_path, "a", newline="", encoding="utf-8") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
