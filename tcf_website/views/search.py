@@ -4,22 +4,9 @@
 import re
 from datetime import datetime
 
-from django.contrib.postgres.search import (
-    TrigramWordSimilarity,
-    SearchQuery,
-    SearchRank,
-    SearchVector,
-)
-from django.db.models import (
-    CharField,
-    ExpressionWrapper,
-    F,
-    FloatField,
-    Q,
-    Value,
-    TextField,
-)
-from django.db.models.functions import Cast, Concat
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.db.models import TextField
+from django.db.models.functions import Cast
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.cache import cache_page
@@ -31,24 +18,24 @@ def search(request):
     """Search results view."""
 
     # Set query
-    query = request.GET.get("q", "")
+    query_str = request.GET.get("q", "")
 
     # courses are at least 3 digits long
     # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
-    match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
+    match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query_str)
     if match:
         title_part, number_part = match.groups()
     else:
         # Handle cases where the query doesn't match the expected format
-        title_part, number_part = query, ""
+        title_part, number_part = query_str, ""
 
-    instructors = fetch_instructors(query)
+    instructors = fetch_instructors(query_str)
     courses = fetch_courses(title_part, number_part)
 
-    courses_first = decide_order(query, courses, instructors)
+    courses_first = decide_order(query_str, courses, instructors)
 
     # Set arguments for template view
-    args = set_arguments(query, courses, instructors, courses_first)
+    args = set_arguments(query_str, courses, instructors, courses_first)
     context_vars = args
 
     # Load template view
@@ -60,66 +47,47 @@ def decide_order(query, courses, instructors):
     Returns True if courses should be prioritized, False if instructors should be prioritized
     """
 
-    # Calculate average similarity for courses
+    print(instructors)
+    # TODO: this is horrible
+    # NOTE: trigram for instructors?
+    if all(instructor['score'] == 0 for instructor in instructors['results']):
+        return True
+
     courses_avg = compute_avg_similarity(
         [x["score"] for x in courses["results"]]
     )
 
-    # Calculate average similarity for instructors
+    if courses_avg == 0:
+        return False
+
     instructors_avg = compute_avg_similarity(
         [x["score"] for x in instructors["results"]]
     )
 
-    # Define a threshold for the minimum average similarity score. This value can be adjusted.
-    THRESHOLD = 0.5
+    if instructors_avg == 0:
+        return True
 
-    # Scores of the closest match for both
-    first_instructor_score = 0
-    first_course_score = 0
-    if len(instructors["results"]) > 0:
-        first_instructor_score = instructors["results"][0]["score"]
-    if len(courses["results"]) > 0:
-        first_course_score = courses["results"][0]["score"]
-
-    # If there is a perfect match for any part of the professor's name, return that
-    # unless it also perfectly matches a course
-    if (
-        first_instructor_score == 1.0
-        and first_instructor_score >= first_course_score
-    ):
+    # Prioritize perfect match for professor names
+    first_instructor_score = instructors["results"][0]["score"]
+    if first_instructor_score == 1.0:
         return False
 
-    # Prioritize courses for short queries or if their average similarity
-    # score is significantly higher
-    if len(query) <= 4 or (
-        courses_avg > instructors_avg and courses_avg > THRESHOLD
-    ):
-        return True
-
-    # Prioritize courses if professor search result length is 0, regardless of course results
-    if len(instructors["results"]) <= 0:
-        return True
-
-    return False
+    return True
 
 
 def compute_avg_similarity(scores):
     """Computes and returns the average similarity score."""
-    length = 0
-    total = 0
-    for score in scores:
-        total += score
-        length += 1
-    return 0 if length == 0 else total / length
+    return sum(scores) / len(scores) if len(scores) > 0 else 0
 
 
-def fetch_instructors(query):
+def fetch_instructors(query_str):
+    # NOTE: outdated comment
     """Get instructor data using Django Trigram similarity"""
-    vector = SearchVector("first_name", weight="A") + SearchVector(
-        "last_name", weight="B"
-    )
+    vector = SearchVector(
+        "first_name", weight="A", config='simple'
+    ) + SearchVector("last_name", weight="B", config='simple')
     results = Instructor.objects.annotate(
-        rank=SearchRank(vector, query)
+        rank=SearchRank(vector, SearchQuery(query_str, config='simple'))
     ).order_by("-rank")[:10]
     formatted_results = [
         {
@@ -150,12 +118,12 @@ def fetch_courses(title, number):
     """Get course data using Django Trigram similarity"""
     time1 = datetime.now()
     vector = (
-        SearchVector("title", weight='A')
-        + SearchVector("subdepartment__mnemonic", weight='B')
+        SearchVector("title", weight='A', config='simple')
+        + SearchVector("subdepartment__mnemonic", weight='B', config='simple')
         + SearchVector(Cast("number", TextField()), weight='C', config='simple')
     )
     query_string = f"{title} {number}" if number else title
-    query = SearchQuery(query_string, config='english')
+    query = SearchQuery(query_string, config='simple')
 
     results = (
         Course.objects.annotate(rank=SearchRank(vector, query))
@@ -307,13 +275,13 @@ def autocomplete(request):
 
 # pylint: disable=missing-function-docstring
 def compare(result):
-    similarity_threshold = 0.10
+    similarity_threshold = 0.01
 
     meetsThreshold = float("-inf")
 
     try:
+        print(f'{result["title"]} has score {result["score"]}')
         if result["score"] > similarity_threshold:
-            print(result['title'])
             meetsThreshold = result["score"]
     except Exception as _:  # pylint: disable=broad-exception-caught
         if result["total_similarity"] > similarity_threshold:
