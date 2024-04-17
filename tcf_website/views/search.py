@@ -4,7 +4,12 @@
 import re
 from datetime import datetime
 
-from django.contrib.postgres.search import TrigramWordSimilarity, SearchQuery, SearchRank, SearchVector
+from django.contrib.postgres.search import (
+    TrigramWordSimilarity,
+    SearchQuery,
+    SearchRank,
+    SearchVector,
+)
 from django.db.models import (
     CharField,
     ExpressionWrapper,
@@ -12,7 +17,7 @@ from django.db.models import (
     FloatField,
     Q,
     Value,
-    TextField
+    TextField,
 )
 from django.db.models.functions import Cast, Concat
 from django.http import JsonResponse
@@ -30,7 +35,7 @@ def search(request):
 
     # courses are at least 3 digits long
     # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
-    match = re.match(r"([a-zA-Z]{2,})\s*(\d{4,})", query)
+    match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
     if match:
         title_part, number_part = match.groups()
     else:
@@ -110,16 +115,15 @@ def compute_avg_similarity(scores):
 
 def fetch_instructors(query):
     """Get instructor data using Django Trigram similarity"""
-    results = (
-        Instructor.objects.only("first_name", "last_name")
-        .annotate(full_name=Concat("first_name", Value(" "), "last_name"))
-        .annotate(similarity=TrigramWordSimilarity(query, "full_name"))
-        .filter(similarity__gte=0.2)
-        .order_by("-rank")[:10]
+    vector = SearchVector("first_name", weight="A") + SearchVector(
+        "last_name", weight="B"
     )
+    results = Instructor.objects.annotate(
+        rank=SearchRank(vector, query)
+    ).order_by("-rank")[:10]
     formatted_results = [
         {
-            "_meta": {"id": str(instructor.pk), "score": instructor.similarity},
+            "_meta": {"id": str(instructor.pk), "score": instructor.rank},
             "first_name": {"raw": instructor.first_name},
             "last_name": {"raw": instructor.last_name},
             "email": {"raw": instructor.email},
@@ -143,33 +147,30 @@ def fetch_instructors(query):
 
 
 def fetch_courses(title, number):
-    time1 = datetime.now()
     """Get course data using Django Trigram similarity"""
-    MNEMONIC_WEIGHT = 1.5
-    NUMBER_WEIGHT = 1
-    TITLE_WEIGHT = 1
-
-    # search query of form "<MNEMONIC><NUMBER>"
-    if number != "":
-        TITLE_WEIGHT = 0
-        MNEMONIC_WEIGHT = 1
-    # otherwise, "title" is entire query
-    else:
-        NUMBER_WEIGHT = 0
-    
-    vector = (SearchVector("subdepartment__mnemonic", weight='B') +
-              SearchVector(Cast("number", TextField()), weight='C', config='simple') +
-              SearchVector("title", weight='A'))
+    time1 = datetime.now()
+    vector = (
+        SearchVector("title", weight='A')
+        + SearchVector("subdepartment__mnemonic", weight='B')
+        + SearchVector(Cast("number", TextField()), weight='C', config='simple')
+    )
     query_string = f"{title} {number}" if number else title
     query = SearchQuery(query_string, config='english')
 
-    results = Course.objects.annotate(
-        rank=SearchRank(vector, query)
-    ).order_by("-rank")
+    results = (
+        Course.objects.annotate(rank=SearchRank(vector, query))
+        .order_by('-rank')
+        .exclude(semester_last_taught_id__lt=48)[:10]
+    )
+    time2 = datetime.now()
+    print(f'Search took {time2 - time1}s')
+
+    print(results)
 
     formatted_results = [
         {
-            "_meta": {"id": str(course.pk), "score": course.total_similarity},
+            # TODO: normalize score
+            "_meta": {"id": str(course.pk), "score": course.rank},
             "title": {"raw": course.title},
             "number": {"raw": course.number},
             "mnemonic": {
@@ -179,8 +180,6 @@ def fetch_courses(title, number):
         }
         for course in results
     ]
-    time2 = datetime.now()
-    print(time2-time1)
     return format_response(
         {
             "results": formatted_results,
@@ -310,7 +309,7 @@ def autocomplete(request):
 
 # pylint: disable=missing-function-docstring
 def compare(result):
-    similarity_threshold = 0.75
+    similarity_threshold = 0.05
 
     meetsThreshold = float("-inf")
 
