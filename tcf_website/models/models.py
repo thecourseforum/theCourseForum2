@@ -10,8 +10,6 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, SearchVector
 
 
-
-
 class School(models.Model):
     """School model.
 
@@ -169,8 +167,8 @@ class Instructor(models.Model):
     departments = models.ManyToManyField(Department)
     # hidden professor. Required. Default visible.
     hidden = models.BooleanField(default=False)
-    
-    search = SearchVector(null = True)
+
+    search = SearchVectorField(null=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
@@ -299,18 +297,15 @@ class Instructor(models.Model):
         return CourseInstructorGrade.objects.filter(instructor=self).aggregate(
             models.Avg("average")
         )["average__avg"]
-    
+
     def save(self, *args, **kwargs):
-        self.search = (
-            SearchVector('first_name', weight='A') +
-            SearchVector('last_name', weight='B')
+        self.search = SearchVector("first_name", weight="A") + SearchVector(
+            "last_name", weight="B"
         )
         super().save(*args, **kwargs)
-    
+
     class Meta:
-        indexes = [
-            GinIndex(fields=['search'])
-        ]
+        indexes = [GinIndex(fields=["search"])]
 
 
 class Semester(models.Model):
@@ -388,6 +383,7 @@ class Course(models.Model):
     Has many Sections.
     Has a Semester last taught.
     """
+
     search = SearchVectorField(null=True)
     # Course title. Required.
     title = models.CharField(max_length=255)
@@ -494,20 +490,19 @@ class Course(models.Model):
     def review_count(self):
         """Compute total number of course reviews."""
         return self.review_set.count()
-    
+
     def save(self, *args, **kwargs):
         self.search = (
-            SearchVector('title', weight='A') +
-            SearchVector('subdepartment', weight='B') +
-            SearchVector(models.functions.Cast('number', models.TextField()), weight = 'C')
+            SearchVector("title", weight="A")
+            + SearchVector("subdepartment", weight="B")
+            + SearchVector(
+                models.functions.Cast("number", models.TextField()), weight="C"
+            )
         )
         super().save(*args, **kwargs)
 
-
     class Meta:
-        indexes = [
-            GinIndex(fields=['search'])
-        ]
+        indexes = [GinIndex(fields=["search"])]
 
         constraints = [
             models.UniqueConstraint(
