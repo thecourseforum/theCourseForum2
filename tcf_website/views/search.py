@@ -4,15 +4,20 @@
 import re
 from datetime import datetime
 
-from django.contrib.postgres.search import TrigramWordSimilarity, SearchQuery, SearchRank, SearchVector
+from django.contrib.postgres.search import (
+    SearchQuery,
+    SearchRank,
+    SearchVector,
+    TrigramWordSimilarity,
+)
 from django.db.models import (
     CharField,
     ExpressionWrapper,
     F,
     FloatField,
     Q,
+    TextField,
     Value,
-    TextField
 )
 from django.db.models.functions import Cast, Concat
 from django.http import JsonResponse
@@ -143,65 +148,30 @@ def fetch_instructors(query):
 
 
 def fetch_courses(title, number):
-    time1 = datetime.now()
     """Get course data using Django Trigram similarity"""
-    MNEMONIC_WEIGHT = 1.5
-    NUMBER_WEIGHT = 1
-    TITLE_WEIGHT = 1
-
-    # search query of form "<MNEMONIC><NUMBER>"
-    if number != "":
-        TITLE_WEIGHT = 0
-        MNEMONIC_WEIGHT = 1
-    # otherwise, "title" is entire query
-    else:
-        NUMBER_WEIGHT = 0
-    
-    vector = (SearchVector("subdepartment__mnemonic", weight='B') +
-              SearchVector(Cast("number", TextField()), weight='C', config='simple') +
-              SearchVector("title", weight='A'))
+    time1 = datetime.now()
+    vector = (
+        SearchVector("title", weight='A')
+        + SearchVector("subdepartment__mnemonic", weight='B')
+        + SearchVector(Cast("number", TextField()), weight='C', config='simple')
+    )
     query_string = f"{title} {number}" if number else title
     query = SearchQuery(query_string, config='english')
 
-    results = Course.objects.annotate(
-        rank=SearchRank(vector, query)
+    results = (
+        Course.objects.annotate(rank=SearchRank(vector, query))
+        .order_by('-rank')
+        .exclude(semester_last_taught_id__lt=48)[:10]
     )
+    time2 = datetime.now()
+    print(f'Search took {time2 - time1}s')
 
     print(results)
 
-    results = (
-        Course.objects.select_related("subdepartment")
-        .only("title", "number", "subdepartment__mnemonic", "description")
-        .annotate(
-            mnemonic_similarity=TrigramWordSimilarity(
-                title, "subdepartment__mnemonic"
-            ),
-            number_similarity=TrigramWordSimilarity(
-                number, Cast("number", CharField())
-            ),
-            title_similarity=TrigramWordSimilarity(
-                title, Cast("title", CharField())
-            ),
-        )
-        .annotate(
-            total_similarity=ExpressionWrapper(
-                F("mnemonic_similarity") * MNEMONIC_WEIGHT
-                + F("number_similarity") * NUMBER_WEIGHT
-                + F("title_similarity") * TITLE_WEIGHT,
-                output_field=FloatField(),
-            )
-        )
-        .filter(total_similarity__gte=0.2)
-        # filters out classes with 3 digit class numbers (old naming system)
-        .filter(Q(number__isnull=True))
-        # filters out classes that haven't been taught since Fall 2020
-        .exclude(semester_last_taught_id__lt=48)
-        .order_by("-total_similarity")[:10]
-    )
-
     formatted_results = [
         {
-            "_meta": {"id": str(course.pk), "score": course.total_similarity},
+            # TODO: normalize score
+            "_meta": {"id": str(course.pk), "score": course.rank},
             "title": {"raw": course.title},
             "number": {"raw": course.number},
             "mnemonic": {
@@ -211,8 +181,6 @@ def fetch_courses(title, number):
         }
         for course in results
     ]
-    time2 = datetime.now()
-    print(time2-time1)
     return format_response(
         {
             "results": formatted_results,
@@ -313,7 +281,7 @@ def autocomplete(request):
     query = request.GET.get("q", "")
     # courses are at least 3 digits long
     # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
-    match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
+    match = re.match(r"([a-zA-Z]{2,})\s*(\d{4,})", query)
     if match:
         title_part, number_part = match.groups()
     else:
