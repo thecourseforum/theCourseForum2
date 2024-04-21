@@ -7,8 +7,8 @@ function populateDropdown(dropdownID) {
   const paramsArr = window.location.pathname.split("/");
 
   // Fetch all semester data from API
-  const course = paramsArr[2];
-  const instrID = paramsArr[3];
+  const course = paramsArr[2] || '594';
+  const instrID = paramsArr[3] || '7733';
   const semEndpoint = `/api/semesters/?course=${course}&instructor=${instrID}`;
   $.getJSON(semEndpoint, function (data) {
     // Generate option tags
