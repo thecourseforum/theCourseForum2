@@ -168,12 +168,6 @@ def new_answer(request):
     # Collect form data into Answer model instance.
     if request.method == 'POST':
         form = QuestionForm(request.POST)
-        """if form.is_valid():
-            instance = form.save(commit=False)
-            instance.user = request.user
-            # TODO: extend field
-            instance.save()
-            return redirect('qa')"""
         return render(request, 'qa/answer_form.html', {'form': form})
     return render(request, 'qa/answer_form.html')
 
