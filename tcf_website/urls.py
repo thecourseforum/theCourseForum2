@@ -114,7 +114,7 @@ urlpatterns = [
     # PASSWORD RESET URLS (used when logged out)
     path(
         "accounts/password_reset/",
-        auth_views.PasswordResetView.as_view(),
+        auth_views.PasswordResetView.as_view(template_name='login/password_reset.html'),
         name="password_reset"
     ),
     path(
