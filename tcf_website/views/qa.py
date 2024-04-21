@@ -53,7 +53,7 @@ class DeleteQuestion(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView
 
 
 # @login_required
-def new_question(request):
+def new_question(request): 
     """Question creation view."""
     # Collect form data into Question model instance.
     if request.method == 'POST':
@@ -162,26 +162,36 @@ class DeleteAnswer(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
         return f"Successfully deleted your answer for {str(question)}!"
 
 
-@login_required
+#@login_required
 def new_answer(request):
     """Answer creation view."""
-
+    # Collect form data into Answer model instance.
     if request.method == 'POST':
-        form = AnswerForm(request.POST)
+        form = QuestionForm(request.POST)
+        return render(request, 'qa/answer_form.html', {'form': form})
+    return render(request, 'qa/answer_form.html')
 
-        print(form)
+    # Old Q&A Functionality
+    """def new_answer(request):
+        """"""Answer creation view.""""""
 
-        if form.is_valid():
-            instance = form.save(commit=False)
-            instance.user = request.user
+        if request.method == 'POST':
+            form = AnswerForm(request.POST)
+            
+            print(form)
+            #return redner(request, html, provide context)
 
-            instance.save()
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.user = request.user
 
-            messages.success(request, 'Successfully added an answer!')
+                instance.save()
+
+                messages.success(request, 'Successfully added an answer!')
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            messages.error(request, "Invalid Form")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-        messages.error(request, "Invalid Form")
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))"""
 
 
 @login_required
