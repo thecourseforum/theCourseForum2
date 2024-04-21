@@ -1,0 +1,29 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Edit a Question - theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'qa/new_question.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="new-question container text-left mx-auto">
+  <h1 class="h2 mt-2 mb-4">Edit a question</h1>
+  <div class="card">
+    <form class="card-body px-md-5"
+    action="{% url 'edit_question' question_id=form.instance.id %}"
+    method="POST">
+        {% csrf_token %}
+        {% include 'qa/question_form_content.html' %}
+        <div class="new-question-submit row py-4">
+          <button type="submit" class="btn btn-primary mx-auto">Update Question</button>
+        </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="{% static 'qa/edit_question.js' %}"></script>
+{% endblock %}

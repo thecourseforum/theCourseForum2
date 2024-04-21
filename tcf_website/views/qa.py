@@ -58,12 +58,12 @@ def new_question(request):
     # Collect form data into Question model instance.
     if request.method == 'POST':
         form = QuestionForm(request.POST)
-        """if form.is_valid():
+        if form.is_valid():
             instance = form.save(commit=False)
             instance.user = request.user
             # TODO: extend field
             instance.save()
-            return redirect('qa')"""
+            return render(request, 'qa/new_question.html')
         return render(request, 'qa/new_question.html', {'form': form})
     return render(request, 'qa/new_question.html')
 
@@ -99,11 +99,11 @@ def edit_question(request, question_id):
                 f'Successfully updated your question for {form.instance.course}!')
             question.created = datetime.datetime.now()
             question.save()
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            return render(request, 'qa/edit_question.html', {'form': form})
         messages.error(request, form.errors)
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        return render(request, 'qa/edit_question.html', {'form': form})
     form = QuestionForm(instance=question)
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return render(request, 'qa/edit_question.html', {'form': form})
 
 
 @login_required

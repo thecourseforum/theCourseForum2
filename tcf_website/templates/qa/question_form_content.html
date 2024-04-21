@@ -10,8 +10,7 @@
         <div class="form-group col-sm-6">
             <label for="subject" class="required-field">Subject</label>
             <select type="text" class="form-control" required id="subject" name="subject">
-                <option selected>{{ form.instance.course.subdepartment.mnemonic }} | {{
-                    form.instance.course.subdepartment.name}} </option>
+                <option selected>{{ form.instance.course.subdepartment.mnemonic }} | {{ form.instance.course.subdepartment.name}} </option>
             </select>
         </div>
     </div>
@@ -19,15 +18,13 @@
         <div class="form-group col-sm-6">
             <label for="course" class="required-field">Course</label>
             <select type="text" class="form-control" required id="course" name="course">
-                <option value="{{ form.instance.course.id }}" selected>{{ form.instance.course.number }} | {{
-                    form.instance.course.title }}</option>
+                <option value="{{ form.instance.course.id }}" selected>{{ form.instance.course.number }} | {{ form.instance.course.title }}</option>
             </select>
         </div>
         <div class="form-group col-sm-6">
             <label for="instructor" class="required-field">Instructor</label>
             <select type="text" class="form-control" required id="instructor" name="instructor">
-                <option value="{{ form.instance.instructor.id }}" selected>{{ form.instance.instructor.last_name }}, {{
-                    form.instance.instructor.first_name }}</option>
+                <option value="{{ form.instance.instructor.id }}" selected>{{ form.instance.instructor.last_name }}, {{ form.instance.instructor.first_name }}</option>
             </select>
         </div>
     </div>

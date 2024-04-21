@@ -111,8 +111,11 @@
                                                 <div class="d-flex justify-content-end">
                                                 {% if question.user == user %}
                                                     <div class="question-actions d-inline-flex">
-                                                        <a data-toggle="modal" class="question-edit h5 px-2 text-tcf-blue" type="button" 
+                                                        <!--a data-toggle="modal" class="question-edit h5 px-2 text-tcf-blue" type="button" 
                                                             data-target="#edit-question-modal{{question.id}}" id="edit-question-button{{question_id}}">
+                                                            <i class="fas fa-pencil-alt"></i>
+                                                        </a-->
+                                                        <a class="question-edit h5 px-2 text-tcf-blue" type="button" href="{% url 'edit_question' question_id=question.id %}" id="edit-question-button{{question_id}}">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </a>
                                                         <a class="question-delete h5 pl-2 text-danger" type="button"
