@@ -109,8 +109,8 @@
                                         <div class="col">
                                             <div class="question-header">
                                                 <div class="d-flex justify-content-left">
-                                                    <h6 id="course" class="btn btn-outline-info">{{ question.course.code }}</h6>
-                                                    <h6 id="instructor" class="btn btn-outline-info">{{ question.instructor.first_name }} {{ question.instructor.last_name }}</h6>
+                                                    <h6 id="course" class="btn border-tcf-blue text-tcf-blue">{{ question.course.code }}</h6> <a>&nbsp &nbsp</a>
+                                                    <h6 id="instructor" class="btn border-tcf-blue text-tcf-blue">{{ question.instructor.first_name }} {{ question.instructor.last_name }}</h6>
                                                 </div>
                                             </div>
                                             <div class="question-content mb-2">
@@ -192,7 +192,7 @@
                                                     <div class="answer-body">
                                                         <div class="answer-head">
                                                             <div class="d-flex justify-content-between">
-                                                                <h6 class="btn btn-outline-info">{{ answer.semester }}</h6>
+                                                                <h6 class="btn border-tcf-blue text-tcf-blue">{{ answer.semester }}</h6>
                                                             </div>
                                                         </div>
                                                         <div class="answer-content">
@@ -293,7 +293,7 @@
                                                     <div></div>
                                                     {% endif %}
                                                     <a href="#loginModal" data-toggle="modal" data-id="{{ question.id }}"
-                                                        class="btn bg-tcf-orange text-white justify-content-end mt-3 answerQuestionBtn"
+                                                        class="btn bg-tcf-blue text-white justify-content-start mt-3 answerQuestionBtn"
                                                         id="answerQuestionBtn">
                                                         Answer this Question!
                                                     </a>

@@ -84,6 +84,9 @@ ul {
 .bg-tcf-blue {
   background-color: var(--secondary-color);
 }
+.border-tcf-blue {
+  border-color: var(--secondary-color);
+}
 
 /* Accent color: Orange */
 .text-tcf-orange {
