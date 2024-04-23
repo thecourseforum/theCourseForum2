@@ -50,3 +50,13 @@ font-size: 1.25rem;
 small{
     color: var(--accent-color);
 }
+
+.badge-new {
+    background-color: #ff0000;  /* Red background to draw attention */
+    color: #ffffff;             /* White text */
+    font-size: 12px;            /* Smaller font size for the badge */
+    padding: 3px 6px;           /* Padding for the badge */
+    margin-left: 10px;          /* Space between button text and badge */
+    border-radius: 5px;         /* Rounded corners for the badge */
+    vertical-align: super;      /* Aligns badge with the top of the button text */
+}
