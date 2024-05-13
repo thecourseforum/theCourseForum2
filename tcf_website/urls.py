@@ -129,7 +129,7 @@ urlpatterns = [
     ),
     path(
         "accounts/password_reset_complete/",
-        auth_views.PasswordResetCompleteView.as_view(),
+        auth_views.PasswordResetCompleteView.as_view(template_name='login/password_reset_complete.html'),
         name="password_reset_complete"
     ),
     # PASSWORD CHANGE URLS (used when logged in)
