@@ -225,6 +225,14 @@ def compile_course_data(course_number, sem_code):
         "MeetingDates4": (
             meetings.get(3)["date_range"] if meetings.get(3) else ""
         ),
+        "CollegeRequirements": (
+            class_details["enrollment_information"]
+            .get("class_attributes")
+            .split(' \r')
+            if class_details.get("enrollment_information")
+            and class_details["enrollment_information"]
+            else []
+        ),
         "Title": class_details["course_title"],
         "Topic": class_details["topic"],
         "Status": class_details["status"],
