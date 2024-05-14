@@ -768,7 +768,6 @@ class Review(models.Model):
     def sortby(
             reviews: 'list[Review]', reviews_per_page: int, method: str = ""
     ) -> 'Page[Review]':
-    # instructor = Instructor.objects.filter(instructor_id=instructor_id)
         match (method):
             case 'helpful':
                 reviews = reviews.annotate(
