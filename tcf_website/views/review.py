@@ -12,6 +12,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import generic
+from django.db.models import Sum
 
 from ..models import Review
 
@@ -56,10 +57,21 @@ class ReviewForm(forms.ModelForm):
         return instance
 
 
-def sortby(request, review_id, method):
-            
+def sortby(request, method, course_id, instructor_id):
+    reviews = Review.objects.filter(course_id=course_id, instructor_id=instructor_id, hidden=False)
+    match (method):
+        case 'helpful':
+            reviews = reviews.annotate(
+                score=Sum('vote__value')
+            ).order_by('-score')
+        case 'recent':
+            reviews = reviews.order_by('-created')
+        case 'highest':
+            reviews = reviews.order_by('-instructor_rating')
+        case 'lowest':
+            reviews = reviews.order_by('instructor_rating')
 
-    return render(request, "reviews/reviews.html")
+    return render(request, "reviews/reviews.html", {'page_obj': Review.paginate(reviews, 1)})
 
 @login_required
 def upvote(request, review_id):
