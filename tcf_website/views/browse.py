@@ -337,7 +337,7 @@ def course_instructor(request, course_id, instructor_id):
 
     return render(
         request,
-        "course/course_professor.html",
+        "course/course_instructor.html",
         {
             "course": course,
             "course_id": course_id,
