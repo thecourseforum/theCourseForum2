@@ -7,6 +7,7 @@ from django.core.paginator import EmptyPage, Page, PageNotAnInteger, Paginator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Abs, Coalesce
+from django.db.models import Sum
 
 
 class School(models.Model):
@@ -763,6 +764,24 @@ class Review(models.Model):
             page_obj = paginator.page(paginator.num_pages)
 
         return page_obj
+
+    def sortby(
+            reviews: 'list[Review]', reviews_per_page: int, method: str = ""
+    ) -> 'Page[Review]':
+    # instructor = Instructor.objects.filter(instructor_id=instructor_id)
+        match (method):
+            case 'helpful':
+                reviews = reviews.annotate(
+                    score=Sum('vote__value')
+                ).order_by('-score')
+            case 'recent':
+                reviews = reviews.order_by('-created')
+            case 'highest':
+                reviews = reviews.order_by('-instructor_rating')
+            case 'lowest':
+                reviews = reviews.order_by('instructor_rating')
+
+        return Review.paginate(reviews, reviews_per_page)
 
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"

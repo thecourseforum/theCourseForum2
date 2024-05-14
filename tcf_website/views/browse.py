@@ -209,8 +209,24 @@ def course_view(request, mnemonic, course_number):
         },
     )
 
+def sortby(method: str, course_id: int, instructor_id: int, page_number: int):
+    # instructor = Instructor.objects.filter(instructor_id=instructor_id)
+    reviews = Review.objects.filter(course_id=course_id, instructor_id=instructor_id, hidden=False)
+    match (method):
+        case 'helpful':
+            reviews = reviews.annotate(
+                score=Sum('vote__value')
+            ).order_by('-score')
+        case 'recent':
+            reviews = reviews.order_by('-created')
+        case 'highest':
+            reviews = reviews.order_by('-instructor_rating')
+        case 'lowest':
+            reviews = reviews.order_by('instructor_rating')
 
-def course_instructor(request, course_id, instructor_id):
+    return Review.paginate(reviews, 1)
+
+def course_instructor(request, course_id, instructor_id, method = ''):
     """View for course instructor page."""
     section_last_taught = (
         Section.objects.filter(course=course_id, instructors=instructor_id)
@@ -232,7 +248,11 @@ def course_instructor(request, course_id, instructor_id):
     dept = course.subdepartment.department
 
     page_number = request.GET.get("page", 1)
-    paginated_reviews = Review.paginate(reviews, page_number)
+    if method != '':
+        paginated_reviews = Review.sortby(reviews, page_number, method)
+    else:
+        paginated_reviews = Review.paginate(reviews, page_number)
+
 
     course_url = reverse(
         "course", args=[course.subdepartment.mnemonic, course.number]

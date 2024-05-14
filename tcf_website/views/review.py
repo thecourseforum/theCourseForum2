@@ -56,24 +56,6 @@ class ReviewForm(forms.ModelForm):
             instance.save()
         return instance
 
-
-def sortby(request, method: str, course_id: int, instructor_id: int):
-    # instructor = Instructor.objects.filter(instructor_id=instructor_id)
-    reviews = Review.objects.filter(course_id=course_id, instructor_id=instructor_id, hidden=False)
-    match (method):
-        case 'helpful':
-            reviews = reviews.annotate(
-                score=Sum('vote__value')
-            ).order_by('-score')
-        case 'recent':
-            reviews = reviews.order_by('-created')
-        case 'highest':
-            reviews = reviews.order_by('-instructor_rating')
-        case 'lowest':
-            reviews = reviews.order_by('instructor_rating')
-
-    return render(request, "course/course_instructor.html", {'page_obj': Review.paginate(reviews, 1)})
-
 @login_required
 def upvote(request, review_id):
     """Upvote a view."""

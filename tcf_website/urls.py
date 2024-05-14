@@ -24,6 +24,11 @@ urlpatterns = [
         name="course_instructor",
     ),
     path(
+        "course/<int:course_id>/<int:instructor_id>/sort=<str:method>", 
+        views.course_instructor,
+        name = "sort_reviews",
+    ),
+    path(
         "course/<str:mnemonic>/<int:course_number>/",
         views.course_view,
         name="course",
@@ -49,11 +54,6 @@ urlpatterns = [
     path(
         "reviews/check_zero_hours_per_week/",
         views.review.check_zero_hours_per_week,
-    ),
-    path(
-        "reviews/sortby/<str:method>/<int:instructor_id>/<int:course_id>/", 
-        views.review.sortby, 
-        name = "sort_reviews"
     ),
     path("profile/", views.profile, name="profile"),
     path(
