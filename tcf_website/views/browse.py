@@ -231,6 +231,9 @@ def course_instructor(request, course_id, instructor_id):
     reviews = Review.display_reviews(course_id, instructor_id, request.user)
     dept = course.subdepartment.department
 
+    page_number = request.GET.get("page", 1)
+    paginated_reviews = Review.paginate(reviews, page_number)
+
     course_url = reverse(
         "course", args=[course.subdepartment.mnemonic, course.number]
     )
@@ -341,7 +344,7 @@ def course_instructor(request, course_id, instructor_id):
             "instructor": instructor,
             "semester_last_taught": section_last_taught.semester,
             "num_reviews": num_reviews,
-            "reviews": reviews,
+            "paginated_reviews": paginated_reviews,
             "breadcrumbs": breadcrumbs,
             "data": json.dumps(data),
             "section_info": section_info,

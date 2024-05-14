@@ -3,6 +3,7 @@
 """TCF Database models."""
 
 from django.contrib.auth.models import AbstractUser
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Abs, Coalesce
@@ -737,6 +738,7 @@ class Review(models.Model):
                 ),
             )
         )
+
         if user.is_authenticated:
             reviews = reviews.annotate(
                 user_vote=models.functions.Coalesce(
@@ -744,7 +746,21 @@ class Review(models.Model):
                     models.Value(0),
                 ),
             )
+
         return reviews.order_by("-created")
+
+    @staticmethod
+    def paginate(reviews: list, page_number: int, reviews_per_page=15):
+        # TODO: sorting?
+        paginator = Paginator(reviews, reviews_per_page)
+        try:
+            page_obj = paginator.page(page_number)
+        except PageNotAnInteger:
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+
+        return page_obj
 
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"

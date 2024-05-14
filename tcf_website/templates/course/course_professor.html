@@ -261,7 +261,7 @@
             <div class="tab-pane fade show active" id="reviewsTabContent" role="tabpanel" aria-labelledby="reviews-tab">
                 <div class="reviews-container mb-5 mt-3">
                     <div class="reviews-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
-                        <h3 class="reviews-heading mb-0 mt-1 mr-4">{{ reviews|length }} {% if reviews|length == 1 %} Comment {% else %} Comments {% endif %}</h3>
+                        <h3 class="reviews-heading mb-0 mt-1 mr-4">{{ num_reviews }} {% if num_reviews == 1 %} Comment {% else %} Comments {% endif %}</h3>
                         <div class="reviews-options d-flex flex-sm-row flex-column col p-0">
                             {% if user.is_authenticated %}
                                 <a href="{% url 'new_review' %}?subdept_id={{course.subdepartment.id}}&course_id={{course.id}}&instr_id={{instructor.id}}" class="btn bg-tcf-orange text-white mb-3">
@@ -272,7 +272,7 @@
                                     <i class="fa fa-plus" aria-hidden="true"></i> Add your review!
                                 </a> 
                             {% endif %}
-                            {% if reviews %}
+                            {% if paginated_reviews and paginated_reviews.number > 0 %}
                             <!-- Show sorting options iff reviews exist -->
                             <div class="ml-auto">
                                 <div class="dropdown btn-group ml-sm-4">
@@ -298,7 +298,7 @@
                             {% endif %}
                         </div>
                     </div>
-                    {% include "reviews/reviews.html" with reviews=reviews %}
+                    {% include "reviews/reviews.html" with paginated_reviews=paginated_reviews %}
                 </div>
             </div>
             <div class="tab-pane fade" id="qaTabContent" role="tabpanel" aria-labelledby="qa-tab">
