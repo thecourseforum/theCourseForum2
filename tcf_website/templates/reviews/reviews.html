@@ -27,7 +27,7 @@
             <a href="?page={{ paginated_reviews.previous_page_number }}">Previous</a>
         {% endif %}
 
-            <span>Page {{ paginated_reviews.number }} of {{ paginated_reviews.paginator.num_pages }}</span>
+        <span>Page {{ paginated_reviews.number }} of {{ paginated_reviews.paginator.num_pages }}</span>
 
         {% if paginated_reviews.has_next %}
             <a href="?page={{ paginated_reviews.next_page_number }}">Next</a>
