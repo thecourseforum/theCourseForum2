@@ -57,7 +57,9 @@ class ReviewForm(forms.ModelForm):
 
 
 def sortby(request, review_id, method):
-    return None
+            
+
+    return render(request, "reviews/reviews.html")
 
 @login_required
 def upvote(request, review_id):
