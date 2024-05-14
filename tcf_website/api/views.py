@@ -77,7 +77,6 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 average_amount_group=Avg("review__amount_group"),
                 average_amount_homework=Avg("review__amount_homework"),
                 # grades
-                # TODO: average_gpa should be fixed
                 average_gpa=Avg("coursegrade__average", distinct=True),
                 a_plus=Sum("coursegrade__a_plus", distinct=True),
                 a=Sum("coursegrade__a", distinct=True),

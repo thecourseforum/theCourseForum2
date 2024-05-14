@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "social_django",
-    "cachalot",  # TODO: add Redis?
+    "cachalot",
     "rest_framework",
     "django_filters",
     "tcf_website",
@@ -146,7 +146,6 @@ AUTHENTICATION_BACKENDS = (
     "social_core.backends.email.EmailAuth",
     "django.contrib.auth.backends.ModelBackend",
 )
-# TODO: Look into options like SOCIAL_AUTH_LOGIN_ERROR_URL or LOGIN_ERROR_URL
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ["virginia.edu"]

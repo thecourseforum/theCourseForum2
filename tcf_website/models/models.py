@@ -625,8 +625,6 @@ class Review(models.Model):
     # hours_per_week used to be the only thing, but we also brought back the
     # subcategories. This is just a sum, but I'm keeping it because other parts
     # of the codebase depend on this model field existing and I'm not fixing them.
-    # TODO: make validators/tests to ensure hours_per_week is the sum, or just
-    #  remove it entirely from the model and replace w/ function
     hours_per_week = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(80)]
     )
