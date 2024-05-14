@@ -16,10 +16,6 @@ from django.views import generic
 from ..models import Review
 
 # pylint: disable=fixme,unused-argument
-# Disable pylint errors on TODO messages, such as below
-
-# TODO: use a proper django form, make it more robust.
-# (i.e. better Course/Instructor/Semester search).
 
 
 class ReviewForm(forms.ModelForm):
