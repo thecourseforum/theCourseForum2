@@ -4,9 +4,14 @@
 import re
 from datetime import datetime
 
-from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
-from django.db.models import TextField
-from django.db.models.functions import Cast
+from django.contrib.postgres.search import (
+    SearchQuery,
+    SearchRank,
+    SearchVector,
+    TrigramWordSimilarity,
+)
+from django.db.models import TextField, Value
+from django.db.models.functions import Cast, Concat
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.cache import cache_page
@@ -18,36 +23,37 @@ def search(request):
     """Search results view."""
 
     # Set query
-    query_str = request.GET.get("q", "")
+    query: str = request.GET.get("q", "")
 
     # courses are at least 3 digits long
     # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
-    match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query_str)
+    match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
     if match:
         title_part, number_part = match.groups()
     else:
         # Handle cases where the query doesn't match the expected format
-        title_part, number_part = query_str, ""
+        title_part, number_part = query, ""
 
-    instructors = fetch_instructors(query_str)
+    instructors = fetch_instructors(query)
     courses = fetch_courses(title_part, number_part)
 
-    courses_first = decide_order(query_str, courses, instructors)
+    courses_first = decide_order(query, courses, instructors)
 
     # Set arguments for template view
-    args = set_arguments(query_str, courses, instructors, courses_first)
+    args = set_arguments(query, courses, instructors, courses_first)
     context_vars = args
 
     # Load template view
     return render(request, "search/search.html", context_vars)
 
 
+# TODO: is this useful?
+# before, prioritized courses for short queries (len < 4) - is this a valid strat?
 def decide_order(query, courses, instructors):
     """Decides if courses or instructors should be displayed first.
     Returns True if courses should be prioritized, False if instructors should be prioritized
     """
 
-    print(instructors)
     if (
         len(instructors["results"]) == 0
         or instructors["results"][0]["score"] == 0
@@ -70,18 +76,19 @@ def compute_avg_similarity(scores):
     return sum(scores) / len(scores) if len(scores) > 0 else 0
 
 
-def fetch_instructors(query_str):
-    # NOTE: outdated comment
+def fetch_instructors(query: str):
     """Get instructor data using Django Trigram similarity"""
-    vector = SearchVector(
-        "first_name", weight="A", config='simple'
-    ) + SearchVector("last_name", weight="B", config='simple')
-    results = Instructor.objects.annotate(
-        rank=SearchRank(vector, SearchQuery(query_str, config='simple'))
-    ).order_by("-rank")[:10]
+    results = (
+        Instructor.objects.only("first_name", "last_name")
+        .annotate(full_name=Concat("first_name", Value(" "), "last_name"))
+        .annotate(similarity=TrigramWordSimilarity(query, "full_name"))
+        .filter(similarity__gte=0.2)
+        .order_by("-similarity")[:10]
+    )
+
     formatted_results = [
         {
-            "_meta": {"id": str(instructor.pk), "score": instructor.rank},
+            "_meta": {"id": str(instructor.pk), "score": instructor.similarity},
             "first_name": {"raw": instructor.first_name},
             "last_name": {"raw": instructor.last_name},
             "email": {"raw": instructor.email},
@@ -105,8 +112,7 @@ def fetch_instructors(query_str):
 
 
 def fetch_courses(title, number):
-    """Get course data using Django Trigram similarity"""
-    time1 = datetime.now()
+    """Get course data using reverse indexing"""
     vector = (
         SearchVector("title", weight='A', config='simple')
         + SearchVector("subdepartment__mnemonic", weight='B', config='simple')
@@ -120,8 +126,6 @@ def fetch_courses(title, number):
         .order_by('-rank')
         .exclude(semester_last_taught_id__lt=48)[:10]
     )
-    time2 = datetime.now()
-    print(f'Search took {time2 - time1}s')
 
     formatted_results = [
         {
@@ -136,6 +140,7 @@ def fetch_courses(title, number):
         }
         for course in results
     ]
+
     return format_response(
         {
             "results": formatted_results,
