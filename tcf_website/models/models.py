@@ -750,7 +750,7 @@ class Review(models.Model):
         return reviews.order_by("-created")
 
     @staticmethod
-    def paginate(reviews: list, page_number: int, reviews_per_page=15):
+    def paginate(reviews: 'list[Review]', page_number: int, reviews_per_page=15):
         # TODO: sorting?
         paginator = Paginator(reviews, reviews_per_page)
         try:
