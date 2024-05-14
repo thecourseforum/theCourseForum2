@@ -50,7 +50,11 @@ urlpatterns = [
         "reviews/check_zero_hours_per_week/",
         views.review.check_zero_hours_per_week,
     ),
-    path("reviews/sortby/<str:method>/<int:instructor_id>/<int:course_id>/", views.review.sortby, name = "sort_reviews"),
+    path(
+        "reviews/sortby/<str:method>/<int:instructor_id>/<int:course_id>/", 
+        views.review.sortby, 
+        name = "sort_reviews"
+    ),
     path("profile/", views.profile, name="profile"),
     path(
         "profile/<int:pk>/delete/",

@@ -14,7 +14,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.db.models import Sum
 
-from ..models import Review
+from ..models import Review, Instructor
 
 # pylint: disable=fixme,unused-argument
 # Disable pylint errors on TODO messages, such as below
@@ -57,7 +57,8 @@ class ReviewForm(forms.ModelForm):
         return instance
 
 
-def sortby(request, method, course_id, instructor_id):
+def sortby(request, method: str, course_id: int, instructor_id: int):
+    # instructor = Instructor.objects.filter(instructor_id=instructor_id)
     reviews = Review.objects.filter(course_id=course_id, instructor_id=instructor_id, hidden=False)
     match (method):
         case 'helpful':
@@ -71,7 +72,7 @@ def sortby(request, method, course_id, instructor_id):
         case 'lowest':
             reviews = reviews.order_by('instructor_rating')
 
-    return render(request, "reviews/reviews.html", {'page_obj': Review.paginate(reviews, 1)})
+    return render(request, "course/course_instructor.html", {'page_obj': Review.paginate(reviews, 1)})
 
 @login_required
 def upvote(request, review_id):
