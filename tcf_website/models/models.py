@@ -3,7 +3,7 @@
 """TCF Database models."""
 
 from django.contrib.auth.models import AbstractUser
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator, Page
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Abs, Coalesce
@@ -750,7 +750,7 @@ class Review(models.Model):
         return reviews.order_by("-created")
 
     @staticmethod
-    def paginate(reviews: 'list[Review]', page_number: int, reviews_per_page=15):
+    def paginate(reviews: 'list[Review]', page_number: int, reviews_per_page=15) -> 'Page[Review]':
         # TODO: sorting?
         paginator = Paginator(reviews, reviews_per_page)
         try:
