@@ -172,7 +172,6 @@ class Command(BaseCommand):
                 print(f"Created {sd}")
         return sd
 
-    # TODO: how to handle special topics courses?
     # topic: section topic
     # description: course description!
     def load_course(self, title, description, semester, subdepartment, number):
