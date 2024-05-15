@@ -209,7 +209,8 @@ def course_view(request, mnemonic, course_number):
         },
     )
 
-def course_instructor(request, course_id, instructor_id, method = ''):
+
+def course_instructor(request, course_id, instructor_id, method=""):
     """View for course instructor page."""
     section_last_taught = (
         Section.objects.filter(course=course_id, instructors=instructor_id)
@@ -235,7 +236,6 @@ def course_instructor(request, course_id, instructor_id, method = ''):
     if method:
         reviews = Review.sortby(reviews, method)
     paginated_reviews = Review.paginate(reviews, page_number)
-
 
     course_url = reverse(
         "course", args=[course.subdepartment.mnemonic, course.number]
@@ -354,7 +354,7 @@ def course_instructor(request, course_id, instructor_id, method = ''):
             "display_times": Semester.latest() == section_last_taught.semester,
             "questions": questions,
             "answers": answers,
-            "selected_sort": method
+            "selected_sort": method,
         },
     )
 

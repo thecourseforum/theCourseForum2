@@ -8,13 +8,13 @@ from django.contrib.auth.mixins import (  # For class-based views
 )
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
+from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import generic
-from django.db.models import Sum
 
-from ..models import Review, Instructor
+from ..models import Instructor, Review
 
 # pylint: disable=fixme,unused-argument
 # Disable pylint errors on TODO messages, such as below
@@ -55,6 +55,7 @@ class ReviewForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
 
 @login_required
 def upvote(request, review_id):

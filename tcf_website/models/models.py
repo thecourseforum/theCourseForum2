@@ -6,9 +6,8 @@ from django.contrib.auth.models import AbstractUser
 from django.core.paginator import EmptyPage, Page, PageNotAnInteger, Paginator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import ExpressionWrapper, F, Q, Sum, fields
 from django.db.models.functions import Abs, Coalesce
-from django.db.models import Sum, F, ExpressionWrapper, fields, Q
-
 
 
 class School(models.Model):
@@ -753,8 +752,8 @@ class Review(models.Model):
 
     @staticmethod
     def paginate(
-        reviews: 'list[Review]', page_number: int, reviews_per_page=15
-    ) -> 'Page[Review]':
+        reviews: "list[Review]", page_number: int, reviews_per_page=15
+    ) -> "Page[Review]":
         paginator = Paginator(reviews, reviews_per_page)
         try:
             page_obj = paginator.page(page_number)
@@ -765,39 +764,51 @@ class Review(models.Model):
 
         return page_obj
 
-    def sortby(
-            reviews: 'list[Review]', method: str = ""
-    ) -> 'list[Review]':
+    def sortby(reviews: "list[Review]", method: str = "") -> "list[Review]":
         match (method):
-            case 'Most Helpful':
+            case "Most Helpful":
                 # Sort by reviews with the most upvotes (each downvote is -1)
                 reviews = reviews.annotate(
-                upvotes=Coalesce(Sum('vote__value', filter=Q(vote__value=1)), 0),
-                downvotes=Coalesce(Abs(Sum('vote__value', filter=Q(vote__value=-1))), 0),
-                helpful_score=ExpressionWrapper(
-                    F('upvotes') - F('downvotes'),
-                    output_field=fields.IntegerField()
-                )
-            ).order_by('-helpful_score')
-            case 'Highest Rating':
+                    upvotes=Coalesce(
+                        Sum("vote__value", filter=Q(vote__value=1)), 0
+                    ),
+                    downvotes=Coalesce(
+                        Abs(Sum("vote__value", filter=Q(vote__value=-1))), 0
+                    ),
+                    helpful_score=ExpressionWrapper(
+                        F("upvotes") - F("downvotes"),
+                        output_field=fields.IntegerField(),
+                    ),
+                ).order_by("-helpful_score")
+            case "Highest Rating":
                 # Sort by reviews with the highest average rating
                 reviews = reviews.annotate(
-                average=ExpressionWrapper(
-                    (F('instructor_rating') + F('recommendability') + F('enjoyability')) / 3,
-                    output_field=fields.FloatField()
-                )
-            ).order_by('-average')
-            case 'Lowest Rating':
+                    average=ExpressionWrapper(
+                        (
+                            F("instructor_rating")
+                            + F("recommendability")
+                            + F("enjoyability")
+                        )
+                        / 3,
+                        output_field=fields.FloatField(),
+                    )
+                ).order_by("-average")
+            case "Lowest Rating":
                 # Sort by reviews with the lowest average rating
                 reviews = reviews.annotate(
-                average=ExpressionWrapper(
-                    (F('instructor_rating') + F('recommendability') + F('enjoyability')) / 3,
-                    output_field=fields.FloatField()
-                )
-            ).order_by('average')
-            case 'Most Recent' | _:
+                    average=ExpressionWrapper(
+                        (
+                            F("instructor_rating")
+                            + F("recommendability")
+                            + F("enjoyability")
+                        )
+                        / 3,
+                        output_field=fields.FloatField(),
+                    )
+                ).order_by("average")
+            case "Most Recent" | _:
                 # Sort by most recent reviews
-                reviews = reviews.order_by('-created')
+                reviews = reviews.order_by("-created")
 
         return reviews
 
