@@ -231,10 +231,10 @@ def course_instructor(request, course_id, instructor_id, method = ''):
     dept = course.subdepartment.department
 
     page_number = request.GET.get("page", 1)
-    if method != '':
-        paginated_reviews = Review.sortby(reviews, page_number, method)
-    else:
-        paginated_reviews = Review.paginate(reviews, page_number)
+    # If the user is sorting the results
+    if method:
+        reviews = Review.sortby(reviews, method)
+    paginated_reviews = Review.paginate(reviews, page_number)
 
 
     course_url = reverse(
@@ -354,6 +354,7 @@ def course_instructor(request, course_id, instructor_id, method = ''):
             "display_times": Semester.latest() == section_last_taught.semester,
             "questions": questions,
             "answers": answers,
+            "selected_sort": method
         },
     )
 
