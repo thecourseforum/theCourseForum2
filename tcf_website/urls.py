@@ -24,9 +24,9 @@ urlpatterns = [
         name="course_instructor",
     ),
     path(
-        "course/<int:course_id>/<int:instructor_id>/sort=<str:method>", 
+        "course/<int:course_id>/<int:instructor_id>/sort=<str:method>",
         views.course_instructor,
-        name = "sort_reviews",
+        name="sort_reviews",
     ),
     path(
         "course/<str:mnemonic>/<int:course_number>/",
