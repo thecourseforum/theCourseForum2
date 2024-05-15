@@ -3,10 +3,10 @@
 """TCF Database models."""
 
 from django.contrib.auth.models import AbstractUser
-from django.core.paginator import EmptyPage, Page, PageNotAnInteger, Paginator
+from django.core.paginator import EmptyPage, Page, Paginator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import ExpressionWrapper, F, Q, Sum, fields
+from django.db.models import ExpressionWrapper, F, Q, QuerySet, Sum, fields
 from django.db.models.functions import Abs, Coalesce
 
 
@@ -726,8 +726,10 @@ class Review(models.Model):
         )
 
     @staticmethod
-    def display_reviews(course_id, instructor_id, user):
+    def get_sorted_reviews(course_id, instructor_id, user, method=""):
         """Prepare review list for course-instructor page."""
+
+        # Filter out reviews with no text and hidden field true.
         reviews = (
             Review.objects.filter(
                 instructor=instructor_id, course=course_id, hidden=False
@@ -748,27 +750,13 @@ class Review(models.Model):
                 ),
             )
 
-        return reviews.order_by("-created")
+        return Review.sort(reviews, method)
 
     @staticmethod
-    def paginate(
-        reviews: "list[Review]", page_number: int, reviews_per_page=15
-    ) -> "Page[Review]":
-        paginator = Paginator(reviews, reviews_per_page)
-        try:
-            page_obj = paginator.page(page_number)
-        except PageNotAnInteger:
-            page_obj = paginator.page(1)
-        except EmptyPage:
-            page_obj = paginator.page(paginator.num_pages)
-
-        return page_obj
-
-    def sortby(reviews: "list[Review]", method: str = "") -> "list[Review]":
-        match (method):
-            case "Most Helpful":
-                # Sort by reviews with the most upvotes (each downvote is -1)
-                reviews = reviews.annotate(
+    def sort(reviews: "QuerySet[Review]", method="") -> "QuerySet[Review]":
+        match method:
+            case "upvotes":
+                return reviews.annotate(
                     upvotes=Coalesce(
                         Sum("vote__value", filter=Q(vote__value=1)), 0
                     ),
@@ -780,9 +768,8 @@ class Review(models.Model):
                         output_field=fields.IntegerField(),
                     ),
                 ).order_by("-helpful_score")
-            case "Highest Rating":
-                # Sort by reviews with the highest average rating
-                reviews = reviews.annotate(
+            case "rating_high":
+                return reviews.annotate(
                     average=ExpressionWrapper(
                         (
                             F("instructor_rating")
@@ -793,9 +780,8 @@ class Review(models.Model):
                         output_field=fields.FloatField(),
                     )
                 ).order_by("-average")
-            case "Lowest Rating":
-                # Sort by reviews with the lowest average rating
-                reviews = reviews.annotate(
+            case "rating_low":
+                return reviews.annotate(
                     average=ExpressionWrapper(
                         (
                             F("instructor_rating")
@@ -806,11 +792,29 @@ class Review(models.Model):
                         output_field=fields.FloatField(),
                     )
                 ).order_by("average")
-            case "Most Recent" | _:
-                # Sort by most recent reviews
-                reviews = reviews.order_by("-created")
+            case "recent" | _:
+                return reviews.order_by("-created")
 
-        return reviews
+    @staticmethod
+    def paginate(
+        reviews: "QuerySet[Review]", page_number, reviews_per_page=15
+    ) -> "Page[Review]":
+        paginator = Paginator(reviews, reviews_per_page)
+        try:
+            page_obj = paginator.page(page_number)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+
+        return page_obj
+
+    @staticmethod
+    def get_paginated_reviews(
+        course_id, instructor_id, user, page_number=1, method=""
+    ) -> "Page[Review]":
+        reviews = Review.get_sorted_reviews(
+            course_id, instructor_id, user, method
+        )
+        return Review.paginate(reviews, page_number)
 
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"
