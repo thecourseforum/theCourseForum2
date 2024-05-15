@@ -227,15 +227,12 @@ def course_instructor(request, course_id, instructor_id, method=""):
         instructor=instructor_id, course=course_id
     ).count()
 
-    # Filter out reviews with no text and hidden field true.
-    reviews = Review.display_reviews(course_id, instructor_id, request.user)
     dept = course.subdepartment.department
 
     page_number = request.GET.get("page", 1)
-    # If the user is sorting the results
-    if method:
-        reviews = Review.sortby(reviews, method)
-    paginated_reviews = Review.paginate(reviews, page_number)
+    paginated_reviews = Review.get_paginated_reviews(
+        course_id, instructor_id, request.user, page_number, method
+    )
 
     course_url = reverse(
         "course", args=[course.subdepartment.mnemonic, course.number]
@@ -354,7 +351,7 @@ def course_instructor(request, course_id, instructor_id, method=""):
             "display_times": Semester.latest() == section_last_taught.semester,
             "questions": questions,
             "answers": answers,
-            "selected_sort": method,
+            "sort_method": method,
         },
     )
 
