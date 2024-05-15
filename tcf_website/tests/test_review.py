@@ -212,7 +212,7 @@ class ModelReviewTests(TestCase):
         review_queryset = Review.objects.filter(course=self.course)
 
         self.assertQuerysetEqual(
-            Review.display_reviews(self.course, self.instructor, self.user1),
+            Review.get_sorted_reviews(self.course, self.instructor, self.user1),
             review_queryset,
             transform=lambda x: x,  # Needed so that the formatting works
             ordered=False,
@@ -223,7 +223,7 @@ class ModelReviewTests(TestCase):
         self.review1.delete()
         self.review2.delete()
         self.assertFalse(
-            Review.display_reviews(
+            Review.get_sorted_reviews(
                 self.course, self.instructor, self.user1
             ).exists()
         )
