@@ -766,21 +766,21 @@ class Review(models.Model):
         return page_obj
 
     def sortby(
-            reviews: 'list[Review]', reviews_per_page: int, method: str = ""
-    ) -> 'Page[Review]':
+            reviews: 'list[Review]', method: str = ""
+    ) -> 'list[Review]':
         match (method):
-            case 'helpful':
+            case 'Most Helpful':
                 reviews = reviews.annotate(
                     score=Sum('vote__value')
                 ).order_by('-score')
-            case 'recent':
+            case 'Most Recent':
                 reviews = reviews.order_by('-created')
-            case 'highest':
+            case 'Highest Rating':
                 reviews = reviews.order_by('-instructor_rating')
-            case 'lowest':
+            case 'Lowest Rating':
                 reviews = reviews.order_by('instructor_rating')
 
-        return Review.paginate(reviews, reviews_per_page)
+        return reviews
 
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"
