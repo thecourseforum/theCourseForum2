@@ -197,7 +197,7 @@
                 </div>
             </div>
             {% if display_times %}
-            <div class="times-info-container">
+            <div class="times-info-container" id = "reload-here">
                 <div class="info-container" style="padding: 10px 15px; margin: 0;">
                     <div style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="toggleSections(this)">
                         <p class="rating-card-desc" style="margin-bottom: 0; display: flex; align-items: center;">Sections
@@ -280,16 +280,16 @@
                                     <button id="review-sort-select" class="btn btn-primary dropdown-toggle" type="button" id="sortOptions"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ selected_sort }}</button>
                                             <div class="dropdown-menu" aria-labelledby="sortOptions">
-                                                <button id="votes-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id instructor.id 'Most Helpful' %}';" class="dropdown-item" type="button">
+                                                <button id="votes-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id instructor.id 'Most Helpful' %}#reload-here';" class="dropdown-item" type="button">
                                                     Most Helpful
                                                 </button>
-                                                <button id="recent-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id instructor.id 'Most Recent' %}';" class="dropdown-item" type="button">
+                                                <button id="recent-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id instructor.id 'Most Recent' %}#reload-here';" class="dropdown-item" type="button">
                                                     Most Recent
                                                 </button>
-                                                <button id="highrating-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id instructor.id 'Highest Rating' %}';" class="dropdown-item" type="button">
+                                                <button id="highrating-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id instructor.id 'Highest Rating'%}#reload-here';" class="dropdown-item" type="button">
                                                     Highest Rating
                                                 </button>
-                                                <button id="lowrating-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id  instructor.id 'Lowest Rating' %}';" class="dropdown-item" type="button">
+                                                <button id="lowrating-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id  instructor.id 'Lowest Rating'%}#reload-here';" class="dropdown-item" type="button">
                                                     Lowest Rating
                                                 </button>
                                             </div>

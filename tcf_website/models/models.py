@@ -773,12 +773,12 @@ class Review(models.Model):
                 reviews = reviews.annotate(
                     score=Sum('vote__value')
                 ).order_by('-score')
-            case 'Most Recent':
-                reviews = reviews.order_by('-created')
             case 'Highest Rating':
                 reviews = reviews.order_by('-instructor_rating')
             case 'Lowest Rating':
                 reviews = reviews.order_by('instructor_rating')
+            case 'Most Recent' | _:
+                reviews = reviews.order_by('-created')
 
         return reviews
 
