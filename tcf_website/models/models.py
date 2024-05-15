@@ -7,7 +7,8 @@ from django.core.paginator import EmptyPage, Page, PageNotAnInteger, Paginator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Abs, Coalesce
-from django.db.models import Sum
+from django.db.models import Sum, F, ExpressionWrapper, fields
+
 
 
 class School(models.Model):
@@ -774,9 +775,19 @@ class Review(models.Model):
                     score=Sum('vote__value')
                 ).order_by('-score')
             case 'Highest Rating':
-                reviews = reviews.order_by('-instructor_rating')
+                reviews = reviews.annotate(
+                average=ExpressionWrapper(
+                    (F('instructor_rating') + F('recommendability') + F('enjoyability')) / 3,
+                    output_field=fields.FloatField()
+                )
+            ).order_by('-average')
             case 'Lowest Rating':
-                reviews = reviews.order_by('instructor_rating')
+                reviews = reviews.annotate(
+                average=ExpressionWrapper(
+                    (F('instructor_rating') + F('recommendability') + F('enjoyability')) / 3,
+                    output_field=fields.FloatField()
+                )
+            ).order_by('average')
             case 'Most Recent' | _:
                 reviews = reviews.order_by('-created')
 
