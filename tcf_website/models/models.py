@@ -756,7 +756,7 @@ class Review(models.Model):
     def sort(reviews: "QuerySet[Review]", method="") -> "QuerySet[Review]":
         """Sort reviews by given method - upvotes, rating (low or high), or recent."""
         match method:
-            case "upvotes":
+            case "Most Helpful":  # net votes
                 return reviews.annotate(
                     upvotes=Coalesce(
                         Sum("vote__value", filter=Q(vote__value=1)), 0
@@ -769,7 +769,7 @@ class Review(models.Model):
                         output_field=fields.IntegerField(),
                     ),
                 ).order_by("-helpful_score")
-            case "rating_high":
+            case "Highest Rating":
                 return reviews.annotate(
                     average=ExpressionWrapper(
                         (
@@ -781,7 +781,7 @@ class Review(models.Model):
                         output_field=fields.FloatField(),
                     )
                 ).order_by("-average")
-            case "rating_low":
+            case "Lowest Rating":
                 return reviews.annotate(
                     average=ExpressionWrapper(
                         (
@@ -793,7 +793,7 @@ class Review(models.Model):
                         output_field=fields.FloatField(),
                     )
                 ).order_by("average")
-            case "recent" | _:
+            case "Most Recent" | _:
                 return reviews.order_by("-created")
 
     @staticmethod
