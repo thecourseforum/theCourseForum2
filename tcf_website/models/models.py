@@ -755,7 +755,6 @@ class Review(models.Model):
     def paginate(
         reviews: 'list[Review]', page_number: int, reviews_per_page=15
     ) -> 'Page[Review]':
-        # TODO: sorting?
         paginator = Paginator(reviews, reviews_per_page)
         try:
             page_obj = paginator.page(page_number)
