@@ -754,6 +754,7 @@ class Review(models.Model):
 
     @staticmethod
     def sort(reviews: "QuerySet[Review]", method="") -> "QuerySet[Review]":
+        """Sort reviews by given method - upvotes, rating (low or high), or recent."""
         match method:
             case "upvotes":
                 return reviews.annotate(
@@ -799,6 +800,7 @@ class Review(models.Model):
     def paginate(
         reviews: "QuerySet[Review]", page_number, reviews_per_page=15
     ) -> "Page[Review]":
+        """Paginate reviews"""
         paginator = Paginator(reviews, reviews_per_page)
         try:
             page_obj = paginator.page(page_number)
@@ -811,6 +813,7 @@ class Review(models.Model):
     def get_paginated_reviews(
         course_id, instructor_id, user, page_number=1, method=""
     ) -> "Page[Review]":
+        """Generate sorted, paginated reviews"""
         reviews = Review.get_sorted_reviews(
             course_id, instructor_id, user, method
         )

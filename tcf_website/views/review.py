@@ -8,13 +8,12 @@ from django.contrib.auth.mixins import (  # For class-based views
 )
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from ..models import Instructor, Review
+from ..models import Review
 
 # pylint: disable=fixme,unused-argument
 # Disable pylint errors on TODO messages, such as below
