@@ -23,15 +23,15 @@
     {% if paginated_reviews and paginated_reviews.number > 0 %}
     <div class="pagination">
         {% if paginated_reviews.has_previous %}
-            <a href="?page=1">First</a>
-            <a href="?page={{ paginated_reviews.previous_page_number }}">Previous</a>
+            <a href="?page=1#reviews">First</a>
+            <a href="?page={{ paginated_reviews.previous_page_number }}#reviews">Previous</a>
         {% endif %}
 
         <span>Page {{ paginated_reviews.number }} of {{ paginated_reviews.paginator.num_pages }}</span>
 
         {% if paginated_reviews.has_next %}
-            <a href="?page={{ paginated_reviews.next_page_number }}">Next</a>
-            <a href="?page={{ paginated_reviews.paginator.num_pages }}">Last</a>
+            <a href="?page={{ paginated_reviews.next_page_number }}#reviews">Next</a>
+            <a href="?page={{ paginated_reviews.paginator.num_pages }}#reviews">Last</a>
         {% endif %}
     </div>
     {% endif %}
