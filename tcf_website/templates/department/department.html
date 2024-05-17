@@ -19,18 +19,16 @@
         {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True %}
     </div>
     <div class="subdepartments mt-3">
-        {% for course in courses %}
-        <div class="subdepartment container-lg {% if not sd.has_current_course %}old{% endif %}">
-            <h1 class="my-3">{{ course.name }}</h1>
-            <ul class="course-list" id="courses-sd-{{sd.id}}">
+        <div class="subdepartment container-lg {% if not current_subdepartment.has_current_course %}old{% endif %}">
+            <h1 class="my-3">{{ current_subdepartment.name }}</h1>
+            <ul class="course-list" id="courses-sd-{{current_subdepartment.id}}">
             </ul>
-            <div class="text-center" id="spinner-sd-{{sd.id}}">
+            <div class="text-center" id="spinner-sd-{{current_subdepartment.id}}">
                 <div class="spinner-border" role="status" >
                     <span class="sr-only">Loading...</span>
                 </div>
             </div>
         </div>
-        {% endfor %}
     </div>
 </div>
 {% endblock %}
