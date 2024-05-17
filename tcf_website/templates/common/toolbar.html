@@ -6,9 +6,17 @@
              role="toolbar" aria-label="Breadcrumbs">
             <ol class="breadcrumb bg-white mb-0">
                 {% for text, url, active in breadcrumbs %}
-                    <li class="breadcrumb-item {% if active %}active{% endif %}">
-                      {% if not active %}<a href="{{ url }}">{{ text }}</a>
-                      {% else %}{{ text }}{% endif %}
+                    <li class="breadcrumb-item {% if active %}active{% endif %} d-flex align-items-center">
+                        {% if text == current_subdepartment.name %}
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ current_subdepartment.name }}
+                                </button>
+                            </div>
+                        {% else %}
+                            {% if not active %}<a href="{{ url }}">{{ text }}</a>
+                            {% else %}{{ text }}{% endif %}
+                        {%endif%}
                     </li>
                 {% endfor %}
             </ol>

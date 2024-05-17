@@ -70,7 +70,7 @@ def department(request, dept_id : int, current_subdepartment_id: int = None):
     # Navigation breadcrimbs
     breadcrumbs = [
         (dept.school.name, reverse("browse"), False),
-        (dept.name, None, True),
+        (dept.name, reverse("department", args=[dept_id]), False),
         (current_subdepartment.name, None, True),
     ]
 
