@@ -19,9 +19,9 @@
         {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True %}
     </div>
     <div class="subdepartments mt-3">
-        {% for sd in subdepartments %}
+        {% for course in courses %}
         <div class="subdepartment container-lg {% if not sd.has_current_course %}old{% endif %}">
-            <h1 class="my-3">{{ sd.name }}</h1>
+            <h1 class="my-3">{{ course.name }}</h1>
             <ul class="course-list" id="courses-sd-{{sd.id}}">
             </ul>
             <div class="text-center" id="spinner-sd-{{sd.id}}">
