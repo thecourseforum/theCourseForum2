@@ -24,6 +24,7 @@ from ..models import (
     School,
     Section,
     Semester,
+    Subdepartment
 )
 
 
@@ -52,6 +53,7 @@ def browse(request):
 
 def department(request, dept_id : int, current_subdepartment_id: int = None):
     """View for department page."""
+    print(f"dept_id: {dept_id}, subdept_id: {current_subdepartment_id}")
 
     # Prefetch related subdepartments and courses to improve performance.
     # department.html loops through related subdepartments and courses.
@@ -79,6 +81,7 @@ def department(request, dept_id : int, current_subdepartment_id: int = None):
         "department/department.html",
         {
             "subdepartments": dept.subdepartment_set.all(),
+            "department": dept,
             "current_subdepartment": current_subdepartment,
             "latest_semester": latest_semester,
             "breadcrumbs": breadcrumbs,
