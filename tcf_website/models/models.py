@@ -47,11 +47,17 @@ class Department(models.Model):
     def __str__(self):
         return self.name
     
-    def prefetch_courses(dept_id: int) -> "Department":
-            department = Department.objects.prefetch_related(
+    @staticmethod
+    def fetch_dept_name(dept_id : int):
+        return Department.objects.get(id=dept_id)
+    
+    @staticmethod
+    def prefetch_courses(dept_id: int, subdept_id : int) -> "QuerySet[Course]":
+        department = Department.objects.prefetch_related(
                 "subdepartment_set"
-            ).get(pk=dept_id)
-            return department
+        ).get(pk=dept_id)
+        courses = Course.objects.filter(subdepartment__id = subdept_id)
+        return courses
 
 
     @staticmethod
@@ -59,13 +65,15 @@ class Department(models.Model):
         paginator = Paginator(courses, courses_per_page)
         try:
             page_obj = paginator.page(page_number)
+        except PageNotAnInteger:
+            page_obj = paginator.page(1)
         except EmptyPage:
             page_obj = paginator.page(paginator.num_pages)
         return page_obj
 
     @staticmethod
-    def get_paginated_reviews(dept_id: int, page_number: int):
-        courses = Department.prefetch_courses(dept_id)
+    def get_paginated_reviews(dept_id: int, subdept_id: int, page_number: int):
+        courses = Department.prefetch_courses(dept_id, subdept_id)
         return Department.paginate(courses, page_number)
 
 

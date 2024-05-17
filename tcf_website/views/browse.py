@@ -53,18 +53,20 @@ def browse(request):
 
 def department(request, dept_id : int, current_subdepartment_id: int = None):
     """View for department page."""
-    print(f"dept_id: {dept_id}, subdept_id: {current_subdepartment_id}")
 
     # Prefetch related subdepartments and courses to improve performance.
     # department.html loops through related subdepartments and courses.
     # See:
     # https://docs.djangoproject.com/en/3.0/ref/models/querysets/#django.db.models.query.QuerySet.prefetch_related
-    dept = Department.prefetch_courses(dept_id)
+    dept = Department.fetch_dept_name(dept_id)
     current_subdepartment = (
         get_object_or_404(Subdepartment, pk=current_subdepartment_id, department=dept)
         if current_subdepartment_id else
         dept.subdepartment_set.first()
     )    
+    page_number = request.GET.get("page", 1)
+    courses = Department.get_paginated_reviews(dept_id, current_subdepartment_id, page_number)
+
     
     # Get the most recent semester
     latest_semester = Semester.latest()
@@ -82,6 +84,7 @@ def department(request, dept_id : int, current_subdepartment_id: int = None):
         {
             "subdepartments": dept.subdepartment_set.all(),
             "department": dept,
+            "courses": courses,
             "current_subdepartment": current_subdepartment,
             "latest_semester": latest_semester,
             "breadcrumbs": breadcrumbs,
