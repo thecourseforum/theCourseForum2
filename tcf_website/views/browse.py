@@ -50,7 +50,7 @@ def browse(request):
     )
 
 
-def department(request, dept_id):
+def department(request, dept_id : int, current_subdepartment_id: int = None):
     """View for department page."""
 
     # Prefetch related subdepartments and courses to improve performance.
@@ -58,7 +58,12 @@ def department(request, dept_id):
     # See:
     # https://docs.djangoproject.com/en/3.0/ref/models/querysets/#django.db.models.query.QuerySet.prefetch_related
     dept = Department.prefetch_courses(dept_id)
-
+    current_subdepartment = (
+        get_object_or_404(Subdepartment, pk=current_subdepartment_id, department=dept)
+        if current_subdepartment_id else
+        dept.subdepartment_set.first()
+    )    
+    
     # Get the most recent semester
     latest_semester = Semester.latest()
 
@@ -66,6 +71,7 @@ def department(request, dept_id):
     breadcrumbs = [
         (dept.school.name, reverse("browse"), False),
         (dept.name, None, True),
+        (current_subdepartment.name, None, True),
     ]
 
     return render(
@@ -73,6 +79,7 @@ def department(request, dept_id):
         "department/department.html",
         {
             "subdepartments": dept.subdepartment_set.all(),
+            "current_subdepartment": current_subdepartment,
             "latest_semester": latest_semester,
             "breadcrumbs": breadcrumbs,
         },
