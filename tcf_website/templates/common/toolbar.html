@@ -9,9 +9,14 @@
                     <li class="breadcrumb-item {% if active %}active{% endif %} d-flex align-items-center">
                         {% if text == current_subdepartment.name %}
                             <div class="dropdown">
-                                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton{{ forloop.counter }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     {{ current_subdepartment.name }}
                                 </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ forloop.counter }}">
+                                    {% for sd in subdepartments %}
+                                        <a class="dropdown-item {% if sd.id == current_subdepartment.id %}active{% endif %}" href="{% url 'department_subdepartment' department.id sd.id %}">{{ sd.name }}</a>
+                                    {% endfor %}
+                                </div>
                             </div>
                         {% else %}
                             {% if not active %}<a href="{{ url }}">{{ text }}</a>
