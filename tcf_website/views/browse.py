@@ -57,9 +57,7 @@ def department(request, dept_id):
     # department.html loops through related subdepartments and courses.
     # See:
     # https://docs.djangoproject.com/en/3.0/ref/models/querysets/#django.db.models.query.QuerySet.prefetch_related
-    dept = Department.objects.prefetch_related("subdepartment_set").get(
-        pk=dept_id
-    )
+    dept = Department.prefetch_courses(dept_id)
 
     # Get the most recent semester
     latest_semester = Semester.latest()
