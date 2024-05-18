@@ -58,7 +58,7 @@ def department(request, dept_id : int, current_subdepartment_id: int = None):
     # department.html loops through related subdepartments and courses.
     # See:
     # https://docs.djangoproject.com/en/3.0/ref/models/querysets/#django.db.models.query.QuerySet.prefetch_related
-    dept = Department.fetch_dept_name(dept_id)
+    dept = get_object_or_404(Department, pk=dept_id)
     current_subdepartment = (
         get_object_or_404(Subdepartment, pk=current_subdepartment_id, department=dept)
         if current_subdepartment_id else

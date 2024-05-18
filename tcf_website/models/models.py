@@ -48,10 +48,6 @@ class Department(models.Model):
         return self.name
     
     @staticmethod
-    def fetch_dept_name(dept_id : int):
-        return Department.objects.get(id=dept_id)
-    
-    @staticmethod
     def prefetch_courses(dept_id: int, subdept_id : int) -> "QuerySet[Course]":
         department = Department.objects.prefetch_related(
                 "subdepartment_set"
