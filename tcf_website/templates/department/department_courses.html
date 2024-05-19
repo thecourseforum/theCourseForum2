@@ -15,7 +15,7 @@
                             <i class="fa fa-star fa-fw" aria-hidden="true"></i>&nbsp;Rating
                         </small>
                         <p class="mb-0 info" id="rating">
-                            {{ course.average_rating }}
+                            {{ course.average_rating|floatformat:2 }}
                         </p>
                     </div> 
                     <div class="col-4 col-lg-2 text-nowrap">
@@ -23,7 +23,7 @@
                             <i class="fa fa-dumbbell fa-fw" aria-hidden="true"></i>&nbsp;Difficulty
                         </small>
                         <p class="mb-0 info" id="difficulty">
-                            {{ course.average_difficulty }}
+                            {{ course.average_difficulty|floatformat:2 }}
                         </p>
                     </div>
                     <div class="col-4 col-lg-2 text-nowrap">
