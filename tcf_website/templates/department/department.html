@@ -22,6 +22,9 @@
         <div class="subdepartment container-lg {% if not current_subdepartment.has_current_course %}old{% endif %}">
             <h1 class="my-3">{{ current_subdepartment.name }}</h1>
             <ul class="course-list" id="courses-sd-{{current_subdepartment.id}}">
+            {% for course in courses %}
+                {% include "department/department_courses.html" with course=course %}
+            {% endfor %}
             </ul>
             <div class="text-center" id="spinner-sd-{{current_subdepartment.id}}">
                 <div class="spinner-border" role="status" >
@@ -30,8 +33,5 @@
             </div>
         </div>
     </div>
-    {% for course in courses %}
-        {% include "department/department_courses.html" with course=course %}
-    {% endfor %}
 </div>
 {% endblock %}
