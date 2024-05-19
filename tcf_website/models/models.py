@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Abs, Coalesce
+from django.shortcuts import get_object_or_404
 
 
 class School(models.Model):
@@ -45,16 +46,7 @@ class Department(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
-    
-    @staticmethod
-    def fetch_courses(dept_id: int, subdept_id : int, semesters_to_fetch: str) -> "QuerySet[Course]":
-        # department = Department.objects.prefetch_related(
-        #         "subdepartment_set"
-        # ).get(pk=dept_id)
-        courses = Course.objects.filter(subdepartment__id = subdept_id, semester_last_taught__number__gte = semesters_to_fetch)
-        return courses
-
+        return self.name 
 
     @staticmethod
     def paginate(courses: "QuerySet[Course]", page_number: int, courses_per_page=15):
@@ -68,9 +60,12 @@ class Department(models.Model):
         return page_obj
 
     @staticmethod
-    def get_paginated_reviews(dept_id: int, subdept_id: int, semesters_to_fetch: int, page_number: int):
-        courses = Department.prefetch_courses(dept_id, subdept_id, semesters_to_fetch)
-        return Department.paginate(courses, page_number)
+    def get_paginated_reviews(subdept_id: int, num_of_years : int, page_number: int):
+        if subdept_id:
+            subdepartment = get_object_or_404(Subdepartment, pk = subdept_id)
+            courses = subdepartment.recent_courses(num_of_years)
+            return Department.paginate(courses, page_number)
+        
 
 
     class Meta:
@@ -107,11 +102,11 @@ class Subdepartment(models.Model):
     def __str__(self):
         return f"{self.mnemonic} - {self.name}"
 
-    def recent_courses(self):
-        """Return courses within last 5 years."""
+    def recent_courses(self, num_of_years : int = 5):
+        """Return courses within last n years."""
         latest_semester = Semester.latest()
         return self.course_set.filter(
-            semester_last_taught__year__gte=latest_semester.year - 5
+            semester_last_taught__year__gte=latest_semester.year - num_of_years
         ).order_by("number")
 
     def has_current_course(self):
