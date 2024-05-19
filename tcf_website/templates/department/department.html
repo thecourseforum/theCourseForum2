@@ -16,7 +16,7 @@
         {% include "../common/leaderboard_ad.html" with ad_slot="3719332473" %}
     </div>
     <div class="container-lg">
-        {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True %}
+        {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=relevant_semester sorting=True %}
     </div>
     <div class="subdepartments mt-3">
         <div class="subdepartment container-lg {% if not current_subdepartment.has_current_course %}old{% endif %}">
@@ -30,17 +30,8 @@
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
-
-{% block js %}
-<script type="module" src="{% static 'common/bind-show-hide.js' %}"></script>
-<script type="module" src="{% static 'common/bind-sort.js' %}"></script>
-<script type="module">
-    import { loadPage } from "{% static 'department/loadMoreCourses.js' %}";
-
-    {% for sd in subdepartments %}
-        loadPage("{{sd.id}}", "/api/courses/?page=1&page_size=30&subdepartment={{sd.id}}&simplestats&recent");
+    {% for course in courses %}
+        {% include "department/department_courses.html" with course=course %}
     {% endfor %}
-</script>
+</div>
 {% endblock %}

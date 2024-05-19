@@ -68,10 +68,10 @@ def department(request, dept_id : int, current_subdepartment_id: int = None):
 
     # Get the most recent semester
     latest_semester = Semester.latest()
-    relevant_semesters = request.GET.get("semesters", latest_semester)
-    relevant_semesters_number = relevant_semesters.number
+    relevant_semester = request.GET.get("semesters", latest_semester)
+    num_of_years = latest_semester.year - relevant_semester.year
 
-    courses = Department.get_paginated_reviews(dept_id, current_subdepartment_id, relevant_semesters_number, page_number)
+    courses = Department.get_paginated_reviews(current_subdepartment_id, num_of_years , page_number)
 
 
     # Navigation breadcrimbs
@@ -90,6 +90,7 @@ def department(request, dept_id : int, current_subdepartment_id: int = None):
             "courses": courses,
             "current_subdepartment": current_subdepartment,
             "latest_semester": latest_semester,
+            "relevant_semester": relevant_semester,
             "breadcrumbs": breadcrumbs,
         },
     )
