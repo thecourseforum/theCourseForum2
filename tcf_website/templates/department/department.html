@@ -22,10 +22,25 @@
         <div class="subdepartment container-lg {% if not current_subdepartment.has_current_course %}old{% endif %}">
             <h1 class="my-3">{{ current_subdepartment.name }}</h1>
             <ul class="course-list" id="courses-sd-{{current_subdepartment.id}}">
-            {% for course in courses %}
+            {% for course in paginated_courses %}
                 {% include "department/department_courses.html" with course=course %}
             {% endfor %}
             </ul>
+            {% if paginated_courses and paginated_courses.number > 0 %}
+            <div class="pagination">
+                {% if paginated_courses.has_previous %}
+                    <a href="?page=1">First</a>
+                    <a href="?page={{ paginated_courses.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span>Page {{ paginated_courses.number }} of {{ paginated_courses.paginator.num_pages }}</span>
+
+                {% if paginated_courses.has_next %}
+                    <a href="?page={{ paginated_courses.next_page_number }}">Next</a>
+                    <a href="?page={{ paginated_courses.paginator.num_pages }}">Last</a>
+                {% endif %}
+            </div>
+            {% endif %}
             <div class="text-center" id="spinner-sd-{{current_subdepartment.id}}">
                 <div class="spinner-border" role="status" >
                     <span class="sr-only">Loading...</span>

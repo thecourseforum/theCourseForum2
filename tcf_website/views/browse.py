@@ -87,7 +87,7 @@ def department(request, dept_id : int, current_subdepartment_id: int = None):
         {
             "subdepartments": dept.subdepartment_set.all(),
             "department": dept,
-            "courses": courses,
+            "paginated_courses": courses,
             "current_subdepartment": current_subdepartment,
             "latest_semester": latest_semester,
             "relevant_semester": relevant_semester,
