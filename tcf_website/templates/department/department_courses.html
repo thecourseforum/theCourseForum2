@@ -1,9 +1,4 @@
-{% extends "base/base.html" %}
-{% load static %}
-
-{% block content %}
-
-<li class="{{course.is_recent ? "" : "old"}}">
+<li  {% comment %} class="{{course.is_recent ? "" : "old"}}" {% endcomment %}> 
     <div class="card rating-card mb-2">
         <div class="row no-gutters">
             <a class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start align-items-center rating-card-link" href="/course/{{course.subdepartment.mnemonic}}/{{course.number}}">
@@ -50,4 +45,3 @@
         </div>
     </div>
 </li>
-{% endblock %}
