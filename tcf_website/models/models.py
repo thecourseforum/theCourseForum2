@@ -48,11 +48,11 @@ class Department(models.Model):
         return self.name
     
     @staticmethod
-    def prefetch_courses(dept_id: int, subdept_id : int) -> "QuerySet[Course]":
-        department = Department.objects.prefetch_related(
-                "subdepartment_set"
-        ).get(pk=dept_id)
-        courses = Course.objects.filter(subdepartment__id = subdept_id)
+    def fetch_courses(dept_id: int, subdept_id : int, semesters_to_fetch: str) -> "QuerySet[Course]":
+        # department = Department.objects.prefetch_related(
+        #         "subdepartment_set"
+        # ).get(pk=dept_id)
+        courses = Course.objects.filter(subdepartment__id = subdept_id, semester_last_taught__number__gte = semesters_to_fetch)
         return courses
 
 
@@ -68,8 +68,8 @@ class Department(models.Model):
         return page_obj
 
     @staticmethod
-    def get_paginated_reviews(dept_id: int, subdept_id: int, page_number: int):
-        courses = Department.prefetch_courses(dept_id, subdept_id)
+    def get_paginated_reviews(dept_id: int, subdept_id: int, semesters_to_fetch: int, page_number: int):
+        courses = Department.prefetch_courses(dept_id, subdept_id, semesters_to_fetch)
         return Department.paginate(courses, page_number)
 
 

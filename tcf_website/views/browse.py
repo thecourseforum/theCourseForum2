@@ -65,11 +65,14 @@ def department(request, dept_id : int, current_subdepartment_id: int = None):
         dept.subdepartment_set.first()
     )    
     page_number = request.GET.get("page", 1)
-    courses = Department.get_paginated_reviews(dept_id, current_subdepartment_id, page_number)
 
-    
     # Get the most recent semester
     latest_semester = Semester.latest()
+    relevant_semesters = request.GET.get("semesters", latest_semester)
+    relevant_semesters_number = relevant_semesters.number
+
+    courses = Department.get_paginated_reviews(dept_id, current_subdepartment_id, relevant_semesters_number, page_number)
+
 
     # Navigation breadcrimbs
     breadcrumbs = [
