@@ -71,7 +71,7 @@ def department(request, dept_id : int, current_subdepartment_id: int = None):
     relevant_semester = request.GET.get("semesters", latest_semester)
     num_of_years = latest_semester.year - relevant_semester.year
 
-    courses = Department.get_paginated_reviews(current_subdepartment_id, num_of_years, page_number)
+    paginated_courses = Department.get_paginated_reviews(current_subdepartment_id, num_of_years, page_number)
 
 
     # Navigation breadcrimbs
@@ -87,7 +87,7 @@ def department(request, dept_id : int, current_subdepartment_id: int = None):
         {
             "subdepartments": dept.subdepartment_set.all(),
             "department": dept,
-            "paginated_courses": courses,
+            "paginated_courses": paginated_courses,
             "current_subdepartment": current_subdepartment,
             "latest_semester": latest_semester,
             "relevant_semester": relevant_semester,
