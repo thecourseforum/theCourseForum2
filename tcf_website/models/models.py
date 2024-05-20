@@ -498,8 +498,7 @@ class Course(models.Model):
     def average_gpa(self):
         course_grades = CourseGrade.objects.filter(course = self)
         first_grade = course_grades.first()
-        return str(first_grade).split(' ')[2]
-
+        return first_grade.average
     def review_count(self):
         """Compute total number of course reviews."""
         return self.review_set.count()
