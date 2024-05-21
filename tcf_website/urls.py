@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long
 """Routes URLs to views"""
 
 from django.urls import include, path
