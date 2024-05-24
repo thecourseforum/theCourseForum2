@@ -15,6 +15,7 @@ window.modalFunctions = function(courseIdParam, modeParam, modalSubmitUrlParam) 
 
     const courseId = courseIdParam;
     window.attachEventListenersToModalContent(modalSubmitUrl, nextModalId, courseId);
+    console.log(courseId);
     if(courseId) {
         document.getElementById("select_schedule_form").setAttribute("data-course-id", courseId);
     }

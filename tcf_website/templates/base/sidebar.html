@@ -41,6 +41,14 @@
         <p>Schedule</p>
         <hr>
       </a>
+      {% else %}
+      <a href="#loginModal" data-toggle="modal"
+       class="list-group-item list-group-item-action pb-0
+       {% if request.resolver_match.url_name == 'schedule' %}active{% endif %}">
+        <h4><i class="fa fa-calendar fa-fw"></i></h4>
+        <p>Schedule</p>
+        <hr>
+      </a>
       {% endif %}
     </li>
     <li>

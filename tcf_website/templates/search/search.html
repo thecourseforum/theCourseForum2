@@ -5,6 +5,7 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'search/search.css' %}"/>
+    <link rel="stylesheet" href="{% static 'schedule/schedule.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -18,7 +19,7 @@
       </div>
 
       <div class="search-results container p-5">
-
+        <div id = "modal-target-course-search"></div> <!-- add schedule -->
         <!-- Tabs for displaying result categories: Courses, Departments, Instructors -->
         <div id="result-nav" class="result-nav row mb-5">
           <div class="col-12">
@@ -92,6 +93,14 @@
                               {%else%}
                                 N/A
                               {%endif%}
+                              <!-- add to schedule button -->
+                              <div class="ml-sm-auto d-flex justify-content-end">
+                                <a class="ml-2 mt-2 btn bg-tcf-orange text-white open_select_modal_button" type="button" 
+                                data-toggle="modal" data-target="#selectScheduleModal" data-course-id="{{ c.id }}"> 
+                                <i class="fas fa-plus" aria-hidden="true"></i> Add to Schedule 
+                                </a>
+                                {% include "schedule/add_course_modal.html" with user_id=user.id course=course%}
+                            </div> 
                             </p>
                           </div>
                         </div>
@@ -157,15 +166,14 @@
               {% endif %}
             </div>
           </div>
-
         </div>
-
       </div>
-
     </div>
 {% endblock %}
 
 {% block js %}
+  <script src="{% static 'schedule/schedule_select_script.js' %}"></script>
+  {# Initializes Bootstrap tooltip #}
   <script>
     // Search results should display some content at all times
     // Thus the current open accordion will not be able to close itself
@@ -177,6 +185,33 @@
             e.stopPropagation();
         }
       }
+    });
+
+    //add schedule modal
+    $(document).ready(function () {
+      $(document).on('click', '.open_select_modal_button', function() {
+          var courseId = $(this).data('course-id');
+
+          let targetDiv = document.getElementById('modal-target-course-search');
+          targetDiv.innerHTML = "";  
+          
+          $.ajax({
+              url: "{% url 'modal_load_schedules' mode='add_course' %}",
+              success: function(data) {
+                  targetDiv.innerHTML = data;
+                  console.log(data);
+                  // this function is included in the static 'schedule_select_script.js' file
+                  modalFunctions(courseId, "add_course", "{% url 'modal_load_sections' %}");
+                  $("#selectScheduleModal").modal("show"); // show the modal
+              }
+          });
+      });
+      
+      // function to enable submit button
+      window.enableSubmit = function() {
+          var submitButton = document.getElementById('schedule_select_btn');
+          submitButton.disabled = false;
+      };
     });
   </script>
 {% endblock %}
