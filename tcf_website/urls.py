@@ -136,7 +136,7 @@ urlpatterns = [
     # PASSWORD CHANGE URLS (used when logged in)
     path(
         "accounts/password_change/",
-        auth_views.PasswordChangeView.as_view(),
+        auth_views.PasswordChangeView.as_view(template_name='login/password_change_form.html'),
         name="password_change"
     ),
     path(
