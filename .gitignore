@@ -27,3 +27,4 @@ db/*.sql
 .coverage
 # ESLint cache
 .eslintcache
+.nvim.lua
