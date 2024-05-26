@@ -106,7 +106,7 @@ class Subdepartment(models.Model):
         """Return courses within last n years."""
         latest_semester = Semester.latest()
         return self.course_set.filter(
-            semester_last_taught__year__gte=latest_semester.year - num_of_years
+            semester_last_taught__number__gte=latest_semester.number - num_of_years * 10
         ).order_by("number")
 
     def has_current_course(self):
@@ -369,6 +369,11 @@ class Semester(models.Model):
     def latest():
         """Returns the latest semester."""
         return Semester.objects.order_by("-number").first()
+
+    @staticmethod
+    def last_five():
+        """Returns the semester from five years ago."""
+        return Semester.objects.filter(number = Semester.latest().number - 50)
 
     class Meta:
         indexes = [
