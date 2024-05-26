@@ -30,8 +30,8 @@
           {% if active_text %}
           <div id="filterButtons" class="btn-group btn-group-sm ml-md-auto mb-3"
                role="toolbar" aria-label="Show/Hide All Semesters">
-              <button type="button" id="hide-btn" class="btn btn-outline-primary {% if active_text == relevant_semester %} active {% endif %}" onclick = "location.href='{% url 'department_subdepartment_years' department.id current_subdepartment.id latest_semester %}'">{{ latest_semester }}</button>
-              <button type="button" id="hide-btn" class="btn btn-outline-primary {% if active_text != relevant_semester %} active {% endif %}" onclick="location.href='{% url 'department_subdepartment_years' department.id current_subdepartment.id last_five_years %}'">Last 5 Years</button>
+              <button type="button" id="hide-btn" class="btn btn-outline-primary {% if relevant_semester == latest_semester %} active {% endif %}" onclick = "location.href='{% url 'department_subdepartment_years' department.id current_subdepartment.id latest_semester %}'">{{ latest_semester }}</button>
+              <button type="button" id="hide-btn" class="btn btn-outline-primary {% if relevant_semester != latest_semester %} active {% endif %}" onclick="location.href='{% url 'department_subdepartment_years' department.id current_subdepartment.id last_five_years %}'">Last 5 Years</button>
           </div>
           {% endif %}
     </div>
