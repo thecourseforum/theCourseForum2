@@ -68,8 +68,12 @@ def department(request, dept_id : int, current_subdepartment_id: int = None, sem
 
     # Get the most recent semester
     latest_semester = Semester.latest()
-    relevant_semester = semester.split(' ')[1]
-    num_of_years = latest_semester.year - int(relevant_semester)
+    if semester:
+        relevant_semester = semester.split(' ')[1]
+        num_of_years = latest_semester.year - int(relevant_semester)
+    else:
+        relevant_semester = latest_semester
+        num_of_years = 0
 
     paginated_courses = Department.get_paginated_reviews(current_subdepartment_id, num_of_years, page_number)
 
@@ -81,6 +85,8 @@ def department(request, dept_id : int, current_subdepartment_id: int = None, sem
         (current_subdepartment.name, None, True),
     ]
 
+    print("_" + semester + " " + str(latest_semester) + "_")
+
     return render(
         request,
         "department/department.html",
@@ -89,8 +95,8 @@ def department(request, dept_id : int, current_subdepartment_id: int = None, sem
             "department": dept,
             "paginated_courses": paginated_courses,
             "current_subdepartment": current_subdepartment,
-            "latest_semester": latest_semester,
-            "relevant_semester": relevant_semester,
+            "latest_semester": str(latest_semester),
+            "relevant_semester": semester,
             "last_five_years": str(Semester.last_five()[0]),
             "breadcrumbs": breadcrumbs,
         },
