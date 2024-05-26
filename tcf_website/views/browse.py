@@ -51,7 +51,7 @@ def browse(request):
     )
 
 
-def department(request, dept_id : int, current_subdepartment_id: int = None):
+def department(request, dept_id : int, current_subdepartment_id: int = None, semester: str = None):
     """View for department page."""
 
     # Prefetch related subdepartments and courses to improve performance.
@@ -68,8 +68,8 @@ def department(request, dept_id : int, current_subdepartment_id: int = None):
 
     # Get the most recent semester
     latest_semester = Semester.latest()
-    relevant_semester = request.GET.get("semesters", latest_semester)
-    num_of_years = latest_semester.year - relevant_semester.year
+    relevant_semester = semester.split(' ')[1]
+    num_of_years = latest_semester.year - int(relevant_semester)
 
     paginated_courses = Department.get_paginated_reviews(current_subdepartment_id, num_of_years, page_number)
 
@@ -91,6 +91,7 @@ def department(request, dept_id : int, current_subdepartment_id: int = None):
             "current_subdepartment": current_subdepartment,
             "latest_semester": latest_semester,
             "relevant_semester": relevant_semester,
+            "last_five_years": str(Semester.last_five()[0]),
             "breadcrumbs": breadcrumbs,
         },
     )
