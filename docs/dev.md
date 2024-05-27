@@ -35,6 +35,10 @@ If you're on windows, open up `scripts/reset-db.sh` and run the commands manuall
 
 8. Ensure the website is up, running, and functional at `localhost:8000`.
 
+### VSCode Setup
+
+When you open the project, VSCode may prompt you to install the recommended extensions for this project. Click yes and ensure that they are in your extension library. A list of the necessary libraries can be found [here](.././.vscode/extensions.json).
+
 ## [Useful Commands](useful-commands.md)
 
 ## Common Issues
