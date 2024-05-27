@@ -58,21 +58,22 @@ def department(request, dept_id : int, current_subdepartment_id: int = None, sem
     # department.html loops through related subdepartments and courses.
     # See:
     # https://docs.djangoproject.com/en/3.0/ref/models/querysets/#django.db.models.query.QuerySet.prefetch_related
-    dept = get_object_or_404(Department, pk=dept_id)
+    department = get_object_or_404(Department, pk=dept_id)
     current_subdepartment = (
-        get_object_or_404(Subdepartment, pk=current_subdepartment_id, department=dept)
+        get_object_or_404(Subdepartment, pk=current_subdepartment_id, department=department)
         if current_subdepartment_id else
-        dept.subdepartment_set.first()
+        department.subdepartment_set.first()
     )    
     page_number = request.GET.get("page", 1)
 
     # Get the most recent semester
     latest_semester = Semester.latest()
+    last_five_years = str(Semester.last_five().first())
     if semester:
-        relevant_semester = semester.split(' ')[1]
-        num_of_years = latest_semester.year - int(relevant_semester)
+        selected_semester = int(semester.split(' ')[1])
+        num_of_years = latest_semester.year - selected_semester
     else:
-        relevant_semester = latest_semester
+        selected_semester = latest_semester
         num_of_years = 0
 
     paginated_courses = Department.get_paginated_reviews(current_subdepartment_id, num_of_years, page_number)
@@ -80,24 +81,22 @@ def department(request, dept_id : int, current_subdepartment_id: int = None, sem
 
     # Navigation breadcrimbs
     breadcrumbs = [
-        (dept.school.name, reverse("browse"), False),
-        (dept.name, reverse("department", args=[dept_id]), False),
+        (department.school.name, reverse("browse"), False),
+        (department.name, reverse("department", args=[dept_id]), False),
         (current_subdepartment.name, None, True),
     ]
-
-    print("_" + semester + " " + str(latest_semester) + "_")
 
     return render(
         request,
         "department/department.html",
         {
-            "subdepartments": dept.subdepartment_set.all(),
-            "department": dept,
+            "subdepartments": department.subdepartment_set.all(),
+            "department": department,
             "paginated_courses": paginated_courses,
             "current_subdepartment": current_subdepartment,
-            "latest_semester": str(latest_semester),
+            "latest_semester": latest_semester,
             "relevant_semester": semester,
-            "last_five_years": str(Semester.last_five()[0]),
+            "last_five_years": last_five_years,
             "breadcrumbs": breadcrumbs,
         },
     )
