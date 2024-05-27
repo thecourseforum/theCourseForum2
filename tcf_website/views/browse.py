@@ -157,6 +157,8 @@ def course_view(request, mnemonic, course_number):
         )
     )
 
+    # Note: Refactor pls
+
     for i in instructors:
         if i.section_times[0] is not None and i.section_nums[0] is not None:
             i.times = {}
@@ -168,7 +170,7 @@ def course_view(request, mnemonic, course_number):
                     i.times[str(i.section_nums[idx])] = i.section_times[idx][
                         :-1
                     ].split(",")
-        if i.section_nums.count(None) > 0:
+        if None in i.section_nums:
             i.section_nums.remove(None)
 
     taught_this_semester = Section.objects.filter(
