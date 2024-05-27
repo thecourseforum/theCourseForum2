@@ -24,7 +24,7 @@ db/*.sql
 .idea/
 .vscode/
 !.vscode/settings.json
-!.vscode/extension.json
+!.vscode/extensions.json
 # Code coverage
 .coverage
 # ESLint cache
