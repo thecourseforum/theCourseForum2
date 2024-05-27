@@ -72,13 +72,10 @@ def department(request, dept_id : int, current_subdepartment_id: int = None, fil
     match filter_type:
         case 'latest':
             num_of_years = 0
-            relevant_semester = latest_semester
         case 'last-five-years':
             num_of_years = 5
-            relevant_semester = last_five_years
         case _:
             num_of_years = 0
-            relevant_semester = latest_semester
             filter_type = "latest"
 
     paginated_courses = Department.get_paginated_reviews(current_subdepartment_id, num_of_years, page_number)
@@ -100,7 +97,6 @@ def department(request, dept_id : int, current_subdepartment_id: int = None, fil
             "paginated_courses": paginated_courses,
             "current_subdepartment": current_subdepartment,
             "latest_semester": latest_semester,
-            "relevant_semester": relevant_semester,
             "last_five_years": last_five_years,
             "filter_type": filter_type,
             "breadcrumbs": breadcrumbs,
