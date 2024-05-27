@@ -3,7 +3,7 @@
 
 """Views for Browse, department, and course/course instructor pages."""
 import json
-from typing import Any, Dict, List
+from typing import Any
 
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.core.exceptions import ObjectDoesNotExist
@@ -358,7 +358,7 @@ def instructor_view(request, instructor_id):
     """View for instructor page, showing all their courses taught."""
     instructor: Instructor = get_object_or_404(Instructor, pk=instructor_id)
 
-    stats: Dict[str, float] = (
+    stats: dict[str, float] = (
         Instructor.objects.filter(pk=instructor_id)
         .prefetch_related("review_set")
         .aggregate(
@@ -373,7 +373,7 @@ def instructor_view(request, instructor_id):
         )
     )
 
-    course_fields: List[str] = [
+    course_fields: list[str] = [
         "name",
         "id",
         "avg_rating",
@@ -381,7 +381,7 @@ def instructor_view(request, instructor_id):
         "avg_gpa",
         "last_taught",
     ]
-    courses: List[Dict[str, Any]] = (
+    courses: list[dict[str, Any]] = (
         Course.objects.filter(section__instructors=instructor, number__gte=1000)
         .prefetch_related("review_set")
         .annotate(
@@ -427,8 +427,8 @@ def instructor_view(request, instructor_id):
         .order_by("subdepartment_name", "name")
     )
 
-    grouped_courses: Dict[str, List[Dict[str, Any]]] = {}
-    for course in courses:  # type: Dict[str, Any]
+    grouped_courses: dict[str, list[dict[str, Any]]] = {}
+    for course in courses:
         course["avg_rating"] = safe_round(course["avg_rating"])
         course["avg_difficulty"] = safe_round(course["avg_difficulty"])
         course["avg_gpa"] = safe_round(course["avg_gpa"])
@@ -437,7 +437,7 @@ def instructor_view(request, instructor_id):
             course
         )
 
-    context: Dict[str, Any] = {
+    context: dict[str, Any] = {
         "instructor": instructor,
         **{key: safe_round(value) for key, value in stats.items()},
         "courses": grouped_courses,
