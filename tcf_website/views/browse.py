@@ -24,7 +24,7 @@ from ..models import (
     School,
     Section,
     Semester,
-    Subdepartment
+    Subdepartment,
 )
 
 
@@ -51,7 +51,12 @@ def browse(request):
     )
 
 
-def department(request, dept_id : int, current_subdepartment_id: int = None, filter_type: str = None):
+def department(
+    request,
+    dept_id: int,
+    current_subdepartment_id: int = None,
+    filter_type: str = None,
+):
     """View for department page."""
 
     # Prefetch related subdepartments and courses to improve performance.
@@ -60,26 +65,29 @@ def department(request, dept_id : int, current_subdepartment_id: int = None, fil
     # https://docs.djangoproject.com/en/3.0/ref/models/querysets/#django.db.models.query.QuerySet.prefetch_related
     department = get_object_or_404(Department, pk=dept_id)
     current_subdepartment = (
-        get_object_or_404(Subdepartment, pk=current_subdepartment_id, department=department)
-        if current_subdepartment_id else
-        department.subdepartment_set.first()
-    )    
+        get_object_or_404(
+            Subdepartment, pk=current_subdepartment_id, department=department
+        )
+        if current_subdepartment_id
+        else department.subdepartment_set.first()
+    )
     page_number = request.GET.get("page", 1)
 
     # Get the most recent semester
     latest_semester = str(Semester.latest())
     last_five_years = str(Semester.last_five().first())
     match filter_type:
-        case 'latest':
+        case "latest":
             num_of_years = 0
-        case 'last-five-years':
+        case "last-five-years":
             num_of_years = 5
         case _:
             num_of_years = 0
             filter_type = "latest"
 
-    paginated_courses = Department.get_paginated_reviews(current_subdepartment_id, num_of_years, page_number)
-
+    paginated_courses = Department.get_paginated_reviews(
+        current_subdepartment_id, num_of_years, page_number
+    )
 
     # Navigation breadcrimbs
     breadcrumbs = [
