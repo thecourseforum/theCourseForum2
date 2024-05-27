@@ -14,7 +14,7 @@ urlpatterns = [
     path("browse/", views.browse, name="browse"),
     path("department/<int:dept_id>/", views.department, name="department"),
     path("department/<int:dept_id>/<int:current_subdepartment_id>/", views.department, name="department_subdepartment"),
-    path("department/<int:dept_id>/<int:current_subdepartment_id>/<str:semester>", views.department, name="department_subdepartment_years"),
+    path("department/<int:dept_id>/<int:current_subdepartment_id>/<str:filter_type>", views.department, name="department_subdepartment_years"),
 
 
     path(
