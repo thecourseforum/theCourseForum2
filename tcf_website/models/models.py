@@ -46,10 +46,12 @@ class Department(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name 
+        return self.name
 
     @staticmethod
-    def paginate(courses: "QuerySet[Course]", page_number: int, courses_per_page=15):
+    def paginate(
+        courses: "QuerySet[Course]", page_number: int, courses_per_page=15
+    ):
         paginator = Paginator(courses, courses_per_page)
         try:
             page_obj = paginator.page(page_number)
@@ -60,13 +62,13 @@ class Department(models.Model):
         return page_obj
 
     @staticmethod
-    def get_paginated_reviews(subdept_id: int, num_of_years : int, page_number: int):
+    def get_paginated_reviews(
+        subdept_id: int, num_of_years: int, page_number: int
+    ):
         if subdept_id:
-            subdepartment = get_object_or_404(Subdepartment, pk = subdept_id)
+            subdepartment = get_object_or_404(Subdepartment, pk=subdept_id)
             courses = subdepartment.recent_courses(num_of_years)
             return Department.paginate(courses, page_number)
-        
-
 
     class Meta:
         indexes = [
@@ -78,6 +80,7 @@ class Department(models.Model):
                 fields=["name", "school"], name="unique departments per school"
             )
         ]
+
 
 # e.g. CREO in French department or ENCW in English
 
@@ -102,11 +105,12 @@ class Subdepartment(models.Model):
     def __str__(self):
         return f"{self.mnemonic} - {self.name}"
 
-    def recent_courses(self, num_of_years : int = 5):
+    def recent_courses(self, n: int = 5):
         """Return courses within last n years."""
         latest_semester = Semester.latest()
         return self.course_set.filter(
-            semester_last_taught__number__gte=latest_semester.number - num_of_years * 10
+            semester_last_taught__number__gte=latest_semester.number
+            - n * 10
         ).order_by("number")
 
     def has_current_course(self):
@@ -373,7 +377,7 @@ class Semester(models.Model):
     @staticmethod
     def last_five():
         """Returns the semester from five years ago."""
-        return Semester.objects.filter(number = Semester.latest().number - 50)
+        return Semester.objects.filter(number=Semester.latest().number - 50)
 
     class Meta:
         indexes = [
@@ -499,14 +503,14 @@ class Course(models.Model):
         return Review.objects.filter(course=self).aggregate(
             models.Avg("difficulty")
         )["difficulty__avg"]
-    
+
     def average_gpa(self):
-        course_grades = CourseGrade.objects.filter(course = self)
+        course_grades = CourseGrade.objects.filter(course=self)
         first_grade = course_grades.first()
         if first_grade is None:
-            return None 
-        return first_grade.average    
-    
+            return None
+        return first_grade.average
+
     def review_count(self):
         """Compute total number of course reviews."""
         return self.review_set.count()
