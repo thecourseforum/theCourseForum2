@@ -7,6 +7,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Abs, Coalesce
 from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 
 class School(models.Model):
