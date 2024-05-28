@@ -8,7 +8,10 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("tcf_website", "0011_remove_course_tcf_website_subdepa_f296bc_idx_and_more"),
+        (
+            "tcf_website",
+            "0011_remove_course_tcf_website_subdepa_f296bc_idx_and_more",
+        ),
     ]
 
     operations = [
