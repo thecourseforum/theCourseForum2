@@ -1,48 +1,34 @@
-{% extends "base/base.html" %}
-{% load static %}
-
-{% block title %}{{breadcrumbs.1.0}} - theCourseForum{% endblock %}
-
-{% block styles %}
+{% extends "base/base.html" %} {% load static %} {% block title
+%}{{breadcrumbs.1.0}} - theCourseForum{% endblock %} {% block styles %}
 <link rel="stylesheet" href="{% static 'department/department.css' %}" />
 <link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
 <link rel="stylesheet" href="{% static 'common/show-hide.css' %}" />
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 
 <div class="department container">
-    <div class="container-lg mb-4">
-        {% include "../common/leaderboard_ad.html" with ad_slot="3719332473" %}
-    </div>
-    <div class="container-lg">
-        {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True %}
-    </div>
-    <div class="subdepartments mt-3">
-        {% for sd in subdepartments %}
-        <div class="subdepartment container-lg {% if not sd.has_current_course %}old{% endif %}">
-            <h1 class="my-3">{{ sd.name }}</h1>
-            <ul class="course-list" id="courses-sd-{{sd.id}}">
-            </ul>
-            <div class="text-center" id="spinner-sd-{{sd.id}}">
-                <div class="spinner-border" role="status" >
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
+  <div class="container-lg mb-4">
+    {% include "../common/leaderboard_ad.html" with ad_slot="3719332473" %}
+  </div>
+  <div class="container-lg">
+    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs
+    active_text=filter_type sorting=True %}
+  </div>
+  <div class="subdepartments mt-3">
+    <div
+      class="subdepartment container-lg {% if not current_subdepartment.has_current_course %}old{% endif %}"
+    >
+      <h1 class="my-3">{{ current_subdepartment.name }}</h1>
+      <ul class="course-list" id="courses-sd-{{current_subdepartment.id}}">
+        {% comment %} TODO: Paginate department courses {% endcomment %} {% for
+        course in paginated_courses %} {% include
+        "department/department_courses.html" with course=course %} {% endfor %}
+      </ul>
+      <div class="text-center" id="spinner-sd-{{current_subdepartment.id}}">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
         </div>
-        {% endfor %}
+      </div>
     </div>
+  </div>
 </div>
-{% endblock %}
-
-{% block js %}
-<script type="module" src="{% static 'common/bind-show-hide.js' %}"></script>
-<script type="module" src="{% static 'common/bind-sort.js' %}"></script>
-<script type="module">
-    import { loadPage } from "{% static 'department/loadMoreCourses.js' %}";
-
-    {% for sd in subdepartments %}
-        loadPage("{{sd.id}}", "/api/courses/?page=1&page_size=30&subdepartment={{sd.id}}&simplestats&recent");
-    {% endfor %}
-</script>
 {% endblock %}
