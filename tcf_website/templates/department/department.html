@@ -1,5 +1,4 @@
-{% extends "base/base.html" %} {% load static %} {% block title
-%}{{breadcrumbs.1.0}} - theCourseForum{% endblock %} {% block styles %}
+{% extends "base/base.html" %} {% load static %} {% block title%}{{breadcrumbs.1.0}} - theCourseForum{% endblock %} {% block styles %}
 <link rel="stylesheet" href="{% static 'department/department.css' %}" />
 <link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
 <link rel="stylesheet" href="{% static 'common/show-hide.css' %}" />
@@ -10,18 +9,17 @@
     {% include "../common/leaderboard_ad.html" with ad_slot="3719332473" %}
   </div>
   <div class="container-lg">
-    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs
-    active_text=filter_type sorting=True %}
+    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs sorting=True %}
   </div>
   <div class="subdepartments mt-3">
     <div
-      class="subdepartment container-lg {% if not current_subdepartment.has_current_course %}old{% endif %}"
+      class="subdepartment container-lg"
     >
-      <h1 class="my-3">{{ current_subdepartment.name }}</h1>
-      <ul class="course-list" id="courses-sd-{{current_subdepartment.id}}">
-        {% comment %} TODO: Paginate department courses {% endcomment %} {% for
-        course in paginated_courses %} {% include
-        "department/department_courses.html" with course=course %} {% endfor %}
+      {% comment %} <h1 class="my-3">{{ current_subdepartment.name }}</h1> {% endcomment %}
+      <ul class="course-list">
+        {% comment %} TODO: Paginate department courses {% endcomment %}
+        {% for course in courses %} 
+        {% include "department/department_courses.html" with course=course %} {% endfor %}
       </ul>
       <div class="text-center" id="spinner-sd-{{current_subdepartment.id}}">
         <div class="spinner-border" role="status">
