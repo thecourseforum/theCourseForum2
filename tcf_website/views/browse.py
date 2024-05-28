@@ -67,8 +67,6 @@ def department(request, dept_id):
             print(course)
             courses.append(course)
 
-    print(courses)
-
     # Get the most recent semester
     latest_semester = Semester.latest()
 
