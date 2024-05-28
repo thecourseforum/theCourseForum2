@@ -3,11 +3,11 @@
 """TCF Database models."""
 
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Abs, Coalesce
-from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchVectorField, SearchVector
 
 
 class School(models.Model):

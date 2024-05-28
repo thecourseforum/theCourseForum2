@@ -2,7 +2,6 @@
 """Views for search results"""
 
 import re
-from datetime import datetime
 
 from django.contrib.postgres.search import (
     SearchQuery,
@@ -12,6 +11,7 @@ from django.contrib.postgres.search import (
 )
 from django.db.models import TextField, Value
 from django.db.models.functions import Cast, Concat
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.cache import cache_page
 
@@ -46,9 +46,8 @@ def search(request):
     return render(request, "search/search.html", context_vars)
 
 
-# TODO: is this useful?
 # before, prioritized courses for short queries (len < 4) - is this a valid strat?
-def decide_order(query, courses, instructors):
+def decide_order(_, courses, instructors):
     """Decides if courses or instructors should be displayed first.
     Returns True if courses should be prioritized, False if instructors should be prioritized
     """
@@ -113,22 +112,21 @@ def fetch_instructors(query: str):
 def fetch_courses(title, number):
     """Get course data using reverse indexing"""
     vector = (
-        SearchVector("title", weight='A', config='simple')
-        + SearchVector("subdepartment__mnemonic", weight='B', config='simple')
-        + SearchVector(Cast("number", TextField()), weight='C', config='simple')
+        SearchVector("title", weight="A", config="simple")
+        + SearchVector("subdepartment__mnemonic", weight="B", config="simple")
+        + SearchVector(Cast("number", TextField()), weight="C", config="simple")
     )
     query_string = f"{title} {number}" if number else title
-    query = SearchQuery(query_string, config='simple')
+    query = SearchQuery(query_string, config="simple")
 
     results = (
         Course.objects.annotate(rank=SearchRank(vector, query))
-        .order_by('-rank')
+        .order_by("-rank")
         .exclude(semester_last_taught_id__lt=48)[:10]
     )
 
     formatted_results = [
         {
-            # TODO: normalize score
             "_meta": {"id": str(course.pk), "score": course.rank},
             "title": {"raw": course.title},
             "number": {"raw": course.number},
