@@ -3,11 +3,11 @@
     <div class="row no-gutters">
       <a
         class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start align-items-center rating-card-link"
-        {% comment %} href="location.href='{% url 'course' course.mnemonic course.number %}'" {% endcomment %}
+        href="{% url 'course' course.subdepartment.mnemonic course.number %}"
       >
         <div class="text-center text-lg-left">
-          <h3 id="title">Course Code</h3>
-          <h5>Title</h5>
+          <h3 id="title">{{ course.subdepartment.mnemonic }} {{ course.number }}</h3>
+          <h5>{{ course.title }}</h5>
         </div>
       </a>
       <div class="col-md-8">
@@ -17,14 +17,26 @@
               <small class="mb-0 text-uppercase">
                 <i class="fa fa-star fa-fw" aria-hidden="true"></i>&nbsp;Rating
               </small>
-              <p class="mb-0 info" id="rating">Avg. Rating</p>
+              <p class="mb-0 info" id="rating">
+              {% if course.average_rating %}
+              {{ course.average_rating|floatformat:2 }}
+              {% else %}
+              —
+              {% endif %}
+              </p>
             </div>
             <div class="col-4 col-lg-2 text-nowrap">
               <small class="mb-0 text-uppercase">
                 <i class="fa fa-dumbbell fa-fw" aria-hidden="true"></i
                 >&nbsp;Difficulty
               </small>
-              <p class="mb-0 info" id="difficulty">Avg. Difficulty</p>
+              <p class="mb-0 info" id="difficulty">
+              {% if course.average_difficulty %}
+              {{ course.average_difficulty|floatformat:2 }}
+              {% else %}
+              —
+              {% endif %}
+              </p>
             </div>
             <div class="col-4 col-lg-2 text-nowrap">
               <small class="mb-0 text-uppercase">
@@ -34,10 +46,10 @@
             </div>
             <div class="col-12 col-lg-3 offset-lg-3">
               <small class="mb-0 text-uppercase"> Last Taught </small>
-              <p class="mb-0 info">Last Taught Semester</p>
+              <p class="mb-0 info">{{ course.semester_last_taught}}</p>
             </div>
           </div>
-          <p class="card-text mt-2">Course Description</p>
+          <p class="card-text mt-2">{{ course.description }}</p>
         </div>
       </div>
     </div>
