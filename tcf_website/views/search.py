@@ -47,13 +47,14 @@ def search(request):
 
 
 # before, prioritized courses for short queries (len < 4) - is this a valid strat?
-def decide_order(_, courses, instructors):
+def decide_order(query, courses, instructors):
     """Decides if courses or instructors should be displayed first.
     Returns True if courses should be prioritized, False if instructors should be prioritized
     """
 
     if (
-        len(instructors["results"]) == 0
+        len(query) <= 4
+        or len(instructors["results"]) == 0
         or instructors["results"][0]["score"] == 0
     ):
         return True
@@ -62,9 +63,7 @@ def decide_order(_, courses, instructors):
     if instructors["results"][0]["score"] == 1.0:
         return False
 
-    courses_avg = compute_avg_similarity(
-        [x["score"] for x in courses["results"]]
-    )
+    courses_avg = compute_avg_similarity([x["score"] for x in courses["results"]])
 
     return courses_avg != 0
 
@@ -91,11 +90,7 @@ def fetch_instructors(query: str):
             "last_name": {"raw": instructor.last_name},
             "email": {"raw": instructor.email},
             "website": {
-                "raw": (
-                    instructor.website
-                    if hasattr(instructor, "website")
-                    else None
-                )
+                "raw": (instructor.website if hasattr(instructor, "website") else None)
             },
         }
         for instructor in results
