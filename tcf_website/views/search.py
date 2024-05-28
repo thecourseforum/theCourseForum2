@@ -13,6 +13,7 @@ from django.contrib.postgres.search import (
 from django.db.models import TextField, Value
 from django.db.models.functions import Cast, Concat
 from django.shortcuts import render
+from django.views.decorators.cache import cache_page
 
 from ..models import Course, Instructor, Subdepartment
 
