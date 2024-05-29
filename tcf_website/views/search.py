@@ -63,7 +63,9 @@ def decide_order(query, courses, instructors):
     if instructors["results"][0]["score"] == 1.0:
         return False
 
-    courses_avg = compute_avg_similarity([x["score"] for x in courses["results"]])
+    courses_avg = compute_avg_similarity(
+        [x["score"] for x in courses["results"]]
+    )
 
     return courses_avg != 0
 
@@ -90,7 +92,11 @@ def fetch_instructors(query: str):
             "last_name": {"raw": instructor.last_name},
             "email": {"raw": instructor.email},
             "website": {
-                "raw": (instructor.website if hasattr(instructor, "website") else None)
+                "raw": (
+                    instructor.website
+                    if hasattr(instructor, "website")
+                    else None
+                )
             },
         }
         for instructor in results
@@ -223,54 +229,3 @@ def group_by_dept(courses):
         grouped_courses[course_dept]["courses"].append(course)
 
     return grouped_courses
-
-
-# cache autocomplete results for 60s * 5 = 5min
-@cache_page(60 * 5)
-def autocomplete(request):
-    """Fetch autocomplete results"""
-    # Set query
-    query = request.GET.get("q", "")
-    # courses are at least 3 digits long
-    # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
-    match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
-    if match:
-        title_part, number_part = match.groups()
-    else:
-        # Handle cases where the query doesn't match the expected format
-        title_part, number_part = query, ""
-
-    # fetching instructor results from query
-    instructorData = fetch_instructors(query)["results"]
-    # normalizing instructor data
-    for instructor in instructorData:
-        instructor["score"] = instructor.pop("score") / 2.5
-        instructor["title"] = (
-            instructor.pop("first_name") + " " + instructor.pop("last_name")
-        )
-
-    courses = fetch_courses(title_part, number_part)
-    courseData = list(courses["results"])
-
-    combinedData = instructorData + courseData
-
-    # sort the top results using the compare function
-    topResults = sorted(combinedData, key=compare, reverse=True)[:5]
-
-    return JsonResponse({"results": topResults})
-
-
-# pylint: disable=missing-function-docstring
-def compare(result):
-    similarity_threshold = 0.01
-
-    meetsThreshold = float("-inf")
-
-    try:
-        print(f'{result["title"]} has score {result["score"]}')
-        if result["score"] > similarity_threshold:
-            meetsThreshold = result["score"]
-    except Exception as _:  # pylint: disable=broad-exception-caught
-        if result["total_similarity"] > similarity_threshold:
-            meetsThreshold = result["total_similarity"]
-    return meetsThreshold
