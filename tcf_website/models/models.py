@@ -168,8 +168,6 @@ class Instructor(models.Model):
     # hidden professor. Required. Default visible.
     hidden = models.BooleanField(default=False)
 
-    search = SearchVectorField(null=True)
-
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
 
@@ -303,9 +301,6 @@ class Instructor(models.Model):
             "last_name", weight="B"
         )
         super().save(*args, **kwargs)
-
-    class Meta:
-        indexes = [GinIndex(fields=["search"])]
 
 
 class Semester(models.Model):
