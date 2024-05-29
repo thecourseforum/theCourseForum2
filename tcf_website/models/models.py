@@ -296,12 +296,6 @@ class Instructor(models.Model):
             models.Avg("average")
         )["average__avg"]
 
-    def save(self, *args, **kwargs):
-        self.search = SearchVector("first_name", weight="A") + SearchVector(
-            "last_name", weight="B"
-        )
-        super().save(*args, **kwargs)
-
 
 class Semester(models.Model):
     """Semester model.
