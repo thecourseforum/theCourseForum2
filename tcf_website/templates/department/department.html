@@ -22,7 +22,7 @@
     <div class="subdepartment container-lg">
       <ul class="course-list">
         {% for course in courses %} 
-          {% include "department/department_courses.html" with course=course %}
+          {% include "department/department_course.html" with course=course %}
         {% endfor %}
       </ul>
       <div class="text-center" id="spinner-sd-{{current_subdepartment.id}}">
