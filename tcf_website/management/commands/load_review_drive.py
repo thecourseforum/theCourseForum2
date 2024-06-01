@@ -9,15 +9,23 @@ from datetime import datetime
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from tcf_website.models import Instructor, Course, Subdepartment, User, Review, Semester
+from tcf_website.models import (
+    Course,
+    Instructor,
+    Review,
+    Semester,
+    Subdepartment,
+    User,
+)
 
-DATA_DIR = "tcf_website/management/commands/review_drive_responses/"
+DATA_DIR = "tcf_website/management/commands/review_drives/"
 
 
 class Command(BaseCommand):
     """Command that is run for CSV upload."""
+
     # Run this command using
-    # `docker exec -it tcf_django python3 manage.py upload_csv_review_drive <params>`
+    # `docker exec -it tcf_django python3 manage.py load_csv_review_drive <params>`
     # Required parameters: [filename] [season] [years]
     # Optional flag --verbose can be set to show output of the script
     # Must be run in a separate terminal after already running docker-compose up
@@ -26,7 +34,7 @@ class Command(BaseCommand):
     # other schools have been split up.
 
     help = (
-        "Uploads CSV from /review_drive_responses/ in the format of "
+        "Uploads CSV from /review_drives/ in the format of "
         "Time, Email, Mnemonic, Number, Name, Review, Rating, Enjoyable, Recommendation, "
         "Difficulty, Reading Hours, Writing Hours, Group work Hours, Misc Hours"
     )
@@ -35,7 +43,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "filename",
             help=(
-                "Filepath of csv to upload in /review_drive_responses/"
+                "Filepath of csv to upload in /review_drives/"
                 "Must be in correct format."
             ),
             type=str,
@@ -75,15 +83,19 @@ class Command(BaseCommand):
             return
 
         # Needs to be created ahead of time in the db
-        dummy_account = User.objects.filter(computing_id__iexact=settings.REVIEW_DRIVE_ID).first()
+        dummy_account = User.objects.filter(
+            computing_id__iexact=settings.REVIEW_DRIVE_ID
+        ).first()
         if dummy_account is None:
-            dummy_account = User.objects.create_user(computing_id=settings.REVIEW_DRIVE_ID,
-                                                     graduation_year=year,
-                                                     username=settings.REVIEW_DRIVE_ID,
-                                                     password=settings.REVIEW_DRIVE_PASSWORD,
-                                                     email=settings.REVIEW_DRIVE_EMAIL,
-                                                     first_name='Review',
-                                                     last_name='Drive')
+            dummy_account = User.objects.create_user(
+                computing_id=settings.REVIEW_DRIVE_ID,
+                graduation_year=year,
+                username=settings.REVIEW_DRIVE_ID,
+                password=settings.REVIEW_DRIVE_PASSWORD,
+                email=settings.REVIEW_DRIVE_EMAIL,
+                first_name="Review",
+                last_name="Drive",
+            )
 
         print("Starting file upload...")
         create_reviews(verbose, filename, semester, dummy_account)
@@ -91,7 +103,9 @@ class Command(BaseCommand):
 
 def create_reviews(verbose, filename, semester, dummy_account):
     """Creates reviews based on CSV info."""
-    with open(os.path.join(DATA_DIR, filename), mode="r", encoding='utf-8') as file:
+    with open(
+        os.path.join(DATA_DIR, filename), mode="r", encoding="utf-8"
+    ) as file:
         csv_file = csv.reader(file)
 
         for i, line in enumerate(csv_file):
@@ -189,7 +203,7 @@ def create_reviews(verbose, filename, semester, dummy_account):
             amount_group = int(line[12].strip())
             amount_homework = int(line[13].strip())
             hours_per_week = (
-                    amount_reading + amount_writing + amount_group + amount_homework
+                amount_reading + amount_writing + amount_group + amount_homework
             )
 
             created = datetime.strptime(line[0].strip(), "%m/%d/%Y %H:%M:%S")
