@@ -446,7 +446,6 @@ class Course(models.Model):
         """Returns True if course was taught in current semester."""
         return self.semester_last_taught == Semester.latest()
 
-    @property
     def average_rating(self):
         """Compute average rating.
 
@@ -468,7 +467,6 @@ class Course(models.Model):
 
         return (recommendability + instructor_rating + enjoyability) / 3
 
-    @property
     def average_difficulty(self):
         """Compute average difficulty score."""
         return Review.objects.filter(course=self).aggregate(

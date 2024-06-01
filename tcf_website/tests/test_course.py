@@ -36,27 +36,27 @@ class CourseTestCase(TestCase):
         """Test average rating."""
         rating = (self.review1.average() + self.review2.average()) / 2
 
-        self.assertAlmostEqual(self.course.average_rating, rating, 4)
+        self.assertAlmostEqual(self.course.average_rating(), rating, 4)
 
     def test_average_difficulty(self):
         """Test average difficulty."""
         difficulty = (self.review1.difficulty + self.review2.difficulty) / 2
 
-        self.assertAlmostEqual(self.course.average_difficulty, difficulty, 4)
+        self.assertAlmostEqual(self.course.average_difficulty(), difficulty, 4)
 
     def test_average_rating_no_reviews(self):
         """Test average rating no reviews."""
         self.review1.delete()
         self.review2.delete()
 
-        self.assertIsNone(self.course.average_rating)
+        self.assertIsNone(self.course.average_rating())
 
     def test_average_difficulty_no_reviews(self):
         """Test average difficulty no reviews."""
         self.review1.delete()
         self.review2.delete()
 
-        self.assertIsNone(self.course.average_difficulty)
+        self.assertIsNone(self.course.average_difficulty())
 
     def test_get_queryset_recent_with_stats(self):
         """Test CourseViewSet.get_queryset() with recent parameter
