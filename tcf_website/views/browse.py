@@ -61,11 +61,11 @@ def department(request, dept_id):
         pk=dept_id
     )
 
-    courses = []
-    for subdepartment in dept.subdepartment_set.all():
-        for course in subdepartment.recent_courses():
-            print(course)
-            courses.append(course)
+    courses = [
+        course
+        for subdepartment in dept.subdepartment_set.all()
+        for course in subdepartment.recent_courses()
+    ]
 
     # Get the most recent semester
     latest_semester = Semester.latest()
