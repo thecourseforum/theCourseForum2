@@ -29,6 +29,7 @@ db/*.sql
 .coverage
 # ESLint cache
 .eslintcache
+.nvim.lua
 # Virtual Environments
 venv
 .venv
