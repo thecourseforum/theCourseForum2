@@ -1,8 +1,15 @@
-{% extends "base/base.html" %} {% load static %} {% block title%}{{breadcrumbs.1.0}} - theCourseForum{% endblock %} {% block styles %}
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}{{breadcrumbs.1.0}} - theCourseForum{% endblock %}
+
+{% block styles %}
 <link rel="stylesheet" href="{% static 'department/department.css' %}" />
 <link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
 <link rel="stylesheet" href="{% static 'common/show-hide.css' %}" />
-{% endblock %} {% block content %}
+{% endblock %}
+
+{% block content %}
 
 <div class="department container">
   <div class="container-lg mb-4">
@@ -15,9 +22,7 @@
     <div
       class="subdepartment container-lg"
     >
-      {% comment %} <h1 class="my-3">{{ current_subdepartment.name }}</h1> {% endcomment %}
       <ul class="course-list">
-        {% comment %} TODO: Paginate department courses {% endcomment %}
         {% for course in courses %} 
         {% include "department/department_courses.html" with course=course %} {% endfor %}
       </ul>
@@ -29,4 +34,5 @@
     </div>
   </div>
 </div>
+
 {% endblock %}

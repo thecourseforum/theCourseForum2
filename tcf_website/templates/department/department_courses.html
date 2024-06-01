@@ -19,9 +19,9 @@
               </small>
               <p class="mb-0 info" id="rating">
               {% if course.average_rating %}
-              {{ course.average_rating|floatformat:2 }}
+                {{ course.average_rating|floatformat:2 }}
               {% else %}
-              —
+                —
               {% endif %}
               </p>
             </div>
@@ -32,9 +32,9 @@
               </small>
               <p class="mb-0 info" id="difficulty">
               {% if course.average_difficulty %}
-              {{ course.average_difficulty|floatformat:2 }}
+                {{ course.average_difficulty|floatformat:2 }}
               {% else %}
-              —
+                —
               {% endif %}
               </p>
             </div>
