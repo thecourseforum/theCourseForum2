@@ -195,11 +195,6 @@ def create_reviews(verbose, filename, semester, dummy_account):
             created = datetime.strptime(line[0].strip(), "%m/%d/%Y %H:%M:%S")
             modified = datetime.now()
 
-            if account == dummy_account:
-                review_email = email
-            else:
-                review_email = ""
-
             review = Review(
                 text=review_content,
                 user=account,
@@ -217,7 +212,7 @@ def create_reviews(verbose, filename, semester, dummy_account):
                 amount_homework=amount_homework,
                 created=created,
                 modified=modified,
-                email=review_email,
+                email=email if account == dummy_account else "",
             )
             review.save()
 
