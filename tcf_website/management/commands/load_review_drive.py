@@ -25,7 +25,7 @@ class Command(BaseCommand):
     """Command that is run for CSV upload."""
 
     # Run this command using
-    # `docker exec -it tcf_django python3 manage.py load_csv_review_drive <params>`
+    # `docker exec -it tcf_django python3 manage.py load_review_drive <params>`
     # Required parameters: [filename] [season] [years]
     # Optional flag --verbose can be set to show output of the script
     # Must be run in a separate terminal after already running docker-compose up
