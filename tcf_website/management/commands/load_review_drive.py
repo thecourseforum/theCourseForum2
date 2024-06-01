@@ -26,12 +26,10 @@ class Command(BaseCommand):
 
     # Run this command using
     # `docker exec -it tcf_django python3 manage.py load_review_drive <params>`
-    # Required parameters: [filename] [season] [years]
+    # Required parameters: [filename]
     # Optional flag --verbose can be set to show output of the script
     # Must be run in a separate terminal after already running docker-compose up
     # May have to restart the docker container for database changes to be visible on the site
-    # Visually check that CS department has been moved to E School and that
-    # other schools have been split up.
 
     help = (
         "Uploads CSV from /review_drives/ in the format of "
@@ -41,24 +39,12 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "filename",
+            "semester",
             help=(
-                "Filepath of csv to upload in /review_drives/"
-                "Must be in correct format."
+                "Semester name of csv to upload in /review_drives/"
+                "Must be in format <YYYY>_<SEASON>"
             ),
             type=str,
-        )
-        parser.add_argument(
-            "season",
-            help=(
-                "What season the reviews took place i.e. Fall, January, Spring, Summer"
-            ),
-            type=str,
-        )
-        parser.add_argument(
-            "year",
-            help="Year of reviews i.e. 2024",
-            type=int,
         )
 
         # Named (optional) arguments
@@ -70,9 +56,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         verbose = options["verbose"]
-        filename = options["filename"]
-        season = options["season"]
-        year = options["year"]
+        semester = options["semester"]
+
+        split = semester.split("_")
+        year, season = int(split[0]), split[1].lower()
 
         # Get semester object from args
         semester = Semester.objects.filter(
@@ -98,7 +85,7 @@ class Command(BaseCommand):
             )
 
         print("Starting file upload...")
-        create_reviews(verbose, filename, semester, dummy_account)
+        create_reviews(verbose, f"{year}_{season}.csv", semester, dummy_account)
 
 
 def create_reviews(verbose, filename, semester, dummy_account):
