@@ -95,7 +95,7 @@ def logout(request):
     """Logs out user."""
     auth_logout(request)
     messages.add_message(request, messages.SUCCESS, "Logged out successfully!")
-    return redirect("browse")
+    return redirect("/")
 
 
 def email_verification(request):
