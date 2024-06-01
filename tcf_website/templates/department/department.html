@@ -16,15 +16,14 @@
     {% include "../common/leaderboard_ad.html" with ad_slot="3719332473" %}
   </div>
   <div class="container-lg">
-    {% include "common/toolbar.html" with active_text=latest_semester breadcrumbs=breadcrumbs sorting=True %}
+    {% include "common/toolbar.html" with active_text=latest_semester breadcrumbs=breadcrumbs hidden_text="Last 5 Years" sorting=True %}
   </div>
   <div class="subdepartments mt-3">
-    <div
-      class="subdepartment container-lg"
-    >
+    <div class="subdepartment container-lg">
       <ul class="course-list">
         {% for course in courses %} 
-        {% include "department/department_courses.html" with course=course %} {% endfor %}
+          {% include "department/department_courses.html" with course=course %}
+        {% endfor %}
       </ul>
       <div class="text-center" id="spinner-sd-{{current_subdepartment.id}}">
         <div class="spinner-border" role="status">
