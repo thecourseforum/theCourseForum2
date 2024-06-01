@@ -1,2 +1,6 @@
 venv/
 node_modules/
+/**/*.*
+!**/*.css
+!**/*.md
+!**/*.js
