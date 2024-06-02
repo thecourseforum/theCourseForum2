@@ -59,7 +59,7 @@ class Command(BaseCommand):
         semester = options["semester"]
 
         split = semester.split("_")
-        year, season = int(split[0]), split[1].lower()
+        year, season = int(split[0]), split[1].lower()[:split[1].index('.csv')]
 
         # Get semester object from args
         semester = Semester.objects.filter(
