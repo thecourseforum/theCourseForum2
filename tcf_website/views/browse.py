@@ -50,7 +50,7 @@ def browse(request):
     )
 
 
-def department(request, dept_id: int, course_age="Fall 2024"):
+def department(request, dept_id: int, course_age=str(Semester.latest())):
     """View for department page."""
 
     # Prefetch related subdepartments and courses to improve performance.
@@ -61,12 +61,6 @@ def department(request, dept_id: int, course_age="Fall 2024"):
         pk=dept_id
     )
 
-    courses = [
-        course
-        for subdepartment in dept.subdepartment_set.all()
-        for course in subdepartment.recent_courses()
-    ]
-
     # Navigation breadcrimbs
     breadcrumbs = [
         (dept.school.name, reverse("browse"), False),
@@ -74,22 +68,33 @@ def department(request, dept_id: int, course_age="Fall 2024"):
     ]
 
     # Setting up sorting and course age variables
-    latest_semester = str(Semester.latest())
-    active_text = course_age
-    last_five_years = str(
-        Semester.objects.filter(number=Semester.latest().number - 50).first()
-    )
+    latest_semester = Semester.latest()
+    last_five_years = Semester.objects.filter(
+        number=latest_semester.number - 50
+    ).first()
+    season, year = course_age.upper().split()
+    print(season, year)
+    active_semester = Semester.objects.filter(year=year, season=season).first()
+
+    courses = [
+        course
+        for subdepartment in dept.subdepartment_set.all()
+        for course in subdepartment.recent_courses(
+            latest_semester.year - active_semester.year
+        )
+    ]
 
     return render(
         request,
         "department/department.html",
         {
             "subdepartments": dept.subdepartment_set.all(),
-            "latest_semester": latest_semester,
+            "dept_id": dept_id,
+            "latest_semester": str(latest_semester),
             "breadcrumbs": breadcrumbs,
             "courses": courses,
-            "active_text": active_text,
-            "last_five_years": last_five_years,
+            "active_text": str(active_semester),
+            "last_five_years": str(last_five_years),
         },
     )
 

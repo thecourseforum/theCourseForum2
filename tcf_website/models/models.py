@@ -82,11 +82,12 @@ class Subdepartment(models.Model):
     def __str__(self):
         return f"{self.mnemonic} - {self.name}"
 
-    def recent_courses(self):
+    def recent_courses(self, num_of_years: int = 5):
         """Return courses within last 5 years."""
         latest_semester = Semester.latest()
         return self.course_set.filter(
-            semester_last_taught__year__gte=latest_semester.year - 5
+            semester_last_taught__number__gte=latest_semester.number
+            - (10 * num_of_years)
         ).order_by("number")
 
     def has_current_course(self):
