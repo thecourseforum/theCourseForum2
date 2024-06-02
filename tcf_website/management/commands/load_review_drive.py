@@ -56,13 +56,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         verbose = options["verbose"]
-        semester = options["semester"]
+        semester: str = options["semester"]
 
+        if semester.endswith(".csv"):
+            semester = semester[: -len(".csv")]
         split = semester.split("_")
-        if '.csv' in semester:
-            year, season = int(split[0]), split[1].lower()[:split[1].index('.csv')]
-        else:
-            year, season = int(split[0]), split[1].lower()
+        year, season = int(split[0]), split[1].lower()
 
         # Get semester object from args
         semester = Semester.objects.filter(
