@@ -3,17 +3,17 @@
 
 import re
 
-from django.contrib.postgres.search import TrigramWordSimilarity
-from django.db.models import (
-    CharField,
-    ExpressionWrapper,
-    F,
-    FloatField,
-    Q,
-    Value,
+from django.contrib.postgres.search import (
+    SearchQuery,
+    SearchRank,
+    SearchVector,
+    TrigramWordSimilarity,
 )
+from django.db.models import TextField, Value
 from django.db.models.functions import Cast, Concat
+from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.decorators.cache import cache_page
 
 from ..models import Course, Instructor, Subdepartment
 
@@ -22,7 +22,7 @@ def search(request):
     """Search results view."""
 
     # Set query
-    query = request.GET.get("q", "")
+    query: str = request.GET.get("q", "")
 
     # courses are at least 3 digits long
     # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
@@ -46,65 +46,36 @@ def search(request):
     return render(request, "search/search.html", context_vars)
 
 
+# before, prioritized courses for short queries (len < 4) - is this a valid strat?
 def decide_order(query, courses, instructors):
     """Decides if courses or instructors should be displayed first.
     Returns True if courses should be prioritized, False if instructors should be prioritized
     """
 
-    # Calculate average similarity for courses
+    if (
+        len(query) <= 4
+        or len(instructors["results"]) == 0
+        or instructors["results"][0]["score"] == 0
+    ):
+        return True
+
+    # Prioritize perfect match for professor names
+    if instructors["results"][0]["score"] == 1.0:
+        return False
+
     courses_avg = compute_avg_similarity(
         [x["score"] for x in courses["results"]]
     )
 
-    # Calculate average similarity for instructors
-    instructors_avg = compute_avg_similarity(
-        [x["score"] for x in instructors["results"]]
-    )
-
-    # Define a threshold for the minimum average similarity score. This value can be adjusted.
-    THRESHOLD = 0.5
-
-    # Scores of the closest match for both
-    first_instructor_score = 0
-    first_course_score = 0
-    if len(instructors["results"]) > 0:
-        first_instructor_score = instructors["results"][0]["score"]
-    if len(courses["results"]) > 0:
-        first_course_score = courses["results"][0]["score"]
-
-    # If there is a perfect match for any part of the professor's name, return that
-    # unless it also perfectly matches a course
-    if (
-        first_instructor_score == 1.0
-        and first_instructor_score >= first_course_score
-    ):
-        return False
-
-    # Prioritize courses for short queries or if their average similarity
-    # score is significantly higher
-    if len(query) <= 4 or (
-        courses_avg > instructors_avg and courses_avg > THRESHOLD
-    ):
-        return True
-
-    # Prioritize courses if professor search result length is 0, regardless of course results
-    if len(instructors["results"]) <= 0:
-        return True
-
-    return False
+    return courses_avg != 0
 
 
 def compute_avg_similarity(scores):
     """Computes and returns the average similarity score."""
-    length = 0
-    total = 0
-    for score in scores:
-        total += score
-        length += 1
-    return 0 if length == 0 else total / length
+    return sum(scores) / len(scores) if len(scores) > 0 else 0
 
 
-def fetch_instructors(query):
+def fetch_instructors(query: str):
     """Get instructor data using Django Trigram similarity"""
     results = (
         Instructor.objects.only("first_name", "last_name")
@@ -113,6 +84,7 @@ def fetch_instructors(query):
         .filter(similarity__gte=0.2)
         .order_by("-similarity")[:10]
     )
+
     formatted_results = [
         {
             "_meta": {"id": str(instructor.pk), "score": instructor.similarity},
@@ -139,52 +111,24 @@ def fetch_instructors(query):
 
 
 def fetch_courses(title, number):
-    """Get course data using Django Trigram similarity"""
-    MNEMONIC_WEIGHT = 1.5
-    NUMBER_WEIGHT = 1
-    TITLE_WEIGHT = 1
-
-    # search query of form "<MNEMONIC><NUMBER>"
-    if number != "":
-        TITLE_WEIGHT = 0
-        MNEMONIC_WEIGHT = 1
-    # otherwise, "title" is entire query
-    else:
-        NUMBER_WEIGHT = 0
+    """Get course data using reverse indexing"""
+    vector = (
+        SearchVector("title", weight="A", config="simple")
+        + SearchVector("subdepartment__mnemonic", weight="B", config="simple")
+        + SearchVector(Cast("number", TextField()), weight="C", config="simple")
+    )
+    query_string = f"{title} {number}" if number else title
+    query = SearchQuery(query_string, config="simple")
 
     results = (
-        Course.objects.select_related("subdepartment")
-        .only("title", "number", "subdepartment__mnemonic", "description")
-        .annotate(
-            mnemonic_similarity=TrigramWordSimilarity(
-                title, "subdepartment__mnemonic"
-            ),
-            number_similarity=TrigramWordSimilarity(
-                number, Cast("number", CharField())
-            ),
-            title_similarity=TrigramWordSimilarity(
-                title, Cast("title", CharField())
-            ),
-        )
-        .annotate(
-            total_similarity=ExpressionWrapper(
-                F("mnemonic_similarity") * MNEMONIC_WEIGHT
-                + F("number_similarity") * NUMBER_WEIGHT
-                + F("title_similarity") * TITLE_WEIGHT,
-                output_field=FloatField(),
-            )
-        )
-        .filter(total_similarity__gte=0.2)
-        # filters out classes with 3 digit class numbers (old naming system)
-        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
-        # filters out classes that haven't been taught since Fall 2020
-        .exclude(semester_last_taught_id__lt=48)
-        .order_by("-total_similarity")[:10]
+        Course.objects.annotate(rank=SearchRank(vector, query))
+        .order_by("-rank")
+        .exclude(semester_last_taught_id__lt=48)[:10]
     )
 
     formatted_results = [
         {
-            "_meta": {"id": str(course.pk), "score": course.total_similarity},
+            "_meta": {"id": str(course.pk), "score": course.rank},
             "title": {"raw": course.title},
             "number": {"raw": course.number},
             "mnemonic": {

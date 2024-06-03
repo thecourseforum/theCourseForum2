@@ -3,6 +3,8 @@
 """TCF Database models."""
 
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Abs, Coalesce
@@ -371,6 +373,7 @@ class Course(models.Model):
     Has a Semester last taught.
     """
 
+    search = SearchVectorField(null=True)
     # Course title. Required.
     title = models.CharField(max_length=255)
     # Course description. Optional.
@@ -477,10 +480,18 @@ class Course(models.Model):
         """Compute total number of course reviews."""
         return self.review_set.count()
 
+    def save(self, *args, **kwargs):
+        self.search = (
+            SearchVector("title", weight="A")
+            + SearchVector("subdepartment", weight="B")
+            + SearchVector(
+                models.functions.Cast("number", models.TextField()), weight="C"
+            )
+        )
+        super().save(*args, **kwargs)
+
     class Meta:
-        indexes = [
-            models.Index(fields=["subdepartment", "number"]),
-        ]
+        indexes = [GinIndex(fields=["search"])]
 
         constraints = [
             models.UniqueConstraint(
