@@ -2,11 +2,10 @@
 
 """TCF Database models."""
 
-from typing import Literal
-
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Avg, Case, F, FloatField, IntegerField, Value, When
 from django.db.models.functions import Abs, Coalesce
 
 
@@ -50,41 +49,53 @@ class Department(models.Model):
         return self.name
 
     # Fetches all courses in a department
-    def fetch_recent_courses(self, num_of_years: int = 5, reverse=False):
-        courses = [
-            course
-            for subdepartment in Subdepartment.objects.filter(department=self)
-            for course in subdepartment.recent_courses(num_of_years)
-        ]
-        if reverse:
-            return courses[::-1]
-        return courses
+    def fetch_recent_courses(self, num_of_years: int = 5):
+        """Return courses within last 5 years."""
+        latest_semester = Semester.latest()
+        return Course.objects.filter(
+            subdepartment__department=self,
+            semester_last_taught__number__gte=latest_semester.number
+            - (10 * num_of_years),
+        ).order_by("number")
 
-    # Given a Course method, sort the classes based on that method
     def sort_courses_by_key(
-        self, key_func, num_of_years: int = 5, reverse: bool = False
+        self, annotation, num_of_years: int = 5, reverse: bool = False
     ):
-
         courses = self.fetch_recent_courses(num_of_years)
-        return sorted(courses, key=key_func, reverse=reverse)
+        return courses.annotate(sort_value=annotation).order_by(
+            ("-" if reverse else "") + "sort_value"
+        )
 
-    # Based on the requested sort, order the courses accordingly
-    def sort_courses(self, sort_type: str, num_of_years: int, order: str):
+    def sort_courses(
+        self, sort_type: str, num_of_years: int = 5, order: str = "asc"
+    ):
         reverse = order != "asc"
+        match sort_type:
+            case "course_id":
+                if reverse:
+                    return self.fetch_recent_courses(num_of_years)[::-1]
+                return self.fetch_recent_courses(num_of_years)
 
-        if sort_type == "course_id" or not sort_type:
-            return self.fetch_recent_courses(num_of_years, reverse)
+            case "rating":
+                annotation = Coalesce(
+                    Avg("review__instructor_rating"),
+                    Value(0) if reverse else Value(5),
+                    output_field=FloatField(),
+                )
+            case "difficulty":
+                annotation = Coalesce(
+                    Avg("review__difficulty"),
+                    Value(0) if reverse else Value(5),
+                    output_field=FloatField(),
+                )
+            case "gpa":
+                annotation = Coalesce(
+                    Avg("coursegrade__average"),
+                    Value(0) if reverse else Value(5),
+                    output_field=FloatField(),
+                )
 
-        functions = {
-            "rating": lambda course: course.average_rating()
-            or (0 if reverse else 5),
-            "difficulty": lambda course: course.average_difficulty()
-            or (0 if reverse else 5),
-            "gpa": lambda course: course.average_gpa() or (0 if reverse else 5),
-        }
-
-        key_func = functions.get(sort_type, functions[sort_type])
-        return self.sort_courses_by_key(key_func, num_of_years, reverse)
+        return self.sort_courses_by_key(annotation, num_of_years, reverse)
 
     class Meta:
         indexes = [
@@ -122,7 +133,6 @@ class Subdepartment(models.Model):
         return f"{self.mnemonic} - {self.name}"
 
     def recent_courses(self, num_of_years: int = 5):
-        """Return courses within last 5 years."""
         latest_semester = Semester.latest()
         return self.course_set.filter(
             semester_last_taught__number__gte=latest_semester.number
@@ -512,11 +522,6 @@ class Course(models.Model):
         return Review.objects.filter(course=self).aggregate(
             models.Avg("difficulty")
         )["difficulty__avg"]
-
-    def average_gpa(self):
-        return CourseGrade.objects.filter(course=self).aggregate(
-            avg_gpa=models.Avg("average")
-        )["avg_gpa"]
 
     def review_count(self):
         """Compute total number of course reviews."""
