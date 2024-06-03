@@ -49,6 +49,7 @@ class Department(models.Model):
     def __str__(self):
         return self.name
 
+    # Fetches all courses in a department
     def fetch_recent_courses(self, num_of_years: int = 5):
         courses = [
             course
@@ -57,16 +58,52 @@ class Department(models.Model):
         ]
         return courses
 
-    def sort_courses(self, sort_type: str, num_of_years: int, ascending=True):
+    def sort_by_rating(self, num_of_years: int = 5):
+        courses = self.fetch_recent_courses(num_of_years)
+        sorted_courses = sorted(
+            courses,
+            key=lambda course: course.average_rating() or 0,
+            reverse=True,
+        )
+        return sorted_courses
+
+    def sort_by_difficulty(self, num_of_years: int = 5):
+        courses = self.fetch_recent_courses(num_of_years)
+        sorted_courses = sorted(
+            courses,
+            key=lambda course: course.average_difficulty() or 6,
+            reverse=False,
+        )
+        return sorted_courses
+
+    def sort_by_gpa(self, num_of_years: int = 5):
+        courses = self.fetch_recent_courses(num_of_years)
+        sorted_courses = sorted(
+            courses,
+            key=lambda course: course.average_gpa() or 0,
+            reverse=True,
+        )
+        return sorted_courses
+
+    def sort_courses(self, sort_type: str, num_of_years: int, order: str):
         match sort_type:
             case "rating":
-                pass
+                if order == "asc":
+                    return self.sort_by_rating(num_of_years)
+                else:
+                    return self.sort_by_rating(num_of_years)[::-1]
             case "difficulty":
-                pass
+                if order == "asc":
+                    return self.sort_by_difficulty(num_of_years)
+                else:
+                    return self.sort_by_difficulty(num_of_years)[::-1]
             case "gpa":
-                pass
+                if order == "asc":
+                    return self.sort_by_gpa(num_of_years)
+                else:
+                    return self.sort_by_gpa(num_of_years)[::-1]
             case "course_id" | _:
-                if ascending:
+                if order == "asc":
                     return self.fetch_recent_courses(num_of_years)
                 else:
                     return self.fetch_recent_courses(num_of_years)[::-1]
@@ -497,6 +534,11 @@ class Course(models.Model):
         return Review.objects.filter(course=self).aggregate(
             models.Avg("difficulty")
         )["difficulty__avg"]
+
+    def average_gpa(self):
+        return CourseGrade.objects.filter(course=self).aggregate(
+            avg_gpa=models.Avg("average")
+        )["avg_gpa"]
 
     def review_count(self):
         """Compute total number of course reviews."""
