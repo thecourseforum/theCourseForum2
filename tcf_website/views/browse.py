@@ -77,7 +77,7 @@ def department(request, dept_id: int, course_age=str(Semester.latest())):
 
     # Fetch sorting variables
     sortby = request.GET.get("sortby", "course_id")
-    order = request.GET.get("order", True)
+    order = request.GET.get("order", "asc")
 
     courses = dept.sort_courses(sortby, latest_semester.year - int(year), order)
 
@@ -91,8 +91,8 @@ def department(request, dept_id: int, course_age=str(Semester.latest())):
             "breadcrumbs": breadcrumbs,
             "courses": courses,
             "active_course_age": str(active_semester),
-            "active_sort": None,
-            "order": None,
+            "sortby": sortby,
+            "order": order,
             "last_five_years": str(last_five_years),
         },
     )

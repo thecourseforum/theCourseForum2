@@ -29,16 +29,16 @@
         {% if sorting %}
         <div id="sortButtons" class="btn-group btn-group-sm" role="toolbar" aria-label="Sorting Buttons">
             {% if 'department' in request.path %}
-            <a href="{% url 'department' dept_id %}?sortby=course_id&order={% if sortby == 'course_id' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'course_id' %}active{% endif %}">
+            <a href="{% url 'department_course_age' dept_id active_course_age %}?sortby=course_id&order={% if sortby == 'course_id' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'course_id' %}active{% endif %}">
                 Course ID {% if sortby == 'course_id' %}{% if order == 'asc' %}&#11014;{% else %}&#11015;{% endif %}{% endif %}
             </a>
-            <a href="{% url 'department' dept_id %}?sortby=rating&order={% if sortby == 'rating' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'rating' %}active{% endif %}">
+            <a href="{% url 'department_course_age' dept_id active_course_age %}?sortby=rating&order={% if sortby == 'rating' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'rating' %}active{% endif %}">
                 Rating {% if sortby == 'rating' %}{% if order == 'asc' %}&#11014;{% else %}&#11015;{% endif %}{% endif %}
             </a>
-            <a href="{% url 'department' dept_id %}?sortby=difficulty&order={% if sortby == 'difficulty' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'difficulty' %}active{% endif %}">
+            <a href="{% url 'department_course_age' dept_id active_course_age %}?sortby=difficulty&order={% if sortby == 'difficulty' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'difficulty' %}active{% endif %}">
                 Difficulty {% if sortby == 'difficulty' %}{% if order == 'asc' %}&#11014;{% else %}&#11015;{% endif %}{% endif %}
             </a>
-            <a href="{% url 'department' dept_id %}?sortby=gpa&order={% if sortby == 'gpa' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'gpa' %}active{% endif %}">
+            <a href="{% url 'department_course_age' dept_id active_course_age %}?sortby=gpa&order={% if sortby == 'gpa' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'gpa' %}active{% endif %}">
                 GPA {% if sortby == 'gpa' %}{% if order == 'asc' %}&#11014;{% else %}&#11015;{% endif %}{% endif %}
             </a>
             {% endif %}
