@@ -75,9 +75,11 @@ def department(request, dept_id: int, course_age=str(Semester.latest())):
     season, year = course_age.upper().split()
     active_semester = Semester.objects.filter(year=year, season=season).first()
 
-    courses = dept.fetch_recent_courses(
-        latest_semester.year - active_semester.year
-    )
+    # Fetch sorting variables
+    sortby = request.GET.get("sortby", "course_id")
+    order = request.GET.get("order", True)
+
+    courses = dept.sort_courses(sortby, latest_semester.year - int(year), order)
 
     return render(
         request,
