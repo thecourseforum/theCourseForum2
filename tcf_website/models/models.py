@@ -2,6 +2,8 @@
 
 """TCF Database models."""
 
+from typing import Literal
+
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -46,6 +48,28 @@ class Department(models.Model):
 
     def __str__(self):
         return self.name
+
+    def fetch_recent_courses(self, num_of_years: int = 5):
+        courses = [
+            course
+            for subdepartment in Subdepartment.objects.filter(department=self)
+            for course in subdepartment.recent_courses(num_of_years)
+        ]
+        return courses
+
+    def sort_courses(self, sort_type: str, num_of_years: int, ascending=True):
+        match sort_type:
+            case "rating":
+                pass
+            case "difficulty":
+                pass
+            case "gpa":
+                pass
+            case "course_id" | _:
+                if ascending:
+                    return self.fetch_recent_courses(num_of_years)
+                else:
+                    return self.fetch_recent_courses(num_of_years)[::-1]
 
     class Meta:
         indexes = [

@@ -2,7 +2,7 @@
     <div class="btn-toolbar justify-content-center text-center text-md-left"
          role="toolbar" aria-label="Toolbar with button groups">
         <!-- Breadcrumbs -->
-        <div id="breadcrumbs" class="rounded bg-white mr-md-auto mb-3 {% if active_text %}col-md-8{% endif %}"
+        <div id="breadcrumbs" class="rounded bg-white mr-md-auto mb-3 {% if active_course_age %}col-md-8{% endif %}"
              role="toolbar" aria-label="Breadcrumbs">
             <ol class="breadcrumb bg-white mb-0">
                 {% for text, url, active in breadcrumbs %}
@@ -14,11 +14,11 @@
             </ol>
         </div>
           <!-- Filter buttons -->
-          {% if active_text %}
+          {% if active_course_age %}
           <div id="filterButtons" class="btn-group btn-group-sm ml-md-auto mb-3"
                role="toolbar" aria-label="Show/Hide All Semesters">
-              <button type="button" id="hide-btn" class="btn btn-outline-primary {% if active_text == latest_semester %} active {% endif %}" onclick = "window.location.href='{% url 'department_course_age' dept_id latest_semester %}'">{{ latest_semester }}</button>
-              <button type="button" id="show-btn" class="btn btn-outline-primary {% if active_text == last_five_years %} active {% endif %}" onclick = "window.location.href='{% url 'department_course_age' dept_id last_five_years %}'">Last 5 Years</button>
+              <button type="button" id="hide-btn" class="btn btn-outline-primary {% if active_course_age == latest_semester %} active {% endif %}" onclick = "window.location.href='{% url 'department_course_age' dept_id latest_semester %}'">{{ latest_semester }}</button>
+              <button type="button" id="show-btn" class="btn btn-outline-primary {% if active_course_age == last_five_years %} active {% endif %}" onclick = "window.location.href='{% url 'department_course_age' dept_id last_five_years %}'">Last 5 Years</button>
           </div>
           {% endif %}
     </div>
