@@ -50,63 +50,41 @@ class Department(models.Model):
         return self.name
 
     # Fetches all courses in a department
-    def fetch_recent_courses(self, num_of_years: int = 5):
+    def fetch_recent_courses(self, num_of_years: int = 5, reverse=False):
         courses = [
             course
             for subdepartment in Subdepartment.objects.filter(department=self)
             for course in subdepartment.recent_courses(num_of_years)
         ]
+        if reverse:
+            return courses[::-1]
         return courses
 
-    def sort_by_rating(self, num_of_years: int = 5):
-        courses = self.fetch_recent_courses(num_of_years)
-        sorted_courses = sorted(
-            courses,
-            key=lambda course: course.average_rating() or 0,
-            reverse=True,
-        )
-        return sorted_courses
+    # Given a Course method, sort the classes based on that method
+    def sort_courses_by_key(
+        self, key_func, num_of_years: int = 5, reverse: bool = False
+    ):
 
-    def sort_by_difficulty(self, num_of_years: int = 5):
         courses = self.fetch_recent_courses(num_of_years)
-        sorted_courses = sorted(
-            courses,
-            key=lambda course: course.average_difficulty() or 6,
-            reverse=False,
-        )
-        return sorted_courses
+        return sorted(courses, key=key_func, reverse=reverse)
 
-    def sort_by_gpa(self, num_of_years: int = 5):
-        courses = self.fetch_recent_courses(num_of_years)
-        sorted_courses = sorted(
-            courses,
-            key=lambda course: course.average_gpa() or 0,
-            reverse=True,
-        )
-        return sorted_courses
-
+    # Based on the requested sort, order the courses accordingly
     def sort_courses(self, sort_type: str, num_of_years: int, order: str):
-        match sort_type:
-            case "rating":
-                if order == "asc":
-                    return self.sort_by_rating(num_of_years)
-                else:
-                    return self.sort_by_rating(num_of_years)[::-1]
-            case "difficulty":
-                if order == "asc":
-                    return self.sort_by_difficulty(num_of_years)
-                else:
-                    return self.sort_by_difficulty(num_of_years)[::-1]
-            case "gpa":
-                if order == "asc":
-                    return self.sort_by_gpa(num_of_years)
-                else:
-                    return self.sort_by_gpa(num_of_years)[::-1]
-            case "course_id" | _:
-                if order == "asc":
-                    return self.fetch_recent_courses(num_of_years)
-                else:
-                    return self.fetch_recent_courses(num_of_years)[::-1]
+        reverse = order != "asc"
+
+        if sort_type == "course_id" or not sort_type:
+            return self.fetch_recent_courses(num_of_years, reverse)
+
+        functions = {
+            "rating": lambda course: course.average_rating()
+            or (0 if reverse else 5),
+            "difficulty": lambda course: course.average_difficulty()
+            or (0 if reverse else 5),
+            "gpa": lambda course: course.average_gpa() or (0 if reverse else 5),
+        }
+
+        key_func = functions.get(sort_type, functions[sort_type])
+        return self.sort_courses_by_key(key_func, num_of_years, reverse)
 
     class Meta:
         indexes = [
