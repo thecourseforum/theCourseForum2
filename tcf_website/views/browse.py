@@ -73,16 +73,11 @@ def department(request, dept_id: int, course_age=str(Semester.latest())):
         number=latest_semester.number - 50
     ).first()
     season, year = course_age.upper().split()
-    print(season, year)
     active_semester = Semester.objects.filter(year=year, season=season).first()
 
-    courses = [
-        course
-        for subdepartment in dept.subdepartment_set.all()
-        for course in subdepartment.recent_courses(
-            latest_semester.year - active_semester.year
-        )
-    ]
+    courses = dept.fetch_recent_courses(
+        latest_semester.year - active_semester.year
+    )
 
     return render(
         request,
@@ -93,7 +88,9 @@ def department(request, dept_id: int, course_age=str(Semester.latest())):
             "latest_semester": str(latest_semester),
             "breadcrumbs": breadcrumbs,
             "courses": courses,
-            "active_text": str(active_semester),
+            "active_course_age": str(active_semester),
+            "active_sort": None,
+            "order": None,
             "last_five_years": str(last_five_years),
         },
     )
