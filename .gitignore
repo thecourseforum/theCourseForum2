@@ -23,7 +23,13 @@ db/*.sql
 # IDEs
 .idea/
 .vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
 # Code coverage
 .coverage
 # ESLint cache
 .eslintcache
+.nvim.lua
+# Virtual Environments
+venv
+.venv

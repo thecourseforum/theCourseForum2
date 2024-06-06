@@ -183,15 +183,6 @@ SOCIAL_AUTH_USER_MODEL = "tcf_website.User"
 
 AUTH_USER_MODEL = "tcf_website.User"
 
-# Read-only access to Elastic
-ES_PUBLIC_API_KEY = env.str("ES_PUBLIC_API_KEY")
-
-# ElasticSearch access
-ELASTICSEARCH_ENDPOINT = env.str("ELASTICSEARCH_ENDPOINT")
-
-# Read-write access to Elastic
-ES_PRIVATE_API_KEY = env.str("ES_PRIVATE_API_KEY", default="")
-
 # Logging configuration (from https://docs.djangoproject.com/en/3.1/topics/logging/)
 LOGGING = {
     "version": 1,
@@ -232,6 +223,11 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = env.str("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD")
+
+# Import review drive settings
+REVIEW_DRIVE_ID = env.str("REVIEW_DRIVE_ID")
+REVIEW_DRIVE_EMAIL = env.str("REVIEW_DRIVE_EMAIL")
+REVIEW_DRIVE_PASSWORD = env.str("REVIEW_DRIVE_PASSWORD")
 
 # Use Bootstrap class names for Django message tags
 MESSAGE_TAGS = {

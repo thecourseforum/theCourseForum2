@@ -5,13 +5,14 @@
 """Custom authentication pipeline steps."""
 
 from functools import wraps
+
+import social_core.pipeline.mail
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.urls import reverse
-import social_core.pipeline.mail
 from social_core.exceptions import InvalidEmail
 from social_core.strategy import BaseStrategy
 
@@ -60,18 +61,19 @@ def mail_validation(*args, **kwargs):
 
 def implement_partial_token_persistence():
     """Apply a wrapper over strategy.clean_partial_pipeline() to implement partial token persistence."""
-    if hasattr(BaseStrategy.clean_partial_pipeline, 'wrapped'):
+    if hasattr(BaseStrategy.clean_partial_pipeline, "wrapped"):
         return  # already wrapped
 
     def wrapper(orig_func):
         @wraps(orig_func)
         def new_func(self, *args, **kwargs):
-            if self.session.get('persist_partial_token', default=False):
+            if self.session.get("persist_partial_token", default=False):
                 # Persist partial token
                 pass
             else:
                 # Delete partial token
                 orig_func(self, *args, **kwargs)
+
         return new_func
 
     # Apply wrapper
@@ -87,7 +89,7 @@ def collect_extra_info(
 
     # Disable partial token persistence
     implement_partial_token_persistence()
-    strategy.session_set('persist_partial_token', False)
+    strategy.session_set("persist_partial_token", False)
 
     if user:
         return {"is_new": False}
@@ -97,17 +99,18 @@ def collect_extra_info(
     grad_year = strategy.session_get("grad_year", None)
     if not grad_year:
         # If grad year isn't available yet, persist the current partial token
-        strategy.session_set('persist_partial_token', True)
+        strategy.session_set("persist_partial_token", True)
 
         # if we return something besides a dict or None, then that is
         # returned to the user -- in this case we will redirect to a
         # view that can be used to get a password
-        return redirect(f"/login/collect_extra_info/{backend.name}"
-                        + "?verification_code="
-                        + request.GET['verification_code']
-                        + "&partial_token="
-                        + request.GET['partial_token']
-                        )
+        return redirect(
+            f"/login/collect_extra_info/{backend.name}"
+            + "?verification_code="
+            + request.GET["verification_code"]
+            + "&partial_token="
+            + request.GET["partial_token"]
+        )
 
 
 USER_FIELDS = ["email", "username"]

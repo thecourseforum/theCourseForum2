@@ -52,7 +52,9 @@ def decide_order(query, courses, instructors):
     """
 
     # Calculate average similarity for courses
-    courses_avg = compute_avg_similarity([x["score"] for x in courses["results"]])
+    courses_avg = compute_avg_similarity(
+        [x["score"] for x in courses["results"]]
+    )
 
     # Calculate average similarity for instructors
     instructors_avg = compute_avg_similarity(
@@ -72,12 +74,17 @@ def decide_order(query, courses, instructors):
 
     # If there is a perfect match for any part of the professor's name, return that
     # unless it also perfectly matches a course
-    if first_instructor_score == 1.0 and first_instructor_score >= first_course_score:
+    if (
+        first_instructor_score == 1.0
+        and first_instructor_score >= first_course_score
+    ):
         return False
 
     # Prioritize courses for short queries or if their average similarity
     # score is significantly higher
-    if len(query) <= 4 or (courses_avg > instructors_avg and courses_avg > THRESHOLD):
+    if len(query) <= 4 or (
+        courses_avg > instructors_avg and courses_avg > THRESHOLD
+    ):
         return True
 
     # Prioritize courses if professor search result length is 0, regardless of course results
@@ -106,7 +113,6 @@ def fetch_instructors(query):
         .filter(similarity__gte=0.2)
         .order_by("-similarity")[:10]
     )
-    # Formatting results similar to Elastic search response
     formatted_results = [
         {
             "_meta": {"id": str(instructor.pk), "score": instructor.similarity},
@@ -176,7 +182,6 @@ def fetch_courses(title, number):
         .order_by("-total_similarity")[:10]
     )
 
-    # Formatting results similar to Elastic search response
     formatted_results = [
         {
             "_meta": {"id": str(course.pk), "score": course.total_similarity},
@@ -199,7 +204,7 @@ def fetch_courses(title, number):
 
 
 def format_response(response):
-    """Formats an Elastic search endpoint response."""
+    """Formats an Trigram response."""
     formatted = {"error": False, "results": []}
     if "error" in response:
         formatted["error"] = True
