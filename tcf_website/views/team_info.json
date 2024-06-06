@@ -171,7 +171,7 @@
       "class": "2024",
       "img_filename": "ENG_Kyle_Durrer.jpg",
       "github": "kmd2zjw"
-    }, 
+    },
     {
       "name": "Alex Yung",
       "role": "Developer",
@@ -208,7 +208,7 @@
       "github": "arthurwu1227"
     },
     {
-      "name": "Zohaib Khalid", 
+      "name": "Zohaib Khalid",
       "role": "Developer",
       "class": "2025",
       "img_filename": "ENG_Zohaib_Khalid.jpg",
@@ -236,27 +236,25 @@
       "github": "artiehumphreys"
     },
     {
-      "name": "Blaire Zhao", 
+      "name": "Blaire Zhao",
       "role": "Developer",
       "class": "2026",
       "img_filename": "ENG_Blaire_Zhao.jpg",
       "github": "blairezh"
     },
     {
-      "name": "Junho Lee", 
+      "name": "Junho Lee",
       "role": "Developer",
       "class": "2025",
       "img_filename": "ENG_Junho_Lee.jpg",
       "github": "junholee6a"
-    }
-    ,
+    },
     {
       "name": "Ja-Zhua Cheng",
       "role": "Developer",
       "class": "2025",
       "img_filename": "ENG_Ja-Zhua_Cheng.jpeg"
-    }
-    ,
+    },
     {
       "name": "Justin Park",
       "role": "Developer",
@@ -277,7 +275,7 @@
       "github": "Jay-Lalwani"
     },
     {
-      "name": "Olivia Seto", 
+      "name": "Olivia Seto",
       "role": "Developer",
       "class": "2025",
       "img_filename": "ENG_Olivia_Seto.jpg",
@@ -323,6 +321,5 @@
       "class": "2025",
       "img_filename": "DM_Chai_Zhang.JPG"
     }
-    
   ]
 }

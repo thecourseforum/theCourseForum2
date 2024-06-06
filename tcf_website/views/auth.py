@@ -72,12 +72,13 @@ def collect_extra_info(request, method):
 
             # once we have the grad_year stashed in the session, we can
             # tell the pipeline to resume by using the "complete" endpoint
-            return redirect(reverse("social:complete", args=[method])
-                            + "?verification_code="
-                            + request.GET['verification_code']
-                            + "&partial_token="
-                            + request.GET['partial_token']
-                            )
+            return redirect(
+                reverse("social:complete", args=[method])
+                + "?verification_code="
+                + request.GET["verification_code"]
+                + "&partial_token="
+                + request.GET["partial_token"]
+            )
     else:
         form = ExtraUserInfoForm()
 
@@ -94,7 +95,7 @@ def logout(request):
     """Logs out user."""
     auth_logout(request)
     messages.add_message(request, messages.SUCCESS, "Logged out successfully!")
-    return redirect("browse")
+    return redirect("/")
 
 
 def email_verification(request):
