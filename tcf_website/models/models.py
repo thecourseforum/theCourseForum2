@@ -609,6 +609,9 @@ class Review(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     # Review semester foreign key. Required.
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    # Email of reviewer for Review Drive, should be blank most of the time
+    # Only done for reviews without accounts
+    email = models.CharField(default="", null=True, blank=True)
 
     # Enum of Rating options.
     RATINGS = (
