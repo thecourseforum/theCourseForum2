@@ -16,9 +16,13 @@
           <!-- Filter buttons -->
           {% if active_text %}
           <div id="filterButtons" class="btn-group btn-group-sm ml-md-auto mb-3"
-               role="toolbar" aria-label="Show/Hide All Semesters">
-              <button type="button" id="hide-btn" class="btn btn-outline-primary active">{{ active_text }}</button>
-              <button type="button" id="show-btn" class="btn btn-outline-primary"> {{ hidden_text }} </button>
+                role="toolbar" aria-label="Show/Hide All Semesters">
+                <button type="button" id="hide-btn" class="btn btn-outline-primary active">{{ active_text }}</button>
+                {% if 'course' in request.path %}
+                <button type="button" id="show-btn" class="btn btn-outline-primary">All</button>
+                {% elif 'department' in request.path %}
+                <button type="button" id="show-btn" class="btn btn-outline-primary">Last 5 Years</button>
+                {% endif %}
           </div>
           {% endif %}
     </div>
