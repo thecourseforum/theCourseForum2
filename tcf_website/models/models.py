@@ -78,7 +78,12 @@ class Department(models.Model):
 
             case "rating":
                 annotation = Coalesce(
-                    Avg("review__instructor_rating"),
+                    (
+                        Avg("review__recommendability")
+                        + Avg("review__instructor_rating")
+                        + Avg("review__enjoyability")
+                    )
+                    / 3,
                     Value(0) if reverse else Value(5),
                     output_field=FloatField(),
                 )
