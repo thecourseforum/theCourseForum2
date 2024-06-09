@@ -6,7 +6,17 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Avg, BooleanField, Case, CharField, Max, Q, When
+from django.db.models import (
+    Avg,
+    BooleanField,
+    Case,
+    CharField,
+    FloatField,
+    Max,
+    Q,
+    Value,
+    When,
+)
 from django.db.models.functions import Abs, Coalesce
 
 
@@ -479,32 +489,43 @@ class Course(models.Model):
         """Compute total number of course reviews."""
         return self.review_set.count()
 
-    def get_instructors_and_data(self, course, latest_semester, recency):
+    def get_instructors_and_data(self, course, latest_semester, reverse):
         instructors = (
             Instructor.objects.filter(section__course=course, hidden=False)
             .distinct()
             .annotate(
-                gpa=Avg(
-                    "courseinstructorgrade__average",
-                    filter=Q(courseinstructorgrade__course=course),
-                ),
-                difficulty=Avg(
-                    "review__difficulty", filter=Q(review__course=course)
-                ),
-                rating=(
+                gpa=Coalesce(
                     Avg(
-                        "review__instructor_rating",
-                        filter=Q(review__course=course),
+                        "courseinstructorgrade__average",
+                        filter=Q(courseinstructorgrade__course=course),
+                    ),
+                    Value(0) if reverse else Value(5),
+                    output_field=FloatField(),
+                ),
+                difficulty=Coalesce(
+                    Avg("review__difficulty", filter=Q(review__course=course)),
+                    Value(0) if reverse else Value(5),
+                    output_field=FloatField(),
+                ),
+                rating=Coalesce(
+                    (
+                        Avg(
+                            "review__instructor_rating",
+                            filter=Q(review__course=course),
+                        )
+                        + Avg(
+                            "review__enjoyability",
+                            filter=Q(review__course=course),
+                        )
+                        + Avg(
+                            "review__recommendability",
+                            filter=Q(review__course=course),
+                        )
                     )
-                    + Avg(
-                        "review__enjoyability", filter=Q(review__course=course)
-                    )
-                    + Avg(
-                        "review__recommendability",
-                        filter=Q(review__course=course),
-                    )
-                )
-                / 3,
+                    / 3,
+                    Value(0) if reverse else Value(5),
+                    output_field=FloatField(),
+                ),
                 semester_last_taught=Max(
                     "section__semester", filter=Q(section__course=course)
                 ),
@@ -537,9 +558,30 @@ class Course(models.Model):
                 ),
             )
         )
-        if recency == latest_semester:
-            return instructors.filter(is_teaching_this_semester=True)
         return instructors
+
+    def sort_instructors_by_key(
+        self,
+        course,
+        latest_semester,
+        order,
+        sortby: str = "last_taught",
+    ):
+        reverse = order != "asc"
+        instructors = self.get_instructors_and_data(
+            course, latest_semester, reverse
+        )
+        sort_field = {
+            "gpa": "gpa",
+            "rating": "rating",
+            "difficulty": "difficulty",
+        }.get(sortby)
+
+        if sort_field:
+            order_prefix = "-" if reverse else ""
+            return instructors.order_by(f"{order_prefix}{sort_field}")
+        else:
+            return instructors
 
     class Meta:
         indexes = [

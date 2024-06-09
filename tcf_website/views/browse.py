@@ -112,11 +112,15 @@ def course_view(
         Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number
     )
     latest_semester = Semester.latest()
-    instructors = course.get_instructors_and_data(course, latest_semester)
+    recency = str(latest_semester) == instructor_age
 
     # Fetch sorting variables
     sortby = request.GET.get("sortby", "last_taught")
     order = request.GET.get("order", "asc")
+
+    instructors = course.sort_instructors_by_key(
+        course, latest_semester, order, sortby
+    )
 
     # Note: Could be simplified further
 
