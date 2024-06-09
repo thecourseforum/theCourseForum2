@@ -499,12 +499,12 @@ class Course(models.Model):
                         "courseinstructorgrade__average",
                         filter=Q(courseinstructorgrade__course=course),
                     ),
-                    Value(0) if reverse else Value(5),
+                    Value(6) if reverse else Value(0),
                     output_field=FloatField(),
                 ),
                 difficulty=Coalesce(
                     Avg("review__difficulty", filter=Q(review__course=course)),
-                    Value(0) if reverse else Value(5),
+                    Value(6) if reverse else Value(0),
                     output_field=FloatField(),
                 ),
                 rating=Coalesce(
@@ -523,7 +523,8 @@ class Course(models.Model):
                         )
                     )
                     / 3,
-                    Value(0) if reverse else Value(5),
+                    # invalid value for if there are no reviews
+                    Value(6) if reverse else Value(0),
                     output_field=FloatField(),
                 ),
                 semester_last_taught=Max(
@@ -564,24 +565,29 @@ class Course(models.Model):
         self,
         course,
         latest_semester,
+        recent,
         order,
         sortby: str = "last_taught",
     ):
-        reverse = order != "asc"
+        reverse = order != "desc"
         instructors = self.get_instructors_and_data(
             course, latest_semester, reverse
         )
+
         sort_field = {
             "gpa": "gpa",
             "rating": "rating",
             "difficulty": "difficulty",
-        }.get(sortby)
+            "last_taught": "semester_last_taught",
+        }.get(sortby, "semester_last_taught")
 
-        if sort_field:
-            order_prefix = "-" if reverse else ""
-            return instructors.order_by(f"{order_prefix}{sort_field}")
-        else:
-            return instructors
+        order_prefix = "" if reverse else "-"
+
+        if recent:
+            instructors = instructors.filter(is_teaching_this_semester=True)
+
+        instructors = instructors.order_by(order_prefix + sort_field)
+        return instructors
 
     class Meta:
         indexes = [

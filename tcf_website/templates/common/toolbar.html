@@ -40,16 +40,16 @@
             <button type="button" id="number-sort-btn" class="btn btn-outline-primary active">Course ID &#11014;</button>
             {% endif %}
             {% if 'course' in request.path %}
-            <a href="{% url 'course_recency' course.subdepartment.mnemonic course.number active_instructor_age %}?sortby=last_taught&order={% if sortby == 'last_taught' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'last_taught' %}active{% endif %}">
+            <a href="{% url 'course_recency' course.subdepartment.mnemonic course.number active_instructor_age %}?sortby=last_taught&order={% if sortby == 'last_taught' and order == 'desc' %}asc{% else %}desc{% endif %}" class="btn btn-outline-primary {% if sortby == 'last_taught' %}active{% endif %}">
                 Last Taught {% if sortby == 'last_taught' %}{% if order == 'asc' %}&#11014;{% else %}&#11015;{% endif %}{% endif %}
             </a>
-            <a href="{% url 'course_recency' course.subdepartment.mnemonic course.number active_instructor_age %}?sortby=rating&order={% if sortby == 'rating' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'rating' %}active{% endif %}">
+            <a href="{% url 'course_recency' course.subdepartment.mnemonic course.number active_instructor_age %}?sortby=rating&order={% if sortby == 'rating' and order == 'desc' %}asc{% else %}desc{% endif %}" class="btn btn-outline-primary {% if sortby == 'rating' %}active{% endif %}">
                 Rating {% if sortby == 'rating' %}{% if order == 'asc' %}&#11014;{% else %}&#11015;{% endif %}{% endif %}
             </a>
-            <a href="{% url 'course_recency' course.subdepartment.mnemonic course.number active_instructor_age %}?sortby=difficulty&order={% if sortby == 'difficulty' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'difficulty' %}active{% endif %}">
+            <a href="{% url 'course_recency' course.subdepartment.mnemonic course.number active_instructor_age %}?sortby=difficulty&order={% if sortby == 'difficulty' and order == 'desc' %}asc{% else %}desc{% endif %}" class="btn btn-outline-primary {% if sortby == 'difficulty' %}active{% endif %}">
                 Difficulty {% if sortby == 'difficulty' %}{% if order == 'asc' %}&#11014;{% else %}&#11015;{% endif %}{% endif %}
             </a>
-            <a href="{% url 'course_recency' course.subdepartment.mnemonic course.number active_instructor_age %}?sortby=gpa&order={% if sortby == 'gpa' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'gpa' %}active{% endif %}">
+            <a href="{% url 'course_recency' course.subdepartment.mnemonic course.number active_instructor_age %}?sortby=gpa&order={% if sortby == 'gpa' and order == 'desc' %}asc{% else %}desc{% endif %}" class="btn btn-outline-primary {% if sortby == 'gpa' %}active{% endif %}">
                 GPA {% if sortby == 'gpa' %}{% if order == 'asc' %}&#11014;{% else %}&#11015;{% endif %}{% endif %}
             </a>
             {% endif %}

@@ -16,7 +16,7 @@
                   <i class="fa fa-star fa-fw"></i>&nbsp;Rating
                 </small>
                 <p class="mb-0 info" id="rating">
-                  {% if rating %}
+                  {% if rating and rating <= 5 %}
                     {{ rating|floatformat:2 }}
                   {% else %}
                     &mdash;
@@ -28,7 +28,7 @@
                   <i class="fa fa-dumbbell fa-fw"></i>&nbsp;Difficulty
                 </small>
                 <p class="mb-0 info" id="difficulty">
-                  {% if difficulty %}
+                  {% if difficulty and difficulty <= 5 %}
                     {{ difficulty|floatformat:2 }}
                   {% else %}
                     &mdash;
@@ -40,7 +40,7 @@
                   <i class="fas fa-chart-bar"></i>&nbsp;GPA
                 </small>
                 <p class="mb-0 info" id="gpa">
-                  {% if gpa %}
+                  {% if gpa and gpa <= 5%}
                     {{ gpa|floatformat:2 }}
                   {% else %}
                     &mdash;
