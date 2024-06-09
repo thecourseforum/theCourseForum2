@@ -95,7 +95,7 @@ def course_view(
     request,
     mnemonic: str,
     course_number: int,
-    instructor_age: str = Semester.latest(),
+    instructor_age: str = str(Semester.latest()),
 ):
     """A new Course view that allows you to input mnemonic and number instead."""
 
@@ -138,8 +138,8 @@ def course_view(
     # So created a dictionary on the fly to minimize database access
     semesters = {s.id: s for s in Semester.objects.all()}
     for instructor in instructors:
-        instructor.semester_last_taught = semesters.get(
-            instructor.semester_last_taught
+        instructor.semester_last_taught = str(
+            semesters.get(instructor.semester_last_taught)
         )
 
     dept = course.subdepartment.department
@@ -162,7 +162,7 @@ def course_view(
         {
             "course": course,
             "instructors": instructors,
-            "latest_semester": latest_semester,
+            "latest_semester": str(latest_semester),
             "breadcrumbs": breadcrumbs,
             "taught_this_semester": taught_this_semester,
             "sortby": sortby,

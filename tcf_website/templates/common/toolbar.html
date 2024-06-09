@@ -17,11 +17,12 @@
           {% if active_instructor_age %}
           <div id="filterButtons" class="btn-group btn-group-sm ml-md-auto mb-3"
                 role="toolbar" aria-label="Show/Hide All Semesters">
-                <button type="button" id="hide-btn" class="btn btn-outline-primary active {% if active_instructor_age == latest_semester %} active {% endif %}" 
-                onclick = "window.location.href='{% url 'course_recency' course.subdepartment.mnemonic course.number  %}'">
+                <button type="button" id="hide-btn" class="btn btn-outline-primary {% if active_instructor_age == latest_semester %} active {% endif %}" 
+                onclick = "window.location.href='{% url 'course_recency' course.subdepartment.mnemonic course.number latest_semester %}'">
                 {{ latest_semester }}</button>
                 {% if 'course' in request.path %}
-                <button type="button" id="show-btn" class="btn btn-outline-primary">All</button>
+                <button type="button" id="show-btn" class="btn btn-outline-primary {% if active_instructor_age != latest_semester %} active {% endif %}" 
+                onclick = "window.location.href='{% url 'course_recency' course.subdepartment.mnemonic course.number 'All' %}'">All</button>
                 {% elif 'department' in request.path %}
                 <button type="button" id="show-btn" class="btn btn-outline-primary">Last 5 Years</button>
                 {% endif %}
