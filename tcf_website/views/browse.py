@@ -95,20 +95,73 @@ def course_view(request, mnemonic, course_number):
     """A new Course view that allows you to input mnemonic and number instead."""
 
     # Clears previously saved course information
-    request.session["course_code"] = None
-    request.session["course_title"] = None
-    request.session["instructor_fullname"] = None
+    request.session.flush()
 
     # Redirect if the mnemonic is not all uppercase
     if mnemonic != mnemonic.upper():
         return redirect(
             "course", mnemonic=mnemonic.upper(), course_number=course_number
         )
+
     course = get_object_or_404(
         Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number
     )
     latest_semester = Semester.latest()
-    instructors = (
+    instructors = get_instructors_and_data(course, latest_semester)
+
+    # Note: Could be simplified further
+
+    for instructor in instructors:
+        if instructor.section_times[0] and instructor.section_nums[0]:
+            instructor.times = {
+                str(num): times[:-1].split(",")
+                for num, times in zip(
+                    instructor.section_nums, instructor.section_times
+                )
+                if num and times
+            }
+
+    taught_this_semester = Section.objects.filter(
+        course=course, semester=latest_semester
+    ).exists()
+
+    # Note: Wanted to use .annotate() but couldn't figure out a way
+    # So created a dictionary on the fly to minimize database access
+    semesters = {s.id: s for s in Semester.objects.all()}
+    for instructor in instructors:
+        instructor.semester_last_taught = semesters.get(
+            instructor.semester_last_taught
+        )
+
+    dept = course.subdepartment.department
+
+    # Navigation breadcrumbs
+    breadcrumbs = [
+        (dept.school.name, reverse("browse"), False),
+        (dept.name, reverse("department", args=[dept.pk]), False),
+        (course.code, None, True),
+    ]
+
+    # Saves information of course to session for recently viewed modal
+    request.session["course_code"] = course.code()
+    request.session["course_title"] = course.title
+    request.session["instructor_fullname"] = None
+
+    return render(
+        request,
+        "course/course.html",
+        {
+            "course": course,
+            "instructors": instructors,
+            "latest_semester": latest_semester,
+            "breadcrumbs": breadcrumbs,
+            "taught_this_semester": taught_this_semester,
+        },
+    )
+
+
+def get_instructors_and_data(course, latest_semester):
+    return (
         Instructor.objects.filter(section__course=course, hidden=False)
         .distinct()
         .annotate(
@@ -155,60 +208,6 @@ def course_view(request, mnemonic, course_number):
                 distinct=True,
             ),
         )
-    )
-
-    # Note: Refactor pls
-
-    for i in instructors:
-        if i.section_times[0] is not None and i.section_nums[0] is not None:
-            i.times = {}
-            for idx, _ in enumerate(i.section_times):
-                if (
-                    i.section_times[idx] is not None
-                    and i.section_nums[idx] is not None
-                ):
-                    i.times[str(i.section_nums[idx])] = i.section_times[idx][
-                        :-1
-                    ].split(",")
-        if None in i.section_nums:
-            i.section_nums.remove(None)
-
-    taught_this_semester = Section.objects.filter(
-        course=course, semester=latest_semester
-    ).exists()
-
-    # Note: Wanted to use .annotate() but couldn't figure out a way
-    # So created a dictionary on the fly to minimize database access
-    semesters = {s.id: s for s in Semester.objects.all()}
-    for instructor in instructors:
-        instructor.semester_last_taught = semesters.get(
-            instructor.semester_last_taught
-        )
-
-    dept = course.subdepartment.department
-
-    # Navigation breadcrumbs
-    breadcrumbs = [
-        (dept.school.name, reverse("browse"), False),
-        (dept.name, reverse("department", args=[dept.pk]), False),
-        (course.code, None, True),
-    ]
-
-    # Saves information of course to session for recently viewed modal
-    request.session["course_code"] = course.code()
-    request.session["course_title"] = course.title
-    request.session["instructor_fullname"] = None
-
-    return render(
-        request,
-        "course/course.html",
-        {
-            "course": course,
-            "instructors": instructors,
-            "latest_semester": latest_semester,
-            "breadcrumbs": breadcrumbs,
-            "taught_this_semester": taught_this_semester,
-        },
     )
 
 
