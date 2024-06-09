@@ -127,7 +127,7 @@ def course_view(
     for instructor in instructors:
         if instructor.section_times[0] and instructor.section_nums[0]:
             instructor.times = {
-                str(num): times[:-1].split(",")
+                num: times[:-1].split(",")
                 for num, times in zip(
                     instructor.section_nums, instructor.section_times
                 )
@@ -168,7 +168,6 @@ def course_view(
             "instructors": instructors,
             "latest_semester": str(latest_semester),
             "breadcrumbs": breadcrumbs,
-            "taught_this_semester": taught_this_semester,
             "sortby": sortby,
             "order": order,
             "active_instructor_age": instructor_age,

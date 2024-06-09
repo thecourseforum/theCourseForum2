@@ -2,6 +2,8 @@
 
 """TCF Database models."""
 
+import math
+
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -490,7 +492,7 @@ class Course(models.Model):
         return self.review_set.count()
 
     def get_instructors_and_data(self, course, latest_semester, reverse):
-        instructors = (
+        return (
             Instructor.objects.filter(section__course=course, hidden=False)
             .distinct()
             .annotate(
@@ -499,12 +501,12 @@ class Course(models.Model):
                         "courseinstructorgrade__average",
                         filter=Q(courseinstructorgrade__course=course),
                     ),
-                    Value(6) if reverse else Value(0),
+                    Value(math.inf) if reverse else Value(-1),
                     output_field=FloatField(),
                 ),
                 difficulty=Coalesce(
                     Avg("review__difficulty", filter=Q(review__course=course)),
-                    Value(6) if reverse else Value(0),
+                    Value(math.inf) if reverse else Value(-1),
                     output_field=FloatField(),
                 ),
                 rating=Coalesce(
@@ -524,7 +526,7 @@ class Course(models.Model):
                     )
                     / 3,
                     # invalid value for if there are no reviews
-                    Value(6) if reverse else Value(0),
+                    Value(math.inf) if reverse else Value(-1),
                     output_field=FloatField(),
                 ),
                 semester_last_taught=Max(
@@ -552,22 +554,16 @@ class Course(models.Model):
                     ),
                     distinct=True,
                 ),
-                is_teaching_this_semester=Case(
-                    When(section__semester=latest_semester, then=True),
-                    default=False,
-                    output_field=BooleanField(),
-                ),
             )
         )
-        return instructors
 
     def sort_instructors_by_key(
         self,
         course,
-        latest_semester,
-        recent,
-        order,
-        sortby: str = "last_taught",
+        latest_semester: Semester,
+        recent: bool,
+        order: str,
+        sortby: str,
     ):
         reverse = order != "desc"
         instructors = self.get_instructors_and_data(
@@ -584,7 +580,9 @@ class Course(models.Model):
         order_prefix = "" if reverse else "-"
 
         if recent:
-            instructors = instructors.filter(is_teaching_this_semester=True)
+            instructors = instructors.filter(
+                semester_last_taught=Semester.latest().pk
+            )
 
         instructors = instructors.order_by(order_prefix + sort_field)
         return instructors
