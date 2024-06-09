@@ -112,7 +112,7 @@ def course_view(
         Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number
     )
     latest_semester = Semester.latest()
-    instructors = get_instructors_and_data(course, latest_semester)
+    instructors = course.get_instructors_and_data(course, latest_semester)
 
     # Fetch sorting variables
     sortby = request.GET.get("sortby", "last_taught")
@@ -169,57 +169,6 @@ def course_view(
             "order": order,
             "active_instructor_age": instructor_age,
         },
-    )
-
-
-def get_instructors_and_data(course, latest_semester):
-    return (
-        Instructor.objects.filter(section__course=course, hidden=False)
-        .distinct()
-        .annotate(
-            gpa=Avg(
-                "courseinstructorgrade__average",
-                filter=Q(courseinstructorgrade__course=course),
-            ),
-            difficulty=Avg(
-                "review__difficulty", filter=Q(review__course=course)
-            ),
-            rating=(
-                Avg(
-                    "review__instructor_rating", filter=Q(review__course=course)
-                )
-                + Avg("review__enjoyability", filter=Q(review__course=course))
-                + Avg(
-                    "review__recommendability", filter=Q(review__course=course)
-                )
-            )
-            / 3,
-            semester_last_taught=Max(
-                "section__semester", filter=Q(section__course=course)
-            ),
-            # ArrayAgg:
-            # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
-            section_times=ArrayAgg(
-                Case(
-                    When(
-                        section__semester=latest_semester,
-                        then="section__section_times",
-                    ),
-                    output_field=CharField(),
-                ),
-                distinct=True,
-            ),
-            section_nums=ArrayAgg(
-                Case(
-                    When(
-                        section__semester=latest_semester,
-                        then="section__sis_section_number",
-                    ),
-                    output_field=CharField(),
-                ),
-                distinct=True,
-            ),
-        )
     )
 
 

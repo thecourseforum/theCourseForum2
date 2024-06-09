@@ -3,8 +3,10 @@
 """TCF Database models."""
 
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Avg, BooleanField, Case, CharField, Max, Q, When
 from django.db.models.functions import Abs, Coalesce
 
 
@@ -476,6 +478,68 @@ class Course(models.Model):
     def review_count(self):
         """Compute total number of course reviews."""
         return self.review_set.count()
+
+    def get_instructors_and_data(self, course, latest_semester, recency):
+        instructors = (
+            Instructor.objects.filter(section__course=course, hidden=False)
+            .distinct()
+            .annotate(
+                gpa=Avg(
+                    "courseinstructorgrade__average",
+                    filter=Q(courseinstructorgrade__course=course),
+                ),
+                difficulty=Avg(
+                    "review__difficulty", filter=Q(review__course=course)
+                ),
+                rating=(
+                    Avg(
+                        "review__instructor_rating",
+                        filter=Q(review__course=course),
+                    )
+                    + Avg(
+                        "review__enjoyability", filter=Q(review__course=course)
+                    )
+                    + Avg(
+                        "review__recommendability",
+                        filter=Q(review__course=course),
+                    )
+                )
+                / 3,
+                semester_last_taught=Max(
+                    "section__semester", filter=Q(section__course=course)
+                ),
+                # ArrayAgg:
+                # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
+                section_times=ArrayAgg(
+                    Case(
+                        When(
+                            section__semester=latest_semester,
+                            then="section__section_times",
+                        ),
+                        output_field=CharField(),
+                    ),
+                    distinct=True,
+                ),
+                section_nums=ArrayAgg(
+                    Case(
+                        When(
+                            section__semester=latest_semester,
+                            then="section__sis_section_number",
+                        ),
+                        output_field=CharField(),
+                    ),
+                    distinct=True,
+                ),
+                is_teaching_this_semester=Case(
+                    When(section__semester=latest_semester, then=True),
+                    default=False,
+                    output_field=BooleanField(),
+                ),
+            )
+        )
+        if recency == latest_semester:
+            return instructors.filter(is_teaching_this_semester=True)
+        return instructors
 
     class Meta:
         indexes = [
