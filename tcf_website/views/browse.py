@@ -91,7 +91,12 @@ def course_view_legacy(request, course_id):
     )
 
 
-def course_view(request, mnemonic, course_number):
+def course_view(
+    request,
+    mnemonic: str,
+    course_number: int,
+    instructor_age: str = Semester.latest(),
+):
     """A new Course view that allows you to input mnemonic and number instead."""
 
     # Clears previously saved course information
@@ -108,6 +113,10 @@ def course_view(request, mnemonic, course_number):
     )
     latest_semester = Semester.latest()
     instructors = get_instructors_and_data(course, latest_semester)
+
+    # Fetch sorting variables
+    sortby = request.GET.get("sortby", "last_taught")
+    order = request.GET.get("order", "asc")
 
     # Note: Could be simplified further
 
@@ -156,6 +165,9 @@ def course_view(request, mnemonic, course_number):
             "latest_semester": latest_semester,
             "breadcrumbs": breadcrumbs,
             "taught_this_semester": taught_this_semester,
+            "sortby": sortby,
+            "order": order,
+            "active_instructor_age": instructor_age,
         },
     )
 
