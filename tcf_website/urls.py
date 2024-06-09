@@ -31,7 +31,7 @@ urlpatterns = [
         name="course",
     ),
     path(
-        "course/<str:mnemonic>/<int:course_number>/<str:instructor_recency>",
+        "course/<str:mnemonic>/<int:course_number>/<str:instructor_age>",
         views.course_view,
         name="course_recency",
     ),
