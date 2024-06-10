@@ -5,9 +5,8 @@
 import json
 from typing import Any
 
-from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Avg, Case, CharField, F, Max, Q, Value, When
+from django.db.models import Avg, CharField, F, Q, Value
 from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -125,8 +124,8 @@ def course_view(
     # Note: Could be simplified further
 
     for instructor in instructors:
-        instructor.semester_last_taught = str(
-            Semester.objects.filter(pk=instructor.semester_last_taught).first()
+        instructor.semester_last_taught = get_object_or_404(
+            Semester, instructor.semester_last_taught
         )
         if instructor.section_times[0] and instructor.section_nums[0]:
             instructor.times = {
