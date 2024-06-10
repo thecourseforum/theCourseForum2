@@ -12,13 +12,16 @@ from django.db.models import (
     Avg,
     Case,
     CharField,
+    F,
     FloatField,
+    IntegerField,
     OuterRef,
     Q,
     Subquery,
     Value,
     When,
 )
+
 from django.db.models.functions import Abs, Coalesce, Concat
 
 
@@ -61,6 +64,60 @@ class Department(models.Model):
     def __str__(self):
         return self.name
 
+    # Fetches all courses in a department
+    def fetch_recent_courses(self, num_of_years: int = 5):
+        """Return courses within last 5 years."""
+        latest_semester = Semester.latest()
+        return Course.objects.filter(
+            subdepartment__department=self,
+            semester_last_taught__number__gte=latest_semester.number
+            - (10 * num_of_years),
+        ).order_by("number")
+
+    def sort_courses_by_key(
+        self, annotation, num_of_years: int = 5, reverse: bool = False
+    ):
+        courses = self.fetch_recent_courses(num_of_years)
+        return courses.annotate(sort_value=annotation).order_by(
+            ("-" if reverse else "") + "sort_value"
+        )
+
+    def sort_courses(
+        self, sort_type: str, num_of_years: int = 5, order: str = "asc"
+    ):
+        reverse = order != "asc"
+        match sort_type:
+            case "course_id":
+                if reverse:
+                    return self.fetch_recent_courses(num_of_years)[::-1]
+                return self.fetch_recent_courses(num_of_years)
+
+            case "rating":
+                annotation = Coalesce(
+                    (
+                        Avg("review__recommendability")
+                        + Avg("review__instructor_rating")
+                        + Avg("review__enjoyability")
+                    )
+                    / 3,
+                    Value(0) if reverse else Value(5),
+                    output_field=FloatField(),
+                )
+            case "difficulty":
+                annotation = Coalesce(
+                    Avg("review__difficulty"),
+                    Value(0) if reverse else Value(5),
+                    output_field=FloatField(),
+                )
+            case "gpa":
+                annotation = Coalesce(
+                    Avg("coursegrade__average"),
+                    Value(0) if reverse else Value(5),
+                    output_field=FloatField(),
+                )
+
+        return self.sort_courses_by_key(annotation, num_of_years, reverse)
+
     class Meta:
         indexes = [
             models.Index(fields=["school"]),
@@ -95,13 +152,6 @@ class Subdepartment(models.Model):
 
     def __str__(self):
         return f"{self.mnemonic} - {self.name}"
-
-    def recent_courses(self):
-        """Return courses within last 5 years."""
-        latest_semester = Semester.latest()
-        return self.course_set.filter(
-            semester_last_taught__year__gte=latest_semester.year - 5
-        ).order_by("number")
 
     def has_current_course(self):
         """Return True if subdepartment has a course in current semester."""
