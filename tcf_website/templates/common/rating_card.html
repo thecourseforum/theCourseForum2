@@ -52,18 +52,18 @@
                   <i class="fas fa-clock"></i>&nbsp;Sections
                 </small>
                 <p class="mb-0 info" id="times">
-                  {% if sec_nums %}
+                  {% if semester_last_taught == latest_semester %}
                       {{ sec_nums|length }}
                   {% else %}
                     &mdash;
                   {% endif %}
                 </p>
               </div>
-              <div class="col-12 col-md-8 col-lg-3" {% if not last_taught %}style="opacity: 0;"{% endif %}>
+              <div class="col-12 col-md-8 col-lg-3">
                 <small class="mb-0 text-uppercase">
                   Last Taught
                 </small>
-                  <p class="mb-0 info" id="recency">{{ last_taught }}</p>
+                  <p class="mb-0 info" id="recency">{{ semester_last_taught }}</p>
               </div>
           </div>
           {% if content %}
