@@ -16,6 +16,11 @@ urlpatterns = [
     path("browse/", views.browse, name="browse"),
     path("department/<int:dept_id>/", views.department, name="department"),
     path(
+        "department/<int:dept_id>/<str:course_age>/",
+        views.department,
+        name="department_course_age",
+    ),
+    path(
         "course/<int:course_id>/",
         views.course_view_legacy,
         name="course_legacy",

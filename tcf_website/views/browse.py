@@ -49,7 +49,7 @@ def browse(request):
     )
 
 
-def department(request, dept_id):
+def department(request, dept_id: int, course_age=str(Semester.latest())):
     """View for department page."""
 
     # Prefetch related subdepartments and courses to improve performance.
@@ -60,22 +60,39 @@ def department(request, dept_id):
         pk=dept_id
     )
 
-    # Get the most recent semester
-    latest_semester = Semester.latest()
-
     # Navigation breadcrimbs
     breadcrumbs = [
         (dept.school.name, reverse("browse"), False),
         (dept.name, None, True),
     ]
 
+    # Setting up sorting and course age variables
+    latest_semester = Semester.latest()
+    last_five_years = Semester.objects.filter(
+        number=latest_semester.number - 50
+    ).first()
+    season, year = course_age.upper().split()
+    active_semester = Semester.objects.filter(year=year, season=season).first()
+
+    # Fetch sorting variables
+    sortby = request.GET.get("sortby", "course_id")
+    order = request.GET.get("order", "asc")
+
+    courses = dept.sort_courses(sortby, latest_semester.year - int(year), order)
+
     return render(
         request,
         "department/department.html",
         {
             "subdepartments": dept.subdepartment_set.all(),
-            "latest_semester": latest_semester,
+            "dept_id": dept_id,
+            "latest_semester": str(latest_semester),
             "breadcrumbs": breadcrumbs,
+            "courses": courses,
+            "active_course_age": str(active_semester),
+            "sortby": sortby,
+            "order": order,
+            "last_five_years": str(last_five_years),
         },
     )
 
