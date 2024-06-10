@@ -125,6 +125,9 @@ def course_view(
     # Note: Could be simplified further
 
     for instructor in instructors:
+        instructor.semester_last_taught = str(
+            Semester.objects.filter(pk=instructor.semester_last_taught).first()
+        )
         if instructor.section_times[0] and instructor.section_nums[0]:
             instructor.times = {
                 num: times[:-1].split(",")
