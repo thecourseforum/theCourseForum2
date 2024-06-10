@@ -119,7 +119,7 @@ def course_view(
     order = request.GET.get("order", "desc")
 
     instructors = course.sort_instructors_by_key(
-        course, latest_semester, recent, order, sortby
+        latest_semester, recent, order, sortby
     )
 
     # Note: Could be simplified further
@@ -133,18 +133,6 @@ def course_view(
                 )
                 if num and times
             }
-
-    taught_this_semester = Section.objects.filter(
-        course=course, semester=latest_semester
-    ).exists()
-
-    # Note: Wanted to use .annotate() but couldn't figure out a way
-    # So created a dictionary on the fly to minimize database access
-    semesters = {s.id: s for s in Semester.objects.all()}
-    for instructor in instructors:
-        instructor.semester_last_taught = str(
-            semesters.get(instructor.semester_last_taught)
-        )
 
     dept = course.subdepartment.department
 

@@ -10,16 +10,16 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import (
     Avg,
-    BooleanField,
     Case,
     CharField,
     FloatField,
-    Max,
+    OuterRef,
     Q,
+    Subquery,
     Value,
     When,
 )
-from django.db.models.functions import Abs, Coalesce
+from django.db.models.functions import Abs, Coalesce, Concat
 
 
 class School(models.Model):
@@ -491,21 +491,30 @@ class Course(models.Model):
         """Compute total number of course reviews."""
         return self.review_set.count()
 
-    def get_instructors_and_data(self, course, latest_semester, reverse):
-        return (
-            Instructor.objects.filter(section__course=course, hidden=False)
+    def get_instructors_and_data(self, latest_semester, reverse):
+        # https://docs.djangoproject.com/en/5.0/ref/models/expressions/
+        # Annotate each instructor with the id of the semester last taught object
+        # Those pks are converted to semester objects with the second annotation
+        semester_last_taught_subquery = Subquery(
+            Section.objects.filter(course=self, instructors=OuterRef("pk"))
+            .order_by("-semester__number")
+            .values("semester__id")[:1]
+        )
+
+        instructors = (
+            Instructor.objects.filter(section__course=self, hidden=False)
             .distinct()
             .annotate(
                 gpa=Coalesce(
                     Avg(
                         "courseinstructorgrade__average",
-                        filter=Q(courseinstructorgrade__course=course),
+                        filter=Q(courseinstructorgrade__course=self),
                     ),
                     Value(math.inf) if reverse else Value(-1),
                     output_field=FloatField(),
                 ),
                 difficulty=Coalesce(
-                    Avg("review__difficulty", filter=Q(review__course=course)),
+                    Avg("review__difficulty", filter=Q(review__course=self)),
                     Value(math.inf) if reverse else Value(-1),
                     output_field=FloatField(),
                 ),
@@ -513,15 +522,15 @@ class Course(models.Model):
                     (
                         Avg(
                             "review__instructor_rating",
-                            filter=Q(review__course=course),
+                            filter=Q(review__course=self),
                         )
                         + Avg(
                             "review__enjoyability",
-                            filter=Q(review__course=course),
+                            filter=Q(review__course=self),
                         )
                         + Avg(
                             "review__recommendability",
-                            filter=Q(review__course=course),
+                            filter=Q(review__course=self),
                         )
                     )
                     / 3,
@@ -529,9 +538,7 @@ class Course(models.Model):
                     Value(math.inf) if reverse else Value(-1),
                     output_field=FloatField(),
                 ),
-                semester_last_taught=Max(
-                    "section__semester", filter=Q(section__course=course)
-                ),
+                semester_last_taught=semester_last_taught_subquery,
                 # ArrayAgg:
                 # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
                 section_times=ArrayAgg(
@@ -557,18 +564,17 @@ class Course(models.Model):
             )
         )
 
+        return instructors
+
     def sort_instructors_by_key(
         self,
-        course,
         latest_semester: Semester,
         recent: bool,
         order: str,
         sortby: str,
     ):
         reverse = order != "desc"
-        instructors = self.get_instructors_and_data(
-            course, latest_semester, reverse
-        )
+        instructors = self.get_instructors_and_data(latest_semester, reverse)
 
         sort_field = {
             "gpa": "gpa",
