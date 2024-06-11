@@ -44,3 +44,7 @@ env_variables:
     # email for account verification
     EMAIL_HOST_USER: "${EMAIL_HOST_USER}"
     EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"
+    # review drive information
+    REVIEW_DRIVE_ID: "${REVIEW_DRIVE_ID}"
+    REVIEW_DRIVE_EMAIL: "${REVIEW_DRIVE_EMAIL}"
+    REVIEW_DRIVE_PASSWORD: "${REVIEW_DRIVE_PASSWORD}"

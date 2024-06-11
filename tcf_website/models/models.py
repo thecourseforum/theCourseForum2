@@ -2,11 +2,27 @@
 
 """TCF Database models."""
 
+import math
+
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Avg, Case, F, FloatField, IntegerField, Value, When
-from django.db.models.functions import Abs, Coalesce
+from django.db.models import (
+    Avg,
+    Case,
+    CharField,
+    F,
+    FloatField,
+    IntegerField,
+    OuterRef,
+    Q,
+    Subquery,
+    Value,
+    When,
+)
+
+from django.db.models.functions import Abs, Coalesce, Concat
 
 
 class School(models.Model):
@@ -525,6 +541,108 @@ class Course(models.Model):
         """Compute total number of course reviews."""
         return self.review_set.count()
 
+    def get_instructors_and_data(self, latest_semester, reverse):
+        # https://docs.djangoproject.com/en/5.0/ref/models/expressions/
+        # Annotate each instructor with the id of the semester last taught object
+        # Those pks are converted to semester objects with the second annotation
+        semester_last_taught_subquery = Subquery(
+            Section.objects.filter(course=self, instructors=OuterRef("pk"))
+            .order_by("-semester__number")
+            .values("semester__id")[:1]
+        )
+
+        instructors = (
+            Instructor.objects.filter(section__course=self, hidden=False)
+            .distinct()
+            .annotate(
+                gpa=Coalesce(
+                    Avg(
+                        "courseinstructorgrade__average",
+                        filter=Q(courseinstructorgrade__course=self),
+                    ),
+                    Value(math.inf) if reverse else Value(-1),
+                    output_field=FloatField(),
+                ),
+                difficulty=Coalesce(
+                    Avg("review__difficulty", filter=Q(review__course=self)),
+                    Value(math.inf) if reverse else Value(-1),
+                    output_field=FloatField(),
+                ),
+                rating=Coalesce(
+                    (
+                        Avg(
+                            "review__instructor_rating",
+                            filter=Q(review__course=self),
+                        )
+                        + Avg(
+                            "review__enjoyability",
+                            filter=Q(review__course=self),
+                        )
+                        + Avg(
+                            "review__recommendability",
+                            filter=Q(review__course=self),
+                        )
+                    )
+                    / 3,
+                    # invalid value for if there are no reviews
+                    Value(math.inf) if reverse else Value(-1),
+                    output_field=FloatField(),
+                ),
+                semester_last_taught=semester_last_taught_subquery,
+                # ArrayAgg:
+                # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
+                section_times=ArrayAgg(
+                    Case(
+                        When(
+                            section__semester=latest_semester,
+                            then="section__section_times",
+                        ),
+                        output_field=CharField(),
+                    ),
+                    distinct=True,
+                ),
+                section_nums=ArrayAgg(
+                    Case(
+                        When(
+                            section__semester=latest_semester,
+                            then="section__sis_section_number",
+                        ),
+                        output_field=CharField(),
+                    ),
+                    distinct=True,
+                ),
+            )
+        )
+
+        return instructors
+
+    def sort_instructors_by_key(
+        self,
+        latest_semester: Semester,
+        recent: bool,
+        order: str,
+        sortby: str,
+    ):
+        reverse = order != "desc"
+        instructors = self.get_instructors_and_data(latest_semester, reverse)
+
+        sort_field = {
+            "gpa": "gpa",
+            "rating": "rating",
+            "difficulty": "difficulty",
+            "last_taught": "semester_last_taught",
+        }.get(sortby, "semester_last_taught")
+
+        order_prefix = "" if reverse else "-"
+
+        if recent:
+            instructors = instructors.filter(
+                semester_last_taught=Semester.latest().pk
+            )
+
+        instructors = instructors.order_by(order_prefix + sort_field)
+        return instructors
+
     class Meta:
         indexes = [
             models.Index(fields=["subdepartment", "number"]),
@@ -651,6 +769,9 @@ class Review(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     # Review semester foreign key. Required.
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    # Email of reviewer for Review Drive, should be blank most of the time
+    # Only done for reviews without accounts
+    email = models.CharField(default="", null=True, blank=True)
 
     # Enum of Rating options.
     RATINGS = (

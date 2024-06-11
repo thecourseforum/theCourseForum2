@@ -224,6 +224,11 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = env.str("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD")
 
+# Import review drive settings
+REVIEW_DRIVE_ID = env.str("REVIEW_DRIVE_ID")
+REVIEW_DRIVE_EMAIL = env.str("REVIEW_DRIVE_EMAIL")
+REVIEW_DRIVE_PASSWORD = env.str("REVIEW_DRIVE_PASSWORD")
+
 # Use Bootstrap class names for Django message tags
 MESSAGE_TAGS = {
     messages.DEBUG: "alert-info",

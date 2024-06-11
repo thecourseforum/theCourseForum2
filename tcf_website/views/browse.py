@@ -5,9 +5,8 @@
 import json
 from typing import Any
 
-from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Avg, Case, CharField, F, Max, Q, Value, When
+from django.db.models import Avg, CharField, F, Q, Value
 from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -108,99 +107,51 @@ def course_view_legacy(request, course_id):
     )
 
 
-def course_view(request, mnemonic, course_number):
+def course_view(
+    request,
+    mnemonic: str,
+    course_number: int,
+    instructor_age: str = str(Semester.latest()),
+):
     """A new Course view that allows you to input mnemonic and number instead."""
 
     # Clears previously saved course information
-    request.session["course_code"] = None
-    request.session["course_title"] = None
-    request.session["instructor_fullname"] = None
+    request.session.flush()
 
     # Redirect if the mnemonic is not all uppercase
     if mnemonic != mnemonic.upper():
         return redirect(
             "course", mnemonic=mnemonic.upper(), course_number=course_number
         )
+
     course = get_object_or_404(
         Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number
     )
     latest_semester = Semester.latest()
-    instructors = (
-        Instructor.objects.filter(section__course=course, hidden=False)
-        .distinct()
-        .annotate(
-            gpa=Avg(
-                "courseinstructorgrade__average",
-                filter=Q(courseinstructorgrade__course=course),
-            ),
-            difficulty=Avg(
-                "review__difficulty", filter=Q(review__course=course)
-            ),
-            rating=(
-                Avg(
-                    "review__instructor_rating", filter=Q(review__course=course)
-                )
-                + Avg("review__enjoyability", filter=Q(review__course=course))
-                + Avg(
-                    "review__recommendability", filter=Q(review__course=course)
-                )
-            )
-            / 3,
-            semester_last_taught=Max(
-                "section__semester", filter=Q(section__course=course)
-            ),
-            # ArrayAgg:
-            # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
-            section_times=ArrayAgg(
-                Case(
-                    When(
-                        section__semester=latest_semester,
-                        then="section__section_times",
-                    ),
-                    output_field=CharField(),
-                ),
-                distinct=True,
-            ),
-            section_nums=ArrayAgg(
-                Case(
-                    When(
-                        section__semester=latest_semester,
-                        then="section__sis_section_number",
-                    ),
-                    output_field=CharField(),
-                ),
-                distinct=True,
-            ),
-        )
+    recent = str(latest_semester) == instructor_age
+
+    # Fetch sorting variables
+    sortby = request.GET.get("sortby", "last_taught")
+    order = request.GET.get("order", "desc")
+
+    instructors = course.sort_instructors_by_key(
+        latest_semester, recent, order, sortby
     )
 
-    # Note: Refactor pls
+    # Note: Could be simplified further
 
-    for i in instructors:
-        if i.section_times[0] is not None and i.section_nums[0] is not None:
-            i.times = {}
-            for idx, _ in enumerate(i.section_times):
-                if (
-                    i.section_times[idx] is not None
-                    and i.section_nums[idx] is not None
-                ):
-                    i.times[str(i.section_nums[idx])] = i.section_times[idx][
-                        :-1
-                    ].split(",")
-        if None in i.section_nums:
-            i.section_nums.remove(None)
-
-    taught_this_semester = Section.objects.filter(
-        course=course, semester=latest_semester
-    ).exists()
-
-    # Note: Wanted to use .annotate() but couldn't figure out a way
-    # So created a dictionary on the fly to minimize database access
-    semesters = {s.id: s for s in Semester.objects.all()}
     for instructor in instructors:
-        instructor.semester_last_taught = semesters.get(
-            instructor.semester_last_taught
+        instructor.semester_last_taught = get_object_or_404(
+            Semester, instructor.semester_last_taught
         )
+        if instructor.section_times[0] and instructor.section_nums[0]:
+            instructor.times = {
+                num: times[:-1].split(",")
+                for num, times in zip(
+                    instructor.section_nums, instructor.section_times
+                )
+                if num and times
+            }
 
     dept = course.subdepartment.department
 
@@ -222,9 +173,11 @@ def course_view(request, mnemonic, course_number):
         {
             "course": course,
             "instructors": instructors,
-            "latest_semester": latest_semester,
+            "latest_semester": str(latest_semester),
             "breadcrumbs": breadcrumbs,
-            "taught_this_semester": taught_this_semester,
+            "sortby": sortby,
+            "order": order,
+            "active_instructor_age": instructor_age,
         },
     )
 
