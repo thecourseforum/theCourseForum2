@@ -125,7 +125,9 @@ def course_view(
         )
 
     course = get_object_or_404(
-        Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number
+        Course,
+        subdepartment__mnemonic=mnemonic.upper(),
+        number=course_number,
     )
     latest_semester = Semester.latest()
     recent = str(latest_semester) == instructor_age
@@ -141,8 +143,8 @@ def course_view(
     # Note: Could be simplified further
 
     for instructor in instructors:
-        instructor.semester_last_taught = get_object_or_404(
-            Semester, instructor.semester_last_taught
+        instructor.semester_last_taught = str(
+            Semester.objects.filter(pk=instructor.semester_last_taught).first()
         )
         if instructor.section_times[0] and instructor.section_nums[0]:
             instructor.times = {
