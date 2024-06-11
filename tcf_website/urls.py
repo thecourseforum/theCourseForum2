@@ -1,5 +1,7 @@
+# pylint: disable=line-too-long
 """Routes URLs to views"""
 
+from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.views.generic import TemplateView
 
@@ -32,6 +34,11 @@ urlpatterns = [
         "course/<str:mnemonic>/<int:course_number>/",
         views.course_view,
         name="course",
+    ),
+    path(
+        "course/<str:mnemonic>/<int:course_number>/<str:instructor_age>",
+        views.course_view,
+        name="course_recency",
     ),
     path(
         "instructor/<int:instructor_id>/",
@@ -113,5 +120,34 @@ urlpatterns = [
         "register/email",
         views.auth.email_verification,
         name="email_verification",
+    ),
+    # PASSWORD RESET URLS (used when logged out)
+    path(
+        "accounts/password_reset/",
+        auth_views.PasswordResetView.as_view(
+            template_name="login/password_reset.html"
+        ),
+        name="password_reset",
+    ),
+    path(
+        "accounts/password_reset_done/",
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="login/password_reset_done.html"
+        ),
+        name="password_reset_done",
+    ),
+    path(
+        "accounts/password_reset_<uidb64>_<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="login/password_reset_form.html"
+        ),
+        name="password_reset_confirm",
+    ),
+    path(
+        "accounts/password_reset_complete/",
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name="login/password_reset_complete.html"
+        ),
+        name="password_reset_complete",
     ),
 ]
