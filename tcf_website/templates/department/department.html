@@ -16,7 +16,7 @@
     {% include "../common/leaderboard_ad.html" with ad_slot="3719332473" %}
   </div>
   <div class="container-lg">
-    {% include "common/toolbar.html" with active_course_age=active_course_age latest_semester=latest_semester last_five_years=last_five_years dept_id=dept_id breadcrumbs=breadcrumbs sorting=True %}
+    {% include "common/toolbar.html" with active_course_recency=active_course_recency latest_semester=latest_semester last_five_years=last_five_years dept_id=dept_id breadcrumbs=breadcrumbs sorting=True %}
   </div>
   <div class="subdepartments mt-3">
     <div class="subdepartment container-lg">
@@ -24,10 +24,10 @@
         <div class="new card col p-5 text-center">
           <div class="card-body">
             <h4 class="card-title">
-              {% if active_course_age == latest_semester %}It appears that no courses are being taught this semester.{% else %}It appears that no courses have been taught recently.{% endif %} <i class="far fa-frown-open fa-fw"></i>
+              {% if active_course_recency == latest_semester %}It appears that no courses are being taught this semester.{% else %}It appears that no courses have been taught recently.{% endif %} <i class="far fa-frown-open fa-fw"></i>
             </h4>
             <p class="card-text">
-              {% if active_course_age == latest_semester %}Select the "Last 5 Years" button in the top right to see courses from previous semesters.{% else %}Consider selecting another department.{% endif %}
+              {% if active_course_recency == latest_semester %}Select the "Last 5 Years" button in the top right to see courses from previous semesters.{% else %}Consider selecting another department.{% endif %}
             </p>
           </div>
         </div>

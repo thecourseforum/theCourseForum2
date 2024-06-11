@@ -49,7 +49,7 @@ def browse(request):
     )
 
 
-def department(request, dept_id: int, course_age=str(Semester.latest())):
+def department(request, dept_id: int, course_recency=str(Semester.latest())):
     """View for department page."""
 
     # Prefetch related subdepartments and courses to improve performance.
@@ -68,10 +68,11 @@ def department(request, dept_id: int, course_age=str(Semester.latest())):
 
     # Setting up sorting and course age variables
     latest_semester = Semester.latest()
-    last_five_years = Semester.objects.filter(
-        number=latest_semester.number - 50
-    ).first()
-    season, year = course_age.upper().split()
+    last_five_years = get_object_or_404(
+        Semester, number=latest_semester.number - 50
+    )
+    # Fetch season and year (either current semester or 5 years previous)
+    season, year = course_recency.upper().split()
     active_semester = Semester.objects.filter(year=year, season=season).first()
 
     # Fetch sorting variables
@@ -89,7 +90,7 @@ def department(request, dept_id: int, course_age=str(Semester.latest())):
             "latest_semester": str(latest_semester),
             "breadcrumbs": breadcrumbs,
             "courses": courses,
-            "active_course_age": str(active_semester),
+            "active_course_recency": str(active_semester),
             "sortby": sortby,
             "order": order,
             "last_five_years": str(last_five_years),
@@ -111,7 +112,7 @@ def course_view(
     request,
     mnemonic: str,
     course_number: int,
-    instructor_age: str = str(Semester.latest()),
+    instructor_recency: str = str(Semester.latest()),
 ):
     """A new Course view that allows you to input mnemonic and number instead."""
 
@@ -130,7 +131,7 @@ def course_view(
         number=course_number,
     )
     latest_semester = Semester.latest()
-    recent = str(latest_semester) == instructor_age
+    recent = str(latest_semester) == instructor_recency
 
     # Fetch sorting variables
     sortby = request.GET.get("sortby", "last_taught")
@@ -143,8 +144,9 @@ def course_view(
     # Note: Could be simplified further
 
     for instructor in instructors:
+        # Convert to string for templating
         instructor.semester_last_taught = str(
-            Semester.objects.filter(pk=instructor.semester_last_taught).first()
+            get_object_or_404(Semester, pk=instructor.semester_last_taught)
         )
         if instructor.section_times[0] and instructor.section_nums[0]:
             instructor.times = {
@@ -179,7 +181,7 @@ def course_view(
             "breadcrumbs": breadcrumbs,
             "sortby": sortby,
             "order": order,
-            "active_instructor_age": instructor_age,
+            "active_instructor_recency": instructor_recency,
         },
     )
 

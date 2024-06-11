@@ -16,9 +16,9 @@ urlpatterns = [
     path("browse/", views.browse, name="browse"),
     path("department/<int:dept_id>/", views.department, name="department"),
     path(
-        "department/<int:dept_id>/<str:course_age>/",
+        "department/<int:dept_id>/<str:course_recency>/",
         views.department,
-        name="department_course_age",
+        name="department_course_recency",
     ),
     path(
         "course/<int:course_id>/",
@@ -36,7 +36,7 @@ urlpatterns = [
         name="course",
     ),
     path(
-        "course/<str:mnemonic>/<int:course_number>/<str:instructor_age>",
+        "course/<str:mnemonic>/<int:course_number>/<str:instructor_recency>",
         views.course_view,
         name="course_recency",
     ),
