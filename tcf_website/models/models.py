@@ -536,6 +536,12 @@ class Course(models.Model):
             models.Avg("difficulty")
         )["difficulty__avg"]
 
+    def average_gpa(self):
+        """Compute average GPA."""
+        return CourseGrade.objects.filter(course=self).aggregate(
+            models.Avg("average")
+        )["average__avg"]
+
     def review_count(self):
         """Compute total number of course reviews."""
         return self.review_set.count()
@@ -543,7 +549,8 @@ class Course(models.Model):
     def get_instructors_and_data(self, latest_semester, reverse):
         # https://docs.djangoproject.com/en/5.0/ref/models/expressions/
         """Annotate each instructor with the id of the semester last taught object
-        Those pks are converted to semester objects with the second annotation"""
+        Those pks are converted to semester objects with the second annotation
+        """
 
         semester_last_taught_subquery = Subquery(
             Section.objects.filter(course=self, instructors=OuterRef("pk"))

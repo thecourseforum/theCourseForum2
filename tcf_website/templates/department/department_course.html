@@ -38,6 +38,19 @@
               {% endif %}
               </p>
             </div>
+            <div class="col-4 col-lg-2 text-nowrap">
+              <small class="mb-0 text-uppercase">
+                <i class="fa fa-chart-bar fa-fw" aria-hidden="true"></i
+                >&nbsp;GPA
+              </small>
+              <p class="mb-0 info" id="gpa">
+              {% if course.average_gpa %}
+                {{ course.average_gpa|floatformat:2 }}
+              {% else %}
+                —
+              {% endif %}
+              </p>
+            </div>
             <div class="col-12 col-lg-3 offset-lg-3">
               <small class="mb-0 text-uppercase"> Last Taught </small>
               <p class="mb-0 info">{{ course.semester_last_taught}}</p>
