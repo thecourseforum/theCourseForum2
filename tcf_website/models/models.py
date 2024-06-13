@@ -12,17 +12,14 @@ from django.db.models import (
     Avg,
     Case,
     CharField,
-    F,
     FloatField,
-    IntegerField,
     OuterRef,
     Q,
     Subquery,
     Value,
     When,
 )
-
-from django.db.models.functions import Abs, Coalesce, Concat
+from django.db.models.functions import Abs, Coalesce
 
 
 class School(models.Model):
@@ -77,6 +74,7 @@ class Department(models.Model):
     def sort_courses_by_key(
         self, annotation, num_of_years: int = 5, reverse: bool = False
     ):
+        """Sort recent courses by key `annotation`"""
         courses = self.fetch_recent_courses(num_of_years)
         return courses.annotate(sort_value=annotation).order_by(
             ("-" if reverse else "") + "sort_value"
@@ -85,6 +83,7 @@ class Department(models.Model):
     def sort_courses(
         self, sort_type: str, num_of_years: int = 5, order: str = "asc"
     ):
+        """Sort courses according by `sort_type`"""
         reverse = order != "asc"
         match sort_type:
             case "course_id":
@@ -543,8 +542,9 @@ class Course(models.Model):
 
     def get_instructors_and_data(self, latest_semester, reverse):
         # https://docs.djangoproject.com/en/5.0/ref/models/expressions/
-        # Annotate each instructor with the id of the semester last taught object
-        # Those pks are converted to semester objects with the second annotation
+        """Annotate each instructor with the id of the semester last taught object
+        Those pks are converted to semester objects with the second annotation"""
+
         semester_last_taught_subquery = Subquery(
             Section.objects.filter(course=self, instructors=OuterRef("pk"))
             .order_by("-semester__number")
@@ -623,6 +623,7 @@ class Course(models.Model):
         order: str,
         sortby: str,
     ):
+        """Sort instructors by `sortby`"""
         reverse = order != "desc"
         instructors = self.get_instructors_and_data(latest_semester, reverse)
 
