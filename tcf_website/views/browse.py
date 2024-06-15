@@ -49,7 +49,7 @@ def browse(request):
     )
 
 
-def department(request, dept_id: int, course_recency=str(Semester.latest())):
+def department(request, dept_id: int, course_recency=str(Semester().latest())):
     """View for department page."""
 
     # Prefetch related subdepartments and courses to improve performance.
@@ -67,7 +67,7 @@ def department(request, dept_id: int, course_recency=str(Semester.latest())):
     ]
 
     # Setting up sorting and course age variables
-    latest_semester = Semester.latest()
+    latest_semester = Semester().latest()
     last_five_years = get_object_or_404(
         Semester, number=latest_semester.number - 50
     )
@@ -112,7 +112,7 @@ def course_view(
     request,
     mnemonic: str,
     course_number: int,
-    instructor_recency: str = str(Semester.latest()),
+    instructor_recency: str = str(Semester().latest()),
 ):
     """A new Course view that allows you to input mnemonic and number instead."""
 
@@ -130,7 +130,7 @@ def course_view(
         subdepartment__mnemonic=mnemonic.upper(),
         number=course_number,
     )
-    latest_semester = Semester.latest()
+    latest_semester = Semester().latest()
     recent = str(latest_semester) == instructor_recency
 
     # Fetch sorting variables
@@ -321,7 +321,8 @@ def course_instructor(request, course_id, instructor_id):
             "breadcrumbs": breadcrumbs,
             "data": json.dumps(data),
             "section_info": section_info,
-            "display_times": Semester.latest() == section_last_taught.semester,
+            "display_times": Semester().latest()
+            == section_last_taught.semester,
             "questions": questions,
             "answers": answers,
         },
