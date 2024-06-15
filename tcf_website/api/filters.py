@@ -16,7 +16,7 @@ class InstructorFilter(FilterSet):
         """Filters instructors who taught the course in the recent 5 years"""
         return queryset.filter(
             section__course=value,
-            section__semester__year__gte=Semester.latest().year - 5,
+            section__semester__year__gte=Semester().latest().year - 5,
         ).distinct()
 
     class Meta:

@@ -105,7 +105,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 / 3,
             )
         if "recent" in self.request.query_params:
-            latest_semester = Semester.latest()
+            latest_semester = Semester().latest()
             queryset = queryset.filter(
                 semester_last_taught__year__gte=latest_semester.year - 5
             )
@@ -142,7 +142,7 @@ class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
         # TODO: Refactor using django-filter if possible
         # Can't use `.filter()` twice, so use a dict
         # https://stackoverflow.com/q/8164675/
-        params = {"year__gte": Semester.latest().year - 5}
+        params = {"year__gte": Semester().latest().year - 5}
         if "course" in self.request.query_params:
             params["section__course"] = self.request.query_params["course"]
         if "instructor" in self.request.query_params:
