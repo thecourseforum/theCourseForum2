@@ -49,7 +49,7 @@ def browse(request):
     )
 
 
-def department(request, dept_id: int, course_recency=str(Semester().latest())):
+def department(request, dept_id: int, course_recency=None):
     """View for department page."""
 
     # Prefetch related subdepartments and courses to improve performance.
@@ -59,6 +59,8 @@ def department(request, dept_id: int, course_recency=str(Semester().latest())):
     dept = Department.objects.prefetch_related("subdepartment_set").get(
         pk=dept_id
     )
+    if not course_recency:
+        course_recency = str(Semester().latest())
 
     # Navigation breadcrimbs
     breadcrumbs = [
@@ -112,9 +114,12 @@ def course_view(
     request,
     mnemonic: str,
     course_number: int,
-    instructor_recency: str = str(Semester().latest()),
+    instructor_recency=None,
 ):
     """A new Course view that allows you to input mnemonic and number instead."""
+
+    if not instructor_recency:
+        instructor_recency = str(Semester().latest())
 
     # Clears previously saved course information
     request.session.flush()
