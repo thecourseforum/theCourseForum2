@@ -17,8 +17,8 @@ class DepartmentTestCase(TestCase):
         setup(self)
         Course.objects.all().delete()
         self.courses = []
-        self.latest_semester = Semester().latest()
         course_numbers = set()
+        self.latest_semester = Semester().latest()
         for _ in range(50):
             # Create random semester using helper method
             create_new_semester(
@@ -50,20 +50,36 @@ class DepartmentTestCase(TestCase):
     def test_fetch_recent_courses_last_five(self):
         """Test Department fetch recent courses function"""
         recent_courses = self.department.fetch_recent_courses()
-
+        self.latest_semester = Semester().latest()
         expected_courses = [
             course
             for course in self.courses
             if course.semester_last_taught.number
             >= self.latest_semester.number - 50
         ]
+        print(self.latest_semester.number)
+        self.assertEqual(set(recent_courses), set(expected_courses))
 
     def test_fetch_recent_courses_current_semester(self):
         """Test Department fetch recent courses function"""
         recent_courses = self.department.fetch_recent_courses(0)
+        self.latest_semester = Semester().latest()
         expected_courses = [
             course
             for course in self.courses
-            if course.semester_last_taught.number > self.latest_semester.number
+            if course.semester_last_taught.number >= self.latest_semester.number
         ]
+        self.assertEqual(set(recent_courses), set(expected_courses))
+
+    def test_sort_courses_course_id_asc(self):
+        """Test Department sort courses function using `Course` as the sort key"""
+        recent_courses = self.department.sort_courses("course_id")
+        self.latest_semester = Semester().latest()
+        expected_courses = [
+            course
+            for course in self.courses
+            if course.semester_last_taught.number
+            >= self.latest_semester.number - 50
+        ]
+        expected_courses.sort(key=lambda x: x.number)
         self.assertEqual(set(recent_courses), set(expected_courses))
