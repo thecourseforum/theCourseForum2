@@ -248,12 +248,16 @@ def create_new_semester(self, year):
     base_number = int(f"1{year % 100}8")
     number = base_number
 
-    while Semester.objects.filter(number=number).exists():
-        number += 1
+    semester = Semester.objects.filter(year=year, season=season).first()
+    if semester:
+        self.semester = semester
+    else:
+        while Semester.objects.filter(number=number).exists():
+            number += 1
 
-    self.semester, created = Semester.objects.get_or_create(
-        year=year, season=season, defaults={"number": number}
-    )
+        self.semester = Semester.objects.create(
+            year=year, season=season, number=number
+        )
 
 
 def suppress_request_warnings(original_function):
