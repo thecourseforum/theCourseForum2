@@ -1,8 +1,7 @@
 # pylint: disable=no-member
 """Tests for Department model."""
 
-from random import choice, randint
-from unittest.mock import MagicMock
+from random import randint
 
 from django.test import TestCase
 
