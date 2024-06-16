@@ -3,7 +3,6 @@
 
 from django.test import TestCase
 
-from ..models import Course
 from .test_utils import create_new_semester, setup
 
 
