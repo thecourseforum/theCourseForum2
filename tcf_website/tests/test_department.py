@@ -42,6 +42,17 @@ class DepartmentTestCase(TestCase):
             )
             self.courses.append(course)
 
+    def get_expected_courses(self, num_of_years: int = 5):
+        """Helper method for fetching course objects in Department"""
+        expected_courses = [
+            course
+            for course in self.courses
+            if course.semester_last_taught.number
+            >= self.latest_semester.number - (10 * num_of_years)
+        ]
+
+        return expected_courses
+
     def test_department_name(self):
         """Test Department model __str__ method"""
         self.assertEqual(str(self.department), "Computer Science")
@@ -50,35 +61,21 @@ class DepartmentTestCase(TestCase):
         """Test Department fetch recent courses function"""
         recent_courses = self.department.fetch_recent_courses()
         self.latest_semester = Semester().latest()
-        expected_courses = [
-            course
-            for course in self.courses
-            if course.semester_last_taught.number
-            >= self.latest_semester.number - 50
-        ]
+        expected_courses = self.get_expected_courses()
         self.assertEqual(set(recent_courses), set(expected_courses))
 
     def test_fetch_recent_courses_current_semester(self):
         """Test Department fetch recent courses function"""
         recent_courses = self.department.fetch_recent_courses(0)
         self.latest_semester = Semester().latest()
-        expected_courses = [
-            course
-            for course in self.courses
-            if course.semester_last_taught.number >= self.latest_semester.number
-        ]
+        expected_courses = self.get_expected_courses(0)
         self.assertEqual(set(recent_courses), set(expected_courses))
 
     def test_sort_courses_course_id_asc(self):
         """Test Department sort courses function using `Course ID` as the sort key (ascending)"""
         recent_courses = self.department.sort_courses("course_id")
         self.latest_semester = Semester().latest()
-        expected_courses = [
-            course
-            for course in self.courses
-            if course.semester_last_taught.number
-            >= self.latest_semester.number - 50
-        ]
+        expected_courses = self.get_expected_courses()
         expected_courses.sort(key=lambda x: x.number)
         self.assertEqual(set(recent_courses), set(expected_courses))
 
@@ -86,11 +83,6 @@ class DepartmentTestCase(TestCase):
         """Test Department sort courses function using `Course` as the sort key (descending)"""
         recent_courses = self.department.sort_courses("course_id", 5, "desc")
         self.latest_semester = Semester().latest()
-        expected_courses = [
-            course
-            for course in self.courses
-            if course.semester_last_taught.number
-            >= self.latest_semester.number - 50
-        ]
+        expected_courses = self.get_expected_courses()
         expected_courses.sort(key=lambda x: -x.number)
         self.assertEqual(set(recent_courses), set(expected_courses))
