@@ -91,9 +91,18 @@ class DepartmentTestCase(TestCase):
         self.assertEqual(list(recent_courses), expected_courses)
 
     def test_sort_courses_gpa_asc(self):
+        """Test Department sort courses function using 'gpa' as the sort key (ascending)"""
         self.latest_semester = Semester().latest()
-
         recent_courses = self.department.sort_courses("gpa")
         expected_courses = self.get_expected_courses()
-        expected_courses.sort(key=lambda x: (x.average_gpa(), -x.number))
+        expected_courses.sort(key=lambda x: (x.average_gpa(), x.number))
         self.assertEqual(list(recent_courses), expected_courses)
+
+    def test_sort_courses_gpa_desc(self):
+        """Test Department sort courses function using 'gpa' as the sort key (descending)"""
+        self.latest_semester = Semester().latest()
+        recent_courses = self.department.sort_courses("gpa", 5, "desc")
+        expected_courses = self.get_expected_courses()
+        expected_courses.sort(key=lambda x: (-x.average_gpa(), x.number))
+        self.assertEqual(list(recent_courses), expected_courses)
+
