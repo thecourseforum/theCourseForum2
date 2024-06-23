@@ -148,3 +148,13 @@ class DepartmentTestCase(TestCase):
         expected_courses = self.get_expected_courses()
         expected_courses.sort(key=lambda x: (round(x.average_difficulty(), 10), x.subdepartment.name, x.number))
         self.assertEqual(list(recent_courses), expected_courses) 
+
+    def test_sort_courses_difficulty_desc(self):
+        """Test Department sort courses function using 'difficulty' as the sort key (descending)"""
+        self.latest_semester = Semester().latest()
+        recent_courses = self.department.sort_courses("difficulty", 5, "desc")
+        expected_courses = self.get_expected_courses()
+        expected_courses.sort(key=lambda x: (-round(x.average_difficulty(), 10), x.subdepartment.name, x.number))
+        self.assertEqual(list(recent_courses), expected_courses) 
+
+
