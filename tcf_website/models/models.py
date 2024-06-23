@@ -99,19 +99,19 @@ class Department(models.Model):
                         + Avg("review__enjoyability")
                     )
                     / 3,
-                    Value(0) if reverse else Value(5),
+                    Value(0) if reverse else Value(5.1),
                     output_field=FloatField(),
                 )
             case "difficulty":
                 annotation = Coalesce(
                     Avg("review__difficulty"),
-                    Value(0) if reverse else Value(5),
+                    Value(0) if reverse else Value(5.1),
                     output_field=FloatField(),
                 )
             case "gpa":
                 annotation = Coalesce(
                     Avg("coursegrade__average"),
-                    Value(0) if reverse else Value(5),
+                    Value(0) if reverse else Value(4.1),
                     output_field=FloatField(),
                 )
 
