@@ -3,3 +3,5 @@ line-length = 80
 [tool.isort]
 profile = "black"
 line_length = 80
+[tool.djlint]
+profile = "django"
