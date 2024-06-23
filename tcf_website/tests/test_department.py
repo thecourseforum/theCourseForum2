@@ -122,7 +122,7 @@ class DepartmentTestCase(TestCase):
         self.latest_semester = Semester().latest()
         recent_courses = self.department.sort_courses("gpa", 5, "desc")
         expected_courses = self.get_expected_courses()
-        expected_courses.sort(key=lambda x: (-round(x.average_gpa(), 10), x.subdepartment.name, x.number)) 
+        expected_courses.sort(key=lambda x: (-round(x.average_gpa(), 10), x.subdepartment.name, x.number))
         self.assertEqual(list(recent_courses), expected_courses)
 
     def test_sort_courses_rating_asc(self):
