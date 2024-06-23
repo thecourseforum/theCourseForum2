@@ -19,7 +19,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Abs, Coalesce
+from django.db.models.functions import Abs, Coalesce, Round
 
 
 class School(models.Model):
@@ -69,15 +69,16 @@ class Department(models.Model):
             subdepartment__department=self,
             semester_last_taught__number__gte=latest_semester.number
             - (10 * num_of_years),
-        ).order_by("number")
+        ).order_by("subdepartment__name", "number")
 
     def sort_courses_by_key(
         self, annotation, num_of_years: int = 5, reverse: bool = False
     ):
         """Sort recent courses by key `annotation`"""
         courses = self.fetch_recent_courses(num_of_years)
-        return courses.annotate(sort_value=annotation).order_by(
-            ("-" if reverse else "") + "sort_value"
+        sort_order = ("-" if reverse else "") + "sort_value"
+        return courses.annotate(sort_value=Round(annotation, 10)).order_by(
+            sort_order, "subdepartment__name", "number"
         )
 
     def sort_courses(

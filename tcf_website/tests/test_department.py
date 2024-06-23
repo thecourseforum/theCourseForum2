@@ -1,11 +1,11 @@
-# pylint: disable=no-member
+# pylint: disable=no-member, line-too-long
 """Tests for Department model."""
 
 from random import randint, uniform
 
 from django.test import TestCase
 
-from ..models import Course, CourseGrade, Semester, CourseInstructorGrade
+from ..models import Course, CourseGrade, Semester, Review
 from .test_utils import create_new_semester, setup
 
 
@@ -15,6 +15,7 @@ class DepartmentTestCase(TestCase):
     def setUp(self):
         setup(self)
         Course.objects.all().delete()
+        Review.objects.all().delete()
         self.courses = []
         course_numbers = set()
         self.latest_semester = Semester().latest()
@@ -44,6 +45,24 @@ class DepartmentTestCase(TestCase):
             CourseGrade.objects.create(
                 course=course, average=uniform(0, 4)
             )
+            for i in range(5):
+                Review.objects.create(
+                    user=self.user1,
+                    course=course,
+                    semester=self.semester,
+                    instructor=self.instructor,
+                    text="Cool.",
+                    instructor_rating=randint(0, 5),
+                    difficulty=randint(0, 5),
+                    recommendability=randint(0, 5),
+                    enjoyability=randint(0, 5),
+                    hours_per_week=randint(0, 5),
+                    amount_group=randint(0, 5),
+                    amount_reading=randint(0, 5),       
+                    amount_writing=randint(0, 5),
+                    amount_homework=randint(0, 5),
+                )
+
 
     def get_expected_courses(self, num_of_years: int = 5):
         """Helper method for fetching course objects in Department"""
@@ -95,7 +114,7 @@ class DepartmentTestCase(TestCase):
         self.latest_semester = Semester().latest()
         recent_courses = self.department.sort_courses("gpa")
         expected_courses = self.get_expected_courses()
-        expected_courses.sort(key=lambda x: (x.average_gpa(), x.number))
+        expected_courses.sort(key=lambda x: (round(x.average_gpa(), 10),  x.subdepartment.name, x.number))
         self.assertEqual(list(recent_courses), expected_courses)
 
     def test_sort_courses_gpa_desc(self):
@@ -103,6 +122,14 @@ class DepartmentTestCase(TestCase):
         self.latest_semester = Semester().latest()
         recent_courses = self.department.sort_courses("gpa", 5, "desc")
         expected_courses = self.get_expected_courses()
-        expected_courses.sort(key=lambda x: (-x.average_gpa(), x.number))
+        expected_courses.sort(key=lambda x: (-round(x.average_gpa(), 10), x.subdepartment.name, x.number)) 
         self.assertEqual(list(recent_courses), expected_courses)
+
+    def test_sort_courses_rating_asc(self):
+        """Test Department sort courses function using 'rating' as the sort key (ascending)"""
+        self.latest_semester = Semester().latest()
+        recent_courses = self.department.sort_courses("rating")
+        expected_courses = self.get_expected_courses()
+        expected_courses.sort(key=lambda x: (round(x.average_rating(), 10), x.subdepartment.name, x.number))
+        self.assertEqual(list(recent_courses), expected_courses) 
 
