@@ -12,7 +12,7 @@ def base(request):
     return {
         "DEBUG": settings.DEBUG,
         "USER": request.user,
-        "LATEST_SEMESTER": Semester().latest(),
+        "LATEST_SEMESTER": Semester.latest(),
     }
 
 
