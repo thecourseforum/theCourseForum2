@@ -61,11 +61,11 @@ class Department(models.Model):
     def __str__(self):
         return self.name
 
-    # Fetches all courses in a department
+    # Fetches all courses in a department within the past `num_of_years' years
     def fetch_recent_courses(self, num_of_years: int = 5):
         """Return courses within last 'num_of_years' years."""
         latest_semester = Semester.latest()
-        # to get the same semester from n years earlier, subtract 10*n from semester number
+        # to get the same season from n years earlier, subtract 10*n from semester number
         return Course.objects.filter(
             subdepartment__department=self,
             semester_last_taught__number__gte=latest_semester.number
@@ -92,7 +92,8 @@ class Department(models.Model):
                 if reverse:
                     return self.fetch_recent_courses(num_of_years)[::-1]
                 return self.fetch_recent_courses(num_of_years)
-
+            # setting annotation
+            # courses with no reviews put at bottom using Value()
             case "rating":
                 annotation = Coalesce(
                     (
