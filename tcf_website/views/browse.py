@@ -59,6 +59,7 @@ def department(request, dept_id: int, course_recency=None):
     dept = Department.objects.prefetch_related("subdepartment_set").get(
         pk=dept_id
     )
+    # Current semester or last five years
     if not course_recency:
         course_recency = str(Semester.latest())
 
