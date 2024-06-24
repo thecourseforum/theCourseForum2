@@ -130,6 +130,7 @@ DATABASES = {
         "USER": env.str("DB_USER"),
         "PASSWORD": env.str("DB_PASSWORD"),
         "HOST": env.str("DB_HOST"),
+        # "HOST": "localhost",
         "PORT": env.int("DB_PORT"),
     },
     "legacy": {

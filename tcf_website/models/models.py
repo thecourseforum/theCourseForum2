@@ -64,7 +64,7 @@ class Department(models.Model):
     # Fetches all courses in a department
     def fetch_recent_courses(self, num_of_years: int = 5):
         """Return courses within last 5 years."""
-        latest_semester = Semester().latest()
+        latest_semester = Semester.latest()
         return Course.objects.filter(
             subdepartment__department=self,
             semester_last_taught__number__gte=latest_semester.number
@@ -156,7 +156,7 @@ class Subdepartment(models.Model):
     def has_current_course(self):
         """Return True if subdepartment has a course in current semester."""
         return self.course_set.filter(
-            section__semester=Semester().latest()
+            section__semester=Semester.latest()
         ).exists()
 
     class Meta:
@@ -409,7 +409,8 @@ class Semester(models.Model):
         """Returns True if semester occurred later than other_semester."""
         return self.number > other_sem.number
 
-    def latest(self):
+    @staticmethod
+    def latest():
         """Returns the latest semester."""
         return Semester.objects.order_by("-number").first()
 
@@ -507,7 +508,7 @@ class Course(models.Model):
 
     def is_recent(self):
         """Returns True if course was taught in current semester."""
-        return self.semester_last_taught == Semester().latest()
+        return self.semester_last_taught == Semester.latest()
 
     def average_rating(self):
         """Compute average rating.
@@ -645,7 +646,7 @@ class Course(models.Model):
 
         if recent:
             instructors = instructors.filter(
-                semester_last_taught=Semester().latest().pk
+                semester_last_taught=Semester.latest().pk
             )
 
         instructors = instructors.order_by(order_prefix + sort_field)
