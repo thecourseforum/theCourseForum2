@@ -69,7 +69,7 @@ class Department(models.Model):
             subdepartment__department=self,
             semester_last_taught__number__gte=latest_semester.number
             - (10 * num_of_years),
-        ).order_by("subdepartment__name", "number")
+        ).order_by("number", "subdepartment__name")
 
     def sort_courses_by_key(
         self, annotation, num_of_years: int = 5, reverse: bool = False
@@ -78,7 +78,7 @@ class Department(models.Model):
         courses = self.fetch_recent_courses(num_of_years)
         sort_order = ("-" if reverse else "") + "sort_value"
         return courses.annotate(sort_value=Round(annotation, 10)).order_by(
-            sort_order, "subdepartment__name", "number"
+            sort_order, "number", "subdepartment__name"
         )
 
     def sort_courses(
