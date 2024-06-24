@@ -1,7 +1,7 @@
 # pylint: disable=no-member, line-too-long
 """Tests for Department model."""
 
-from random import randint, uniform
+from random import randint, sample, uniform
 
 from django.test import TestCase
 
@@ -17,9 +17,9 @@ class DepartmentTestCase(TestCase):
         Course.objects.all().delete()
         Review.objects.all().delete()
         self.courses = []
-        course_numbers = set()
         self.latest_semester = Semester.latest()
-        for _ in range(50):
+        course_numbers = sample(range(1000, 4000), 50)
+        for course_number in course_numbers:
             # Create random semester using helper method
             create_new_semester(
                 self,
@@ -27,13 +27,6 @@ class DepartmentTestCase(TestCase):
                     self.latest_semester.year - 10, self.latest_semester.year
                 ),
             )
-            # Generate random course numbers
-            while True:
-                course_number = randint(1000, 4000)
-                if course_number not in course_numbers:
-                    course_numbers.add(course_number)
-                    break
-
             # Generate random courses
             course = Course.objects.create(
                 title="Intro to Programming",

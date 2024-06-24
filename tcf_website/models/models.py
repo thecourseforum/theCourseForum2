@@ -63,8 +63,9 @@ class Department(models.Model):
 
     # Fetches all courses in a department
     def fetch_recent_courses(self, num_of_years: int = 5):
-        """Return courses within last 5 years."""
+        """Return courses within last 'num_of_years' years."""
         latest_semester = Semester.latest()
+        # to get the same semester from n years earlier, subtract 10*n from semester number
         return Course.objects.filter(
             subdepartment__department=self,
             semester_last_taught__number__gte=latest_semester.number
