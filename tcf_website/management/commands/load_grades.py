@@ -10,12 +10,7 @@ import pandas as pd
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
-from tcf_website.models import (
-    Course,
-    CourseGrade,
-    CourseInstructorGrade,
-    Instructor,
-)
+from tcf_website.models import Course, CourseGrade, CourseInstructorGrade, Instructor
 
 # Location of our grade data CSVs
 DATA_DIR = "tcf_website/management/commands/grade_data/csv/"
@@ -30,9 +25,7 @@ class Command(BaseCommand):
 
     help = "Imports FOIAed grade data files into PostgreSQL database"
 
-    def __init__(
-        self, stdout=None, stderr=None, no_color=False, force_color=False
-    ):
+    def __init__(self, stdout=None, stderr=None, no_color=False, force_color=False):
         super().__init__(stdout, stderr, no_color, force_color)
 
         # Initialize some variables that get used everywhere
@@ -43,17 +36,13 @@ class Command(BaseCommand):
         # TODO: figure out how to differentiate (maybe by classes taught?)
         self.instructors = {
             (obj["first_name"], obj["last_name"]): obj["id"]
-            for obj in Instructor.objects.values(
-                "id", "first_name", "last_name"
-            )
+            for obj in Instructor.objects.values("id", "first_name", "last_name")
         }
 
         # Dict mapping course mnemonic in a tuple to its ID in our database
         self.courses = {
             (obj["subdepartment__mnemonic"], obj["number"]): obj["id"]
-            for obj in Course.objects.values(
-                "id", "number", "subdepartment__mnemonic"
-            )
+            for obj in Course.objects.values("id", "number", "subdepartment__mnemonic")
         }
 
         # Default level of verbosity
@@ -160,9 +149,7 @@ class Command(BaseCommand):
         if self.verbosity > 0:
             print(f"Found {df.size} sections in {file}")
 
-        for _, row in tqdm(
-            df.iterrows(), total=df.shape[0], disable=self.suppress_tqdm
-        ):
+        for _, row in tqdm(df.iterrows(), total=df.shape[0], disable=self.suppress_tqdm):
             if self.verbosity == 3:
                 print(str(row).encode("ascii", "ignore").decode("ascii"))
             self.load_row_into_dict(row)
@@ -185,9 +172,7 @@ class Command(BaseCommand):
         title = row["Class Title"]
         # Key assumption: names are in the format `LAST,FIRST MIDDLE`
         try:
-            last_name, first_and_middle = row["Primary Instructor Name"].split(
-                ","
-            )
+            last_name, first_and_middle = row["Primary Instructor Name"].split(",")
             first_name = first_and_middle.split(" ")[0]
         except ValueError as e:
             # Script should stop if name that doesn't fit this pattern is given
@@ -223,9 +208,7 @@ class Command(BaseCommand):
             # We also need to handle the edge case where these fields are empty, which
             # clean() fills as 0.
             average = float(row["Course GPA"])
-            total_enrolled = max(
-                int(row["# of Students"]), sum(semester_grades)
-            )
+            total_enrolled = max(int(row["# of Students"]), sum(semester_grades))
 
             # Add aggregate stats to end of array
             semester_grades.append(total_enrolled)
@@ -258,8 +241,7 @@ class Command(BaseCommand):
                 # If both are not zero, then update with weighted formula
                 if prev_average and average:
                     new_average = (
-                        prev_average * prev_total_enrolled
-                        + average * total_enrolled
+                        prev_average * prev_total_enrolled + average * total_enrolled
                     ) / (prev_total_enrolled + total_enrolled)
                     data_dict[identifier][-1] = new_average
                 # If only old average is zero, then set it to new average
@@ -289,9 +271,7 @@ class Command(BaseCommand):
         # Load course_grades data from dicts and create model instances
         unsaved_cg_instances = []
         for row in tqdm(self.course_grades, disable=self.suppress_tqdm):
-            course_grade_params = self.set_grade_params(
-                row, is_instructor_grade=False
-            )
+            course_grade_params = self.set_grade_params(row, is_instructor_grade=False)
             unsaved_cg_instance = CourseGrade(**course_grade_params)
             unsaved_cg_instances.append(unsaved_cg_instance)
 
@@ -303,15 +283,9 @@ class Command(BaseCommand):
 
         # Load course_instructor_grades data from dicts and create model instances
         unsaved_cig_instances = []
-        for row in tqdm(
-            self.course_instructor_grades, disable=self.suppress_tqdm
-        ):
-            course_instructor_grade_params = self.set_grade_params(
-                row, is_instructor_grade=True
-            )
-            unsaved_cig_instance = CourseInstructorGrade(
-                **course_instructor_grade_params
-            )
+        for row in tqdm(self.course_instructor_grades, disable=self.suppress_tqdm):
+            course_instructor_grade_params = self.set_grade_params(row, is_instructor_grade=True)
+            unsaved_cig_instance = CourseInstructorGrade(**course_instructor_grade_params)
             unsaved_cig_instances.append(unsaved_cig_instance)
         CourseInstructorGrade.objects.bulk_create(unsaved_cig_instances)
         if self.verbosity > 0:

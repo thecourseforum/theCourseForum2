@@ -23,9 +23,7 @@ class DepartmentTestCase(TestCase):
             # Create random semester using helper method
             create_new_semester(
                 self,
-                randint(
-                    self.latest_semester.year - 10, self.latest_semester.year
-                ),
+                randint(self.latest_semester.year - 10, self.latest_semester.year),
             )
             # Generate random courses
             course = Course.objects.create(

@@ -3,14 +3,7 @@
 from django.db.models import Avg, Sum
 from rest_framework import viewsets
 
-from ..models import (
-    Course,
-    Department,
-    Instructor,
-    School,
-    Semester,
-    Subdepartment,
-)
+from ..models import Course, Department, Instructor, School, Semester, Subdepartment
 from .filters import InstructorFilter
 from .paginations import FlexiblePagination
 from .serializers import (
@@ -49,9 +42,7 @@ class SubdepartmentViewSet(viewsets.ReadOnlyModelViewSet):
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     """DRF ViewSet for Course"""
 
-    queryset = Course.objects.select_related(
-        "subdepartment", "semester_last_taught"
-    )
+    queryset = Course.objects.select_related("subdepartment", "semester_last_taught")
     pagination_class = FlexiblePagination
     filterset_fields = ["subdepartment"]
 
@@ -89,9 +80,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 c=Sum("coursegrade__c", distinct=True),
                 c_minus=Sum("coursegrade__c_minus", distinct=True),
                 dfw=Sum("coursegrade__dfw", distinct=True),
-                total_enrolled=Sum(
-                    "coursegrade__total_enrolled", distinct=True
-                ),
+                total_enrolled=Sum("coursegrade__total_enrolled", distinct=True),
             )
         elif "simplestats" in self.request.query_params:
             queryset = queryset.prefetch_related("review_set").annotate(
@@ -106,9 +95,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             )
         if "recent" in self.request.query_params:
             latest_semester = Semester.latest()
-            queryset = queryset.filter(
-                semester_last_taught__year__gte=latest_semester.year - 5
-            )
+            queryset = queryset.filter(semester_last_taught__year__gte=latest_semester.year - 5)
         return queryset.order_by("number")
 
     def get_serializer_class(self):
@@ -146,8 +133,6 @@ class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
         if "course" in self.request.query_params:
             params["section__course"] = self.request.query_params["course"]
         if "instructor" in self.request.query_params:
-            params["section__instructors"] = self.request.query_params[
-                "instructor"
-            ]
+            params["section__instructors"] = self.request.query_params["instructor"]
         # Returns filtered, unique semesters in reverse chronological order
         return self.queryset.filter(**params).distinct().order_by("-number")

@@ -34,9 +34,7 @@ def browse(request):
     excluded_list = [clas.pk, seas.pk]
 
     # Other schools besides CLAS, SEAS, and Misc.
-    other_schools = School.objects.exclude(pk__in=excluded_list).order_by(
-        "name"
-    )
+    other_schools = School.objects.exclude(pk__in=excluded_list).order_by("name")
 
     return render(
         request,
@@ -56,9 +54,7 @@ def department(request, dept_id: int, course_recency=None):
     # department.html loops through related subdepartments and courses.
     # See:
     # https://docs.djangoproject.com/en/3.0/ref/models/querysets/#django.db.models.query.QuerySet.prefetch_related
-    dept = Department.objects.prefetch_related("subdepartment_set").get(
-        pk=dept_id
-    )
+    dept = Department.objects.prefetch_related("subdepartment_set").get(pk=dept_id)
     # Current semester or last five years
     if not course_recency:
         course_recency = str(Semester.latest())
@@ -71,9 +67,7 @@ def department(request, dept_id: int, course_recency=None):
 
     # Setting up sorting and course age variables
     latest_semester = Semester.latest()
-    last_five_years = get_object_or_404(
-        Semester, number=latest_semester.number - 50
-    )
+    last_five_years = get_object_or_404(Semester, number=latest_semester.number - 50)
     # Fetch season and year (either current semester or 5 years previous)
     season, year = course_recency.upper().split()
     active_semester = Semester.objects.filter(year=year, season=season).first()
@@ -129,9 +123,7 @@ def course_view(
 
     # Redirect if the mnemonic is not all uppercase
     if mnemonic != mnemonic.upper():
-        return redirect(
-            "course", mnemonic=mnemonic.upper(), course_number=course_number
-        )
+        return redirect("course", mnemonic=mnemonic.upper(), course_number=course_number)
 
     course = get_object_or_404(
         Course,
@@ -145,9 +137,7 @@ def course_view(
     sortby = request.GET.get("sortby", "last_taught")
     order = request.GET.get("order", "desc")
 
-    instructors = course.sort_instructors_by_key(
-        latest_semester, recent, order, sortby
-    )
+    instructors = course.sort_instructors_by_key(latest_semester, recent, order, sortby)
 
     # Note: Could be simplified further
 
@@ -159,9 +149,7 @@ def course_view(
         if instructor.section_times[0] and instructor.section_nums[0]:
             instructor.times = {
                 num: times[:-1].split(",")
-                for num, times in zip(
-                    instructor.section_nums, instructor.section_times
-                )
+                for num, times in zip(instructor.section_nums, instructor.section_times)
                 if num and times
             }
 
@@ -207,17 +195,13 @@ def course_instructor(request, course_id, instructor_id):
     instructor = section_last_taught.instructors.get(pk=instructor_id)
 
     # Find the total number of reviews (with or without text) for the given course
-    num_reviews = Review.objects.filter(
-        instructor=instructor_id, course=course_id
-    ).count()
+    num_reviews = Review.objects.filter(instructor=instructor_id, course=course_id).count()
 
     # Filter out reviews with no text and hidden field true.
     reviews = Review.display_reviews(course_id, instructor_id, request.user)
     dept = course.subdepartment.department
 
-    course_url = reverse(
-        "course", args=[course.subdepartment.mnemonic, course.number]
-    )
+    course_url = reverse("course", args=[course.subdepartment.mnemonic, course.number])
     # Navigation breadcrumbs
     breadcrumbs = [
         (dept.school.name, reverse("browse"), False),
@@ -226,15 +210,9 @@ def course_instructor(request, course_id, instructor_id):
         (instructor.full_name, None, True),
     ]
 
-    data = Review.objects.filter(
-        course=course_id, instructor=instructor_id
-    ).aggregate(
+    data = Review.objects.filter(course=course_id, instructor=instructor_id).aggregate(
         # rating stats
-        average_rating=(
-            Avg("instructor_rating")
-            + Avg("enjoyability")
-            + Avg("recommendability")
-        )
+        average_rating=(Avg("instructor_rating") + Avg("enjoyability") + Avg("recommendability"))
         / 3,
         average_instructor=Avg("instructor_rating"),
         average_fun=Avg("enjoyability"),
@@ -250,17 +228,13 @@ def course_instructor(request, course_id, instructor_id):
     data = {key: safe_round(value) for key, value in data.items()}
 
     try:
-        grades_data = CourseInstructorGrade.objects.get(
-            instructor=instructor, course=course
-        )
+        grades_data = CourseInstructorGrade.objects.get(instructor=instructor, course=course)
     except ObjectDoesNotExist:  # if no data found
         pass
     # NOTE: Don't catch MultipleObjectsReturned because we want to be notified
     else:  # Fill in the data found
         # grades stats
-        data["average_gpa"] = (
-            round(grades_data.average, 2) if grades_data.average else None
-        )
+        data["average_gpa"] = round(grades_data.average, 2) if grades_data.average else None
         # pylint: disable=duplicate-code
         fields = [
             "a_plus",
@@ -304,17 +278,11 @@ def course_instructor(request, course_id, instructor_id):
     request.session["instructor_fullname"] = instructor.full_name()
 
     # QA Data
-    questions = Question.objects.filter(
-        course=course_id, instructor=instructor_id
-    )
+    questions = Question.objects.filter(course=course_id, instructor=instructor_id)
     answers = {}
     for question in questions:
-        answers[question.id] = Answer.display_activity(
-            question.id, request.user
-        )
-    questions = Question.display_activity(
-        course_id, instructor_id, request.user
-    )
+        answers[question.id] = Answer.display_activity(question.id, request.user)
+    questions = Question.display_activity(course_id, instructor_id, request.user)
 
     return render(
         request,
@@ -380,9 +348,7 @@ def instructor_view(request, instructor_id):
                 "courseinstructorgrade__average",
                 filter=Q(courseinstructorgrade__instructor=instructor),
             ),
-            avg_difficulty=Avg(
-                "review__difficulty", filter=Q(review__instructor=instructor)
-            ),
+            avg_difficulty=Avg("review__difficulty", filter=Q(review__instructor=instructor)),
             avg_rating=(
                 Avg(
                     "review__instructor_rating",
@@ -415,9 +381,7 @@ def instructor_view(request, instructor_id):
         course["avg_difficulty"] = safe_round(course["avg_difficulty"])
         course["avg_gpa"] = safe_round(course["avg_gpa"])
         course["last_taught"] = course["last_taught"].title()
-        grouped_courses.setdefault(course["subdepartment_name"], []).append(
-            course
-        )
+        grouped_courses.setdefault(course["subdepartment_name"], []).append(course)
 
     context: dict[str, Any] = {
         "instructor": instructor,
