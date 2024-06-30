@@ -123,7 +123,9 @@ def course_view(
         instructor_recency = str(Semester.latest())
 
     # Clears previously saved course information
-    request.session.flush()
+    request.session["course_code"] = None
+    request.session["course_title"] = None
+    request.session["instructor_fullname"] = None
 
     # Redirect if the mnemonic is not all uppercase
     if mnemonic != mnemonic.upper():
