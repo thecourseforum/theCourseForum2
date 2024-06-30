@@ -4,9 +4,7 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import (  # For class-based views
-    LoginRequiredMixin,
-)
+from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Avg, Count, Q
@@ -31,9 +29,7 @@ class ProfileForm(ModelForm):
         widgets = {
             "first_name": forms.TextInput(attrs={"class": "form-control"}),
             "last_name": forms.TextInput(attrs={"class": "form-control"}),
-            "graduation_year": forms.NumberInput(
-                attrs={"class": "form-control"}
-            ),
+            "graduation_year": forms.NumberInput(attrs={"class": "form-control"}),
         }
 
 
@@ -78,9 +74,7 @@ def reviews(request):
     return render(request, "reviews/user_reviews.html", context=stats)
 
 
-class DeleteProfile(
-    LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView
-):
+class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
     """User deletion view."""
 
     model = User
@@ -98,9 +92,7 @@ class DeleteProfile(
         obj = super().get_object()
         # For security: Make sure target review belongs to the current user
         if obj != self.request.user:
-            raise PermissionDenied(
-                "You are not allowed to delete this account!"
-            )
+            raise PermissionDenied("You are not allowed to delete this account!")
         return obj
 
     def get_success_message(self, cleaned_data) -> str:

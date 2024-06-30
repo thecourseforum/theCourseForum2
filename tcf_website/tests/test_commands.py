@@ -19,9 +19,7 @@ class LoadGradesTestCase(TestCase):
         # Clearing is required to pass tests
         CourseGrade.objects.all().delete()
         CourseInstructorGrade.objects.all().delete()
-        management.call_command(
-            "load_grades", "test/test_data", "--suppress-tqdm", verbosity=0
-        )
+        management.call_command("load_grades", "test/test_data", "--suppress-tqdm", verbosity=0)
         cls.cg = CourseGrade.objects.first()
         cls.cig = CourseInstructorGrade.objects.first()
 

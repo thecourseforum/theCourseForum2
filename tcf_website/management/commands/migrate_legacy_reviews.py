@@ -146,44 +146,22 @@ class Command(BaseCommand):
             subdepartment__mnemonic=review.course.subdepartment.mnemonic,
         )
 
-        amount_reading = (
-            min(20, review.amount_reading) if review.amount_reading else 0
-        )
-        amount_writing = (
-            min(20, review.amount_writing) if review.amount_writing else 0
-        )
-        amount_group = (
-            min(20, review.amount_group) if review.amount_group else 0
-        )
-        amount_homework = (
-            min(20, review.amount_homework) if review.amount_homework else 0
-        )
+        amount_reading = min(20, review.amount_reading) if review.amount_reading else 0
+        amount_writing = min(20, review.amount_writing) if review.amount_writing else 0
+        amount_group = min(20, review.amount_group) if review.amount_group else 0
+        amount_homework = min(20, review.amount_homework) if review.amount_homework else 0
 
-        hours_per_week = (
-            amount_reading + amount_writing + amount_group + amount_homework
-        )
+        hours_per_week = amount_reading + amount_writing + amount_group + amount_homework
 
         try:
             semester = Semester.objects.get(number=review.semester.number)
         except Exception:
-            semester = self.get_most_recent_semester(
-                course, instructor, review.created_at
-            )
+            semester = self.get_most_recent_semester(course, instructor, review.created_at)
 
-        instructor_rating = (
-            min(5, round(review.professor_rating))
-            if review.professor_rating
-            else 3
-        )
-        difficulty = (
-            min(5, round(review.difficulty)) if review.difficulty else 3
-        )
-        recommendability = (
-            min(5, round(review.recommend)) if review.recommend else 3
-        )
-        enjoyability = (
-            min(5, round(review.enjoyability)) if review.enjoyability else 3
-        )
+        instructor_rating = min(5, round(review.professor_rating)) if review.professor_rating else 3
+        difficulty = min(5, round(review.difficulty)) if review.difficulty else 3
+        recommendability = min(5, round(review.recommend)) if review.recommend else 3
+        enjoyability = min(5, round(review.enjoyability)) if review.enjoyability else 3
 
         r, created = Review.objects.get_or_create(
             text=review.comment,
@@ -281,9 +259,7 @@ class Command(BaseCommand):
         self.semesters = Semesters.objects.using("legacy").all()
 
         UNKNOWN_SCHOOL, _ = School.objects.get_or_create(name="UNKNOWN")
-        UNKNOWN_DEPT, _ = Department.objects.get_or_create(
-            name="UNKNOWN", school=UNKNOWN_SCHOOL
-        )
+        UNKNOWN_DEPT, _ = Department.objects.get_or_create(name="UNKNOWN", school=UNKNOWN_SCHOOL)
 
         self.migrate_reviews()
 
