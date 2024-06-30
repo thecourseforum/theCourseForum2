@@ -71,6 +71,12 @@ class Command(BaseCommand):
             print("ERROR: Semester not found")
             return
 
+        if settings.REVIEW_DRIVE_ID is None or \
+                settings.REVIEW_DRIVE_PASSWORD is None or \
+                settings.REVIEW_DRIVE_EMAIL is None:
+            print("ERROR: Review Drive login not configured")
+            return
+
         # Needs to be created ahead of time in the db
         dummy_account = User.objects.filter(
             computing_id__iexact=settings.REVIEW_DRIVE_ID
@@ -93,7 +99,7 @@ class Command(BaseCommand):
 def create_reviews(verbose, filename, semester, dummy_account):
     """Creates reviews based on CSV info."""
     with open(
-        os.path.join(DATA_DIR, filename), mode="r", encoding="utf-8"
+            os.path.join(DATA_DIR, filename), mode="r", encoding="utf-8"
     ) as file:
         csv_file = csv.reader(file)
 
@@ -192,7 +198,7 @@ def create_reviews(verbose, filename, semester, dummy_account):
             amount_group = int(line[12].strip())
             amount_homework = int(line[13].strip())
             hours_per_week = (
-                amount_reading + amount_writing + amount_group + amount_homework
+                    amount_reading + amount_writing + amount_group + amount_homework
             )
 
             created = datetime.strptime(line[0].strip(), "%m/%d/%Y %H:%M:%S")
