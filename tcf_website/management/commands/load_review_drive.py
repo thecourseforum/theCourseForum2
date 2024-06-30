@@ -62,6 +62,14 @@ class Command(BaseCommand):
             print("ERROR: Semester not found")
             return
 
+        if None in [
+            settings.REVIEW_DRIVE_ID,
+            settings.REVIEW_DRIVE_PASSWORD,
+            settings.REVIEW_DRIVE_EMAIL,
+        ]:
+            print("ERROR: Review Drive login not configured")
+            return
+
         # Needs to be created ahead of time in the db
         dummy_account = User.objects.filter(computing_id__iexact=settings.REVIEW_DRIVE_ID).first()
         if dummy_account is None:
