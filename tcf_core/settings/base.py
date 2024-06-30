@@ -7,9 +7,7 @@ from django.contrib.messages import constants as messages
 from django.urls import reverse_lazy
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Django-environ library imports .env settings
 env = environ.Env(
@@ -159,9 +157,7 @@ SOCIAL_AUTH_EMAIL_AUTH_WHITELISTED_DOMAINS = ["virginia.edu"]
 
 WHITELISTED_DOMAINS = ["virginia.edu"]
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_LOGIN_URL = reverse_lazy(
-    "social:begin", args=["google-oauth2"]
-)
+SOCIAL_AUTH_GOOGLE_OAUTH2_LOGIN_URL = reverse_lazy("social:begin", args=["google-oauth2"])
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 SOCIAL_AUTH_PIPELINE = (
     "tcf_core.auth_pipeline.password_validation",
@@ -207,9 +203,7 @@ LOGGING = {
 
 # Django Rest Framework Settings
 REST_FRAMEWORK = {
-    "DEFAULT_FILTER_BACKENDS": (
-        "django_filters.rest_framework.DjangoFilterBackend",
-    ),
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
 
 # Discord bot settings
