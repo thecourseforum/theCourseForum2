@@ -4,6 +4,7 @@
 """Common testing utilities."""
 
 import logging
+from random import randint
 
 from ..models import *
 
@@ -243,9 +244,20 @@ def setup(obj):
 
 def create_new_semester(self, year):
     """Helper method to modify current semester"""
-    self.semester = Semester.objects.create(
-        year=year, season="FALL", number=f"1{year % 100}8"
-    )
+    season = "FALL" if randint(0, 1) == 0 else "SPRING"
+    base_number = int(f"1{year % 100}8")
+    number = base_number
+
+    semester = Semester.objects.filter(year=year, season=season).first()
+    if semester:
+        self.semester = semester
+    else:
+        while Semester.objects.filter(number=number).exists():
+            number += 1
+
+        self.semester = Semester.objects.create(
+            year=year, season=season, number=number
+        )
 
 
 def suppress_request_warnings(original_function):
