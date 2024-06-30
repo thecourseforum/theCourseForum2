@@ -71,9 +71,7 @@ class Command(BaseCommand):
             print("ERROR: Semester not found")
             return
 
-        if settings.REVIEW_DRIVE_ID is None or \
-                settings.REVIEW_DRIVE_PASSWORD is None or \
-                settings.REVIEW_DRIVE_EMAIL is None:
+        if None in [settings.REVIEW_DRIVE_ID, settings.REVIEW_DRIVE_PASSWORD, settings.REVIEW_DRIVE_EMAIL]:
             print("ERROR: Review Drive login not configured")
             return
 
