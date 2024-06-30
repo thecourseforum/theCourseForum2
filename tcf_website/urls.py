@@ -1,10 +1,9 @@
 # pylint: disable=line-too-long
 """Routes URLs to views"""
 
+from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.views.generic import TemplateView
-
-from django.contrib.auth import views as auth_views
 
 from . import views
 
@@ -42,9 +41,7 @@ urlpatterns = [
         views.DeleteReview.as_view(),
         name="delete_review",
     ),
-    path(
-        "reviews/<int:review_id>/edit/", views.edit_review, name="edit_review"
-    ),
+    path("reviews/<int:review_id>/edit/", views.edit_review, name="edit_review"),
     path("reviews/", views.reviews, name="reviews"),
     path("reviews/<int:review_id>/upvote/", views.upvote),
     path("reviews/<int:review_id>/downvote/", views.downvote),
@@ -83,9 +80,7 @@ urlpatterns = [
         views.DeleteAnswer.as_view(),
         name="delete_answer",
     ),
-    path(
-        "answers/<int:answer_id>/edit/", views.edit_answer, name="edit_answer"
-    ),
+    path("answers/<int:answer_id>/edit/", views.edit_answer, name="edit_answer"),
     # API URLs
     path("api/", include("tcf_website.api.urls"), name="api"),
     # DISCORD URLS
@@ -115,22 +110,24 @@ urlpatterns = [
     # PASSWORD RESET URLS (used when logged out)
     path(
         "accounts/password_reset/",
-        auth_views.PasswordResetView.as_view(template_name='login/password_reset.html'),
-        name="password_reset"
+        auth_views.PasswordResetView.as_view(template_name="login/password_reset.html"),
+        name="password_reset",
     ),
     path(
         "accounts/password_reset_done/",
-        auth_views.PasswordResetDoneView.as_view(template_name='login/password_reset_done.html'),
-        name="password_reset_done"
+        auth_views.PasswordResetDoneView.as_view(template_name="login/password_reset_done.html"),
+        name="password_reset_done",
     ),
     path(
         "accounts/password_reset_<uidb64>_<token>/",
-        auth_views.PasswordResetConfirmView.as_view(template_name='login/password_reset_form.html'),
-        name="password_reset_confirm"
+        auth_views.PasswordResetConfirmView.as_view(template_name="login/password_reset_form.html"),
+        name="password_reset_confirm",
     ),
     path(
         "accounts/password_reset_complete/",
-        auth_views.PasswordResetCompleteView.as_view(template_name='login/password_reset_complete.html'),
-        name="password_reset_complete"
-    )
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name="login/password_reset_complete.html"
+        ),
+        name="password_reset_complete",
+    ),
 ]

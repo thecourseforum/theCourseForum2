@@ -22,15 +22,12 @@ class MiscModelsTestCase(TestCase):
 
     def test_department_name(self):
         """Test __str__ method in Department model"""
-        self.assertEqual(
-            "Computer Science", str(self.course.subdepartment.department)
-        )
+        self.assertEqual("Computer Science", str(self.course.subdepartment.department))
 
     def test_section_name(self):
         """Test __str__ method in Section mdoel"""
         self.assertEqual(
-            "CS 1420 | Software Testing | Fall 2020 | "
-            "Tom Jefferson (tjt3rea@virginia.edu)",
+            "CS 1420 | Software Testing | Fall 2020 | " "Tom Jefferson (tjt3rea@virginia.edu)",
             str(self.section_course),
         )
 
@@ -40,15 +37,11 @@ class MiscModelsTestCase(TestCase):
 
     def test_course_instructor_grade_name(self):
         """Test __str__ method in CourseInstructorGrade model"""
-        self.assertEqual(
-            "Tom Jefferson CS 1420 3.8", str(self.instructor_grade)
-        )
+        self.assertEqual("Tom Jefferson CS 1420 3.8", str(self.instructor_grade))
 
     def test_course_vote_name(self):
         """Test __str__ method in Vote model"""
-        vote = Vote.objects.create(
-            value=-1, user=self.user4, review=self.review1
-        )
+        vote = Vote.objects.create(value=-1, user=self.user4, review=self.review1)
         self.assertEqual(
             str(vote),
             "Vote of value -1 for Review by Taylor Comb "

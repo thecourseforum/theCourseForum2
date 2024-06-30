@@ -19,9 +19,7 @@ class SubdepartmentTestCase(TestCase):
 
     def test_recent_courses_has_recent_courses(self):
         """Test recent_courses method in Subdepartment model when there are recent courses"""
-        recent_courses = Course.objects.filter(
-            title__in=[self.course.title, self.course2.title]
-        )
+        recent_courses = Course.objects.filter(title__in=[self.course.title, self.course2.title])
 
         self.assertQuerysetEqual(
             self.subdepartment.recent_courses(),

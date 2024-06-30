@@ -12,18 +12,12 @@ def setup(obj):
     """Load some example data"""
 
     obj.school = School.objects.create(name="School of Hard Knocks")
-    obj.department = Department.objects.create(
-        name="Computer Science", school=obj.school
-    )
+    obj.department = Department.objects.create(name="Computer Science", school=obj.school)
     obj.subdepartment = Subdepartment.objects.create(
         name="Computer Science", mnemonic="CS", department=obj.department
     )
-    obj.semester = Semester.objects.create(
-        year=2020, season="FALL", number=1208
-    )
-    obj.past_semester = Semester.objects.create(
-        year=2010, season="FALL", number=1108
-    )
+    obj.semester = Semester.objects.create(year=2020, season="FALL", number=1208)
+    obj.past_semester = Semester.objects.create(year=2010, season="FALL", number=1108)
     obj.incomplete_semester = Semester.objects.create(year=2019, number=1198)
 
     obj.course = Course.objects.create(
@@ -94,16 +88,12 @@ def setup(obj):
         course=obj.course, semester=obj.semester, sis_section_number=312312
     )
 
-    obj.section_course.instructors.set(
-        Instructor.objects.filter(pk=obj.instructor.pk)
-    )
+    obj.section_course.instructors.set(Instructor.objects.filter(pk=obj.instructor.pk))
 
     obj.section_course2 = Section.objects.create(
         course=obj.course2, semester=obj.semester, sis_section_number=31232
     )
-    obj.section_course2.instructors.set(
-        Instructor.objects.filter(pk=obj.instructor.pk)
-    )
+    obj.section_course2.instructors.set(Instructor.objects.filter(pk=obj.instructor.pk))
 
     obj.instructor_grade = CourseInstructorGrade.objects.create(
         instructor=obj.instructor,
@@ -119,9 +109,7 @@ def setup(obj):
         instructor=obj.instructor, course=obj.course2, average=3.9
     )
 
-    obj.instructor2 = Instructor.objects.create(
-        first_name="No", last_name="Email"
-    )
+    obj.instructor2 = Instructor.objects.create(first_name="No", last_name="Email")
 
     obj.review1 = Review.objects.create(
         user=obj.user1,
@@ -225,27 +213,17 @@ def setup(obj):
         amount_homework=0,
     )
 
-    obj.course_grade = CourseGrade.objects.create(
-        course=obj.course, average=2.9
-    )
+    obj.course_grade = CourseGrade.objects.create(course=obj.course, average=2.9)
 
-    obj.upvote_review1 = Vote.objects.create(
-        value=1, user=obj.user1, review=obj.review1
-    )
+    obj.upvote_review1 = Vote.objects.create(value=1, user=obj.user1, review=obj.review1)
 
-    obj.upvote_review1_2 = Vote.objects.create(
-        value=1, user=obj.user2, review=obj.review1
-    )
-    obj.downvote_review1 = Vote.objects.create(
-        value=-1, user=obj.user3, review=obj.review1
-    )
+    obj.upvote_review1_2 = Vote.objects.create(value=1, user=obj.user2, review=obj.review1)
+    obj.downvote_review1 = Vote.objects.create(value=-1, user=obj.user3, review=obj.review1)
 
 
 def create_new_semester(self, year):
     """Helper method to modify current semester"""
-    self.semester = Semester.objects.create(
-        year=year, season="FALL", number=f"1{year % 100}8"
-    )
+    self.semester = Semester.objects.create(year=year, season="FALL", number=f"1{year % 100}8")
 
 
 def suppress_request_warnings(original_function):

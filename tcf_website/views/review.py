@@ -3,9 +3,7 @@
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import (  # For class-based views
-    LoginRequiredMixin,
-)
+from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
@@ -95,9 +93,7 @@ def new_review(request):
 
             instance.save()
 
-            messages.success(
-                request, f"Successfully reviewed {instance.course}!"
-            )
+            messages.success(request, f"Successfully reviewed {instance.course}!")
             return redirect("reviews")
         return render(request, "reviews/new_review.html", {"form": form})
     return render(request, "reviews/new_review.html")
