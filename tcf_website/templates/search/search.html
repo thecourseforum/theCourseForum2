@@ -99,7 +99,7 @@
                                 data-toggle="modal" data-target="#selectScheduleModal" data-course-id="{{ c.id }}"> 
                                 <i class="fas fa-plus" aria-hidden="true"></i> Add to Schedule 
                                 </a>
-                                {% include "schedule/add_course_modal.html" with user_id=user.id course=course%}
+                                {% include "schedule/add_course_modal.html" with user_id=user.id course=c%}
                             </div> 
                             </p>
                           </div>
@@ -192,19 +192,30 @@
       $(document).on('click', '.open_select_modal_button', function() {
           var courseId = $(this).data('course-id');
 
+          // let targetDiv = $('modal-target-course-search');
+          // targetDiv.empty();
+
           let targetDiv = document.getElementById('modal-target-course-search');
-          targetDiv.innerHTML = "";  
+          targetDiv.innerHTML = ""; 
           
           $.ajax({
               url: "{% url 'modal_load_schedules' mode='add_course' %}",
               success: function(data) {
+                  //targetDiv.html(data);
                   targetDiv.innerHTML = data;
-                  console.log(data);
                   // this function is included in the static 'schedule_select_script.js' file
-                  modalFunctions(courseId, "add_course", "{% url 'modal_load_sections' %}");
+                  modalFunctions(courseId, "add_searched_course", "{% url 'modal_load_sections' %}");
                   $("#selectScheduleModal").modal("show"); // show the modal
+                  // setTimeout(function() {
+                  //   modalFunctions(courseId, "add_course", "{% url 'modal_load_sections' %}");
+                  //   $("#selectScheduleModal-" + courseId).modal("show"); // show the modal
+                  // }, 500); // Adjust the delay if necessary
               }
           });
+      });
+
+      $(document).on('hidden.bs.modal', function (e) {
+        $(e.target).removeData('bs.modal').remove();
       });
       
       // function to enable submit button

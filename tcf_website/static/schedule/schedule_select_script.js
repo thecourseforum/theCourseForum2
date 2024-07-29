@@ -2,6 +2,7 @@
 window.modalFunctions = function(courseIdParam, modeParam, modalSubmitUrlParam) {
     var modalSubmitUrl = "";
     var nextModalId = "";
+    const courseId = courseIdParam;
 
     if( modeParam == "add_course"){
         modalSubmitUrl = modalSubmitUrlParam;
@@ -9,13 +10,14 @@ window.modalFunctions = function(courseIdParam, modeParam, modalSubmitUrlParam) 
     } else if( modeParam == "edit_schedule") {
         modalSubmitUrl = modalSubmitUrlParam;
         nextModalId = '#editScheduleModal';
+    } else if( modeParam = "add_searched_course") {
+        modalSubmitUrl = modalSubmitUrlParam;
+        nextModalId = "#add_search_course" + courseIdParam;
     } else {
         console.error("invalid or missing mode");
     }
 
-    const courseId = courseIdParam;
     window.attachEventListenersToModalContent(modalSubmitUrl, nextModalId, courseId);
-    console.log(courseId);
     if(courseId) {
         document.getElementById("select_schedule_form").setAttribute("data-course-id", courseId);
     }
