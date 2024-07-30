@@ -30,9 +30,7 @@ def history_cookies(request):
     else:
         previous_paths_titles = ""
 
-    previous_paths_titles = [
-        title[:80] + "..." for title in previous_paths_titles
-    ]
+    previous_paths_titles = [title[:80] + "..." for title in previous_paths_titles]
 
     previous_paths_and_titles = None
     if len(previous_paths) > 0 and len(previous_paths_titles) > 0:
