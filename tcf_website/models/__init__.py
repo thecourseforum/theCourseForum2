@@ -23,4 +23,3 @@ from .models import (
     User,
     Vote,
 )
-

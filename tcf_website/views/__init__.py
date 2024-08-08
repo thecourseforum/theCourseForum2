@@ -29,15 +29,15 @@ from .qa import (
     upvote_question,
 )
 from .review import DeleteReview, downvote, edit_review, new_review, upvote
-from .search import search
 from .schedule import (
-    view_schedules,
-    new_schedule,
     delete_schedule,
-    edit_schedule,
     duplicate_schedule,
+    edit_schedule,
     modal_load_editor,
     modal_load_sections,
+    new_schedule,
     schedule_add_course,
-    view_select_schedules_modal)
-
+    view_schedules,
+    view_select_schedules_modal,
+)
+from .search import search
