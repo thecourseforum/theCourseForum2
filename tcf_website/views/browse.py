@@ -5,8 +5,9 @@
 import json
 from typing import Any
 
-from django.db.models import Avg, CharField, F, Max, Q, Value, Case, When
-from django.db.models.functions import Concat, Cast
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Avg, Case, CharField, F, Max, Q, Value, When
+from django.db.models.functions import Cast, Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -132,32 +133,32 @@ def load_secs_helper(course, latest_semester):
             ),
             section_nums=ArrayAgg(
                 Case(
-                    When(
-                        section__semester=latest_semester,
-                        then='section__sis_section_number'),
-                    output_field=CharField()),
-                distinct=True),
+                    When(section__semester=latest_semester, then="section__sis_section_number"),
+                    output_field=CharField(),
+                ),
+                distinct=True,
+            ),
             section_details=ArrayAgg(
                 # this is to get sections in this format: section.id /%
                 # section.section_num /% section.time /% section_type
                 Concat(
-                    Cast('section__id', CharField()),
-                    Value(' /% '),
+                    Cast("section__id", CharField()),
+                    Value(" /% "),
                     Case(
                         When(
                             section__semester=latest_semester,
-                            then=Cast('section__sis_section_number', CharField())
+                            then=Cast("section__sis_section_number", CharField()),
                         ),
-                        default=Value(''),
-                        output_field=CharField()
+                        default=Value(""),
+                        output_field=CharField(),
                     ),
-                    Value(' /% '),
-                    'section__section_times',
-                    Value(' /% '),
-                    'section__section_type',
-                    Value(' /% '),
-                    'section__units',
-                    output_field=CharField()
+                    Value(" /% "),
+                    "section__section_times",
+                    Value(" /% "),
+                    "section__section_type",
+                    Value(" /% "),
+                    "section__units",
+                    output_field=CharField(),
                 ),
                 distinct=True),
         )
@@ -168,7 +169,7 @@ def load_secs_helper(course, latest_semester):
             for idx, _ in enumerate(i.section_times):
                 if i.section_times[idx] is not None and i.section_nums[idx] is not None:
                     i.times[str(i.section_nums[idx])] = i.section_times[idx][:-1].split(",")
-        if i.section_nums.count(None) > 0:
+        if None in i.section_nums:
             i.section_nums.remove(None)
 
     return instructors
