@@ -1271,17 +1271,23 @@ class Schedule(models.Model):
         """Get the schedule and all its related information"""
         # NOTE: there may be a way to combine all of these methods into
         #       one query, but it would be very complicated
-        ret = [0] * 5
-        ret[0] = self.get_scheduled_courses()
-        ret[1] = sum([int(course.section.units) for course in ret[0]])
-        ret[2] = self.average_rating_for_schedule()
-        ret[3] = self.average_schedule_difficulty()
 
         total_grade_points = 0
         total_course_credits = 0
+        courses = self.get_scheduled_courses()
+
+        ret = [0] * 5  # intialize return array for the schedule, which will have 5 fields
+        ret[0] = courses  # list of courses in the schedule
+        ret[1] = sum([int(course.section.units) for course in ret[0]])  # total amount of credits
+        ret[2] = (
+            self.average_rating_for_schedule()
+        )  # average rating for the courses in this schedule
+        ret[3] = (
+            self.average_schedule_difficulty()
+        )  # average difficulty for the courses in this schedule
 
         # calculate weighted gpa based on credits
-        for course in ret[0]:
+        for course in courses:
             course_gpa = course.gpa
             course_credits = course.credits if course.credits else 0
 
