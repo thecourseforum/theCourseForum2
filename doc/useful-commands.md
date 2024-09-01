@@ -104,7 +104,7 @@ $ docker exec -it tcf_django python manage.py load_semester <year>_<season>
 
 See [load_semester.py](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/load_semester.py) for more information.
 
-## [Requesting Grade Data/FOIA Requests](docs/grade-data.md)
+## [Requesting Grade Data/FOIA Requests](doc/grade-data.md)
 
 ## Formatting the Codebase
 
