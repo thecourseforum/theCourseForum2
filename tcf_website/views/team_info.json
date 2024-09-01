@@ -78,25 +78,11 @@
       "github": "ajnye"
     },
     {
-      "name": "Oliver Song",
-      "role": "Treasurer",
-      "class": "2024",
-      "img_filename": "ENG_Oliver_Song.jpg",
-      "github": "obs4qqf"
-    },
-    {
       "name": "Ann Li",
       "role": "VP Infrastructure Engineering",
       "class": "2024",
       "img_filename": "ENG_Ann_Li.jpg",
       "github": "Ann924"
-    },
-    {
-      "name": "Raffi Khondaker",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Raffi_Khondaker.jpeg",
-      "github": "therealraffi"
     },
     {
       "name": "Barrett Ruth",
@@ -106,53 +92,11 @@
       "github": "barrett-ruth"
     },
     {
-      "name": "Lilian Zhang",
-      "role": "Developer",
-      "class": "2024",
-      "img_filename": "ENG_Lilian_Zhang.png",
-      "github": "lilizhhh"
-    },
-    {
-      "name": "Tommy Lam",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Tommy_Lam.jpg",
-      "github": "t0mmylam"
-    },
-    {
-      "name": "Samyak Thapa",
-      "role": "Developer",
-      "class": "2025",
-      "img_filename": "ENG_Samyak_Thapa.jpg",
-      "github": "SRT-13"
-    },
-    {
-      "name": "Param Patel",
-      "role": "Developer",
-      "class": "2025",
-      "img_filename": "ENG_PARAM_PATEL.jpg",
-      "github": "param23403"
-    },
-    {
       "name": "Hari Gajjala",
       "role": "Developer",
       "class": "2026",
       "img_filename": "ENG_Hari_Gajjala.JPG",
       "github": "hari-gajjala"
-    },
-    {
-      "name": "Caesar Ning",
-      "role": "Developer",
-      "class": "2024",
-      "img_filename": "ENG_Caesar_Ning.jpg",
-      "github": "Caesarsyning"
-    },
-    {
-      "name": "Ankit Poudyal",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Ankit_Poudyal.jpg",
-      "github": "poudyalankit"
     },
     {
       "name": "Neha Bagalkot",
@@ -225,13 +169,6 @@
       "github": "kingsleykimm"
     },
     {
-      "name": "Riley Fletcher",
-      "role": "Developer",
-      "class": "2025",
-      "img_filename": "ENG_Riley_Fletcher.jpg",
-      "github": "nrfletcher"
-    },
-    {
       "name": "Artie Humphreys",
       "role": "Developer",
       "class": "2026",
@@ -300,24 +237,6 @@
     }
   ],
   "marketing_team": [
-    {
-      "name": "Rachita Pathipati",
-      "role": "VP | Marketing & Design",
-      "class": "2025",
-      "img_filename": "MAD_Rachita_Pathipati.webp"
-    },
-    {
-      "name": "Jasmine Senesombath",
-      "role": "Designer",
-      "class": "2024",
-      "img_filename": "DM_Jasmine_Senesombath.jpg"
-    },
-    {
-      "name": "Ananya Raam",
-      "role": "Designer",
-      "class": "2025",
-      "img_filename": "DM_Ananya_Raam.jpeg"
-    },
     {
       "name": "Chai Zhang",
       "role": "Designer",
