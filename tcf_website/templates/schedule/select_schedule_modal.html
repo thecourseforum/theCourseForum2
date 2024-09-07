@@ -1,0 +1,50 @@
+{% load static %}
+{% load custom_tags %}
+
+<div class="modal fade" id="selectScheduleModal" tabindex="-1" role="dialog" aria-labelledby="selectScheduleModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Select Schedule</h5>
+          <button type="button" id="close_modal_btn" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div id="modal-body" class="modal-body">
+          <form id="select_schedule_form" action="{% url 'schedule' %}" method="POST">
+            {% csrf_token %}
+            {% for s in schedules %}
+            <div class="schedule_radio_option">
+              <label>
+                    <input class="schedule_radio_input" type="radio" name="selected_schedules" value="{{s.id}}" onchange="enableSubmit()">
+                    <div>
+                        {% include "schedule/schedule.html" with schedule=s gpa=schedules_gpa|get_item:s.id courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id credits=credits|get_item:s.id %}
+
+                      </div>
+                </label>
+              </div>
+            {% empty %}
+            <!-- TODO: either present a link to the user to make a schedule or allow them to make one here in the modal -->
+            <div>{{schedules}}</div>
+            <div>You haven't made any schedules yet!</div>
+            {% endfor %}
+            <div class="ml-sm-auto d-flex justify-content-end">
+              <button id="schedule_select_btn"  type="submit" value="Submit" class="btn btn-primary" disabled>
+                    Continue
+              </button>
+            </div>
+        </form>
+      </div>
+      </div>
+    </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    document.getElementById('close_modal_btn').addEventListener('click', function() {
+        document.getElementById('select_schedule_form').reset();
+        document.getElementById('schedule_select_btn').disabled = true;
+    });
+  })
+</script>
+
+<script src="{% static 'schedule/schedule_select_script.js' %}"></script>

@@ -1,0 +1,108 @@
+{% load static %}
+
+{% block styles %}
+
+{% endblock %}
+
+<div class="modal fade" id="addCourseModal" tabindex="-1" role="dialog" aria-labelledby="addCourseModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Select a Section for <strong>{{course}}</strong></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div id="second-modal-body" class="modal-body">
+
+
+        </div>
+        <div class="modal-footer">
+            <button id="section_select_btn" form="select_section_form" type="submit" value="Submit" class="btn btn-primary" disabled >
+                Confirm
+            </button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script src="{% static 'schedule/parse_time.js' %}"></script>
+<script>
+
+  function buttonDoubleSubmit() {
+    // this function is for preventing a double submit
+    var sectionForm = document.getElementById("select_section_form");
+
+    // this will prevent a submit without a selection
+    var submitButton = document.getElementById("section_select_btn");
+    
+    // Function to check the inputs and enable the button if criteria is met
+    function updateButtonState() {
+      var inputs = sectionForm.querySelectorAll('input[type="radio"]');
+      var isAnyInputFilled = Array.from(inputs).some(radio => radio.checked);
+      submitButton.disabled = !isAnyInputFilled;
+    }
+
+    // Event listener for changes in the form
+    sectionForm.addEventListener("change", updateButtonState);
+
+    // Initial check in case the form is pre-filled
+    updateButtonState();
+
+  };
+
+  
+  function submitSectionSelect() {
+    //this will use a listener to send the form data to the view
+    var sectionForm = document.getElementById("select_section_form");
+    sectionForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+      // prevent double submission
+      var submitButton = document.getElementById("section_select_btn");
+      submitButton.disabled = true;
+
+      // retrieve the data from the form, parse into a json, and extract the section time
+      var formData = new FormData(this);
+      const parsedFormData = JSON.parse(formData.get('selected_course'))
+      isConflict = checkConflictWrapper(parsedFormData['section_time']);
+
+      if(isConflict){
+        // if there is a conflict, alert the user and return
+        event.preventDefault();
+        alert("Error: new course has a time conflict with this schedule. Select another section time and try again.")
+
+        return;
+      } 
+      fetch(this.action, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: formData
+      })
+      .then(resp => {
+        if (resp.ok) {
+          location.reload();
+        }
+      })
+      .catch(error => {
+        submitButton.disabled = false;
+        console.error("Error:", error);
+        alert("Something went wrong");
+      });
+          
+      });
+  }
+    
+  var modal = document.getElementById('addCourseModal');
+  modal.addEventListener('modalLoaded', function(event) {
+    // add the submit event listener
+    submitSectionSelect();
+    // This function is in the schedule template, and simply serializes the schedule's times
+    makeSerialSchedule();
+
+    buttonDoubleSubmit();
+  })
+
+</script>

@@ -1,0 +1,74 @@
+{% load custom_tags %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'schedule/schedule_editor.css' %}" />
+<div class="schedule_editor_container">
+    <div>
+        {% include "schedule/schedule.html" with mode="edit" schedule=schedule gpa=schedule_gpa courses=schedule_courses rating=schedule_ratings difficulty=schedule_difficulty credits=schedule_credits %}
+    </div>
+    <form id="edit_schedule_form" action="{% url 'edit_schedule' %}" method="POST" data-course-id="{{ course.id }}">
+        {% csrf_token %}
+        
+        <input type="hidden" id="schedule_id_input" name="schedule_id" value="{{schedule.id}}">
+        <div class="schedule_name_input_group">
+            <span for="schedule_name_input">Schedule Name: </span>
+            <input type="text" id="schedule_name_input" name="schedule_name" value="{{schedule.name}}">
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Course</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody id="courses_lists">
+                {% for course in schedule_courses %}
+                    <tr class="course-row" course_id="{{course.id}}">
+                        <td>{{course.title}}</td>
+                        <td>{{course.section.section_type}}</td>
+                        <td>
+                            <button type="button" class="btn btn-danger remove-course-btn">
+                                <i class="fa fa-trash-o"></i>
+                            </button>
+                        </td>
+                        
+                    </tr>
+                {% endfor %}
+        
+            </tbody>
+        </table>
+    
+    </form>
+</div>
+
+{% endblock %}
+<script src="{% static 'schedule/parse_time.js' %}"></script>
+<script>
+
+    // attach an event listener to every remove button
+    document.querySelectorAll('.remove-course-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const courseRow = this.closest('.course-row');
+            const courseId = courseRow.getAttribute('course_id');
+
+            // Create a hidden input to indicate that this course ID should be removed
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'removed_course_ids[]';
+            hiddenInput.value = courseId;
+
+            // Append the hidden input to the form (assuming your form has a specific ID)
+            courseRow.appendChild(hiddenInput);
+            courseRow.style.display = 'none'; // hide from the table
+
+            // Get the course from the schedule card template, notice we use 
+            // the mode included in the context of the schedule template above
+            const scheduledCourse = document.getElementById(`ScheduledCourse-${courseId}edit`);
+            scheduledCourse.remove(); // Remove the course in the schedule card
+
+            updateStats(); // this method is included in the schedule template
+        });
+    });
+
+</script>

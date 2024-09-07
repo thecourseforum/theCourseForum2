@@ -1,0 +1,68 @@
+{% load custom_tags %}
+{% load static %}
+
+<div class="modal fade" id="editScheduleModal" tabindex="-1" role="dialog" aria-labelledby="editScheduleModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Schedule</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div id="second-modal-body" class="modal-body">
+          
+        </div>
+            <div class="modal-footer">
+              <button id="scheduleResetButton" class="btn btn-primary">
+                Reset
+              </button>
+              <button id="schedule_edit_btn" form="edit_schedule_form" type="submit" value="Submit" class="btn btn-primary">
+                Save
+              </button>
+            </div>
+      </div>
+    </div>
+</div>
+
+<script>
+  function refetchSchedule() {
+    // fetch the schedule's data again, essentially reseting the modal
+    fetch("{% url 'modal_load_editor' %}", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        "X-CSRFToken": getCookie("csrftoken")
+      },
+      body: JSON.stringify(requestBody)
+    })
+    .then(resp => resp.text())
+    .then(html => {
+      // insert the returned HTML and update hidden schedule ID
+      $("#second-modal-body").html("");
+      $("#second-modal-body").html(html);
+
+    })
+    .catch(error => {
+      console.error("Error:", error);
+      alert("Something went wrong");
+    });
+  }
+
+  const resetButton = document.getElementById('scheduleResetButton');
+  resetButton.addEventListener('click', refetchSchedule);
+
+  let sectionForm = document.getElementById("editScheduleModal");
+  sectionForm.addEventListener('modalLoaded', function() {
+    sectionForm.addEventListener('submit', function(event) {
+      // make sure the name input is filled out 
+      const nameInput = document.getElementById('schedule_name_input');
+      if (nameInput.value == "") {
+        event.preventDefault();
+        alert("Invalid Schedule Name");
+      }
+        
+    });
+  });
+
+</script>
