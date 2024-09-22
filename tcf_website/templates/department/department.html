@@ -12,37 +12,34 @@
 {% block content %}
 
 <div class="department container">
-    <div class="container-lg mb-4">
-        {% include "../common/leaderboard_ad.html" with ad_slot="3719332473" %}
-    </div>
-    <div class="container-lg">
-        {% include "common/toolbar.html" with breadcrumbs=breadcrumbs active_text=latest_semester hidden_text="Last 5 Years" sorting=True %}
-    </div>
-    <div class="subdepartments mt-3">
-        {% for sd in subdepartments %}
-        <div class="subdepartment container-lg {% if not sd.has_current_course %}old{% endif %}">
-            <h1 class="my-3">{{ sd.name }}</h1>
-            <ul class="course-list" id="courses-sd-{{sd.id}}">
-            </ul>
-            <div class="text-center" id="spinner-sd-{{sd.id}}">
-                <div class="spinner-border" role="status" >
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
+  <div class="container-lg mb-4">
+    {% include "../common/leaderboard_ad.html" with ad_slot="3719332473" %}
+  </div>
+  <div class="container-lg">
+    {% include "common/toolbar.html" with active_course_recency=active_course_recency latest_semester=latest_semester last_five_years=last_five_years dept_id=dept_id breadcrumbs=breadcrumbs sorting=True %}
+  </div>
+  <div class="subdepartments mt-3">
+    <div class="subdepartment container-lg">
+      {% if courses|length == 0 %}
+        <div class="new card col p-5 text-center">
+          <div class="card-body">
+            <h4 class="card-title">
+              {% if active_course_recency == latest_semester %}It appears that no courses are being taught this semester.{% else %}It appears that no courses have been taught recently.{% endif %} <i class="far fa-frown-open fa-fw"></i>
+            </h4>
+            <p class="card-text">
+              {% if active_course_recency == latest_semester %}Select the "Last 5 Years" button in the top right to see courses from previous semesters.{% else %}Consider selecting another department.{% endif %}
+            </p>
+          </div>
         </div>
+      {% else %}
+      <ul class="course-list">
+        {% for course in courses %} 
+          {% include "department/department_course.html" with course=course %}
         {% endfor %}
+      </ul>
+      {% endif %}
     </div>
+  </div>
 </div>
-{% endblock %}
 
-{% block js %}
-<script type="module" src="{% static 'common/bind-show-hide.js' %}"></script>
-<script type="module" src="{% static 'common/bind-sort.js' %}"></script>
-<script type="module">
-    import { loadPage } from "{% static 'department/loadMoreCourses.js' %}";
-
-    {% for sd in subdepartments %}
-        loadPage("{{sd.id}}", "/api/courses/?page=1&page_size=30&subdepartment={{sd.id}}&simplestats&recent");
-    {% endfor %}
-</script>
 {% endblock %}

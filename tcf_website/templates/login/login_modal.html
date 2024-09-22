@@ -22,6 +22,9 @@
                 <div class="modal-footer d-flex justify-content-center">
                     {% include "login/login_form.html" %}
                 </div>
+                <div class="text-center">
+                    <a href="{% url 'password_reset' %}">Forgot password?</a>
+                </div>
             </div>
             <div class="modal-footer d-flex justify-content-center">
                 <a href="{% url 'register' %}" class="btn btn-lg bg-tcf-orange text-white">Create an Account!</a>

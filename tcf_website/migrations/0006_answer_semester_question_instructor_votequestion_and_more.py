@@ -107,9 +107,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="votequestion",
-            index=models.Index(
-                fields=["question"], name="tcf_website_questio_ea2a57_idx"
-            ),
+            index=models.Index(fields=["question"], name="tcf_website_questio_ea2a57_idx"),
         ),
         migrations.AddConstraint(
             model_name="votequestion",
@@ -120,9 +118,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="voteanswer",
-            index=models.Index(
-                fields=["answer"], name="tcf_website_answer__fc907a_idx"
-            ),
+            index=models.Index(fields=["answer"], name="tcf_website_answer__fc907a_idx"),
         ),
         migrations.AddConstraint(
             model_name="voteanswer",

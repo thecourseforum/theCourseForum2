@@ -40,9 +40,7 @@ def password_validation(backend, details, request, response, *args, **kwargs):
         try:
             validate_password(response.get("password"))
         except ValidationError as err:
-            return render(
-                request, "login/register_form.html", {"error_message": err}
-            )
+            return render(request, "login/register_form.html", {"error_message": err})
     else:
         if not User.objects.filter(email=response.get("email")).exists():
             return redirect("/login/password_error", error=True)
@@ -82,9 +80,7 @@ def implement_partial_token_persistence():
     BaseStrategy.clean_partial_pipeline = wrapped_func
 
 
-def collect_extra_info(
-    strategy, backend, request, details, user=None, *args, **kwargs
-):
+def collect_extra_info(strategy, backend, request, details, user=None, *args, **kwargs):
     """Collect extra information on sign up."""
 
     # Disable partial token persistence
@@ -140,16 +136,12 @@ def create_user(strategy, details, backend, user=None, *args, **kwargs):
     # Add graduation year and computing ID. This is extra info not
     # automatically collected by python-social-auth.
     fields["graduation_year"] = strategy.session_get("grad_year", None)
-    fields["computing_id"] = kwargs.get("email", details.get("email")).split(
-        "@"
-    )[0]
+    fields["computing_id"] = kwargs.get("email", details.get("email")).split("@")[0]
 
     return {"is_new": True, "user": strategy.create_user(**fields)}
 
 
-def check_user_password(
-    strategy, backend, user, is_new=False, password="", *args, **kwargs
-):
+def check_user_password(strategy, backend, user, is_new=False, password="", *args, **kwargs):
     """
     Saves password to user object if a new user (registering).
     Otherwise, validates given password is correct.
@@ -170,9 +162,7 @@ def validate_email(strategy, backend, code, partial_token):
     """
     if not code.verified:
         url = (
-            strategy.build_absolute_uri(
-                reverse("social:complete", args=(backend.name,))
-            )
+            strategy.build_absolute_uri(reverse("social:complete", args=(backend.name,)))
             + "?verification_code="
             + code.code
             + "&partial_token="

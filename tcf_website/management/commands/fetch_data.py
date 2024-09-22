@@ -97,9 +97,7 @@ def retrieve_and_write_semester_courses(csv_path, sem_code):
         if not page_data:
             break
 
-        requests_to_make = [
-            (course["class_nbr"], sem_code) for course in page_data
-        ]
+        requests_to_make = [(course["class_nbr"], sem_code) for course in page_data]
 
         with ThreadPoolExecutor(max_workers=20) as executor:
             all_classes = executor.map(
@@ -158,9 +156,7 @@ def compile_course_data(course_number, sem_code):
             "DIS": "Discussion",
             "LAB": "Laboratory",
         }.get(class_details["component"], class_details["component"]),
-        "Units": class_details["units"][
-            0 : class_details["units"].find("units") - 1
-        ],
+        "Units": class_details["units"][0 : class_details["units"].find("units") - 1],
         "Instructor1": (
             ", ".join(
                 instructor["name"]
@@ -170,19 +166,11 @@ def compile_course_data(course_number, sem_code):
             if meetings.get(0)
             else ""
         ),
-        "Days1": (
-            meetings.get(0)["meets"]
-            if meetings.get(0)["meets"] != "-"
-            else "TBA"
-        )
+        "Days1": (meetings.get(0)["meets"] if meetings.get(0)["meets"] != "-" else "TBA")
         .replace("AM", "am")
         .replace("PM", "pm"),
-        "Room1": (
-            meetings.get(0)["room"] if meetings.get(0)["room"] != "-" else "TBA"
-        ),
-        "MeetingDates1": (
-            meetings.get(0)["date_range"] if meetings.get(0) else ""
-        ),
+        "Room1": (meetings.get(0)["room"] if meetings.get(0)["room"] != "-" else "TBA"),
+        "MeetingDates1": (meetings.get(0)["date_range"] if meetings.get(0) else ""),
         "Instructor2": (
             ", ".join(
                 instructor["name"]
@@ -194,9 +182,7 @@ def compile_course_data(course_number, sem_code):
         ),
         "Days2": meetings.get(1)["meets"] if meetings.get(1) else "",
         "Room2": meetings.get(1)["room"] if meetings.get(1) else "",
-        "MeetingDates2": (
-            meetings.get(1)["date_range"] if meetings.get(1) else ""
-        ),
+        "MeetingDates2": (meetings.get(1)["date_range"] if meetings.get(1) else ""),
         "Instructor3": (
             ", ".join(
                 instructor["name"]
@@ -208,9 +194,7 @@ def compile_course_data(course_number, sem_code):
         ),
         "Days3": meetings.get(2)["meets"] if meetings.get(2) else "",
         "Room3": meetings.get(2)["room"] if meetings.get(2) else "",
-        "MeetingDates3": (
-            meetings.get(2)["date_range"] if meetings.get(2) else ""
-        ),
+        "MeetingDates3": (meetings.get(2)["date_range"] if meetings.get(2) else ""),
         "Instructor4": (
             ", ".join(
                 instructor["name"]
@@ -222,26 +206,14 @@ def compile_course_data(course_number, sem_code):
         ),
         "Days4": meetings.get(3)["meets"] if meetings.get(3) else "",
         "Room4": meetings.get(3)["room"] if meetings.get(3) else "",
-        "MeetingDates4": (
-            meetings.get(3)["date_range"] if meetings.get(3) else ""
-        ),
-        "CollegeRequirements": (
-            class_details["enrollment_information"]
-            .get("class_attributes")
-            .split(' \r')
-            if class_details.get("enrollment_information")
-            and class_details["enrollment_information"]
-            else []
-        ),
+        "MeetingDates4": (meetings.get(3)["date_range"] if meetings.get(3) else ""),
         "Title": class_details["course_title"],
         "Topic": class_details["topic"],
         "Status": class_details["status"],
         "Enrollment": class_availability["enrollment_total"],
         "EnrollmentLimit": class_availability["class_capacity"],
         "Waitlist": class_availability["wait_list_total"],
-        "Description": data["section_info"]["catalog_descr"][
-            "crse_catalog_description"
-        ]
+        "Description": data["section_info"]["catalog_descr"]["crse_catalog_description"]
         .replace("\n", "")
         .replace("\r", " "),
     }
@@ -303,17 +275,13 @@ def compare_csv_files(lous_list_file_path, sis_file_path):
 def main() -> None:
     arguments = sys.argv[1:]
     if not arguments:
-        sys.stdout.write(
-            "No argument given. Give an argument in format: <year>_<season>"
-        )
+        sys.stdout.write("No argument given. Give an argument in format: <year>_<season>")
     elif "--help" in arguments or "-h" in arguments:
         sys.stdout.write(
             "Fetches data from SIS API for the specified semester and saves it to a CSV file.\nUsage: cd tcf_website/management/commands; python3 fetch_data.py 2024_spring"
         )
     elif not arguments[0]:
-        sys.stdout.write(
-            "No argument given. Give an argument in format: <year>_<season>"
-        )
+        sys.stdout.write("No argument given. Give an argument in format: <year>_<season>")
     elif (
         len(elements := arguments[0].split("_")) != 2
         or not elements[0].isdigit()
@@ -327,7 +295,9 @@ def main() -> None:
         year, season = arguments[0].split("_")
         season = season.lower()
         year_code = str(year)[-2:]
-        sem_code = f"1{year_code}{SEASON_NUMBERS.get(season)}"  # 1 represents 21st century in querying
+        sem_code = (
+            f"1{year_code}{SEASON_NUMBERS.get(season)}"  # 1 represents 21st century in querying
+        )
         sys.stdout.write(f"Fetching course data for {year} {season}...\n")
         filename = f"{year}_{season}.csv"
         csv_path = os.path.join(COURSE_DATA_DIR, filename)
