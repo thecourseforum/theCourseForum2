@@ -216,14 +216,7 @@ def compile_course_data(course_number, sem_code):
         "Description": data["section_info"]["catalog_descr"]["crse_catalog_description"]
         .replace("\n", "")
         .replace("\r", " "),
-        "CollegeRequirements": (
-            class_details["enrollment_information"]
-            .get("class_attributes")
-            .split(' \r')
-            if class_details.get("enrollment_information")
-            and class_details["enrollment_information"].get("class_attributes")
-            else []
-        ),
+        "CollegeRequirements": class_details["enrollment_information"]["class_attributes"].split(' \r'),
     }
     return course_dictionary
 
