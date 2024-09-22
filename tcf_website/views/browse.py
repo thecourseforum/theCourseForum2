@@ -320,17 +320,17 @@ def course_instructor(request, course_id, instructor_id):
     request.session["instructor_fullname"] = instructor.full_name()
 
     # QA Data
-    questions = Question.objects.filter(
-        course=course_id, instructor=instructor_id
-    )
-    answers = {}
-    for question in questions:
-        answers[question.id] = Answer.display_activity(
-            question.id, request.user
-        )
-    questions = Question.display_activity(
-        course_id, instructor_id, request.user
-    )
+    # questions = Question.objects.filter(
+    #     course=course_id, instructor=instructor_id
+    # )
+    # answers = {}
+    # for question in questions:
+    #     answers[question.id] = Answer.display_activity(
+    #         question.id, request.user
+    #     )
+    # questions = Question.display_activity(
+    #     course_id, instructor_id, request.user
+    # )
 
     return render(
         request,
@@ -346,8 +346,8 @@ def course_instructor(request, course_id, instructor_id):
             "data": json.dumps(data),
             "section_info": section_info,
             "display_times": Semester.latest() == section_last_taught.semester,
-            "questions": questions,
-            "answers": answers,
+            # "questions": questions,
+            # "answers": answers,
         },
     )
 
