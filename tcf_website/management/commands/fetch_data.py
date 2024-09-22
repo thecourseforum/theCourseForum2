@@ -221,7 +221,7 @@ def compile_course_data(course_number, sem_code):
             .get("class_attributes")
             .split(' \r')
             if class_details.get("enrollment_information")
-            and class_details["enrollment_information"]
+            and class_details["enrollment_information"].get("class_attributes")
             else []
         ),
     }
