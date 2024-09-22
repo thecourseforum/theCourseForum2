@@ -1,6 +1,6 @@
 # Google App Engine Config
 
-runtime: python39
+runtime: python312
 
 # The --http flag exposes the app with uWSGI only and will act as the router/proxy/load balancer
 # If we want an nginx webserver upstream for more features, we would have to use a --socket flag so that nginx can communicate with uWSGI
@@ -44,3 +44,7 @@ env_variables:
     # email for account verification
     EMAIL_HOST_USER: "${EMAIL_HOST_USER}"
     EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"
+    # review drive information
+    REVIEW_DRIVE_ID: "${REVIEW_DRIVE_ID}"
+    REVIEW_DRIVE_EMAIL: "${REVIEW_DRIVE_EMAIL}"
+    REVIEW_DRIVE_PASSWORD: "${REVIEW_DRIVE_PASSWORD}"

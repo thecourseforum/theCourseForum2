@@ -62,9 +62,7 @@ class CourseTestCase(TestCase):
         """Test CourseViewSet.get_queryset() with recent parameter
         and simplestats parameters"""
         client = Client()
-        response = client.get(
-            path=reverse("course-list"), data={"simplestats": "", "recent": ""}
-        )
+        response = client.get(path=reverse("course-list"), data={"simplestats": "", "recent": ""})
         courses = response.json()["results"]
         self.assertEqual(len(courses), 2)
         serializer = CourseSimpleStatsSerializer(data=courses, many=True)
@@ -114,8 +112,7 @@ class CourseTestCase(TestCase):
     def test_student_eval_link(self):
         """Test if a student eval link matches up with a real link."""
         eval_link = (
-            "https://evals.itc.virginia.edu/"
-            + "course-selectionguide/pages/SGMain.jsp?cmp=CS,1420"
+            "https://evals.itc.virginia.edu/" + "course-selectionguide/pages/SGMain.jsp?cmp=CS,1420"
         )
         # need to break into 2 lines because otherwise pylint gets mad
         # this link doesn't actually work because CS 420 is not a real class
