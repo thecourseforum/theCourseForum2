@@ -408,6 +408,10 @@ class Semester(models.Model):
         constraints = [models.UniqueConstraint(fields=["season", "year"], name="unique semesters")]
 
 class Attribute(models.Model):
+    """Attribute model.
+
+    Has many Courses.
+    """
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
