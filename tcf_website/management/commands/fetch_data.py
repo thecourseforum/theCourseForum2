@@ -39,7 +39,7 @@ from tqdm import tqdm
 # https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearchOptions?institution=UVA01&term=1228
 
 session = requests.session()
-
+TIMEOUT = 100
 
 @backoff.on_exception(
     backoff.expo,
@@ -67,9 +67,9 @@ def retrieve_and_write_semester_courses(csv_path, sem_code):
     print("\nBinary search for total pages in range [1, 200]:")
     while min_pages <= max_pages:
         mid = (min_pages + max_pages) // 2
-        print(f"\tChecking page {mid}")
+        # print(f"\tChecking page {mid}")
         try:
-            response = session.get(semester_url + str(mid), timeout=300)
+            response = session.get(semester_url + str(mid), timeout=TIMEOUT)
             page_data = json.loads(response.text)
         except requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
@@ -88,7 +88,7 @@ def retrieve_and_write_semester_courses(csv_path, sem_code):
         all_classes = []
         page_url = semester_url + str(page)
         try:
-            response = session.get(page_url, timeout=300)
+            response = session.get(page_url, timeout=TIMEOUT)
             page_data = json.loads(response.text)
         except requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
@@ -128,7 +128,7 @@ def compile_course_data(course_number, sem_code):
     )
 
     try:
-        response = session.get(url, timeout=300)
+        response = session.get(url, timeout=TIMEOUT)
     except requests.exceptions.RequestException:
         return None
 
@@ -217,10 +217,8 @@ def compile_course_data(course_number, sem_code):
         .replace("\n", "")
         .replace("\r", " "),
         "CollegeRequirements": (
-            class_details["enrollment_information"]["class_attributes"].split(' \r')
-            if class_details.get("enrollment_information")
-            and class_details["enrollment_information"].get("class_attributes")
-            else []
+            data["section_info"]["enrollment_information"]["class_attributes"]
+            .replace("\r", "")
         ),
     }
     return course_dictionary
