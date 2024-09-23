@@ -420,6 +420,9 @@ class Course(models.Model):
     title = models.CharField(max_length=255)
     # Course description. Optional.
     description = models.TextField(blank=True)
+    # Course attributes. Optional.
+    attributes = models.TextField(blank=True)
+
     # Course number. Required.
     number = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99999)])
 

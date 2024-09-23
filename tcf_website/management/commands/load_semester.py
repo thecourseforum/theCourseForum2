@@ -111,6 +111,7 @@ class Command(BaseCommand):
             title = row["Title"]  # may be empty/nan
             topic = row["Topic"]  # may be empty/nan
             description = row["Description"]  # may be empty/nan
+            attributes = row["Attributes"]  # may be empty/nan (Need to split on "-")
             section_type = row["Type"]  # may be empty/nan
 
             # may include staff, may be empty
@@ -130,7 +131,7 @@ class Command(BaseCommand):
             raise e
 
         sd = self.load_subdepartment(mnemonic)
-        course = self.load_course(title, description, semester, sd, course_number)
+        course = self.load_course(title, description, attributes, semester, sd, course_number)
         instructors = self.load_instructors(instructor_names)
         section = self.load_section(
             sis_number,
@@ -161,10 +162,10 @@ class Command(BaseCommand):
     # TODO: how to handle special topics courses?
     # topic: section topic
     # description: course description!
-    def load_course(self, title, description, semester, subdepartment, number):
+    def load_course(self, title, description, attributes, semester, subdepartment, number):
 
         params = {}
-        fields = {"title", "description", "subdepartment", "number"}
+        fields = {"title", "description", "attributes", "subdepartment", "number"}
         for k, v in locals().items():
             if k in fields and not pd.isnull(v):
                 params[k] = v
@@ -174,7 +175,7 @@ class Command(BaseCommand):
             if self.verbose:
                 print(f"Retrieved {course}")
         except ObjectDoesNotExist:
-            # create new Course with title, description, subdepartment, number
+            # create new Course with title, description, attributes, subdepartment, number
             course = Course(**params)
             course.semester_last_taught = semester
             course.save()
@@ -184,6 +185,8 @@ class Command(BaseCommand):
         # fill in blank info
         if not course.description and not pd.isnull(description):
             course.description = description
+        if not course.attributes and not pd.isnull(attributes):
+            course.attributes = attributes
         if not course.title and not pd.isnull(title):
             course.description = title
         # update with new info if possible
