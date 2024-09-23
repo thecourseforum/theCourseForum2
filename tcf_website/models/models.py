@@ -407,6 +407,11 @@ class Semester(models.Model):
 
         constraints = [models.UniqueConstraint(fields=["season", "year"], name="unique semesters")]
 
+class Attribute(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
 
 class Course(models.Model):
     """Course model.
@@ -421,7 +426,7 @@ class Course(models.Model):
     # Course description. Optional.
     description = models.TextField(blank=True)
     # Course attributes. Optional.
-    attributes = models.TextField(blank=True)
+    attributes = models.ManyToManyField(Attribute, blank=True)
 
     # Course number. Required.
     number = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99999)])

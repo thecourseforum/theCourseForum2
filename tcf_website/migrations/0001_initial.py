@@ -118,6 +118,21 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name="Attribute",
+            fields=[
+                (
+                    "id", models.AutoField(
+                        auto_created=True, 
+                        primary_key=True, 
+                        serialize=False, 
+                        verbose_name="ID"),
+                ),
+                (
+                    "name", models.CharField(max_length=255),
+                ),
+            ]
+        ),
+        migrations.CreateModel(
             name="Course",
             fields=[
                 (
@@ -131,6 +146,7 @@ class Migration(migrations.Migration):
                 ),
                 ("title", models.CharField(max_length=255)),
                 ("description", models.TextField(blank=True)),
+                ("attributes", models.ManyToManyField(to="tcf_website.Attribute")),
                 (
                     "number",
                     models.IntegerField(
