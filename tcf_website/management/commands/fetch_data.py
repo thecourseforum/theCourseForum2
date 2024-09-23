@@ -39,7 +39,7 @@ from tqdm import tqdm
 # https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearchOptions?institution=UVA01&term=1228
 
 session = requests.session()
-TIMEOUT = 100
+TIMEOUT = 300
 
 @backoff.on_exception(
     backoff.expo,
@@ -64,10 +64,10 @@ def retrieve_and_write_semester_courses(csv_path, sem_code):
     max_pages = 200
 
     # Binary search to find the total number of pages
-    print("\nBinary search for total pages in range [1, 200]:")
+    print("\nBinary search for total pages [1, 200]:")
     while min_pages <= max_pages:
         mid = (min_pages + max_pages) // 2
-        # print(f"\tChecking page {mid}")
+        print(f"\tChecking page {mid}")
         try:
             response = session.get(semester_url + str(mid), timeout=TIMEOUT)
             page_data = json.loads(response.text)
@@ -216,9 +216,9 @@ def compile_course_data(course_number, sem_code):
         "Description": data["section_info"]["catalog_descr"]["crse_catalog_description"]
         .replace("\n", "")
         .replace("\r", " "),
-        "CollegeRequirements": (
+        "Attributes": (
             data["section_info"]["enrollment_information"]["class_attributes"]
-            .replace("\r", "")
+            .replace(" \r", "-")
         ),
     }
     return course_dictionary
