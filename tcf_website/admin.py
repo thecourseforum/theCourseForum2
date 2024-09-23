@@ -73,6 +73,7 @@ class CourseInstructorGradeAdmin(admin.ModelAdmin):
 
 admin.site.register(Section, SectionAdmin)
 admin.site.register(Instructor, InstructorAdmin)
+admin.site.register(Attribute, AttributeAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(School, SchoolAdmin)
 admin.site.register(Department, DepartmentAdmin)
