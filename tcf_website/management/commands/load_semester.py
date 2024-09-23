@@ -184,6 +184,7 @@ class Command(BaseCommand):
 
         # fill in blank info
         if not course.attributes and not pd.isnull(attributes):
+            attrs = []
             for attr in attributes.split("-"):
                 attr = attr.strip()
                 if not attr:
@@ -193,7 +194,8 @@ class Command(BaseCommand):
                 except ObjectDoesNotExist:
                     attribute = Attribute(name=attr)
                     attribute.save()
-                course.attributes.add(attribute)
+                attrs.append(attribute)
+            course.attributes.set(attrs)
         if not course.description and not pd.isnull(description):
             course.description = description
         if not course.title and not pd.isnull(title):
