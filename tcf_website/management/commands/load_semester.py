@@ -183,10 +183,19 @@ class Command(BaseCommand):
                 print(f"Created {course}")
 
         # fill in blank info
+        if not course.attributes and not pd.isnull(attributes):
+            for attr in attributes.split("-"):
+                attr = attr.strip()
+                if not attr:
+                    continue
+                try:
+                    attribute = Attribute.objects.get(name=attr)
+                except ObjectDoesNotExist:
+                    attribute = Attribute(name=attr)
+                    attribute.save()
+                course.attributes.add(attribute)
         if not course.description and not pd.isnull(description):
             course.description = description
-        if not course.attributes and not pd.isnull(attributes):
-            course.attributes = attributes
         if not course.title and not pd.isnull(title):
             course.description = title
         # update with new info if possible
