@@ -7,6 +7,7 @@
 
 from .models import (
     Answer,
+    Attribute,
     Course,
     CourseGrade,
     CourseInstructorGrade,
