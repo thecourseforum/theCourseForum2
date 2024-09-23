@@ -303,7 +303,7 @@ def main() -> None:
             f"1{year_code}{SEASON_NUMBERS.get(season)}"  # 1 represents 21st century in querying
         )
         sys.stdout.write(f"Fetching course data for {year} {season}...\n")
-        filename = f"{year}_{season}_test.csv"
+        filename = f"{year}_{season}.csv"
         csv_path = os.path.join(COURSE_DATA_DIR, filename)
 
         if os.path.exists(csv_path):
