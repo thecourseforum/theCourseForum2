@@ -40,6 +40,15 @@
                         {{ course.compute_pre_req }}
                     </div>
                     {% endif %}
+                    
+                    {% if course.attributes|length > 0 %}
+                    <div>
+                        <small class="mb-0 text-uppercase" style="font-size: 15px;">
+                            <i class="fa-fw" aria-hidden="true"></i>Attributes:
+                        </small>
+                        {{ course.attributes }}
+                    </div>
+                    {% endif %}
 
                     <p class="card-text">
                         {{ course.course_description_without_pre_req }}
