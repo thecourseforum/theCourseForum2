@@ -165,7 +165,7 @@ class Command(BaseCommand):
     def load_course(self, title, description, attributes, semester, subdepartment, number):
 
         params = {}
-        fields = {"title", "description", "attributes", "subdepartment", "number"}
+        fields = {"title", "description", "subdepartment", "number"}
         for k, v in locals().items():
             if k in fields and not pd.isnull(v):
                 params[k] = v
@@ -175,7 +175,7 @@ class Command(BaseCommand):
             if self.verbose:
                 print(f"Retrieved {course}")
         except ObjectDoesNotExist:
-            # create new Course with title, description, attributes, subdepartment, number
+            # create new Course with title, description, subdepartment, number
             course = Course(**params)
             course.semester_last_taught = semester
             course.save()
@@ -183,7 +183,7 @@ class Command(BaseCommand):
                 print(f"Created {course}")
 
         # fill in blank info
-        if not course.attributes and not pd.isnull(attributes):
+        if not pd.isnull(attributes):
             attrs = []
             for attr in attributes.split("-"):
                 attr = attr.strip()
