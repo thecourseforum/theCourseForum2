@@ -216,7 +216,12 @@ def compile_course_data(course_number, sem_code):
         "Description": data["section_info"]["catalog_descr"]["crse_catalog_description"]
         .replace("\n", "")
         .replace("\r", " "),
-        "CollegeRequirements": class_details["enrollment_information"]["class_attributes"].split(' \r'),
+        "CollegeRequirements": (
+            class_details["enrollment_information"]["class_attributes"].split(' \r')
+            if class_details.get("enrollment_information")
+            and class_details["enrollment_information"].get("class_attributes")
+            else []
+        ),
     }
     return course_dictionary
 
@@ -300,7 +305,7 @@ def main() -> None:
             f"1{year_code}{SEASON_NUMBERS.get(season)}"  # 1 represents 21st century in querying
         )
         sys.stdout.write(f"Fetching course data for {year} {season}...\n")
-        filename = f"{year}_{season}.csv"
+        filename = f"{year}_{season}_test.csv"
         csv_path = os.path.join(COURSE_DATA_DIR, filename)
 
         if os.path.exists(csv_path):
