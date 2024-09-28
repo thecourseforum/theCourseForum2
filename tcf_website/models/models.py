@@ -214,8 +214,6 @@ class Instructor(models.Model):
     last_name = models.CharField(max_length=255)
     # Instructor email. Optional.
     email = models.EmailField(blank=True)
-    # Instructor website. Optional.
-    website = models.URLField(blank=True)
     # Instructor departments. Optional.
     departments = models.ManyToManyField(Department)
     # hidden professor. Required. Default visible.
