@@ -172,7 +172,7 @@ const createChart = (gradesData) => {
       layout: {
         padding: {
           bottom: 20,
-          top: 25
+          top: 25,
         },
       },
       responsive: true,
@@ -234,9 +234,7 @@ const createChart = (gradesData) => {
 
           // add margin of text when position is `outside` or `border`
           // default is 2
-          position: "border",
           textMargin: 2,
-
         },
       },
     },
