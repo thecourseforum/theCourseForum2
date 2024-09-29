@@ -62,11 +62,7 @@ class Command(BaseCommand):
                         after_func(obj, new_obj)
 
                 except Exception as e:
-                    print(
-                        f"Error migrating {type(obj).__name__} {obj}:".encode(
-                            "utf-8"
-                        )
-                    )
+                    print(f"Error migrating {type(obj).__name__} {obj}:".encode("utf-8"))
                     print(e)
                     traceback.print_exc()
 
@@ -85,9 +81,7 @@ class Command(BaseCommand):
         self.semesters = Semesters.objects.using("legacy").all()
 
         UNKNOWN_SCHOOL, _ = School.objects.get_or_create(name="UNKNOWN")
-        UNKNOWN_DEPT, _ = Department.objects.get_or_create(
-            name="UNKNOWN", school=UNKNOWN_SCHOOL
-        )
+        UNKNOWN_DEPT, _ = Department.objects.get_or_create(name="UNKNOWN", school=UNKNOWN_SCHOOL)
 
         self.migrate(
             Schools,
@@ -145,11 +139,7 @@ class Command(BaseCommand):
         def get_email(old):
             if not old.email_alias:
                 return None
-            return (
-                old.email_alias
-                if "@" in old.email_alias
-                else f"{old.email_alias}@virginia.edu"
-            )
+            return old.email_alias if "@" in old.email_alias else f"{old.email_alias}@virginia.edu"
 
         # Instructor.objects.all().delete()
         self.migrate(

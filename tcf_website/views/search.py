@@ -4,14 +4,7 @@
 import re
 
 from django.contrib.postgres.search import TrigramWordSimilarity
-from django.db.models import (
-    CharField,
-    ExpressionWrapper,
-    F,
-    FloatField,
-    Q,
-    Value,
-)
+from django.db.models import CharField, ExpressionWrapper, F, FloatField, Q, Value
 from django.db.models.functions import Cast, Concat
 from django.shortcuts import render
 
@@ -55,9 +48,7 @@ def decide_order(query, courses, instructors):
     courses_avg = compute_avg_similarity([x["score"] for x in courses["results"]])
 
     # Calculate average similarity for instructors
-    instructors_avg = compute_avg_similarity(
-        [x["score"] for x in instructors["results"]]
-    )
+    instructors_avg = compute_avg_similarity([x["score"] for x in instructors["results"]])
 
     # Define a threshold for the minimum average similarity score. This value can be adjusted.
     THRESHOLD = 0.5
@@ -106,20 +97,13 @@ def fetch_instructors(query):
         .filter(similarity__gte=0.2)
         .order_by("-similarity")[:10]
     )
-    # Formatting results similar to Elastic search response
     formatted_results = [
         {
             "_meta": {"id": str(instructor.pk), "score": instructor.similarity},
             "first_name": {"raw": instructor.first_name},
             "last_name": {"raw": instructor.last_name},
             "email": {"raw": instructor.email},
-            "website": {
-                "raw": (
-                    instructor.website
-                    if hasattr(instructor, "website")
-                    else None
-                )
-            },
+            "website": {"raw": (instructor.website if hasattr(instructor, "website") else None)},
         }
         for instructor in results
     ]
@@ -150,15 +134,9 @@ def fetch_courses(title, number):
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
-            mnemonic_similarity=TrigramWordSimilarity(
-                title, "subdepartment__mnemonic"
-            ),
-            number_similarity=TrigramWordSimilarity(
-                number, Cast("number", CharField())
-            ),
-            title_similarity=TrigramWordSimilarity(
-                title, Cast("title", CharField())
-            ),
+            mnemonic_similarity=TrigramWordSimilarity(title, "subdepartment__mnemonic"),
+            number_similarity=TrigramWordSimilarity(number, Cast("number", CharField())),
+            title_similarity=TrigramWordSimilarity(title, Cast("title", CharField())),
         )
         .annotate(
             total_similarity=ExpressionWrapper(
@@ -176,15 +154,12 @@ def fetch_courses(title, number):
         .order_by("-total_similarity")[:10]
     )
 
-    # Formatting results similar to Elastic search response
     formatted_results = [
         {
             "_meta": {"id": str(course.pk), "score": course.total_similarity},
             "title": {"raw": course.title},
             "number": {"raw": course.number},
-            "mnemonic": {
-                "raw": course.subdepartment.mnemonic + " " + str(course.number)
-            },
+            "mnemonic": {"raw": course.subdepartment.mnemonic + " " + str(course.number)},
             "description": {"raw": course.description},
         }
         for course in results
@@ -199,7 +174,7 @@ def fetch_courses(title, number):
 
 
 def format_response(response):
-    """Formats an Elastic search endpoint response."""
+    """Formats an Trigram response."""
     formatted = {"error": False, "results": []}
     if "error" in response:
         formatted["error"] = True
