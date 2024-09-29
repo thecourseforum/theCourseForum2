@@ -78,16 +78,21 @@ A normal update may look like the following:
 $ docker exec -it tcf_django python manage.py load_grades <year>_<season>.csv
 ```
 
-5. Update ElasticSearch to reflect the latest database changes:
+5. Commit the semesterly data to the repo
+6. Remove production credentialing (use `.env` credentials like normal)
 
-```console
-$ docker exec tcf_django python manage.py index_elasticsearch
+## Downloading Semester Data
+
+Use the [fetch_data](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/fetch_data.py)
+script to load data for a specified semester from the SIS API. The resulting CSV
+is stored in `tcf_website/management/commands/semester_data/sis_csv`.
+For example, loading the 2024 fall semester:
+
+```sh
+$ cd tcf_website/management/commands/
+$ python fetch_data.py 2024_FALL
+$ cd -
 ```
-
-**_NOTE_**: this command may take +1 hour(s) to run, so plan accordingly!
-
-6. Commit the semesterly data to the repo
-7. Remove production credentialing (use `.env` credentials like normal)
 
 ## Loading Semester Data
 
