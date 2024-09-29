@@ -206,11 +206,19 @@
   .students-text {
     font-size: 14;
   }
+  .chart-sizing {
+    width: 300px !important;
+    height: 300px !important;
+  }
 }
 
 @media (max-width: 800px) {
   .info-num {
     width: 60px;
+  }
+  .chart-sizing {
+    width: 250px !important;
+    height: 250px !important;
   }
 }
 
@@ -240,6 +248,10 @@
   }
   .progress {
     height: 14px;
+  }
+  .chart-sizing {
+    width: 200px !important;
+    height: 200px !important;
   }
 }
 

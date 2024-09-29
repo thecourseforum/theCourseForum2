@@ -246,7 +246,7 @@ const createChart = (gradesData) => {
     options: {
       cutoutPercentage: 65,
       responsive: true,
-      aspectRatio: 1,
+      aspectRatio: .5,
       tooltips: {
         callbacks: {
           label: function (tooltipItem, data) {
