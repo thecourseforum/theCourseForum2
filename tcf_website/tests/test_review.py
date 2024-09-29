@@ -107,9 +107,7 @@ class DeleteReviewTests(TestCase):
 
     def test_delete_review_message(self):
         """Test if a message is shown when a user deletes their review."""
-        self.client.force_login(
-            self.review1.user
-        )  # force a login as the author of review1
+        self.client.force_login(self.review1.user)  # force a login as the author of review1
         # try and make the user delete review1
         response = self.client.post(
             reverse("delete_review", args=[self.review1.id]),
@@ -128,9 +126,7 @@ class DeleteReviewTests(TestCase):
     def test_delete_nonexistent_review_id(self):
         """Test if a 404 is returned for deleting a nonexistent review ID."""
         self.client.force_login(self.user1)
-        response = self.client.post(
-            reverse("delete_review", args=[0])  # id 0 = nonexistent review
-        )
+        response = self.client.post(reverse("delete_review", args=[0]))  # id 0 = nonexistent review
 
         self.assertEqual(response.status_code, 404)
 
@@ -157,45 +153,33 @@ class ModelReviewTests(TestCase):
 
     def test_count_votes(self):
         """Test for count votes method"""
-        self.assertDictEqual(
-            self.review1.count_votes(), {"upvotes": 2, "downvotes": 1}
-        )
+        self.assertDictEqual(self.review1.count_votes(), {"upvotes": 2, "downvotes": 1})
 
     def test_count_votes_no_votes(self):
         """Test for count votes method for when there are no votes"""
-        self.assertEqual(
-            self.review2.count_votes(), {"upvotes": 0, "downvotes": 0}
-        )
+        self.assertEqual(self.review2.count_votes(), {"upvotes": 0, "downvotes": 0})
 
     def test_upvote(self):
         """Test for upvote method verify with count_votes"""
         self.review1.upvote(self.user4)
-        self.assertDictEqual(
-            self.review1.count_votes(), {"upvotes": 3, "downvotes": 1}
-        )
+        self.assertDictEqual(self.review1.count_votes(), {"upvotes": 3, "downvotes": 1})
 
     def test_upvote_already_upvoted(self):
         """Test for upvote method verify with count_votes when the user already upvoted"""
         self.review1.upvote(self.user4)
         self.review1.upvote(self.user4)
-        self.assertDictEqual(
-            self.review1.count_votes(), {"upvotes": 2, "downvotes": 1}
-        )
+        self.assertDictEqual(self.review1.count_votes(), {"upvotes": 2, "downvotes": 1})
 
     def test_downvote(self):
         """Test for downvote method verify with count_votes"""
         self.review1.downvote(self.user4)
-        self.assertDictEqual(
-            self.review1.count_votes(), {"upvotes": 2, "downvotes": 2}
-        )
+        self.assertDictEqual(self.review1.count_votes(), {"upvotes": 2, "downvotes": 2})
 
     def test_upvote_already_downvoted(self):
         """Test for downvote method verify with count_votes when the user already downvoted"""
         self.review1.downvote(self.user4)
         self.review1.downvote(self.user4)
-        self.assertDictEqual(
-            self.review1.count_votes(), {"upvotes": 2, "downvotes": 1}
-        )
+        self.assertDictEqual(self.review1.count_votes(), {"upvotes": 2, "downvotes": 1})
 
     def test_double_vote(self):
         """Test for voting twice on same review by same user using vote model"""
@@ -222,8 +206,4 @@ class ModelReviewTests(TestCase):
         """Test display reviews method when there are no reviews"""
         self.review1.delete()
         self.review2.delete()
-        self.assertFalse(
-            Review.display_reviews(
-                self.course, self.instructor, self.user1
-            ).exists()
-        )
+        self.assertFalse(Review.display_reviews(self.course, self.instructor, self.user1).exists())

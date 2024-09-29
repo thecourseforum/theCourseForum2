@@ -13,8 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="question",
             name="placeholder",
-            field=models.CharField(
-                default="Enter your response here", max_length=100
-            ),
+            field=models.CharField(default="Enter your response here", max_length=100),
         ),
     ]

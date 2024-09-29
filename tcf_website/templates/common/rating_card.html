@@ -16,7 +16,7 @@
                   <i class="fa fa-star fa-fw"></i>&nbsp;Rating
                 </small>
                 <p class="mb-0 info" id="rating">
-                  {% if rating %}
+                  {% if rating and rating <= 5 and rating >= 0 %}
                     {{ rating|floatformat:2 }}
                   {% else %}
                     &mdash;
@@ -28,7 +28,7 @@
                   <i class="fa fa-dumbbell fa-fw"></i>&nbsp;Difficulty
                 </small>
                 <p class="mb-0 info" id="difficulty">
-                  {% if difficulty %}
+                  {% if difficulty and difficulty <= 5 and difficulty >= 0 %}
                     {{ difficulty|floatformat:2 }}
                   {% else %}
                     &mdash;
@@ -40,7 +40,7 @@
                   <i class="fas fa-chart-bar"></i>&nbsp;GPA
                 </small>
                 <p class="mb-0 info" id="gpa">
-                  {% if gpa %}
+                  {% if gpa and gpa <= 4 and gpa >= 0 %}
                     {{ gpa|floatformat:2 }}
                   {% else %}
                     &mdash;
@@ -52,18 +52,18 @@
                   <i class="fas fa-clock"></i>&nbsp;Sections
                 </small>
                 <p class="mb-0 info" id="times">
-                  {% if sec_nums %}
+                  {% if semester_last_taught == latest_semester %}
                       {{ sec_nums|length }}
                   {% else %}
                     &mdash;
                   {% endif %}
                 </p>
               </div>
-              <div class="col-12 col-md-8 col-lg-3" {% if not last_taught %}style="opacity: 0;"{% endif %}>
+              <div class="col-12 col-md-8 col-lg-3">
                 <small class="mb-0 text-uppercase">
                   Last Taught
                 </small>
-                  <p class="mb-0 info" id="recency">{{ last_taught }}</p>
+                  <p class="mb-0 info" id="recency">{{ semester_last_taught }}</p>
               </div>
           </div>
           {% if content %}
