@@ -31,9 +31,7 @@ class Command(BaseCommand):
 
         self.verbose = options["verbose"]
 
-        self.UNKNOWN_SCHOOL, _ = School.objects.get_or_create(
-            name="Miscellaneous"
-        )
+        self.UNKNOWN_SCHOOL, _ = School.objects.get_or_create(name="Miscellaneous")
         self.UNKNOWN_DEPT, _ = Department.objects.get_or_create(
             name="Miscellaneous", school=self.UNKNOWN_SCHOOL
         )
@@ -51,9 +49,7 @@ class Command(BaseCommand):
             # but run this command if you notice that it hasn't been done.
             sections = Section.objects.all()
             for section in tqdm(sections, total=sections.count()):
-                if section.semester.is_after(
-                    section.course.semester_last_taught
-                ):
+                if section.semester.is_after(section.course.semester_last_taught):
                     section.course.semester_last_taught = section.semester
                     section.course.save()
                     section.save()
@@ -63,9 +59,7 @@ class Command(BaseCommand):
         print("Completed. Hooray!")
 
     def clean(self, df):
-        return df.dropna(
-            subset=["Mnemonic", "ClassNumber", "Number", "Section"]
-        )
+        return df.dropna(subset=["Mnemonic", "ClassNumber", "Number", "Section"])
 
     def load_semester_file(self, file):
         year, semester = file.split(".")[0].split("_")
@@ -87,9 +81,7 @@ class Command(BaseCommand):
 
     def load_semester(self, year, season):
         year_code = str(year)[-2:]
-        season_code = {"FALL": 8, "SUMMER": 6, "SPRING": 2, "JANUARY": 1}[
-            season
-        ]
+        season_code = {"FALL": 8, "SUMMER": 6, "SPRING": 2, "JANUARY": 1}[season]
         semester_code = int(f"1{year_code}{season_code}")
 
         sem, created = Semester.objects.get_or_create(
@@ -123,11 +115,7 @@ class Command(BaseCommand):
 
             # may include staff, may be empty
             instructor_names = (
-                row[
-                    ["Instructor1", "Instructor2", "Instructor3", "Instructor4"]
-                ]
-                .dropna()
-                .array
+                row[["Instructor1", "Instructor2", "Instructor3", "Instructor4"]].dropna().array
             )
 
             times = row[["Days1", "Days2", "Days3", "Days4"]].dropna().array
@@ -142,9 +130,7 @@ class Command(BaseCommand):
             raise e
 
         sd = self.load_subdepartment(mnemonic)
-        course = self.load_course(
-            title, description, semester, sd, course_number
-        )
+        course = self.load_course(title, description, semester, sd, course_number)
         instructors = self.load_instructors(instructor_names)
         section = self.load_section(
             sis_number,
@@ -184,9 +170,7 @@ class Command(BaseCommand):
                 params[k] = v
 
         try:
-            course = Course.objects.get(
-                subdepartment=subdepartment, number=number
-            )
+            course = Course.objects.get(subdepartment=subdepartment, number=number)
             if self.verbose:
                 print(f"Retrieved {course}")
         except ObjectDoesNotExist:

@@ -57,7 +57,7 @@
     <header class="masthead text-center">
         <div class="row">
             <div class="col-xl-8 mx-auto py-4">
-                {% include "../common/login-fix-banner.html" %}
+                {% include "../common/application_banner.html" %}
                 <div class="about-logo row justify-content-center">
                     <img src="{% static 'base/img/new_logo.svg' %}" alt="theCourseForum logo" height="150px">
                     <div class="tagline text-left pt-3">
@@ -74,53 +74,71 @@
 
     <!-- Icons Grid -->
     <section class="features-icons container px-5 pb-5">
-        <div class="row px-md-4 text-center">
-            <div class="col-lg-4">
+        <div class="row d-flex justify-content-center px-md-4 text-center">
+            <div class="col-lg-3 col-md-6 mb-4">
                 <a href="{% url 'browse' %}" class="link-unstyled">
-                    <div class="card mx-sm-3 my-3">
-                        <div class="card-body features-icons-item mx-auto mb-2">
+                    <div class="card h-100 mx-sm-3 my-3">
+                        <div class="card-body d-flex flex-column features-icons-item mx-auto mb-2">
                             <div class="features-icons-icon d-flex">
                                 <i class="icon-list m-auto text-tcf-indigo"></i>
                             </div>
-                            <h4 class="card-title">Browse Courses</h4>
+                            <h4 class="card-title mt-auto">Browse Courses</h4>
                             <p class="card-text font-weight-light mb-0">See what other UVA students say about classes
                                 and professors</p>
                         </div>
                     </div>
                 </a>
             </div>
-
-            <div class="col-lg-4">
+    
+            <div class="col-lg-3 col-md-6 mb-4">
                 <a href="{% url 'browse' %}" class="link-unstyled">
-                    <div class="card mx-sm-3 my-3">
-                        <div class="card-body features-icons-item mx-auto mb-2">
+                    <div class="card h-100 mx-sm-3 my-3">
+                        <div class="card-body d-flex flex-column features-icons-item mx-auto mb-2">
                             <div class="features-icons-icon d-flex">
                                 <i class="icon-chart m-auto text-tcf-indigo"></i>
                             </div>
-                            <h4 class="card-title">View Grades</h4>
+                            <h4 class="card-title mt-auto">View Grades</h4>
                             <p class="card-text font-weight-light mb-0">Check out actual grade distributions from past
                                 semesters</p>
                         </div>
                     </div>
                 </a>
             </div>
-
-            <div class="col-lg-4">
+    
+            <div class="col-lg-3 col-md-6 mb-4">
                 {% if user.is_authenticated %}
                 <a href="{% url 'new_review' %}" class="link-unstyled">
                     {% else %}
                     {% include "login/login_modal.html" with path="/reviews/new" path_id="reviewLoginModal" %}
                     <a href="#reviewLoginModal" data-toggle="modal" class="link-unstyled">
                         {% endif %}
-                        <div class="card mx-sm-3 my-3">
-                            <div class="card-body features-icons-item mx-auto mb-2">
+                        <div class="card h-100 mx-sm-3 my-3">
+                            <div class="card-body d-flex flex-column features-icons-item mx-auto mb-2">
                                 <div class="features-icons-icon d-flex">
                                     <i class="icon-pencil m-auto text-tcf-indigo"></i>
                                 </div>
-                                <h4 class="card-title">Write a Review</h4>
+                                <h4 class="card-title mt-auto">Write a Review</h4>
                                 <p class="card-text font-weight-light mb-0">Help our community by telling others about
-                                    your
-                                    class experience</p>
+                                    your class experience</p>
+                            </div>
+                        </div>
+                    </a>
+            </div>
+    
+            <div class="col-lg-3 col-md-6 mb-4">
+                {% if user.is_authenticated %}
+                <a href="{% url 'qa' %}" class="link-unstyled">
+                    {% else %}
+                    {% include "login/login_modal.html" with path="/reviews/new" path_id="reviewLoginModal" %}
+                    <a href="#reviewLoginModal" data-toggle="modal" class="link-unstyled">
+                        {% endif %}
+                        <div class="card h-100 mx-sm-3 my-3">
+                            <div class="card-body d-flex flex-column features-icons-item mx-auto mb-2">
+                                <div class="features-icons-icon d-flex">
+                                    <i class="icon-pencil m-auto text-tcf-indigo"></i>
+                                </div>
+                                <h4 class="card-title mt-auto">Q&A</h4>
+                                <p class="card-text font-weight-light mb-0">Ask questions (ADD MORE)</p>
                             </div>
                         </div>
                     </a>

@@ -23,10 +23,7 @@ class RecordMiddleware:  # pylint: disable=too-few-public-methods
             previous_paths_titles = []
 
         response = self.get_response(request)
-        if (
-            check_path(request.path)
-            and request.session.get("instructor_fullname") is not None
-        ):
+        if check_path(request.path) and request.session.get("instructor_fullname") is not None:
             previous_paths.insert(0, request.build_absolute_uri())
             previous_paths = list(dict.fromkeys(previous_paths))
 
