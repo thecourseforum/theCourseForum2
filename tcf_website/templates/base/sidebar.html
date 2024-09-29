@@ -41,6 +41,15 @@
         <hr>
       </a>
     </li>
+    <li></li>
+      <a href="{% url 'qa' %}"
+         class="list-group-item list-group-item-action pb-0
+         {% if request.resolver_match.url_name == 'qa' %}active{% endif %}">
+        <h4><i class="fa fa-code fa-fw"></i></h4>
+        <p>Q&A</p>
+        <hr>
+      </a>
+    </li>
     <!-- <li> -->
     <!--   <a href="#bugModal" data-toggle="modal" data-target="#bugModal" id="bugFormOpen" -->
     <!--      class="list-group-item list-group-item-action pb-0 -->
