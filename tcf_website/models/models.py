@@ -407,8 +407,8 @@ class Semester(models.Model):
 
         constraints = [models.UniqueConstraint(fields=["season", "year"], name="unique semesters")]
 
-class Attribute(models.Model):
-    """Attribute model.
+class Discipline(models.Model):
+    """Discipline model.
 
     Has many Courses.
     """
@@ -430,7 +430,7 @@ class Course(models.Model):
     # Course description. Optional.
     description = models.TextField(blank=True)
     # Course attributes. Optional.
-    attributes = models.ManyToManyField(Attribute, blank=True)
+    attributes = models.ManyToManyField(Discipline, blank=True)
 
     # Course number. Required.
     number = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99999)])
