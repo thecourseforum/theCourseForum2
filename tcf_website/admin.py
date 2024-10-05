@@ -33,7 +33,7 @@ class SemesterAdmin(admin.ModelAdmin):
     ordering = ["-number"]
     search_fields = ["season", "year"]
 
-class AttributeAdmin(admin.ModelAdmin):
+class DisciplineAdmin(admin.ModelAdmin):
     ordering = ["name"]
     search_fields = ["name"]
 
@@ -73,7 +73,7 @@ class CourseInstructorGradeAdmin(admin.ModelAdmin):
 
 admin.site.register(Section, SectionAdmin)
 admin.site.register(Instructor, InstructorAdmin)
-admin.site.register(Attribute, AttributeAdmin)
+admin.site.register(Discipline, DisciplineAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(School, SchoolAdmin)
 admin.site.register(Department, DepartmentAdmin)

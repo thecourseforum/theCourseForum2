@@ -7,11 +7,11 @@
 
 from .models import (
     Answer,
-    Attribute,
     Course,
     CourseGrade,
     CourseInstructorGrade,
     Department,
+    Discipline,
     Instructor,
     Question,
     Review,
