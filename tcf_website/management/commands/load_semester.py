@@ -111,7 +111,7 @@ class Command(BaseCommand):
             title = row["Title"]  # may be empty/nan
             topic = row["Topic"]  # may be empty/nan
             description = row["Description"]  # may be empty/nan
-            attributes = row["Attributes"]  # may be empty/nan (Need to split on "-")
+            disciplines = row["Disciplines"]  # may be empty/nan (Need to split on "$")
             section_type = row["Type"]  # may be empty/nan
 
             # may include staff, may be empty
@@ -131,7 +131,7 @@ class Command(BaseCommand):
             raise e
 
         sd = self.load_subdepartment(mnemonic)
-        course = self.load_course(title, description, attributes, semester, sd, course_number)
+        course = self.load_course(title, description, disciplines, semester, sd, course_number)
         instructors = self.load_instructors(instructor_names)
         section = self.load_section(
             sis_number,
@@ -162,7 +162,7 @@ class Command(BaseCommand):
     # TODO: how to handle special topics courses?
     # topic: section topic
     # description: course description!
-    def load_course(self, title, description, attributes, semester, subdepartment, number):
+    def load_course(self, title, description, disciplines, semester, subdepartment, number):
 
         params = {}
         fields = {"title", "description", "subdepartment", "number"}
@@ -183,19 +183,19 @@ class Command(BaseCommand):
                 print(f"Created {course}")
 
         # fill in blank info
-        if not pd.isnull(attributes):
+        if not pd.isnull(disciplines):
             attrs = []
-            for attr in attributes.split("-"):
+            for attr in disciplines.split("$"):
                 attr = attr.strip()
                 if not attr:
                     continue
                 try:
-                    attribute = Attribute.objects.get(name=attr)
+                    attribute = Discipline.objects.get(name=attr)
                 except ObjectDoesNotExist:
-                    attribute = Attribute(name=attr)
+                    attribute = Discipline(name=attr)
                     attribute.save()
                 attrs.append(attribute)
-            course.attributes.set(attrs)
+            course.disciplines.set(attrs)
         if not course.description and not pd.isnull(description):
             course.description = description
         if not course.title and not pd.isnull(title):

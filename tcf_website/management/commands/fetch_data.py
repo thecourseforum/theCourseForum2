@@ -46,7 +46,7 @@ TIMEOUT = 300
     (requests.exceptions.Timeout, requests.exceptions.ConnectionError),
     max_tries=5,
 )
-def retrieve_and_write_semester_courses(csv_path, sem_code):
+def retrieve_and_write_semester_courses(csv_path, sem_code, pages=None):
     """
     input: semester using the formula  “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
     output: list of dictionaries where each dictionary is all a course's information for the csv writing
@@ -138,6 +138,17 @@ def compile_course_data(course_number, sem_code):
 
     class_details = data["section_info"]["class_details"]
     meetings = {0: None, 1: None, 2: None, 3: None}
+    attributes = ( data["section_info"]["enrollment_information"]
+                  ["class_attributes"]
+    )
+    disciplines = ""
+    cost = ""
+    for attribute in attributes.split(" \r"):
+        if "cost" in attribute.lower():
+            cost = attribute
+        else:
+            disciplines += attribute + "$"
+    disciplines = disciplines[:-1] if disciplines else ""
 
     for index, meeting in enumerate(data["section_info"]["meetings"]):
         if index > 3:
@@ -216,10 +227,8 @@ def compile_course_data(course_number, sem_code):
         "Description": data["section_info"]["catalog_descr"]["crse_catalog_description"]
         .replace("\n", "")
         .replace("\r", " "),
-        "Attributes": (
-            data["section_info"]["enrollment_information"]["class_attributes"]
-            .replace(" \r", "-")
-        ),
+        "Disciplines": disciplines,
+        "Cost": cost,
     }
     return course_dictionary
 
