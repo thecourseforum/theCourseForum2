@@ -714,7 +714,7 @@ class Section(models.Model):
     # different topic.
     topic = models.TextField(blank=True)
 
-    # Section cost. Optional. e.g. 'No Cost Course Materials' or 'Course Materials Required'.
+    # Section cost. Optional. e.g. 'No Cost Course Materials' or 'Low Cost Course Materials'.
     cost = models.CharField(max_length=255, blank=True)
 
     # Section # of units. Optional.
