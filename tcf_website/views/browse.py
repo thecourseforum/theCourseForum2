@@ -282,7 +282,7 @@ def course_instructor(request, course_id, instructor_id):
     answers = {}
     for question in questions:
         answers[question.id] = Answer.display_activity(question.id, request.user)
-    questions = Question.display_activity(course_id, instructor_id, request.user)
+    questions = Question.display_activity_course_page(course_id, instructor_id, request.user)
 
     return render(
         request,
