@@ -1051,29 +1051,6 @@ class Question(models.Model):
         )
 
     @staticmethod
-    def display_activity_course_page(course_id, instructor_id, user):
-        """Prepare review list for course-instructor page."""
-        question = (
-            Question.objects.filter(instructor=instructor_id, course=course_id)
-            .exclude(text="")
-            .annotate(
-                sum_q_votes=models.functions.Coalesce(
-                    models.Sum("votequestion__value"), models.Value(0)
-                ),
-            )
-        )
-        if user.is_authenticated:
-            question = question.annotate(
-                user_q_vote=models.functions.Coalesce(
-                    models.Sum(
-                        "votequestion__value",
-                        filter=models.Q(votequestion__user=user),
-                    ),
-                    models.Value(0),
-                ),
-            )
-        return question.order_by("-created")
-    
     def display_activity(user):
         """Prepare review list for course-instructor page."""
         question = (
