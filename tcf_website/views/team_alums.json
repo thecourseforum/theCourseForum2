@@ -30,6 +30,13 @@
           "class": "2026",
           "img_filename": "ENG_Raffi_Khondaker.jpeg",
           "github": "therealraffi"
+        },
+        {
+          "name": "Tino Martella",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Tino_Martella.jpg",
+          "github": "Tino-Martella"
         }
       ]
     },
