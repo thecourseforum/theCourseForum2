@@ -271,6 +271,7 @@ def course_instructor(request, course_id, instructor_id):
             "type": section.section_type,
             "units": section.units,
             "times": times,
+            "cost": section.cost,
         }
 
     request.session["course_code"] = course.code()
