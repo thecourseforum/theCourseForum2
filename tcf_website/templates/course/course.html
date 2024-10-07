@@ -40,7 +40,18 @@
                         {{ course.compute_pre_req }}
                     </div>
                     {% endif %}
-
+                    {% if course.disciplines.exists %}
+                    <div>
+                        <small class="mb-0 text-uppercase" style="font-size: 15px;">
+                            <i class="fa-fw" aria-hidden="true"></i>Discipline(s):
+                        </small>
+                        <ul>
+                            {% for discipline in course.disciplines.all %}
+                                <li>{{ discipline.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
                     <p class="card-text">
                         {{ course.course_description_without_pre_req }}
                     </p>
