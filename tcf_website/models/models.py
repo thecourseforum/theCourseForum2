@@ -407,6 +407,15 @@ class Semester(models.Model):
 
         constraints = [models.UniqueConstraint(fields=["season", "year"], name="unique semesters")]
 
+class Discipline(models.Model):
+    """Discipline model.
+
+    Has many Courses.
+    """
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
 
 class Course(models.Model):
     """Course model.
@@ -420,6 +429,9 @@ class Course(models.Model):
     title = models.CharField(max_length=255)
     # Course description. Optional.
     description = models.TextField(blank=True)
+    # Course disciplines. Optional.
+    disciplines = models.ManyToManyField(Discipline, blank=True)
+
     # Course number. Required.
     number = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99999)])
 
@@ -701,6 +713,9 @@ class Section(models.Model):
     # Section topic. Optional. E.g. for CS 4501, each section has a
     # different topic.
     topic = models.TextField(blank=True)
+
+    # Section cost. Optional. e.g. 'No Cost Course Materials' or 'Low Cost Course Materials'.
+    cost = models.CharField(max_length=255, blank=True)
 
     # Section # of units. Optional.
     units = models.CharField(max_length=10, blank=True)
