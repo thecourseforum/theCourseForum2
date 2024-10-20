@@ -13,6 +13,7 @@ from django.db.models import (
     Case,
     CharField,
     FloatField,
+    Index,
     OuterRef,
     Q,
     Subquery,
@@ -347,6 +348,9 @@ class Instructor(models.Model):
             models.Avg("average")
         )["average__avg"]
 
+    class Meta:
+        indexes = [Index(fields=["first_name", "last_name"])]
+
 
 class Semester(models.Model):
     """Semester model.
@@ -407,15 +411,18 @@ class Semester(models.Model):
 
         constraints = [models.UniqueConstraint(fields=["season", "year"], name="unique semesters")]
 
+
 class Discipline(models.Model):
     """Discipline model.
 
     Has many Courses.
     """
+
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
+
 
 class Course(models.Model):
     """Course model.
