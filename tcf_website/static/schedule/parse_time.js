@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 function stringTimeToInt(stringTime) {
   let ret = 0;
   parsed_time = stringTime.split(":");
@@ -115,11 +113,4 @@ function checkConflict(newTime, times) {
     }
   }
   return false;
-}
-
-function addTimeBlock(newTime, schedule) {
-  // this method will add the time block to a schedule HTML element
-  // TODO: implement this method, NOTE: there can be many ways to do, this is just a starter code
-
-  return true;
 }

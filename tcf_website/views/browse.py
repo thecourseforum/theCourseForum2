@@ -5,6 +5,7 @@
 import json
 from typing import Any
 
+from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg, Case, CharField, F, Max, Q, Value, When
 from django.db.models.functions import Cast, Concat
