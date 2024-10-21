@@ -1,0 +1,51 @@
+{% load custom_tags %}
+{% load static %}
+
+<div class="modal fade" id="createScheduleModal" tabindex="-1" role="dialog" aria-labelledby="createScheduleModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create Schedule</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form id="create_schedule_form" action="{% url 'new_schedule' %}" method="POST">
+                {% csrf_token %}
+
+                {# load the Django form into the modal from the form context variable #}
+                {{ form }}
+
+                {% if user.is_authenticated %}
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+                {% else %}
+                <input type="hidden" name="user_id" value="">
+                {% endif %}
+                <div class="ml-sm-auto d-flex justify-content-end">
+                    <button id="schedule_create_btn"  type="submit" value="Submit" class="btn btn-primary">
+                        Confirm
+                    </button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+{% block js%}
+<script>
+  // prevent an empty/default submission
+  document.addEventListener('DOMContentLoaded', function() {
+      var form = document.getElementById('create_schedule_form');
+      var textInput = document.getElementById('name');
+
+      form.addEventListener('submit', function(event) {
+          if (!textInput.value.trim()) {
+              event.preventDefault(); // Prevent form submission
+              alert('Please give your schedule a name'); // Alert or any other feedback mechanism
+          }
+      });
+  });
+</script>
+{% endblock %}
