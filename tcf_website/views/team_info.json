@@ -243,12 +243,20 @@
       "github": "Charka123"
     },
     {
+      "name": "Yu Cao",
+      "role": "Developer",
+      "class": "2028",
+      "img_filename": "ENG_Yu_Cao.jpg",
+      "github": "YuDavidCao"
+    },
+    {
       "name": "Collin Togher",
       "role": "Developer",
       "class": "2026",
       "img_filename": "ENG_Collin_Togher.jpg",
       "github": "ctogs"
     },
+    {
       "name": "Visvajit Murali",
       "role": "Developer",
       "class": "2027",
