@@ -250,6 +250,13 @@
       "github": "YuDavidCao"
     },
     {
+      "name": "Collin Togher",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Collin_Togher.jpg",
+      "github": "ctogs"
+    },
+    {
       "name": "Visvajit Murali",
       "role": "Developer",
       "class": "2027",
@@ -262,6 +269,27 @@
       "class": "2026",
       "img_filename": "ENG_Grace_Kang.jpg",
       "github": "gckang"
+    },
+    {
+      "name": "Yilin Wang",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Yilin_Wang.jpg",
+      "github": "yilinw762"
+    },
+    {
+      "name": "Brian Tran",
+      "role": "Developer",
+      "class": "2028",
+      "img_filename": "ENG_Brian_Tran.jpg",
+      "github": "brianlogic"
+    },
+    {
+      "name": "Brandon Istfan",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Brandon_Istfan.jpg",
+      "github": "brandonistfan"
     }
   ],
   "marketing_team": [
