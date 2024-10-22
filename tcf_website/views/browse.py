@@ -12,6 +12,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
+from ..models import Discipline  # Import Discipline model
 from ..models import (
     Answer,
     Course,
@@ -36,6 +37,14 @@ def browse(request):
     # Other schools besides CLAS, SEAS, and Misc.
     other_schools = School.objects.exclude(pk__in=excluded_list).order_by("name")
 
+    # Fetch all departments and disciplines for the advanced search
+    departments = Department.objects.all()
+    disciplines = Discipline.objects.all()
+
+    # Get selected filters from the request
+    selected_departments = request.GET.getlist("department")
+    selected_disciplines = request.GET.getlist("discipline")
+
     return render(
         request,
         "browse/browse.html",
@@ -43,6 +52,10 @@ def browse(request):
             "CLAS": clas,
             "SEAS": seas,
             "other_schools": other_schools,
+            "departments": departments,
+            "disciplines": disciplines,
+            "selected_departments": selected_departments,
+            "selected_disciplines": selected_disciplines,
         },
     )
 
@@ -400,3 +413,4 @@ def safe_round(num):
     if num is not None:
         return round(num, 2)
     return "\u2014"
+
