@@ -8,7 +8,7 @@ from django.db.models import CharField, ExpressionWrapper, F, FloatField, Q, Val
 from django.db.models.functions import Cast, Concat
 from django.shortcuts import render
 
-from ..models import Course, Instructor, Subdepartment
+from ..models import Course, Discipline, Instructor, Subdepartment  # Import Discipline
 
 
 def search(request):
@@ -17,8 +17,10 @@ def search(request):
     # Set query
     query = request.GET.get("q", "")
 
+    # Get selected filters from the request
+    selected_disciplines = request.GET.getlist("discipline")
+
     # courses are at least 3 digits long
-    # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
     match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
     if match:
         title_part, number_part = match.groups()
@@ -27,7 +29,7 @@ def search(request):
         title_part, number_part = query, ""
 
     instructors = fetch_instructors(query)
-    courses = fetch_courses(title_part, number_part)
+    courses = fetch_courses(title_part, number_part, selected_disciplines)  # Pass filters
 
     courses_first = decide_order(query, courses, instructors)
 
@@ -116,7 +118,7 @@ def fetch_instructors(query):
     )
 
 
-def fetch_courses(title, number):
+def fetch_courses(title, number, disciplines):
     """Get course data using Django Trigram similarity"""
     MNEMONIC_WEIGHT = 1.5
     NUMBER_WEIGHT = 1
@@ -147,12 +149,14 @@ def fetch_courses(title, number):
             )
         )
         .filter(total_similarity__gte=0.2)
-        # filters out classes with 3 digit class numbers (old naming system)
         .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
-        # filters out classes that haven't been taught since Fall 2020
         .exclude(semester_last_taught_id__lt=48)
-        .order_by("-total_similarity")[:10]
     )
+
+    if disciplines:
+        results = results.filter(disciplines__name__in=disciplines)
+
+    results = results.order_by("-total_similarity")[:10]
 
     formatted_results = [
         {
