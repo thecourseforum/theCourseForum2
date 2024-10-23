@@ -14,7 +14,7 @@ runs:
       shell: bash
       run: |
         cp requirements.txt requirements-ci.txt
-        sed -i '/\(coverage\|types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements-ci.txt
+        sed -i '/\(types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements-ci.txt
     - name: Cache pip dependencies
       uses: actions/cache@v3
       with:
