@@ -8,7 +8,7 @@ from django.db.models import CharField, ExpressionWrapper, F, FloatField, Q, Val
 from django.db.models.functions import Cast, Concat
 from django.shortcuts import render
 
-from ..models import Course, Discipline, Instructor, Subdepartment  # Import Discipline
+from ..models import Course, Discipline, Instructor, Subdepartment
 
 
 def search(request):
@@ -148,11 +148,13 @@ def fetch_courses(title, number, disciplines):
                 output_field=FloatField(),
             )
         )
-        .filter(total_similarity__gte=0.2)
         .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
         .exclude(semester_last_taught_id__lt=48)
     )
 
+    if title or number:
+        results = results.filter(total_similarity__gte=0.2)
+    
     if disciplines:
         results = results.filter(disciplines__name__in=disciplines)
 
