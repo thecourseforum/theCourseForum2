@@ -42,5 +42,6 @@ class HandleExceptionsMiddleware:
         print("========== Request details ==========", file=sys.stderr)
         print("Request: " + pretty_request(request), file=sys.stderr)
         print("========== Exception ==========", file=sys.stderr)
-        print(traceback.format_exc(), file=sys.stderr)
+        # print(traceback.format_exc(), file=sys.stderr)
+        print(exception)
         print("========================================", file=sys.stderr)
