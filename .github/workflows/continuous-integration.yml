@@ -33,7 +33,37 @@ env:
   REVIEW_DRIVE_EMAIL: ${{ secrets.REVIEW_DRIVE_EMAIL }}
   REVIEW_DRIVE_PASSWORD: ${{ secrets.REVIEW_DRIVE_PASSWORD }}
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.cache-deps.outputs.cache-hit }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_TARGET }}
+          cache: "pip" # Enable built-in pip caching
+      - name: Prepare CI requirements
+        run: |
+          cp requirements.txt requirements-ci.txt
+          sed -i '/\(types\-tqdm\|black\|mypy\|stubs\|isort\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements-ci.txt
+      - name: Cache pip dependencies
+        id: cache-deps
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-ci.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-ci.txt
   pylint:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -43,9 +73,17 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_TARGET }}
           cache: "pip" # Enable built-in pip caching
-      # Use the composite action to install dependencies
-      - name: Install Dependencies
-        uses: ./.github/actions/install-dependencies
+      - name: Restore pip cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-ci.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-ci.txt
       - name: Configure PYTHONPATH
         run: |
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
@@ -53,6 +91,7 @@ jobs:
         run: |
           pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
   django:
+    needs: setup
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -72,9 +111,17 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_TARGET }}
           cache: "pip" # Enable built-in pip caching
-      # Use the composite action to install dependencies
-      - name: Install Dependencies
-        uses: ./.github/actions/install-dependencies
+      - name: Restore pip cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-ci.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-ci.txt
       - name: Configure PYTHONPATH
         run: |
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
