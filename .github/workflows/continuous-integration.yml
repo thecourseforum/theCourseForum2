@@ -32,34 +32,20 @@ env:
   REVIEW_DRIVE_ID: ${{ secrets.REVIEW_DRIVE_ID }}
   REVIEW_DRIVE_EMAIL: ${{ secrets.REVIEW_DRIVE_EMAIL }}
   REVIEW_DRIVE_PASSWORD: ${{ secrets.REVIEW_DRIVE_PASSWORD }}
-.steps_install_deps: &install_deps
-  - name: Prepare CI requirements
-    run: |
-      cp requirements.txt requirements-ci.txt
-      sed -i '/\(coverage\|types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements-ci.txt
-  - name: Cache pip dependencies
-    uses: actions/cache@v3
-    with:
-      path: ~/.cache/pip
-      key: ${{ runner.os }}-pip-${{ hashFiles('requirements-ci.txt') }}
-      restore-keys: |
-        ${{ runner.os }}-pip-
-  - name: Install dependencies
-    run: |
-      python -m pip install --upgrade pip
-      pip install -r requirements-ci.txt
 jobs:
   pylint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_TARGET }}
           cache: "pip" # Enable built-in pip caching
-      # Reuse install steps
-      - !!merge <<: *install_deps
+      # Use the composite action to install dependencies
+      - name: Install Dependencies
+        uses: ./.github/actions/install-deps
       - name: Configure PYTHONPATH
         run: |
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
@@ -79,14 +65,16 @@ jobs:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_TARGET }}
           cache: "pip" # Enable built-in pip caching
-      # Reuse install steps
-      - !!merge <<: *install_deps
+      # Use the composite action to install dependencies
+      - name: Install Dependencies
+        uses: ./.github/actions/install-deps
       - name: Configure PYTHONPATH
         run: |
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV

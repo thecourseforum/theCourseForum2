@@ -1,0 +1,22 @@
+name: Install Dependencies
+description: >
+  Prepares CI requirements, caches pip dependencies, and installs them.
+
+runs:
+  using: "composite"
+  steps:
+    - name: Prepare CI requirements
+      run: |
+        cp requirements.txt requirements-ci.txt
+        sed -i '/\(coverage\|types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements-ci.txt
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements-ci.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-ci.txt
