@@ -45,7 +45,7 @@ jobs:
           cache: "pip" # Enable built-in pip caching
       # Use the composite action to install dependencies
       - name: Install Dependencies
-        uses: ./.github/actions/install-deps
+        uses: ./.github/actions/install-dependencies
       - name: Configure PYTHONPATH
         run: |
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
@@ -74,7 +74,7 @@ jobs:
           cache: "pip" # Enable built-in pip caching
       # Use the composite action to install dependencies
       - name: Install Dependencies
-        uses: ./.github/actions/install-deps
+        uses: ./.github/actions/install-dependencies
       - name: Configure PYTHONPATH
         run: |
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
