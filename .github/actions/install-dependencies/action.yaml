@@ -2,6 +2,11 @@ name: Install Dependencies
 description: >
   Prepares CI requirements, caches pip dependencies, and installs them.
 
+inputs:
+  python-version:
+    description: "Python version to set up"
+    required: true
+    default: "3.11"
 runs:
   using: "composite"
   steps:
