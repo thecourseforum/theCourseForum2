@@ -133,11 +133,13 @@ jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install Node
-        uses: actions/setup-node@v1
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 20
+          cache: "npm" # built-in npm caching
       - name: Install npm packages
         run: npm ci
       - name: Run ESLint
