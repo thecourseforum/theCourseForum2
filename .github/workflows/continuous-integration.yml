@@ -33,51 +33,57 @@ env:
   REVIEW_DRIVE_EMAIL: ${{ secrets.REVIEW_DRIVE_EMAIL }}
   REVIEW_DRIVE_PASSWORD: ${{ secrets.REVIEW_DRIVE_PASSWORD }}
 jobs:
-  install-deps:
+  setup:
     runs-on: ubuntu-latest
     outputs:
-      deps-path: vendor
+      cache-hit: ${{ steps.cache-deps.outputs.cache-hit }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Set up Python ${{ env.PYTHON_TARGET }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_TARGET }}
-      - name: Install Python packages to vendor directory
+      - name: Cache vendor dependencies
+        id: cache-deps
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-vendor-
+      - name: Install dependencies to vendor directory
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           python -m pip install --upgrade pip
-          sed -i '/\(types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
-          mkdir vendor
+          sed -i '/\(coverage\|types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|uwsgi\|lint\|mypy\|django\-stubs\)/d' requirements.txt
+          mkdir -p vendor
           pip install --target=vendor -r requirements.txt
-      - name: Upload dependencies artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: dependencies
-          path: vendor
   pylint:
-    needs: install-deps
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Set up Python ${{ env.PYTHON_TARGET }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_TARGET }}
-      - name: Download dependencies artifact
-        uses: actions/download-artifact@v3
+      - name: Restore vendor cache
+        uses: actions/cache@v3
         with:
-          name: dependencies
           path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-vendor-
       - name: Configure PYTHONPATH
         run: |
-          echo "PYTHONPATH=$(pwd)/vendor" >> "$GITHUB_ENV"
+          echo "PYTHONPATH=$(pwd)/vendor" >> $GITHUB_ENV
       - name: Run pylint
         run: |
           pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
   django:
-    needs: install-deps
+    needs: setup
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -93,17 +99,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Set up Python ${{ env.PYTHON_TARGET }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_TARGET }}
-      - name: Download dependencies artifact
-        uses: actions/download-artifact@v3
+      - name: Restore vendor cache
+        uses: actions/cache@v3
         with:
-          name: dependencies
           path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-vendor-
       - name: Configure PYTHONPATH
         run: |
-          echo "PYTHONPATH=$(pwd)/vendor" >> "$GITHUB_ENV"
+          echo "PYTHONPATH=$(pwd)/vendor" >> $GITHUB_ENV
       - name: Migrations & Tests
         run: |
           envsubst < .config/.env.example > .env
@@ -112,7 +120,7 @@ jobs:
       - name: Get code coverage
         id: coverage
         run: |
-          echo "percentage=$(coverage report | grep -o '[0-9]\+%' | tail -1)" >> "$GITHUB_ENV"
+          echo "percentage=$(coverage report | grep -o '[0-9]\+%' | tail -1)" >> $GITHUB_ENV
   eslint:
     runs-on: ubuntu-latest
     steps:
