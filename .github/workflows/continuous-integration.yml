@@ -35,55 +35,88 @@ env:
   REVIEW_DRIVE_PASSWORD: ${{ secrets.REVIEW_DRIVE_PASSWORD }}
 
 jobs:
-  pylint:
+  install-deps:
     runs-on: ubuntu-latest
+    outputs:
+      deps-path: vendor
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Set up Python ${{ env.PYTHON_TARGET }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON_TARGET }}
 
-      - name: Install Python packages, excluding the unnecessary ones
+      - name: Install Python packages to vendor directory
         run: |
           python -m pip install --upgrade pip
-          sed -i '/\(coverage\|types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
-          pip install -r requirements.txt
+          sed -i '/\(types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
+          mkdir vendor
+          pip install --target=vendor -r requirements.txt
+
+      - name: Upload dependencies artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dependencies
+          path: vendor
+  pylint:
+    needs: install-deps
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ env.PYTHON_TARGET }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_TARGET }}
+
+      - name: Download dependencies artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dependencies
+          path: vendor
+
+      - name: Configure PYTHONPATH
+        run: |
+          echo "PYTHONPATH=$(pwd)/vendor" >> "$GITHUB_ENV"
 
       - name: Run pylint
         run: |
-          export PYTHONPATH="$(pwd)"
           pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
 
   django:
+    needs: install-deps
     runs-on: ubuntu-latest
-    outputs:
-      code-coverage: ${{ steps.coverage.outputs.percentage }}
     services:
       postgres:
         image: postgres:15.4
         env:
-          POSTGRES_USER: ${{ env.DB_USER}}
+          POSTGRES_USER: ${{ env.DB_USER }}
           POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
           POSTGRES_DB: ${{ env.DB_NAME }}
         ports:
           - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Set up Python ${{ env.PYTHON_TARGET }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON_TARGET }}
 
-      - name: Install Python packages, excluding the unnecessary ones
+      - name: Download dependencies artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dependencies
+          path: vendor
+
+      - name: Configure PYTHONPATH
         run: |
-          python -m pip install --upgrade pip
-          sed -i '/\(lint\|mypy\|types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|django\-stubs\|uwsgi\)/d' requirements.txt
-          pip install -r requirements.txt
+          echo "PYTHONPATH=$(pwd)/vendor" >> "$GITHUB_ENV"
 
       - name: Migrations & Tests
         run: |
@@ -94,8 +127,7 @@ jobs:
       - name: Get code coverage
         id: coverage
         run: |
-          echo "::set-output name=percentage::$(coverage report | grep -o '[0-9]\+%' | tail -1)"
-
+          echo "percentage=$(coverage report | grep -o '[0-9]\+%' | tail -1)" >> "$GITHUB_ENV"
   eslint:
     runs-on: ubuntu-latest
     steps:
