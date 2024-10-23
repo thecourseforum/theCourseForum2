@@ -1,0 +1,370 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'schedule/schedule.css' %}" />
+<div id="schedule{{schedule.id}}{{mode}}" class="schedule card mb-2">
+    <div class="card-body text-left">
+        <div class="row">
+            <!-- schedule Main Content -->
+            <div class="scheduleCardHeader">
+                <h4>{{schedule.name}}</h4>
+                <div class="scheduleStats d-flex justify-content-center">
+                  <div class="row w-100 justify-content-between text-center">
+
+                    <div class="col-12 col-md-8 col-lg-2 text-nowrap">
+                      <small class="mb-0 text-uppercase">
+                        <i class="fa fa-clock fa-fw"></i>&nbsp;Units
+                      </small>
+                      <p id="ScheduleCredits-{{schedule.id}}" class="mb-0 info text-break">
+                        {% if credits %}
+                          {{credits}}
+                        {% else %}
+                          &mdash;
+                        {% endif %}
+                      </p>
+                    </div>
+
+                    <div class="col-12 col-md-8 col-lg-2 text-nowrap">
+                      <small class="mb-0 text-uppercase">
+                        <i class="fa fa-star fa-fw"></i>&nbsp;Rating
+                      </small>
+                      <p id="ScheduleRating-{{schedule.id}}" class="mb-0 info text-break">
+                        {% if rating %}
+                          {{rating|floatformat:2}}
+                        {% else %}
+                          &mdash;
+                        {% endif %}
+                      </p>
+                    </div>
+
+                    <div class="col-12 col-md-8 col-lg-2 mr-4 text-nowrap">
+                      <small class="mb-0 text-uppercase">
+                        <i class="fa fa-dumbbell fa-fw"></i>&nbsp;Difficulty
+                      </small>
+                      <p id="ScheduleDifficulty-{{schedule.id}}" class="mb-0 info text-break">
+                        {% if difficulty %}
+                          {{difficulty|floatformat:2}}
+                        {% else %}
+                          &mdash;
+                        {% endif %}
+                      </p>
+                    </div>
+
+                    <div class="col-12 col-md-8 col-lg-2 text-nowrap">
+                      <small class="mb-0 text-uppercase">
+                        <i class="fas fa-chart-bar"></i>&nbsp;GPA
+                      </small>
+                      <p id="ScheduleGPA-{{schedule.id}}" class="mb-0 info text-break">
+                        {% if gpa %}
+                          {{ gpa|floatformat:2 }}
+                        {% else %}
+                          &mdash;
+                        {% endif %}
+                      </p>
+                      
+                    </div>
+                    
+
+                  </div>
+                </div>
+            </div>
+            <div class="schedule-body col-xs-12 col-md-12 col-lg-12">
+                <ul id="schedule_courses-{{schedule.id}}" class="schedule_card_courses">
+                    {% for course in courses %}
+                    <li>
+
+                        <div id="ScheduledCourse-{{course.id}}{{mode}}" course_rating="{{course.total_rating}}" 
+                        course_diff="{{course.difficulty}}" course_credits="{{course.credits}}" course_gpa="{{course.gpa}}" class="card schedule_course_card mb-2">
+                            <div class="row no-gutters">
+                                <div class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start schedule-card-link align-items-center ">
+                                    <div class="text-center text-lg-left">
+                                        <h4 id="title">{{ course.title }}</h4>
+                                        <h6>{{ course.instructor }}</h6>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                  <div class="card-body">
+                                    <div class="row justify-content-center text-center">
+                                      <div class="col-12 col-sm-2 col-lg-2 text-nowrap">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fas fa-chalkboard"></i>&nbsp;Section Type
+                                        </small>
+                                        <p class="mb-0 info" id="recency">{{course.section.section_type}}</p>
+                                      </div>
+                                      <div class="col-12 col-sm-8 col-lg-7 text-nowrap">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fas fa-hourglass"></i>&nbsp;Section Time
+                                        </small>
+                                        <p class="mb-1 info text-break course_time">{{course.time}}</p>
+                                      </div>
+                                      <div class="col-6 col-sm-4 col-lg-3 text-nowrap ">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fas fa-chart-bar"></i>&nbsp;GPA
+                                        </small>
+                                        <p class="mb-0 info text-break">
+                                          {% if course.gpa %}
+                                            {{ course.gpa|floatformat:2 }}
+                                          {% else %}
+                                            &mdash;
+                                          {% endif %}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  <div class="row justify-content-between text-center">
+                                    <div class="col-3 col-lg-2 col-md-2 text-nowrap">
+                                      <small class="mb-0 text-uppercase">
+                                        <i class="fas fa-clock"></i>&nbsp;Units
+                                      </small>
+                                      <p class="mb-0 info text-break">
+                                        {% if course.credits %}
+                                        {{ course.credits }}
+                                        {% else %}
+                                        &mdash;
+                                        {% endif %}
+                                      </p>
+                                    </div>
+                                    <div class="col-4 col-lg-2 col-md-2 text-nowrap">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fa fa-star fa-fw"></i>&nbsp;Rating
+                                        </small>
+                                        <p class="mb-0 info text-break">
+                                          {% if course.total_rating %}
+                                            {{ course.total_rating|floatformat:2 }}
+                                          {% else %}
+                                            &mdash;
+                                          {% endif %}
+                                        </p>
+                                      </div>
+                                      <div class="col-5 col-lg-3 col-md-6 text-nowrap">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fa fa-dumbbell fa-fw"></i>&nbsp;Difficulty
+                                        </small>
+                                        <p class="mb-0 info text-break">
+                                          {% if course.difficulty %}
+                                            {{ course.difficulty|floatformat:2 }}
+                                          {% else %}
+                                            &mdash;
+                                          {% endif %}
+                                        </p>
+                                      </div>
+                                  </div>
+                                  
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                    </li>
+                    {% empty %}
+                        <label id="no_courses_label">Schedule has no courses!</label>
+                    {% endfor %}
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block js %}
+{% if mode == "edit" %}
+<script>
+    // Only include this javascript when editing this schedule
+    function updateStats() {
+        // this function will take the courses included in the course table
+        // and recalculate the ratings, difficulty, and credit totals
+        let this_schedule = document.getElementById("schedule{{schedule.id}}edit");
+
+        let rating = 0;  // the running total of ratings for the current schedule
+        let r_count = 0;  // the count of the number of valid course rows for ratings
+        let credit = 0;  // the running total of credits for the current schedule
+        let difficulty = 0;  // the running total of difficultys for the current schedule
+        let d_count = 0;  // the count of the number of valid course rows for difficultys
+        let cumulative_grade_point = 0;  // the running total of grade point averages
+        let gpa_credits = 0;  // the running total of relavent credits for calculating weighted GPA
+
+
+        // get the course rows from the table
+        let courses = this_schedule.querySelectorAll('.schedule_course_card');
+        courses.forEach(course => {
+            let courseRating = parseFloat(course.getAttribute("course_rating"));
+            let courseCredits = parseInt(course.getAttribute("course_credits"));
+            let courseDifficulty = parseFloat(course.getAttribute("course_diff"));
+            let courseGpa = parseFloat(course.getAttribute("course_gpa"));
+
+            // if there is a valid rating and difficulty, increment it's count and accumulate
+            if (courseRating){
+                rating += courseRating;
+                r_count++;
+            }
+            if (courseDifficulty){
+                difficulty += courseDifficulty;
+                d_count++;
+            }
+
+            credit += courseCredits;
+            if (courseGpa) {
+                cumulative_grade_point += courseCredits * courseGpa;
+                gpa_credits += courseCredits;
+            }
+
+        });
+        // See if rating, difficulty, and cumlative grade points were changed
+        if (rating) {
+            rating = rating / r_count;
+        }
+        if (difficulty) {
+            difficulty = difficulty / d_count;
+        }
+        let final_gpa = 0;
+        if (cumulative_grade_point) {
+            final_gpa = cumulative_grade_point / gpa_credits
+        }
+        // fetch the schedule rating HTML element from the schedule template that is loaded into this page
+        const scheduleGPA = this_schedule.querySelector('#ScheduleGPA-{{schedule.id}}');
+        scheduleGPA.innerText = (final_gpa).toFixed(2);
+
+        const scheduleRating = this_schedule.querySelector('#ScheduleRating-{{schedule.id}}');
+        scheduleRating.innerText = rating.toFixed(2);
+        
+        const scheduleDifficulty = this_schedule.querySelector('#ScheduleDifficulty-{{schedule.id}}');
+        scheduleDifficulty.innerText = difficulty.toFixed(2);
+
+        const scheduleCredits = this_schedule.querySelector('#ScheduleCredits-{{schedule.id}}');
+        scheduleCredits.innerText = credit;
+        
+    }
+
+    function addCourse(course) {
+        // dyanmically add a course to the schedule 
+        // NOTE: Currently only used for adding temporary courses to the schedule card
+
+        // remove the no courses label if it's on the DOM
+        let noCourseLabel = document.getElementById('no_courses_label');
+        if(noCourseLabel){
+            noCourseLabel.remove();
+        }
+        const scheduleId = '{{schedule.id}}';
+        let this_schedule = document.getElementById("schedule{{schedule.id}}edit");
+        let this_schedule_courses = this_schedule.querySelector("#schedule_courses-{{schedule.id}}");
+        // notice we mark this newly added list element with a ID
+        let courseCardHTML = `
+            <li id="selectedSectionTentative">
+                <div id="ScheduledCourse-${course.id}edit" course_rating="${course.rating}" 
+                            course_diff="${course.difficulty}" course_credits="${course.credits}" course_gpa="${course.gpa}" class="card schedule_course_card mb-2">
+                                <div class="row no-gutters">
+                                    <div class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start schedule-card-link align-items-center ">
+                                        <div class="text-center text-lg-left">
+                                            <h4 id="title">New Addition</h4>
+                                            <h6>${ course.instructor_name }</h6>
+    
+                                        </div>
+                                    </div>
+                                  <div class="col-md-8">
+                                    <div class="card-body">
+                                      
+
+                                        <div class="row justify-content-center text-center">
+                                      <div class="col-12 col-sm-2 col-lg-2 text-nowrap">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fas fa-chalkboard"></i>&nbsp;Section Type
+                                        </small>
+                                        <p class="mb-0 info" id="recency">${course.section_type}</p>
+                                      </div>
+                                      <div class="col-12 col-sm-8 col-lg-7 text-nowrap ">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fas fa-hourglass"></i>&nbsp;Section Time
+                                        </small>
+                                        <p class="mb-1 info text-break">${course.section_time}</p>
+                                      </div>
+                                      <div class="col-6 col-sm-4 col-lg-3 text-nowrap ">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fas fa-chart-bar"></i>&nbsp;GPA
+                                        </small>
+                                        <p class="mb-0 info text-break">
+                                          ${parseFloat(course.gpa).toFixed(2)}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  <div class="row justify-content-between text-center">
+                                    <div class="col-3 col-lg-3 col-md-2 text-nowrap">
+                                      <small class="mb-0 text-uppercase">
+                                        <i class="fas fa-clock"></i>&nbsp;Units
+                                      </small>
+                                      <p class="mb-0 info text-break">
+                                        ${course.credits}
+                                      </p>
+                                    </div>
+                                    <div class="col-4 col-lg-3 col-md-2 text-nowrap">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fa fa-star fa-fw"></i>&nbsp;Rating
+                                        </small>
+                                        <p class="mb-0 info text-break">
+                                          ${parseFloat(course.rating).toFixed(2)}
+                                        </p>
+                                      </div>
+                                      <div class="col-5 col-lg-3 col-md-6 text-nowrap">
+                                        <small class="mb-0 text-uppercase">
+                                          <i class="fa fa-dumbbell fa-fw"></i>&nbsp;Difficulty
+                                        </small>
+                                        <p class="mb-0 info text-break">
+                                          ${parseFloat(course.difficulty).toFixed(2)}
+                                        </p>
+                                      </div>
+                                  </div>
+
+                                      
+                                    </div>
+                                  </div>
+                                </div>
+                    </div>
+            </li>
+
+        `;
+        // Append the constructed HTML to the this_schedule_courses
+        this_schedule_courses.insertAdjacentHTML('beforeend', courseCardHTML);
+    }
+
+</script>
+{% endif %}
+<script type="text/javascript">
+
+    var compiled_schedule = [];
+    function makeSerialSchedule() {
+        // this method is called from other templates, and it populates the compiled_schedule array with the course times
+        // there is a potential improvement to use the courses context variable instead of pulling from the html
+
+        const parent = document.getElementById("schedule_courses-{{schedule.id}}");
+        const courseCards = parent.querySelectorAll('.schedule_course_card');
+        let times = [];
+
+        // if there are no courses for the schedule, return early
+        if (!courseCards) {return;}
+
+        courseCards.forEach(card => {
+            // Assuming the time is always in the third div inside the card
+            const timeDiv = card.querySelector('.course_time');
+            if (timeDiv) {
+                const timeString = timeDiv.textContent.trim();
+                // add to time string array
+                times.push(timeString);
+            }
+        });
+        compiled_schedule = consolidateTimes(times);
+        
+    }
+
+    function checkConflictWrapper(newTime) {
+        // this function should always be called after making the serialized schedule
+        if(! compiled_schedule){
+            // this condition either means the schedule is empty or this function was improperly called.
+            return false;
+        }
+        // call checkConflict(), which is located in the parse_time.js static file
+        res = checkConflict(newTime, compiled_schedule);
+        return res;
+    }
+
+
+
+</script>
+{% endblock %}
