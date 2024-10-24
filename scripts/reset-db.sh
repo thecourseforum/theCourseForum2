@@ -10,4 +10,5 @@ if [ ! -f "$DB_FILE" ]; then
 fi
 
 docker exec -i tcf_db psql tcf_db -U tcf_django -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+docker exec -i tcf_db psql tcf_db -U tcf_django -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 docker exec -i tcf_db psql tcf_db -U tcf_django < "$DB_FILE"
