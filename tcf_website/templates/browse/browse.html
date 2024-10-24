@@ -15,8 +15,8 @@
         <!-- Banner(s) go here: -->
 {#        {% include "../common/application_banner.html" %}#}
     
-        {% comment %} {% include "../common/leaderboard_ad.html" with ad_slot="9691204298" %}
-
+        {% include "../common/leaderboard_ad.html" with ad_slot="9691204298" %}
+        {% comment %} 
         <!-- Browse page content -->
         <h2 class="font-weight-light mt-4">Browse by Department</h2>
         <div class="schools text-left">
@@ -29,7 +29,8 @@
                 {% include "browse/school.html" with school=school %}
             {% endfor %}
 
-        </div> {% endcomment %}
+        </div> 
+        {% endcomment %}
         <h2 class="font-weight-light">Advanced Search</h2>
         <form method="GET" action="{% url 'search' %}">
             <div class="form-group">
