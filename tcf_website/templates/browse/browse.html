@@ -1,14 +1,35 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}Advanced Search - theCourseForum{% endblock %}
+{% block title %}Browse - theCourseForum{% endblock %}
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'browse/browse.css' %}"/>
 {% endblock %}
 
 {% block content %}
-    <div class="advanced-search container mt-4">
+    {% comment %} <div class="container">
+        {% include "../common/notification.html" %}
+    </div> {% endcomment %}
+    {% comment %} <div class="browse container">
+        <!-- Banner(s) go here: -->
+{#        {% include "../common/application_banner.html" %}#}
+    
+        {% include "../common/leaderboard_ad.html" with ad_slot="9691204298" %}
+
+        <!-- Browse page content -->
+        <h2 class="font-weight-light mt-4">Browse by Department</h2>
+        <div class="schools text-left">
+
+            {% include "browse/school.html" with school=CLAS %}
+
+            {% include "browse/school.html" with school=SEAS %}
+
+            {% for school in other_schools %}
+                {% include "browse/school.html" with school=school %}
+            {% endfor %}
+
+        </div> {% endcomment %}
         <h2 class="font-weight-light">Advanced Search</h2>
         <form method="GET" action="{% url 'search' %}">
             <div class="form-group">
@@ -36,12 +57,6 @@
             
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
+        
     </div>
-
-    {% if results %}
-        <div class="search-results container mt-5">
-            <h3>Search Results</h3>
-            {% include "search/results.html" %}
-        </div>
-    {% endif %}
 {% endblock %}
