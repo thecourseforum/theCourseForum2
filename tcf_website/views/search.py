@@ -30,7 +30,12 @@ def search(request):
         title_part, number_part = query, ""
 
     instructors = fetch_instructors(query)
-    courses = fetch_courses(title_part, number_part, selected_disciplines, selected_subdepartments)  # Added subdepartments
+    courses = fetch_courses(
+        title_part, 
+        number_part, 
+        selected_disciplines, 
+        selected_subdepartments
+    )
 
     courses_first = decide_order(query, courses, instructors)
 
@@ -240,7 +245,9 @@ def set_arguments(query, courses, instructors, courses_first):
     args = {"query": query}
     if not courses["error"]:
         args["courses"] = group_by_dept(courses["results"])
-        args["total_courses"] = sum(len(dept_data["courses"]) for dept_data in args["courses"].values())
+        args["total_courses"] = sum(
+            len(dept_data["courses"]) for dept_data in args["courses"].values()
+        )
     if not instructors["error"]:
         args["instructors"] = instructors["results"]
 

@@ -33,19 +33,6 @@ def browse(request):
     clas = School.objects.get(name="College of Arts & Sciences")
     seas = School.objects.get(name="School of Engineering & Applied Science")
 
-    excluded_list = [clas.pk, seas.pk]
-
-    # Other schools besides CLAS, SEAS, and Misc.
-    other_schools = School.objects.exclude(pk__in=excluded_list).order_by("name")
-
-    # Fetch all departments and disciplines for the advanced search
-    departments = Department.objects.all()
-    disciplines = Discipline.objects.all()
-
-    # Get selected filters from the request
-    selected_departments = request.GET.getlist("department")
-    selected_disciplines = request.GET.getlist("discipline")
-
     context = {
         'disciplines': Discipline.objects.all().order_by('name'),
         'subdepartments': Subdepartment.objects.all().order_by('mnemonic'),
@@ -408,5 +395,6 @@ def safe_round(num):
     if num is not None:
         return round(num, 2)
     return "\u2014"
+
 
 
