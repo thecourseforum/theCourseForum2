@@ -1,6 +1,5 @@
 # Based on https://github.com/actions/starter-workflows/blob/main/ci/django.yml
 name: Continuous Integration
-
 on:
   pull_request:
     branches:
@@ -33,85 +32,118 @@ env:
   REVIEW_DRIVE_ID: ${{ secrets.REVIEW_DRIVE_ID }}
   REVIEW_DRIVE_EMAIL: ${{ secrets.REVIEW_DRIVE_EMAIL }}
   REVIEW_DRIVE_PASSWORD: ${{ secrets.REVIEW_DRIVE_PASSWORD }}
-
 jobs:
-  pylint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python ${{ env.PYTHON_TARGET }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON_TARGET }}
-
-      - name: Install Python packages, excluding the unnecessary ones
-        run: |
-          python -m pip install --upgrade pip
-          sed -i '/\(coverage\|types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
-          pip install -r requirements.txt
-
-      - name: Run pylint
-        run: |
-          export PYTHONPATH="$(pwd)"
-          pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
-
-  django:
+  setup:
     runs-on: ubuntu-latest
     outputs:
-      code-coverage: ${{ steps.coverage.outputs.percentage }}
+      cache-key: ${{ steps.cache-deps.outputs.cache-hit }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_TARGET }}
+          cache: "pip" # built-in pip caching
+      - name: Cache pip dependencies
+        id: cache-deps
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+  pylint:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_TARGET }}
+          cache: "pip" # built-in pip caching
+      - name: Restore pip cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Configure PYTHONPATH
+        run: |
+          echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+      - name: Run pylint
+        run: |
+          pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
+  django:
+    needs: setup
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:15.4
         env:
-          POSTGRES_USER: ${{ env.DB_USER}}
+          POSTGRES_USER: ${{ env.DB_USER }}
           POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
           POSTGRES_DB: ${{ env.DB_NAME }}
         ports:
           - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python ${{ env.PYTHON_TARGET }}
-        uses: actions/setup-python@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_TARGET }}
-
-      - name: Install Python packages, excluding the unnecessary ones
+          cache: "pip" # Enable built-in pip caching
+      - name: Restore pip cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          sed -i '/\(lint\|mypy\|types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|django\-stubs\|uwsgi\)/d' requirements.txt
           pip install -r requirements.txt
-
+      - name: Configure PYTHONPATH
+        run: |
+          echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
       - name: Migrations & Tests
         run: |
           envsubst < .config/.env.example > .env
           python manage.py migrate
           coverage run manage.py test
-
       - name: Get code coverage
         id: coverage
         run: |
-          echo "::set-output name=percentage::$(coverage report | grep -o '[0-9]\+%' | tail -1)"
-
+          echo "percentage=$(coverage report | grep -o '[0-9]\+%' | tail -1)" >> $GITHUB_ENV
   eslint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Install Node
-        uses: actions/setup-node@v1
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 20
-
+          cache: "npm" # built-in npm caching
       - name: Install npm packages
         run: npm ci
-
       - name: Run ESLint
         run: npx eslint -c .config/.eslintrc.yml tcf_website/static/
-
   discord:
     if: ${{ always() }}
     needs: [pylint, django, eslint]
@@ -120,7 +152,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0 # needed for PRs
-
       - name: Send a message to tCF Discord Server when all jobs are finished
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL_CI }}
