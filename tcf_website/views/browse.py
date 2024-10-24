@@ -21,7 +21,6 @@ from ..models import (
     Instructor,
     Question,
     Review,
-    School,
     Section,
     Semester,
     Subdepartment,
