@@ -12,6 +12,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
+from ..models import Discipline  # Import Discipline model
 from ..models import (
     Answer,
     Course,
@@ -20,31 +21,22 @@ from ..models import (
     Instructor,
     Question,
     Review,
-    School,
     Section,
     Semester,
+    Subdepartment,
 )
 
 
 def browse(request):
     """View for browse page."""
-    clas = School.objects.get(name="College of Arts & Sciences")
-    seas = School.objects.get(name="School of Engineering & Applied Science")
 
-    excluded_list = [clas.pk, seas.pk]
-
-    # Other schools besides CLAS, SEAS, and Misc.
-    other_schools = School.objects.exclude(pk__in=excluded_list).order_by("name")
-
-    return render(
-        request,
-        "browse/browse.html",
-        {
-            "CLAS": clas,
-            "SEAS": seas,
-            "other_schools": other_schools,
-        },
-    )
+    context = {
+        'disciplines': Discipline.objects.all().order_by('name'),
+        'subdepartments': Subdepartment.objects.all().order_by('mnemonic'),
+        'selected_disciplines': request.GET.getlist('discipline'),
+        'selected_subdepartments': request.GET.getlist('subdepartment'),
+    }
+    return render(request, 'browse/browse.html', context)
 
 
 def department(request, dept_id: int, course_recency=None):
@@ -271,6 +263,7 @@ def course_instructor(request, course_id, instructor_id):
             "type": section.section_type,
             "units": section.units,
             "times": times,
+            "cost": section.cost,
         }
 
     request.session["course_code"] = course.code()

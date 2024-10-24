@@ -17,8 +17,11 @@ def search(request):
     # Set query
     query = request.GET.get("q", "")
 
+    # Get selected filters from the request
+    selected_disciplines = request.GET.getlist("discipline")
+    selected_subdepartments = request.GET.getlist("subdepartment")
+
     # courses are at least 3 digits long
-    # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
     match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
     if match:
         title_part, number_part = match.groups()
@@ -27,7 +30,12 @@ def search(request):
         title_part, number_part = query, ""
 
     instructors = fetch_instructors(query)
-    courses = fetch_courses(title_part, number_part)
+    courses = fetch_courses(
+        title_part,
+        number_part,
+        selected_disciplines,
+        selected_subdepartments
+    )
 
     courses_first = decide_order(query, courses, instructors)
 
@@ -95,7 +103,7 @@ def fetch_instructors(query):
         .annotate(full_name=Concat("first_name", Value(" "), "last_name"))
         .annotate(similarity=TrigramWordSimilarity(query, "full_name"))
         .filter(similarity__gte=0.2)
-        .order_by("-similarity")[:10]
+        .order_by("-similarity")
     )
     formatted_results = [
         {
@@ -116,7 +124,7 @@ def fetch_instructors(query):
     )
 
 
-def fetch_courses(title, number):
+def fetch_courses(title, number, disciplines, subdepartments):
     """Get course data using Django Trigram similarity"""
     MNEMONIC_WEIGHT = 1.5
     NUMBER_WEIGHT = 1
@@ -146,13 +154,20 @@ def fetch_courses(title, number):
                 output_field=FloatField(),
             )
         )
-        .filter(total_similarity__gte=0.2)
-        # filters out classes with 3 digit class numbers (old naming system)
         .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
-        # filters out classes that haven't been taught since Fall 2020
         .exclude(semester_last_taught_id__lt=48)
-        .order_by("-total_similarity")[:10]
     )
+
+    if title or number:
+        results = results.filter(total_similarity__gte=0.2)
+
+    if disciplines:
+        results = results.filter(disciplines__name__in=disciplines)
+
+    if subdepartments:
+        results = results.filter(subdepartment__mnemonic__in=subdepartments)
+
+    results = results.order_by("-total_similarity")
 
     formatted_results = [
         {
@@ -230,6 +245,9 @@ def set_arguments(query, courses, instructors, courses_first):
     args = {"query": query}
     if not courses["error"]:
         args["courses"] = group_by_dept(courses["results"])
+        args["total_courses"] = sum(
+            len(dept_data["courses"]) for dept_data in args["courses"].values()
+        )
     if not instructors["error"]:
         args["instructors"] = instructors["results"]
 
