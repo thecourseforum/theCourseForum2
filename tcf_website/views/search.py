@@ -98,7 +98,7 @@ def fetch_instructors(query):
         .annotate(full_name=Concat("first_name", Value(" "), "last_name"))
         .annotate(similarity=TrigramWordSimilarity(query, "full_name"))
         .filter(similarity__gte=0.2)
-        .order_by("-similarity")[:10]
+        .order_by("-similarity")
     )
     formatted_results = [
         {
@@ -162,7 +162,7 @@ def fetch_courses(title, number, disciplines, subdepartments):
     if subdepartments:
         results = results.filter(subdepartment__mnemonic__in=subdepartments)
 
-    results = results.order_by("-total_similarity")[:10]
+    results = results.order_by("-total_similarity")
 
     formatted_results = [
         {
@@ -240,6 +240,7 @@ def set_arguments(query, courses, instructors, courses_first):
     args = {"query": query}
     if not courses["error"]:
         args["courses"] = group_by_dept(courses["results"])
+        args["total_courses"] = sum(len(dept_data["courses"]) for dept_data in args["courses"].values())
     if not instructors["error"]:
         args["instructors"] = instructors["results"]
 
