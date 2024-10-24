@@ -30,8 +30,6 @@ from ..models import (
 
 def browse(request):
     """View for browse page."""
-    clas = School.objects.get(name="College of Arts & Sciences")
-    seas = School.objects.get(name="School of Engineering & Applied Science")
 
     context = {
         'disciplines': Discipline.objects.all().order_by('name'),
@@ -395,6 +393,3 @@ def safe_round(num):
     if num is not None:
         return round(num, 2)
     return "\u2014"
-
-
-
