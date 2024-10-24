@@ -8,7 +8,7 @@ from django.db.models import CharField, ExpressionWrapper, F, FloatField, Q, Val
 from django.db.models.functions import Cast, Concat
 from django.shortcuts import render
 
-from ..models import Course, Discipline, Instructor, Subdepartment
+from ..models import Course, Instructor, Subdepartment
 
 
 def search(request):
@@ -19,6 +19,7 @@ def search(request):
 
     # Get selected filters from the request
     selected_disciplines = request.GET.getlist("discipline")
+    selected_subdepartments = request.GET.getlist("subdepartment")
 
     # courses are at least 3 digits long
     match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
@@ -29,7 +30,7 @@ def search(request):
         title_part, number_part = query, ""
 
     instructors = fetch_instructors(query)
-    courses = fetch_courses(title_part, number_part, selected_disciplines)  # Pass filters
+    courses = fetch_courses(title_part, number_part, selected_disciplines, selected_subdepartments)  # Added subdepartments
 
     courses_first = decide_order(query, courses, instructors)
 
@@ -118,7 +119,7 @@ def fetch_instructors(query):
     )
 
 
-def fetch_courses(title, number, disciplines):
+def fetch_courses(title, number, disciplines, subdepartments):
     """Get course data using Django Trigram similarity"""
     MNEMONIC_WEIGHT = 1.5
     NUMBER_WEIGHT = 1
@@ -157,6 +158,9 @@ def fetch_courses(title, number, disciplines):
     
     if disciplines:
         results = results.filter(disciplines__name__in=disciplines)
+        
+    if subdepartments:
+        results = results.filter(subdepartment__mnemonic__in=subdepartments)
 
     results = results.order_by("-total_similarity")[:10]
 

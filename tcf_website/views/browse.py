@@ -24,6 +24,7 @@ from ..models import (
     School,
     Section,
     Semester,
+    Subdepartment,
 )
 
 
@@ -45,19 +46,13 @@ def browse(request):
     selected_departments = request.GET.getlist("department")
     selected_disciplines = request.GET.getlist("discipline")
 
-    return render(
-        request,
-        "browse/browse.html",
-        {
-            "CLAS": clas,
-            "SEAS": seas,
-            "other_schools": other_schools,
-            "departments": departments,
-            "disciplines": disciplines,
-            "selected_departments": selected_departments,
-            "selected_disciplines": selected_disciplines,
-        },
-    )
+    context = {
+        'disciplines': Discipline.objects.all().order_by('name'),
+        'subdepartments': Subdepartment.objects.all().order_by('mnemonic'),
+        'selected_disciplines': request.GET.getlist('discipline'),
+        'selected_subdepartments': request.GET.getlist('subdepartment'),
+    }
+    return render(request, 'browse/browse.html', context)
 
 
 def department(request, dept_id: int, course_recency=None):
@@ -413,4 +408,5 @@ def safe_round(num):
     if num is not None:
         return round(num, 2)
     return "\u2014"
+
 
