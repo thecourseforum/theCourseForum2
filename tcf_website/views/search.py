@@ -31,9 +31,9 @@ def search(request):
 
     instructors = fetch_instructors(query)
     courses = fetch_courses(
-        title_part, 
-        number_part, 
-        selected_disciplines, 
+        title_part,
+        number_part,
+        selected_disciplines,
         selected_subdepartments
     )
 
@@ -160,10 +160,10 @@ def fetch_courses(title, number, disciplines, subdepartments):
 
     if title or number:
         results = results.filter(total_similarity__gte=0.2)
-    
+
     if disciplines:
         results = results.filter(disciplines__name__in=disciplines)
-        
+
     if subdepartments:
         results = results.filter(subdepartment__mnemonic__in=subdepartments)
 
