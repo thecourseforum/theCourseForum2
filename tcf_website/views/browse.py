@@ -29,12 +29,33 @@ from ..models import (
 
 def browse(request):
     """View for browse page."""
+    
+    # Get all semesters from the last 5 years
+    latest_semester = Semester.latest()
+    recent_semesters = Semester.objects.filter(
+        number__gte=latest_semester.number - 50  # 50 = 5 years * 10 semesters
+    ).order_by('-number')
+
+    # Get all instructors who have taught in the last 5 years
+    recent_instructors = (
+        Instructor.objects
+        .filter(
+            section__semester__number__gte=latest_semester.number - 50,
+            hidden=False
+        )
+        .distinct()
+        .order_by('last_name', 'first_name')
+    )
 
     context = {
         'disciplines': Discipline.objects.all().order_by('name'),
         'subdepartments': Subdepartment.objects.all().order_by('mnemonic'),
+        'instructors': recent_instructors,
+        'semesters': recent_semesters,
         'selected_disciplines': request.GET.getlist('discipline'),
         'selected_subdepartments': request.GET.getlist('subdepartment'),
+        'selected_instructors': request.GET.getlist('instructor'),
+        'selected_semesters': request.GET.getlist('semester'),
     }
     return render(request, 'browse/browse.html', context)
 
