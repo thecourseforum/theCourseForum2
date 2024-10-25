@@ -55,7 +55,6 @@ def browse(request):
         'selected_disciplines': request.GET.getlist('discipline'),
         'selected_subdepartments': request.GET.getlist('subdepartment'),
         'selected_instructors': request.GET.getlist('instructor'),
-        'selected_semesters': request.GET.getlist('semester'),
     }
     return render(request, 'browse/browse.html', context)
 

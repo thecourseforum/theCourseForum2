@@ -30,7 +30,6 @@ def search(request):
         'disciplines': request.GET.getlist("discipline"),
         'subdepartments': request.GET.getlist("subdepartment"),
         'instructors': request.GET.getlist("instructor"),
-        'semesters': request.GET.getlist("semester")
     }
 
     instructors = fetch_instructors(query)
@@ -166,9 +165,6 @@ def fetch_courses(title, number, filters):
 
     if filters.get('instructors'):
         results = results.filter(section__instructors__id__in=filters.get('instructors')).distinct()
-
-    if filters.get('semesters'):
-        results = results.filter(semester_last_taught_id__in=filters.get('semesters'))
 
     results = results.order_by("-total_similarity")
 
