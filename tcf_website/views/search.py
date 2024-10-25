@@ -17,9 +17,10 @@ def search(request):
     # Set query
     query = request.GET.get("q", "")
 
-    # Get selected filters from the request
     selected_disciplines = request.GET.getlist("discipline")
     selected_subdepartments = request.GET.getlist("subdepartment")
+    selected_instructors = request.GET.getlist("instructor")
+    selected_semesters = request.GET.getlist("semester")
 
     # courses are at least 3 digits long
     match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
@@ -34,7 +35,9 @@ def search(request):
         title_part,
         number_part,
         selected_disciplines,
-        selected_subdepartments
+        selected_subdepartments,
+        selected_instructors,
+        selected_semesters
     )
 
     courses_first = decide_order(query, courses, instructors)
@@ -124,7 +127,7 @@ def fetch_instructors(query):
     )
 
 
-def fetch_courses(title, number, disciplines, subdepartments):
+def fetch_courses(title, number, disciplines, subdepartments, instructors, semesters):
     """Get course data using Django Trigram similarity"""
     MNEMONIC_WEIGHT = 1.5
     NUMBER_WEIGHT = 1
@@ -158,6 +161,7 @@ def fetch_courses(title, number, disciplines, subdepartments):
         .exclude(semester_last_taught_id__lt=48)
     )
 
+    # Filters
     if title or number:
         results = results.filter(total_similarity__gte=0.2)
 
@@ -166,6 +170,12 @@ def fetch_courses(title, number, disciplines, subdepartments):
 
     if subdepartments:
         results = results.filter(subdepartment__mnemonic__in=subdepartments)
+
+    if instructors:
+        results = results.filter(section__instructors__id__in=instructors).distinct()
+
+    if semesters:
+        results = results.filter(semester_last_taught_id__in=semesters)
 
     results = results.order_by("-total_similarity")
 
