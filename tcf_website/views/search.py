@@ -17,12 +17,7 @@ def search(request):
     # Set query
     query = request.GET.get("q", "")
 
-    selected_disciplines = request.GET.getlist("discipline")
-    selected_subdepartments = request.GET.getlist("subdepartment")
-    selected_instructors = request.GET.getlist("instructor")
-    selected_semesters = request.GET.getlist("semester")
-
-    # courses are at least 3 digits long
+    # Parse query
     match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
     if match:
         title_part, number_part = match.groups()
@@ -30,15 +25,16 @@ def search(request):
         # Handle cases where the query doesn't match the expected format
         title_part, number_part = query, ""
 
+    # Get filters from request
+    filters = {
+        'disciplines': request.GET.getlist("discipline"),
+        'subdepartments': request.GET.getlist("subdepartment"),
+        'instructors': request.GET.getlist("instructor"),
+        'semesters': request.GET.getlist("semester")
+    }
+
     instructors = fetch_instructors(query)
-    courses = fetch_courses(
-        title_part,
-        number_part,
-        selected_disciplines,
-        selected_subdepartments,
-        selected_instructors,
-        selected_semesters
-    )
+    courses = fetch_courses(title_part, number_part, filters)
 
     courses_first = decide_order(query, courses, instructors)
 
@@ -127,7 +123,7 @@ def fetch_instructors(query):
     )
 
 
-def fetch_courses(title, number, disciplines, subdepartments, instructors, semesters):
+def fetch_courses(title, number, filters):
     """Get course data using Django Trigram similarity"""
     MNEMONIC_WEIGHT = 1.5
     NUMBER_WEIGHT = 1
@@ -161,21 +157,18 @@ def fetch_courses(title, number, disciplines, subdepartments, instructors, semes
         .exclude(semester_last_taught_id__lt=48)
     )
 
-    # Filters
-    if title or number:
-        results = results.filter(total_similarity__gte=0.2)
+    # Apply filters
+    if filters.get('disciplines'):
+        results = results.filter(disciplines__name__in=filters.get('disciplines'))
 
-    if disciplines:
-        results = results.filter(disciplines__name__in=disciplines)
+    if filters.get('subdepartments'):
+        results = results.filter(subdepartment__mnemonic__in=filters.get('subdepartments'))
 
-    if subdepartments:
-        results = results.filter(subdepartment__mnemonic__in=subdepartments)
+    if filters.get('instructors'):
+        results = results.filter(section__instructors__id__in=filters.get('instructors')).distinct()
 
-    if instructors:
-        results = results.filter(section__instructors__id__in=instructors).distinct()
-
-    if semesters:
-        results = results.filter(semester_last_taught_id__in=semesters)
+    if filters.get('semesters'):
+        results = results.filter(semester_last_taught_id__in=filters.get('semesters'))
 
     results = results.order_by("-total_similarity")
 

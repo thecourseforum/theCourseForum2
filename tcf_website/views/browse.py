@@ -29,7 +29,7 @@ from ..models import (
 
 def browse(request):
     """View for browse page."""
-    
+
     # Get all semesters from the last 5 years
     latest_semester = Semester.latest()
     recent_semesters = Semester.objects.filter(
