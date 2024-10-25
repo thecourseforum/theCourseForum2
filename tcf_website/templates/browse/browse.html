@@ -67,17 +67,6 @@
                 </select>
             </div>
             
-            <div class="form-group">
-                <label for="semester">Semester</label>
-                <select multiple class="form-control" id="semester" name="semester">
-                    {% for semester in semesters %}
-                        <option value="{{ semester.id }}" {% if semester.id|stringformat:"s" in selected_semesters %}selected{% endif %}>
-                            {{ semester }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
         
