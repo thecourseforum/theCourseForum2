@@ -26,6 +26,7 @@ def search(request):
         # Handle cases where the query doesn't match the expected format
         title_part, number_part = query, ""
 
+    # TODO: make async & only search over instructors
     instructors = fetch_instructors(query)
     courses = fetch_courses(title_part, number_part)
 
