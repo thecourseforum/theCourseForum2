@@ -111,6 +111,8 @@ class Command(BaseCommand):
             title = row["Title"]  # may be empty/nan
             topic = row["Topic"]  # may be empty/nan
             description = row["Description"]  # may be empty/nan
+            disciplines = row["Disciplines"]  # may be empty/nan (Need to split on "$")
+            cost = row["Cost"] # may be empty/nan
             section_type = row["Type"]  # may be empty/nan
 
             # may include staff, may be empty
@@ -130,7 +132,7 @@ class Command(BaseCommand):
             raise e
 
         sd = self.load_subdepartment(mnemonic)
-        course = self.load_course(title, description, semester, sd, course_number)
+        course = self.load_course(title, description, disciplines, semester, sd, course_number)
         instructors = self.load_instructors(instructor_names)
         section = self.load_section(
             sis_number,
@@ -141,6 +143,7 @@ class Command(BaseCommand):
             units,
             section_type,
             section_times,
+            cost,
         )
 
     def load_subdepartment(self, mnemonic):
@@ -161,7 +164,7 @@ class Command(BaseCommand):
     # TODO: how to handle special topics courses?
     # topic: section topic
     # description: course description!
-    def load_course(self, title, description, semester, subdepartment, number):
+    def load_course(self, title, description, disciplines, semester, subdepartment, number):
 
         params = {}
         fields = {"title", "description", "subdepartment", "number"}
@@ -182,6 +185,19 @@ class Command(BaseCommand):
                 print(f"Created {course}")
 
         # fill in blank info
+        if not pd.isnull(disciplines):
+            attrs = []
+            for attr in disciplines.split("$"):
+                attr = attr.strip()
+                if not attr:
+                    continue
+                try:
+                    attribute = Discipline.objects.get(name=attr)
+                except ObjectDoesNotExist:
+                    attribute = Discipline(name=attr)
+                    attribute.save()
+                attrs.append(attribute)
+            course.disciplines.set(attrs)
         if not course.description and not pd.isnull(description):
             course.description = description
         if not course.title and not pd.isnull(title):
@@ -246,6 +262,7 @@ class Command(BaseCommand):
         units,
         section_type,
         section_times,
+        cost,
     ):
 
         # Separating out unique fields lets us search for a given section number in
@@ -260,7 +277,7 @@ class Command(BaseCommand):
             "sis_section_number",
             "semester",
         }
-        fields = {"course", "topic", "units", "section_type", "section_times"}
+        fields = {"course", "topic", "units", "section_type", "section_times", "cost"}
 
         for key, value in locals().items():
             if key in unique_fields and not pd.isnull(value):
