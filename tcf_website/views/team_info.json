@@ -243,6 +243,13 @@
       "github": "Charka123"
     },
     {
+      "name": "Joyce Yang",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Joyce_Yang.jpg",
+      "github": "jo-hya"
+    },
+    {
       "name": "Yu Cao",
       "role": "Developer",
       "class": "2028",
@@ -297,6 +304,27 @@
     "class": "2027",
     "img_filename": "ENG_Namai_Kureishi.jpg",
     "github": "namaikureishi"
+    },
+    {
+      "name": "Ronit Batra",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Ronit_Batra.jpg",
+      "github": "ronitbatra"
+    },
+    {
+      "name": "Sagun Venuganti",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Sagun_Venuganti.jpg",
+      "github": "sagunvenuganti"
+    },
+    {
+      "name": "Shruti Bala",
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Shruti_Bala.jpg",
+      "github": "shrutibala1"
     }
   ],
   "marketing_team": [
