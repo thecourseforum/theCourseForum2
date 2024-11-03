@@ -25,7 +25,7 @@ Started 15 years ago, the project has grown monumentally. Over 10k users in the 
 
 _theCourseForum_ team is a group of students that contribute their time and effort to continue to improve the site for other students to use.
 
-## [Developer Information](docs/dev.md)
+## [Developer Information](doc/dev.md)
 
 ## Want to get involved?
 

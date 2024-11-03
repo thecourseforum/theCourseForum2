@@ -234,6 +234,97 @@
       "class": "2026",
       "img_filename": "ENG_Tino_Martella.jpg",
       "github": "Tino-Martella"
+    },
+    {
+      "name": "Hanzhe Dong",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Hanzhe_Dong.jpg",
+      "github": "Charka123"
+    },
+    {
+      "name": "Joyce Yang",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Joyce_Yang.jpg",
+      "github": "jo-hya"
+    },
+    {
+      "name": "Yu Cao",
+      "role": "Developer",
+      "class": "2028",
+      "img_filename": "ENG_Yu_Cao.jpg",
+      "github": "YuDavidCao"
+    },
+    {
+      "name": "Collin Togher",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Collin_Togher.jpg",
+      "github": "ctogs"
+    },
+    {
+      "name": "Visvajit Murali",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Visvajit_Murali.jpg",
+      "github": "visva-murali"
+    },
+    {
+      "name": "Grace Kang",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Grace_Kang.jpg",
+      "github": "gckang"
+    },
+    {
+      "name": "Yilin Wang",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Yilin_Wang.jpg",
+      "github": "yilinw762"
+    },
+    {
+      "name": "Brian Tran",
+      "role": "Developer",
+      "class": "2028",
+      "img_filename": "ENG_Brian_Tran.jpg",
+      "github": "brianlogic"
+    },
+    {
+      "name": "Brandon Istfan",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Brandon_Istfan.jpg",
+      "github": "brandonistfan"
+    },
+    {      
+    "name": "Namai Kureishi",
+    "role": "Developer",
+    "class": "2027",
+    "img_filename": "ENG_Namai_Kureishi.jpg",
+    "github": "namaikureishi"
+    },
+    {
+      "name": "Ronit Batra",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Ronit_Batra.jpg",
+      "github": "ronitbatra"
+    },
+    {
+      "name": "Sagun Venuganti",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Sagun_Venuganti.jpg",
+      "github": "sagunvenuganti"
+    },
+    {
+      "name": "Shruti Bala",
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Shruti_Bala.jpg",
+      "github": "shrutibala1"
     }
   ],
   "marketing_team": [

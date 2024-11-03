@@ -64,7 +64,6 @@ header.masthead h1 {
 .features-icons .features-icons-item .features-icons-icon {
   height: 7rem;
   color: var(--main-color);
-  text-shadow: 10px 10px 50px var(--accent-color);
 }
 
 .features-icons .features-icons-item .features-icons-icon i {
