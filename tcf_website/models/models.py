@@ -451,9 +451,15 @@ class Course(models.Model):
     subdepartment = models.ForeignKey(Subdepartment, on_delete=models.CASCADE)
     # Semester that the course was most recently taught.
     semester_last_taught = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    # Subdepartment mnemonic and course number. Required.
+    combined_mnemonic_number = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return f"{self.subdepartment.mnemonic} {self.number} | {self.title}"
+
+    def save(self, *args, **kwargs):
+        self.combined_mnemonic_number = f"{self.subdepartment.mnemonic} {self.number}".strip()
+        super().save(*args, **kwargs)
 
     def compute_pre_req(self):
         """Returns course pre-requisite(s)."""
@@ -651,7 +657,11 @@ class Course(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["subdepartment", "number"]),
+            GinIndex(
+                fields=["combined_mnemonic_number"],
+                opclasses=["gin_trgm_ops"],
+                name="course_mnemonic_number",
+            ),
         ]
 
         constraints = [
