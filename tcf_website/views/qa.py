@@ -19,25 +19,24 @@ from ..models import Answer, Question
 
 
 class QAView(ListView):
-    template_name = 'qa/qa.html'
+    template_name = "qa/qa.html"
     model = Question
-    #context_object_name = 'questions'
+    # context_object_name = 'questions'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         # Prepare Questions list
-        context['questions'] = Question.display_activity(self.request.user)
+        context["questions"] = Question.display_activity(self.request.user)
 
         # Prepare Answers list
         questions = Question.objects.all()
         answers = {}
         for question in questions:
-            answers[question.id] = Answer.display_activity(
-                question.id, self.request.user
-            )
-        context['answers'] = answers
+            answers[question.id] = Answer.display_activity(question.id, self.request.user)
+        context["answers"] = answers
         return context
+
 
 class QuestionForm(forms.ModelForm):
     """Form for question creation"""
@@ -108,14 +107,20 @@ def edit_question(request, question_id):
     if request.method == "POST":
         form = QuestionForm(request.POST, instance=question)
         if form.is_valid():
+            ## may have to move this to inner check
             form.save()
-            messages.success(
-                request,
-                f"Successfully updated your question for {form.instance.course}!",
-            )
-            question.created = datetime.datetime.now()
-            question.save()
-            return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+            instructor = question.instructor
+            if instructor.objects.filter(last_name=form.fields[2]).exists():
+                # check if instructor is in set of instructors for course
+                # check if course chosen is taught (instructor has a set of courese)
+                if form.fields[1] in instructor.departments:
+                    messages.success(
+                        request,
+                        f"Successfully updated your question for {form.instance.course}!",
+                    )
+                    question.created = datetime.datetime.now()
+                    question.save()
+                    return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
         messages.error(request, form.errors)
         return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
     form = QuestionForm(instance=question)
