@@ -5,7 +5,7 @@ import re
 
 from django.contrib.postgres.search import TrigramSimilarity, TrigramWordSimilarity
 from django.db.models import CharField, ExpressionWrapper, F, FloatField, Q, Value
-from django.db.models.functions import Cast, Concat
+from django.db.models.functions import Cast, Greatest
 from django.shortcuts import render
 
 from ..models import Course, Instructor, Subdepartment
@@ -91,13 +91,6 @@ def compute_avg_similarity(scores):
 
 def fetch_instructors(query):
     """Get instructor data using Django Trigram similarity"""
-    # results = (
-    #     Instructor.objects.only("first_name", "last_name")
-    #     .annotate(full_name=Concat("first_name", Value(" "), "last_name"))
-    #     .annotate(similarity=TrigramWordSimilarity(query, "full_name"))
-    #     .filter(similarity__gte=0.2)
-    #     .order_by("-similarity")[:10]
-    # )
     similarity_threshold = 0.5
     results = (
         Instructor.objects.only("first_name", "last_name", "full_name")
@@ -106,22 +99,22 @@ def fetch_instructors(query):
             similarity_last=TrigramSimilarity("last_name", query),
             similarity_full=TrigramSimilarity("full_name", query),
         )
-        .filter(
-            Q(similarity_first__gte=similarity_threshold)
-            | Q(similarity_last__gte=similarity_threshold)
-            | Q(similarity_full__gte=similarity_threshold)
+        .annotate(
+            similarity_max=Greatest(
+                F("similarity_first"),
+                F("similarity_last"),
+                F("similarity_full"),
+                output_field=FloatField(),
+            )
         )
-        .order_by("-similarity_full", "-similarity_first", "-similarity_last")[:10]
+        .filter(Q(similarity_max__gte=similarity_threshold))
+        .order_by("-similarity_max")[:10]
     )
     formatted_results = [
         {
             "_meta": {
                 "id": str(instructor.pk),
-                "score": max(
-                    instructor.similarity_first,
-                    instructor.similarity_last,
-                    instructor.similarity_full,
-                ),
+                "score": instructor.similarity_max,
             },
             "first_name": {"raw": instructor.first_name},
             "last_name": {"raw": instructor.last_name},
