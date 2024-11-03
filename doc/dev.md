@@ -18,7 +18,7 @@ $ cd theCourseForum
 
 ```console
 $ docker compose build --no-cache # from scratch (only necessary the first time)
-$ docker compose up
+$ docker compose up --build
 ```
 
 5. Wait for the Django server to finish building (i.e. `tcf_django | Watching for file changes with StatReloader` is visible in stdout).
