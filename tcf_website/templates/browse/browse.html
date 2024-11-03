@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="{% static 'browse/browse.css' %}"/>
 {% endblock %}
 
+{% block js %}
+    <script type="text/javascript" src="{% static 'browse/search_filter.js' %}"></script>
+{% endblock %}
+
 {% block content %}
     {% comment %} <div class="container">
         {% include "../common/notification.html" %}
@@ -40,6 +44,7 @@
 
             <div class="form-group">
                 <label for="subdepartment">Subject</label>
+                <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
                 <select multiple class="form-control" id="subdepartment" name="subdepartment">
                     {% for subdept in subdepartments %}
                         <option value="{{ subdept.mnemonic }}" {% if subdept.mnemonic in selected_subdepartments %}selected{% endif %}>{{ subdept.mnemonic }} - {{ subdept.name }}</option>
