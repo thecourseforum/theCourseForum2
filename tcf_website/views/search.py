@@ -98,7 +98,7 @@ def fetch_instructors(query):
     #     .filter(similarity__gte=0.2)
     #     .order_by("-similarity")[:10]
     # )
-    similarity_threshold = 0.2
+    similarity_threshold = 0.5
     results = (
         Instructor.objects.only("first_name", "last_name", "full_name")
         .annotate(
@@ -117,7 +117,11 @@ def fetch_instructors(query):
         {
             "_meta": {
                 "id": str(instructor.pk),
-                "score": instructor.similarity_first,
+                "score": max(
+                    instructor.similarity_first,
+                    instructor.similarity_last,
+                    instructor.similarity_full,
+                ),
             },
             "first_name": {"raw": instructor.first_name},
             "last_name": {"raw": instructor.last_name},
