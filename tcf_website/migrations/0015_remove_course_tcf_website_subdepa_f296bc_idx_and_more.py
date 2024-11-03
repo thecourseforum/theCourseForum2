@@ -21,7 +21,7 @@ def populate_combined_mnemonic_number(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("tcf_website", "0013_discipline_section_cost_course_disciplines"),
+        ("tcf_website", "0014_remove_instructor_website"),
     ]
 
     operations = [

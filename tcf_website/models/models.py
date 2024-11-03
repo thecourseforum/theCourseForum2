@@ -19,7 +19,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Abs, Coalesce, Concat, Round
+from django.db.models.functions import Abs, Coalesce, Round
 
 
 class School(models.Model):
