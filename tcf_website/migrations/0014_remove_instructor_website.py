@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("tcf_website", "0012_alter_review_email"),
+        ("tcf_website", "0013_discipline_section_cost_course_disciplines"),
     ]
 
     operations = [
