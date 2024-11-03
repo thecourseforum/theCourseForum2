@@ -11,14 +11,3 @@ function get_content() {
     echo "Deployment failed. Click [here]($run_link) to see why."
   fi
 }
-
-response=$(curl $DISCORD_WEBHOOK \
-  -X "POST" \
-  -H "Content-Type: application/json" \
-  -d "{ \"content\" : \"$(get_content)\" }" | jq -r .message)
-
-if [[ $response != "" ]]
-then
-  echo $response
-  exit 1
-fi
