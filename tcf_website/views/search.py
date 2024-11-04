@@ -1,7 +1,6 @@
 # pylint: disable=invalid-name
 """Views for search results"""
 
-import pprint
 import re
 import statistics
 from typing import Iterable
