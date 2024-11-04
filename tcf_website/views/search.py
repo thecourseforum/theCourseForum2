@@ -133,45 +133,26 @@ def fetch_instructors(query):
 
 def fetch_courses(title, number):
     """Get course data using Django Trigram similarity"""
-    MNEMONIC_WEIGHT = 1.5
-    NUMBER_WEIGHT = 1
-    TITLE_WEIGHT = 1
 
-    # search query of form "<MNEMONIC><NUMBER>"
-    if number != "":
-        TITLE_WEIGHT = 0
-        MNEMONIC_WEIGHT = 1
-    # otherwise, "title" is entire query
-    else:
-        NUMBER_WEIGHT = 0
-
+    query = f"{title} {number}"
+    similarity_threshold = 0.5
     results = (
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
-            mnemonic_similarity=TrigramWordSimilarity(title, "subdepartment__mnemonic"),
-            number_similarity=TrigramWordSimilarity(number, Cast("number", CharField())),
-            title_similarity=TrigramWordSimilarity(title, Cast("title", CharField())),
+            similarity=TrigramSimilarity("combined_mnemonic_number", query),
         )
-        .annotate(
-            total_similarity=ExpressionWrapper(
-                F("mnemonic_similarity") * MNEMONIC_WEIGHT
-                + F("number_similarity") * NUMBER_WEIGHT
-                + F("title_similarity") * TITLE_WEIGHT,
-                output_field=FloatField(),
-            )
-        )
-        .filter(total_similarity__gte=0.2)
+        .filter(similarity__gte=similarity_threshold)
         # filters out classes with 3 digit class numbers (old naming system)
         .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
         # filters out classes that haven't been taught since Fall 2020
         .exclude(semester_last_taught_id__lt=48)
-        .order_by("-total_similarity")[:10]
+        .order_by("-similarity")[:10]
     )
 
     formatted_results = [
         {
-            "_meta": {"id": str(course.pk), "score": course.total_similarity},
+            "_meta": {"id": str(course.pk), "score": course.similarity},
             "title": {"raw": course.title},
             "number": {"raw": course.number},
             "mnemonic": {"raw": course.subdepartment.mnemonic + " " + str(course.number)},
