@@ -16,8 +16,8 @@ def pretty_request(request):
 
     return (
         f'{request.method} HTTP/1.1\n'
-        f'Content-Length: {request.META["CONTENT_LENGTH"]}\n'
-        f'Content-Type: {request.META["CONTENT_TYPE"]}\n'
+        f'Content-Length: {request.META.get("CONTENT_LENGTH", "Unknown")}\n'
+        f'Content-Type: {request.META.get("CONTENT_TYPE", "Unknown")}\n'
         f'{headers}\n\n'
         f'{request.body}'
     )

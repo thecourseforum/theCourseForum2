@@ -1,11 +1,11 @@
 # pylint: disable=missing-class-docstring, wildcard-import, fixme, too-many-lines
-
 """TCF Database models."""
 
 import math
 
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.aggregates.general import ArrayAgg
+from django.contrib.postgres.indexes import GinIndex
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import (
@@ -212,10 +212,10 @@ class Instructor(models.Model):
     first_name = models.CharField(max_length=255, blank=True)
     # Instructor last_name. Required.
     last_name = models.CharField(max_length=255)
+    # Instructor full_name. Auto-populated.
+    full_name = models.CharField(max_length=511, editable=False, blank=True)
     # Instructor email. Optional.
     email = models.EmailField(blank=True)
-    # Instructor website. Optional.
-    website = models.URLField(blank=True)
     # Instructor departments. Optional.
     departments = models.ManyToManyField(Department)
     # hidden professor. Required. Default visible.
@@ -223,10 +223,6 @@ class Instructor(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
-
-    def full_name(self):
-        """Return string containing instructor full name."""
-        return f"{self.first_name} {self.last_name}"
 
     # this implementation is the same as average_rating in Course
     # except with an extra
@@ -347,6 +343,19 @@ class Instructor(models.Model):
             models.Avg("average")
         )["average__avg"]
 
+    def save(self, *args, **kwargs):
+        self.full_name = f"{self.first_name} {self.last_name}".strip()
+        super().save(*args, **kwargs)
+
+    class Meta:
+        indexes = [
+            GinIndex(
+                fields=["first_name"], opclasses=["gin_trgm_ops"], name="first_name_instructor"
+            ),
+            GinIndex(fields=["last_name"], opclasses=["gin_trgm_ops"], name="last_name_instructor"),
+            GinIndex(fields=["full_name"], opclasses=["gin_trgm_ops"], name="full_name_instructor"),
+        ]
+
 
 class Semester(models.Model):
     """Semester model.
@@ -407,15 +416,18 @@ class Semester(models.Model):
 
         constraints = [models.UniqueConstraint(fields=["season", "year"], name="unique semesters")]
 
+
 class Discipline(models.Model):
     """Discipline model.
 
     Has many Courses.
     """
+
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
+
 
 class Course(models.Model):
     """Course model.
@@ -439,9 +451,15 @@ class Course(models.Model):
     subdepartment = models.ForeignKey(Subdepartment, on_delete=models.CASCADE)
     # Semester that the course was most recently taught.
     semester_last_taught = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    # Subdepartment mnemonic and course number. Required.
+    combined_mnemonic_number = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return f"{self.subdepartment.mnemonic} {self.number} | {self.title}"
+
+    def save(self, *args, **kwargs):
+        self.combined_mnemonic_number = f"{self.subdepartment.mnemonic} {self.number}".strip()
+        super().save(*args, **kwargs)
 
     def compute_pre_req(self):
         """Returns course pre-requisite(s)."""
@@ -639,7 +657,11 @@ class Course(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["subdepartment", "number"]),
+            GinIndex(
+                fields=["combined_mnemonic_number"],
+                opclasses=["gin_trgm_ops"],
+                name="course_mnemonic_number",
+            ),
         ]
 
         constraints = [
