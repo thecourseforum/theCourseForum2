@@ -206,10 +206,6 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
 
-# Discord bot settings
-DISCORD_URL_BUG = env.str("DISCORD_URL_BUG")
-DISCORD_URL_FEEDBACK = env.str("DISCORD_URL_FEEDBACK")
-
 # Automated email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"

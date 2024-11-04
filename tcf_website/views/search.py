@@ -3,9 +3,9 @@
 
 import re
 
-from django.contrib.postgres.search import TrigramWordSimilarity
-from django.db.models import CharField, ExpressionWrapper, F, FloatField, Q, Value
-from django.db.models.functions import Cast, Concat
+from django.contrib.postgres.search import TrigramSimilarity, TrigramWordSimilarity
+from django.db.models import CharField, ExpressionWrapper, F, FloatField, Q
+from django.db.models.functions import Cast, Greatest
 from django.shortcuts import render
 
 from ..models import Course, Instructor, Subdepartment
@@ -90,16 +90,31 @@ def compute_avg_similarity(scores):
 
 def fetch_instructors(query):
     """Get instructor data using Django Trigram similarity"""
+    similarity_threshold = 0.5
     results = (
-        Instructor.objects.only("first_name", "last_name")
-        .annotate(full_name=Concat("first_name", Value(" "), "last_name"))
-        .annotate(similarity=TrigramWordSimilarity(query, "full_name"))
-        .filter(similarity__gte=0.2)
-        .order_by("-similarity")[:10]
+        Instructor.objects.only("first_name", "last_name", "full_name")
+        .annotate(
+            similarity_first=TrigramSimilarity("first_name", query),
+            similarity_last=TrigramSimilarity("last_name", query),
+            similarity_full=TrigramSimilarity("full_name", query),
+        )
+        .annotate(
+            similarity_max=Greatest(
+                F("similarity_first"),
+                F("similarity_last"),
+                F("similarity_full"),
+                output_field=FloatField(),
+            )
+        )
+        .filter(Q(similarity_max__gte=similarity_threshold))
+        .order_by("-similarity_max")[:10]
     )
     formatted_results = [
         {
-            "_meta": {"id": str(instructor.pk), "score": instructor.similarity},
+            "_meta": {
+                "id": str(instructor.pk),
+                "score": instructor.similarity_max,
+            },
             "first_name": {"raw": instructor.first_name},
             "last_name": {"raw": instructor.last_name},
             "email": {"raw": instructor.email},
