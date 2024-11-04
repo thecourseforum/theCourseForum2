@@ -1,5 +1,6 @@
 # pylint: disable=invalid-name
 """Views for search results"""
+import re
 
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models import F, FloatField, Q
@@ -123,7 +124,12 @@ def fetch_instructors(query):
 def fetch_courses(query):
     """Get course data using Django Trigram similarity"""
 
-    similarity_threshold = 0.3
+    similarity_threshold = 0.25
+
+    pattern = re.compile(r"^([A-Za-z]{1,4})(\d{3,4})$", re.IGNORECASE)
+    match = pattern.match(query)
+    if match:
+        query = f"{match.group(1)} {match.group(2)}"
     results = (
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
@@ -144,6 +150,9 @@ def fetch_courses(query):
         .exclude(semester_last_taught_id__lt=48)
         .order_by("-max_similarity")[:10]
     )
+
+    for course in results:
+        print(course.combined_mnemonic_number, course.mnemonic_similarity, course.title_similarity)
 
     formatted_results = [
         {
