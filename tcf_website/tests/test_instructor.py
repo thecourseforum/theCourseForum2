@@ -17,7 +17,7 @@ class InstructorTestCase(TestCase):
 
     def test_full_name(self):
         """Course full name string."""
-        self.assertEqual(self.instructor.full_name(), "Tom Jefferson")
+        self.assertEqual(self.instructor.full_name, "Tom Jefferson")
 
     def test_average_rating_for_course(self):
         """Test average rating for an instructor's particular course."""
