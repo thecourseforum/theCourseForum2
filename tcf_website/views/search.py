@@ -1,11 +1,9 @@
 # pylint: disable=invalid-name
 """Views for search results"""
 
-import re
-
-from django.contrib.postgres.search import TrigramSimilarity, TrigramWordSimilarity
-from django.db.models import CharField, ExpressionWrapper, F, FloatField, Q
-from django.db.models.functions import Cast, Greatest
+from django.contrib.postgres.search import TrigramSimilarity
+from django.db.models import F, FloatField, Q
+from django.db.models.functions import Greatest
 from django.shortcuts import render
 
 from ..models import Course, Instructor, Subdepartment
@@ -17,17 +15,8 @@ def search(request):
     # Set query
     query = request.GET.get("q", "")
 
-    # courses are at least 3 digits long
-    # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
-    match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
-    if match:
-        title_part, number_part = match.groups()
-    else:
-        # Handle cases where the query doesn't match the expected format
-        title_part, number_part = query, ""
-
+    courses = fetch_courses(query)
     instructors = fetch_instructors(query)
-    courses = fetch_courses(title_part, number_part)
 
     courses_first = decide_order(query, courses, instructors)
 
@@ -92,7 +81,7 @@ def fetch_instructors(query):
     """Get instructor data using Django Trigram similarity"""
     similarity_threshold = 0.5
     results = (
-        Instructor.objects.only("first_name", "last_name", "full_name")
+        Instructor.objects.only("first_name", "last_name", "full_name", "email")
         .annotate(
             similarity_first=TrigramSimilarity("first_name", query),
             similarity_last=TrigramSimilarity("last_name", query),
@@ -131,28 +120,34 @@ def fetch_instructors(query):
     )
 
 
-def fetch_courses(title, number):
+def fetch_courses(query):
     """Get course data using Django Trigram similarity"""
 
-    query = f"{title} {number}"
-    similarity_threshold = 0.5
+    similarity_threshold = 0.3
     results = (
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
-            similarity=TrigramSimilarity("combined_mnemonic_number", query),
+            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", query),
+            title_similarity=TrigramSimilarity("title", query),
         )
-        .filter(similarity__gte=similarity_threshold)
+        .annotate(
+            max_similarity=Greatest(
+                F("mnemonic_similarity"),
+                F("title_similarity"),
+            )
+        )
+        .filter(max_similarity__gte=similarity_threshold)
         # filters out classes with 3 digit class numbers (old naming system)
         .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
         # filters out classes that haven't been taught since Fall 2020
         .exclude(semester_last_taught_id__lt=48)
-        .order_by("-similarity")[:10]
+        .order_by("-max_similarity")[:10]
     )
 
     formatted_results = [
         {
-            "_meta": {"id": str(course.pk), "score": course.similarity},
+            "_meta": {"id": str(course.pk), "score": course.max_similarity},
             "title": {"raw": course.title},
             "number": {"raw": course.number},
             "mnemonic": {"raw": course.subdepartment.mnemonic + " " + str(course.number)},
