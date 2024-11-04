@@ -123,9 +123,10 @@ def fetch_instructors(query):
 
 def fetch_courses(query):
     """Get course data using Django Trigram similarity"""
-
+    # lower similarity threshold for partial searches of course titles
     similarity_threshold = 0.25
 
+    # if "<mnemonic><number>" pattern present without a space, add one to adhere to index pattern
     pattern = re.compile(r"^([A-Za-z]{1,4})(\d{3,4})$", re.IGNORECASE)
     match = pattern.match(query)
     if match:
