@@ -57,8 +57,8 @@ def decide_order(courses: list[dict], instructors: list[dict]) -> bool:
         """Computes and returns the average similarity score."""
         return statistics.mean(_scores) if (_scores := list(scores)) else 0
 
-    courses_avg = mean(x["max_similarity"] for x in courses)
-    instructors_avg = mean(x["max_similarity"] for x in instructors)
+    courses_avg = mean(course["max_similarity"] for course in courses)
+    instructors_avg = mean(instructor["max_similarity"] for instructor in instructors)
 
     return courses_avg > instructors_avg or not instructors
 
@@ -115,9 +115,7 @@ def fetch_courses(query):
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
-            mnemonic_similarity=TrigramSimilarity(
-                "combined_mnemonic_number", search_query
-            ),
+            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", search_query),
             title_similarity=TrigramSimilarity("title", search_query),
         )
         # round results to two decimal places
