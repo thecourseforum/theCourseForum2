@@ -1,11 +1,10 @@
 # pylint: disable=invalid-name
 """Views for search results"""
-
 import re
 
-from django.contrib.postgres.search import TrigramSimilarity, TrigramWordSimilarity
-from django.db.models import CharField, ExpressionWrapper, F, FloatField, Q
-from django.db.models.functions import Cast, Greatest
+from django.contrib.postgres.search import TrigramSimilarity
+from django.db.models import F, FloatField, Q
+from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
 
 from ..models import Course, Instructor, Subdepartment
@@ -17,17 +16,8 @@ def search(request):
     # Set query
     query = request.GET.get("q", "")
 
-    # courses are at least 3 digits long
-    # https://registrar.virginia.edu/faculty-staff/course-numbering-scheme
-    match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
-    if match:
-        title_part, number_part = match.groups()
-    else:
-        # Handle cases where the query doesn't match the expected format
-        title_part, number_part = query, ""
-
+    courses = fetch_courses(query)
     instructors = fetch_instructors(query)
-    courses = fetch_courses(title_part, number_part)
 
     courses_first = decide_order(query, courses, instructors)
 
@@ -92,7 +82,7 @@ def fetch_instructors(query):
     """Get instructor data using Django Trigram similarity"""
     similarity_threshold = 0.5
     results = (
-        Instructor.objects.only("first_name", "last_name", "full_name")
+        Instructor.objects.only("first_name", "last_name", "full_name", "email")
         .annotate(
             similarity_first=TrigramSimilarity("first_name", query),
             similarity_last=TrigramSimilarity("last_name", query),
@@ -131,47 +121,48 @@ def fetch_instructors(query):
     )
 
 
-def fetch_courses(title, number):
+def fetch_courses(query):
     """Get course data using Django Trigram similarity"""
-    MNEMONIC_WEIGHT = 1.5
-    NUMBER_WEIGHT = 1
-    TITLE_WEIGHT = 1
+    # lower similarity threshold for partial searches of course titles
+    similarity_threshold = 0.15
 
-    # search query of form "<MNEMONIC><NUMBER>"
-    if number != "":
-        TITLE_WEIGHT = 0
-        MNEMONIC_WEIGHT = 1
-    # otherwise, "title" is entire query
-    else:
-        NUMBER_WEIGHT = 0
+    def normalize_search_query(q: str) -> str:
+        # if "<mnemonic><number>" pattern present without space, add one to adhere to index pattern
+        pattern = re.compile(r"^([A-Za-z]{1,4})(\d{4})$")
+        match = pattern.match(q)
+
+        return f"{match.group(1)} {match.group(2)}" if match else q
+
+    search_query = normalize_search_query(query)
 
     results = (
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
-            mnemonic_similarity=TrigramWordSimilarity(title, "subdepartment__mnemonic"),
-            number_similarity=TrigramWordSimilarity(number, Cast("number", CharField())),
-            title_similarity=TrigramWordSimilarity(title, Cast("title", CharField())),
+            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", search_query),
+            title_similarity=TrigramSimilarity("title", search_query),
         )
+        # round results to two decimal places
         .annotate(
-            total_similarity=ExpressionWrapper(
-                F("mnemonic_similarity") * MNEMONIC_WEIGHT
-                + F("number_similarity") * NUMBER_WEIGHT
-                + F("title_similarity") * TITLE_WEIGHT,
-                output_field=FloatField(),
+            max_similarity=Round(
+                Greatest(
+                    F("mnemonic_similarity"),
+                    F("title_similarity"),
+                ),
+                2,
             )
         )
-        .filter(total_similarity__gte=0.2)
+        .filter(max_similarity__gte=similarity_threshold)
         # filters out classes with 3 digit class numbers (old naming system)
         .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
         # filters out classes that haven't been taught since Fall 2020
         .exclude(semester_last_taught_id__lt=48)
-        .order_by("-total_similarity")[:10]
+        .order_by("-max_similarity")[:10]
     )
 
     formatted_results = [
         {
-            "_meta": {"id": str(course.pk), "score": course.total_similarity},
+            "_meta": {"id": str(course.pk), "score": course.max_similarity},
             "title": {"raw": course.title},
             "number": {"raw": course.number},
             "mnemonic": {"raw": course.subdepartment.mnemonic + " " + str(course.number)},
