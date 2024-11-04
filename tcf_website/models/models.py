@@ -662,6 +662,11 @@ class Course(models.Model):
                 opclasses=["gin_trgm_ops"],
                 name="course_mnemonic_number",
             ),
+            GinIndex(
+                fields=["title"],
+                opclasses=["gin_trgm_ops"],
+                name="title_gin_index",
+            ),
         ]
 
         constraints = [
