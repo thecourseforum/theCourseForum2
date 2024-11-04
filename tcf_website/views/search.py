@@ -57,19 +57,15 @@ def decide_order(query, courses: list[dict], instructors: list[dict]) -> bool:
         """Computes and returns the average similarity score."""
         return statistics.mean(_scores) if (_scores := list(scores)) else 0
 
-    THRESHOLD = 0.5
-
     courses_avg = mean(x["max_similarity"] for x in courses)
     instructors_avg = mean(x["max_similarity"] for x in instructors)
 
-    if len(query) <= 4 or (courses_avg > instructors_avg and courses_avg > THRESHOLD):
-        return True
-
-    return not instructors
+    return courses_avg > instructors_avg or not instructors
 
 
 def fetch_instructors(query) -> list[dict]:
     """Get instructor data using Django Trigram similarity"""
+    # arbitrarily chosen threshold
     similarity_threshold = 0.5
     results = (
         Instructor.objects.only("first_name", "last_name", "full_name", "email")
@@ -119,7 +115,9 @@ def fetch_courses(query):
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
-            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", search_query),
+            mnemonic_similarity=TrigramSimilarity(
+                "combined_mnemonic_number", search_query
+            ),
             title_similarity=TrigramSimilarity("title", search_query),
         )
         # round results to two decimal places
