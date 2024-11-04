@@ -18,11 +18,9 @@ def group_by_dept(courses):
     """Groups courses by their department and adds relevant data."""
     grouped_courses = {}
     for course in courses:
-        course_dept = course["combined_mnemonic_number"][
-            : course["combined_mnemonic_number"].index(" ")
-        ]
+        course_dept = course['mnemonic']
         if course_dept not in grouped_courses:
-            subdept = Subdepartment.objects.filter(mnemonic=course_dept)[0]
+            subdept = Subdepartment.objects.filter(mnemonic=course_dept).first()
             # should only ever have one returned with that mnemonic
             grouped_courses[course_dept] = {
                 "subdept_name": subdept.name,
@@ -66,9 +64,9 @@ def search(request):
 def decide_order(query, courses: list[dict], instructors: list[dict]) -> bool:
     """Decides if courses (True) or instructors (False) should be displayed first."""
 
-    def mean(scores: list[int]) -> float:
+    def mean(scores: Iterable[int]) -> float:
         """Computes and returns the average similarity score."""
-        return statistics.mean(scores) if scores else 0
+        return statistics.mean(_scores) if (_scores := list(scores)) else 0
 
     THRESHOLD = 0.5
 
@@ -134,6 +132,7 @@ def fetch_courses(title, number) -> list[dict]:
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
+            mnemonic=F("subdepartment__mnemonic"),
             mnemonic_similarity=TrigramWordSimilarity(title, "subdepartment__mnemonic"),
             number_similarity=TrigramWordSimilarity(number, Cast("number", CharField())),
             title_similarity=TrigramWordSimilarity(title, Cast("title", CharField())),
@@ -162,7 +161,7 @@ def fetch_courses(title, number) -> list[dict]:
                     "id",
                     "title",
                     "number",
-                    "combined_mnemonic_number",
+                    "mnemonic",
                     "description",
                     "similarity_max",
                 )
