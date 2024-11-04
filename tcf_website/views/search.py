@@ -17,7 +17,7 @@ def group_by_dept(courses):
     """Groups courses by their department and adds relevant data."""
     grouped_courses = {}
     for course in courses:
-        course_dept = course['mnemonic']
+        course_dept = course["mnemonic"]
         if course_dept not in grouped_courses:
             subdept = Subdepartment.objects.filter(mnemonic=course_dept).first()
             # should only ever have one returned with that mnemonic
@@ -100,15 +100,13 @@ def fetch_instructors(query) -> list[dict]:
         .order_by("-similarity_max")[:10]
     )
 
-    instructors = list(
-        map(
-            lambda instructor: {
-                key: getattr(instructor, key)
-                for key in ("first_name", "last_name", "email", "id", "similarity_max")
-            },
-            results,
-        )
-    )
+    instructors = [
+        {
+            key: getattr(instructor, key)
+            for key in ("first_name", "last_name", "email", "id", "similarity_max")
+        }
+        for instructor in results
+    ]
 
     return instructors
 
@@ -152,21 +150,19 @@ def fetch_courses(title, number) -> list[dict]:
         .order_by("-similarity_max")[:10]
     )
 
-    courses = list(
-        map(
-            lambda course: {
-                key: getattr(course, key)
-                for key in (
-                    "id",
-                    "title",
-                    "number",
-                    "mnemonic",
-                    "description",
-                    "similarity_max",
-                )
-            },
-            results,
-        )
-    )
+    courses = [
+        {
+            key: getattr(course, key)
+            for key in (
+                "id",
+                "title",
+                "number",
+                "mnemonic",
+                "description",
+                "similarity_max",
+            )
+        }
+        for course in results
+    ]
 
     return courses
