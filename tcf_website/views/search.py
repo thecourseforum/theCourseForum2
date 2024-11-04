@@ -126,17 +126,21 @@ def fetch_courses(query):
     # lower similarity threshold for partial searches of course titles
     similarity_threshold = 0.25
 
-    # if "<mnemonic><number>" pattern present without a space, add one to adhere to index pattern
-    pattern = re.compile(r"^([A-Za-z]{1,4})(\d{3,4})$", re.IGNORECASE)
-    match = pattern.match(query)
-    if match:
-        query = f"{match.group(1)} {match.group(2)}"
+    def normalize_search_query(q: str) -> str:
+        # if "<mnemonic><number>" pattern present without a space, add one to adhere to index pattern
+        pattern = re.compile(r"^([A-Za-z]{1,4})(\d{4})$")
+        match = pattern.match(q)
+
+        return f"{match.group(1)} {match.group(2)}" if match else q
+
+    search_query = normalize_search_query(query)
+
     results = (
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
-            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", query),
-            title_similarity=TrigramSimilarity("title", query),
+            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", search_query),
+            title_similarity=TrigramSimilarity("title", search_query),
         )
         .annotate(
             max_similarity=Greatest(
@@ -151,9 +155,6 @@ def fetch_courses(query):
         .exclude(semester_last_taught_id__lt=48)
         .order_by("-max_similarity")[:10]
     )
-
-    for course in results:
-        print(course.combined_mnemonic_number, course.mnemonic_similarity, course.title_similarity)
 
     formatted_results = [
         {
