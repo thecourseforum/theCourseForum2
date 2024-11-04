@@ -38,7 +38,7 @@ def search(request):
 
     courses = fetch_courses(query)
     instructors = fetch_instructors(query)
-    courses_first = decide_order(query, courses, instructors)
+    courses_first = decide_order(courses, instructors)
 
     ctx = {
         "query": query[:30] + ("..." if len(query) > 30 else ""),
@@ -50,7 +50,7 @@ def search(request):
     return render(request, "search/search.html", ctx)
 
 
-def decide_order(query, courses: list[dict], instructors: list[dict]) -> bool:
+def decide_order(courses: list[dict], instructors: list[dict]) -> bool:
     """Decides if courses (True) or instructors (False) should be displayed first."""
 
     def mean(scores: Iterable[int]) -> float:
