@@ -4,7 +4,7 @@ import re
 
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models import F, FloatField, Q
-from django.db.models.functions import Greatest
+from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
 
 from ..models import Course, Instructor, Subdepartment
@@ -124,10 +124,10 @@ def fetch_instructors(query):
 def fetch_courses(query):
     """Get course data using Django Trigram similarity"""
     # lower similarity threshold for partial searches of course titles
-    similarity_threshold = 0.25
+    similarity_threshold = 0.15
 
     def normalize_search_query(q: str) -> str:
-        # if "<mnemonic><number>" pattern present without a space, add one to adhere to index pattern
+        # if "<mnemonic><number>" pattern present without space, add one to adhere to index pattern
         pattern = re.compile(r"^([A-Za-z]{1,4})(\d{4})$")
         match = pattern.match(q)
 
@@ -142,10 +142,14 @@ def fetch_courses(query):
             mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", search_query),
             title_similarity=TrigramSimilarity("title", search_query),
         )
+        # round results to two decimal places
         .annotate(
-            max_similarity=Greatest(
-                F("mnemonic_similarity"),
-                F("title_similarity"),
+            max_similarity=Round(
+                Greatest(
+                    F("mnemonic_similarity"),
+                    F("title_similarity"),
+                ),
+                2,
             )
         )
         .filter(max_similarity__gte=similarity_threshold)
