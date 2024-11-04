@@ -66,9 +66,9 @@ def search(request):
 def decide_order(query, courses: list[dict], instructors: list[dict]) -> bool:
     """Decides if courses (True) or instructors (False) should be displayed first."""
 
-    def mean(scores: Iterable[int]) -> float:
+    def mean(scores: list[int]) -> float:
         """Computes and returns the average similarity score."""
-        return statistics.mean(_scores) if (_scores := list(scores)) else 0
+        return statistics.mean(scores) if scores else 0
 
     THRESHOLD = 0.5
 
