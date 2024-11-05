@@ -121,7 +121,7 @@ def create_user(strategy, details, backend, user=None, *args, **kwargs):
     # User has registered previously.
     if user:
         if backend.name == "email":
-            details["fullname"] = user.full_name
+            details["fullname"] = user.full_name()
             details["first_name"] = user.first_name
             details["last_name"] = user.last_name
         return {"is_new": False, "details": details}
