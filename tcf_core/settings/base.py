@@ -207,8 +207,8 @@ REST_FRAMEWORK = {
 }
 
 # Discord bot settings
-DISCORD_URL_BUG = env.str("DISCORD_URL_BUG")
-DISCORD_URL_FEEDBACK = env.str("DISCORD_URL_FEEDBACK")
+# DISCORD_URL_BUG = env.str("DISCORD_URL_BUG")
+# DISCORD_URL_FEEDBACK = env.str("DISCORD_URL_FEEDBACK")
 
 # Automated email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
