@@ -22,8 +22,8 @@ class UserTestCase(TestCase):
 
     def test_full_name(self):
         """Test full_name method in User model when fullname exists"""
-        self.assertEqual("Taylor Comb", self.user1.full_name)
+        self.assertEqual("Taylor Comb", self.user1.full_name())
 
     def test_full_name_no_first(self):
         """Test full_name method in User model when first name missing exists"""
-        self.assertEqual(" NoFirstName", self.user2.full_name)
+        self.assertEqual(" NoFirstName", self.user2.full_name())
