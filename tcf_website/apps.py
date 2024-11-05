@@ -7,3 +7,4 @@ class TcfWebsiteConfig(AppConfig):
     """TCF Django Web Application Configuration."""
 
     name = "tcf_website"
+
