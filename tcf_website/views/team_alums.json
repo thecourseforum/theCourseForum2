@@ -30,6 +30,13 @@
           "class": "2026",
           "img_filename": "ENG_Raffi_Khondaker.jpeg",
           "github": "therealraffi"
+        },
+        {
+          "name": "Tino Martella",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Tino_Martella.jpg",
+          "github": "Tino-Martella"
         }
       ]
     },
@@ -256,6 +263,12 @@
           "role": "VP of Marketing and Design",
           "class": "2022",
           "img_filename": "MAD_Kimberly_Vo.webp"
+        },
+        {
+          "name": "Vi Nguyen",
+          "role": "Secretary and Operations Lead",
+          "class": "2022",
+          "img_filename": "ENG_Vi_Nguyen.webp"
         },
         {
           "name": "Lauren Kim",

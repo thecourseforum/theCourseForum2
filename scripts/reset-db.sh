@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DB_FILE="${DB_FILE:-db/latest.sql}"
+DB_FILE="${1:-db/latest.sql}"
 
 if [ ! -f "$DB_FILE" ]; then 
   echo "Database file '$DB_FILE' not found."
@@ -10,4 +10,5 @@ if [ ! -f "$DB_FILE" ]; then
 fi
 
 docker exec -i tcf_db psql tcf_db -U tcf_django -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+docker exec -i tcf_db psql tcf_db -U tcf_django -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 docker exec -i tcf_db psql tcf_db -U tcf_django < "$DB_FILE"
