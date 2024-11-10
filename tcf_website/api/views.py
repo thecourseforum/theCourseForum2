@@ -47,7 +47,12 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ["subdepartment"]
 
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = super().get_queryset()
+
+        if "recent" in self.request.query_params:
+            latest_semester = Semester.latest()
+            queryset = queryset.filter(semester_last_taught__year__gte=latest_semester.year - 5)
+
         if "allstats" in self.request.query_params:
             queryset = queryset.prefetch_related("review_set").annotate(
                 # ratings
@@ -69,19 +74,20 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 average_amount_homework=Avg("review__amount_homework"),
                 # grades
                 # TODO: average_gpa should be fixed
-                average_gpa=Avg("coursegrade__average", distinct=True),
-                a_plus=Sum("coursegrade__a_plus", distinct=True),
-                a=Sum("coursegrade__a", distinct=True),
-                a_minus=Sum("coursegrade__a_minus", distinct=True),
-                b_plus=Sum("coursegrade__b_plus", distinct=True),
-                b=Sum("coursegrade__b", distinct=True),
-                b_minus=Sum("coursegrade__b_minus", distinct=True),
-                c_plus=Sum("coursegrade__c_plus", distinct=True),
-                c=Sum("coursegrade__c", distinct=True),
-                c_minus=Sum("coursegrade__c_minus", distinct=True),
-                dfw=Sum("coursegrade__dfw", distinct=True),
-                total_enrolled=Sum("coursegrade__total_enrolled", distinct=True),
+                average_gpa=Avg("coursegrade__average"),
+                a_plus=Sum("coursegrade__a_plus"),
+                a=Sum("coursegrade__a"),
+                a_minus=Sum("coursegrade__a_minus"),
+                b_plus=Sum("coursegrade__b_plus"),
+                b=Sum("coursegrade__b"),
+                b_minus=Sum("coursegrade__b_minus"),
+                c_plus=Sum("coursegrade__c_plus"),
+                c=Sum("coursegrade__c"),
+                c_minus=Sum("coursegrade__c_minus"),
+                dfw=Sum("coursegrade__dfw"),
+                total_enrolled=Sum("coursegrade__total_enrolled"),
             )
+
         elif "simplestats" in self.request.query_params:
             queryset = queryset.prefetch_related("review_set").annotate(
                 average_gpa=Avg("coursegrade__average"),
@@ -93,9 +99,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 )
                 / 3,
             )
-        if "recent" in self.request.query_params:
-            latest_semester = Semester.latest()
-            queryset = queryset.filter(semester_last_taught__year__gte=latest_semester.year - 5)
+
         return queryset.order_by("number")
 
     def get_serializer_class(self):
@@ -135,4 +139,4 @@ class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
         if "instructor" in self.request.query_params:
             params["section__instructors"] = self.request.query_params["instructor"]
         # Returns filtered, unique semesters in reverse chronological order
-        return self.queryset.filter(**params).distinct().order_by("-number")
+        return super().get_queryset().filter(**params).distinct().order_by("-number")
