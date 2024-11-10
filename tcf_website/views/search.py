@@ -16,7 +16,7 @@ def search(request):
 
     # Set query
     query = request.GET.get("q", "")
-
+    
     # Parse query
     match = re.match(r"([a-zA-Z]{2,})\s*(\d{3,})", query)
     if match:
@@ -27,6 +27,7 @@ def search(request):
 
     # Get filters from request
     filters = {
+        "current_semester": request.GET.get("semester", ""),
         'disciplines': request.GET.getlist("discipline"),
         'subdepartments': request.GET.getlist("subdepartment"),
         'instructors': request.GET.getlist("instructor"),
@@ -153,7 +154,7 @@ def fetch_courses(title, number, filters):
             )
         )
         .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
-        .exclude(semester_last_taught_id__lt=48)
+        .exclude(semester_last_taught_id__lt=59 if filters.get("current_semester") == "on" else 48)
     )
 
     # Apply filters
