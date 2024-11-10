@@ -78,6 +78,7 @@ class DeleteQuestion(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView
         return f"Successfully deleted your question for {str(course)} and {str(instructor)}!"
 
 
+# overly commented with success messages
 @login_required
 def new_question(request):
     """Question creation view."""
@@ -87,12 +88,23 @@ def new_question(request):
 
         if form.is_valid():
             instance = form.save(commit=False)
-            instance.user = request.user
 
-            instance.save()
+            question = instance.question
+            instructor = question.instructor
+            if instructor.objects.filter(last_name=form.fields[2]).exists():
+                messages.success(request, f"Valid instructor!")
+                if form.fields[1] in instructor.departments:
 
-            messages.success(request, f"Successfully added a question for {instance.course}!")
-            return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+                    messages.success(request, f"Valid department!")
+
+                    instance.user = request.user
+
+                    instance.save()
+
+                    messages.success(
+                        request, f"Successfully added a question for {instance.course}!"
+                    )
+                    return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
         return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
     return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
 
