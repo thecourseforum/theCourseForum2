@@ -13,7 +13,6 @@ from .browse import (
     department,
     instructor_view,
 )
-from .discord import post_message
 from .index import AboutView, index, privacy, terms
 from .profile import DeleteProfile, profile, reviews
 from .qa import (
