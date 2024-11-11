@@ -2,7 +2,6 @@
 
 import warnings
 
-from django.core.paginator import Paginator  # to be used instead of FlexiblePagination
 from rest_framework.pagination import PageNumberPagination
 
 
@@ -15,7 +14,8 @@ class FlexiblePagination(PageNumberPagination):
 
     def __init__(self, *args, **kwargs):
         warnings.warn(
-            "The FlexiblePagination class is deprecated. Please use Paginator from django.core.paginator instead.",
+            "The FlexiblePagination class is deprecated."
+            + "Please use Paginator from django.core.paginator instead.",
             DeprecationWarning,
             stacklevel=2,
         )
