@@ -1,79 +1,150 @@
 <!-- searchbar.html -->
-<form class="form-inline flex-grow-1" action="/search" method="get">
+<form class="form-inline flex-grow-1" action="{% url 'search' %}" method="get">
   <div class="input-group flex-grow-1">
-    <input type="search" class="form-control border border-right-0"
-           placeholder="Search for a class or professor..." aria-label="Search" name="q" value="{{query}}">
+    <input 
+      type="search" 
+      class="form-control border border-right-0"
+      placeholder="Search for a class or professor..." 
+      aria-label="Search" 
+      name="q" 
+      value="{{ query }}"
+    >
     <div class="input-group-append">
       <!-- Search Button -->
-      <button class="btn btn-outline-secondary border border-left-0" id="search-button" aria-label="Search" type="submit">
-          <i class="fa fa-search" aria-hidden="true"></i>
+      <button 
+        class="btn btn-outline-secondary border border-left-0" 
+        id="search-button" 
+        aria-label="Search" 
+        type="submit"
+      >
+        <i class="fa fa-search" aria-hidden="true"></i>
       </button>
-<!-- filter_dropdown.html -->
-<div class="dropdown">
-  <button 
-    class="btn btn-outline-secondary dropdown-toggle border border-left-0" 
-    id="filter-button" 
-    aria-label="Filter" 
-    type="button" 
-    data-toggle="dropdown" 
-    aria-expanded="false"
-  >
-    Filter
-  </button>
-  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="filter-button" style="width: 800px;">
-    <form class="px-4 py-3">
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="option1">
-        <label class="form-check-label" for="option1">
-          Monday
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="option2">
-        <label class="form-check-label" for="option2">
-          Tuesday 
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="option3">
-        <label class="form-check-label" for="option3">
-          Wednesday 
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="option4">
-        <label class="form-check-label" for="option4">
-          Thursday 
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="option4">
-        <label class="form-check-label" for="option4">
-          Friday 
-        </label>
-      </div>
-    </form>
-    
-      <form method="GET" action="{% url 'search' %}">
-        <div class="form-group">
-            <label for="subdepartment">Subject</label>
-            <select multiple class="form-control" id="subdepartment" name="subdepartment">
-                {% for subdept in subdepartments %}
-                    <option value="{{ subdept.mnemonic }}" {% if subdept.mnemonic in selected_subdepartments %}selected{% endif %}>{{ subdept.mnemonic }} - {{ subdept.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="discipline">Discipline</label>
-            <select multiple class="form-control" id="discipline" name="discipline">
-                {% for discipline in disciplines %}
-                    <option value="{{ discipline.name }}" {% if discipline.name in selected_disciplines %}selected{% endif %}>{{ discipline.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
   </div>
-</div>
+  <div class="dropdown input-group">
+    <button 
+      class="btn btn-outline-secondary dropdown-toggle border border-left-0" 
+      id="filter-button" 
+      aria-label="Filter" 
+      type="button" 
+      data-toggle="dropdown" 
+      aria-expanded="false" 
+    >
+      Filter
+    </button>
+    <div 
+      class="dropdown-menu dropdown-menu-right" 
+      aria-labelledby="filter-button" 
+      style="width: 800px;" 
+      id="filter-dropdown"
+    >
+      <form class="px-4 py-3" method="GET" action="{% url 'search' %}">
+        <!-- Day Filters -->
+        <div>
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="monday" 
+              name="monday" 
+              {% if monday %}checked{% endif %}
+            >
+            <label class="form-check-label" for="monday">
+              Monday
+            </label>
+          </div>
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="tuesday" 
+              name="tuesday" 
+              {% if tuesday %}checked{% endif %}
+            >
+            <label class="form-check-label" for="tuesday">
+              Tuesday
+            </label>
+          </div>
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="wednesday" 
+              name="wednesday" 
+              {% if wednesday %}checked{% endif %}
+            >
+            <label class="form-check-label" for="wednesday">
+              Wednesday
+            </label>
+          </div>
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="thursday" 
+              name="thursday" 
+              {% if thursday %}checked{% endif %}
+            >
+            <label class="form-check-label" for="thursday">
+              Thursday
+            </label>
+          </div>
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="friday" 
+              name="friday" 
+              {% if friday %}checked{% endif %}
+            >
+            <label class="form-check-label" for="friday">
+              Friday
+            </label>
+          </div>
+        </div>
+  
+        <!-- Subject Filter -->
+        <div class="form-group">
+          <label for="subdepartment">Subject</label>
+          <select multiple class="form-control" id="subdepartment" name="subdepartment">
+            {% for subdept in subdepartments %}
+              <option 
+                value="{{ subdept.mnemonic }}" 
+                {% if subdept.mnemonic in selected_subdepartments %}selected{% endif %}
+              >
+                {{ subdept.mnemonic }} - {{ subdept.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+  
+        <!-- Discipline Filter -->
+        <div class="form-group">
+          <label for="discipline">Discipline</label>
+          <select multiple class="form-control" id="discipline" name="discipline">
+            {% for discipline in disciplines %}
+              <option 
+                value="{{ discipline.name }}" 
+                {% if discipline.name in selected_disciplines %}selected{% endif %}
+              >
+                {{ discipline.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+  
+        <!-- Search Button -->
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+    </div>
+  </div>
+</form>
+
+<!-- filter_dropdown.html -->
 
 
+<script>
+  document.getElementById('filter-dropdown').addEventListener('click', function (event) {
+    event.stopPropagation();
+  });
+</script>

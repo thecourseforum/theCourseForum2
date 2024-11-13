@@ -72,5 +72,10 @@ def searchbar_context(request):
         'selected_disciplines': request.GET.getlist('discipline'),
         'selected_subdepartments': request.GET.getlist('subdepartment'),
         'selected_instructors': request.GET.getlist('instructor'),
+        "monday": True,
+        "tuesday": True,
+        "wednesday": True,
+        "thursday": True,
+        "friday": True,
     }
     return context 
