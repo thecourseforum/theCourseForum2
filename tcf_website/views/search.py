@@ -30,6 +30,13 @@ def search(request):
         'disciplines': request.GET.getlist("discipline"),
         'subdepartments': request.GET.getlist("subdepartment"),
         'instructors': request.GET.getlist("instructor"),
+        'weekdays': [
+            request.GET.get("monday"),
+            request.GET.get("tuesday"),
+            request.GET.get("wednesday"),
+            request.GET.get("thursday"),
+            request.GET.get("friday"),
+        ]
     }
 
     instructors = fetch_instructors(query)
