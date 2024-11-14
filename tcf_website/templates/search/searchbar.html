@@ -33,98 +33,87 @@
       Filter
     </button>
     <div 
-      class="dropdown-menu dropdown-menu-right" 
+      class="dropdown-menu dropdown-menu-right p-4" 
       aria-labelledby="filter-button" 
-      style="width: 800px;" 
+      style="width: 400px; max-height: 80vh; overflow-y: auto;" 
       id="filter-dropdown"
     >
-      <form class="px-4 py-3" method="GET" action="{% url 'search' %}">
-        <!-- Day Filters -->
-        <div>
-          <div class="form-check">
-            <input 
-              class="form-check-input" 
-              type="checkbox" 
-              id="monday" 
-              name="monday" 
-              {% if monday %}checked{% endif %}
-            >
-            <label class="form-check-label" for="monday">
-              Monday
-            </label>
-          </div>
-          <div class="form-check">
-            <input 
-              class="form-check-input" 
-              type="checkbox" 
-              id="tuesday" 
-              name="tuesday" 
-              {% if tuesday %}checked{% endif %}
-            >
-            <label class="form-check-label" for="tuesday">
-              Tuesday
-            </label>
-          </div>
-          <div class="form-check">
-            <input 
-              class="form-check-input" 
-              type="checkbox" 
-              id="wednesday" 
-              name="wednesday" 
-              {% if wednesday %}checked{% endif %}
-            >
-            <label class="form-check-label" for="wednesday">
-              Wednesday
-            </label>
-          </div>
-          <div class="form-check">
-            <input 
-              class="form-check-input" 
-              type="checkbox" 
-              id="thursday" 
-              name="thursday" 
-              {% if thursday %}checked{% endif %}
-            >
-            <label class="form-check-label" for="thursday">
-              Thursday
-            </label>
-          </div>
-          <div class="form-check">
-            <input 
-              class="form-check-input" 
-              type="checkbox" 
-              id="friday" 
-              name="friday" 
-              {% if friday %}checked{% endif %}
-            >
-            <label class="form-check-label" for="friday">
-              Friday
-            </label>
+      <form method="GET" action="{% url 'search' %}">
+        <!-- Days Section -->
+        <div class="mb-4">
+          <h6 class="dropdown-header px-0 font-weight-bold" style="border-bottom: 1px solid #dee2e6; margin-bottom: 0.5rem; padding-bottom: 0.5rem;">
+            Class Days
+          </h6>
+          <div class="d-flex flex-wrap" style="gap: 0.75rem">
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" id="monday" name="monday"
+                {% if 'monday' in selected_days %}checked{% endif %}>
+              <label class="form-check-label" for="monday">Monday</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" id="tuesday" name="tuesday"
+                {% if 'tuesday' in selected_days %}checked{% endif %}>
+              <label class="form-check-label" for="tuesday">Tuesday</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" id="wednesday" name="wednesday"
+                {% if 'wednesday' in selected_days %}checked{% endif %}>
+              <label class="form-check-label" for="wednesday">Wednesday</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" id="thursday" name="thursday"
+                {% if 'thursday' in selected_days %}checked{% endif %}>
+              <label class="form-check-label" for="thursday">Thursday</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" id="friday" name="friday"
+                {% if 'friday' in selected_days %}checked{% endif %}>
+              <label class="form-check-label" for="friday">Friday</label>
+            </div>
           </div>
         </div>
-  
+
         <!-- Subject Filter -->
-        <div class="form-group">
-          <label for="subdepartment">Subject</label>
-          <select multiple class="form-control" id="subdepartment" name="subdepartment">
+        <div class="mb-4">
+          <h6 class="dropdown-header px-0 font-weight-bold" style="border-bottom: 1px solid #dee2e6; margin-bottom: 0.5rem; padding-bottom: 0.5rem;">
+            Subject
+          </h6>
+          <select 
+            class="form-select" 
+            id="subdepartment" 
+            name="subdepartment" 
+            multiple 
+            size="5"
+            style="min-height: 120px; overflow-y: auto; width: 100%;"
+          >
             {% for subdept in subdepartments %}
               <option 
-                value="{{ subdept.mnemonic }}" 
+                value="{{ subdept.mnemonic }}"
                 {% if subdept.mnemonic in selected_subdepartments %}selected{% endif %}
               >
                 {{ subdept.mnemonic }} - {{ subdept.name }}
               </option>
             {% endfor %}
           </select>
+          <small class="form-text text-muted mt-1">Hold Ctrl/Cmd to select multiple</small>
         </div>
-  
+
         <!-- Discipline Filter -->
-        <div class="form-group">
-          <label for="discipline">Discipline</label>
-          <select multiple class="form-control" id="discipline" name="discipline">
+        <div class="mb-4">
+          <h6 class="dropdown-header px-0 font-weight-bold" style="border-bottom: 1px solid #dee2e6; margin-bottom: 0.5rem; padding-bottom: 0.5rem;">
+            Discipline
+          </h6>
+          <select 
+            class="form-select" 
+            id="discipline" 
+            name="discipline" 
+            multiple 
+            size="5"
+            style="min-height: 120px; overflow-y: auto; width: 100%;"
+          >
             {% for discipline in disciplines %}
               <option 
-                value="{{ discipline.name }}" 
+                value="{{ discipline.name }}"
                 {% if discipline.name in selected_disciplines %}selected{% endif %}
               >
                 {{ discipline.name }}
@@ -132,9 +121,12 @@
             {% endfor %}
           </select>
         </div>
-  
-        <!-- Search Button -->
-        <button type="submit" class="btn btn-primary">Search</button>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="reset" class="btn btn-outline-secondary">Clear All</button>
+          <button type="submit" class="btn btn-primary">Apply Filters</button>
+        </div>
       </form>
     </div>
   </div>
