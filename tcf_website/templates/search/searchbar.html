@@ -28,14 +28,16 @@
       aria-label="Filter" 
       type="button" 
       data-toggle="dropdown" 
+      data-bs-display="static" 
+      data-bs-auto-close="outside" 
       aria-expanded="false" 
     >
       Filter
     </button>
     <div 
-      class="dropdown-menu dropdown-menu-right p-4" 
+      class="dropdown-menu dropdown-menu-right p-4 filter-dropdown" 
       aria-labelledby="filter-button" 
-      style="width: 400px; max-height: 80vh; overflow-y: auto;" 
+      style="width: min(90vw, 800px); position: absolute;" 
       id="filter-dropdown"
     >
       <form method="GET" action="{% url 'search' %}">
@@ -83,8 +85,8 @@
             id="subdepartment" 
             name="subdepartment" 
             multiple 
-            size="5"
-            style="min-height: 120px; overflow-y: auto; width: 100%;"
+            size="3"
+            style="height: 80px; width: 100%;"
           >
             {% for subdept in subdepartments %}
               <option 
@@ -108,8 +110,8 @@
             id="discipline" 
             name="discipline" 
             multiple 
-            size="5"
-            style="min-height: 120px; overflow-y: auto; width: 100%;"
+            size="3"
+            style="height: 80px; width: 100%;"
           >
             {% for discipline in disciplines %}
               <option 
@@ -136,7 +138,19 @@
 
 
 <script>
-  document.getElementById('filter-dropdown').addEventListener('click', function (event) {
-    event.stopPropagation();
+  document.addEventListener('DOMContentLoaded', function() {
+    const dropdown = document.getElementById('filter-dropdown');
+
+    // Only prevent dropdown from closing when clicking inside
+    dropdown.addEventListener('click', function(event) {
+      event.stopPropagation();
+    });
   });
 </script>
+
+<style>
+  .filter-dropdown {
+    margin-top: 2px;
+  }
+</style>
+
