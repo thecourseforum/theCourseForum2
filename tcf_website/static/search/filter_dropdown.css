@@ -1,0 +1,72 @@
+.filter-dropdown .btn-filter {
+  background-color: white;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.filter-dropdown .btn-filter:hover {
+  background-color: #f8f9fa;
+  border-color: #cbd3da;
+}
+
+.filter-dropdown .dropdown-menu {
+  min-width: 280px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 8px;
+  animation: fadeIn 0.2s ease;
+}
+
+.filter-dropdown .dropdown-header {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-radius: 8px 8px 0 0;
+}
+
+.filter-section {
+  padding: 4px 0;
+}
+
+.filter-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.form-check {
+  margin: 8px 0;
+}
+
+.form-check-label {
+  color: #495057;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.form-check-input {
+  cursor: pointer;
+}
+
+.form-check-input:checked {
+  background-color: #4a69bd;
+  border-color: #4a69bd;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hover states */
+.form-check:hover .form-check-label {
+  color: #4a69bd;
+}
+
+/* Active states */
+.dropdown-menu.show {
+  transform: scale(1);
+  opacity: 1;
+}
