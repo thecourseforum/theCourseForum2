@@ -39,7 +39,7 @@ read -r _ < /dev/tty
 
 [ ! -f ".env" ] && echo "Error: '.env' file does not exist in '$1'. Follow the installation instructions in doc/dev.md after creating a '.env' file." && exit 1
 
-docker compose --no-cache
+docker compose build --no-cache
 docker compose up
 (
 	docker exec -i tcf_db psql tcf_db -U tcf_django -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
