@@ -29,7 +29,7 @@ git switch lfs-db
 
 echo ""
 echo "============================================"
-echo "Please ensure that the '.env' file exists in the repository directory: $1"
+echo "Please ensure that the '.env' file exists in the repository directory: $(eval echo "$1")"
 echo "Once you have created the '.env' file, press Enter to continue."
 echo "If the '.env' file does not exist, the script will exit."
 echo "============================================"
