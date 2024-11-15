@@ -24,6 +24,7 @@ if [ "$?" -ne 0 ]; then
 fi
 
 cd theCourseForum2 || exit
+git switch lfs-db
 
 echo ""
 echo "============================================"
