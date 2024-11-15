@@ -24,6 +24,7 @@ if [ "$?" -ne 0 ]; then
 fi
 
 cd theCourseForum2 || exit
+# TODO: remove this when on main
 git switch lfs-db
 
 echo ""
@@ -34,7 +35,7 @@ echo "If the '.env' file does not exist, the script will exit."
 echo "============================================"
 
 printf "Press Enter to continue after verifying the '.env' file..."
-read -r _
+read -r _ < /dev/tty
 
 [ ! -f ".env" ] && echo "Error: '.env' file does not exist in '$1'. Follow the installation instructions in doc/dev.md after creating a '.env' file." && exit 1
 
