@@ -35,101 +35,100 @@
       Filter
     </button>
     <div 
-      class="dropdown-menu dropdown-menu-right p-4 filter-dropdown" 
+      class="dropdown-menu p-4 filter-dropdown" 
       aria-labelledby="filter-button" 
       style="width: min(90vw, 800px); position: absolute;" 
       id="filter-dropdown"
     >
-      <form method="GET" action="{% url 'search' %}">
-        <!-- Days Section -->
-        <div class="mb-4">
-          <h6 class="dropdown-header px-0 font-weight-bold" style="border-bottom: 1px solid #dee2e6; margin-bottom: 0.5rem; padding-bottom: 0.5rem;">
+      <div class="filter-container">
+        <div class="filter-section compact">
+          <h6 class="filter-header">
+            <i class="fa fa-calendar-day me-2"></i>
             Class Days
           </h6>
-          <div class="d-flex flex-wrap" style="gap: 0.75rem">
-            <div class="form-check me-3">
-              <input class="form-check-input" type="checkbox" id="monday" name="monday"
-                {% if 'monday' in selected_days %}checked{% endif %}>
-              <label class="form-check-label" for="monday">Monday</label>
+          <div class="day-toggles">
+            <div class="form-check form-check-inline m-0">
+              <input class="form-check-input" type="checkbox" id="monday" name="monday" checked>
+              <label class="form-check-label" for="monday">Mon</label>
             </div>
-            <div class="form-check me-3">
-              <input class="form-check-input" type="checkbox" id="tuesday" name="tuesday"
-                {% if 'tuesday' in selected_days %}checked{% endif %}>
-              <label class="form-check-label" for="tuesday">Tuesday</label>
+            <div class="form-check form-check-inline m-0">
+              <input class="form-check-input" type="checkbox" id="tuesday" name="tuesday" checked>
+              <label class="form-check-label" for="tuesday">Tue</label>
             </div>
-            <div class="form-check me-3">
-              <input class="form-check-input" type="checkbox" id="wednesday" name="wednesday"
-                {% if 'wednesday' in selected_days %}checked{% endif %}>
-              <label class="form-check-label" for="wednesday">Wednesday</label>
+            <div class="form-check form-check-inline m-0">
+              <input class="form-check-input" type="checkbox" id="wednesday" name="wednesday" checked>
+              <label class="form-check-label" for="wednesday">Wed</label>
             </div>
-            <div class="form-check me-3">
-              <input class="form-check-input" type="checkbox" id="thursday" name="thursday"
-                {% if 'thursday' in selected_days %}checked{% endif %}>
-              <label class="form-check-label" for="thursday">Thursday</label>
+            <div class="form-check form-check-inline m-0">
+              <input class="form-check-input" type="checkbox" id="thursday" name="thursday" checked>
+              <label class="form-check-label" for="thursday">Thu</label>
             </div>
-            <div class="form-check me-3">
-              <input class="form-check-input" type="checkbox" id="friday" name="friday"
-                {% if 'friday' in selected_days %}checked{% endif %}>
-              <label class="form-check-label" for="friday">Friday</label>
+            <div class="form-check form-check-inline m-0">
+              <input class="form-check-input" type="checkbox" id="friday" name="friday" checked>
+              <label class="form-check-label" for="friday">Fri</label>
             </div>
           </div>
         </div>
 
-        <!-- Subject Filter -->
-        <div class="mb-4">
-          <h6 class="dropdown-header px-0 font-weight-bold" style="border-bottom: 1px solid #dee2e6; margin-bottom: 0.5rem; padding-bottom: 0.5rem;">
-            Subject
-          </h6>
-          <select 
-            class="form-select" 
-            id="subdepartment" 
-            name="subdepartment" 
-            multiple 
-            size="3"
-            style="height: 80px; width: 100%;"
-          >
-            {% for subdept in subdepartments %}
-              <option 
-                value="{{ subdept.mnemonic }}"
-                {% if subdept.mnemonic in selected_subdepartments %}selected{% endif %}
-              >
-                {{ subdept.mnemonic }} - {{ subdept.name }}
-              </option>
-            {% endfor %}
-          </select>
-          <small class="form-text text-muted mt-1">Hold Ctrl/Cmd to select multiple</small>
+        <div class="filter-grid">
+          <div class="filter-section">
+            <h6 class="filter-header">
+              <i class="fa fa-book me-2"></i>
+              Subject
+            </h6>
+            <div class="search-container">
+              <input type="text" class="form-control" id="subject-search" placeholder="Search subjects...">
+            </div>
+            <div class="subject-list">
+              {% for subdept in subdepartments %}
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="subject-{{ subdept.mnemonic }}" 
+                    name="subdepartment" 
+                    value="{{ subdept.mnemonic }}"
+                    {% if subdept.mnemonic in selected_subdepartments %}checked{% endif %}
+                  >
+                  <label class="form-check-label" for="subject-{{ subdept.mnemonic }}">
+                    {{ subdept.mnemonic }} - {{ subdept.name }}
+                  </label>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          
+          <div class="filter-section">
+            <h6 class="filter-header">
+              <i class="fa fa-graduation-cap me-2"></i>
+              Discipline
+            </h6>
+            <div class="discipline-list">
+              {% for discipline in disciplines %}
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="discipline-{{ discipline.name|slugify }}" 
+                    name="discipline" 
+                    value="{{ discipline.name }}"
+                    {% if discipline.name in selected_disciplines %}checked{% endif %}
+                  >
+                  <label class="form-check-label" for="discipline-{{ discipline.name|slugify }}">
+                    {{ discipline.name }}
+                  </label>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
         </div>
+      </div>
 
-        <!-- Discipline Filter -->
-        <div class="mb-4">
-          <h6 class="dropdown-header px-0 font-weight-bold" style="border-bottom: 1px solid #dee2e6; margin-bottom: 0.5rem; padding-bottom: 0.5rem;">
-            Discipline
-          </h6>
-          <select 
-            class="form-select" 
-            id="discipline" 
-            name="discipline" 
-            multiple 
-            size="3"
-            style="height: 80px; width: 100%;"
-          >
-            {% for discipline in disciplines %}
-              <option 
-                value="{{ discipline.name }}"
-                {% if discipline.name in selected_disciplines %}selected{% endif %}
-              >
-                {{ discipline.name }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="d-flex justify-content-between mt-4">
-          <button type="reset" class="btn btn-outline-secondary">Clear All</button>
-          <button type="submit" class="btn btn-primary">Apply Filters</button>
-        </div>
-      </form>
+      <!-- Action buttons -->
+      <div class="filter-actions">
+        <button type="reset" class="btn btn-outline-secondary">Clear All</button>
+        <button type="submit" class="btn btn-primary">Apply Filters</button>
+      </div>
     </div>
   </div>
 </form>
@@ -145,12 +144,170 @@
     dropdown.addEventListener('click', function(event) {
       event.stopPropagation();
     });
+
+    // Add subject search functionality
+    const subjectSearch = document.getElementById('subject-search');
+    const subjectItems = document.querySelectorAll('.subject-list .form-check');
+
+    subjectSearch.addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      
+      subjectItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    // Add clear all functionality
+    const resetButton = document.querySelector('button[type="reset"]');
+    resetButton.addEventListener('click', function(e) {
+      e.preventDefault(); // Prevent default reset behavior
+      
+      // Reset checkboxes
+      document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = true; // Set days to checked by default
+        if (checkbox.name === 'subdepartment' || checkbox.name === 'discipline') {
+          checkbox.checked = false; // Uncheck subjects and disciplines
+        }
+      });
+
+      // Clear subject search
+      document.getElementById('subject-search').value = '';
+      document.querySelectorAll('.subject-list .form-check').forEach(item => {
+        item.style.display = ''; // Show all subjects
+      });
+    });
   });
 </script>
 
 <style>
   .filter-dropdown {
-    margin-top: 2px;
+    width: min(90vw, 800px);
+    margin-top: 0.5rem;
+    right: 0;
+    left: auto !important;
+    transform: none !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+
+  .filter-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .filter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .filter-section.compact {
+    margin-bottom: 0;
+  }
+
+  .day-toggles {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .day-toggles .form-check-inline {
+    background: white;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 0.4rem 0.9rem;
+    transition: all 0.15s ease;
+  }
+
+  .day-toggles .form-check-input:checked + .form-check-label {
+    color: #2b6cb0;
+    font-weight: 600;
+  }
+
+  .day-toggles .form-check-inline:hover {
+    background: #f7fafc;
+    border-color: #90cdf4;
+  }
+
+  .subject-list, .discipline-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    background: #fff;
+    min-height: 250px;
+  }
+
+  .discipline-list {
+    /* removed max-height: 250px; */
+  }
+
+  .search-container {
+    position: relative;
+  }
+
+  .search-container .form-control {
+    padding-left: 2rem;
+  }
+
+  .search-container::before {
+    content: '\f002';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #718096;
+    pointer-events: none;
+  }
+
+  .filter-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .form-check {
+    padding: 0.375rem 0;
+    margin: 0;
+  }
+
+  .form-check:hover {
+    background-color: #f7fafc;
+    border-radius: 4px;
+  }
+
+  .form-check-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .subject-list, .discipline-list {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 transparent;
+  }
+
+  .subject-list::-webkit-scrollbar,
+  .discipline-list::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .subject-list::-webkit-scrollbar-thumb,
+  .discipline-list::-webkit-scrollbar-thumb {
+    background-color: #cbd5e0;
+    border-radius: 2px;
   }
 </style>
 
