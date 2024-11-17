@@ -21,113 +21,114 @@
       </button>
     </div>
   </div>
-  <div class="dropdown input-group">
-    <button 
-      class="btn btn-outline-secondary dropdown-toggle border border-left-0" 
-      id="filter-button" 
-      aria-label="Filter" 
-      type="button" 
-      data-toggle="dropdown" 
-      data-bs-display="static" 
-      data-bs-auto-close="outside" 
-      aria-expanded="false" 
-    >
-      Filter
-    </button>
-    <div 
-      class="dropdown-menu p-4 filter-dropdown" 
-      aria-labelledby="filter-button" 
-      style="width: min(90vw, 800px); position: absolute;" 
-      id="filter-dropdown"
-    >
-      <div class="filter-container">
-        <div class="filter-section compact">
-          <h6 class="filter-header">
-            <i class="fa fa-calendar-day me-2"></i>
-            Class Days
-          </h6>
-          <div class="day-toggles">
-            <div class="form-check form-check-inline m-0">
-              <input class="form-check-input" type="checkbox" id="monday" name="monday" checked>
-              <label class="form-check-label" for="monday">Mon</label>
+  <div class="dropdown-wrapper">
+    <div class="dropdown input-group">
+      <button 
+        class="btn btn-outline-secondary dropdown-toggle border border-left-0" 
+        id="filter-button" 
+        aria-label="Filter" 
+        type="button" 
+        data-toggle="dropdown" 
+        data-bs-display="static" 
+        data-bs-auto-close="outside" 
+        aria-expanded="false" 
+      >
+        Filter
+      </button>
+      <div 
+        class="dropdown-menu p-4 filter-dropdown dropdown-menu-end" 
+        aria-labelledby="filter-button" 
+        id="filter-dropdown"
+      >
+        <div class="filter-container">
+          <div class="filter-section compact">
+            <h6 class="filter-header">
+              <i class="fa fa-calendar-day me-2"></i>
+              Class Days
+            </h6>
+            <div class="day-toggles">
+              <div class="form-check form-check-inline m-0">
+                <input class="form-check-input" type="checkbox" id="monday" name="monday" checked>
+                <label class="form-check-label" for="monday">Mon</label>
+              </div>
+              <div class="form-check form-check-inline m-0">
+                <input class="form-check-input" type="checkbox" id="tuesday" name="tuesday" checked>
+                <label class="form-check-label" for="tuesday">Tue</label>
+              </div>
+              <div class="form-check form-check-inline m-0">
+                <input class="form-check-input" type="checkbox" id="wednesday" name="wednesday" checked>
+                <label class="form-check-label" for="wednesday">Wed</label>
+              </div>
+              <div class="form-check form-check-inline m-0">
+                <input class="form-check-input" type="checkbox" id="thursday" name="thursday" checked>
+                <label class="form-check-label" for="thursday">Thu</label>
+              </div>
+              <div class="form-check form-check-inline m-0">
+                <input class="form-check-input" type="checkbox" id="friday" name="friday" checked>
+                <label class="form-check-label" for="friday">Fri</label>
+              </div>
             </div>
-            <div class="form-check form-check-inline m-0">
-              <input class="form-check-input" type="checkbox" id="tuesday" name="tuesday" checked>
-              <label class="form-check-label" for="tuesday">Tue</label>
+          </div>
+
+          <div class="filter-grid">
+            <div class="filter-section">
+              <h6 class="filter-header">
+                <i class="fa fa-book me-2"></i>
+                Subject
+              </h6>
+              <div class="search-container">
+                <input type="text" class="form-control" id="subject-search" placeholder="Search subjects...">
+              </div>
+              <div class="subject-list">
+                {% for subdept in subdepartments %}
+                  <div class="form-check">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      id="subject-{{ subdept.mnemonic }}" 
+                      name="subdepartment" 
+                      value="{{ subdept.mnemonic }}"
+                      {% if subdept.mnemonic in selected_subdepartments %}checked{% endif %}
+                    >
+                    <label class="form-check-label" for="subject-{{ subdept.mnemonic }}">
+                      {{ subdept.mnemonic }} - {{ subdept.name }}
+                    </label>
+                  </div>
+                {% endfor %}
+              </div>
             </div>
-            <div class="form-check form-check-inline m-0">
-              <input class="form-check-input" type="checkbox" id="wednesday" name="wednesday" checked>
-              <label class="form-check-label" for="wednesday">Wed</label>
-            </div>
-            <div class="form-check form-check-inline m-0">
-              <input class="form-check-input" type="checkbox" id="thursday" name="thursday" checked>
-              <label class="form-check-label" for="thursday">Thu</label>
-            </div>
-            <div class="form-check form-check-inline m-0">
-              <input class="form-check-input" type="checkbox" id="friday" name="friday" checked>
-              <label class="form-check-label" for="friday">Fri</label>
+            
+            <div class="filter-section">
+              <h6 class="filter-header">
+                <i class="fa fa-graduation-cap me-2"></i>
+                Discipline
+              </h6>
+              <div class="discipline-list">
+                {% for discipline in disciplines %}
+                  <div class="form-check">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      id="discipline-{{ discipline.name|slugify }}" 
+                      name="discipline" 
+                      value="{{ discipline.name }}"
+                      {% if discipline.name in selected_disciplines %}checked{% endif %}
+                    >
+                    <label class="form-check-label" for="discipline-{{ discipline.name|slugify }}">
+                      {{ discipline.name }}
+                    </label>
+                  </div>
+                {% endfor %}
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="filter-grid">
-          <div class="filter-section">
-            <h6 class="filter-header">
-              <i class="fa fa-book me-2"></i>
-              Subject
-            </h6>
-            <div class="search-container">
-              <input type="text" class="form-control" id="subject-search" placeholder="Search subjects...">
-            </div>
-            <div class="subject-list">
-              {% for subdept in subdepartments %}
-                <div class="form-check">
-                  <input 
-                    class="form-check-input" 
-                    type="checkbox" 
-                    id="subject-{{ subdept.mnemonic }}" 
-                    name="subdepartment" 
-                    value="{{ subdept.mnemonic }}"
-                    {% if subdept.mnemonic in selected_subdepartments %}checked{% endif %}
-                  >
-                  <label class="form-check-label" for="subject-{{ subdept.mnemonic }}">
-                    {{ subdept.mnemonic }} - {{ subdept.name }}
-                  </label>
-                </div>
-              {% endfor %}
-            </div>
-          </div>
-          
-          <div class="filter-section">
-            <h6 class="filter-header">
-              <i class="fa fa-graduation-cap me-2"></i>
-              Discipline
-            </h6>
-            <div class="discipline-list">
-              {% for discipline in disciplines %}
-                <div class="form-check">
-                  <input 
-                    class="form-check-input" 
-                    type="checkbox" 
-                    id="discipline-{{ discipline.name|slugify }}" 
-                    name="discipline" 
-                    value="{{ discipline.name }}"
-                    {% if discipline.name in selected_disciplines %}checked{% endif %}
-                  >
-                  <label class="form-check-label" for="discipline-{{ discipline.name|slugify }}">
-                    {{ discipline.name }}
-                  </label>
-                </div>
-              {% endfor %}
-            </div>
-          </div>
+        <!-- Action buttons -->
+        <div class="filter-actions">
+          <button type="reset" class="btn btn-outline-secondary">Clear All</button>
+          <button type="submit" class="btn btn-primary">Apply Filters</button>
         </div>
-      </div>
-
-      <!-- Action buttons -->
-      <div class="filter-actions">
-        <button type="reset" class="btn btn-outline-secondary">Clear All</button>
-        <button type="submit" class="btn btn-primary">Apply Filters</button>
       </div>
     </div>
   </div>
@@ -181,15 +182,26 @@
 </script>
 
 <style>
+  .dropdown-wrapper {
+    position: relative;
+  }
+
   .filter-dropdown {
-    width: min(90vw, 800px);
-    margin-top: 0.5rem;
-    right: 0;
+    position: absolute !important;
+    right: 0 !important;
     left: auto !important;
     transform: none !important;
+    width: min(90vw, 800px);
+    margin-top: 0.5rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     border-radius: 12px;
     border: 1px solid rgba(0,0,0,0.1);
+  }
+
+  @media (max-width: 992px) {
+    .filter-dropdown {
+      right: -1rem !important; /* Adjust position on mobile */
+    }
   }
 
   .filter-container {
