@@ -1,0 +1,100 @@
+{% load custom_tags %}
+{% load static %}
+
+<div class="modal fade" id="deleteScheduleModal" tabindex="-1" role="dialog" aria-labelledby="deleteScheduleModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete Schedule</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form id="delete_schedule_form" action="{% url 'delete_schedule' %}" method="POST">
+                {% csrf_token %}
+                {% for s in schedules %}
+                <div class="radio">
+                    <label>
+                        <input type="checkbox" name="selected_schedules" value="{{s.id}}"> 
+                    
+                        {% include "schedule/schedule.html" with schedule=s gpa=schedules_gpa|get_item:s.id courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id credits=credits|get_item:s.id %}
+                        </input>
+                        
+                    </label>
+                </div>
+                {% empty %}
+                <div>You haven't made any schedules yet!</div>
+                {% endfor %}
+                <div class="ml-sm-auto d-flex justify-content-end">
+                    <button id="delete_schedule_select_btn" type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmDeleteModal" disabled>
+                        Confirm
+                    </button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body border-0">
+                Are you sure you want to delete the selected schedules?
+            </div>
+            <div class="modal-footer border-0 d-flex justify-content-center">
+                <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button> -->
+                <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var checkboxes = document.querySelectorAll('input[type="checkbox"][name="selected_schedules"]');
+        var confirmButton = document.getElementById('delete_schedule_select_btn');
+        var deleteForm = document.getElementById('delete_schedule_form');
+        var confirmDeleteButton = document.getElementById('confirmDeleteBtn');
+        var cancelDeleteButton = document.getElementById('cancelDeleteBtn');
+        var deleteScheduleModal = document.getElementById('deleteScheduleModal');
+
+        function updateButtonState() {
+            var isAnyCheckboxChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+            confirmButton.disabled = !isAnyCheckboxChecked;
+        }
+
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', updateButtonState);
+        });
+
+        confirmButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            $('#confirmDeleteModal').modal('show');
+        });
+
+        confirmDeleteButton.addEventListener('click', function() {
+            deleteForm.submit();
+        });
+
+        cancelDeleteButton.addEventListener('click', function() {
+            $('#confirmDeleteModal').modal('hide');
+            deleteScheduleModal.focus();
+            deleteScheduleModal.style.overflow = 'auto';
+            document.body.style.overflow = 'hidden';
+        });
+
+        updateButtonState();
+    })
+</script>
+{% endblock %}
