@@ -752,6 +752,18 @@ class Section(models.Model):
     # Comma-separated list of times the section is taught.
     section_times = models.CharField(max_length=255, blank=True)
 
+    # Total number of enrolled students. Optional.
+    enrollment_total = models.IntegerField(null=True, blank=True, default=None)
+
+    # Maximum number of students allowed to enroll. Optional.
+    enrollment_limit = models.IntegerField(null=True, blank=True, default=None)
+
+    # Total number of students on the waitlist. Optional.
+    waitlist_total = models.IntegerField(null=True, blank=True, default=None)
+
+    # Maximum number of students allowed on the waitlist. Optional.
+    waitlist_limit = models.IntegerField(null=True, blank=True, default=None)
+
     def __str__(self):
         return (
             f"{self.course} | {self.semester} | "
