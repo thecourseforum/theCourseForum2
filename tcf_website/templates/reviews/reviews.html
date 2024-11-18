@@ -1,4 +1,5 @@
 {% load static %}
+<link rel="stylesheet" href="{% static 'reviews/pagination.css' %}" />
 
 <div class="reviews container-lg px-0">
     <ul class="review-list list-unstyled">
@@ -25,24 +26,20 @@
         {% if paginated_reviews.has_previous %}
             <a href="?page={{ paginated_reviews.previous_page_number }}#reviews">&lt;</a>
         {% endif %}
-
-        <a href="?page=1#reviews">1</a>
-        {% if paginated_reviews.paginator.num_pages >= 2 %}
-            <a href="?page=2#reviews">2</a>
+    
+        {% if paginated_reviews.number == 1 %}
+            <span class="current">1</span>
+        {% else %}
+            <a href="?page=1#reviews">1</a>
         {% endif %}
-        {% if paginated_reviews.paginator.num_pages >= 3 and paginated_reviews.number != 3 %}
-            <a href="?page=3#reviews">3</a>
-        {% elif paginated_reviews.number == 3 %}
-            <span class="current">3</span>
+    
+        {% if paginated_reviews.number > 4 %}
+            <span class="dots">...</span>
         {% endif %}
-
-        {% if paginated_reviews.paginator.num_pages > 3 and paginated_reviews.number > 3 %}
-            <span>...</span>
-        {% endif %}
-
+    
         {% for page_num in paginated_reviews.paginator.page_range %}
-            {% if page_num > 3 and page_num < paginated_reviews.paginator.num_pages %}
-                {% if page_num >= paginated_reviews.number|add:'-1' and page_num <= paginated_reviews.number|add:'1' %}
+            {% if page_num > 1 and page_num < paginated_reviews.paginator.num_pages %}
+                {% if page_num >= paginated_reviews.number|add:'-2' and page_num <= paginated_reviews.number|add:'2' %}
                     {% if page_num == paginated_reviews.number %}
                         <span class="current">{{ page_num }}</span>
                     {% else %}
@@ -51,23 +48,25 @@
                 {% endif %}
             {% endif %}
         {% endfor %}
-
-        {% if paginated_reviews.paginator.num_pages > 3 and paginated_reviews.number < paginated_reviews.paginator.num_pages|add:'-2' %}
-            <span>...</span>
+    
+        {% if paginated_reviews.number < paginated_reviews.paginator.num_pages|add:'-3' %}
+            <span class="dots">...</span>
         {% endif %}
-
-        {% if paginated_reviews.paginator.num_pages > 3 %}
+    
+        {% if paginated_reviews.paginator.num_pages > 1 %}
             {% if paginated_reviews.number == paginated_reviews.paginator.num_pages %}
                 <span class="current">{{ paginated_reviews.paginator.num_pages }}</span>
             {% else %}
-                <a href="?page={{ paginated_reviews.paginator.num_pages }}#reviews">{{ paginated_reviews.paginator.num_pages }}</a>
+                <a href="?page={{ paginated_reviews.paginator.num_pages }}#reviews">
+                    {{ paginated_reviews.paginator.num_pages }}
+                </a>
             {% endif %}
         {% endif %}
-
+    
         {% if paginated_reviews.has_next %}
             <a href="?page={{ paginated_reviews.next_page_number }}#reviews">&gt;</a>
         {% endif %}
-    </div>
+    </div>    
     {% endif %}
 </div>
 
