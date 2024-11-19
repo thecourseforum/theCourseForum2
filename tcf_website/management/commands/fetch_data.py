@@ -41,6 +41,7 @@ from tqdm import tqdm
 session = requests.session()
 TIMEOUT = 300
 
+
 @backoff.on_exception(
     backoff.expo,
     (requests.exceptions.Timeout, requests.exceptions.ConnectionError),
@@ -138,9 +139,7 @@ def compile_course_data(course_number, sem_code):
 
     class_details = data["section_info"]["class_details"]
     meetings = {0: None, 1: None, 2: None, 3: None}
-    attributes = ( data["section_info"]["enrollment_information"]
-                  ["class_attributes"]
-    )
+    attributes = data["section_info"]["enrollment_information"]["class_attributes"]
     disciplines = ""
     cost = ""
     for attribute in attributes.split(" \r"):
