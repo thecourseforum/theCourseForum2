@@ -1,3 +1,9 @@
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'icons/icons.css' %}"/>
+{% endblock %}
+
 <!-- tCF search -->
 <!-- To be imported into templates (navbar, landing page) -->
 <form class="form-inline flex-grow-1" action="/search" method="get">
