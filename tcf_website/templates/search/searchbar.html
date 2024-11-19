@@ -84,7 +84,7 @@
               </div>
               <div class="subject-list">
                 {% for subdept in subdepartments %}
-                  <div class="form-check">
+                  <div class="form-check subdepartment-label">
                     <input 
                       class="form-check-input" 
                       type="checkbox" 
@@ -108,7 +108,7 @@
               </h6>
               <div class="discipline-list">
                 {% for discipline in disciplines %}
-                  <div class="form-check">
+                  <div class="form-check discipline-label">
                     <input 
                       class="form-check-input" 
                       type="checkbox" 
@@ -273,6 +273,11 @@
     margin-top: 0.5rem;
     background: #fff;
     min-height: 250px;
+  }
+
+  .form-check.subdepartment-label, .form-check.discipline-label {
+    display: flex;
+    justify-content: flex-start;
   }
 
   .discipline-list {
