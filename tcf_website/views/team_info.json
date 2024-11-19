@@ -106,13 +106,6 @@
       "github": "nehagb99"
     },
     {
-      "name": "Ruiyu Zhang",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Ruiyu_Zhang.jpg",
-      "github": "RuiyuZhang69"
-    },
-    {
       "name": "Kyle Durrer",
       "role": "Developer",
       "class": "2024",
@@ -127,32 +120,11 @@
       "github": "alex-yung-github"
     },
     {
-      "name": "Bryan Katuari",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Bryan_Katuari.jpg",
-      "github": "bryankatuari"
-    },
-    {
       "name": "Luke Kohler",
       "role": "Developer",
       "class": "2026",
       "img_filename": "ENG_Luke_Kohler.jpeg",
       "github": "ldkohler"
-    },
-    {
-      "name": "Vincent Song",
-      "role": "Developer",
-      "class": "2025",
-      "img_filename": "ENG_Vincent_Song.jpg",
-      "github": "vsong15"
-    },
-    {
-      "name": "Arthur Wu",
-      "role": "Developer",
-      "class": "2027",
-      "img_filename": "ENG_Arthur_Wu.jpg",
-      "github": "arthurwu1227"
     },
     {
       "name": "Zohaib Khalid",
@@ -220,20 +192,6 @@
       "class": "2025",
       "img_filename": "ENG_Olivia_Seto.jpg",
       "github": "oliviaseto"
-    },
-    {
-      "name": "Sebastian Wiktorowicz",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Sebastian_Wiktorowicz.png",
-      "github": "SebastianWikt"
-    },
-    {
-      "name": "Tino Martella",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Tino_Martella.jpg",
-      "github": "Tino-Martella"
     },
     {
       "name": "Hanzhe Dong",
