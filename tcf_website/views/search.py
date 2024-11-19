@@ -36,9 +36,11 @@ def search(request):
             request.GET.get("wednesday"),
             request.GET.get("thursday"),
             request.GET.get("friday"),
-        ]
+        ],
+        "from_time": request.GET.get("from_time"),
+        "to_time": request.GET.get("to_time"),
     }
-
+    
     instructors = fetch_instructors(query)
     courses = fetch_courses(title_part, number_part, filters)
 
