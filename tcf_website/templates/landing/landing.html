@@ -28,7 +28,11 @@
             </a>
 
             <!-- tCF History Popup -->
-            <a class="ml-auto nav-link fa fa-clock-o" href="#historyPage" data-toggle="modal"></a>
+            <a class="ml-auto nav-link d-flex align-items-center" href="#historyPage" data-toggle="modal">
+                <a class="nav-link d-flex align-items-center" href="#historyPage" data-toggle="modal">
+                    <img src="{% static 'icons/img/fa-clock.svg' %}" style="width: 1.2em; height: auto; vertical-align: middle; horizontal" alt="Clock Icon">
+                </a>
+            </a>
 
             <!-- tCF profile dropdown -->
             <div class="account-settings">
@@ -169,7 +173,7 @@
                                     <div class="card-body mx-auto">
                                         <p class="card-text text-white text-left">
                                             Meet the full team
-                                            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                            <i class="fa fa-arrow-right" aria-hidden="true" style = "width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
                                         </p>
                                     </div>
                                 </div>
