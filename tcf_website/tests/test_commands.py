@@ -36,7 +36,7 @@ class LoadGradesTestCase(TestCase):
 
     def test_correct_instructor(self):
         """Make sure instructor is Tom Jefferson"""
-        self.assertEqual(self.cig.instructor.full_name(), "Tom Jefferson")
+        self.assertEqual(self.cig.instructor.full_name, "Tom Jefferson")
 
     def test_total_students(self):
         """Check valid total_enrolled"""
