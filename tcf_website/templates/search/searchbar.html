@@ -146,11 +146,17 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const dropdown = document.getElementById('filter-dropdown');
+    const searchInput = document.querySelector('.form-control.border.border-right-0');
+
+    searchInput.addEventListener('click', function(event) {
+      event.stopPropagation();
+    });
 
     // Only prevent dropdown from closing when clicking inside
     dropdown.addEventListener('click', function(event) {
       event.stopPropagation();
     });
+    
 
     // Add subject search functionality
     const subjectSearch = document.getElementById('subject-search');
@@ -252,11 +258,12 @@
 
   .filter-dropdown {
     position: absolute !important;
+    top: 100% !important; 
     right: 0 !important;
     left: auto !important;
+    margin-top: 0.5rem !important;
     transform: none !important;
     width: min(90vw, 800px);
-    margin-top: 0.5rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     border-radius: 12px;
     border: 1px solid rgba(0,0,0,0.1);
