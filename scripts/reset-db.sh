@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DB_FILE="${DB_FILE:-db/latest.sql}"
+DB_FILE="${1:-db/latest.sql}"
 
 if [ ! -f "$DB_FILE" ]; then 
   echo "Database file '$DB_FILE' not found."
