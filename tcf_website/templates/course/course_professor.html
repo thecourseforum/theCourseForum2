@@ -217,11 +217,11 @@
                                 </div>
                                 <div style="text-align: center; margin: 0 10px;">
                                     {% if sec_info.enrollment_limit %}
-                                    {{ sec_info.enrollment_total|default_if_none:0 }}/{{ sec_info.enrollment_limit }}
+                                    {{ sec_info.enrollment_total }}/{{ sec_info.enrollment_limit }}
                                     {% endif %}
-                                    <!-- {% if sec_info.waitlist_limit %}
-                                    ({{ sec_info.waitlist_total|default_if_none:0 }}/{{ sec_info.waitlist_limit }})
-                                    {% endif %} -->
+                                    {% if sec_info.waitlist_limit %}
+                                    ({{ sec_info.waitlist_total }}/{{ sec_info.waitlist_limit }})
+                                    {% endif %}
                                 </div>
                                 <div style="grid-column: ratio/end; text-align: right;">
                                     {% for time in sec_info.times %}
