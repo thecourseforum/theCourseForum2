@@ -210,13 +210,16 @@
                     <div style="overflow: hidden;">
                         <div id="sectionInfo" style="margin-top: -10000px;">
                             {% for section, sec_info in section_info.sections.items %}
-                            <div style="display: grid; grid-template-columns: [start] 6ch [sec-num] auto [type] 1fr [end]; margin-bottom: 3px;">
+                            <div style="display: grid; grid-template-columns: [start] 6ch [sec-num] auto [type] auto [ratio] 1fr [end]; margin-bottom: 3px;">
                                 <div style="color: var(--accent-color);">{{ section }}</div>
                                 <div style="margin-left: min(20px, 4vw);">
                                     {{ sec_info.type }}{% if sec_info.units is not None %} ({{ sec_info.units }} Unit{% if sec_info.units != 1 %}s{% endif %}){% endif %}
                                     {%if sec_info.cost is not None %}{{ sec_info.cost }}{% endif %}
                                 </div>
-                                <div style="grid-column: type/end; text-align: right;">
+                                <div style="text-align: center; margin: 0 10px;">
+                                    {{ sec_info.enrollment_total }}/{{ sec_info.enrollment_limit }} ({{ sec_info.waitlist_total }}/{{ sec_info.waitlist_limit }})
+                                </div>
+                                <div style="grid-column: ratio/end; text-align: right;">
                                     {% for time in sec_info.times %}
                                     {% if forloop.counter > 1 %}<br>{% endif %}{{ time }}
                                     {% endfor %}

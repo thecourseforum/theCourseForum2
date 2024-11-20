@@ -284,6 +284,10 @@ def course_instructor(request, course_id, instructor_id):
             "units": section.units,
             "times": times,
             "cost": section.cost,
+            "enrollment_total": section.enrollment_total if section.enrollment_total is not None else "N/A",
+            "enrollment_limit": section.enrollment_limit if section.enrollment_limit is not None else "N/A",
+            "waitlist_total": section.waitlist_total if section.waitlist_total is not None else "N/A",
+            "waitlist_limit": section.waitlist_limit if section.waitlist_limit is not None else "N/A",
         }
 
     request.session["course_code"] = course.code()
