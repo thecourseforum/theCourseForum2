@@ -75,13 +75,18 @@ class SectionTimeAdmin(admin.ModelAdmin):
     def get_days_display(self, obj):
         """Return formatted string of meeting days."""
         days = []
-        if obj.monday: days.append('MON')
-        if obj.tuesday: days.append('TUE')
-        if obj.wednesday: days.append('WED')
-        if obj.thursday: days.append('THU')
-        if obj.friday: days.append('FRI')
+        if self.monday:
+            days.append('MON')
+        if self.tuesday:
+            days.append('TUE')
+        if self.wednesday:
+            days.append('WED')
+        if self.thursday:
+            days.append('THU')
+        if self.friday:
+            days.append('FRI')
         return ', '.join(days)
-    get_days_display.short_description = 'Days'  # Column header in admin
+    get_days_display.short_description = 'Days'
     
     def get_queryset(self, request):
         qs = super().get_queryset(request)
