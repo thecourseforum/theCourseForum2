@@ -113,7 +113,7 @@ class Command(BaseCommand):
             topic = row["Topic"]  # may be empty/nan
             description = row["Description"]  # may be empty/nan
             disciplines = row["Disciplines"]  # may be empty/nan (Need to split on "$")
-            cost = row["Cost"] # may be empty/nan
+            cost = row["Cost"]  # may be empty/nan
             section_type = row["Type"]  # may be empty/nan
 
             # may include staff, may be empty

@@ -106,13 +106,6 @@
       "github": "nehagb99"
     },
     {
-      "name": "Ruiyu Zhang",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Ruiyu_Zhang.jpg",
-      "github": "RuiyuZhang69"
-    },
-    {
       "name": "Kyle Durrer",
       "role": "Developer",
       "class": "2024",
@@ -127,32 +120,11 @@
       "github": "alex-yung-github"
     },
     {
-      "name": "Bryan Katuari",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Bryan_Katuari.jpg",
-      "github": "bryankatuari"
-    },
-    {
       "name": "Luke Kohler",
       "role": "Developer",
       "class": "2026",
       "img_filename": "ENG_Luke_Kohler.jpeg",
       "github": "ldkohler"
-    },
-    {
-      "name": "Vincent Song",
-      "role": "Developer",
-      "class": "2025",
-      "img_filename": "ENG_Vincent_Song.jpg",
-      "github": "vsong15"
-    },
-    {
-      "name": "Arthur Wu",
-      "role": "Developer",
-      "class": "2027",
-      "img_filename": "ENG_Arthur_Wu.jpg",
-      "github": "arthurwu1227"
     },
     {
       "name": "Zohaib Khalid",
@@ -222,25 +194,18 @@
       "github": "oliviaseto"
     },
     {
-      "name": "Sebastian Wiktorowicz",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Sebastian_Wiktorowicz.png",
-      "github": "SebastianWikt"
-    },
-    {
-      "name": "Tino Martella",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Tino_Martella.jpg",
-      "github": "Tino-Martella"
-    },
-    {
       "name": "Hanzhe Dong",
       "role": "Developer",
       "class": "2027",
       "img_filename": "ENG_Hanzhe_Dong.jpg",
       "github": "Charka123"
+    },
+    {
+      "name": "Joyce Yang",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Joyce_Yang.jpg",
+      "github": "jo-hya"
     },
     {
       "name": "Yu Cao",
@@ -291,12 +256,12 @@
       "img_filename": "ENG_Brandon_Istfan.jpg",
       "github": "brandonistfan"
     },
-    {      
-    "name": "Namai Kureishi",
-    "role": "Developer",
-    "class": "2027",
-    "img_filename": "ENG_Namai_Kureishi.jpg",
-    "github": "namaikureishi"
+    {
+      "name": "Namai Kureishi",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Namai_Kureishi.jpg",
+      "github": "namaikureishi"
     },
     {
       "name": "Ronit Batra",
@@ -304,6 +269,20 @@
       "class": "2027",
       "img_filename": "ENG_Ronit_Batra.jpg",
       "github": "ronitbatra"
+    },
+    {
+      "name": "Sagun Venuganti",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Sagun_Venuganti.jpg",
+      "github": "sagunvenuganti"
+    },
+    {
+      "name": "Shruti Bala",
+      "role": "Developer",
+      "class": "2025",
+      "img_filename": "ENG_Shruti_Bala.jpg",
+      "github": "shrutibala1"
     }
   ],
   "marketing_team": [

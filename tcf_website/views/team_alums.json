@@ -15,8 +15,34 @@
   ],
   "contributors": [
     {
+      "group_name": "Class of 2027",
+      "members": [
+        {
+          "name": "Arthur Wu",
+          "role": "Developer",
+          "class": "2027",
+          "img_filename": "ENG_Arthur_Wu.jpg",
+          "github": "arthurwu1227"
+        }
+      ]
+    },
+    {
       "group_name": "Class of 2026",
       "members": [
+        {
+          "name": "Bryan Katuari",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Bryan_Katuari.jpg",
+          "github": "bryankatuari"
+        },
+        {
+          "name": "Ruiyu Zhang",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Ruiyu_Zhang.jpg",
+          "github": "RuiyuZhang69"
+        },
         {
           "name": "Tommy Lam",
           "role": "Developer",
@@ -30,6 +56,20 @@
           "class": "2026",
           "img_filename": "ENG_Raffi_Khondaker.jpeg",
           "github": "therealraffi"
+        },
+        {
+          "name": "Tino Martella",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Tino_Martella.jpg",
+          "github": "Tino-Martella"
+        },
+        {
+          "name": "Sebastian Wiktorowicz",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Sebastian_Wiktorowicz.png",
+          "github": "SebastianWikt"
         }
       ]
     },
@@ -66,6 +106,13 @@
           "role": "VP | Marketing & Design",
           "class": "2025",
           "img_filename": "MAD_Rachita_Pathipati.webp"
+        },
+        {
+          "name": "Vincent Song",
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "ENG_Vincent_Song.jpg",
+          "github": "vsong15"
         }
       ]
     },
