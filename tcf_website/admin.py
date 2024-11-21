@@ -63,14 +63,25 @@ class SectionAdmin(admin.ModelAdmin):
         return qs
 
 class SectionTimeAdmin(admin.ModelAdmin):
-    list_display = ['section', 'days', 'start_time', 'end_time']
-    list_filter = ['days', 'start_time', 'end_time']
+    list_display = ['section', 'get_days_display', 'start_time', 'end_time']
+    list_filter = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'start_time', 'end_time']
     search_fields = [
         'section__course__subdepartment__mnemonic',
         'section__course__number',
         'section__course__title',
     ]
     autocomplete_fields = ['section']
+    
+    def get_days_display(self, obj):
+        """Return formatted string of meeting days."""
+        days = []
+        if obj.monday: days.append('MON')
+        if obj.tuesday: days.append('TUE')
+        if obj.wednesday: days.append('WED')
+        if obj.thursday: days.append('THU')
+        if obj.friday: days.append('FRI')
+        return ', '.join(days)
+    get_days_display.short_description = 'Days'  # Column header in admin
     
     def get_queryset(self, request):
         qs = super().get_queryset(request)
