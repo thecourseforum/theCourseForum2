@@ -62,6 +62,37 @@ class SectionAdmin(admin.ModelAdmin):
         qs = qs.prefetch_related("instructors")
         return qs
 
+class SectionTimeAdmin(admin.ModelAdmin):
+    list_display = ['section', 'get_days_display', 'start_time', 'end_time']
+    list_filter = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'start_time', 'end_time']
+    search_fields = [
+        'section__course__subdepartment__mnemonic',
+        'section__course__number',
+        'section__course__title',
+    ]
+    autocomplete_fields = ['section']
+
+    def get_days_display(self, obj):
+        """Return formatted string of meeting days."""
+        days = []
+        if getattr(obj, 'monday', False):
+            days.append('MON')
+        if getattr(obj, 'tuesday', False):
+            days.append('TUE')
+        if getattr(obj, 'wednesday', False):
+            days.append('WED')
+        if getattr(obj, 'thursday', False):
+            days.append('THU')
+        if getattr(obj, 'friday', False):
+            days.append('FRI')
+        return ', '.join(days)
+    get_days_display.short_description = 'Days'
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related(
+            'section__course__subdepartment'
+        )
 
 class CourseGradeAdmin(admin.ModelAdmin):
     ordering = ["course__subdepartment", "course__number", "course__title"]
@@ -83,3 +114,4 @@ admin.site.register(Subdepartment, SubdepartmentAdmin)
 admin.site.register(Semester, SemesterAdmin)
 admin.site.register(CourseGrade, CourseGradeAdmin)
 admin.site.register(CourseInstructorGrade, CourseInstructorGradeAdmin)
+admin.site.register(SectionTime, SectionTimeAdmin)

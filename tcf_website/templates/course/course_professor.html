@@ -215,6 +215,7 @@
                                 <div style="color: var(--accent-color);">{{ section }}</div>
                                 <div style="margin-left: min(20px, 4vw);">
                                     {{ sec_info.type }}{% if sec_info.units is not None %} ({{ sec_info.units }} Unit{% if sec_info.units != 1 %}s{% endif %}){% endif %}
+                                    {%if sec_info.cost is not None %}{{ sec_info.cost }}{% endif %}
                                 </div>
                                 <div style="grid-column: type/end; text-align: right;">
                                     {% for time in sec_info.times %}

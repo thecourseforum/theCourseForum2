@@ -16,7 +16,7 @@
 {#        {% include "../common/application_banner.html" %}#}
     
         {% include "../common/leaderboard_ad.html" with ad_slot="9691204298" %}
-
+        {% comment %} 
         <!-- Browse page content -->
         <h2 class="font-weight-light mt-4">Browse by Department</h2>
         <div class="schools text-left">
@@ -29,6 +29,49 @@
                 {% include "browse/school.html" with school=school %}
             {% endfor %}
 
-        </div>
+        </div> 
+        {% endcomment %}
+        <h2 class="font-weight-light">Advanced Search</h2>
+        <form method="GET" action="{% url 'search' %}">
+            <div class="form-group">
+                <label for="query">Search Query</label>
+                <input type="text" class="form-control" id="query" name="q" placeholder="Enter course title or instructor name" value="{{ query }}">
+            </div>
+            <div class="form-check form-check-inline align-items-center">
+                <label class="form-check-label" for="semester">Only display courses taught in the current semester</label>
+                <input type="checkbox" class="form-check-input" id="semester" name="semester" {% if semester %}checked{% endif %}>
+            </div>
+            <div class="form-group">
+                <label for="subdepartment">Subject</label>
+                <select multiple class="form-control" id="subdepartment" name="subdepartment">
+                    {% for subdept in subdepartments %}
+                        <option value="{{ subdept.mnemonic }}" {% if subdept.mnemonic in selected_subdepartments %}selected{% endif %}>{{ subdept.mnemonic }} - {{ subdept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="discipline">Discipline</label>
+                <select multiple class="form-control" id="discipline" name="discipline">
+                    {% for discipline in disciplines %}
+                        <option value="{{ discipline.name }}" {% if discipline.name in selected_disciplines %}selected{% endif %}>{{ discipline.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="instructor">Instructor</label>
+                <select multiple class="form-control" id="instructor" name="instructor">
+                    {% for instructor in instructors %}
+                        <option value="{{ instructor.id }}" {% if instructor.id|stringformat:"s" in selected_instructors %}selected{% endif %}>
+                            {{ instructor.full_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        
     </div>
 {% endblock %}
