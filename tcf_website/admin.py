@@ -71,23 +71,23 @@ class SectionTimeAdmin(admin.ModelAdmin):
         'section__course__title',
     ]
     autocomplete_fields = ['section']
-    
+
     def get_days_display(self, obj):
         """Return formatted string of meeting days."""
         days = []
-        if self.monday:
+        if getattr(obj, 'monday', False):
             days.append('MON')
-        if self.tuesday:
+        if getattr(obj, 'tuesday', False):
             days.append('TUE')
-        if self.wednesday:
+        if getattr(obj, 'wednesday', False):
             days.append('WED')
-        if self.thursday:
+        if getattr(obj, 'thursday', False):
             days.append('THU')
-        if self.friday:
+        if getattr(obj, 'friday', False):
             days.append('FRI')
         return ', '.join(days)
     get_days_display.short_description = 'Days'
-    
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.select_related(
