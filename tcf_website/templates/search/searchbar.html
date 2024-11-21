@@ -261,15 +261,6 @@
     // Initialize weekdays
     updateWeekdays();
 
-    // Handle form submission when Apply Filters is clicked
-    const applyButton = document.querySelector('.filter-actions .btn-primary');
-    const searchInput = document.querySelector('input[name="q"]');
-    
-    applyButton.addEventListener('click', function(e) {
-        e.preventDefault();  // Prevent default form submission
-        searchInput.value = '';  // Clear the search query
-        searchInput.closest('form').submit();  // Submit the form
-    });
   });
 </script>
 
