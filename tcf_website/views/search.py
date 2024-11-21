@@ -9,7 +9,7 @@ from django.db.models import F, FloatField, Q
 from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
 
-from ..models import Course, Instructor, Subdepartment
+from ..models import Course, Instructor, Semester, Subdepartment
 
 
 def group_by_dept(courses):
@@ -36,15 +36,30 @@ def search(request):
     # Set query
     query = request.GET.get("q", "")
 
-    courses = fetch_courses(query)
-    instructors = fetch_instructors(query)
-    courses_first = decide_order(courses, instructors)
+    filters = {
+        'disciplines': request.GET.getlist("discipline"),
+        'subdepartments': request.GET.getlist("subdepartment"),
+        'instructors': request.GET.getlist("instructor"),
+        'weekdays': request.GET.get("weekdays", "").split("-") if request.GET.get("weekdays") else [],
+        "from_time": request.GET.get("from_time"),
+        "to_time": request.GET.get("to_time"),
+    }
+
+    if query:
+        courses = fetch_courses(query)
+        instructors = fetch_instructors(query)
+        courses_first = decide_order(courses, instructors)
+    else:
+        courses = filter_courses(filters)
+        instructors = []
+        courses_first = True
 
     ctx = {
         "query": query[:30] + ("..." if len(query) > 30 else ""),
         "courses_first": courses_first,
         "courses": group_by_dept(courses),
         "instructors": instructors,
+        "total_courses": len(courses),
     }
 
     return render(request, "search/search.html", ctx)
@@ -135,7 +150,7 @@ def fetch_courses(query):
         .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
         # filters out classes that haven't been taught since Fall 2020
         .exclude(semester_last_taught_id__lt=48)
-        .order_by("-max_similarity")[:10]
+        .order_by("-max_similarity")
     )
 
     courses = [
@@ -149,6 +164,56 @@ def fetch_courses(query):
                 "description",
                 "max_similarity",
             )
+        }
+        for course in results
+    ]
+
+    return courses
+
+def filter_courses(filters):
+    """Get filtered courses without search functionality."""
+    results = (
+        Course.objects.select_related("subdepartment")
+        .only("title", "number", "subdepartment__mnemonic", "description")
+        .annotate(mnemonic=F("subdepartment__mnemonic"))
+        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+        .exclude(semester_last_taught_id__lt=48)
+    )
+
+    # Apply filters
+    if filters.get('disciplines'):
+        results = results.filter(disciplines__name__in=filters.get('disciplines'))
+
+    if filters.get('subdepartments'):
+        results = results.filter(subdepartment__mnemonic__in=filters.get('subdepartments'))
+
+    if filters.get('instructors'):
+        results = results.filter(section__instructors__id__in=filters.get('instructors'))
+
+    # Apply time filters
+    weekdays = [day for day in filters.get('weekdays', []) if day]
+    from_time = filters.get('from_time')
+    to_time = filters.get('to_time')
+
+    if any([weekdays, from_time, to_time]):
+        time_filtered = Course.filter_by_time(
+            days=weekdays,
+            start_time=from_time,
+            end_time=to_time
+        )
+        results = results.filter(id__in=time_filtered.values_list('id', flat=True))
+
+    results = results.distinct().order_by("subdepartment__mnemonic", "number")
+
+    # Convert to same format as fetch_courses
+    courses = [
+        {
+            "id": course.id,
+            "title": course.title,
+            "number": course.number,
+            "mnemonic": course.mnemonic,
+            "description": course.description,
+            "max_similarity": 1.0  # default value since we're not searching
         }
         for course in results
     ]

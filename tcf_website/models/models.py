@@ -657,29 +657,42 @@ class Course(models.Model):
 
     @classmethod
     def filter_by_time(cls, days=None, start_time=None, end_time=None):
-        """
-        Filter courses by available times.
-        
-        Args:
-            days: List of days (e.g., ['MON', 'WED'])
-            start_time: Earliest acceptable start time
-            end_time: Latest acceptable end time
-        """
+        """Filter courses by available times."""
         query = cls.objects.all()
         
         if days:
-            # Build OR conditions for each day
-            day_conditions = Q()
-            for day in days:
-                day_conditions |= Q(section__sectiontime__days__contains=day)
-            query = query.filter(day_conditions)
+            # Get the latest semester
+            current_semester = Semester.latest()
             
-        if start_time:
-            query = query.filter(section__sectiontime__start_time__gte=start_time)
+            # Map day codes to field names
+            day_map = {
+                'MON': 'monday',
+                'TUE': 'tuesday',
+                'WED': 'wednesday',
+                'THU': 'thursday',
+                'FRI': 'friday'
+            }
             
-        if end_time:
-            query = query.filter(section__sectiontime__end_time__lte=end_time)
+            # Get all possible days
+            all_days = set(day_map.values())  # {monday, tuesday, wednesday, thursday, friday}
+            # Get selected days
+            selected_days = {day_map[d] for d in days if d in day_map}  # {monday, wednesday}
+            # Get unavailable days
+            unavailable_days = all_days - selected_days  # {tuesday, thursday, friday}
             
+            # Filter for sections that don't meet on unavailable days
+            section_conditions = Q(section__semester=current_semester)
+            
+            for day in unavailable_days:
+                section_conditions &= Q(**{f'section__sectiontime__{day}': False})
+            
+            if start_time:
+                section_conditions &= Q(section__sectiontime__start_time__gte=start_time)
+            if end_time:
+                section_conditions &= Q(section__sectiontime__end_time__lte=end_time)
+            
+            query = query.filter(section_conditions)
+        
         return query.distinct()
 
     class Meta:
@@ -799,20 +812,52 @@ class Section(models.Model):
         ]
 
 class SectionTime(models.Model):
-    section = models.ForeignKey(Section, on_delete=models.CASCADE)
-    # Store days as a comma-separated string like "MON,WED,FRI"
-    days = models.CharField(max_length=20)
+    """Section meeting time model.
+    
+    Belongs to a Section.
+    """
+    section = models.ForeignKey('Section', on_delete=models.CASCADE)
+    
+    # Individual day fields
+    monday = models.BooleanField(default=False)
+    tuesday = models.BooleanField(default=False)
+    wednesday = models.BooleanField(default=False)
+    thursday = models.BooleanField(default=False)
+    friday = models.BooleanField(default=False)
+    
     start_time = models.TimeField()
     end_time = models.TimeField()
 
+    def __str__(self):
+        days = []
+        if self.monday: days.append('MON')
+        if self.tuesday: days.append('TUE')
+        if self.wednesday: days.append('WED')
+        if self.thursday: days.append('THU')
+        if self.friday: days.append('FRI')
+        return f"{','.join(days)} {self.start_time}-{self.end_time}"
+
+    @property
+    def days_list(self):
+        """Return list of days this section meets."""
+        days = []
+        if self.monday: days.append('MON')
+        if self.tuesday: days.append('TUE')
+        if self.wednesday: days.append('WED')
+        if self.thursday: days.append('THU')
+        if self.friday: days.append('FRI')
+        return days
+
     class Meta:
         indexes = [
-            models.Index(fields=['days']),
-            models.Index(fields=['start_time', 'end_time']),
+            models.Index(fields=['monday']),
+            models.Index(fields=['tuesday']),
+            models.Index(fields=['wednesday']),
+            models.Index(fields=['thursday']),
+            models.Index(fields=['friday']),
+            models.Index(fields=['start_time']),
+            models.Index(fields=['end_time']),
         ]
-
-    def get_days_list(self):
-        return self.days.split(',')
 
 
 class Review(models.Model):

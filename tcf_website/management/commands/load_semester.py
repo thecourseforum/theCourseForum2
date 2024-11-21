@@ -315,33 +315,25 @@ class Command(BaseCommand):
             for time_block in section_times_str.split(','):
                 if not time_block.strip():
                     continue
-                # Example format: "MoWeFr 10:00AM - 10:50AM"
                 try:
                     days_part, time_part = time_block.strip().split(' ', 1)
                     start_time, end_time = time_part.split(' - ')
                     
-                    # Convert day format
-                    day_mapping = {
-                        'Mo': 'MON', 
-                        'Tu': 'TUE',
-                        'We': 'WED', 
-                        'Th': 'THU', 
-                        'Fr': 'FRI'
-                    }
-                    days = []
-                    for i in range(0, len(days_part), 2):
-                        day_code = days_part[i:i+2]
-                        if day_code in day_mapping:
-                            days.append(day_mapping[day_code])
-                    
-                    times.append({
-                        'days': ','.join(days),
+                    # Create time block with boolean fields
+                    time_data = {
+                        'monday': 'Mo' in days_part,
+                        'tuesday': 'Tu' in days_part,
+                        'wednesday': 'We' in days_part,
+                        'thursday': 'Th' in days_part,
+                        'friday': 'Fr' in days_part,
                         'start_time': datetime.strptime(start_time, '%I:%M%p').time(),
                         'end_time': datetime.strptime(end_time, '%I:%M%p').time()
-                    })
+                    }
+                    times.append(time_data)
+                    
                 except (ValueError, IndexError):
                     continue
-                
+                    
             return times
 
         # Clear existing section times

@@ -1,54 +1,451 @@
-<!-- tCF search -->
-<!-- To be imported into templates (navbar, landing page) -->
-<form class="form-inline flex-grow-1" action="/search" method="get">
+<!-- searchbar.html -->
+<form class="form-inline flex-grow-1" action="{% url 'search' %}" method="get">
   <div class="input-group flex-grow-1">
-    <input type="search" class="form-control border border-right-0"
-            placeholder="Search for a class or professor..." aria-label="Search" name="q" value="{{query}}">
+    <input 
+      type="search" 
+      class="form-control border border-right-0"
+      placeholder="Search for a class or professor..." 
+      aria-label="Search" 
+      name="q" 
+      value="{{ query }}"
+    >
+    <div class="filter-summary">
+      <span id="active-filters"></span>
+    </div>
     <div class="input-group-append">
-      <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fa fa-clock"></i>
+      <!-- Search Button -->
+      <button 
+        class="btn btn-outline-secondary border border-left-0" 
+        id="search-button" 
+        aria-label="Search" 
+        type="submit"
+      >
+        <i class="fa fa-search" aria-hidden="true"></i>
       </button>
-      <div class="dropdown-menu p-3" style="width: 300px">
-        <!-- Days selection -->
-        <div class="mb-2">
-          <label>Available Days:</label><br>
-          <div class="btn-group btn-group-sm" role="group">
-            <input type="checkbox" class="btn-check" name="days" value="MON" id="mon">
-            <label class="btn btn-outline-primary" for="mon">M</label>
-            
-            <input type="checkbox" class="btn-check" name="days" value="TUE" id="tue">
-            <label class="btn btn-outline-primary" for="tue">T</label>
-            
-            <input type="checkbox" class="btn-check" name="days" value="WED" id="wed">
-            <label class="btn btn-outline-primary" for="wed">W</label>
-            
-            <input type="checkbox" class="btn-check" name="days" value="THU" id="thu">
-            <label class="btn btn-outline-primary" for="thu">Th</label>
-            
-            <input type="checkbox" class="btn-check" name="days" value="FRI" id="fri">
-            <label class="btn btn-outline-primary" for="fri">F</label>
+    </div>
+    <div class="dropdown-wrapper">
+      <div class="dropdown input-group">
+        <button 
+          class="btn btn-outline-secondary dropdown-toggle border border-left-0" 
+          id="filter-button" 
+          aria-label="Filter" 
+          type="button" 
+          data-toggle="dropdown" 
+          data-bs-display="static" 
+          data-bs-auto-close="outside" 
+          aria-expanded="false" 
+        >
+          Filter
+        </button>
+        <div 
+          class="dropdown-menu p-4 filter-dropdown dropdown-menu-end" 
+          aria-labelledby="filter-button" 
+          id="filter-dropdown"
+        >
+          <div class="filter-container">
+            <div class="filter-section compact">
+              <h6 class="filter-header">
+                <i class="fa fa-calendar-day me-2"></i>
+                Class Days
+              </h6>
+              <div class="day-toggles">
+                <div class="form-check form-check-inline m-0">
+                  <input class="form-check-input day-checkbox" type="checkbox" id="monday" value="MON" 
+                         {% if 'MON' in selected_weekdays %}checked{% endif %}>
+                  <label class="form-check-label" for="monday">Mon</label>
+                </div>
+                <div class="form-check form-check-inline m-0">
+                  <input class="form-check-input day-checkbox" type="checkbox" id="tuesday" value="TUE" 
+                         {% if 'TUE' in selected_weekdays %}checked{% endif %}>
+                  <label class="form-check-label" for="tuesday">Tue</label>
+                </div>
+                <div class="form-check form-check-inline m-0">
+                  <input class="form-check-input day-checkbox" type="checkbox" id="wednesday" value="WED" 
+                         {% if 'WED' in selected_weekdays %}checked{% endif %}>
+                  <label class="form-check-label" for="wednesday">Wed</label>
+                </div>
+                <div class="form-check form-check-inline m-0">
+                  <input class="form-check-input day-checkbox" type="checkbox" id="thursday" value="THU" 
+                         {% if 'THU' in selected_weekdays %}checked{% endif %}>
+                  <label class="form-check-label" for="thursday">Thu</label>
+                </div>
+                <div class="form-check form-check-inline m-0">
+                  <input class="form-check-input day-checkbox" type="checkbox" id="friday" value="FRI" 
+                         {% if 'FRI' in selected_weekdays %}checked{% endif %}>
+                  <label class="form-check-label" for="friday">Fri</label>
+                </div>
+                <p>from</p>
+                <input class="time-selection" type="time" id="from_time" name="from_time">
+                <p>to</p>
+                <input class="time-selection" type="time" id="to_time" name="to_time">
+              </div>
+            </div>
+            <div class="filter-grid">
+              <div class="filter-section">
+                <h6 class="filter-header">
+                  <i class="fa fa-book me-2"></i>
+                  Subject
+                </h6>
+                <div class="search-container">
+                  <input type="text" class="form-control" id="subject-search" placeholder="Search subjects...">
+                </div>
+                <div class="subject-list">
+                  {% for subdept in subdepartments %}
+                    <div class="form-check subdepartment-label">
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="subject-{{ subdept.mnemonic }}" 
+                        name="subdepartment" 
+                        value="{{ subdept.mnemonic }}"
+                        {% if subdept.mnemonic in selected_subdepartments %}checked{% endif %}
+                      >
+                      <label class="form-check-label" for="subject-{{ subdept.mnemonic }}">
+                        {{ subdept.mnemonic }} - {{ subdept.name }}
+                      </label>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div class="filter-section">
+                <h6 class="filter-header">
+                  <i class="fa fa-graduation-cap me-2"></i>
+                  Discipline
+                </h6>
+                <div class="discipline-list">
+                  {% for discipline in disciplines %}
+                    <div class="form-check discipline-label">
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="discipline-{{ discipline.name|slugify }}" 
+                        name="discipline" 
+                        value="{{ discipline.name }}"
+                        {% if discipline.name in selected_disciplines %}checked{% endif %}
+                      >
+                      <label class="form-check-label" for="discipline-{{ discipline.name|slugify }}">
+                        {{ discipline.name }}
+                      </label>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <!-- Time range -->
-        <div class="row">
-          <div class="col-6">
-            <label>After:</label>
-            <input type="time" class="form-control form-control-sm" name="start_time">
-          </div>
-          <div class="col-6">
-            <label>Before:</label>
-            <input type="time" class="form-control form-control-sm" name="end_time">
+  
+          <!-- Action buttons -->
+          <div class="filter-actions">
+            <button type="reset" class="btn btn-outline-secondary">Clear All</button>
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
           </div>
         </div>
       </div>
     </div>
-    
-    <div class="input-group-append">
-      <button class="btn btn-outline-secondary border border-left-0" type="submit">
-        <i class="fa fa-search"></i>
-      </button>
-    </div>
   </div>
+  <input type="hidden" name="weekdays" id="weekdays-input">
 </form>
+
+<!-- filter_dropdown.html -->
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const dropdown = document.getElementById('filter-dropdown');
+    const searchInput = document.querySelector('.form-control.border.border-right-0');
+
+    searchInput.addEventListener('click', function(event) {
+      event.stopPropagation();
+    });
+
+    // Only prevent dropdown from closing when clicking inside
+    dropdown.addEventListener('click', function(event) {
+      event.stopPropagation();
+    });
+    
+
+    // Add subject search functionality
+    const subjectSearch = document.getElementById('subject-search');
+    const subjectItems = document.querySelectorAll('.subject-list .form-check');
+
+    subjectSearch.addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      
+      subjectItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    // Add clear all functionality
+    const resetButton = document.querySelector('button[type="reset"]');
+    resetButton.addEventListener('click', function(e) {
+      e.preventDefault(); // Prevent default reset behavior
+      
+      // Reset checkboxes
+      document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = true; // Set days to checked by default
+        if (checkbox.name === 'subdepartment' || checkbox.name === 'discipline') {
+          checkbox.checked = false; // Uncheck subjects and disciplines
+        }
+      });
+
+      // Clear subject search
+      document.getElementById('subject-search').value = '';
+      document.querySelectorAll('.subject-list .form-check').forEach(item => {
+        item.style.display = ''; // Show all subjects
+      });
+    });
+
+    const filtersContainer = document.getElementById('active-filters');
+  
+    function updateFilterSummary() {
+      const selectedFilters = [];
+      
+      // Class Days
+      const dayCheckboxes = document.querySelectorAll('.day-checkbox:checked');
+      const selectedDays = Array.from(dayCheckboxes).map(cb => cb.nextElementSibling.textContent.trim());
+      if (selectedDays.length > 0) {
+        selectedFilters.push(`Days: ${selectedDays.map((e) => e.slice(0,2)).join('/')}`);
+      }
+      
+      // Time Range
+      const fromTime = document.getElementById('from_time').value;
+      const toTime = document.getElementById('to_time').value;
+      if (fromTime && toTime) {
+        selectedFilters.push(`Time: ${fromTime} - ${toTime}`);
+      }
+      
+      // Subjects
+      const selectedSubjects = Array.from(document.querySelectorAll('.subject-list .form-check-input:checked'))
+        .map(input => input.nextElementSibling.textContent.trim());
+      if (selectedSubjects.length > 0) {
+        selectedFilters.push(`Subjects: ${selectedSubjects.map(e => e.slice(0, e.indexOf("-") - 1)).join(', ')}`);
+      }
+      
+      // Disciplines
+      const selectedDisciplines = Array.from(document.querySelectorAll('.discipline-list .form-check-input:checked'))
+        .map(input => input.nextElementSibling.textContent.trim());
+      if (selectedDisciplines.length > 0) {
+        selectedFilters.push(`Disciplines: ${selectedDisciplines.join(', ')}`);
+      }
+      
+      // Update display
+      filtersContainer.textContent = selectedFilters.length > 0 
+        ? `${selectedFilters.join(' | ')}`
+        : '';
+    }
+  
+    document.querySelectorAll('input[type="checkbox"], input[type="time"]').forEach(input => {
+      input.addEventListener('change', updateFilterSummary);
+    });
+    
+    updateFilterSummary();
+
+    // Add weekdays handling
+    function updateWeekdays() {
+      const checkedDays = Array.from(document.querySelectorAll('.day-checkbox:checked'))
+        .map(cb => cb.value)
+        .join('-');
+      document.getElementById('weekdays-input').value = checkedDays;
+    }
+
+    // Update weekdays on checkbox change
+    document.querySelectorAll('.day-checkbox').forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        updateWeekdays();
+        updateFilterSummary();
+      });
+    });
+
+    // Initialize weekdays
+    updateWeekdays();
+
+    // Handle form submission when Apply Filters is clicked
+    const applyButton = document.querySelector('.filter-actions .btn-primary');
+    const searchInput = document.querySelector('input[name="q"]');
+    
+    applyButton.addEventListener('click', function(e) {
+        e.preventDefault();  // Prevent default form submission
+        searchInput.value = '';  // Clear the search query
+        searchInput.closest('form').submit();  // Submit the form
+    });
+  });
+</script>
+
+<style>
+  .filter-summary {
+    background-color: #f7fafc;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #4a5568;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50%;
+  }
+
+  .dropdown-wrapper {
+    position: relative;
+  }
+
+  .filter-dropdown {
+    position: absolute !important;
+    top: 100% !important; 
+    right: 0 !important;
+    left: auto !important;
+    margin-top: 0.5rem !important;
+    transform: none !important;
+    width: min(90vw, 800px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+
+  @media (max-width: 992px) {
+    .filter-dropdown {
+      right: -1rem !important; /* Adjust position on mobile */
+    }
+  }
+
+  .filter-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .filter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .filter-section.compact {
+    margin-bottom: 0;
+  }
+
+  .day-toggles {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .day-toggles p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .time-selection {
+    background: white;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 0.4rem 0.4rem;
+  }
+
+  .day-toggles .form-check-inline {
+    background: white;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 0.4rem 0.9rem;
+    transition: all 0.15s ease;
+  }
+
+  .day-toggles .form-check-input:checked + .form-check-label {
+    color: #2b6cb0;
+    font-weight: 600;
+  }
+
+  .day-toggles .form-check-inline:hover {
+    background: #f7fafc;
+    border-color: #90cdf4;
+  }
+
+  .subject-list, .discipline-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    background: #fff;
+    min-height: 250px;
+  }
+
+  .form-check.subdepartment-label, .form-check.discipline-label {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .discipline-list {
+    /* removed max-height: 250px; */
+  }
+
+  .search-container {
+    position: relative;
+  }
+
+  .search-container .form-control {
+    padding-left: 2rem;
+  }
+
+  .search-container::before {
+    content: '\f002';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #718096;
+    pointer-events: none;
+  }
+
+  .filter-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .form-check {
+    padding: 0.375rem 0;
+    margin: 0;
+  }
+
+  .form-check:hover {
+    background-color: #f7fafc;
+    border-radius: 4px;
+  }
+
+  .form-check-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .subject-list, .discipline-list {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 transparent;
+  }
+
+  .subject-list::-webkit-scrollbar,
+  .discipline-list::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .subject-list::-webkit-scrollbar-thumb,
+  .discipline-list::-webkit-scrollbar-thumb {
+    background-color: #cbd5e0;
+    border-radius: 2px;
+  }
+</style>
