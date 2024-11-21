@@ -2,6 +2,7 @@
 """Views for search results"""
 
 import re
+from datetime import datetime
 
 from django.contrib.postgres.search import TrigramWordSimilarity
 from django.db.models import CharField, ExpressionWrapper, F, FloatField, Q, Value
@@ -31,6 +32,9 @@ def search(request):
         'disciplines': request.GET.getlist("discipline"),
         'subdepartments': request.GET.getlist("subdepartment"),
         'instructors': request.GET.getlist("instructor"),
+        'days': request.GET.getlist("days"),
+        'start_time': request.GET.get("start_time"),
+        'end_time': request.GET.get("end_time"),
     }
 
     instructors = fetch_instructors(query)
@@ -157,7 +161,7 @@ def fetch_courses(title, number, filters):
         .exclude(semester_last_taught_id__lt=59 if filters.get("current_semester") == "on" else 48)
     )
 
-    # Apply filters
+    # Apply existing filters
     if filters.get('disciplines'):
         results = results.filter(disciplines__name__in=filters.get('disciplines'))
 
@@ -166,6 +170,43 @@ def fetch_courses(title, number, filters):
 
     if filters.get('instructors'):
         results = results.filter(section__instructors__id__in=filters.get('instructors')).distinct()
+
+    # Apply time-based filters
+    if any(key in filters for key in ['days', 'start_time', 'end_time']):
+        days = filters.get('days', [])
+        start_time = filters.get('start_time')
+        end_time = filters.get('end_time')
+        
+        # Convert time strings to time objects if they exist
+        if start_time:
+            try:
+                start_time = datetime.strptime(start_time, '%H:%M').time()
+            except ValueError:
+                start_time = None
+                
+        if end_time:
+            try:
+                end_time = datetime.strptime(end_time, '%H:%M').time()
+            except ValueError:
+                end_time = None
+
+        # Build time filter conditions
+        time_conditions = Q()
+        
+        if days:
+            day_conditions = Q()
+            for day in days:
+                day_conditions |= Q(section__sectiontime__days__contains=day)
+            time_conditions &= day_conditions
+
+        if start_time:
+            time_conditions &= Q(section__sectiontime__start_time__gte=start_time)
+            
+        if end_time:
+            time_conditions &= Q(section__sectiontime__end_time__lte=end_time)
+
+        if time_conditions:
+            results = results.filter(time_conditions)
 
     results = results.order_by("-total_similarity")
 

@@ -5,8 +5,49 @@
     <input type="search" class="form-control border border-right-0"
             placeholder="Search for a class or professor..." aria-label="Search" name="q" value="{{query}}">
     <div class="input-group-append">
-      <button class="btn btn-outline-secondary border border-left-0" id="search-button" aria-label="Search" type="submit">
-          <i class="fa fa-search" aria-hidden="true"></i>
+      <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fa fa-clock"></i>
+      </button>
+      <div class="dropdown-menu p-3" style="width: 300px">
+        <!-- Days selection -->
+        <div class="mb-2">
+          <label>Available Days:</label><br>
+          <div class="btn-group btn-group-sm" role="group">
+            <input type="checkbox" class="btn-check" name="days" value="MON" id="mon">
+            <label class="btn btn-outline-primary" for="mon">M</label>
+            
+            <input type="checkbox" class="btn-check" name="days" value="TUE" id="tue">
+            <label class="btn btn-outline-primary" for="tue">T</label>
+            
+            <input type="checkbox" class="btn-check" name="days" value="WED" id="wed">
+            <label class="btn btn-outline-primary" for="wed">W</label>
+            
+            <input type="checkbox" class="btn-check" name="days" value="THU" id="thu">
+            <label class="btn btn-outline-primary" for="thu">Th</label>
+            
+            <input type="checkbox" class="btn-check" name="days" value="FRI" id="fri">
+            <label class="btn btn-outline-primary" for="fri">F</label>
+          </div>
+        </div>
+        
+        <!-- Time range -->
+        <div class="row">
+          <div class="col-6">
+            <label>After:</label>
+            <input type="time" class="form-control form-control-sm" name="start_time">
+          </div>
+          <div class="col-6">
+            <label>Before:</label>
+            <input type="time" class="form-control form-control-sm" name="end_time">
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary border border-left-0" type="submit">
+        <i class="fa fa-search"></i>
       </button>
     </div>
   </div>

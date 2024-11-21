@@ -637,6 +637,33 @@ class Course(models.Model):
         instructors = instructors.order_by(order_prefix + sort_field)
         return instructors
 
+    @classmethod
+    def filter_by_time(cls, days=None, start_time=None, end_time=None):
+        """
+        Filter courses by available times.
+        
+        Args:
+            days: List of days (e.g., ['MON', 'WED'])
+            start_time: Earliest acceptable start time
+            end_time: Latest acceptable end time
+        """
+        query = cls.objects.all()
+        
+        if days:
+            # Build OR conditions for each day
+            day_conditions = Q()
+            for day in days:
+                day_conditions |= Q(section__sectiontime__days__contains=day)
+            query = query.filter(day_conditions)
+            
+        if start_time:
+            query = query.filter(section__sectiontime__start_time__gte=start_time)
+            
+        if end_time:
+            query = query.filter(section__sectiontime__end_time__lte=end_time)
+            
+        return query.distinct()
+
     class Meta:
         indexes = [
             models.Index(fields=["subdepartment", "number"]),
@@ -743,6 +770,22 @@ class Section(models.Model):
                 name="unique sections per semesters",
             )
         ]
+
+class SectionTime(models.Model):
+    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    # Store days as a comma-separated string like "MON,WED,FRI"
+    days = models.CharField(max_length=20)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['days']),
+            models.Index(fields=['start_time', 'end_time']),
+        ]
+
+    def get_days_list(self):
+        return self.days.split(',')
 
 
 class Review(models.Model):
