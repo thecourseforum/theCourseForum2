@@ -1,0 +1,3 @@
+[MAIN]
+
+ignore=migrations,fix_multiple_objects_returned.py,fetch_grades.py,fetch_data.py,load_semester_old.py,other_schools_department_fix.py,load_semester.py,migrate_legacy_reviews.py,migrate_legacy_subdepartments.py,index_elasticsearch.py
