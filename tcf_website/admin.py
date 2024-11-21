@@ -60,6 +60,21 @@ class SectionAdmin(admin.ModelAdmin):
         qs = qs.prefetch_related("instructors")
         return qs
 
+class SectionTimeAdmin(admin.ModelAdmin):
+    list_display = ['section', 'days', 'start_time', 'end_time']
+    list_filter = ['days', 'start_time', 'end_time']
+    search_fields = [
+        'section__course__subdepartment__mnemonic',
+        'section__course__number',
+        'section__course__title',
+    ]
+    autocomplete_fields = ['section']
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related(
+            'section__course__subdepartment'
+        )
 
 class CourseGradeAdmin(admin.ModelAdmin):
     ordering = ["course__subdepartment", "course__number", "course__title"]
@@ -81,3 +96,4 @@ admin.site.register(Subdepartment, SubdepartmentAdmin)
 admin.site.register(Semester, SemesterAdmin)
 admin.site.register(CourseGrade, CourseGradeAdmin)
 admin.site.register(CourseInstructorGrade, CourseInstructorGradeAdmin)
+admin.site.register(SectionTime, SectionTimeAdmin)
