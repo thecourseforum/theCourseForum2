@@ -871,6 +871,46 @@ class SectionTime(models.Model):
             models.Index(fields=["end_time"]),
         ]
 
+class SectionEnrollment(models.Model):
+    """Section meeting enrollment model.
+
+    Belongs to a Section.
+    """
+
+    section = models.ForeignKey("Section", on_delete=models.CASCADE)
+
+    # Total number of enrolled students. Optional.
+    enrollment_taken = models.IntegerField(null=True, blank=True)
+
+    # Maximum number of students allowed to enroll. Optional.
+    enrollment_limit = models.IntegerField(null=True, blank=True)
+
+    # Total number of students on the waitlist. Optional.
+    waitlist_taken = models.IntegerField(null=True, blank=True)
+
+    # Maximum number of students allowed on the waitlist. Optional.
+    waitlist_limit = models.IntegerField(null=True, blank=True)
+
+    @property
+    def enrollment_info(self):
+        return {
+            'enrollment_taken': self.enrollment_taken,
+            'enrollment_limit': self.enrollment_limit,
+            'waitlist_taken': self.waitlist_taken,
+            'waitlist_limit': self.waitlist_limit
+        }
+
+    def __str__(self):
+        return f"Section: {self.section}, Enrolled: {self.enrollment_taken}/{self.enrollment_limit}, Waitlist: {self.waitlist_taken}/{self.waitlist_limit}"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["enrollment_taken"]),
+            models.Index(fields=["enrollment_limit"]),
+            models.Index(fields=["waitlist_taken"]),
+            models.Index(fields=["waitlist_limit"]),
+        ]
+
 
 class Review(models.Model):
     """Review model.
