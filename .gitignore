@@ -33,3 +33,5 @@ db/*.sql
 # Virtual Environments
 venv
 .venv
+# Celery Beat Schedule
+celerybeat-schedule
