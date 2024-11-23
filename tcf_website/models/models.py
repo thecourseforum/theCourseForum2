@@ -904,6 +904,9 @@ class SectionEnrollment(models.Model):
 
     @property
     def enrollment_info(self):
+        """
+        Returns a dictionary containing enrollment and waitlist information.
+        """
         return {
             'enrollment_taken': self.enrollment_taken,
             'enrollment_limit': self.enrollment_limit,
@@ -912,8 +915,10 @@ class SectionEnrollment(models.Model):
         }
 
     def __str__(self):
-        return f"Section: {self.section}, Enrolled: {self.enrollment_taken}/{self.enrollment_limit}, Waitlist: {self.waitlist_taken}/{self.waitlist_limit}"
-
+        return (f"Section: {self.section}, Enrolled: {self.enrollment_taken}/"
+                f"{self.enrollment_limit}, Waitlist: {self.waitlist_taken}/"
+                f"{self.waitlist_limit}")
+    
     class Meta:
         indexes = [
             models.Index(fields=["enrollment_taken"]),

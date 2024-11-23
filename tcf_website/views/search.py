@@ -202,7 +202,7 @@ def filter_courses(filters):
     if any([weekdays, from_time, to_time]):
         time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
-    
+
     # Filter for open sections
     if filters.get("open_sections"):
         open_sections_filtered = Course.filter_by_open_sections()
