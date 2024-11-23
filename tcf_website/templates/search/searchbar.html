@@ -85,14 +85,19 @@
                 <i class="fa fa-door-open me-2"></i>
                 Availability
               </h6>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="open-sections" name="open_sections" 
-                       {% if open_sections %}checked{% endif %}>
+              <div class="form-check d-inline-flex align-items-center">
+                <input 
+                  class="form-check-input me-2" 
+                  type="checkbox" 
+                  id="open-sections" 
+                  name="open_sections" 
+                  {% if open_sections %}checked{% endif %}
+                >
                 <label class="form-check-label" for="open-sections">
-                  Show only courses with open sections
+                  Only display courses with open sections
                 </label>
               </div>
-            </div>      
+            </div>
             <div class="filter-grid">
               <div class="filter-section">
                 <h6 class="filter-header">
