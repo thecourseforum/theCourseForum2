@@ -48,9 +48,9 @@ def update_enrollment_data():
         except KeyError as e:
             error_count += 1
             print(f"Missing data for section {section.sis_section_number}: {str(e)}")
-        except Exception as e:
+        except (ValueError, TypeError) as e:
             error_count += 1
-            print(f"Unexpected error for section {section.sis_section_number}: {str(e)}")
+            print(f"Data processing error for section {section.sis_section_number}: {str(e)}")
 
     print(f"Finished enrollment update at {timezone.now()}")
     print(f"Updated {updated_count} sections, encountered {error_count} errors.")

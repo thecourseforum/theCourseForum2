@@ -94,6 +94,25 @@ class SectionTimeAdmin(admin.ModelAdmin):
             'section__course__subdepartment'
         )
 
+class SectionEnrollmentAdmin(admin.ModelAdmin):
+    list_display = [
+        'section',
+        'enrollment_taken',
+        'enrollment_limit',
+        'waitlist_taken',
+        'waitlist_limit',
+    ]
+    search_fields = [
+        'section__course__subdepartment__mnemonic',
+        'section__course__number',
+        'section__course__title',
+    ]
+    list_filter = ['section__semester']
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('section__course__subdepartment', 'section__semester')
+
 class CourseGradeAdmin(admin.ModelAdmin):
     ordering = ["course__subdepartment", "course__number", "course__title"]
     search_fields = ["course__subdepartment", "course__number"]
@@ -115,3 +134,4 @@ admin.site.register(Semester, SemesterAdmin)
 admin.site.register(CourseGrade, CourseGradeAdmin)
 admin.site.register(CourseInstructorGrade, CourseInstructorGradeAdmin)
 admin.site.register(SectionTime, SectionTimeAdmin)
+admin.site.register(SectionEnrollment, SectionEnrollmentAdmin)

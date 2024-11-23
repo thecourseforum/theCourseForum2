@@ -696,7 +696,7 @@ class Course(models.Model):
             query = query.filter(section_conditions)
 
         return query.distinct()
-    
+
     @classmethod
     def filter_by_open_sections(cls):
         """Filter courses that have at least one open section."""
@@ -918,7 +918,7 @@ class SectionEnrollment(models.Model):
         return (f"Section: {self.section}, Enrolled: {self.enrollment_taken}/"
                 f"{self.enrollment_limit}, Waitlist: {self.waitlist_taken}/"
                 f"{self.waitlist_limit}")
-    
+
     class Meta:
         indexes = [
             models.Index(fields=["enrollment_taken"]),
