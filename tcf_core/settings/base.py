@@ -242,7 +242,7 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_BEAT_SCHEDULE = {
     'update-enrollment-data-daily': {
         'task': 'tcf_website.tasks.update_enrollment_data',
-        'schedule': crontab(hour=21, minute=26),
+        'schedule': crontab(hour=4, minute=0),
     },
 }
 
