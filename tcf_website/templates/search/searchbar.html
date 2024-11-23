@@ -80,6 +80,19 @@
                 <input class="time-selection" type="time" id="to_time" name="to_time">
               </div>
             </div>
+            <div class="filter-section compact availability-section">
+              <h6 class="filter-header">
+                <i class="fa fa-door-open me-2"></i>
+                Availability
+              </h6>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="open-sections" name="open_sections" 
+                       {% if open_sections %}checked{% endif %}>
+                <label class="form-check-label" for="open-sections">
+                  Show only courses with open sections
+                </label>
+              </div>
+            </div>      
             <div class="filter-grid">
               <div class="filter-section">
                 <h6 class="filter-header">
@@ -185,7 +198,7 @@
       // Reset checkboxes
       document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
         checkbox.checked = true; // Set days to checked by default
-        if (checkbox.name === 'subdepartment' || checkbox.name === 'discipline') {
+        if (checkbox.name === 'subdepartment' || checkbox.name === 'discipline' || checkbox.name === 'open_sections') {
           checkbox.checked = false; // Uncheck subjects and disciplines
         }
       });
@@ -216,6 +229,12 @@
         selectedFilters.push(`Time: ${fromTime} - ${toTime}`);
       }
       
+      // Open Sections
+      const openSectionsCheckbox = document.getElementById('open-sections');
+      if (openSectionsCheckbox.checked) {
+        selectedFilters.push('Open Sections Only');
+      }
+
       // Subjects
       const selectedSubjects = Array.from(document.querySelectorAll('.subject-list .form-check-input:checked'))
         .map(input => input.nextElementSibling.textContent.trim());
@@ -235,6 +254,8 @@
         ? `${selectedFilters.join(' | ')}`
         : '';
     }
+
+    document.getElementById('open-sections').addEventListener('change', updateFilterSummary);
   
     document.querySelectorAll('input[type="checkbox"], input[type="time"]').forEach(input => {
       input.addEventListener('change', updateFilterSummary);
