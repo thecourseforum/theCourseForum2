@@ -12,6 +12,8 @@ from django.db.models import (
     Avg,
     Case,
     CharField,
+    Exists,
+    F,
     FloatField,
     OuterRef,
     Q,
@@ -694,6 +696,15 @@ class Course(models.Model):
             query = query.filter(section_conditions)
 
         return query.distinct()
+    
+    @classmethod
+    def filter_by_open_sections(cls):
+        """Filter courses that have at least one open section."""
+        open_sections = SectionEnrollment.objects.filter(
+            section__course=OuterRef('pk'),
+            enrollment_taken__lt=F('enrollment_limit')
+        )
+        return cls.objects.filter(Exists(open_sections))
 
     class Meta:
         indexes = [
