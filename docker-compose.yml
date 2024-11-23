@@ -20,6 +20,7 @@ services:
     restart: always
     depends_on:
       - db
+      - redis
   db:
     image: postgres:15.4
     volumes:
@@ -31,5 +32,39 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_PORT: ${DB_PORT}
+  redis:
+    image: redis:6
+    container_name: tcf_redis
+    restart: always
+
+  celery_worker:
+    build: .
+    command: celery -A tcf_core.settings worker -l info
+    volumes:
+      - .:/app
+      - /app/db/
+      - node_modules:/app/node_modules
+    container_name: tcf_celery_worker
+    restart: always
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=tcf_core.settings.base
+
+  celery_beat:
+    build: .
+    command: celery -A tcf_core.settings beat -l info
+    volumes:
+      - .:/app
+      - /app/db/
+      - node_modules:/app/node_modules
+    container_name: tcf_celery_beat
+    restart: always
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=tcf_core.settings.base
 volumes:
   node_modules:

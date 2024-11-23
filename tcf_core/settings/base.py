@@ -5,6 +5,8 @@ import os
 import environ
 from django.contrib.messages import constants as messages
 from django.urls import reverse_lazy
+from celery import Celery
+from celery.schedules import crontab
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "tcf_website",
+    "celery",
 ]
 
 MIDDLEWARE = [
@@ -231,3 +234,26 @@ MESSAGE_TAGS = {
 
 # Required in Django 3.2+ (See https://stackoverflow.com/a/66971803)
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+CELERY_BROKER_URL = 'redis://tcf_redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://tcf_redis:6379/0'
+CELERY_TIMEZONE = 'America/New_York'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_BEAT_SCHEDULE = {
+    'update-enrollment-data-daily': {
+        'task': 'tcf_website.tasks.update_enrollment_data',
+        'schedule': crontab(hour=4, minute=0),
+    },
+}
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tcf_core.settings.base')
+
+app = Celery('tcf_core')
+
+app.config_from_object('django.conf:settings', namespace='CELERY')
+
+app.autodiscover_tasks()
+
+celery_app = app
+
+__all__ = list(locals().keys())

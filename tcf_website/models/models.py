@@ -12,6 +12,8 @@ from django.db.models import (
     Avg,
     Case,
     CharField,
+    Exists,
+    F,
     FloatField,
     OuterRef,
     Q,
@@ -695,6 +697,15 @@ class Course(models.Model):
 
         return query.distinct()
 
+    @classmethod
+    def filter_by_open_sections(cls):
+        """Filter courses that have at least one open section."""
+        open_sections = SectionEnrollment.objects.filter(
+            section__course=OuterRef('pk'),
+            enrollment_taken__lt=F('enrollment_limit')
+        )
+        return cls.objects.filter(Exists(open_sections))
+
     class Meta:
         indexes = [
             GinIndex(
@@ -869,6 +880,51 @@ class SectionTime(models.Model):
             models.Index(fields=["friday"]),
             models.Index(fields=["start_time"]),
             models.Index(fields=["end_time"]),
+        ]
+
+class SectionEnrollment(models.Model):
+    """Section meeting enrollment model.
+
+    Belongs to a Section.
+    """
+
+    section = models.ForeignKey("Section", on_delete=models.CASCADE)
+
+    # Total number of enrolled students. Optional.
+    enrollment_taken = models.IntegerField(null=True, blank=True)
+
+    # Maximum number of students allowed to enroll. Optional.
+    enrollment_limit = models.IntegerField(null=True, blank=True)
+
+    # Total number of students on the waitlist. Optional.
+    waitlist_taken = models.IntegerField(null=True, blank=True)
+
+    # Maximum number of students allowed on the waitlist. Optional.
+    waitlist_limit = models.IntegerField(null=True, blank=True)
+
+    @property
+    def enrollment_info(self):
+        """
+        Returns a dictionary containing enrollment and waitlist information.
+        """
+        return {
+            'enrollment_taken': self.enrollment_taken,
+            'enrollment_limit': self.enrollment_limit,
+            'waitlist_taken': self.waitlist_taken,
+            'waitlist_limit': self.waitlist_limit
+        }
+
+    def __str__(self):
+        return (f"Section: {self.section}, Enrolled: {self.enrollment_taken}/"
+                f"{self.enrollment_limit}, Waitlist: {self.waitlist_taken}/"
+                f"{self.waitlist_limit}")
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["enrollment_taken"]),
+            models.Index(fields=["enrollment_limit"]),
+            models.Index(fields=["waitlist_taken"]),
+            models.Index(fields=["waitlist_limit"]),
         ]
 
 
