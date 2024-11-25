@@ -56,7 +56,7 @@ jobs:
           sed -i '/\(coverage\|lint\|types\-tqdm\|mypy\|black\|isort\|gunicorn\|django\-heroku\|django\-stubs\)/d' requirements.txt
       - name: Install Python Packages
         run: |
-          uv pip install -r requirements.txt
+          uv pip install --system -r requirements.txt
       - name: Migrations
         run: |
           python manage.py migrate
