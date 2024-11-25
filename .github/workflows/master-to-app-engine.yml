@@ -51,8 +51,6 @@ jobs:
         run: pip install uv
       - name: Modify requirements.txt
         run: sed -i '/\(coverage\|lint\|types\-tqdm\|mypy\|black\|isort\|gunicorn\|django\-heroku\|django\-stubs\)/d' requirements.txt
-      - name: Create virtual environment
-        run: uv venv venv && . venv/bin/activate
       - name: Install Python Packages
         run: uv pip install -r requirements.txt
       - name: Migrations
