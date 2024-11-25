@@ -67,17 +67,16 @@ jobs:
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ env.PYTHON_TARGET }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON_TARGET }}
+      - name: Checkout Repository
+        uses: actions/checkout@v3
       - name: Install uv
-        run: pip install uv
-      - name: Install Python packages, excluding the unnecessary ones
-        run: |
-          sed -i '/\(lint\|mypy\|types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|django\-stubs\|uwsgi\)/d' requirements.txt
-          uv install -r requirements.txt
+        uses: astral-sh/setup-uv@v3
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+      - name: Install Python Packages
+        run: uv pip install -r requirements.txt
       - name: Migrations & Tests
         run: |
           envsubst < .config/.env.example > .env
@@ -87,6 +86,8 @@ jobs:
         id: coverage
         run: |
           echo "::set-output name=percentage::$(coverage report | grep -o '[0-9]\+%' | tail -1)"
+      - name: Minimize uv cache
+        run: uv cache prune --ci
   eslint:
     runs-on: ubuntu-latest
     steps:
