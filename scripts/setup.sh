@@ -24,8 +24,6 @@ if [ "$?" -ne 0 ]; then
 fi
 
 cd theCourseForum2 || exit
-# TODO: remove this when on main
-git switch lfs-db
 
 echo ""
 echo "============================================"

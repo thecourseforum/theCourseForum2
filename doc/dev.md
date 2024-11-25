@@ -11,7 +11,7 @@ Replace `<install_dir>` with where you'd like to clone the script.
 *TODO*: correct branch to main/dev when merged
 
 ```console
-curl -fL 'https://raw.githubusercontent.com/thecourseforum/theCourseForum2/refs/heads/lfs-db/scripts/setup.sh' | sh -s -- <install_dir>
+curl -fL 'https://raw.githubusercontent.com/thecourseforum/theCourseForum2/refs/heads/master/scripts/setup.sh' | sh -s -- <install_dir>
 ```
 
 ## Setup (Old)
