@@ -8,7 +8,7 @@ on:
   push:
     branches: [dev, master]
 env:
-  PYTHON_TARGET: 3.11
+  PYTHON_TARGET: 3.11.0
   # Django
   DJANGO_SETTINGS_MODULE: tcf_core.settings.ci
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
