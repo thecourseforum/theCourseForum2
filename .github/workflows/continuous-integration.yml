@@ -39,13 +39,15 @@ jobs:
         uses: astral-sh/setup-uv@v3
         with:
           enable-cache: true
-          cache-dependency-glob: "requirements**.txt"
+          cache-dependency-glob: requirements.txt
       - name: Install Python Packages
         run: uv pip install -r requirements.txt
       - name: Run pylint
         run: |
           export PYTHONPATH="$(pwd)"
           pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
+      - name: Minimize uv cache
+        run: uv cache prune --ci
   django:
     runs-on: ubuntu-latest
     outputs:
