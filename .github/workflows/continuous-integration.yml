@@ -47,7 +47,7 @@ jobs:
         with:
           python-version-file: ".python-version"
       - name: Install Python Packages
-        run: uv pip install -r requirements.txt
+        run: uv pip install -r requirements-ci.txt
       - name: Run pylint
         run: |
           export PYTHONPATH="$(pwd)"
@@ -82,7 +82,7 @@ jobs:
         with:
           python-version-file: ".python-version"
       - name: Install Python Packages
-        run: uv pip install -r requirements.txt
+        run: uv pip install -r requirements-ci.txt
       - name: Migrations & Tests
         run: |
           envsubst < .config/.env.example > .env
