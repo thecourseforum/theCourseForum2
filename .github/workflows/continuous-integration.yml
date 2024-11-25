@@ -1,6 +1,5 @@
 # Based on https://github.com/actions/starter-workflows/blob/main/ci/django.yml
 name: Continuous Integration
-
 on:
   pull_request:
     branches:
@@ -30,31 +29,31 @@ env:
   REVIEW_DRIVE_ID: ${{ secrets.REVIEW_DRIVE_ID }}
   REVIEW_DRIVE_EMAIL: ${{ secrets.REVIEW_DRIVE_EMAIL }}
   REVIEW_DRIVE_PASSWORD: ${{ secrets.REVIEW_DRIVE_PASSWORD }}
-
 jobs:
   pylint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - name: Set up Python ${{ env.PYTHON_TARGET }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON_TARGET }}
-
-      - name: Install uv
-        run: pip install uv
-
-      - name: Install Python packages, excluding the unnecessary ones
+      - name: Upgrade pip
         run: |
-          sed -i '/\(coverage\|types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
-          uv install -r requirements.txt
-
+          python -m pip install --upgrade pip
+      - name: Install uv Package
+        run: |
+          pip install uv
+      - name: Modify requirements.txt
+        run: |
+          sed -i '/\(coverage\|lint\|types\-tqdm\|mypy\|black\|isort\|gunicorn\|django\-heroku\|django\-stubs\)/d' requirements.txt
+      - name: Install Python Packages
+        run: |
+          uv pip install -r requirements.txt
       - name: Run pylint
         run: |
           export PYTHONPATH="$(pwd)"
           pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
-
   django:
     runs-on: ubuntu-latest
     outputs:
@@ -72,43 +71,34 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v2
-
       - name: Set up Python ${{ env.PYTHON_TARGET }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON_TARGET }}
-
       - name: Install uv
         run: pip install uv
-
       - name: Install Python packages, excluding the unnecessary ones
         run: |
           sed -i '/\(lint\|mypy\|types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|django\-stubs\|uwsgi\)/d' requirements.txt
           uv install -r requirements.txt
-
       - name: Migrations & Tests
         run: |
           envsubst < .config/.env.example > .env
           python manage.py migrate
           coverage run manage.py test
-
       - name: Get code coverage
         id: coverage
         run: |
           echo "::set-output name=percentage::$(coverage report | grep -o '[0-9]\+%' | tail -1)"
-
   eslint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - name: Install Node
         uses: actions/setup-node@v1
         with:
           node-version: 20
-
       - name: Install npm packages
         run: npm ci
-
       - name: Run ESLint
         run: npx eslint -c .config/.eslintrc.yml tcf_website/static/
