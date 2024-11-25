@@ -25,6 +25,8 @@ fi
 
 cd theCourseForum2 || exit
 
+git switch dev
+
 echo ""
 echo "============================================"
 echo "Please ensure that the '.env' file exists in the repository directory: $(eval echo "$1")"
