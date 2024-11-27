@@ -199,73 +199,50 @@
 
     const filtersContainer = document.getElementById('active-filters');
   
-    function updateFilterSummary() {
-      const selectedFilters = [];
-      
-      // Class Days
-      const dayCheckboxes = document.querySelectorAll('.day-checkbox:checked');
-      const selectedDays = Array.from(dayCheckboxes).map(cb => cb.nextElementSibling.textContent.trim());
-      if (selectedDays.length > 0) {
-        selectedFilters.push(`Days: ${selectedDays.map((e) => e.slice(0,2)).join('/')}`);
-      }
-      
-      // Time Range
-      const fromTime = document.getElementById('from_time').value;
-      const toTime = document.getElementById('to_time').value;
-      if (fromTime && toTime) {
-        selectedFilters.push(`Time: ${fromTime} - ${toTime}`);
-      }
-      
-      // Subjects
-      const selectedSubjects = Array.from(document.querySelectorAll('.subject-list .form-check-input:checked'))
-        .map(input => input.nextElementSibling.textContent.trim());
-      if (selectedSubjects.length > 0) {
-        selectedFilters.push(`Subjects: ${selectedSubjects.map(e => e.slice(0, e.indexOf("-") - 1)).join(', ')}`);
-      }
-      
-      // Disciplines
-      const selectedDisciplines = Array.from(document.querySelectorAll('.discipline-list .form-check-input:checked'))
-        .map(input => input.nextElementSibling.textContent.trim());
-      if (selectedDisciplines.length > 0) {
-        selectedFilters.push(`Disciplines: ${selectedDisciplines.join(', ')}`);
-      }
-      
-      // Update display
-      filtersContainer.textContent = selectedFilters.length > 0 
-        ? `${selectedFilters.join(' | ')}`
-        : '';
-    }
-  
-    document.querySelectorAll('input[type="checkbox"], input[type="time"]').forEach(input => {
-      input.addEventListener('change', updateFilterSummary);
-    });
+  function updateFilterSummary() {
+    const selectedFilters = [];
+    const filterSummaryContainer = document.querySelector('.filter-summary');
     
-    updateFilterSummary();
-
-    // Add weekdays handling
-    function updateWeekdays() {
-      const checkedDays = Array.from(document.querySelectorAll('.day-checkbox:checked'))
-        .map(cb => cb.value)
-        .join('-');
-      document.getElementById('weekdays-input').value = checkedDays;
+    // Class Days
+    const dayCheckboxes = document.querySelectorAll('.day-checkbox:checked');
+    const selectedDays = Array.from(dayCheckboxes).map(cb => cb.nextElementSibling.textContent.trim());
+    if (selectedDays.length > 0) {
+      selectedFilters.push(`Days: ${selectedDays.map((e) => e.slice(0, 2)).join('/')}`);
     }
 
-    // Update weekdays on checkbox change
-    document.querySelectorAll('.day-checkbox').forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
-        updateWeekdays();
-        updateFilterSummary();
-      });
-    });
+    // Time Range
+    const fromTime = document.getElementById('from_time').value;
+    const toTime = document.getElementById('to_time').value;
+    if (fromTime && toTime) {
+      selectedFilters.push(`Time: ${fromTime} - ${toTime}`);
+    }
 
-    // Initialize weekdays
-    updateWeekdays();
+    // Show or hide filter summary
+    if (selectedDays.length > 0) {
+      filterSummaryContainer.style.display = 'inline-block'; // Show when a day is selected
+    } else {
+      filterSummaryContainer.style.display = 'none'; // Hide when no days are selected
+    }
 
+    // Update the display content
+    filterSummaryContainer.textContent = selectedFilters.length > 0 
+      ? `${selectedFilters.join(' | ')}`
+      : '';
+  }
+
+  // Attach event listeners to day checkboxes and other inputs
+  document.querySelectorAll('.day-checkbox, input[type="time"]').forEach(input => {
+    input.addEventListener('change', updateFilterSummary);
   });
+
+updateFilterSummary();
+});
+
 </script>
 
 <style>
   .filter-summary {
+    display: none;
     background-color: #f7fafc;
     padding: 0.375rem 0.75rem;
     border: 1px solid #cbd5e0;

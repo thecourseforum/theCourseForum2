@@ -659,7 +659,7 @@ class Course(models.Model):
     def filter_by_time(cls, days=None, start_time=None, end_time=None):
         """Filter courses by available times."""
         query = cls.objects.all()
-
+        
         if days:
             # Get the latest semester
             current_semester = Semester.latest()
