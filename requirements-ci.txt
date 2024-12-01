@@ -1,0 +1,16 @@
+Django~=4.2.8
+backoff~=2.2.1
+coverage~=7.3.3
+django-cachalot~=2.6.1
+django-environ~=0.11.2
+django-filter~=23.5
+djangorestframework~=3.14.0
+html-linter~=0.4.0
+numpy~=1.26.2
+pandas~=2.1.4
+psycopg2~=2.9.9
+pylint-django~=2.5.5
+pylint~=3.0.3
+requests~=2.31.0
+social-auth-app-django~=5.4.0
+tqdm~=4.66.1
