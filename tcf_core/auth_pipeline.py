@@ -100,13 +100,18 @@ def collect_extra_info(strategy, backend, request, details, user=None, *args, **
         # if we return something besides a dict or None, then that is
         # returned to the user -- in this case we will redirect to a
         # view that can be used to get a password
-        return redirect(
-            f"/login/collect_extra_info/{backend.name}"
-            + "?verification_code="
-            + request.GET["verification_code"]
-            + "&partial_token="
-            + request.GET["partial_token"]
-        )
+        if "verification_code" in request.GET:
+            # For email/password login
+            return redirect(
+                f"/login/collect_extra_info/{backend.name}"
+                + "?verification_code="
+                + request.GET["verification_code"]
+                + "&partial_token="
+                + request.GET["partial_token"]
+            )
+        else:
+            # For social auth login
+            return redirect(f"/login/collect_extra_info/{backend.name}")
 
 
 USER_FIELDS = ["email", "username"]
