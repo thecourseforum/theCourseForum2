@@ -148,64 +148,22 @@
 
 <!-- filter_dropdown.html -->
 
-
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const dropdown = document.getElementById('filter-dropdown');
-    const searchInput = document.querySelector('.form-control.border.border-right-0');
+  document.addEventListener('DOMContentLoaded', function () {
+  const filtersContainer = document.getElementById('active-filters');
+  const filterSummaryContainer = document.querySelector('.filter-summary');
+  const weekdaysInput = document.getElementById('weekdays-input');
+  const subjectSearch = document.getElementById('subject-search'); // Subject search input
+  const subjectItems = document.querySelectorAll('.subject-list .form-check'); // Subject list items
 
-    searchInput.addEventListener('click', function(event) {
-      event.stopPropagation();
-    });
-
-    // Only prevent dropdown from closing when clicking inside
-    dropdown.addEventListener('click', function(event) {
-      event.stopPropagation();
-    });
-    
-
-    // Add subject search functionality
-    const subjectSearch = document.getElementById('subject-search');
-    const subjectItems = document.querySelectorAll('.subject-list .form-check');
-
-    subjectSearch.addEventListener('input', function(e) {
-      const searchTerm = e.target.value.toLowerCase();
-      
-      subjectItems.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        item.style.display = text.includes(searchTerm) ? '' : 'none';
-      });
-    });
-
-    // Add clear all functionality
-    const resetButton = document.querySelector('button[type="reset"]');
-    resetButton.addEventListener('click', function(e) {
-      e.preventDefault(); // Prevent default reset behavior
-      
-      // Reset checkboxes
-      document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-        checkbox.checked = true; // Set days to checked by default
-        if (checkbox.name === 'subdepartment' || checkbox.name === 'discipline') {
-          checkbox.checked = false; // Uncheck subjects and disciplines
-        }
-      });
-
-      // Clear subject search
-      document.getElementById('subject-search').value = '';
-      document.querySelectorAll('.subject-list .form-check').forEach(item => {
-        item.style.display = ''; // Show all subjects
-      });
-    });
-
-    const filtersContainer = document.getElementById('active-filters');
-  
   function updateFilterSummary() {
     const selectedFilters = [];
-    const filterSummaryContainer = document.querySelector('.filter-summary');
-    
+
     // Class Days
     const dayCheckboxes = document.querySelectorAll('.day-checkbox:checked');
-    const selectedDays = Array.from(dayCheckboxes).map(cb => cb.nextElementSibling.textContent.trim());
+    const selectedDays = Array.from(dayCheckboxes).map((cb) =>
+      cb.nextElementSibling.textContent.trim()
+    );
     if (selectedDays.length > 0) {
       selectedFilters.push(`Days: ${selectedDays.map((e) => e.slice(0, 2)).join('/')}`);
     }
@@ -217,25 +175,44 @@
       selectedFilters.push(`Time: ${fromTime} - ${toTime}`);
     }
 
-    // Show or hide filter summary
+    // Update weekdays hidden input
+    updateWeekdays();
+
+    // Show or hide the filter summary based on selected days
     if (selectedDays.length > 0) {
-      filterSummaryContainer.style.display = 'inline-block'; // Show when a day is selected
+      filterSummaryContainer.style.display = 'inline-block'; // Show when at least one day is selected
+      filtersContainer.textContent = selectedFilters.join(' | ');
     } else {
       filterSummaryContainer.style.display = 'none'; // Hide when no days are selected
+      filtersContainer.textContent = '';
     }
-
-    // Update the display content
-    filterSummaryContainer.textContent = selectedFilters.length > 0 
-      ? `${selectedFilters.join(' | ')}`
-      : '';
   }
 
-  // Attach event listeners to day checkboxes and other inputs
-  document.querySelectorAll('.day-checkbox, input[type="time"]').forEach(input => {
+  function updateWeekdays() {
+    const checkedDays = Array.from(document.querySelectorAll('.day-checkbox:checked'))
+      .map((cb) => cb.value)
+      .join('-');
+    weekdaysInput.value = checkedDays;
+  }
+
+  function filterSubjects(e) {
+    const searchTerm = e.target.value.toLowerCase(); // Get the lowercase search term
+    subjectItems.forEach((item) => {
+      const text = item.textContent.toLowerCase(); // Get the subject name in lowercase
+      item.style.display = text.includes(searchTerm) ? '' : 'none'; // Show or hide items
+    });
+  }
+
+  // Attach event listeners to day-checkbox and time inputs
+  document.querySelectorAll('.day-checkbox, input[type="time"]').forEach((input) => {
     input.addEventListener('change', updateFilterSummary);
   });
 
-updateFilterSummary();
+  // Attach event listener to subject search input
+  subjectSearch.addEventListener('input', filterSubjects);
+
+  // Initialize the filter summary on page load
+  updateFilterSummary();
 });
 
 </script>
