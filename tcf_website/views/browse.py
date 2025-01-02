@@ -354,7 +354,7 @@ def course_instructor(request, course_id, instructor_id):
 
     request.session["course_code"] = course.code()
     request.session["course_title"] = course.title
-    request.session["instructor_fullname"] = instructor.full_name()
+    request.session["instructor_fullname"] = instructor.full_name
 
     # QA Data
     questions = Question.objects.filter(course=course_id, instructor=instructor_id)

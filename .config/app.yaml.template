@@ -1,6 +1,6 @@
 # Google App Engine Config
 
-runtime: python312
+runtime: python311
 
 # The --http flag exposes the app with uWSGI only and will act as the router/proxy/load balancer
 # If we want an nginx webserver upstream for more features, we would have to use a --socket flag so that nginx can communicate with uWSGI
@@ -38,9 +38,6 @@ env_variables:
     ELASTICSEARCH_ENDPOINT: "${ELASTICSEARCH_ENDPOINT}"
     ES_PRIVATE_API_KEY: "${ES_PRIVATE_API_KEY}"
     ES_PUBLIC_API_KEY: "${ES_PUBLIC_API_KEY}"
-    # discord
-    DISCORD_URL_BUG: "${DISCORD_URL_BUG}"
-    DISCORD_URL_FEEDBACK: "${DISCORD_URL_FEEDBACK}"
     # email for account verification
     EMAIL_HOST_USER: "${EMAIL_HOST_USER}"
     EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"
