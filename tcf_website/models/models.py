@@ -608,6 +608,7 @@ class Course(models.Model):
                 semester_last_taught=semester_last_taught_subquery,
                 # ArrayAgg:
                 # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
+                # pylint: disable=duplicate-code
                 section_times=ArrayAgg(
                     Case(
                         When(
