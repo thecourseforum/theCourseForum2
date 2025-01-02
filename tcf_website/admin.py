@@ -35,9 +35,11 @@ class SemesterAdmin(admin.ModelAdmin):
     ordering = ["-number"]
     search_fields = ["season", "year"]
 
+
 class DisciplineAdmin(admin.ModelAdmin):
     ordering = ["name"]
     search_fields = ["name"]
+
 
 class CourseAdmin(admin.ModelAdmin):
     ordering = ["subdepartment__mnemonic", "number", "title"]
