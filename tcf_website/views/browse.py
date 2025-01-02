@@ -113,7 +113,8 @@ def load_secs_helper(course, latest_semester):
         .distinct()
         .annotate(
             gpa=Avg(
-                "courseinstructorgrade__average", filter=Q(courseinstructorgrade__course=course)
+                "courseinstructorgrade__average",
+                filter=Q(courseinstructorgrade__course=course),
             ),
             difficulty=Avg("review__difficulty", filter=Q(review__course=course)),
             rating=(
@@ -127,7 +128,10 @@ def load_secs_helper(course, latest_semester):
             # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
             section_times=ArrayAgg(
                 Case(
-                    When(section__semester=latest_semester, then="section__section_times"),
+                    When(
+                        section__semester=latest_semester,
+                        then="section__section_times",
+                    ),
                     output_field=CharField(),
                 ),
                 distinct=True,
@@ -161,8 +165,12 @@ def load_secs_helper(course, latest_semester):
                     "section__units",
                     output_field=CharField(),
                 ),
-                distinct=True),
+                distinct=True,
+            ),
         )
+    )
+
+    # Note: Refactor pls
 
     for i in instructors:
         if i.section_times[0] is not None and i.section_nums[0] is not None:
@@ -176,7 +184,12 @@ def load_secs_helper(course, latest_semester):
     return instructors
 
 
-def course_view(request, mnemonic, course_number):
+def course_view(
+    request,
+    mnemonic: str,
+    course_number: int,
+    instructor_recency=None,
+):
     """A new Course view that allows you to input mnemonic and number instead."""
 
     # Clears previously saved course information
