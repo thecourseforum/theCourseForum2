@@ -207,7 +207,7 @@ def modal_load_editor(request):
 
     if request.method != "POST":
         messages.error(request, f"Invalid request method: {request.method}")
-        return
+        return JsonResponse({"status": "Method Not Allowed"}, status=405)
 
     body_unicode = request.body.decode("utf-8")
     body = json.loads(body_unicode)
@@ -258,7 +258,7 @@ def modal_load_sections(request):
     """
     Load the instructors and section times for a course, and the schedule, when adding to schedule from the modal
     """
-
+    # pylint: disable=too-many-locals
     body_unicode = request.body.decode("utf-8")
     body = json.loads(body_unicode)
     course_id = body["course_id"]
@@ -319,7 +319,7 @@ def schedule_add_course(request):
             selected_course = json.loads(
                 request.POST.get("selected_course", "{}")
             )  # Default to empty dict if not found
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             return JsonResponse({"status": "error", "message": "Invalid JSON data"}, status=400)
 
         form_data = {
