@@ -1,4 +1,3 @@
-/* eslint-disable */
 window.modalFunctions = function (
   courseIdParam,
   modeParam,
