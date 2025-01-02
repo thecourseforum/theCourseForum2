@@ -1276,7 +1276,8 @@ class Schedule(models.Model):
 
         ret = [0] * 5  # intialize return array for the schedule, which will have 5 fields
         ret[0] = courses  # list of courses in the schedule
-        ret[1] = sum([int(course.section.units) for course in ret[0]])  # total amount of credits
+        # pylint: disable=not-an-iterable
+        ret[1] = sum(int(course.section.units) for course in ret[0])  # total amount of credits
         ret[2] = (
             self.average_rating_for_schedule()
         )  # average rating for the courses in this schedule
@@ -1468,9 +1469,6 @@ class Schedule(models.Model):
 
     def average_schedule_gpa(self):
         """Compute the average GPA for this schedule"""
-        """CourseInstructorGrade.objects.filter(
-            course=course, instructor=self
-        ).aggregate(models.Avg("average"))["average__avg"]"""
 
         average_gpa = CourseInstructorGrade.objects.filter(
             course__in=ScheduledCourse.objects.values_list("section__course", flat=True),
