@@ -31,7 +31,7 @@ window.modalFunctions = function (
 };
 
 window.enableSubmit = function () {
-  let submitButton = document.getElementById("schedule_select_btn");
+  const submitButton = document.getElementById("schedule_select_btn");
   submitButton.disabled = false;
 };
 
@@ -42,7 +42,7 @@ window.attachEventListenersToModalContent = function (
 ) {
   // the fetchUrl is the endpoint for loading the content into the modal
 
-  let form = document.getElementById("select_schedule_form");
+  const form = document.getElementById("select_schedule_form");
   if (!form) {
     console.error("ERROR: missing form");
     return;
@@ -53,13 +53,13 @@ window.attachEventListenersToModalContent = function (
     document.getElementById("schedule_select_btn").disabled = true; // prevent a double submission
 
     // get the related data from the form
-    let selectedSchedule = form.querySelector(
+    const selectedSchedule = form.querySelector(
       'input[type="radio"][name="selected_schedules"]:checked',
     ).value;
-    let courseId = courseIdParam;
+    const courseId = courseIdParam;
 
     // prepare the request body
-    let requestBody = {};
+    const requestBody = {};
     requestBody.schedule_id = selectedSchedule;
 
     if (fetchUrl === "/schedule/modal/editor") {
@@ -88,8 +88,8 @@ window.attachEventListenersToModalContent = function (
           // show the modal and then dispatch an event to the modal to
           // let it know when to attach the submit event listener
           $(nextModalId).modal("show");
-          let modal = document.getElementById(nextModalId.substring(1));
-          let modalEvent = new Event("modalLoaded");
+          const modal = document.getElementById(nextModalId.substring(1));
+          const modalEvent = new Event("modalLoaded");
           modal.dispatchEvent(modalEvent);
         }, 400);
       })
