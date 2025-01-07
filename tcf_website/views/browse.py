@@ -206,7 +206,7 @@ def course_view(
     latest_semester = Semester.latest()
     instructors = load_secs_helper(course, latest_semester)
 
-    taught_this_semester = Section.objects.filter(course=course, semester=latest_semester).exists()
+    # taught_this_semester = Section.objects.filter(course=course, semester=latest_semester).exists()
 
     # Note: Could be simplified further
 
@@ -235,6 +235,10 @@ def course_view(
     request.session["course_code"] = course.code()
     request.session["course_title"] = course.title
     request.session["instructor_fullname"] = None
+
+    # Fetch sorting variables
+    sortby = request.GET.get("sortby", "course_id")
+    order = request.GET.get("order", "asc")
 
     return render(
         request,
