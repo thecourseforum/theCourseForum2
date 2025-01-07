@@ -53,11 +53,11 @@ function parseTime(timeString) {
 }
 
 function consolidateTimes(times) {
-  let selectedClassesMeetingTimes = [[], [], [], [], []];
+  const selectedClassesMeetingTimes = [[], [], [], [], []];
   for (let selectedClass = 0; selectedClass < times.length; selectedClass++) {
     const classMeetingTimes = parseTime(times[selectedClass]);
     for (let i = 0; i < classMeetingTimes.length; i++) {
-      if (classMeetingTimes[i].length == 0) {
+      if (classMeetingTimes[i].length === 0) {
         continue;
       }
       selectedClassesMeetingTimes[i].push(classMeetingTimes[i]);
@@ -68,7 +68,7 @@ function consolidateTimes(times) {
 
 function checkConflict(newTime, times) {
   // this method will return true if there is conflict with the list of times passed in and the newTime
-  let newTimeMeetingTimes = parseTime(newTime);
+  const newTimeMeetingTimes = parseTime(newTime);
   const consolidatedRimes = times;
 
   for (let day = 0; day < newTimeMeetingTimes.length; day++) {
@@ -82,7 +82,7 @@ function checkConflict(newTime, times) {
       continue;
     }
 
-    for ( let period = 0; period < newTimeMeetingTimes[day].length; period++) {
+    for (let period = 0; period < newTimeMeetingTimes[day].length; period++) {
       // period for proposed class
       for (
         let periodInSchedule = 0;
