@@ -1,11 +1,12 @@
+/* eslint-disable no-unused-vars */ // Since these functions are called by other files
 function stringTimeToInt(stringTime) {
   let ret = 0;
-  let parsedTime = stringTime.split(":");
+  const parsedTime = stringTime.split(":");
   ret += 60 * parseInt(parsedTime[0]);
   if (parsedTime[1][2] === "p" && parsedTime[0] !== "12") {
     ret += 720;
   }
-  let minuteString = parsedTime[1].substr(0, 2);
+  const minuteString = parsedTime[1].substr(0, 2);
   ret += parseInt(minuteString);
 
   return ret;
@@ -51,23 +52,19 @@ function parseTime(timeString) {
   return weekdayMeetingTimes;
 }
 
-// function consolidateTimes(times) {
-//   selected_classes_meeting_times = [[], [], [], [], []];
-//   for (
-//     let selected_class = 0;
-//     selected_class < times.length;
-//     selected_class++
-//   ) {
-//     class_meeting_times = parseTime(times[selected_class]);
-//     for (let i = 0; i < class_meeting_times.length; i++) {
-//       if (class_meeting_times[i].length == 0) {
-//         continue;
-//       }
-//       selected_classes_meeting_times[i].push(class_meeting_times[i]);
-//     }
-//   }
-//   return selected_classes_meeting_times;
-// }
+function consolidateTimes(times) {
+  let selectedClassesMeetingTimes = [[], [], [], [], []];
+  for (let selectedClass = 0; selectedClass < times.length; selectedClass++) {
+    const classMeetingTimes = parseTime(times[selectedClass]);
+    for (let i = 0; i < classMeetingTimes.length; i++) {
+      if (classMeetingTimes[i].length == 0) {
+        continue;
+      }
+      selectedClassesMeetingTimes[i].push(classMeetingTimes[i]);
+    }
+  }
+  return selectedClassesMeetingTimes;
+}
 
 function checkConflict(newTime, times) {
   // this method will return true if there is conflict with the list of times passed in and the newTime
@@ -85,24 +82,20 @@ function checkConflict(newTime, times) {
       continue;
     }
 
-    for (
-      let period = 0;
-      period < newTimeMeetingTimes[day].length;
-      period++
-    ) {
+    for ( let period = 0; period < newTimeMeetingTimes[day].length; period++) {
       // period for proposed class
       for (
-        let period_in_schedule = 0;
-        period_in_schedule < dayInSchedule.length;
-        period_in_schedule++
+        let periodInSchedule = 0;
+        periodInSchedule < dayInSchedule.length;
+        periodInSchedule++
       ) {
         // period_in for exisiting schedule
-        let beginsBefore =
+        const beginsBefore =
           newTimeMeetingTimes[day][period][0] <=
-          dayInSchedule[period_in_schedule][0][1];
-        let endsAfter =
+          dayInSchedule[periodInSchedule][0][1];
+        const endsAfter =
           newTimeMeetingTimes[day][period][1] >=
-          dayInSchedule[period_in_schedule][0][0];
+          dayInSchedule[periodInSchedule][0][0];
         if (beginsBefore && endsAfter) {
           return true;
         }
