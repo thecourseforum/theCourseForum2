@@ -67,12 +67,12 @@ def fetch_section_data(section):
     response = requests.get(url, timeout=300)
     response.raise_for_status()
     data = response.json()
-    if data:
-        section_data = data[0]
+    if data and "classes" in data and data["classes"]:
+        class_data = data["classes"][0]
         return {
-            "enrollment_taken": section_data['enrollment_total'],
-            "enrollment_limit": section_data['class_capacity'],
-            "waitlist_taken": section_data['wait_tot'],
-            "waitlist_limit": section_data['wait_cap'],
+            "enrollment_taken": class_data.get("enrollment_total", 0),
+            "enrollment_limit": class_data.get("class_capacity", 0),
+            "waitlist_taken": class_data.get("wait_tot", 0),
+            "waitlist_limit": class_data.get("wait_cap", 0),
         }
     return {}
