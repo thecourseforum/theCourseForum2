@@ -77,6 +77,13 @@
       "group_name": "Class of 2025",
       "members": [
         {
+          "name": "Shruti Bala",
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "ENG_Shruti_Bala.jpg",
+          "github": "shrutibala1"
+        },
+        {
           "name": "Christina Wang",
           "role": "Developer",
           "class": "2025",
@@ -119,6 +126,13 @@
     {
       "group_name": "Class of 2024",
       "members": [
+        {
+          "name": "Ann Li",
+          "role": "VP Infrastructure Engineering",
+          "class": "2024",
+          "img_filename": "ENG_Ann_Li.jpg",
+          "github": "Ann924"
+        },
         {
           "name": "Oliver Song",
           "role": "Treasurer",

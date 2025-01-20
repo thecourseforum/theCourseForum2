@@ -1,6 +1,6 @@
 # tCF Developer Info
 
-Ensure your system has [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), and [Docker](https://docs.docker.com/install/) installed.
+Ensure your system has [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), [git-lfs](https://git-lfs.com/) and [Docker](https://docs.docker.com/install/) installed.
 
 ## One-Command Setup
 
@@ -11,7 +11,7 @@ Replace `<install_dir>` with where you'd like to clone the script.
 *TODO*: correct branch to main/dev when merged
 
 ```console
-curl -fL 'https://raw.githubusercontent.com/thecourseforum/theCourseForum2/refs/heads/lfs-db/scripts/setup.sh' | sh -s -- <install_dir>
+curl -fL 'https://raw.githubusercontent.com/thecourseforum/theCourseForum2/refs/heads/master/scripts/setup.sh' | sh -s -- <install_dir>
 ```
 
 ## Setup (Old)
