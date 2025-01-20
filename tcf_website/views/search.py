@@ -198,9 +198,13 @@ def filter_courses(filters):
     from_time = filters.get("from_time")
     to_time = filters.get("to_time")
 
+    print("DEBUG TIME FILTERS")
+    print(weekdays, from_time, to_time)
     if any([weekdays, from_time, to_time]):
         time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
+        print(results)
+        print("DEBUG TIME FILTERED")
 
     results = results.distinct().order_by("subdepartment__mnemonic", "number")
 
