@@ -195,6 +195,11 @@
       document.querySelectorAll('.subject-list .form-check').forEach(item => {
         item.style.display = ''; // Show all subjects
       });
+
+      // Set time inputs to empty
+      document.getElementById('from_time').value = '';
+      document.getElementById('to_time').value = '';
+
     });
 
     const filtersContainer = document.getElementById('active-filters');
