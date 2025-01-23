@@ -27,7 +27,10 @@ function parseTime(timeString) {
 
   for (const session of timeString) {
     const [days, startTime, , endTime] = session.split(" "); // [daysOfWeek, startTime, "-", endTime]
-    const classTimePair = [stringTimeToInt(startTime), stringTimeToInt(endTime)];
+    const classTimePair = [
+      stringTimeToInt(startTime),
+      stringTimeToInt(endTime),
+    ];
 
     // Extract day abbreviations using regex (splitting by uppercase letters)
     const daysOfWeek = days.match(/[A-Z][a-z]?/g) || [];
