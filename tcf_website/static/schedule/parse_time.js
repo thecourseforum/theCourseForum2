@@ -1,4 +1,13 @@
 /* eslint-disable no-unused-vars */ // Since these functions are called by other files
+
+const WeekdayIndex = {
+  Mo: 0,
+  Tu: 1,
+  We: 2,
+  Th: 3,
+  Fr: 4,
+};
+
 function stringTimeToInt(stringTime) {
   let ret = 0;
   const parsedTime = stringTime.split(":");
@@ -14,41 +23,23 @@ function stringTimeToInt(stringTime) {
 
 function parseTime(timeString) {
   timeString = timeString.split(","); // split lab times / discussion times / lecture times
-  const weekdayMeetingTimes = Array.from({ length: 5 }, () => []); // index 0 = monday, index 1 = tuesday, index 2 = wednesday, index 3 = thursday, index 4 = friday
+  const weekdayMeetingTimes = Array.from({ length: 5 }, () => []); // Monday to Friday
 
-  for (let j = 0; j < timeString.length; j++) {
-    const meetingTime = timeString[j].split(" "); // creates an array that contains[daysOfWeek, class_start_time, -, class_end_time]
-    let daysOfWeek = meetingTime[0];
+  for (const session of timeString) {
+    const [days, startTime, , endTime] = session.split(" "); // [daysOfWeek, startTime, "-", endTime]
+    const classTimePair = [stringTimeToInt(startTime), stringTimeToInt(endTime)];
 
-    while (daysOfWeek !== "") {
-      // adds both the start and end time for a particular class to a weekday
-      const classTimePair = [
-        stringTimeToInt(meetingTime[1]),
-        stringTimeToInt(meetingTime[3]),
-      ];
+    // Extract day abbreviations using regex (splitting by uppercase letters)
+    const daysOfWeek = days.match(/[A-Z][a-z]?/g) || [];
 
-      if (daysOfWeek.includes("Mo")) {
-        weekdayMeetingTimes[0].push(classTimePair);
-        daysOfWeek = daysOfWeek.replace("Mo", "");
+    daysOfWeek.forEach((dayAbbr) => {
+      const index = WeekdayIndex[dayAbbr];
+      if (index !== undefined) {
+        weekdayMeetingTimes[index].push(classTimePair);
       }
-      if (daysOfWeek.includes("Tu")) {
-        weekdayMeetingTimes[1].push(classTimePair);
-        daysOfWeek = daysOfWeek.replace("Tu", "");
-      }
-      if (daysOfWeek.includes("We")) {
-        weekdayMeetingTimes[2].push(classTimePair);
-        daysOfWeek = daysOfWeek.replace("We", "");
-      }
-      if (daysOfWeek.includes("Th")) {
-        weekdayMeetingTimes[3].push(classTimePair);
-        daysOfWeek = daysOfWeek.replace("Th", "");
-      }
-      if (daysOfWeek.includes("Fr")) {
-        weekdayMeetingTimes[4].push(classTimePair);
-        daysOfWeek = daysOfWeek.replace("Fr", "");
-      }
-    }
+    });
   }
+
   return weekdayMeetingTimes;
 }
 
@@ -69,18 +60,13 @@ function consolidateTimes(times) {
 function checkConflict(newTime, times) {
   // this method will return true if there is conflict with the list of times passed in and the newTime
   const newTimeMeetingTimes = parseTime(newTime);
-  const consolidatedRimes = times;
+  const consolidatedTimes = times;
 
   for (let day = 0; day < newTimeMeetingTimes.length; day++) {
-    if (consolidatedRimes[day].length === 0) {
+    if (consolidatedTimes[day].length === 0) {
       continue;
     }
-    const dayInSchedule = consolidatedRimes[day];
-
-    if (newTimeMeetingTimes[day].length === 0 || dayInSchedule.length === 0) {
-      // skip over empty days in new time meeting times
-      continue;
-    }
+    const dayInSchedule = consolidatedTimes[day];
 
     for (let period = 0; period < newTimeMeetingTimes[day].length; period++) {
       // period for proposed class
