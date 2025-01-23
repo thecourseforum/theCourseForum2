@@ -40,6 +40,7 @@ class ScheduleForm(forms.ModelForm):
     """
 
     user_id = forms.IntegerField(widget=forms.HiddenInput())
+    name = forms.CharField(max_length=15)
 
     class Meta:
         model = Schedule
@@ -145,12 +146,11 @@ def new_schedule(request):
                 return render(request, "schedule/user_schedules.html", {"form": form})
             schedule.save()
             messages.success(request, "Successfully created schedule!")
-            return redirect("schedule")
     else:
         # if schedule isn't getting saved, then don't do anything
         # for part two of the this project, load the actual course builder page
         form = ScheduleForm()
-    return render(request, "schedule/schedule_builder.html", {"form": form})
+    return redirect("schedule")
 
 
 @login_required
