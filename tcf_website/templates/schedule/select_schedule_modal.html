@@ -1,6 +1,15 @@
 {% load static %}
 {% load custom_tags %}
 
+<style>
+  .schedule_radio_option:has(.schedule_radio_input:checked) .schedule {
+    border: 2px solid #007bff; /* Highlight border color */
+    background-color: #f0f8ff; /* Light background color */
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+    transition: all 0.3s ease-in-out;
+}
+</style>
+
 <div class="modal fade" id="selectScheduleModal" tabindex="-1" role="dialog" aria-labelledby="selectScheduleModal" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
@@ -15,12 +24,15 @@
             {% csrf_token %}
             {% for s in schedules %}
             <div class="schedule_radio_option">
-              <label>
+              <label style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <!-- <input class="schedule_radio_input" type="radio" name="selected_schedules" value="{{s.id}}" onchange="enableSubmit()"> -->
+                  <div style="flex-shrink: 0;">
                     <input class="schedule_radio_input" type="radio" name="selected_schedules" value="{{s.id}}" onchange="enableSubmit()">
-                    <div>
+                  </div>
+                    <div style="flex-grow: 1;">
                         {% include "schedule/schedule.html" with schedule=s gpa=schedules_gpa|get_item:s.id courses=courses|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id credits=credits|get_item:s.id %}
 
-                      </div>
+                    </div>
                 </label>
               </div>
             {% empty %}
