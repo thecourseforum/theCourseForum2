@@ -184,7 +184,7 @@ def duplicate_schedule(request, schedule_id):
     schedule = get_object_or_404(Schedule, pk=schedule_id)
     schedule.pk = None  # reset the key so it will be recreated when it's saved
     old_name = schedule.name
-    schedule.name = old_name + "_copy"
+    schedule.name = "Copy of " + old_name
     schedule.save()
 
     courses = ScheduledCourse.objects.filter(schedule_id=schedule_id)

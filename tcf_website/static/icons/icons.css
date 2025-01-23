@@ -294,3 +294,10 @@
   background-size: contain;
   background-position: center;
 }
+
+.fa-copy {
+  background-image: url("../icons/img/fa-copy.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
