@@ -198,7 +198,7 @@
                 </div>
             </div>
             {% if display_times %}
-            <div class="times-info-container">
+            <div class="times-info-container" id="reviews">
                 <div class="info-container" style="padding: 10px 15px; margin: 0;">
                     <div style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="toggleSections(this)">
                         <p class="rating-card-desc" style="margin-bottom: 0; display: flex; align-items: center;">Sections
@@ -230,24 +230,7 @@
             {% endif %}
         </div>
 
-        <script>
-            document.querySelector("#sectionInfo").style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
-
-            function toggleSections(div) {
-                const arrow = div.getElementsByTagName("i")[0],
-                    sectionInfo = document.querySelector("#sectionInfo");
-                arrow.classList.toggle("rotated");
-                sectionInfo.classList.toggle("show");
-                if (sectionInfo.classList.contains("show")) {
-                    sectionInfo.style.marginTop = '10px';
-                } else {
-                    sectionInfo.style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
-                }
-            }
-        </script>
-
-
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs" id="reviews">
             <li class="nav-item">
                 <a class="nav-link active" id="reviewsTab" data-toggle="tab" href="#reviewsTabContent" style="font-size: 18px;">Reviews</a>
             </li>
@@ -262,7 +245,7 @@
             <div class="tab-pane fade show active" id="reviewsTabContent" role="tabpanel" aria-labelledby="reviews-tab">
                 <div class="reviews-container mb-5 mt-3">
                     <div class="reviews-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
-                        <h3 class="reviews-heading mb-0 mt-1 mr-4">{{ reviews|length }} {% if reviews|length == 1 %} Comment {% else %} Comments {% endif %}</h3>
+                        <h3 class="reviews-heading mb-0 mt-1 mr-4">{{ num_reviews }} {% if num_reviews == 1 %} Comment {% else %} Comments {% endif %}</h3>
                         <div class="reviews-options d-flex flex-sm-row flex-column col p-0">
                             {% if user.is_authenticated %}
                                 <a href="{% url 'new_review' %}?subdept_id={{course.subdepartment.id}}&course_id={{course.id}}&instr_id={{instructor.id}}" class="btn bg-tcf-orange text-white mb-3">
@@ -273,24 +256,25 @@
                                     <i class="fa fa-plus" aria-hidden="true"></i> Add your review!
                                 </a> 
                             {% endif %}
-                            {% if reviews %}
+                            {% if paginated_reviews and paginated_reviews.number > 0 %}
                             <!-- Show sorting options iff reviews exist -->
                             <div class="ml-auto">
                                 <div class="dropdown btn-group ml-sm-4">
                                     <button class="btn bg-white" disabled>Sort by</button>
                                     <button id="review-sort-select" class="btn btn-primary dropdown-toggle" type="button" id="sortOptions"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ sort_method }}
+                                    </button>
                                     <div class="dropdown-menu" aria-labelledby="sortOptions">
-                                        <button id="votes-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                        <button id="votes-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id instructor.id 'Most Helpful' %}#reviews';" class="dropdown-item" type="button">
                                             Most Helpful
                                         </button>
-                                        <button id="recent-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                        <button id="recent-sort-btn" onclick="window.location.href='{% url 'sort_reviews'  course.id instructor.id 'Most Recent' %}#reviews';" class="dropdown-item" type="button">
                                             Most Recent
                                         </button>
-                                        <button id="highrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                        <button id="highrating-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id instructor.id 'Highest Rating' %}#reviews';" class="dropdown-item" type="button">
                                             Highest Rating
                                         </button>
-                                        <button id="lowrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                        <button id="lowrating-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id instructor.id 'Lowest Rating' %}#reviews';" class="dropdown-item" type="button">
                                             Lowest Rating
                                         </button>
                                     </div>
@@ -299,7 +283,7 @@
                             {% endif %}
                         </div>
                     </div>
-                    {% include "reviews/reviews.html" with reviews=reviews %}
+                    {% include "reviews/reviews.html" with paginated_reviews=paginated_reviews %}
                 </div>
             </div>
             <div class="tab-pane fade" id="qaTabContent" role="tabpanel" aria-labelledby="qa-tab">
