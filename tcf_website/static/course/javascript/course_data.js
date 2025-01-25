@@ -8,8 +8,8 @@ function togglePieChart() {
   if (myChart) {
     myChart.destroy();
   }
-  document.getElementById("canvas-parent").style.width = "290px";
   // eslint-disable-next-line no-new,no-undef
+  pieConfig.options.plugins.legend.display = false;
   myChart = new Chart(ctx, pieConfig);
 }
 
@@ -17,8 +17,8 @@ function toggleBarChart() {
   if (myChart) {
     myChart.destroy();
   }
-  document.getElementById("canvas-parent").style.width = "95%";
   // eslint-disable-next-line no-new,no-undef
+  barConfig.options.plugins.legend.display = false;
   myChart = new Chart(ctx, barConfig);
 }
 
@@ -26,11 +26,13 @@ $(".pieToBar").click(function () {
   if (document.getElementById("toggle-btn").value === "bar") {
     toggleBarChart();
     document.getElementById("chart-label").className = "bottom-center";
+    document.getElementById("grades-container").style.paddingBottom = "3em";
     document.getElementById("toggle-btn").innerHTML = "Pie";
     document.getElementById("toggle-btn").value = "pie";
   } else {
     togglePieChart();
     document.getElementById("chart-label").className = "absolute-center";
+    document.getElementById("grades-container").style.paddingBottom = "0em";
     document.getElementById("toggle-btn").innerHTML = "Bar";
     document.getElementById("toggle-btn").value = "bar";
   }
@@ -176,9 +178,6 @@ const createChart = (gradesData) => {
         },
       },
       responsive: true,
-      legend: {
-        display: false,
-      },
       scales: {
         xAxes: [
           {
@@ -206,6 +205,9 @@ const createChart = (gradesData) => {
         ],
       },
       plugins: {
+        legend: {
+          display: false,
+        },
         labels: {
           // render 'label', 'value', 'percentage', 'image' or custom function, default is 'percentage'
           render: "value",
@@ -242,12 +244,10 @@ const createChart = (gradesData) => {
 
   // Generate configuration for Pie Chart
   pieConfig = {
-    type: "pie",
+    type: "doughnut",
     data: chartData,
     options: {
-      cutoutPercentage: 65,
-      responsive: true,
-      aspectRatio: 1,
+      maintainAspectRatio: false,
       tooltips: {
         callbacks: {
           label: function (tooltipItem, data) {
@@ -264,10 +264,10 @@ const createChart = (gradesData) => {
         },
         displayColors: false,
       },
-      legend: {
-        display: false,
-      },
       plugins: {
+        legend: {
+          display: false,
+        },
         labels: {
           // render 'label', 'value', 'percentage', 'image' or custom function, default is 'percentage'
           render: "label",
