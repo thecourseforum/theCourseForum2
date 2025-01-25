@@ -16,6 +16,8 @@ exists git
 
 exists docker
 
+exists gdown # check for gdown
+
 git clone git@github.com:thecourseforum/theCourseForum2.git
 if [ "$?" -ne 0 ]; then
   echo "Unable to clone thecourseforum/theCourseForum2 with SSH. Ensure you have an ssh key set up on your GitHub account."
@@ -39,11 +41,25 @@ read -r _ </dev/tty
 
 [ ! -f ".env" ] && echo "Error: '.env' file does not exist in '$1'. Follow the installation instructions in doc/dev.md after creating a '.env' file." && exit 1
 
+GDRIVE_FILE_ID="1TsSvhvWGA24537xNo_9CkULKzjugNrZH"
+SQL_FILE_PATH="db/latest.sql"
+
+echo "Downloading $SQL_FILE_PATH from Google Drive..."
+
+# use gdown to download latest.sql
+gdown --id "$GDRIVE_FILE_ID" --output "$SQL_FILE_PATH"
+if [ "$?" -ne 0 ]; then
+  echo "Failed to download $SQL_FILE_PATH from Google Drive."
+  echo "Make sure the file is publicly accessible or you have proper permissions."
+  exit 1
+fi
+
 docker compose build --no-cache
 docker compose up &
 (
-  sleep 1
+  sleep 3 # 1 to 3 to ensure containers are up
   docker exec -i tcf_db psql tcf_db -U tcf_django -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
   docker exec -i tcf_db psql tcf_db -U tcf_django -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
-  docker exec -i tcf_db psql tcf_db -U tcf_django <db/latest.sql
+  echo "Importing data from $SQL_FILE_PATH..."
+  docker exec -i tcf_db psql tcf_db -U tcf_django < "$SQL_FILE_PATH"
 ) &

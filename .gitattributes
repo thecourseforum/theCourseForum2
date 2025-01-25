@@ -4,4 +4,4 @@
 # e.g. `/bin/sh^M: bad interpreter: No such file or directory`
 # https://docs.github.com/en/github/using-git/configuring-git-to-handle-line-endings
 *.sh text eol=lf
-db/latest.sql filter=lfs diff=lfs merge=lfs -text
+# db/latest.sql filter=lfs diff=lfs merge=lfs -text
