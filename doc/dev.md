@@ -8,7 +8,7 @@ Run the following command in a POSIX-compliant shell (i.e. Windows users - use G
 
 Replace `<install_dir>` with where you'd like to clone the script.
 
-*TODO*: correct branch to main/dev when merged
+_TODO_: correct branch to main/dev when merged
 
 ```console
 curl -fL 'https://raw.githubusercontent.com/thecourseforum/theCourseForum2/refs/heads/master/scripts/setup.sh' | sh -s -- <install_dir>
