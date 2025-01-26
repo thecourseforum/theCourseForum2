@@ -5,7 +5,7 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'course/course_professor.css' %}"/>
-    <link rel="stylesheet" href="{% static 'icons/icons .css' %}"/>
+    <link rel="stylesheet" href="{% static 'icons/icons.css' %}"/>
 {% endblock %}
 
 {% block content %}
@@ -184,10 +184,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="grades-container">
-                    <div class="chart-container d-flex align-items-center justify-content-center">
-                        <div id="canvas-parent"><canvas id="myChart"></canvas></div>
-                    </div>
+                <div id="grades-container" class="grades-container">
+                    <canvas id="myChart"></canvas>
                     <div class="absolute-center" id="chart-label">
                         <p class="gpa-text"> No grades found <i class="fa fa-frown-open fa-fw"></i></p>
                         <p class="students-text"> &mdash; Students</p>
@@ -322,7 +320,7 @@
     </script>
 
     <!-- For grade data -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module"
             src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
     <script type="module" src="{% static 'course/javascript/course_data.js' %}"></script>
