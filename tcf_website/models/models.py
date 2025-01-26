@@ -6,18 +6,24 @@ import math
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
+from django.core.paginator import EmptyPage, Page, Paginator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import (
     Avg,
     Case,
     CharField,
+    ExpressionWrapper,
+    F,
     FloatField,
     OuterRef,
     Q,
+    QuerySet,
     Subquery,
+    Sum,
     Value,
     When,
+    fields,
 )
 from django.db.models.functions import Abs, Coalesce, Round
 
@@ -911,8 +917,10 @@ class Review(models.Model):
         )
 
     @staticmethod
-    def display_reviews(course_id, instructor_id, user):
+    def get_sorted_reviews(course_id, instructor_id, user, method=""):
         """Prepare review list for course-instructor page."""
+
+        # Filter out reviews with no text and hidden field true.
         reviews = (
             Review.objects.filter(instructor=instructor_id, course=course_id, hidden=False)
             .exclude(text="")
@@ -920,6 +928,7 @@ class Review(models.Model):
                 sum_votes=models.functions.Coalesce(models.Sum("vote__value"), models.Value(0)),
             )
         )
+
         if user.is_authenticated:
             reviews = reviews.annotate(
                 user_vote=models.functions.Coalesce(
@@ -927,7 +936,57 @@ class Review(models.Model):
                     models.Value(0),
                 ),
             )
-        return reviews.order_by("-created")
+
+        return Review.sort(reviews, method)
+
+    @staticmethod
+    def sort(reviews: "QuerySet[Review]", method="") -> "QuerySet[Review]":
+        """Sort reviews by given method - upvotes, rating (low or high), or recent."""
+        match method:
+            case "Most Helpful":  # net votes
+                return reviews.annotate(
+                    upvotes=Coalesce(Sum("vote__value", filter=Q(vote__value=1)), 0),
+                    downvotes=Coalesce(Abs(Sum("vote__value", filter=Q(vote__value=-1))), 0),
+                    helpful_score=ExpressionWrapper(
+                        F("upvotes") - F("downvotes"),
+                        output_field=fields.IntegerField(),
+                    ),
+                ).order_by("-helpful_score")
+            case "Highest Rating":
+                return reviews.annotate(
+                    average=ExpressionWrapper(
+                        (F("instructor_rating") + F("recommendability") + F("enjoyability")) / 3,
+                        output_field=fields.FloatField(),
+                    )
+                ).order_by("-average")
+            case "Lowest Rating":
+                return reviews.annotate(
+                    average=ExpressionWrapper(
+                        (F("instructor_rating") + F("recommendability") + F("enjoyability")) / 3,
+                        output_field=fields.FloatField(),
+                    )
+                ).order_by("average")
+            case "Most Recent" | _:
+                return reviews.order_by("-created")
+
+    @staticmethod
+    def paginate(reviews: "QuerySet[Review]", page_number, reviews_per_page=10) -> "Page[Review]":
+        """Paginate reviews"""
+        paginator = Paginator(reviews, reviews_per_page)
+        try:
+            page_obj = paginator.page(page_number)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+
+        return page_obj
+
+    @staticmethod
+    def get_paginated_reviews(
+        course_id, instructor_id, user, page_number=1, method=""
+    ) -> "Page[Review]":
+        """Generate sorted, paginated reviews"""
+        reviews = Review.get_sorted_reviews(course_id, instructor_id, user, method)
+        return Review.paginate(reviews, page_number)
 
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"
