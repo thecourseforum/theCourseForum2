@@ -8,8 +8,8 @@ function togglePieChart() {
   if (myChart) {
     myChart.destroy();
   }
-  // eslint-disable-next-line no-new,no-undef
   pieConfig.options.plugins.legend.display = false;
+  // eslint-disable-next-line no-new,no-undef
   myChart = new Chart(ctx, pieConfig);
 }
 
@@ -17,8 +17,8 @@ function toggleBarChart() {
   if (myChart) {
     myChart.destroy();
   }
-  // eslint-disable-next-line no-new,no-undef
   barConfig.options.plugins.legend.display = false;
+  // eslint-disable-next-line no-new,no-undef
   myChart = new Chart(ctx, barConfig);
 }
 
