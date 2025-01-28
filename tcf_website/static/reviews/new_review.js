@@ -69,7 +69,7 @@ jQuery(function ($) {
                               &page_size=${pageSize}&recent`;
     $.getJSON(courseEndpoint, function (data) {
       // Generate option tags
-      $.each(data.results, function (i, course) {
+      $.each(data, function (i, course) {
         $("<option />", {
           val: course.id,
           text: course.number + " | " + course.title,
@@ -105,7 +105,7 @@ jQuery(function ($) {
       clearDropdown("#instructor"); // Empty dropdown
 
       // Generate option tags
-      $.each(data.results, function (i, instr) {
+      $.each(data, function (i, instr) {
         $("<option />", {
           val: instr.id,
           text: instr.last_name + ", " + instr.first_name,
