@@ -8,6 +8,7 @@ django-filter~=23.5
 django-heroku~=0.3.1
 django-stubs~=4.2.7
 djangorestframework~=3.14.0
+gdown~=5.2.0
 gunicorn~=21.2.0
 html-linter~=0.4.0
 isort~=5.13.2
