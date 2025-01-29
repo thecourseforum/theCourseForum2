@@ -47,7 +47,7 @@ SQL_FILE_PATH="db/latest.sql"
 echo "Downloading $SQL_FILE_PATH from Google Drive..."
 
 # use gdown to download latest.sql
-gdown --id "$GDRIVE_FILE_ID" --output "$SQL_FILE_PATH"
+gdown "$GDRIVE_FILE_ID" --output "$SQL_FILE_PATH"
 if [ "$?" -ne 0 ]; then
   echo "Failed to download $SQL_FILE_PATH from Google Drive."
   echo "Make sure the file is publicly accessible or you have proper permissions."
