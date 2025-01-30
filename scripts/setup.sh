@@ -5,6 +5,8 @@ if [ -z "$1" ]; then
   exit
 fi
 
+cd "$1" || exit
+
 exists() {
   command -v "$1" >/dev/null 2>&1 || {
     echo "Error: '$1' is not installed. Please install '$1'." >&2
