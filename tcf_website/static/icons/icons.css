@@ -16,7 +16,7 @@
   height: 1em;
 }
 
-.fa-clock {
+/* .fa-clock {
   width: 1em;
   height: 1em;
   background-image: url("../icons/img/fa-clock.svg");
@@ -24,6 +24,17 @@
   background-size: contain;
   background-position: center;
   vertical-align: middle;
+} */
+
+.fa-clock {
+  width: 1em;
+  height: 1em;
+  /* background-image: url("../icons/img/fa-clock.svg"); */
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  vertical-align: middle;
+  color: var(--dark-mode-white);
 }
 
 .fa-arrow-right {
