@@ -99,7 +99,13 @@
                                         <div class="col">
                                             <div class="question-header">
                                                 <div class="d-flex justify-content-end">
-                                                    <h6 id="date" class="text-muted">Updated {{ question.created|date:"n/d/y" }}</h6>
+                                                    <h6 id="date" class="text-muted">Updated {{ question.created|date:"n/d/y" }}
+                                                        <a class="question-delete h5 pl-2 text-danger" type="button"
+                                                        data-toggle="modal" data-target="#deleteQuestionModal{{question.id}}">
+                                                        <i class="fa fa-trash-o"></i>
+                                                        </a>
+                                                    </h6>
+                                                    
                                                 </div>
                                             </div>
                                             <div class="question-content mb-2">
@@ -114,10 +120,6 @@
                                                         <a data-toggle="modal" class="question-edit h5 px-2 text-tcf-blue" type="button" 
                                                             data-target="#edit-question-modal{{question.id}}" id="edit-question-button{{question_id}}">
                                                             <i class="fas fa-pencil-alt"></i>
-                                                        </a>
-                                                        <a class="question-delete h5 pl-2 text-danger" type="button"
-                                                                data-toggle="modal" data-target="#deleteQuestionModal{{question.id}}">
-                                                        <i class="fa fa-trash-o"></i>
                                                         </a>
                                                         {% include "qa/delete_question_confirm_modal.html" with question_id=question.id %}
                                                     </div>
@@ -179,7 +181,12 @@
                                                         <div class="answer-head">
                                                             <div class="d-flex justify-content-between">
                                                                 <h6 class="text-tcf-orange text-start">{{ answer.semester }}</h6>
-                                                                <h6 id="date" class="text-muted">Updated {{ answer.created|date:"n/d/y" }}</h6>
+                                                                <h6 id="date" class="text-muted">Updated {{ answer.created|date:"n/d/y" }}
+                                                                    <a class="answer-delete h5 pl-2 text-danger" type="button"
+                                                                    data-toggle="modal" data-target="#deleteAnswerModal{{answer.id}}">
+                                                                    <i class="fa fa-trash-o"></i>
+                                                                    </a>
+                                                                </h6>
                                                             </div>
                                                         </div>
                                                         <div class="answer-content">
@@ -210,10 +217,6 @@
                                                                 <div class="answer-actions d-inline-flex">
                                                                     <a data-toggle="modal" type="button" class="answer-edit h5 px-2 text-tcf-blue" data-target="#edit-answer-modal{{answer.id}}" id="edit-answer-button{{answer_id}}">
                                                                         <i class="fas fa-pencil-alt"></i>
-                                                                    </a>
-                                                                    <a class="answer-delete h5 pl-2 text-danger" type="button"
-                                                                            data-toggle="modal" data-target="#deleteAnswerModal{{answer.id}}">
-                                                                    <i class="fa fa-trash-o"></i>
                                                                     </a>
                                                                     {% include "qa/delete_answer_confirm_modal.html" with answer_id=answer.id %}
                                                                 </div>
@@ -267,7 +270,7 @@
                                                 {% endfor %}
                                                 </div>
                                                 <div class="collapse" id="answerCollapse{{question.id}}"></div>
-                                                <div class="row d-flex justify-content-between">
+                                                <div class="row d-flex justify-content-center">
                                                     {% if answer_list|length > 1 %}
                                                     <div class="d-flex collapse-answer-button" id="collapse-answer-button{{question.id}}" value="show" type="button" data-toggle="collapse" data-target="#answerCollapse{{question.id}}" aria-expanded="false" aria-controls="answerCollapse{{question.id}}">
                                                         <button class="btn text-tcf-orange hover-tcf-orange mt-3 collapse-answer-chevron" id="collapse-answer-chevron{{question.id}}" style="border-color: var(--accent-color)">View more answers here</button>
