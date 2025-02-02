@@ -906,9 +906,6 @@ class SectionEnrollment(models.Model):
     # Maximum number of students allowed on the waitlist. Optional.
     waitlist_limit = models.IntegerField(null=True, blank=True)
 
-    # Automatically updates the timestamp every time the object is saved
-    last_updated = models.DateTimeField(auto_now=True)
-
     @property
     def enrollment_info(self):
         """
@@ -919,7 +916,6 @@ class SectionEnrollment(models.Model):
             'enrollment_limit': self.enrollment_limit,
             'waitlist_taken': self.waitlist_taken,
             'waitlist_limit': self.waitlist_limit,
-            'last_updated': self.last_updated,
         }
 
     def __str__(self):
@@ -933,7 +929,6 @@ class SectionEnrollment(models.Model):
             models.Index(fields=["enrollment_limit"]),
             models.Index(fields=["waitlist_taken"]),
             models.Index(fields=["waitlist_limit"]),
-            models.Index(fields=["last_updated"]),
         ]
 
 class Review(models.Model):

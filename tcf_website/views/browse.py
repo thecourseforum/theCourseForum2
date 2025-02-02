@@ -14,7 +14,7 @@ from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from tcf_website.utils.enrollment_utils import update_enrollment_data
+from tcf_website.api.enrollment import update_enrollment_data
 
 from ..models import (
     Answer,
@@ -426,6 +426,6 @@ def safe_round(num):
     return "\u2014"
 
 def run_async(func, *args):
-    """Runs an async function inside a thread."""
+    """Helper function to run an async function inside a thread."""
     thread = Thread(target=lambda: asyncio.run(func(*args)))
     thread.start()
