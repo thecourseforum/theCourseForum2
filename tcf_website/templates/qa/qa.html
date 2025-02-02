@@ -76,25 +76,23 @@
                                 <div class="question" id="question{{question.id}}">
                                     <div class="row">
                                         <div class="col-sm-1 d-flex text-muted">
-                                            <span class="upvoteCount" hidden>{{ question.count_votes.upvotes }}</span>
-                                            <span class="downvoteCount" hidden>{{ question.count_votes.downvotes }}</span>
-                                            <ul class="list-group mx-auto justify-content-center text-center">
-                                                <li class="item">
-                                                    <a id="upvoteQ{{question.id}}" href="#loginModal" data-toggle="modal"
+                                            <span id="answer-vote-count" hidden>{{ question.sum_a_votes }}</span>
+                                            <div class="mr-3 mr-sm-4">
+                                                <a id="upvoteQ{{question.id}}" href="#loginModal"
+                                                    data-toggle="modal"
                                                     class="upvoteQuestion {% if question.user_q_vote == 1 %}active{% endif %}">
-                                                    <i class="fa fa-chevron-up fa-lg"></i>
-                                                    </a>
-                                                </li>
-                                                <li class="item justify-content-center">
-                                                    <span id="question-vote-count">{{ question.sum_q_votes }}</span>
-                                                </li>
-                                                <li class="item justify-content-center">
-                                                    <a id="downvoteQ{{question.id}}" href="#loginModal" data-toggle="modal"
+                                                    <i class="fa fa-thumbs-up"></i>
+                                                </a>
+                                                <span class="upvoteCount">{{ question.count_votes.upvotes }}</span>
+                                            </div>
+                                            <div class="mr-3 mr-sm-4">
+                                                <a id="downvoteQ{{question.id}}" href="#loginModal"
+                                                    data-toggle="modal"
                                                     class="downvoteQuestion {% if question.user_q_vote == -1 %}active{% endif %}">
-                                                    <i class="fa fa-chevron-down fa-lg"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
+                                                    <i class="fa fa-thumbs-down"></i>
+                                                </a>
+                                                <span class="downvoteCount">{{ question.count_votes.downvotes }}</span>
+                                            </div>
                                         </div>
                                         <div class="col">
                                             <div class="question-header">
