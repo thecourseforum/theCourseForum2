@@ -18,6 +18,7 @@ from .models import (
     School,
     Section,
     SectionTime,
+    SectionEnrollment,
     Semester,
     Subdepartment,
     User,
