@@ -2,15 +2,19 @@
 # pylint: disable=too-many-locals
 
 """Views for Browse, department, and course/course instructor pages."""
+import asyncio
 import json
+from threading import Thread
 from typing import Any
 
+from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg, CharField, F, Q, Value
 from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from tcf_website.utils.enrollment_utils import update_enrollment_data
 
 from ..models import (
     Answer,
@@ -130,6 +134,9 @@ def course_view(
         subdepartment__mnemonic=mnemonic.upper(),
         number=course_number,
     )
+
+    run_async(update_enrollment_data, course.id)
+
     latest_semester = Semester.latest()
     recent = str(latest_semester) == instructor_recency
 
@@ -254,6 +261,8 @@ def course_instructor(request, course_id, instructor_id, method="Most Recent"):
         ]
         for field in fields:
             data[field] = getattr(grades_data, field)
+
+    run_async(update_enrollment_data, course.id)
 
     sections_taught = Section.objects.filter(
         course=course_id,
@@ -403,3 +412,8 @@ def safe_round(num):
     if num is not None:
         return round(num, 2)
     return "\u2014"
+
+def run_async(func, *args):
+    """Runs an async function inside a thread."""
+    thread = Thread(target=lambda: asyncio.run(func(*args)))
+    thread.start()
