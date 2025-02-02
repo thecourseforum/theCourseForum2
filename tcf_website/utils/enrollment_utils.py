@@ -3,7 +3,6 @@ import logging
 import requests
 import time
 from concurrent.futures import ThreadPoolExecutor
-from datetime import timedelta
 from django.utils import timezone
 from django.core.cache import cache
 from asgiref.sync import sync_to_async
@@ -38,18 +37,17 @@ async def update_enrollment_data(course_id):
         loop = asyncio.get_running_loop()
 
         section_enrollment, _ = await sync_to_async(SectionEnrollment.objects.get_or_create)(section=section)
-
-        # if section_enrollment.last_updated and section_enrollment.last_updated >= timezone.now() - timedelta(hours=4):
-        #     return f"Skipped section {section.sis_section_number} (Updated recently)"
-
+    
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
             data = await loop.run_in_executor(executor, fetch_section_data, section)
 
         if data:
             await sync_to_async(update_section_enrollment)(section, data)
-            return f"Updated enrollment for section {section.sis_section_number}"
+            logger.info(f"Updated enrollment for section {section.sis_section_number}")
+            return
         else:
-            return f"No data found for section {section.sis_section_number}"
+            logger.info(f"No data found for section {section.sis_section_number}")
+            return
 
     tasks = [process_section(section) for section in sections]
     results = await asyncio.gather(*tasks)
@@ -97,4 +95,11 @@ def update_section_enrollment(section, data):
     section_enrollment.enrollment_limit = data.get('enrollment_limit', 0)
     section_enrollment.waitlist_taken = data.get('waitlist_taken', 0)
     section_enrollment.waitlist_limit = data.get('waitlist_limit', 0)
+
+    logger.info(
+        f"Updated section {section.sis_section_number} | "
+        f"Enrollment: {section_enrollment.enrollment_taken}/{section_enrollment.enrollment_limit} | "
+        f"Waitlist: {section_enrollment.waitlist_taken}/{section_enrollment.waitlist_limit}"
+    )
+
     section_enrollment.save()

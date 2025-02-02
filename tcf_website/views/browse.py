@@ -26,6 +26,7 @@ from ..models import (
     Review,
     School,
     Section,
+    SectionEnrollment,
     Semester,
 )
 
@@ -274,15 +275,26 @@ def course_instructor(request, course_id, instructor_id, method="Most Recent"):
         "term": section_last_taught.semester.season.lower().capitalize(),
         "sections": {},
     }
+
     for section in sections_taught:
         times = []
         for time in section.section_times.split(","):
             if len(time) > 0:
                 times.append(time)
+        
+        section_enrollment = SectionEnrollment.objects.filter(section=section).first()
+        enrollment_data = {
+            'enrollment_taken': section_enrollment.enrollment_taken if section_enrollment else None,
+            'enrollment_limit': section_enrollment.enrollment_limit if section_enrollment else None,
+            'waitlist_taken': section_enrollment.waitlist_taken if section_enrollment else None,
+            'waitlist_limit': section_enrollment.waitlist_limit if section_enrollment else None
+        }
+        
         section_info["sections"][section.sis_section_number] = {
             "type": section.section_type,
             "units": section.units,
             "times": times,
+            "enrollment_data": enrollment_data,
         }
 
     request.session["course_code"] = course.code()
