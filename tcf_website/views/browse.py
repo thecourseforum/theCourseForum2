@@ -182,7 +182,7 @@ def course_view(
     )
 
 
-def course_instructor(request, course_id, instructor_id):
+def course_instructor(request, course_id, instructor_id, method="Most Recent"):
     """View for course instructor page."""
     section_last_taught = (
         Section.objects.filter(course=course_id, instructors=instructor_id)
@@ -197,9 +197,12 @@ def course_instructor(request, course_id, instructor_id):
     # Find the total number of reviews (with or without text) for the given course
     num_reviews = Review.objects.filter(instructor=instructor_id, course=course_id).count()
 
-    # Filter out reviews with no text and hidden field true.
-    reviews = Review.display_reviews(course_id, instructor_id, request.user)
     dept = course.subdepartment.department
+
+    page_number = request.GET.get("page", 1)
+    paginated_reviews = Review.get_paginated_reviews(
+        course_id, instructor_id, request.user, page_number, method
+    )
 
     course_url = reverse("course", args=[course.subdepartment.mnemonic, course.number])
     # Navigation breadcrumbs
@@ -293,13 +296,14 @@ def course_instructor(request, course_id, instructor_id):
             "instructor": instructor,
             "semester_last_taught": section_last_taught.semester,
             "num_reviews": num_reviews,
-            "reviews": reviews,
+            "paginated_reviews": paginated_reviews,
             "breadcrumbs": breadcrumbs,
             "data": json.dumps(data),
             "section_info": section_info,
             "display_times": Semester.latest() == section_last_taught.semester,
             "questions": questions,
             "answers": answers,
+            "sort_method": method,
         },
     )
 
