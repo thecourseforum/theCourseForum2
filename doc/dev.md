@@ -1,6 +1,6 @@
 # tCF Developer Info
 
-Ensure your system has [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), [git-lfs](https://git-lfs.com/) and [Docker](https://docs.docker.com/install/) installed.
+Ensure your system has [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), [git-lfs](https://git-lfs.com/), [Docker](https://docs.docker.com/install/), and [gdown](https://github.com/wkentaro/gdown) installed.
 
 ## One-Command Setup
 
@@ -8,7 +8,7 @@ Run the following command in a POSIX-compliant shell (i.e. Windows users - use G
 
 Replace `<install_dir>` with where you'd like to clone the script.
 
-*TODO*: correct branch to main/dev when merged
+_TODO_: correct branch to main/dev when merged
 
 ```console
 curl -fL 'https://raw.githubusercontent.com/thecourseforum/theCourseForum2/refs/heads/master/scripts/setup.sh' | sh -s -- <install_dir>
@@ -35,7 +35,7 @@ $ docker compose up --build
 ```
 
 4. Wait for the Django server to finish building (i.e. `tcf_django | Watching for file changes with StatReloader` is visible in stdout).
-5. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) from Google Drive into `db/latest.sql` in your local repo.
+5. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) (should be named `latest.sql`) from Google Drive into `db/latest.sql` in your local repo.
 6. Update the database:
 
 MacOS/Linux (or Windows, if you're using Git-Bash):
