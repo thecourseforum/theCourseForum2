@@ -18,7 +18,7 @@
             {% include "common/toolbar.html" with breadcrumbs=breadcrumbs sorting=True %}
         </div>
 
-        <div class="instructors container-lg mt-3">
+        <div class="instructors container-lg mt-3 px-0">
             <div class="d-md-flex align-items-baseline my-3">
                 <h1 class="mr-md-3 text-nowrap">{{ course.code }}</h1>
                 <h2>{{ course.title }}</h2>
@@ -41,15 +41,14 @@
                     </div>
                     {% endif %}
                     {% if course.disciplines.exists %}
-                    <div>
+                    <div class="mb-4">
                         <small class="mb-0 text-uppercase" style="font-size: 15px;">
                             <i class="fa-fw" aria-hidden="true"></i>Discipline(s):
                         </small>
-                        <ul>
-                            {% for discipline in course.disciplines.all %}
-                                <li>{{ discipline.name }}</li>
-                            {% endfor %}
-                        </ul>
+                        {% for discipline in course.disciplines.all %}
+                            {{ discipline.name }}
+                            {% if not forloop.last %} / {% endif %}
+                        {% endfor %}
                     </div>
                     {% endif %}
                     <p class="card-text">
