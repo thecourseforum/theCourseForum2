@@ -1,4 +1,5 @@
 <!-- searchbar.html -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <form class="form-inline flex-grow-1" action="{% url 'search' %}" method="get">
   <div class="input-group flex-grow-1">
     <input 
@@ -9,9 +10,6 @@
       name="q" 
       value="{{ query }}"
     >
-    <div class="filter-summary">
-      <span id="active-filters"></span>
-    </div>
     <div class="input-group-append">
       <!-- Search Button -->
       <button 
@@ -35,7 +33,7 @@
           data-bs-auto-close="outside" 
           aria-expanded="false" 
         >
-          Filter
+          Filters
         </button>
         <div 
           class="dropdown-menu p-4 filter-dropdown dropdown-menu-end" 
@@ -45,7 +43,6 @@
           <div class="filter-container">
             <div class="filter-section compact">
               <h6 class="filter-header">
-                <i class="fa fa-calendar-day me-2"></i>
                 Class Days
               </h6>
               <div class="day-toggles">
@@ -83,7 +80,6 @@
             <div class="filter-grid">
               <div class="filter-section">
                 <h6 class="filter-header">
-                  <i class="fa fa-book me-2"></i>
                   Subject
                 </h6>
                 <div class="search-container">
@@ -93,7 +89,7 @@
                   {% for subdept in subdepartments %}
                     <div class="form-check subdepartment-label">
                       <input 
-                        class="form-check-input" 
+                        class="form-check-input form-check-subjects" 
                         type="checkbox" 
                         id="subject-{{ subdept.mnemonic }}" 
                         name="subdepartment" 
@@ -110,14 +106,16 @@
               
               <div class="filter-section">
                 <h6 class="filter-header">
-                  <i class="fa fa-graduation-cap me-2"></i>
                   Discipline
                 </h6>
+                <div class="search-container">
+                  <input type="text" class="form-control" id="discipline-search" placeholder="Search disciplines...">
+                </div>
                 <div class="discipline-list">
                   {% for discipline in disciplines %}
                     <div class="form-check discipline-label">
                       <input 
-                        class="form-check-input" 
+                        class="form-check-input form-check-disciplines" 
                         type="checkbox" 
                         id="discipline-{{ discipline.name|slugify }}" 
                         name="discipline" 
@@ -137,7 +135,7 @@
           <!-- Action buttons -->
           <div class="filter-actions">
             <button type="reset" class="btn btn-outline-secondary">Clear All</button>
-            <button type="submit" class="btn btn-primary">Apply Filters</button>
+            <button type="submit" class ="btn-custom">Apply Filters</button>
           </div>
         </div>
       </div>
@@ -151,6 +149,51 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // Determines if any filters (besides day ones) are active 
+    const filterInputs = document.querySelectorAll('.dropdown-menu input[type="checkbox"]:not(.day-checkbox)');
+    const dayFilters = document.querySelectorAll('.day-checkbox'); 
+    const filterButton = document.getElementById('filter-button');
+    const timeFrom = document.getElementById('from_time'); 
+    const timeTo = document.getElementById('to_time');
+
+    // Check initial state (in case of page refresh with active filters)
+    updateButtonState();
+    
+    filterInputs.forEach(input => {
+        input.addEventListener('change', updateButtonState);
+    });
+
+    dayFilters.forEach(input => {
+        input.addEventListener('change', updateButtonState);
+    });
+
+    timeFrom.addEventListener('input', updateButtonState);
+    timeTo.addEventListener('input', updateButtonState);
+
+    // Checks for active filters or inactive day filters to determine button state
+    function updateButtonState() {
+        const activeFilters = Array.from(filterInputs).filter(input => input.checked);
+        const inactiveDayFilters = Array.from(dayFilters).filter(input => !input.checked);
+        
+        let timeFromChanged = false;
+        let timeToChanged = false;
+
+        if (timeFrom.value) {
+            timeFromChanged = timeFrom.value !== '';
+        }
+        if (timeTo.value) {
+            timeToChanged = timeTo.value !== '';
+        }
+
+        if (activeFilters.length > 0 || inactiveDayFilters.length > 0 || timeFromChanged || timeToChanged) {
+            filterButton.classList.add('filter-active');
+            filterButton.textContent = 'Filters Active';
+        } else {
+            filterButton.classList.remove('filter-active');
+            filterButton.textContent = 'Filters';
+        }
+    }
+
     const dropdown = document.getElementById('filter-dropdown');
     const searchInput = document.querySelector('.form-control.border.border-right-0');
 
@@ -172,6 +215,19 @@
       const searchTerm = e.target.value.toLowerCase();
       
       subjectItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    // Add discipline search functionality
+    const disciplineSearch = document.getElementById('discipline-search');
+    const disciplineItems = document.querySelectorAll('.discipline-list .form-check');
+
+    disciplineSearch.addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      
+      disciplineItems.forEach(item => {
         const text = item.textContent.toLowerCase();
         item.style.display = text.includes(searchTerm) ? '' : 'none';
       });
@@ -200,52 +256,9 @@
       document.getElementById('from_time').value = '';
       document.getElementById('to_time').value = '';
 
-    });
+      updateButtonState();
 
-    const filtersContainer = document.getElementById('active-filters');
-  
-    function updateFilterSummary() {
-      const selectedFilters = [];
-      
-      // Class Days
-      const dayCheckboxes = document.querySelectorAll('.day-checkbox:checked');
-      const selectedDays = Array.from(dayCheckboxes).map(cb => cb.nextElementSibling.textContent.trim());
-      if (selectedDays.length > 0) {
-        selectedFilters.push(`Days: ${selectedDays.map((e) => e.slice(0,2)).join('/')}`);
-      }
-      
-      // Time Range
-      const fromTime = document.getElementById('from_time').value;
-      const toTime = document.getElementById('to_time').value;
-      if (fromTime && toTime) {
-        selectedFilters.push(`Time: ${fromTime} - ${toTime}`);
-      }
-      
-      // Subjects
-      const selectedSubjects = Array.from(document.querySelectorAll('.subject-list .form-check-input:checked'))
-        .map(input => input.nextElementSibling.textContent.trim());
-      if (selectedSubjects.length > 0) {
-        selectedFilters.push(`Subjects: ${selectedSubjects.map(e => e.slice(0, e.indexOf("-") - 1)).join(', ')}`);
-      }
-      
-      // Disciplines
-      const selectedDisciplines = Array.from(document.querySelectorAll('.discipline-list .form-check-input:checked'))
-        .map(input => input.nextElementSibling.textContent.trim());
-      if (selectedDisciplines.length > 0) {
-        selectedFilters.push(`Disciplines: ${selectedDisciplines.join(', ')}`);
-      }
-      
-      // Update display
-      filtersContainer.textContent = selectedFilters.length > 0 
-        ? `${selectedFilters.join(' | ')}`
-        : '';
-    }
-  
-    document.querySelectorAll('input[type="checkbox"], input[type="time"]').forEach(input => {
-      input.addEventListener('change', updateFilterSummary);
     });
-    
-    updateFilterSummary();
 
     // Add weekdays handling
     function updateWeekdays() {
@@ -265,6 +278,9 @@
 
     // Initialize weekdays
     updateWeekdays();
+
+    // Updates filter button
+    updateButtonState();
 
   });
 </script>
@@ -298,6 +314,11 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     border-radius: 12px;
     border: 1px solid rgba(0,0,0,0.1);
+  }
+
+  .filter-active {
+    background-color: #d75626;
+    color: white; 
   }
 
   @media (max-width: 992px) {
@@ -354,7 +375,7 @@
   }
 
   .day-toggles .form-check-input:checked + .form-check-label {
-    color: #2b6cb0;
+    color: #d75626;
     font-weight: 600;
   }
 
@@ -363,15 +384,24 @@
     border-color: #90cdf4;
   }
 
+  .form-check-input:checked {
+    accent-color: #d75626;
+  }
+
+  .form-check-subjects, .form-check-disciplines { 
+    margin-top: 1.2% !important; 
+    align-self: start !important; 
+  }
+
   .subject-list, .discipline-list {
-    max-height: 300px;
+    max-height: 150px;
     overflow-y: auto;
     border: 1px solid #cbd5e0;
     border-radius: 8px;
     padding: 0.75rem;
     margin-top: 0.5rem;
     background: #fff;
-    min-height: 250px;
+    min-height: 200px;
   }
 
   .form-check.subdepartment-label, .form-check.discipline-label {
@@ -414,6 +444,7 @@
   .form-check {
     padding: 0.375rem 0;
     margin: 0;
+    align-items: center; 
   }
 
   .form-check:hover {
@@ -432,6 +463,19 @@
   .subject-list, .discipline-list {
     scrollbar-width: thin;
     scrollbar-color: #cbd5e0 transparent;
+  }
+
+  .btn-custom {
+    background-color: #d75626;
+    border-color: #d75626;
+    border-radius: 4px; 
+    color: white;
+    box-shadow: none;
+  }
+
+  .btn-custom:hover {
+    background-color: #b4441d; 
+    border-color: #b4441d;
   }
 
   .subject-list::-webkit-scrollbar,
