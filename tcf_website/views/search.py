@@ -113,10 +113,11 @@ def fetch_instructors(query) -> list[dict]:
 
     return instructors
 
+
 def apply_filters(filters, results):
     # Apply general filters
     if filters.get("disciplines"):
-            results = results.filter(disciplines__name__in=filters.get("disciplines"))
+        results = results.filter(disciplines__name__in=filters.get("disciplines"))
 
     if filters.get("subdepartments"):
         results = results.filter(subdepartment__mnemonic__in=filters.get("subdepartments"))
@@ -132,11 +133,11 @@ def apply_filters(filters, results):
     if any([weekdays, from_time, to_time]):
         time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
-    return results 
+    return results
 
 
 def fetch_courses(query, filters):
-    if query: 
+    if query:
         """Get course data using Django Trigram similarity"""
         # lower similarity threshold for partial searches of course titles
         similarity_threshold = 0.15
@@ -195,8 +196,8 @@ def fetch_courses(query, filters):
         ]
 
         return courses
-    else: 
-        
+    else:
+
         """Get filtered courses with empty search"""
     results = (
         Course.objects.select_related("subdepartment")
