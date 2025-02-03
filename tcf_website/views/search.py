@@ -48,7 +48,7 @@ def search(request):
     }
 
     if query:
-        courses = fetch_courses(query)
+        courses = fetch_courses(query, filters)
         instructors = fetch_instructors(query)
         courses_first = decide_order(courses, instructors)
     else:
@@ -113,8 +113,7 @@ def fetch_instructors(query) -> list[dict]:
 
     return instructors
 
-
-def fetch_courses(query):
+def fetch_courses(query, filters):
     """Get course data using Django Trigram similarity"""
     # lower similarity threshold for partial searches of course titles
     similarity_threshold = 0.15
@@ -154,6 +153,16 @@ def fetch_courses(query):
         .exclude(semester_last_taught_id__lt=48)
         .order_by("-max_similarity")
     )
+
+    # Apply filters
+    if filters.get("disciplines"):
+        results = results.filter(disciplines__name__in=filters.get("disciplines"))
+
+    if filters.get("subdepartments"):
+        results = results.filter(subdepartment__mnemonic__in=filters.get("subdepartments"))
+
+    if filters.get("instructors"):
+        results = results.filter(section__instructors__id__in=filters.get("instructors"))
 
     courses = [
         {
