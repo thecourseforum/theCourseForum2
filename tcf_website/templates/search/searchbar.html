@@ -237,7 +237,47 @@
       });
     });
 
-    // Add clear all functionality
+    // Reordering function to pin selected checkboxes to the top
+    function reorderList(containerSelector, checkboxSelector) {
+        const container = document.querySelector(containerSelector);
+        if (!container) return;
+        const items = Array.from(container.children);
+        items.sort((a, b) => {
+            const aCheckbox = a.querySelector(checkboxSelector);
+            const bCheckbox = b.querySelector(checkboxSelector);
+            
+            // Check if one is selected and the other is not
+            if (aCheckbox.checked && !bCheckbox.checked) return -1;
+            if (!aCheckbox.checked && bCheckbox.checked) return 1;
+            
+            // If both are either checked or unchecked, sort alphabetically by label text
+            const aLabelText = a.querySelector('label').textContent.trim().toLowerCase();
+            const bLabelText = b.querySelector('label').textContent.trim().toLowerCase();
+            return aLabelText.localeCompare(bLabelText);
+        });
+        // Clear and reappend in new order
+        container.innerHTML = '';
+        items.forEach(item => container.appendChild(item));
+    }
+
+    // Add event listeners to re-sort subjects whenever a subject checkbox changes
+    document.querySelectorAll('.form-check-subjects').forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+          reorderList('.subject-list', '.form-check-subjects');
+      });
+    });
+
+    // Add event listeners to re-sort disciplines whenever a discipline checkbox changes
+    document.querySelectorAll('.form-check-disciplines').forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+          reorderList('.discipline-list', '.form-check-disciplines');
+      });
+    });
+
+    // Call reorder on page load in case some items are selected by default
+    reorderList('.subject-list', '.form-check-subjects');
+    reorderList('.discipline-list', '.form-check-disciplines');
+
     const resetButton = document.querySelector('button[type="reset"]');
     resetButton.addEventListener('click', function(e) {
       e.preventDefault(); // Prevent default reset behavior
@@ -261,7 +301,10 @@
       document.getElementById('to_time').value = '';
 
       updateButtonState();
-
+      
+      // Reorder lists after clearing filters (so any selected items, if any, are sorted correctly)
+      reorderList('.subject-list', '.form-check-subjects');
+      reorderList('.discipline-list', '.form-check-disciplines');
     });
 
     // Add weekdays handling
@@ -276,7 +319,7 @@
     document.querySelectorAll('.day-checkbox').forEach(checkbox => {
       checkbox.addEventListener('change', () => {
         updateWeekdays();
-        updateFilterSummary();
+        updateButtonState();
       });
     });
 
