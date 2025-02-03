@@ -265,16 +265,22 @@
       "img_filename": "DM_Chai_Zhang.JPG"
     },
     {
-      "name": "Carissa Chen",
+      "name": "Alyssa Zhang",
       "role": "Marketing",
       "class": "2027",
-      "img_filename": "DM_Carissa_Chen.jpg"
+      "img_filename": "DM_Alyssa_Zhang.jpg"
     },
     {
       "name": "Julie Huang",
       "role": "Marketing",
       "class": "2027",
       "img_filename": "DM_Julie_Huang.jpg"
+    },
+    {
+      "name": "Carissa Chen",
+      "role": "Marketing",
+      "class": "2027",
+      "img_filename": "DM_Carissa_Chen.jpg"
     }
   ]
 }
