@@ -1,5 +1,5 @@
 <!-- searchbar.html -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+ 
 <form class="form-inline flex-grow-1" action="{% url 'search' %}" method="get">
   <div class="input-group flex-grow-1">
     <input 
@@ -40,6 +40,7 @@
           aria-labelledby="filter-button" 
           id="filter-dropdown"
         >
+        <!-- Day and time selections -->
           <div class="filter-container">
             <div class="filter-section compact">
               <h6 class="filter-header">
@@ -77,12 +78,14 @@
                 <input class="time-selection" type="time" id="to_time" name="to_time" value="{{ to_time }}">
               </div>
             </div>
+            <!-- List of subjects -->
             <div class="filter-grid">
               <div class="filter-section">
                 <h6 class="filter-header">
                   Subject
                 </h6>
                 <div class="search-container">
+                  <i class="fa fa-search search-icon"></i>
                   <input type="text" class="form-control" id="subject-search" placeholder="Search subjects...">
                 </div>
                 <div class="subject-list">
@@ -103,12 +106,13 @@
                   {% endfor %}
                 </div>
               </div>
-              
+              <!-- List of disciplines -->
               <div class="filter-section">
                 <h6 class="filter-header">
                   Discipline
                 </h6>
                 <div class="search-container">
+                  <i class="fa fa-search search-icon"></i>
                   <input type="text" class="form-control" id="discipline-search" placeholder="Search disciplines...">
                 </div>
                 <div class="discipline-list">
@@ -388,6 +392,15 @@
     accent-color: #d75626;
   }
 
+  .search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #718096;
+    pointer-events: none;
+  }
+
   .form-check-subjects, .form-check-disciplines { 
     margin-top: 1.2% !important; 
     align-self: start !important; 
@@ -421,18 +434,6 @@
     padding-left: 2rem;
   }
 
-  .search-container::before {
-    content: '\f002';
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    position: absolute;
-    left: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #718096;
-    pointer-events: none;
-  }
-
   .filter-actions {
     display: flex;
     justify-content: space-between;
@@ -451,6 +452,7 @@
     background-color: #f7fafc;
     border-radius: 4px;
   }
+  
 
   .form-check-label {
     display: flex;

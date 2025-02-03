@@ -47,14 +47,14 @@ def search(request):
         "to_time": request.GET.get("to_time"),
     }
 
-    if query and filters:
+    if query:
         courses = fetch_courses(query, filters)
         instructors = fetch_instructors(query)
         courses_first = decide_order(courses, instructors)
     else:
-        courses = fetch_courses("", filters)
-        instructors = fetch_instructors(query)
-        courses_first = decide_order(courses, instructors)
+        courses = filter_courses(filters)
+        instructors = []
+        courses_first = True
 
     ctx = {
         "query": query[:30] + ("..." if len(query) > 30 else ""),
@@ -113,10 +113,88 @@ def fetch_instructors(query) -> list[dict]:
 
     return instructors
 
-def apply_filters(filters, results):
-    # Apply general filters
+def fetch_courses(query, filters):
+    """Get course data using Django Trigram similarity"""
+    # lower similarity threshold for partial searches of course titles
+    similarity_threshold = 0.15
+
+    def normalize_search_query(q: str) -> str:
+        # if "<mnemonic><number>" pattern present without space, add one to adhere to index pattern
+        pattern = re.compile(r"^([A-Za-z]{1,4})(\d{4})$")
+        match = pattern.match(q)
+
+        return f"{match.group(1)} {match.group(2)}" if match else q
+
+    search_query = normalize_search_query(query)
+
+    results = (
+        Course.objects.select_related("subdepartment")
+        .only("title", "number", "subdepartment__mnemonic", "description")
+        .annotate(
+            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", search_query),
+            title_similarity=TrigramSimilarity("title", search_query),
+        )
+        # round results to two decimal places
+        .annotate(
+            max_similarity=Round(
+                Greatest(
+                    F("mnemonic_similarity"),
+                    F("title_similarity"),
+                ),
+                2,
+            )
+        )
+        # expose mnemonic to view
+        .annotate(mnemonic=F("subdepartment__mnemonic"))
+        .filter(max_similarity__gte=similarity_threshold)
+        # filters out classes with 3 digit class numbers (old naming system)
+        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+        # filters out classes that haven't been taught since Fall 2020
+        .exclude(semester_last_taught_id__lt=48)
+        .order_by("-max_similarity")
+    )
+
+    # Apply filters
     if filters.get("disciplines"):
-            results = results.filter(disciplines__name__in=filters.get("disciplines"))
+        results = results.filter(disciplines__name__in=filters.get("disciplines"))
+
+    if filters.get("subdepartments"):
+        results = results.filter(subdepartment__mnemonic__in=filters.get("subdepartments"))
+
+    if filters.get("instructors"):
+        results = results.filter(section__instructors__id__in=filters.get("instructors"))
+
+    courses = [
+        {
+            key: getattr(course, key)
+            for key in (
+                "id",
+                "title",
+                "number",
+                "mnemonic",
+                "description",
+                "max_similarity",
+            )
+        }
+        for course in results
+    ]
+
+    return courses
+
+
+def filter_courses(filters):
+    """Get filtered courses without search functionality."""
+    results = (
+        Course.objects.select_related("subdepartment")
+        .only("title", "number", "subdepartment__mnemonic", "description")
+        .annotate(mnemonic=F("subdepartment__mnemonic"))
+        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+        .exclude(semester_last_taught_id__lt=48)
+    )
+
+    # Apply filters
+    if filters.get("disciplines"):
+        results = results.filter(disciplines__name__in=filters.get("disciplines"))
 
     if filters.get("subdepartments"):
         results = results.filter(subdepartment__mnemonic__in=filters.get("subdepartments"))
@@ -132,84 +210,10 @@ def apply_filters(filters, results):
     if any([weekdays, from_time, to_time]):
         time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
-    return results 
-
-
-def fetch_courses(query, filters):
-    if query: 
-        """Get course data using Django Trigram similarity"""
-        # lower similarity threshold for partial searches of course titles
-        similarity_threshold = 0.15
-
-        def normalize_search_query(q: str) -> str:
-            # if "<mnemonic><number>" pattern present without space, add one to adhere to index pattern
-            pattern = re.compile(r"^([A-Za-z]{1,4})(\d{4})$")
-            match = pattern.match(q)
-
-            return f"{match.group(1)} {match.group(2)}" if match else q
-
-        search_query = normalize_search_query(query)
-
-        results = (
-            Course.objects.select_related("subdepartment")
-            .only("title", "number", "subdepartment__mnemonic", "description")
-            .annotate(
-                mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", search_query),
-                title_similarity=TrigramSimilarity("title", search_query),
-            )
-            # round results to two decimal places
-            .annotate(
-                max_similarity=Round(
-                    Greatest(
-                        F("mnemonic_similarity"),
-                        F("title_similarity"),
-                    ),
-                    2,
-                )
-            )
-            # expose mnemonic to view
-            .annotate(mnemonic=F("subdepartment__mnemonic"))
-            .filter(max_similarity__gte=similarity_threshold)
-            # filters out classes with 3 digit class numbers (old naming system)
-            .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
-            # filters out classes that haven't been taught since Fall 2020
-            .exclude(semester_last_taught_id__lt=48)
-            .order_by("-max_similarity")
-        )
-
-        results = apply_filters(filters, results)
-
-        courses = [
-            {
-                key: getattr(course, key)
-                for key in (
-                    "id",
-                    "title",
-                    "number",
-                    "mnemonic",
-                    "description",
-                    "max_similarity",
-                )
-            }
-            for course in results
-        ]
-
-        return courses
-    else: 
-        
-        """Get filtered courses with empty search"""
-    results = (
-        Course.objects.select_related("subdepartment")
-        .only("title", "number", "subdepartment__mnemonic", "description")
-        .annotate(mnemonic=F("subdepartment__mnemonic"))
-        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
-        .exclude(semester_last_taught_id__lt=48)
-    )
-
-    results = apply_filters(filters, results)
 
     results = results.distinct().order_by("subdepartment__mnemonic", "number")
 
+    # Convert to same format as fetch_courses
     courses = [
         {
             "id": course.id,
