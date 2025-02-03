@@ -269,6 +269,12 @@
       "role": "Marketing",
       "class": "2027",
       "img_filename": "DM_Carissa_Chen.jpg"
+    },
+    {
+      "name": "Julie Huang",
+      "role": "Marketing",
+      "class": "2027",
+      "img_filename": "DM_Julie_Huang.jpg"
     }
   ]
 }
