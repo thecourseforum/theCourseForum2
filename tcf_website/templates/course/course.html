@@ -47,7 +47,7 @@
                         </small>
                         {% for discipline in course.disciplines.all %}
                             {{ discipline.name }}
-                            {% if not forloop.last %} &#38; {% endif %}
+                            {% if not forloop.last %} / {% endif %}
                         {% endfor %}
                     </div>
                     {% endif %}
