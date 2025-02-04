@@ -47,6 +47,9 @@ def search(request):
         "to_time": request.GET.get("to_time"),
     }
 
+    # Save filters to session
+    request.session["search_filters"] = filters
+
     if query:
         courses = fetch_courses(query, filters)
         instructors = fetch_instructors(query)
@@ -112,6 +115,7 @@ def fetch_instructors(query) -> list[dict]:
     ]
 
     return instructors
+
 
 def fetch_courses(query, filters):
     """Get course data using Django Trigram similarity"""
