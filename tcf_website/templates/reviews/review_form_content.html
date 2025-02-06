@@ -1,10 +1,10 @@
 <!-- Class Info -->
 <div class="new-review-course form-row mb-3">
-  <h2 class="h4 review-form-header form-group col-12 mt-4 mb-2">
-    Which class are you reviewing?</h2>
-  <div class="form-group col-12">
+  <h2 class="h4 review-form-header form-group col-12 my-4">
+    Which class?</h2>
+  <!-- <div class="form-group col-12">
     <p class="small">You can type or use Arrowkeys+Enter to select.</p>
-  </div>
+  </div> -->
   <div class="form-group col-sm-6">
     <label for="subject" class="required-field">Subject</label>
     <select type="text" class="form-control" required id="subject" name="subject">
@@ -37,11 +37,25 @@
 <!-- Review written content -->
 <div id="review-form-div" class="new-review-content form-row mb-3">
   <h2 class="h4 review-form-header form-group col-12 my-4">
-    <label for="reviewtext" class="required-field">Tell us more about the course and instructor</label>
+    <label for="reviewtext" class="required-field">Write your review</label>
   </h2>
+  <div class="form-group col-12 mb-2">
+    <p style="text-align: left; margin-bottom: 0;">
+      Things to consider:
+    </p>
+    <nl style="margin-top: 0;">
+      <li>Professor teaching style</li>
+      <li>Ability to convey information</li>
+      <li>Workload</li>
+      <li>Assignment types</li>
+      <li>What you liked</li>
+      <li>What you disliked</li>
+    </nl>
+  </div>
+
   <div class="form-group col mb-3">
     <textarea class="form-control" required id="reviewtext" name="text" rows="5"
-              placeholder="(Aim for 150 words or more! Some suggestions on what to write about are information about the professor's teaching style and ability to convey information, workload, assignment types and/or anything you think is important to know when taking the class. Include what you liked about the course and what could be improved on. Well-written reviews help other students get a good understanding of classes they're considering taking!)" minlength="100" maxlength="5000">{{ form.text.value }}</textarea>
+              placeholder="Type Here!" minlength="100" maxlength="5000">{{ form.text.value }}</textarea>
   </div>
     <!-- Message for Progress Bar-->
   <div class="form-group col-12">
