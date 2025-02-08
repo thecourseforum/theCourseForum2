@@ -109,7 +109,7 @@ ul {
 
 /* Main color: Indigo/Dark blue */
 .text-tcf-indigo {
-  color: var(--main-color-);
+  color: var(--main-color);
 }
 .bg-tcf-indigo {
   background-color: var(--main-color);
