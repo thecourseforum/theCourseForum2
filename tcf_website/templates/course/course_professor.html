@@ -238,6 +238,43 @@
 
         <script>
             document.querySelector("#sectionInfo").style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
+
+            const courseId = "{{ course.id }}";
+
+            function updateEnrollmentData() {
+                fetch(`/api/enrollment/${courseId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const enrollmentData = data.enrollment_data;
+                        // Update each section's enrollment information
+                        Object.entries(enrollmentData).forEach(([sectionNum, data]) => {
+                            const sectionDivs = document.querySelectorAll('#sectionInfo > div');
+                            sectionDivs.forEach(div => {
+                                if (div.textContent.includes(sectionNum)) {
+                                    const enrollmentDiv = div.children[2];
+                                    if (enrollmentDiv) {
+                                        enrollmentDiv.textContent = `${data.enrollment_taken}/${data.enrollment_limit} (${data.waitlist_taken}/${data.waitlist_limit})`;
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch(error => console.error('Error updating enrollment data:', error));
+            }
+
+            // Check for updates every 5 seconds for 1 minute
+            let checkCount = 0;
+            const enrollmentCheck = setInterval(() => {
+                updateEnrollmentData();
+                checkCount++;
+                if (checkCount >= 12) {
+                    clearInterval(enrollmentCheck);
+                }
+            }, 5000);
+
+            updateEnrollmentData();
+        </script>
+
         <ul class="nav nav-tabs" id="reviews">
             <li class="nav-item">
                 <a class="nav-link active" id="reviewsTab" data-toggle="tab" href="#reviewsTabContent" style="font-size: 18px;">Reviews</a>

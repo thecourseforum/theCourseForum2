@@ -2,8 +2,9 @@
 """DRF Viewsets"""
 from django.db.models import Avg, Sum
 from rest_framework import viewsets
+from django.http import JsonResponse
 
-from ..models import Course, Department, Instructor, School, Semester, Subdepartment
+from ..models import Course, Department, Instructor, School, Semester, Subdepartment, Section, SectionEnrollment
 from .filters import InstructorFilter
 from .serializers import (
     CourseAllStatsSerializer,
@@ -137,3 +138,20 @@ class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
             params["section__instructors"] = self.request.query_params["instructor"]
         # Returns filtered, unique semesters in reverse chronological order
         return super().get_queryset().filter(**params).distinct().order_by("-number")
+
+
+def get_section_enrollment(request, course_id):
+    sections = Section.objects.filter(course_id=course_id)
+    enrollment_data = {}
+    
+    for section in sections:
+        section_enrollment = SectionEnrollment.objects.filter(section=section).first()
+        if section_enrollment:
+            enrollment_data[section.sis_section_number] = {
+                'enrollment_taken': section_enrollment.enrollment_taken,
+                'enrollment_limit': section_enrollment.enrollment_limit,
+                'waitlist_taken': section_enrollment.waitlist_taken,
+                'waitlist_limit': section_enrollment.waitlist_limit
+            }
+    
+    return JsonResponse({'enrollment_data': enrollment_data})
