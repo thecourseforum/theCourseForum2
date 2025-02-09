@@ -6,7 +6,7 @@ import json
 from typing import Any
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Avg, CharField, F, Q, Value
+from django.db.models import Avg, CharField, Count, F, Q, Value
 from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -182,7 +182,7 @@ def course_view(
     )
 
 
-def course_instructor(request, course_id, instructor_id):
+def course_instructor(request, course_id, instructor_id, method="Default"):
     """View for course instructor page."""
     section_last_taught = (
         Section.objects.filter(course=course_id, instructors=instructor_id)
@@ -194,12 +194,18 @@ def course_instructor(request, course_id, instructor_id):
     course = section_last_taught.course
     instructor = section_last_taught.instructors.get(pk=instructor_id)
 
-    # Find the total number of reviews (with or without text) for the given course
-    num_reviews = Review.objects.filter(instructor=instructor_id, course=course_id).count()
+    # ratings: reviews with and without text; reviews: ratings with text
+    reviews = Review.objects.filter(instructor=instructor_id, course=course_id).aggregate(
+        num_ratings=Count("id"), num_reviews=Count("id", filter=~Q(text=""))
+    )
+    num_reviews, num_ratings = reviews["num_reviews"], reviews["num_ratings"]
 
-    # Filter out reviews with no text and hidden field true.
-    reviews = Review.display_reviews(course_id, instructor_id, request.user)
     dept = course.subdepartment.department
+
+    page_number = request.GET.get("page", 1)
+    paginated_reviews = Review.get_paginated_reviews(
+        course_id, instructor_id, request.user, page_number, method
+    )
 
     course_url = reverse("course", args=[course.subdepartment.mnemonic, course.number])
     # Navigation breadcrumbs
@@ -292,14 +298,16 @@ def course_instructor(request, course_id, instructor_id):
             "course_id": course_id,
             "instructor": instructor,
             "semester_last_taught": section_last_taught.semester,
+            "num_ratings": num_ratings,
             "num_reviews": num_reviews,
-            "reviews": reviews,
+            "paginated_reviews": paginated_reviews,
             "breadcrumbs": breadcrumbs,
             "data": json.dumps(data),
             "section_info": section_info,
             "display_times": Semester.latest() == section_last_taught.semester,
             "questions": questions,
             "answers": answers,
+            "sort_method": method,
         },
     )
 
