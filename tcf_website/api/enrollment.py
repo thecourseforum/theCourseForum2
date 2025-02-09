@@ -43,7 +43,7 @@ def fetch_section_data(section):
     return {}
 
 async def update_enrollment_data(course_id):
-    """Asynchronous function to update enrollment data using ThreadPoolExecutor."""
+    """Asynchronous function to update enrollment data."""
     start_time = time.monotonic()
 
     course_exists = await sync_to_async(Course.objects.filter(id=course_id).exists)()
@@ -63,7 +63,7 @@ async def update_enrollment_data(course_id):
     print(f"Starting async enrollment update for {len(sections)} sections...")
 
     async def process_section(section):
-        """Fetch and update enrollment data asynchronously using ThreadPoolExecutor."""
+        """Fetch and update enrollment data asynchronously."""
         loop = asyncio.get_running_loop()
         data = await loop.run_in_executor(None, fetch_section_data, section)
 

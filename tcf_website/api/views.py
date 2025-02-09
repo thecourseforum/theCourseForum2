@@ -1,8 +1,9 @@
 # pylint: disable=too-many-ancestors,fixme
 """DRF Viewsets"""
 from django.db.models import Avg, Sum
-from rest_framework import viewsets
 from django.http import JsonResponse
+
+from rest_framework import viewsets
 
 from ..models import (
     Course,
@@ -149,19 +150,22 @@ class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
         return super().get_queryset().filter(**params).distinct().order_by("-number")
 
 
-def get_section_enrollment(request, course_id):
-    """Retrieves enrollment data for all sections of a given course."""
-    sections = Section.objects.filter(course_id=course_id)
-    enrollment_data = {}
+class SectionEnrollmentViewSet(viewsets.ViewSet):
+    """ViewSet for retrieving section enrollment data."""
 
-    for section in sections:
-        section_enrollment = SectionEnrollment.objects.filter(section=section).first()
-        if section_enrollment:
-            enrollment_data[section.sis_section_number] = {
-                'enrollment_taken': section_enrollment.enrollment_taken,
-                'enrollment_limit': section_enrollment.enrollment_limit,
-                'waitlist_taken': section_enrollment.waitlist_taken,
-                'waitlist_limit': section_enrollment.waitlist_limit
-            }
+    def retrieve(self, request, pk=None):
+        """Retrieves enrollment data for all sections of a given course."""
+        sections = Section.objects.filter(course_id=pk)
+        enrollment_data = {}
 
-    return JsonResponse({'enrollment_data': enrollment_data})
+        for section in sections:
+            section_enrollment = SectionEnrollment.objects.filter(section=section).first()
+            if section_enrollment:
+                enrollment_data[section.sis_section_number] = {
+                    'enrollment_taken': section_enrollment.enrollment_taken,
+                    'enrollment_limit': section_enrollment.enrollment_limit,
+                    'waitlist_taken': section_enrollment.waitlist_taken,
+                    'waitlist_limit': section_enrollment.waitlist_limit
+                }
+
+        return JsonResponse({'enrollment_data': enrollment_data})
