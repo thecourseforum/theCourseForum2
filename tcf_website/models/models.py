@@ -1119,8 +1119,10 @@ class Review(models.Model):
                         output_field=fields.FloatField(),
                     )
                 ).order_by("average")
-            case "Most Recent" | _:
+            case "Most Recent":
                 return reviews.order_by("-created")
+            case "Default" | _:
+                return reviews
 
     @staticmethod
     def paginate(reviews: "QuerySet[Review]", page_number, reviews_per_page=10) -> "Page[Review]":
