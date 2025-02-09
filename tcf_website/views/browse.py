@@ -182,7 +182,7 @@ def course_view(
     )
 
 
-def course_instructor(request, course_id, instructor_id, method="Most Recent"):
+def course_instructor(request, course_id, instructor_id, method="Default"):
     """View for course instructor page."""
     section_last_taught = (
         Section.objects.filter(course=course_id, instructors=instructor_id)
