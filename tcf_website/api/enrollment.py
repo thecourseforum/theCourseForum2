@@ -1,3 +1,7 @@
+"""
+Module for fetching and updating section enrollment data asynchronously.
+"""
+
 import asyncio
 import time
 import requests
@@ -48,8 +52,9 @@ async def update_enrollment_data(course_id):
 
     course = await sync_to_async(Course.objects.get)(id=course_id)
     latest_semester = await sync_to_async(lambda: Semester.objects.order_by("-year").first())()
-    
-    sections = await sync_to_async(list)(Section.objects.filter(course=course, semester=latest_semester))
+
+    sections_queryset = Section.objects.filter(course=course, semester=latest_semester)
+    sections = await sync_to_async(list)(sections_queryset)
 
     if not sections:
         print(f"No sections found for course {course.code()} in semester {latest_semester}.")
