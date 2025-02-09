@@ -194,11 +194,11 @@ def course_instructor(request, course_id, instructor_id, method="Most Recent"):
     course = section_last_taught.course
     instructor = section_last_taught.instructors.get(pk=instructor_id)
 
-    # Find the total number of reviews (with or without text) for the given course
+    # ratings: reviews with and without text; reviews: ratings with text
     reviews = Review.objects.filter(instructor=instructor_id, course=course_id).aggregate(
-        num_reviews=Count("id"), num_comments=Count("id", filter=~Q(text=""))
+        num_ratings=Count("id"), num_reviews=Count("id", filter=~Q(text=""))
     )
-    num_comments, num_reviews = reviews["num_comments"], reviews["num_reviews"]
+    num_reviews, num_ratings = reviews["num_reviews"], reviews["num_ratings"]
 
     dept = course.subdepartment.department
 
@@ -298,8 +298,8 @@ def course_instructor(request, course_id, instructor_id, method="Most Recent"):
             "course_id": course_id,
             "instructor": instructor,
             "semester_last_taught": section_last_taught.semester,
+            "num_ratings": num_ratings,
             "num_reviews": num_reviews,
-            "num_comments": num_comments,
             "paginated_reviews": paginated_reviews,
             "breadcrumbs": breadcrumbs,
             "data": json.dumps(data),
