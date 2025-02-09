@@ -227,6 +227,22 @@
             {% endif %}
         </div>
 
+        <script>
+            document.querySelector("#sectionInfo").style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
+
+            function toggleSections(div) {
+                const arrow = div.getElementsByTagName("i")[0],
+                    sectionInfo = document.querySelector("#sectionInfo");
+                arrow.classList.toggle("rotated");
+                sectionInfo.classList.toggle("show");
+                if (sectionInfo.classList.contains("show")) {
+                    sectionInfo.style.marginTop = '10px';
+                } else {
+                    sectionInfo.style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
+                }
+            }
+        </script>
+
         <ul class="nav nav-tabs" id="reviews">
             <li class="nav-item">
                 <a class="nav-link active" id="reviewsTab" data-toggle="tab" href="#reviewsTabContent" style="font-size: 18px;">Reviews</a>
