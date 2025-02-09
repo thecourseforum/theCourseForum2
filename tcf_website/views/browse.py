@@ -6,7 +6,7 @@ import json
 from typing import Any
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Avg, CharField, F, Q, Value
+from django.db.models import Avg, CharField, Count, F, Q, Value
 from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -195,7 +195,10 @@ def course_instructor(request, course_id, instructor_id, method="Most Recent"):
     instructor = section_last_taught.instructors.get(pk=instructor_id)
 
     # Find the total number of reviews (with or without text) for the given course
-    num_reviews = Review.objects.filter(instructor=instructor_id, course=course_id).count()
+    reviews = Review.objects.filter(instructor=instructor_id, course=course_id).aggregate(
+        num_reviews=Count("id"), num_comments=Count("id", filter=~Q(text=""))
+    )
+    num_comments, num_reviews = reviews["num_comments"], reviews["num_reviews"]
 
     dept = course.subdepartment.department
 
@@ -296,6 +299,7 @@ def course_instructor(request, course_id, instructor_id, method="Most Recent"):
             "instructor": instructor,
             "semester_last_taught": section_last_taught.semester,
             "num_reviews": num_reviews,
+            "num_comments": num_comments,
             "paginated_reviews": paginated_reviews,
             "breadcrumbs": breadcrumbs,
             "data": json.dumps(data),
