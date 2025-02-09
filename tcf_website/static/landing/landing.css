@@ -6,7 +6,7 @@
 
 /* Navbar */
 nav.navbar {
-  background-color: white;
+  background-color: var(--navbar-color);
 }
 
 nav.navbar img.logo {
