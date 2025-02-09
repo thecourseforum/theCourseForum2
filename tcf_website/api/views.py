@@ -4,7 +4,16 @@ from django.db.models import Avg, Sum
 from rest_framework import viewsets
 from django.http import JsonResponse
 
-from ..models import Course, Department, Instructor, School, Semester, Subdepartment, Section, SectionEnrollment
+from ..models import (
+    Course,
+    Department,
+    Instructor,
+    School,
+    Section,
+    SectionEnrollment,
+    Semester,
+    Subdepartment,
+)
 from .filters import InstructorFilter
 from .serializers import (
     CourseAllStatsSerializer,
@@ -141,9 +150,10 @@ class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 def get_section_enrollment(request, course_id):
+    """Retrieves enrollment data for all sections of a given course."""
     sections = Section.objects.filter(course_id=course_id)
     enrollment_data = {}
-    
+
     for section in sections:
         section_enrollment = SectionEnrollment.objects.filter(section=section).first()
         if section_enrollment:
@@ -153,5 +163,5 @@ def get_section_enrollment(request, course_id):
                 'waitlist_taken': section_enrollment.waitlist_taken,
                 'waitlist_limit': section_enrollment.waitlist_limit
             }
-    
+
     return JsonResponse({'enrollment_data': enrollment_data})

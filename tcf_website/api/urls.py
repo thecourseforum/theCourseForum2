@@ -15,5 +15,9 @@ router.register(r"semesters", views.SemesterViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    path('enrollment/<int:course_id>/', views.get_section_enrollment, name='get_section_enrollment'),
+    path(
+        'enrollment/<int:course_id>/',
+        views.get_section_enrollment,
+        name='get_section_enrollment'
+    ),
 ]
