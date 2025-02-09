@@ -135,8 +135,6 @@ def course_view(
         number=course_number,
     )
 
-    run_async(update_enrollment_data, course.id)
-
     latest_semester = Semester.latest()
     recent = str(latest_semester) == instructor_recency
 
@@ -266,6 +264,7 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             data[field] = getattr(grades_data, field)
 
     run_async(update_enrollment_data, course.id)
+    request.session['fetching_enrollment'] = True
 
     sections_taught = Section.objects.filter(
         course=course_id,
