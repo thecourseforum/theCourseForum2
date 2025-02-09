@@ -16,6 +16,7 @@ class TestEnrollment(TestCase):
             subdepartment=self.subdepartment, 
             semester_last_taught=self.semester
         )
+        
         self.section = Section.objects.create(
             course=self.course, 
             semester=self.semester, 
