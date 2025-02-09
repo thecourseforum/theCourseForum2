@@ -50,17 +50,17 @@ def searchbar_context(request):
         number__gte=latest_semester.number - 50  # 50 = 5 years * 10 semesters
     ).order_by("-number")
 
-    # Get weekdays from request, defaulting to all days if not specified
-    weekdays = request.GET.get("weekdays", "MON-TUE-WED-THU-FRI").split("-")
+    # Get saved filters from the session (or use defaults)
+    saved_filters = request.session.get("search_filters", {})
 
     context = {
         "disciplines": Discipline.objects.all().order_by("name"),
         "subdepartments": Subdepartment.objects.all().order_by("mnemonic"),
         "semesters": recent_semesters,
-        "selected_disciplines": request.GET.getlist("discipline"),
-        "selected_subdepartments": request.GET.getlist("subdepartment"),
-        "selected_weekdays": weekdays,
-        "from_time": request.GET.get("from_time", ""),
-        "to_time": request.GET.get("to_time", ""),
+        "selected_disciplines": saved_filters.get("disciplines", []),
+        "selected_subdepartments": saved_filters.get("subdepartments", []),
+        "selected_weekdays": saved_filters.get("weekdays", ["MON", "TUE", "WED", "THU", "FRI"]),
+        "from_time": saved_filters.get("from_time", ""),
+        "to_time": saved_filters.get("to_time", ""),
     }
     return context
