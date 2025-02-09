@@ -1,5 +1,6 @@
 import os
 import re
+from datetime import datetime
 
 import pandas as pd
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
@@ -305,5 +306,45 @@ class Command(BaseCommand):
                 print(f"Created/updated {section}")
             else:
                 print(f"Retrieved {section}")
+
+        def parse_section_times(section_times_str):
+            if not section_times_str:
+                return []
+            
+            times = []
+            for time_block in section_times_str.split(','):
+                if not time_block.strip():
+                    continue
+                try:
+                    days_part, time_part = time_block.strip().split(' ', 1)
+                    start_time, end_time = time_part.split(' - ')
+                    
+                    # Create time block with boolean fields
+                    time_data = {
+                        'monday': 'Mo' in days_part,
+                        'tuesday': 'Tu' in days_part,
+                        'wednesday': 'We' in days_part,
+                        'thursday': 'Th' in days_part,
+                        'friday': 'Fr' in days_part,
+                        'start_time': datetime.strptime(start_time, '%I:%M%p').time(),
+                        'end_time': datetime.strptime(end_time, '%I:%M%p').time()
+                    }
+                    times.append(time_data)
+                    
+                except (ValueError, IndexError):
+                    continue
+                    
+            return times
+
+        # Clear existing section times
+        section.sectiontime_set.all().delete()
+        
+        # Create new section times
+        times = parse_section_times(section_times)
+        for time_data in times:
+            SectionTime.objects.create(
+                section=section,
+                **time_data
+            )
 
         return section
