@@ -349,6 +349,25 @@
         {% block js %}
         <!-- <script type="module" src="{% static 'landing/feedbackform.js' %}"></script> -->
         <script type="text/javascript">
+
+            document.addEventListener("DOMContentLoaded", function () {
+                document.querySelectorAll(".faqs-content h5").forEach(header => {
+                    header.addEventListener("click", function () {
+                        let icon = this.querySelector("i.fas"); // Find the <i> inside the h5
+            
+                        if (icon) {
+                            icon.classList.toggle("fa-chevron-down");
+                            icon.classList.toggle("fa-chevron-up");
+                        } else {
+                            console.warn("Chevron icon not found in FAQ header:", this);
+                        }
+                    });
+                });
+            
+                // Update copyright year at the bottom of landing page
+                $(".year").text(new Date().getFullYear());
+            });
+            
             // Update copyright year at the bottom of landing page
             $(".year").text(new Date().getFullYear());
         </script>
