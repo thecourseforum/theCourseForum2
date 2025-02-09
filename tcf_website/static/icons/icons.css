@@ -1,3 +1,8 @@
+body.dark-mode {
+  --main-color: blue;
+}
+/* this blue is being override by --main-color in tcf-style.css */
+
 .fa {
   display: inline-block;
   font-style: normal; /* Reset any inherited styles */
@@ -34,7 +39,7 @@
   background-size: contain;
   background-position: center;
   vertical-align: middle;
-  color: var(--dark-mode-white);
+  color: var(--main-color);
 }
 
 .fa-arrow-right {
@@ -54,6 +59,7 @@
   background-size: contain;
   background-position: center;
   vertical-align: middle;
+  color: var(--main-color);
 }
 
 .fa-book {
@@ -187,10 +193,11 @@
 .fa-chevron-down {
   width: 1em;
   height: 1em;
-  background-image: url("../icons/img/fa-chevron-down.svg");
+  /* background-image: url("../icons/img/fa-chevron-down.svg"); */
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
+  color: var(--main-color);
 }
 
 .fa-thumbs-up {

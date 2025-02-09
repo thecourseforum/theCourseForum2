@@ -4,47 +4,37 @@
 
 /* Use these variables in CSS stylesheets */
 :root {
-  /* Light Mode Colors */
-  --main-color-light: #274f97; /* Indigo/Dark blue */
-  --secondary-color-light: #4077c4;
-  --accent-color-light: #d75626; /* Orange */
-  --dark-color-light: #545454; /* Dark grey, for headers/buttons */
-  --shadow-color-light: #a6a6a6; /* Medium grey, used for shadows */
-  --shaded-color-light: #cfcfcf; /* Medium light grey, used for shading */
-  --background-color-light: #ebebeb; /* Light grey, used for backgrounds */
+  --main-color: #274f97; /* Indigo/Dark blue */
+  --secondary-color: #4077c4;
+  --accent-color: #d75626; /* Orange */
+  --dark-color: #545454; /* Dark grey, for headers/buttons */
+  --shadow-color: #a6a6a6; /* Medium grey, used for shadows */
+  --shaded-color: #cfcfcf; /* Medium light grey, used for shading */
+  --background-color: #ebebeb; /* Light grey, used for backgrounds */
+  --overall-backrgound-color: #f8f9fa;
+  --navbar-color: white;
+  /* #f8f9fa is the og background color styled by .bg-light in _background_variant.scss */
   /* Note: Can use Bootstrap "light" color and white color */
-
-  /* Dark Mode Colors */
-  --main-color-dark: #274F97; /* Indigo/Dark blue */
-  --secondary-color-dark: #4873B7;
-  --accent-color-dark: #D75626; /* Orange */
-  --dark-color-dark: #000000; /* Dark grey, for headers/buttons */
-  --shadow-color-dark: #ffffff; /* Medium grey, used for shadows */
-  --shaded-color-dark: #333333; /* Medium light grey, used for shading */
-  --background-color-dark: #000000; /* Light grey, used for backgrounds */
-  --test: #ff0099;
-
-  /* Default to Light Mode 
-  --main-color: var(--main-color-light);
-  --secondary-color: var(--secondary-color-light);
-  --accent-color: var(--accent-color-light);
-  --dark-color: var(--dark-color-light);
-  --shadow-color: var(--shadow-color-light);
-  --shaded-color: var(--shaded-color-light);
-  --background-color: var(--background-color-light);
-  */
-
-  /* Default to Dark Mode */
-  --main-color: var(--main-color-dark);
-  --secondary-color: var(--secondary-color-dark);
-  --accent-color: var(--accent-color-dark);
-  --dark-color: var(--dark-color-dark);
-  --shadow-color: var(--shadow-color-dark);
-  --shaded-color: var(--shaded-color-dark);
-  --background-color: var(--background-color-dark);
 }
 
-/* Dark Mode Overrides */
+/* only main-color (tcf blue) and accent-color (tcf organge) are being utilized by the landing page */
+body.dark-mode {
+  --main-color: white;
+  --secondary-color: orange;
+  --accent-color:  yellow;
+  --dark-color: green;
+  --shadow-color: blue;
+  --shaded-color: purple;
+  --overall-background-color: black;
+  --h1-text-color: white;
+  --h4-card-title-color: white;
+  --p-card-text-color: white;
+  --card-background-color: #333333;
+  --navbar-color: #333333;
+  --input-color: #333333;
+}
+
+/* Dark Mode Overrides
 [data-theme="dark"] {
   --main-color: var(--main-color-dark);
   --secondary-color: var(--secondary-color-dark);
@@ -53,7 +43,7 @@
   --shadow-color: var(--shadow-color-dark);
   --shaded-color: var(--shaded-color-dark);
   --background-color: var(--background-color-dark);
-}
+} */
 
 /*************DEFAULT STYLES**************/
 h1,
@@ -70,6 +60,12 @@ h6,
 .h6 {
   /* Default heading font: Lato (others are fallbacks) */
   font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Chai: initially didn't have a color element, this color element overrides color in _reboot.cscc */
+  /* color: var(--h4-card-title-color);  */
+}
+
+h1, .h1 {
+  color: var(--h1-text-color);
 }
 
 body {
@@ -109,10 +105,12 @@ ul {
 
 /* Main color: Indigo/Dark blue */
 .text-tcf-indigo {
-  color: var(--main-color-);
+  color: var(--main-color);
 }
 .bg-tcf-indigo {
-  background-color: var(--main-color);
+  /* background-color: var(--main-color); */
+  /* Chai: this banner color should be tcf blue no matter if theme is light or dark */
+  background-color: #274f97;
 }
 .border-tcf-indigo {
   border-color: var(--main-color);
@@ -163,6 +161,25 @@ ul {
 }
 .border-tcf-background {
   border-color: var(--background-color);
+}
+
+/* OVERRIDES scss stylings */
+/* Chai: background color on landing page is being styled by .bg-light in _background-variant.scss, has to have !important to override the !important in the scss */
+.bg-light {
+  background-color: var(--overall-background-color) !important;
+}
+
+/* Chai: card background color is being styled by .card in _card.scss; color will be card-background-color when in dark-mode */
+.card {
+  background-color: var(--card-background-color);
+}
+
+p {
+  color: var(--p-card-text-color);
+}
+
+.form-control {
+  background-color: var(--input-color);
 }
 
 /* Note: Can use Bootstrap "light" color
