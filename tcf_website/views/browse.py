@@ -82,7 +82,7 @@ def department(request, dept_id: int, course_recency=None):
         request,
         "department/department.html",
         {
-            "subdepartments": dept.subdepartment_set.all(),
+            # "subdepartments": dept.subdepartment_set.all(),
             "dept_id": dept_id,
             "latest_semester": str(latest_semester),
             "breadcrumbs": breadcrumbs,
