@@ -150,23 +150,17 @@ def fetch_courses(query, filters):
         )
         # expose mnemonic to view
         .annotate(mnemonic=F("subdepartment__mnemonic"))
-        .filter(max_similarity__gte=similarity_threshold)
-        # filters out classes with 3 digit class numbers (old naming system)
-        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
-        # filters out classes that haven't been taught since Fall 2020
-        .exclude(semester_last_taught_id__lt=48)
-        .order_by("-max_similarity")
     )
 
     # Apply filters
-    if filters.get("disciplines"):
-        results = results.filter(disciplines__name__in=filters.get("disciplines"))
+    results = apply_filters(results, filters)
 
-    if filters.get("subdepartments"):
-        results = results.filter(subdepartment__mnemonic__in=filters.get("subdepartments"))
+    results = (results.filter(max_similarity__gte=similarity_threshold)
+            .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+            .exclude(semester_last_taught_id__lt=48)
+            .order_by("-max_similarity"))
 
-    if filters.get("instructors"):
-        results = results.filter(section__instructors__id__in=filters.get("instructors"))
+    results = results.distinct().order_by("subdepartment__mnemonic", "number")
 
     courses = [
         {
@@ -197,23 +191,7 @@ def filter_courses(filters):
     )
 
     # Apply filters
-    if filters.get("disciplines"):
-        results = results.filter(disciplines__name__in=filters.get("disciplines"))
-
-    if filters.get("subdepartments"):
-        results = results.filter(subdepartment__mnemonic__in=filters.get("subdepartments"))
-
-    if filters.get("instructors"):
-        results = results.filter(section__instructors__id__in=filters.get("instructors"))
-
-    # Apply time filters
-    weekdays = [day for day in filters.get("weekdays", []) if day]
-    from_time = filters.get("from_time")
-    to_time = filters.get("to_time")
-
-    if any([weekdays, from_time, to_time]):
-        time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
-        results = results.filter(id__in=time_filtered.values_list("id", flat=True))
+    results = apply_filters(results, filters)
 
     results = results.distinct().order_by("subdepartment__mnemonic", "number")
 
@@ -231,3 +209,24 @@ def filter_courses(filters):
     ]
 
     return courses
+
+def apply_filters(results, filters):
+    """Apply filters to course queryset."""
+    if filters.get("disciplines"):
+        results = results.filter(disciplines__name__in=filters.get("disciplines"))
+
+    if filters.get("subdepartments"):
+        results = results.filter(subdepartment__mnemonic__in=filters.get("subdepartments"))
+
+    if filters.get("instructors"):
+        results = results.filter(section__instructors__id__in=filters.get("instructors"))
+
+    weekdays = [day for day in filters.get("weekdays", []) if day]
+    from_time = filters.get("from_time")
+    to_time = filters.get("to_time")
+
+    if any([weekdays, from_time, to_time]):
+        time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
+        results = results.filter(id__in=time_filtered.values_list("id", flat=True))
+        
+    return results
