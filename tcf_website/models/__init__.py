@@ -15,6 +15,8 @@ from .models import (
     Instructor,
     Question,
     Review,
+    Schedule,
+    ScheduledCourse,
     School,
     Section,
     Semester,

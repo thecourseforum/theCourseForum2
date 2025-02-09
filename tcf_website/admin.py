@@ -12,6 +12,8 @@ admin.site.register(Review)
 admin.site.register(Vote)
 admin.site.register(Question)
 admin.site.register(Answer)
+admin.site.register(Schedule)
+admin.site.register(ScheduledCourse)
 
 
 class SchoolAdmin(admin.ModelAdmin):
