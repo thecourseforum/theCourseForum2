@@ -24,7 +24,7 @@
                 </div>
                 <div class="course-title d-md-flex align-items-baseline">
                     <h3 class="mr-md-3 text-nowrap">Sentiment Score: </h3>
-                    <h2>{{ sentiment_score }}</h2>
+                    <h2 class="mr-md-3 sentiment">{{ sentiment_score }}</h2>
                 </div>
                 
 
@@ -338,5 +338,15 @@
 
     <!-- For QA Form-->
     <script type="text/javascript" src="{% static 'qa/new_answer.js' %}"></script>
+
+    <script>
+        let sentimentElement = document.querySelector(".sentiment");
+        let sentimentValue = parseFloat(sentimentElement.textContent)
+        
+        let normalized = (sentimentValue + 1) / 2;
+        let green = (normalized * 191.25)
+    
+        sentimentElement.style.color = `rgb(125, ${green}, 0)`;
+    </script>
 
 {% endblock %}
