@@ -3,6 +3,8 @@
 
 """Views for Browse, department, and course/course instructor pages."""
 import json
+import os
+import re
 from typing import Any
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -11,6 +13,7 @@ from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+import pandas as pd
 
 from ..models import (
     Answer,
@@ -181,6 +184,39 @@ def course_view(
         },
     )
 
+# Converts professor name to solely full name without email from CSV
+def extract_professor_name(professor_full):
+    return re.match(r'^[^()]+', professor_full).group().strip()
+
+# Converts course title in CSV to solely just mnemonic and number
+def extract_course_mnemonic(course_full):
+    return course_full.split(' |')[0].strip()
+
+# Creates a dataframe with instructor names, course codes, and their average sentiment scores
+def avg_sentiment_df_creator():
+    reviews_data_path = 'tcf_website/management/commands/reviews_data/reviews_data_with_sentiment.csv'
+    df = pd.read_csv(reviews_data_path)
+    df["instructor_name_only"] = df["instructor"].apply(extract_professor_name)
+    df["course_code_only"] = df["course"].apply(extract_course_mnemonic)
+    avg_sentiment_df = df.groupby(["instructor_name_only", "course_code_only"])["sentiment_score"].mean().reset_index()
+    return avg_sentiment_df
+
+# Finds average sentiment of reviews for an instructor for a course
+def get_avg_sentiment(instructor, course):
+    avg_sentiment_df = avg_sentiment_df_creator()
+    
+    instructor_name = instructor.strip()
+    course_code = course.strip()
+    
+    result = avg_sentiment_df[
+        (avg_sentiment_df["instructor_name_only"] == instructor_name) & (avg_sentiment_df["course_code_only"] == course_code)
+    ]
+    
+    sentiment_score = None
+    if not result.empty:
+        sentiment_score = round(result["sentiment_score"].values[0], 2)
+    
+    return sentiment_score
 
 def course_instructor(request, course_id, instructor_id):
     """View for course instructor page."""
@@ -284,6 +320,9 @@ def course_instructor(request, course_id, instructor_id):
         answers[question.id] = Answer.display_activity(question.id, request.user)
     questions = Question.display_activity(course_id, instructor_id, request.user)
 
+    # Sentiment score
+    sentiment_score = get_avg_sentiment(instructor.full_name, course.combined_mnemonic_number)
+
     return render(
         request,
         "course/course_professor.html",
@@ -300,6 +339,7 @@ def course_instructor(request, course_id, instructor_id):
             "display_times": Semester.latest() == section_last_taught.semester,
             "questions": questions,
             "answers": answers,
+            "sentiment_score": sentiment_score,
         },
     )
 
