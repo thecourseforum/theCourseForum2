@@ -34,7 +34,7 @@ def search(request):
     """Search results view."""
 
     # Set query
-    query = request.GET.get("q", "")
+    query = request.GET.get("q", "").strip()
 
     filters = {
         "disciplines": request.GET.getlist("discipline"),
