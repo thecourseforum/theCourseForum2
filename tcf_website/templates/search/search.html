@@ -13,7 +13,12 @@
 
       <div class="search-title row p-4">
         <h2>
-          Search results - <b><i>{{ query }}</i></b>
+          Search results 
+          {% if query %}
+            - <b><i>{{ query }}</i></b>
+          {% else %}
+            :
+          {% endif %}
         </h2>
       </div>
 
