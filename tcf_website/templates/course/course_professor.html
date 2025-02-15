@@ -208,19 +208,31 @@
                     <div style="overflow: hidden;">
                         <div id="sectionInfo" style="margin-top: -10000px;">
                             {% for section, sec_info in section_info.sections.items %}
-                            <div style="display: grid; grid-template-columns: [start] 6ch [sec-num] minmax(120px, auto) [type] minmax(120px, auto) [enrollment] 1fr [end]; gap: 10px; margin-bottom: 3px;">
+                            <div style="display: grid; grid-template-columns: [start] 6ch [sec-num] 150px [type] minmax(200px, 1fr) [times] minmax(120px, auto) [end]; gap: 10px; margin-bottom: 3px;">
                                 <div style="color: var(--accent-color);">{{ section }}</div>
                                 <div>
                                     {{ sec_info.type }}{% if sec_info.units is not None %} ({{ sec_info.units }} Unit{% if sec_info.units != 1 %}s{% endif %}){% endif %}
                                     {%if sec_info.cost is not None %}{{ sec_info.cost }}{% endif %}
                                 </div>
-                                <div>
-                                    {% if sec_info.enrollment_data %}
-                                        {{ sec_info.enrollment_data.enrollment_taken|default_if_none:"N/A" }}/{{ sec_info.enrollment_data.enrollment_limit|default_if_none:"N/A" }}
-                                        ({{ sec_info.enrollment_data.waitlist_taken|default_if_none:"N/A" }}/{{ sec_info.enrollment_data.waitlist_limit|default_if_none:"N/A" }})
-                                    {% else %}
-                                        N/A/N/A (N/A/N/A)
-                                    {% endif %}
+                                <div class="enrollment-info" style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+                                    <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; margin: 0 100px;">
+                                        <div style="display: flex; gap: 20px; flex: 1; max-width: 600px; margin: 0 auto;">
+                                            <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+                                                <span style="font-size: 14px; white-space: nowrap; min-width: 85px;">Enrollment:</span>
+                                                <div class="progress" style="flex: 1; height: 8px; margin: 0;">
+                                                    <div class="progress-bar enrollment-bar" role="progressbar" style="width: 0%;"></div>
+                                                </div>
+                                                <span class="enrollment-text" style="white-space: nowrap; min-width: 65px; text-align: right;">N/A/N/A</span>
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+                                                <span style="font-size: 14px; white-space: nowrap; min-width: 65px;">Waitlist:</span>
+                                                <div class="progress" style="flex: 1; height: 8px; margin: 0;">
+                                                    <div class="progress-bar waitlist-bar" role="progressbar" style="width: 0%; background-color: #ffc107;"></div>
+                                                </div>
+                                                <span class="waitlist-text" style="white-space: nowrap; min-width: 65px; text-align: right;">N/A/N/A</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div style="text-align: right;">
                                     {% for time in sec_info.times %}
@@ -235,6 +247,17 @@
             </div>
             {% endif %}
         </div>
+
+        <style>
+            @media (max-width: 1024px) {
+                .enrollment-info {
+                    display: none !important;
+                }
+                .times-info-container .grid {
+                    grid-template-columns: [start] 6ch [sec-num] 150px [type] 1fr [end] !important;
+                }
+            }
+        </style>
 
         <script>
             document.querySelector("#sectionInfo").style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
@@ -264,7 +287,35 @@
                                 if (div.textContent.includes(sectionNum)) {
                                     const enrollmentDiv = div.children[2];
                                     if (enrollmentDiv) {
-                                        enrollmentDiv.textContent = `${data.enrollment_taken}/${data.enrollment_limit} (${data.waitlist_taken}/${data.waitlist_limit})`;
+                                        const progressBar = enrollmentDiv.querySelector('.enrollment-bar');
+                                        const waitlistBar = enrollmentDiv.querySelector('.waitlist-bar');
+                                        const enrollmentText = enrollmentDiv.querySelector('.enrollment-text');
+                                        const waitlistText = enrollmentDiv.querySelector('.waitlist-text');
+                                        const taken = data.enrollment_taken || 0;
+                                        const limit = data.enrollment_limit || 0;
+                                        const waitTaken = data.waitlist_taken || 0;
+                                        const waitLimit = data.waitlist_limit || 0;
+                                        
+                                        if (limit > 0) {
+                                            const enrollPercentage = (taken / limit) * 100;
+                                            progressBar.style.width = `${enrollPercentage}%`;
+                                            progressBar.style.backgroundColor = enrollPercentage >= 100 ? '#dc3545' : '#28a745';
+                                            enrollmentText.textContent = `${taken}/${limit}`;
+                                            
+                                            if (waitLimit > 0) {
+                                                const waitPercentage = (waitTaken / waitLimit) * 100;
+                                                waitlistBar.style.width = `${waitPercentage}%`;
+                                                waitlistText.textContent = `${waitTaken}/${waitLimit}`;
+                                            } else {
+                                                waitlistBar.style.width = '0%';
+                                                waitlistText.textContent = 'N/A/N/A';
+                                            }
+                                        } else {
+                                            progressBar.style.width = '0%';
+                                            waitlistBar.style.width = '0%';
+                                            enrollmentText.textContent = 'N/A/N/A';
+                                            waitlistText.textContent = 'N/A/N/A';
+                                        }
                                     }
                                 }
                             });
