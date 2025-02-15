@@ -216,6 +216,20 @@ def get_sentiments(instructor, course):
         return []
     else:
         return result["sentiment_score"].tolist()
+    
+def categorize_sentiments(sentiments):
+    bins = [-1, -0.6, -0.2, 0.2, 0.6, 1]
+    labels = [
+        "Strongly negative",
+        "Somewhat negative",
+        "Neutral",
+        "Somewhat positive",
+        "Strongly positive",
+    ]
+    
+    categorized = pd.cut(sentiments, bins=bins, labels=labels, include_lowest=True)
+    sentiment_counts = categorized.value_counts().reindex(labels, fill_value=0).to_dict()
+    return sentiment_counts
 
 def course_instructor(request, course_id, instructor_id):
     """View for course instructor page."""
@@ -319,8 +333,10 @@ def course_instructor(request, course_id, instructor_id):
         answers[question.id] = Answer.display_activity(question.id, request.user)
     questions = Question.display_activity(course_id, instructor_id, request.user)
 
-    # Sentiment scores
+    # Sentiment scores + distributions
     sentiment_scores = get_sentiments(instructor.full_name, course.combined_mnemonic_number)
+    sentiment_distribution = categorize_sentiments(pd.Series(sentiment_scores))
+    sentiment_distribution = json.dumps(sentiment_distribution)  
 
     return render(
         request,
@@ -338,7 +354,7 @@ def course_instructor(request, course_id, instructor_id):
             "display_times": Semester.latest() == section_last_taught.semester,
             "questions": questions,
             "answers": answers,
-            "sentiment_scores": sentiment_scores,
+            "sentiment_distribution": sentiment_distribution,
         },
     )
 

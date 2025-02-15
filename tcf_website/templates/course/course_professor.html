@@ -15,6 +15,8 @@
         <div class="mt-4"></div>
 
         {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
+        
+        <canvas id="sentiment-chart"></canvas>
 
         <div class="course-instructor-header my-2">
             <div class="d-flex flex-column">
@@ -24,9 +26,7 @@
                 </div>
                 <div class="course-title d-md-flex align-items-baseline">
                     <h3 class="mr-md-3 text-nowrap">Sentiment Score: </h3>
-                    <h2 class="mr-md-3 sentiment">{{ sentiment_score }}</h2>
                 </div>
-                
 
                 <div class="instructor-info d-flex flex-sm-row flex-column align-items-baseline">
 
@@ -338,15 +338,46 @@
 
     <!-- For QA Form-->
     <script type="text/javascript" src="{% static 'qa/new_answer.js' %}"></script>
-
-    <script>
-        let sentimentElement = document.querySelector(".sentiment");
-        let sentimentValue = parseFloat(sentimentElement.textContent)
-        
-        let normalized = (sentimentValue + 1) / 2;
-        let green = (normalized * 191.25)
     
-        sentimentElement.style.color = `rgb(125, ${green}, 0)`;
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let rawData = `{{ sentiment_distribution|safe }}`;
+            
+            const sentimentData = JSON.parse(rawData);
+            console.log("Parsed Sentiment Data:", sentimentData); // Debugging
+                
+            const labels = Object.keys(sentimentData);
+            const dataValues = Object.values(sentimentData);
+
+            const ctx = document.getElementById('sentiment-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Number of Reviews',
+                        data: dataValues,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                precision: 0
+                            }
+                        }]
+                    }
+                }
+            });
+        });
+
     </script>
+    
+
 
 {% endblock %}
