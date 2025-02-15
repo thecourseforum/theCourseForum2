@@ -192,7 +192,7 @@ def extract_professor_name(professor_full):
 def extract_course_mnemonic(course_full):
     return course_full.split(' |')[0].strip()
 
-# Creates a dataframe with instructor names, course codes, and their average sentiment scores
+# Creates a dataframe with instructor names, course codes, and their sentiment scores
 def sentiments_df_creator():
     reviews_data_path = 'tcf_website/management/commands/reviews_data/reviews_data_with_sentiment.csv'
     df = pd.read_csv(reviews_data_path)
@@ -201,7 +201,7 @@ def sentiments_df_creator():
     sentiments = df[["instructor_name_only", "course_code_only", "sentiment_score"]]
     return sentiments
 
-# Finds average sentiment of reviews for an instructor for a course
+# Returns list of sentiments of reviews for an instructor for a course
 def get_sentiments(instructor, course):
     sentiments_df = sentiments_df_creator()
     
@@ -319,8 +319,8 @@ def course_instructor(request, course_id, instructor_id):
         answers[question.id] = Answer.display_activity(question.id, request.user)
     questions = Question.display_activity(course_id, instructor_id, request.user)
 
-    # Sentiment score
-    sentiment_score = get_avg_sentiment(instructor.full_name, course.combined_mnemonic_number)
+    # Sentiment scores
+    sentiment_scores = get_sentiments(instructor.full_name, course.combined_mnemonic_number)
 
     return render(
         request,
@@ -338,7 +338,7 @@ def course_instructor(request, course_id, instructor_id):
             "display_times": Semester.latest() == section_last_taught.semester,
             "questions": questions,
             "answers": answers,
-            "sentiment_score": sentiment_score,
+            "sentiment_scores": sentiment_scores,
         },
     )
 
