@@ -193,30 +193,29 @@ def extract_course_mnemonic(course_full):
     return course_full.split(' |')[0].strip()
 
 # Creates a dataframe with instructor names, course codes, and their average sentiment scores
-def avg_sentiment_df_creator():
+def sentiments_df_creator():
     reviews_data_path = 'tcf_website/management/commands/reviews_data/reviews_data_with_sentiment.csv'
     df = pd.read_csv(reviews_data_path)
     df["instructor_name_only"] = df["instructor"].apply(extract_professor_name)
     df["course_code_only"] = df["course"].apply(extract_course_mnemonic)
-    avg_sentiment_df = df.groupby(["instructor_name_only", "course_code_only"])["sentiment_score"].mean().reset_index()
-    return avg_sentiment_df
+    sentiments = df[["instructor_name_only", "course_code_only", "sentiment_score"]]
+    return sentiments
 
 # Finds average sentiment of reviews for an instructor for a course
-def get_avg_sentiment(instructor, course):
-    avg_sentiment_df = avg_sentiment_df_creator()
+def get_sentiments(instructor, course):
+    sentiments_df = sentiments_df_creator()
     
     instructor_name = instructor.strip()
     course_code = course.strip()
     
-    result = avg_sentiment_df[
-        (avg_sentiment_df["instructor_name_only"] == instructor_name) & (avg_sentiment_df["course_code_only"] == course_code)
+    result = sentiments_df[
+        (sentiments_df["instructor_name_only"] == instructor_name) & (sentiments_df["course_code_only"] == course_code)
     ]
     
-    sentiment_score = None
-    if not result.empty:
-        sentiment_score = round(result["sentiment_score"].values[0], 2)
-    
-    return sentiment_score
+    if result.empty:
+        return []
+    else:
+        return result["sentiment_score"].tolist()
 
 def course_instructor(request, course_id, instructor_id):
     """View for course instructor page."""
