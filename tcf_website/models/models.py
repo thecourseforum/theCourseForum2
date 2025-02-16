@@ -679,12 +679,8 @@ class Course(models.Model):
                 "FRI": "friday",
             }
 
-            # Get all possible days
-            all_days = set(day_map.values())  # {monday, tuesday, wednesday, thursday, friday}
-            # Get selected days
-            selected_days = {day_map[d] for d in days if d in day_map}  # {monday, wednesday}
             # Get unavailable days
-            unavailable_days = all_days - selected_days  # {tuesday, thursday, friday}
+            unavailable_days = {day_map[d] for d in days if d in day_map}  # {monday, wednesday}
 
             # Filter for sections that don't meet on unavailable days
             section_conditions = Q(section__semester=current_semester)
