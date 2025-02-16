@@ -6,8 +6,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views import generic
 
@@ -212,3 +214,40 @@ def edit_review(request, review_id):
         return render(request, "reviews/edit_review.html", {"form": form})
     form = ReviewForm(instance=review)
     return render(request, "reviews/edit_review.html", {"form": form})
+
+
+def paginated_reviews(request, course_id, instructor_id=None):
+    """Fetch paginated reviews for a given course asynchronously."""
+    page = request.GET.get("page", 1)  # default to page 1
+    per_page = 10  # 10 reviews per page
+
+    if not instructor_id:
+        instructor_id = request.GET.get("instructor_id")
+
+    # fetch reviews
+    reviews = Review.objects.filter(course_id=course_id, instructor_id=instructor_id)
+
+    # paginate
+    paginator = Paginator(reviews, per_page)
+    page_obj = paginator.get_page(page)
+
+    # render using reviews_list template
+    reviews_html = render_to_string(
+        "reviews/reviews_list.html",
+        {
+            "paginated_reviews": page_obj,
+            "profile": request.user.profile if request.user.is_authenticated else None,
+        },
+        request=request,
+    )
+
+    # return json w/ reviews list and pagination info
+    return JsonResponse(
+        {
+            "reviews_html": reviews_html,
+            "has_next": page_obj.has_next(),
+            "has_previous": page_obj.has_previous(),
+            "current_page": page_obj.number,
+            "total_pages": paginator.num_pages,
+        }
+    )
