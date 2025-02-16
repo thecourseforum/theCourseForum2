@@ -46,7 +46,7 @@
           <div class="filter-container">
             <div class="filter-section compact">
               <h6 class="filter-header">
-                Class Days
+                Class Days to Exclude 
               </h6>
               <div class="day-toggles">
                 <div class="form-check form-check-inline m-0">
@@ -216,7 +216,7 @@
     // Checks for active filters or inactive day filters to determine button state
     function updateButtonState() {
         const activeFilters = Array.from(filterInputs).filter(input => input.checked);
-        const inactiveDayFilters = Array.from(dayFilters).filter(input => !input.checked);
+        const activeDayFilters = Array.from(dayFilters).filter(input => input.checked);
         
         let timeFromChanged = false;
         let timeToChanged = false;
@@ -228,7 +228,7 @@
             timeToChanged = timeTo.value !== '';
         }
 
-        if (activeFilters.length > 0 || inactiveDayFilters.length > 0 || timeFromChanged || timeToChanged) {
+        if (activeFilters.length > 0 || activeDayFilters.length > 0 || timeFromChanged || timeToChanged) {
             filterButton.classList.add('filter-active');
             filterButton.textContent = 'Filters Active';
         } else {
@@ -353,6 +353,20 @@
         .join('-');
       document.getElementById('weekdays-input').value = checkedDays;
     }
+
+    // Updates weekdays if div of checkbox is clicked 
+    document.querySelectorAll('.form-check-inline').forEach(container => {
+      container.addEventListener('click', (event) => {
+        const checkbox = container.querySelector('.day-checkbox');
+        if (event.target === checkbox || event.target.closest('label')) {
+          return;
+        }
+        checkbox.checked = !checkbox.checked;
+        checkbox.dispatchEvent(new Event('change'));
+        updateWeekdays();
+        updateButtonState();
+      });
+    });
 
     // Update weekdays on checkbox change
     document.querySelectorAll('.day-checkbox').forEach(checkbox => {
