@@ -284,6 +284,9 @@ def course_instructor(request, course_id, instructor_id):
         answers[question.id] = Answer.display_activity(question.id, request.user)
     questions = Question.display_activity(course_id, instructor_id, request.user)
 
+    # avg GPA history data
+    gpa_history = instructor.avg_gpa_history_by_course(course)
+
     return render(
         request,
         "course/course_professor.html",
@@ -300,6 +303,7 @@ def course_instructor(request, course_id, instructor_id):
             "display_times": Semester.latest() == section_last_taught.semester,
             "questions": questions,
             "answers": answers,
+            "gpa_history": json.dumps(gpa_history),
         },
     )
 
