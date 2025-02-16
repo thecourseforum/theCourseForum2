@@ -51,9 +51,10 @@
 }
 
 .chart-container {
-  width: 90%;
-  height: 90%;
   position: relative;
+  margin-top: none;
+  height: 80vh;
+  width: 80vw;
 }
 
 .chart-button {
@@ -129,6 +130,16 @@
   flex-direction: column;
 }
 
+.top-center {
+  position: absolute;
+  top: 10px;
+  left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
 .gpa-text {
   color: #384676;
   font-size: 28px;
@@ -178,10 +189,6 @@
 }
 
 @media (max-width: 1100px) {
-  .chart-container {
-    max-width: 600px;
-  }
-
   .grades-ratings-container {
     flex-direction: column;
     height: 650px;
@@ -252,9 +259,6 @@
     height: 50%;
   }
 
-  .chart-container {
-    width: 175px;
-  }
   .ratings-container {
     height: 50%;
   }
