@@ -36,7 +36,7 @@
         >
           Filters
         </button>
-        <div class="tooltip">Try our new filters button!</div>
+        <div class="tooltip">Try out the filters!</div>
         <div 
           class="dropdown-menu p-4 filter-dropdown dropdown-menu-end" 
           aria-labelledby="filter-button" 
@@ -187,7 +187,7 @@
               tooltip.style.display = 'none';
               beacon.style.display = 'none';
           }, 500);
-      }, 3500);
+      }, 4000);
     } else {
       document.querySelector('.beacon').style.display = 'none';
     }
@@ -625,6 +625,7 @@
     z-index: 1;
     opacity: 1;
     transition: opacity 0.5s ease-out, visibility 0.5s;
+    pointer-events: none; 
   }
 
   .beacon.hide {
