@@ -75,54 +75,58 @@
                             <div class="question-body col-xs-12 col-md-12 col-lg-12">
                                 <div class="question" id="question{{question.id}}">
                                     <div class="row">
-                                        <div class="col-sm-1 d-flex text-muted">
-                                            <span id="answer-vote-count" hidden>{{ question.sum_a_votes }}</span>
-                                            <div class="mr-3 mr-sm-4">
-                                                <a id="upvoteQ{{question.id}}" href="#loginModal"
-                                                    data-toggle="modal"
-                                                    class="upvoteQuestion {% if question.user_q_vote == 1 %}active{% endif %}">
-                                                    <i class="fa fa-thumbs-up"></i>
-                                                </a>
-                                                <span class="upvoteCount">{{ question.count_votes.upvotes }}</span>
-                                            </div>
-                                            <div class="mr-3 mr-sm-4">
-                                                <a id="downvoteQ{{question.id}}" href="#loginModal"
-                                                    data-toggle="modal"
-                                                    class="downvoteQuestion {% if question.user_q_vote == -1 %}active{% endif %}">
-                                                    <i class="fa fa-thumbs-down"></i>
-                                                </a>
-                                                <span class="downvoteCount">{{ question.count_votes.downvotes }}</span>
-                                            </div>
-                                        </div>
                                         <div class="col">
                                             <div class="question-header">
-                                                <div class="d-flex justify-content-end">
-                                                    <h6 id="date" class="text-muted">Updated {{ question.created|date:"n/d/y" }}
-                                                        <a class="question-delete h5 pl-2 text-danger" type="button"
-                                                        data-toggle="modal" data-target="#deleteQuestionModal{{question.id}}">
-                                                        <i class="fa fa-trash-o"></i>
-                                                        </a>
-                                                    </h6>
-                                                    
-                                                </div>
+                                                <!-- Use question.user to print actual question creator -->
+                                                <span class="text-muted">Anonymous</span>
+                                                | Updated {{ question.created|date:"n/d/y" }}
+                                                    {% if question.user == user %}
+                                                        <div class="question-actions d-inline-flex">
+                                                            <a data-toggle="modal" class="question-edit h5 px-2 text-tcf-blue" type="button" 
+                                                                data-target="#edit-question-modal{{question.id}}" id="edit-question-button{{question_id}}">
+                                                                <i class="fa fa-pencil"></i>
+                                                            </a>
+                                                            {% include "qa/delete_question_confirm_modal.html" with question_id=question.id %}
+                                                        </div>
+                                                    {% endif %}
+                                                    <a class="question-delete h5 pl-2 text-danger" type="button"
+                                                    data-toggle="modal" data-target="#deleteQuestionModal{{question.id}}">
+                                                    <i class="fa fa-trash-o"></i>
+                                                    </a>
+                                                </h6>
                                             </div>
                                             <div class="question-content mb-2">
-                                                <div class="question-text-body" id="questionText{{question.id}}">
-                                                    <div class="question-text-full text-break">{{ question.text|linebreaks }}</div>
+                                                <div class="d-flex justify-content-between">
+                                                    <div class="question-text-body" id="questionText{{question.id}}">
+                                                        <div class="question-text-full text-break">{{ question.text|linebreaks }}</div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="question-footer mt-3">
-                                                <div class="d-flex justify-content-end">
-                                                {% if question.user == user %}
-                                                    <div class="question-actions d-inline-flex">
-                                                        <a data-toggle="modal" class="question-edit h5 px-2 text-tcf-blue" type="button" 
-                                                            data-target="#edit-question-modal{{question.id}}" id="edit-question-button{{question_id}}">
-                                                            <i class="fas fa-pencil-alt"></i>
-                                                        </a>
-                                                        {% include "qa/delete_question_confirm_modal.html" with question_id=question.id %}
-                                                    </div>
-                                                {% endif %}
+                                            <div class="question-footer mt-2">
+                                                <div class="d-flex justify-content-left">
+                                                <span id="answer-vote-count" hidden>{{ question.sum_a_votes }}</span>
+                                                <div class="mr-3 mr-sm-4">
+                                                    <a id="upvoteQ{{question.id}}" href="#loginModal"
+                                                        data-toggle="modal"
+                                                        class="upvoteQuestion {% if question.user_q_vote == 1 %}active{% endif %}">
+                                                        <i class="fa fa-thumbs-up"></i>
+                                                    </a>
+                                                    <span class="upvoteCount">{{ question.count_votes.upvotes }}</span>
                                                 </div>
+                                                <div class="mr-3 mr-sm-4">
+                                                    <a id="downvoteQ{{question.id}}" href="#loginModal"
+                                                        data-toggle="modal"
+                                                        class="downvoteQuestion {% if question.user_q_vote == -1 %}active{% endif %}">
+                                                        <i class="fa fa-thumbs-down"></i>
+                                                    </a>
+                                                    <span class="downvoteCount">{{ question.count_votes.downvotes }}</span>
+                                                </div>
+                                                </div>
+                                                <a href="#loginModal" data-toggle="modal" data-id="{{ question.id }}"
+                                                        class="btn bg-tcf-orange text-white justify-content-end mt-3 answerQuestionBtn"
+                                                        id="answerQuestionBtn">
+                                                        Add a response!
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -276,11 +280,6 @@
                                                     {% else %}
                                                     <div></div>
                                                     {% endif %}
-                                                    <a href="#loginModal" data-toggle="modal" data-id="{{ question.id }}"
-                                                        class="btn bg-tcf-orange text-white justify-content-end mt-3 answerQuestionBtn"
-                                                        id="answerQuestionBtn">
-                                                        Add a response!
-                                                    </a>
                                                 </div>
                                                 {% endif %}
                                                 {% endfor %}
