@@ -245,7 +245,8 @@
             }
         </script>
 
-        <div style="background-color: white; padding: 10px; margin-bottom: 10px;">
+        <div style=" margin-left: auto; margin-right: auto; background-color: white; 
+        padding: 10px; margin-bottom: 10px; position: relative; height:50vh; width:40vw">
             <canvas id="sentiment-chart"></canvas>
         </div>
 
@@ -394,18 +395,7 @@
                         },
                     },
                     scales: {
-                        xAxes: [{
-                            scaleLabel: {
-                                display: true,
-                                labelString: "Sentiment Score Ranges",
-                            },
-
-                        }],
                         yAxes: [{
-                            scaleLabel: {
-                                display: true,
-                                labelString: "Number of Sentiment Scores",
-                            },
                             ticks: {
                                 beginAtZero: true,
                                 precision: 0
@@ -418,7 +408,5 @@
         });
 
     </script>
-    
-
 
 {% endblock %}
