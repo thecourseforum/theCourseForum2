@@ -1,0 +1,7 @@
+body {
+    color: var(--h1-text-color);
+}
+
+.bg-white {
+    background-color: var(--card-background-color) !important;
+}

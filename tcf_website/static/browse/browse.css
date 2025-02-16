@@ -1,3 +1,7 @@
+body {
+  color: var(--h1-text-color);
+}
+
 .schools {
   margin-top: 30px;
 }
@@ -19,7 +23,6 @@
 
 .school > .card-header {
   background-color: var(--secondary-color);
-  color: white;
 }
 
 .school-body {

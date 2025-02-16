@@ -2,6 +2,10 @@ body.dark-mode {
   --main-color: blue;
 }
 /* this blue is being override by --main-color in tcf-style.css */
+/* changes all icons to white if dark-mode is enabled */
+body.dark-mode .fa {
+  filter: invert(100%) brightness(150%);
+}
 
 .fa {
   display: inline-block;
@@ -59,7 +63,6 @@ body.dark-mode {
   background-size: contain;
   background-position: center;
   vertical-align: middle;
-  color: var(--main-color);
 }
 
 .fa-book {
