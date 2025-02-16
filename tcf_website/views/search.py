@@ -221,15 +221,11 @@ def apply_filters(results, filters):
     if filters.get("instructors"):
         results = results.filter(section__instructors__id__in=filters.get("instructors"))
 
-    # default returns all result including courses not offered this semester
-    if len(filters.get("weekdays")) == 5 and not filters.get("from_time") and not filters.get("to_time"):
-        return results
-
     weekdays = [day for day in filters.get("weekdays", []) if day]
     from_time = filters.get("from_time")
     to_time = filters.get("to_time")
 
-    if any([weekdays, from_time, to_time]):
+    if len(weekdays) != 5 and len(weekdays) != 0 or from_time or to_time:
         time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
 
