@@ -457,4 +457,53 @@
     <!-- For QA Form-->
     <script type="text/javascript" src="{% static 'qa/new_answer.js' %}"></script>
 
+    <!-- For GPA Graph -->
+    <canvas id="gpaChart" width="600" height="400"></canvas>
+
+    <script>
+        // Parse the GPA history JSON passed from Django.
+        // Ensure you use the escapejs filter to prevent issues with quotes.
+        const gpaHistory = JSON.parse('{{ gpa_history|escapejs }}');
+
+        // Map the GPA history to get labels and GPA values.
+        // For example, each entry is expected to have:
+        //   semester_year, semester_season, and average_gpa
+        const labels = gpaHistory.map(entry => `${entry.semester_season} ${entry.semester_year}`);
+        const gpaData = gpaHistory.map(entry => entry.average_gpa);
+
+        // Get the canvas context.
+        const ctx = document.getElementById('gpaChart').getContext('2d');
+
+        // Create the Chart.js line chart.
+        const gpaChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+            label: 'Average GPA',
+            data: gpaData,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)', // area fill color
+            borderColor: 'rgba(75, 192, 192, 1)',           // line color
+            borderWidth: 2,
+            fill: true,  // fill the area under the line
+            tension: 0.1 // smooths the line; set to 0 for straight lines
+            }]
+        },
+        options: {
+            scales: {
+            y: {
+                beginAtZero: true,
+                suggestedMax: 4.0  // Adjust if your GPA scale is different
+            }
+            },
+            plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            }
+            }
+        }
+        });
+    </script>
+
 {% endblock %}
