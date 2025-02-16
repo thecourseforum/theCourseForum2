@@ -215,21 +215,21 @@
                                     {%if sec_info.cost is not None %}{{ sec_info.cost }}{% endif %}
                                 </div>
                                 <div class="enrollment-info" style="display: flex; align-items: center; gap: 8px; min-width: 0;">
-                                    <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; margin: 0 100px;">
-                                        <div style="display: flex; gap: 20px; flex: 1; max-width: 600px; margin: 0 auto;">
-                                            <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
-                                                <span style="font-size: 14px; white-space: nowrap; min-width: 85px;">Enrollment:</span>
-                                                <div class="progress" style="flex: 1; height: 8px; margin: 0;">
+                                    <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; margin: 0 60px;">
+                                        <div style="display: flex; gap: 30px; flex: 1; max-width: 700px; margin: 0 auto;">
+                                            <div style="display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end;">
+                                                <span style="font-size: 14px; white-space: nowrap; width: 85px; text-align: right;">Enrollment:</span>
+                                                <div class="progress enrollment-progress" style="width: 100px; height: 8px; margin: 0;">
                                                     <div class="progress-bar enrollment-bar" role="progressbar" style="width: 0%;"></div>
                                                 </div>
-                                                <span class="enrollment-text" style="white-space: nowrap; min-width: 65px; text-align: right;">N/A/N/A</span>
+                                                <span class="enrollment-text" style="font-size: 14px; white-space: nowrap; width: 70px; text-align: left;">N/A</span>
                                             </div>
-                                            <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
-                                                <span style="font-size: 14px; white-space: nowrap; min-width: 65px;">Waitlist:</span>
-                                                <div class="progress" style="flex: 1; height: 8px; margin: 0;">
+                                            <div style="display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-start;">
+                                                <span style="font-size: 14px; white-space: nowrap; width: 70px; text-align: right;">Waitlist:</span>
+                                                <div class="progress waitlist-progress" style="width: 100px; height: 8px; margin: 0;">
                                                     <div class="progress-bar waitlist-bar" role="progressbar" style="width: 0%; background-color: #ffc107;"></div>
                                                 </div>
-                                                <span class="waitlist-text" style="white-space: nowrap; min-width: 65px; text-align: right;">N/A/N/A</span>
+                                                <span class="waitlist-text" style="font-size: 14px; white-space: nowrap; width: 70px; text-align: left;">N/A</span>
                                             </div>
                                         </div>
                                     </div>
@@ -249,6 +249,11 @@
         </div>
 
         <style>
+            @media (max-width: 1200px) {
+                .enrollment-progress, .waitlist-progress {
+                    width: 30px !important;
+                }
+            }
             @media (max-width: 1024px) {
                 .enrollment-info {
                     display: none !important;
@@ -308,13 +313,13 @@
                                                 waitlistText.textContent = `${waitTaken}/${waitLimit}`;
                                             } else {
                                                 waitlistBar.style.width = '0%';
-                                                waitlistText.textContent = 'N/A/N/A';
+                                                waitlistText.textContent = 'N/A';
                                             }
                                         } else {
                                             progressBar.style.width = '0%';
                                             waitlistBar.style.width = '0%';
-                                            enrollmentText.textContent = 'N/A/N/A';
-                                            waitlistText.textContent = 'N/A/N/A';
+                                            enrollmentText.textContent = 'N/A';
+                                            waitlistText.textContent = 'N/A';
                                         }
                                     }
                                 }
