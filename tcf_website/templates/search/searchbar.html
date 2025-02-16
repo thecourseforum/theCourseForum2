@@ -23,6 +23,7 @@
     </div>
     <div class="dropdown-wrapper">
       <div class="dropdown input-group">
+        <div class="beacon"></div>
         <button 
           class="btn btn-outline-secondary dropdown-toggle border border-left-0" 
           id="filter-button" 
@@ -35,6 +36,7 @@
         >
           Filters
         </button>
+        <div class="tooltip">Try our new filters button!</div>
         <div 
           class="dropdown-menu p-4 filter-dropdown dropdown-menu-end" 
           aria-labelledby="filter-button" 
@@ -153,6 +155,43 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // Function to check if cookie exists
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    function setCookie(name, value, days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      const expires = `expires=${date.toUTCString()}`;
+      document.cookie = `${name}=${value};${expires};path=/`;
+    }
+
+    if (!getCookie('hasVisited')) {
+      const tooltip = document.querySelector('.tooltip');
+      const beacon = document.querySelector('.beacon');
+
+      tooltip.classList.add('show');
+
+      setCookie('hasVisited', 'true', 365);
+
+      setTimeout(() => {
+          tooltip.classList.remove('show');
+          tooltip.classList.add('hide');
+          beacon.classList.add('hide');
+
+          // Fully remove elements after transition
+          setTimeout(() => {
+              tooltip.style.display = 'none';
+              beacon.style.display = 'none';
+          }, 500);
+      }, 3500);
+    } else {
+      document.querySelector('.beacon').style.display = 'none';
+    }
+
     // Determines if any filters (besides day ones) are active 
     const filterInputs = document.querySelectorAll('.dropdown-menu input[type="checkbox"]:not(.day-checkbox)');
     const dayFilters = document.querySelectorAll('.day-checkbox'); 
@@ -532,5 +571,79 @@
   .discipline-list::-webkit-scrollbar-thumb {
     background-color: #cbd5e0;
     border-radius: 2px;
+  }
+  
+  .tooltip {
+    position: absolute;
+    left: calc(100% - 4px);
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #b4441d;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    opacity: 0; /* Start hidden */
+    visibility: hidden;
+    transition: opacity 0.3s ease-in, visibility 0.3s;
+  }
+
+  .tooltip::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background-color: #333;
+    clip-path: polygon(100% 0, 0 50%, 100% 100%);
+  }
+
+  .tooltip.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .tooltip.hide {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .beacon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    background-color: rgba(0, 123, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 1.5s infinite;
+    z-index: 1;
+    opacity: 1;
+    transition: opacity 0.5s ease-out, visibility 0.5s;
+  }
+
+  .beacon.hide {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  @keyframes pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.7;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.3;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.4);
+        opacity: 0;
+    }
   }
 </style>
