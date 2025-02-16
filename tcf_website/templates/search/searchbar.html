@@ -44,40 +44,49 @@
         >
         <!-- Day and time selections -->
           <div class="filter-container">
-            <div class="filter-section compact">
-              <h6 class="filter-header">
-                Class Days to Exclude 
-              </h6>
-              <div class="day-toggles">
-                <div class="form-check form-check-inline m-0">
-                  <input class="form-check-input day-checkbox" type="checkbox" id="monday" value="MON" 
-                         {% if 'MON' in selected_weekdays %}checked{% endif %}>
-                  <label class="form-check-label" for="monday">Mon</label>
+            <div class="time-filter">
+              <div class="filter-section compact">
+                <h6 class="filter-header">
+                  Exclude Class Days
+                </h6>
+                <div class="day-toggles">
+                  <div class="form-check form-check-inline m-0">
+                    <input class="form-check-input day-checkbox" type="checkbox" id="monday" value="MON" 
+                           {% if 'MON' in selected_weekdays %}checked{% endif %}>
+                    <label class="form-check-label" for="monday">Mon</label>
+                  </div>
+                  <div class="form-check form-check-inline m-0">
+                    <input class="form-check-input day-checkbox" type="checkbox" id="tuesday" value="TUE" 
+                           {% if 'TUE' in selected_weekdays %}checked{% endif %}>
+                    <label class="form-check-label" for="tuesday">Tue</label>
+                  </div>
+                  <div class="form-check form-check-inline m-0">
+                    <input class="form-check-input day-checkbox" type="checkbox" id="wednesday" value="WED" 
+                           {% if 'WED' in selected_weekdays %}checked{% endif %}>
+                    <label class="form-check-label" for="wednesday">Wed</label>
+                  </div>
+                  <div class="form-check form-check-inline m-0">
+                    <input class="form-check-input day-checkbox" type="checkbox" id="thursday" value="THU" 
+                           {% if 'THU' in selected_weekdays %}checked{% endif %}>
+                    <label class="form-check-label" for="thursday">Thu</label>
+                  </div>
+                  <div class="form-check form-check-inline m-0">
+                    <input class="form-check-input day-checkbox" type="checkbox" id="friday" value="FRI" 
+                           {% if 'FRI' in selected_weekdays %}checked{% endif %}>
+                    <label class="form-check-label" for="friday">Fri</label>
+                  </div>
                 </div>
-                <div class="form-check form-check-inline m-0">
-                  <input class="form-check-input day-checkbox" type="checkbox" id="tuesday" value="TUE" 
-                         {% if 'TUE' in selected_weekdays %}checked{% endif %}>
-                  <label class="form-check-label" for="tuesday">Tue</label>
+              </div>
+              <div class="filter-section compact">
+                <h6 class="filter-header">
+                  Available Time
+                </h6>
+                <div class="day-toggles">
+                  <p>From</p>
+                  <input class="time-selection" type="time" id="from_time" name="from_time" value="{{ from_time }}">
+                  <p>to</p>
+                  <input class="time-selection" type="time" id="to_time" name="to_time" value="{{ to_time }}">
                 </div>
-                <div class="form-check form-check-inline m-0">
-                  <input class="form-check-input day-checkbox" type="checkbox" id="wednesday" value="WED" 
-                         {% if 'WED' in selected_weekdays %}checked{% endif %}>
-                  <label class="form-check-label" for="wednesday">Wed</label>
-                </div>
-                <div class="form-check form-check-inline m-0">
-                  <input class="form-check-input day-checkbox" type="checkbox" id="thursday" value="THU" 
-                         {% if 'THU' in selected_weekdays %}checked{% endif %}>
-                  <label class="form-check-label" for="thursday">Thu</label>
-                </div>
-                <div class="form-check form-check-inline m-0">
-                  <input class="form-check-input day-checkbox" type="checkbox" id="friday" value="FRI" 
-                         {% if 'FRI' in selected_weekdays %}checked{% endif %}>
-                  <label class="form-check-label" for="friday">Fri</label>
-                </div>
-                <p>from</p>
-                <input class="time-selection" type="time" id="from_time" name="from_time" value="{{ from_time }}">
-                <p>to</p>
-                <input class="time-selection" type="time" id="to_time" name="to_time" value="{{ to_time }}">
               </div>
             </div>
             <!-- List of subjects -->
@@ -323,10 +332,7 @@
       
       // Reset checkboxes
       document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-        checkbox.checked = true; // Set days to checked by default
-        if (checkbox.name === 'subdepartment' || checkbox.name === 'discipline') {
-          checkbox.checked = false; // Uncheck subjects and disciplines
-        }
+        checkbox.checked = false; // Set days to checked by default
       });
 
       // Clear subject search
@@ -339,6 +345,7 @@
       document.getElementById('from_time').value = '';
       document.getElementById('to_time').value = '';
 
+      updateWeekdays();
       updateButtonState();
       
       // Reorder lists after clearing filters (so any selected items, if any, are sorted correctly)
@@ -444,6 +451,11 @@
     margin-bottom: 0;
   }
 
+  .time-filter {
+    display: flex;
+    gap: 1.5rem;
+  }
+
   .day-toggles {
     display: flex;
     gap: 0.5rem;
@@ -470,7 +482,7 @@
     background: white;
     border: 1px solid #cbd5e0;
     border-radius: 6px;
-    padding: 0.4rem 0.9rem;
+    padding: 0.55rem 0.67rem;
     transition: all 0.15s ease;
   }
 
