@@ -216,7 +216,8 @@ def get_sentiments(instructor, course):
         return []
     else:
         return result["sentiment_score"].tolist()
-    
+
+# Categorizes sentiments based on where they fall in the range
 def categorize_sentiments(sentiments):
     bins = [-1, -0.6, -0.2, 0.2, 0.6, 1]
     labels = [
