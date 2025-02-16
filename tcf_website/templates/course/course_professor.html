@@ -245,7 +245,7 @@
             }
         </script>
 
-        <div style=" margin-left: auto; margin-right: auto; background-color: white; 
+        <div style="margin-left: auto; margin-right: auto; background-color: white; 
         padding: 10px; margin-bottom: 10px; position: relative; height:50vh; width:40vw">
             <canvas id="sentiment-chart"></canvas>
         </div>
@@ -361,17 +361,19 @@
                 '#182D66',
             ];
 
+            const datasets = labels.map((label, index) => ({
+                label: label,
+                data: [dataValues[index]],
+                backgroundColor: barColors[index % barColors.length],
+                borderWidth: 0
+            }));
+
             const ctx = document.getElementById('sentiment-chart').getContext('2d');
             new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Number of Reviews',
-                        data: dataValues,
-                        backgroundColor: barColors.slice(0, labels.length),
-                        borderWidth: 0
-                    }]
+                    labels: ['Sentiment Distribution'],
+                    datasets: datasets,
                 },
                 options: {
                     responsive: true,
@@ -395,7 +397,11 @@
                         },
                     },
                     scales: {
+                        xAxes: [{
+                            stacked: true
+                        }],
                         yAxes: [{
+                            stacked: true,
                             ticks: {
                                 beginAtZero: true,
                                 precision: 0
