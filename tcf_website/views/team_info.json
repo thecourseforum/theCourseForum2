@@ -78,13 +78,6 @@
       "github": "ajnye"
     },
     {
-      "name": "Ann Li",
-      "role": "VP Infrastructure Engineering",
-      "class": "2024",
-      "img_filename": "ENG_Ann_Li.jpg",
-      "github": "Ann924"
-    },
-    {
       "name": "Barrett Ruth",
       "role": "Developer",
       "class": "2026",
@@ -229,6 +222,13 @@
       "github": "visva-murali"
     },
     {
+      "name": "Angad Brar",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Angad_Brar.jpg",
+      "github": "angadv12"
+    },
+    {
       "name": "Grace Kang",
       "role": "Developer",
       "class": "2026",
@@ -262,27 +262,6 @@
       "class": "2027",
       "img_filename": "ENG_Namai_Kureishi.jpg",
       "github": "namaikureishi"
-    },
-    {
-      "name": "Ronit Batra",
-      "role": "Developer",
-      "class": "2027",
-      "img_filename": "ENG_Ronit_Batra.jpg",
-      "github": "ronitbatra"
-    },
-    {
-      "name": "Sagun Venuganti",
-      "role": "Developer",
-      "class": "2027",
-      "img_filename": "ENG_Sagun_Venuganti.jpg",
-      "github": "sagunvenuganti"
-    },
-    {
-      "name": "Shruti Bala",
-      "role": "Developer",
-      "class": "2025",
-      "img_filename": "ENG_Shruti_Bala.jpg",
-      "github": "shrutibala1"
     }
   ],
   "marketing_team": [
