@@ -5,6 +5,8 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.views.generic import TemplateView
 
+from tcf_website.views.review import paginated_reviews
+
 from . import views
 
 urlpatterns = [
@@ -57,6 +59,11 @@ urlpatterns = [
         name="delete_review",
     ),
     path("reviews/<int:review_id>/edit/", views.edit_review, name="edit_review"),
+    path(
+        "reviews/paginated/<int:course_id>/<int:instructor_id>/",
+        paginated_reviews,
+        name="paginated_reviews",
+    ),
     path("reviews/", views.reviews, name="reviews"),
     path("reviews/<int:review_id>/upvote/", views.upvote),
     path("reviews/<int:review_id>/downvote/", views.downvote),
