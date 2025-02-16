@@ -36,51 +36,6 @@ $(".pieToBar").click(function () {
   }
 });
 
-function drawGpaChart(gpaHistoryData) {
-  const labels = gpaHistoryData.map(item => `${item.semester_season} ${item.semester_year}`);
-  
-  const dataPoints = gpaHistoryData.map(item => item.average_gpa);
-  
-  const ctxGpa = document.getElementById('gpaChart').getContext('2d');
-  
-  const gpaConfig = {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Average GPA',
-        data: dataPoints,
-        borderColor: 'rgba(75,192,192,1)',
-        backgroundColor: 'rgba(75,192,192,0.2)',
-        fill: true,
-        lineTension: 0.2,
-        pointRadius: 4,
-      }]
-    },
-    options: {
-      responsive: true,
-      title: {
-        display: true,
-        text: 'Average GPA History by Semester'
-      },
-      scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true,
-            suggestedMax: 4.0
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'GPA'
-          }
-        }]
-      }
-    }
-  };
-  
-  new Chart(ctxGpa, gpaConfig);
-}
-
 const loadData = (data) => {
   // order in the input data
   /* eslint-disable camelcase */

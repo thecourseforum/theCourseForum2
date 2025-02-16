@@ -197,14 +197,13 @@
                     </div>
                 </div>
 
-                <div id="chart-container">
-                    <div id="canvas-parent">
-                      <canvas id="myChart"></canvas>
-                    </div>
-                    <div id="gpa-container" style="margin-top: 30px;">
-                      <canvas id="gpaChart"></canvas>
-                    </div>
-                  </div>
+                <div id="gpa-container" data-gpa-history="{{ gpa_history_json|escapejs }}" style="margin-top: 30px;">
+                    <canvas id="gpaChart"></canvas>
+                </div>
+                {% block js_graph %}
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+                    <script type="module" src="{% static 'course/javascript/course_data.js' %}"></script>
+                {% endblock %}
 
             </div>
             {% if display_times %}
