@@ -398,7 +398,7 @@
     transform: none !important;
     width: min(90vw, 800px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    border-radius: 12px;
+    border-radius: 0.25rem;
     border: 1px solid rgba(0,0,0,0.1);
   }
 
@@ -513,6 +513,7 @@
   }
 
   .search-container .form-control {
+    width: 100%; 
     padding-left: 2rem;
   }
 
@@ -551,15 +552,23 @@
 
   .btn-custom {
     background-color: #d75626;
-    border-color: #d75626;
+    border: 2px solid #d75626; /* Ensure solid border */
     border-radius: 4px; 
     color: white;
-    box-shadow: none;
+    box-shadow: none !important;
+    outline: none !important;
   }
 
   .btn-custom:hover {
-    background-color: #b4441d; 
-    border-color: #b4441d;
+      background-color: #b4441d; 
+      border-color: #b4441d;
+  }
+
+  .btn-custom:focus, 
+  .btn-custom:active {
+      box-shadow: none !important;
+      outline: none !important;
+      border: 2px solid #b4441d; /* Ensure no unexpected border change */
   }
 
   .subject-list::-webkit-scrollbar,
@@ -575,7 +584,7 @@
   
   .tooltip {
     position: absolute;
-    left: calc(100% - 4px);
+    left: calc(115%);
     top: 50%;
     transform: translateY(-50%);
     background-color: #b4441d;
