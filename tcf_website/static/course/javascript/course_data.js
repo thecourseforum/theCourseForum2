@@ -241,6 +241,7 @@ const createChart = (gradesData) => {
       },
     },
   };
+  Chart.register(ChartDataLabels);
 
   // Generate configuration for Pie Chart
   pieConfig = {
@@ -252,14 +253,9 @@ const createChart = (gradesData) => {
         callbacks: {
           label: function (tooltipItem, data) {
             const dataset = data.datasets[0];
-            const percent = Math.round(
-              (dataset.data[tooltipItem.index] / totalSum) * 100,
-            );
-            let label = data.labels[tooltipItem.index];
-            if (tooltipItem.index === 9) {
-              label = "D/F/Withdraw";
-            }
-            return label + ": " + percent + "%";
+            const total = dataset.data.reduce((acc, num) => acc + num, 0);
+            const percent = ((dataset.data[tooltipItem.index] / total) * 100).toFixed(1); // 1 decimal place
+            return `${percent}%`; // Show percentage on hover
           },
         },
         displayColors: false,
@@ -267,6 +263,21 @@ const createChart = (gradesData) => {
       plugins: {
         legend: {
           display: false,
+        },
+        datalabels: {
+          color: "#fff", // White text
+          formatter: (value, context) => {
+            const dataset = context.chart.data.datasets[0];
+            const total = dataset.data.reduce((acc, num) => acc + num, 0);
+            const percentage = (value / total) * 100;
+            
+            return percentage > 5 ? context.chart.data.labels[context.dataIndex] : ""; // Show only if >5%
+          },
+          font: {
+            size: 14,
+          },
+          anchor: "center",
+          align: "center",
         },
         labels: {
           // render 'label', 'value', 'percentage', 'image' or custom function, default is 'percentage'
