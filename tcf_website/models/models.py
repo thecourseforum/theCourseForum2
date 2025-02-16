@@ -433,33 +433,6 @@ class Instructor(models.Model):
             models.Avg("average")
         )["average__avg"]
 
-    def avg_gpa_history_by_course(self, course):
-
-        sections = (
-            Section.objects.filter(instructors=self, course=course)
-            .select_related("semester")
-            .order_by("semester__number")
-        )
-
-        grade_record = CourseInstructorGrade.objects.filter(instructor=self, course=course).first()
-
-        result = []
-        for section in sections:
-            semester = section.semester
-            entry = {
-                "semester_year": semester.year,
-                "semester_season": semester.season,
-                "average_gpa": None,
-            }
-
-            if grade_record:
-                entry["average_gpa"] = grade_record.average
-                entry["total_enrolled"] = grade_record.total_enrolled
-
-            result.append(entry)
-
-        return result
-
     def save(self, *args, **kwargs):
         self.full_name = f"{self.first_name} {self.last_name}".strip()
         super().save(*args, **kwargs)
