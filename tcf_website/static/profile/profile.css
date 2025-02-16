@@ -1,3 +1,8 @@
+
+.container-fluid {
+  background-color: var(--overall-background-color);
+}
+
 .user_delete {
   align-items: end;
 }
@@ -5,4 +10,27 @@
 .button-wrapper {
   display: flex;
   justify-content: space-between;
+}
+
+h2, h4 {
+  color: var(--h4-card-title-color);
+  /*explicitly written to override scss file*/
+  margin-top: 0;
+  margin-bottom: .5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  font-size: 26px;
+}
+
+small, label {
+  color: var(--p-card-text-color); /*small is a gray color*/
+}
+
+.form-control {
+  color: var(--p-card-text-color);
+  background-color: var(--text-input-background);
+}
+
+.card {
+  background-color: var(--card-background-color);
 }
