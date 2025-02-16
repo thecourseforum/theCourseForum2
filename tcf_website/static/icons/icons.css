@@ -182,6 +182,27 @@
   background-position: center;
 }
 
+.fa-chevron-up-white {
+  width: 1em;
+  height: 1em;
+  background-image: url("../icons/img/fa-chevron-up.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  filter: invert(1);
+}
+
+.fa-chevron-down-white {
+  width: 1em;
+  height: 1em;
+  background-image: url("../icons/img/fa-chevron-down.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  filter: invert(1);
+}
+
+
 .fa-thumbs-up {
   width: 1em;
   height: 1em;
@@ -293,4 +314,19 @@
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
+}
+
+.fa-flask {
+  background-image: url("../icons/img/fa-flask.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.invert-to-light {
+  filter: invert(1);
+}
+
+.invert-to-dark {
+  filter: invert(0);
 }

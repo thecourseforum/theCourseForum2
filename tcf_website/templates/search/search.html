@@ -167,6 +167,21 @@
 
 {% block js %}
   <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".hover-tcf-orange").forEach(header => {
+            header.addEventListener("click", function () {
+                let icon = this.querySelector("i.fas.fa-chevron-down, i.fas.fa-chevron-up");
+                console.log("Icon found:", icon);
+
+                if (icon) {
+                    icon.classList.toggle("fa-chevron-down");
+                    icon.classList.toggle("fa-chevron-up");
+                } else {
+                    console.warn("Icon not found.");
+                }
+            });
+        });
+    });
     // Search results should display some content at all times
     // Thus the current open accordion will not be able to close itself
     $('[data-toggle="collapse"]').on('click',function(e) {

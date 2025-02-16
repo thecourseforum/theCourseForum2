@@ -1,11 +1,12 @@
 <div class="school card mb-3">
     <div class="card-header pt-3" data-toggle="collapse"
-    data-target="#school-{{ school.id }}" aria-expanded="true">
+        data-target="#school-{{ school.id }}" aria-expanded="true"
+        id="header-{{ school.id }}">
         <div class="float-left">
-            <h3 class="card-title mb-0 alignleft">{{school.name}}</h3>
+            <h3 class="card-title mb-0 alignleft">{{ school.name }}</h3>
         </div>
         <div class="float-right">
-            <h3><i class="fa fa-chevron-down"></i></h3>
+            <i class="fa fa-chevron-down-white" id="chevron-{{ school.id }}"></i>
         </div>
         <div class="clearfix"></div>
     </div>
@@ -13,7 +14,7 @@
         <ul class="department-list">
             {% for d in school.department_set.all|dictsort:"name" %}
                 <li>
-                    <a href="{% url 'department' dept_id=d.pk %}">{{d}}</a>
+                    <a href="{% url 'department' dept_id=d.pk %}">{{ d }}</a>
                 </li>
             {% endfor %}
         </ul>

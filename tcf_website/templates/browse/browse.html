@@ -32,3 +32,24 @@
         </div>
     </div>
 {% endblock %}
+
+{% block js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".card-header").forEach(header => {
+            header.addEventListener("click", function () {
+                let schoolId = this.id.replace("header-", "").trim(); // Extract school ID
+    
+                let icon = document.getElementById(`chevron-${schoolId}`); // Find the icon
+    
+                if (icon) {
+                    icon.classList.toggle("fa-chevron-down-white");
+                    icon.classList.toggle("fa-chevron-up-white");
+                } else {
+                    console.warn("Icon not found for school ID:", schoolId);
+                }
+            });
+        });
+    });    
+</script>
+{% endblock %}
