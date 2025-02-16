@@ -246,8 +246,13 @@
         </script>
 
         <div style="margin-left: auto; margin-right: auto; background-color: white; 
-        padding: 10px; margin-bottom: 10px; position: relative; height:50vh; width:40vw">
+        padding: 10px; margin-bottom: 10px; position: relative; height:50vh; width:40vw; 
+        display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <canvas id="sentiment-chart"></canvas>
+            <div style="display: flex; flex-direction: row;">
+                <p style="margin-right: 100px; color: #BE4B20; font-weight: bold;">Negative</p> 
+                <p style="margin-left: 100px; color: #182D66; font-weight: bold;">Positive</p>
+            </div>
         </div>
 
 
@@ -370,9 +375,8 @@
 
             const ctx = document.getElementById('sentiment-chart').getContext('2d');
             new Chart(ctx, {
-                type: 'bar',
+                type: 'horizontalBar',
                 data: {
-                    labels: ['Sentiment Distribution'],
                     datasets: datasets,
                 },
                 options: {
