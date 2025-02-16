@@ -23,6 +23,7 @@ body {
 
 .school > .card-header {
   background-color: var(--secondary-color);
+  color: white; /* change to text variable when they r made */
 }
 
 .school-body {
