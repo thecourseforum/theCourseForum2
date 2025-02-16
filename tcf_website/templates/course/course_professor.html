@@ -208,7 +208,7 @@
                     <div style="overflow: hidden;">
                         <div id="sectionInfo" style="margin-top: -10000px;">
                             {% for section, sec_info in section_info.sections.items %}
-                            <div style="display: grid; grid-template-columns: [start] 6ch [sec-num] 150px [type] minmax(200px, 1fr) [times] minmax(120px, auto) [end]; gap: 10px; margin-bottom: 3px;">
+                            <div style="display: grid; grid-template-columns: [start] 6ch [sec-num] 150px [type] minmax(200px, 1fr) [times] minmax(120px, auto) [end]; gap: 10px; margin-bottom: 3px; align-items: start;">
                                 <div style="color: var(--accent-color);">{{ section }}</div>
                                 <div>
                                     {{ sec_info.type }}{% if sec_info.units is not None %} ({{ sec_info.units }} Unit{% if sec_info.units != 1 %}s{% endif %}){% endif %}
