@@ -23,7 +23,7 @@
     </div>
     <div class="dropdown-wrapper">
       <div class="dropdown input-group">
-        <div class="beacon"></div>
+        <div class="beacon" style="display: none;"></div>
         <button 
           class="btn btn-outline-secondary dropdown-toggle border border-left-0" 
           id="filter-button" 
@@ -178,27 +178,30 @@
       document.cookie = `${name}=${value};${expires};path=/`;
     }
 
+    const beacon = document.querySelector('.beacon');
+    const tooltip = document.querySelector('.tooltip');
+
     if (!getCookie('hasVisited')) {
-      const tooltip = document.querySelector('.tooltip');
-      const beacon = document.querySelector('.beacon');
+      // First-time visitor: Show the beacon and pulse
+      beacon.style.display = 'block';  // Make beacon visible
+      beacon.classList.add('show');    // Start pulsing animation
+      tooltip.classList.add('show');   // Show the tooltip
 
-      tooltip.classList.add('show');
-
-      setCookie('hasVisited', 'true', 365);
+      setCookie('hasVisited', 'true', 365);  // Set the 'hasVisited' cookie
 
       setTimeout(() => {
           tooltip.classList.remove('show');
           tooltip.classList.add('hide');
           beacon.classList.add('hide');
 
-          // Fully remove elements after transition
           setTimeout(() => {
               tooltip.style.display = 'none';
-              beacon.style.display = 'none';
+              beacon.style.display = 'none';  // Hide the beacon after 4 seconds
           }, 500);
-      }, 4000);
+      }, 4000);  // After 4 seconds, hide tooltip and beacon
     } else {
-      document.querySelector('.beacon').style.display = 'none';
+      // Returning visitor: Hide the beacon completely (no pulse)
+      beacon.style.display = 'none';
     }
 
     // Determines if any filters (besides day ones) are active 
@@ -224,26 +227,26 @@
 
     // Checks for active filters or inactive day filters to determine button state
     function updateButtonState() {
-        const activeFilters = Array.from(filterInputs).filter(input => input.checked);
-        const activeDayFilters = Array.from(dayFilters).filter(input => input.checked);
-        
-        let timeFromChanged = false;
-        let timeToChanged = false;
+      const activeFilters = Array.from(filterInputs).filter(input => input.checked);
+      const activeDayFilters = Array.from(dayFilters).filter(input => input.checked);
+      
+      let timeFromChanged = false;
+      let timeToChanged = false;
 
-        if (timeFrom.value) {
-            timeFromChanged = timeFrom.value !== '';
-        }
-        if (timeTo.value) {
-            timeToChanged = timeTo.value !== '';
-        }
+      if (timeFrom.value) {
+          timeFromChanged = timeFrom.value !== '';
+      }
+      if (timeTo.value) {
+          timeToChanged = timeTo.value !== '';
+      }
 
-        if (activeFilters.length > 0 || activeDayFilters.length > 0 || timeFromChanged || timeToChanged) {
-            filterButton.classList.add('filter-active');
-            filterButton.textContent = 'Filters Active';
-        } else {
-            filterButton.classList.remove('filter-active');
-            filterButton.textContent = 'Filters';
-        }
+      if (activeFilters.length > 0 || activeDayFilters.length > 0 || timeFromChanged || timeToChanged) {
+          filterButton.classList.add('filter-active');
+          filterButton.textContent = 'Filters Active';
+      } else {
+          filterButton.classList.remove('filter-active');
+          filterButton.textContent = 'Filters';
+      }
     }
 
     const dropdown = document.getElementById('filter-dropdown');
@@ -578,7 +581,7 @@
 
   .btn-custom {
     background-color: #d75626;
-    border: 2px solid #d75626; /* Ensure solid border */
+    border: 2px solid #d75626;
     border-radius: 4px; 
     color: white;
     box-shadow: none !important;
@@ -594,7 +597,7 @@
   .btn-custom:active {
       box-shadow: none !important;
       outline: none !important;
-      border: 2px solid #b4441d; /* Ensure no unexpected border change */
+      border: 2px solid #b4441d;
   }
 
   .subject-list::-webkit-scrollbar,
@@ -656,11 +659,16 @@
     background-color: rgba(0, 123, 255, 0.3);
     border-radius: 50%;
     transform: translate(-50%, -50%);
-    animation: pulse 1.5s infinite;
-    z-index: 1;
-    opacity: 1;
+    opacity: 0; /* Start hidden */
+    visibility: hidden; /* Prevent flashing */
     transition: opacity 0.5s ease-out, visibility 0.5s;
-    pointer-events: none; 
+    pointer-events: none;
+  }
+
+  .beacon.show {
+    opacity: 1;
+    visibility: visible;
+    animation: pulse 1.5s infinite; /* Start pulsing when shown */
   }
 
   .beacon.hide {
