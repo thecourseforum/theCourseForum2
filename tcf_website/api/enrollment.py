@@ -9,18 +9,14 @@ from asgiref.sync import sync_to_async
 from django.utils import timezone
 from django.http import HttpResponseNotFound
 from tcf_website.models import Section, SectionEnrollment, Semester, Course
+from tcf_website.utils.enrollment import build_sis_api_url, format_enrollment_update_message
 
 TIMEOUT = 10
 MAX_WORKERS = 5
 
 def fetch_section_data(section):
     """Fetch enrollment data for a given section from the UVA SIS API."""
-    url = (
-        "https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM."
-        "H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch"
-        f"?institution=UVA01&term={section.semester.number}&page=1&"
-        f"class_nbr={section.sis_section_number}"
-    )
+    url = build_sis_api_url(section)
 
     try:
         response = requests.get(url, timeout=TIMEOUT)
@@ -86,10 +82,4 @@ def update_section_enrollment(section, data):
     section_enrollment.waitlist_limit = data.get("waitlist_limit", 0)
     section_enrollment.save()
 
-    print(
-        f"Updated section {section.sis_section_number} | "
-        f"Enrollment: {section_enrollment.enrollment_taken}/"
-        f"{section_enrollment.enrollment_limit} | "
-        f"Waitlist: {section_enrollment.waitlist_taken}/"
-        f"{section_enrollment.waitlist_limit}"
-    )
+    print(format_enrollment_update_message(section, section_enrollment))
