@@ -23,7 +23,14 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")  # default value set on the top
 
-ALLOWED_HOSTS = ["localhost", ".ngrok.io", "127.0.0.1"]
+ALLOWED_HOSTS = [
+    "localhost",
+    ".ngrok.io",
+    "127.0.0.1",
+    "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
+]
+
+CORS_ALLOWED_ORIGINS = ["https://thecourseforum.com", "https://thecourseforumtest.com"]
 
 # Application definition
 
@@ -157,7 +164,9 @@ SOCIAL_AUTH_EMAIL_AUTH_WHITELISTED_DOMAINS = ["virginia.edu"]
 
 WHITELISTED_DOMAINS = ["virginia.edu"]
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_LOGIN_URL = reverse_lazy("social:begin", args=["google-oauth2"])
+SOCIAL_AUTH_GOOGLE_OAUTH2_LOGIN_URL = reverse_lazy(
+    "social:begin", args=["google-oauth2"]
+)
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 SOCIAL_AUTH_PIPELINE = (
     "tcf_core.auth_pipeline.password_validation",
