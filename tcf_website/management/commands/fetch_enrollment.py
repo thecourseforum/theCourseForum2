@@ -11,11 +11,12 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 import backoff
 import requests
+from requests.adapters import HTTPAdapter
 from tqdm import tqdm
+from urllib3.util.retry import Retry
 from django.core.management.base import BaseCommand
 from tcf_website.models import Section, Semester, SectionEnrollment
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
+from tcf_website.utils.enrollment import build_sis_api_url, format_enrollment_update_message
 
 # Maximum time to wait for a response from the server
 TIMEOUT = 30
@@ -69,13 +70,7 @@ def fetch_section_data(section):
     Returns:
         bool: True if successful, False otherwise
     """
-    # Construct SIS API URL for the section
-    url = (
-        "https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM."
-        "H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch"
-        f"?institution=UVA01&term={section.semester.number}&page=1&"
-        f"class_nbr={section.sis_section_number}"
-    )
+    url = build_sis_api_url(section)
 
     try:
         # Fetch and validate response
@@ -96,13 +91,7 @@ def fetch_section_data(section):
             section_enrollment.waitlist_limit = class_data.get("wait_cap", 0)
             section_enrollment.save()
 
-            print(
-                f"Updated section {section.sis_section_number} | "
-                f"Enrollment: {section_enrollment.enrollment_taken}/"
-                f"{section_enrollment.enrollment_limit} | "
-                f"Waitlist: {section_enrollment.waitlist_taken}/"
-                f"{section_enrollment.waitlist_limit}"
-            )
+            print(format_enrollment_update_message(section, section_enrollment))
             return True
             
     except requests.exceptions.HTTPError as http_err:
