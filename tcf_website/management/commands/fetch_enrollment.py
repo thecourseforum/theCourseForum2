@@ -76,14 +76,14 @@ def fetch_section_data(section):
         # Fetch and validate response
         response = session.get(url, timeout=TIMEOUT)
         response.raise_for_status()
-        
+
         data = response.json()
 
         # Update enrollment data if available
         if data and "classes" in data and data["classes"]:
             class_data = data["classes"][0]
             section_enrollment, _ = SectionEnrollment.objects.get_or_create(section=section)
-            
+
             # Update enrollment and waitlist numbers
             section_enrollment.enrollment_taken = class_data.get("enrollment_total", 0)
             section_enrollment.enrollment_limit = class_data.get("class_capacity", 0)
@@ -93,7 +93,7 @@ def fetch_section_data(section):
 
             print(format_enrollment_update_message(section, section_enrollment))
             return True
-            
+
     except requests.exceptions.HTTPError as http_err:
         if http_err.response.status_code == 429:
             print(f"Rate limited while fetching section {section.sis_section_number}. Retrying...")
@@ -134,11 +134,11 @@ class Command(BaseCommand):
             semester = Semester.latest()
 
         print(f"Fetching enrollment data for semester {semester}...")
-        
+
         sections = Section.objects.filter(semester=semester)
         total_sections = sections.count()
         print(f"Found {total_sections} sections")
-        
+
         # Process sections in parallel using ThreadPoolExecutor
         success_count = 0
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
@@ -153,7 +153,7 @@ class Command(BaseCommand):
                 print("\nProcess interrupted by user. Shutting down...")
                 executor.shutdown(wait=False)
                 return
-        
+
         elapsed_time = time.time() - start_time
         print(f"\nSuccessfully updated {success_count}/{total_sections} sections")
         print(f"Total time: {elapsed_time:.2f} seconds")
