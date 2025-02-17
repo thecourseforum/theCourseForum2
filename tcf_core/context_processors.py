@@ -59,7 +59,7 @@ def searchbar_context(request):
         "semesters": recent_semesters,
         "selected_disciplines": saved_filters.get("disciplines", []),
         "selected_subdepartments": saved_filters.get("subdepartments", []),
-        "selected_weekdays": saved_filters.get("weekdays", ["MON", "TUE", "WED", "THU", "FRI"]),
+        "selected_weekdays": saved_filters.get("weekdays", []),
         "from_time": saved_filters.get("from_time", ""),
         "to_time": saved_filters.get("to_time", ""),
     }
