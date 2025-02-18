@@ -57,29 +57,47 @@ async def update_enrollment_data(course_id):
         return
 
     print(f"Starting async enrollment update for {len(sections)} sections...")
+    
+    changed_sections = 0
 
     async def process_section(section):
         """Fetch and update enrollment data asynchronously."""
+        nonlocal changed_sections
         loop = asyncio.get_running_loop()
         data = await loop.run_in_executor(None, fetch_section_data, section)
 
         if data:
-            await sync_to_async(update_section_enrollment)(section, data)
+            was_changed = await sync_to_async(update_section_enrollment)(section, data)
+            if was_changed:
+                changed_sections += 1
             print(f"Updated enrollment for section {section.sis_section_number}")
 
     await asyncio.gather(*(process_section(section) for section in sections))
 
     elapsed_time = time.monotonic() - start_time
     print(f"Enrollment update completed at {timezone.now()} "
-          f"(Total time: {elapsed_time:.2f} seconds)")
+          f"(Total time: {elapsed_time:.2f} seconds, "
+          f"{changed_sections} sections changed)")
 
 def update_section_enrollment(section, data):
-    """Update SectionEnrollment safely within an async function."""
+    """Update SectionEnrollment only if the data has changed."""
     section_enrollment, _ = SectionEnrollment.objects.get_or_create(section=section)
-    section_enrollment.enrollment_taken = data.get("enrollment_taken", 0)
-    section_enrollment.enrollment_limit = data.get("enrollment_limit", 0)
-    section_enrollment.waitlist_taken = data.get("waitlist_taken", 0)
-    section_enrollment.waitlist_limit = data.get("waitlist_limit", 0)
-    section_enrollment.save()
-
-    print(format_enrollment_update_message(section, section_enrollment))
+    
+    has_changes = any([
+        section_enrollment.enrollment_taken != data.get("enrollment_taken", 0),
+        section_enrollment.enrollment_limit != data.get("enrollment_limit", 0),
+        section_enrollment.waitlist_taken != data.get("waitlist_taken", 0),
+        section_enrollment.waitlist_limit != data.get("waitlist_limit", 0)
+    ])
+    
+    if has_changes:
+        section_enrollment.enrollment_taken = data.get("enrollment_taken", 0)
+        section_enrollment.enrollment_limit = data.get("enrollment_limit", 0)
+        section_enrollment.waitlist_taken = data.get("waitlist_taken", 0)
+        section_enrollment.waitlist_limit = data.get("waitlist_limit", 0)
+        section_enrollment.save()
+        print(format_enrollment_update_message(section, section_enrollment))
+    else:
+        print(f"No changes in enrollment data for section {section.sis_section_number}")
+    
+    return has_changes

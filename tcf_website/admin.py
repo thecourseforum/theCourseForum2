@@ -123,6 +123,21 @@ class CourseInstructorGradeAdmin(admin.ModelAdmin):
     search_fields = ["instructor__first_name", "instructor__last_name"]
 
 
+class CourseEnrollmentAdmin(admin.ModelAdmin):
+    list_display = ['course', 'last_update']
+    search_fields = [
+        'course__subdepartment__mnemonic',
+        'course__number',
+        'course__title',
+    ]
+    list_filter = ['last_update']
+    readonly_fields = ['last_update']
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('course__subdepartment')
+
+
 admin.site.register(Section, SectionAdmin)
 admin.site.register(Instructor, InstructorAdmin)
 admin.site.register(Discipline, DisciplineAdmin)
@@ -135,3 +150,4 @@ admin.site.register(CourseGrade, CourseGradeAdmin)
 admin.site.register(CourseInstructorGrade, CourseInstructorGradeAdmin)
 admin.site.register(SectionTime, SectionTimeAdmin)
 admin.site.register(SectionEnrollment, SectionEnrollmentAdmin)
+admin.site.register(CourseEnrollment, CourseEnrollmentAdmin)

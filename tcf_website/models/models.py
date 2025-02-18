@@ -733,6 +733,14 @@ class Course(models.Model):
         ]
 
 
+class CourseEnrollment(models.Model):
+    course = models.OneToOneField('Course', on_delete=models.CASCADE, related_name='enrollment_tracking')
+    last_update = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Enrollment tracking for {self.course.code()}"
+
+
 class CourseGrade(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     average = models.FloatField(default=0.0, null=True)
