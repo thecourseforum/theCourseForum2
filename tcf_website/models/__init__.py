@@ -8,6 +8,7 @@
 from .models import (
     Answer,
     Course,
+    CourseEnrollment,
     CourseGrade,
     CourseInstructorGrade,
     Department,
