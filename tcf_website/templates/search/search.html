@@ -13,7 +13,10 @@
 
       <div class="search-title row p-4">
         <h2>
-          Search results - <b><i>{{ query }}</i></b>
+          Search results 
+          {% if query %}
+            - <b><i>{{ query }}</i></b>
+          {% endif %}
         </h2>
       </div>
 
@@ -49,7 +52,7 @@
               <div class="search-result-header mb-3">
                 <h3 class="mr-3">Courses</h3>
                 {% if courses %}
-                <p class="text-muted">15 results</p>
+                <p class="text-muted">{{ total_courses }} results</p>
                 {% else %}
                 <p class="text-muted">0 results</p>
                 {% endif %}
@@ -167,6 +170,21 @@
 
 {% block js %}
   <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".hover-tcf-orange").forEach(header => {
+            header.addEventListener("click", function () {
+                let icon = this.querySelector("i.fas.fa-chevron-down, i.fas.fa-chevron-up");
+                console.log("Icon found:", icon);
+
+                if (icon) {
+                    icon.classList.toggle("fa-chevron-down");
+                    icon.classList.toggle("fa-chevron-up");
+                } else {
+                    console.warn("Icon not found.");
+                }
+            });
+        });
+    });
     // Search results should display some content at all times
     // Thus the current open accordion will not be able to close itself
     $('[data-toggle="collapse"]').on('click',function(e) {
