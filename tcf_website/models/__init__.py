@@ -17,6 +17,7 @@ from .models import (
     Review,
     School,
     Section,
+    SectionTime,
     Semester,
     Subdepartment,
     User,
