@@ -23,7 +23,6 @@
     </div>
     <div class="dropdown-wrapper">
       <div class="dropdown input-group">
-        <div class="beacon" style="display: none;"></div>
         <button 
           class="btn btn-outline-secondary dropdown-toggle border border-left-0" 
           id="filter-button" 
@@ -36,7 +35,12 @@
         >
           Filters
         </button>
-        <div class="tooltip">Try out the filters!</div>
+        <div class="tooltip-container">
+            <div class="tooltip">
+                Try out Filters!
+            </div>
+            <div class="tooltip-arrow"></div>
+        </div>
         <div 
           class="dropdown-menu p-4 filter-dropdown dropdown-menu-end" 
           aria-labelledby="filter-button" 
@@ -79,7 +83,7 @@
               </div>
               <div class="filter-section compact">
                 <h6 class="filter-header">
-                  Available Time
+                  Preferred Class Time
                 </h6>
                 <div class="day-toggles">
                   <p>From</p>
@@ -164,7 +168,6 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Function to check if cookie exists
     function getCookie(name) {
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
@@ -178,30 +181,29 @@
       document.cookie = `${name}=${value};${expires};path=/`;
     }
 
-    const beacon = document.querySelector('.beacon');
     const tooltip = document.querySelector('.tooltip');
+    const tooltipArrow = document.querySelector('.tooltip-arrow');
 
     if (!getCookie('hasVisited')) {
-      // First-time visitor: Show the beacon and pulse
-      beacon.style.display = 'block';  // Make beacon visible
-      beacon.classList.add('show');    // Start pulsing animation
-      tooltip.classList.add('show');   // Show the tooltip
+        tooltip.classList.add('show');
+        tooltipArrow.classList.add('show');
 
-      setCookie('hasVisited', 'true', 365);  // Set the 'hasVisited' cookie
+        setCookie('hasVisited', 'true', 365);
 
-      setTimeout(() => {
-          tooltip.classList.remove('show');
-          tooltip.classList.add('hide');
-          beacon.classList.add('hide');
+        setTimeout(() => {
+            tooltip.classList.remove('show');
+            tooltip.classList.add('hide');
+            tooltipArrow.classList.remove('show');
+            tooltipArrow.classList.add('hide');
 
-          setTimeout(() => {
-              tooltip.style.display = 'none';
-              beacon.style.display = 'none';  // Hide the beacon after 4 seconds
-          }, 500);
-      }, 4000);  // After 4 seconds, hide tooltip and beacon
+            setTimeout(() => {
+                tooltip.style.display = 'none';
+                tooltipArrow.style.display = 'none';
+            }, 500);
+        }, 6000);
     } else {
-      // Returning visitor: Hide the beacon completely (no pulse)
-      beacon.style.display = 'none';
+        tooltip.style.display = 'none';
+        tooltipArrow.style.display = 'none';
     }
 
     // Determines if any filters (besides day ones) are active 
@@ -613,33 +615,87 @@
     border-radius: 2px;
   }
   
-  .tooltip {
+  .tooltip-container {
     position: absolute;
-    left: calc(115%);
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: #b4441d;
+    left: auto;
+    right: 10px;
+    top: calc(100% + 15px);
+    transform: none;
+  }
+
+  .tooltip {
+    position: relative;
+    left: 0;
+    top: 0;
+    transform: none;
+    background: linear-gradient(135deg, #d75626, #b4441d);
     color: white;
     padding: 8px 12px;
     border-radius: 4px;
     white-space: nowrap;
     font-size: 14px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    opacity: 0; /* Start hidden */
+    opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease-in, visibility 0.3s;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
   }
 
-  .tooltip::before {
-    content: '';
+  .tooltip-arrow {
     position: absolute;
-    left: -8px;
-    top: 50%;
-    transform: translateY(-50%);
+    left: auto;
+    right: 25px;
+    top: -8px;
     width: 8px;
     height: 8px;
-    background-color: #333;
-    clip-path: polygon(100% 0, 0 50%, 100% 100%);
+    background: linear-gradient(135deg, #d75626, #b4441d);
+    clip-path: polygon(0 100%, 50% 0, 100% 100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in, visibility 0.3s;
+    z-index: 1;
+  }
+
+  .tooltip-arrow.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .tooltip-arrow.hide {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,0,0,0.3),
+        rgba(255,165,0,0.3),
+        rgba(255,255,0,0.3),
+        rgba(0,255,0,0.3),
+        rgba(0,191,255,0.3),
+        rgba(238,130,238,0.3),
+        transparent
+    );
+    transform: skewX(-20deg);
+    animation: rainbow-gloss 2s infinite ease;
+  }
+
+  @keyframes rainbow-gloss {
+    0% {
+        left: -200%;
+    }
+    100% {
+        left: 200%;
+    }
   }
 
   .tooltip.show {
@@ -650,46 +706,5 @@
   .tooltip.hide {
     opacity: 0;
     visibility: hidden;
-  }
-
-  .beacon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100px;
-    height: 100px;
-    background-color: rgba(0, 123, 255, 0.3);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0; /* Start hidden */
-    visibility: hidden; /* Prevent flashing */
-    transition: opacity 0.5s ease-out, visibility 0.5s;
-    pointer-events: none;
-  }
-
-  .beacon.show {
-    opacity: 1;
-    visibility: visible;
-    animation: pulse 1.5s infinite; /* Start pulsing when shown */
-  }
-
-  .beacon.hide {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  @keyframes pulse {
-    0% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 0.7;
-    }
-    50% {
-        transform: translate(-50%, -50%) scale(1.2);
-        opacity: 0.3;
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1.4);
-        opacity: 0;
-    }
   }
 </style>
