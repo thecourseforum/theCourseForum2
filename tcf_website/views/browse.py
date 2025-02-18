@@ -266,9 +266,15 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             data[field] = getattr(grades_data, field)
 
     two_hours_ago = timezone.now() - timezone.timedelta(hours=2)
-    enrollment_tracking, _ = CourseEnrollment.objects.get_or_create(course=course)
-    
-    if not enrollment_tracking.last_update or enrollment_tracking.last_update < two_hours_ago:
+    enrollment_tracking = CourseEnrollment.objects.filter(course=course).first()
+
+    if enrollment_tracking is None:
+        enrollment_tracking = CourseEnrollment.objects.create(course=course)
+        should_update = True
+    else:
+        should_update = not enrollment_tracking.last_update or enrollment_tracking.last_update < two_hours_ago
+
+    if should_update:
         run_async(update_enrollment_data, course.id)
         request.session['fetching_enrollment'] = True
     else:
