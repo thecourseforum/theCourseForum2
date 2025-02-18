@@ -13,11 +13,13 @@ from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from tcf_website.api.enrollment import update_enrollment_data
 
 from ..models import (
     Answer,
     Course,
+    CourseEnrollment,
     CourseInstructorGrade,
     Department,
     Instructor,
@@ -263,8 +265,14 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         for field in fields:
             data[field] = getattr(grades_data, field)
 
-    run_async(update_enrollment_data, course.id)
-    request.session['fetching_enrollment'] = True
+    two_hours_ago = timezone.now() - timezone.timedelta(hours=2)
+    enrollment_tracking, _ = CourseEnrollment.objects.get_or_create(course=course)
+    
+    if not enrollment_tracking.last_update or enrollment_tracking.last_update < two_hours_ago:
+        run_async(update_enrollment_data, course.id)
+        request.session['fetching_enrollment'] = True
+    else:
+        request.session['fetching_enrollment'] = False
 
     sections_taught = Section.objects.filter(
         course=course_id,
