@@ -160,8 +160,6 @@ def fetch_courses(query, filters):
             .exclude(semester_last_taught_id__lt=48)
             .order_by("-max_similarity"))
 
-    results = results.distinct().order_by("subdepartment__mnemonic", "number")
-
     courses = [
         {
             key: getattr(course, key)
