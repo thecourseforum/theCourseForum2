@@ -1,0 +1,237 @@
+import re
+from playwright.sync_api import Playwright, sync_playwright, expect
+
+HEADLESS = True
+
+def test_basic_search(playwright: Playwright) -> None:
+    """Test basic search."""
+    browser = playwright.chromium.launch(headless=HEADLESS)
+    context = browser.new_context()
+    page = context.new_page()
+    page.goto("http://localhost:8000/")
+    expect(page.get_by_text("connecting you to the courses")).to_be_visible()
+    page.get_by_role("searchbox", name="Search").click()
+    page.get_by_role("searchbox", name="Search").fill("CS")
+    page.get_by_role("searchbox", name="Search").press("Enter")
+    page.get_by_role("button", name="Search").click()
+    expect(page.get_by_role("link", name="CS 1111 Introduction to")).to_be_visible()
+    expect(page.get_by_role("link", name="CS 6620 Compilers")).to_be_visible()
+    page.get_by_role("link", name="CS 1111 Introduction to").click()
+    expect(page.get_by_role("heading", name="CS")).to_be_visible()
+    page.get_by_role("button", name="All").click()
+
+    # ---------------------
+    context.close()
+    browser.close()
+
+def test_detailed_search(playwright: Playwright) -> None:
+    """Test detailed search."""
+    browser = playwright.chromium.launch(headless=HEADLESS)
+    context = browser.new_context()
+    page = context.new_page()
+    page.goto("http://localhost:8000/")
+    page.get_by_role("button", name="Filter").click()
+    page.get_by_role("checkbox", name="Chemical, Mathematical, and").check()
+    page.get_by_role("textbox", name="Search subjects...").click()
+    page.get_by_role("textbox", name="Search subjects...").fill("CHem")
+    page.get_by_role("checkbox", name="CHEM - Chemistry").check()
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_role("link", name="CHEM 1500 Chemistry for")).to_be_visible()
+    page.get_by_role("button", name="Filter").click()
+    page.get_by_role("checkbox", name="Mon", exact=True).check()
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_role("link", name="CHEM 1500 Chemistry for")).to_be_visible()
+    page.get_by_role("button", name="Filter").click()
+    page.get_by_role("checkbox", name="Wed").check()
+    page.get_by_role("checkbox", name="Fri", exact=True).check()
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_role("link", name="CHEM 1500 Chemistry for")).to_be_visible()
+    page.get_by_role("button", name="Filter").click()
+    page.get_by_text("Wed", exact=True).click()
+    page.locator(".day-toggles > div:nth-child(5)").click()
+    page.get_by_role("checkbox", name="Mon", exact=True).uncheck()
+    page.get_by_role("checkbox", name="Tue").check()
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_role("link", name="CHEM 1500 Chemistry for")).not_to_be_visible()
+    page.get_by_role("button", name="Filter").click()
+    page.get_by_role("checkbox", name="Thu").check()
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_role("link", name="CHEM 1500 Chemistry for")).not_to_be_visible()
+    page.get_by_role("button", name="Filter").click()
+    page.get_by_text("Thu").click()
+    page.get_by_role("checkbox", name="Tue").uncheck()
+    page.locator("#from_time").click()
+    page.locator("#from_time").fill("10:50")
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_role("link", name="CHEM 1500 Chemistry for")).not_to_be_visible()
+    page.get_by_role("button", name="Filter").click()
+    page.locator("#from_time").click()
+    page.locator("#from_time").press("ArrowLeft")
+    page.locator("#from_time").press("ArrowLeft")
+    page.locator("#from_time").fill("08:50")
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_role("link", name="CHEM 1500 Chemistry for")).to_be_visible()
+    page.get_by_role("button", name="Filter").click()
+    page.get_by_role("searchbox", name="Search").click()
+    page.get_by_role("searchbox", name="Search").fill("Health")
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_role("link", name="CHEM 1500 Chemistry for")).to_be_visible()
+    page.get_by_role("searchbox", name="Search").click()
+    page.get_by_role("searchbox", name="Search").press("ControlOrMeta+Shift+ArrowLeft")
+    page.get_by_role("searchbox", name="Search").fill("k1bheiufnjkbh1bef")
+    page.get_by_role("searchbox", name="Search").press("Enter")
+    page.get_by_role("button", name="Search").click()
+    expect(page.get_by_text("No courses matched your")).to_be_visible()
+
+    # ---------------------
+    context.close()
+    browser.close()
+
+def test_empty_search(playwright: Playwright) -> None:
+    """Test empty search."""
+    browser = playwright.chromium.launch(headless=HEADLESS)
+    context = browser.new_context()
+    page = context.new_page()
+    page.goto("http://localhost:8000/")
+    page.get_by_role("searchbox", name="Search").click()
+    page.get_by_role("searchbox", name="Search").fill("CS")
+    page.get_by_role("button", name="Filter").click()
+    page.get_by_role("textbox", name="Search subjects...").click()
+    page.get_by_role("checkbox", name="ACCT - Accounting").check()
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_text("No courses matched your")).to_be_visible()
+    page.get_by_role("button", name="Instructors").click()
+    expect(page.get_by_text("No professors matched your")).to_be_visible()
+    page.get_by_role("button", name="Departments").click()
+    expect(page.get_by_text("No departments matched your")).to_be_visible()
+
+    # ---------------------
+    context.close()
+    browser.close()
+
+def test_weekdays_and_time(playwright: Playwright) -> None:
+    """Test weekday and time filters."""
+    browser = playwright.chromium.launch(headless=HEADLESS)
+    context = browser.new_context()
+    page = context.new_page()
+    page.goto("http://localhost:8000/")
+    page.get_by_role("searchbox", name="Search").click()
+    page.get_by_role("searchbox", name="Search").fill("CS")
+    page.get_by_role("button", name="Filter").click()
+    page.get_by_role("checkbox", name="Mon", exact=True).check()
+    page.get_by_role("checkbox", name="Wed").check()
+    page.get_by_role("checkbox", name="Fri", exact=True).check()
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_role("link", name="CS 3140 Software Development")).to_be_visible()
+    expect(page.get_by_role("link", name="CS 2100 Data Structures and")).not_to_be_visible()
+    page.get_by_role("button", name="Filter").click()
+    page.locator("#from_time").click()
+    page.locator("#from_time").fill("11:11")
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_role("link", name="CS 3140 Software Development")).to_be_visible()
+    page.get_by_role("button", name="Filter").click()
+    page.locator("#from_time").click()
+    page.locator("#from_time").press("ArrowLeft")
+    page.locator("#from_time").press("ArrowLeft")
+    page.locator("#from_time").fill("02:11")
+    page.locator("#from_time").press("Tab")
+    page.locator("#from_time").fill("14:11")
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_role("link", name="CS 3140 Software Development")).not_to_be_visible()
+
+    # ---------------------
+    context.close()
+    browser.close()
+
+def test_discipline_filter(playwright: Playwright) -> None:
+    """Test discipline filter."""
+    browser = playwright.chromium.launch(headless=HEADLESS)
+    context = browser.new_context()
+    page = context.new_page()
+    page.goto("http://localhost:8000/")
+    t = "theCourseForum connecting you to the courses you love. Filters Try out Filters"
+    page.get_by_text(t).click(button="right")
+    page.get_by_role("button", name="Filter").click()
+    page.get_by_role("checkbox", name="Artistic, Interpretive, &").check()
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_role("link", name="AAS / African-American and")).to_be_visible()
+    expect(page.get_by_role("link", name="CS 3140 Software Development")).not_to_be_visible()
+    page.get_by_role("link", name="AAS 2559 New Course in").click()
+    expect(page.get_by_text("Discipline(s): Artistic,")).to_be_visible()
+
+    # ---------------------
+    context.close()
+    browser.close()
+
+
+def test_subject_filter(playwright: Playwright) -> None:
+    """Test subject filter."""
+    browser = playwright.chromium.launch(headless=HEADLESS)
+    context = browser.new_context()
+    page = context.new_page()
+    page.goto("http://localhost:8000/")
+    page.get_by_role("button", name="Filter").click()
+    page.get_by_role("checkbox", name="CS - Computer Science").check()
+    page.get_by_role("button", name="Apply Filters").click()
+    expect(page.get_by_role("link", name="CS 2100 Data Structures and")).to_be_visible()
+    expect(page.get_by_role("link", name="CS 9999 Dissertation")).to_be_visible()
+    expect(page.get_by_role("link", name="AAS / African-American and")).not_to_be_visible()
+
+    # ---------------------
+    context.close()
+    browser.close()
+
+def test_individual_class(playwright: Playwright) -> None:
+    """Test individual class page."""
+    browser = playwright.chromium.launch(headless=HEADLESS)
+    context = browser.new_context()
+    page = context.new_page()
+    page.goto("http://localhost:8000/")
+    page.get_by_role("searchbox", name="Search").click()
+    page.get_by_role("searchbox", name="Search").fill("CS")
+    page.get_by_role("button", name="Search").click()
+    page.get_by_role("link", name="CS 2130 Computer Systems and").click()
+    expect(page.get_by_role("heading", name="Computer Systems and")).to_be_visible()
+    page.get_by_role("link", name="Daniel Graham").click()
+    expect(page.get_by_role("heading", name="Computer Systems and")).to_be_visible()
+    page.get_by_role("button", name="Bar").click()
+    expect(page.get_by_role("button", name="Pie")).to_be_visible()
+    page.get_by_text("Sections 7").click()
+    expect(page.get_by_text("Lecture (4 Units)")).to_be_visible()
+
+    # ---------------------
+    context.close()
+    browser.close()
+
+def test_reset_filter_behavior(playwright: Playwright) -> None:
+    """Test if the reset button clears all filters."""
+    browser = playwright.chromium.launch(headless=HEADLESS)
+    context = browser.new_context()
+    page = context.new_page()
+    page.goto("http://localhost:8000/")
+    page.get_by_role("button", name="Filter").click()
+    page.get_by_role("checkbox", name="Tue").check()
+    page.get_by_role("checkbox", name="Thu").check()
+    page.get_by_role("checkbox", name="AAS - African-American and").check()
+    page.get_by_role("checkbox", name="Artistic, Interpretive, &").check()
+    page.locator("#from_time").click()
+    page.locator("#from_time").press("ArrowRight")
+    page.locator("#from_time").press("ArrowRight")
+    page.locator("#from_time").fill("01:01")
+    page.locator("#to_time").click()
+    page.locator("#to_time").press("ArrowRight")
+    page.locator("#to_time").press("ArrowRight")
+    page.locator("#to_time").fill("13:01")
+    page.get_by_role("button", name="Apply Filters").click()
+    page.get_by_role("button", name="Filter").click()
+    page.get_by_role("button", name="Clear All").click()
+    expect(page.get_by_role("checkbox", name="Tue")).not_to_be_checked()
+    expect(page.get_by_role("checkbox", name="Thu")).not_to_be_checked()
+    expect(page.locator("#from_time")).to_be_empty()
+    expect(page.locator("#to_time")).to_be_empty()
+    expect(page.get_by_role("checkbox", name="AAS - African-American and")).not_to_be_checked()
+    expect(page.get_by_role("checkbox", name="Artistic, Interpretive, &")).not_to_be_checked()
+
+    # ---------------------
+    context.close()
+    browser.close()
