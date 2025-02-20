@@ -666,9 +666,12 @@ class Course(models.Model):
         """Filter courses by available times."""
         query = cls.objects.all()
 
+        # Get the latest semester
+        current_semester = Semester.latest()
+
+        section_conditions = Q(section__semester=current_semester)
+
         if days:
-            # Get the latest semester
-            current_semester = Semester.latest()
 
             # Map day codes to field names
             day_map = {
@@ -680,21 +683,18 @@ class Course(models.Model):
             }
 
             # Get unavailable days
-            unavailable_days = {day_map[d] for d in days if d in day_map}  # {monday, wednesday}
+            unavailable_days = {day_map[d] for d in days if d in day_map}
 
             # Filter for sections that don't meet on unavailable days
-            section_conditions = Q(section__semester=current_semester)
-
             for day in unavailable_days:
                 section_conditions &= Q(**{f"section__sectiontime__{day}": False})
 
-            if start_time:
-                section_conditions &= Q(section__sectiontime__start_time__gte=start_time)
-            if end_time:
-                section_conditions &= Q(section__sectiontime__end_time__lte=end_time)
+        if start_time:
+            section_conditions &= Q(section__sectiontime__start_time__gte=start_time)
+        if end_time:
+            section_conditions &= Q(section__sectiontime__end_time__lte=end_time)
 
-            query = query.filter(section_conditions)
-
+        query = query.filter(section_conditions)
         return query.distinct()
 
     class Meta:
