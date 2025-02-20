@@ -45,6 +45,7 @@ def search(request):
         ),
         "from_time": request.GET.get("from_time"),
         "to_time": request.GET.get("to_time"),
+        "open_sections": request.GET.get("open_sections") == "on",
     }
 
     # Save filters to session
@@ -190,6 +191,11 @@ def filter_courses(filters):
 
     # Apply filters
     results = apply_filters(results, filters)
+
+    # Filter for open sections
+    if filters.get("open_sections"):
+        open_sections_filtered = Course.filter_by_open_sections()
+        results = results.filter(id__in=open_sections_filtered.values_list("id", flat=True))
 
     results = results.distinct().order_by("subdepartment__mnemonic", "number")
 

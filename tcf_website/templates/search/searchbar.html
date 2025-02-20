@@ -93,6 +93,24 @@
                 </div>
               </div>
             </div>
+            <!-- Open Section selections -->
+            <div class="filter-section compact availability-section">
+              <h6 class="filter-header">
+                Availability
+              </h6>
+              <div class="form-check d-inline-flex align-items-center" style="background: white; border: 1px solid #cbd5e0; border-radius: 6px; padding: 0.55rem 0.67rem;">
+                <input 
+                  class="form-check-input me-2" 
+                  type="checkbox" 
+                  id="open-sections" 
+                  name="open_sections" 
+                  {% if request.session.search_filters.open_sections %}checked{% endif %}
+                >
+                <label class="form-check-label" for="open-sections">
+                  Only display courses with open sections
+                </label>
+              </div>
+            </div>
             <!-- List of subjects -->
             <div class="filter-grid">
               <div class="filter-section">
@@ -212,6 +230,7 @@
     const filterButton = document.getElementById('filter-button');
     const timeFrom = document.getElementById('from_time'); 
     const timeTo = document.getElementById('to_time');
+    const openSections = document.getElementById('open-sections');
 
     // Check initial state (in case of page refresh with active filters)
     updateButtonState();
@@ -227,6 +246,8 @@
     timeFrom.addEventListener('input', updateButtonState);
     timeTo.addEventListener('input', updateButtonState);
 
+    openSections.addEventListener('change', updateButtonState);
+
     // Checks for active filters or inactive day filters to determine button state
     function updateButtonState() {
       const activeFilters = Array.from(filterInputs).filter(input => input.checked);
@@ -234,6 +255,7 @@
       
       let timeFromChanged = false;
       let timeToChanged = false;
+      let openSectionsChanged = false;
 
       if (timeFrom.value) {
           timeFromChanged = timeFrom.value !== '';
@@ -242,7 +264,11 @@
           timeToChanged = timeTo.value !== '';
       }
 
-      if (activeFilters.length > 0 || activeDayFilters.length > 0 || timeFromChanged || timeToChanged) {
+      if (openSections.checked) {
+        openSectionsChanged = true;
+      }
+
+      if (activeFilters.length > 0 || activeDayFilters.length > 0 || timeFromChanged || timeToChanged || openSectionsChanged) {
           filterButton.classList.add('filter-active');
           filterButton.textContent = 'Filters Active';
       } else {
