@@ -1,9 +1,11 @@
+import { handleVote } from "./review.js";
+
 document.addEventListener("DOMContentLoaded", function () {
   const currentPage = 1;
   const courseId =
-  document.getElementById("reviews-container").dataset.courseId;
+    document.getElementById("reviews-container").dataset.courseId;
   const instructorId =
-  document.getElementById("reviews-container").dataset.instructorId;
+    document.getElementById("reviews-container").dataset.instructorId;
 
   function fetchReviews(page) {
     $.ajax({
