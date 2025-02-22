@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    let currentPage = 1;
+    const currentPage = 1;
     const courseId = document.getElementById("reviews-container").dataset.courseId;
     const instructorId = document.getElementById("reviews-container").dataset.instructorId;
 
