@@ -2,9 +2,11 @@
 # pylint: disable=too-many-locals
 
 """Views for Browse, department, and course/course instructor pages."""
+import asyncio
 import json
 from typing import Any
 
+from asgiref.sync import async_to_sync, sync_to_async
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg, CharField, Count, F, Q, Value
 from django.db.models.functions import Concat
@@ -182,6 +184,41 @@ def course_view(
     )
 
 
+async def fetch_review_data(course_id, instructor_id, user, page, method):
+    reviews_agg = sync_to_async(
+        lambda: Review.objects.filter(instructor=instructor_id, course=course_id).aggregate(
+            num_ratings=Count("id"), num_reviews=Count("id", filter=~Q(text=""))
+        )
+    )()
+
+    paginated_reviews = sync_to_async(
+        lambda: Review.get_paginated_reviews(course_id, instructor_id, user, page, method)
+    )()
+
+    data_agg = sync_to_async(
+        lambda: Review.objects.filter(course=course_id, instructor=instructor_id).aggregate(
+            average_rating=(
+                Avg("instructor_rating") + Avg("enjoyability") + Avg("recommendability")
+            )
+            / 3,
+            average_instructor=Avg("instructor_rating"),
+            average_fun=Avg("enjoyability"),
+            average_recommendability=Avg("recommendability"),
+            average_difficulty=Avg("difficulty"),
+            average_hours_per_week=Avg("hours_per_week"),
+            average_amount_reading=Avg("amount_reading"),
+            average_amount_writing=Avg("amount_writing"),
+            average_amount_group=Avg("amount_group"),
+            average_amount_homework=Avg("amount_homework"),
+        )
+    )()
+
+    review_data, paginated_reviews, data = await asyncio.gather(
+        reviews_agg, paginated_reviews, data_agg
+    )
+    return review_data, paginated_reviews, data
+
+
 def course_instructor(request, course_id, instructor_id, method="Default"):
     """View for course instructor page."""
     section_last_taught = (
@@ -194,19 +231,16 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     course = section_last_taught.course
     instructor = section_last_taught.instructors.get(pk=instructor_id)
 
-    # ratings: reviews with and without text; reviews: ratings with text
-    reviews = Review.objects.filter(instructor=instructor_id, course=course_id).aggregate(
-        num_ratings=Count("id"), num_reviews=Count("id", filter=~Q(text=""))
-    )
-    num_reviews, num_ratings = reviews["num_reviews"], reviews["num_ratings"]
-
-    dept = course.subdepartment.department
-
     page_number = request.GET.get("page", 1)
-    paginated_reviews = Review.get_paginated_reviews(
+
+    review_data, paginated_reviews, data = async_to_sync(fetch_review_data)(
         course_id, instructor_id, request.user, page_number, method
     )
+    # ratings: reviews with and without text; reviews: ratings with text
+    num_reviews, num_ratings = review_data["num_reviews"], review_data["num_ratings"]
+    data = {key: safe_round(value) for key, value in data.items()}
 
+    dept = course.subdepartment.department
     course_url = reverse("course", args=[course.subdepartment.mnemonic, course.number])
     # Navigation breadcrumbs
     breadcrumbs = [
@@ -215,23 +249,6 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         (course.code, course_url, False),
         (instructor.full_name, None, True),
     ]
-
-    data = Review.objects.filter(course=course_id, instructor=instructor_id).aggregate(
-        # rating stats
-        average_rating=(Avg("instructor_rating") + Avg("enjoyability") + Avg("recommendability"))
-        / 3,
-        average_instructor=Avg("instructor_rating"),
-        average_fun=Avg("enjoyability"),
-        average_recommendability=Avg("recommendability"),
-        average_difficulty=Avg("difficulty"),
-        # workload stats
-        average_hours_per_week=Avg("hours_per_week"),
-        average_amount_reading=Avg("amount_reading"),
-        average_amount_writing=Avg("amount_writing"),
-        average_amount_group=Avg("amount_group"),
-        average_amount_homework=Avg("amount_homework"),
-    )
-    data = {key: safe_round(value) for key, value in data.items()}
 
     try:
         grades_data = CourseInstructorGrade.objects.get(instructor=instructor, course=course)
