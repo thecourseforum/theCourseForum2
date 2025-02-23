@@ -1,5 +1,6 @@
 # pylint: disable=no-member
 """Tests for browse.py."""
+from unittest.mock import patch
 from django.test import TestCase
 from django.urls import reverse
 
@@ -11,6 +12,12 @@ class CourseViewTestCase(TestCase):
 
     def setUp(self):
         setup(self)
+        self.patcher = patch("tcf_website.views.browse.update_enrollment_data")
+        self.mock_update_enrollment = self.patcher.start()
+
+    def tearDown(self):
+        """Stop patching after each test."""
+        self.patcher.stop()
 
     @suppress_request_warnings
     def test_legacy_course_url_404(self):

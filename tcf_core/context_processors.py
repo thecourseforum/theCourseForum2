@@ -62,5 +62,6 @@ def searchbar_context(request):
         "selected_weekdays": saved_filters.get("weekdays", []),
         "from_time": saved_filters.get("from_time", ""),
         "to_time": saved_filters.get("to_time", ""),
+        "open_sections": saved_filters.get("open_sections", False),
     }
     return context
