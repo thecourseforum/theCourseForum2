@@ -19,7 +19,7 @@
     {% include "common/toolbar.html" with active_course_recency=active_course_recency latest_semester=latest_semester last_five_years=last_five_years dept_id=dept_id breadcrumbs=breadcrumbs sorting=True %}
   </div>
   <div class="subdepartments mt-3">
-    <div class="subdepartment container-lg">
+    <div class="subdepartment container-lg px-0">
       {% if courses|length == 0 %}
         <div class="new card col p-5 text-center">
           <div class="card-body">
