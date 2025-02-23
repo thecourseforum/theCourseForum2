@@ -162,10 +162,10 @@ class SectionEnrollmentViewSet(viewsets.ViewSet):
             section_enrollment = SectionEnrollment.objects.filter(section=section).first()
             if section_enrollment:
                 enrollment_data[section.sis_section_number] = {
-                    'enrollment_taken': section_enrollment.enrollment_taken,
-                    'enrollment_limit': section_enrollment.enrollment_limit,
-                    'waitlist_taken': section_enrollment.waitlist_taken,
-                    'waitlist_limit': section_enrollment.waitlist_limit
+                    "enrollment_taken": section_enrollment.enrollment_taken,
+                    "enrollment_limit": section_enrollment.enrollment_limit,
+                    "waitlist_taken": section_enrollment.waitlist_taken,
+                    "waitlist_limit": section_enrollment.waitlist_limit,
                 }
 
-        return JsonResponse({'enrollment_data': enrollment_data})
+        return JsonResponse({"enrollment_data": enrollment_data})

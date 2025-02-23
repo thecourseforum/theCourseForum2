@@ -97,22 +97,23 @@ class SectionTimeAdmin(admin.ModelAdmin):
 
 class SectionEnrollmentAdmin(admin.ModelAdmin):
     list_display = [
-        'section',
-        'enrollment_taken',
-        'enrollment_limit',
-        'waitlist_taken',
-        'waitlist_limit',
+        "section",
+        "enrollment_taken",
+        "enrollment_limit",
+        "waitlist_taken",
+        "waitlist_limit",
     ]
     search_fields = [
-        'section__course__subdepartment__mnemonic',
-        'section__course__number',
-        'section__course__title',
+        "section__course__subdepartment__mnemonic",
+        "section__course__number",
+        "section__course__title",
     ]
-    list_filter = ['section__semester']
+    list_filter = ["section__semester"]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related('section__course__subdepartment', 'section__semester')
+        return qs.select_related("section__course__subdepartment", "section__semester")
+
 
 class CourseGradeAdmin(admin.ModelAdmin):
     ordering = ["course__subdepartment", "course__number", "course__title"]
@@ -125,18 +126,18 @@ class CourseInstructorGradeAdmin(admin.ModelAdmin):
 
 
 class CourseEnrollmentAdmin(admin.ModelAdmin):
-    list_display = ['course', 'last_update']
+    list_display = ["course", "last_update"]
     search_fields = [
-        'course__subdepartment__mnemonic',
-        'course__number',
-        'course__title',
+        "course__subdepartment__mnemonic",
+        "course__number",
+        "course__title",
     ]
-    list_filter = ['last_update']
-    readonly_fields = ['last_update']
+    list_filter = ["last_update"]
+    readonly_fields = ["last_update"]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related('course__subdepartment')
+        return qs.select_related("course__subdepartment")
 
 
 admin.site.register(Section, SectionAdmin)
