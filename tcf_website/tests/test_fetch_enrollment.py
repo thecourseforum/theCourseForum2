@@ -16,17 +16,14 @@ class FetchEnrollmentTestCase(TestCase):
         # pylint: disable=no-member
         self.section = self.section_course
 
-    @patch('tcf_website.management.commands.fetch_enrollment.session.get')
+    @patch("tcf_website.management.commands.fetch_enrollment.session.get")
     def test_fetch_enrollment_success(self, mock_get):
         """Test successful enrollment fetch."""
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {
-            "classes": [{
-                "enrollment_total": 15,
-                "class_capacity": 20,
-                "wait_tot": 5,
-                "wait_cap": 10
-            }]
+            "classes": [
+                {"enrollment_total": 15, "class_capacity": 20, "wait_tot": 5, "wait_cap": 10}
+            ]
         }
 
         fetch_section_data(self.section)
@@ -37,7 +34,7 @@ class FetchEnrollmentTestCase(TestCase):
         self.assertEqual(enrollment.waitlist_taken, 5)
         self.assertEqual(enrollment.waitlist_limit, 10)
 
-    @patch('tcf_website.management.commands.fetch_enrollment.session.get')
+    @patch("tcf_website.management.commands.fetch_enrollment.session.get")
     def test_fetch_enrollment_update_existing(self, mock_get):
         """Test updating existing enrollment data."""
         # Create initial enrollment
@@ -46,17 +43,14 @@ class FetchEnrollmentTestCase(TestCase):
             enrollment_taken=10,
             enrollment_limit=20,
             waitlist_taken=2,
-            waitlist_limit=5
+            waitlist_limit=5,
         )
 
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {
-            "classes": [{
-                "enrollment_total": 15,
-                "class_capacity": 25,
-                "wait_tot": 8,
-                "wait_cap": 12
-            }]
+            "classes": [
+                {"enrollment_total": 15, "class_capacity": 25, "wait_tot": 8, "wait_cap": 12}
+            ]
         }
 
         fetch_section_data(self.section)
@@ -67,7 +61,7 @@ class FetchEnrollmentTestCase(TestCase):
         self.assertEqual(enrollment.waitlist_taken, 8)
         self.assertEqual(enrollment.waitlist_limit, 12)
 
-    @patch('tcf_website.management.commands.fetch_enrollment.session.get')
+    @patch("tcf_website.management.commands.fetch_enrollment.session.get")
     def test_fetch_enrollment_empty_response(self, mock_get):
         """Test handling of empty API response."""
         mock_get.return_value.status_code = 200
@@ -78,7 +72,7 @@ class FetchEnrollmentTestCase(TestCase):
         self.assertFalse(result)
         self.assertEqual(SectionEnrollment.objects.count(), 0)
 
-    @patch('tcf_website.management.commands.fetch_enrollment.session.get')
+    @patch("tcf_website.management.commands.fetch_enrollment.session.get")
     def test_fetch_enrollment_api_error(self, mock_get):
         """Test handling of API error."""
         mock_get.return_value.status_code = 500

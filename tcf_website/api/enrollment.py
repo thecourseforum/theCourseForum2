@@ -14,6 +14,7 @@ from tcf_website.utils.enrollment import build_sis_api_url, format_enrollment_up
 TIMEOUT = 10
 MAX_WORKERS = 5
 
+
 def fetch_section_data(section):
     """Fetch enrollment data for a given section from the UVA SIS API."""
     url = build_sis_api_url(section)
@@ -38,6 +39,7 @@ def fetch_section_data(section):
 
     return {}
 
+
 async def update_enrollment_data(course_id):
     """Asynchronous function to update enrollment data."""
     start_time = time.monotonic()
@@ -57,7 +59,7 @@ async def update_enrollment_data(course_id):
         return
 
     print(f"Starting async enrollment update for {len(sections)} sections...")
-    
+
     changed_sections = 0
 
     async def process_section(section):
@@ -75,21 +77,26 @@ async def update_enrollment_data(course_id):
     await asyncio.gather(*(process_section(section) for section in sections))
 
     elapsed_time = time.monotonic() - start_time
-    print(f"Enrollment update completed at {timezone.now()} "
-          f"(Total time: {elapsed_time:.2f} seconds, "
-          f"{changed_sections} sections changed)")
+    print(
+        f"Enrollment update completed at {timezone.now()} "
+        f"(Total time: {elapsed_time:.2f} seconds, "
+        f"{changed_sections} sections changed)"
+    )
+
 
 def update_section_enrollment(section, data):
     """Update SectionEnrollment only if the data has changed."""
     section_enrollment, _ = SectionEnrollment.objects.get_or_create(section=section)
-    
-    has_changes = any([
-        section_enrollment.enrollment_taken != data.get("enrollment_taken", 0),
-        section_enrollment.enrollment_limit != data.get("enrollment_limit", 0),
-        section_enrollment.waitlist_taken != data.get("waitlist_taken", 0),
-        section_enrollment.waitlist_limit != data.get("waitlist_limit", 0)
-    ])
-    
+
+    has_changes = any(
+        [
+            section_enrollment.enrollment_taken != data.get("enrollment_taken", 0),
+            section_enrollment.enrollment_limit != data.get("enrollment_limit", 0),
+            section_enrollment.waitlist_taken != data.get("waitlist_taken", 0),
+            section_enrollment.waitlist_limit != data.get("waitlist_limit", 0),
+        ]
+    )
+
     if has_changes:
         section_enrollment.enrollment_taken = data.get("enrollment_taken", 0)
         section_enrollment.enrollment_limit = data.get("enrollment_limit", 0)
@@ -99,5 +106,5 @@ def update_section_enrollment(section, data):
         print(format_enrollment_update_message(section, section_enrollment))
     else:
         print(f"No changes in enrollment data for section {section.sis_section_number}")
-    
+
     return has_changes

@@ -1,4 +1,5 @@
 """Tests for enrollment data updates."""
+
 from unittest.mock import patch
 from django.test import TestCase
 from tcf_website.models import SectionEnrollment
@@ -19,7 +20,7 @@ class TestEnrollment(TestCase):
             enrollment_taken=10,
             enrollment_limit=20,
             waitlist_taken=5,
-            waitlist_limit=10
+            waitlist_limit=10,
         )
 
     @patch("tcf_website.api.enrollment.fetch_section_data")

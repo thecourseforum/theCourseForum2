@@ -272,13 +272,15 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         enrollment_tracking = CourseEnrollment.objects.create(course=course)
         should_update = True
     else:
-        should_update = not enrollment_tracking.last_update or enrollment_tracking.last_update < two_hours_ago
+        should_update = (
+            not enrollment_tracking.last_update or enrollment_tracking.last_update < two_hours_ago
+        )
 
     if should_update:
         run_async(update_enrollment_data, course.id)
-        request.session['fetching_enrollment'] = True
+        request.session["fetching_enrollment"] = True
     else:
-        request.session['fetching_enrollment'] = False
+        request.session["fetching_enrollment"] = False
 
     sections_taught = Section.objects.filter(
         course=course_id,
@@ -299,10 +301,10 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
 
         section_enrollment = SectionEnrollment.objects.filter(section=section).first()
         enrollment_data = {
-            'enrollment_taken': section_enrollment.enrollment_taken if section_enrollment else None,
-            'enrollment_limit': section_enrollment.enrollment_limit if section_enrollment else None,
-            'waitlist_taken': section_enrollment.waitlist_taken if section_enrollment else None,
-            'waitlist_limit': section_enrollment.waitlist_limit if section_enrollment else None
+            "enrollment_taken": section_enrollment.enrollment_taken if section_enrollment else None,
+            "enrollment_limit": section_enrollment.enrollment_limit if section_enrollment else None,
+            "waitlist_taken": section_enrollment.waitlist_taken if section_enrollment else None,
+            "waitlist_limit": section_enrollment.waitlist_limit if section_enrollment else None,
         }
 
         section_info["sections"][section.sis_section_number] = {
@@ -440,6 +442,7 @@ def safe_round(num):
     if num is not None:
         return round(num, 2)
     return "\u2014"
+
 
 def run_async(func, *args):
     """Helper function to run an async function inside a thread."""

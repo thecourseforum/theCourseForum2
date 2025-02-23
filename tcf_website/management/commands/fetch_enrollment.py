@@ -37,12 +37,11 @@ retry_strategy = Retry(
     status_forcelist=[429, 500, 502, 503, 504],
 )
 adapter = HTTPAdapter(
-    pool_connections=MAX_POOL_SIZE,
-    pool_maxsize=MAX_POOL_SIZE,
-    max_retries=retry_strategy
+    pool_connections=MAX_POOL_SIZE, pool_maxsize=MAX_POOL_SIZE, max_retries=retry_strategy
 )
 session.mount("http://", adapter)
 session.mount("https://", adapter)
+
 
 def should_retry_request(exception):
     """Determine if we should retry the request based on the exception."""
@@ -53,20 +52,21 @@ def should_retry_request(exception):
         return True
     return False
 
+
 @backoff.on_exception(
     backoff.expo,
     requests.exceptions.RequestException,
     max_tries=MAX_TRIES,
     giveup=lambda e: not should_retry_request(e),
     base=2,
-    factor=INITIAL_WAIT
+    factor=INITIAL_WAIT,
 )
 def fetch_section_data(section):
     """Fetch enrollment data for a given section from the UVA SIS API.
-    
+
     Args:
         section: Section object to fetch enrollment data for
-        
+
     Returns:
         bool: True if successful, False otherwise
     """
@@ -113,14 +113,14 @@ def fetch_section_data(section):
 class Command(BaseCommand):
     """Django management command to fetch enrollment data for all sections."""
 
-    help = 'Fetches current enrollment data for all sections in the latest semester'
+    help = "Fetches current enrollment data for all sections in the latest semester"
 
     def add_arguments(self, parser):
         """Add command arguments."""
         parser.add_argument(
-            '--semester',
+            "--semester",
             type=str,
-            help='Semester number (e.g., "1242" for Spring 2024). Defaults to latest semester.'
+            help='Semester number (e.g., "1242" for Spring 2024). Defaults to latest semester.',
         )
 
     def handle(self, *args, **options):
@@ -128,8 +128,8 @@ class Command(BaseCommand):
         start_time = time.time()
 
         # Use provided semester or get latest
-        if options['semester']:
-            semester = Semester.objects.get(number=options['semester'])
+        if options["semester"]:
+            semester = Semester.objects.get(number=options["semester"])
         else:
             semester = Semester.latest()
 
@@ -143,11 +143,13 @@ class Command(BaseCommand):
         success_count = 0
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
             try:
-                results = list(tqdm(
-                    executor.map(fetch_section_data, sections),
-                    total=total_sections,
-                    desc="Fetching enrollment"
-                ))
+                results = list(
+                    tqdm(
+                        executor.map(fetch_section_data, sections),
+                        total=total_sections,
+                        desc="Fetching enrollment",
+                    )
+                )
                 success_count = sum(1 for r in results if r)
             except KeyboardInterrupt:
                 print("\nProcess interrupted by user. Shutting down...")

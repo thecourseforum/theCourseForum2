@@ -1,11 +1,12 @@
 """Utility functions for enrollment data handling."""
 
+
 def build_sis_api_url(section):
     """Build the SIS API URL for a given section.
-    
+
     Args:
         section: Section object to build URL for
-        
+
     Returns:
         str: The complete SIS API URL
     """
@@ -16,13 +17,14 @@ def build_sis_api_url(section):
         f"class_nbr={section.sis_section_number}"
     )
 
+
 def format_enrollment_update_message(section, section_enrollment):
     """Format a consistent enrollment update message.
-    
+
     Args:
         section: Section object that was updated
         section_enrollment: SectionEnrollment object with the updated data
-        
+
     Returns:
         str: Formatted message string
     """
