@@ -246,10 +246,10 @@
         </script>
 
         <div style="margin-left: auto; margin-right: auto; background-color: white; 
-        padding: 10px; margin-bottom: 10px; position: relative; height:45vh; width:40vw;">
+        padding: 10px; margin-bottom: 10px; position: relative; height:32vh; width:40vw;">
             <div style="position: relative; height: 100%; width: 100%;">
                 <canvas id="sentiment-chart"></canvas>
-                <div class="sentiment-chart-overlay" id="sentiment-chart-label">
+                <div style="text-align: center; line-height: 250px; vertical-align: middle; height: 100%; width: 100%;" class="absolute-center" id="sentiment-chart-label">
                     <p class="sentiment-text">No reviews found <i class="far fa-frown-open fa-fw"></i></p>
                 </div>
             </div>
@@ -361,9 +361,19 @@
 
             const totalReviews = dataValues.reduce((sum, current) => sum + current, 0);
 
+            const chartCanvas = document.getElementById("sentiment-chart");
+            const noReviewsMessage = document.getElementById("sentiment-chart-label");
+
+
             const chartLabel = document.getElementById('sentiment-chart-label');
-            if (totalReviews > 0) {
-                chartLabel.style.display = 'none';
+            if (totalReviews === 0) {
+                // Hide the chart, show "No reviews found"
+                chartCanvas.style.display = "none";
+                noReviewsMessage.style.display = "block";
+            } else {
+                // Show the chart, hide the message
+                chartCanvas.style.display = "block";
+                noReviewsMessage.style.display = "none";
             }
     
             const barColors = {
@@ -402,6 +412,7 @@
                     responsive: true,
                     layout: { padding: 10 },
                     legend: { display: false },
+                    //aspectRatio: aspectRatio,
                     title: {
                         display: true,
                         text: 'Review Positivity for ' + courseCode + ' with ' + instructorName,
