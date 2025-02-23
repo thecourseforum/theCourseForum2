@@ -349,15 +349,16 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             let rawData = `{{ sentiment_distribution|safe }}`;
-            
+    
             const courseCode = "{{ course.code|escapejs }}";
             const instructorName = "{{ instructor.first_name|escapejs }} {{ instructor.last_name|escapejs }}";
-
+    
             const sentimentData = JSON.parse(rawData);
-            
-            const labels = Object.keys(sentimentData);
+    
+            const labels = ["Review Positivity"];
+            const sentimentLabels = Object.keys(sentimentData);
             const dataValues = Object.values(sentimentData);
-
+    
             const barColors = [
                 '#BE4B20',
                 '#DD734C',
@@ -365,19 +366,20 @@
                 '#5D83D1',
                 '#182D66',
             ];
-
-            const datasets = labels.map((label, index) => ({
+    
+            const datasets = sentimentLabels.map((label, index) => ({
                 label: label,
-                data: [dataValues[index]],
+                data: [dataValues[index]],  // Each sentiment category gets one stacked bar
                 backgroundColor: barColors[index % barColors.length],
                 borderWidth: 0
             }));
-
+    
             const ctx = document.getElementById('sentiment-chart').getContext('2d');
             new Chart(ctx, {
                 type: 'horizontalBar',
                 data: {
-                    datasets: datasets,
+                    labels: labels,
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
@@ -387,36 +389,56 @@
                     legend: { display: false },
                     title: {
                         display: true,
-                        text: 'Review Sentiment Distribution for ' + courseCode + ' with ' + instructorName,
+                        text: 'Opinions for ' + courseCode + ' with ' + instructorName,
                         fontSize: 18,
                         padding: 20,
                         fontColor: 'black'
                     },
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                let dataset = data.datasets[tooltipItem.datasetIndex];
+                                let value = dataset.data[tooltipItem.index];
+                                return `${dataset.label}: ${value} reviews`;
+                            }
+                        }
+                    },
                     plugins: {
-                        labels: {
-                            render: 'value',
-                            fontColor: 'black',
-                            fontSize: 14,
-                            position: 'outside'
-                        },
+                        datalabels: {
+                            anchor: 'center',
+                            align: 'center',
+                            color: 'white',
+                            font: {
+                                weight: 'bold',
+                                size: 14
+                            },
+                            formatter: (value) => value > 0 ? value : ''
+                        }
                     },
                     scales: {
                         xAxes: [{
-                            stacked: true
-                        }],
-                        yAxes: [{
+                            display: false,
                             stacked: true,
                             ticks: {
                                 beginAtZero: true,
-                                precision: 0
+                                precision: 0,
+                                display: false
                             },
-
+                            gridLines: { display: false }
+                        }],
+                        yAxes: [{
+                            display: false,
+                            stacked: true,
+                            ticks: {
+                                display: false
+                            },
+                            gridLines: { display: false }
                         }]
                     }
                 }
             });
         });
-
     </script>
+    
 
 {% endblock %}
