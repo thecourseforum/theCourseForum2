@@ -200,6 +200,15 @@
   background-position: center;
 }
 
+.fa-reply {
+  width: 1em;
+  height: 1em;
+  background-image: url("../icons/img/fa-reply.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
 .fa-trash-o {
   width: 1em;
   height: 1em;
