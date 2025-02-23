@@ -168,162 +168,123 @@
 {% block js %}
 {% if mode == "edit" %}
 <script>
-    // Only include this javascript when editing this schedule
-    function updateStats() {
-        // this function will take the courses included in the course table
-        // and recalculate the ratings, difficulty, and credit totals
-        let this_schedule = document.getElementById("schedule{{schedule.id}}edit");
+  function updateStats() {
+      let this_schedule = document.getElementById("schedule{{schedule.id}}edit");
 
-        let rating = 0;  // the running total of ratings for the current schedule
-        let r_count = 0;  // the count of the number of valid course rows for ratings
-        let credit = 0;  // the running total of credits for the current schedule
-        let difficulty = 0;  // the running total of difficultys for the current schedule
-        let d_count = 0;  // the count of the number of valid course rows for difficultys
-        let cumulative_grade_point = 0;  // the running total of grade point averages
-        let gpa_credits = 0;  // the running total of relavent credits for calculating weighted GPA
+      let rating = 0, r_count = 0;
+      let credit = 0;
+      let difficulty = 0, d_count = 0;
+      let cumulative_grade_point = 0, gpa_credits = 0;
 
+      let courses = this_schedule.querySelectorAll('.schedule_course_card');
+      courses.forEach(course => {
+          let courseRating = parseFloat(course.getAttribute("course_rating"));
+          let courseCredits = parseInt(course.getAttribute("course_credits"));
+          let courseDifficulty = parseFloat(course.getAttribute("course_diff"));
+          let courseGpa = parseFloat(course.getAttribute("course_gpa"));
+          console.log(courseRating, courseDifficulty);
+          if (!isNaN(courseRating) || courseRating == 0) {
+              rating += courseRating;
+              r_count++;
+          }
+          if (!isNaN(courseDifficulty) || courseDifficulty == 0) {
+              difficulty += courseDifficulty;
+              d_count++;
+          }
 
-        // get the course rows from the table
-        let courses = this_schedule.querySelectorAll('.schedule_course_card');
-        courses.forEach(course => {
-            let courseRating = parseFloat(course.getAttribute("course_rating"));
-            let courseCredits = parseInt(course.getAttribute("course_credits"));
-            let courseDifficulty = parseFloat(course.getAttribute("course_diff"));
-            let courseGpa = parseFloat(course.getAttribute("course_gpa"));
+          credit += courseCredits;
+          if (!isNaN(courseGpa)) {
+              cumulative_grade_point += courseCredits * courseGpa;
+              gpa_credits += courseCredits;
+          }
+      });
 
-            // if there is a valid rating and difficulty, increment it's count and accumulate
-            if (courseRating){
-                rating += courseRating;
-                r_count++;
-            }
-            if (courseDifficulty){
-                difficulty += courseDifficulty;
-                d_count++;
-            }
+       let final_gpa = gpa_credits ? (cumulative_grade_point / gpa_credits).toFixed(2) : "\u2014";
+       let final_rating = r_count ? (rating / r_count).toFixed(2) : "\u2014";
+       let final_difficulty = d_count ? (difficulty / d_count).toFixed(2) : "\u2014";
 
-            credit += courseCredits;
-            if (courseGpa) {
-                cumulative_grade_point += courseCredits * courseGpa;
-                gpa_credits += courseCredits;
-            }
+      this_schedule.querySelector('#ScheduleGPA-{{schedule.id}}').innerText = final_gpa;
+      this_schedule.querySelector('#ScheduleRating-{{schedule.id}}').innerText = final_rating;
+      this_schedule.querySelector('#ScheduleDifficulty-{{schedule.id}}').innerText = final_difficulty;
+      this_schedule.querySelector('#ScheduleCredits-{{schedule.id}}').innerText = credit;
+  }
 
-        });
-        // See if rating, difficulty, and cumlative grade points were changed
-        if (rating) {
-            rating = rating / r_count;
-        }
-        if (difficulty) {
-            difficulty = difficulty / d_count;
-        }
-        let final_gpa = 0;
-        if (cumulative_grade_point) {
-            final_gpa = cumulative_grade_point / gpa_credits
-        }
-        // fetch the schedule rating HTML element from the schedule template that is loaded into this page
-        const scheduleGPA = this_schedule.querySelector('#ScheduleGPA-{{schedule.id}}');
-        scheduleGPA.innerText = (final_gpa).toFixed(2);
+  function addCourse(course) {
+      let noCourseLabel = document.getElementById('no_courses_label');
+      if (noCourseLabel) {
+          noCourseLabel.remove();
+      }
 
-        const scheduleRating = this_schedule.querySelector('#ScheduleRating-{{schedule.id}}');
-        scheduleRating.innerText = rating.toFixed(2);
-        
-        const scheduleDifficulty = this_schedule.querySelector('#ScheduleDifficulty-{{schedule.id}}');
-        scheduleDifficulty.innerText = difficulty.toFixed(2);
+      let this_schedule = document.getElementById("schedule{{schedule.id}}edit");
+      let this_schedule_courses = this_schedule.querySelector("#schedule_courses-{{schedule.id}}");
 
-        const scheduleCredits = this_schedule.querySelector('#ScheduleCredits-{{schedule.id}}');
-        scheduleCredits.innerText = credit;
-        
-    }
+      let gpa = isNaN(parseFloat(course.gpa)) ? "\u2014" : parseFloat(course.gpa).toFixed(2);
+      let rating = isNaN(parseFloat(course.rating)) ? "\u2014" : parseFloat(course.rating).toFixed(2);
+      let difficulty = isNaN(parseFloat(course.difficulty)) ? "\u2014" : parseFloat(course.difficulty).toFixed(2);
 
-    function addCourse(course) {
-        // dyanmically add a course to the schedule 
-        // NOTE: Currently only used for adding temporary courses to the schedule card
-
-        // remove the no courses label if it's on the DOM
-        let noCourseLabel = document.getElementById('no_courses_label');
-        if(noCourseLabel){
-            noCourseLabel.remove();
-        }
-        const scheduleId = '{{schedule.id}}';
-        let this_schedule = document.getElementById("schedule{{schedule.id}}edit");
-        let this_schedule_courses = this_schedule.querySelector("#schedule_courses-{{schedule.id}}");
-        // notice we mark this newly added list element with a ID
-        let courseCardHTML = `
-            <li id="selectedSectionTentative">
-                <div id="ScheduledCourse-${course.id}edit" course_rating="${course.rating}" 
-                            course_diff="${course.difficulty}" course_credits="${course.credits}" course_gpa="${course.gpa}" class="card schedule_course_card mb-2">
-                                <div class="row no-gutters">
-                                    <div class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start schedule-card-link align-items-center ">
-                                        <div class="text-center text-lg-left">
-                                            <h4 id="title">New Addition</h4>
-                                            <h6>${ course.instructor_name }</h6>
-    
-                                        </div>
-                                    </div>
-                                  <div class="col-md-8">
-                                    <div class="card-body">
-                                      
-
-                                        <div class="row justify-content-center text-center">
-                                      <div class="col-12 col-sm-2 col-lg-2 text-nowrap">
-                                        <small class="mb-0 text-uppercase">
-                                          <i class="fas fa-chalkboard"></i>&nbsp;Section Type
-                                        </small>
-                                        <p class="mb-0 info" id="recency">${course.section_type}</p>
-                                      </div>
-                                      <div class="col-12 col-sm-8 col-lg-7 text-nowrap ">
-                                        <small class="mb-0 text-uppercase">
-                                          <i class="fas fa-hourglass"></i>&nbsp;Section Time
-                                        </small>
-                                        <p class="mb-1 info text-break">${course.section_time}</p>
-                                      </div>
-                                      <div class="col-6 col-sm-4 col-lg-3 text-nowrap ">
-                                        <small class="mb-0 text-uppercase">
-                                          <i class="fas fa-chart-bar"></i>&nbsp;GPA
-                                        </small>
-                                        <p class="mb-0 info text-break">
-                                          ${parseFloat(course.gpa).toFixed(2)}
-                                        </p>
-                                      </div>
-                                    </div>
-                                  <div class="row justify-content-between text-center">
-                                    <div class="col-3 col-lg-3 col-md-2 text-nowrap">
+      let courseCardHTML = `
+          <li id="selectedSectionTentative">
+              <div id="ScheduledCourse-${course.id}edit" course_rating="${course.rating}" 
+                  course_diff="${course.difficulty}" course_credits="${course.credits}" course_gpa="${course.gpa}" 
+                  class="card schedule_course_card mb-2">
+                  <div class="row no-gutters">
+                      <div class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start schedule-card-link align-items-center ">
+                          <div class="text-center text-lg-left">
+                              <h4 id="title">New Addition</h4>
+                              <h6>${course.instructor_name}</h6>
+                          </div>
+                      </div>
+                      <div class="col-md-8">
+                          <div class="card-body">
+                              <div class="row justify-content-center text-center">
+                                  <div class="col-12 col-sm-2 col-lg-2 text-nowrap">
                                       <small class="mb-0 text-uppercase">
-                                        <i class="fas fa-clock"></i>&nbsp;Units
+                                          <i class="fas fa-chalkboard"></i>&nbsp;Section Type
                                       </small>
-                                      <p class="mb-0 info text-break">
-                                        ${course.credits}
-                                      </p>
-                                    </div>
-                                    <div class="col-4 col-lg-3 col-md-2 text-nowrap">
-                                        <small class="mb-0 text-uppercase">
+                                      <p class="mb-0 info" id="recency">${course.section_type}</p>
+                                  </div>
+                                  <div class="col-12 col-sm-8 col-lg-7 text-nowrap">
+                                      <small class="mb-0 text-uppercase">
+                                          <i class="fas fa-hourglass"></i>&nbsp;Section Time
+                                      </small>
+                                      <p class="mb-1 info text-break">${course.section_time}</p>
+                                  </div>
+                                  <div class="col-6 col-sm-4 col-lg-3 text-nowrap">
+                                      <small class="mb-0 text-uppercase">
+                                          <i class="fas fa-chart-bar"></i>&nbsp;GPA
+                                      </small>
+                                      <p class="mb-0 info text-break">${gpa}</p>
+                                  </div>
+                              </div>
+                              <div class="row justify-content-between text-center">
+                                  <div class="col-3 col-lg-3 col-md-2 text-nowrap">
+                                      <small class="mb-0 text-uppercase">
+                                          <i class="fas fa-clock"></i>&nbsp;Units
+                                      </small>
+                                      <p class="mb-0 info text-break">${course.credits}</p>
+                                  </div>
+                                  <div class="col-4 col-lg-3 col-md-2 text-nowrap">
+                                      <small class="mb-0 text-uppercase">
                                           <i class="fa fa-star fa-fw"></i>&nbsp;Rating
-                                        </small>
-                                        <p class="mb-0 info text-break">
-                                          ${parseFloat(course.rating).toFixed(2)}
-                                        </p>
-                                      </div>
-                                      <div class="col-5 col-lg-3 col-md-6 text-nowrap">
-                                        <small class="mb-0 text-uppercase">
+                                      </small>
+                                      <p class="mb-0 info text-break">${rating}</p>
+                                  </div>
+                                  <div class="col-5 col-lg-3 col-md-6 text-nowrap">
+                                      <small class="mb-0 text-uppercase">
                                           <i class="fa fa-dumbbell fa-fw"></i>&nbsp;Difficulty
-                                        </small>
-                                        <p class="mb-0 info text-break">
-                                          ${parseFloat(course.difficulty).toFixed(2)}
-                                        </p>
-                                      </div>
+                                      </small>
+                                      <p class="mb-0 info text-break">${difficulty}</p>
                                   </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </li>
+      `;
 
-                                      
-                                    </div>
-                                  </div>
-                                </div>
-                    </div>
-            </li>
-
-        `;
-        // Append the constructed HTML to the this_schedule_courses
-        this_schedule_courses.insertAdjacentHTML('beforeend', courseCardHTML);
-    }
-
+      this_schedule_courses.insertAdjacentHTML('beforeend', courseCardHTML);
+  }
 </script>
 {% endif %}
 <script type="text/javascript">
