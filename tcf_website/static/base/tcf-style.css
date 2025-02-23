@@ -20,7 +20,7 @@
 
 /* only main-color (tcf blue) and accent-color (tcf organge) are being utilized by the landing page */
 body.dark-mode {
-  --main-color: #ffffff;
+  /* --main-color: #ffffff;
   --secondary-color: #4873B7;
   --accent-color:  #d75626;
   --dark-color: green;
@@ -33,7 +33,16 @@ body.dark-mode {
   --h4-card-title-color: #ffffff;
   --p-card-text-color: white;
   --card-background-color: #333333;
-  --input-color: #333333;
+  --input-color: #333333; */
+
+  --background-color: black;
+  --card-background-color: #333333;
+  --input-background-color: #545454;
+  --input-text-color: #a6a6a6;
+  --accent-text-color: #d75626;
+  --basic-text-color: white;
+  --icon-color: white;
+  --input-border-color: #a6a6a6;
 }
 
 /* Dark Mode Overrides
