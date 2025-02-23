@@ -121,13 +121,13 @@
                                                     </a>
                                                     <span class="downvoteCount">{{ question.count_votes.downvotes }}</span>
                                                 </div>
-                                                <!-- <div class="mr-3 mr-sm-4">
+                                                <div class="mr-3 mr-sm-4">
                                                     <a href="#loginModal" data-toggle="modal" data-id="{{ question.id }}"
                                                         class="btn answerQuestionBtn"
                                                         id="answerQuestionBtn">
-                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                        <i class="fa fa-reply" aria-hidden="true"></i>
                                                     </a>
-                                                </div> -->
+                                                </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -183,9 +183,10 @@
                                                     <hr>
                                                     <div class="answer-body">
                                                         <div class="answer-head">
-                                                            <div class="d-flex justify-content-between">
-                                                                <h6 class="text-tcf-orange text-start">{{ answer.semester }}</h6>
-                                                                <h6 id="date" class="text-muted">Updated {{ answer.created|date:"n/d/y" }}
+                                                            <div class="d-flex">
+                                                                <span class="text-muted">Anonymous</span>
+                                                                | Taken {{ answer.semester }} | Updated {{ question.created|date:"n/d/y" }}
+                                                                <h6 id="date" class="text-muted">
                                                                     <a class="answer-delete h5 pl-2 text-danger" type="button"
                                                                     data-toggle="modal" data-target="#deleteAnswerModal{{answer.id}}">
                                                                     <i class="fa fa-trash-o"></i>
