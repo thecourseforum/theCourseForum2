@@ -45,7 +45,7 @@ def search(request):
         ),
         "from_time": request.GET.get("from_time"),
         "to_time": request.GET.get("to_time"),
-        "open_sections": request.GET.get("open_sections", "") == "on",
+        "open_sections": request.GET.get("open_sections") == "on",
     }
 
     # Save filters to session
@@ -156,11 +156,12 @@ def fetch_courses(query, filters):
     # Apply filters
     results = apply_filters(results, filters)
 
-
-    results = (results.filter(max_similarity__gte=similarity_threshold)
-            .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
-            .exclude(semester_last_taught_id__lt=48)
-            .order_by("-max_similarity"))[:15]
+    results = (
+        results.filter(max_similarity__gte=similarity_threshold)
+        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+        .exclude(semester_last_taught_id__lt=48)
+        .order_by("-max_similarity")
+    )[:15]
 
     courses = [
         {
