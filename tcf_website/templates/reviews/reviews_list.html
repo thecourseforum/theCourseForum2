@@ -23,13 +23,23 @@
         <a href="#" class="pagination-button" data-page="{{ paginated_reviews.previous_page_number }}#reviews">&lt;</a>
     {% endif %}
 
-    {% for page_num in paginated_reviews.paginator.page_range %}
-        {% if page_num == paginated_reviews.number %}
-            <span class="current">{{ page_num }}</span>
-        {% else %}
-            <a href="#" class="pagination-button" data-page="{{ page_num }}#reviews">{{ page_num }}</a>
-        {% endif %}
+    {% with ''|center:paginated_reviews.paginator.num_pages as range %}
+    {% for _ in range %}
+        {% with forloop.counter as page_num %}
+            {% if page_num == paginated_reviews.number %}
+                <span class="current">{{ page_num }}</span>
+            {% elif page_num == 1 or page_num == paginated_reviews.paginator.num_pages %}
+                <a href="#" class="pagination-button" data-page="{{ page_num }}#reviews">{{ page_num }}</a>
+            {% elif page_num|add:"-2" <= paginated_reviews.number and page_num|add:"2" >= paginated_reviews.number %}
+                <a href="#" class="pagination-button" data-page="{{ page_num }}#reviews">{{ page_num }}</a>
+            {% elif page_num == 2 and paginated_reviews.number > 4 %}
+                <span class="ellipsis">&hellip;</span>
+            {% elif page_num == paginated_reviews.paginator.num_pages|add:"-1" and paginated_reviews.number < paginated_reviews.paginator.num_pages|add:"-3" %}
+                <span class="ellipsis">&hellip;</span>
+            {% endif %}
+        {% endwith %}
     {% endfor %}
+    {% endwith %}
 
     {% if paginated_reviews.has_next %}
         <a href="#" class="pagination-button" data-page="{{ paginated_reviews.next_page_number }}#reviews">&gt;</a>

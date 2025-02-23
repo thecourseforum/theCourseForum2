@@ -225,7 +225,9 @@ def paginated_reviews(request, course_id, instructor_id=None):
         instructor_id = request.GET.get("instructor_id")
 
     # fetch reviews
-    reviews = Review.objects.filter(course_id=course_id, instructor_id=instructor_id)
+    reviews = Review.objects.filter(course_id=course_id, instructor_id=instructor_id).exclude(
+        text=""
+    )
 
     # paginate
     paginator = Paginator(reviews, per_page)
