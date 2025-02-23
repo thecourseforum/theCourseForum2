@@ -354,18 +354,28 @@
             const sentimentLabels = Object.keys(sentimentData);
             const dataValues = Object.values(sentimentData);
     
-            const barColors = [
-                '#BE4B20',  // Strongly Negative
-                '#DD734C',  // Somewhat Negative
-                '#B4A6B6',  // Neutral
-                '#5D83D1',  // Somewhat Positive
-                '#182D66',  // Strongly Positive
-            ];
+            const barColors = {
+                normal: [
+                    '#BE4B20', // Strongly Negative
+                    '#DD734C', // Somewhat Negative
+                    '#B4A6B6', // Neutral
+                    '#5D83D1', // Somewhat Positive
+                    '#182D66', // Strongly Positive
+                ],
+                hover: [
+                    '#9E3B10', // Darker Strongly Negative
+                    '#BD634C', // Darker Somewhat Negative
+                    '#948696', // Darker Neutral
+                    '#4D73C1', // Darker Somewhat Positive
+                    '#081D56'  // Darker Strongly Positive
+                ]
+            };
     
             const datasets = sentimentLabels.map((label, index) => ({
                 label: label,
                 data: [dataValues[index]],
-                backgroundColor: barColors[index % barColors.length],
+                backgroundColor: barColors.normal[index % barColors.normal.length],
+                hoverBackgroundColor: barColors.hover[index % barColors.hover.length],
                 borderWidth: 0
             }));
     
@@ -409,17 +419,9 @@
                             }
                         },
                     },
-                    plugins: {
-                        datalabels: {
-                            anchor: 'center',
-                            align: 'center',
-                            color: 'white',
-                            font: {
-                                weight: 'bold',
-                                size: 14
-                            },
-                            formatter: (value) => value > 0 ? value : ''  
-                        }
+                    hover: {
+                        mode: 'point',  // Changed from default to 'point'
+                        intersect: true
                     },
                     scales: {
                         xAxes: [{
