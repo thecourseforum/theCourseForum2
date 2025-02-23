@@ -156,14 +156,11 @@ def fetch_courses(query, filters):
     # Apply filters
     results = apply_filters(results, filters)
 
-    results = (
-        results.filter(max_similarity__gte=similarity_threshold)
-        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
-        .exclude(semester_last_taught_id__lt=48)
-        .order_by("-max_similarity")
-    )
 
-    results = results.distinct().order_by("subdepartment__mnemonic", "number")
+    results = (results.filter(max_similarity__gte=similarity_threshold)
+            .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+            .exclude(semester_last_taught_id__lt=48)
+            .order_by("-max_similarity"))[:15]
 
     courses = [
         {
