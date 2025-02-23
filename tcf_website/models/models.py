@@ -671,6 +671,7 @@ class Course(models.Model):
 
         section_conditions = Q(section__semester=current_semester)
 
+        # Filter for sections that don't meet on unavailable days
         if days:
 
             # Map day codes to field names
@@ -689,6 +690,7 @@ class Course(models.Model):
             for day in unavailable_days:
                 section_conditions &= Q(**{f"section__sectiontime__{day}": False})
 
+        # Filter for sections that meet within the specified time range
         if start_time:
             section_conditions &= Q(section__sectiontime__start_time__gte=start_time)
         if end_time:
