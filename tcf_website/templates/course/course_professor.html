@@ -246,13 +246,8 @@
         </script>
 
         <div style="margin-left: auto; margin-right: auto; background-color: white; 
-        padding: 10px; margin-bottom: 10px; position: relative; height:50vh; width:40vw; 
-        display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        padding: 10px; margin-bottom: 10px; position: relative; height:45vh; width:40vw;">
             <canvas id="sentiment-chart"></canvas>
-            <div style="display: flex; flex-direction: row;">
-                <p style="margin-right: 100px; color: #BE4B20; font-weight: bold;">Negative</p> 
-                <p style="margin-left: 100px; color: #182D66; font-weight: bold;">Positive</p>
-            </div>
         </div>
 
 
@@ -360,11 +355,11 @@
             const dataValues = Object.values(sentimentData);
     
             const barColors = [
-                '#BE4B20',
-                '#DD734C',
-                '#B4A6B6',
-                '#5D83D1',
-                '#182D66',
+                '#BE4B20',  // Strongly Negative
+                '#DD734C',  // Somewhat Negative
+                '#B4A6B6',  // Neutral
+                '#5D83D1',  // Somewhat Positive
+                '#182D66',  // Strongly Positive
             ];
     
             const datasets = sentimentLabels.map((label, index) => ({
@@ -383,25 +378,36 @@
                 },
                 options: {
                     responsive: true,
-                    layout: {
-                        padding: 10
-                    },
+                    layout: { padding: 10 },
                     legend: { display: false },
                     title: {
                         display: true,
-                        text: 'Review Positivity for ' + courseCode + ' with ' + instructorName,
+                        text: 'Opinions for ' + courseCode + ' with ' + instructorName,
                         fontSize: 18,
                         padding: 20,
                         fontColor: 'black'
                     },
                     tooltips: {
+                        mode: 'dataset',
+                        intersect: true,
                         callbacks: {
                             label: function(tooltipItem, data) {
+                                // Get the current dataset and value for the hovered segment
                                 let dataset = data.datasets[tooltipItem.datasetIndex];
                                 let value = dataset.data[tooltipItem.index];
-                                return `${dataset.label}: ${value} reviews`;
+
+                                // Calculate the total value (sum of all segments in the bar) for the current index
+                                let total = 0;
+                                data.datasets.forEach((dataset) => {
+                                    total += dataset.data[tooltipItem.index];
+                                });
+
+                                // Calculate the percentage
+                                let percentage = Math.round(((value / total) * 100).toFixed(2));
+
+                                return `${dataset.label}: ${percentage}% of reviews`;
                             }
-                        }
+                        },
                     },
                     plugins: {
                         datalabels: {
@@ -412,32 +418,33 @@
                                 weight: 'bold',
                                 size: 14
                             },
-                            formatter: (value) => value > 0 ? value : ''
+                            formatter: (value) => value > 0 ? value : ''  
                         }
                     },
                     scales: {
                         xAxes: [{
                             display: false,
                             stacked: true,
-                            ticks: {
-                                beginAtZero: true,
-                                precision: 0,
-                                display: false
-                            },
-                            gridLines: { display: false }
+                            ticks: { display: false },
+                            gridLines: { display: false },
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.8
                         }],
                         yAxes: [{
                             display: false,
                             stacked: true,
-                            ticks: {
-                                display: false
-                            },
+                            ticks: { display: false },
                             gridLines: { display: false }
                         }]
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x'
                     }
                 }
             });
         });
     </script>
+    
 
 {% endblock %}
