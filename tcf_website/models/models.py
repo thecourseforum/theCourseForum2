@@ -685,6 +685,7 @@ class Course(models.Model):
 
 class CourseGrade(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     average = models.FloatField(default=0.0, null=True)
     a_plus = models.IntegerField(default=0)
     a = models.IntegerField(default=0)
