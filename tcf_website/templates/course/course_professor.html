@@ -247,7 +247,13 @@
 
         <div style="margin-left: auto; margin-right: auto; background-color: white; 
         padding: 10px; margin-bottom: 10px; position: relative; height:45vh; width:40vw;">
-            <canvas id="sentiment-chart"></canvas>
+            <div style="position: relative; height: 100%; width: 100%;">
+                <canvas id="sentiment-chart"></canvas>
+                <div class="sentiment-chart-overlay" id="sentiment-chart-label">
+                    <p class="gpa-text">No reviews found <i class="far fa-frown-open fa-fw"></i></p>
+                    <p class="students-text">&mdash; Students</p>
+                </div>
+            </div>
         </div>
 
 
@@ -353,6 +359,13 @@
             const labels = ["Review Positivity"];
             const sentimentLabels = Object.keys(sentimentData);
             const dataValues = Object.values(sentimentData);
+
+            const totalReviews = dataValues.reduce((sum, current) => sum + current, 0);
+
+            const chartLabel = document.getElementById('sentiment-chart-label');
+            if (totalReviews > 0) {
+                chartLabel.style.display = 'none';
+            }
     
             const barColors = {
                 normal: [
@@ -392,7 +405,7 @@
                     legend: { display: false },
                     title: {
                         display: true,
-                        text: 'Opinions for ' + courseCode + ' with ' + instructorName,
+                        text: 'Review Positivity for ' + courseCode + ' with ' + instructorName,
                         fontSize: 18,
                         padding: 20,
                         fontColor: 'black'
@@ -402,17 +415,14 @@
                         intersect: true,
                         callbacks: {
                             label: function(tooltipItem, data) {
-                                // Get the current dataset and value for the hovered segment
                                 let dataset = data.datasets[tooltipItem.datasetIndex];
                                 let value = dataset.data[tooltipItem.index];
 
-                                // Calculate the total value (sum of all segments in the bar) for the current index
                                 let total = 0;
                                 data.datasets.forEach((dataset) => {
                                     total += dataset.data[tooltipItem.index];
                                 });
 
-                                // Calculate the percentage
                                 let percentage = Math.round(((value / total) * 100).toFixed(2));
 
                                 return `${dataset.label}: ${percentage}% of reviews`;
@@ -420,14 +430,18 @@
                         },
                     },
                     hover: {
-                        mode: 'point',  // Changed from default to 'point'
+                        mode: 'point', 
                         intersect: true
                     },
                     scales: {
                         xAxes: [{
                             display: false,
                             stacked: true,
-                            ticks: { display: false },
+                            ticks: { 
+                                display: false,
+                                min: 0,
+                                max: totalReviews, 
+                            },
                             gridLines: { display: false },
                             barPercentage: 0.7,
                             categoryPercentage: 0.8
@@ -442,8 +456,8 @@
                     interaction: {
                         mode: 'nearest',
                         axis: 'x'
-                    }
-                }
+                    },                   
+                },
             });
         });
     </script>
