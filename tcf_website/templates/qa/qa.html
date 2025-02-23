@@ -187,6 +187,14 @@
                                                                 <span class="text-muted">Anonymous</span>
                                                                 | Taken {{ answer.semester }} | Updated {{ question.created|date:"n/d/y" }}
                                                                 <h6 id="date" class="text-muted">
+                                                                    {% if answer.user == user %}
+                                                                        <div class="answer-actions d-inline-flex">
+                                                                            <a data-toggle="modal" type="button" class="answer-edit h5 px-2 text-tcf-blue" data-target="#edit-answer-modal{{answer.id}}" id="edit-answer-button{{answer_id}}">
+                                                                                <i class="fas fa-pencil"></i>
+                                                                            </a>
+                                                                            {% include "qa/delete_answer_confirm_modal.html" with answer_id=answer.id %}
+                                                                        </div>
+                                                                    {% endif %}
                                                                     <a class="answer-delete h5 pl-2 text-danger" type="button"
                                                                     data-toggle="modal" data-target="#deleteAnswerModal{{answer.id}}">
                                                                     <i class="fa fa-trash-o"></i>
@@ -218,14 +226,6 @@
                                                                     <span class="downvoteCount">{{ answer.count_votes.downvotes }}</span>
                                                                 </div>
                                                             </div>
-                                                            {% if answer.user == user %}
-                                                                <div class="answer-actions d-inline-flex">
-                                                                    <a data-toggle="modal" type="button" class="answer-edit h5 px-2 text-tcf-blue" data-target="#edit-answer-modal{{answer.id}}" id="edit-answer-button{{answer_id}}">
-                                                                        <i class="fas fa-pencil-alt"></i>
-                                                                    </a>
-                                                                    {% include "qa/delete_answer_confirm_modal.html" with answer_id=answer.id %}
-                                                                </div>
-                                                            {% endif %}
                                                         </div>
                                                     </div>
                                                 </div>
