@@ -458,7 +458,7 @@
     <script type="text/javascript" src="{% static 'qa/new_answer.js' %}"></script>
 
     <!-- For GPA Graph -->
-    <canvas id="gpaChart" width="600" height="400"></canvas>
+    <canvas id="gpaChart" width="600" height="800"></canvas>
 
     <script>
         // Parse the GPA history JSON passed from Django.
@@ -476,33 +476,48 @@
 
         // Create the Chart.js line chart.
         const gpaChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-            label: 'Average GPA',
-            data: gpaData,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)', // area fill color
-            borderColor: 'rgba(75, 192, 192, 1)',           // line color
-            borderWidth: 2,
-            fill: false,  // fill the area under the line
-            tension: 0.1 // smooths the line; set to 0 for straight lines
-            }]
-        },
-        options: {
-            scales: {
-            y: {
-                beginAtZero: true,
-                suggestedMax: 4.0  // Adjust if your GPA scale is different
-            }
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Average GPA',
+                    data: gpaData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.1
+                }]
             },
-            plugins: {
-            legend: {
-                display: true,
-                position: 'top'
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                },
+                scales: {
+                    x: {
+                      grid: {
+                        display: false, // remove vertical grid lines
+                      }
+                    },
+                    y: {
+                      grid: {
+                        display: false, // remove horizontal grid lines
+                      },
+                      min: 0,
+                      max: 4.0,
+                      ticks: {
+                        stepSize: 0.5,
+                      },
+                    }
+                  },                         
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                }
             }
-            }
-        }
         });
     </script>
 
