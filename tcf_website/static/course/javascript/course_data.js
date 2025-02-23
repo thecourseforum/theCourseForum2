@@ -1,7 +1,6 @@
 let barConfig;
 let pieConfig;
 let myChart;
-let totalSum;
 const ctx = document.getElementById("myChart");
 
 function togglePieChart() {
@@ -241,9 +240,9 @@ const createChart = (gradesData) => {
       },
     },
   };
+  // eslint-disable-next-line no-new,no-undef
   Chart.register(ChartDataLabels);
 
-  // Generate configuration for Pie Chart
   pieConfig = {
     type: "doughnut",
     data: chartData,
@@ -254,13 +253,14 @@ const createChart = (gradesData) => {
           display: false,
         },
         datalabels: {
-          color: "#fff", // White text
+          color: "#fff", 
           formatter: (value, context) => {
             const dataset = context.chart.data.datasets[0];
             const total = dataset.data.reduce((acc, num) => acc + num, 0);
             const percentage = (value / total) * 100;
-            
-            return percentage > 5 ? context.chart.data.labels[context.dataIndex] : ""; // Show only if >5%
+            return percentage > 5 
+            ? context.chart.data.labels[context.dataIndex]
+            : "";
           },
           font: {
             size: 14,
