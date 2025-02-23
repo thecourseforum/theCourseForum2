@@ -249,17 +249,6 @@ const createChart = (gradesData) => {
     data: chartData,
     options: {
       maintainAspectRatio: false,
-      tooltips: {
-        callbacks: {
-          label: function (tooltipItem, data) {
-            const dataset = data.datasets[0];
-            const total = dataset.data.reduce((acc, num) => acc + num, 0);
-            const percent = ((dataset.data[tooltipItem.index] / total) * 100).toFixed(1); // 1 decimal place
-            return `${percent}%`; // Show percentage on hover
-          },
-        },
-        displayColors: false,
-      },
       plugins: {
         legend: {
           display: false,
@@ -278,6 +267,18 @@ const createChart = (gradesData) => {
           },
           anchor: "center",
           align: "center",
+        },
+        tooltip: {
+          callbacks: {
+            label: function (tooltipItem) {
+              const dataset = tooltipItem.dataset;
+              const total = dataset.data.reduce((acc, num) => acc + num, 0);
+              const value = dataset.data[tooltipItem.dataIndex];
+              const percent = ((value / total) * 100).toFixed(1);
+              return `${value} (${percent}%)`;
+            },
+          },
+          displayColors: false,
         },
         labels: {
           // render 'label', 'value', 'percentage', 'image' or custom function, default is 'percentage'
