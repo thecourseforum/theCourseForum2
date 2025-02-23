@@ -45,7 +45,7 @@ def search(request):
         ),
         "from_time": request.GET.get("from_time"),
         "to_time": request.GET.get("to_time"),
-        "open_sections": request.GET.get("open_sections") == "on",
+        "open_sections": request.GET.get("open_sections", "") == "on",
     }
 
     # Save filters to session
