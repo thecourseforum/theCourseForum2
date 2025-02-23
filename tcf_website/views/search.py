@@ -191,7 +191,7 @@ def filter_courses(filters):
     # Apply filters
     results = apply_filters(results, filters)
 
-    results = results.distinct().order_by("subdepartment__mnemonic", "number")
+    results = results.distinct().order_by("subdepartment__mnemonic", "number")[:15]
 
     # Convert to same format as fetch_courses
     courses = [
