@@ -135,6 +135,12 @@
   margin: 0;
 }
 
+.sentiment-text {
+  color: #384676;
+  font-size: 28px;
+  margin: 0;
+}
+
 .students-text {
   color: #56679d;
   font-size: 16px;
@@ -201,6 +207,10 @@
   }
 
   .gpa-text {
+    font-size: 24px;
+  }
+
+  .sentiment-text {
     font-size: 24px;
   }
   .students-text {
@@ -281,6 +291,11 @@
   .gpa-text {
     font-size: 18px;
   }
+
+  .sentiment-text {
+    font-size: 18px;
+  }
+  
   .students-text {
     font-size: 12px;
   }

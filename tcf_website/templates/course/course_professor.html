@@ -250,8 +250,7 @@
             <div style="position: relative; height: 100%; width: 100%;">
                 <canvas id="sentiment-chart"></canvas>
                 <div class="sentiment-chart-overlay" id="sentiment-chart-label">
-                    <p class="gpa-text">No reviews found <i class="far fa-frown-open fa-fw"></i></p>
-                    <p class="students-text">&mdash; Students</p>
+                    <p class="sentiment-text">No reviews found <i class="far fa-frown-open fa-fw"></i></p>
                 </div>
             </div>
         </div>
@@ -408,7 +407,7 @@
                         text: 'Review Positivity for ' + courseCode + ' with ' + instructorName,
                         fontSize: 18,
                         padding: 20,
-                        fontColor: 'black'
+                        fontColor: '#384676'
                     },
                     tooltips: {
                         mode: 'dataset',
@@ -444,13 +443,14 @@
                             },
                             gridLines: { display: false },
                             barPercentage: 0.7,
-                            categoryPercentage: 0.8
+                            categoryPercentage: 0.8,
                         }],
                         yAxes: [{
                             display: false,
                             stacked: true,
                             ticks: { display: false },
-                            gridLines: { display: false }
+                            gridLines: { display: false },
+                            barThickness : 73
                         }]
                     },
                     interaction: {
