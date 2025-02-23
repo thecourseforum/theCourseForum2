@@ -50,6 +50,7 @@ def search(request):
     # Save filters to session
     request.session["search_filters"] = filters
 
+    # No need to filter based on query string if no query
     if query:
         courses = fetch_courses(query, filters)
         instructors = fetch_instructors(query)
@@ -155,10 +156,12 @@ def fetch_courses(query, filters):
     # Apply filters
     results = apply_filters(results, filters)
 
-    results = (results.filter(max_similarity__gte=similarity_threshold)
-            .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
-            .exclude(semester_last_taught_id__lt=48)
-            .order_by("-max_similarity"))
+    results = (
+        results.filter(max_similarity__gte=similarity_threshold)
+        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+        .exclude(semester_last_taught_id__lt=48)
+        .order_by("-max_similarity")[:15] # limit to 15 results to prevent long load times
+    )
 
     courses = [
         {
@@ -191,6 +194,7 @@ def filter_courses(filters):
     # Apply filters
     results = apply_filters(results, filters)
 
+    # Limit to 15 results to prevent long load times
     results = results.distinct().order_by("subdepartment__mnemonic", "number")[:15]
 
     # Convert to same format as fetch_courses
@@ -208,6 +212,7 @@ def filter_courses(filters):
 
     return courses
 
+
 def apply_filters(results, filters):
     """Apply filters to course queryset."""
     if filters.get("disciplines"):
@@ -223,6 +228,7 @@ def apply_filters(results, filters):
     from_time = filters.get("from_time")
     to_time = filters.get("to_time")
 
+    # only filters the dates and time if time filter is present and weekdays are not empty or full
     if len(weekdays) != 5 and len(weekdays) != 0 or from_time or to_time:
         time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
