@@ -56,9 +56,6 @@ const loadData = (data) => {
     dfw,
   ];
 
-  // Calculate total number of students
-  totalSum = grades_data.reduce((total, num) => total + num, 0);
-
   // Create default pie chart
   /* eslint-enable camelcase */
   createChart(grades_data);
@@ -253,14 +250,14 @@ const createChart = (gradesData) => {
           display: false,
         },
         datalabels: {
-          color: "#fff", 
+          color: "#fff",
           formatter: (value, context) => {
             const dataset = context.chart.data.datasets[0];
             const total = dataset.data.reduce((acc, num) => acc + num, 0);
             const percentage = (value / total) * 100;
-            return percentage > 5 
-            ? context.chart.data.labels[context.dataIndex]
-            : "";
+            return percentage > 5
+              ? context.chart.data.labels[context.dataIndex]
+              : "";
           },
           font: {
             size: 14,
