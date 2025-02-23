@@ -369,7 +369,7 @@
     
             const datasets = sentimentLabels.map((label, index) => ({
                 label: label,
-                data: [dataValues[index]],  // Each sentiment category gets one stacked bar
+                data: [dataValues[index]],
                 backgroundColor: barColors[index % barColors.length],
                 borderWidth: 0
             }));
@@ -389,7 +389,7 @@
                     legend: { display: false },
                     title: {
                         display: true,
-                        text: 'Opinions for ' + courseCode + ' with ' + instructorName,
+                        text: 'Review Positivity for ' + courseCode + ' with ' + instructorName,
                         fontSize: 18,
                         padding: 20,
                         fontColor: 'black'
@@ -439,6 +439,5 @@
             });
         });
     </script>
-    
 
 {% endblock %}
