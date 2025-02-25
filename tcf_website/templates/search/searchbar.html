@@ -1,6 +1,6 @@
 <!-- searchbar.html -->
  
-<form class="form-inline flex-grow-1" action="{% url 'search' %}" method="get">
+<form id="searchbar-form" class="form-inline flex-grow-1" action="{% url 'search' %}" method="get">
   <div class="input-group flex-grow-1">
     <input 
       type="search" 
@@ -167,6 +167,25 @@
 
 
 <script>
+
+  const form = document.getElementById('searchbar-form');
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+
+    for (const [key, value] of formData.entries()) {
+        if (value.trim() !== "") {
+            params.append(key, value);
+        }
+    }
+
+    const newUrl = form.action + (params.toString() ? "?" + params.toString() : "");
+    window.location.href = newUrl;
+  });
+
   document.addEventListener('DOMContentLoaded', function() {
     function getCookie(name) {
       const value = `; ${document.cookie}`;
