@@ -14,18 +14,28 @@ from ..models import Course, Instructor, Subdepartment
 
 def group_by_dept(courses):
     """Groups courses by their department and adds relevant data."""
+    # Get all unique mnemonics from courses
+    mnemonics = set(course["mnemonic"] for course in courses)
+
+    # Fetch all subdepartments in a single query
+    subdepts = {
+        subdept.mnemonic: subdept
+        for subdept in Subdepartment.objects.filter(mnemonic__in=mnemonics)
+    }
+
     grouped_courses = {}
     for course in courses:
         course_dept = course["mnemonic"]
         if course_dept not in grouped_courses:
-            subdept = Subdepartment.objects.filter(mnemonic=course_dept).first()
-            # should only ever have one returned with that mnemonic
-            grouped_courses[course_dept] = {
-                "subdept_name": subdept.name,
-                "dept_id": subdept.department_id,
-                "courses": [],
-            }
-        grouped_courses[course_dept]["courses"].append(course)
+            subdept = subdepts.get(course_dept)
+            if subdept:
+                grouped_courses[course_dept] = {
+                    "subdept_name": subdept.name,
+                    "dept_id": subdept.department_id,
+                    "courses": [],
+                }
+        if course_dept in grouped_courses:
+            grouped_courses[course_dept]["courses"].append(course)
 
     return grouped_courses
 
@@ -155,10 +165,12 @@ def fetch_courses(query, filters):
     # Apply filters
     results = apply_filters(results, filters)
 
-    results = (results.filter(max_similarity__gte=similarity_threshold)
-            .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
-            .exclude(semester_last_taught_id__lt=48)
-            .order_by("-max_similarity"))[:15]
+    results = (
+        results.filter(max_similarity__gte=similarity_threshold)
+        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+        .exclude(semester_last_taught_id__lt=48)
+        .order_by("-max_similarity")
+    )[:15]
 
     courses = [
         {
@@ -207,6 +219,7 @@ def filter_courses(filters):
     ]
 
     return courses
+
 
 def apply_filters(results, filters):
     """Apply filters to course queryset."""
