@@ -145,21 +145,15 @@ def fetch_courses(query, filters):
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
-            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", search_query),
-            title_similarity=TrigramSimilarity("title", search_query),
-        )
-        # round results to two decimal places
-        .annotate(
+            mnemonic=F("subdepartment__mnemonic"),
             max_similarity=Round(
                 Greatest(
-                    F("mnemonic_similarity"),
-                    F("title_similarity"),
+                    TrigramSimilarity("combined_mnemonic_number", search_query),
+                    TrigramSimilarity("title", search_query),
                 ),
                 2,
-            )
+            ),
         )
-        # expose mnemonic to view
-        .annotate(mnemonic=F("subdepartment__mnemonic"))
     )
 
     # Apply filters
@@ -222,21 +216,27 @@ def filter_courses(filters):
 
 
 def apply_filters(results, filters):
-    """Apply filters to course queryset."""
+    """Apply filters to course queryset using Q objects for more readable code."""
+    filter_conditions = Q()
+
     if filters.get("disciplines"):
-        results = results.filter(disciplines__name__in=filters.get("disciplines"))
+        filter_conditions &= Q(disciplines__name__in=filters.get("disciplines"))
 
     if filters.get("subdepartments"):
-        results = results.filter(subdepartment__mnemonic__in=filters.get("subdepartments"))
+        filter_conditions &= Q(subdepartment__mnemonic__in=filters.get("subdepartments"))
 
     if filters.get("instructors"):
-        results = results.filter(section__instructors__id__in=filters.get("instructors"))
+        filter_conditions &= Q(section__instructors__id__in=filters.get("instructors"))
 
+    if filter_conditions:
+        results = results.filter(filter_conditions)
+
+    # Handle time filters
     weekdays = [day for day in filters.get("weekdays", []) if day]
     from_time = filters.get("from_time")
     to_time = filters.get("to_time")
 
-    if len(weekdays) != 5 and len(weekdays) != 0 or from_time or to_time:
+    if (len(weekdays) != 5 and len(weekdays) != 0) or from_time or to_time:
         time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
 
