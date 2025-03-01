@@ -264,7 +264,7 @@
       "github": "namaikureishi"
     }
   ],
-  "marketing_team": [
+  "design_team": [
     {
       "name": "Chai Zhang",
       "role": "Designer",
@@ -276,7 +276,9 @@
       "role": "Designer",
       "class": "2028",
       "img_filename": "DM_Tara_Vidyababu.webp"
-    },
+    }
+  ],
+  "marketing_team": [
     {
       "name": "Carissa Chen",
       "role": "Marketing",
@@ -288,6 +290,12 @@
       "role": "Marketing",
       "class": "2027",
       "img_filename": "DM_Julie_Huang.jpg"
+    },
+    {
+      "name": "Alyssa Zhang",
+      "role": "Marketing",
+      "class": "2027",
+      "img_filename": "DM_Alyssa_Zhang.jpg"
     }
   ]
 }
