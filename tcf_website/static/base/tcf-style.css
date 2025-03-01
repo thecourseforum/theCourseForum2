@@ -190,7 +190,16 @@ p {
 }
 
 .form-control {
-  background-color: var(--input-color);
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+}
+
+.form-control::placeholder {
+  color: var(--input-text-color);
+}
+
+.forcontrol:disabled {
+  background-color: var(--background-color);
 }
 
 /* Note: Can use Bootstrap "light" color
