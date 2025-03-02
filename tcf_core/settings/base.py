@@ -43,10 +43,25 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "social_django",
     "cachalot",  # TODO: add Redis?
+    "storages",
     "rest_framework",
     "django_filters",
     "tcf_website",
 ]
+
+AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = env.str("AWS_S3_REGION_NAME", default="us-east-1")
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+AWS_DEFAULT_ACL = "public-read"
+AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
+STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -122,8 +137,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
+STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 
 # Database
