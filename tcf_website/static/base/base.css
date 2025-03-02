@@ -21,6 +21,19 @@ Responsive breakpoints:
 
 :root {
   --sidebar-width: 7rem; /* Width of sidebar is fixed */
+  --background-color: #000000 
+}
+
+body.body {
+  --background-color: black;
+  --card-background-color: #333333;
+  --input-background-color: #545454;
+  --input-text-color: #a6a6a6;
+  --accent-text-color: #d75626;
+  --basic-text-color: white;
+  --icon-color: white;
+  --input-border-color: #a6a6a6;
+  
 }
 
 html {
@@ -31,12 +44,13 @@ html {
 
 body {
   padding-top: 70px; /* Height of fixed navbar */
-  background-color: var(--background-color);
+  background-color: var(--background-color) !important;
   max-width: 100vw;
+
 }
 
 .content {
-  background-color: var(--background-color);
+  background-color: var(--background-color) !important;
 }
 
 @media (min-width: 768px) {
@@ -53,7 +67,7 @@ footer {
   height: 80px; /* Set the fixed height of the footer here */
   line-height: 30px; /* Vertically center the text there */
   text-align: center;
-  color: var(--background-color);
+  color: var(--background-color) !important;
   background-color: #172248;
   padding-top: 15px;
 }
@@ -91,8 +105,8 @@ footer > .row {
 .btn.btn-primary,
 .btn.btn-outline-primary {
   color: white;
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
 }
 
 .btn.btn-outline-primary:not(:disabled):not(.disabled).active,
@@ -104,8 +118,8 @@ footer > .row {
 
 .btn.btn-outline-primary {
   color: white;
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
 }
 
 .btn.btn-primary:hover,
@@ -150,11 +164,11 @@ footer > .row {
 
 /* Change slider color */
 .custom-range::-webkit-slider-thumb {
-  background: var(--accent-color);
+  background: var(--accent-color)!important;
 }
 .custom-range::-moz-range-thumb {
-  background: var(--accent-color);
+  background: var(--accent-color)!important;
 }
 .custom-range::-ms-thumb {
-  background: var(--accent-color);
+  background: var(--accent-color)!important;
 }
