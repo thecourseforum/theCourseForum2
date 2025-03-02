@@ -54,17 +54,16 @@ AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME = env.str("AWS_S3_REGION_NAME", default="us-east-1")
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-AWS_DEFAULT_ACL = 'public-read'
+AWS_DEFAULT_ACL = "public-read"
 AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3.S3Storage",
-        "OPTIONS": {
-        },
+        "OPTIONS": {},
     },
+    "staticfiles": "storages.backends.s3.S3Storage",
 }
-STATICFILES_STORAGE = "storages.backends.s3.S3Storage"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -183,9 +182,7 @@ SOCIAL_AUTH_EMAIL_AUTH_WHITELISTED_DOMAINS = ["virginia.edu"]
 
 WHITELISTED_DOMAINS = ["virginia.edu"]
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_LOGIN_URL = reverse_lazy(
-    "social:begin", args=["google-oauth2"]
-)
+SOCIAL_AUTH_GOOGLE_OAUTH2_LOGIN_URL = reverse_lazy("social:begin", args=["google-oauth2"])
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 SOCIAL_AUTH_PIPELINE = (
     "tcf_core.auth_pipeline.password_validation",
