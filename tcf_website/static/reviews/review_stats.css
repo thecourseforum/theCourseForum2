@@ -1,3 +1,14 @@
+body.body {
+  --background-color: black;
+  --card-background-color: #333333;
+  --input-background-color: #545454;
+  --input-text-color: #a6a6a6;
+  --accent-text-color: #d75626;
+  --basic-text-color: white;
+  --icon-color: white;
+  --input-border-color: #a6a6a6;
+}
+
 .large-stats {
   padding-top: 15px;
   padding-bottom: 10px;
@@ -10,4 +21,8 @@
   .large-stats h2 {
     font-size: 20px;
   }
+}
+
+h1, h2 {
+  color: var(--basic-text-color);
 }
