@@ -55,3 +55,15 @@
   overflow: hidden;
   opacity: 0.8;
 }
+
+.jumbotron {
+  background-color: var(--input-background-color) !important;
+}
+
+.text-muted {
+  color: var(--basic-text-color) !important;
+}
+
+.card-text {
+  color: var(--basic-text-color) !important;
+}
