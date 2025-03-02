@@ -32,16 +32,14 @@ env:
   REVIEW_DRIVE_EMAIL: ${{ secrets.REVIEW_DRIVE_EMAIL }}
   REVIEW_DRIVE_PASSWORD: ${{ secrets.REVIEW_DRIVE_PASSWORD }}
   # aws ecs image
-  IMAGE_NAME: latest
   AWS_REGION: us-east-1                          
   ECS_SERVICE: barrett-fogle-love-v1          
-  ECS_CLUSTER: tcf-fargate-cluster             
-  ECS_TASK_DEFINITION: tcf-prod-task:14
-  CONTAINER_IMAGE: tcf/thecourseforum2:latest
-  CONTAINER_NAME: latest
+  ECS_CLUSTER: tcf-fargate-cluster    
+  ECR_REPO: tcf/thecourseforum2 
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  # aws s3 bucket
   S3_BUCKET_NAME: tcf-static-files
 
 jobs:
@@ -105,15 +103,15 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.CONTAINER_IMAGE }}:$(github.sha)
+          tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{github.sha}}
 
       - name: Add image in ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.CONTAINER_IMAGE }}$(github.sha)      
+          task-definition: $(aws ecs list-task-definitions --family-prefix tcf-prod-task --sort DESC --max-items 1 --region=us-east-1 --profile tcf | jq -r '.taskDefinitionArns[0] | split("/")[-1]')
+          container-name: ${{ env.ECR_REPO }}
+          image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{github.sha}}     
             
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
