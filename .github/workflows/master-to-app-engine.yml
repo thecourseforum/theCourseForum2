@@ -33,7 +33,7 @@ env:
   REVIEW_DRIVE_PASSWORD: ${{ secrets.REVIEW_DRIVE_PASSWORD }}
   # aws ecs image
   IMAGE_NAME: latest
-  AWS_REGION: us-east-1f                          
+  AWS_REGION: us-east-1                          
   ECS_SERVICE: barrett-fogle-love-v1          
   ECS_CLUSTER: tcf-fargate-cluster             
   ECS_TASK_DEFINITION: tcf-prod-task:14
