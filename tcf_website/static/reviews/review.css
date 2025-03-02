@@ -1,3 +1,14 @@
+body.body {
+  --background-color: black;
+  --card-background-color: #333333;
+  --input-background-color: #545454;
+  --input-text-color: #a6a6a6;
+  --accent-text-color: #d75626;
+  --basic-text-color: white;
+  --icon-color: white;
+  --input-border-color: #a6a6a6;
+}
+
 .review-content .review-text-body.collapse:not(.show) {
   display: block;
   height: 12rem;
@@ -40,4 +51,8 @@
 
 .tooltip-inner {
   margin: 0;
+}
+
+.review-text-body {
+  color: var(--basic-text-color);
 }
