@@ -76,7 +76,15 @@ h6,
 }
 
 h1, .h1 {
-  color: var(--h1-text-color);
+  color: var(--basic-text-color);
+}
+
+h3, .h3 {
+  color: var(--basic-text-color);
+}
+
+h4, .h4 {
+  color: var(--basic-text-color);
 }
 
 body {
@@ -186,7 +194,7 @@ ul {
 }
 
 p {
-  color: var(--p-card-text-color);
+  color: var(--basic-text-color);
 }
 
 .form-control {
