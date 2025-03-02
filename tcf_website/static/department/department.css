@@ -1,6 +1,6 @@
-body {
-    color: var(--h1-text-color);
-}
+body.dark-mode {
+    color: var(--basic-text-color);
+  }
 
 .bg-white {
     background-color: var(--card-background-color) !important;
