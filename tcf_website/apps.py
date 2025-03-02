@@ -5,4 +5,5 @@ from django.apps import AppConfig
 
 class TcfWebsiteConfig(AppConfig):
     """TCF Django Web Application Configuration."""
-    name = 'tcf_website'
+
+    name = "tcf_website"

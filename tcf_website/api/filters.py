@@ -1,5 +1,7 @@
 """"Custom DRF pagination classes"""
+
 from django_filters import FilterSet, NumberFilter
+
 from ..models import Instructor, Semester
 
 # pylint: disable=unused-argument
@@ -7,7 +9,8 @@ from ..models import Instructor, Semester
 
 class InstructorFilter(FilterSet):
     """Filter for Instructor"""
-    course = NumberFilter(method='filter_recent_instructors_by_course')
+
+    course = NumberFilter(method="filter_recent_instructors_by_course")
 
     def filter_recent_instructors_by_course(self, queryset, name, value):
         """Filters instructors who taught the course in the recent 5 years"""
@@ -18,4 +21,4 @@ class InstructorFilter(FilterSet):
 
     class Meta:
         model = Instructor
-        fields = ['course']
+        fields = ["course"]

@@ -6,139 +6,139 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     replaces = [
-        ('tcf_website',
-         '0004_remove_coursegrade_d_remove_coursegrade_d_minus_and_more'),
-        ('tcf_website',
-         '0004_instructor_hidden'),
-        ('tcf_website',
-         '0005_merge_20230205_1937'),
-        ('tcf_website',
-         '0006_alter_coursegrade_average_and_more')]
+        (
+            "tcf_website",
+            "0004_remove_coursegrade_d_remove_coursegrade_d_minus_and_more",
+        ),
+        ("tcf_website", "0004_instructor_hidden"),
+        ("tcf_website", "0005_merge_20230205_1937"),
+        ("tcf_website", "0006_alter_coursegrade_average_and_more"),
+    ]
 
     dependencies = [
-        ('tcf_website', '0003_review_hidden'),
+        ("tcf_website", "0003_review_hidden"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='coursegrade',
-            name='d',
+            model_name="coursegrade",
+            name="d",
         ),
         migrations.RemoveField(
-            model_name='coursegrade',
-            name='d_minus',
+            model_name="coursegrade",
+            name="d_minus",
         ),
         migrations.RemoveField(
-            model_name='coursegrade',
-            name='d_plus',
+            model_name="coursegrade",
+            name="d_plus",
         ),
         migrations.RemoveField(
-            model_name='coursegrade',
-            name='drop',
+            model_name="coursegrade",
+            name="drop",
         ),
         migrations.RemoveField(
-            model_name='coursegrade',
-            name='f',
+            model_name="coursegrade",
+            name="f",
         ),
         migrations.RemoveField(
-            model_name='coursegrade',
-            name='number',
+            model_name="coursegrade",
+            name="number",
         ),
         migrations.RemoveField(
-            model_name='coursegrade',
-            name='ot',
+            model_name="coursegrade",
+            name="ot",
         ),
         migrations.RemoveField(
-            model_name='coursegrade',
-            name='subdepartment',
+            model_name="coursegrade",
+            name="subdepartment",
         ),
         migrations.RemoveField(
-            model_name='coursegrade',
-            name='title',
+            model_name="coursegrade",
+            name="title",
         ),
         migrations.RemoveField(
-            model_name='coursegrade',
-            name='withdraw',
+            model_name="coursegrade",
+            name="withdraw",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='d',
+            model_name="courseinstructorgrade",
+            name="d",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='d_minus',
+            model_name="courseinstructorgrade",
+            name="d_minus",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='d_plus',
+            model_name="courseinstructorgrade",
+            name="d_plus",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='drop',
+            model_name="courseinstructorgrade",
+            name="drop",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='email',
+            model_name="courseinstructorgrade",
+            name="email",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='f',
+            model_name="courseinstructorgrade",
+            name="f",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='first_name',
+            model_name="courseinstructorgrade",
+            name="first_name",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='last_name',
+            model_name="courseinstructorgrade",
+            name="last_name",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='middle_name',
+            model_name="courseinstructorgrade",
+            name="middle_name",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='number',
+            model_name="courseinstructorgrade",
+            name="number",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='ot',
+            model_name="courseinstructorgrade",
+            name="ot",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='subdepartment',
+            model_name="courseinstructorgrade",
+            name="subdepartment",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='title',
+            model_name="courseinstructorgrade",
+            name="title",
         ),
         migrations.RemoveField(
-            model_name='courseinstructorgrade',
-            name='withdraw',
+            model_name="courseinstructorgrade",
+            name="withdraw",
         ),
         migrations.AddField(
-            model_name='coursegrade',
-            name='dfw',
+            model_name="coursegrade",
+            name="dfw",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='courseinstructorgrade',
-            name='dfw',
+            model_name="courseinstructorgrade",
+            name="dfw",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='instructor',
-            name='hidden',
+            model_name="instructor",
+            name="hidden",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='coursegrade',
-            name='average',
+            model_name="coursegrade",
+            name="average",
             field=models.FloatField(default=0.0, null=True),
         ),
         migrations.AlterField(
-            model_name='courseinstructorgrade',
-            name='average',
+            model_name="courseinstructorgrade",
+            name="average",
             field=models.FloatField(default=0.0, null=True),
         ),
     ]

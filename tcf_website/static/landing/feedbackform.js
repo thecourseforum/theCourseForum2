@@ -35,7 +35,7 @@
 // form.onsubmit = submit;
 
 // Show confirmation modal on form submit
-$("#feedbackform").submit(function(e) {
-    $("#confirmationModal").modal("show");
-    return false;
+$("#feedbackform").submit(function (e) {
+  $("#confirmationModal").modal("show");
+  return false;
 });

@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "ms-python.black-formatter",
+    "ms-python.isort",
+    "ms-python.mypy-type-checker",
+    "ms-python.vscode-pylance",
+    "ms-python.python",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
+  ]
+}

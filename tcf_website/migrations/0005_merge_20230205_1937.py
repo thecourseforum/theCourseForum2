@@ -6,9 +6,11 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tcf_website', '0004_instructor_hidden'),
-        ('tcf_website', '0004_remove_coursegrade_d_remove_coursegrade_d_minus_and_more'),
+        ("tcf_website", "0004_instructor_hidden"),
+        (
+            "tcf_website",
+            "0004_remove_coursegrade_d_remove_coursegrade_d_minus_and_more",
+        ),
     ]
 
-    operations = [
-    ]
+    operations = []

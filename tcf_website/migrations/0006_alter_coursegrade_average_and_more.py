@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tcf_website', '0005_merge_20230205_1937'),
+        ("tcf_website", "0005_merge_20230205_1937"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='coursegrade',
-            name='average',
+            model_name="coursegrade",
+            name="average",
             field=models.FloatField(default=0.0, null=True),
         ),
         migrations.AlterField(
-            model_name='courseinstructorgrade',
-            name='average',
+            model_name="courseinstructorgrade",
+            name="average",
             field=models.FloatField(default=0.0, null=True),
         ),
     ]

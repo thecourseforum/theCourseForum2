@@ -9,5 +9,5 @@ from .base import *
 
 # The following if statement is needed to prevent overwriting global variables when
 # this settings file is interpreted
-if os.environ.get('DJANGO_SETTINGS_MODULE') == 'tcf_core.settings.ci':
+if os.environ.get("DJANGO_SETTINGS_MODULE") == "tcf_core.settings.ci":
     pass

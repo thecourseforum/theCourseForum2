@@ -6,9 +6,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tcf_website', '0003_review_hidden'),
-        ('tcf_website', '0004_alter_question_placeholder'),
+        ("tcf_website", "0003_review_hidden"),
+        ("tcf_website", "0004_alter_question_placeholder"),
     ]
 
-    operations = [
-    ]
+    operations = []

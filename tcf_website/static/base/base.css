@@ -20,19 +20,19 @@ Responsive breakpoints:
 */
 
 :root {
-  --sidebar-width: 7rem;        /* Width of sidebar is fixed */
+  --sidebar-width: 7rem; /* Width of sidebar is fixed */
 }
 
 html {
-    position: relative;
-    min-height: 100%;
-    max-width: 100vw;
+  position: relative;
+  min-height: 100%;
+  max-width: 100vw;
 }
 
 body {
-    padding-top: 70px; /* Height of fixed navbar */
-    background-color: var(--background-color);
-    max-width: 100vw;
+  padding-top: 70px; /* Height of fixed navbar */
+  background-color: var(--background-color);
+  max-width: 100vw;
 }
 
 .content {
@@ -40,41 +40,56 @@ body {
 }
 
 @media (min-width: 768px) {
-    .content {
-        width: calc(100vw - var(--sidebar-width));
-        margin-left: var(--sidebar-width);
-    }
+  .content {
+    width: calc(100vw - var(--sidebar-width));
+    margin-left: var(--sidebar-width);
+  }
 }
 
 footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 80px; /* Set the fixed height of the footer here */
-    line-height: 30px; /* Vertically center the text there */
-    text-align: center;
-    color: var(--background-color);
-    background-color: #172248;
-    padding-top: 15px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 80px; /* Set the fixed height of the footer here */
+  line-height: 30px; /* Vertically center the text there */
+  text-align: center;
+  color: var(--background-color);
+  background-color: #172248;
+  padding-top: 15px;
 }
 
 footer > .row {
-    background-color: #172248;
+  background-color: #172248;
 }
 
 /* For text on small screens */
 @media (max-width: 900px) {
-  h1{ font-size: 32px; }
-  h2{ font-size: 26px; }
-  h3{ font-size: 22px; }
-  h4{ font-size: 19px; }
-  h5{ font-size: 16px; }
-  h6{ font-size: 14px; }
-  html{ font-size: 14px; }
+  h1 {
+    font-size: 32px;
+  }
+  h2 {
+    font-size: 26px;
+  }
+  h3 {
+    font-size: 22px;
+  }
+  h4 {
+    font-size: 19px;
+  }
+  h5 {
+    font-size: 16px;
+  }
+  h6 {
+    font-size: 14px;
+  }
+  html {
+    font-size: 14px;
+  }
 }
 
 /* For buttons */
-.btn.btn-primary, .btn.btn-outline-primary {
+.btn.btn-primary,
+.btn.btn-outline-primary {
   color: white;
   background-color: var(--accent-color);
   border-color: var(--accent-color);
@@ -83,8 +98,8 @@ footer > .row {
 .btn.btn-outline-primary:not(:disabled):not(.disabled).active,
 .btn.btn-outline-primary:not(:disabled):not(.disabled):active {
   color: white;
-  background-color: #AC451E !important;
-  border-color: #AC451E !important;
+  background-color: #ac451e !important;
+  border-color: #ac451e !important;
 }
 
 .btn.btn-outline-primary {
@@ -96,8 +111,8 @@ footer > .row {
 .btn.btn-primary:hover,
 .btn.btn-outline-primary:hover {
   color: white;
-  background-color: #AC451E !important;
-  border-color: #AC451E !important;
+  background-color: #ac451e !important;
+  border-color: #ac451e !important;
 }
 
 .btn:not(:disabled):not(.disabled).active.focus,
@@ -118,19 +133,19 @@ footer > .row {
 
 /* Change tooltop color */
 .tooltip-inner {
-    background-color: var(--dark-color) !important;
+  background-color: var(--dark-color) !important;
 }
 .tooltip.bs-tooltip-right .arrow:before {
-    border-right-color: var(--dark-color) !important;
+  border-right-color: var(--dark-color) !important;
 }
 .tooltip.bs-tooltip-left .arrow:before {
-    border-left-color: var(--dark-color) !important;
+  border-left-color: var(--dark-color) !important;
 }
 .tooltip.bs-tooltip-bottom .arrow:before {
-    border-bottom-color: var(--dark-color) !important;
+  border-bottom-color: var(--dark-color) !important;
 }
 .tooltip.bs-tooltip-top .arrow:before {
-    border-top-color: var(--dark-color) !important;
+  border-top-color: var(--dark-color) !important;
 }
 
 /* Change slider color */
