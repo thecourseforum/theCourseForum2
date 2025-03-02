@@ -31,3 +31,8 @@
 .answer .downvoteAnswer:hover {
   color: rgb(215, 86, 38);
 }
+
+.question-header {
+  display: flex;
+  align-items: center;
+}

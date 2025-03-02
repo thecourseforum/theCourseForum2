@@ -76,7 +76,7 @@
                                 <div class="question" id="question{{question.id}}">
                                     <div class="row">
                                         <div class="col">
-                                            <div class="question-header">
+                                            <div class="question-header d-flex">
                                                 <!-- Use question.user to print actual question creator -->
                                                 <span class="text-muted">Anonymous</span>
                                                 | Updated {{ question.created|date:"n/d/y" }}
@@ -93,7 +93,6 @@
                                                     data-toggle="modal" data-target="#deleteQuestionModal{{question.id}}">
                                                     <i class="fa fa-trash-o"></i>
                                                     </a>
-                                                </h6>
                                             </div>
                                             <div class="question-content mb-2">
                                                 <div class="d-flex justify-content-between">
