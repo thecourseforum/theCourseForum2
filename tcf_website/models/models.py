@@ -661,6 +661,42 @@ class Course(models.Model):
         instructors = instructors.order_by(order_prefix + sort_field)
         return instructors
 
+    @classmethod
+    def filter_by_time(cls, days=None, start_time=None, end_time=None):
+        """Filter courses by available times."""
+        query = cls.objects.all()
+
+        # Get the latest semester
+        current_semester = Semester.latest()
+
+        section_conditions = Q(section__semester=current_semester)
+
+        if days:
+
+            # Map day codes to field names
+            day_map = {
+                "MON": "monday",
+                "TUE": "tuesday",
+                "WED": "wednesday",
+                "THU": "thursday",
+                "FRI": "friday",
+            }
+
+            # Get unavailable days
+            unavailable_days = {day_map[d] for d in days if d in day_map}
+
+            # Filter for sections that don't meet on unavailable days
+            for day in unavailable_days:
+                section_conditions &= Q(**{f"section__sectiontime__{day}": False})
+
+        if start_time:
+            section_conditions &= Q(section__sectiontime__start_time__gte=start_time)
+        if end_time:
+            section_conditions &= Q(section__sectiontime__end_time__lte=end_time)
+
+        query = query.filter(section_conditions)
+        return query.distinct()
+
     class Meta:
         indexes = [
             GinIndex(
@@ -775,6 +811,66 @@ class Section(models.Model):
                 fields=["sis_section_number", "semester"],
                 name="unique sections per semesters",
             )
+        ]
+
+
+class SectionTime(models.Model):
+    """Section meeting time model.
+
+    Belongs to a Section.
+    """
+
+    section = models.ForeignKey("Section", on_delete=models.CASCADE)
+
+    # Individual day fields
+    monday = models.BooleanField(default=False)
+    tuesday = models.BooleanField(default=False)
+    wednesday = models.BooleanField(default=False)
+    thursday = models.BooleanField(default=False)
+    friday = models.BooleanField(default=False)
+
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def __str__(self):
+        days = []
+        if self.monday:
+            days.append("MON")
+        if self.tuesday:
+            days.append("TUE")
+        if self.wednesday:
+            days.append("WED")
+        if self.thursday:
+            days.append("THU")
+        if self.friday:
+            days.append("FRI")
+        return f"{','.join(days)} {self.start_time}-{self.end_time}"
+
+    @property
+    def days_list(self):
+        """Return list of days this section meets."""
+        days = []
+        if self.monday:
+            days.append("MON")
+        if self.tuesday:
+            days.append("TUE")
+        if self.wednesday:
+            days.append("WED")
+        if self.thursday:
+            days.append("THU")
+        if self.friday:
+            days.append("FRI")
+        return days
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["monday"]),
+            models.Index(fields=["tuesday"]),
+            models.Index(fields=["wednesday"]),
+            models.Index(fields=["thursday"]),
+            models.Index(fields=["friday"]),
+            models.Index(fields=["start_time"]),
+            models.Index(fields=["end_time"]),
         ]
 
 
