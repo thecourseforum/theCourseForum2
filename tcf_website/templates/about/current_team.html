@@ -55,9 +55,32 @@
       </div>
     </div>
 
+    <div class="design-team jumbotron py-5 bg-light">
+      <div class="container">
+        <h3>Design Team</h3>
+        <hr/>
+        <div class="row text-left">
+          {% for member in design_team %}
+            <div class="col-lg-3 col-sm-6 d-flex">
+              <div class="member card mb-4 shadow-sm flex-fill">
+                <div class="pfp">
+                  <img class="card-img-top" src="{% static 'about/team-pfps/'|add:member.img_filename %}" alt="{{ member.name }}">
+                </div>
+                <div class="card-body">
+                  <h5 class="card-text">{{ member.name }}</h5>
+                  <p class="card-text small text-muted">Class of {{ member.class }}</p>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+
     <div class="marketing-team jumbotron py-5 bg-light">
       <div class="container">
-        <h3>Marketing & Design Team</h3>
+        <h3>Marketing Team</h3>
         <hr/>
         <div class="row text-left">
           {% for member in marketing_team %}
