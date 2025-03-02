@@ -94,26 +94,19 @@
               </div>
             </div>
             <div class="middle-filters">
-              <div class="filter-section compact">      
-                <h6 class="filter-header">
-                  Availability 
-                </h6>
-                <div class="availability-check">
-                  <input class="form-check-input day-checkbox" type="checkbox" id="wednesday" value="WED">
-                  <label class="availability-check-label" for="wednesday">Only display courses with open sections</label>
-                </div>
-              </div>
-              <div class="filter-section compact">      
+              <div class="filter-section compact">
                 <h6 class="filter-header">
                   Minimum GPA
                 </h6>
-                <div class="day-toggles">
-                  <form method="get">
-                    <select class="gpa-select" id="gpa-select" name="min_gpa">
-                      <option value="" disabled selected>Select Min GPA</option>
-                        <!-- Options will be populated dynamically using JavaScript -->
-                    </select>
-                </form>
+                <div class="gpa-input">
+                  <select class="gpa-select" id="gpa-select" name="min_gpa">
+                    <!-- GPA range of 4.0 to 2.0 filled in by Javascript -->
+                    {% if min_gpa %}
+                      <option value="" disabled selected>{{min_gpa }}</option>
+                    {% else %}
+                      <option value="" disabled selected>Select a minimum GPA</option>
+                    {% endif %}
+                  </select>
                 </div>
               </div>
             </div>
@@ -423,11 +416,6 @@
     }
 
     // Preserve selected value from URL query params
-    const urlParams = new URLSearchParams(window.location.search);
-    const selectedGPA = urlParams.get("min_gpa");
-    if (selectedGPA) {
-        select.value = selectedGPA;
-    }
 
     // Initialize weekdays
     updateWeekdays();
@@ -503,7 +491,7 @@
     gap: 1.5rem;
   }
 
-  .day-toggles {
+  .day-toggles, .gpa-input{
     display: flex;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
@@ -768,4 +756,39 @@
     opacity: 0;
     visibility: hidden;
   }
+
+  .dropdown-container {
+            position: relative;
+            display: inline-block;
+            width: 200px;
+        }
+
+        .dropdown-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .dropdown-list {
+            display: none;
+            position: absolute;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: white;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .dropdown-list div {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .dropdown-list div:hover {
+            background: #f0f0f0;
+        }
 </style>
