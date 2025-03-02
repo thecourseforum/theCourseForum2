@@ -415,7 +415,7 @@
 
     // Fill the Min GPA dropdown with options from 2.0 to 4.0 with 0.2 increments
     let select = document.getElementById("gpa-select");
-    for (let i = 2.0; i <= 4.0; i += 0.2) {
+    for (let i = 4.0; i >= 2.0; i -= 0.2) {
         let option = document.createElement("option");
         option.value = i.toFixed(1);
         option.textContent = i.toFixed(1);
