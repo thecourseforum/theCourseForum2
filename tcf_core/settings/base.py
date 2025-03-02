@@ -62,7 +62,6 @@ STORAGES = {
         "BACKEND": "storages.backends.s3.S3Storage",
         "OPTIONS": {},
     },
-    "staticfiles": "storages.backends.s3.S3Storage",
 }
 
 MIDDLEWARE = [
