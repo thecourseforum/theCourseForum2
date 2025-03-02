@@ -105,12 +105,18 @@ jobs:
           push: true
           tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{github.sha}}
 
+      - name: Get latest task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition tcf-prod-task \
+            --query taskDefinition > task-definition.json
+
       - name: Add image in ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: $(aws ecs list-task-definitions --family-prefix tcf-prod-task --sort DESC --max-items 1 --region=us-east-1 --profile tcf | jq -r '.taskDefinitionArns[0] | split("/")[-1]')
-          container-name: ${{ env.ECR_REPO }}
+          task-definition: task-definition.json
+          container-name: ${{ env.ECR_REPO }}:${{github.sha}} 
           image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{github.sha}}     
             
       - name: Deploy Amazon ECS task definition
