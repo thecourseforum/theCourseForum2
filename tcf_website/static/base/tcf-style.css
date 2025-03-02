@@ -83,11 +83,27 @@ h1, .h1 {
   color: var(--basic-text-color);
 }
 
+h2, .h2 {
+  color: var(--basic-text-color);
+}
+
 h4, .h4 {
   color: var(--basic-text-color);
 }
 
+h3, .h3 {
+  color: var(--basic-text-color);
+}
+
+h5, .h5 {
+  color: var(--basic-text-color);
+}
+
 h6, .h6 {
+  color: var(--basic-text-color);
+}
+
+label {
   color: var(--basic-text-color);
 }
 
