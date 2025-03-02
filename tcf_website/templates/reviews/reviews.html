@@ -1,8 +1,9 @@
 {% load static %}
+<link rel="stylesheet" href="{% static 'reviews/pagination.css' %}" />
 
 <div class="reviews container-lg px-0">
     <ul class="review-list list-unstyled">
-        {% for r in reviews %}
+        {% for r in paginated_reviews %}
             <li>
                 {% include "reviews/review.html" with profile=profile review=r %}
             </li>
@@ -19,6 +20,54 @@
             </div>
         {% endfor %}
     </ul>
+
+    {% if paginated_reviews and paginated_reviews.number > 0 %}
+    <div class="pagination">
+        {% if paginated_reviews.has_previous %}
+            <a href="?page={{ paginated_reviews.previous_page_number }}#reviews">&lt;</a>
+        {% endif %}
+    
+        {% if paginated_reviews.number == 1 %}
+            <span class="current">1</span>
+        {% else %}
+            <a href="?page=1#reviews">1</a>
+        {% endif %}
+    
+        {% if paginated_reviews.number > 4 %}
+            <span class="dots">...</span>
+        {% endif %}
+    
+        {% for page_num in paginated_reviews.paginator.page_range %}
+            {% if page_num > 1 and page_num < paginated_reviews.paginator.num_pages %}
+                {% if page_num >= paginated_reviews.number|add:'-2' and page_num <= paginated_reviews.number|add:'2' %}
+                    {% if page_num == paginated_reviews.number %}
+                        <span class="current">{{ page_num }}</span>
+                    {% else %}
+                        <a href="?page={{ page_num }}#reviews">{{ page_num }}</a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    
+        {% if paginated_reviews.number < paginated_reviews.paginator.num_pages|add:'-3' %}
+            <span class="dots">...</span>
+        {% endif %}
+    
+        {% if paginated_reviews.paginator.num_pages > 1 %}
+            {% if paginated_reviews.number == paginated_reviews.paginator.num_pages %}
+                <span class="current">{{ paginated_reviews.paginator.num_pages }}</span>
+            {% else %}
+                <a href="?page={{ paginated_reviews.paginator.num_pages }}#reviews">
+                    {{ paginated_reviews.paginator.num_pages }}
+                </a>
+            {% endif %}
+        {% endif %}
+    
+        {% if paginated_reviews.has_next %}
+            <a href="?page={{ paginated_reviews.next_page_number }}#reviews">&gt;</a>
+        {% endif %}
+    </div>    
+    {% endif %}
 </div>
 
 {% if reviews %}

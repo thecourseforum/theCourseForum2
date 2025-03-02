@@ -15,8 +15,74 @@
   ],
   "contributors": [
     {
+      "group_name": "Class of 2027",
+      "members": [
+        {
+          "name": "Arthur Wu",
+          "role": "Developer",
+          "class": "2027",
+          "img_filename": "ENG_Arthur_Wu.jpg",
+          "github": "arthurwu1227"
+        }
+      ]
+    },
+    {
+      "group_name": "Class of 2026",
+      "members": [
+        {
+          "name": "Bryan Katuari",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Bryan_Katuari.jpg",
+          "github": "bryankatuari"
+        },
+        {
+          "name": "Ruiyu Zhang",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Ruiyu_Zhang.jpg",
+          "github": "RuiyuZhang69"
+        },
+        {
+          "name": "Tommy Lam",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Tommy_Lam.jpg",
+          "github": "t0mmylam"
+        },
+        {
+          "name": "Raffi Khondaker",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Raffi_Khondaker.jpeg",
+          "github": "therealraffi"
+        },
+        {
+          "name": "Tino Martella",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Tino_Martella.jpg",
+          "github": "Tino-Martella"
+        },
+        {
+          "name": "Sebastian Wiktorowicz",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Sebastian_Wiktorowicz.png",
+          "github": "SebastianWikt"
+        }
+      ]
+    },
+    {
       "group_name": "Class of 2025",
       "members": [
+        {
+          "name": "Shruti Bala",
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "ENG_Shruti_Bala.jpg",
+          "github": "shrutibala1"
+        },
         {
           "name": "Christina Wang",
           "role": "Developer",
@@ -28,12 +94,72 @@
           "role": "Marketing and Design",
           "class": "2025",
           "img_filename": "DM_Anoushka_Sarkar.JPG"
+        },
+        {
+          "name": "Riley Fletcher",
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "ENG_Riley_Fletcher.jpg",
+          "github": "nrfletcher"
+        },
+        {
+          "name": "Ananya Raam",
+          "role": "Designer",
+          "class": "2025",
+          "img_filename": "DM_Ananya_Raam.jpeg"
+        },
+        {
+          "name": "Rachita Pathipati",
+          "role": "VP | Marketing & Design",
+          "class": "2025",
+          "img_filename": "MAD_Rachita_Pathipati.webp"
+        },
+        {
+          "name": "Vincent Song",
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "ENG_Vincent_Song.jpg",
+          "github": "vsong15"
         }
       ]
     },
     {
       "group_name": "Class of 2024",
       "members": [
+        {
+          "name": "Ann Li",
+          "role": "VP Infrastructure Engineering",
+          "class": "2024",
+          "img_filename": "ENG_Ann_Li.jpg",
+          "github": "Ann924"
+        },
+        {
+          "name": "Oliver Song",
+          "role": "Treasurer",
+          "class": "2024",
+          "img_filename": "ENG_Oliver_Song.jpg",
+          "github": "obs4qqf"
+        },
+        {
+          "name": "Lilian Zhang",
+          "role": "Developer",
+          "class": "2024",
+          "img_filename": "ENG_Lilian_Zhang.png",
+          "github": "lilizhhh"
+        },
+        {
+          "name": "Jasmine Senesombath",
+          "role": "Designer",
+          "class": "2024",
+          "img_filename": "DM_Jasmine_Senesombath.jpg"
+        },
+        {
+          "name": "Caesar Ning",
+          "role": "Developer",
+          "class": "2024",
+          "img_filename": "ENG_Caesar_Ning.jpg",
+          "github": "Caesarsyning"
+        },
         {
           "name": "Lilleth Snavely",
           "role": "Marketing and Design",
@@ -99,6 +225,18 @@
           "class": "2023",
           "img_filename": "ENG_Khushi_Chawla.jpg",
           "github": "khushic"
+        },
+        {
+          "name": "Nikhil Mahajan",
+          "role": "Data Manager",
+          "class": "2023",
+          "img_filename": "DM_Nikhil_Mahajan.webp"
+        },
+        {
+          "name": "Borja Ingle-Fernandez",
+          "role": "VP of Infrastructure Engineering",
+          "class": "2023",
+          "img_filename": "ENG_Borja_Ingle-Fernandez.webp"
         },
         {
           "name": "Arjun Kumar",
@@ -179,6 +317,12 @@
           "role": "VP of Marketing and Design",
           "class": "2022",
           "img_filename": "MAD_Kimberly_Vo.webp"
+        },
+        {
+          "name": "Vi Nguyen",
+          "role": "Secretary and Operations Lead",
+          "class": "2022",
+          "img_filename": "ENG_Vi_Nguyen.webp"
         },
         {
           "name": "Lauren Kim",
