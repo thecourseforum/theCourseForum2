@@ -1,5 +1,5 @@
-body {
-  color: var(--h1-text-color);
+body.dark-mode {
+  color: var(--basic-text-color);
 }
 
 .schools {
@@ -23,7 +23,7 @@ body {
 
 .school > .card-header {
   background-color: var(--secondary-color);
-  color: white; /* change to text variable when they r made */
+  color: white; /* need a variable in light mode for white text? */
 }
 
 .school-body {
