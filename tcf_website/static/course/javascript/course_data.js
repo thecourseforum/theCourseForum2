@@ -1,7 +1,6 @@
 let barConfig;
 let pieConfig;
 let myChart;
-let totalSum;
 const ctx = document.getElementById("myChart");
 
 function togglePieChart() {
@@ -56,9 +55,6 @@ const loadData = (data) => {
     c_minus,
     dfw,
   ];
-
-  // Calculate total number of students
-  totalSum = grades_data.reduce((total, num) => total + num, 0);
 
   // Create default pie chart
   /* eslint-enable camelcase */
@@ -241,32 +237,45 @@ const createChart = (gradesData) => {
       },
     },
   };
+  // eslint-disable-next-line no-new,no-undef
+  Chart.register(ChartDataLabels);
 
-  // Generate configuration for Pie Chart
   pieConfig = {
     type: "doughnut",
     data: chartData,
     options: {
       maintainAspectRatio: false,
-      tooltips: {
-        callbacks: {
-          label: function (tooltipItem, data) {
-            const dataset = data.datasets[0];
-            const percent = Math.round(
-              (dataset.data[tooltipItem.index] / totalSum) * 100,
-            );
-            let label = data.labels[tooltipItem.index];
-            if (tooltipItem.index === 9) {
-              label = "D/F/Withdraw";
-            }
-            return label + ": " + percent + "%";
-          },
-        },
-        displayColors: false,
-      },
       plugins: {
         legend: {
           display: false,
+        },
+        datalabels: {
+          color: "#fff",
+          formatter: (value, context) => {
+            const dataset = context.chart.data.datasets[0];
+            const total = dataset.data.reduce((acc, num) => acc + num, 0);
+            const percentage = (value / total) * 100;
+            return percentage > 5
+              ? context.chart.data.labels[context.dataIndex]
+              : "";
+          },
+          font: {
+            size: 14,
+          },
+          anchor: "center",
+          align: "center",
+        },
+        tooltip: {
+          callbacks: {
+            label: function (tooltipItem) {
+              const dataset = tooltipItem.dataset;
+              const total = dataset.data.reduce((acc, num) => acc + num, 0);
+              const value = dataset.data[tooltipItem.dataIndex];
+              const percent = ((value / total) * 100).toFixed(1);
+              return `${value} (${percent}%)`;
+            },
+          },
+          displayColors: false,
         },
         labels: {
           // render 'label', 'value', 'percentage', 'image' or custom function, default is 'percentage'
