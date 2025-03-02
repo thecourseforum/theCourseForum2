@@ -5,7 +5,7 @@ import statistics
 from typing import Iterable
 
 from django.contrib.postgres.search import TrigramSimilarity
-from django.db.models import F, FloatField, Q
+from django.db.models import Avg, F, FloatField, Q
 from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
 
@@ -45,6 +45,7 @@ def search(request):
         ),
         "from_time": request.GET.get("from_time"),
         "to_time": request.GET.get("to_time"),
+        "min_gpa": request.GET.get("min_gpa")
     }
 
     # Save filters to session
@@ -226,5 +227,10 @@ def apply_filters(results, filters):
     if len(weekdays) != 5 and len(weekdays) != 0 or from_time or to_time:
         time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
+    
+    min_gpa = filters.get("min_gpa")
+    if filters.get("min_gpa"): 
+        gpa_filtered = Course.filter_by_gpa(min_gpa=min_gpa)
+        results = results.filter(id__in=gpa_filtered.values_list("id", flat=True)) 
 
     return results

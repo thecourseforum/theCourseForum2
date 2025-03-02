@@ -93,6 +93,30 @@
                 </div>
               </div>
             </div>
+            <div class="middle-filters">
+              <div class="filter-section compact">      
+                <h6 class="filter-header">
+                  Availability 
+                </h6>
+                <div class="availability-check">
+                  <input class="form-check-input day-checkbox" type="checkbox" id="wednesday" value="WED">
+                  <label class="availability-check-label" for="wednesday">Only display courses with open sections</label>
+                </div>
+              </div>
+              <div class="filter-section compact">      
+                <h6 class="filter-header">
+                  Minimum GPA
+                </h6>
+                <div class="day-toggles">
+                  <form method="get">
+                    <select class="gpa-select" id="gpa-select" name="min_gpa">
+                      <option value="" disabled selected>Select Min GPA</option>
+                        <!-- Options will be populated dynamically using JavaScript -->
+                    </select>
+                </form>
+                </div>
+              </div>
+            </div>
             <!-- List of subjects -->
             <div class="filter-grid">
               <div class="filter-section">
@@ -168,6 +192,7 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // Checks cookies for rendering tooltip for filters
     function getCookie(name) {
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
@@ -388,6 +413,22 @@
       });
     });
 
+    // Fill the Min GPA dropdown with options from 2.0 to 4.0 with 0.2 increments
+    let select = document.getElementById("gpa-select");
+    for (let i = 2.0; i <= 4.0; i += 0.2) {
+        let option = document.createElement("option");
+        option.value = i.toFixed(1);
+        option.textContent = i.toFixed(1);
+        select.appendChild(option);
+    }
+
+    // Preserve selected value from URL query params
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedGPA = urlParams.get("min_gpa");
+    if (selectedGPA) {
+        select.value = selectedGPA;
+    }
+
     // Initialize weekdays
     updateWeekdays();
 
@@ -442,7 +483,7 @@
   .filter-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.1rem;
   }
 
   .filter-grid {
@@ -457,7 +498,7 @@
     margin-bottom: 0;
   }
 
-  .time-filter {
+  .time-filter, .middle-filters {
     display: flex;
     gap: 1.5rem;
   }
@@ -505,6 +546,26 @@
 
   .form-check-input:checked {
     accent-color: #d75626;
+  }
+
+  .gpa-select {
+    background: white;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 0.55rem 0.67rem;
+  }
+
+  .availability-check {
+    justify-content: left;
+  }
+
+  .availability-check-label {
+    display: flex;
+    align-items: center;
+    justify-content: left !important;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
   }
 
   .search-icon {
