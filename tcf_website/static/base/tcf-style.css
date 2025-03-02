@@ -22,7 +22,7 @@
 }
 
 /* only main-color (tcf blue) and accent-color (tcf organge) are being utilized by the landing page */
-body.dark-mode {
+body.body {
   /* --main-color: #ffffff;
   --secondary-color: #4873B7;
   --accent-color:  #d75626;
@@ -38,15 +38,17 @@ body.dark-mode {
   --card-background-color: #333333;
   --input-color: #333333; */
 
-  --background-color: black;
-  --landing-page-background-color: black;
-  --card-background-color: #333333;
-  --input-background-color: #545454;
-  --input-text-color: #a6a6a6;
-  --accent-text-color: #d75626;
-  --basic-text-color: white;
-  --icon-color: white;
-  --input-border-color: #a6a6a6;
+/* Added updated variables names */
+  --background-color: black; /* Dark background color */
+  --card-background-color: #333333;  /* Dark card background */
+  --input-background-color: #545454;  /* Dark input background */
+  --input-text-color: #a6a6a6;   /* Light text in inputs */
+  --accent-text-color: #d75626; /* Accent color for dark mode */
+  --basic-text-color: white;    /* White text color */
+  --icon-color: white; /* Light icon color */
+  --input-border-color: #a6a6a6; /* Lighter border color for inputs */
+  --button-bg-color: #1e1e1e; /* Darker button background */
+  
 }
 
 /* Dark Mode Overrides
@@ -210,11 +212,11 @@ ul {
 
 /* Chai: card background color is being styled by .card in _card.scss; color will be card-background-color when in dark-mode */
 .card {
-  background-color: var(--card-background-color);
+  background-color: var(--card-background-color) !important;
 }
 
 p {
-  color: var(--basic-text-color);
+  color: var(--p-card-text-color);
 }
 
 .form-control {
