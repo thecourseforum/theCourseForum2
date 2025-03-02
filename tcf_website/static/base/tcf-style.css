@@ -14,6 +14,9 @@
   --overall-background-color: #faf8f9;
   --card-background-color: #ffffff;
   --navbar-color: #ffffff;
+  /* newly added */
+  --basic-text-color: #212529;
+
   /* #f8f9fa is the og background color styled by .bg-light in _background_variant.scss */
   /* Note: Can use Bootstrap "light" color and white color */
 }
@@ -36,6 +39,7 @@ body.dark-mode {
   --input-color: #333333; */
 
   --background-color: black;
+  --landing-page-background-color: black;
   --card-background-color: #333333;
   --input-background-color: #545454;
   --input-text-color: #a6a6a6;
@@ -76,7 +80,15 @@ h6,
 }
 
 h1, .h1 {
-  color: var(--h1-text-color);
+  color: var(--basic-text-color);
+}
+
+h4, .h4 {
+  color: var(--basic-text-color);
+}
+
+h6, .h6 {
+  color: var(--basic-text-color);
 }
 
 body {
@@ -177,7 +189,7 @@ ul {
 /* OVERRIDES scss stylings */
 /* Chai: background color on landing page is being styled by .bg-light in _background-variant.scss, has to have !important to override the !important in the scss */
 .bg-light {
-  background-color: var(--overall-background-color) !important;
+  background-color: var(--landing-page-background-color) !important;
 }
 
 /* Chai: card background color is being styled by .card in _card.scss; color will be card-background-color when in dark-mode */
@@ -186,7 +198,7 @@ ul {
 }
 
 p {
-  color: var(--p-card-text-color);
+  color: var(--basic-text-color);
 }
 
 .form-control {
