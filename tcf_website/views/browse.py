@@ -145,6 +145,14 @@ def course_view(
     order = request.GET.get("order", "desc")
 
     instructors = course.sort_instructors_by_key(latest_semester, recent, order, sortby)
+    # Remove none values from section_times and section_nums
+    # For whatever reason, it is not possible to remove None from .annotate()'s ArrayAgg() function
+    for instructor in instructors:
+        if hasattr(instructor, "section_times") and instructor.section_times:
+            instructor.section_times = [s for s in instructor.section_times if s is not None]
+
+        if hasattr(instructor, "section_nums") and instructor.section_nums:
+            instructor.section_nums = [s for s in instructor.section_nums if s is not None]
 
     # Note: Could be simplified further
 
