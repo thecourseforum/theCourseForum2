@@ -1,5 +1,5 @@
 # Based on https://github.com/actions/starter-workflows/blob/main/ci/django.yml
-name: Google App Engine Deployment
+name: AWS Deployment
 
 on:
   # CI must pass on the master branch
