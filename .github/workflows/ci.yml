@@ -88,7 +88,7 @@ jobs:
 
       - name: Migrations & Tests
         run: |
-          envsubst < .config/.env.example > .env
+          envsubst < .env.example > .env
           python manage.py migrate
           coverage run manage.py test
 
