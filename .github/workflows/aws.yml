@@ -5,7 +5,7 @@ on:
   # CI must pass on the master branch
   workflow_run:
     workflows: ["Continuous Integration"]
-    branches: [master]
+    branches: [aws/cicd]
     types:
       - completed
 
@@ -32,15 +32,14 @@ env:
   REVIEW_DRIVE_EMAIL: ${{ secrets.REVIEW_DRIVE_EMAIL }}
   REVIEW_DRIVE_PASSWORD: ${{ secrets.REVIEW_DRIVE_PASSWORD }}
   # aws ecs image
-  AWS_REGION: us-east-1                          
-  ECS_SERVICE: barrett-fogle-love-v1          
-  ECS_CLUSTER: tcf-fargate-cluster    
-  ECR_REPO: tcf/thecourseforum2 
+  AWS_REGION: us-east-1
+  ECS_SERVICE: barrett-fogle-love-v1
+  ECS_CLUSTER: tcf-fargate-cluster
+  ECR_REPO: tcf/thecourseforum2
   ECR_CONTAINER_NAME: tcf-container
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-  # aws s3 bucket
   S3_BUCKET_NAME: tcf-static-files
 
 jobs:
@@ -87,7 +86,7 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-          
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -112,7 +111,7 @@ jobs:
           task-definition: task-definition.json
           container-name: ${{ env.ECR_CONTAINER_NAME }}
           image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{github.sha}}     
-            
+
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
@@ -120,4 +119,3 @@ jobs:
             service: ${{ env.ECS_SERVICE }}
             cluster: ${{ env.ECS_CLUSTER }}
             wait-for-service-stability: true
-    
