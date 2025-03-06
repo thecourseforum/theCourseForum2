@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "collectfast",
     "django.contrib.staticfiles",
     "social_django",
     "cachalot",  # TODO: add Redis?
@@ -64,8 +65,10 @@ STORAGES = {
     },
     "staticfiles": {
         "BACKEND": "storages.backends.s3.S3Storage",
-    }
+    },
 }
+
+COLLECTFAST_THREADS = 20
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
