@@ -67,6 +67,9 @@ jobs:
         run: |
           python manage.py migrate
 
+      - name: Collect static files
+        run: python manage.py collectstatic --no-input
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

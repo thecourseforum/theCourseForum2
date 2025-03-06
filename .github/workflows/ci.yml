@@ -112,4 +112,3 @@ jobs:
 
       - name: Run ESLint
         run: npx eslint -c .config/.eslintrc.yml tcf_website/static/
-      
