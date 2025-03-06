@@ -5,7 +5,7 @@ on:
   # CI must pass on the master branch
   workflow_run:
     workflows: ["Continuous Integration"]
-    branches: [aws/cicd]
+    branches: [master]
     types:
       - completed
 
