@@ -25,3 +25,4 @@ social-auth-app-django~=5.4.0
 tqdm~=4.66.1
 types-tqdm~=4.66.0
 uWSGI~=2.0.28
+Collectfast==2.2.0
