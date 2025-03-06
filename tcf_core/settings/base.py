@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "collectfast",
+    # "collectfast",
     "django.contrib.staticfiles",
     "social_django",
     "cachalot",  # TODO: add Redis?
@@ -68,8 +68,8 @@ STORAGES = {
     },
 }
 
-COLLECTFAST_THREADS = 20
-COLLECTFAST_STRATEGY = "collectfast.strategies.boto3.Boto3Strategy"
+# COLLECTFAST_THREADS = 20
+# COLLECTFAST_STRATEGY = "collectfast.strategies.boto3.Boto3Strategy"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
