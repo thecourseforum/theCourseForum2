@@ -69,6 +69,7 @@ STORAGES = {
 }
 
 COLLECTFAST_THREADS = 20
+COLLECTFAST_STRATEGY = "collectfast.strategies.boto3.Boto3Strategy"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
