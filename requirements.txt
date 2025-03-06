@@ -3,6 +3,7 @@ backoff~=2.2.1
 black~=24.1.1
 boto3~=1.37.4
 coverage~=7.3.3
+Collectfast~=2.2.0
 django-cachalot~=2.6.1
 django-environ~=0.11.2
 django-filter~=23.5
