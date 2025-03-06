@@ -2,7 +2,7 @@
 # pylint: disable=too-many-locals
 
 """Views for Browse, department, and course/course instructor pages."""
-import json 
+import json
 from typing import Any
 
 from django.core.exceptions import ObjectDoesNotExist
