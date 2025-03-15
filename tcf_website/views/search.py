@@ -152,15 +152,21 @@ def fetch_courses(query, filters):
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
-            mnemonic=F("subdepartment__mnemonic"),
+            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", search_query),
+            title_similarity=TrigramSimilarity("title", search_query),
+        )
+        # round results to two decimal places
+        .annotate(
             max_similarity=Round(
                 Greatest(
-                    TrigramSimilarity("combined_mnemonic_number", search_query),
-                    TrigramSimilarity("title", search_query),
+                    F("mnemonic_similarity"),
+                    F("title_similarity"),
                 ),
                 2,
-            ),
+            )
         )
+        # expose mnemonic to view
+        .annotate(mnemonic=F("subdepartment__mnemonic"))
     )
 
     # Apply filters
