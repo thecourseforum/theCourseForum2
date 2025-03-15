@@ -8,7 +8,6 @@ from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models import F, FloatField, Q
 from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
-from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 
 from ..models import Course, Instructor, Subdepartment
@@ -244,7 +243,7 @@ def apply_filters(results, filters):
     from_time = filters.get("from_time")
     to_time = filters.get("to_time")
 
-    if (len(weekdays) != 5 and len(weekdays) != 0) or from_time or to_time:
+    if weekdays or from_time or to_time:
         time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
 
