@@ -9,6 +9,7 @@ from django.db.models import F, FloatField, Q
 from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
 from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 
 from ..models import Course, Instructor, Subdepartment
 
@@ -41,6 +42,7 @@ def group_by_dept(courses):
     return grouped_courses
 
 
+@cache_page(60 * 15)  # Cache for 15 minutes
 def search(request):
     """Search results view."""
 
@@ -61,24 +63,14 @@ def search(request):
     # Save filters to session
     request.session["search_filters"] = filters
 
-    # Create a cache key from the query and filters
-    cache_key = f"search_{query}_{hash(frozenset(str(filters.items())))}"
-    cached_results = cache.get(cache_key)
-
-    if cached_results:
-        courses, instructors, courses_first = cached_results
-    elif query:
+    if query:
         courses = fetch_courses(query, filters)
         instructors = fetch_instructors(query)
         courses_first = decide_order(courses, instructors)
-        # Cache the results for 10 minutes
-        cache.set(cache_key, (courses, instructors, courses_first), 600)
     else:
         courses = filter_courses(filters)
         instructors = []
         courses_first = True
-        # Cache the results for 10 minutes
-        cache.set(cache_key, (courses, instructors, courses_first), 600)
 
     ctx = {
         "query": query[:30] + ("..." if len(query) > 30 else ""),
