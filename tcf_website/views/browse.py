@@ -2,7 +2,9 @@
 # pylint: disable=too-many-locals
 
 """Views for Browse, department, and course/course instructor pages."""
+import asyncio
 import json
+from threading import Thread
 from typing import Any
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -11,10 +13,13 @@ from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
+from tcf_website.api.enrollment import update_enrollment_data
 
 from ..models import (
     Answer,
     Course,
+    CourseEnrollment,
     CourseInstructorGrade,
     Department,
     Instructor,
@@ -22,6 +27,7 @@ from ..models import (
     Review,
     School,
     Section,
+    SectionEnrollment,
     Semester,
 )
 
@@ -130,6 +136,7 @@ def course_view(
         subdepartment__mnemonic=mnemonic.upper(),
         number=course_number,
     )
+
     latest_semester = Semester.latest()
     recent = str(latest_semester) == instructor_recency
 
@@ -138,6 +145,14 @@ def course_view(
     order = request.GET.get("order", "desc")
 
     instructors = course.sort_instructors_by_key(latest_semester, recent, order, sortby)
+    # Remove none values from section_times and section_nums
+    # For whatever reason, it is not possible to remove None from .annotate()'s ArrayAgg() function
+    for instructor in instructors:
+        if hasattr(instructor, "section_times") and instructor.section_times:
+            instructor.section_times = [s for s in instructor.section_times if s is not None]
+
+        if hasattr(instructor, "section_nums") and instructor.section_nums:
+            instructor.section_nums = [s for s in instructor.section_nums if s is not None]
 
     # Note: Could be simplified further
 
@@ -258,6 +273,23 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         for field in fields:
             data[field] = getattr(grades_data, field)
 
+    two_hours_ago = timezone.now() - timezone.timedelta(hours=2)
+    enrollment_tracking = CourseEnrollment.objects.filter(course=course).first()
+
+    if enrollment_tracking is None:
+        enrollment_tracking = CourseEnrollment.objects.create(course=course)
+        should_update = True
+    else:
+        should_update = (
+            not enrollment_tracking.last_update or enrollment_tracking.last_update < two_hours_ago
+        )
+
+    if should_update:
+        run_async(update_enrollment_data, course.id)
+        request.session["fetching_enrollment"] = True
+    else:
+        request.session["fetching_enrollment"] = False
+
     sections_taught = Section.objects.filter(
         course=course_id,
         instructors__in=Instructor.objects.filter(pk=instructor_id),
@@ -268,15 +300,26 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         "term": section_last_taught.semester.season.lower().capitalize(),
         "sections": {},
     }
+
     for section in sections_taught:
         times = []
         for time in section.section_times.split(","):
             if len(time) > 0:
                 times.append(time)
+
+        section_enrollment = SectionEnrollment.objects.filter(section=section).first()
+        enrollment_data = {
+            "enrollment_taken": section_enrollment.enrollment_taken if section_enrollment else None,
+            "enrollment_limit": section_enrollment.enrollment_limit if section_enrollment else None,
+            "waitlist_taken": section_enrollment.waitlist_taken if section_enrollment else None,
+            "waitlist_limit": section_enrollment.waitlist_limit if section_enrollment else None,
+        }
+
         section_info["sections"][section.sis_section_number] = {
             "type": section.section_type,
             "units": section.units,
             "times": times,
+            "enrollment_data": enrollment_data,
         }
 
     request.session["course_code"] = course.code()
@@ -407,3 +450,9 @@ def safe_round(num):
     if num is not None:
         return round(num, 2)
     return "\u2014"
+
+
+def run_async(func, *args):
+    """Helper function to run an async function inside a thread."""
+    thread = Thread(target=lambda: asyncio.run(func(*args)))
+    thread.start()

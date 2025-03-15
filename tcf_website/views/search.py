@@ -45,6 +45,7 @@ def search(request):
         ),
         "from_time": request.GET.get("from_time"),
         "to_time": request.GET.get("to_time"),
+        "open_sections": request.GET.get("open_sections") == "on",
     }
 
     # Save filters to session
@@ -155,10 +156,12 @@ def fetch_courses(query, filters):
     # Apply filters
     results = apply_filters(results, filters)
 
-    results = (results.filter(max_similarity__gte=similarity_threshold)
-            .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
-            .exclude(semester_last_taught_id__lt=48)
-            .order_by("-max_similarity"))[:15]
+    results = (
+        results.filter(max_similarity__gte=similarity_threshold)
+        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+        .exclude(semester_last_taught_id__lt=48)
+        .order_by("-max_similarity")
+    )[:15]
 
     courses = [
         {
@@ -191,6 +194,11 @@ def filter_courses(filters):
     # Apply filters
     results = apply_filters(results, filters)
 
+    # Filter for open sections
+    if filters.get("open_sections"):
+        open_sections_filtered = Course.filter_by_open_sections()
+        results = results.filter(id__in=open_sections_filtered.values_list("id", flat=True))
+
     results = results.distinct().order_by("subdepartment__mnemonic", "number")[:15]
 
     # Convert to same format as fetch_courses
@@ -207,6 +215,7 @@ def filter_courses(filters):
     ]
 
     return courses
+
 
 def apply_filters(results, filters):
     """Apply filters to course queryset."""
