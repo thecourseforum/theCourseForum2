@@ -8,28 +8,41 @@ from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models import F, FloatField, Q
 from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 
 from ..models import Course, Instructor, Subdepartment
 
 
 def group_by_dept(courses):
     """Groups courses by their department and adds relevant data."""
+    # Get all unique mnemonics from courses
+    mnemonics = set(course["mnemonic"] for course in courses)
+
+    # Fetch all subdepartments in a single query
+    subdepts = {
+        subdept.mnemonic: subdept
+        for subdept in Subdepartment.objects.filter(mnemonic__in=mnemonics)
+    }
+
     grouped_courses = {}
     for course in courses:
         course_dept = course["mnemonic"]
         if course_dept not in grouped_courses:
-            subdept = Subdepartment.objects.filter(mnemonic=course_dept).first()
-            # should only ever have one returned with that mnemonic
-            grouped_courses[course_dept] = {
-                "subdept_name": subdept.name,
-                "dept_id": subdept.department_id,
-                "courses": [],
-            }
-        grouped_courses[course_dept]["courses"].append(course)
+            subdept = subdepts.get(course_dept)
+            if subdept:
+                grouped_courses[course_dept] = {
+                    "subdept_name": subdept.name,
+                    "dept_id": subdept.department_id,
+                    "courses": [],
+                }
+        if course_dept in grouped_courses:
+            grouped_courses[course_dept]["courses"].append(course)
 
     return grouped_courses
 
 
+@cache_page(60 * 15)  # Cache for 15 minutes
 def search(request):
     """Search results view."""
 
@@ -135,30 +148,26 @@ def fetch_courses(query, filters):
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
-            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", search_query),
-            title_similarity=TrigramSimilarity("title", search_query),
-        )
-        # round results to two decimal places
-        .annotate(
+            mnemonic=F("subdepartment__mnemonic"),
             max_similarity=Round(
                 Greatest(
-                    F("mnemonic_similarity"),
-                    F("title_similarity"),
+                    TrigramSimilarity("combined_mnemonic_number", search_query),
+                    TrigramSimilarity("title", search_query),
                 ),
                 2,
-            )
+            ),
         )
-        # expose mnemonic to view
-        .annotate(mnemonic=F("subdepartment__mnemonic"))
     )
 
     # Apply filters
     results = apply_filters(results, filters)
 
-    results = (results.filter(max_similarity__gte=similarity_threshold)
-            .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
-            .exclude(semester_last_taught_id__lt=48)
-            .order_by("-max_similarity"))[:15]
+    results = (
+        results.filter(max_similarity__gte=similarity_threshold)
+        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+        .exclude(semester_last_taught_id__lt=48)
+        .order_by("-max_similarity")
+    )[:15]
 
     courses = [
         {
@@ -208,22 +217,29 @@ def filter_courses(filters):
 
     return courses
 
+
 def apply_filters(results, filters):
-    """Apply filters to course queryset."""
+    """Apply filters to course queryset using Q objects for more readable code."""
+    filter_conditions = Q()
+
     if filters.get("disciplines"):
-        results = results.filter(disciplines__name__in=filters.get("disciplines"))
+        filter_conditions &= Q(disciplines__name__in=filters.get("disciplines"))
 
     if filters.get("subdepartments"):
-        results = results.filter(subdepartment__mnemonic__in=filters.get("subdepartments"))
+        filter_conditions &= Q(subdepartment__mnemonic__in=filters.get("subdepartments"))
 
     if filters.get("instructors"):
-        results = results.filter(section__instructors__id__in=filters.get("instructors"))
+        filter_conditions &= Q(section__instructors__id__in=filters.get("instructors"))
 
+    if filter_conditions:
+        results = results.filter(filter_conditions)
+
+    # Handle time filters
     weekdays = [day for day in filters.get("weekdays", []) if day]
     from_time = filters.get("from_time")
     to_time = filters.get("to_time")
 
-    if len(weekdays) != 5 and len(weekdays) != 0 or from_time or to_time:
+    if (len(weekdays) != 5 and len(weekdays) != 0) or from_time or to_time:
         time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
 
