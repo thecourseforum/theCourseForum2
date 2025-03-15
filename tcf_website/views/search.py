@@ -199,7 +199,7 @@ def filter_courses(filters):
         open_sections_filtered = Course.filter_by_open_sections()
         results = results.filter(id__in=open_sections_filtered.values_list("id", flat=True))
 
-    results = results.distinct().order_by("subdepartment__mnemonic", "number")
+    results = results.distinct().order_by("subdepartment__mnemonic", "number")[:15]
 
     # Convert to same format as fetch_courses
     courses = [
