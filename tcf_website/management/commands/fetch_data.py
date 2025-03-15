@@ -163,9 +163,7 @@ def compile_course_data(course_number, sem_code):
             if meetings.get(0)
             else ""
         ),
-        "Days1": (meetings.get(0)["meets"] if meetings.get(0)["meets"] != "-" else "TBA")
-        .replace("AM", "am")
-        .replace("PM", "pm"),
+        "Days1": (meetings.get(0)["meets"] if meetings.get(0)["meets"] != "-" else "TBA").lower(),
         "Room1": (meetings.get(0)["room"] if meetings.get(0)["room"] != "-" else "TBA"),
         "MeetingDates1": (meetings.get(0)["date_range"] if meetings.get(0) else ""),
         "Instructor2": (
@@ -177,9 +175,7 @@ def compile_course_data(course_number, sem_code):
             if meetings.get(1)
             else ""
         ),
-        "Days2": (meetings.get(1)["meets"] if meetings.get(1) else "")
-        .replace("AM", "am")
-        .replace("PM", "pm"),
+        "Days2": (meetings.get(1)["meets"] if meetings.get(1) else "").lower(),
         "Room2": meetings.get(1)["room"] if meetings.get(1) else "",
         "MeetingDates2": (meetings.get(1)["date_range"] if meetings.get(1) else ""),
         "Instructor3": (
@@ -191,9 +187,7 @@ def compile_course_data(course_number, sem_code):
             if meetings.get(2)
             else ""
         ),
-        "Days3": (meetings.get(2)["meets"] if meetings.get(2) else "")
-        .replace("AM", "am")
-        .replace("PM", "pm"),
+        "Days3": (meetings.get(2)["meets"] if meetings.get(2) else "").lower(),
         "Room3": meetings.get(2)["room"] if meetings.get(2) else "",
         "MeetingDates3": (meetings.get(2)["date_range"] if meetings.get(2) else ""),
         "Instructor4": (
@@ -205,9 +199,7 @@ def compile_course_data(course_number, sem_code):
             if meetings.get(3)
             else ""
         ),
-        "Days4": (meetings.get(3)["meets"] if meetings.get(3) else "")
-        .replace("AM", "am")
-        .replace("PM", "pm"),
+        "Days4": (meetings.get(3)["meets"] if meetings.get(3) else "").lower(),
         "Room4": meetings.get(3)["room"] if meetings.get(3) else "",
         "MeetingDates4": (meetings.get(3)["date_range"] if meetings.get(3) else ""),
         "Title": class_details["course_title"],
