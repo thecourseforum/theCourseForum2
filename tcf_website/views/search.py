@@ -28,16 +28,21 @@ def group_by_dept(courses):
     grouped_courses = {}
     for course in courses:
         course_dept = course["mnemonic"]
+
+        # Skip courses without valid subdepartment
+        if course_dept not in subdepts:
+            continue
+
+        subdept = subdepts[course_dept]
+
         if course_dept not in grouped_courses:
-            subdept = subdepts.get(course_dept)
-            if subdept:
-                grouped_courses[course_dept] = {
-                    "subdept_name": subdept.name,
-                    "dept_id": subdept.department_id,
-                    "courses": [],
-                }
-        if course_dept in grouped_courses:
-            grouped_courses[course_dept]["courses"].append(course)
+            grouped_courses[course_dept] = {
+                "subdept_name": subdept.name,
+                "dept_id": subdept.department_id,
+                "courses": [],
+            }
+
+        grouped_courses[course_dept]["courses"].append(course)
 
     return grouped_courses
 
