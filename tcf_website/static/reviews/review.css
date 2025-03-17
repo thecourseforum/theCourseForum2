@@ -1,10 +1,30 @@
-.review-content .review-text-body.collapse:not(.show) {
-  display: block;
-  height: 12rem;
-  overflow: hidden;
+/* Add new collapse styles */
+.review-content .review-text-body {
+    position: relative;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
 }
-.review-content .review-text-body.collapsing {
-  height: 12rem;
+
+.review-content .review-text-body.collapsed {
+    max-height: 12rem;
+}
+
+.review-content .review-collapse-link {
+    display: none;
+    text-align: right;
+    color: var(--secondary-color);
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+
+.review-content .review-text-body.collapsed::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3rem;
+    background: linear-gradient(transparent, white);
 }
 
 .review-content a.collapsed::after {
