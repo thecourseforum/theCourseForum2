@@ -94,18 +94,25 @@
               </div>
             </div>
             <div class="middle-filters">
+              <div class="filter-section compact">      
+                <h6 class="filter-header">
+                  Availability 
+                </h6>
+                <div class="availability-check">
+                  <input class="form-check-input day-checkbox" type="checkbox" id="wednesday" value="WED">
+                  <label class="availability-check-label" for="wednesday">Only display courses with open sections</label>
+                </div>
+              </div>
               <div class="filter-section compact">
                 <h6 class="filter-header">
                   Minimum GPA
                 </h6>
-                <div class="gpa-input">
-                  <select class="gpa-select" id="gpa-select" name="min_gpa">
-                    <!-- GPA range of 4.0 to 2.0 filled in by Javascript -->
-                    {% if min_gpa %}
-                      <option value="" disabled selected>{{min_gpa }}</option>
-                    {% else %}
-                      <option value="" disabled selected>Select a minimum GPA</option>
-                    {% endif %}
+                <div class="min-gpa-div">
+                  <input type="text" id="gpa-input" class="custom-select-input" name="min_gpa" 
+                    placeholder="Select a minimum GPA" 
+                    value="{% if min_gpa %}{{ min_gpa }}{% endif %}">
+                  <button type="button" id="gpa-dropdown-toggle" class="dropdown-button">▼</button>
+                  <div id="gpa-dropdown" class="custom-select-dropdown"></div>
                   </select>
                 </div>
               </div>
@@ -410,16 +417,56 @@
     });
 
     // Fill the Min GPA dropdown with options from 2.0 to 4.0 with 0.2 increments
-    let select = document.getElementById("gpa-select");
+    const input = document.getElementById('gpa-input');
+    const gpa_dropdown = document.getElementById('gpa-dropdown');
+    const toggleButton = document.getElementById('gpa-dropdown-toggle');
+    
+    // Generate options from 4.0 to 2.0 in 0.2 steps
     for (let i = 4.0; i >= 2.0; i -= 0.2) {
-        let option = document.createElement("option");
-        option.value = i.toFixed(1);
-        option.textContent = i.toFixed(1);
-        select.appendChild(option);
+      const formattedValue = i.toFixed(1);
+      
+      const option = document.createElement('div');
+      option.className = 'custom-select-option';
+      option.textContent = formattedValue;
+      option.dataset.value = formattedValue;
+      
+      option.addEventListener('click', function() {
+        input.value = this.dataset.value;
+        hideGPADropdown();
+      });
+      
+      gpa_dropdown.appendChild(option);
     }
-
-    // Preserve selected value from URL query params
-
+    
+    // Toggle dropdown visibility
+    toggleButton.addEventListener('click', function() {
+      if (gpa_dropdown.style.display === 'block') {
+        hideGPADropdown();
+      } else {
+        showGPADropdown();
+      }
+    });
+    
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!gpa_dropdown.contains(e.target) && e.target !== toggleButton && e.target !== input) {
+        hideGPADropdown();
+      }
+    });
+    
+    /* Show dropdown when the input is focused 
+    input.addEventListener('focus', function() {
+      showGPADropdown();
+    });
+    */ 
+    
+    function showGPADropdown() {
+      gpa_dropdown.style.display = 'block';
+    }
+    
+    function hideGPADropdown() {
+      gpa_dropdown.style.display = 'none';
+    }
     // Initialize weekdays
     updateWeekdays();
 
@@ -494,14 +541,20 @@
     gap: 1.5rem;
   }
 
-  .day-toggles, .gpa-input{
+  .day-toggles, .min-gpa-div{
     display: flex;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
     align-items: center;
-    flex-wrap: wrap;
     width: 100%; 
     justify-content: space-between;
+  }
+
+  .min-gpa-div {
+    position: relative; 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0; 
   }
 
   .day-toggles p {
@@ -760,38 +813,44 @@
     visibility: hidden;
   }
 
-  .dropdown-container {
-            position: relative;
-            display: inline-block;
-            width: 200px;
-        }
+  .custom-select-input {
+    width: calc(100%);
+    padding: 8px 12px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+  }
 
-        .dropdown-input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+  .custom-select-dropdown {
+    position: absolute; 
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+    border-radius: 0 4px 4px 0;
+  }
 
-        .dropdown-list {
-            display: none;
-            position: absolute;
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background: white;
-            max-height: 150px;
-            overflow-y: auto;
-            z-index: 1000;
-        }
+  .custom-select-option {
+    padding: 8px 12px;
+    cursor: pointer;
+  }
 
-        .dropdown-list div {
-            padding: 8px;
-            cursor: pointer;
-        }
+  .custom-select-option:hover {
+    background-color: #f1f1f1;
+  }
 
-        .dropdown-list div:hover {
-            background: #f0f0f0;
-        }
+  .dropdown-button {
+    height: 100%;
+    width: 30px;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+  }
 </style>
