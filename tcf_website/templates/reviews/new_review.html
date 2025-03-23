@@ -10,7 +10,7 @@
 {% block content %}
 
 <div class="new-review container text-left mx-auto">
-  <h1 class="h2 mt-2 mb-4">Write a review</h1>
+  <h1 class="h2 mt-2 mb-4">Write a Review</h1>
   <div class="card">
     <form class="card-body px-md-5" id="reviewForm" action="{% url 'new_review' %}" method="POST">
         {% csrf_token %}
