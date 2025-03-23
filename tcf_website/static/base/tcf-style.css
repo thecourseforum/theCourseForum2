@@ -12,7 +12,7 @@
   --shaded-color: #cfcfcf; /* Medium light grey, used for shading */
   --background-color: #ebebeb; /* Light grey, used for backgrounds */
   --overall-background-color: #faf8f9;
-  --card-background-color: #ffffff;
+  --card-background-color: #ffffff; 
   --navbar-color: #ffffff;
   /* newly added */
   --basic-text-color: #212529;
@@ -22,7 +22,7 @@
 }
 
 /* only main-color (tcf blue) and accent-color (tcf organge) are being utilized by the landing page */
-body.body {
+body.dark-mode {
   /* --main-color: #ffffff;
   --secondary-color: #4873B7;
   --accent-color:  #d75626;
