@@ -20,7 +20,7 @@
   </div>
   <div class="subdepartments mt-3">
     <div class="subdepartment container-lg px-0">
-      {% if courses|length == 0 %}
+      {% if paginated_courses|length == 0 %}
         <div class="new card col p-5 text-center">
           <div class="card-body">
             <h4 class="card-title">
@@ -33,7 +33,7 @@
         </div>
       {% else %}
       <ul class="course-list">
-        {% for course in courses %} 
+        {% for course in paginated_courses %} 
           {% include "department/department_course.html" with course=course %}
         {% endfor %}
       </ul>

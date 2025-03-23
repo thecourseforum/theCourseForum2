@@ -124,6 +124,25 @@ class Department(models.Model):
 
         return self.sort_courses_by_key(annotation, num_of_years, reverse)
 
+    def get_paginated_department_courses(
+        self, sort_type: str, num_of_years: int, order: str, page_number=1
+    ) -> "Page[Course]":
+        """Generate sorted, paginated reviews"""
+        dept_courses = self.sort_courses(sort_type, num_of_years, order)
+        return self.paginate(dept_courses, page_number)
+
+    def paginate(
+        self, courses: "QuerySet[Course]", page_number, courses_per_page=10
+    ) -> "Page[Course]":
+        """Paginate reviews"""
+        paginator = Paginator(courses, courses_per_page)
+        try:
+            page_obj = paginator.page(page_number)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+
+        return page_obj
+
     class Meta:
         indexes = [
             models.Index(fields=["school"]),
