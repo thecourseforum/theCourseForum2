@@ -4,474 +4,491 @@
 {% block title %}{{course.code}} - {{instructor.full_name}} - theCourseForum{% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'course/course_professor.css' %}"/>
+<link rel="stylesheet" href="{% static 'course/course_professor.css' %}" />
 {% endblock %}
 
 {% block content %}
 
-    <div class="course-professor container text-left px-3">
-        {% include "../common/leaderboard_ad.html" with ad_slot="5402759869" %}
-        <!-- Empty div for margin (maybe not the best solution) -->
-        <div class="mt-4"></div>
+<div class="course-professor container text-left px-3">
+    {% include "../common/leaderboard_ad.html" with ad_slot="5402759869" %}
+    <!-- Empty div for margin (maybe not the best solution) -->
+    <div class="mt-4"></div>
 
-        {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
+    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
 
-        <div class="course-instructor-header my-2">
-            <div class="d-flex flex-column">
-                <div class="course-title d-md-flex align-items-baseline">
-                    <h1 id="course-code" class="mr-md-3 text-nowrap">{{ course.code }}</h1>
-                    <h2 class="mr-md-3">{{ course.title }}</h2>
-                </div>
+    <div class="course-instructor-header my-2">
+        <div class="d-flex flex-column">
+            <div class="course-title d-md-flex align-items-baseline">
+                <h1 id="course-code" class="mr-md-3 text-nowrap">{{ course.code }}</h1>
+                <h2 class="mr-md-3">{{ course.title }}</h2>
+            </div>
 
-                <div class="instructor-info d-flex flex-sm-row flex-column align-items-baseline">
+            <div class="instructor-info d-flex flex-sm-row flex-column align-items-baseline">
 
-                  <div class="d-flex flex-row">
+                <div class="d-flex flex-row">
                     <!-- Instructor page link -->
                     <a class="instructor-profile align-self-center mr-3"
-                       href="{% url 'instructor' instructor_id=instructor.id %}">
-                      <h4 class="m-0 text-tcf-indigo"
-                          tabindex="0" data-toggle="tooltip" data-placement="bottom"
-                          title="View instructor profile">
-                        <i class="mr-2 fa fa-user mt-3" aria-hidden="true"></i>
-                        <p class = "instructor-select p-1 btn-lg float-right">{{ instructor.last_name }}, {{ instructor.first_name }}</p>
-                      </h4>
+                        href="{% url 'instructor' instructor_id=instructor.id %}">
+                        <h4 class="m-0 text-tcf-indigo" tabindex="0" data-toggle="tooltip" data-placement="bottom"
+                            title="View instructor profile">
+                            <i class="mr-2 fa fa-user mt-3" aria-hidden="true"></i>
+                            <p class="instructor-select p-1 btn-lg float-right">{{ instructor.last_name }},
+                                {{ instructor.first_name }}</p>
+                        </h4>
                     </a>
 
                     <!-- Instructor Dropdown -->
                     <div class="instructor dropdown">
-                      <a class="instructor-dropdown btn btn-sm btn-outline-primary text-tcf-orange mt-2" href="#"
-                         role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                         aria-haspopup="true" aria-expanded="false">▼
-                      </a>
+                        <a class="instructor-dropdown btn btn-sm btn-outline-primary text-tcf-orange mt-2" href="#"
+                            role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">▼
+                        </a>
 
-                      <div id="instructorMenu" class="instructor-menu dropdown-menu w-200" aria-labelledby="dropdownMenuLink" disabled>
-                        <!-- To be populated by instr_data.js script -->
-                      </div>
+                        <div id="instructorMenu" class="instructor-menu dropdown-menu w-200"
+                            aria-labelledby="dropdownMenuLink" disabled>
+                            <!-- To be populated by instr_data.js script -->
+                        </div>
                     </div>
-                  </div>
+                </div>
 
-                  <!-- Semester last taught -->
-                  <div class="ml-auto pl-5 btn-group text-center">
+                <!-- Semester last taught -->
+                <div class="ml-auto pl-5 btn-group text-center">
                     <span class="p-2 bg-white">Last taught</span>
                     <span class="p-2 bg-tcf-blue text-white">{{ semester_last_taught }}</span>
-                  </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="course-info-container">
-            <div class="grades-ratings-container">
-                <div class="ratings-container">
-                    <div class="ratings-row">
-                        <div class="rating-card">
-                            <span class="rating-card-num rating-num">&mdash;</span>
-                            <p class="rating-card-desc"><i class="fa fa-star fa-fw"></i>&nbsp;{{ num_reviews }} {% if num_reviews == 1 %} Rating {% else %} Ratings {% endif %}</p>
-                        </div>
-                        <div class="info-container">
-                            <div class="info-row">
-                                <div class="info-title">
-                                    <i class="fas fa-user"></i>&nbsp;Instructor
-                                </div>
-                                <div class="info-bar">
-                                    <div class="progress">
-                                        <div class="progress-bar instructor-bar" style="width: 0%"></div>
-                                    </div>
-                                </div>
-                                <div class="info-num instructor-num">
-                                    &mdash;
-                                </div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-title">
-                                    <i class="far fa-smile-beam"></i>&nbsp;Enjoyability
-                                </div>
-                                <div class="info-bar">
-                                    <div class="progress">
-                                        <div class="progress-bar fun-bar" style="width:0%"></div>
-                                    </div>
-                                </div>
-                                <div class="info-num fun-num">
-                                    &mdash;
-                                </div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-title">
-                                    <i class="fas fa-dumbbell"></i>&nbsp;Difficulty
-                                </div>
-                                <div class="info-bar">
-                                    <div class="progress">
-                                        <div class="progress-bar difficulty-bar" style="width:0%"></div>
-                                    </div>
-                                </div>
-                                <div class="info-num difficulty-num">
-                                    &mdash;
-                                </div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-title">
-                                    <i class="fas fa-heart"></i>&nbsp;Recommend
-                                </div>
-                                <div class="info-bar">
-                                    <div class="progress">
-                                        <div class="progress-bar recommend-bar" style="width:0%"></div>
-                                    </div>
-                                </div>
-                                <div class="info-num recommend-num">
-                                    &mdash;
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ratings-row" style="align-items: flex-end">
-                        <div class="rating-card">
-                            <span class="rating-card-num hours-num">&mdash;</span>
-                            <p class="rating-card-desc"><i class="fa fa-hourglass-half fa-fw"></i>&nbsp;Hours/Week</p>
-                        </div>
-                        <div class="info-container">
-                            <div class="info-row">
-                                <div class="info-title">
-                                    <i class="fas fa-book"></i>&nbsp;Reading
-                                </div>
-                                <div class="info-bar">
-                                    <div class="progress">
-                                        <div class="progress-bar reading-bar" style="width:0%"></div>
-                                    </div>
-                                </div>
-                                <div class="info-num reading-num">
-                                    &mdash;
-                                </div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-title">
-                                    <i class="fas fa-pencil-alt"></i>&nbsp;Writing
-                                </div>
-                                <div class="info-bar">
-                                    <div class="progress">
-                                        <div class="progress-bar writing-bar" style="width:0%"></div>
-                                    </div>
-                                </div>
-                                <div class="info-num writing-num">
-                                    &mdash;
-                                </div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-title">
-                                    <i class="fas fa-user-friends"></i>&nbsp;Groupwork
-                                </div>
-                                <div class="info-bar">
-                                    <div class="progress">
-                                        <div class="progress-bar group-bar" style="width:0%"></div>
-                                    </div>
-                                </div>
-                                <div class="info-num group-num">
-                                    &mdash;
-                                </div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-title">
-                                    <i class="fas fa-flask"></i>&nbsp;Other
-                                </div>
-                                <div class="info-bar">
-                                    <div class="progress">
-                                        <div class="progress-bar homework-bar" style="width: 0%"></div>
-                                    </div>
-                                </div>
-                                <div class="info-num homework-num">
-                                    &mdash;
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="grades-container">
-                    <div class="chart-container d-flex align-items-center justify-content-center">
-                        <div id="canvas-parent"><canvas id="myChart"></canvas></div>
-                    </div>
-                    <div class="absolute-center" id="chart-label">
-                        <p class="gpa-text"> No grades found <i class="far fa-frown-open fa-fw"></i></p>
-                        <p class="students-text"> &mdash; Students</p>
-                    </div>
-                    <div class="chart-button">
-                        <button type="button" id="toggle-btn" class="btn btn-outline-primary pieToBar" value="bar">Bar</button>
-                    </div>
-                </div>
-            </div>
-            {% if display_times %}
-            <div class="times-info-container">
-                <div class="info-container" style="padding: 10px 15px; margin: 0;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="toggleSections(this)">
-                        <p class="rating-card-desc" style="margin-bottom: 0; display: flex; align-items: center;">Sections
-                            <span style="background-color: var(--secondary-color); color: white; padding: 0 8px; border-radius: 25%; font-size: 12px; margin-left: 7px;">
-                                {{ section_info.sections|length }}
-                            </span>
-                        </p>
-                        <i class="fas fa-solid fa-chevron-right" style="transition: transform 0.3s;"></i>
-                    </div>
-                    <div style="overflow: hidden;">
-                        <div id="sectionInfo" style="margin-top: -10000px;">
-                            {% for section, sec_info in section_info.sections.items %}
-                            <div style="display: grid; grid-template-columns: [start] 6ch [sec-num] auto [type] 1fr [end]; margin-bottom: 3px;">
-                                <div style="color: var(--accent-color);">{{ section }}</div>
-                                <div style="margin-left: min(20px, 4vw);">
-                                    {{ sec_info.type }}{% if sec_info.units is not None %} ({{ sec_info.units }} Unit{% if sec_info.units != 1 %}s{% endif %}){% endif %}
-                                </div>
-                                <div style="grid-column: type/end; text-align: right;">
-                                    {% for time in sec_info.times %}
-                                    {% if forloop.counter > 1 %}<br>{% endif %}{{ time }}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-        </div>
-
-        <script>
-            document.querySelector("#sectionInfo").style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
-
-            function toggleSections(div) {
-                const arrow = div.getElementsByTagName("i")[0],
-                    sectionInfo = document.querySelector("#sectionInfo");
-                arrow.classList.toggle("rotated");
-                sectionInfo.classList.toggle("show");
-                if (sectionInfo.classList.contains("show")) {
-                    sectionInfo.style.marginTop = '10px';
-                } else {
-                    sectionInfo.style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
-                }
-            }
-        </script>
-
-        <div style="margin-left: auto; margin-right: auto; background-color: white; 
-        padding: 10px; margin-bottom: 10px; position: relative; height:32vh; width:40vw;">
-            <div style="position: relative; height: 100%; width: 100%;">
-                <canvas id="sentiment-chart"></canvas>
-                <div style="text-align: center; line-height: 250px; vertical-align: middle; height: 100%; width: 100%;" class="absolute-center" id="sentiment-chart-label">
-                    <p class="sentiment-text">No reviews found <i class="far fa-frown-open fa-fw"></i></p>
-                </div>
-            </div>
-        </div>
-
-
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" id="reviewsTab" data-toggle="tab" href="#reviewsTabContent" style="font-size: 18px;">Reviews</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="qaTab" data-toggle="tab" href="#qaTabContent" style="font-size: 18px;">Q&A
-                    <span class="badge badge-pill badge-info ml-2">New</span>
-                </a>
-            </li>
-        </ul>
-
-        <div class="tab-content">
-            <div class="tab-pane fade show active" id="reviewsTabContent" role="tabpanel" aria-labelledby="reviews-tab">
-                <div class="reviews-container mb-5 mt-3">
-                    <div class="reviews-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
-                        <h3 class="reviews-heading mb-0 mt-1 mr-4">{{ reviews|length }} {% if reviews|length == 1 %} Comment {% else %} Comments {% endif %}</h3>
-                        <div class="reviews-options d-flex flex-sm-row flex-column col p-0">
-                            {% if user.is_authenticated %}
-                                <a href="{% url 'new_review' %}?subdept_id={{course.subdepartment.id}}&course_id={{course.id}}&instr_id={{instructor.id}}" class="btn bg-tcf-orange text-white mb-3">
-                                    <i class="fa fa-plus" aria-hidden="true"></i> Add your review!
-                                </a>
-                            {% else %}
-                                <a href="#loginModal" data-toggle="modal" class="btn bg-tcf-orange text-white mb-3">
-                                    <i class="fa fa-plus" aria-hidden="true"></i> Add your review!
-                                </a> 
-                            {% endif %}
-                            {% if reviews %}
-                            <!-- Show sorting options iff reviews exist -->
-                            
-                            <div class="ml-auto">
-                                <div class="dropdown btn-group ml-sm-4">
-                                    <button class="btn bg-white" disabled>Sort by</button>
-                                    <button id="review-sort-select" class="btn btn-primary dropdown-toggle" type="button" id="sortOptions"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                                    <div class="dropdown-menu" aria-labelledby="sortOptions">
-                                        <button id="votes-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
-                                            Most Helpful
-                                        </button>
-                                        <button id="recent-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
-                                            Most Recent
-                                        </button>
-                                        <button id="highrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
-                                            Highest Rating
-                                        </button>
-                                        <button id="lowrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
-                                            Lowest Rating
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% include "reviews/reviews.html" with reviews=reviews %}
-                </div>
-            </div>
-            <div class="tab-pane fade" id="qaTabContent" role="tabpanel" aria-labelledby="qa-tab">
-                {% include 'qa/qa.html' %}
             </div>
         </div>
     </div>
+
+    <div class="course-info-container">
+        <div class="grades-ratings-container">
+            <div class="ratings-container">
+                <div class="ratings-row">
+                    <div class="rating-card">
+                        <span class="rating-card-num rating-num">&mdash;</span>
+                        <p class="rating-card-desc"><i class="fa fa-star fa-fw"></i>&nbsp;{{ num_reviews }}
+                            {% if num_reviews == 1 %} Rating {% else %} Ratings {% endif %}</p>
+                    </div>
+                    <div class="info-container">
+                        <div class="info-row">
+                            <div class="info-title">
+                                <i class="fas fa-user"></i>&nbsp;Instructor
+                            </div>
+                            <div class="info-bar">
+                                <div class="progress">
+                                    <div class="progress-bar instructor-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="info-num instructor-num">
+                                &mdash;
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-title">
+                                <i class="far fa-smile-beam"></i>&nbsp;Enjoyability
+                            </div>
+                            <div class="info-bar">
+                                <div class="progress">
+                                    <div class="progress-bar fun-bar" style="width:0%"></div>
+                                </div>
+                            </div>
+                            <div class="info-num fun-num">
+                                &mdash;
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-title">
+                                <i class="fas fa-dumbbell"></i>&nbsp;Difficulty
+                            </div>
+                            <div class="info-bar">
+                                <div class="progress">
+                                    <div class="progress-bar difficulty-bar" style="width:0%"></div>
+                                </div>
+                            </div>
+                            <div class="info-num difficulty-num">
+                                &mdash;
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-title">
+                                <i class="fas fa-heart"></i>&nbsp;Recommend
+                            </div>
+                            <div class="info-bar">
+                                <div class="progress">
+                                    <div class="progress-bar recommend-bar" style="width:0%"></div>
+                                </div>
+                            </div>
+                            <div class="info-num recommend-num">
+                                &mdash;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ratings-row" style="align-items: flex-end">
+                    <div class="rating-card">
+                        <span class="rating-card-num hours-num">&mdash;</span>
+                        <p class="rating-card-desc"><i class="fa fa-hourglass-half fa-fw"></i>&nbsp;Hours/Week</p>
+                    </div>
+                    <div class="info-container">
+                        <div class="info-row">
+                            <div class="info-title">
+                                <i class="fas fa-book"></i>&nbsp;Reading
+                            </div>
+                            <div class="info-bar">
+                                <div class="progress">
+                                    <div class="progress-bar reading-bar" style="width:0%"></div>
+                                </div>
+                            </div>
+                            <div class="info-num reading-num">
+                                &mdash;
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-title">
+                                <i class="fas fa-pencil-alt"></i>&nbsp;Writing
+                            </div>
+                            <div class="info-bar">
+                                <div class="progress">
+                                    <div class="progress-bar writing-bar" style="width:0%"></div>
+                                </div>
+                            </div>
+                            <div class="info-num writing-num">
+                                &mdash;
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-title">
+                                <i class="fas fa-user-friends"></i>&nbsp;Groupwork
+                            </div>
+                            <div class="info-bar">
+                                <div class="progress">
+                                    <div class="progress-bar group-bar" style="width:0%"></div>
+                                </div>
+                            </div>
+                            <div class="info-num group-num">
+                                &mdash;
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-title">
+                                <i class="fas fa-flask"></i>&nbsp;Other
+                            </div>
+                            <div class="info-bar">
+                                <div class="progress">
+                                    <div class="progress-bar homework-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="info-num homework-num">
+                                &mdash;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grades-container">
+                <div class="chart-container d-flex align-items-center justify-content-center">
+                    <div id="canvas-parent"><canvas id="myChart"></canvas></div>
+                </div>
+                <div class="absolute-center" id="chart-label">
+                    <p class="gpa-text"> No grades found <i class="far fa-frown-open fa-fw"></i></p>
+                    <p class="students-text"> &mdash; Students</p>
+                </div>
+                <div class="chart-button">
+                    <button type="button" id="toggle-btn" class="btn btn-outline-primary pieToBar"
+                        value="bar">Bar</button>
+                </div>
+            </div>
+        </div>
+        {% if display_times %}
+        <div class="times-info-container">
+            <div class="info-container" style="padding: 10px 15px; margin: 0;">
+                <div style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;"
+                    onclick="toggleSections(this)">
+                    <p class="rating-card-desc" style="margin-bottom: 0; display: flex; align-items: center;">Sections
+                        <span
+                            style="background-color: var(--secondary-color); color: white; padding: 0 8px; border-radius: 25%; font-size: 12px; margin-left: 7px;">
+                            {{ section_info.sections|length }}
+                        </span>
+                    </p>
+                    <i class="fas fa-solid fa-chevron-right" style="transition: transform 0.3s;"></i>
+                </div>
+                <div style="overflow: hidden;">
+                    <div id="sectionInfo" style="margin-top: -10000px;">
+                        {% for section, sec_info in section_info.sections.items %}
+                        <div
+                            style="display: grid; grid-template-columns: [start] 6ch [sec-num] auto [type] 1fr [end]; margin-bottom: 3px;">
+                            <div style="color: var(--accent-color);">{{ section }}</div>
+                            <div style="margin-left: min(20px, 4vw);">
+                                {{ sec_info.type }}{% if sec_info.units is not None %} ({{ sec_info.units }} Unit
+                                {% if sec_info.units != 1 %}s{% endif %}){% endif %}
+                            </div>
+                            <div style="grid-column: type/end; text-align: right;">
+                                {% for time in sec_info.times %}
+                                {% if forloop.counter > 1 %}<br>{% endif %}{{ time }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.querySelector("#sectionInfo").style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
+
+        function toggleSections(div) {
+            const arrow = div.getElementsByTagName("i")[0],
+                sectionInfo = document.querySelector("#sectionInfo");
+            arrow.classList.toggle("rotated");
+            sectionInfo.classList.toggle("show");
+            if (sectionInfo.classList.contains("show")) {
+                sectionInfo.style.marginTop = '10px';
+            } else {
+                sectionInfo.style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
+            }
+        }
+    </script>
+
+    <div
+        style="margin: 0 auto; background-color: white; padding: 10px; margin-bottom: 10px; position: relative; height: 32vh; width: 40vw; overflow: hidden;">
+        <div style="position: relative; height: 100%; width: 100%;">
+            <canvas id="sentiment-chart"></canvas>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center;"
+                id="sentiment-chart-label">
+                <p class="sentiment-text" style="margin: 0; padding: 0;">No reviews found <i
+                        class="far fa-frown-open fa-fw"></i></p>
+            </div>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" id="reviewsTab" data-toggle="tab" href="#reviewsTabContent"
+                style="font-size: 18px;">Reviews</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="qaTab" data-toggle="tab" href="#qaTabContent" style="font-size: 18px;">Q&A
+                <span class="badge badge-pill badge-info ml-2">New</span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="reviewsTabContent" role="tabpanel" aria-labelledby="reviews-tab">
+            <div class="reviews-container mb-5 mt-3">
+                <div
+                    class="reviews-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
+                    <h3 class="reviews-heading mb-0 mt-1 mr-4">{{ reviews|length }} {% if reviews|length == 1 %} Comment
+                        {% else %} Comments {% endif %}</h3>
+                    <div class="reviews-options d-flex flex-sm-row flex-column col p-0">
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'new_review' %}?subdept_id={{course.subdepartment.id}}&course_id={{course.id}}&instr_id={{instructor.id}}"
+                            class="btn bg-tcf-orange text-white mb-3">
+                            <i class="fa fa-plus" aria-hidden="true"></i> Add your review!
+                        </a>
+                        {% else %}
+                        <a href="#loginModal" data-toggle="modal" class="btn bg-tcf-orange text-white mb-3">
+                            <i class="fa fa-plus" aria-hidden="true"></i> Add your review!
+                        </a>
+                        {% endif %}
+                        {% if reviews %}
+                        <!-- Show sorting options iff reviews exist -->
+
+                        <div class="ml-auto">
+                            <div class="dropdown btn-group ml-sm-4">
+                                <button class="btn bg-white" disabled>Sort by</button>
+                                <button id="review-sort-select" class="btn btn-primary dropdown-toggle" type="button"
+                                    id="sortOptions" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false"></button>
+                                <div class="dropdown-menu" aria-labelledby="sortOptions">
+                                    <button id="votes-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item"
+                                        type="button">
+                                        Most Helpful
+                                    </button>
+                                    <button id="recent-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item"
+                                        type="button">
+                                        Most Recent
+                                    </button>
+                                    <button id="highrating-sort-btn" onclick="sortReviews(this.id)"
+                                        class="dropdown-item" type="button">
+                                        Highest Rating
+                                    </button>
+                                    <button id="lowrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item"
+                                        type="button">
+                                        Lowest Rating
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% include "reviews/reviews.html" with reviews=reviews %}
+            </div>
+        </div>
+        <div class="tab-pane fade" id="qaTabContent" role="tabpanel" aria-labelledby="qa-tab">
+            {% include 'qa/qa.html' %}
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block js %}
-    <!-- For instructor data -->
-    <script> // Create global js vars from template context vars
-       var courseID = "{{ course_id|escapejs }}";
-    </script>
-    <script type="module" src="{% static 'course/javascript/instr_data.js' %}"></script>
+<!-- For instructor data -->
+<script> // Create global js vars from template context vars
+    var courseID = "{{ course_id|escapejs }}";
+</script>
+<script type="module" src="{% static 'course/javascript/instr_data.js' %}"></script>
 
-    <!-- For Bootstrap tooltip -->
-    <script>
-      $(function () { $('[data-toggle="tooltip"]').tooltip() })
-    </script>
+<!-- For Bootstrap tooltip -->
+<script>
+    $(function () { $('[data-toggle="tooltip"]').tooltip() })
+</script>
 
-    <!-- For grade data -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-    <script type="module"
-            src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
-    <script type="module" src="{% static 'course/javascript/course_data.js' %}"></script>
-    <script type="module">
-        // Run loaddata function from above script
-        import {loadData} from "{% static 'course/javascript/course_data.js' %}";
-        loadData(JSON.parse("{{ data|escapejs }}"))
-    </script>
+<!-- For grade data -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script type="module"
+    src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+<script type="module" src="{% static 'course/javascript/course_data.js' %}"></script>
+<script type="module">
+    // Run loaddata function from above script
+    import { loadData } from "{% static 'course/javascript/course_data.js' %}";
+    loadData(JSON.parse("{{ data|escapejs }}"))
+</script>
 
-    <!-- For QA Form-->
-    <script type="text/javascript" src="{% static 'qa/new_answer.js' %}"></script>
-    
-    <!-- For sentiments bar chart -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let rawData = `{{ sentiment_distribution|safe }}`;
-    
-            const courseCode = "{{ course.code|escapejs }}";
-            const instructorName = "{{ instructor.first_name|escapejs }} {{ instructor.last_name|escapejs }}";
-    
-            const sentimentData = JSON.parse(rawData);
-    
-            const labels = ["Review Positivity"];
-            const sentimentLabels = Object.keys(sentimentData);
-            const dataValues = Object.values(sentimentData);
+<!-- For QA Form-->
+<script type="text/javascript" src="{% static 'qa/new_answer.js' %}"></script>
 
-            const totalReviews = dataValues.reduce((sum, current) => sum + current, 0);
+<!-- For sentiments bar chart -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let rawData = `{{ sentiment_distribution|safe }}`;
 
-            const chartCanvas = document.getElementById("sentiment-chart");
-            const noReviewsMessage = document.getElementById("sentiment-chart-label");
+        const courseCode = "{{ course.code|escapejs }}";
+        const instructorName = "{{ instructor.first_name|escapejs }} {{ instructor.last_name|escapejs }}";
+
+        const sentimentData = JSON.parse(rawData);
+
+        const labels = ["Review Positivity"];
+        const sentimentLabels = Object.keys(sentimentData);
+        const dataValues = Object.values(sentimentData);
+
+        const totalReviews = dataValues.reduce((sum, current) => sum + current, 0);
+
+        const chartCanvas = document.getElementById("sentiment-chart");
+        const noReviewsMessage = document.getElementById("sentiment-chart-label");
 
 
-            const chartLabel = document.getElementById('sentiment-chart-label');
-            if (totalReviews === 0) {
-                // Hide the chart, show "No reviews found"
-                chartCanvas.style.display = "none";
-                noReviewsMessage.style.display = "block";
-            } else {
-                // Show the chart, hide the message
-                chartCanvas.style.display = "block";
-                noReviewsMessage.style.display = "none";
-            }
-    
-            const barColors = {
-                normal: [
-                    '#BE4B20', // Strongly Negative
-                    '#DD734C', // Somewhat Negative
-                    '#B4A6B6', // Neutral
-                    '#5D83D1', // Somewhat Positive
-                    '#182D66', // Strongly Positive
-                ],
-                hover: [
-                    '#9E3B10', // Darker Strongly Negative
-                    '#BD634C', // Darker Somewhat Negative
-                    '#948696', // Darker Neutral
-                    '#4D73C1', // Darker Somewhat Positive
-                    '#081D56'  // Darker Strongly Positive
-                ]
-            };
-    
-            const datasets = sentimentLabels.map((label, index) => ({
-                label: label,
-                data: [dataValues[index]],
-                backgroundColor: barColors.normal[index % barColors.normal.length],
-                hoverBackgroundColor: barColors.hover[index % barColors.hover.length],
-                borderWidth: 0
-            }));
-    
-            const ctx = document.getElementById('sentiment-chart').getContext('2d');
-            new Chart(ctx, {
-                type: 'horizontalBar',
-                data: {
-                    labels: labels,
-                    datasets: datasets
+        const chartLabel = document.getElementById('sentiment-chart-label');
+        if (totalReviews === 0) {
+            // Hide the chart, show "No reviews found"
+            chartCanvas.style.display = "none";
+            noReviewsMessage.style.display = "block";
+        } else {
+            // Show the chart, hide the message
+            chartCanvas.style.display = "block";
+            noReviewsMessage.style.display = "none";
+        }
+
+        const barColors = {
+            normal: [
+                '#BE4B20', // Strongly Negative
+                '#DD734C', // Somewhat Negative
+                '#B4A6B6', // Neutral
+                '#5D83D1', // Somewhat Positive
+                '#182D66', // Strongly Positive
+            ],
+            hover: [
+                '#9E3B10', // Darker Strongly Negative
+                '#BD634C', // Darker Somewhat Negative
+                '#948696', // Darker Neutral
+                '#4D73C1', // Darker Somewhat Positive
+                '#081D56'  // Darker Strongly Positive
+            ]
+        };
+
+        const datasets = sentimentLabels.map((label, index) => ({
+            label: label,
+            data: [dataValues[index]],
+            backgroundColor: barColors.normal[index % barColors.normal.length],
+            hoverBackgroundColor: barColors.hover[index % barColors.hover.length],
+            borderWidth: 0
+        }));
+
+        const ctx = document.getElementById('sentiment-chart').getContext('2d');
+        new Chart(ctx, {
+            type: 'horizontalBar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                layout: { padding: 10 },
+                legend: { display: false },
+                //aspectRatio: aspectRatio,
+                title: {
+                    display: true,
+                    text: 'Review Positivity for ' + courseCode + ' with ' + instructorName,
+                    fontSize: 18,
+                    padding: 20,
+                    fontColor: '#384676'
                 },
-                options: {
-                    responsive: true,
-                    layout: { padding: 10 },
-                    legend: { display: false },
-                    //aspectRatio: aspectRatio,
-                    title: {
-                        display: true,
-                        text: 'Review Positivity for ' + courseCode + ' with ' + instructorName,
-                        fontSize: 18,
-                        padding: 20,
-                        fontColor: '#384676'
+                tooltips: {
+                    mode: 'dataset',
+                    intersect: true,
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            let dataset = data.datasets[tooltipItem.datasetIndex];
+                            let value = dataset.data[tooltipItem.index];
+
+                            let total = 0;
+                            data.datasets.forEach((dataset) => {
+                                total += dataset.data[tooltipItem.index];
+                            });
+
+                            let percentage = Math.round(((value / total) * 100).toFixed(2));
+
+                            return `${dataset.label}: ${percentage}% of reviews`;
+                        }
                     },
-                    tooltips: {
-                        mode: 'dataset',
-                        intersect: true,
-                        callbacks: {
-                            label: function(tooltipItem, data) {
-                                let dataset = data.datasets[tooltipItem.datasetIndex];
-                                let value = dataset.data[tooltipItem.index];
-
-                                let total = 0;
-                                data.datasets.forEach((dataset) => {
-                                    total += dataset.data[tooltipItem.index];
-                                });
-
-                                let percentage = Math.round(((value / total) * 100).toFixed(2));
-
-                                return `${dataset.label}: ${percentage}% of reviews`;
-                            }
+                },
+                hover: {
+                    mode: 'point',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: false,
+                        stacked: true,
+                        ticks: {
+                            display: false,
+                            min: 0,
+                            max: totalReviews,
                         },
-                    },
-                    hover: {
-                        mode: 'point', 
-                        intersect: true
-                    },
-                    scales: {
-                        xAxes: [{
-                            display: false,
-                            stacked: true,
-                            ticks: { 
-                                display: false,
-                                min: 0,
-                                max: totalReviews, 
-                            },
-                            gridLines: { display: false },
-                            barPercentage: 0.7,
-                            categoryPercentage: 0.8,
-                        }],
-                        yAxes: [{
-                            display: false,
-                            stacked: true,
-                            ticks: { display: false },
-                            gridLines: { display: false },
-                            barThickness : 73
-                        }]
-                    },
-                    interaction: {
-                        mode: 'nearest',
-                        axis: 'x'
-                    },                   
+                        gridLines: { display: false },
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8,
+                    }],
+                    yAxes: [{
+                        display: false,
+                        stacked: true,
+                        ticks: { display: false },
+                        gridLines: { display: false },
+                        barThickness: 73
+                    }]
                 },
-            });
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x'
+                },
+            },
         });
-    </script>
-    
+    });
+</script>
+
 
 {% endblock %}
