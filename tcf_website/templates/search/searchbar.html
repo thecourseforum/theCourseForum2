@@ -108,11 +108,13 @@
                   Minimum GPA
                 </h6>
                 <div class="min-gpa-div">
-                  <input type="text" id="gpa-input" class="custom-select-input" name="min_gpa" 
+                  <input type="text" id="gpa-input" class="min-gpa-input" name="min_gpa" 
                     placeholder="Select a minimum GPA" 
                     value="{% if min_gpa %}{{ min_gpa }}{% endif %}">
-                  <button type="button" id="gpa-dropdown-toggle" class="dropdown-button">▼</button>
-                  <div id="gpa-dropdown" class="custom-select-dropdown"></div>
+                  <button type="button" id="gpa-dropdown-toggle" class="gpa-dropdown-button">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                  <div id="gpa-dropdown" class="gpa-dropdown"></div>
                   </select>
                 </div>
               </div>
@@ -237,6 +239,7 @@
     const filterButton = document.getElementById('filter-button');
     const timeFrom = document.getElementById('from_time'); 
     const timeTo = document.getElementById('to_time');
+    const gpa_input = document.getElementById('gpa-input');
 
     // Check initial state (in case of page refresh with active filters)
     updateButtonState();
@@ -252,6 +255,8 @@
     timeFrom.addEventListener('input', updateButtonState);
     timeTo.addEventListener('input', updateButtonState);
 
+    gpa_input.addEventListener('input', updateButtonState);
+
     // Checks for active filters or inactive day filters to determine button state
     function updateButtonState() {
       const activeFilters = Array.from(filterInputs).filter(input => input.checked);
@@ -259,6 +264,7 @@
       
       let timeFromChanged = false;
       let timeToChanged = false;
+      let gpaChanged = false;
 
       if (timeFrom.value) {
           timeFromChanged = timeFrom.value !== '';
@@ -267,7 +273,11 @@
           timeToChanged = timeTo.value !== '';
       }
 
-      if (activeFilters.length > 0 || activeDayFilters.length > 0 || timeFromChanged || timeToChanged) {
+      if (gpa_input.value) {
+          gpaChanged = gpa_input.value !== '';
+      }
+
+      if (activeFilters.length > 0 || activeDayFilters.length > 0 || timeFromChanged || timeToChanged || gpaChanged) {
           filterButton.classList.add('filter-active');
           filterButton.textContent = 'Filters Active';
       } else {
@@ -417,56 +427,116 @@
     });
 
     // Fill the Min GPA dropdown with options from 2.0 to 4.0 with 0.2 increments
-    const input = document.getElementById('gpa-input');
     const gpa_dropdown = document.getElementById('gpa-dropdown');
     const toggleButton = document.getElementById('gpa-dropdown-toggle');
-    
-    // Generate options from 4.0 to 2.0 in 0.2 steps
-    for (let i = 4.0; i >= 2.0; i -= 0.2) {
-      const formattedValue = i.toFixed(1);
-      
+  
+    // Create a document fragment for better performance
+    const fragment = document.createDocumentFragment();
+
+    // Create an array of GPA values to display
+    const gpaValues = [];
+
+    // Generate standard options from 4.0 to 1.8 in 0.2 steps
+    for (let i = 4.0; i >= 1.8; i -= 0.2) {
+      gpaValues.push(i.toFixed(1));
+    }
+
+    // Add 3.9 if it's not already in the array
+    if (!gpaValues.includes('3.9')) {
+      gpaValues.push('3.9');
+    }
+
+    // Add 3.7 if it's not already in the array
+    if (!gpaValues.includes('3.7')) {
+      gpaValues.push('3.7');
+    }
+
+    // Sort values in descending order to ensure proper order with 3.9 included
+    gpaValues.sort((a, b) => parseFloat(b) - parseFloat(a));
+
+    // Create option elements
+    gpaValues.forEach(value => {
       const option = document.createElement('div');
       option.className = 'custom-select-option';
-      option.textContent = formattedValue;
-      option.dataset.value = formattedValue;
+      option.textContent = value;
+      option.dataset.value = value;
       
-      option.addEventListener('click', function() {
-        input.value = this.dataset.value;
-        hideGPADropdown();
+      option.addEventListener('click', () => {
+        gpa_input.value = option.dataset.value;
+        toggleDropdown(false);
       });
       
-      gpa_dropdown.appendChild(option);
-    }
-    
-    // Toggle dropdown visibility
-    toggleButton.addEventListener('click', function() {
-      if (gpa_dropdown.style.display === 'block') {
-        hideGPADropdown();
-      } else {
-        showGPADropdown();
+      fragment.appendChild(option);
+    });
+
+    // Append all options at once for better performance
+    gpa_dropdown.appendChild(fragment);
+
+    // Input validation for GPA field
+    gpa_input.addEventListener('input', function() {
+      // Use a more efficient regex that handles all cases
+      this.value = this.value.replace(/[^0-9.]/g, '');
+      
+      // More efficient way to handle multiple decimals
+      const parts = this.value.split('.');
+      if (parts.length > 2) {
+        this.value = parts[0] + '.' + parts.slice(1).join('');
       }
     });
-    
-    // Hide dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!gpa_dropdown.contains(e.target) && e.target !== toggleButton && e.target !== input) {
-        hideGPADropdown();
-      }
-    });
-    
-    /* Show dropdown when the input is focused 
-    input.addEventListener('focus', function() {
-      showGPADropdown();
-    });
-    */ 
-    
-    function showGPADropdown() {
+
+    // Split into separate show/hide functions for clarity
+    function showDropdown() {
       gpa_dropdown.style.display = 'block';
     }
-    
-    function hideGPADropdown() {
+
+    function hideDropdown() {
       gpa_dropdown.style.display = 'none';
     }
+
+    // Toggle function using the show/hide functions
+    function toggleDropdown() {
+      if (gpa_dropdown.style.display === 'block') {
+        hideDropdown();
+      } else {
+        showDropdown();
+      }
+    }
+
+    // Use event delegation for click events
+    toggleButton.addEventListener('click', function(e) {
+      // Stop the event from bubbling up to document
+      e.stopPropagation();
+      toggleDropdown();
+    });
+
+    gpa_input.addEventListener('click', function(e) {
+      // Stop the event from bubbling up to document
+      e.stopPropagation();
+      toggleDropdown();
+    });
+
+    // Input validation for GPA field
+    gpa_input.addEventListener('input', function() {
+      // Use a more efficient regex that handles all cases
+      this.value = this.value.replace(/[^0-9.]/g, '');
+      
+      // More efficient way to handle multiple decimals
+      const parts = this.value.split('.');
+      if (parts.length > 2) {
+        this.value = parts[0] + '.' + parts.slice(1).join('');
+      }
+    });
+
+    // Add click event to the dropdown itself to prevent it from closing
+    gpa_dropdown.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
+    // Global document click handler to close dropdown
+    document.addEventListener('click', function() {
+      hideDropdown();
+    });
+
     // Initialize weekdays
     updateWeekdays();
 
@@ -813,26 +883,26 @@
     visibility: hidden;
   }
 
-  .custom-select-input {
-    width: calc(100%);
+  .min-gpa-input{
     padding: 8px 12px;
     box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 4px 0 0 4px;
   }
 
-  .custom-select-dropdown {
+  .gpa-dropdown {
     position: absolute; 
     top: 100%;
     left: 0;
-    width: 100%;
+    width: 100%; /* This will now match the width of min-gpa-div */
     background-color: white;
     border: 1px solid #ccc;
-    max-height: 200px;
+    max-height: 200px; 
     overflow-y: auto;
     display: none;
     z-index: 1000;
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 4px 4px 4px;
+    box-sizing: border-box;
   }
 
   .custom-select-option {
@@ -844,13 +914,18 @@
     background-color: #f1f1f1;
   }
 
-  .dropdown-button {
-    height: 100%;
-    width: 30px;
-    background-color: #f1f1f1;
-    border: 1px solid #ccc;
-    border-left: none;
+  .gpa-dropdown-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 100%; 
+    box-sizing: border-box;
+    background-color: #f8f9fa;
     border-radius: 0 4px 4px 0;
+    border: 1px solid #ccc;
     cursor: pointer;
   }
+
 </style>
