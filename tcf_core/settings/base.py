@@ -28,7 +28,11 @@ ALLOWED_HOSTS = [
     ".ngrok.io",
     "127.0.0.1",
     "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
+    "0.0.0.0",
 ]
+
+if env.str("ENVIRONMENT") == "dev":
+    STATIC_URL = '/static/'
 
 CORS_ALLOWED_ORIGINS = ["https://thecourseforum.com", "https://thecourseforumtest.com"]
 
