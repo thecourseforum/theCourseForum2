@@ -81,8 +81,12 @@ def department(request, dept_id: int, course_recency=None):
     # Fetch sorting variables
     sortby = request.GET.get("sortby", "course_id")
     order = request.GET.get("order", "asc")
+    page = request.GET.get("page", 1)
 
-    courses = dept.sort_courses(sortby, latest_semester.year - int(year), order)
+    print(dept)
+    paginated_courses = dept.get_paginated_department_courses(
+        sortby, latest_semester.year - int(year), order, page
+    )
 
     return render(
         request,
@@ -92,7 +96,7 @@ def department(request, dept_id: int, course_recency=None):
             "dept_id": dept_id,
             "latest_semester": str(latest_semester),
             "breadcrumbs": breadcrumbs,
-            "courses": courses,
+            "paginated_courses": paginated_courses,
             "active_course_recency": str(active_semester),
             "sortby": sortby,
             "order": order,
