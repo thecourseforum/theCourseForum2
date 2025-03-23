@@ -37,17 +37,29 @@
   align-items: center;
 }
 
-.answer-head{
+.connector-container {
   position: relative;
-  margin-left: 1.5rem;
+  display: inline-block;
+  vertical-align: middle;
 }
 
-.answer-head::before {
-  content: "";
+/* .connector-line {
   position: absolute;
-  left: -1.5rem;
+  left: 0;
   top: 0;
   bottom: 0;
-  width: 20px;
-  background-color: black;
+  width: 32px;
+  background: url("/path/to/curvy-line.svg") no-repeat center;
+  background-size: contain;
+} */
+
+
+.connector-container::after {
+  content: "";
+  position: absolute;
+  left: 2rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #ccc;
 }
