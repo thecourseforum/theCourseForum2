@@ -40,6 +40,51 @@
       {% endif %}
     </div>
   </div>
+  <div class="pagination">
+    {% if paginated_courses.has_previous %}
+      <a href="?page={{ paginated_courses.previous_page_number }}#reviews">&lt;</a>
+    {% endif %}
+    
+    {% if paginated_courses.number == 1 %}
+      <span class="current">1</span>
+    {% else %}
+      <a href="?page=1#reviews">1</a>
+    {% endif %}
+    
+    {% if paginated_courses.number > 4 %}
+      <span class="dots">...</span>
+    {% endif %}
+    
+    {% for page_num in paginated_courses.paginator.page_range %}
+      {% if page_num > 1 and page_num < paginated_courses.paginator.num_pages %}
+        {% if page_num >= paginated_courses.number|add:'-2' and page_num <= paginated_courses.number|add:'2' %}
+          {% if page_num == paginated_courses.number %}
+            <span class="current">{{ page_num }}</span>
+          {% else %}
+            <a href="?page={{ page_num }}#reviews">{{ page_num }}</a>
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    
+    {% if paginated_courses.number < paginated_courses.paginator.num_pages|add:'-3' %}
+      <span class="dots">...</span>
+    {% endif %}
+    
+    {% if paginated_courses.paginator.num_pages > 1 %}
+      {% if paginated_courses.number == paginated_courses.paginator.num_pages %}
+        <span class="current">{{ paginated_courses.paginator.num_pages }}</span>
+      {% else %}
+        <a href="?page={{ paginated_courses.paginator.num_pages }}#reviews">
+            {{ paginated_courses.paginator.num_pages }}
+        </a>
+      {% endif %}
+    {% endif %}
+    
+    {% if paginated_courses.has_next %}
+      <a href="?page={{ paginated_courses.next_page_number }}#reviews">&gt;</a>
+    {% endif %}
+  </div>  
 </div>
 
 {% endblock %}
