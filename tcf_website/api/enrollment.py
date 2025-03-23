@@ -36,7 +36,7 @@ def fetch_section_data(section):
         print(f"Network error while fetching section {section.sis_section_number}: {e}")
     except ValueError as e:
         print(f"JSON decoding error for section {section.sis_section_number}: {e}")
-
+    # Returns empty dictionary when data for a class was not found
     return {}
 
 
