@@ -1,4 +1,4 @@
-""" "Custom DRF pagination classes"""
+""""Custom DRF pagination classes"""
 
 from django_filters import FilterSet, NumberFilter
 
