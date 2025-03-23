@@ -172,8 +172,11 @@
                                 </div>
                                 <div class="question-answer-section mt-3">
                                     <div class="row">
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                                        <div class="connector-container">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                                        <!-- add connector icon here -->
+                                        <!-- <i class="fa fa-trash-o"></i> -->
                                         <div class="col">
+                                            <!-- <div class="connector-line"></div> -->
                                             <div class="answer-container" id="answer-container{{question.id}}">
                                                 {% for question_id, answer_list in answers.items %}
                                                 {% if question.id == question_id %}
