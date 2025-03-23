@@ -1,11 +1,13 @@
 Django~=4.2.8
 backoff~=2.2.1
 black~=24.1.1
+boto3~=1.37.4
 coverage~=7.3.3
 django-cachalot~=2.6.1
 django-environ~=0.11.2
 django-filter~=23.5
 django-heroku~=0.3.1
+django-storages~=1.14.5
 django-stubs~=4.2.7
 djangorestframework~=3.14.0
 gunicorn~=21.2.0

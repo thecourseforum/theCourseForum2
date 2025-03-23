@@ -23,7 +23,14 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")  # default value set on the top
 
-ALLOWED_HOSTS = ["localhost", ".ngrok.io", "127.0.0.1"]
+ALLOWED_HOSTS = [
+    "localhost",
+    ".ngrok.io",
+    "127.0.0.1",
+    "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
+]
+
+CORS_ALLOWED_ORIGINS = ["https://thecourseforum.com", "https://thecourseforumtest.com"]
 
 # Application definition
 
@@ -33,13 +40,36 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    # "collectfast",
     "django.contrib.staticfiles",
     "social_django",
     "cachalot",  # TODO: add Redis?
+    "storages",
     "rest_framework",
     "django_filters",
     "tcf_website",
 ]
+
+AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = env.str("AWS_S3_REGION_NAME", default="us-east-1")
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+AWS_DEFAULT_ACL = None
+AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {},
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+}
+
+# COLLECTFAST_THREADS = 20
+# COLLECTFAST_STRATEGY = "collectfast.strategies.boto3.Boto3Strategy"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -110,13 +140,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 
 # Database
