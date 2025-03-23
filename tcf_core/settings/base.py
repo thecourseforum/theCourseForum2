@@ -31,7 +31,6 @@ ALLOWED_HOSTS = [
     "0.0.0.0",
 ]
 
-
 CORS_ALLOWED_ORIGINS = ["https://thecourseforum.com", "https://thecourseforumtest.com"]
 
 # Application definition
