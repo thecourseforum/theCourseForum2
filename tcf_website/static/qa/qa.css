@@ -36,3 +36,18 @@
   display: flex;
   align-items: center;
 }
+
+.answer-head{
+  position: relative;
+  margin-left: 1.5rem;
+}
+
+.answer-head::before {
+  content: "";
+  position: absolute;
+  left: -1.5rem;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background-color: black;
+}
