@@ -255,3 +255,11 @@ function clearDropdown(id) {
   $(id).empty();
   $(id).html("<option value='' disabled selected>Select...</option>");
 }
+
+function expandTextarea() {
+  document.querySelector(".textarea-container").style.flex = "100%";
+  document.querySelector(".alert-container").style.display = "none";
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+});

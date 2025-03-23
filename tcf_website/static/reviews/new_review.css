@@ -27,3 +27,32 @@
 #progressbar-message {
   margin-bottom: 0px;
 }
+
+/* Add this to your existing CSS file */
+.review-container {
+  display: flex;
+  gap: 10px;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.textarea-container {
+  flex: 70%;
+  transition: flex 0.3s ease;
+}
+
+.alert-container {
+  flex: 30%;
+  transition: flex 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .review-container {
+    flex-direction: column;
+  }
+  
+  .textarea-container, .alert-container {
+    flex: 100%;
+  }
+}
