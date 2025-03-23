@@ -14,6 +14,7 @@ env:
   DJANGO_SETTINGS_MODULE: tcf_core.settings.ci
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   DEBUG: 1
+  ENVIRONMENT: dev
   # database
   DB_NAME: tcf_db # arbitrary string
   DB_USER: postgres # default user
