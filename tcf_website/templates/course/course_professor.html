@@ -253,9 +253,14 @@
     </script>
 
     <div
-        style="margin: 0 auto; background-color: white; padding: 10px; margin-bottom: 10px; position: relative; height: 32vh; width: 40vw; overflow: hidden;">
+        style="margin: 0 auto; background-color: white; padding: 10px; margin-bottom: 10px; position: relative; height: 50vh; width: 40vw; overflow: hidden;">
         <div style="position: relative; height: 100%; width: 100%;">
+            <p class="sentiment-text" style="text-align: center; font-size: 20px; margin-top: 10px;">How Students Feel
+                About
+                {{ course.code }} - {{ instructor.first_name}} {{instructor.last_name}}</p>
             <canvas id="sentiment-chart"></canvas>
+            <p id="sentiment-range" class="sentiment-text" style="text-align: center; font-size: 15px;">Strongly
+                Negative—————————————————Strongly Positive</p>
             <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center;"
                 id="sentiment-chart-label">
                 <p class="sentiment-text" style="margin: 0; padding: 0;">No reviews found <i
@@ -383,13 +388,16 @@
 
 
         const chartLabel = document.getElementById('sentiment-chart-label');
+        const chartRange = document.getElementById('sentiment-range');
         if (totalReviews === 0) {
             // Hide the chart, show "No reviews found"
             chartCanvas.style.display = "none";
+            chartRange.style.display = "none";
             noReviewsMessage.style.display = "block";
         } else {
             // Show the chart, hide the message
             chartCanvas.style.display = "block";
+            chartRange.style.display = "block";
             noReviewsMessage.style.display = "none";
         }
 
@@ -430,13 +438,14 @@
                 layout: { padding: 10 },
                 legend: { display: false },
                 //aspectRatio: aspectRatio,
+                /*
                 title: {
                     display: true,
-                    text: 'Review Positivity for ' + courseCode + ' with ' + instructorName,
+                    text: 'How Students Feel About ' + courseCode + ' with ' + instructorName,
                     fontSize: 18,
                     padding: 20,
                     fontColor: '#384676'
-                },
+                },*/
                 tooltips: {
                     mode: 'dataset',
                     intersect: true,
@@ -478,7 +487,7 @@
                         stacked: true,
                         ticks: { display: false },
                         gridLines: { display: false },
-                        barThickness: 73
+                        barThickness: 150
                     }]
                 },
                 interaction: {
