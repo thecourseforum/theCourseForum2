@@ -1,7 +1,7 @@
 /*
     Any css that involves the navbar should go in this file!
-    This way things are kept insolated and de-coupled from one
-    another, making components more maliable and maintainable.
+    This way things are kept isolated and de-coupled from one
+    another, making components more malleable and maintainable.
 */
 
 .navbar {
@@ -25,14 +25,8 @@
   transition-timing-function: ease;
 }
 
-.logo-container:hover {
-  transform: scale(1.05);
-}
-
-.logo-container:active {
-  transform: scale(1.05);
-}
-
+.logo-container:hover,
+.logo-container:active,
 .logo-container:focus {
   transform: scale(1.05);
 }
@@ -41,7 +35,6 @@
   .logo-container {
     width: calc(var(--sidebar-width) - 16px);
     height: auto;
-
     /* Animation */
     padding-left: 0.55rem; /* centers logo in logo-container */
     padding-right: 0rem;
@@ -83,6 +76,29 @@
 
 .navbar-toggler.menu:focus {
   background-color: rgb(190, 190, 190);
+}
+
+.dark-mode .navbar {
+  flex-wrap: nowrap;
+  background-color: var(--card-background-color);
+  color: var(--basic-text-color);
+}
+
+.dark-mode .navbar-toggler.menu {
+  border-color: var(--input-border-color);
+  background-color: var(--button-bg-color);
+}
+
+.dark-mode .navbar-toggler.menu:hover {
+  background-color: #2a2a2a;
+}
+
+.dark-mode .navbar-toggler.menu:active {
+  background-color: #333333;
+}
+
+.dark-mode .navbar-toggler.menu:focus {
+  background-color: #2a2a2a;
 }
 
 @media (max-width: 768px) {
