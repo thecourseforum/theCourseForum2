@@ -463,6 +463,7 @@
       
       option.addEventListener('click', () => {
         gpa_input.value = option.dataset.value;
+        updateButtonState(); 
         toggleDropdown(false);
       });
       
