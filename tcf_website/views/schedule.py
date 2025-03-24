@@ -1,20 +1,13 @@
 """View pertaining to schedule creation/viewing."""
 
 import json
+import logging
 
 from django import forms
-
-# from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
-# from django.contrib.messages.views import SuccessMessageMixin
-# from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-
-# from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.db.models import Prefetch
 from django.http import HttpResponse, JsonResponse
-
-# from django.shortcuts import get_object_or_404, render, redirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 
@@ -33,6 +26,7 @@ from .browse import load_secs_helper
 # pylint: disable=no-else-return
 # pylint: disable=consider-using-generator
 
+logger = logging.getLogger(__name__)
 
 class ScheduleForm(forms.ModelForm):
     """
@@ -60,9 +54,8 @@ class SectionForm(forms.ModelForm):
 @login_required
 def schedule_data_helper(request):
     """
-    this helper method is for getting schedule data for a request.
+    This helper method is for getting schedule data for a request.
     """
-
     schedules = Schedule.objects.prefetch_related(
         Prefetch(
             "scheduledcourse_set",
@@ -99,7 +92,7 @@ def schedule_data_helper(request):
 
 def view_schedules(request):
     """
-    get all schedules, and the related courses, for a given user
+    Get all schedules, and the related courses, for a given user.
     """
     schedule_context = schedule_data_helper(request)
 
@@ -113,8 +106,7 @@ def view_schedules(request):
 
 def view_select_schedules_modal(request, mode):
     """
-    get all schedules and display in the modal.
-
+    Get all schedules and display in the modal.
     """
     schedule_context = schedule_data_helper(request)
 
@@ -132,7 +124,7 @@ def view_select_schedules_modal(request, mode):
 @login_required
 def new_schedule(request):
     """
-    Take the user to the new schedule page
+    Take the user to the new schedule page.
     """
     if request.method == "POST":
         # Handle saving the schedule
@@ -156,7 +148,7 @@ def new_schedule(request):
 @login_required
 def delete_schedule(request):
     """
-    Delete a schedule or multiple schedules
+    Delete a schedule or multiple schedules.
     """
     # we use POST since forms don't support the DELETE method
     if request.method == "POST":
@@ -179,7 +171,7 @@ def delete_schedule(request):
 @login_required
 def duplicate_schedule(request, schedule_id):
     """
-    Duplicate a scheulde given a schedule id in the request
+    Duplicate a schedule given a schedule id in the request.
     """
     schedule = get_object_or_404(Schedule, pk=schedule_id)
     schedule.pk = None  # reset the key so it will be recreated when it's saved
@@ -202,17 +194,26 @@ def duplicate_schedule(request, schedule_id):
 @login_required
 def modal_load_editor(request):
     """
-    Edit a schedule based on a selected schedule, and the changes passed in
+    Load the schedule editor modal with schedule data.
     """
-
     if request.method != "POST":
         messages.error(request, f"Invalid request method: {request.method}")
         return JsonResponse({"status": "Method Not Allowed"}, status=405)
 
     body_unicode = request.body.decode("utf-8")
     body = json.loads(body_unicode)
-    schedule_id = body["schedule_id"]
-    schedule = Schedule.objects.get(pk=schedule_id)
+    schedule_id = body.get("schedule_id")
+
+    if not schedule_id:
+        messages.error(request, "Schedule ID is missing")
+        return JsonResponse({"status": "Bad Request"}, status=400)
+
+    try:
+        schedule = Schedule.objects.get(pk=schedule_id)
+    except Schedule.DoesNotExist:
+        messages.error(request, "Schedule not found")
+        return JsonResponse({"status": "Not Found"}, status=404)
+
     schedule_data = schedule.get_schedule()
 
     context = {
@@ -229,34 +230,31 @@ def modal_load_editor(request):
 @login_required
 def edit_schedule(request):
     """
-    Edit a schedule based on a selected schedule, and the changes passed in
+    Edit a schedule based on a selected schedule, and the changes passed in.
     """
-
     if request.method != "POST":
         messages.error(request, f"Invalid request method: {request.method}")
         return JsonResponse({"status": "Method Not Allowed"}, status=405)
 
-    # get the related schedule and see if we need to update it's name
     schedule = Schedule.objects.get(pk=request.POST["schedule_id"])
     if schedule.name != request.POST["schedule_name"]:
-
         schedule.name = request.POST["schedule_name"]
         schedule.save()
 
-    # get the ScheduledCourse id's to remove from this schedule
-    course_ids = request.POST.getlist("removed_course_ids[]")
-    if course_ids:
-        ScheduledCourse.objects.filter(id__in=course_ids).delete()
+    # Store deleted courses in session before deleting them
+    deleted_courses = request.POST.getlist("removed_course_ids[]")
+    if deleted_courses:
+        request.session['deleted_courses'] = deleted_courses
+        ScheduledCourse.objects.filter(id__in=deleted_courses).delete()
 
     messages.success(request, f"Successfully made changes to {schedule.name}")
-
     return redirect("schedule")
 
 
 @login_required
 def modal_load_sections(request):
     """
-    Load the instructors and section times for a course, and the schedule, when adding to schedule from the modal
+    Load the instructors and section times for a course, and the schedule, when adding to schedule from the modal.
     """
     # pylint: disable=too-many-locals
     body_unicode = request.body.decode("utf-8")
@@ -311,7 +309,7 @@ def modal_load_sections(request):
 
 @login_required
 def schedule_add_course(request):
-    """Add a course to a schedule, the request should be FormData for the SectionForm class"""
+    """Add a course to a schedule, the request should be FormData for the SectionForm class."""
 
     if request.method == "POST":
         # Parse the JSON-encoded 'selected_course' field
