@@ -30,7 +30,12 @@ ALLOWED_HOSTS = [
     "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
 ]
 
-CORS_ALLOWED_ORIGINS = ["https://thecourseforum.com", "https://thecourseforumtest.com"]
+CORS_ALLOWED_ORIGINS = [
+    "https://thecourseforum.com",
+    "https://thecourseforumtest.com",
+    "https://pagead2.googlesyndication.com",
+    "https://securepubads.g.doubleclick.net"
+]
 
 # Application definition
 
