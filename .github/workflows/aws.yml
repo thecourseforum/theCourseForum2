@@ -17,11 +17,11 @@ env:
   DEBUG: 0
   ENVIRONMENT: production
   # database
-  DB_NAME: ${{ secrets.DB_NAME }}
-  DB_USER: ${{ secrets.DB_USER }}
-  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-  DB_HOST: ${{ secrets.DB_HOST }}
-  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_NAME: ${{ secrets.AWS_RDS_NAME }}
+  DB_USER: ${{ secrets.AWS_RDS_USER }}
+  DB_PASSWORD: ${{ secrets.AWS_RDS_PASSWORD }}
+  DB_HOST: ${{ secrets.AWS_RDS_HOST }}
+  DB_PORT: ${{ secrets.AWS_RDS_PORT }}
   # social-auth-app-django
   SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
   SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
