@@ -26,22 +26,7 @@
 </div>
 
 <script>
-   /* function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-          const cookies = document.cookie.split(';');
-          for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
-              if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                  break;
-              }
-          }
-      }
-      return cookieValue;
-  }
-*/
-// Function to get the CSRF token from cookies
+
 // Function to initialize remove buttons
 function initializeRemoveButtons() {
   document.querySelectorAll('.remove-course-btn').forEach(button => {
@@ -65,6 +50,7 @@ function initializeRemoveButtons() {
   });
 }
 
+// Function to get the CSRF token from cookies
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -97,7 +83,6 @@ function refetchSchedule() {
     .then(resp => resp.text())
     .then(html => {
         // Insert the returned HTML and update hidden schedule ID
-        console.log(html);
         document.getElementById("second-modal-body").innerHTML = "";
         document.getElementById("second-modal-body").innerHTML = html;
         initializeRemoveButtons();
@@ -130,6 +115,5 @@ if (editScheduleForm) {
 
         // Log the hidden inputs being submitted
         const removedCourseInputs = document.querySelectorAll('input[name="removed_course_ids[]"]');
-        console.log("Removed course IDs being submitted:", Array.from(removedCourseInputs).map(input => input.value));
     });
 }</script>
