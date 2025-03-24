@@ -43,13 +43,13 @@
   </div>
   <div class="pagination">
     {% if paginated_courses.has_previous %}
-      <a href="?page={{ paginated_courses.previous_page_number }}#reviews">&lt;</a>
+      <a href="?page={{ paginated_courses.previous_page_number }}">&lt;</a>
     {% endif %}
     
     {% if paginated_courses.number == 1 %}
       <span class="current">1</span>
     {% else %}
-      <a href="?page=1#reviews">1</a>
+      <a href="?page=1">1</a>
     {% endif %}
     
     {% if paginated_courses.number > 4 %}
@@ -62,7 +62,7 @@
           {% if page_num == paginated_courses.number %}
             <span class="current">{{ page_num }}</span>
           {% else %}
-            <a href="?page={{ page_num }}#reviews">{{ page_num }}</a>
+            <a href="?page={{ page_num }}">{{ page_num }}</a>
           {% endif %}
         {% endif %}
       {% endif %}
@@ -76,14 +76,14 @@
       {% if paginated_courses.number == paginated_courses.paginator.num_pages %}
         <span class="current">{{ paginated_courses.paginator.num_pages }}</span>
       {% else %}
-        <a href="?page={{ paginated_courses.paginator.num_pages }}#reviews">
+        <a href="?page={{ paginated_courses.paginator.num_pages }}">
             {{ paginated_courses.paginator.num_pages }}
         </a>
       {% endif %}
     {% endif %}
     
     {% if paginated_courses.has_next %}
-      <a href="?page={{ paginated_courses.next_page_number }}#reviews">&gt;</a>
+      <a href="?page={{ paginated_courses.next_page_number }}">&gt;</a>
     {% endif %}
   </div>  
 </div>
