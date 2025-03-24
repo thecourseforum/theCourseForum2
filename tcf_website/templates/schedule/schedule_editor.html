@@ -32,43 +32,40 @@
                                 <i class="fa fa-trash-o"></i>
                             </button>
                         </td>
-                        
                     </tr>
                 {% endfor %}
-        
             </tbody>
         </table>
-    
     </form>
 </div>
 
 {% endblock %}
 <script src="{% static 'schedule/parse_time.js' %}"></script>
 <script>
-
-    // attach an event listener to every remove button
+      // Function to initialize remove buttons
+  function initializeRemoveButtons() {
     document.querySelectorAll('.remove-course-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const courseRow = this.closest('.course-row');
-            const courseId = courseRow.getAttribute('course_id');
-
-            // Create a hidden input to indicate that this course ID should be removed
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'removed_course_ids[]';
-            hiddenInput.value = courseId;
-
-            // Append the hidden input to the form (assuming your form has a specific ID)
-            courseRow.appendChild(hiddenInput);
-            courseRow.style.display = 'none'; // hide from the table
-
-            // Get the course from the schedule card template, notice we use 
-            // the mode included in the context of the schedule template above
-            const scheduledCourse = document.getElementById(`ScheduledCourse-${courseId}edit`);
-            scheduledCourse.remove(); // Remove the course in the schedule card
-
-            updateStats(); // this method is included in the schedule template
-        });
+      button.addEventListener('click', function() {
+        const courseRow = this.closest('.course-row');
+        const courseId = courseRow.getAttribute('course_id');
+        
+        // Create hidden input
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'removed_course_ids[]';
+        hiddenInput.value = courseId;
+        
+        document.getElementById('edit_schedule_form').appendChild(hiddenInput);
+        courseRow.style.display = 'none';
+        
+        const scheduledCourse = document.getElementById(`ScheduledCourse-${courseId}edit`);
+        if(scheduledCourse) scheduledCourse.remove();
+        updateStats();
+      });
     });
+  }
+
+  // Initial attachment when page loads
+  initializeRemoveButtons();
 
 </script>
