@@ -23,12 +23,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")  # default value set on the top
 
-ALLOWED_HOSTS = [
-    "localhost",
-    ".ngrok.io",
-    "127.0.0.1",
-    "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
-]
+ALLOWED_HOSTS = []
 
 CORS_ALLOWED_ORIGINS = [
     "https://thecourseforum.com",
@@ -60,6 +55,12 @@ if env.str("ENVIRONMENT") == "dev":
     STATIC_URL = '/static/'
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+    ALLOWED_HOSTS.extend([
+        "localhost",
+        ".grok.io",
+        "127.0.0.1"
+    ])
+
     DATABASES = {
         "default": {
             "NAME": env.str("DB_NAME"),
@@ -79,6 +80,12 @@ else:
     AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
     AWS_DEFAULT_ACL = None
     AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+
+    ALLOWED_HOSTS.extend([
+        "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
+        "thecourseforum.com",
+        "thecourseforumtest.com"
+    ])
 
     STORAGES = {
         "default": {
