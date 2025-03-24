@@ -56,7 +56,10 @@ INSTALLED_APPS = [
 ]
 
 # Dev does not use S3 buckets
-if env.str("ENVIRONMENT") == "production":
+if env.str("ENVIRONMENT") == "dev":
+    STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
+else:
     AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
     AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
@@ -74,9 +77,6 @@ if env.str("ENVIRONMENT") == "production":
             "BACKEND": "storages.backends.s3.S3Storage",
         },
     }
-else:
-    STATIC_URL = '/static/'
-    STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # COLLECTFAST_THREADS = 20
 # COLLECTFAST_STRATEGY = "collectfast.strategies.boto3.Boto3Strategy"
