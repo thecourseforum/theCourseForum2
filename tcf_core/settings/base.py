@@ -31,7 +31,12 @@ ALLOWED_HOSTS = [
     "0.0.0.0",
 ]
 
-CORS_ALLOWED_ORIGINS = ["https://thecourseforum.com", "https://thecourseforumtest.com"]
+CORS_ALLOWED_ORIGINS = [
+    "https://thecourseforum.com",
+    "https://thecourseforumtest.com",
+    "https://pagead2.googlesyndication.com",
+    "https://securepubads.g.doubleclick.net"
+]
 
 # Application definition
 
