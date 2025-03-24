@@ -14,6 +14,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+
 from tcf_website.api.enrollment import update_enrollment_data
 
 from ..models import (
@@ -83,7 +84,6 @@ def department(request, dept_id: int, course_recency=None):
     order = request.GET.get("order", "asc")
     page = request.GET.get("page", 1)
 
-    print(dept)
     paginated_courses = dept.get_paginated_department_courses(
         sortby, latest_semester.year - int(year), order, page
     )
