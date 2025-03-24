@@ -26,43 +26,110 @@
 </div>
 
 <script>
-  function refetchSchedule() {
-    // fetch the schedule's data again, essentially reseting the modal
+   /* function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+*/
+// Function to get the CSRF token from cookies
+// Function to initialize remove buttons
+function initializeRemoveButtons() {
+  document.querySelectorAll('.remove-course-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const courseRow = this.closest('.course-row');
+      const courseId = courseRow.getAttribute('course_id');
+      
+      // Create hidden input
+      const hiddenInput = document.createElement('input');
+      hiddenInput.type = 'hidden';
+      hiddenInput.name = 'removed_course_ids[]';
+      hiddenInput.value = courseId;
+      
+      document.getElementById('edit_schedule_form').appendChild(hiddenInput);
+      courseRow.style.display = 'none';
+      
+      const scheduledCourse = document.getElementById(`ScheduledCourse-${courseId}edit`);
+      if(scheduledCourse) scheduledCourse.remove();
+      updateStats();
+    });
+  });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Function to refetch the schedule data
+function refetchSchedule() {
+    const requestBody = {
+        schedule_id: document.getElementById('schedule_id_input').value,
+    };
+
     fetch("{% url 'modal_load_editor' %}", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        "X-CSRFToken": getCookie("csrftoken")
-      },
-      body: JSON.stringify(requestBody)
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify(requestBody)
     })
     .then(resp => resp.text())
     .then(html => {
-      // insert the returned HTML and update hidden schedule ID
-      $("#second-modal-body").html("");
-      $("#second-modal-body").html(html);
+        // Insert the returned HTML and update hidden schedule ID
+        console.log(html);
+        document.getElementById("second-modal-body").innerHTML = "";
+        document.getElementById("second-modal-body").innerHTML = html;
+        initializeRemoveButtons();
 
     })
     .catch(error => {
-      console.error("Error:", error);
-      alert("Something went wrong");
+        console.error("Error:", error);
+        alert("Something went wrong");
     });
-  }
+}
 
-  const resetButton = document.getElementById('scheduleResetButton');
-  resetButton.addEventListener('click', refetchSchedule);
+// Attach event listener to the reset button
+const resetButton = document.getElementById('scheduleResetButton');
+if (resetButton) {
+    resetButton.addEventListener('click', refetchSchedule);
+}
 
-  let sectionForm = document.getElementById("editScheduleModal");
-  sectionForm.addEventListener('modalLoaded', function() {
-    sectionForm.addEventListener('submit', function(event) {
-      // make sure the name input is filled out 
-      const nameInput = document.getElementById('schedule_name_input');
-      if (nameInput.value == "") {
-        event.preventDefault();
-        alert("Invalid Schedule Name");
-      }
-        
+
+
+// Handle form submission
+const editScheduleForm = document.getElementById('edit_schedule_form');
+if (editScheduleForm) {
+    editScheduleForm.addEventListener('submit', function (event) {
+        // Make sure the name input is filled out
+        const nameInput = document.getElementById('schedule_name_input');
+        if (nameInput && nameInput.value === "") {
+            event.preventDefault();
+            alert("Invalid Schedule Name");
+        }
+
+        // Log the hidden inputs being submitted
+        const removedCourseInputs = document.querySelectorAll('input[name="removed_course_ids[]"]');
+        console.log("Removed course IDs being submitted:", Array.from(removedCourseInputs).map(input => input.value));
     });
-  });
-
-</script>
+}</script>
