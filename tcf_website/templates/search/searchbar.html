@@ -108,13 +108,15 @@
                   Minimum GPA
                 </h6>
                 <div class="min-gpa-div">
-                  <input type="text" id="gpa-input" class="min-gpa-input" name="min_gpa" 
-                    placeholder="Select a minimum GPA" 
-                    value="{% if min_gpa %}{{ min_gpa }}{% endif %}">
-                  <button type="button" id="gpa-dropdown-toggle" class="gpa-dropdown-button">
-                    <i class="fa fa-plus"></i>
-                  </button>
-                  <div id="gpa-dropdown" class="gpa-dropdown"></div>
+                  <div class="gpa-input-container">
+                    <input type="text" id="gpa-input" class="min-gpa-input" name="min_gpa" 
+                      placeholder="Select a minimum GPA" 
+                      value="{% if min_gpa %}{{ min_gpa }}{% endif %}">
+                    <button type="button" id="gpa-dropdown-toggle" class="gpa-dropdown-button">
+                      <i class="fa fa-plus"></i>
+                    </button>
+                    <div id="gpa-dropdown" class="gpa-dropdown"></div>
+                  </div>
                   </select>
                 </div>
               </div>
@@ -428,43 +430,35 @@
 
     // Fill the Min GPA dropdown with options from 2.0 to 4.0 with 0.2 increments
     const gpa_dropdown = document.getElementById('gpa-dropdown');
-    const toggleButton = document.getElementById('gpa-dropdown-toggle');
-  
-    // Create a document fragment for better performance
-    const fragment = document.createDocumentFragment();
+    const minGPAButton = document.getElementById('gpa-dropdown-toggle');
+    // gpa_input cached before code that checks for applied filters status 
 
-    // Create an array of GPA values to display
+    // Create an array of GPA values to fill GPA dropdown from 4.0 to 2 with 0.2 increments (including 3.9 and 3.7)
     const gpaValues = [];
-
-    // Generate standard options from 4.0 to 1.8 in 0.2 steps
-    for (let i = 4.0; i >= 1.8; i -= 0.2) {
-      gpaValues.push(i.toFixed(1));
+    for (let i = 40; i >= 20; i -= 2) {
+      const gpa = (i / 10).toFixed(1);
+      gpaValues.push(gpa);
     }
 
-    // Add 3.9 if it's not already in the array
-    if (!gpaValues.includes('3.9')) {
-      gpaValues.push('3.9');
-    }
+    gpaValues.push('3.9', '3.7');
 
-    // Add 3.7 if it's not already in the array
-    if (!gpaValues.includes('3.7')) {
-      gpaValues.push('3.7');
-    }
-
-    // Sort values in descending order to ensure proper order with 3.9 included
+    // Sort numerically if needed
     gpaValues.sort((a, b) => parseFloat(b) - parseFloat(a));
 
-    // Create option elements
+    // Create a document fragment for better performance when appending to GPA dropdown 
+    const fragment = document.createDocumentFragment();
+
+    // Appends each GPA value as an element to the dropdown 
     gpaValues.forEach(value => {
       const option = document.createElement('div');
-      option.className = 'custom-select-option';
+      option.className = 'gpa-option';
       option.textContent = value;
       option.dataset.value = value;
       
       option.addEventListener('click', () => {
         gpa_input.value = option.dataset.value;
         updateButtonState(); 
-        toggleDropdown(false);
+        toggleGPADropdown(false);
       });
       
       fragment.appendChild(option);
@@ -473,6 +467,16 @@
     // Append all options at once for better performance
     gpa_dropdown.appendChild(fragment);
 
+    // Stops invalid inputs from being entered into min GPA input (only numbers and decimal)
+    gpa_input.addEventListener('input', function() {
+      // Use a more efficient regex that handles all cases
+      this.value = this.value.replace(/[^0-9.]/g, '');
+      const parts = this.value.split('.');
+      if (parts.length > 2) {
+        this.value = parts[0] + '.' + parts.slice(1).join('');
+      }
+    });
+
     // Input validation for GPA field
     gpa_input.addEventListener('input', function() {
       // Use a more efficient regex that handles all cases
@@ -485,57 +489,41 @@
       }
     });
 
-    // Split into separate show/hide functions for clarity
-    function showDropdown() {
+    dropdown.addEventListener('click', function(event) {
+      hideGPADropdown(); 
+    });
+
+    function showGPADropdown() {
       gpa_dropdown.style.display = 'block';
     }
 
-    function hideDropdown() {
+    function hideGPADropdown() {
       gpa_dropdown.style.display = 'none';
     }
 
     // Toggle function using the show/hide functions
-    function toggleDropdown() {
+    function toggleGPADropdown() {
       if (gpa_dropdown.style.display === 'block') {
-        hideDropdown();
+        hideGPADropdown();
       } else {
-        showDropdown();
+        showGPADropdown();
       }
     }
 
     // Use event delegation for click events
-    toggleButton.addEventListener('click', function(e) {
-      // Stop the event from bubbling up to document
-      e.stopPropagation();
-      toggleDropdown();
+    minGPAButton.addEventListener('click', function(e) {
+      e.stopPropagation(); // Prevent dropdown closing from dropdown listener 
+      toggleGPADropdown();
     });
 
     gpa_input.addEventListener('click', function(e) {
-      // Stop the event from bubbling up to document
-      e.stopPropagation();
-      toggleDropdown();
-    });
-
-    // Input validation for GPA field
-    gpa_input.addEventListener('input', function() {
-      // Use a more efficient regex that handles all cases
-      this.value = this.value.replace(/[^0-9.]/g, '');
-      
-      // More efficient way to handle multiple decimals
-      const parts = this.value.split('.');
-      if (parts.length > 2) {
-        this.value = parts[0] + '.' + parts.slice(1).join('');
-      }
-    });
-
-    // Add click event to the dropdown itself to prevent it from closing
-    gpa_dropdown.addEventListener('click', function(e) {
-      e.stopPropagation();
+      e.stopPropagation(); // Prevent dropdown closing from dropdown listener 
+      toggleGPADropdown();
     });
 
     // Global document click handler to close dropdown
     document.addEventListener('click', function() {
-      hideDropdown();
+      hideGPADropdown();
     });
 
     // Initialize weekdays
@@ -623,20 +611,13 @@
     gap: 1.5rem;
   }
 
-  .day-toggles, .min-gpa-div{
+  .day-toggles{
     display: flex;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
     align-items: center;
     width: 100%; 
     justify-content: space-between;
-  }
-
-  .min-gpa-div {
-    position: relative; 
-    display: grid; 
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0; 
   }
 
   .day-toggles p {
@@ -895,6 +876,11 @@
     visibility: hidden;
   }
 
+  .min-gpa-div {
+    display: inline-flex;
+    gap: 0; 
+  }
+
   .min-gpa-input{
     padding: 8px 12px;
     box-sizing: border-box;
@@ -902,28 +888,35 @@
     border-radius: 4px 0 0 4px;
   }
 
+  .gpa-input-container {
+    position: relative;
+    display: flex;
+    width: 100%;
+  }
+
   .gpa-dropdown {
     position: absolute; 
     top: 100%;
     left: 0;
-    width: 100%; /* This will now match the width of min-gpa-div */
+    width: 100%; 
     background-color: white;
     border: 1px solid #ccc;
     max-height: 200px; 
     overflow-y: auto;
     display: none;
     z-index: 1000;
-    border-radius: 0 4px 4px 4px;
+    border-radius: 4px 4px 4px 4px;
     box-sizing: border-box;
   }
 
-  .custom-select-option {
+  .gpa-option {
     padding: 8px 12px;
     cursor: pointer;
   }
 
-  .custom-select-option:hover {
+  .gpa-option:hover {
     background-color: #f1f1f1;
+    transition: all 0.15s ease;
   }
 
   .gpa-dropdown-button {
@@ -932,12 +925,22 @@
     align-items: center;
     justify-content: center;
     width: 40px;
-    height: 100%; 
-    box-sizing: border-box;
     background-color: #f8f9fa;
     border-radius: 0 4px 4px 0;
     border: 1px solid #ccc;
     cursor: pointer;
+    outline: 0;
+    outline: none;
+  }
+
+  .gpa-dropdown-button:hover {
+    background-color: #e2e6ea;
+    transition: all 0.15s ease;
+  }
+
+  .button:focus {
+    outline: none; 
+
   }
 
 </style>
