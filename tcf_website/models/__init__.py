@@ -8,6 +8,7 @@
 from .models import (
     Answer,
     Course,
+    CourseEnrollment,
     CourseGrade,
     CourseInstructorGrade,
     Department,
@@ -17,6 +18,8 @@ from .models import (
     Review,
     School,
     Section,
+    SectionTime,
+    SectionEnrollment,
     Semester,
     Subdepartment,
     User,
