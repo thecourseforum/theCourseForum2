@@ -29,7 +29,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://thecourseforum.com",
     "https://thecourseforumtest.com",
     "https://pagead2.googlesyndication.com",
-    "https://securepubads.g.doubleclick.net"
+    "https://securepubads.g.doubleclick.net",
 ]
 
 # Application definition
@@ -52,7 +52,7 @@ INSTALLED_APPS = [
 
 # Dev does not use S3 buckets
 if env.str("ENVIRONMENT") == "dev":
-    STATIC_URL = '/static/'
+    STATIC_URL = "/static/"
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
     ALLOWED_HOSTS.extend([
