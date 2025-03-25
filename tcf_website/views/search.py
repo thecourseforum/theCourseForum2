@@ -8,10 +8,9 @@ from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models import F, FloatField, Q
 from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
-
-from ..models import Course, Instructor, Subdepartment
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+from ..models import Course, Instructor, Subdepartment
 
 def group_by_dept(courses):
     """Groups courses by their department and adds relevant data."""
