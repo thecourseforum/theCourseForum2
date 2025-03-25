@@ -351,6 +351,7 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "questions": questions,
             "answers": answers,
             "sort_method": method,
+            "sem_code": section_last_taught.semester.number,
         },
     )
 
