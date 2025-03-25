@@ -96,6 +96,17 @@ else:
         },
     }
 
+    DATABASES = {
+        "default": {
+            "NAME": env.str("AWS_RDS_NAME"),
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "USER": env.str("AWS_RDS_USER"),
+            "PASSWORD": env.str("AWS_RDS_PASSWORD"),
+            "HOST": env.str("AWS_RDS_HOST"),
+            "PORT": env.int("AWS_RDS_PORT"),
+        }
+    }
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -165,25 +176,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "NAME": env.str("DB_NAME"),
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "USER": env.str("DB_USER"),
-        "PASSWORD": env.str("DB_PASSWORD"),
-        "HOST": env.str("DB_HOST"),
-        "PORT": env.int("DB_PORT"),
-    },
-    "legacy": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "tcf.db"),
-    },
-}
 
 
 # social-auth-app-django settings.
