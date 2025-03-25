@@ -83,7 +83,7 @@ def search(request):
     # without this condition, the page will default to instructor
     # even if the user clicked on other pages
     if not request.GET.get("pages"):
-        courses_first = decide_order(courses, instructors) if courses else True
+        courses_first = decide_order(courses, instructors) if query else True
     else:
         courses_first = True
 
