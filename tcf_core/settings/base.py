@@ -23,18 +23,13 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")  # default value set on the top
 
-ALLOWED_HOSTS = [
-    "localhost",
-    ".ngrok.io",
-    "127.0.0.1",
-    "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
-]
+ALLOWED_HOSTS = []
 
 CORS_ALLOWED_ORIGINS = [
     "https://thecourseforum.com",
     "https://thecourseforumtest.com",
     "https://pagead2.googlesyndication.com",
-    "https://securepubads.g.doubleclick.net"
+    "https://securepubads.g.doubleclick.net",
 ]
 
 # Application definition
@@ -57,8 +52,25 @@ INSTALLED_APPS = [
 
 # Dev does not use S3 buckets
 if env.str("ENVIRONMENT") == "dev":
-    STATIC_URL = '/static/'
+    STATIC_URL = "/static/"
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+    ALLOWED_HOSTS.extend([
+        "localhost",
+        ".grok.io",
+        "127.0.0.1"
+    ])
+
+    DATABASES = {
+        "default": {
+            "NAME": env.str("DB_NAME"),
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "USER": env.str("DB_USER"),
+            "PASSWORD": env.str("DB_PASSWORD"),
+            "HOST": env.str("DB_HOST"),
+            "PORT": env.int("DB_PORT"),
+        }
+    }
 else:
     AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
@@ -67,6 +79,12 @@ else:
     AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
     AWS_DEFAULT_ACL = None
     AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+
+    ALLOWED_HOSTS.extend([
+        "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
+        "thecourseforum.com",
+        "thecourseforumtest.com"
+    ])
 
     STORAGES = {
         "default": {
