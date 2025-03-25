@@ -102,21 +102,22 @@
                       {% endfor %}
                   </div>
                 </div>
-                <div class="pagination">
-                  {% if page_obj.has_previous %}
-                    <a href="?{{ request|change_page:1 }}">&lt;&lt;</a>
-                    <a href="?{{ request | change_page:page_obj.previous_page_number }}">&lt;</a>
-                  {% endif %}
-                  <span class="current">{{page_obj.number}}</span>
-                  {% if page_obj.has_next %}
-                    <a href="?{{ request|change_page:page_obj.next_page_number }}">&gt;</a>
-                    <a href="?{{ request|change_page:page_obj.paginator.num_pages }}">&gt;&gt;</a>
-                  {% endif %}
-                </div>
               {% endfor %}
+              <div class="pagination">
+                {% if page_obj.has_previous %}
+                  <a href="?{{ request|change_page:1 }}">&lt;&lt;</a>
+                  <a href="?{{ request | change_page:page_obj.previous_page_number }}">&lt;</a>
+                {% endif %}
+                <span class="current">{{page_obj.number}} / {{page_obj.paginator.num_pages}}</span>
+                {% if page_obj.has_next %}
+                  <a href="?{{ request|change_page:page_obj.next_page_number }}">&gt;</a>
+                  <a href="?{{ request|change_page:page_obj.paginator.num_pages }}">&gt;&gt;</a>
+                {% endif %}
+              </div>
               {% else %}
               <p>No courses matched your search.</p>
               {% endif %}
+              
             </div>
           </div>
 
