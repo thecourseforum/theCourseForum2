@@ -1,5 +1,6 @@
 {% extends "base/base.html" %}
 {% load static %}
+{% load url_utils %}
 
 {% block title %}{{query}} - theCourseForum{% endblock %}
 
@@ -101,6 +102,17 @@
                       {% endfor %}
                   </div>
                 </div>
+                <div class="pagination">
+                  {% if page_obj.has_previous %}
+                    <a href="?{{ request|change_page:1 }}">&lt;&lt;</a>
+                    <a href="?{{ request | change_page:page_obj.previous_page_number }}">&lt;</a>
+                  {% endif %}
+                  <span class="current">{{page_obj.number}}</span>
+                  {% if page_obj.has_next %}
+                    <a href="?{{ request|change_page:page_obj.next_page_number }}">&gt;</a>
+                    <a href="?{{ request|change_page:page_obj.paginator.num_pages }}">&gt;&gt;</a>
+                  {% endif %}
+                </div>
               {% endfor %}
               {% else %}
               <p>No courses matched your search.</p>
@@ -166,6 +178,73 @@
       </div>
 
     </div>
+    <style>
+      /* CSS for styling pagination section, copied directly from static/reviews/review.css */
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px 0;
+      }
+
+      .pagination a,
+      .pagination span {
+        font-size: 1rem;
+        padding: 8px 12px;
+        margin: 0 5px;
+        text-decoration: none;
+        color: var(--main-color);
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s;
+        background-color: white;
+      }
+
+      .pagination a:hover {
+        background-color: var(--main-color);
+        color: white;
+      }
+
+      .pagination span.current {
+        background-color: var(--main-color);
+        color: white;
+        font-weight: bold;
+        border: 1px solid var(--main-color);
+      }
+
+      .pagination span {
+        cursor: default;
+      }
+
+      .pagination a:disabled,
+      .pagination span:disabled {
+        color: #ccc;
+        border-color: #ccc;
+        cursor: not-allowed;
+      }
+
+      .pagination a:first-child,
+      .pagination a:last-child {
+        font-weight: bold;
+      }
+
+      /* Responsive styling for pagination */
+      @media (max-width: 768px) {
+        .pagination a,
+        .pagination span {
+          font-size: 0.9rem;
+          padding: 6px 10px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .pagination a,
+        .pagination span {
+          font-size: 0.8rem;
+          padding: 4px 8px;
+        }
+      }
+    </style>
 {% endblock %}
 
 {% block js %}
