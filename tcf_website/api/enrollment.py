@@ -49,7 +49,9 @@ async def update_enrollment_data(course_id):
         return HttpResponseNotFound("Course not found.")
 
     course = await sync_to_async(Course.objects.get)(id=course_id)
-    latest_semester = await sync_to_async(lambda: Semester.latest())()
+    latest_semester = await sync_to_async(
+        lambda: Semester.latest()
+    )()  # pylint: disable=unnecessary-lambda
 
     sections_queryset = Section.objects.filter(course=course, semester=latest_semester)
     sections = await sync_to_async(list)(sections_queryset)
