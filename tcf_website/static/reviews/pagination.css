@@ -46,6 +46,14 @@
   .pagination a:last-child {
     font-weight: bold;
   }
+
+  .pagination .ellipsis {
+    padding: 8px 12px;
+    margin: 0 5px;
+    color: var(--main-color);
+    border: none;
+    background: none;
+  }
   
   /* Responsive styling for pagination */
   @media (max-width: 768px) {
@@ -63,4 +71,3 @@
       padding: 4px 8px;
     }
   }
-  
