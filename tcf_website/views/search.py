@@ -80,7 +80,12 @@ def search(request):
         for course in results
     ]
 
-    courses_first = decide_order(courses, instructors) if courses else True
+    # without this condition, the page will default to instructor
+    # even if the user clicked on other pages
+    if not request.GET.get("pages"):
+        courses_first = decide_order(courses, instructors) if courses else True
+    else:
+        courses_first = True
 
     ctx = {
         "query": query[:30] + ("..." if len(query) > 30 else ""),
