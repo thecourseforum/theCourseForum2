@@ -271,7 +271,3 @@ MESSAGE_TAGS = {
 
 # Required in Django 3.2+ (See https://stackoverflow.com/a/66971803)
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
-
-STATIC_URL = "/static/"
-
-ALLOWED_HOSTS = ["0.0.0.0"]
