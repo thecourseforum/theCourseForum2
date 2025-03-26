@@ -52,6 +52,7 @@ def search(request):
     # Save filters to session
     request.session["search_filters"] = filters
 
+    # Fetch courses and instructors based on query
     if query:
         results = fetch_courses(query, filters)
         instructors = fetch_instructors(query)
@@ -59,6 +60,7 @@ def search(request):
         results = filter_courses(filters)
         instructors = []
 
+    # Paginate results, default to 1
     page_number = filters.get("pages", 1)
     paginator = Paginator(results, 15)
     try:
@@ -68,6 +70,7 @@ def search(request):
     except EmptyPage:
         results = paginator.page(paginator.num_pages)
 
+    # Formulate course data
     courses = [
         {
             "id": course.id,
@@ -87,6 +90,7 @@ def search(request):
     else:
         courses_first = True
 
+    # formulating context to pass into the django template
     ctx = {
         "query": query[:30] + ("..." if len(query) > 30 else ""),
         "courses_first": courses_first,

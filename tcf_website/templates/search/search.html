@@ -295,6 +295,7 @@
 
     const goButton = document.getElementById('go-to-page');
 
+    // Prevent form submission if the page number is the same as the current page
     goButton.addEventListener('click', function(e) {
       const pageInput = document.querySelector('.page-input');
       if (parseInt(pageInput.value, 10) === {{ page_obj.number }}) {
