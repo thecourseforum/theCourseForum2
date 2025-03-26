@@ -108,7 +108,18 @@
                   <a href="?{{ request|change_page:1 }}">&lt;&lt;</a>
                   <a href="?{{ request | change_page:page_obj.previous_page_number }}">&lt;</a>
                 {% endif %}
-                <span class="current">{{page_obj.number}} / {{page_obj.paginator.num_pages}}</span>
+                <form method="get" style="display: inline-block;">
+                  <div class="page-input-wrapper" style="display: inline-block;">
+                    <input class="page-input" type="number" name="pages" min="1" max="{{ page_obj.paginator.num_pages }}" value="{{ page_obj.number }}"/>
+                    <span class="total-page">/ {{ page_obj.paginator.num_pages }}</span>
+                    {% for key, value in request.GET.items %}
+                      {% if key != 'pages' %}
+                        <input type="hidden" name="{{ key }}" value="{{ value }}">
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                  <button id="go-to-page" type="submit">Go</button>
+                </form>
                 {% if page_obj.has_next %}
                   <a href="?{{ request|change_page:page_obj.next_page_number }}">&gt;</a>
                   <a href="?{{ request|change_page:page_obj.paginator.num_pages }}">&gt;&gt;</a>
@@ -180,7 +191,7 @@
 
     </div>
     <style>
-      /* CSS for styling pagination section, copied directly from static/reviews/review.css */
+      /* CSS for styling pagination section, copied from static/reviews/review.css */
       .pagination {
         display: flex;
         justify-content: center;
@@ -189,7 +200,7 @@
       }
 
       .pagination a,
-      .pagination span {
+      .pagination button {
         font-size: 1rem;
         padding: 8px 12px;
         margin: 0 5px;
@@ -201,7 +212,27 @@
         background-color: white;
       }
 
-      .pagination a:hover {
+      .page-input-wrapper {
+        font-size: 1rem;
+        padding: 7px 12px;
+        margin: 0 5px;
+        text-decoration: none;
+        color: var(--main-color);
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s;
+        background-color: white;
+      }
+
+      .page-input {
+        outline: none;
+        border: none;
+        border-bottom: 1px solid #000;
+        transition: border-bottom-color 0.3s ease;
+      }
+
+      .pagination a:hover,
+      .pagination button:hover {
         background-color: var(--main-color);
         color: white;
       }
@@ -232,17 +263,28 @@
       /* Responsive styling for pagination */
       @media (max-width: 768px) {
         .pagination a,
-        .pagination span {
-          font-size: 0.9rem;
+        .pagination button {
+          padding: 6px 10px;
+          font-size: 0.8rem;
+        }
+
+        .page-input-wrapper {
           padding: 6px 10px;
         }
       }
 
       @media (max-width: 480px) {
         .pagination a,
-        .pagination span {
+        .pagination button {
           font-size: 0.8rem;
-          padding: 4px 8px;
+          padding: 4px 6px;
+          margin: 0 1px;
+        }
+
+        .page-input-wrapper {
+          font-size: 0.8rem;
+          padding: 4px 6px;
+          margin: 0 1px;
         }
       }
     </style>
@@ -250,6 +292,16 @@
 
 {% block js %}
   <script>
+
+    const goButton = document.getElementById('go-to-page');
+
+    goButton.addEventListener('click', function(e) {
+      const pageInput = document.querySelector('.page-input');
+      if (parseInt(pageInput.value, 10) === {{ page_obj.number }}) {
+        e.preventDefault();
+      }
+    });
+
       document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".hover-tcf-orange").forEach(header => {
             header.addEventListener("click", function () {
