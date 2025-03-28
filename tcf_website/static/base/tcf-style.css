@@ -49,6 +49,7 @@ body.dark-mode {
   --input-border-color: #a6a6a6; /* Lighter border color for inputs */
   --button-bg-color: #1e1e1e; /* Darker button background */
   --landing-page-background-color: black;
+  --main-color: white; /* replace tcf-blue as tcf logo text color */
 }
 
 /* Dark Mode Overrides
@@ -148,6 +149,7 @@ ul {
 .text-tcf-indigo {
   color: var(--main-color);
 }
+
 .bg-tcf-indigo {
   /* background-color: var(--main-color); */
   /* Chai: this banner color should be tcf blue no matter if theme is light or dark */
