@@ -48,7 +48,7 @@ body.dark-mode {
   --icon-color: white; /* Light icon color */
   --input-border-color: #a6a6a6; /* Lighter border color for inputs */
   --button-bg-color: #1e1e1e; /* Darker button background */
-  
+  --landing-page-background-color: black;
 }
 
 /* Dark Mode Overrides
