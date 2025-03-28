@@ -16,6 +16,8 @@
   --navbar-color: #ffffff;
   /* newly added */
   --basic-text-color: #212529;
+  /* changes the border color of the search bar on landing page */
+  --input-border-color: #DEE2E6;
 
   /* #f8f9fa is the og background color styled by .bg-light in _background_variant.scss */
   /* Note: Can use Bootstrap "light" color and white color */
@@ -41,27 +43,16 @@ body.dark-mode {
 /* Added updated variables names */
   --background-color: black; /* Dark background color */
   --card-background-color: #333333;  /* Dark card background */
-  --input-background-color: #545454;  /* Dark input background */
+  --input-background-color: #333333;  /* Dark input background */
   --input-text-color: #a6a6a6;   /* Light text in inputs */
   --accent-text-color: #d75626; /* Accent color for dark mode */
   --basic-text-color: white;    /* White text color */
   --icon-color: white; /* Light icon color */
-  --input-border-color: #a6a6a6; /* Lighter border color for inputs */
+  --input-border-color: #A6A6A6; /* Lighter border color for inputs */
   --button-bg-color: #1e1e1e; /* Darker button background */
   --landing-page-background-color: black;
   --main-color: white; /* replace tcf-blue as tcf logo text color */
 }
-
-/* Dark Mode Overrides
-[data-theme="dark"] {
-  --main-color: var(--main-color-dark);
-  --secondary-color: var(--secondary-color-dark);
-  --accent-color: var(--accent-color-dark);
-  --dark-color: var(--dark-color-dark);
-  --shadow-color: var(--shadow-color-dark);
-  --shaded-color: var(--shaded-color-dark);
-  --background-color: var(--background-color-dark);
-} */
 
 /*************DEFAULT STYLES**************/
 h1,
@@ -171,6 +162,7 @@ ul {
 .text-tcf-orange {
   color: var(--accent-color);
 }
+/* colors specifically the 'Meet the full team' button */
 .bg-tcf-orange {
   background-color: var(--accent-color);
 }
@@ -216,6 +208,10 @@ ul {
 .card {
   background-color: var(--card-background-color) !important;
 }
+.card.bg-tcf-orange {
+  background-color: var(--accent-color) !important;
+}
+
 
 p {
   color: var(--basic-text-color);
@@ -232,6 +228,11 @@ p {
 
 .forcontrol:disabled {
   background-color: var(--background-color);
+}
+
+/* originally in borders.scss */
+.border {
+  border: 0.5px solid var(--input-border-color) !important;
 }
 
 /* Note: Can use Bootstrap "light" color
