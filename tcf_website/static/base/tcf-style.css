@@ -216,7 +216,7 @@ ul {
 }
 
 p {
-  color: var(--p-card-text-color);
+  color: var(--basic-text-color);
 }
 
 .form-control {
