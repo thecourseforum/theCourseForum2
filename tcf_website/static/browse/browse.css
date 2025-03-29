@@ -23,7 +23,6 @@ body.dark-mode {
 
 .school > .card-header {
   background-color: var(--secondary-color);
-  color: white; /* need a variable in light mode for white text? */
 }
 
 .school-body {
