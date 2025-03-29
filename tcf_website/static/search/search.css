@@ -1,5 +1,9 @@
 .search .search-results {
-  background-color: white;
+  background-color: var(--card-background-color);
+}
+
+.text-muted {
+  color: var(--basic-text-color) !important;
 }
 
 .result-nav .btn-group {
@@ -13,4 +17,16 @@
 
 .search-course-description {
   color: var(--accent-color);
+}
+
+body.dark-mode{
+  color: var(--basic-text-color) !important;
+}
+
+body.dark-mode .list-group-item-light,
+body.dark-mode .btn-light {
+  background-color: var(--input-background-color) !important;
+  color: var(--basic-text-color) !important;
+  border: none;
+  outline: none;
 }

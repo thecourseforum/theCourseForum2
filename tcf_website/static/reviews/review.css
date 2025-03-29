@@ -1,14 +1,3 @@
-body.body {
-  --background-color: black;
-  --card-background-color: #333333;
-  --input-background-color: #545454;
-  --input-text-color: #a6a6a6;
-  --accent-text-color: #d75626;
-  --basic-text-color: white;
-  --icon-color: white;
-  --input-border-color: #a6a6a6;
-}
-
 .review-content .review-text-body.collapse:not(.show) {
   display: block;
   height: 12rem;
@@ -35,18 +24,18 @@ body.body {
 .review .upvote,
 .review .downvote {
   font-size: 1.3rem;
-  color: #aaa;
+  color: var(--shadow-color);
   cursor: pointer;
 }
 
 .review .upvote.active,
 .review .upvote:hover {
-  color: dodgerblue;
+  color: var(--main-color);
 }
 
 .review .downvote.active,
 .review .downvote:hover {
-  color: rgb(215, 86, 38);
+  color: var(--accent-color);
 }
 
 .tooltip-inner {
@@ -55,4 +44,16 @@ body.body {
 
 .review-text-body {
   color: var(--basic-text-color);
+}
+
+.btn {
+  color: var(--basic-text-color);
+}
+
+body.dark-mode .text-muted {
+  color: var(--basic-text-color) !important;
+}
+
+body.dark-mode .text-dark {
+  color: var(--basic-text-color) !important;
 }
