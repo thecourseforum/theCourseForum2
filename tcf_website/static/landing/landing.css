@@ -1,5 +1,15 @@
 /* Html Classes */
 
+body {
+  background-color: var(--card-background-color);
+  color: var(--basic-text-color);
+}
+
+body.dark-mode {
+  background-color: var(--background-color);
+  color: var(--basic-text-color);
+}
+
 .container-fluid {
   overflow: hidden;
 }
@@ -96,6 +106,14 @@ header.masthead h1 {
   overflow: hidden;
 }
 
+.dark-mode .about-team .about-pfp {
+  background-color: var(--background-color);
+  overflow: hidden;
+}
+
+.border {
+  border: 1px solid var(--input-border-color) !important;
+}
 .about-team .about-pfp img {
   transition: all 0.5s ease;
   box-shadow: 5px 5px 0px var(--accent-color);
@@ -109,6 +127,11 @@ header.masthead h1 {
   border: 0px;
 }
 
+.dark-mode .about-member.card {
+  background-color: var(--background-color) !important;
+  color: var(--basic-text-color);
+}
+
 .about-team .about-link:hover {
   box-shadow: 2px 2px 5px var(--main-color);
 }
@@ -116,6 +139,10 @@ header.masthead h1 {
 .about-link {
   font-size: 1.25rem;
 }
+
+.about-link.card {
+  background-color: var(--accent-color) !important;
+  color: var(--basic-text-color) !important;}
 
 /* About info box */
 .about-team .about-info {

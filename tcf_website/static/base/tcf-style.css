@@ -215,6 +215,7 @@ ul {
 
 p {
   color: var(--basic-text-color);
+  color: var(--basic-text-color);
 }
 
 .form-control {
