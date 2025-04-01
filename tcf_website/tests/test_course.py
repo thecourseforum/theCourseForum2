@@ -63,7 +63,7 @@ class CourseTestCase(TestCase):
         and simplestats parameters"""
         client = Client()
         response = client.get(path=reverse("course-list"), data={"simplestats": "", "recent": ""})
-        courses = response.json()["results"]
+        courses = response.json()
         self.assertEqual(len(courses), 2)
         serializer = CourseSimpleStatsSerializer(data=courses, many=True)
         self.assertTrue(serializer.is_valid())
@@ -75,7 +75,7 @@ class CourseTestCase(TestCase):
         but without simplestats parameters"""
         client = Client()
         response = client.get(path=reverse("course-list"), data={"recent": ""})
-        courses = response.json()["results"]
+        courses = response.json()
         self.assertEqual(len(courses), 2)
         serializer = CourseSimpleStatsSerializer(data=courses, many=True)
         self.assertFalse(serializer.is_valid())
@@ -90,7 +90,7 @@ class CourseTestCase(TestCase):
             path=reverse("course-list"),
             data={"simplestats": ""},
         )
-        courses = response.json()["results"]
+        courses = response.json()
         self.assertEqual(len(courses), 5)
         serializer = CourseSimpleStatsSerializer(data=courses, many=True)
         self.assertTrue(serializer.is_valid())
@@ -102,7 +102,7 @@ class CourseTestCase(TestCase):
         or simplestats parameters"""
         client = Client()
         response = client.get(path=reverse("course-list"))
-        courses = response.json()["results"]
+        courses = response.json()
         self.assertEqual(len(courses), 5)
         serializer = CourseSimpleStatsSerializer(data=courses, many=True)
         self.assertFalse(serializer.is_valid())
