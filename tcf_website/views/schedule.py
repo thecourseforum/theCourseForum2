@@ -6,7 +6,18 @@ import logging
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Prefetch
+from django.contrib.postgres.aggregates.general import ArrayAgg
+from django.db.models import (
+    Avg,
+    Case,
+    CharField,
+    Max,
+    Prefetch,
+    Q,
+    Value,
+    When,
+)
+from django.db.models.functions import Cast, Concat
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -20,13 +31,90 @@ from ..models import (
     Semester,
     User,
 )
-from .browse import load_secs_helper
 
 # pylint: disable=line-too-long
 # pylint: disable=no-else-return
 # pylint: disable=consider-using-generator
 
 logger = logging.getLogger(__name__)
+
+
+def load_secs_helper(course, latest_semester):
+    """Helper function for course_view and for a view in schedule.py"""
+    instructors = (
+        Instructor.objects.filter(section__course=course, hidden=False)
+        .distinct()
+        .annotate(
+            gpa=Avg(
+                "courseinstructorgrade__average",
+                filter=Q(courseinstructorgrade__course=course),
+            ),
+            difficulty=Avg("review__difficulty", filter=Q(review__course=course)),
+            rating=(
+                Avg("review__instructor_rating", filter=Q(review__course=course))
+                + Avg("review__enjoyability", filter=Q(review__course=course))
+                + Avg("review__recommendability", filter=Q(review__course=course))
+            )
+            / 3,
+            semester_last_taught=Max("section__semester", filter=Q(section__course=course)),
+            # ArrayAgg:
+            # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
+            section_times=ArrayAgg(
+                Case(
+                    When(
+                        section__semester=latest_semester,
+                        then="section__section_times",
+                    ),
+                    output_field=CharField(),
+                ),
+                distinct=True,
+            ),
+            section_nums=ArrayAgg(
+                Case(
+                    When(section__semester=latest_semester, then="section__sis_section_number"),
+                    output_field=CharField(),
+                ),
+                distinct=True,
+            ),
+            section_details=ArrayAgg(
+                # this is to get sections in this format: section.id /%
+                # section.section_num /% section.time /% section_type
+                Concat(
+                    Cast("section__id", CharField()),
+                    Value(" /% "),
+                    Case(
+                        When(
+                            section__semester=latest_semester,
+                            then=Cast("section__sis_section_number", CharField()),
+                        ),
+                        default=Value(""),
+                        output_field=CharField(),
+                    ),
+                    Value(" /% "),
+                    "section__section_times",
+                    Value(" /% "),
+                    "section__section_type",
+                    Value(" /% "),
+                    "section__units",
+                    output_field=CharField(),
+                ),
+                distinct=True,
+            ),
+        )
+    )
+
+    # Note: Refactor pls
+
+    for i in instructors:
+        if i.section_times[0] is not None and i.section_nums[0] is not None:
+            i.times = {}
+            for idx, _ in enumerate(i.section_times):
+                if i.section_times[idx] is not None and i.section_nums[idx] is not None:
+                    i.times[str(i.section_nums[idx])] = i.section_times[idx][:-1].split(",")
+        if None in i.section_nums:
+            i.section_nums.remove(None)
+
+    return instructors
 
 
 class ScheduleForm(forms.ModelForm):

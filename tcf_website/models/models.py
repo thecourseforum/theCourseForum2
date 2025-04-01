@@ -6,18 +6,25 @@ import math
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
+from django.core.paginator import EmptyPage, Page, Paginator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import (
     Avg,
     Case,
     CharField,
+    ExpressionWrapper,
+    Exists,
+    F,
     FloatField,
     OuterRef,
     Q,
+    QuerySet,
     Subquery,
+    Sum,
     Value,
     When,
+    fields,
 )
 from django.db.models.functions import Abs, Cast, Coalesce, Concat, Round
 
@@ -662,6 +669,50 @@ class Course(models.Model):
         instructors = instructors.order_by(order_prefix + sort_field)
         return instructors
 
+    @classmethod
+    def filter_by_time(cls, days=None, start_time=None, end_time=None):
+        """Filter courses by available times."""
+        query = cls.objects.all()
+
+        # Get the latest semester
+        current_semester = Semester.latest()
+
+        section_conditions = Q(section__semester=current_semester)
+
+        if days:
+
+            # Map day codes to field names
+            day_map = {
+                "MON": "monday",
+                "TUE": "tuesday",
+                "WED": "wednesday",
+                "THU": "thursday",
+                "FRI": "friday",
+            }
+
+            # Get unavailable days
+            unavailable_days = {day_map[d] for d in days if d in day_map}
+
+            # Filter for sections that don't meet on unavailable days
+            for day in unavailable_days:
+                section_conditions &= Q(**{f"section__sectiontime__{day}": False})
+
+        if start_time:
+            section_conditions &= Q(section__sectiontime__start_time__gte=start_time)
+        if end_time:
+            section_conditions &= Q(section__sectiontime__end_time__lte=end_time)
+
+        query = query.filter(section_conditions)
+        return query.distinct()
+
+    @classmethod
+    def filter_by_open_sections(cls):
+        """Filter courses that have at least one open section."""
+        open_sections = SectionEnrollment.objects.filter(
+            section__course=OuterRef("pk"), enrollment_taken__lt=F("enrollment_limit")
+        )
+        return cls.objects.filter(Exists(open_sections))
+
     class Meta:
         indexes = [
             GinIndex(
@@ -682,6 +733,16 @@ class Course(models.Model):
                 name="unique course subdepartment and number",
             )
         ]
+
+
+class CourseEnrollment(models.Model):
+    course = models.OneToOneField(
+        "Course", on_delete=models.CASCADE, related_name="enrollment_tracking"
+    )
+    last_update = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Enrollment tracking for {self.course.code()}"
 
 
 class CourseGrade(models.Model):
@@ -776,6 +837,113 @@ class Section(models.Model):
                 fields=["sis_section_number", "semester"],
                 name="unique sections per semesters",
             )
+        ]
+
+
+class SectionTime(models.Model):
+    """Section meeting time model.
+
+    Belongs to a Section.
+    """
+
+    section = models.ForeignKey("Section", on_delete=models.CASCADE)
+
+    # Individual day fields
+    monday = models.BooleanField(default=False)
+    tuesday = models.BooleanField(default=False)
+    wednesday = models.BooleanField(default=False)
+    thursday = models.BooleanField(default=False)
+    friday = models.BooleanField(default=False)
+
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def __str__(self):
+        days = []
+        if self.monday:
+            days.append("MON")
+        if self.tuesday:
+            days.append("TUE")
+        if self.wednesday:
+            days.append("WED")
+        if self.thursday:
+            days.append("THU")
+        if self.friday:
+            days.append("FRI")
+        return f"{','.join(days)} {self.start_time}-{self.end_time}"
+
+    @property
+    def days_list(self):
+        """Return list of days this section meets."""
+        days = []
+        if self.monday:
+            days.append("MON")
+        if self.tuesday:
+            days.append("TUE")
+        if self.wednesday:
+            days.append("WED")
+        if self.thursday:
+            days.append("THU")
+        if self.friday:
+            days.append("FRI")
+        return days
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["monday"]),
+            models.Index(fields=["tuesday"]),
+            models.Index(fields=["wednesday"]),
+            models.Index(fields=["thursday"]),
+            models.Index(fields=["friday"]),
+            models.Index(fields=["start_time"]),
+            models.Index(fields=["end_time"]),
+        ]
+
+
+class SectionEnrollment(models.Model):
+    """Section meeting enrollment model.
+    Belongs to a Section.
+    """
+
+    section = models.ForeignKey("Section", on_delete=models.CASCADE)
+
+    # Total number of enrolled students. Optional.
+    enrollment_taken = models.IntegerField(null=True, blank=True)
+
+    # Maximum number of students allowed to enroll. Optional.
+    enrollment_limit = models.IntegerField(null=True, blank=True)
+
+    # Total number of students on the waitlist. Optional.
+    waitlist_taken = models.IntegerField(null=True, blank=True)
+
+    # Maximum number of students allowed on the waitlist. Optional.
+    waitlist_limit = models.IntegerField(null=True, blank=True)
+
+    @property
+    def enrollment_info(self):
+        """
+        Returns a dictionary containing enrollment and waitlist information.
+        """
+        return {
+            "enrollment_taken": self.enrollment_taken,
+            "enrollment_limit": self.enrollment_limit,
+            "waitlist_taken": self.waitlist_taken,
+            "waitlist_limit": self.waitlist_limit,
+        }
+
+    def __str__(self):
+        return (
+            f"Section: {self.section}, Enrolled: {self.enrollment_taken}/"
+            f"{self.enrollment_limit}, Waitlist: {self.waitlist_taken}/"
+            f"{self.waitlist_limit}"
+        )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["enrollment_taken"]),
+            models.Index(fields=["enrollment_limit"]),
+            models.Index(fields=["waitlist_taken"]),
+            models.Index(fields=["waitlist_limit"]),
         ]
 
 
@@ -918,8 +1086,10 @@ class Review(models.Model):
         )
 
     @staticmethod
-    def display_reviews(course_id, instructor_id, user):
+    def get_sorted_reviews(course_id, instructor_id, user, method=""):
         """Prepare review list for course-instructor page."""
+
+        # Filter out reviews with no text and hidden field true.
         reviews = (
             Review.objects.filter(instructor=instructor_id, course=course_id, hidden=False)
             .exclude(text="")
@@ -927,6 +1097,7 @@ class Review(models.Model):
                 sum_votes=models.functions.Coalesce(models.Sum("vote__value"), models.Value(0)),
             )
         )
+
         if user.is_authenticated:
             reviews = reviews.annotate(
                 user_vote=models.functions.Coalesce(
@@ -934,7 +1105,59 @@ class Review(models.Model):
                     models.Value(0),
                 ),
             )
-        return reviews.order_by("-created")
+
+        return Review.sort(reviews, method)
+
+    @staticmethod
+    def sort(reviews: "QuerySet[Review]", method="") -> "QuerySet[Review]":
+        """Sort reviews by given method - upvotes, rating (low or high), or recent."""
+        match method:
+            case "Most Helpful":  # net votes
+                return reviews.annotate(
+                    upvotes=Coalesce(Sum("vote__value", filter=Q(vote__value=1)), 0),
+                    downvotes=Coalesce(Abs(Sum("vote__value", filter=Q(vote__value=-1))), 0),
+                    helpful_score=ExpressionWrapper(
+                        F("upvotes") - F("downvotes"),
+                        output_field=fields.IntegerField(),
+                    ),
+                ).order_by("-helpful_score")
+            case "Highest Rating":
+                return reviews.annotate(
+                    average=ExpressionWrapper(
+                        (F("instructor_rating") + F("recommendability") + F("enjoyability")) / 3,
+                        output_field=fields.FloatField(),
+                    )
+                ).order_by("-average")
+            case "Lowest Rating":
+                return reviews.annotate(
+                    average=ExpressionWrapper(
+                        (F("instructor_rating") + F("recommendability") + F("enjoyability")) / 3,
+                        output_field=fields.FloatField(),
+                    )
+                ).order_by("average")
+            case "Most Recent":
+                return reviews.order_by("-created")
+            case "Default" | _:
+                return reviews
+
+    @staticmethod
+    def paginate(reviews: "QuerySet[Review]", page_number, reviews_per_page=10) -> "Page[Review]":
+        """Paginate reviews"""
+        paginator = Paginator(reviews, reviews_per_page)
+        try:
+            page_obj = paginator.page(page_number)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+
+        return page_obj
+
+    @staticmethod
+    def get_paginated_reviews(
+        course_id, instructor_id, user, page_number=1, method=""
+    ) -> "Page[Review]":
+        """Generate sorted, paginated reviews"""
+        reviews = Review.get_sorted_reviews(course_id, instructor_id, user, method)
+        return Review.paginate(reviews, page_number)
 
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"

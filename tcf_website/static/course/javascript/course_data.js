@@ -1,14 +1,13 @@
 let barConfig;
 let pieConfig;
 let myChart;
-let totalSum;
 const ctx = document.getElementById("myChart");
 
 function togglePieChart() {
   if (myChart) {
     myChart.destroy();
   }
-  document.getElementById("canvas-parent").style.width = "290px";
+  pieConfig.options.plugins.legend.display = false;
   // eslint-disable-next-line no-new,no-undef
   myChart = new Chart(ctx, pieConfig);
 }
@@ -17,7 +16,7 @@ function toggleBarChart() {
   if (myChart) {
     myChart.destroy();
   }
-  document.getElementById("canvas-parent").style.width = "95%";
+  barConfig.options.plugins.legend.display = false;
   // eslint-disable-next-line no-new,no-undef
   myChart = new Chart(ctx, barConfig);
 }
@@ -26,11 +25,13 @@ $(".pieToBar").click(function () {
   if (document.getElementById("toggle-btn").value === "bar") {
     toggleBarChart();
     document.getElementById("chart-label").className = "bottom-center";
+    document.getElementById("grades-container").style.paddingBottom = "3em";
     document.getElementById("toggle-btn").innerHTML = "Pie";
     document.getElementById("toggle-btn").value = "pie";
   } else {
     togglePieChart();
     document.getElementById("chart-label").className = "absolute-center";
+    document.getElementById("grades-container").style.paddingBottom = "0em";
     document.getElementById("toggle-btn").innerHTML = "Bar";
     document.getElementById("toggle-btn").value = "bar";
   }
@@ -54,9 +55,6 @@ const loadData = (data) => {
     c_minus,
     dfw,
   ];
-
-  // Calculate total number of students
-  totalSum = grades_data.reduce((total, num) => total + num, 0);
 
   // Create default pie chart
   /* eslint-enable camelcase */
@@ -176,9 +174,6 @@ const createChart = (gradesData) => {
         },
       },
       responsive: true,
-      legend: {
-        display: false,
-      },
       scales: {
         xAxes: [
           {
@@ -206,6 +201,9 @@ const createChart = (gradesData) => {
         ],
       },
       plugins: {
+        legend: {
+          display: false,
+        },
         labels: {
           // render 'label', 'value', 'percentage', 'image' or custom function, default is 'percentage'
           render: "value",
@@ -239,35 +237,46 @@ const createChart = (gradesData) => {
       },
     },
   };
+  // eslint-disable-next-line no-new,no-undef
+  Chart.register(ChartDataLabels);
 
-  // Generate configuration for Pie Chart
   pieConfig = {
-    type: "pie",
+    type: "doughnut",
     data: chartData,
     options: {
-      cutoutPercentage: 65,
-      responsive: true,
-      aspectRatio: 1,
-      tooltips: {
-        callbacks: {
-          label: function (tooltipItem, data) {
-            const dataset = data.datasets[0];
-            const percent = Math.round(
-              (dataset.data[tooltipItem.index] / totalSum) * 100,
-            );
-            let label = data.labels[tooltipItem.index];
-            if (tooltipItem.index === 9) {
-              label = "D/F/Withdraw";
-            }
-            return label + ": " + percent + "%";
-          },
-        },
-        displayColors: false,
-      },
-      legend: {
-        display: false,
-      },
+      maintainAspectRatio: false,
       plugins: {
+        legend: {
+          display: false,
+        },
+        datalabels: {
+          color: "#fff",
+          formatter: (value, context) => {
+            const dataset = context.chart.data.datasets[0];
+            const total = dataset.data.reduce((acc, num) => acc + num, 0);
+            const percentage = (value / total) * 100;
+            return percentage > 5
+              ? context.chart.data.labels[context.dataIndex]
+              : "";
+          },
+          font: {
+            size: 14,
+          },
+          anchor: "center",
+          align: "center",
+        },
+        tooltip: {
+          callbacks: {
+            label: function (tooltipItem) {
+              const dataset = tooltipItem.dataset;
+              const total = dataset.data.reduce((acc, num) => acc + num, 0);
+              const value = dataset.data[tooltipItem.dataIndex];
+              const percent = ((value / total) * 100).toFixed(1);
+              return `${value} (${percent}%)`;
+            },
+          },
+          displayColors: false,
+        },
         labels: {
           // render 'label', 'value', 'percentage', 'image' or custom function, default is 'percentage'
           render: "label",

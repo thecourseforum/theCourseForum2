@@ -23,7 +23,14 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")  # default value set on the top
 
-ALLOWED_HOSTS = ["localhost", ".ngrok.io", "127.0.0.1"]
+ALLOWED_HOSTS = []
+
+CORS_ALLOWED_ORIGINS = [
+    "https://thecourseforum.com",
+    "https://thecourseforumtest.com",
+    "https://pagead2.googlesyndication.com",
+    "https://securepubads.g.doubleclick.net",
+]
 
 # Application definition
 
@@ -33,13 +40,72 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    # "collectfast",
     "django.contrib.staticfiles",
     "social_django",
     "cachalot",  # TODO: add Redis?
+    "storages",
     "rest_framework",
     "django_filters",
     "tcf_website",
 ]
+
+# Dev does not use S3 buckets
+if env.str("ENVIRONMENT") == "dev":
+    STATIC_URL = "/static/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+    ALLOWED_HOSTS.extend([
+        "localhost",
+        ".grok.io",
+        "127.0.0.1"
+    ])
+
+    DATABASES = {
+        "default": {
+            "NAME": env.str("DB_NAME"),
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "USER": env.str("DB_USER"),
+            "PASSWORD": env.str("DB_PASSWORD"),
+            "HOST": env.str("DB_HOST"),
+            "PORT": env.int("DB_PORT"),
+        }
+    }
+else:
+    AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_REGION_NAME = env.str("AWS_S3_REGION_NAME", default="us-east-1")
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    AWS_DEFAULT_ACL = None
+    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+
+    ALLOWED_HOSTS.extend([
+        "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
+        "thecourseforum.com",
+        "thecourseforumtest.com"
+    ])
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+            "OPTIONS": {},
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+        },
+    }
+
+    DATABASES = {
+        "default": {
+            "NAME": env.str("AWS_RDS_NAME"),
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "USER": env.str("AWS_RDS_USER"),
+            "PASSWORD": env.str("AWS_RDS_PASSWORD"),
+            "HOST": env.str("AWS_RDS_HOST"),
+            "PORT": env.int("AWS_RDS_PORT"),
+        }
+    }
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -70,6 +136,7 @@ TEMPLATES = [
                 "social_django.context_processors.login_redirect",
                 "tcf_core.context_processors.base",
                 "tcf_core.context_processors.history_cookies",
+                "tcf_core.context_processors.searchbar_context",
             ],
         },
     },
@@ -109,32 +176,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "NAME": env.str("DB_NAME"),
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "USER": env.str("DB_USER"),
-        "PASSWORD": env.str("DB_PASSWORD"),
-        "HOST": env.str("DB_HOST"),
-        "PORT": env.int("DB_PORT"),
-    },
-    "legacy": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "tcf.db"),
-    },
-}
 
 
 # social-auth-app-django settings.

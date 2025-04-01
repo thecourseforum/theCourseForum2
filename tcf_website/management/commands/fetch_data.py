@@ -61,27 +61,14 @@ def retrieve_and_write_semester_courses(csv_path, sem_code, pages=None):
         f"institution=UVA01&term={sem_code}&page="
     )
 
-    min_pages = 1
-    max_pages = 200
+    # Extract total number of pages from the first page
+    try:
+        response = session.get(semester_url, timeout=TIMEOUT)
+        page_data = json.loads(response.text)
+        total_pages = int(page_data["pageCount"])
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
 
-    # Binary search to find the total number of pages
-    print("\nBinary search for total pages [1, 200]:")
-    while min_pages <= max_pages:
-        mid = (min_pages + max_pages) // 2
-        print(f"\tChecking page {mid}")
-        try:
-            response = session.get(semester_url + str(mid), timeout=TIMEOUT)
-            page_data = json.loads(response.text)
-        except requests.exceptions.RequestException as e:
-            print(f"An error occurred: {e}")
-            break
-
-        if not page_data:
-            max_pages = mid - 1
-        else:
-            min_pages = mid + 1
-
-    total_pages = max_pages
     print(f"Total pages: {total_pages}")
 
     for page in tqdm(range(1, total_pages + 1)):
@@ -98,7 +85,7 @@ def retrieve_and_write_semester_courses(csv_path, sem_code, pages=None):
         if not page_data:
             break
 
-        requests_to_make = [(course["class_nbr"], sem_code) for course in page_data]
+        requests_to_make = [(course["class_nbr"], sem_code) for course in page_data["classes"]]
 
         with ThreadPoolExecutor(max_workers=20) as executor:
             all_classes = executor.map(
@@ -176,9 +163,7 @@ def compile_course_data(course_number, sem_code):
             if meetings.get(0)
             else ""
         ),
-        "Days1": (meetings.get(0)["meets"] if meetings.get(0)["meets"] != "-" else "TBA")
-        .replace("AM", "am")
-        .replace("PM", "pm"),
+        "Days1": (meetings.get(0)["meets"] if meetings.get(0)["meets"] != "-" else "TBA").lower(),
         "Room1": (meetings.get(0)["room"] if meetings.get(0)["room"] != "-" else "TBA"),
         "MeetingDates1": (meetings.get(0)["date_range"] if meetings.get(0) else ""),
         "Instructor2": (
@@ -190,7 +175,7 @@ def compile_course_data(course_number, sem_code):
             if meetings.get(1)
             else ""
         ),
-        "Days2": meetings.get(1)["meets"] if meetings.get(1) else "",
+        "Days2": (meetings.get(1)["meets"] if meetings.get(1) else "").lower(),
         "Room2": meetings.get(1)["room"] if meetings.get(1) else "",
         "MeetingDates2": (meetings.get(1)["date_range"] if meetings.get(1) else ""),
         "Instructor3": (
@@ -202,7 +187,7 @@ def compile_course_data(course_number, sem_code):
             if meetings.get(2)
             else ""
         ),
-        "Days3": meetings.get(2)["meets"] if meetings.get(2) else "",
+        "Days3": (meetings.get(2)["meets"] if meetings.get(2) else "").lower(),
         "Room3": meetings.get(2)["room"] if meetings.get(2) else "",
         "MeetingDates3": (meetings.get(2)["date_range"] if meetings.get(2) else ""),
         "Instructor4": (
@@ -214,7 +199,7 @@ def compile_course_data(course_number, sem_code):
             if meetings.get(3)
             else ""
         ),
-        "Days4": meetings.get(3)["meets"] if meetings.get(3) else "",
+        "Days4": (meetings.get(3)["meets"] if meetings.get(3) else "").lower(),
         "Room4": meetings.get(3)["room"] if meetings.get(3) else "",
         "MeetingDates4": (meetings.get(3)["date_range"] if meetings.get(3) else ""),
         "Title": class_details["course_title"],

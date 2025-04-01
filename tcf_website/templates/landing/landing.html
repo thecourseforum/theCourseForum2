@@ -210,8 +210,9 @@
                                     We keep our servers running through university grants and your donations.
                                     Just $4 keeps our servers up for a day, so we can keep serving you the best content.
                                 </p>
-                                <a href="https://gf.me/u/yvhyfa" class="btn btn-primary bg-tcf-indigo">Donate $4
-                                    today</a>
+                                <a class="ml-auto d-flex align-items-center" href="#donatePage" data-toggle="modal">
+                                    <button class="btn btn-primary bg-tcf-indigo">Donate $4 today</button>
+                                </a>
                             </div>
                         </div>
                     </a>
@@ -334,25 +335,25 @@
                             <li class="list-inline-item mr-3"
                                 style="display: inline-block; vertical-align: middle; transform: translateY(0.00rem);">
                                 <a href="https://discord.gg/tAjzH7eyvW">
-                                    <i class="fab fa-discord fa-2x fa-fw"></i>
+                                    <i class="fab fa-discord fa-2x fa-fw" style="width: 1.5em; height: 1.5em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
                                 </a>
                             </li>
                             <li class="list-inline-item mr-3"
                                 style="display: inline-block; vertical-align: middle; transform: translateY(0.00rem);">
                                 <a href="https://www.facebook.com/thecourseforum">
-                                    <i class="fab fa-facebook fa-2x fa-fw"></i>
+                                    <i class="fab fa-facebook fa-2x fa-fw" style="width: 1.5em; height: 1.5em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
                                 </a>
                             </li>
                             <li class="list-inline-item mr-3"
                                 style="display: inline-block; vertical-align: middle; transform: translateY(0.00rem);">
                                 <a href="https://www.instagram.com/thecourseforum_uva/">
-                                    <i class="fab fa-instagram fa-2x fa-fw"></i>
+                                    <i class="fab fa-instagram fa-2x fa-fw" style="width: 1.5em; height: 1.5em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
                                 </a>
                             </li>
                             <li class="list-inline-item"
                                 style="display: inline-block; vertical-align: middle; transform: translateY(0.00rem);">
                                 <a href="https://twitter.com/thecourseforum">
-                                    <i class="fab fa-twitter-square fa-2x fa-fw"></i>
+                                    <i class="fab fa-twitter-square fa-2x fa-fw" style="width: 1.5em; height: 1.5em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
                                 </a>
                             </li>
                         </ul>
@@ -365,6 +366,25 @@
         {% block js %}
         <!-- <script type="module" src="{% static 'landing/feedbackform.js' %}"></script> -->
         <script type="text/javascript">
+
+            document.addEventListener("DOMContentLoaded", function () {
+                document.querySelectorAll(".faqs-content h5").forEach(header => {
+                    header.addEventListener("click", function () {
+                        let icon = this.querySelector("i.fas"); // Find the <i> inside the h5
+            
+                        if (icon) {
+                            icon.classList.toggle("fa-chevron-down");
+                            icon.classList.toggle("fa-chevron-up");
+                        } else {
+                            console.warn("Chevron icon not found in FAQ header:", this);
+                        }
+                    });
+                });
+            
+                // Update copyright year at the bottom of landing page
+                $(".year").text(new Date().getFullYear());
+            });
+            
             // Update copyright year at the bottom of landing page
             $(".year").text(new Date().getFullYear());
         </script>

@@ -5,7 +5,6 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'course/course_professor.css' %}"/>
-    <link rel="stylesheet" href="{% static 'icons/icons .css' %}"/>
 {% endblock %}
 
 {% block content %}
@@ -66,7 +65,7 @@
                     <div class="ratings-row">
                         <div class="rating-card">
                             <span class="rating-card-num rating-num">&mdash;</span>
-                            <p class="rating-card-desc"><i class="fa fa-star fa-fw"></i>&nbsp;{{ num_reviews }} {% if num_reviews == 1 %} Rating {% else %} Ratings {% endif %}</p>
+                            <p class="rating-card-desc"><i class="fa fa-star fa-fw"></i>&nbsp;{{ num_ratings }} {% if num_ratings == 1 %} Rating {% else %} Ratings {% endif %}</p>
                         </div>
                         <div class="info-container">
                             <div class="info-row">
@@ -131,7 +130,7 @@
                         <div class="info-container">
                             <div class="info-row">
                                 <div class="info-title">
-                                    <i class="fas fa-book"></i>&nbsp;Reading
+                                    <i class="fa fa-book invert-to-dark"></i>&nbsp;Reading
                                 </div>
                                 <div class="info-bar">
                                     <div class="progress">
@@ -144,7 +143,7 @@
                             </div>
                             <div class="info-row">
                                 <div class="info-title">
-                                    <i class="fas fa-pencil-alt"></i>&nbsp;Writing
+                                    <i class="fa fa-pencil invert-to-dark"></i>&nbsp;Writing
                                 </div>
                                 <div class="info-bar">
                                     <div class="progress">
@@ -157,7 +156,7 @@
                             </div>
                             <div class="info-row">
                                 <div class="info-title">
-                                    <i class="fas fa-user-friends"></i>&nbsp;Groupwork
+                                    <i class="fa fa-user-friends"></i>&nbsp;Groupwork
                                 </div>
                                 <div class="info-bar">
                                     <div class="progress">
@@ -170,7 +169,7 @@
                             </div>
                             <div class="info-row">
                                 <div class="info-title">
-                                    <i class="fas fa-flask"></i>&nbsp;Other
+                                    <i class="fa fa-flask invert-to-dark"></i>&nbsp;Other
                                 </div>
                                 <div class="info-bar">
                                     <div class="progress">
@@ -184,10 +183,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="grades-container">
-                    <div class="chart-container d-flex align-items-center justify-content-center">
-                        <div id="canvas-parent"><canvas id="myChart"></canvas></div>
-                    </div>
+                <div id="grades-container" class="grades-container">
+                    <canvas id="myChart"></canvas>
                     <div class="absolute-center" id="chart-label">
                         <p class="gpa-text"> No grades found <i class="fa fa-frown-open fa-fw"></i></p>
                         <p class="students-text"> &mdash; Students</p>
@@ -198,56 +195,162 @@
                 </div>
             </div>
             {% if display_times %}
-            <div class="times-info-container">
+            <div class="times-info-container" id="reviews">
                 <div class="info-container" style="padding: 10px 15px; margin: 0;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="toggleSections(this)">
-                        <p class="rating-card-desc" style="margin-bottom: 0; display: flex; align-items: center;">Sections
-                            <span style="background-color: var(--secondary-color); color: white; padding: 0 8px; border-radius: 25%; font-size: 12px; margin-left: 7px;">
-                                {{ section_info.sections|length }}
-                            </span>
-                        </p>
-                        <i class="fas fa-solid fa-chevron-right" style="transition: transform 0.3s;"></i>
-                    </div>
-                    <div style="overflow: hidden;">
-                        <div id="sectionInfo" style="margin-top: -10000px;">
-                            {% for section, sec_info in section_info.sections.items %}
-                            <div style="display: grid; grid-template-columns: [start] 6ch [sec-num] auto [type] 1fr [end]; margin-bottom: 3px;">
-                                <div style="color: var(--accent-color);">{{ section }}</div>
-                                <div style="margin-left: min(20px, 4vw);">
-                                    {{ sec_info.type }}{% if sec_info.units is not None %} ({{ sec_info.units }} Unit{% if sec_info.units != 1 %}s{% endif %}){% endif %}
-                                </div>
-                                <div style="grid-column: type/end; text-align: right;">
-                                    {% for time in sec_info.times %}
-                                    {% if forloop.counter > 1 %}<br>{% endif %}{{ time }}
-                                    {% endfor %}
+                    <div class="sections-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <p class="rating-card-desc mb-0 d-flex align-items-center">Sections
+                                <span class="section-count">
+                                    {{ section_info.sections|length }}
+                                </span>
+                            </p>
+                            {% if section_info.sections|length > 5 %}
+                            <div class="sections-toggle-wrapper">
+                                <div class="sections-toggle">
+                                    <div class="toggle-option active" data-show="first5">
+                                        First 5
+                                    </div>
+                                    <div class="toggle-option" data-show="all">
+                                        All {{ section_info.sections|length }}
+                                    </div>
                                 </div>
                             </div>
-                            {% endfor %}
+                            {% endif %}
                         </div>
+                    </div>
+                    <div id="sectionInfo">
+                        {% for section, sec_info in section_info.sections.items %}
+                        <a href="https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_DETAILS.FieldFormula.IScript_Main?institution=UVA01&class_nbr={{ section }}" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="section-row {% if forloop.counter > 5 %}hidden-section{% endif %}">
+                            <div style="color: var(--accent-color);">{{ section }}</div>
+                            <div>
+                                {{ sec_info.type }}{% if sec_info.units is not None %} ({{ sec_info.units }} Unit{% if sec_info.units != 1 %}s{% endif %}){% endif %}
+                            </div>
+                            <div class="enrollment-info">
+                                <div class="enrollment-wrapper">
+                                    <div class="enrollment-metrics">
+                                        <div class="enrollment-metric">
+                                            <span class="metric-label">Enrollment:</span>
+                                            <div class="progress enrollment-progress">
+                                                <div class="progress-bar enrollment-bar" role="progressbar"></div>
+                                            </div>
+                                            <span class="enrollment-text metric-text">N/A</span>
+                                        </div>
+                                        <div class="enrollment-metric">
+                                            <span class="metric-label">Waitlist:</span>
+                                            <div class="progress waitlist-progress">
+                                                <div class="progress-bar waitlist-bar" role="progressbar"></div>
+                                            </div>
+                                            <span class="waitlist-text metric-text">N/A</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                {% for time in sec_info.times %}
+                                {% if forloop.counter > 1 %}<br>{% endif %}{{ time }}
+                                {% endfor %}
+                            </div>
+                        </a>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
             {% endif %}
         </div>
 
-        <script>
-            document.querySelector("#sectionInfo").style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
 
-            function toggleSections(div) {
-                const arrow = div.getElementsByTagName("i")[0],
-                    sectionInfo = document.querySelector("#sectionInfo");
-                arrow.classList.toggle("rotated");
-                sectionInfo.classList.toggle("show");
-                if (sectionInfo.classList.contains("show")) {
-                    sectionInfo.style.marginTop = '10px';
-                } else {
-                    sectionInfo.style.marginTop = "-" + window.getComputedStyle(sectionInfo).height;
-                }
+        <script>
+            const courseId = "{{ course.id }}";
+
+            function updateEnrollmentData() {
+                fetch(`/api/enrollment/${courseId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const enrollmentData = data.enrollment_data;
+                        // Update each section's enrollment information
+                        Object.entries(enrollmentData).forEach(([sectionNum, data]) => {
+                            const sectionLinks = document.querySelectorAll('#sectionInfo > a.section-row');
+                            sectionLinks.forEach(link => {
+                                if (link.textContent.includes(sectionNum)) {
+                                    const enrollmentDiv = link.querySelector('.enrollment-info');
+                                    if (enrollmentDiv) {
+                                        const progressBar = enrollmentDiv.querySelector('.enrollment-bar');
+                                        const waitlistBar = enrollmentDiv.querySelector('.waitlist-bar');
+                                        const enrollmentText = enrollmentDiv.querySelector('.enrollment-text');
+                                        const waitlistText = enrollmentDiv.querySelector('.waitlist-text');
+                                        const taken = data.enrollment_taken || 0;
+                                        const limit = data.enrollment_limit || 0;
+                                        const waitTaken = data.waitlist_taken || 0;
+                                        const waitLimit = data.waitlist_limit || 0;
+                                        
+                                        if (limit > 0) {
+                                            const enrollPercentage = (taken / limit) * 100;
+                                            progressBar.style.width = `${enrollPercentage}%`;
+                                            progressBar.style.backgroundColor = enrollPercentage >= 100 ? '#dc3545' : '#28a745';
+                                            enrollmentText.textContent = `${taken}/${limit}`;
+                                            
+                                            if (waitLimit > 0) {
+                                                const waitPercentage = (waitTaken / waitLimit) * 100;
+                                                waitlistBar.style.width = `${waitPercentage}%`;
+                                                waitlistText.textContent = `${waitTaken}/${waitLimit}`;
+                                            } else {
+                                                waitlistBar.style.width = '0%';
+                                                waitlistText.textContent = 'N/A';
+                                            }
+                                        } else {
+                                            progressBar.style.width = '0%';
+                                            waitlistBar.style.width = '0%';
+                                            enrollmentText.textContent = 'N/A';
+                                            waitlistText.textContent = 'N/A';
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch(error => console.error('Error updating enrollment data:', error));
             }
+
+            // Check for updates every 5 seconds for 15 seconds
+            let checkCount = 0;
+            const enrollmentCheck = setInterval(() => {
+                updateEnrollmentData();
+                checkCount++;
+                if (checkCount >= 3) {
+                    clearInterval(enrollmentCheck);
+                }
+            }, 5000);
+
+            updateEnrollmentData();
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const toggleOptions = document.querySelectorAll('.toggle-option');
+                if (toggleOptions.length) {
+                    toggleOptions.forEach(option => {
+                        option.addEventListener('click', function() {
+                            const showAll = this.dataset.show === 'all';
+                            const allSections = document.querySelectorAll('.section-row');
+                            
+                            // Update sections visibility
+                            allSections.forEach((section, index) => {
+                                if (index >= 5) {
+                                    section.classList.toggle('hidden-section', !showAll);
+                                }
+                            });
+                            
+                            // Update toggle state
+                            toggleOptions.forEach(opt => opt.classList.remove('active'));
+                            this.classList.add('active');
+                        });
+                    });
+                }
+            });
         </script>
 
-
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs" id="reviews">
             <li class="nav-item">
                 <a class="nav-link active" id="reviewsTab" data-toggle="tab" href="#reviewsTabContent" style="font-size: 18px;">Reviews</a>
             </li>
@@ -262,7 +365,7 @@
             <div class="tab-pane fade show active" id="reviewsTabContent" role="tabpanel" aria-labelledby="reviews-tab">
                 <div class="reviews-container mb-5 mt-3">
                     <div class="reviews-toolbar pb-2 d-flex flex-md-row flex-column justify-content-left justify-content-md-center">
-                        <h3 class="reviews-heading mb-0 mt-1 mr-4">{{ reviews|length }} {% if reviews|length == 1 %} Comment {% else %} Comments {% endif %}</h3>
+                        <h3 class="reviews-heading mb-0 mt-1 mr-4">{{ num_reviews }} {% if num_reviews == 1 %} Review {% else %} Reviews {% endif %}</h3>
                         <div class="reviews-options d-flex flex-sm-row flex-column col p-0">
                             {% if user.is_authenticated %}
                                 <a href="{% url 'new_review' %}?subdept_id={{course.subdepartment.id}}&course_id={{course.id}}&instr_id={{instructor.id}}" class="btn bg-tcf-orange text-white mb-3">
@@ -273,24 +376,25 @@
                                     <i class="fa fa-plus" aria-hidden="true"></i> Add your review!
                                 </a> 
                             {% endif %}
-                            {% if reviews %}
+                            {% if paginated_reviews and paginated_reviews.number > 0 %}
                             <!-- Show sorting options iff reviews exist -->
                             <div class="ml-auto">
                                 <div class="dropdown btn-group ml-sm-4">
                                     <button class="btn bg-white" disabled>Sort by</button>
                                     <button id="review-sort-select" class="btn btn-primary dropdown-toggle" type="button" id="sortOptions"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ sort_method }}
+                                    </button>
                                     <div class="dropdown-menu" aria-labelledby="sortOptions">
-                                        <button id="votes-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                        <button id="votes-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id instructor.id 'Most Helpful' %}#reviews';" class="dropdown-item" type="button">
                                             Most Helpful
                                         </button>
-                                        <button id="recent-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                        <button id="recent-sort-btn" onclick="window.location.href='{% url 'sort_reviews'  course.id instructor.id 'Most Recent' %}#reviews';" class="dropdown-item" type="button">
                                             Most Recent
                                         </button>
-                                        <button id="highrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                        <button id="highrating-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id instructor.id 'Highest Rating' %}#reviews';" class="dropdown-item" type="button">
                                             Highest Rating
                                         </button>
-                                        <button id="lowrating-sort-btn" onclick="sortReviews(this.id)" class="dropdown-item" type="button">
+                                        <button id="lowrating-sort-btn" onclick="window.location.href='{% url 'sort_reviews' course.id instructor.id 'Lowest Rating' %}#reviews';" class="dropdown-item" type="button">
                                             Lowest Rating
                                         </button>
                                     </div>
@@ -299,7 +403,7 @@
                             {% endif %}
                         </div>
                     </div>
-                    {% include "reviews/reviews.html" with reviews=reviews %}
+                    {% include "reviews/reviews.html" with paginated_reviews=paginated_reviews %}
                 </div>
             </div>
             <div class="tab-pane fade" id="qaTabContent" role="tabpanel" aria-labelledby="qa-tab">
@@ -307,6 +411,7 @@
             </div>
         </div>
     </div>
+
 {% endblock %}
 
 {% block js %}
@@ -322,9 +427,9 @@
     </script>
 
     <!-- For grade data -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-    <script type="module"
-            src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
     <script type="module" src="{% static 'course/javascript/course_data.js' %}"></script>
     <script type="module">
         // Run loaddata function from above script
