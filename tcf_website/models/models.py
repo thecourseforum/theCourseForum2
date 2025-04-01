@@ -460,8 +460,24 @@ class Course(models.Model):
     # Subdepartment mnemonic and course number. Required.
     combined_mnemonic_number = models.CharField(max_length=255, blank=True)
 
+    avg_rating = models.FloatField(null=True, blank=True)
+    avg_difficulty = models.FloatField(null=True, blank=True)
+    avg_hours_per_week = models.FloatField(null=True, blank=True)
+    review_count = models.PositiveIntegerField(default=0)
+
     def __str__(self):
         return f"{self.subdepartment.mnemonic} {self.number} | {self.title}"
+
+    def average_rating(self):
+        """Return pre-calculated average rating."""
+        return self.avg_rating
+
+    def instructor_metrics(self, instructor):
+        """Get pre-calculated metrics for this course-instructor pair."""
+        try:
+            return CourseInstructorMetrics.objects.get(course=self, instructor=instructor)
+        except CourseInstructorMetrics.DoesNotExist:
+            return None
 
     def save(self, *args, **kwargs):
         self.combined_mnemonic_number = f"{self.subdepartment.mnemonic} {self.number}".strip()
@@ -554,7 +570,7 @@ class Course(models.Model):
             "average__avg"
         ]
 
-    def review_count(self):
+    def get_review_count(self):
         """Compute total number of course reviews."""
         return self.review_set.count()
 
@@ -761,6 +777,28 @@ class CourseInstructorGrade(models.Model):
         )
 
 
+class CourseInstructorMetrics(models.Model):
+    """Stores pre-calculated metrics for course-instructor pairs."""
+
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+
+    avg_rating = models.FloatField(null=True, blank=True)
+    avg_difficulty = models.FloatField(null=True, blank=True)
+    avg_recommendability = models.FloatField(null=True, blank=True)
+    avg_enjoyability = models.FloatField(null=True, blank=True)
+    avg_instructor_rating = models.FloatField(null=True, blank=True)
+    avg_hours_per_week = models.FloatField(null=True, blank=True)
+    avg_amount_reading = models.FloatField(null=True, blank=True)
+    avg_amount_writing = models.FloatField(null=True, blank=True)
+    avg_amount_group = models.FloatField(null=True, blank=True)
+    avg_amount_homework = models.FloatField(null=True, blank=True)
+    review_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ("course", "instructor")
+
+
 class Section(models.Model):
     """Section model.
 
@@ -948,10 +986,207 @@ class Review(models.Model):
     # Review visibility. Required. Default visible.
     hidden = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+
+        # Save the review first
+        super().save(*args, **kwargs)
+
+        # Update course-instructor metrics
+        metrics, created = CourseInstructorMetrics.objects.get_or_create(
+            course=self.course, instructor=self.instructor
+        )
+
+        if created:
+            # First review for this course-instructor pair
+            metrics.avg_rating = self.average()
+            metrics.avg_difficulty = self.difficulty
+            metrics.avg_recommendability = self.recommendability
+            metrics.avg_enjoyability = self.enjoyability
+            metrics.avg_instructor_rating = self.instructor_rating
+            metrics.avg_hours_per_week = self.hours_per_week
+            metrics.avg_amount_reading = self.amount_reading
+            metrics.avg_amount_writing = self.amount_writing
+            metrics.avg_amount_group = self.amount_group
+            metrics.avg_amount_homework = self.amount_homework
+            metrics.review_count = 1
+        else:
+            # Update existing metrics using proper averaging formula
+            n = metrics.review_count
+
+            # Update each field using the formula: new_avg = (old_avg * n + new_value) / (n + 1)
+            if is_new:  # Only increment counters for new reviews
+                metrics.avg_rating = (metrics.avg_rating * n + self.average()) / (n + 1)
+                metrics.avg_difficulty = (metrics.avg_difficulty * n + self.difficulty) / (n + 1)
+                metrics.avg_recommendability = (
+                    metrics.avg_recommendability * n + self.recommendability
+                ) / (n + 1)
+                metrics.avg_enjoyability = (metrics.avg_enjoyability * n + self.enjoyability) / (
+                    n + 1
+                )
+                metrics.avg_instructor_rating = (
+                    metrics.avg_instructor_rating * n + self.instructor_rating
+                ) / (n + 1)
+                metrics.avg_hours_per_week = (
+                    metrics.avg_hours_per_week * n + self.hours_per_week
+                ) / (n + 1)
+                metrics.avg_amount_reading = (
+                    metrics.avg_amount_reading * n + self.amount_reading
+                ) / (n + 1)
+                metrics.avg_amount_writing = (
+                    metrics.avg_amount_writing * n + self.amount_writing
+                ) / (n + 1)
+                metrics.avg_amount_group = (metrics.avg_amount_group * n + self.amount_group) / (
+                    n + 1
+                )
+                metrics.avg_amount_homework = (
+                    metrics.avg_amount_homework * n + self.amount_homework
+                ) / (n + 1)
+                metrics.review_count = n + 1
+
+        metrics.save()
+
+        # Also update course-level metrics
+        course = self.course
+        if is_new:  # Only update for new reviews
+            if not course.review_count:
+                # First review for this course
+                course.avg_rating = self.average()
+                course.avg_difficulty = self.difficulty
+                course.avg_hours_per_week = self.hours_per_week
+                course.review_count = 1
+            else:
+                # Update existing metrics using proper averaging formula
+                n = course.review_count
+
+                # Update each field using the formula: new_avg = (old_avg * n + new_value) / (n + 1)
+                if course.avg_rating is not None:
+                    course.avg_rating = (course.avg_rating * n + self.average()) / (n + 1)
+                else:
+                    course.avg_rating = self.average()
+
+                if course.avg_difficulty is not None:
+                    course.avg_difficulty = (course.avg_difficulty * n + self.difficulty) / (n + 1)
+                else:
+                    course.avg_difficulty = self.difficulty
+
+                if course.avg_hours_per_week is not None:
+                    course.avg_hours_per_week = (
+                        course.avg_hours_per_week * n + self.hours_per_week
+                    ) / (n + 1)
+                else:
+                    course.avg_hours_per_week = self.hours_per_week
+
+                course.review_count = n + 1
+
+            course.save()
+
+    def populate_metrics(apps, schema_editor):
+        Review = apps.get_model("tcf_website", "Review")
+        CourseInstructorMetrics = apps.get_model("tcf_website", "CourseInstructorMetrics")
+        Course = apps.get_model("tcf_website", "Course")
+
+        # Group reviews by course-instructor and calculate metrics
+        metrics_data = {}
+
+        # First, collect all reviews and group them
+        for review in Review.objects.all():
+            key = (review.course_id, review.instructor_id)
+            if key not in metrics_data:
+                metrics_data[key] = {
+                    "course_id": review.course_id,
+                    "instructor_id": review.instructor_id,
+                    "reviews": [],
+                }
+            metrics_data[key]["reviews"].append(review)
+
+        # Calculate and save metrics for each group
+        for data in metrics_data.values():
+            reviews = data["reviews"]
+            n = len(reviews)
+
+            metrics = CourseInstructorMetrics(
+                course_id=data["course_id"],
+                instructor_id=data["instructor_id"],
+                review_count=n,
+                avg_rating=sum(r.average() for r in reviews) / n if n > 0 else None,
+                # ...calculate other averages similarly
+            )
+            metrics.save()
+
     # does this get used anywhere? not sure
     def average(self):
         """Average score for review."""
         return (self.instructor_rating + self.recommendability + self.enjoyability) / 3
+
+    def delete(self, *args, **kwargs):
+        """Update metrics when a review is deleted."""
+        # Update course-instructor metrics
+        try:
+            metrics = CourseInstructorMetrics.objects.get(
+                course=self.course, instructor=self.instructor
+            )
+            n = metrics.review_count
+
+            if n == 1:
+                # This is the last review, just delete the metrics
+                metrics.delete()
+            else:
+                # Remove this review's contribution from the average
+                # Formula: new_avg = (old_avg * n - value) / (n - 1)
+                metrics.avg_rating = (metrics.avg_rating * n - self.average()) / (n - 1)
+                metrics.avg_difficulty = (metrics.avg_difficulty * n - self.difficulty) / (n - 1)
+                metrics.avg_recommendability = (
+                    metrics.avg_recommendability * n - self.recommendability
+                ) / (n - 1)
+                metrics.avg_enjoyability = (metrics.avg_enjoyability * n - self.enjoyability) / (
+                    n - 1
+                )
+                metrics.avg_instructor_rating = (
+                    metrics.avg_instructor_rating * n - self.instructor_rating
+                ) / (n - 1)
+                metrics.avg_hours_per_week = (
+                    metrics.avg_hours_per_week * n - self.hours_per_week
+                ) / (n - 1)
+                metrics.avg_amount_reading = (
+                    metrics.avg_amount_reading * n - self.amount_reading
+                ) / (n - 1)
+                metrics.avg_amount_writing = (
+                    metrics.avg_amount_writing * n - self.amount_writing
+                ) / (n - 1)
+                metrics.avg_amount_group = (metrics.avg_amount_group * n - self.amount_group) / (
+                    n - 1
+                )
+                metrics.avg_amount_homework = (
+                    metrics.avg_amount_homework * n - self.amount_homework
+                ) / (n - 1)
+                metrics.review_count = n - 1
+                metrics.save()
+        except CourseInstructorMetrics.DoesNotExist:
+            pass
+
+        # Update course-level metrics
+        course = self.course
+        n = course.review_count
+
+        if n == 1:
+            # This is the last review, reset metrics
+            course.avg_rating = None
+            course.avg_difficulty = None
+            course.avg_hours_per_week = None
+            course.review_count = 0
+        else:
+            # Remove this review's contribution from the average
+            course.avg_rating = (course.avg_rating * n - self.average()) / (n - 1)
+            course.avg_difficulty = (course.avg_difficulty * n - self.difficulty) / (n - 1)
+            course.avg_hours_per_week = (course.avg_hours_per_week * n - self.hours_per_week) / (
+                n - 1
+            )
+            course.review_count = n - 1
+        course.save()
+
+        # Call the original delete method
+        super().delete(*args, **kwargs)
 
     def count_votes(self):
         """Sum votes for review."""
