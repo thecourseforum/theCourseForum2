@@ -1,0 +1,119 @@
+{% load custom_tags %}
+{% load static %}
+
+<div class="modal fade" id="editScheduleModal" tabindex="-1" role="dialog" aria-labelledby="editScheduleModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Schedule</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div id="second-modal-body" class="modal-body">
+          
+        </div>
+            <div class="modal-footer">
+              <button id="scheduleResetButton" class="btn btn-primary">
+                Reset
+              </button>
+              <button id="schedule_edit_btn" form="edit_schedule_form" type="submit" value="Submit" class="btn btn-primary">
+                Save
+              </button>
+            </div>
+      </div>
+    </div>
+</div>
+
+<script>
+
+// Function to initialize remove buttons
+function initializeRemoveButtons() {
+  document.querySelectorAll('.remove-course-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const courseRow = this.closest('.course-row');
+      const courseId = courseRow.getAttribute('course_id');
+      
+      // Create hidden input
+      const hiddenInput = document.createElement('input');
+      hiddenInput.type = 'hidden';
+      hiddenInput.name = 'removed_course_ids[]';
+      hiddenInput.value = courseId;
+      
+      document.getElementById('edit_schedule_form').appendChild(hiddenInput);
+      courseRow.style.display = 'none';
+      
+      const scheduledCourse = document.getElementById(`ScheduledCourse-${courseId}edit`);
+      if(scheduledCourse) scheduledCourse.remove();
+      updateStats();
+    });
+  });
+}
+
+// Function to get the CSRF token from cookies
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Function to refetch the schedule data
+function refetchSchedule() {
+    const requestBody = {
+        schedule_id: document.getElementById('schedule_id_input').value,
+    };
+
+    fetch("{% url 'modal_load_editor' %}", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify(requestBody)
+    })
+    .then(resp => resp.text())
+    .then(html => {
+        // Insert the returned HTML and update hidden schedule ID
+        document.getElementById("second-modal-body").innerHTML = "";
+        document.getElementById("second-modal-body").innerHTML = html;
+        initializeRemoveButtons();
+
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("Something went wrong");
+    });
+}
+
+// Attach event listener to the reset button
+const resetButton = document.getElementById('scheduleResetButton');
+if (resetButton) {
+    resetButton.addEventListener('click', refetchSchedule);
+}
+
+
+
+// Handle form submission
+const editScheduleForm = document.getElementById('edit_schedule_form');
+if (editScheduleForm) {
+    editScheduleForm.addEventListener('submit', function (event) {
+        // Make sure the name input is filled out
+        const nameInput = document.getElementById('schedule_name_input');
+        if (nameInput && nameInput.value === "") {
+            event.preventDefault();
+            alert("Invalid Schedule Name");
+        }
+
+        // Log the hidden inputs being submitted
+        const removedCourseInputs = document.querySelectorAll('input[name="removed_course_ids[]"]');
+    });
+}</script>

@@ -1,0 +1,22 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Make a Schedule - theCourseForum{% endblock %}
+
+{% block content %}
+
+<div>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{form}}
+        {% if user.is_authenticated %}
+        <input type="hidden" name="user_id" value="{{ user.id }}">
+        {% else %}
+        <input type="hidden" name="user_id" value="">
+        {% endif %}
+        <input type="submit" value="Submit">
+    </form>
+
+</div>
+
+{% endblock %}
