@@ -120,6 +120,9 @@ def course_view(
 ):
     """A new Course view that allows you to input mnemonic and number instead."""
 
+    if not instructor_recency:
+        instructor_recency = str(Semester.latest())
+
     # Clears previously saved course information
     request.session["course_code"] = None
     request.session["course_title"] = None
@@ -128,8 +131,11 @@ def course_view(
     # Redirect if the mnemonic is not all uppercase
     if mnemonic != mnemonic.upper():
         return redirect("course", mnemonic=mnemonic.upper(), course_number=course_number)
+
     course = get_object_or_404(
-        Course, subdepartment__mnemonic=mnemonic.upper(), number=course_number
+        Course,
+        subdepartment__mnemonic=mnemonic.upper(),
+        number=course_number,
     )
 
     latest_semester = Semester.latest()
@@ -177,10 +183,6 @@ def course_view(
     request.session["course_title"] = course.title
     request.session["instructor_fullname"] = None
 
-    # Fetch sorting variables
-    sortby = request.GET.get("sortby", "course_id")
-    order = request.GET.get("order", "asc")
-
     return render(
         request,
         "course/course.html",
@@ -194,7 +196,6 @@ def course_view(
             "active_instructor_recency": instructor_recency,
         },
     )
-
 
 def course_instructor(request, course_id, instructor_id, method="Default"):
     """View for course instructor page."""
