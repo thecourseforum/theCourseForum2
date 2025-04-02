@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_tags %}
 
 <link rel="stylesheet" href="{% static 'schedule/schedule.css' %}" />
 <div id="schedule{{schedule.id}}{{mode}}" class="schedule card mb-2">
@@ -78,7 +79,7 @@
                                 <div class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start schedule-card-link align-items-center ">
                                     <div class="text-center text-lg-left">
                                         <h4 id="title">{{ course.title }}</h4>
-                                        <h6>{{ course.instructor }}</h6>
+                                        <h6>{{ course.instructor|remove_email }}</h6>
 
                                     </div>
                                 </div>
@@ -87,13 +88,13 @@
                                     <div class="row justify-content-center text-center">
                                       <div class="col-12 col-sm-2 col-lg-2 text-nowrap">
                                         <small class="mb-0 text-uppercase">
-                                          <i class="fas fa-chalkboard"></i>&nbsp;Section Type
+                                          <i class="fa fa-book"></i>&nbsp;Section Type
                                         </small>
-                                        <p class="mb-0 info" id="recency">{{course.section.section_type}}</p>
+                                        <p class="mb-0 info" id="recency">{{course.section.section_type|slice:":3"}}.</p>
                                       </div>
                                       <div class="col-12 col-sm-8 col-lg-7 text-nowrap">
                                         <small class="mb-0 text-uppercase">
-                                          <i class="fas fa-hourglass"></i>&nbsp;Section Time
+                                          <i class="fa fa-hourglass-half"></i>&nbsp;Section Time
                                         </small>
                                         <p class="mb-1 info text-break course_time">{{course.time}}</p>
                                       </div>
@@ -182,7 +183,6 @@
           let courseCredits = parseInt(course.getAttribute("course_credits"));
           let courseDifficulty = parseFloat(course.getAttribute("course_diff"));
           let courseGpa = parseFloat(course.getAttribute("course_gpa"));
-          console.log(courseRating, courseDifficulty);
           if (!isNaN(courseRating) || courseRating == 0) {
               rating += courseRating;
               r_count++;
@@ -221,6 +221,7 @@
       let gpa = isNaN(parseFloat(course.gpa)) ? "\u2014" : parseFloat(course.gpa).toFixed(2);
       let rating = isNaN(parseFloat(course.rating)) ? "\u2014" : parseFloat(course.rating).toFixed(2);
       let difficulty = isNaN(parseFloat(course.difficulty)) ? "\u2014" : parseFloat(course.difficulty).toFixed(2);
+      const course_name = document.getElementById('course-name-value').textContent.split('|')[0].trim();
 
       let courseCardHTML = `
           <li id="selectedSectionTentative">
@@ -230,7 +231,7 @@
                   <div class="row no-gutters">
                       <div class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start schedule-card-link align-items-center ">
                           <div class="text-center text-lg-left">
-                              <h4 id="title">New Addition</h4>
+                              <h4 id="title">${course_name}</h4>
                               <h6>${course.instructor_name}</h6>
                           </div>
                       </div>
@@ -241,11 +242,11 @@
                                       <small class="mb-0 text-uppercase">
                                           <i class="fas fa-chalkboard"></i>&nbsp;Section Type
                                       </small>
-                                      <p class="mb-0 info" id="recency">${course.section_type}</p>
+                                      <p class="mb-0 info" id="recency">${course.section_type.slice(0, 3) + '.'}</p>
                                   </div>
                                   <div class="col-12 col-sm-8 col-lg-7 text-nowrap">
                                       <small class="mb-0 text-uppercase">
-                                          <i class="fas fa-hourglass"></i>&nbsp;Section Time
+                                          <i class="fa fa-hourglass-half"></i>&nbsp;Section Time
                                       </small>
                                       <p class="mb-1 info text-break">${course.section_time}</p>
                                   </div>
