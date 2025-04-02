@@ -8,7 +8,7 @@ from threading import Thread
 from typing import Any
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Avg, Count, CharField, F, Q, Value
+from django.db.models import Avg, CharField, Count, F, Q, Value
 from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -162,12 +162,13 @@ def course_view(
         instructor.semester_last_taught = str(
             get_object_or_404(Semester, pk=instructor.semester_last_taught)
         )
-        if instructor.section_times[0] and instructor.section_nums[0]:
-            instructor.times = {
-                num: times[:-1].split(",")
-                for num, times in zip(instructor.section_nums, instructor.section_times)
-                if num and times
-            }
+        if instructor.section_times and instructor.section_nums:
+            if instructor.section_times[0] and instructor.section_nums[0]:
+                instructor.times = {
+                    num: times[:-1].split(",")
+                    for num, times in zip(instructor.section_nums, instructor.section_times)
+                    if num and times
+                }
 
     dept = course.subdepartment.department
 
