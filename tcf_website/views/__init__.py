@@ -27,5 +27,6 @@ from .qa import (
     upvote_answer,
     upvote_question,
 )
+from .comprehend import analyze_text
 from .review import DeleteReview, downvote, edit_review, new_review, upvote
 from .search import search

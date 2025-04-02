@@ -143,4 +143,5 @@ urlpatterns = [
         ),
         name="password_reset_complete",
     ),
+    path("analyze/", views.analyze_text, name="analyze_text"),
 ]

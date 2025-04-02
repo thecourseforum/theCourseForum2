@@ -6,7 +6,6 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.views.generic.base import TemplateView
 
-
 def index(request):
     """
     Index view.
