@@ -13,4 +13,4 @@ def get_item(dictionary, key):
 @register.filter
 def remove_email(value):
     """This filter will remove the professors email from the string"""
-    return str(value).split('(')[0].strip()
+    return str(value).split('(', maxsplit=1)[0]
