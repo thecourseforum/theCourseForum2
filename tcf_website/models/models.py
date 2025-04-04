@@ -13,8 +13,8 @@ from django.db.models import (
     Avg,
     Case,
     CharField,
-    ExpressionWrapper,
     Exists,
+    ExpressionWrapper,
     F,
     FloatField,
     OuterRef,
@@ -969,6 +969,10 @@ class Review(models.Model):
     # Email of reviewer for Review Drive, should be blank most of the time
     # Only done for reviews without accounts
     email = models.CharField(default="", null=True, blank=True)
+    # Toxicity rating of review
+    toxicity_rating = models.IntegerField(default=0)
+    # Most relevant toxicity category, only exists if review has text
+    toxicity_catgory = models.CharField(blank=True)
 
     # Enum of Rating options.
     RATINGS = (
