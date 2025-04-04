@@ -45,7 +45,7 @@ class Command(BaseCommand):
                 review.toxicity_rating = prediction.get("toxicity", 0)
 
                 # get most relevant toxicity category
-                max_label = max(toxicity_categories, key=lambda label: prediction.get(label, 0))
+                max_label = max(toxicity_categories, key=lambda label: prediction[label][0])
                 # max_score = predictions.get(max_label, 0)
                 # print(f"Max label: {max_label}, Max score: {max_score}")
                 review.toxicity_catgory = max_label
