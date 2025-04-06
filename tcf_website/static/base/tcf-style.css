@@ -18,6 +18,8 @@
   --basic-text-color: #212529;
   /* changes the border color of the search bar on landing page */
   --input-border-color: #DEE2E6;
+  /* changes the color of the title and icons on the landing page */
+  --title-color: #274f97;
 
   /* #f8f9fa is the og background color styled by .bg-light in _background_variant.scss */
   /* Note: Can use Bootstrap "light" color and white color */
@@ -50,8 +52,8 @@ body.dark-mode {
   --icon-color: white; /* Light icon color */
   --input-border-color: #A6A6A6; /* Lighter border color for inputs */
   --button-bg-color: #1e1e1e; /* Darker button background */
-  --landing-page-background-color: black;
-  --main-color: white; /* replace tcf-blue as tcf logo text color */
+  --landing-page-background-color: black; /* replace tcf-blue as tcf logo text color */
+  --title-color: white; /* make title and icons on landing page white */
 }
 
 /*************DEFAULT STYLES**************/
@@ -138,7 +140,7 @@ ul {
 
 /* Main color: Indigo/Dark blue */
 .text-tcf-indigo {
-  color: var(--main-color);
+  color: var(--title-color);
 }
 
 .bg-tcf-indigo {
@@ -147,7 +149,7 @@ ul {
   background-color: #274f97;
 }
 .border-tcf-indigo {
-  border-color: var(--main-color);
+  border-color: var(--title-color);
 }
 
 /* Secondary color: Light blue */
