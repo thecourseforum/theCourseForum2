@@ -54,6 +54,15 @@ class ReviewForm(forms.ModelForm):
         return instance
 
 
+TOXICITY_THRESHOLD = 0.75
+
+
+def reviews_list(request):
+    # Only fetch reviews that are not too toxic
+    reviews = Review.objects.filter(toxicity_rating__lt=TOXICITY_THRESHOLD)
+    return render(request, "reviews/reviews.html", {"reviews": reviews})
+
+
 @login_required
 def upvote(request, review_id):
     """Upvote a view."""
