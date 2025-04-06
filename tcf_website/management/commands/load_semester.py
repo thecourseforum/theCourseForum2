@@ -233,7 +233,7 @@ class Command(BaseCommand):
             else:
                 names = name.split()
                 try:
-                    first, last = names[0], names[-1]
+                    first, last = " ".join(names[:-1]), names[-1]
                 except IndexError as e:
                     print(f"Instructor named '{name}'")
                     print(e)
