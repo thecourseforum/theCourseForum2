@@ -546,7 +546,6 @@ def get_course_term_gpa(course_id, instructor_id):
 
     # Loop over CSV files in the folder
     for filename in os.listdir(csv_folder):
-        # Consider only CSV files whose filename indicates fall or spring (case-insensitive)
         if not ("fall" in filename.lower() or "spring" in filename.lower()):
             continue
         filepath = os.path.join(csv_folder, filename)
@@ -566,7 +565,6 @@ def get_course_term_gpa(course_id, instructor_id):
                     catalog_number = int(catalog_str)
                 except ValueError:
                     continue
-                # We assume that course.combined_mnemonic_number is something like "MATH 101"
 
                 combined_mnemonic = f"{subject} {catalog_number}"
 
@@ -580,7 +578,6 @@ def get_course_term_gpa(course_id, instructor_id):
                     first = first_and_middle.split()[0]
                 except ValueError:
                     continue
-                # Compare the instructor's first and last name
 
                 full_name = f"{first.strip()} {last.strip()}"
 
@@ -620,8 +617,7 @@ def get_course_term_gpa(course_id, instructor_id):
             year, season = term, ""
         transformed.append(
             {
-                "semester_season": season[0:1],
-                "semester_year": year[2:],
+                "semester_term": f"{season[0:1]}{year[2:]}",
                 "average_gpa": round(gpa, 2) if gpa is not None else None,
             }
         )
