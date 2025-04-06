@@ -8,7 +8,7 @@ cd -
 
 Example:
 cd tcf_website/management/commands
-python fetch_data "2023_spring"
+python fetch_data.py "2023_spring"
 cd -
 """
 
