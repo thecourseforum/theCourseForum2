@@ -6,6 +6,7 @@ import asyncio
 import json
 from threading import Thread
 from typing import Any
+from urllib.parse import urlencode
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg, CharField, Count, F, Q, Value
@@ -79,6 +80,9 @@ def department(request, dept_id: int, course_recency=None):
     season, year = course_recency.upper().split()
     active_semester = Semester.objects.filter(year=year, season=season).first()
 
+    query_params = request.GET.copy()
+    query_params.pop("page", None)
+    query_params = urlencode(query_params)
     # Fetch sorting variables
     sortby = request.GET.get("sortby", "course_id")
     order = request.GET.get("order", "asc")
@@ -101,6 +105,7 @@ def department(request, dept_id: int, course_recency=None):
             "sortby": sortby,
             "order": order,
             "last_five_years": str(last_five_years),
+            "query_params": query_params,
         },
     )
 
@@ -113,7 +118,6 @@ def course_view_legacy(request, course_id):
         mnemonic=course.subdepartment.mnemonic,
         course_number=course.number,
     )
-
 
 
 def course_view(
@@ -201,6 +205,7 @@ def course_view(
             "active_instructor_recency": instructor_recency,
         },
     )
+
 
 def course_instructor(request, course_id, instructor_id, method="Default"):
     """View for course instructor page."""
