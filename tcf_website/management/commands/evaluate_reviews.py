@@ -1,5 +1,5 @@
 from detoxify import Detoxify
-from tdqm import tdqm
+from tqdm import tqdm
 from django.core.management.base import BaseCommand, CommandError
 
 from tcf_website.models import Review
@@ -41,8 +41,8 @@ class Command(BaseCommand):
             #"sexual_explicit", doesn't exist for original model
         ]
 
-        for review in tdqm(reviews, desc="Processing reviews..", unit="review"):
-            if review.text and review.toxicity_catgory:  # evaluate if there is text + no rating
+        for review in tqdm(reviews, desc="Processing reviews..", unit="review"):
+            if review.text:  # evaluate if there is text + no rating
                 try:
                     prediction = model.predict(review.text)
                 except Exception as e:
@@ -50,7 +50,7 @@ class Command(BaseCommand):
                         self.style.WARNING(f"Error processing review {review.id}: {e}")
                     )
                     continue
-                review.toxicity_rating = prediction["toxicity"]
+                review.toxicity_rating = round(100 * prediction["toxicity"])
 
                 # get most relevant toxicity category
                 max_label = max(toxicity_categories, key=lambda label: prediction[label])
