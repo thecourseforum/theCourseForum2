@@ -549,11 +549,136 @@ def safe_round(num):
     return "\u2014"
 
 
+# def get_course_term_gpa(course_id, instructor_id):
+
+#     instructor = get_object_or_404(Instructor, instructor_id)
+#     course = get_object_or_404(Course, course_id)
+
+#     # course information
+#     """
+#     title = models.CharField(max_length=255)
+#     # Course description. Optional.
+#     description = models.TextField(blank=True)
+#     # Course disciplines. Optional.
+#     disciplines = models.ManyToManyField(Discipline, blank=True)
+
+#     # Course number. Required.
+#     number = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99999)])
+
+#     # Subdepartment foreign key. Required.
+#     subdepartment = models.ForeignKey(Subdepartment, on_delete=models.CASCADE)
+#     # Semester that the course was most recently taught.
+#     semester_last_taught = models.ForeignKey(Semester, on_delete=models.CASCADE)
+#     # Subdepartment mnemonic and course number. Required.
+#     combined_mnemonic_number = models.CharField(max_length=255, blank=True)
+#     """
+
+#     # instructor information
+#     """
+#     # Instructor first_name. Optional.
+#     first_name = models.CharField(max_length=255, blank=True)
+#     # Instructor last_name. Required.
+#     last_name = models.CharField(max_length=255)
+#     # Instructor full_name. Auto-populated.
+#     full_name = models.CharField(max_length=511, editable=False, blank=True)
+#     # Instructor email. Optional.
+#     email = models.EmailField(blank=True)
+#     # Instructor departments. Optional.
+#     departments = models.ManyToManyField(Department)
+#     # hidden professor. Required. Default visible.
+#     hidden = models.BooleanField(default=False)
+#     """
+
+#     csv_folder = "tcf_website/management/commands/grade_data/csv"
+
+#     term_gpa = {}  # maps term (e.g., "2009 Fall") to tuple (weighted_avg, total_enrolled)
+
+#     # Loop over CSV files in the folder
+#     for filename in os.listdir(csv_folder):
+#         # Consider only CSV files whose filename indicates fall or spring (case-insensitive)
+#         if not ("fall" in filename.lower() or "spring" in filename.lower()):
+#             continue
+#         filepath = os.path.join(csv_folder, filename)
+#         with open(filepath, newline="", encoding="utf-8") as csvfile:
+#             reader = csv.DictReader(csvfile)
+#             for row in reader:
+#                 # Get the term description from the row
+#                 term_desc = row.get("Term Desc", "").strip()
+#                 # Only process rows for Fall or Spring terms
+#                 if not ("fall" in term_desc.lower() or "spring" in term_desc.lower()):
+#                     continue
+
+#                 # Check that this row matches the course identifier.
+#                 subject = row.get("Subject", "").strip()
+#                 catalog_str = re.sub("[^0-9]", "", str(row.get("Catalog Number", "")))
+#                 try:
+#                     catalog_number = int(catalog_str)
+#                 except ValueError:
+#                     continue
+#                 class_title = row.get("Class Title", "").strip()
+#                 if (subject, catalog_number, class_title) != course_id:
+#                     continue
+
+#                 # Extract instructor names from "Primary Instructor Name"
+#                 primary_instructor = row.get("Primary Instructor Name", "").strip()
+#                 try:
+#                     last, first_and_middle = primary_instructor.split(",")
+#                     first = first_and_middle.split()[0]
+#                 except ValueError:
+#                     continue
+#                 if (first.strip(), last.strip()) != instructor_id:
+#                     continue
+
+#                 # At this point the row matches our course and instructor.
+#                 # Compute GPA and total enrolled
+#                 try:
+#                     avg_gpa = float(row["Course GPA"])
+#                     total_students = int(row["# of Students"])
+#                 except (ValueError, KeyError):
+#                     continue
+
+#                 # Update weighted average for this term.
+#                 if term_desc in term_gpa:
+#                     current_avg, current_total = term_gpa[term_desc]
+#                     new_total = current_total + total_students
+#                     # Weighted average update:
+#                     new_weighted = (
+#                         current_avg * current_total + avg_gpa * total_students
+#                     ) / new_total
+#                     term_gpa[term_desc] = (new_weighted, new_total)
+#                 else:
+#                     term_gpa[term_desc] = (avg_gpa, total_students)
+
+#     # Convert the stored tuples into a simple dictionary: term -> rounded weighted average GPA.
+#     test = {"Fall 2024": 3.389, "Spring 2024": 3.323}
+
+#     transformed = []
+#     for term, gpa in test.items():
+#         # Assume term format is "Season Year" (e.g. "Fall 2024")
+#         parts = term.split()
+#         if len(parts) == 2:
+#             season, year = parts
+#         else:
+#             # Fallback if the term is not in expected format
+#             season, year = term, ""
+#         transformed.append(
+#             {
+#                 "semester_season": season,
+#                 "semester_year": year,
+#                 "average_gpa": round(gpa, 2) if gpa is not None else None,
+#             }
+#         )
+#     return transformed
+
+
 def get_course_term_gpa(course_id, instructor_id):
+    # Retrieve the instructor and course objects from the database
+
+    instructor = get_object_or_404(Instructor, pk=instructor_id)
+    course = get_object_or_404(Course, pk=course_id)
 
     csv_folder = "tcf_website/management/commands/grade_data/csv"
-
-    term_gpa = {}  # maps term (e.g., "2009 Fall") to tuple (weighted_avg, total_enrolled)
+    term_gpa = {}
 
     # Loop over CSV files in the folder
     for filename in os.listdir(csv_folder):
@@ -577,8 +702,11 @@ def get_course_term_gpa(course_id, instructor_id):
                     catalog_number = int(catalog_str)
                 except ValueError:
                     continue
-                class_title = row.get("Class Title", "").strip()
-                if (subject, catalog_number, class_title) != course_id:
+                # We assume that course.combined_mnemonic_number is something like "MATH 101"
+
+                combined_mnemonic = f"{subject} {catalog_number}"
+
+                if combined_mnemonic != course.combined_mnemonic_number:
                     continue
 
                 # Extract instructor names from "Primary Instructor Name"
@@ -588,45 +716,48 @@ def get_course_term_gpa(course_id, instructor_id):
                     first = first_and_middle.split()[0]
                 except ValueError:
                     continue
-                if (first.strip(), last.strip()) != instructor_id:
+                # Compare the instructor's first and last name
+
+                full_name = f"{first.strip()} {last.strip()}"
+
+                if full_name != instructor.full_name:
                     continue
 
-                # At this point the row matches our course and instructor.
-                # Compute GPA and total enrolled
                 try:
-                    avg_gpa = float(row["Course GPA"])
-                    total_students = int(row["# of Students"])
-                except (ValueError, KeyError):
+                    gpa_value = float(row.get("Course GPA", 0))
+                    enrolled = int(row.get("# of Students", 0))
+                except ValueError:
                     continue
 
-                # Update weighted average for this term.
-                if term_desc in term_gpa:
-                    current_avg, current_total = term_gpa[term_desc]
-                    new_total = current_total + total_students
-                    # Weighted average update:
-                    new_weighted = (
-                        current_avg * current_total + avg_gpa * total_students
-                    ) / new_total
-                    term_gpa[term_desc] = (new_weighted, new_total)
-                else:
-                    term_gpa[term_desc] = (avg_gpa, total_students)
+                if enrolled <= 0:
+                    continue
 
-    # Convert the stored tuples into a simple dictionary: term -> rounded weighted average GPA.
-    test = {"Fall 2024": 3.389, "Spring 2024": 3.323}
+                # Update term_gpa: accumulate weighted GPA total and total enrollment
+                if term_desc not in term_gpa:
+                    term_gpa[term_desc] = (0.0, 0)
+                weighted_total, total_enrolled = term_gpa[term_desc]
+                weighted_total += gpa_value * enrolled
+                total_enrolled += enrolled
+                term_gpa[term_desc] = (weighted_total, total_enrolled)
 
+    # Compute the final weighted average GPA for each term.
+    final_term_gpa = {}
+    for term, (weighted_total, total_enrolled) in term_gpa.items():
+        if total_enrolled > 0:
+            final_term_gpa[term] = weighted_total / total_enrolled
+
+    # Transform the results into the desired output format.
     transformed = []
-    for term, gpa in test.items():
-        # Assume term format is "Season Year" (e.g. "Fall 2024")
+    for term, gpa in final_term_gpa.items():
         parts = term.split()
         if len(parts) == 2:
-            season, year = parts
+            year, season = parts
         else:
-            # Fallback if the term is not in expected format
-            season, year = term, ""
+            year, season = term, ""
         transformed.append(
             {
-                "semester_season": season,
-                "semester_year": year,
+                "semester_season": season[0:1],
+                "semester_year": year[2:],
                 "average_gpa": round(gpa, 2) if gpa is not None else None,
             }
         )
