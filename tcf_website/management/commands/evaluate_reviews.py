@@ -1,20 +1,28 @@
 from detoxify import Detoxify
+from tdqm import tdqm
 from django.core.management.base import BaseCommand, CommandError
 
 from tcf_website.models import Review
 
-
+"""
+Command for evaluating toxicity of existing reviews
+use: docker exec -it tcf_django python manage.py evaluate_reviews
+"""
 class Command(BaseCommand):
-    """Command that is run for assigning toxicity ratings to existing reviews"""
 
     help = (
-        "Assigns toxicity ratings to existing reviews of"
-        "Overall toxicity on a scale of 1-10, "
+        "Assigns toxicity with:"
+        "Overall toxicity on a scale of 0-1, "
         "Most relevant category out of obscene, threat, insult, identity_attack or sexual_explicit"
     )
 
-    def handle(self):
-        """Standard Django function implementation - runs when this command is executed."""
+    def add_arguments(self, parser):
+        parser.add_argument("--log", action="store_true", help="Prints out reviews as they are processed")
+
+    """Standard Django function implementation - runs when this command is executed."""
+    def handle(self, *args, **options):
+        log = options["log"]
+        
         try:
             model = Detoxify("original")
         except Exception as e:
@@ -30,11 +38,11 @@ class Command(BaseCommand):
             "threat",
             "insult",
             "identity_attack",
-            "sexual_explicit",
+            #"sexual_explicit", doesn't exist for original model
         ]
 
-        for review in reviews:
-            if review.text is not "":  # evaluate if there is text
+        for review in tdqm(reviews, desc="Processing reviews..", unit="review"):
+            if review.text and review.toxicity_catgory:  # evaluate if there is text + no rating
                 try:
                     prediction = model.predict(review.text)
                 except Exception as e:
@@ -42,12 +50,10 @@ class Command(BaseCommand):
                         self.style.WARNING(f"Error processing review {review.id}: {e}")
                     )
                     continue
-                review.toxicity_rating = prediction.get("toxicity", 0)
+                review.toxicity_rating = prediction["toxicity"]
 
                 # get most relevant toxicity category
-                max_label = max(toxicity_categories, key=lambda label: prediction[label][0])
-                # max_score = predictions.get(max_label, 0)
-                # print(f"Max label: {max_label}, Max score: {max_score}")
+                max_label = max(toxicity_categories, key=lambda label: prediction[label])
                 review.toxicity_catgory = max_label
                 review.save()
         self.stdout.write(self.style.SUCCESS("Finished evaluating reviews :)"))
