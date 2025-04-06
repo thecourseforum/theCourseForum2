@@ -111,6 +111,7 @@ def course_view_legacy(request, course_id):
     )
 
 
+
 def course_view(
     request,
     mnemonic: str,
@@ -161,12 +162,13 @@ def course_view(
         instructor.semester_last_taught = str(
             get_object_or_404(Semester, pk=instructor.semester_last_taught)
         )
-        if instructor.section_times[0] and instructor.section_nums[0]:
-            instructor.times = {
-                num: times[:-1].split(",")
-                for num, times in zip(instructor.section_nums, instructor.section_times)
-                if num and times
-            }
+        if instructor.section_times and instructor.section_nums:
+            if instructor.section_times[0] and instructor.section_nums[0]:
+                instructor.times = {
+                    num: times[:-1].split(",")
+                    for num, times in zip(instructor.section_nums, instructor.section_times)
+                    if num and times
+                }
 
     dept = course.subdepartment.department
 
@@ -195,7 +197,6 @@ def course_view(
             "active_instructor_recency": instructor_recency,
         },
     )
-
 
 def course_instructor(request, course_id, instructor_id, method="Default"):
     """View for course instructor page."""
