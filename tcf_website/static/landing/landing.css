@@ -73,7 +73,7 @@ header.masthead h1 {
 
 .features-icons .features-icons-item .features-icons-icon {
   height: 7rem;
-  color: var(--main-color);
+  color: var(--title-color);
 }
 
 .features-icons .features-icons-item .features-icons-icon i {
@@ -133,7 +133,7 @@ header.masthead h1 {
 }
 
 .about-team .about-link:hover {
-  box-shadow: 2px 2px 5px var(--main-color);
+  box-shadow: 2px 2px 5px var(--title-color);
 }
 
 .about-link {
@@ -157,7 +157,7 @@ header.masthead h1 {
 }
 
 .about-team .about-info:hover {
-  box-shadow: 2px 2px 5px var(--main-color);
+  box-shadow: 2px 2px 5px var(--title-color);
 }
 
 @media (min-width: 768px) {
