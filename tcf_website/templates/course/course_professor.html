@@ -468,7 +468,7 @@
         // Map the GPA history to get labels and GPA values.
         // For example, each entry is expected to have:
         //   semester_year, semester_season, and average_gpa
-        const labels = gpaHistory.map(entry => `${entry.semester_season} ${entry.semester_year}`);
+        const labels = gpaHistory.map(entry => `${entry.semester_term}`);
         const gpaData = gpaHistory.map(entry => entry.average_gpa);
 
         // Get the canvas context.
