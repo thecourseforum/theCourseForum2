@@ -25,6 +25,12 @@ body.dark-mode {
   background-color: var(--secondary-color);
 }
 
+.school .card-header,
+.school .card-header .card-title {
+    color: var(--accent-text-white) !important;
+}
+
 .school-body {
   padding: 1.25rem;
 }
+

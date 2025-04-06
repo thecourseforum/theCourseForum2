@@ -16,6 +16,7 @@
   --navbar-color: #ffffff;
   /* newly added */
   --basic-text-color: #212529;
+  --accent-text-white: #ffffff; /* White text color */
   /* changes the border color of the search bar on landing page */
   --input-border-color: #DEE2E6;
 

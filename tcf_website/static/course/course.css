@@ -10,3 +10,7 @@ body {
 .bg-white {
     background-color: var(--card-background-color) !important;
 }
+
+#title {
+    color: var(--accent-text-white) !important;
+}

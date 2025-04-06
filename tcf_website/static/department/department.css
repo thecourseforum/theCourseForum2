@@ -5,3 +5,7 @@ body.dark-mode {
 .bg-white {
     background-color: var(--card-background-color) !important;
 }
+
+.main-text {
+  color: var(--accent-text-white) !important;
+}
