@@ -29,7 +29,6 @@ from ..models import (
     ScheduledCourse,
     Section,
     Semester,
-    User,
 )
 
 # pylint: disable=line-too-long
