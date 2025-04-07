@@ -64,10 +64,6 @@ jobs:
           sed -i '/\(coverage\|lint\|types\-tqdm\|mypy\|black\|isort\|gunicorn\|django\-heroku\|django\-stubs\)/d' requirements.txt
           pip install -r requirements.txt
 
-      - name: Migrations
-        run: |
-          python manage.py migrate
-
       - name: Collect static files
         run: python manage.py collectstatic --no-input
 
