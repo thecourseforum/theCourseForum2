@@ -2,6 +2,7 @@
 """TCF Database models."""
 
 import math
+from decimal import Decimal
 
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.aggregates.general import ArrayAgg
@@ -1522,7 +1523,11 @@ class Schedule(models.Model):
         ret = [0] * 5  # intialize return array for the schedule, which will have 5 fields
         ret[0] = courses  # list of courses in the schedule
         # pylint: disable=not-an-iterable
-        ret[1] = sum(int(course.section.units) for course in ret[0])  # total amount of credits
+        ret[1] = sum(
+            Decimal(course.section.units)
+            for course in ret[0]
+            if course.section.units
+        )
         ret[2] = (
             self.average_rating_for_schedule()
         )  # average rating for the courses in this schedule
@@ -1533,7 +1538,7 @@ class Schedule(models.Model):
         # calculate weighted gpa based on credits
         for course in courses:
             course_gpa = course.gpa
-            course_credits = course.credits if course.credits else 0
+            course_credits = float(course.credits) if course.credits else 0.0
 
             if not course_gpa:
                 continue  # pass a given course if there is no gpa for it
@@ -1555,7 +1560,7 @@ class Schedule(models.Model):
         queryset = (
             self.scheduledcourse_set.select_related("section", "instructor")
             .annotate(
-                credits=Cast("section__units", output_field=models.IntegerField()),
+                credits=Cast("section__units", output_field=models.DecimalField(max_digits=3, decimal_places=2)),
                 avg_recommendability=Coalesce(
                     models.Avg(
                         "section__course__review__recommendability",
