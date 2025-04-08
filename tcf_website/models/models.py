@@ -2,6 +2,7 @@
 """TCF Database models."""
 
 import math
+from decimal import Decimal
 
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.aggregates.general import ArrayAgg
@@ -27,7 +28,6 @@ from django.db.models import (
     fields,
 )
 from django.db.models.functions import Abs, Cast, Coalesce, Concat, Round
-from decimal import Decimal
 
 # pylint: disable=line-too-long
 
