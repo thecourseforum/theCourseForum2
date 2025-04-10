@@ -193,12 +193,51 @@
                         <button type="button" id="toggle-btn" class="btn btn-outline-primary pieToBar" value="bar">Bar</button>
                     </div>
                 </div>
-
-                <div id="gpa-container" class="grades-container" data-gpa-history="{{ gpa_history_json|escapejs }}">
-                    <canvas id="gpaChart"></canvas>
-                </div>
-
             </div>
+
+            <div class="gpa-trend-section container p-3 bg-white rounded shadow-sm mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="m-0 text-tcf-indigo font-weight-bold">GPA Trend Analysis</h3>
+                    {% if gpa_history|length >= 3 %}
+                    <span class="toggle-icon text-tcf-orange" 
+                          style="cursor: pointer; font-size: 1.5rem;" 
+                          onclick="toggleGpaAnalysis()">
+                        <i class="fa fa-chevron-up"></i>
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <div id="gpa-analysis-content" class="row">
+                    {% if gpa_history|length < 3 %}
+                    <div class="col-12 text-center">
+                        <p class="text-muted">Not enough information</p>
+                    </div>
+                    {% else %}
+                    <!-- Left Section (Placeholder) -->
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-tcf-orange">Statistics Overview</h5>
+                                <p class="text-muted">Placeholder for additional statistics or information coming soon...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Section (GPA Graph) -->
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body p-2">
+                                <canvas id="gpaChart" class="w-100" style="max-height: 300px;"></canvas>
+                                <div id="gpa-no-data" class="d-none absolute-center">
+                                    <p class="gpa-text text-muted">No history found <i class="fa fa-frown-open fa-fw"></i></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
             {% if display_times %}
             <div class="times-info-container" id="reviews">
                 <div class="info-container" style="padding: 10px 15px; margin: 0;">
@@ -337,83 +376,108 @@
     <!-- For QA Form-->
     <script type="text/javascript" src="{% static 'qa/new_answer.js' %}"></script>
 
-    <!-- For GPA Graph -->
-    <canvas id="gpaChart" width="600" height="800"></canvas>
-
     <script>
-        // Parse the GPA history JSON passed from Django.
+        // Toggle function for GPA analysis content
+        function toggleGpaAnalysis() {
+            const content = document.getElementById('gpa-analysis-content');
+            const icon = document.querySelector('.toggle-icon i');
+            content.classList.toggle('d-none');
+            // Switch between chevron-up and chevron-down
+            if (content.classList.contains('d-none')) {
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            }
+        }
+
+        // Parse the GPA history JSON passed from Django
         const gpaHistory = JSON.parse('{{ gpa_history|escapejs }}');
+        const gpaChartCanvas = document.getElementById('gpaChart');
+        const gpaNoDataDiv = document.getElementById('gpa-no-data');
+        const ctx = gpaChartCanvas.getContext('2d');
 
-        // Get the canvas context.
-        const ctx = document.getElementById('gpaChart').getContext('2d');
-
-        // Check if there are enough data points to create a meaningful chart
         if (gpaHistory.length <= 1) {
-        // Create a container for the "No grades found" message
-        const gpaContainer = document.getElementById('gpa-container');
-        
-        // Remove the canvas
-        gpaContainer.removeChild(document.getElementById('gpaChart'));
-        
-        // Create and add the "No grades found" message
-        const noGradesDiv = document.createElement('div');
-        noGradesDiv.className = 'absolute-center';
-        noGradesDiv.innerHTML = `
-            <p class="gpa-text"> No history found <i class="fa fa-frown-open fa-fw"></i></p>
-        `;
-        
-        gpaContainer.appendChild(noGradesDiv);
+            gpaChartCanvas.classList.add('d-none');
+            gpaNoDataDiv.classList.remove('d-none');
         } else {
-        // Map the GPA history to get labels and GPA values.
-        const labels = gpaHistory.map(entry => `${entry.semester_term}`);
-        const gpaData = gpaHistory.map(entry => entry.average_gpa);
+            const labels = gpaHistory.map(entry => `${entry.semester_term}`);
+            const gpaData = gpaHistory.map(entry => entry.average_gpa);
 
-        // Create the Chart.js line chart.
-        const gpaChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-            labels: labels,
-            datasets: [{
-                label: 'Average GPA',
-                data: gpaData,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 2,
-                fill: false,
-                tension: 0.1
-            }]
-            },
-            options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-            },
-            scales: {
-                x: {
-                grid: {
-                    display: false,
-                }
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Average GPA',
+                        data: gpaData,
+                        backgroundColor: 'rgba(255, 135, 66, 0.2)',
+                        borderColor: '#FF8733',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#FF8733',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 1,
+                        pointRadius: 4,
+                        fill: true,
+                        tension: 0.3
+                    }]
                 },
-                y: {
-                grid: {
-                    display: false,
-                },
-                min: 0,
-                max: 4.0,
-                ticks: {
-                    stepSize: 0.5,
-                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: 10
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: '#e9ecef',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#6c757d',
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: '#e9ecef',
+                                drawBorder: false
+                            },
+                            min: 0,
+                            max: 4.0,
+                            ticks: {
+                                stepSize: 0.5,
+                                color: '#6c757d'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: '#2e2e7e',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#2e2e7e',
+                            titleFont: {
+                                size: 14
+                            },
+                            bodyFont: {
+                                size: 12
+                            }
+                        }
+                    }
                 }
-            },
-            plugins: {
-                legend: {
-                display: true,
-                position: 'top',
-                onClick: null  // This disables the click functionality on legend items
-                }
-            }
-            }
-        });
+            });
         }
     </script>
 
