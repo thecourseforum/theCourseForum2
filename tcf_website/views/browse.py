@@ -7,6 +7,7 @@ import json
 from threading import Thread
 from typing import Any
 
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg, CharField, Count, F, Q, Value
 from django.db.models.functions import Concat
@@ -14,6 +15,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+
 from tcf_website.api.enrollment import update_enrollment_data
 
 from ..models import (
@@ -111,7 +113,6 @@ def course_view_legacy(request, course_id):
     )
 
 
-
 def course_view(
     request,
     mnemonic: str,
@@ -198,6 +199,7 @@ def course_view(
         },
     )
 
+
 def course_instructor(request, course_id, instructor_id, method="Default"):
     """View for course instructor page."""
     section_last_taught = (
@@ -211,9 +213,9 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     instructor = section_last_taught.instructors.get(pk=instructor_id)
 
     # ratings: reviews with and without text; reviews: ratings with text
-    reviews = Review.objects.filter(instructor=instructor_id, course=course_id, toxicity_rating__lt=74).aggregate(
-        num_ratings=Count("id"), num_reviews=Count("id", filter=~Q(text=""))
-    )
+    reviews = Review.objects.filter(
+        instructor=instructor_id, course=course_id, toxicity_rating__lt=settings.TOXICITY_THRESHOLD
+    ).aggregate(num_ratings=Count("id"), num_reviews=Count("id", filter=~Q(text="")))
     num_reviews, num_ratings = reviews["num_reviews"], reviews["num_ratings"]
 
     dept = course.subdepartment.department

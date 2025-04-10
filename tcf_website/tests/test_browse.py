@@ -1,6 +1,7 @@
 # pylint: disable=no-member
 """Tests for browse.py."""
 from unittest.mock import patch
+
 from django.test import TestCase
 from django.urls import reverse
 

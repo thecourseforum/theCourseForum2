@@ -1,9 +1,12 @@
 """Tests for fetch_enrollment management command."""
 
 from unittest.mock import patch
+
 from django.test import TestCase
-from tcf_website.models import SectionEnrollment
+
 from tcf_website.management.commands.fetch_enrollment import fetch_section_data
+from tcf_website.models import SectionEnrollment
+
 from .test_utils import setup
 
 

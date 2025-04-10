@@ -9,14 +9,19 @@ docker exec -it tcf_django python manage.py fetch_enrollment
 
 import time
 from concurrent.futures import ThreadPoolExecutor
+
 import backoff
 import requests
+from django.core.management.base import BaseCommand
 from requests.adapters import HTTPAdapter
 from tqdm import tqdm
 from urllib3.util.retry import Retry
-from django.core.management.base import BaseCommand
-from tcf_website.models import Section, Semester, SectionEnrollment
-from tcf_website.utils.enrollment import build_sis_api_url, format_enrollment_update_message
+
+from tcf_website.models import Section, SectionEnrollment, Semester
+from tcf_website.utils.enrollment import (
+    build_sis_api_url,
+    format_enrollment_update_message,
+)
 
 # Maximum time to wait for a response from the server
 TIMEOUT = 30

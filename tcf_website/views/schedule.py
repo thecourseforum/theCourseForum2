@@ -7,16 +7,7 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.aggregates.general import ArrayAgg
-from django.db.models import (
-    Avg,
-    Case,
-    CharField,
-    Max,
-    Prefetch,
-    Q,
-    Value,
-    When,
-)
+from django.db.models import Avg, Case, CharField, Max, Prefetch, Q, Value, When
 from django.db.models.functions import Cast, Concat
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render

@@ -3,6 +3,7 @@
 
 import math
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
@@ -1095,7 +1096,12 @@ class Review(models.Model):
 
         # Filter out reviews that are hidden, have no text, or are toxic.
         reviews = (
-            Review.objects.filter(instructor=instructor_id, course=course_id, toxicity_rating__lt=74, hidden=False)
+            Review.objects.filter(
+                instructor=instructor_id,
+                course=course_id,
+                toxicity_rating__lt=settings.TOXICITY_THRESHOLD,
+                hidden=False,
+            )
             .exclude(text="")
             .annotate(
                 sum_votes=models.functions.Coalesce(models.Sum("vote__value"), models.Value(0)),
