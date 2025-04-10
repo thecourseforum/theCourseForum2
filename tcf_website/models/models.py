@@ -2,6 +2,7 @@
 """TCF Database models."""
 
 import math
+from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -124,6 +125,25 @@ class Department(models.Model):
                 )
 
         return self.sort_courses_by_key(annotation, num_of_years, reverse)
+
+    def get_paginated_department_courses(
+        self, sort_type: str, num_of_years: int, order: str, page_number=1
+    ) -> "Page[Course]":
+        """Generate sorted, paginated reviews"""
+        dept_courses = self.sort_courses(sort_type, num_of_years, order)
+        return self.paginate(dept_courses, page_number)
+
+    def paginate(
+        self, courses: "QuerySet[Course]", page_number, courses_per_page=10
+    ) -> "Page[Course]":
+        """Paginate reviews"""
+        paginator = Paginator(courses, courses_per_page)
+        try:
+            page_obj = paginator.page(page_number)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+
+        return page_obj
 
     class Meta:
         indexes = [
@@ -1513,7 +1533,11 @@ class Schedule(models.Model):
         ret = [0] * 5  # intialize return array for the schedule, which will have 5 fields
         ret[0] = courses  # list of courses in the schedule
         # pylint: disable=not-an-iterable
-        ret[1] = sum(int(course.section.units) for course in ret[0])  # total amount of credits
+        ret[1] = sum(
+            Decimal(course.section.units)
+            for course in ret[0]
+            if course.section.units
+        )
         ret[2] = (
             self.average_rating_for_schedule()
         )  # average rating for the courses in this schedule
@@ -1524,7 +1548,7 @@ class Schedule(models.Model):
         # calculate weighted gpa based on credits
         for course in courses:
             course_gpa = course.gpa
-            course_credits = course.credits if course.credits else 0
+            course_credits = float(course.credits) if course.credits else 0.0
 
             if not course_gpa:
                 continue  # pass a given course if there is no gpa for it
@@ -1546,7 +1570,7 @@ class Schedule(models.Model):
         queryset = (
             self.scheduledcourse_set.select_related("section", "instructor")
             .annotate(
-                credits=Cast("section__units", output_field=models.IntegerField()),
+                credits=Cast("section__units", output_field=models.DecimalField(max_digits=3, decimal_places=2)),
                 avg_recommendability=Coalesce(
                     models.Avg(
                         "section__course__review__recommendability",

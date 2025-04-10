@@ -117,7 +117,7 @@
                                         <i class="fas fa-clock"></i>&nbsp;Units
                                       </small>
                                       <p class="mb-0 info text-break">
-                                        {% if course.credits %}
+                                        {% if course.credits and course.credits != 0.0 %}
                                         {{ course.credits }}
                                         {% else %}
                                         &mdash;
@@ -180,7 +180,7 @@
       let courses = this_schedule.querySelectorAll('.schedule_course_card');
       courses.forEach(course => {
           let courseRating = parseFloat(course.getAttribute("course_rating"));
-          let courseCredits = parseInt(course.getAttribute("course_credits"));
+          let courseCredits = parseFloat(course.getAttribute("course_credits"));
           let courseDifficulty = parseFloat(course.getAttribute("course_diff"));
           let courseGpa = parseFloat(course.getAttribute("course_gpa"));
           if (!isNaN(courseRating) || courseRating == 0) {
@@ -202,11 +202,12 @@
        let final_gpa = gpa_credits ? (cumulative_grade_point / gpa_credits).toFixed(2) : "\u2014";
        let final_rating = r_count ? (rating / r_count).toFixed(2) : "\u2014";
        let final_difficulty = d_count ? (difficulty / d_count).toFixed(2) : "\u2014";
+       let final_credit = credit ? (credit).toFixed(2) : "\u2014";
 
       this_schedule.querySelector('#ScheduleGPA-{{schedule.id}}').innerText = final_gpa;
       this_schedule.querySelector('#ScheduleRating-{{schedule.id}}').innerText = final_rating;
       this_schedule.querySelector('#ScheduleDifficulty-{{schedule.id}}').innerText = final_difficulty;
-      this_schedule.querySelector('#ScheduleCredits-{{schedule.id}}').innerText = credit;
+      this_schedule.querySelector('#ScheduleCredits-{{schedule.id}}').innerText = final_credit;
   }
 
   function addCourse(course) {
@@ -222,6 +223,7 @@
       let gpa = isNaN(parseFloat(course.gpa)) ? "\u2014" : parseFloat(course.gpa).toFixed(2);
       let rating = isNaN(parseFloat(course.rating)) ? "\u2014" : parseFloat(course.rating).toFixed(2);
       let difficulty = isNaN(parseFloat(course.difficulty)) ? "\u2014" : parseFloat(course.difficulty).toFixed(2);
+      let credits = isNaN(parseFloat(course.credits)) || course.credits == 0.0 ? "\u2014" : parseFloat(course.credits).toFixed(2);
       const course_name = document.getElementById('course-name-value').textContent.split('|')[0].trim();
 
       let courseCardHTML = `
@@ -263,7 +265,7 @@
                                       <small class="mb-0 text-uppercase">
                                           <i class="fas fa-clock"></i>&nbsp;Units
                                       </small>
-                                      <p class="mb-0 info text-break">${course.credits}</p>
+                                      <p class="mb-0 info text-break">${credits}</p>
                                   </div>
                                   <div class="col-4 col-lg-3 col-md-2 text-nowrap">
                                       <small class="mb-0 text-uppercase">

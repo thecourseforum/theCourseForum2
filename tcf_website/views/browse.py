@@ -6,6 +6,7 @@ import asyncio
 import json
 from threading import Thread
 from typing import Any
+from urllib.parse import urlencode
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -80,11 +81,17 @@ def department(request, dept_id: int, course_recency=None):
     season, year = course_recency.upper().split()
     active_semester = Semester.objects.filter(year=year, season=season).first()
 
+    query_params = request.GET.copy()
+    query_params.pop("page", None)
+    query_params = urlencode(query_params)
     # Fetch sorting variables
     sortby = request.GET.get("sortby", "course_id")
     order = request.GET.get("order", "asc")
+    page = request.GET.get("page", 1)
 
-    courses = dept.sort_courses(sortby, latest_semester.year - int(year), order)
+    paginated_courses = dept.get_paginated_department_courses(
+        sortby, latest_semester.year - int(year), order, page
+    )
 
     return render(
         request,
@@ -94,11 +101,12 @@ def department(request, dept_id: int, course_recency=None):
             "dept_id": dept_id,
             "latest_semester": str(latest_semester),
             "breadcrumbs": breadcrumbs,
-            "courses": courses,
+            "paginated_courses": paginated_courses,
             "active_course_recency": str(active_semester),
             "sortby": sortby,
             "order": order,
             "last_five_years": str(last_five_years),
+            "query_params": query_params,
         },
     )
 
@@ -354,6 +362,7 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "questions": questions,
             "answers": answers,
             "sort_method": method,
+            "sem_code": section_last_taught.semester.number,
         },
     )
 

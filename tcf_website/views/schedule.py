@@ -20,7 +20,6 @@ from ..models import (
     ScheduledCourse,
     Section,
     Semester,
-    User,
 )
 
 # pylint: disable=line-too-long
@@ -136,7 +135,7 @@ def schedule_data_helper(request):
     """
     This helper method is for getting schedule data for a request.
     """
-    schedules = Schedule.objects.prefetch_related(
+    schedules = Schedule.objects.filter(user=request.user).prefetch_related(
         Prefetch(
             "scheduledcourse_set",
             queryset=ScheduledCourse.objects.select_related("section", "instructor"),
@@ -211,9 +210,8 @@ def new_schedule(request):
         form = ScheduleForm(request.POST)
         if form.is_valid():
             schedule = form.save(commit=False)
-            user_id = form.cleaned_data["user_id"]  # get the user's primary key
-            schedule.user = User.objects.get(id=user_id)
-            if user_id == "" or schedule.user is None:
+            schedule.user = request.user
+            if schedule.user is None:
                 messages.error(request, "There was an error")
                 return render(request, "schedule/user_schedules.html", {"form": form})
             schedule.save()
@@ -237,7 +235,7 @@ def delete_schedule(request):
         schedule_count = len(schedule_ids)
 
         # Perform bulk delete
-        deleted_count, _ = Schedule.objects.filter(id__in=schedule_ids).delete()
+        deleted_count, _ = Schedule.objects.filter(id__in=schedule_ids, user=request.user).delete()
         if deleted_count == 0:
             messages.error(request, "No schedules were deleted.")
         else:
