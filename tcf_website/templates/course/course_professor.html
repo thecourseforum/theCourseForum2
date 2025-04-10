@@ -342,63 +342,79 @@
 
     <script>
         // Parse the GPA history JSON passed from Django.
-        // Ensure you use the escapejs filter to prevent issues with quotes.
         const gpaHistory = JSON.parse('{{ gpa_history|escapejs }}');
-
-        // Map the GPA history to get labels and GPA values.
-        // For example, each entry is expected to have:
-        //   semester_year, semester_season, and average_gpa
-        const labels = gpaHistory.map(entry => `${entry.semester_term}`);
-        const gpaData = gpaHistory.map(entry => entry.average_gpa);
 
         // Get the canvas context.
         const ctx = document.getElementById('gpaChart').getContext('2d');
+
+        // Check if there are enough data points to create a meaningful chart
+        if (gpaHistory.length <= 1) {
+        // Create a container for the "No grades found" message
+        const gpaContainer = document.getElementById('gpa-container');
+        
+        // Remove the canvas
+        gpaContainer.removeChild(document.getElementById('gpaChart'));
+        
+        // Create and add the "No grades found" message
+        const noGradesDiv = document.createElement('div');
+        noGradesDiv.className = 'absolute-center';
+        noGradesDiv.innerHTML = `
+            <p class="gpa-text"> No history found <i class="fa fa-frown-open fa-fw"></i></p>
+        `;
+        
+        gpaContainer.appendChild(noGradesDiv);
+        } else {
+        // Map the GPA history to get labels and GPA values.
+        const labels = gpaHistory.map(entry => `${entry.semester_term}`);
+        const gpaData = gpaHistory.map(entry => entry.average_gpa);
 
         // Create the Chart.js line chart.
         const gpaChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Average GPA',
-                    data: gpaData,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.1
-                }]
+            labels: labels,
+            datasets: [{
+                label: 'Average GPA',
+                data: gpaData,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.1
+            }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+            },
+            scales: {
+                x: {
+                grid: {
+                    display: false,
+                }
                 },
-                scales: {
-                    x: {
-                      grid: {
-                        display: false,
-                      }
-                    },
-                    y: {
-                      grid: {
-                        display: false,
-                      },
-                      min: 0,
-                      max: 4.0,
-                      ticks: {
-                        stepSize: 0.5,
-                      },
-                    }
-                  },                         
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
+                y: {
+                grid: {
+                    display: false,
+                },
+                min: 0,
+                max: 4.0,
+                ticks: {
+                    stepSize: 0.5,
+                },
+                }
+            },
+            plugins: {
+                legend: {
+                display: true,
+                position: 'top',
+                onClick: null  // This disables the click functionality on legend items
                 }
             }
+            }
         });
+        }
     </script>
 
 {% endblock %}
