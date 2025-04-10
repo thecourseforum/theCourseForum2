@@ -57,7 +57,7 @@ class Command(BaseCommand):
 
                 # get most relevant toxicity category
                 max_label = max(toxicity_categories, key=lambda label: prediction[label])
-                review.toxicity_catgory = max_label
+                review.toxicity_category = max_label
                 review.save()
         self.stdout.write(self.style.SUCCESS("Finished evaluating reviews :)"))
 
