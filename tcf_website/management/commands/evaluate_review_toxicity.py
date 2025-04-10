@@ -21,7 +21,9 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         # parser.add_argument("--log", action="store_true", help="Prints out reviews as they are processed")
-        parser.add_argument("--results", action="store_true", help="View results of evaluation")
+        parser.add_argument(
+            "--results", action="store_true", help="View results of evaluation"
+        )
 
     """Standard Django function implementation - runs when this command is executed."""
 
@@ -60,7 +62,9 @@ class Command(BaseCommand):
                 review.toxicity_rating = round(100 * prediction["toxicity"])
 
                 # get most relevant toxicity category
-                max_label = max(toxicity_categories, key=lambda label: prediction[label])
+                max_label = max(
+                    toxicity_categories, key=lambda label: prediction[label]
+                )
                 review.toxicity_category = max_label
                 review.save()
         self.stdout.write(self.style.SUCCESS("Finished evaluating reviews :)"))

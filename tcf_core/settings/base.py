@@ -196,7 +196,9 @@ SOCIAL_AUTH_EMAIL_AUTH_WHITELISTED_DOMAINS = ["virginia.edu"]
 
 WHITELISTED_DOMAINS = ["virginia.edu"]
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_LOGIN_URL = reverse_lazy("social:begin", args=["google-oauth2"])
+SOCIAL_AUTH_GOOGLE_OAUTH2_LOGIN_URL = reverse_lazy(
+    "social:begin", args=["google-oauth2"]
+)
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 SOCIAL_AUTH_PIPELINE = (
     "tcf_core.auth_pipeline.password_validation",

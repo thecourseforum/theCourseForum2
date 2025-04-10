@@ -2,7 +2,8 @@
 
 from rest_framework import serializers
 
-from ..models import Course, Department, Instructor, School, Semester, Subdepartment
+from ..models import (Course, Department, Instructor, School, Semester,
+                      Subdepartment)
 
 
 class SemesterSerializer(serializers.ModelSerializer):

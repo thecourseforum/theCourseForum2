@@ -17,7 +17,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 ("monday", models.BooleanField(default=False)),
@@ -30,19 +33,34 @@ class Migration(migrations.Migration):
                 (
                     "section",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="tcf_website.section"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="tcf_website.section",
                     ),
                 ),
             ],
             options={
                 "indexes": [
-                    models.Index(fields=["monday"], name="tcf_website_monday_201753_idx"),
-                    models.Index(fields=["tuesday"], name="tcf_website_tuesday_a197a4_idx"),
-                    models.Index(fields=["wednesday"], name="tcf_website_wednesd_161943_idx"),
-                    models.Index(fields=["thursday"], name="tcf_website_thursda_ea277b_idx"),
-                    models.Index(fields=["friday"], name="tcf_website_friday_f63a33_idx"),
-                    models.Index(fields=["start_time"], name="tcf_website_start_t_12da2b_idx"),
-                    models.Index(fields=["end_time"], name="tcf_website_end_tim_63631f_idx"),
+                    models.Index(
+                        fields=["monday"], name="tcf_website_monday_201753_idx"
+                    ),
+                    models.Index(
+                        fields=["tuesday"], name="tcf_website_tuesday_a197a4_idx"
+                    ),
+                    models.Index(
+                        fields=["wednesday"], name="tcf_website_wednesd_161943_idx"
+                    ),
+                    models.Index(
+                        fields=["thursday"], name="tcf_website_thursda_ea277b_idx"
+                    ),
+                    models.Index(
+                        fields=["friday"], name="tcf_website_friday_f63a33_idx"
+                    ),
+                    models.Index(
+                        fields=["start_time"], name="tcf_website_start_t_12da2b_idx"
+                    ),
+                    models.Index(
+                        fields=["end_time"], name="tcf_website_end_tim_63631f_idx"
+                    ),
                 ],
             },
         ),

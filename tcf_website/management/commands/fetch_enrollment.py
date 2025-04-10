@@ -18,10 +18,8 @@ from tqdm import tqdm
 from urllib3.util.retry import Retry
 
 from tcf_website.models import Section, SectionEnrollment, Semester
-from tcf_website.utils.enrollment import (
-    build_sis_api_url,
-    format_enrollment_update_message,
-)
+from tcf_website.utils.enrollment import (build_sis_api_url,
+                                          format_enrollment_update_message)
 
 # Maximum time to wait for a response from the server
 TIMEOUT = 30
@@ -42,7 +40,9 @@ retry_strategy = Retry(
     status_forcelist=[429, 500, 502, 503, 504],
 )
 adapter = HTTPAdapter(
-    pool_connections=MAX_POOL_SIZE, pool_maxsize=MAX_POOL_SIZE, max_retries=retry_strategy
+    pool_connections=MAX_POOL_SIZE,
+    pool_maxsize=MAX_POOL_SIZE,
+    max_retries=retry_strategy,
 )
 session.mount("http://", adapter)
 session.mount("https://", adapter)
@@ -87,7 +87,9 @@ def fetch_section_data(section):
         # Update enrollment data if available
         if data and "classes" in data and data["classes"]:
             class_data = data["classes"][0]
-            section_enrollment, _ = SectionEnrollment.objects.get_or_create(section=section)
+            section_enrollment, _ = SectionEnrollment.objects.get_or_create(
+                section=section
+            )
 
             # Update enrollment and waitlist numbers
             section_enrollment.enrollment_taken = class_data.get("enrollment_total", 0)
@@ -101,14 +103,22 @@ def fetch_section_data(section):
 
     except requests.exceptions.HTTPError as http_err:
         if http_err.response.status_code == 429:
-            print(f"Rate limited while fetching section {section.sis_section_number}. Retrying...")
+            print(
+                f"Rate limited while fetching section {section.sis_section_number}. Retrying..."
+            )
             raise  # Re-raise to trigger backoff
-        print(f"HTTP error while fetching section {section.sis_section_number}: {http_err}")
+        print(
+            f"HTTP error while fetching section {section.sis_section_number}: {http_err}"
+        )
     except requests.exceptions.RequestException as req_err:
-        print(f"Network error while fetching section {section.sis_section_number}: {req_err}")
+        print(
+            f"Network error while fetching section {section.sis_section_number}: {req_err}"
+        )
         raise  # Re-raise to trigger backoff
     except ValueError as val_err:
-        print(f"JSON decoding error for section {section.sis_section_number}: {val_err}")
+        print(
+            f"JSON decoding error for section {section.sis_section_number}: {val_err}"
+        )
     except Exception as err:  # pylint: disable=broad-except
         print(f"Unexpected error for section {section.sis_section_number}: {err}")
 

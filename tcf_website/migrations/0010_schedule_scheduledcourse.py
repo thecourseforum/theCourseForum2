@@ -18,14 +18,18 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 ("name", models.CharField(max_length=255)),
                 (
                     "user",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
                     ),
                 ),
             ],
@@ -36,26 +40,32 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 ("time", models.CharField(max_length=255)),
                 (
                     "instructor",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="tcf_website.instructor"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="tcf_website.instructor",
                     ),
                 ),
                 (
                     "schedule",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="tcf_website.schedule"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="tcf_website.schedule",
                     ),
                 ),
                 (
                     "section",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="tcf_website.section"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="tcf_website.section",
                     ),
                 ),
             ],

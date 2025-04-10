@@ -435,10 +435,12 @@
 
 .section-row {
   display: grid;
-  grid-template-columns: [start] 6ch [sec-num] 150px [type] minmax(200px, 1fr) [times] minmax(
+  grid-template-columns:
+    [start] 6ch [sec-num] 150px [type] minmax(200px, 1fr) [times] minmax(
       120px,
       auto
-    ) [end];
+    )
+    [end];
   gap: 16px;
   margin-bottom: 4px;
   align-items: center;

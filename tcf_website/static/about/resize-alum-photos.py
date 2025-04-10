@@ -60,11 +60,17 @@ for folder_name, images in [
 ]:
     print(f"Resizing images in {folder_name} folder:")
     for filename, dimensions in images:
-        user_input = input(f"Do you want to resize {filename} ({dimensions}) to 800x800? (Y/N): ")
+        user_input = input(
+            f"Do you want to resize {filename} ({dimensions}) to 800x800? (Y/N): "
+        )
         if user_input.lower() == "y":
-            with Image.open(f"tcf_website/static/about/{folder_name}/{filename}") as img:
+            with Image.open(
+                f"tcf_website/static/about/{folder_name}/{filename}"
+            ) as img:
                 img = img.resize((800, 800), Image.ANTIALIAS)
-                img.save(os.path.join(f"tcf_website/static/about/{folder_name}/{filename}"))
+                img.save(
+                    os.path.join(f"tcf_website/static/about/{folder_name}/{filename}")
+                )
             print(f"{filename} resized to 800x800")
         else:
             print(f"{filename} not resized")

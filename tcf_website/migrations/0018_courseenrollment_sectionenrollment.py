@@ -17,7 +17,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 ("last_update", models.DateTimeField(auto_now=True)),
@@ -37,7 +40,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 ("enrollment_taken", models.IntegerField(blank=True, null=True)),
@@ -47,20 +53,27 @@ class Migration(migrations.Migration):
                 (
                     "section",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="tcf_website.section"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="tcf_website.section",
                     ),
                 ),
             ],
             options={
                 "indexes": [
                     models.Index(
-                        fields=["enrollment_taken"], name="tcf_website_enrollm_a003a0_idx"
+                        fields=["enrollment_taken"],
+                        name="tcf_website_enrollm_a003a0_idx",
                     ),
                     models.Index(
-                        fields=["enrollment_limit"], name="tcf_website_enrollm_a40cdb_idx"
+                        fields=["enrollment_limit"],
+                        name="tcf_website_enrollm_a40cdb_idx",
                     ),
-                    models.Index(fields=["waitlist_taken"], name="tcf_website_waitlis_5cf666_idx"),
-                    models.Index(fields=["waitlist_limit"], name="tcf_website_waitlis_916c18_idx"),
+                    models.Index(
+                        fields=["waitlist_taken"], name="tcf_website_waitlis_5cf666_idx"
+                    ),
+                    models.Index(
+                        fields=["waitlist_limit"], name="tcf_website_waitlis_916c18_idx"
+                    ),
                 ],
             },
         ),

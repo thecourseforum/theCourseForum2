@@ -39,14 +39,18 @@ class InstructorEdgeTestCase(TestCase):
         self.review1.delete()
         self.review2.delete()
 
-        self.assertIsNone(self.instructor.average_instructor_rating_for_course(self.course))
+        self.assertIsNone(
+            self.instructor.average_instructor_rating_for_course(self.course)
+        )
 
     def test_average_recommendability_for_course_no_reviews(self):
         """Test average recommendability for a particular course when there are no reviews."""
         self.review1.delete()
         self.review2.delete()
 
-        self.assertIsNone(self.instructor.average_recommendability_for_course(self.course))
+        self.assertIsNone(
+            self.instructor.average_recommendability_for_course(self.course)
+        )
 
     def test_average_hours_for_course_no_reviews(self):
         """Test average hours for a particular course when there are no reviews."""

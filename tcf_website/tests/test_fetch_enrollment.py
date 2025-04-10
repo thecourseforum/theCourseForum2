@@ -25,7 +25,12 @@ class FetchEnrollmentTestCase(TestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {
             "classes": [
-                {"enrollment_total": 15, "class_capacity": 20, "wait_tot": 5, "wait_cap": 10}
+                {
+                    "enrollment_total": 15,
+                    "class_capacity": 20,
+                    "wait_tot": 5,
+                    "wait_cap": 10,
+                }
             ]
         }
 
@@ -52,7 +57,12 @@ class FetchEnrollmentTestCase(TestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {
             "classes": [
-                {"enrollment_total": 15, "class_capacity": 25, "wait_tot": 8, "wait_cap": 12}
+                {
+                    "enrollment_total": 15,
+                    "class_capacity": 25,
+                    "wait_tot": 8,
+                    "wait_cap": 12,
+                }
             ]
         }
 
