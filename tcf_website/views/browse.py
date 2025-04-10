@@ -211,7 +211,7 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     instructor = section_last_taught.instructors.get(pk=instructor_id)
 
     # ratings: reviews with and without text; reviews: ratings with text
-    reviews = Review.objects.filter(instructor=instructor_id, course=course_id).aggregate(
+    reviews = Review.objects.filter(instructor=instructor_id, course=course_id, toxicity_rating__lt=74).aggregate(
         num_ratings=Count("id"), num_reviews=Count("id", filter=~Q(text=""))
     )
     num_reviews, num_ratings = reviews["num_reviews"], reviews["num_ratings"]
