@@ -54,7 +54,7 @@ class ReviewForm(forms.ModelForm):
         return instance
 
 
-TOXICITY_THRESHOLD = 75
+TOXICITY_THRESHOLD = 74
 
 
 def reviews_list(request):
