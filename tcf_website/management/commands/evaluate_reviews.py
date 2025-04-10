@@ -17,11 +17,14 @@ class Command(BaseCommand):
     )
 
     def add_arguments(self, parser):
-        parser.add_argument("--log", action="store_true", help="Prints out reviews as they are processed")
+        #parser.add_argument("--log", action="store_true", help="Prints out reviews as they are processed")
+        parser.add_argument("--results", action="store_true", help="View results of evaluation")
 
     """Standard Django function implementation - runs when this command is executed."""
     def handle(self, *args, **options):
-        log = options["log"]
+        if (options["results"]):
+            self.view_results()
+            return
         
         try:
             model = Detoxify("original")
@@ -57,3 +60,11 @@ class Command(BaseCommand):
                 review.toxicity_catgory = max_label
                 review.save()
         self.stdout.write(self.style.SUCCESS("Finished evaluating reviews :)"))
+
+    """Used to check for any abnormalities after filtering. Only used for testing, this prints to console"""
+    def view_results(self):
+        self.stdout.write("Printing out all toxic reviews...")
+        removed_reviews = Review.objects.filter(toxicity_rating__gte=74).order_by('toxicity_rating')
+        for review in removed_reviews:
+            self.stdout.write(str(review.toxicity_rating) + " - " + review.text)
+        self.stdout.write(self.style.SUCCESS("Finished retrieving reviews :)"))
