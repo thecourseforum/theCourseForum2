@@ -972,7 +972,7 @@ class Review(models.Model):
     # Toxicity rating of review
     toxicity_rating = models.IntegerField(default=0)
     # Most relevant toxicity category, only exists if review has text
-    toxicity_catgory = models.CharField(blank=True)
+    toxicity_category = models.CharField(blank=True)
 
     # Enum of Rating options.
     RATINGS = (
@@ -1093,9 +1093,9 @@ class Review(models.Model):
     def get_sorted_reviews(course_id, instructor_id, user, method=""):
         """Prepare review list for course-instructor page."""
 
-        # Filter out reviews with no text and hidden field true.
+        # Filter out reviews that are hidden, have no text, or are toxic.
         reviews = (
-            Review.objects.filter(instructor=instructor_id, course=course_id, hidden=False)
+            Review.objects.filter(instructor=instructor_id, course=course_id, toxicity_rating__lt=74, hidden=False)
             .exclude(text="")
             .annotate(
                 sum_votes=models.functions.Coalesce(models.Sum("vote__value"), models.Value(0)),
