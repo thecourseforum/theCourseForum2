@@ -169,6 +169,8 @@ class Command(BaseCommand):
         # 'Term Desc' column is unused because we only care about aggregate across semesters
         # Might want to display semester-by-semester metrics too? Would have to change this
 
+        term_desc = row["Term Desc"]
+
         subdepartment = row["Subject"]
         # `Catalog Number` is handled with all other numerical data in the try block below
 
@@ -224,12 +226,13 @@ class Command(BaseCommand):
             raise e
         # No error casting values to float/int, so continue
         # Identifiers are tuple keys to grade data dictionaries
-        course_identifier = (subdepartment, number, title)
+        course_identifier = (subdepartment, number, title, term_desc)
         course_instructor_identifier = (
             subdepartment,
             number,
             first_name,
             last_name,
+            term_desc,
         )
 
         # Helper function because we basically do the same thing twice
@@ -309,6 +312,7 @@ class Command(BaseCommand):
 
         course_grade_params = {
             "course_id": self.courses.get(row[:2]),
+            "semester": row[-1],
             "a_plus": data[0],
             "a": data[1],
             "a_minus": data[2],
@@ -324,5 +328,5 @@ class Command(BaseCommand):
         }
 
         if is_instructor_grade:
-            course_grade_params["instructor_id"] = self.instructors.get(row[2:])
+            course_grade_params["instructor_id"] = self.instructors.get(row[2:4])
         return course_grade_params

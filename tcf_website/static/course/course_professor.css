@@ -326,6 +326,7 @@
   padding-top: 4px;
 }
 
+<<<<<<< HEAD
 /* Enrollment progress bar */
 @media (max-width: 1200px) {
   .enrollment-progress,
@@ -551,4 +552,13 @@
     font-size: 12px;
     min-width: 80px;
   }
+=======
+#sectionInfo.show {
+  /* margin-top set by JS */
+  transition: margin-top cubic-bezier(0, 1, 1, 1) 0.3s;
+<<<<<<< HEAD
+>>>>>>> avg_gpa_trend
 }
+=======
+}
+>>>>>>> db11ac0d77ec71a72c0dc02d6b9964f6119c18ee
