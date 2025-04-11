@@ -14,7 +14,10 @@ from django.db.models.functions import Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+<<<<<<< HEAD
 import pandas as pd
+=======
+>>>>>>> db11ac0d77ec71a72c0dc02d6b9964f6119c18ee
 
 from ..models import (
     Answer,
@@ -185,6 +188,7 @@ def course_view(
         },
     )
 
+<<<<<<< HEAD
 # Converts professor name to solely full name without email from CSV
 def extract_professor_name(professor_full):
     return re.match(r'^[^()]+', professor_full).group().strip()
@@ -233,6 +237,8 @@ def categorize_sentiments(sentiments):
     sentiment_counts = categorized.value_counts().reindex(labels, fill_value=0).to_dict()
     return sentiment_counts
 
+=======
+>>>>>>> db11ac0d77ec71a72c0dc02d6b9964f6119c18ee
 
 def course_instructor(request, course_id, instructor_id, method="Default"):
     """View for course instructor page."""
@@ -342,11 +348,14 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         answers[question.id] = Answer.display_activity(question.id, request.user)
     questions = Question.display_activity(course_id, instructor_id, request.user)
 
+<<<<<<< HEAD
      # Sentiment scores + distributions
     sentiment_scores = get_sentiments(instructor.full_name, course.combined_mnemonic_number)
     sentiment_distribution = categorize_sentiments(pd.Series(sentiment_scores))
     sentiment_distribution = json.dumps(sentiment_distribution) 
 
+=======
+>>>>>>> db11ac0d77ec71a72c0dc02d6b9964f6119c18ee
     return render(
         request,
         "course/course_professor.html",
@@ -366,7 +375,10 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "answers": answers,
             "gpa_history": json.dumps(get_course_term_gpa(course_id, instructor_id)),
             "sort_method": method,
+<<<<<<< HEAD
             "sentiment_distribution": sentiment_distribution,
+=======
+>>>>>>> db11ac0d77ec71a72c0dc02d6b9964f6119c18ee
         },
     )
 
