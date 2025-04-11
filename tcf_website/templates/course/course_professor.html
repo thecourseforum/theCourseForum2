@@ -287,6 +287,24 @@
             }
         </script>
 
+        <div
+        style="margin: 0 auto; background-color: white; padding: 10px; margin-bottom: 10px; position: relative; height: 40vh; width: 40vw; overflow: hidden;">
+            <div style="position: relative; height: 100%; width: 100%;">
+                <p class="sentiment-text" style="text-align: center; font-size: 20px; margin-top: 0; margin-bottom: 0;">How
+                    Students Feel About
+                    {{ course.code }} - {{ instructor.first_name}} {{instructor.last_name}}</p>
+                <canvas id="sentiment-chart" style="margin-top: -30px; margin-bottom: 0;"></canvas>
+                <p id="sentiment-range" class="sentiment-text"
+                    style="text-align: center; font-size: 15px; margin-top: -50px;">Strongly
+                    Negative—————————————————Strongly Positive</p>
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center;"
+                    id="sentiment-chart-label">
+                    <p class="sentiment-text" style="margin: 0; padding: 0;">No reviews found <i
+                            class="far fa-frown-open fa-fw"></i></p>
+                </div>
+            </div>
+        </div>
+
         <ul class="nav nav-tabs" id="reviews">
             <li class="nav-item">
                 <a class="nav-link active" id="reviewsTab" data-toggle="tab" href="#reviewsTabContent" style="font-size: 18px;">Reviews</a>
@@ -479,6 +497,122 @@
                 }
             });
         }
+    </script>
+    <!-- For sentiments bar chart -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let rawData = `{{ sentiment_distribution|safe }}`;
+
+            const courseCode = "{{ course.code|escapejs }}";
+            const instructorName = "{{ instructor.first_name|escapejs }} {{ instructor.last_name|escapejs }}";
+
+            const sentimentData = JSON.parse(rawData);
+
+            const labels = ["Review Positivity"];
+            const sentimentLabels = Object.keys(sentimentData);
+            const dataValues = Object.values(sentimentData);
+
+            const totalReviews = dataValues.reduce((sum, current) => sum + current, 0);
+
+            const chartCanvas = document.getElementById("sentiment-chart");
+            const noReviewsMessage = document.getElementById("sentiment-chart-label");
+
+
+            const chartLabel = document.getElementById('sentiment-chart-label');
+            const chartRange = document.getElementById('sentiment-range');
+            if (totalReviews === 0) {
+                // Hide the chart, show "No reviews found"
+                chartCanvas.style.display = "none";
+                chartRange.style.display = "none";
+                noReviewsMessage.style.display = "block";
+            } else {
+                // Show the chart, hide the message
+                chartCanvas.style.display = "block";
+                chartRange.style.display = "block";
+                noReviewsMessage.style.display = "none";
+            }
+
+            const barColors = {
+                normal: [
+                    '#BE4B20', // Strongly Negative
+                    '#DD734C', // Somewhat Negative
+                    '#B4A6B6', // Neutral
+                    '#5D83D1', // Somewhat Positive
+                    '#182D66', // Strongly Positive
+                ],
+                hover: [
+                    '#9E3B10', // Darker Strongly Negative
+                    '#BD634C', // Darker Somewhat Negative
+                    '#948696', // Darker Neutral
+                    '#4D73C1', // Darker Somewhat Positive
+                    '#081D56'  // Darker Strongly Positive
+                ]
+            };
+
+            const datasets = sentimentLabels.map((label, index) => ({
+                label: label,
+                data: [dataValues[index]],
+                backgroundColor: barColors.normal[index % barColors.normal.length],
+                hoverBackgroundColor: barColors.hover[index % barColors.hover.length],
+                borderWidth: 0
+            }));
+
+            const ctx = document.getElementById('sentiment-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: 10 },
+                    barPercentage: 0.5,
+                    categoryPercentage: 0.8,
+                    
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'dataset',
+                            intersect: true,
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                let value = tooltipItem.raw;
+                                let total = 0;
+                                
+                                tooltipItem.chart.data.datasets.forEach((dataset) => {
+                                    total += dataset.data[tooltipItem.dataIndex];
+                                });
+                                
+                                let percentage = Math.round((value / total) * 100);
+                                return `${tooltipItem.dataset.label}: ${percentage}% of reviews`;
+                                }
+                            }
+                            }
+                    },
+                    hover: {
+                        mode: 'point',
+                        intersect: true
+                    },
+                    scales: {
+                        x: {
+                            display: false,
+                            stacked: true,
+                            min: 0,
+                            max: totalReviews,
+                            grid: { display: false }
+                        },
+                        y: {
+                            display: false,
+                            stacked: true,
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        });
     </script>
 
 {% endblock %}
