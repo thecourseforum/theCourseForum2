@@ -8,9 +8,9 @@ from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models import F, FloatField, Q
 from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from ..models import Course, Instructor, Subdepartment
-
 
 def group_by_dept(courses):
     """Groups courses by their department and adds relevant data."""
@@ -47,27 +47,59 @@ def search(request):
         ),
         "from_time": request.GET.get("from_time"),
         "to_time": request.GET.get("to_time"),
+        "pages": request.GET.get("pages"),
         "open_sections": request.GET.get("open_sections") == "on",
     }
 
     # Save filters to session
     request.session["search_filters"] = filters
 
+    # Fetch courses and instructors based on query
     if query:
-        courses = fetch_courses(query, filters)
+        results = fetch_courses(query, filters)
         instructors = fetch_instructors(query)
-        courses_first = decide_order(courses, instructors)
     else:
-        courses = filter_courses(filters)
+        results = filter_courses(filters)
         instructors = []
+
+    # Paginate results, default to 1
+    page_number = filters.get("pages", 1)
+    paginator = Paginator(results, 15)
+    try:
+        results = paginator.page(page_number)
+    except PageNotAnInteger:
+        results = paginator.page(1)
+    except EmptyPage:
+        results = paginator.page(paginator.num_pages)
+
+    # Formulate course data
+    courses = [
+        {
+            "id": course.id,
+            "title": course.title,
+            "number": course.number,
+            "mnemonic": course.mnemonic,
+            "description": course.description,
+            "max_similarity": course.max_similarity if query else 1.0,
+        }
+        for course in results
+    ]
+
+    # without this condition, the page will default to instructor
+    # even if the user clicked on other pages
+    if not request.GET.get("pages"):
+        courses_first = decide_order(courses, instructors) if query else True
+    else:
         courses_first = True
 
+    # formulating context to pass into the django template
     ctx = {
         "query": query[:30] + ("..." if len(query) > 30 else ""),
         "courses_first": courses_first,
         "courses": group_by_dept(courses),
         "instructors": instructors,
-        "total_courses": len(courses),
+        "total_courses": results.paginator.count,
+        "page_obj": paginator.get_page(page_number),
     }
 
     return render(request, "search/search.html", ctx)
@@ -165,24 +197,9 @@ def fetch_courses(query, filters):
         .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
         .exclude(semester_last_taught_id__lt=48)
         .order_by("-max_similarity")
-    )[:15]
+    )
 
-    courses = [
-        {
-            key: getattr(course, key)
-            for key in (
-                "id",
-                "title",
-                "number",
-                "mnemonic",
-                "description",
-                "max_similarity",
-            )
-        }
-        for course in results
-    ]
-
-    return courses
+    return results
 
 
 def filter_courses(filters):
@@ -205,22 +222,9 @@ def filter_courses(filters):
             id__in=open_sections_filtered.values_list("id", flat=True)
         )
 
-    results = results.distinct().order_by("subdepartment__mnemonic", "number")[:15]
+    results = results.distinct().order_by("subdepartment__mnemonic", "number")
 
-    # Convert to same format as fetch_courses
-    courses = [
-        {
-            "id": course.id,
-            "title": course.title,
-            "number": course.number,
-            "mnemonic": course.mnemonic,
-            "description": course.description,
-            "max_similarity": 1.0,  # default value since we're not searching
-        }
-        for course in results
-    ]
-
-    return courses
+    return results
 
 
 def apply_filters(results, filters):
