@@ -16,6 +16,7 @@ from django.db.models.functions import Coalesce, Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+import pandas as pd
 
 from ..models import (
     Answer,
@@ -305,6 +306,102 @@ def course_view(
         },
     )
 
+# Converts professor name to solely full name without email from CSV
+def extract_professor_name(professor_full):
+    return re.match(r'^[^()]+', professor_full).group().strip()
+
+# Converts course title in CSV to solely just mnemonic and number
+def extract_course_mnemonic(course_full):
+    return course_full.split(' |')[0].strip()
+
+# Creates a dataframe with instructor names, course codes, and their sentiment scores
+def sentiments_df_creator():
+    reviews_data_path = 'tcf_website/management/commands/reviews_data/reviews_data_with_sentiment.csv'
+    df = pd.read_csv(reviews_data_path)
+    df["instructor_name_only"] = df["instructor"].apply(extract_professor_name)
+    df["course_code_only"] = df["course"].apply(extract_course_mnemonic)
+    sentiments = df[["instructor_name_only", "course_code_only", "sentiment_score"]]
+    return sentiments
+
+# Returns list of sentiments of reviews for an instructor for a course
+def get_sentiments(instructor, course):
+    sentiments_df = sentiments_df_creator()
+    
+    instructor_name = instructor.strip()
+    course_code = course.strip()
+    
+    result = sentiments_df[
+        (sentiments_df["instructor_name_only"] == instructor_name) & (sentiments_df["course_code_only"] == course_code)
+    ]
+    
+    if result.empty:
+        return []
+    else:
+        return result["sentiment_score"].tolist()
+
+# Categorizes sentiments based on where they fall in the range
+def categorize_sentiments(sentiments):
+    bins = [-1, -0.6, -0.2, 0.2, 0.6, 1]
+    labels = [
+        "Strongly negative",
+        "Somewhat negative",
+        "Neutral",
+        "Somewhat positive",
+        "Strongly positive",
+    ]
+    
+    categorized = pd.cut(sentiments, bins=bins, labels=labels, include_lowest=True)
+    sentiment_counts = categorized.value_counts().reindex(labels, fill_value=0).to_dict()
+    return sentiment_counts
+
+# Converts professor name to solely full name without email from CSV
+def extract_professor_name(professor_full):
+    return re.match(r'^[^()]+', professor_full).group().strip()
+
+# Converts course title in CSV to solely just mnemonic and number
+def extract_course_mnemonic(course_full):
+    return course_full.split(' |')[0].strip()
+
+# Creates a dataframe with instructor names, course codes, and their sentiment scores
+def sentiments_df_creator():
+    reviews_data_path = 'tcf_website/management/commands/reviews_data/reviews_data_with_sentiment.csv'
+    df = pd.read_csv(reviews_data_path)
+    df["instructor_name_only"] = df["instructor"].apply(extract_professor_name)
+    df["course_code_only"] = df["course"].apply(extract_course_mnemonic)
+    sentiments = df[["instructor_name_only", "course_code_only", "sentiment_score"]]
+    return sentiments
+
+# Returns list of sentiments of reviews for an instructor for a course
+def get_sentiments(instructor, course):
+    sentiments_df = sentiments_df_creator()
+    
+    instructor_name = instructor.strip()
+    course_code = course.strip()
+    
+    result = sentiments_df[
+        (sentiments_df["instructor_name_only"] == instructor_name) & (sentiments_df["course_code_only"] == course_code)
+    ]
+    
+    if result.empty:
+        return []
+    else:
+        return result["sentiment_score"].tolist()
+
+# Categorizes sentiments based on where they fall in the range
+def categorize_sentiments(sentiments):
+    bins = [-1, -0.6, -0.2, 0.2, 0.6, 1]
+    labels = [
+        "Strongly negative",
+        "Somewhat negative",
+        "Neutral",
+        "Somewhat positive",
+        "Strongly positive",
+    ]
+    
+    categorized = pd.cut(sentiments, bins=bins, labels=labels, include_lowest=True)
+    sentiment_counts = categorized.value_counts().reindex(labels, fill_value=0).to_dict()
+    return sentiment_counts
+
 
 def course_instructor(request, course_id, instructor_id, method="Default"):
     """View for course instructor page."""
@@ -423,6 +520,11 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         answers[question.id] = Answer.display_activity(question.id, request.user)
     questions = Question.display_activity(course_id, instructor_id, request.user)
 
+     # Sentiment scores + distributions
+    sentiment_scores = get_sentiments(instructor.full_name, course.combined_mnemonic_number)
+    sentiment_distribution = categorize_sentiments(pd.Series(sentiment_scores))
+    sentiment_distribution = json.dumps(sentiment_distribution) 
+
     return render(
         request,
         "course/course_professor.html",
@@ -446,6 +548,7 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "course_code": course.code(),
             "course_title": course.title,
             "instructor_fullname": instructor.full_name,
+            "sentiment_distribution": sentiment_distribution,
         },
     )
 
