@@ -55,11 +55,7 @@ if env.str("ENVIRONMENT") == "dev":
     STATIC_URL = "/static/"
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-    ALLOWED_HOSTS.extend([
-        "localhost",
-        ".grok.io",
-        "127.0.0.1"
-    ])
+    ALLOWED_HOSTS.extend(["localhost", ".grok.io", "127.0.0.1"])
 
     DATABASES = {
         "default": {
@@ -80,11 +76,13 @@ else:
     AWS_DEFAULT_ACL = None
     AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 
-    ALLOWED_HOSTS.extend([
-        "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
-        "thecourseforum.com",
-        "thecourseforumtest.com"
-    ])
+    ALLOWED_HOSTS.extend(
+        [
+            "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
+            "thecourseforum.com",
+            "thecourseforumtest.com",
+        ]
+    )
 
     STORAGES = {
         "default": {
@@ -198,7 +196,9 @@ SOCIAL_AUTH_EMAIL_AUTH_WHITELISTED_DOMAINS = ["virginia.edu"]
 
 WHITELISTED_DOMAINS = ["virginia.edu"]
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_LOGIN_URL = reverse_lazy("social:begin", args=["google-oauth2"])
+SOCIAL_AUTH_GOOGLE_OAUTH2_LOGIN_URL = reverse_lazy(
+    "social:begin", args=["google-oauth2"]
+)
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 SOCIAL_AUTH_PIPELINE = (
     "tcf_core.auth_pipeline.password_validation",
@@ -271,3 +271,6 @@ MESSAGE_TAGS = {
 
 # Required in Django 3.2+ (See https://stackoverflow.com/a/66971803)
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+# Toxicity threshold for filtering reviews
+TOXICITY_THRESHOLD = 74

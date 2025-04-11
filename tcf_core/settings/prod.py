@@ -16,8 +16,11 @@ if os.environ.get("DJANGO_SETTINGS_MODULE") == "tcf_core.settings.prod":
     ALLOWED_HOSTS = ["*", "thecourseforum.com"]
 
     # CSRF settings to fix form submission issues in production
-    CSRF_TRUSTED_ORIGINS = ['https://thecourseforum.com', 'https://thecourseforumtest.com']
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    CSRF_TRUSTED_ORIGINS = [
+        "https://thecourseforum.com",
+        "https://thecourseforumtest.com",
+    ]
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
     # Use secure connection for database access
     DATABASES["default"]["OPTIONS"] = {"sslmode": "require"}

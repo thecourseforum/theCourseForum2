@@ -13,7 +13,9 @@ def setup(obj):
     """Load some example data"""
 
     obj.school = School.objects.create(name="School of Hard Knocks")
-    obj.department = Department.objects.create(name="Computer Science", school=obj.school)
+    obj.department = Department.objects.create(
+        name="Computer Science", school=obj.school
+    )
     obj.subdepartment = Subdepartment.objects.create(
         name="Computer Science", mnemonic="CS", department=obj.department
     )
@@ -216,10 +218,16 @@ def setup(obj):
 
     obj.course_grade = CourseGrade.objects.create(course=obj.course, average=2.9)
 
-    obj.upvote_review1 = Vote.objects.create(value=1, user=obj.user1, review=obj.review1)
+    obj.upvote_review1 = Vote.objects.create(
+        value=1, user=obj.user1, review=obj.review1
+    )
 
-    obj.upvote_review1_2 = Vote.objects.create(value=1, user=obj.user2, review=obj.review1)
-    obj.downvote_review1 = Vote.objects.create(value=-1, user=obj.user3, review=obj.review1)
+    obj.upvote_review1_2 = Vote.objects.create(
+        value=1, user=obj.user2, review=obj.review1
+    )
+    obj.downvote_review1 = Vote.objects.create(
+        value=-1, user=obj.user3, review=obj.review1
+    )
 
 
 def create_new_semester(self, year):

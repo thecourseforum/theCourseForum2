@@ -118,7 +118,9 @@ class Command(BaseCommand):
 
             # may include staff, may be empty
             instructor_names = (
-                row[["Instructor1", "Instructor2", "Instructor3", "Instructor4"]].dropna().array
+                row[["Instructor1", "Instructor2", "Instructor3", "Instructor4"]]
+                .dropna()
+                .array
             )
 
             times = row[["Days1", "Days2", "Days3", "Days4"]].dropna().array
@@ -133,7 +135,9 @@ class Command(BaseCommand):
             raise e
 
         sd = self.load_subdepartment(mnemonic)
-        course = self.load_course(title, description, disciplines, semester, sd, course_number)
+        course = self.load_course(
+            title, description, disciplines, semester, sd, course_number
+        )
         instructors = self.load_instructors(instructor_names)
         section = self.load_section(
             sis_number,
@@ -165,7 +169,9 @@ class Command(BaseCommand):
     # TODO: how to handle special topics courses?
     # topic: section topic
     # description: course description!
-    def load_course(self, title, description, disciplines, semester, subdepartment, number):
+    def load_course(
+        self, title, description, disciplines, semester, subdepartment, number
+    ):
 
         params = {}
         fields = {"title", "description", "subdepartment", "number"}
