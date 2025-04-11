@@ -67,7 +67,15 @@ class SectionAdmin(admin.ModelAdmin):
 
 class SectionTimeAdmin(admin.ModelAdmin):
     list_display = ["section", "get_days_display", "start_time", "end_time"]
-    list_filter = ["monday", "tuesday", "wednesday", "thursday", "friday", "start_time", "end_time"]
+    list_filter = [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "start_time",
+        "end_time",
+    ]
     search_fields = [
         "section__course__subdepartment__mnemonic",
         "section__course__number",

@@ -14,7 +14,9 @@ def populate_full_name(apps, schema_editor):
 def populate_combined_mnemonic_number(apps, schema_editor):
     Course = apps.get_model("tcf_website", "Course")
     for course in Course.objects.all():
-        course.combined_mnemonic_number = f"{course.subdepartment.mnemonic} {course.number}".strip()
+        course.combined_mnemonic_number = (
+            f"{course.subdepartment.mnemonic} {course.number}".strip()
+        )
         course.save()
 
 
@@ -50,19 +52,25 @@ class Migration(migrations.Migration):
         migrations.AddIndex(
             model_name="instructor",
             index=django.contrib.postgres.indexes.GinIndex(
-                fields=["first_name"], name="first_name_instructor", opclasses=["gin_trgm_ops"]
+                fields=["first_name"],
+                name="first_name_instructor",
+                opclasses=["gin_trgm_ops"],
             ),
         ),
         migrations.AddIndex(
             model_name="instructor",
             index=django.contrib.postgres.indexes.GinIndex(
-                fields=["last_name"], name="last_name_instructor", opclasses=["gin_trgm_ops"]
+                fields=["last_name"],
+                name="last_name_instructor",
+                opclasses=["gin_trgm_ops"],
             ),
         ),
         migrations.AddIndex(
             model_name="instructor",
             index=django.contrib.postgres.indexes.GinIndex(
-                fields=["full_name"], name="full_name_instructor", opclasses=["gin_trgm_ops"]
+                fields=["full_name"],
+                name="full_name_instructor",
+                opclasses=["gin_trgm_ops"],
             ),
         ),
         migrations.RunPython(populate_full_name),
