@@ -1,6 +1,12 @@
-[tool.black]
-line-length = 100
-[tool.isort]
-profile = "black"
-[tool.djlint]
-profile = "django"
+[project]
+name = "thecourseforum2"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "astroid>=3.3.9",
+    "black>=25.1.0",
+    "dill>=0.3.9",
+    "pylint>=3.3.6",
+]

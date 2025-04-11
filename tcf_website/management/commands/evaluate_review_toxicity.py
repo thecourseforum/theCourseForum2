@@ -1,3 +1,5 @@
+"""Command for evaluating toxicity of existing reviews"""
+
 from detoxify import Detoxify
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
@@ -5,13 +7,9 @@ from tqdm import tqdm
 
 from tcf_website.models import Review
 
-"""
-Command for evaluating toxicity of existing reviews
-use: docker exec -it tcf_django python manage.py evaluate_review_toxicity
-"""
-
 
 class Command(BaseCommand):
+    """Command that is run to evaluate review toxicity"""
 
     help = (
         "Assigns toxicity with:"
@@ -20,12 +18,9 @@ class Command(BaseCommand):
     )
 
     def add_arguments(self, parser):
-        # parser.add_argument("--log", action="store_true", help="Prints out reviews as they are processed")
         parser.add_argument(
             "--results", action="store_true", help="View results of evaluation"
         )
-
-    """Standard Django function implementation - runs when this command is executed."""
 
     def handle(self, *args, **options):
         if options["results"]:
@@ -35,7 +30,7 @@ class Command(BaseCommand):
         try:
             model = Detoxify("original")
         except Exception as e:
-            raise CommandError(f"Error initializing Detoxify: {e}")
+            raise CommandError(f"Error initializing Detoxify: {e}") from e
 
         reviews = Review.objects.all()
         if not reviews:
@@ -54,24 +49,32 @@ class Command(BaseCommand):
             if review.text:  # evaluate if there is text + no rating
                 try:
                     prediction = model.predict(review.text)
-                except Exception as e:
+                except (TypeError, ValueError, RuntimeError, OSError) as e:
                     self.stdout.write(
                         self.style.WARNING(f"Error processing review {review.id}: {e}")
                     )
                     continue
+                except Exception as e:  # pylint: disable=W0718
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"Unexpected error processing review {review.id}: {e}"
+                        )
+                    )
+                    continue
+
                 review.toxicity_rating = round(100 * prediction["toxicity"])
 
                 # get most relevant toxicity category
                 max_label = max(
-                    toxicity_categories, key=lambda label: prediction[label]
+                    toxicity_categories,
+                    key=lambda label: prediction[label],  # pylint: disable=W0640
                 )
                 review.toxicity_category = max_label
                 review.save()
         self.stdout.write(self.style.SUCCESS("Finished evaluating reviews :)"))
 
-    """Used to check for any abnormalities after filtering. Only used for testing, this prints to console"""
-
     def view_results(self):
+        """View toxic reviews in the console"""
         self.stdout.write("Printing out all toxic reviews...")
         removed_reviews = Review.objects.filter(
             toxicity_rating__gte=settings.TOXICITY_THRESHOLD
