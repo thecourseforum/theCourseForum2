@@ -51,7 +51,7 @@ body.dark-mode {
   --accent-text-color: #d75626; /* Accent color for dark mode */
   --basic-text-color: white;    /* White text color */
   --icon-color: white; /* Light icon color */
-  --input-border-color: #A6A6A6; /* Lighter border color for inputs */
+  --input-border-color: #242424; /* Lighter border color for inputs */
   --button-bg-color: #1e1e1e; /* Darker button background */
   --landing-page-background-color: black; /* replace tcf-blue as tcf logo text color */
   --title-color: white; /* make title and icons on landing page white */
@@ -224,6 +224,7 @@ p {
 .form-control {
   background-color: var(--input-background-color);
   color: var(--input-text-color);
+  border: var(--input-border-color);
 }
 
 .form-control::placeholder {
