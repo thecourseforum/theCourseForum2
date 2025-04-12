@@ -116,7 +116,7 @@ a {
 }
 a:hover,
 .hover-tcf-orange:hover {
-  color: var(--test);
+  color: var(--accent-color);
   text-decoration: none;
   cursor: pointer;
 }
@@ -227,9 +227,22 @@ p {
   border: var(--input-border-color);
 }
 
+.form-control:focus {
+  background-color: var(--input-background-color);
+  color: var(--basic-text-color);
+}
+
 .form-control::placeholder {
   color: var(--input-text-color);
 }
+
+/* overrides the input:-internal-autofill-selected setting from User Agent Stylesheet */
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px var(--input-background-color) inset !important;
+  -webkit-text-fill-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 
 .forcontrol:disabled {
   background-color: var(--background-color);
