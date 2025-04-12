@@ -243,7 +243,6 @@ input:-webkit-autofill {
   transition: background-color 5000s ease-in-out 0s;
 }
 
-
 .forcontrol:disabled {
   background-color: var(--background-color);
 }
@@ -251,6 +250,18 @@ input:-webkit-autofill {
 /* originally in borders.scss */
 .border {
   border: 0.5px solid var(--input-border-color) !important;
+}
+
+.modal-body {
+  background-color: var(--background-color);
+}
+
+.modal-header {
+  background-color: var(--background-color);
+}
+
+.modal-footer {
+  background-color: var(--background-color);
 }
 
 /* Note: Can use Bootstrap "light" color
