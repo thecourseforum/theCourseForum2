@@ -51,7 +51,7 @@ body.dark-mode {
   --accent-text-color: #d75626; /* Accent color for dark mode */
   --basic-text-color: white;    /* White text color */
   --icon-color: white; /* Light icon color */
-  --input-border-color: #242424; /* Lighter border color for inputs */
+  --input-border-color: #5a5c5d; /* Lighter border color for inputs */
   --button-bg-color: #1e1e1e; /* Darker button background */
   --landing-page-background-color: black; /* replace tcf-blue as tcf logo text color */
   --title-color: white; /* make title and icons on landing page white */
@@ -258,10 +258,12 @@ input:-webkit-autofill {
 
 .modal-header {
   background-color: var(--background-color);
+  border-bottom: 1px solid var(--input-border-color);
 }
 
 .modal-footer {
   background-color: var(--background-color);
+  border-top: 1px solid var(--input-border-color);
 }
 
 /* Note: Can use Bootstrap "light" color
