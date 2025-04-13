@@ -107,7 +107,9 @@ class DeleteReviewTests(TestCase):
 
     def test_delete_review_message(self):
         """Test if a message is shown when a user deletes their review."""
-        self.client.force_login(self.review1.user)  # force a login as the author of review1
+        self.client.force_login(
+            self.review1.user
+        )  # force a login as the author of review1
         # try and make the user delete review1
         response = self.client.post(
             reverse("delete_review", args=[self.review1.id]),
@@ -126,7 +128,9 @@ class DeleteReviewTests(TestCase):
     def test_delete_nonexistent_review_id(self):
         """Test if a 404 is returned for deleting a nonexistent review ID."""
         self.client.force_login(self.user1)
-        response = self.client.post(reverse("delete_review", args=[0]))  # id 0 = nonexistent review
+        response = self.client.post(
+            reverse("delete_review", args=[0])
+        )  # id 0 = nonexistent review
 
         self.assertEqual(response.status_code, 404)
 

@@ -6,7 +6,9 @@ import asyncio
 import json
 from threading import Thread
 from typing import Any
+from urllib.parse import urlencode
 
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg, CharField, Count, F, Q, Value
 from django.db.models.functions import Concat
@@ -14,22 +16,12 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+
 from tcf_website.api.enrollment import update_enrollment_data
 
-from ..models import (
-    Answer,
-    Course,
-    CourseEnrollment,
-    CourseInstructorGrade,
-    Department,
-    Instructor,
-    Question,
-    Review,
-    School,
-    Section,
-    SectionEnrollment,
-    Semester,
-)
+from ..models import (Answer, Course, CourseEnrollment, CourseInstructorGrade,
+                      Department, Instructor, Question, Review, School,
+                      Section, SectionEnrollment, Semester)
 
 
 def browse(request):
@@ -78,11 +70,17 @@ def department(request, dept_id: int, course_recency=None):
     season, year = course_recency.upper().split()
     active_semester = Semester.objects.filter(year=year, season=season).first()
 
+    query_params = request.GET.copy()
+    query_params.pop("page", None)
+    query_params = urlencode(query_params)
     # Fetch sorting variables
     sortby = request.GET.get("sortby", "course_id")
     order = request.GET.get("order", "asc")
+    page = request.GET.get("page", 1)
 
-    courses = dept.sort_courses(sortby, latest_semester.year - int(year), order)
+    paginated_courses = dept.get_paginated_department_courses(
+        sortby, latest_semester.year - int(year), order, page
+    )
 
     return render(
         request,
@@ -92,11 +90,12 @@ def department(request, dept_id: int, course_recency=None):
             "dept_id": dept_id,
             "latest_semester": str(latest_semester),
             "breadcrumbs": breadcrumbs,
-            "courses": courses,
+            "paginated_courses": paginated_courses,
             "active_course_recency": str(active_semester),
             "sortby": sortby,
             "order": order,
             "last_five_years": str(last_five_years),
+            "query_params": query_params,
         },
     )
 
@@ -129,7 +128,9 @@ def course_view(
 
     # Redirect if the mnemonic is not all uppercase
     if mnemonic != mnemonic.upper():
-        return redirect("course", mnemonic=mnemonic.upper(), course_number=course_number)
+        return redirect(
+            "course", mnemonic=mnemonic.upper(), course_number=course_number
+        )
 
     course = get_object_or_404(
         Course,
@@ -149,10 +150,14 @@ def course_view(
     # For whatever reason, it is not possible to remove None from .annotate()'s ArrayAgg() function
     for instructor in instructors:
         if hasattr(instructor, "section_times") and instructor.section_times:
-            instructor.section_times = [s for s in instructor.section_times if s is not None]
+            instructor.section_times = [
+                s for s in instructor.section_times if s is not None
+            ]
 
         if hasattr(instructor, "section_nums") and instructor.section_nums:
-            instructor.section_nums = [s for s in instructor.section_nums if s is not None]
+            instructor.section_nums = [
+                s for s in instructor.section_nums if s is not None
+            ]
 
     # Note: Could be simplified further
 
@@ -161,12 +166,15 @@ def course_view(
         instructor.semester_last_taught = str(
             get_object_or_404(Semester, pk=instructor.semester_last_taught)
         )
-        if instructor.section_times[0] and instructor.section_nums[0]:
-            instructor.times = {
-                num: times[:-1].split(",")
-                for num, times in zip(instructor.section_nums, instructor.section_times)
-                if num and times
-            }
+        if instructor.section_times and instructor.section_nums:
+            if instructor.section_times[0] and instructor.section_nums[0]:
+                instructor.times = {
+                    num: times[:-1].split(",")
+                    for num, times in zip(
+                        instructor.section_nums, instructor.section_times
+                    )
+                    if num and times
+                }
 
     dept = course.subdepartment.department
 
@@ -210,9 +218,11 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     instructor = section_last_taught.instructors.get(pk=instructor_id)
 
     # ratings: reviews with and without text; reviews: ratings with text
-    reviews = Review.objects.filter(instructor=instructor_id, course=course_id).aggregate(
-        num_ratings=Count("id"), num_reviews=Count("id", filter=~Q(text=""))
-    )
+    reviews = Review.objects.filter(
+        instructor=instructor_id,
+        course=course_id,
+        toxicity_rating__lt=settings.TOXICITY_THRESHOLD,
+    ).aggregate(num_ratings=Count("id"), num_reviews=Count("id", filter=~Q(text="")))
     num_reviews, num_ratings = reviews["num_reviews"], reviews["num_ratings"]
 
     dept = course.subdepartment.department
@@ -233,7 +243,9 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
 
     data = Review.objects.filter(course=course_id, instructor=instructor_id).aggregate(
         # rating stats
-        average_rating=(Avg("instructor_rating") + Avg("enjoyability") + Avg("recommendability"))
+        average_rating=(
+            Avg("instructor_rating") + Avg("enjoyability") + Avg("recommendability")
+        )
         / 3,
         average_instructor=Avg("instructor_rating"),
         average_fun=Avg("enjoyability"),
@@ -249,13 +261,17 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     data = {key: safe_round(value) for key, value in data.items()}
 
     try:
-        grades_data = CourseInstructorGrade.objects.get(instructor=instructor, course=course)
+        grades_data = CourseInstructorGrade.objects.get(
+            instructor=instructor, course=course
+        )
     except ObjectDoesNotExist:  # if no data found
         pass
     # NOTE: Don't catch MultipleObjectsReturned because we want to be notified
     else:  # Fill in the data found
         # grades stats
-        data["average_gpa"] = round(grades_data.average, 2) if grades_data.average else None
+        data["average_gpa"] = (
+            round(grades_data.average, 2) if grades_data.average else None
+        )
         # pylint: disable=duplicate-code
         fields = [
             "a_plus",
@@ -281,7 +297,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         should_update = True
     else:
         should_update = (
-            not enrollment_tracking.last_update or enrollment_tracking.last_update < two_hours_ago
+            not enrollment_tracking.last_update
+            or enrollment_tracking.last_update < two_hours_ago
         )
 
     if should_update:
@@ -309,10 +326,18 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
 
         section_enrollment = SectionEnrollment.objects.filter(section=section).first()
         enrollment_data = {
-            "enrollment_taken": section_enrollment.enrollment_taken if section_enrollment else None,
-            "enrollment_limit": section_enrollment.enrollment_limit if section_enrollment else None,
-            "waitlist_taken": section_enrollment.waitlist_taken if section_enrollment else None,
-            "waitlist_limit": section_enrollment.waitlist_limit if section_enrollment else None,
+            "enrollment_taken": (
+                section_enrollment.enrollment_taken if section_enrollment else None
+            ),
+            "enrollment_limit": (
+                section_enrollment.enrollment_limit if section_enrollment else None
+            ),
+            "waitlist_taken": (
+                section_enrollment.waitlist_taken if section_enrollment else None
+            ),
+            "waitlist_limit": (
+                section_enrollment.waitlist_limit if section_enrollment else None
+            ),
         }
 
         section_info["sections"][section.sis_section_number] = {
@@ -351,6 +376,7 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "questions": questions,
             "answers": answers,
             "sort_method": method,
+            "sem_code": section_last_taught.semester.number,
         },
     )
 
@@ -399,7 +425,9 @@ def instructor_view(request, instructor_id):
                 "courseinstructorgrade__average",
                 filter=Q(courseinstructorgrade__instructor=instructor),
             ),
-            avg_difficulty=Avg("review__difficulty", filter=Q(review__instructor=instructor)),
+            avg_difficulty=Avg(
+                "review__difficulty", filter=Q(review__instructor=instructor)
+            ),
             avg_rating=(
                 Avg(
                     "review__instructor_rating",

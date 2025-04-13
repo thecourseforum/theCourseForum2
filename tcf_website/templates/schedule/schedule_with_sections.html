@@ -1,0 +1,96 @@
+{% load custom_tags %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'schedule/schedule_with_sections.css' %}" />
+<div id="schedule_sections_container" class="container">
+    <div id="schedule_wrapper">
+        {% include "schedule/schedule.html" with schedule=schedule mode="edit" gpa=schedule_gpa courses=schedule_courses rating=schedule_ratings difficulty=schedule_difficulty credits=schedule_credits %}
+    </div>
+    <form id="select_section_form" action="{% url 'schedule_add_course' %}" method="POST" data-course-id="{{ course.id }}">     
+                
+        {% csrf_token %}
+        <input type="hidden" id="schedule_id_input" name="schedule_id" value="{{schedule.id}}">
+        {% for insId, insInfo in instructors_data.items %}
+        <div class="modal_instructor_card" id="modal_instructor_card{{ insId }}">
+            <input type="hidden" value="{{ insId }}">
+            <div class="instructor_name_label">
+                {{ insInfo.name }}
+                <a class="collapse_section" data-toggle="collapse" href="#Sections-{{insId}}" role="button" aria-expanded="true" aria-controls="Sections-{{insId}}">
+                    <i class="fa fa-chevron-up" aria-hidden="true" ></i>
+                </a>
+            </div>
+            <ul id="Sections-{{insId}}" class="Sections">
+                {% for section in insInfo.sections %}
+                <li class="section">
+                    <label>
+                        <input type="radio" name="selected_course" value='{ "instructor": "{{ insId }}", "section": "{{ section.0 }}", 
+                        "section_time":"{{ section.2 }}", "rating": "{{insInfo.rating}}", "difficulty": "{{insInfo.difficulty}}", "gpa": "{{insInfo.gpa}}",
+                        "instructor_name": "{{insInfo.name}}", "section_type": "{{section.3}}", "credits": "{{section.4}}" }'>
+                        {{section.3}}
+                        {{ section.2 }}
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+    </form>
+</div>
+
+{% endblock %}
+<script>
+    // reset the sections
+    $(document).ready(function () {
+        $('.Sections').collapse();
+    });
+
+    // adding the java script to allow collapse functionalitity
+    // TODO: clear form when we hide a card (and change submit button) and 
+    //      keep state up to date when we double click the collapse icon
+    document.querySelectorAll(".collapse_section").forEach(section => {
+        section.addEventListener("click", event => {
+            const icon = section.querySelector("i"); 
+            if (icon) {
+                if (icon.classList.contains('fa-chevron-up')) {
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                    //document.getElementById('select_section_form').reset();
+                } else {
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                }
+            }
+        })
+
+    });
+
+    function selectionChange() {
+        // handle a selection change in the form
+        const thisForm = document.getElementById('select_section_form');
+        const scheduleWrapper = document.getElementById('schedule_wrapper');
+        var selectedCourse = thisForm.querySelector('input[type="radio"]:checked');
+        let courseJSON = JSON.parse(selectedCourse.value);
+
+        // retrieve a recently added course through the id of the list element in 
+        //  the Schedule template, if there is one then remove it
+        let recentCourse = document.getElementById('selectedSectionTentative');
+        if (recentCourse) {
+            recentCourse.remove();
+        }
+        
+        // round the gpa field
+        courseJSON.gpa = parseFloat(parseFloat(courseJSON.gpa).toFixed(2));
+
+        // These functions are in the schedule template
+        addCourse(courseJSON);
+        updateStats();
+
+    }
+    
+    modal.addEventListener('modalLoaded', function(event) {
+        // this event is sent from the static file that handles loading the modals
+        const thisForm = document.getElementById('select_section_form');
+        thisForm.addEventListener('change', selectionChange);
+    })
+
+</script>

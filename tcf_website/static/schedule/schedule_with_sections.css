@@ -1,0 +1,44 @@
+#schedule_sections_container {
+  display: flex;
+  overflow-x: auto;
+  align-items: flex-start;
+  gap: 10px;
+  max-height: 70vh;
+}
+
+#schedule_sections_container > div {
+  flex: 1.4;
+}
+
+#schedule_sections_container > form {
+  flex: 0.6;
+  overflow-y: auto;
+  padding-left: 10px;
+  border-left: 3px solid rgba(10, 10, 10, 0.1);
+}
+
+.modal-dialog.modal-lg {
+  max-width: 75vw;
+}
+
+.modal_instructor_card {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 3px groove rgba(10, 10, 10, 0.5);
+}
+.instructor_name_label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 10px;
+}
+.instructor_name_label > a {
+  display: flex;
+  margin-right: 10px;
+  margin-left: auto;
+}
+
+.section {
+  margin-left: 12px;
+}

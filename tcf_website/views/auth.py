@@ -111,6 +111,8 @@ def email_verification(request):
 def load_microsoft_verification(request):
     """Loads Microsoft verification document in order to be an authorized
     provider for Microsoft authentication"""
-    with open("tcf_website/microsoft-identity-association.json", encoding="UTF-8") as data_file:
+    with open(
+        "tcf_website/microsoft-identity-association.json", encoding="UTF-8"
+    ) as data_file:
         json_content = json.load(data_file)
     return JsonResponse(json_content)

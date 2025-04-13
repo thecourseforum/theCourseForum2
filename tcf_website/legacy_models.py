@@ -139,9 +139,13 @@ class Users(models.Model):
     cellphone = models.CharField(max_length=255, blank=True, null=True)
     old_password = models.CharField(max_length=255, blank=True, null=True)
     # student_id = models.IntegerField(blank=True, null=True)
-    student = models.ForeignKey("Students", db_column="student_id", on_delete=models.CASCADE)
+    student = models.ForeignKey(
+        "Students", db_column="student_id", on_delete=models.CASCADE
+    )
     # professor_id = models.IntegerField(blank=True, null=True)
-    professor = models.ForeignKey("Professors", db_column="professor_id", on_delete=models.CASCADE)
+    professor = models.ForeignKey(
+        "Professors", db_column="professor_id", on_delete=models.CASCADE
+    )
     subscribed_to_email = models.IntegerField(blank=True, null=True)
     # created_at = models.DateTimeField()
     # updated_at = models.DateTimeField()
@@ -172,7 +176,9 @@ class Users(models.Model):
 class Students(models.Model):
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
-    grad_year = models.DecimalField(max_digits=10, decimal_places=5, blank=True, null=True)
+    grad_year = models.DecimalField(
+        max_digits=10, decimal_places=5, blank=True, null=True
+    )
     # user_id = models.IntegerField(blank=True, null=True)
     user = models.ForeignKey(Users, db_column="user_id", on_delete=models.CASCADE)
     # created_at = models.DateTimeField()
@@ -188,7 +194,9 @@ class Courses(models.Model):
     description = models.TextField(blank=True, null=True)
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
-    course_number = models.DecimalField(max_digits=10, decimal_places=5, blank=True, null=True)
+    course_number = models.DecimalField(
+        max_digits=10, decimal_places=5, blank=True, null=True
+    )
     # subdepartment_id = models.IntegerField(blank=True, null=True)
     subdepartment = models.ForeignKey(
         Subdepartments, db_column="subdepartment_id", on_delete=models.CASCADE
@@ -224,7 +232,9 @@ class Sections(models.Model):
     # course_id = models.IntegerField(blank=True, null=True)
     course = models.ForeignKey(Courses, db_column="course_id", on_delete=models.CASCADE)
     # semester_id = models.IntegerField(blank=True, null=True)
-    semester = models.ForeignKey(Semesters, db_column="semester_id", on_delete=models.CASCADE)
+    semester = models.ForeignKey(
+        Semesters, db_column="semester_id", on_delete=models.CASCADE
+    )
 
     created_at = models.IntegerField(db_column="created_at", blank=True, null=True)
     updated_at = models.IntegerField(db_column="updated_at", blank=True, null=True)
@@ -291,7 +301,9 @@ class DepartmentsSubdepartments(models.Model):
     # department_id = models.IntegerField(blank=True, null=True)
     # subdepartment_id = models.IntegerField(blank=True, null=True)
 
-    department = models.ForeignKey(Departments, db_column="department_id", on_delete=models.CASCADE)
+    department = models.ForeignKey(
+        Departments, db_column="department_id", on_delete=models.CASCADE
+    )
     subdepartment = models.ForeignKey(
         Subdepartments, db_column="subdepartment_id", on_delete=models.CASCADE
     )
@@ -370,7 +382,9 @@ class Professors(models.Model):
     preferred_name = models.CharField(max_length=255, blank=True, null=True)
     email_alias = models.CharField(max_length=255, blank=True, null=True)
     # department_id = models.IntegerField(blank=True, null=True)
-    department = models.ForeignKey(Departments, db_column="department_id", on_delete=models.CASCADE)
+    department = models.ForeignKey(
+        Departments, db_column="department_id", on_delete=models.CASCADE
+    )
     # user_id = models.IntegerField(blank=True, null=True)
     user = models.ForeignKey(Users, db_column="user_id", on_delete=models.CASCADE)
     # created_at = models.DateTimeField()
@@ -412,28 +426,40 @@ class Reviews(models.Model):
     # updated_at = models.DateTimeField(null=True)
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
-    professor_rating = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    professor_rating = models.DecimalField(
+        max_digits=11, decimal_places=2, blank=True, null=True
+    )
     enjoyability = models.IntegerField(blank=True, null=True)
     difficulty = models.IntegerField(blank=True, null=True)
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
-    amount_reading = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    amount_reading = models.DecimalField(
+        max_digits=11, decimal_places=2, blank=True, null=True
+    )
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
-    amount_writing = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    amount_writing = models.DecimalField(
+        max_digits=11, decimal_places=2, blank=True, null=True
+    )
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
-    amount_group = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    amount_group = models.DecimalField(
+        max_digits=11, decimal_places=2, blank=True, null=True
+    )
     # max_digits and decimal_places have been guessed, as this database
     # handles decimal fields as float
-    amount_homework = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    amount_homework = models.DecimalField(
+        max_digits=11, decimal_places=2, blank=True, null=True
+    )
     only_tests = models.IntegerField(blank=True, null=True)
     recommend = models.IntegerField(blank=True, null=True)
     ta_name = models.CharField(max_length=255, blank=True, null=True)
     # course_id = models.IntegerField(blank=True, null=True)
     course = models.ForeignKey(Courses, db_column="course_id", on_delete=models.CASCADE)
     # professor_id = models.IntegerField(blank=True, null=True)
-    professor = models.ForeignKey(Professors, db_column="professor_id", on_delete=models.CASCADE)
+    professor = models.ForeignKey(
+        Professors, db_column="professor_id", on_delete=models.CASCADE
+    )
     deleted = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
@@ -479,8 +505,12 @@ class SectionProfessors(models.Model):
     created_at = models.IntegerField(db_column="created_at", blank=True, null=True)
     updated_at = models.IntegerField(db_column="updated_at", blank=True, null=True)
 
-    section = models.ForeignKey(Sections, db_column="section_id", on_delete=models.CASCADE)
-    professor = models.ForeignKey(Professors, db_column="professor_id", on_delete=models.CASCADE)
+    section = models.ForeignKey(
+        Sections, db_column="section_id", on_delete=models.CASCADE
+    )
+    professor = models.ForeignKey(
+        Professors, db_column="professor_id", on_delete=models.CASCADE
+    )
 
     class Meta:
         managed = False
@@ -544,10 +574,14 @@ class TextbookTransactions(models.Model):
 
 class Votes(models.Model):
     vote = models.IntegerField()
-    review = models.ForeignKey(Reviews, db_column="voteable_id", on_delete=models.CASCADE)
+    review = models.ForeignKey(
+        Reviews, db_column="voteable_id", on_delete=models.CASCADE
+    )
     voteable_type = models.CharField(max_length=255)
     # voter_id = models.IntegerField(blank=True, null=True)
-    user = models.ForeignKey(Users, db_column="voter_id", on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(
+        Users, db_column="voter_id", on_delete=models.CASCADE, null=True
+    )
     voter_type = models.CharField(max_length=255, blank=True, null=True)
     # created_at = models.DateTimeField(blank=True, null=True)
     # updated_at = models.DateTimeField(blank=True, null=True)

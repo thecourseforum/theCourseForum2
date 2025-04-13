@@ -219,7 +219,6 @@ body.dark-mode .fa {
   filter: invert(1);
 }
 
-
 .fa-thumbs-up {
   width: 1em;
   height: 1em;
@@ -328,6 +327,13 @@ body.dark-mode .fa {
 
 .fa-heart {
   background-image: url("../icons/img/fa-heart.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.fa-copy {
+  background-image: url("../icons/img/fa-copy.svg");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;

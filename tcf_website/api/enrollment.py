@@ -2,14 +2,18 @@
 Module for fetching and updating section enrollment data asynchronously.
 """
 
+# pylint: disable=unnecessary-lambda
 import asyncio
 import time
+
 import requests
 from asgiref.sync import sync_to_async
-from django.utils import timezone
 from django.http import HttpResponseNotFound
-from tcf_website.models import Section, SectionEnrollment, Semester, Course
-from tcf_website.utils.enrollment import build_sis_api_url, format_enrollment_update_message
+from django.utils import timezone
+
+from tcf_website.models import Course, Section, SectionEnrollment, Semester
+from tcf_website.utils.enrollment import (build_sis_api_url,
+                                          format_enrollment_update_message)
 
 TIMEOUT = 10
 MAX_WORKERS = 5
@@ -49,13 +53,15 @@ async def update_enrollment_data(course_id):
         return HttpResponseNotFound("Course not found.")
 
     course = await sync_to_async(Course.objects.get)(id=course_id)
-    latest_semester = await sync_to_async(lambda: Semester.objects.order_by("-year").first())()
+    latest_semester = await sync_to_async(lambda: Semester.latest())()
 
     sections_queryset = Section.objects.filter(course=course, semester=latest_semester)
     sections = await sync_to_async(list)(sections_queryset)
 
     if not sections:
-        print(f"No sections found for course {course.code()} in semester {latest_semester}.")
+        print(
+            f"No sections found for course {course.code()} in semester {latest_semester}."
+        )
         return
 
     print(f"Starting async enrollment update for {len(sections)} sections...")

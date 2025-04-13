@@ -2,30 +2,15 @@
 """DRF Viewsets"""
 from django.db.models import Avg, Sum
 from django.http import JsonResponse
-
 from rest_framework import viewsets
 
-from ..models import (
-    Course,
-    Department,
-    Instructor,
-    School,
-    Section,
-    SectionEnrollment,
-    Semester,
-    Subdepartment,
-)
+from ..models import (Course, Department, Instructor, School, Section,
+                      SectionEnrollment, Semester, Subdepartment)
 from .filters import InstructorFilter
-from .serializers import (
-    CourseAllStatsSerializer,
-    CourseSerializer,
-    CourseSimpleStatsSerializer,
-    DepartmentSerializer,
-    InstructorSerializer,
-    SchoolSerializer,
-    SemesterSerializer,
-    SubdepartmentSerializer,
-)
+from .serializers import (CourseAllStatsSerializer, CourseSerializer,
+                          CourseSimpleStatsSerializer, DepartmentSerializer,
+                          InstructorSerializer, SchoolSerializer,
+                          SemesterSerializer, SubdepartmentSerializer)
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
@@ -60,7 +45,9 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
         if "recent" in self.request.query_params:
             latest_semester = Semester.latest()
-            queryset = queryset.filter(semester_last_taught__year__gte=latest_semester.year - 5)
+            queryset = queryset.filter(
+                semester_last_taught__year__gte=latest_semester.year - 5
+            )
 
         if "allstats" in self.request.query_params:
             queryset = queryset.prefetch_related("review_set").annotate(
@@ -159,7 +146,9 @@ class SectionEnrollmentViewSet(viewsets.ViewSet):
         enrollment_data = {}
 
         for section in sections:
-            section_enrollment = SectionEnrollment.objects.filter(section=section).first()
+            section_enrollment = SectionEnrollment.objects.filter(
+                section=section
+            ).first()
             if section_enrollment:
                 enrollment_data[section.sis_section_number] = {
                     "enrollment_taken": section_enrollment.enrollment_taken,

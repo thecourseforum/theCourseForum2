@@ -72,6 +72,28 @@ urlpatterns = [
         name="delete_profile",
     ),
     path("search/", views.search, name="search"),
+    # SCHEDULE URLs
+    path("schedule/", views.view_schedules, name="schedule"),
+    path("schedule/new/", views.new_schedule, name="new_schedule"),
+    path("schedule/delete/", views.delete_schedule, name="delete_schedule"),
+    path("schedule/edit/", views.edit_schedule, name="edit_schedule"),
+    path(
+        "schedule/duplicate/<int:schedule_id>/",
+        views.duplicate_schedule,
+        name="duplicate_schedule",
+    ),
+    path("schedule/modal/editor", views.modal_load_editor, name="modal_load_editor"),
+    path(
+        "schedule/modal/sections/",
+        views.modal_load_sections,
+        name="modal_load_sections",
+    ),
+    path(
+        "schedule/modal/<str:mode>/",
+        views.view_select_schedules_modal,
+        name="modal_load_schedules",
+    ),
+    path("schedule/add_course/", views.schedule_add_course, name="schedule_add_course"),
     # QA URLs
     path("answers/check_duplicate/", views.qa.check_duplicate),
     path("qa/new_question/", views.new_question, name="new_question"),
@@ -128,12 +150,16 @@ urlpatterns = [
     ),
     path(
         "accounts/password_reset_done/",
-        auth_views.PasswordResetDoneView.as_view(template_name="login/password_reset_done.html"),
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="login/password_reset_done.html"
+        ),
         name="password_reset_done",
     ),
     path(
         "accounts/password_reset_<uidb64>_<token>/",
-        auth_views.PasswordResetConfirmView.as_view(template_name="login/password_reset_form.html"),
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="login/password_reset_form.html"
+        ),
         name="password_reset_confirm",
     ),
     path(

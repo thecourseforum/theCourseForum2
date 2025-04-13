@@ -1,9 +1,12 @@
 """Tests for enrollment data updates."""
 
 from unittest.mock import patch
+
 from django.test import TestCase
-from tcf_website.models import SectionEnrollment
+
 from tcf_website.api.enrollment import update_enrollment_data
+from tcf_website.models import SectionEnrollment
+
 from .test_utils import setup
 
 

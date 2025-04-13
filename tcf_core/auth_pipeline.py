@@ -141,7 +141,9 @@ def create_user(strategy, details, backend, user=None, *args, **kwargs):
     return {"is_new": True, "user": strategy.create_user(**fields)}
 
 
-def check_user_password(strategy, backend, user, is_new=False, password="", *args, **kwargs):
+def check_user_password(
+    strategy, backend, user, is_new=False, password="", *args, **kwargs
+):
     """
     Saves password to user object if a new user (registering).
     Otherwise, validates given password is correct.
@@ -162,7 +164,9 @@ def validate_email(strategy, backend, code, partial_token):
     """
     if not code.verified:
         url = (
-            strategy.build_absolute_uri(reverse("social:complete", args=(backend.name,)))
+            strategy.build_absolute_uri(
+                reverse("social:complete", args=(backend.name,))
+            )
             + "?verification_code="
             + code.code
             + "&partial_token="
