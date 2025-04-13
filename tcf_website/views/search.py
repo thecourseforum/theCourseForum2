@@ -46,6 +46,7 @@ def search(request):
         "from_time": request.GET.get("from_time"),
         "to_time": request.GET.get("to_time"),
         "open_sections": request.GET.get("open_sections") == "on",
+        "min_gpa": request.GET.get("min_gpa")
     }
 
     # Save filters to session
@@ -236,4 +237,8 @@ def apply_filters(results, filters):
         time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
 
+    min_gpa = filters.get("min_gpa")
+    if filters.get("min_gpa"): 
+        gpa_filtered = Course.filter_by_gpa(min_gpa=min_gpa)
+        results = results.filter(id__in=gpa_filtered.values_list("id", flat=True))
     return results

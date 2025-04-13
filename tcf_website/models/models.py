@@ -704,6 +704,20 @@ class Course(models.Model):
 
         query = query.filter(section_conditions)
         return query.distinct()
+    
+    @classmethod
+    def filter_by_gpa(cls, min_gpa=None):
+        """Filter courses by minimum GPA."""
+        query = cls.objects.all()
+
+        # Apply GPA filtering if min_gpa is provided
+        if min_gpa is not None:
+            # Calculate the average GPA for each course using the related CourseGrade model
+            query = query.annotate(
+                avg_gpa=Avg("coursegrade__average")
+            ).filter(avg_gpa__gte=min_gpa)
+            
+        return query.distinct()
 
     @classmethod
     def filter_by_open_sections(cls):
