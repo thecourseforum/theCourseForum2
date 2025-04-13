@@ -202,11 +202,11 @@
                 </div>
             </div>
 
-            <div class="gpa-trend-section container p-3 rounded shadow-sm mb-4" style="background-color: #ebebeb;">                
+            <div class="gpa-trend-section container p-3 rounded shadow-sm mb-4" style="background-color: #ebebeb;">
                 <div id="gpa-analysis-content" class="row">
                     {% if gpa_history|length < 3 %}
                     <div class="col-12 text-center">
-                        <p class="text-muted">Not enough information</p>
+                        <p class="text-muted" style="font-size: 16px; line-height: 300px;">Not enough information</p>
                     </div>
                     {% else %}
                     <!-- Left Section (Sentiment Analysis) -->
@@ -216,12 +216,12 @@
                                 <p class="sentiment-text" style="text-align: center; font-size: 16px; margin-top: 4em; margin-bottom: 5px; color: black;">
                                     How Students Feel About {{ course.code }} - {{ instructor.first_name }} {{ instructor.last_name }}
                                 </p>
-                                <div style="position: relative; height: 150px; width: 90%; margin: 0 auto;"> 
+                                <div style="position: relative; height: 150px; width: 90%; margin: 0 auto;">
                                     <canvas id="sentiment-chart" style="max-height: 200px;"></canvas>
                                     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center;" 
                                          id="sentiment-chart-label">
-                                        <p class="sentiment-text" style="margin: 0; padding: 0;">
-                                            No reviews found <i class="far fa-frown-open fa-fw"></i>
+                                        <p class="sentiment-text" style="margin: 0; padding: 0; font-size: 16px;">
+                                            Not enough information
                                         </p>
                                     </div>
                                 </div>
@@ -232,10 +232,10 @@
                     <!-- Right Section (GPA Graph) -->
                     <div class="col-md-6">
                         <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body p-2" style="height: 300px;">
+                            <div class="card-body p-2" style="height: 300px; position: relative;">
                                 <canvas id="gpaChart" class="w-100" style="max-height: 300px;"></canvas>
-                                <div id="gpa-no-data" class="d-none absolute-center">
-                                    <p class="gpa-text text-muted">No history found <i class="fa fa-frown-open fa-fw"></i></p>
+                                <div id="gpa-no-data" class="d-none" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center;">
+                                    <p class="text-muted" style="margin: 0; font-size: 16px;">Not enough information</p>
                                 </div>
                             </div>
                         </div>
@@ -491,27 +491,13 @@
     <script type="text/javascript" src="{% static 'qa/new_answer.js' %}"></script>
 
     <script>
-        // Toggle function for GPA analysis content
-        function toggleGpaAnalysis() {
-            const content = document.getElementById('gpa-analysis-content');
-            const icon = document.querySelector('.toggle-icon i');
-            content.classList.toggle('d-none');
-            if (content.classList.contains('d-none')) {
-                icon.classList.remove('fa-chevron-up');
-                icon.classList.add('fa-chevron-down');
-            } else {
-                icon.classList.remove('fa-chevron-down');
-                icon.classList.add('fa-chevron-up');
-            }
-        }
-
         // GPA Chart Script
         const gpaHistory = JSON.parse('{{ gpa_history|escapejs }}');
         const gpaChartCanvas = document.getElementById('gpaChart');
         const gpaNoDataDiv = document.getElementById('gpa-no-data');
         const gpaCtx = gpaChartCanvas ? gpaChartCanvas.getContext('2d') : null;
 
-        if (gpaHistory.length <= 1) {
+        if (gpaHistory.length <= 2) { // Changed from <= 1 to <= 2 to match < 3 condition
             gpaChartCanvas.classList.add('d-none');
             gpaNoDataDiv.classList.remove('d-none');
         } else {
@@ -520,8 +506,8 @@
 
             // Calculate a reasonable Y-axis minimum based on the data
             const minGpa = Math.min(...gpaData);
-            const suggestedMin = Math.floor(minGpa * 2) / 2; // Round down to nearest 0.5
-            const yAxisMin = Math.max(2.0, suggestedMin); // Ensure it doesn't go below 2.0
+            const suggestedMin = Math.floor(minGpa * 2) / 2;
+            const yAxisMin = Math.max(2.0, suggestedMin);
 
             new Chart(gpaCtx, {
                 type: 'line',
@@ -547,7 +533,7 @@
                     layout: { padding: 10 },
                     scales: {
                         x: {
-                            grid: { display: false, drawBorder: false }, // Remove X-axis grid lines
+                            grid: { display: false, drawBorder: false },
                             ticks: {
                                 color: '#6c757d',
                                 maxRotation: 45,
@@ -557,8 +543,8 @@
                             offset: true
                         },
                         y: {
-                            grid: { display: false, drawBorder: false }, // Remove Y-axis grid lines
-                            min: yAxisMin, // Start Y-axis at a reasonable value
+                            grid: { display: false, drawBorder: false },
+                            min: yAxisMin,
                             max: 4.0,
                             ticks: { stepSize: 0.5, color: '#6c757d' }
                         }
@@ -596,63 +582,63 @@
         const chartCanvas = document.getElementById("sentiment-chart");
         const noReviewsMessage = document.getElementById("sentiment-chart-label");
 
-        if (totalReviews === 0) {
+        if (totalReviews <= 1) { // Changed condition to <= 1
             chartCanvas.style.display = "none";
             noReviewsMessage.style.display = "block";
         } else {
             chartCanvas.style.display = "block";
             noReviewsMessage.style.display = "none";
-        }
 
-        const barColors = {
-            normal: ['#BE4B20', '#DD734C', '#B4A6B6', '#5D83D1', '#182D66'],
-            hover: ['#9E3B10', '#BD634C', '#948696', '#4D73C1', '#081D56']
-        };
+            const barColors = {
+                normal: ['#BE4B20', '#DD734C', '#B4A6B6', '#5D83D1', '#182D66'],
+                hover: ['#9E3B10', '#BD634C', '#948696', '#4D73C1', '#081D56']
+            };
 
-        const datasets = sentimentLabels.map((label, index) => ({
-            label: label,
-            data: [dataValues[index]],
-            backgroundColor: barColors.normal[index % barColors.normal.length],
-            hoverBackgroundColor: barColors.hover[index % barColors.hover.length],
-            borderWidth: 0
-        }));
+            const datasets = sentimentLabels.map((label, index) => ({
+                label: label,
+                data: [dataValues[index]],
+                backgroundColor: barColors.normal[index % barColors.normal.length],
+                hoverBackgroundColor: barColors.hover[index % barColors.hover.length],
+                borderWidth: 0
+            }));
 
-        const sentimentCtx = chartCanvas.getContext('2d');
-        new Chart(sentimentCtx, {
-            type: 'bar',
-            data: {
-                labels: ["Review Positivity"],
-                datasets: datasets
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: { padding: 10 },
-                barPercentage: 0.5,
-                categoryPercentage: 0.8,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        mode: 'dataset',
-                        intersect: true,
-                        callbacks: {
-                            label: function(tooltipItem) {
-                                let value = tooltipItem.raw;
-                                let total = tooltipItem.chart.data.datasets.reduce((sum, ds) => sum + ds.data[tooltipItem.dataIndex], 0);
-                                let percentage = Math.round((value / total) * 100);
-                                return `${tooltipItem.dataset.label}: ${percentage}% of reviews`;
+            const sentimentCtx = chartCanvas.getContext('2d');
+            new Chart(sentimentCtx, {
+                type: 'bar',
+                data: {
+                    labels: ["Review Positivity"],
+                    datasets: datasets
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: 10 },
+                    barPercentage: 0.5,
+                    categoryPercentage: 0.8,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'dataset',
+                            intersect: true,
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    let value = tooltipItem.raw;
+                                    let total = tooltipItem.chart.data.datasets.reduce((sum, ds) => sum + ds.data[tooltipItem.dataIndex], 0);
+                                    let percentage = Math.round((value / total) * 100);
+                                    return `${tooltipItem.dataset.label}: ${percentage}% of reviews`;
+                                }
                             }
                         }
+                    },
+                    hover: { mode: 'point', intersect: true },
+                    scales: {
+                        x: { display: false, stacked: true, min: 0, max: totalReviews, grid: { display: false } },
+                        y: { display: false, stacked: true, grid: { display: false } }
                     }
-                },
-                hover: { mode: 'point', intersect: true },
-                scales: {
-                    x: { display: false, stacked: true, min: 0, max: totalReviews, grid: { display: false } },
-                    y: { display: false, stacked: true, grid: { display: false } }
                 }
-            }
-        });
+            });
+        }
     </script>
 
 {% endblock %}
