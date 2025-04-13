@@ -43,6 +43,7 @@
   </div>
   <div class="pagination">
     {% if paginated_courses.has_previous %}
+      <a href="?page={{ 1 }}{% if query_params %}&{{ query_params }}{% endif %}">&lt;&lt;</a>
       <a href="?page={{ paginated_courses.previous_page_number }}{% if query_params %}&{{ query_params }}{% endif %}">&lt;</a>
     {% endif %}
     
@@ -84,6 +85,7 @@
     
     {% if paginated_courses.has_next %}
       <a href="?page={{ paginated_courses.next_page_number }}{% if query_params %}&{{ query_params }}{% endif %}">&gt;</a>
+      <a href="?page={{ paginated_courses.paginator.num_pages }}{% if query_params %}&{{ query_params }}{% endif %}">&gt;&gt;</a>
     {% endif %}
   </div>  
 </div>
