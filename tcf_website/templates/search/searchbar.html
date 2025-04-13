@@ -273,6 +273,7 @@
       let timeFromChanged = false;
       let timeToChanged = false;
       let openSectionsChanged = false;
+      let gpaChanged = false;
 
       if (timeFrom.value) {
           timeFromChanged = timeFrom.value !== '';
@@ -289,7 +290,7 @@
           gpaChanged = gpa_input.value !== '';
       }
 
-      if (activeFilters.length > 0 || activeDayFilters.length > 0 || timeFromChanged || timeToChanged || openSectionsChanged) {
+      if (activeFilters.length > 0 || activeDayFilters.length > 0 || timeFromChanged || timeToChanged || openSectionsChanged || gpaChanged) {
           filterButton.classList.add('filter-active');
           filterButton.textContent = 'Filters Active';
       } else {
