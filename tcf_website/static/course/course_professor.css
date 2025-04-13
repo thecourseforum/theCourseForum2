@@ -181,6 +181,7 @@ body.dark-mode .students-text {
 .info-bar .progress {
   margin: 0;
   padding: 0;
+  background-color: var(--input-background-color);
 }
 .info-bar .progress-bar {
   background-color: var(--secondary-color);
@@ -448,7 +449,7 @@ body.dark-mode .students-text {
     height: 34px;
     border-radius: 6px;
     overflow: hidden;
-    background-color: #f8f9fa;
+    background-color: var(--input-background-color);
     position: relative;
     padding: 2px;
 }
@@ -470,7 +471,7 @@ body.dark-mode .students-text {
     margin-bottom: 4px;
     align-items: center;
     padding: 12px 16px;
-    background-color: white;
+    background-color: var(--input-background-color);
     border-radius: 6px;
     transition: all 0.2s ease;
     border: 1px solid transparent;
@@ -502,7 +503,7 @@ body.dark-mode .students-text {
 
 .section-row > div:last-child {
     text-align: right;
-    color: #666;
+    color: var(--basic-text-color);
 }
 
 .hidden-section {
@@ -541,11 +542,12 @@ body.dark-mode .students-text {
     align-items: center;
     justify-content: center;
     user-select: none;
-    color: #666;
+    color: var(--basic-text-color);
     position: relative;
     z-index: 1;
     border-radius: 4px;
     min-width: 90px;
+    /* background-color: var(---input-background-color); */
 }
 
 .toggle-option:hover:not(.active) {
