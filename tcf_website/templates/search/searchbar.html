@@ -98,29 +98,32 @@
               <h6 class="filter-header">
                 Availability
               </h6>
-              <div class="form-check d-inline-flex align-items-center" style="background: white; border: 1px solid #cbd5e0; border-radius: 6px; padding: 0.55rem 0.67rem;">
-                <input 
-                  class="form-check-input me-2" 
-                  type="checkbox" 
-                  id="open-sections" 
-                  name="open_sections" 
-                  {% if request.session.search_filters.open_sections %}checked{% endif %}
-                >
-                <label class="form-check-label" for="open-sections">
-                  Only display courses with open sections
-                </label>
-              </div>
-              <div class="min-gpa-div">
-                <div class="gpa-input-container">
-                  <input type="text" id="gpa-input" class="min-gpa-input" name="min_gpa" 
-                    placeholder="Select a minimum GPA" 
-                    value="{% if min_gpa %}{{ min_gpa }}{% endif %}">
-                  <button type="button" id="gpa-dropdown-toggle" class="gpa-dropdown-button">
-                    <i class="fa fa-plus"></i>
-                  </button>
-                  <div id="gpa-dropdown" class="gpa-dropdown"></div>
+              <div class="filter-grid">
+                <div class="form-check d-inline-flex align-items-center" style="background: white; border: 1px solid #cbd5e0; border-radius: 6px; padding-left: 0;">
+                  <input 
+                    class="form-check-input me-2" 
+                    type="checkbox" 
+                    id="open-sections" 
+                    name="open_sections" 
+                    {% if request.session.search_filters.open_sections %}checked{% endif %}
+                  >
+                  <label class="form-check-label" for="open-sections">
+                    Only display courses with open sections
+                  </label>
                 </div>
-                </select>
+                <!-- Min GPA selection -->
+                <div class="min-gpa-div">
+                  <div class="gpa-input-container">
+                    <input type="text" id="gpa-input" class="min-gpa-input" name="min_gpa" 
+                      placeholder="Select a minimum GPA" 
+                      value="{% if min_gpa %}{{ min_gpa }}{% endif %}">
+                    <button type="button" id="gpa-dropdown-toggle" class="gpa-dropdown-button">
+                      <i class="fa fa-plus"></i>
+                    </button>
+                    <div id="gpa-dropdown" class="gpa-dropdown"></div>
+                  </div>
+                  </select>
+                </div>
               </div>
             </div>
             <!-- List of subjects -->
