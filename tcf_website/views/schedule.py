@@ -7,30 +7,15 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.aggregates.general import ArrayAgg
-from django.db.models import (
-    Avg,
-    Case,
-    CharField,
-    Max,
-    Prefetch,
-    Q,
-    Value,
-    When,
-)
+from django.db.models import (Avg, Case, CharField, Max, Prefetch, Q, Value,
+                              When)
 from django.db.models.functions import Cast, Concat
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 
-from ..models import (
-    Course,
-    Instructor,
-    Schedule,
-    ScheduledCourse,
-    Section,
-    Semester,
-    User,
-)
+from ..models import (Course, Instructor, Schedule, ScheduledCourse, Section,
+                      Semester)
 
 # pylint: disable=line-too-long
 # pylint: disable=no-else-return
@@ -56,7 +41,9 @@ def load_secs_helper(course, latest_semester):
                 + Avg("review__recommendability", filter=Q(review__course=course))
             )
             / 3,
-            semester_last_taught=Max("section__semester", filter=Q(section__course=course)),
+            semester_last_taught=Max(
+                "section__semester", filter=Q(section__course=course)
+            ),
             # ArrayAgg:
             # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
             section_times=ArrayAgg(
@@ -71,7 +58,10 @@ def load_secs_helper(course, latest_semester):
             ),
             section_nums=ArrayAgg(
                 Case(
-                    When(section__semester=latest_semester, then="section__sis_section_number"),
+                    When(
+                        section__semester=latest_semester,
+                        then="section__sis_section_number",
+                    ),
                     output_field=CharField(),
                 ),
                 distinct=True,
@@ -110,7 +100,9 @@ def load_secs_helper(course, latest_semester):
             i.times = {}
             for idx, _ in enumerate(i.section_times):
                 if i.section_times[idx] is not None and i.section_nums[idx] is not None:
-                    i.times[str(i.section_nums[idx])] = i.section_times[idx][:-1].split(",")
+                    i.times[str(i.section_nums[idx])] = i.section_times[idx][:-1].split(
+                        ","
+                    )
         if None in i.section_nums:
             i.section_nums.remove(None)
 
@@ -145,16 +137,24 @@ def schedule_data_helper(request):
     """
     This helper method is for getting schedule data for a request.
     """
-    schedules = Schedule.objects.prefetch_related(
+    schedules = Schedule.objects.filter(user=request.user).prefetch_related(
         Prefetch(
             "scheduledcourse_set",
             queryset=ScheduledCourse.objects.select_related("section", "instructor"),
         )
     )
-    courses_context = {}  # contains the joined table for Schedule and ScheduledCourse models
-    ratings_context = {}  # contains aggregated ratings for schedules, using the model's method
-    difficulty_context = {}  # contains aggregated difficulty of schedules, using the model's method
-    credits_context = {}  # contains the total credits of schedules, calculated in this view
+    courses_context = (
+        {}
+    )  # contains the joined table for Schedule and ScheduledCourse models
+    ratings_context = (
+        {}
+    )  # contains aggregated ratings for schedules, using the model's method
+    difficulty_context = (
+        {}
+    )  # contains aggregated difficulty of schedules, using the model's method
+    credits_context = (
+        {}
+    )  # contains the total credits of schedules, calculated in this view
     gpa_context = {}  # contains the weighted gpa, calculated in the model function
 
     # iterate over the schedules for this request in order to set up the context
@@ -220,9 +220,8 @@ def new_schedule(request):
         form = ScheduleForm(request.POST)
         if form.is_valid():
             schedule = form.save(commit=False)
-            user_id = form.cleaned_data["user_id"]  # get the user's primary key
-            schedule.user = User.objects.get(id=user_id)
-            if user_id == "" or schedule.user is None:
+            schedule.user = request.user
+            if schedule.user is None:
                 messages.error(request, "There was an error")
                 return render(request, "schedule/user_schedules.html", {"form": form})
             schedule.save()
@@ -246,7 +245,9 @@ def delete_schedule(request):
         schedule_count = len(schedule_ids)
 
         # Perform bulk delete
-        deleted_count, _ = Schedule.objects.filter(id__in=schedule_ids).delete()
+        deleted_count, _ = Schedule.objects.filter(
+            id__in=schedule_ids, user=request.user
+        ).delete()
         if deleted_count == 0:
             messages.error(request, "No schedules were deleted.")
         else:
@@ -407,7 +408,9 @@ def schedule_add_course(request):
                 request.POST.get("selected_course", "{}")
             )  # Default to empty dict if not found
         except json.JSONDecodeError:
-            return JsonResponse({"status": "error", "message": "Invalid JSON data"}, status=400)
+            return JsonResponse(
+                {"status": "error", "message": "Invalid JSON data"}, status=400
+            )
 
         form_data = {
             "schedule": request.POST.get("schedule_id"),
@@ -422,9 +425,15 @@ def schedule_add_course(request):
         if form.is_valid():
             scheduled_course = form.save(commit=False)
             # extract id's for all related fields
-            schedule_id = form.cleaned_data["schedule"].id  # get the schedule's primary key
-            instructor_id = form.cleaned_data["instructor"].id  # get the instructor's primary key
-            section_id = form.cleaned_data["section"].id  # get the section's primary key
+            schedule_id = form.cleaned_data[
+                "schedule"
+            ].id  # get the schedule's primary key
+            instructor_id = form.cleaned_data[
+                "instructor"
+            ].id  # get the instructor's primary key
+            section_id = form.cleaned_data[
+                "section"
+            ].id  # get the section's primary key
             course_time = form.cleaned_data["time"]
 
             # update the form object with the related objects returned from the database

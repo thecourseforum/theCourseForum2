@@ -64,10 +64,6 @@ jobs:
           sed -i '/\(coverage\|lint\|types\-tqdm\|mypy\|black\|isort\|gunicorn\|django\-heroku\|django\-stubs\)/d' requirements.txt
           pip install -r requirements.txt
 
-      - name: Migrations
-        run: |
-          python manage.py migrate
-
       - name: Collect static files
         run: python manage.py collectstatic --no-input
 
@@ -110,10 +106,10 @@ jobs:
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-            task-definition: ${{ steps.task-def.outputs.task-definition }}
-            service: ${{ env.ECS_SERVICE }}
-            cluster: ${{ env.ECS_CLUSTER }}
-            wait-for-service-stability: true
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
 
       - name: Force new deployment
         run: |

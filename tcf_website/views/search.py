@@ -41,7 +41,9 @@ def search(request):
         "subdepartments": request.GET.getlist("subdepartment"),
         "instructors": request.GET.getlist("instructor"),
         "weekdays": (
-            request.GET.get("weekdays", "").split("-") if request.GET.get("weekdays") else []
+            request.GET.get("weekdays", "").split("-")
+            if request.GET.get("weekdays")
+            else []
         ),
         "from_time": request.GET.get("from_time"),
         "to_time": request.GET.get("to_time"),
@@ -137,7 +139,9 @@ def fetch_courses(query, filters):
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(
-            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", search_query),
+            mnemonic_similarity=TrigramSimilarity(
+                "combined_mnemonic_number", search_query
+            ),
             title_similarity=TrigramSimilarity("title", search_query),
         )
         # round results to two decimal places
@@ -198,7 +202,9 @@ def filter_courses(filters):
     # Filter for open sections
     if filters.get("open_sections"):
         open_sections_filtered = Course.filter_by_open_sections()
-        results = results.filter(id__in=open_sections_filtered.values_list("id", flat=True))
+        results = results.filter(
+            id__in=open_sections_filtered.values_list("id", flat=True)
+        )
 
     results = results.distinct().order_by("subdepartment__mnemonic", "number")[:15]
 
@@ -224,17 +230,23 @@ def apply_filters(results, filters):
         results = results.filter(disciplines__name__in=filters.get("disciplines"))
 
     if filters.get("subdepartments"):
-        results = results.filter(subdepartment__mnemonic__in=filters.get("subdepartments"))
+        results = results.filter(
+            subdepartment__mnemonic__in=filters.get("subdepartments")
+        )
 
     if filters.get("instructors"):
-        results = results.filter(section__instructors__id__in=filters.get("instructors"))
+        results = results.filter(
+            section__instructors__id__in=filters.get("instructors")
+        )
 
     weekdays = [day for day in filters.get("weekdays", []) if day]
     from_time = filters.get("from_time")
     to_time = filters.get("to_time")
 
     if len(weekdays) != 5 and len(weekdays) != 0 or from_time or to_time:
-        time_filtered = Course.filter_by_time(days=weekdays, start_time=from_time, end_time=to_time)
+        time_filtered = Course.filter_by_time(
+            days=weekdays, start_time=from_time, end_time=to_time
+        )
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
 
     min_gpa = filters.get("min_gpa")

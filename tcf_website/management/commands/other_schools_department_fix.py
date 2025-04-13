@@ -35,7 +35,10 @@ class Command(BaseCommand):
         ]
 
         # Check if this script has already been run
-        if School.objects.get(name="Curry School of Education").department_set.count() > 1:
+        if (
+            School.objects.get(name="Curry School of Education").department_set.count()
+            > 1
+        ):
             print("Already split! Aborting script...")
             return
 
@@ -43,7 +46,9 @@ class Command(BaseCommand):
             print("Splitting all other schools...")
             dash = "-" * 155
             print(dash)
-            print("{:<50s}{:<50s}{:<50s}".format("Subdepartment", "Department", "School"))
+            print(
+                "{:<50s}{:<50s}{:<50s}".format("Subdepartment", "Department", "School")
+            )
             print(dash)
 
         # Go through all schools that are not in the list of excluded
@@ -80,7 +85,9 @@ class Command(BaseCommand):
             print("Moving Computer Science to School of Engineering...")
 
         try:
-            e_school = School.objects.get(name="School of Engineering & Applied Science")
+            e_school = School.objects.get(
+                name="School of Engineering & Applied Science"
+            )
             comp_sci = Department.objects.get(name="Computer Science")
             # Assign school
             comp_sci.school = e_school

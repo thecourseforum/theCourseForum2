@@ -1,9 +1,12 @@
 """Tests for fetch_enrollment management command."""
 
 from unittest.mock import patch
+
 from django.test import TestCase
-from tcf_website.models import SectionEnrollment
+
 from tcf_website.management.commands.fetch_enrollment import fetch_section_data
+from tcf_website.models import SectionEnrollment
+
 from .test_utils import setup
 
 
@@ -22,7 +25,12 @@ class FetchEnrollmentTestCase(TestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {
             "classes": [
-                {"enrollment_total": 15, "class_capacity": 20, "wait_tot": 5, "wait_cap": 10}
+                {
+                    "enrollment_total": 15,
+                    "class_capacity": 20,
+                    "wait_tot": 5,
+                    "wait_cap": 10,
+                }
             ]
         }
 
@@ -49,7 +57,12 @@ class FetchEnrollmentTestCase(TestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {
             "classes": [
-                {"enrollment_total": 15, "class_capacity": 25, "wait_tot": 8, "wait_cap": 12}
+                {
+                    "enrollment_total": 15,
+                    "class_capacity": 25,
+                    "wait_tot": 8,
+                    "wait_cap": 12,
+                }
             ]
         }
 

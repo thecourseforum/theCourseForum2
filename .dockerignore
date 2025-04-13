@@ -1,1 +1,7 @@
 node_modules/
+*.sql
+venv
+__pycache__
+*.pyc
+.DS_Store
+.git
