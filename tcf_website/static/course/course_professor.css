@@ -51,16 +51,10 @@
 }
 
 .chart-container {
-<<<<<<< HEAD
-  width: 90%;
-  height: 90%;
-  position: relative;
-=======
   position: relative;
   margin-top: none;
   height: 80vh;
   width: 80vw;
->>>>>>> db11ac0d77ec71a72c0dc02d6b9964f6119c18ee
 }
 
 .chart-button {
@@ -136,15 +130,6 @@
   flex-direction: column;
 }
 
-<<<<<<< HEAD
-.gpa-text {
-  color: #384676;
-  font-size: 28px;
-  margin: 0;
-}
-
-.sentiment-text {
-=======
 .top-center {
   position: absolute;
   top: 10px;
@@ -156,7 +141,6 @@
 }
 
 .gpa-text {
->>>>>>> db11ac0d77ec71a72c0dc02d6b9964f6119c18ee
   color: #384676;
   font-size: 28px;
   margin: 0;
@@ -205,13 +189,10 @@
 }
 
 @media (max-width: 1100px) {
-<<<<<<< HEAD
   .chart-container {
     max-width: 600px;
   }
 
-=======
->>>>>>> db11ac0d77ec71a72c0dc02d6b9964f6119c18ee
   .grades-ratings-container {
     flex-direction: column;
     height: 650px;
@@ -233,13 +214,10 @@
   .gpa-text {
     font-size: 24px;
   }
-<<<<<<< HEAD
 
   .sentiment-text {
     font-size: 24px;
   }
-=======
->>>>>>> db11ac0d77ec71a72c0dc02d6b9964f6119c18ee
   .students-text {
     font-size: 14;
   }
@@ -289,12 +267,9 @@
     height: 50%;
   }
 
-<<<<<<< HEAD
   .chart-container {
     width: 175px;
   }
-=======
->>>>>>> db11ac0d77ec71a72c0dc02d6b9964f6119c18ee
   .ratings-container {
     height: 50%;
   }
@@ -321,14 +296,11 @@
   .gpa-text {
     font-size: 18px;
   }
-<<<<<<< HEAD
 
   .sentiment-text {
     font-size: 18px;
   }
   
-=======
->>>>>>> db11ac0d77ec71a72c0dc02d6b9964f6119c18ee
   .students-text {
     font-size: 12px;
   }
@@ -372,8 +344,4 @@
 #sectionInfo.show {
   /* margin-top set by JS */
   transition: margin-top cubic-bezier(0, 1, 1, 1) 0.3s;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> db11ac0d77ec71a72c0dc02d6b9964f6119c18ee
