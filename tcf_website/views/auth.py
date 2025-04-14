@@ -31,12 +31,10 @@ def login(request):
     # Redirect to Cognito hosted UI
     cognito_login_url = (
         f"{cognito_base_url}/login?"
-        + "client_id={}&".format(settings.COGNITO_APP_CLIENT_ID)
+        + f"client_id={settings.COGNITO_APP_CLIENT_ID}&"
         + "response_type=code&"
         + "scope=email+openid+profile&"
-        + "redirect_uri={}".format(
-            request.build_absolute_uri(settings.COGNITO_REDIRECT_URI).rstrip("/")
-        )
+        + f"redirect_uri={request.build_absolute_uri(settings.COGNITO_REDIRECT_URI).rstrip('/')}"
     )
 
     return HttpResponseRedirect(cognito_login_url)

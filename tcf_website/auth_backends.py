@@ -7,6 +7,7 @@ from urllib.request import urlopen
 
 import jose.jwk
 import jose.jwt
+from jose.exceptions import JWKError
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
@@ -123,6 +124,6 @@ class CognitoBackend:
                 return None
 
             return claims
-        except (jose.JWTError, jose.JWKError, KeyError, ValueError) as e:
+        except (jose.JWTError, JWKError, KeyError, ValueError) as e:
             logger.exception("Error validating token: %s", str(e))
             return None
