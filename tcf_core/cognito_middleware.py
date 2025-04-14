@@ -1,13 +1,11 @@
 """Middleware for handling Cognito authentication"""
 
 import logging
-from django.conf import settings
-from django.contrib.auth import authenticate, login
 
 logger = logging.getLogger(__name__)
 
 
-class CognitoAuthMiddleware:
+class CognitoAuthMiddleware:  # pylint: disable=too-few-public-methods
     """
     Middleware that processes Cognito tokens in HTTP requests
 

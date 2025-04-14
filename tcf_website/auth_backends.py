@@ -65,8 +65,8 @@ class CognitoBackend:
                     user.save()
 
             return user
-        except Exception as e:
-            logger.exception(f"Error authenticating with Cognito: {str(e)}")
+        except (ValueError, jose.JWTError) as e:
+            logger.exception("Error authenticating with Cognito: %s", str(e))
             return None
 
     def get_user(self, user_id):
@@ -83,10 +83,14 @@ class CognitoBackend:
         Validate the JWT token from Cognito
         """
         # Get the JWKs from Cognito
-        jwks_url = f"https://cognito-idp.{settings.COGNITO_REGION_NAME}.amazonaws.com/{settings.COGNITO_USER_POOL_ID}/.well-known/jwks.json"
+        jwks_url = (
+            f"https://cognito-idp.{settings.COGNITO_REGION_NAME}.amazonaws.com/"
+            f"{settings.COGNITO_USER_POOL_ID}/.well-known/jwks.json"
+        )
 
         try:
-            jwks = json.loads(urlopen(jwks_url).read())
+            with urlopen(jwks_url) as response:
+                jwks = json.loads(response.read())
 
             # Extract the key ID from the token
             headers = jose.jwt.get_unverified_header(token)
@@ -95,7 +99,7 @@ class CognitoBackend:
             # Find the matching key
             key = next((k for k in jwks["keys"] if k["kid"] == kid), None)
             if not key:
-                logger.warning(f"Matching key not found for kid {kid}")
+                logger.warning("Matching key not found for kid %s", kid)
                 return None
 
             # Construct the public key
@@ -119,6 +123,6 @@ class CognitoBackend:
                 return None
 
             return claims
-        except Exception as e:
-            logger.exception(f"Error validating token: {str(e)}")
+        except (jose.JWTError, jose.JWKError, KeyError, ValueError) as e:
+            logger.exception("Error validating token: %s", str(e))
             return None

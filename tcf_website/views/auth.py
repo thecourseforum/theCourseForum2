@@ -1,10 +1,11 @@
 """Auth related views."""
 
 import logging
-import requests
 from base64 import b64encode
 from datetime import datetime
+import json
 
+import requests
 from django import forms
 from django.conf import settings
 from django.contrib import messages
@@ -30,10 +31,12 @@ def login(request):
     # Redirect to Cognito hosted UI
     cognito_login_url = (
         f"{cognito_base_url}/login?"
-        + f"client_id={settings.COGNITO_APP_CLIENT_ID}&"
-        + f"response_type=code&"
-        + f"scope=email+openid+profile&"
-        + f"redirect_uri={request.build_absolute_uri(settings.COGNITO_REDIRECT_URI).rstrip('/')}"
+        + "client_id={}&".format(settings.COGNITO_APP_CLIENT_ID)
+        + "response_type=code&"
+        + "scope=email+openid+profile&"
+        + "redirect_uri={}".format(
+            request.build_absolute_uri(settings.COGNITO_REDIRECT_URI).rstrip("/")
+        )
     )
 
     return HttpResponseRedirect(cognito_login_url)
@@ -71,10 +74,11 @@ def cognito_callback(request):
                     settings.COGNITO_REDIRECT_URI
                 ).rstrip("/"),
             },
+            timeout=30,  # Add reasonable timeout
         )
 
         if response.status_code != 200:
-            logger.error(f"Error exchanging code for tokens: {response.text}")
+            logger.error("Error exchanging code for tokens: %s", response.text)
             messages.error(request, "Authentication error. Please try again.")
             return redirect("index")
 
@@ -93,8 +97,8 @@ def cognito_callback(request):
         messages.success(request, "Logged in successfully!")
         return redirect("browse")
 
-    except Exception as e:
-        logger.exception(f"Error in Cognito callback: {str(e)}")
+    except (requests.RequestException, ValueError, json.JSONDecodeError) as e:
+        logger.exception("Error in Cognito callback: %s", str(e))
         messages.error(request, "Authentication error. Please try again.")
         return redirect("index")
 
