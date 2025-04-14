@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     # "collectfast",
     "django.contrib.staticfiles",
-    "social_django",
     "cachalot",  # TODO: add Redis?
     "storages",
     "rest_framework",
@@ -113,6 +112,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "tcf_core.cognito_middleware.CognitoAuthMiddleware",
     "tcf_core.settings.handle_exceptions_middleware.HandleExceptionsMiddleware",
     "tcf_core.settings.record_middleware.RecordMiddleware",
 ]
@@ -178,45 +178,25 @@ USE_TZ = True
 
 # social-auth-app-django settings.
 
+# AWS Cognito Configuration
+COGNITO_USER_POOL_ID = env.str("COGNITO_USER_POOL_ID")
+COGNITO_APP_CLIENT_ID = env.str("COGNITO_APP_CLIENT_ID")
+COGNITO_APP_CLIENT_SECRET = env.str("COGNITO_APP_CLIENT_SECRET")
+COGNITO_DOMAIN = env.str("COGNITO_DOMAIN")
+COGNITO_REGION_NAME = env.str("COGNITO_REGION_NAME")
+
+# These should match exactly what you configured in Cognito
+COGNITO_REDIRECT_URI = "/cognito-callback"
+COGNITO_LOGOUT_URI = "/"
+
+# Replace social auth backends with custom Cognito backend
 AUTHENTICATION_BACKENDS = (
-    "social_core.backends.google.GoogleOAuth2",
-    "social_core.backends.email.EmailAuth",
+    "tcf_website.auth_backends.CognitoBackend",
     "django.contrib.auth.backends.ModelBackend",
 )
-# TODO: Look into options like SOCIAL_AUTH_LOGIN_ERROR_URL or LOGIN_ERROR_URL
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ["virginia.edu"]
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy("browse")
 
-SOCIAL_AUTH_EMAIL_FORM_URL = "/"
-EMAIL_VALIDATION_URL = "email_verification"
-SOCIAL_AUTH_EMAIL_VALIDATION_FUNCTION = "tcf_core.auth_pipeline.validate_email"
-SOCIAL_AUTH_EMAIL_AUTH_WHITELISTED_DOMAINS = ["virginia.edu"]
-
-WHITELISTED_DOMAINS = ["virginia.edu"]
-
-SOCIAL_AUTH_GOOGLE_OAUTH2_LOGIN_URL = reverse_lazy(
-    "social:begin", args=["google-oauth2"]
-)
-SOCIAL_AUTH_RAISE_EXCEPTIONS = False
-SOCIAL_AUTH_PIPELINE = (
-    "tcf_core.auth_pipeline.password_validation",
-    "social_core.pipeline.social_auth.social_details",
-    "social_core.pipeline.social_auth.social_uid",
-    "tcf_core.auth_pipeline.auth_allowed",
-    "social_core.pipeline.social_auth.social_user",
-    "social_core.pipeline.user.get_username",
-    "tcf_core.auth_pipeline.mail_validation",
-    "social_core.pipeline.social_auth.associate_by_email",
-    "tcf_core.auth_pipeline.collect_extra_info",
-    "tcf_core.auth_pipeline.create_user",
-    "social_core.pipeline.social_auth.associate_user",
-    "tcf_core.auth_pipeline.check_user_password",
-    "social_core.pipeline.social_auth.load_extra_data",
-    "social_core.pipeline.user.user_details",
-)
-SOCIAL_AUTH_USER_MODEL = "tcf_website.User"
+# Login URL for redirecting unauthenticated users
+LOGIN_URL = reverse_lazy("login")
 
 AUTH_USER_MODEL = "tcf_website.User"
 

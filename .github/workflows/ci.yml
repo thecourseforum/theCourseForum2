@@ -21,9 +21,12 @@ env:
   DB_PASSWORD: postgres # default password
   DB_HOST: localhost # required for GitHub Actions
   DB_PORT: 5432 # default port
-  # social-auth-app-django
-  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
-  SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
+  # AWS Cognito
+  COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
+  COGNITO_APP_CLIENT_ID: ${{ secrets.COGNITO_APP_CLIENT_ID }}
+  COGNITO_APP_CLIENT_SECRET: ${{ secrets.COGNITO_APP_CLIENT_SECRET }}
+  COGNITO_DOMAIN: ${{ secrets.COGNITO_DOMAIN }}
+  COGNITO_REGION_NAME: ${{ secrets.COGNITO_REGION_NAME }}
   # email for account verification
   EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
   EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
