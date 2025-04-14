@@ -67,9 +67,9 @@ def cognito_callback(request):
                 "grant_type": "authorization_code",
                 "client_id": settings.COGNITO_APP_CLIENT_ID,
                 "code": code,
-                "redirect_uri": request.build_absolute_uri(settings.COGNITO_REDIRECT_URI).rstrip(
-                    "/"
-                ),
+                "redirect_uri": request.build_absolute_uri(
+                    settings.COGNITO_REDIRECT_URI
+                ).rstrip("/"),
             },
         )
 
