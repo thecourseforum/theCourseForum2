@@ -11,9 +11,23 @@ from django.contrib.postgres.indexes import GinIndex
 from django.core.paginator import EmptyPage, Page, Paginator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import (Avg, Case, CharField, Exists, ExpressionWrapper,
-                              F, FloatField, OuterRef, Q, QuerySet, Subquery,
-                              Sum, Value, When, fields)
+from django.db.models import (
+    Avg,
+    Case,
+    CharField,
+    Exists,
+    ExpressionWrapper,
+    F,
+    FloatField,
+    OuterRef,
+    Q,
+    QuerySet,
+    Subquery,
+    Sum,
+    Value,
+    When,
+    fields,
+)
 from django.db.models.functions import Abs, Cast, Coalesce, Concat, Round
 
 # pylint: disable=line-too-long
