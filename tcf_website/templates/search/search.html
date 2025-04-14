@@ -105,7 +105,8 @@
               {% endfor %}
               <div class="pagination">
                 {% if page_obj.has_previous %}
-                  <a href="?{{ request|change_page:1 }}">&lt;</a>
+                  <a href="?{{ request|change_page:1 }}">&lt;&lt;</a>
+                  <a href="?{{ request|change_page:page_obj.paginator.previous_page_number }}">&lt;</a>
                 {% endif %}
 
                 {% if page_obj.number == 1 %}
@@ -145,7 +146,8 @@
                     {% endif %}
                 {% endif %}
                 {% if page_obj.has_next %}
-                  <a href="?{{ request|change_page:page_obj.paginator.num_pages }}">&gt;</a>
+                  <a href="?{{ request|change_page:page_obj.paginator.next_page_number }}">&gt;</a>
+                  <a href="?{{ request|change_page:page_obj.paginator.num_pages }}">&gt;&gt;</a>
                 {% endif %}
               </div>
               {% else %}
