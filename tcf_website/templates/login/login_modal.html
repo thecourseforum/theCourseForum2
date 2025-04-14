@@ -19,16 +19,9 @@
                     <h2 class="h3 card-title">Welcome to theCourseForum!</h2>
                     <p class="card-text mb-3">Please log in to continue.</p>
                 </div>
-                <div class="modal-footer d-flex justify-content-center">
-                    {% include "login/login_form.html" %}
-                </div>
-                <div class="text-center">
-                    <a href="{% url 'password_reset' %}">Forgot password?</a>
-                </div>
             </div>
             <div class="modal-footer d-flex justify-content-center">
-                <a href="{% url 'register' %}" class="btn btn-lg bg-tcf-orange text-white">Create an Account!</a>
-                {% include "login/google_login_button.html" %}
+                <a href="{% url 'login' %}" class="btn btn-lg bg-tcf-orange text-white">Sign In / Create Account</a>
             </div>
         </div>
     </div>
