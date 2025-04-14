@@ -34,7 +34,9 @@ class CognitoBackend:
                 return None
 
             # Get user info from the claims
-            username = claims.get("email")
+            email = claims.get("email")
+            username = email.split("@")[0]
+
             if not username:
                 return None
 
@@ -42,8 +44,8 @@ class CognitoBackend:
             user, created = User.objects.get_or_create(
                 username=username,
                 defaults={
-                    "email": username,
-                    "computing_id": username.split("@")[0],
+                    "email": email,
+                    "computing_id": username,
                     "first_name": claims.get("given_name", ""),
                     "last_name": claims.get("family_name", ""),
                 },
@@ -53,8 +55,8 @@ class CognitoBackend:
             if not created:
                 updated = False
                 for attr, value in {
-                    "email": username,
-                    "computing_id": username.split("@")[0],
+                    "email": email,
+                    "computing_id": username,
                     "first_name": claims.get("given_name", user.first_name),
                     "last_name": claims.get("family_name", user.last_name),
                 }.items():
