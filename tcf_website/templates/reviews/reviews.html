@@ -24,6 +24,7 @@
     {% if paginated_reviews and paginated_reviews.number > 0 %}
     <div class="pagination">
         {% if paginated_reviews.has_previous %}
+            <a href="?page={{ 1 }}#reviews">&lt;&lt;</a>
             <a href="?page={{ paginated_reviews.previous_page_number }}#reviews">&lt;</a>
         {% endif %}
     
@@ -65,6 +66,7 @@
     
         {% if paginated_reviews.has_next %}
             <a href="?page={{ paginated_reviews.next_page_number }}#reviews">&gt;</a>
+            <a href="?page={{ paginated_reviews.paginator.num_pages }}#reviews">&gt;&gt;</a>
         {% endif %}
     </div>    
     {% endif %}
