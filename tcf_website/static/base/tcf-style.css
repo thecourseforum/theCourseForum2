@@ -11,7 +11,7 @@
   --shadow-color: #a6a6a6; /* Medium grey, used for shadows */
   --shaded-color: #cfcfcf; /* Medium light grey, used for shading */
   --background-color: #ebebeb; /* Light grey, used for backgrounds */
-  --overall-background-color: #faf8f9;
+  --landing-page-background-color: #faf8f9;
   --card-background-color: #ffffff; 
   --navbar-color: #ffffff;
   /* newly added */
@@ -31,20 +31,6 @@
 
 /* only main-color (tcf blue) and accent-color (tcf organge) are being utilized by the landing page */
 body.dark-mode {
-  /* --main-color: #ffffff;
-  --secondary-color: #4873B7;
-  --accent-color:  #d75626;
-  --dark-color: green;
-  --shadow-color: #ffffff;
-  --shaded-color: #333333;
-  --background-color: black;
-  --overall-background-color: black;
-  --navbar-color: #333333;
-  --h1-text-color: #ffffff;
-  --h4-card-title-color: #ffffff;
-  --p-card-text-color: white;
-  --card-background-color: #333333;
-  --input-color: #333333; */
 
 /* Added updated variables names */
   --background-color: black; /* Dark background color */
@@ -223,13 +209,12 @@ ul {
 
 p {
   color: var(--basic-text-color);
-  color: var(--basic-text-color);
 }
 
 .form-control {
   background-color: var(--input-background-color);
   color: var(--input-text-color);
-  border: var(--input-border-color);
+  border: 1px solid var(--input-border-color);
 }
 
 .form-control:focus {
