@@ -306,6 +306,12 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: pointer;
 }
 
+#darkModeToggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
 
 
 /* Note: Can use Bootstrap "light" color
