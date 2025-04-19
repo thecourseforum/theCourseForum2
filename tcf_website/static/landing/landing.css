@@ -60,11 +60,11 @@ header.masthead h1 {
 
 /* Features */
 .features-icons .card {
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+  box-shadow: 1px 1px 2px var(--input-border-color);
 }
 
 .features-icons .card:hover {
-  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 1px 1px 4px var(--input-border-color);
 }
 
 .features-icons .features-icons-item {
@@ -133,7 +133,7 @@ header.masthead h1 {
 }
 
 .about-team .about-link:hover {
-  box-shadow: 2px 2px 5px var(--title-color);
+  box-shadow: 2px 2px 5px var(--accent-color);
 }
 
 .about-link {
@@ -156,7 +156,7 @@ header.masthead h1 {
 }
 
 .about-team .about-info:hover {
-  box-shadow: 2px 2px 5px var(--title-color);
+  box-shadow: 2px 2px 5px var(--main-color);
 }
 
 @media (min-width: 768px) {
