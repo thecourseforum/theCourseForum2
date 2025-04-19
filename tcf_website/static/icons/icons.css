@@ -12,11 +12,11 @@
 
 .fa-clock            { background-image: url("../icons/img/fa-clock.svg"); }
 .fa-arrow-right      { background-image: url("../icons/img/fa-arrow-right.svg"); }
-.fa-search           { background-image: url("../icons/img/fa-search.svg"); }
-.fa-book             { background-image: url("../icons/img/fa-book.svg"); }
-.fa-users            { background-image: url("../icons/img/fa-user.svg"); }
-.fa-graduation-cap   { background-image: url("../icons/img/fa-graduation-cap.svg"); }
-.fa-handshake        { background-image: url("../icons/img/fa-handshake.svg"); }
+.fa-search           { background-image: url("../icons/img/fa-search.svg"); vertical-align: middle;}
+.fa-book             { background-image: url("../icons/img/fa-book.svg"); vertical-align: middle;}
+.fa-users            { background-image: url("../icons/img/fa-user.svg"); vertical-align: middle;}
+.fa-graduation-cap   { background-image: url("../icons/img/fa-graduation-cap.svg"); vertical-align: middle;}
+.fa-handshake        { background-image: url("../icons/img/fa-handshake.svg"); vertical-align: middle;}
 .fa-github           { background-image: url("../icons/img/fa-github.svg"); }
 .fa-user             { background-image: url("../icons/img/fa-user.svg"); }
 .fa-dumbbell         { background-image: url("../icons/img/fa-dumbbell.svg"); }
@@ -35,7 +35,7 @@
 .fa-discord          { background-image: url("../icons/img/fa-discord.svg"); }
 .fa-facebook         { background-image: url("../icons/img/fa-facebook.svg"); }
 .fa-code             { background-image: url("../icons/img/fa-code.svg"); }
-.fa-list             { background-image: url("../icons/img/fa-list.svg"); }
+.fa-list             { background-image: url("../icons/img/fa-list.svg"); vertical-align: middle;}
 .fa-user-friends     { background-image: url("../icons/img/fa-user-friends.svg"); }
 .fa-smile-beam       { background-image: url("../icons/img/fa-smile-beam.svg"); }
 .fa-frown-open       { background-image: url("../icons/img/fa-frown-open.svg"); }
