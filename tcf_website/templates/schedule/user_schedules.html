@@ -38,7 +38,7 @@
                 {% include "schedule/schedule.html" with courses=courses|get_item:s.id gpa=schedules_gpa|get_item:s.id rating=ratings|get_item:s.id difficulty=difficulty|get_item:s.id schedule=s credits=credits|get_item:s.id %}
                 <div class="d-flex justify-content-center mt-1 mb-2">
                     <a href="{% url 'duplicate_schedule' s.id %}" class=" btn bg-tcf-orange text-white" type="button">
-                        <i class="fa fa-copy invert-to-light" aria-hidden="true"></i> Make a Copy 
+                        <i class="fa fa-copy" aria-hidden="true"></i> Make a Copy 
                     </a>
                 </div>
 

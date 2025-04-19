@@ -41,7 +41,7 @@
 .fa-smile-beam       { background-image: url("../icons/img/fa-smile-beam.svg"); }
 .fa-frown-open       { background-image: url("../icons/img/fa-frown-open.svg"); }
 .fa-heart            { background-image: url("../icons/img/fa-heart.svg"); }
-.fa-copy             { background-image: url("../icons/img/fa-copy.svg"); }
+.fa-copy             { background-image: url("../icons/img/fa-copy.svg"); filter: invert(100%) brightness(150%);}
 .fa-flask            { background-image: url("../icons/img/fa-flask.svg"); }
 
 body.dark-mode .fa,
