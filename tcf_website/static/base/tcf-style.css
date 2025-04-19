@@ -22,6 +22,7 @@
   /* changes the color of the title and icons on the landing page */
   --title-color: #274f97;
   --filter-input-background-color: white;
+  --icon-color-white: #ffffff; /* White icon color */
 
   /* #f8f9fa is the og background color styled by .bg-light in _background_variant.scss */
   /* Note: Can use Bootstrap "light" color and white color */
