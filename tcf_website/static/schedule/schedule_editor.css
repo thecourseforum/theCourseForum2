@@ -34,10 +34,12 @@
 
 .schedule_name_input_group > input {
   padding: 8px 12px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--input-border-color);
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(39, 79, 151, 0.1);
   transition: all 0.3s ease;
+  background-color: var(--input-background-color);
+  color: var(--basic-text-color);
 }
 
 .schedule_name_input_group > input:focus {
@@ -54,6 +56,7 @@
 .table td {
   padding: 10px 15px;
   text-align: left;
+  color: var(--basic-text-color);
 }
 
 .table th:last-child,
