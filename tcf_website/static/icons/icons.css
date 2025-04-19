@@ -32,9 +32,12 @@
 .fa-trash-o          { background-image: url("../icons/img/fa-trash-o.svg"); }
 .fa-hourglass-half   { background-image: url("../icons/img/fa-hourglass-half.svg"); }
 .fa-pencil           { background-image: url("../icons/img/fa-pencil.svg"); }
-.fa-instagram        { background-image: url("../icons/img/fa-instagram.svg"); }
-.fa-discord          { background-image: url("../icons/img/fa-discord.svg"); }
-.fa-facebook         { background-image: url("../icons/img/fa-facebook.svg"); }
+.fa-instagram        { background-image: url("../icons/img/fa-instagram.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-discord          { background-image: url("../icons/img/fa-discord.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-facebook         { background-image: url("../icons/img/fa-facebook.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-instagram-lg     { background-image: url("../icons/img/fa-instagram.svg"); width: 1.5em; height: 1.5em; filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-discord-lg       { background-image: url("../icons/img/fa-discord.svg"); width: 1.5em; height: 1.5em; filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-facebook-lg      { background-image: url("../icons/img/fa-facebook.svg"); width: 1.5em; height: 1.5em; filter: invert(100%) brightness(150%); vertical-align: middle;}
 .fa-code             { background-image: url("../icons/img/fa-code.svg"); }
 .fa-list             { background-image: url("../icons/img/fa-list.svg"); vertical-align: middle;}
 .fa-user-friends     { background-image: url("../icons/img/fa-user-friends.svg"); }
