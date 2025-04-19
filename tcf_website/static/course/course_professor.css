@@ -467,21 +467,6 @@ body.dark-mode .students-text {
 }
 
 .section-row {
-<<<<<<< HEAD
-    display: grid;
-    grid-template-columns: [start] 6ch [sec-num] 150px [type] minmax(200px, 1fr) [times] minmax(120px, auto) [end];
-    gap: 16px;
-    margin-bottom: 4px;
-    align-items: center;
-    padding: 12px 16px;
-    background-color: var(--input-background-color);
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    border: 1px solid transparent;
-    cursor: pointer;
-    text-decoration: none;
-    color: inherit;
-=======
   display: grid;
   grid-template-columns:
     [start] 6ch [sec-num] 150px [type] minmax(200px, 1fr) [times] minmax(
@@ -500,7 +485,6 @@ body.dark-mode .students-text {
   cursor: pointer;
   text-decoration: none;
   color: inherit;
->>>>>>> origin/dev
 }
 
 .section-row:hover {
