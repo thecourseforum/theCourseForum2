@@ -83,6 +83,9 @@
   background-color: var(--card-background-color);
   color: var(--basic-text-color);
 }
+.navbar {
+  background-color: white;
+}
 
 .dark-mode .navbar-toggler.menu {
   border-color: var(--input-border-color);
