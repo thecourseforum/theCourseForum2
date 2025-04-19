@@ -3,6 +3,10 @@ body.dark-mode .fa {
   filter: invert(100%) brightness(150%);
 }
 
+body.dark-mode .fas {
+  filter: invert(100%) brightness(150%);
+}
+
 .fa {
   display: inline-block;
   font-style: normal; /* Reset any inherited styles */
@@ -21,7 +25,7 @@ body.dark-mode .fa {
   height: 1em;
 }
 
-/* .fa-clock {
+.fa-clock {
   width: 1em;
   height: 1em;
   background-image: url("../icons/img/fa-clock.svg");
@@ -29,17 +33,6 @@ body.dark-mode .fa {
   background-size: contain;
   background-position: center;
   vertical-align: middle;
-} */
-
-.fa-clock {
-  width: 1em;
-  height: 1em;
-  /* background-image: url("../icons/img/fa-clock.svg"); */
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  vertical-align: middle;
-  color: var(--main-color);
 }
 
 .fa-arrow-right {
@@ -178,6 +171,8 @@ body.dark-mode .fa {
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
+  vertical-align: middle;
+  filter: invert(100%) brightness(150%);
 }
 
 .fa-chevron-up {
