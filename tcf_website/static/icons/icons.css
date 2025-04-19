@@ -14,9 +14,10 @@
 .fa-arrow-right      { background-image: url("../icons/img/fa-arrow-right.svg"); }
 .fa-search           { background-image: url("../icons/img/fa-search.svg"); vertical-align: middle;}
 .fa-book             { background-image: url("../icons/img/fa-book.svg"); vertical-align: middle;}
-.fa-users            { background-image: url("../icons/img/fa-user.svg"); vertical-align: middle;}
-.fa-graduation-cap   { background-image: url("../icons/img/fa-graduation-cap.svg"); vertical-align: middle;}
-.fa-handshake        { background-image: url("../icons/img/fa-handshake.svg"); vertical-align: middle;}
+.fa-history-book     { background-image: url("../icons/img/fa-book.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-users            { background-image: url("../icons/img/fa-user.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-graduation-cap   { background-image: url("../icons/img/fa-graduation-cap.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-handshake        { background-image: url("../icons/img/fa-handshake.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
 .fa-github           { background-image: url("../icons/img/fa-github.svg"); }
 .fa-user             { background-image: url("../icons/img/fa-user.svg"); }
 .fa-dumbbell         { background-image: url("../icons/img/fa-dumbbell.svg"); }
@@ -40,7 +41,7 @@
 .fa-smile-beam       { background-image: url("../icons/img/fa-smile-beam.svg"); }
 .fa-frown-open       { background-image: url("../icons/img/fa-frown-open.svg"); }
 .fa-heart            { background-image: url("../icons/img/fa-heart.svg"); }
-.fa-copy             { background-image: url("../icons/img/fa-copy.svg"); }
+.fa-copy             { background-image: url("../icons/img/fa-copy.svg"); filter: invert(100%) brightness(150%);}
 .fa-flask            { background-image: url("../icons/img/fa-flask.svg"); }
 
 body.dark-mode .fa,
