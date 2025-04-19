@@ -21,6 +21,7 @@
   --input-border-color: #DEE2E6;
   /* changes the color of the title and icons on the landing page */
   --title-color: #274f97;
+  --filter-input-background-color: white;
 
   /* #f8f9fa is the og background color styled by .bg-light in _background_variant.scss */
   /* Note: Can use Bootstrap "light" color and white color */
@@ -47,6 +48,7 @@ body.dark-mode {
   --background-color: black; /* Dark background color */
   --card-background-color: #333333;  /* Dark card background */
   --input-background-color: #545454;  /* Dark input background */
+  --filter-input-background-color: #545454;  /* Dark input background */
   --input-text-color: #a6a6a6;   /* Light text in inputs */
   --accent-text-color: #d75626; /* Accent color for dark mode */
   --basic-text-color: white;    /* White text color */
