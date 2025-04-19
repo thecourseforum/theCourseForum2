@@ -478,7 +478,7 @@ body.dark-mode .students-text {
   margin-bottom: 4px;
   align-items: center;
   padding: 12px 16px;
-  background-color: white;
+  background-color: var(--input-background-color);
   border-radius: 6px;
   transition: all 0.2s ease;
   border: 1px solid transparent;
@@ -509,13 +509,8 @@ body.dark-mode .students-text {
 }
 
 .section-row > div:last-child {
-<<<<<<< HEAD
     text-align: right;
     color: var(--basic-text-color);
-=======
-  text-align: right;
-  color: #666;
->>>>>>> origin/dev
 }
 
 .hidden-section {
@@ -545,7 +540,6 @@ body.dark-mode .students-text {
 
 /* Section toggle */
 .toggle-option {
-<<<<<<< HEAD
     padding: 0 20px;
     cursor: pointer;
     font-size: 13px;
@@ -561,22 +555,6 @@ body.dark-mode .students-text {
     border-radius: 4px;
     min-width: 90px;
     /* background-color: var(---input-background-color); */
-=======
-  padding: 0 20px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  color: #666;
-  position: relative;
-  z-index: 1;
-  border-radius: 4px;
-  min-width: 90px;
->>>>>>> origin/dev
 }
 
 .toggle-option:hover:not(.active) {
