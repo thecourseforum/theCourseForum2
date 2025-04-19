@@ -23,7 +23,7 @@
 .fa-chart-bar        { background-image: url("../icons/img/fa-chart-bar.svg"); }
 .fa-star             { background-image: url("../icons/img/fa-star.svg"); }
 .fa-calendar         { background-image: url("../icons/img/fa-calendar.svg"); }
-.fa-plus             { background-image: url("../icons/img/fa-plus.svg"); }
+.fa-plus             { background-image: url("../icons/img/fa-plus.svg"); filter: invert(100%) brightness(150%);}
 .fa-chevron-up       { background-image: url("../icons/img/fa-chevron-up.svg"); }
 .fa-chevron-down     { background-image: url("../icons/img/fa-chevron-down.svg"); }
 .fa-thumbs-up        { background-image: url("../icons/img/fa-thumbs-up.svg"); }
