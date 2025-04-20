@@ -25,7 +25,7 @@ body.dark-mode{
 
 body.dark-mode .list-group-item-light,
 body.dark-mode .btn-light {
-  background-color: var(--input-background-color) !important;
+  background-color: transparent !important;
   color: var(--basic-text-color) !important;
   border: none;
   outline: none;
