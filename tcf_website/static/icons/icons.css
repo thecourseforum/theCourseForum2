@@ -51,3 +51,7 @@ body.dark-mode .fa,
 body.dark-mode .fas {
   filter: invert(100%) brightness(150%);
 }
+
+#search-button:hover .fa-search {
+  filter: invert(100%) brightness(150%);
+}
