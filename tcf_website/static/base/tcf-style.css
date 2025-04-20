@@ -11,12 +11,11 @@
   --shadow-color: #a6a6a6; /* Medium grey, used for shadows */
   --shaded-color: #cfcfcf; /* Medium light grey, used for shading */
   --background-color: #ebebeb; /* Light grey, used for backgrounds */
-  --landing-page-background-color: #faf8f9;
+  --landing-page-background-color: #F8F9FA;
   --card-background-color: #ffffff; 
   --navbar-color: #ffffff;
   /* newly added */
   --basic-text-color: #212529;
-  --basic-accent-text-color: white; /* text color on colored background in light-mode */
   --accent-text-white: #ffffff; /* White text color */
   /* changes the border color of the search bar on landing page */
   --input-border-color: #DEE2E6;
@@ -24,6 +23,8 @@
   --title-color: #274f97;
   --filter-input-background-color: white;
   --icon-color-white: #ffffff; /* White icon color */
+  --input-background-color: #EBEBEB;
+  --landing-page-input-background-color: white;
 
   /* #f8f9fa is the og background color styled by .bg-light in _background_variant.scss */
   /* Note: Can use Bootstrap "light" color and white color */
