@@ -25,6 +25,7 @@
   --icon-color-white: #ffffff; /* White icon color */
   --input-background-color: #EBEBEB;
   --landing-page-input-background-color: white;
+  --filter-background-color: white;
 
   /* #f8f9fa is the og background color styled by .bg-light in _background_variant.scss */
   /* Note: Can use Bootstrap "light" color and white color */
@@ -46,6 +47,7 @@ body.dark-mode {
   --button-bg-color: #1e1e1e; /* Darker button background */
   --landing-page-background-color: black; /* replace tcf-blue as tcf logo text color */
   --title-color: white; /* make title and icons on landing page white */
+  --filter-background-color: #333333;
 }
 
 /*************DEFAULT STYLES**************/
@@ -258,7 +260,7 @@ input:-webkit-autofill {
 }
 
 .dropdown-menu {
-  background-color: var(--background-color);
+  background-color: var(--filter-background-color);
 }
 
 .dropdown-item {
