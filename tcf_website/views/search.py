@@ -250,7 +250,7 @@ def apply_filters(results, filters):
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
 
     min_gpa = filters.get("min_gpa")
-    if filters.get("min_gpa"): 
+    if filters.get("min_gpa"):
         gpa_filtered = Course.filter_by_gpa(min_gpa=min_gpa)
         results = results.filter(id__in=gpa_filtered.values_list("id", flat=True))
     return results

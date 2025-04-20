@@ -750,7 +750,6 @@ class Course(models.Model):
             query = query.annotate(
                 avg_gpa=Avg("coursegrade__average")
             ).filter(avg_gpa__gte=min_gpa)
-            
         return query.distinct()
 
     @classmethod
