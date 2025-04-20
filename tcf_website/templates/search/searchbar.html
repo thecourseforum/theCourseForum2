@@ -130,7 +130,9 @@
               <h6 class="filter-header">
                 Availability
               </h6>
-              <div class="filter-grid">
+              <h6 class="filter-header">
+                Minimum GPA
+              </h6>
                 <div class="availability-check">
                   <input 
                     class="form-check-input me-2" 
@@ -156,7 +158,6 @@
                   </div>
                   </select>
                 </div>
-              </div>
             </div>
             <!-- List of subjects -->
             <div class="filter-grid">
@@ -640,7 +641,7 @@
   .filter-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    gap: 0.3rem 1.5rem;
     align-items: start;
   }
 
@@ -956,6 +957,7 @@
     box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 4px 0 0 4px;
+    width: 100%; 
   }
 
   .gpa-input-container {
