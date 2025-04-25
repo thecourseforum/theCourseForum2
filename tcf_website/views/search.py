@@ -182,7 +182,6 @@ def fetch_courses(query, filters):
         }
         for course in results
     ]
-
     return courses
 
 

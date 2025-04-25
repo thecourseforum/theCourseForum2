@@ -752,7 +752,7 @@ class Course(models.Model):
 
         query = query.filter(section_conditions)
         return query.distinct()
-    
+
     @classmethod
     def filter_by_gpa(cls, min_gpa=None):
         """Filter courses by minimum GPA."""

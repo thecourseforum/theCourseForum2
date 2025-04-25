@@ -93,6 +93,8 @@
                 </div>
               </div>
             </div>
+            <!-- Hidden inputs for min_gpa -->
+            <input type="hidden" id="min_gpa" name="min_gpa" value="{% if min_gpa %}{{ min_gpa }}{% endif %}">
             <!-- Open Section & Minimum GPA selections mobile -->
             <div class="filter-section compact availability-section">
               <h6 class="filter-header">
@@ -115,14 +117,9 @@
               <h6 class="filter-header">
                 Minimum GPA
               </h6>
-              <div class="gpa-input-container">
-                <input type="text" id="gpa-input" class="min-gpa-input" name="min_gpa" 
-                  placeholder="Select a minimum GPA" 
-                  value="{% if min_gpa %}{{ min_gpa }}{% endif %}">
-                <button type="button" id="gpa-dropdown-toggle" class="gpa-dropdown-button">
-                  <i class="fa fa-plus"></i>
-                </button>
-                <div id="gpa-dropdown" class="gpa-dropdown"></div>
+              <div class="min-gpa-div">
+                <input type="text" id="gpa-input-compact" class="min-gpa-input" placeholder="Select GPA" value="{% if min_gpa %}{{ min_gpa }}{% endif %}">
+                <input type="range" id="gpa-slider-compact" class="gpa-slider" min="1.0" max="4.0" step="0.1" value="{% if min_gpa %}{{ min_gpa }}{% endif %}">
               </div>
             </div>
             <!-- Open Section & Minimum GPA selections desktop -->
@@ -148,23 +145,8 @@
                 <!-- Min GPA selection -->
                 <div class="min-gpa-div">
                   <div class="gpa-input-container">
-                    <input
-                      type="text"
-                      id="gpa-input"
-                      class="min-gpa-input"
-                      name="min_gpa"
-                      placeholder="Select GPA"
-                      value="{% if min_gpa %}{{ min_gpa }}{% endif %}"
-                    >
-                    <input
-                      type="range"
-                      id="gpa-slider"
-                      class="gpa-slider"
-                      min="1.0"
-                      max="4.0"
-                      step="0.1"
-                      value="{% if min_gpa %}{{ min_gpa }}{% endif %}"
-                    >
+                    <input type="text" id="gpa-input" class="min-gpa-input" placeholder="Select GPA" value="{% if min_gpa %}{{ min_gpa }}{% endif %}">
+                    <input type="range" id="gpa-slider" class="gpa-slider" min="1.0" max="4.0" step="0.1" value="{% if min_gpa %}{{ min_gpa }}{% endif %}">
                   </div>
                 </div>
             </div>
@@ -288,7 +270,56 @@
     const timeFrom = document.getElementById('from_time'); 
     const timeTo = document.getElementById('to_time');
     const openSections = document.getElementById('open-sections');
-    const gpaInput = document.getElementById('gpa-input');
+    
+    const gpaInputDesktop = document.getElementById('gpa-input');
+    const gpaSliderDesktop = document.getElementById('gpa-slider');
+    const gpaInputMobile = document.getElementById('gpa-input-compact');
+    const gpaSliderMobile = document.getElementById('gpa-slider-compact');
+    const hiddenGpaInput = document.getElementById('min_gpa');
+    
+    // Function to sync all GPA values
+    function syncGpaValues(value) {
+        gpaInputDesktop.value = value;
+        gpaSliderDesktop.value = value;
+        gpaInputMobile.value = value;
+        gpaSliderMobile.value = value;
+        hiddenGpaInput.value = value;
+    }
+    
+    // Initialize with any existing value
+    if (hiddenGpaInput.value) {
+        syncGpaValues(hiddenGpaInput.value);
+    }
+    
+    // Add event listeners to all inputs
+    gpaInputDesktop.addEventListener('input', function() {
+        syncGpaValues(this.value);
+    });
+    
+    gpaSliderDesktop.addEventListener('input', function() {
+        syncGpaValues(this.value);
+    });
+    
+    gpaInputMobile.addEventListener('input', function() {
+        syncGpaValues(this.value);
+    });
+    
+    gpaSliderMobile.addEventListener('input', function() {
+        syncGpaValues(this.value);
+    });
+    
+    // Form submission - ensure the hidden input has the current value
+    document.querySelector('form').addEventListener('submit', function() {
+        const currentValue = window.innerWidth < 768 ? 
+            gpaInputMobile.value : gpaInputDesktop.value;
+        hiddenGpaInput.value = currentValue;
+    });
+    
+    // Handle window resize (optional - already handled by syncing values)
+    window.addEventListener('resize', function() {
+        // This is optional since values are already synced
+        // Could be used if there's specific logic needed on resize
+    });
 
     // Check initial state (in case of page refresh with active filters)
     updateButtonState();
@@ -305,7 +336,7 @@
     timeTo.addEventListener('input', updateButtonState);
 
     openSections.addEventListener('change', updateButtonState);
-    gpaInput.addEventListener('input', updateButtonState);
+    hiddenGpaInput.addEventListener('input', updateButtonState);
 
     // Checks for active filters or inactive day filters to determine button state
     function updateButtonState() {
@@ -328,8 +359,8 @@
         openSectionsChanged = true;
       }
 
-      if (gpaInput.value) {
-          gpaChanged = gpaInput.value !== '';
+      if (hiddenGpaInput.value) {
+          gpaChanged = hiddenGpaInput.value !== '';
       }
 
       if (activeFilters.length > 0 || activeDayFilters.length > 0 || timeFromChanged || timeToChanged || openSectionsChanged || gpaChanged) {
@@ -441,6 +472,7 @@
       document.getElementById('to_time').value = '';
 
       // Clear GPA dropdown
+      document.getElementById('min-gpa-input').value = '';
       document.getElementById('gpa-input').value = '';
 
       updateWeekdays();
