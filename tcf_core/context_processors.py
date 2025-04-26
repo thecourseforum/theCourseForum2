@@ -46,9 +46,16 @@ def history_cookies(request):
 def searchbar_context(request):
     """Provide context for the search bar."""
     latest_semester = Semester.latest()
-    recent_semesters = Semester.objects.filter(
-        number__gte=latest_semester.number - 50  # 50 = 5 years * 10 semesters
-    ).order_by("-number")
+    # recent_semesters = Semester.objects.filter(
+    #     number__gte=latest_semester.number - 50  # 50 = 5 years * 10 semesters
+    # ).order_by("-number")
+
+    if latest_semester:
+        recent_semesters = Semester.objects.filter(
+            number__gte=latest_semester.number - 50  # 50 = 5 years * 10 semesters
+        ).order_by("-number")
+    else:
+        recent_semesters = Semester.objects.none()
 
     # Get saved filters from the session (or use defaults)
     saved_filters = request.session.get("search_filters", {})
