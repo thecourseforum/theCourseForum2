@@ -17,11 +17,23 @@ jQuery(function ($) {
   // If coming from a course professor page, params.length > 0
   const params = window.location.search;
   let subdeptID, courseID, instructorID;
+  
+  // Use URLSearchParams to properly parse query parameters
   if (params.length > 0) {
-    const paramsArr = params.split("&");
-    subdeptID = parseInt(paramsArr[0].replace("?subdept_id=", ""));
-    courseID = parseInt(paramsArr[1].replace("course_id=", ""));
-    instructorID = parseInt(paramsArr[2].replace("instr_id=", ""));
+    const urlParams = new URLSearchParams(params);
+    
+    // Only try to parse course parameters if they exist
+    if (urlParams.has("subdept_id")) {
+      subdeptID = parseInt(urlParams.get("subdept_id"));
+      
+      if (urlParams.has("course_id")) {
+        courseID = parseInt(urlParams.get("course_id"));
+      }
+      
+      if (urlParams.has("instr_id")) {
+        instructorID = parseInt(urlParams.get("instr_id"));
+      }
+    }
   }
 
   // Fetch all subdepartment data from API

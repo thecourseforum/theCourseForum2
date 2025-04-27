@@ -5,12 +5,25 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'reviews/new_review.css' %}" />
+<link rel="stylesheet" href="{% static 'browse/browse.css' %}" />
 {% endblock %}
 
 {% block content %}
 
 <div class="new-review container text-left mx-auto">
-  <h1 class="h2 mt-2 mb-4">Write a review</h1>
+  <!-- Header row with title and toggle -->
+  <div class="row mt-2 mb-3">
+    <div class="col-12 d-flex align-items-center justify-content-between">
+      <h1 class="h2 mb-0">Write a review</h1>
+      <div class="mode-toggle-container">
+        <div class="mode-toggle-wrapper">
+          <a href="?mode=courses" class="mode-toggle-option {% if not is_club %}active{% endif %}">Courses</a>
+          <a href="?mode=clubs" class="mode-toggle-option {% if is_club %}active{% endif %}">Clubs</a>
+          <div class="mode-toggle-slider {% if is_club %}slide-right{% endif %}"></div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="card">
     <form class="card-body px-md-5" id="reviewForm" action="{% url 'new_review' %}" method="POST">
         {% csrf_token %}
@@ -27,11 +40,13 @@
 {% endblock %}
 
 {% block js %}
-<script type="text/javascript" src="{% static 'reviews/new_review.js' %}"></script>
 <script type="text/javascript" src="{% static 'reviews/sync_review_sliders.js' %}"></script>
 {% if is_club %}
 <script type="text/javascript" src="{% static 'reviews/club_review.js' %}"></script>
+{% else %}
+<script type="text/javascript" src="{% static 'reviews/new_review.js' %}"></script>
 {% endif %}
+
 <script>
   // For Bootstrap tooltip
   $(function () {

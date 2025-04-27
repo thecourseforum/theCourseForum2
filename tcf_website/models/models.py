@@ -1057,12 +1057,14 @@ class Review(models.Model):
     text = models.TextField(blank=True)
     # Review user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # Review course foreign key. Required.
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    # Review course foreign key. Required only if club is not provided.
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
     # Review club foreign key. Optional alternative to course.
     club = models.ForeignKey(Club, on_delete=models.CASCADE, null=True, blank=True)
-    # Review instructor foreign key. Required.
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    # Review instructor foreign key. Required only if club is not provided.
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, null=True, blank=True
+    )
     # Review semester foreign key. Required.
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     # Email of reviewer for Review Drive, should be blank most of the time

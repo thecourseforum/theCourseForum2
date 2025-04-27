@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -46,6 +46,25 @@ class ReviewForm(forms.ModelForm):
             "amount_group",
             "amount_homework",
         ]
+
+    def clean(self):
+        """Validate that either club or (course and instructor) are provided."""
+        cleaned_data = super().clean()
+        club = cleaned_data.get("club")
+        course = cleaned_data.get("course")
+        instructor = cleaned_data.get("instructor")
+
+        # If it's a club review, course and instructor are not required
+        if club:
+            return cleaned_data
+
+        # If it's a course review, both course and instructor are required
+        if not course:
+            raise ValidationError("Course is required for course reviews")
+        if not instructor:
+            raise ValidationError("Instructor is required for course reviews")
+
+        return cleaned_data
 
     def save(self, commit=True):
         """Compute `hours_per_week` before actually saving"""
@@ -140,23 +159,21 @@ def new_review(request):
 
 @login_required()
 def check_duplicate(request):
-    """Check for duplicate reviews when a user submits a review
-    based on if it's the same course with the same instructor/semester.
-    Used for an Ajax request in new_review.html"""
-    is_club = parse_mode(request)[1]
+    """Check for duplicate reviews when a user submits a review."""
 
     form = ReviewForm(request.POST)
     if form.is_valid():
         instance = form.save(commit=False)
 
-        # Check based on mode
-        if is_club and instance.club:
+        print(instance.club)
+
+        if instance.club:
             # Check if user has reviewed given club before
             reviews_on_same_club = request.user.review_set.filter(club=instance.club)
             # Review already exists so it's a duplicate; inform user
             if reviews_on_same_club.exists():
-                response = {"duplicate": True}
-                return JsonResponse(response)
+                return JsonResponse({"duplicate": True})
+            return JsonResponse({"duplicate": False})
         else:
             # First check if user has reviewed given course during same
             # semester before

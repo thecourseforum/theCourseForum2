@@ -14,19 +14,25 @@ jQuery(function ($) {
   const params = window.location.search;
   let clubId = null;
 
-  if (params.length > 0 && params.includes("club=")) {
+  if (params.length > 0) {
     // Parse club ID from URL
     const urlParams = new URLSearchParams(params);
-    clubId = parseInt(urlParams.get("club"));
+    
+    // Only try to parse club parameter if it exists
+    if (urlParams.has("club")) {
+      clubId = parseInt(urlParams.get("club"));
 
-    // If we have a club ID, fetch the club details to get its category
-    if (clubId) {
-      fetchClubDetails(clubId);
+      // If we have a club ID, fetch the club details to get its category
+      if (clubId) {
+        fetchClubDetails(clubId);
+      }
     }
   }
 
   // Enable category dropdown, which is the first in sequence
   $("#category").prop("disabled", false);
+  $("#club").prop("disabled", true);
+  $("#semester").prop("disabled", true);
 
   // Fetch all club categories from API
   const categoryEndpoint = "/api/club-categories/";
@@ -64,9 +70,6 @@ jQuery(function ($) {
 
       // Signal that categories have loaded
       $(document).trigger("categories-loaded");
-
-      // Load semesters in parallel
-      loadSemesters();
     },
     error: function (xhr, status, error) {
       console.error("Error loading categories:", error);
@@ -81,7 +84,9 @@ jQuery(function ($) {
   $("#category").change(function () {
     // Clear club dropdown
     clearDropdown("#club");
+    clearDropdown("#semester");
     $("#club").prop("disabled", true);
+    $("#semester").prop("disabled", true);
 
     const categoryId = $(this).val();
     if (!categoryId) {
@@ -134,6 +139,22 @@ jQuery(function ($) {
     });
   });
 
+  /* Add club select handler to load semesters when a club is selected */
+  $("#club").change(function() {
+    // Clear semester dropdown
+    clearDropdown("#semester");
+    $("#semester").prop("disabled", true);
+    
+    // Only proceed if we have a club selected
+    const clubId = $(this).val();
+    if (!clubId) {
+      return;
+    }
+    
+    // Now load semesters since a club is selected
+    loadSemesters();
+  });
+
   // Fetch club details to get its category, then trigger category selection
   function fetchClubDetails(clubId) {
     $.ajax({
@@ -149,7 +170,7 @@ jQuery(function ($) {
             // Wait for clubs to load using a custom event
             $(document).one("clubs-loaded", function () {
               // Now select the club
-              $("#club").val(clubId);
+              $("#club").val(clubId).trigger("change");
             });
           });
 
@@ -176,8 +197,6 @@ jQuery(function ($) {
     if (clubId) {
       // Remove any existing hidden fields
       $("#hidden-club-field").remove();
-      $("#hidden-instructor-field").remove();
-      $("#hidden-course-field").remove();
       $("#hidden-mode-field").remove();
 
       // Add club ID field
@@ -187,26 +206,6 @@ jQuery(function ($) {
           id: "hidden-club-field",
           name: "club",
           value: clubId,
-        })
-        .appendTo("#reviewForm");
-
-      // Add dummy instructor field (required by model)
-      $("<input>")
-        .attr({
-          type: "hidden",
-          id: "hidden-instructor-field",
-          name: "instructor",
-          value: "1", // dummy value
-        })
-        .appendTo("#reviewForm");
-
-      // Add dummy course field (required by model)
-      $("<input>")
-        .attr({
-          type: "hidden",
-          id: "hidden-course-field",
-          name: "course",
-          value: "1", // dummy value
         })
         .appendTo("#reviewForm");
 
