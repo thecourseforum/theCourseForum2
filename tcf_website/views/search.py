@@ -5,11 +5,17 @@ import statistics
 from typing import Iterable
 
 from django.contrib.postgres.search import TrigramSimilarity
-from django.db.models import F, FloatField, Q
+from django.db.models import F, FloatField, Q, Value
 from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
 
-from ..models import Course, Instructor, Subdepartment
+from ..models import Club, Course, Instructor, Subdepartment
+
+
+def parse_mode(request):
+    """Parse the mode parameter from the request."""
+    mode = request.GET.get("mode", "courses")
+    return mode, (mode == "clubs")
 
 
 def group_by_dept(courses):
@@ -30,11 +36,27 @@ def group_by_dept(courses):
     return grouped_courses
 
 
+def group_by_club_category(clubs):
+    """Groups clubs by their category and adds relevant data."""
+    grouped = {}
+    for club in clubs:
+        slug = club["category_slug"]
+        if slug not in grouped:
+            grouped[slug] = {
+                "category_name": club["category_name"],
+                "category_slug": slug,
+                "clubs": [],
+            }
+        grouped[slug]["clubs"].append(club)
+    return grouped
+
+
 def search(request):
     """Search results view."""
 
     # Set query
     query = request.GET.get("q", "").strip()
+    mode, is_club = parse_mode(request)
 
     filters = {
         "disciplines": request.GET.getlist("discipline"),
@@ -53,24 +75,79 @@ def search(request):
     # Save filters to session
     request.session["search_filters"] = filters
 
-    if query:
-        courses = fetch_courses(query, filters)
-        instructors = fetch_instructors(query)
-        courses_first = decide_order(courses, instructors)
-    else:
-        courses = filter_courses(filters)
+    if is_club:
+        clubs = fetch_clubs(query)
+        grouped = group_by_club_category(clubs)
+        total = len(clubs)
         instructors = []
-        courses_first = True
+        courses_first = True  # Always show clubs first in club mode
+    else:
+        if query:
+            courses = fetch_courses(query, filters)
+            instructors = fetch_instructors(query)
+            courses_first = decide_order(courses, instructors)
+            grouped = group_by_dept(courses)
+            total = len(courses)
+        else:
+            courses = filter_courses(filters)
+            instructors = []
+            courses_first = True
+            grouped = group_by_dept(courses)
+            total = len(courses)
 
     ctx = {
+        "mode": mode,
+        "is_club": is_club,
         "query": query[:30] + ("..." if len(query) > 30 else ""),
         "courses_first": courses_first,
-        "courses": group_by_dept(courses),
+        "grouped": grouped,
         "instructors": instructors,
-        "total_courses": len(courses),
+        "total": total,
     }
 
     return render(request, "search/search.html", ctx)
+
+
+def fetch_clubs(query):
+    """Get club data using Django Trigram similarity."""
+    threshold = 0.15
+    if not query:
+        return list(
+            Club.objects.annotate(
+                max_similarity=Value(1.0, output_field=FloatField()),
+                category_slug=F("category__slug"),
+                category_name=F("category__name"),
+            ).values(
+                "id",
+                "name",
+                "description",
+                "max_similarity",
+                "category_slug",
+                "category_name",
+            )[
+                :15
+            ]
+        )
+
+    qs = (
+        Club.objects.annotate(sim=TrigramSimilarity("combined_name", query))
+        .annotate(max_similarity=F("sim"))
+        .filter(max_similarity__gte=threshold)
+        .annotate(category_slug=F("category__slug"), category_name=F("category__name"))
+        .order_by("-max_similarity")[:15]
+    )
+
+    return [
+        {
+            "id": c.id,
+            "name": c.name,
+            "description": c.description,
+            "max_similarity": c.max_similarity,
+            "category_slug": c.category_slug,
+            "category_name": c.category_name,
+        }
+        for c in qs
+    ]
 
 
 def decide_order(courses: list[dict], instructors: list[dict]) -> bool:

@@ -12,8 +12,10 @@ from django.http import HttpResponseNotFound
 from django.utils import timezone
 
 from tcf_website.models import Course, Section, SectionEnrollment, Semester
-from tcf_website.utils.enrollment import (build_sis_api_url,
-                                          format_enrollment_update_message)
+from tcf_website.utils.enrollment import (
+    build_sis_api_url,
+    format_enrollment_update_message,
+)
 
 TIMEOUT = 10
 MAX_WORKERS = 5

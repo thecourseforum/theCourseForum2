@@ -5,12 +5,20 @@
     <input 
       type="search" 
       class="form-control border border-right-0"
-      placeholder="Search for a class or professor..." 
+      placeholder="{% if is_club %}Search for a club...{% else %}Search for a class or professor...{% endif %}" 
       aria-label="Search" 
       name="q" 
       value="{{ query }}"
     >
     <div class="input-group-append">
+      <!-- Mode Toggle -->
+      <div class="search-mode-toggle no-transition">
+        <input type="radio" id="search-mode-courses" name="mode" value="courses" {% if not is_club %}checked{% endif %}>
+        <input type="radio" id="search-mode-clubs" name="mode" value="clubs" {% if is_club %}checked{% endif %}>
+        <label for="search-mode-courses" class="mode-label">Courses</label>
+        <label for="search-mode-clubs" class="mode-label">Clubs</label>
+        <div class="toggle-indicator"></div>
+      </div>
       <!-- Search Button -->
       <button 
         class="btn btn-outline-secondary border border-left-0" 
@@ -35,12 +43,7 @@
         >
           Filters
         </button>
-        <div class="tooltip-container">
-            <div class="tooltip">
-                Try out Filters!
-            </div>
-            <div class="tooltip-arrow"></div>
-        </div>
+
         <div 
           class="dropdown-menu p-4 filter-dropdown dropdown-menu-end" 
           aria-labelledby="filter-button" 
@@ -199,30 +202,7 @@
       document.cookie = `${name}=${value};${expires};path=/`;
     }
 
-    const tooltip = document.querySelector('.tooltip');
-    const tooltipArrow = document.querySelector('.tooltip-arrow');
-
-    if (!getCookie('hasVisited')) {
-        tooltip.classList.add('show');
-        tooltipArrow.classList.add('show');
-
-        setCookie('hasVisited', 'true', 365);
-
-        setTimeout(() => {
-            tooltip.classList.remove('show');
-            tooltip.classList.add('hide');
-            tooltipArrow.classList.remove('show');
-            tooltipArrow.classList.add('hide');
-
-            setTimeout(() => {
-                tooltip.style.display = 'none';
-                tooltipArrow.style.display = 'none';
-            }, 500);
-        }, 6000);
-    } else {
-        tooltip.style.display = 'none';
-        tooltipArrow.style.display = 'none';
-    }
+    
 
     // Determines if any filters (besides day ones) are active 
     const filterInputs = document.querySelectorAll('.dropdown-menu input[type="checkbox"]:not(.day-checkbox)');
@@ -419,6 +399,11 @@
 
     // Updates filter button
     updateButtonState();
+
+    // Remove no-transition class after page load to enable animations for subsequent interactions
+    setTimeout(function() {
+      document.querySelector('.search-mode-toggle').classList.remove('no-transition');
+    }, 100);
 
   });
 </script>
@@ -652,96 +637,62 @@
     border-radius: 2px;
   }
   
-  .tooltip-container {
-    position: absolute;
-    left: auto;
-    right: 10px;
-    top: calc(100% + 15px);
-    transform: none;
-  }
-
-  .tooltip {
+  /* Search Mode Toggle Styles */
+  .search-mode-toggle {
     position: relative;
-    left: 0;
-    top: 0;
-    transform: none;
-    background: linear-gradient(135deg, #d75626, #b4441d);
-    color: white;
-    padding: 8px 12px;
+    display: flex;
+    background-color: #f0f0f0;
     border-radius: 4px;
-    white-space: nowrap;
-    font-size: 14px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease-in, visibility 0.3s;
+    border: 1px solid #cbd5e0;
+    height: 38px;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.1);
+    min-width: 170px;
   }
-
-  .tooltip-arrow {
-    position: absolute;
-    left: auto;
-    right: 25px;
-    top: -8px;
-    width: 8px;
-    height: 8px;
-    background: linear-gradient(135deg, #d75626, #b4441d);
-    clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  
+  .search-mode-toggle.no-transition .toggle-indicator {
+    transition: none !important;
+  }
+  
+  .search-mode-toggle input[type="radio"] {
     opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease-in, visibility 0.3s;
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
+  
+  .search-mode-toggle .mode-label {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    cursor: pointer;
+    position: relative;
     z-index: 1;
+    transition: color 0.3s;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
   }
-
-  .tooltip-arrow.show {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .tooltip-arrow.hide {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  .tooltip::after {
-    content: '';
+  
+  .search-mode-toggle .toggle-indicator {
     position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255,0,0,0.3),
-        rgba(255,165,0,0.3),
-        rgba(255,255,0,0.3),
-        rgba(0,255,0,0.3),
-        rgba(0,191,255,0.3),
-        rgba(238,130,238,0.3),
-        transparent
-    );
-    transform: skewX(-20deg);
-    animation: rainbow-gloss 2s infinite ease;
+    top: 2px;
+    left: 2px;
+    width: calc(50% - 4px);
+    height: calc(100% - 4px);
+    background-color: #d75626;
+    transition: transform 0.3s ease;
+    border-radius: 3px;
   }
-
-  @keyframes rainbow-gloss {
-    0% {
-        left: -200%;
-    }
-    100% {
-        left: 200%;
-    }
+  
+  #search-mode-clubs:checked ~ .toggle-indicator {
+    transform: translateX(105%);
   }
-
-  .tooltip.show {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .tooltip.hide {
-    opacity: 0;
-    visibility: hidden;
+  
+  #search-mode-courses:checked ~ .mode-label[for="search-mode-courses"],
+  #search-mode-clubs:checked ~ .mode-label[for="search-mode-clubs"] {
+    color: white;
   }
 </style>

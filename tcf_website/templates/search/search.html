@@ -22,11 +22,16 @@
 
       <div class="search-results container p-5">
 
-        <!-- Tabs for displaying result categories: Courses, Departments, Instructors -->
+        <!-- Tabs for displaying result categories -->
         <div id="result-nav" class="result-nav row mb-5">
           <div class="col-12">
             <div class="btn-group btn-group-sm" role="toolbar">
               <a class="btn bg-tcf-indigo text-white" disabled>See results for</a>
+              {% if is_club %}
+              <a href="#clubs" id="club-tab" class="btn btn-light collapsed" autofocus
+                 role="button" data-toggle="collapse" aria-expanded="true" aria-controls="clubs">
+                 Clubs</a>
+              {% else %}
               <a href="#courses" id="course-tab" class="btn btn-light collapsed" {% if courses_first %} autofocus {% endif %}
                  role="button" data-toggle="collapse" aria-expanded="true" aria-controls="courses">
                  Courses</a>
@@ -36,6 +41,7 @@
               <a href="#departments" id="department-tab" class="btn btn-light collapsed"
                 role="button" data-toggle="collapse" aria-expanded="false" aria-controls="departments">
                  Departments</a>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -43,23 +49,79 @@
         <!-- The current result category that is displayed -->
         <div id="results" class="accordion">
 
-          <!-- Course results -->
+          {% if is_club %}
+          <!-- Club results -->
+          <div id="clubs" class="row mb-5 collapse show"
+               aria-labelledby="club-tab" data-parent="#results">
+            <div class="col-12">
+              <div class="search-result-header mb-3">
+                <h3 class="mr-3">Clubs</h3>
+                <p class="text-muted">{{ total }} results</p>
+              </div>
 
+              {% if grouped %}
+                {% for category_slug, category_data in grouped.items %}
+                <div class="row mb-5">
+                  <div class="col-12">
+                    <h5>{{ category_data.category_name }}</h5>
+                      {% for club in category_data.clubs %}
+                        <div class="list-group-item list-group-item-light text-dark p-2">
+                          <div class="row">
+                            <div class="col-md-11 align-self-center">
+                                <a href="{% url 'course' mnemonic=category_data.category_slug course_number=club.id %}?mode=clubs">
+                                  <div class="row g-0">
+                                    <div class="col-12">{{club.name}}</div>
+                                  </div>
+                                </a>
+                            </div>
+                            <div class="col-md-1 align-self-center">
+                              <h5 class="hover-tcf-orange" data-toggle="collapse"
+                                data-target="#description_container_{{forloop.parentloop.counter}}_{{forloop.counter}}"
+                                id="result_{{forloop.counter}}">
+                                <i class="fas fa-chevron-down" style="vertical-align: middle;"></i>
+                              </h5>
+                            </div>
+                          </div>
+                          <div class="collapse" id="description_container_{{forloop.parentloop.counter}}_{{forloop.counter}}">
+                            <hr>
+                            <p>
+                              <small class="text-uppercase search-course-description" style="font-size: 15px;">
+                                Club Description:
+                              </small>
+                              {% if club.description|length > 0 %}
+                                {{club.description}}
+                              {%else%}
+                                N/A
+                              {%endif%}
+                            </p>
+                          </div>
+                        </div>
+                      {% endfor %}
+                  </div>
+                </div>
+              {% endfor %}
+              {% else %}
+              <p>No clubs matched your search.</p>
+              {% endif %}
+            </div>
+          </div>
+          {% else %}
+          <!-- Course results -->
           <div id="courses" class="row mb-5 collapse {% if courses_first %} show {% endif %}"
                aria-labelledby="course-tab" data-parent="#results">
             <div class="col-12">
 
               <div class="search-result-header mb-3">
                 <h3 class="mr-3">Courses</h3>
-                {% if courses %}
-                <p class="text-muted">{{ total_courses }} results</p>
+                {% if grouped %}
+                <p class="text-muted">{{ total }} results</p>
                 {% else %}
                 <p class="text-muted">0 results</p>
                 {% endif %}
               </div>
 
-              {% if courses %}
-                {% for dept, dept_data in courses.items %}
+              {% if grouped %}
+                {% for dept, dept_data in grouped.items %}
                 <div class="row mb-5">
                   <div class="col-12">
                     <h5><a href="{% url 'department' dept_id=dept_data.dept_id %}">{{ dept }} / {{ dept_data.subdept_name }}</a></h5>
@@ -140,11 +202,11 @@
 
               <div class="search-result-header mb-3">
                 <h3 class="mr-3">Departments</h3>
-                <p class="text-muted">{{ courses|length }} results</p>
+                <p class="text-muted">{{ grouped|length }} results</p>
               </div>
-              {% if courses %}
+              {% if grouped %}
                 <ul class="list-unstyled searched-instructors">
-                {% for dept, dept_data in courses.items %}
+                {% for dept, dept_data in grouped.items %}
                   <li class="my-2">
                     <a href="{% url 'department' dept_id=dept_data.dept_id %}">
                       <div class="row p-0 text-left">
@@ -160,7 +222,7 @@
               {% endif %}
             </div>
           </div>
-
+          {% endif %}
         </div>
 
       </div>

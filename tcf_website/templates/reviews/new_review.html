@@ -29,6 +29,9 @@
 {% block js %}
 <script type="text/javascript" src="{% static 'reviews/new_review.js' %}"></script>
 <script type="text/javascript" src="{% static 'reviews/sync_review_sliders.js' %}"></script>
+{% if is_club %}
+<script type="text/javascript" src="{% static 'reviews/club_review.js' %}"></script>
+{% endif %}
 <script>
   // For Bootstrap tooltip
   $(function () {

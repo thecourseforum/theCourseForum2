@@ -3,8 +3,7 @@
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import \
-    LoginRequiredMixin  # For class-based views
+from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
@@ -13,6 +12,8 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from ..models import Review
+
+from tcf_website.views.browse import parse_mode
 
 # pylint: disable=fixme,unused-argument
 # Disable pylint errors on TODO messages, such as below
@@ -29,6 +30,7 @@ class ReviewForm(forms.ModelForm):
         fields = [
             "text",
             "course",
+            "club",
             "instructor",
             "semester",
             "instructor_rating",
@@ -78,6 +80,7 @@ def downvote(request, review_id):
 @login_required
 def new_review(request):
     """Review creation view."""
+    mode, is_club = parse_mode(request)
 
     # Collect form data into Review model instance.
     if request.method == "POST":
@@ -94,10 +97,43 @@ def new_review(request):
 
             instance.save()
 
-            messages.success(request, f"Successfully reviewed {instance.course}!")
-            return redirect("reviews")
-        return render(request, "reviews/new_review.html", {"form": form})
-    return render(request, "reviews/new_review.html")
+            # Determine redirect URL with appropriate mode
+            redirect_url = "reviews"
+
+            # Check if this is a club review by directly checking if club field is set
+            if instance.club:
+                messages.success(request, f"Successfully reviewed {instance.club}!")
+            else:
+                messages.success(request, f"Successfully reviewed {instance.course}!")
+
+            return redirect(redirect_url)
+        return render(
+            request,
+            "reviews/new_review.html",
+            {"form": form, "is_club": is_club, "mode": mode},
+        )
+
+    # Prepare context data for GET requests
+    context = {"is_club": is_club, "mode": mode}
+
+    # For club reviews, fetch club categories and clubs if needed
+    if is_club:
+        from tcf_website.models import ClubCategory, Club
+
+        # Get all club categories for the form
+        context["club_categories"] = ClubCategory.objects.all().order_by("name")
+
+        # If a specific club is pre-selected in the URL
+        club_id = request.GET.get("club")
+        if club_id:
+            try:
+                club = Club.objects.get(id=club_id)
+                context["selected_club"] = club
+                context["selected_category"] = club.category
+            except Club.DoesNotExist:
+                pass
+
+    return render(request, "reviews/new_review.html", context)
 
 
 @login_required()
@@ -105,34 +141,43 @@ def check_duplicate(request):
     """Check for duplicate reviews when a user submits a review
     based on if it's the same course with the same instructor/semester.
     Used for an Ajax request in new_review.html"""
+    mode, is_club = parse_mode(request)
 
     form = ReviewForm(request.POST)
     if form.is_valid():
         instance = form.save(commit=False)
 
-        # First check if user has reviewed given course during same
-        # semester before
-        reviews_on_same_class = request.user.review_set.filter(
-            course=instance.course, semester=instance.semester
-        )
+        # Check based on mode
+        if is_club and instance.club:
+            # Check if user has reviewed given club before
+            reviews_on_same_club = request.user.review_set.filter(club=instance.club)
+            # Review already exists so it's a duplicate; inform user
+            if reviews_on_same_club.exists():
+                response = {"duplicate": True}
+                return JsonResponse(response)
+        else:
+            # First check if user has reviewed given course during same
+            # semester before
+            reviews_on_same_class = request.user.review_set.filter(
+                course=instance.course, semester=instance.semester
+            )
 
-        # Review already exists so it's a duplicate; inform user
-        if reviews_on_same_class.exists():
-            response = {"duplicate": True}
-            return JsonResponse(response)
+            # Review already exists so it's a duplicate; inform user
+            if reviews_on_same_class.exists():
+                response = {"duplicate": True}
+                return JsonResponse(response)
 
-        # Then check if user has reviewed given course with same
-        # instructor before
-        reviews_on_same_class = request.user.review_set.filter(
-            course=instance.course, instructor=instance.instructor
-        )
-        # Review already exists so it's a duplicate; inform user
-        if reviews_on_same_class.exists():
-            response = {"duplicate": True}
-            return JsonResponse(response)
+            # Then check if user has reviewed given course with same
+            # instructor before
+            reviews_on_same_class = request.user.review_set.filter(
+                course=instance.course, instructor=instance.instructor
+            )
+            # Review already exists so it's a duplicate; inform user
+            if reviews_on_same_class.exists():
+                response = {"duplicate": True}
+                return JsonResponse(response)
 
-        # User has not reviewed course during same semester OR with same instructor before;
-        # proceed with standard form submission
+        # User has not reviewed course/club before; proceed with standard form submission
         response = {"duplicate": False}
         return JsonResponse(response)
     return redirect("new_review")
@@ -186,11 +231,12 @@ class DeleteReview(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
 
     def get_success_message(self, cleaned_data) -> str:
         """Overrides SuccessMessageMixin's get_success_message method."""
-        # get the course this review is about
-        course = self.object.course
-
-        # return success message
-        return f"Successfully deleted your review for {str(course)}!"
+        # Check if it's a club review
+        if self.object.club:
+            return f"Successfully deleted your review for {self.object.club}!"
+        else:
+            # It's a course review
+            return f"Successfully deleted your review for {self.object.course}!"
 
 
 @login_required
@@ -204,10 +250,17 @@ def edit_review(request, review_id):
         form = ReviewForm(request.POST, instance=review)
         if form.is_valid():
             form.save()
-            messages.success(
-                request,
-                f"Successfully updated your review for {form.instance.course}!",
-            )
+            # Check if it's a club or course review
+            if form.instance.club:
+                messages.success(
+                    request,
+                    f"Successfully updated your review for {form.instance.club}!",
+                )
+            else:
+                messages.success(
+                    request,
+                    f"Successfully updated your review for {form.instance.course}!",
+                )
             return redirect("reviews")
         messages.error(request, form.errors)
         return render(request, "reviews/edit_review.html", {"form": form})

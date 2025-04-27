@@ -200,6 +200,52 @@ class Subdepartment(models.Model):
         ]
 
 
+class ClubCategory(models.Model):
+    """ClubCategory model.
+
+    Has many Clubs.
+    """
+
+    # Human name
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True)
+    # slug for routing in the existing course URL
+    slug = models.SlugField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Club(models.Model):
+    """Club model.
+
+    Belongs to a ClubCategory.
+    Has many Reviews.
+    """
+
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    category = models.ForeignKey(ClubCategory, on_delete=models.CASCADE)
+    combined_name = models.CharField(max_length=255, blank=True, editable=False)
+
+    def save(self, *args, **kwargs):
+        # maintain combined_name for trigram search
+        self.combined_name = self.name
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        indexes = [
+            GinIndex(
+                fields=["combined_name"],
+                opclasses=["gin_trgm_ops"],
+                name="club_combined_name",
+            ),
+        ]
+
+
 class User(AbstractUser):
     """User model.
 
@@ -1004,6 +1050,7 @@ class Review(models.Model):
     Has a Course.
     Has an Instructor.
     Has an Semester.
+    Can optionally have a Club instead of a Course.
     """
 
     # Review text. Optional.
@@ -1012,6 +1059,8 @@ class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     # Review course foreign key. Required.
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    # Review club foreign key. Optional alternative to course.
+    club = models.ForeignKey(Club, on_delete=models.CASCADE, null=True, blank=True)
     # Review instructor foreign key. Required.
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     # Review semester foreign key. Required.

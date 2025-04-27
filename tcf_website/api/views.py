@@ -4,13 +4,31 @@ from django.db.models import Avg, Sum
 from django.http import JsonResponse
 from rest_framework import viewsets
 
-from ..models import (Course, Department, Instructor, School, Section,
-                      SectionEnrollment, Semester, Subdepartment)
+from ..models import (
+    Club,
+    ClubCategory,
+    Course,
+    Department,
+    Instructor,
+    School,
+    Section,
+    SectionEnrollment,
+    Semester,
+    Subdepartment,
+)
 from .filters import InstructorFilter
-from .serializers import (CourseAllStatsSerializer, CourseSerializer,
-                          CourseSimpleStatsSerializer, DepartmentSerializer,
-                          InstructorSerializer, SchoolSerializer,
-                          SemesterSerializer, SubdepartmentSerializer)
+from .serializers import (
+    ClubCategorySerializer,
+    ClubSerializer,
+    CourseAllStatsSerializer,
+    CourseSerializer,
+    CourseSimpleStatsSerializer,
+    DepartmentSerializer,
+    InstructorSerializer,
+    SchoolSerializer,
+    SemesterSerializer,
+    SubdepartmentSerializer,
+)
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
@@ -135,6 +153,31 @@ class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
             params["section__instructors"] = self.request.query_params["instructor"]
         # Returns filtered, unique semesters in reverse chronological order
         return super().get_queryset().filter(**params).distinct().order_by("-number")
+
+
+class ClubCategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    """DRF ViewSet for ClubCategory"""
+
+    queryset = ClubCategory.objects.all()
+    serializer_class = ClubCategorySerializer
+
+
+class ClubViewSet(viewsets.ReadOnlyModelViewSet):
+    """DRF ViewSet for Club"""
+
+    queryset = Club.objects.select_related("category")
+    serializer_class = ClubSerializer
+    filterset_fields = ["category"]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        # Filter by category if provided in query params
+        category_id = self.request.query_params.get("category")
+        if category_id:
+            queryset = queryset.filter(category_id=category_id)
+
+        return queryset.order_by("name")
 
 
 class SectionEnrollmentViewSet(viewsets.ViewSet):

@@ -18,8 +18,10 @@ from tqdm import tqdm
 from urllib3.util.retry import Retry
 
 from tcf_website.models import Section, SectionEnrollment, Semester
-from tcf_website.utils.enrollment import (build_sis_api_url,
-                                          format_enrollment_update_message)
+from tcf_website.utils.enrollment import (
+    build_sis_api_url,
+    format_enrollment_update_message,
+)
 
 # Maximum time to wait for a response from the server
 TIMEOUT = 30

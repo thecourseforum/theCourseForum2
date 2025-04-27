@@ -2,8 +2,16 @@
 
 from rest_framework import serializers
 
-from ..models import (Course, Department, Instructor, School, Semester,
-                      Subdepartment)
+from ..models import (
+    Club,
+    ClubCategory,
+    Course,
+    Department,
+    Instructor,
+    School,
+    Semester,
+    Subdepartment,
+)
 
 
 class SemesterSerializer(serializers.ModelSerializer):
@@ -149,4 +157,22 @@ class InstructorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Instructor
+        fields = "__all__"
+
+
+class ClubCategorySerializer(serializers.ModelSerializer):
+    """DRF Serializer for ClubCategory"""
+
+    class Meta:
+        model = ClubCategory
+        fields = "__all__"
+
+
+class ClubSerializer(serializers.ModelSerializer):
+    """DRF Serializer for Club"""
+
+    category = ClubCategorySerializer(read_only=True)
+
+    class Meta:
+        model = Club
         fields = "__all__"

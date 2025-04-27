@@ -25,3 +25,60 @@
 .school-body {
   padding: 1.25rem;
 }
+
+/* Mode Toggle Styles */
+.mode-toggle-container {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 300px;
+}
+
+.mode-toggle-wrapper {
+  position: relative;
+  display: flex;
+  background-color: #f0f0f0;
+  border-radius: 30px;
+  padding: 4px;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.mode-toggle-option {
+  flex: 1;
+  text-align: center;
+  padding: 10px 20px;
+  z-index: 1;
+  transition: color 0.3s ease;
+  font-weight: 500;
+  color: #555;
+  text-decoration: none;
+}
+
+.mode-toggle-option.active {
+  color: #fff;
+}
+
+.mode-toggle-slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background-color: #d75626;
+  border-radius: 25px;
+  transition: transform 0.3s ease;
+}
+
+.mode-toggle-slider.slide-right {
+  transform: translateX(100%);
+}
+
+.mode-toggle-option:hover {
+  text-decoration: none;
+  color: #d75626;
+}
+
+.mode-toggle-option.active:hover {
+  color: #fff;
+}
