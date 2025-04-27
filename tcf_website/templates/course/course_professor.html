@@ -224,7 +224,7 @@
                                             Not enough information
                                         </p>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; margin-top: 2px; font-size: 14px;">
+                                    <div id="sentiment-labels" style="display: none; justify-content: space-between; margin-top: 2px; font-size: 14px;">
                                         <span style="color: #BE4B20; font-weight: bold;">Strongly Negative</span>
                                         <span style="color: #182D66; font-weight: bold;">Strongly Positive</span>
                                     </div>
@@ -528,7 +528,7 @@
         const gpaNoDataDiv = document.getElementById('gpa-no-data');
         const gpaCtx = gpaChartCanvas ? gpaChartCanvas.getContext('2d') : null;
 
-        if (gpaHistory.length <= 2) {
+        if (gpaHistory.length <= 1) {
             gpaChartCanvas.classList.add('d-none');
             gpaNoDataDiv.classList.remove('d-none');
         } else {
@@ -632,9 +632,11 @@
         if (totalReviews <= 1) { // Changed condition to <= 1
             chartCanvas.style.display = "none";
             noReviewsMessage.style.display = "block";
+            document.getElementById('sentiment-labels').style.display = "none";
         } else {
             chartCanvas.style.display = "block";
             noReviewsMessage.style.display = "none";
+            document.getElementById('sentiment-labels').style.display = "flex";
 
             const barColors = {
                 normal: ['#BE4B20', '#DD734C', '#B4A6B6', '#5D83D1', '#182D66'],
