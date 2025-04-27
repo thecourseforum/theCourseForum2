@@ -58,26 +58,26 @@ def browse(request):
                 "club_categories": club_categories,
             },
         )
-    else:
-        clas = School.objects.get(name="College of Arts & Sciences")
-        seas = School.objects.get(name="School of Engineering & Applied Science")
 
-        excluded_list = [clas.pk, seas.pk]
+    clas = School.objects.get(name="College of Arts & Sciences")
+    seas = School.objects.get(name="School of Engineering & Applied Science")
 
-        # Other schools besides CLAS, SEAS, and Misc.
-        other_schools = School.objects.exclude(pk__in=excluded_list).order_by("name")
+    excluded_list = [clas.pk, seas.pk]
 
-        return render(
-            request,
-            "browse/browse.html",
-            {
-                "is_club": False,
-                "mode": mode,
-                "CLAS": clas,
-                "SEAS": seas,
-                "other_schools": other_schools,
-            },
-        )
+    # Other schools besides CLAS, SEAS, and Misc.
+    other_schools = School.objects.exclude(pk__in=excluded_list).order_by("name")
+
+    return render(
+        request,
+        "browse/browse.html",
+        {
+            "is_club": False,
+            "mode": mode,
+            "CLAS": clas,
+            "SEAS": seas,
+            "other_schools": other_schools,
+        },
+    )
 
 
 def department(request, dept_id: int, course_recency=None):
@@ -225,88 +225,86 @@ def course_view(
                 "breadcrumbs": breadcrumbs,
             },
         )
-    else:
-        # Redirect if the mnemonic is not all uppercase
-        if mnemonic != mnemonic.upper():
-            return redirect(
-                "course", mnemonic=mnemonic.upper(), course_number=course_number
-            )
 
-        course = get_object_or_404(
-            Course,
-            subdepartment__mnemonic=mnemonic.upper(),
-            number=course_number,
+    # Redirect if the mnemonic is not all uppercase
+    if mnemonic != mnemonic.upper():
+        return redirect(
+            "course", mnemonic=mnemonic.upper(), course_number=course_number
         )
 
-        latest_semester = Semester.latest()
-        recent = str(latest_semester) == instructor_recency
+    course = get_object_or_404(
+        Course,
+        subdepartment__mnemonic=mnemonic.upper(),
+        number=course_number,
+    )
 
-        # Fetch sorting variables
-        sortby = request.GET.get("sortby", "last_taught")
-        order = request.GET.get("order", "desc")
+    latest_semester = Semester.latest()
+    recent = str(latest_semester) == instructor_recency
 
-        instructors = course.sort_instructors_by_key(
-            latest_semester, recent, order, sortby
+    # Fetch sorting variables
+    sortby = request.GET.get("sortby", "last_taught")
+    order = request.GET.get("order", "desc")
+
+    instructors = course.sort_instructors_by_key(latest_semester, recent, order, sortby)
+    # Remove none values from section_times and section_nums
+    # For whatever reason, it is not possible to remove None from .annotate()'s ArrayAgg() function
+    for instructor in instructors:
+        if hasattr(instructor, "section_times") and instructor.section_times:
+            instructor.section_times = [
+                s for s in instructor.section_times if s is not None
+            ]
+
+        if hasattr(instructor, "section_nums") and instructor.section_nums:
+            instructor.section_nums = [
+                s for s in instructor.section_nums if s is not None
+            ]
+
+    # Note: Could be simplified further
+
+    for instructor in instructors:
+        # Convert to string for templating
+        instructor.semester_last_taught = str(
+            get_object_or_404(Semester, pk=instructor.semester_last_taught)
         )
-        # Remove none values from section_times and section_nums
-        # For whatever reason, it is not possible to remove None from .annotate()'s ArrayAgg() function
-        for instructor in instructors:
-            if hasattr(instructor, "section_times") and instructor.section_times:
-                instructor.section_times = [
-                    s for s in instructor.section_times if s is not None
-                ]
+        if instructor.section_times and instructor.section_nums:
+            if instructor.section_times[0] and instructor.section_nums[0]:
+                instructor.times = {
+                    num: times[:-1].split(",")
+                    for num, times in zip(
+                        instructor.section_nums, instructor.section_times
+                    )
+                    if num and times
+                }
 
-            if hasattr(instructor, "section_nums") and instructor.section_nums:
-                instructor.section_nums = [
-                    s for s in instructor.section_nums if s is not None
-                ]
+    dept = course.subdepartment.department
 
-        # Note: Could be simplified further
+    # Navigation breadcrumbs
+    breadcrumbs = [
+        (dept.school.name, reverse("browse"), False),
+        (dept.name, reverse("department", args=[dept.pk]), False),
+        (course.code, None, True),
+    ]
 
-        for instructor in instructors:
-            # Convert to string for templating
-            instructor.semester_last_taught = str(
-                get_object_or_404(Semester, pk=instructor.semester_last_taught)
-            )
-            if instructor.section_times and instructor.section_nums:
-                if instructor.section_times[0] and instructor.section_nums[0]:
-                    instructor.times = {
-                        num: times[:-1].split(",")
-                        for num, times in zip(
-                            instructor.section_nums, instructor.section_times
-                        )
-                        if num and times
-                    }
+    # Saves information of course to session for recently viewed modal
+    request.session["course_code"] = course.code()
+    request.session["course_title"] = course.title
+    request.session["instructor_fullname"] = None
 
-        dept = course.subdepartment.department
-
-        # Navigation breadcrumbs
-        breadcrumbs = [
-            (dept.school.name, reverse("browse"), False),
-            (dept.name, reverse("department", args=[dept.pk]), False),
-            (course.code, None, True),
-        ]
-
-        # Saves information of course to session for recently viewed modal
-        request.session["course_code"] = course.code()
-        request.session["course_title"] = course.title
-        request.session["instructor_fullname"] = None
-
-        return render(
-            request,
-            "course/course.html",
-            {
-                "is_club": False,
-                "mode": mode,
-                "course": course,
-                "instructors": instructors,
-                "latest_semester": str(latest_semester),
-                "breadcrumbs": breadcrumbs,
-                "sortby": sortby,
-                "order": order,
-                "active_instructor_recency": instructor_recency,
-            },
-        )
+    return render(
+        request,
+        "course/course.html",
+        {
+            "is_club": False,
+            "mode": mode,
+            "course": course,
+            "instructors": instructors,
+            "latest_semester": str(latest_semester),
+            "breadcrumbs": breadcrumbs,
+            "sortby": sortby,
+            "order": order,
+            "active_instructor_recency": instructor_recency,
+        },
+    )
 
 
 def course_instructor(request, course_id, instructor_id, method="Default"):
@@ -592,7 +590,7 @@ def run_async(func, *args):
 
 def club_category(request, category_slug: str):
     """View for club category page."""
-    mode, is_club = parse_mode(request)
+    mode = parse_mode(request)[0]  # Only use the mode, ignoring is_club
 
     # Get the category by slug
     category = get_object_or_404(ClubCategory, slug=category_slug.upper())

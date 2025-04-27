@@ -11,8 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from ..models import Review
-
+from ..models import Review, ClubCategory, Club
 from tcf_website.views.browse import parse_mode
 
 # pylint: disable=fixme,unused-argument
@@ -118,8 +117,6 @@ def new_review(request):
 
     # For club reviews, fetch club categories and clubs if needed
     if is_club:
-        from tcf_website.models import ClubCategory, Club
-
         # Get all club categories for the form
         context["club_categories"] = ClubCategory.objects.all().order_by("name")
 
@@ -141,7 +138,7 @@ def check_duplicate(request):
     """Check for duplicate reviews when a user submits a review
     based on if it's the same course with the same instructor/semester.
     Used for an Ajax request in new_review.html"""
-    mode, is_club = parse_mode(request)
+    is_club = parse_mode(request)[1]
 
     form = ReviewForm(request.POST)
     if form.is_valid():
@@ -234,9 +231,7 @@ class DeleteReview(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
         # Check if it's a club review
         if self.object.club:
             return f"Successfully deleted your review for {self.object.club}!"
-        else:
-            # It's a course review
-            return f"Successfully deleted your review for {self.object.course}!"
+        return f"Successfully deleted your review for {self.object.course}!"
 
 
 @login_required
