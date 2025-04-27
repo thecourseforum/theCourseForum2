@@ -270,6 +270,28 @@
     });
     
 
+    // Disable filters button when in club mode
+    const coursesRadio = document.getElementById('search-mode-courses');
+    const clubsRadio = document.getElementById('search-mode-clubs');
+    const filterButtonElement = document.getElementById('filter-button');
+    
+    function updateFilterButtonState() {
+      if (clubsRadio.checked) {
+        filterButtonElement.disabled = true;
+        filterButtonElement.classList.add('disabled');
+      } else {
+        filterButtonElement.disabled = false;
+        filterButtonElement.classList.remove('disabled');
+      }
+    }
+    
+    // Set initial state
+    updateFilterButtonState();
+    
+    // Listen for changes
+    coursesRadio.addEventListener('change', updateFilterButtonState);
+    clubsRadio.addEventListener('change', updateFilterButtonState);
+
     // Add subject search functionality
     const subjectSearch = document.getElementById('subject-search');
     const subjectItems = document.querySelectorAll('.subject-list .form-check');
@@ -694,5 +716,12 @@
   #search-mode-courses:checked ~ .mode-label[for="search-mode-courses"],
   #search-mode-clubs:checked ~ .mode-label[for="search-mode-clubs"] {
     color: white;
+  }
+  
+  /* Style for disabled filter button */
+  #filter-button.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 </style>
