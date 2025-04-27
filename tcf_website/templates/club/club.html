@@ -18,21 +18,26 @@
   
   <div class="row">
     <div class="col-12">
-      <div class="course-header card mb-3">
+      <div class="d-md-flex align-items-baseline my-3">
+        <h1 class="mr-md-3">{{ club.name }}</h1>
+        <h4>{{ club.category.name }}</h4>
+      </div>
+      
+      <!-- Club Description -->
+      {% if club.description %}
+      <div class="card">
         <div class="card-body">
-          <div class="course-info">
-            <h1 class="course-title">{{ club.name }}</h1>
-            <h4 class="course-mnemonic">{{ club.category.name }}</h4>
-            <div class="course-description">
-              {% if club.description %}
-                <p>{{ club.description }}</p>
-              {% else %}
-                <p>No description available.</p>
-              {% endif %}
-            </div>
-          </div>
+          <h4 class="card-title">
+            Club Description
+          </h4>
+          <p class="card-text">
+            {{ club.description }}
+          </p>
         </div>
       </div>
+      {% endif %}
+      
+      <br/>
     </div>
   </div>
 

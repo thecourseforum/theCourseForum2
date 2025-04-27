@@ -67,6 +67,9 @@ export { handleVote };
 
 /* For review text collapse/expand functionality */
 $(function () {
+  // Initialize tooltips
+  $('[data-toggle="tooltip"]').tooltip();
+
   // On browser window resize, refresh collapser threshold for each review card
   $(".review").each(function (i, review) {
     const visibleReviewBody = $(this).find("div.review-text-body");

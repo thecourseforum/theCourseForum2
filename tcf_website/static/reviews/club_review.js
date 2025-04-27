@@ -10,6 +10,9 @@ jQuery(function ($) {
   clearDropdown("#club");
   clearDropdown("#semester");
 
+  // Initialize tooltips
+  $('[data-toggle="tooltip"]').tooltip();
+
   // Check for URL params and handle prefilling
   const params = window.location.search;
   let clubId = null;
