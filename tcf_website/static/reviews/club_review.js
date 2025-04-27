@@ -239,7 +239,7 @@ jQuery(function ($) {
           (encouragedWordCount / 3).toString() +
           " words. Aim for " +
           encouragedWordCount.toString() +
-          " or more!"
+          " or more!",
       );
     } else if (
       numberOfWords >= encouragedWordCount / 3 &&
@@ -250,7 +250,7 @@ jQuery(function ($) {
         numberOfWordsInMessage +
           " Good job getting to " +
           (encouragedWordCount / 3).toString() +
-          " words, keep going!"
+          " words, keep going!",
       );
     } else if (
       numberOfWords >= (2 * encouragedWordCount) / 3 &&
@@ -263,13 +263,13 @@ jQuery(function ($) {
           ((2 * encouragedWordCount) / 3).toString() +
           " words! You're so close to the " +
           encouragedWordCount.toString() +
-          " mark!"
+          " mark!",
       );
     } else if (numberOfWords >= encouragedWordCount) {
       $("#review-progressbar").css("background-color", "#B5EAD7");
       $("#progressbar-message").html(
         numberOfWordsInMessage +
-          " Thank you for your in depth review. The tCF team and other users appreciate your effort!"
+          " Thank you for your in depth review. The tCF team and other users appreciate your effort!",
       );
     }
   });

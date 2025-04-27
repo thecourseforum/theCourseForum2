@@ -12,13 +12,18 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from ..models import Review, ClubCategory, Club
-from tcf_website.views.browse import parse_mode
 
 # pylint: disable=fixme,unused-argument
 # Disable pylint errors on TODO messages, such as below
 
 # TODO: use a proper django form, make it more robust.
 # (i.e. better Course/Instructor/Semester search).
+
+
+def parse_mode(request):
+    """Parse the mode parameter from the request."""
+    mode = request.GET.get("mode", "courses")
+    return mode, (mode == "clubs")
 
 
 class ReviewForm(forms.ModelForm):
