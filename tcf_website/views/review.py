@@ -165,8 +165,6 @@ def check_duplicate(request):
     if form.is_valid():
         instance = form.save(commit=False)
 
-        print(instance.club)
-
         if instance.club:
             # Check if user has reviewed given club before
             reviews_on_same_club = request.user.review_set.filter(club=instance.club)
