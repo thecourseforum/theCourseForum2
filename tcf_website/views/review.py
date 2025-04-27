@@ -172,27 +172,27 @@ def check_duplicate(request):
             if reviews_on_same_club.exists():
                 return JsonResponse({"duplicate": True})
             return JsonResponse({"duplicate": False})
-        else:
-            # First check if user has reviewed given course during same
-            # semester before
-            reviews_on_same_class = request.user.review_set.filter(
-                course=instance.course, semester=instance.semester
-            )
 
-            # Review already exists so it's a duplicate; inform user
-            if reviews_on_same_class.exists():
-                response = {"duplicate": True}
-                return JsonResponse(response)
+        # First check if user has reviewed given course during same
+        # semester before
+        reviews_on_same_class = request.user.review_set.filter(
+            course=instance.course, semester=instance.semester
+        )
 
-            # Then check if user has reviewed given course with same
-            # instructor before
-            reviews_on_same_class = request.user.review_set.filter(
-                course=instance.course, instructor=instance.instructor
-            )
-            # Review already exists so it's a duplicate; inform user
-            if reviews_on_same_class.exists():
-                response = {"duplicate": True}
-                return JsonResponse(response)
+        # Review already exists so it's a duplicate; inform user
+        if reviews_on_same_class.exists():
+            response = {"duplicate": True}
+            return JsonResponse(response)
+
+        # Then check if user has reviewed given course with same
+        # instructor before
+        reviews_on_same_class = request.user.review_set.filter(
+            course=instance.course, instructor=instance.instructor
+        )
+        # Review already exists so it's a duplicate; inform user
+        if reviews_on_same_class.exists():
+            response = {"duplicate": True}
+            return JsonResponse(response)
 
         # User has not reviewed course/club before; proceed with standard form submission
         response = {"duplicate": False}
