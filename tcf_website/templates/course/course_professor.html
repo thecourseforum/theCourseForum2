@@ -213,16 +213,20 @@
                     <div class="col-md-6">
                         <div class="card h-100 border-0 shadow-sm">
                             <div class="card-body" style="padding: 10px; height: 300px;">
-                                <p class="sentiment-text" style="text-align: center; font-size: 16px; margin-top: 4em; margin-bottom: 5px; color: black;">
+                                <p class="sentiment-text" style="text-align: center; font-size: 16px; margin-top: 1em; margin-bottom: 5px; color: black;">
                                     How Students Feel About {{ course.code }} - {{ instructor.first_name }} {{ instructor.last_name }}
                                 </p>
-                                <div style="position: relative; height: 150px; width: 90%; margin: 0 auto;">
+                                <div style="position: relative; height: 200px; width: 90%; margin: 0 auto;">
                                     <canvas id="sentiment-chart" style="max-height: 200px;"></canvas>
                                     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center;" 
                                          id="sentiment-chart-label">
                                         <p class="sentiment-text" style="margin: 0; padding: 0; font-size: 16px;">
                                             Not enough information
                                         </p>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-top: 2px; font-size: 14px;">
+                                        <span style="color: #BE4B20; font-weight: bold;">Strongly Negative</span>
+                                        <span style="color: #182D66; font-weight: bold;">Strongly Positive</span>
                                     </div>
                                 </div>
                             </div>
@@ -497,7 +501,7 @@
         const gpaNoDataDiv = document.getElementById('gpa-no-data');
         const gpaCtx = gpaChartCanvas ? gpaChartCanvas.getContext('2d') : null;
 
-        if (gpaHistory.length <= 2) { // Changed from <= 1 to <= 2 to match < 3 condition
+        if (gpaHistory.length <= 2) {
             gpaChartCanvas.classList.add('d-none');
             gpaNoDataDiv.classList.remove('d-none');
         } else {
@@ -516,61 +520,88 @@
                     datasets: [{
                         label: 'Average GPA',
                         data: gpaData,
-                        backgroundColor: 'rgba(255, 135, 66, 0.2)',
-                        borderColor: '#1e90ff',
-                        borderWidth: 2,
+                        borderColor: '#FF8733',
+                        backgroundColor: '#fff',
                         pointBackgroundColor: '#FF8733',
                         pointBorderColor: '#fff',
-                        pointBorderWidth: 1,
-                        pointRadius: 4,
-                        fill: true,
+                        pointRadius: 5,
+                        fill: false,
                         tension: 0.3
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    layout: { padding: 10 },
+                    layout: { 
+                        padding: { 
+                            left: 10, 
+                            right: 10, 
+                            top: 20, 
+                            bottom: 20 
+                        } 
+                    },
                     scales: {
                         x: {
                             grid: { display: false, drawBorder: false },
-                            ticks: {
-                                color: '#6c757d',
-                                maxRotation: 45,
-                                minRotation: 45,
-                                padding: 10
+                            ticks: { 
+                                color: '#2d1c1c', 
+                                font: { size: 14 },
+                                padding: 5
                             },
-                            offset: true
+                            offset: true,
+                            min: labels[0],
+                            max: labels[labels.length - 1],
+                            afterFit: function(scaleInstance) {
+                                scaleInstance.paddingLeft = 5;
+                                scaleInstance.paddingRight = 5;
+                            }
                         },
                         y: {
                             grid: { display: false, drawBorder: false },
                             min: yAxisMin,
                             max: 4.0,
-                            ticks: { stepSize: 0.5, color: '#6c757d' }
+                            ticks: { 
+                                stepSize: 0.5, 
+                                color: '#2d1c1c', 
+                                font: { size: 14 },
+                                padding: 5
+                            }
                         }
                     },
                     plugins: {
-                        legend: {
+                        legend: { display: false },
+                        title: {
                             display: true,
-                            position: 'top',
-                            onClick: null,
-                            labels: {
-                                color: '#000000',
-                                font: {
-                                    size: 16,
-                                    weight: 'bold'
-                                }
+                            text: 'Average GPA Trend',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 20
                             }
                         },
                         tooltip: {
                             backgroundColor: '#2e2e7e',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
                             titleFont: { size: 14 },
-                            bodyFont: { size: 12 }
+                            bodyFont: { size: 12 },
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return tooltipItem.raw;
+                                },
+                                title: function() {
+                                    return '';
+                                }
+                            }
                         }
                     }
                 }
             });
         }
+        
 
         // Sentiment Bar Chart
         let rawData = `{{ sentiment_distribution|safe }}`;
@@ -613,9 +644,16 @@
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
-                    layout: { padding: 10 },
-                    barPercentage: 0.5,
-                    categoryPercentage: 0.8,
+                    layout: { 
+                        padding: { 
+                            left: 20, 
+                            right: 20, 
+                            top: 20, 
+                            bottom: 20 
+                        } 
+                    },
+                    barPercentage: 0.8,
+                    categoryPercentage: 0.9,
                     plugins: {
                         legend: { display: false },
                         tooltip: {
