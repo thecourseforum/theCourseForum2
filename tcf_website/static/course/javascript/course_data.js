@@ -143,7 +143,7 @@ const loadData = (data) => {
 const createChart = (gradesData) => {
 
   const cardBgColor = getComputedStyle(document.body)
-                      .getPropertyValue('--card-background-color')
+                      .getPropertyValue("--card-background-color")
                       .trim();
 
   const chartData = {
@@ -260,7 +260,7 @@ observer.observe(document.body, { attributes: true });
 
 function updateChartBorderColor() {
   const newCardBgColor = getComputedStyle(document.body)
-    .getPropertyValue('--card-background-color')
+    .getPropertyValue("--card-background-color")
     .trim();
   if (myChart && myChart.config.data.datasets[0]) {
     myChart.config.data.datasets[0].borderColor = newCardBgColor;
