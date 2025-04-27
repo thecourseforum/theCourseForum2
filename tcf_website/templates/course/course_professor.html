@@ -237,6 +237,9 @@
                     <div class="col-md-6">
                         <div class="card h-100 border-0 shadow-sm">
                             <div class="card-body p-2" style="height: 300px; position: relative;">
+                                <p class="sentiment-text" style="text-align: center; font-size: 16px; margin-top: 1em; margin-bottom: 5px; color: black;">
+                                    Average GPA Trend
+                                </p>
                                 <canvas id="gpaChart" class="w-100" style="max-height: 300px;"></canvas>
                                 <div id="gpa-no-data" class="d-none" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center;">
                                     <p class="text-muted" style="margin: 0; font-size: 16px;">Not enough information</p>
@@ -594,19 +597,6 @@
                     },
                     plugins: {
                         legend: { display: false },
-                        title: {
-                            display: true,
-                            text: 'Average GPA Trend',
-                            font: {
-                                size: 16,
-                                weight: 'normal'
-                            },
-                            color: '#000000',
-                            padding: {
-                                top: 10,
-                                bottom: 20
-                            }
-                        },
                         tooltip: {
                             backgroundColor: '#2e2e7e',
                             titleColor: '#fff',
