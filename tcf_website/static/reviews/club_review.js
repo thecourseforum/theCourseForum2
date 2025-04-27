@@ -17,7 +17,7 @@ jQuery(function ($) {
   if (params.length > 0) {
     // Parse club ID from URL
     const urlParams = new URLSearchParams(params);
-    
+
     // Only try to parse club parameter if it exists
     if (urlParams.has("club")) {
       clubId = parseInt(urlParams.get("club"));
@@ -140,17 +140,17 @@ jQuery(function ($) {
   });
 
   /* Add club select handler to load semesters when a club is selected */
-  $("#club").change(function() {
+  $("#club").change(function () {
     // Clear semester dropdown
     clearDropdown("#semester");
     $("#semester").prop("disabled", true);
-    
+
     // Only proceed if we have a club selected
     const clubId = $(this).val();
     if (!clubId) {
       return;
     }
-    
+
     // Now load semesters since a club is selected
     loadSemesters();
   });
