@@ -141,10 +141,9 @@ const loadData = (data) => {
 };
 
 const createChart = (gradesData) => {
-
   const cardBgColor = getComputedStyle(document.body)
-                      .getPropertyValue("--card-background-color")
-                      .trim();
+    .getPropertyValue("--card-background-color")
+    .trim();
 
   const chartData = {
     datasets: [
@@ -249,24 +248,24 @@ const createChart = (gradesData) => {
   Chart.register(ChartDataLabels);
 
   // Set up a MutationObserver to update chart borderColor when the body class changes.
-const observer = new MutationObserver((mutationsList) => {
-  for (const mutation of mutationsList) {
-    if (mutation.attributeName === "class") {
-      updateChartBorderColor();
+  const observer = new MutationObserver((mutationsList) => {
+    for (const mutation of mutationsList) {
+      if (mutation.attributeName === "class") {
+        updateChartBorderColor();
+      }
+    }
+  });
+  observer.observe(document.body, { attributes: true });
+
+  function updateChartBorderColor() {
+    const newCardBgColor = getComputedStyle(document.body)
+      .getPropertyValue("--card-background-color")
+      .trim();
+    if (myChart && myChart.config.data.datasets[0]) {
+      myChart.config.data.datasets[0].borderColor = newCardBgColor;
+      myChart.update({ duration: 0 });
     }
   }
-});
-observer.observe(document.body, { attributes: true });
-
-function updateChartBorderColor() {
-  const newCardBgColor = getComputedStyle(document.body)
-    .getPropertyValue("--card-background-color")
-    .trim();
-  if (myChart && myChart.config.data.datasets[0]) {
-    myChart.config.data.datasets[0].borderColor = newCardBgColor;
-    myChart.update({ duration: 0 });
-  }
-}
   // Generate configuration for Pie Chart
   pieConfig = {
     type: "doughnut",
