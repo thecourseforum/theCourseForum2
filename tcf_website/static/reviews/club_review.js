@@ -217,7 +217,7 @@ jQuery(function ($) {
 
     // Set the width of the bar to the what percent of the encouraged word count the current review is (Used an outer container's width to ensure it scales properly to mobile)
     $("#review-progressbar").width(
-      $("#review-form-div").width() * (numberOfWords / encouragedWordCount)
+      $("#review-form-div").width() * (numberOfWords / encouragedWordCount),
     );
 
     // String Form of the number of words out of the encouraged word count
