@@ -17,9 +17,10 @@
     
         {% include "../common/leaderboard_ad.html" with ad_slot="9691204298" %}
 
-        <!-- Mode Toggle -->
+        <!-- Header row with title and toggle -->
         <div class="row mt-4 mb-3">
-            <div class="col-12">
+            <div class="col-12 d-flex align-items-center justify-content-between">
+                <h2 class="font-weight-light mb-0">Browse by {% if is_club %}Category{% else %}Department{% endif %}</h2>
                 <div class="mode-toggle-container">
                     <div class="mode-toggle-wrapper">
                         <a href="?mode=courses" class="mode-toggle-option {% if not is_club %}active{% endif %}">Courses</a>
@@ -32,7 +33,6 @@
 
         <!-- Browse page content -->
         {% if is_club %}
-        <h2 class="font-weight-light mt-4">Browse by Category</h2>
         <div id="club-categories" class="schools text-left">
             {% if club_categories %}
                 {% for category in club_categories %}
@@ -66,7 +66,6 @@
             {% endif %}
         </div>
         {% else %}
-        <h2 class="font-weight-light mt-4">Browse by Department</h2>
         <div class="schools text-left">
             {% include "browse/school.html" with school=CLAS %}
             {% include "browse/school.html" with school=SEAS %}

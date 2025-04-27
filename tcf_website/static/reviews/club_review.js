@@ -62,12 +62,18 @@ jQuery(function ($) {
         });
       }
 
+      // Signal that categories have loaded
+      $(document).trigger("categories-loaded");
+
       // Load semesters in parallel
       loadSemesters();
     },
     error: function (xhr, status, error) {
       console.error("Error loading categories:", error);
       $("<option />").text("Error loading categories").appendTo("#category");
+
+      // Even on error, trigger the event
+      $(document).trigger("categories-loaded");
     },
   });
 
@@ -113,11 +119,17 @@ jQuery(function ($) {
 
         // Enable the club dropdown
         $("#club").prop("disabled", false);
+
+        // Signal that clubs have loaded
+        $(document).trigger("clubs-loaded");
       },
       error: function (xhr, status, error) {
         console.error("Error loading clubs:", error);
         $("<option />").text("Error loading clubs").appendTo("#club");
         $("#club").prop("disabled", false);
+
+        // Even on error, trigger the event
+        $(document).trigger("clubs-loaded");
       },
     });
   });
@@ -129,17 +141,22 @@ jQuery(function ($) {
       dataType: "json",
       success: function (club) {
         if (club && club.category) {
-          // Wait for the categories to load
-          setTimeout(function () {
+          // Wait for categories to load using a custom event
+          $(document).one("categories-loaded", function () {
             // Select the category
             $("#category").val(club.category.id).trigger("change");
 
-            // We need to wait for the clubs to load before selecting
-            setTimeout(function () {
+            // Wait for clubs to load using a custom event
+            $(document).one("clubs-loaded", function () {
               // Now select the club
               $("#club").val(clubId);
-            }, 500);
-          }, 500);
+            });
+          });
+
+          // If categories are already loaded, manually trigger the event
+          if ($("#category option").length > 1) {
+            $(document).trigger("categories-loaded");
+          }
         }
       },
       error: function (xhr, status, error) {
