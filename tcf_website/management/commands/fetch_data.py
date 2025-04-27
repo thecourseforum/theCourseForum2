@@ -98,7 +98,6 @@ def retrieve_and_write_semester_courses(csv_path, sem_code, pages=None):
         all_classes = list(filter(lambda x: x is not None, all_classes))
 
         write_to_csv(csv_path, all_classes)
-        page += 1
 
     print("Data fetching complete.")
 
