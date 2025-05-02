@@ -151,7 +151,8 @@ class Command(BaseCommand):
         raw_categories = row[1].split("$")
         application_required = row[2].lower() == "true"
         description = row[3]
-        photo = row[4]
+        meeting_time = row[4]
+        photo = row[5]
 
         # Process categories
         category_name = self.determine_category(raw_categories)
@@ -168,5 +169,6 @@ class Command(BaseCommand):
             category=category,
             application_required=application_required,
             description=description,
+            meeting_time=meeting_time,
             photo_url=photo_url,
         )

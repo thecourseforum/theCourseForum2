@@ -36,6 +36,12 @@
               </p>
               
               <div class="mt-3">
+                {% if club.meeting_time %}
+                <div class="mb-2">
+                  <strong>Meeting Time:</strong> {{ club.meeting_time }}
+                </div>
+                {% endif %}
+                
                 <span class="badge {% if club.application_required %}badge-warning{% else %}badge-success{% endif %} p-2">
                   {% if club.application_required %}
                     Application Required

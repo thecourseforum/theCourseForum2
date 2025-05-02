@@ -62,9 +62,10 @@ def process_organization(org, writer):
         application = "No Application or Interview Required" not in raw_cats
 
         desc = strip_html_tags(details.get("description", ""))
+        time = details.get("regularMeetingTime", "")
         photo = os.path.basename(details.get("photoUri", ""))
 
-        writer.writerow([name, categories_str, application, desc, photo])
+        writer.writerow([name, categories_str, application, desc, time, photo])
 
     except (requests.RequestException, KeyError, ValueError) as e:
         print(f"Error {uri}: {e}")
@@ -83,6 +84,7 @@ def write_csv(csv_file):
                 "Categories",
                 "Application",
                 "Description",
+                "Time",
                 "Photo",
             ]
         )

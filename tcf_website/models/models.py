@@ -229,6 +229,7 @@ class Club(models.Model):
     combined_name = models.CharField(max_length=255, blank=True, editable=False)
     application_required = models.BooleanField(default=False)
     photo_url = models.CharField(max_length=255, blank=True)
+    meeting_time = models.CharField(max_length=255, blank=True)
 
     def save(self, *args, **kwargs):
         # maintain combined_name for trigram search
