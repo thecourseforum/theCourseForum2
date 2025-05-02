@@ -5,7 +5,7 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'reviews/new_review.css' %}" />
-<link rel="stylesheet" href="{% static 'browse/browse.css' %}" />
+<link rel="stylesheet" href="{% static 'club/mode_toggle.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -14,13 +14,7 @@
   <div class="row mt-2 mb-3">
     <div class="col-12 d-flex align-items-center justify-content-between">
       <h1 class="h2 mb-0">Edit a review</h1>
-      <div class="mode-toggle-container">
-        <div class="mode-toggle-wrapper">
-          <a href="?mode=courses" class="mode-toggle-option {% if not is_club %}active{% endif %}">Courses</a>
-          <a href="?mode=clubs" class="mode-toggle-option {% if is_club %}active{% endif %}">Clubs</a>
-          <div class="mode-toggle-slider {% if is_club %}slide-right{% endif %}"></div>
-        </div>
-      </div>
+      {% include "../club/mode_toggle.html" with is_club=is_club %}
     </div>
   </div>
   <div class="card">
