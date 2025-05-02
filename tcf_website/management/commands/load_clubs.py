@@ -124,9 +124,7 @@ class Command(BaseCommand):
         # Dictionary to keep track of created categories
         categories = {}
 
-        # Clear existing clubs for a clean import
-        Club.objects.all().delete()
-
+        # Process clubs
         with open(csv_file, "r", encoding="utf-8") as f:
             reader = csv.reader(f)
             # Skip header row
@@ -163,12 +161,14 @@ class Command(BaseCommand):
         if photo:
             photo_url = f"{photo_base_url}{photo}"
 
-        # Create the club
-        Club.objects.create(
+        # Update or create the club
+        Club.objects.update_or_create(
             name=name,
-            category=category,
-            application_required=application_required,
-            description=description,
-            meeting_time=meeting_time,
-            photo_url=photo_url,
+            defaults={
+                "category": category,
+                "application_required": application_required,
+                "description": description,
+                "meeting_time": meeting_time,
+                "photo_url": photo_url,
+            },
         )
