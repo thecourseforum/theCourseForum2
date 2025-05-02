@@ -15,18 +15,14 @@ document.addEventListener("DOMContentLoaded", function () {
   // Check initial state (in case of page refresh with active filters)
   updateButtonState();
 
-  filterInputs.forEach((input) => {
+  // Add event listeners to all filter inputs
+  [...filterInputs, ...dayFilters, openSections].forEach((input) => {
     input.addEventListener("change", updateButtonState);
   });
 
-  dayFilters.forEach((input) => {
-    input.addEventListener("change", updateButtonState);
+  [timeFrom, timeTo].forEach((input) => {
+    input.addEventListener("input", updateButtonState);
   });
-
-  timeFrom.addEventListener("input", updateButtonState);
-  timeTo.addEventListener("input", updateButtonState);
-
-  openSections.addEventListener("change", updateButtonState);
 
   // Min GPA slider and text input synchronization
   minGpaSlider.addEventListener("input", function () {
@@ -37,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   minGpaText.addEventListener("change", function () {
-    // Using 'change' instead of 'input'
     // Only update if valid number
     let value = parseFloat(this.value);
 
@@ -69,42 +64,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Checks for active filters or inactive day filters to determine button state
   function updateButtonState() {
-    const activeFilters = Array.from(filterInputs).filter(
-      (input) => input.checked,
-    );
-    const activeDayFilters = Array.from(dayFilters).filter(
-      (input) => input.checked,
-    );
+    const hasActiveFilters =
+      Array.from(filterInputs).some((input) => input.checked) ||
+      Array.from(dayFilters).some((input) => input.checked) ||
+      timeFrom.value !== "" ||
+      timeTo.value !== "" ||
+      openSections.checked ||
+      (minGpaInput && parseFloat(minGpaInput.value) !== 0.0);
 
-    let timeFromChanged = false;
-    let timeToChanged = false;
-    let openSectionsChanged = false;
-    let minGpaChanged = false;
-
-    if (timeFrom.value) {
-      timeFromChanged = timeFrom.value !== "";
-    }
-    if (timeTo.value) {
-      timeToChanged = timeTo.value !== "";
-    }
-
-    if (openSections.checked) {
-      openSectionsChanged = true;
-    }
-
-    // Check if min GPA has been changed from default (0.0)
-    if (minGpaInput && parseFloat(minGpaInput.value) !== 0.0) {
-      minGpaChanged = true;
-    }
-
-    if (
-      activeFilters.length > 0 ||
-      activeDayFilters.length > 0 ||
-      timeFromChanged ||
-      timeToChanged ||
-      openSectionsChanged ||
-      minGpaChanged
-    ) {
+    if (hasActiveFilters) {
       filterButton.classList.add("filter-active");
     } else {
       filterButton.classList.remove("filter-active");
@@ -125,33 +93,27 @@ document.addEventListener("DOMContentLoaded", function () {
     event.stopPropagation();
   });
 
-  // Add subject search functionality
-  const subjectSearch = document.getElementById("subject-search");
-  const subjectItems = document.querySelectorAll(".subject-list .form-check");
-
-  subjectSearch.addEventListener("input", function (e) {
-    const searchTerm = e.target.value.toLowerCase();
-
-    subjectItems.forEach((item) => {
-      const text = item.textContent.toLowerCase();
-      item.style.display = text.includes(searchTerm) ? "" : "none";
+  // Generic function for filtering items
+  function setupSearch(searchInput, itemsSelector) {
+    const items = document.querySelectorAll(itemsSelector);
+    searchInput.addEventListener("input", function (e) {
+      const searchTerm = e.target.value.toLowerCase();
+      items.forEach((item) => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(searchTerm) ? "" : "none";
+      });
     });
-  });
+  }
 
-  // Add discipline search functionality
-  const disciplineSearch = document.getElementById("discipline-search");
-  const disciplineItems = document.querySelectorAll(
+  // Setup search functionality
+  setupSearch(
+    document.getElementById("subject-search"),
+    ".subject-list .form-check",
+  );
+  setupSearch(
+    document.getElementById("discipline-search"),
     ".discipline-list .form-check",
   );
-
-  disciplineSearch.addEventListener("input", function (e) {
-    const searchTerm = e.target.value.toLowerCase();
-
-    disciplineItems.forEach((item) => {
-      const text = item.textContent.toLowerCase();
-      item.style.display = text.includes(searchTerm) ? "" : "none";
-    });
-  });
 
   // Reordering function to pin selected checkboxes to the top
   function reorderList(containerSelector, checkboxSelector) {
@@ -182,23 +144,19 @@ document.addEventListener("DOMContentLoaded", function () {
     items.forEach((item) => container.appendChild(item));
   }
 
-  // Add event listeners to re-sort subjects whenever a subject checkbox changes
-  document.querySelectorAll(".form-check-subjects").forEach((checkbox) => {
-    checkbox.addEventListener("change", () => {
-      reorderList(".subject-list", ".form-check-subjects");
+  // Setup reordering for subjects and disciplines
+  function setupReordering(checkboxSelector, containerSelector) {
+    document.querySelectorAll(checkboxSelector).forEach((checkbox) => {
+      checkbox.addEventListener("change", () => {
+        reorderList(containerSelector, checkboxSelector);
+      });
     });
-  });
+    // Call reorder on page load in case some items are selected by default
+    reorderList(containerSelector, checkboxSelector);
+  }
 
-  // Add event listeners to re-sort disciplines whenever a discipline checkbox changes
-  document.querySelectorAll(".form-check-disciplines").forEach((checkbox) => {
-    checkbox.addEventListener("change", () => {
-      reorderList(".discipline-list", ".form-check-disciplines");
-    });
-  });
-
-  // Call reorder on page load in case some items are selected by default
-  reorderList(".subject-list", ".form-check-subjects");
-  reorderList(".discipline-list", ".form-check-disciplines");
+  setupReordering(".form-check-subjects", ".subject-list");
+  setupReordering(".form-check-disciplines", ".discipline-list");
 
   const resetButton = document.querySelector('button[type="reset"]');
   resetButton.addEventListener("click", function (e) {
@@ -206,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Reset checkboxes
     document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
-      checkbox.checked = false; // Set days to checked by default
+      checkbox.checked = false;
     });
 
     // Clear subject search
@@ -215,9 +173,17 @@ document.addEventListener("DOMContentLoaded", function () {
       item.style.display = ""; // Show all subjects
     });
 
+    // Clear discipline search
+    document.getElementById("discipline-search").value = "";
+    document
+      .querySelectorAll(".discipline-list .form-check")
+      .forEach((item) => {
+        item.style.display = ""; // Show all disciplines
+      });
+
     // Set time inputs to empty
-    document.getElementById("from_time").value = "";
-    document.getElementById("to_time").value = "";
+    timeFrom.value = "";
+    timeTo.value = "";
 
     // Reset min GPA to default value of 0.0
     if (minGpaSlider) minGpaSlider.value = 0.0;
@@ -227,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateWeekdays();
     updateButtonState();
 
-    // Reorder lists after clearing filters (so any selected items, if any, are sorted correctly)
+    // Reorder lists after clearing filters
     reorderList(".subject-list", ".form-check-subjects");
     reorderList(".discipline-list", ".form-check-disciplines");
   });
@@ -267,9 +233,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize weekdays
   updateWeekdays();
 
-  // Updates filter button
-  updateButtonState();
-
   // Clear filters when window is resized to mobile view
   window.addEventListener("resize", function () {
     if (window.innerWidth <= 992) {
@@ -281,8 +244,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
       // Clear time inputs
-      if (timeFrom) timeFrom.value = "";
-      if (timeTo) timeTo.value = "";
+      timeFrom.value = "";
+      timeTo.value = "";
 
       // Reset min GPA
       if (minGpaSlider) minGpaSlider.value = 0.0;
