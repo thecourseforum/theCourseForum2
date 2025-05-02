@@ -65,7 +65,6 @@
   display: flex;
   justify-content: space-between;
   gap: 1.25rem;
-  margin-bottom: 1rem;
 }
 
 .filter-row .filter-section {
