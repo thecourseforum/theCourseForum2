@@ -28,55 +28,105 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 768px) {
-  .filter-dropdown {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) !important;
-  }
-}
-
 .filter-active {
   background-color: #d75626;
   color: white;
 }
 
 @media (max-width: 992px) {
+  #filter-button, 
+  .dropdown-wrapper, 
   .filter-dropdown {
-    right: -1rem !important; /* Adjust position on mobile */
+    display: none !important;
   }
 }
 
 .filter-container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .filter-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
+  gap: 1.25rem;
   align-items: start;
 }
 
-.filter-section.compact {
-  width: 100%;
-  margin-bottom: 0;
-}
-
+/* Top filter sections layout */
 .time-filter {
   display: flex;
   gap: 1.5rem;
 }
 
+/* Filter row layout (Availability and Min GPA side by side) */
+.filter-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.filter-row .filter-section {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Standardized filter containers */
+.filter-option-container {
+  background: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  transition: all 0.15s ease;
+}
+
+.filter-option-container:hover {
+  background: #f7fafc;
+  border-color: #90cdf4;
+}
+
+/* Min GPA controls */
+.min-gpa-controls {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.form-range {
+  flex: 1;
+  margin-right: 0.75rem;
+}
+
+.min-gpa-text {
+  width: 60px !important;
+  padding: 0.25rem 0.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.filter-section .filter-header {
+  margin-bottom: 0.35rem;
+  font-size: 1rem;
+}
+
+.form-check {
+  width: 100%;
+}
+
+/* Remove redundant styles */
+.filter-section.compact {
+  margin-bottom: 0.75rem;
+}
+
 .day-toggles {
   display: flex;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
   align-items: center;
   flex-wrap: wrap;
   width: 100%;
@@ -112,6 +162,32 @@
 .day-toggles .form-check-inline:hover {
   background: #f7fafc;
   border-color: #90cdf4;
+}
+
+/* Availability section styles */
+.availability-filters {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.availability-option {
+  background: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  padding: 0.55rem 0.67rem;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.availability-option:hover {
+  background: #f7fafc;
+  border-color: #90cdf4;
+}
+
+.min-gpa-container {
+  display: flex;
+  align-items: center;
 }
 
 .form-check-input:checked {
@@ -167,8 +243,8 @@
 .filter-actions {
   display: flex;
   justify-content: space-between;
-  margin-top: 1.5rem;
-  padding-top: 1rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
   border-top: 1px solid #e2e8f0;
 }
 

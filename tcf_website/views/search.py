@@ -70,6 +70,7 @@ def search(request):
         "from_time": request.GET.get("from_time"),
         "to_time": request.GET.get("to_time"),
         "open_sections": request.GET.get("open_sections") == "on",
+        "min_gpa": request.GET.get("min_gpa"),
     }
 
     # Save filters to session
@@ -324,5 +325,16 @@ def apply_filters(results, filters):
             days=weekdays, start_time=from_time, end_time=to_time
         )
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
+
+    # Apply min GPA filter if provided - simplified approach
+    min_gpa = filters.get("min_gpa")
+    if min_gpa:
+        try:
+            min_gpa_float = float(min_gpa)
+            # Filter directly using a subquery on CourseGrade
+            results = results.filter(coursegrade__average__gte=min_gpa_float)
+        except (ValueError, TypeError):
+            # Silently ignore invalid values
+            pass
 
     return results

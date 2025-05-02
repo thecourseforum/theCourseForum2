@@ -63,5 +63,6 @@ def searchbar_context(request):
         "from_time": saved_filters.get("from_time", ""),
         "to_time": saved_filters.get("to_time", ""),
         "open_sections": saved_filters.get("open_sections", False),
+        "min_gpa": saved_filters.get("min_gpa", 0.0),
     }
     return context

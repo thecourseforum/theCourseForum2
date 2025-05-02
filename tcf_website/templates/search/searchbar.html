@@ -94,23 +94,55 @@
               </div>
             </div>
             <!-- Open Section selections -->
-            <div class="filter-section compact availability-section">
-              <h6 class="filter-header">
-                Availability
-              </h6>
-              <div class="form-check d-inline-flex align-items-center" style="background: white; border: 1px solid #cbd5e0; border-radius: 6px; padding: 0.55rem 0.67rem;">
-                <input 
-                  class="form-check-input me-2" 
-                  type="checkbox" 
-                  id="open-sections" 
-                  name="open_sections" 
-                  {% if request.session.search_filters.open_sections %}checked{% endif %}
-                >
-                <label class="form-check-label" for="open-sections">
-                  Show Open Courses Only
-                </label>
+            <div class="filter-row">
+              <!-- Open Section selections -->
+              <div class="filter-section compact">
+                <h6 class="filter-header">
+                  Availability
+                </h6>
+                <div class="filter-option-container">
+                  <div class="form-check d-flex align-items-center">
+                    <input 
+                      class="form-check-input me-2" 
+                      type="checkbox" 
+                      id="open-sections" 
+                      name="open_sections" 
+                      {% if request.session.search_filters.open_sections %}checked{% endif %}
+                    >
+                    <label class="form-check-label" for="open-sections">
+                      Show Open Courses Only
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Min GPA Filter -->
+              <div class="filter-section compact">
+                <h6 class="filter-header">
+                  Min GPA
+                </h6>
+                <div class="filter-option-container">
+                  <div class="min-gpa-controls">
+                    <input 
+                      type="range" 
+                      class="form-range" 
+                      id="min-gpa-slider" 
+                      min="0" 
+                      max="4" 
+                      step="0.1" 
+                      value="{{ min_gpa|default:0.0 }}" 
+                    >
+                    <input 
+                      type="text" 
+                      class="form-control min-gpa-text" 
+                      id="min-gpa-text" 
+                      value="{{ min_gpa|default:0.0 }}" 
+                    >
+                  </div>
+                </div>
               </div>
             </div>
+            
             <!-- List of subjects -->
             <div class="filter-grid">
               <div class="filter-section">
@@ -179,6 +211,7 @@
     </div>
   </div>
   <input type="hidden" name="weekdays" id="weekdays-input">
+  <input type="hidden" name="min_gpa" id="min-gpa-input" value="{{ min_gpa }}">
 </form>
 
 <script src="{% static 'club/mode_toggle.js' %}"></script>

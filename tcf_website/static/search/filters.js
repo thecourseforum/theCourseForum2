@@ -8,6 +8,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const timeFrom = document.getElementById("from_time");
   const timeTo = document.getElementById("to_time");
   const openSections = document.getElementById("open-sections");
+  const minGpaSlider = document.getElementById("min-gpa-slider");
+  const minGpaText = document.getElementById("min-gpa-text");
+  const minGpaInput = document.getElementById("min-gpa-input");
 
   // Check initial state (in case of page refresh with active filters)
   updateButtonState();
@@ -25,6 +28,45 @@ document.addEventListener("DOMContentLoaded", function () {
 
   openSections.addEventListener("change", updateButtonState);
 
+  // Min GPA slider and text input synchronization
+  minGpaSlider.addEventListener("input", function () {
+    const value = parseFloat(this.value).toFixed(1); // Ensures clean decimal
+    minGpaText.value = value;
+    minGpaInput.value = value;
+    updateButtonState();
+  });
+
+  minGpaText.addEventListener("change", function () {
+    // Using 'change' instead of 'input'
+    // Only update if valid number
+    let value = parseFloat(this.value);
+
+    // Validate and constrain the value
+    if (isNaN(value)) {
+      value = 0.0; // Default to 0.0 if invalid
+    } else {
+      // Keep value between 0 and 4
+      value = Math.max(0, Math.min(4, value));
+      // Round to nearest 0.1
+      value = Math.round(value * 10) / 10;
+    }
+
+    // Update all inputs with the cleaned value
+    this.value = value.toFixed(1);
+    minGpaSlider.value = value;
+    minGpaInput.value = value;
+    updateButtonState();
+  });
+
+  // Allow enter key on min-gpa-text to apply the filter
+  minGpaText.addEventListener("keyup", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      this.blur(); // Remove focus to trigger change event
+      document.querySelector('button[type="submit"]').click(); // Submit the form
+    }
+  });
+
   // Checks for active filters or inactive day filters to determine button state
   function updateButtonState() {
     const activeFilters = Array.from(filterInputs).filter(
@@ -37,6 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let timeFromChanged = false;
     let timeToChanged = false;
     let openSectionsChanged = false;
+    let minGpaChanged = false;
 
     if (timeFrom.value) {
       timeFromChanged = timeFrom.value !== "";
@@ -49,18 +92,22 @@ document.addEventListener("DOMContentLoaded", function () {
       openSectionsChanged = true;
     }
 
+    // Check if min GPA has been changed from default (0.0)
+    if (minGpaInput && parseFloat(minGpaInput.value) !== 0.0) {
+      minGpaChanged = true;
+    }
+
     if (
       activeFilters.length > 0 ||
       activeDayFilters.length > 0 ||
       timeFromChanged ||
       timeToChanged ||
-      openSectionsChanged
+      openSectionsChanged ||
+      minGpaChanged
     ) {
       filterButton.classList.add("filter-active");
-      filterButton.textContent = "Filters Active";
     } else {
       filterButton.classList.remove("filter-active");
-      filterButton.textContent = "Filters";
     }
   }
 
@@ -172,6 +219,11 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("from_time").value = "";
     document.getElementById("to_time").value = "";
 
+    // Reset min GPA to default value of 0.0
+    if (minGpaSlider) minGpaSlider.value = 0.0;
+    if (minGpaText) minGpaText.value = 0.0;
+    if (minGpaInput) minGpaInput.value = 0.0;
+
     updateWeekdays();
     updateButtonState();
 
@@ -217,4 +269,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Updates filter button
   updateButtonState();
+
+  // Clear filters when window is resized to mobile view
+  window.addEventListener("resize", function () {
+    if (window.innerWidth <= 992) {
+      // Reset all checkboxes
+      document
+        .querySelectorAll('input[type="checkbox"]')
+        .forEach((checkbox) => {
+          checkbox.checked = false;
+        });
+
+      // Clear time inputs
+      if (timeFrom) timeFrom.value = "";
+      if (timeTo) timeTo.value = "";
+
+      // Reset min GPA
+      if (minGpaSlider) minGpaSlider.value = 0.0;
+      if (minGpaText) minGpaText.value = 0.0;
+      if (minGpaInput) minGpaInput.value = 0.0;
+
+      // Update hidden inputs and button state
+      updateWeekdays();
+      updateButtonState();
+    }
+  });
 });
