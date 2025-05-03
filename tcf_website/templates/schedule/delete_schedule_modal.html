@@ -38,7 +38,7 @@
                     </label>
                 </div>
                 {% empty %}
-                <div>You haven't made any schedules yet!</div>
+                <p>You haven't made any schedules yet!</p>
                 {% endfor %}
                 <div class="ml-sm-auto d-flex justify-content-end">
                     <button id="delete_schedule_select_btn" type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmDeleteModal" disabled>
@@ -62,7 +62,7 @@
                 </button>
             </div>
             <div class="modal-body border-0">
-                Are you sure you want to delete the selected schedules?
+                <p>Are you sure you want to delete the selected schedules?</p>
             </div>
             <div class="modal-footer border-0 d-flex justify-content-center">
                 <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>

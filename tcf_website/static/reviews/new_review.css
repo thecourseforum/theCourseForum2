@@ -5,8 +5,8 @@
 }
 
 .new-review select:disabled {
-  color: var(--shadow-color);
-  background-color: var(--shaded-color);
+  color: var(--input-text-color);
+  background-color: var(--background-color);
 }
 
 .required-field::after {
@@ -27,3 +27,8 @@
 #progressbar-message {
   margin-bottom: 0px;
 }
+
+h1, label, p {
+  color: var(--basic-text-color);
+}
+

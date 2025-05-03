@@ -98,7 +98,7 @@
               <h6 class="filter-header">
                 Availability
               </h6>
-              <div class="form-check d-inline-flex align-items-center" style="background: white; border: 1px solid #cbd5e0; border-radius: 6px; padding: 0.55rem 0.67rem;">
+              <div class="form-check d-inline-flex align-items-center custom-form-check">
                 <input 
                   class="form-check-input me-2" 
                   type="checkbox" 
@@ -516,15 +516,20 @@
   }
 
   .time-selection {
-    background: white;
-    border: 1px solid #cbd5e0;
+    background: var(--filter-input-background-color);
+    border: 1px solid var(--input-border-color);
     border-radius: 6px;
     padding: 0.4rem 0.4rem;
+    color: var(--basic-text-color);
+  }
+
+  .time-selection::-webkit-calendar-picker-indicator {
+    filter: invert(1);
   }
 
   .day-toggles .form-check-inline {
-    background: white;
-    border: 1px solid #cbd5e0;
+    background: var(--filter-input-background-color);
+    border: 1px solid var(--input-border-color);
     border-radius: 6px;
     padding: 0.55rem 0.67rem;
     transition: all 0.15s ease;
@@ -536,8 +541,15 @@
   }
 
   .day-toggles .form-check-inline:hover {
-    background: #f7fafc;
+    background: var(--filter-input-background-color);
     border-color: #90cdf4;
+  }
+
+  .custom-form-check {
+    background: var(--filter-input-background-color);
+    border: 1px solid var(--input-border-color);
+    border-radius: 6px;
+    padding: 0.55rem 0.67rem;
   }
 
   .form-check-input:checked {
@@ -561,11 +573,11 @@
   .subject-list, .discipline-list {
     max-height: 150px;
     overflow-y: auto;
-    border: 1px solid #cbd5e0;
+    border: 1px solid var(--input-border-color);
     border-radius: 8px;
     padding: 0.75rem;
     margin-top: 0.5rem;
-    background: #fff;
+    background: var(--filter-input-background-color);
     min-height: 200px;
   }
 
@@ -602,10 +614,9 @@
   }
 
   .form-check:hover {
-    background-color: #f7fafc;
+    background-color: var(--filter-input-background-color);
     border-radius: 4px;
   }
-  
 
   .form-check-label {
     display: flex;
@@ -627,6 +638,11 @@
     color: white;
     box-shadow: none !important;
     outline: none !important;
+  }
+
+  .btn-outline-secondary {
+    color: var(--basic-text-color);
+    border-color: var(--input-border-color);
   }
 
   .btn-custom:hover {

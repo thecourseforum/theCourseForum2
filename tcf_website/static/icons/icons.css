@@ -1,338 +1,57 @@
-.fa {
-  display: inline-block;
-  font-style: normal; /* Reset any inherited styles */
-  line-height: 1; /* Match text line height */
-  /* vertical-align: middle;   */
-  width: 1em;
-  height: 1em;
-}
-
+.fa,
 .fas {
   display: inline-block;
-  font-style: normal; /* Reset any inherited styles */
-  line-height: 1; /* Match text line height */
-  /* vertical-align: middle;   */
+  font-style: normal;
+  line-height: 1;
   width: 1em;
   height: 1em;
-}
-
-.fa-clock {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-clock.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  vertical-align: middle;
-}
-
-.fa-arrow-right {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-arrow-right.svg");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
 }
 
-.fa-search {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-search.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  vertical-align: middle;
-}
+.fa-clock            { background-image: url("../icons/img/fa-clock.svg"); }
+.fa-arrow-right      { background-image: url("../icons/img/fa-arrow-right.svg"); }
+.fa-search           { background-image: url("../icons/img/fa-search.svg"); vertical-align: middle;}
+.fa-book             { background-image: url("../icons/img/fa-book.svg"); vertical-align: middle;}
+.fa-history-book     { background-image: url("../icons/img/fa-book.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-users            { background-image: url("../icons/img/fa-user.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-graduation-cap   { background-image: url("../icons/img/fa-graduation-cap.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-handshake        { background-image: url("../icons/img/fa-handshake.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-github           { background-image: url("../icons/img/fa-github.svg"); }
+.fa-user             { background-image: url("../icons/img/fa-user.svg"); }
+.fa-dumbbell         { background-image: url("../icons/img/fa-dumbbell.svg"); }
+.fa-chart-bar        { background-image: url("../icons/img/fa-chart-bar.svg"); }
+.fa-star             { background-image: url("../icons/img/fa-star.svg"); }
+.fa-calendar         { background-image: url("../icons/img/fa-calendar.svg"); }
+.fa-plus             { background-image: url("../icons/img/fa-plus.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-chevron-up       { background-image: url("../icons/img/fa-chevron-up.svg"); }
+.fa-chevron-down     { background-image: url("../icons/img/fa-chevron-down.svg"); }
+.fa-thumbs-up        { background-image: url("../icons/img/fa-thumbs-up.svg"); }
+.fa-thumbs-down      { background-image: url("../icons/img/fa-thumbs-down.svg"); }
+.fa-trash-o          { background-image: url("../icons/img/fa-trash-o.svg"); }
+.fa-hourglass-half   { background-image: url("../icons/img/fa-hourglass-half.svg"); }
+.fa-pencil           { background-image: url("../icons/img/fa-pencil.svg"); }
+.fa-instagram        { background-image: url("../icons/img/fa-instagram.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-discord          { background-image: url("../icons/img/fa-discord.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-facebook         { background-image: url("../icons/img/fa-facebook.svg"); filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-instagram-lg     { background-image: url("../icons/img/fa-instagram.svg"); width: 1.5em; height: 1.5em; filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-discord-lg       { background-image: url("../icons/img/fa-discord.svg"); width: 1.5em; height: 1.5em; filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-facebook-lg      { background-image: url("../icons/img/fa-facebook.svg"); width: 1.5em; height: 1.5em; filter: invert(100%) brightness(150%); vertical-align: middle;}
+.fa-code             { background-image: url("../icons/img/fa-code.svg"); }
+.fa-list             { background-image: url("../icons/img/fa-list.svg"); vertical-align: middle;}
+.fa-user-friends     { background-image: url("../icons/img/fa-user-friends.svg"); }
+.fa-smile-beam       { background-image: url("../icons/img/fa-smile-beam.svg"); }
+.fa-frown-open       { background-image: url("../icons/img/fa-frown-open.svg"); }
+.fa-heart            { background-image: url("../icons/img/fa-heart.svg"); }
+.fa-copy             { background-image: url("../icons/img/fa-copy.svg"); filter: invert(100%) brightness(150%);}
+.fa-flask            { background-image: url("../icons/img/fa-flask.svg"); }
 
-.fa-book {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-book.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  width: 1em;
-  height: 1em;
-  vertical-align: middle;
-  display: inline-block;
+body.dark-mode .fa,
+body.dark-mode .fas {
   filter: invert(100%) brightness(150%);
 }
 
-.fa-users {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-user.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  width: 1em;
-  height: 1em;
-  vertical-align: middle;
-  display: inline-block;
+#search-button:hover .fa-search {
   filter: invert(100%) brightness(150%);
-}
-
-.fa-graduation-cap {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-graduation-cap.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  width: 1em;
-  height: 1em;
-  vertical-align: middle;
-  display: inline-block;
-  filter: invert(100%) brightness(150%);
-}
-
-.fa-handshake {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-handshake.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  width: 1em;
-  height: 1em;
-  vertical-align: middle;
-  display: inline-block;
-  filter: invert(100%) brightness(150%);
-}
-
-.fa-github {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-github.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-user {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-user.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-dumbbell {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-dumbbell.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-chart-bar {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-chart-bar.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-star {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-star.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-calendar {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-calendar.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-plus {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-plus.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-chevron-up {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-chevron-up.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-chevron-down {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-chevron-down.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-chevron-up-white {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-chevron-up.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  filter: invert(1);
-}
-
-.fa-chevron-down-white {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-chevron-down.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  filter: invert(1);
-}
-
-.fa-thumbs-up {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-thumbs-up.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-thumbs-down {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-thumbs-down.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-trash-o {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-trash-o.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-hourglass-half {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-hourglass-half.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-pencil {
-  width: 1em;
-  height: 1em;
-  background-image: url("../icons/img/fa-pencil.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-instagram {
-  background-image: url("../icons/img/fa-instagram.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-discord {
-  background-image: url("../icons/img/fa-discord.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-facebook {
-  background-image: url("../icons/img/fa-facebook.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-code {
-  background-image: url("../icons/img/fa-code.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-list {
-  background-image: url("../icons/img/fa-list.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  width: 1em;
-  height: 1em;
-  vertical-align: middle;
-  display: inline-block;
-  filter: invert(100%) brightness(150%);
-}
-
-.fa-user-friends {
-  background-image: url("../icons/img/fa-user-friends.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-smile-beam {
-  background-image: url("../icons/img/fa-smile-beam.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-frown-open {
-  background-image: url("../icons/img/fa-frown-open.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-heart {
-  background-image: url("../icons/img/fa-heart.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-copy {
-  background-image: url("../icons/img/fa-copy.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.fa-flask {
-  background-image: url("../icons/img/fa-flask.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.invert-to-light {
-  filter: invert(1);
-}
-
-.invert-to-dark {
-  filter: invert(0);
 }

@@ -11,7 +11,43 @@
   --shadow-color: #a6a6a6; /* Medium grey, used for shadows */
   --shaded-color: #cfcfcf; /* Medium light grey, used for shading */
   --background-color: #ebebeb; /* Light grey, used for backgrounds */
+  --landing-page-background-color: #F8F9FA;
+  --card-background-color: #ffffff; 
+  --navbar-color: #ffffff;
+  /* newly added */
+  --basic-text-color: #212529;
+  --accent-text-white: #ffffff; /* White text color */
+  /* changes the border color of the search bar on landing page */
+  --input-border-color: #DEE2E6;
+  /* changes the color of the title and icons on the landing page */
+  --title-color: #274f97;
+  --filter-input-background-color: white;
+  --icon-color-white: #ffffff; /* White icon color */
+  --input-background-color: #EBEBEB;
+  --landing-page-input-background-color: white;
+  --filter-background-color: white;
+
+  /* #f8f9fa is the og background color styled by .bg-light in _background_variant.scss */
   /* Note: Can use Bootstrap "light" color and white color */
+}
+
+/* only main-color (tcf blue) and accent-color (tcf organge) are being utilized by the landing page */
+body.dark-mode {
+
+/* Added updated variables names */
+  --background-color: black; /* Dark background color */
+  --card-background-color: #333333;  /* Dark card background */
+  --input-background-color: #545454;  /* Dark input background */
+  --filter-input-background-color: #545454;  /* Dark input background */
+  --input-text-color: #a6a6a6;   /* Light text in inputs */
+  --accent-text-color: #d75626; /* Accent color for dark mode */
+  --basic-text-color: white;    /* White text color */
+  --icon-color: white; /* Light icon color */
+  --input-border-color: #5a5c5d; /* Lighter border color for inputs */
+  --button-bg-color: #1e1e1e; /* Darker button background */
+  --landing-page-background-color: black; /* replace tcf-blue as tcf logo text color */
+  --title-color: white; /* make title and icons on landing page white */
+  --filter-background-color: #333333;
 }
 
 /*************DEFAULT STYLES**************/
@@ -29,6 +65,36 @@ h6,
 .h6 {
   /* Default heading font: Lato (others are fallbacks) */
   font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Chai: initially didn't have a color element, this color element overrides color in _reboot.cscc */
+  /* color: var(--h4-card-title-color);  */
+}
+
+h1, .h1 {
+  color: var(--basic-text-color);
+}
+
+h2, .h2 {
+  color: var(--basic-text-color);
+}
+
+h4, .h4 {
+  color: var(--basic-text-color);
+}
+
+h3, .h3 {
+  color: var(--basic-text-color);
+}
+
+h5, .h5 {
+  color: var(--basic-text-color);
+}
+
+h6, .h6 {
+  color: var(--basic-text-color);
+}
+
+label {
+  color: var(--basic-text-color);
 }
 
 body {
@@ -68,13 +134,16 @@ ul {
 
 /* Main color: Indigo/Dark blue */
 .text-tcf-indigo {
-  color: var(--main-color);
+  color: var(--title-color);
 }
+
 .bg-tcf-indigo {
-  background-color: var(--main-color);
+  /* background-color: var(--main-color); */
+  /* Chai: this banner color should be tcf blue no matter if theme is light or dark */
+  background-color: #274f97;
 }
 .border-tcf-indigo {
-  border-color: var(--main-color);
+  border-color: var(--title-color);
 }
 
 /* Secondary color: Light blue */
@@ -89,6 +158,7 @@ ul {
 .text-tcf-orange {
   color: var(--accent-color);
 }
+/* colors specifically the 'Meet the full team' button */
 .bg-tcf-orange {
   background-color: var(--accent-color);
 }
@@ -124,8 +194,114 @@ ul {
   border-color: var(--background-color);
 }
 
-/* Note: Can use Bootstrap "light" color
-  .text-light
-  .bg-light
-  .border-light
-*/
+/* OVERRIDES scss stylings */
+/* Chai: background color on landing page is being styled by .bg-light in _background-variant.scss, has to have !important to override the !important in the scss */
+.bg-light {
+  background-color: var(--landing-page-background-color) !important;
+}
+
+/* Chai: card background color is being styled by .card in _card.scss; color will be card-background-color when in dark-mode */
+.card {
+  background-color: var(--card-background-color) !important;
+  /* border: 1px solid var(--input-border-color); */
+}
+.card.bg-tcf-orange {
+  background-color: var(--accent-color) !important;
+}
+
+
+p {
+  color: var(--basic-text-color);
+}
+
+.form-control {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 1px solid var(--input-border-color);
+}
+
+.form-control:focus {
+  background-color: var(--input-background-color);
+  color: var(--basic-text-color);
+}
+
+.form-control::placeholder {
+  color: var(--input-text-color);
+}
+
+/* overrides the input:-internal-autofill-selected setting from User Agent Stylesheet */
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px var(--input-background-color) inset !important;
+  -webkit-text-fill-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.forcontrol:disabled {
+  background-color: var(--background-color);
+}
+
+/* originally in borders.scss */
+.border {
+  border: 0.5px solid var(--input-border-color) !important;
+}
+
+.modal-body {
+  background-color: var(--background-color);
+}
+
+.modal-header {
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--input-border-color);
+}
+
+.modal-footer {
+  background-color: var(--background-color);
+  border-top: 1px solid var(--input-border-color);
+}
+
+.dropdown-menu {
+  background-color: var(--filter-background-color);
+}
+
+.dropdown-item {
+  color: var(--basic-text-color);
+}
+
+.dropdown-divider {
+  border-top: 1px solid var(--input-border-color);
+}
+
+/* styles the input range bar on the write review page */
+input[type="range"] {
+  width: 100%;
+  height: 6px;
+  background: transparent;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  background: var(--input-background-color); /* Track color */
+  border-radius: 3px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 16px;
+  width: 16px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  margin-top: -5px; /* aligns thumb with the track */
+  cursor: pointer;
+}
+
+#darkModeToggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--icon-color, #212529); /* Customizable */
+}
+
+#sunIcon {
+  vertical-align: middle;
+}

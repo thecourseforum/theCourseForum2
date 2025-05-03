@@ -1,12 +1,22 @@
 /* Html Classes */
 
+body {
+  background-color: var(--card-background-color);
+  color: var(--basic-text-color);
+}
+
+body.dark-mode {
+  background-color: var(--background-color);
+  color: var(--basic-text-color);
+}
+
 .container-fluid {
   overflow: hidden;
 }
 
 /* Navbar */
 nav.navbar {
-  background-color: white;
+  background-color: var(--navbar-color);
 }
 
 nav.navbar img.logo {
@@ -50,11 +60,11 @@ header.masthead h1 {
 
 /* Features */
 .features-icons .card {
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+  box-shadow: 1px 1px 2px var(--input-border-color);
 }
 
 .features-icons .card:hover {
-  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 1px 1px 4px var(--input-border-color);
 }
 
 .features-icons .features-icons-item {
@@ -63,7 +73,7 @@ header.masthead h1 {
 
 .features-icons .features-icons-item .features-icons-icon {
   height: 7rem;
-  color: var(--main-color);
+  color: var(--title-color);
 }
 
 .features-icons .features-icons-item .features-icons-icon i {
@@ -96,6 +106,14 @@ header.masthead h1 {
   overflow: hidden;
 }
 
+.dark-mode .about-team .about-pfp {
+  background-color: var(--background-color);
+  overflow: hidden;
+}
+
+.border {
+  border: 1px solid var(--input-border-color) !important;
+}
 .about-team .about-pfp img {
   transition: all 0.5s ease;
   box-shadow: 5px 5px 0px var(--accent-color);
@@ -109,13 +127,22 @@ header.masthead h1 {
   border: 0px;
 }
 
+.dark-mode .about-member.card {
+  background-color: var(--background-color) !important;
+  color: var(--basic-text-color);
+}
+
 .about-team .about-link:hover {
-  box-shadow: 2px 2px 5px var(--main-color);
+  box-shadow: 2px 2px 5px var(--accent-color);
 }
 
 .about-link {
   font-size: 1.25rem;
 }
+
+.about-link.card {
+  background-color: var(--accent-color) !important;
+  color: var(--basic-text-color) !important;}
 
 /* About info box */
 .about-team .about-info {

@@ -1,3 +1,7 @@
+body.dark-mode {
+  color: var(--basic-text-color);
+}
+
 .schools {
   margin-top: 30px;
 }
@@ -19,9 +23,14 @@
 
 .school > .card-header {
   background-color: var(--secondary-color);
-  color: white;
+}
+
+.school .card-header,
+.school .card-header .card-title {
+    color: var(--accent-text-white) !important;
 }
 
 .school-body {
   padding: 1.25rem;
 }
+

@@ -11,7 +11,7 @@
         <h4>
           <i class="fa fa-list" aria-hidden="true" style="width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
         </h4>
-         <p>Browse</p>
+         <p style="color: white">Browse</p>
          <hr>
       </a>
     </li>
@@ -23,7 +23,7 @@
          <h4>
           <i class="fa fa-pencil" aria-hidden="true" style="width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
         </h4>
-        <p>Review</p>
+        <p style="color: white">Review</p>
         <hr>
       </a>
       {% else %}
@@ -33,7 +33,7 @@
       <h4>
         <i class="fa fa-pencil" aria-hidden="true" style="width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
       </h4>
-      <p>Review</p>
+      <p style="color: white">Review</p>
       <hr>
       </a>
       {% endif %}
@@ -46,7 +46,7 @@
          {% if request.resolver_match.url_name == 'schedule' %}active{% endif %}">
          <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-info" style="top: 12px; left: 80px; transform: translate(-50%, -50%);">New</span>
         <h4><i class="fa fa-calendar fa-fw" aria-hidden="true" style="width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i></h4>
-        <p>Schedule</p>
+        <p style="color: white">Schedule</p>
         <hr>
       </a>
       {% else %}
@@ -55,7 +55,7 @@
           {% if request.resolver_match.url_name == 'schedule' %}active{% endif %}">
         <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-info" style="top: 12px; left: 80px; transform: translate(-50%, -50%);">New</span>
         <h4><i class="fa fa-calendar fa-fw" aria-hidden="true" style="width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i></h4>
-        <p>Schedule</p>
+        <p style="color: white">Schedule</p>
         <hr>
       </a>
       {% endif %}
@@ -67,7 +67,7 @@
         <h4>
           <i class="fa fa-code" aria-hidden="true" style="width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
         </h4>
-        <p>About</p>
+        <p style="color: white">About</p>
         <hr>
       </a>
     </li>
@@ -88,7 +88,7 @@
           <h4>
             <i class="fa fa-user" aria-hidden="true" style="width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
           </h4>
-          <p class="mb-0">Account</p>
+          <p class="mb-0" style="color: white">Account</p>
         </div>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
@@ -104,7 +104,7 @@
         <h4>
           <i class="fa fa-user" aria-hidden="true" style="width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
         </h4>
-        <p>Sign In</p>
+        <p style="color: white">Sign In</p>
       </a>
     {% endif %}
     </li>
@@ -114,24 +114,24 @@
     <ul class="icon-section">
       <li class="icon-wrapper left-icon">
         <a href="https://discord.gg/tAjzH7eyvW" aria-label="theCourseForum Discord">
-          <i class="fa fa-discord" aria-hidden="true" style="width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
+          <i class="fa fa-discord" aria-hidden="true"></i>
         </a>
       </li>
       <li class="icon-wrapper left-icon">
           <a href="https://www.facebook.com/thecourseforum" aria-label="theCourseForum Facebook">
-            <i class="fa fa-facebook" aria-hidden="true" style="width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
+            <i class="fa fa-facebook" aria-hidden="true"></i>
           </a>
       </li>
       <li class="icon-wrapper right-icon">
           <a href="https://www.instagram.com/thecourseforum_uva/" aria-label="theCourseForum Instagram">
-            <i class="fa fa-instagram" aria-hidden="true" style="width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
+            <i class="fa fa-instagram" aria-hidden="true"></i>
           </a>
       </li>
     </ul>
 
     <a style="padding-top: 0rem;" href="{% url 'privacy' %}">Privacy</a> |
     <a style="padding-top: 0rem;" href="{% url 'terms' %}">Terms</a>
-    <p>theCourseForum <br> &copy; <span class="year"></span> v1.3.0</p>
+    <p style="color: white">theCourseForum <br> &copy; <span class="year"></span> v1.3.0</p>
     {% if DEBUG %}
     <div class="bg-tcf-blue pb-3">
       <hr class="border-white">

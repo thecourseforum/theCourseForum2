@@ -1,0 +1,16 @@
+/* Global override: force all text to white */
+body {
+  color: var(--basic-text-color);
+}
+
+.breadcrumb {
+    background-color: var(--card-background-color) !important;
+}
+
+.bg-white {
+    background-color: var(--card-background-color) !important;
+}
+
+#title {
+    color: var(--accent-text-white) !important;
+}

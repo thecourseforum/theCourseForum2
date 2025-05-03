@@ -66,7 +66,7 @@
                       {% for c in dept_data.courses %}
                         {% if c != dept_data.courses.0 %}
                         {% endif %}
-                        <div class="list-group-item list-group-item-light text-dark p-2">
+                        <div class="list-group-item list-group-item-light text-dark p-2" style="border: 1px solid var(--input-border-color)">
                           <div class="row">
                             <div class="col-md-11 align-self-center">
                                 <a href="{% url 'course' mnemonic=c.mnemonic course_number=c.number %}">
@@ -85,7 +85,7 @@
                             </div>
                           </div>
                           <div class="collapse" id="description_container_{{forloop.parentloop.counter}}_{{forloop.counter}}">
-                            <hr>
+                            <hr style="border-top: 1px solid var(--input-border-color)">
                             <p>
                               <small class="text-uppercase search-course-description" style="font-size: 15px;">
                                 Course Description:

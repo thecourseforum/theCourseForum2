@@ -7,9 +7,10 @@
     font-size: 22px;
   }
 }
-.course-instructor-header .instructor-menu {
-  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
-}
+/*.course-instructor-header .instructor-menu {
+  box-shadow: 1px 1px 10px rgba(255, 0, 0, 0.2);
+}*/
+
 /* Change tooltip alignment */
 @media (min-width: 768px) {
   .tooltip-inner {
@@ -24,6 +25,11 @@
   display: flex;
   flex-direction: column;
   row-gap: 10px;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--basic-text-color);
 }
 
 .times-info-container {
@@ -46,7 +52,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: white;
+  background-color: var(--card-background-color);
   z-index: 0;
 }
 
@@ -79,7 +85,7 @@
 
 .rating-card {
   height: 100%;
-  background-color: white;
+  background-color: var(--card-background-color);
   width: 200px;
   display: flex;
   align-items: center;
@@ -89,7 +95,7 @@
 
 .rating-card-num {
   font-size: 42px;
-  color: #d75626;
+  color: var(--accent-color);
 }
 
 .rating-card-desc {
@@ -100,7 +106,7 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  background-color: white;
+  background-color: var(--card-background-color);
   height: 100%;
   margin-left: 10px;
   padding-top: 6px;
@@ -141,15 +147,20 @@
 }
 
 .gpa-text {
-  color: #384676;
+  color: var(--main-color);
   font-size: 28px;
   margin: 0;
 }
 
 .students-text {
-  color: #56679d;
+  color: var(--secondary-color);
   font-size: 16px;
   margin: 0;
+}
+
+body.dark-mode .gpa-text,
+body.dark-mode .students-text {
+  color: var(--basic-text-color) !important;
 }
 
 .info-row {
@@ -170,8 +181,10 @@
 .info-bar .progress {
   margin: 0;
   padding: 0;
+  background-color: var(--input-background-color);
 }
 .info-bar .progress-bar {
+  background-color: var(--secondary-color);
   margin: 0;
   padding: 0;
 }
@@ -316,6 +329,26 @@
   }
 }
 
+.breadcrumb {
+  background-color: var(--card-background-color) !important;
+  color: var(--basic-text-color) !important;
+}
+
+.bg-white {
+  background-color: var(--card-background-color) !important;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+  color: var(--basic-text-color) !important; 
+  background-color: var(--card-background-color) !important;
+  border-color: var(--card-background-color);
+  border-bottom: 1px solid var(--background-color);
+}
+
+.nav-tabs {
+  border-bottom: 1px solid var(--background-color) !important;
+}
+
 .rotated {
   transform: rotateZ(90deg);
 }
@@ -389,6 +422,7 @@
   width: 100px;
   height: 8px;
   margin: 0;
+  background-color: var(--input-background-color);
 }
 
 .metric-text {
@@ -413,14 +447,14 @@
 }
 
 .sections-toggle {
-  display: flex;
-  align-items: stretch;
-  height: 34px;
-  border-radius: 6px;
-  overflow: hidden;
-  background-color: #f8f9fa;
-  position: relative;
-  padding: 2px;
+    display: flex;
+    align-items: stretch;
+    height: 34px;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: var(--input-background-color);
+    position: relative;
+    padding: 2px;
 }
 
 .section-count {
@@ -445,7 +479,6 @@
   margin-bottom: 4px;
   align-items: center;
   padding: 12px 16px;
-  background-color: white;
   border-radius: 6px;
   transition: all 0.2s ease;
   border: 1px solid transparent;
@@ -476,8 +509,8 @@
 }
 
 .section-row > div:last-child {
-  text-align: right;
-  color: #666;
+    text-align: right;
+    color: var(--basic-text-color);
 }
 
 .hidden-section {
@@ -507,20 +540,21 @@
 
 /* Section toggle */
 .toggle-option {
-  padding: 0 20px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  color: #666;
-  position: relative;
-  z-index: 1;
-  border-radius: 4px;
-  min-width: 90px;
+    padding: 0 20px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    color: var(--basic-text-color);
+    position: relative;
+    z-index: 1;
+    border-radius: 4px;
+    min-width: 90px;
+    /* background-color: var(---input-background-color); */
 }
 
 .toggle-option:hover:not(.active) {

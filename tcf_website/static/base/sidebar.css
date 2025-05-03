@@ -84,3 +84,8 @@ body {
 .modal {
   z-index: 10000;
 }
+
+/* styles the right border of sidebar */
+.border-right { 
+  border-right: 1px solid var(--input-border-color) !important;
+}

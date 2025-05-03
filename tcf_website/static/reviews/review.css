@@ -24,20 +24,36 @@
 .review .upvote,
 .review .downvote {
   font-size: 1.3rem;
-  color: #aaa;
+  color: var(--shadow-color);
   cursor: pointer;
 }
 
 .review .upvote.active,
 .review .upvote:hover {
-  color: dodgerblue;
+  color: var(--main-color);
 }
 
 .review .downvote.active,
 .review .downvote:hover {
-  color: rgb(215, 86, 38);
+  color: var(--accent-color);
 }
 
 .tooltip-inner {
   margin: 0;
+}
+
+.review-text-body {
+  color: var(--basic-text-color);
+}
+
+.btn {
+  color: var(--basic-text-color);
+}
+
+body.dark-mode .text-muted {
+  color: var(--basic-text-color) !important;
+}
+
+body.dark-mode .text-dark {
+  color: var(--basic-text-color) !important;
 }
