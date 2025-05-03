@@ -276,13 +276,6 @@ def filter_courses(filters):
     # Apply filters
     results = apply_filters(results, filters)
 
-    # Filter for open sections
-    if filters.get("open_sections"):
-        open_sections_filtered = Course.filter_by_open_sections()
-        results = results.filter(
-            id__in=open_sections_filtered.values_list("id", flat=True)
-        )
-
     results = results.distinct().order_by("subdepartment__mnemonic", "number")[:15]
 
     # Convert to same format as fetch_courses
@@ -325,6 +318,12 @@ def apply_filters(results, filters):
             days=weekdays, start_time=from_time, end_time=to_time
         )
         results = results.filter(id__in=time_filtered.values_list("id", flat=True))
+
+    if filters.get("open_sections"):
+        open_sections_filtered = Course.filter_by_open_sections()
+        results = results.filter(
+            id__in=open_sections_filtered.values_list("id", flat=True)
+        )
 
     # Apply min GPA filter if provided - simplified approach
     min_gpa = filters.get("min_gpa")
