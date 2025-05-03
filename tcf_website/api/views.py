@@ -1,5 +1,7 @@
 # pylint: disable=too-many-ancestors,fixme
 """DRF Viewsets"""
+import asyncio
+from threading import Thread
 from django.db.models import Avg, Sum
 from django.http import JsonResponse
 from rest_framework import viewsets
@@ -29,6 +31,7 @@ from .serializers import (
     SemesterSerializer,
     SubdepartmentSerializer,
 )
+from .enrollment import update_enrollment_data
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
@@ -185,6 +188,11 @@ class SectionEnrollmentViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         """Retrieves enrollment data for all sections of a given course."""
+        # Start the update in a background thread with minimal code
+        thread = Thread(target=lambda: asyncio.run(update_enrollment_data(pk)))
+        thread.start()
+
+        # Get sections and return enrollment data
         sections = Section.objects.filter(course_id=pk)
         enrollment_data = {}
 

@@ -4,12 +4,20 @@ Module for fetching and updating section enrollment data asynchronously.
 
 # pylint: disable=unnecessary-lambda
 import asyncio
+from datetime import timedelta
 
 import requests
 from asgiref.sync import sync_to_async
 from django.http import HttpResponseNotFound
+from django.utils import timezone
 
-from tcf_website.models import Course, Section, SectionEnrollment, Semester
+from tcf_website.models import (
+    Course,
+    CourseEnrollment,
+    Section,
+    SectionEnrollment,
+    Semester,
+)
 
 TIMEOUT = 10
 MAX_WORKERS = 5
@@ -59,11 +67,18 @@ def fetch_section_data(section):
 
 async def update_enrollment_data(course_id):
     """Asynchronous function to update enrollment data."""
-
     course_exists = await sync_to_async(Course.objects.filter(id=course_id).exists)()
     if not course_exists:
         return HttpResponseNotFound("Course not found.")
 
+    # Check if the course's enrollment data was updated within the last 2 hours
+    enrollment_tracking, created = await sync_to_async(
+        CourseEnrollment.objects.get_or_create
+    )(course_id=course_id)
+    if not created and timezone.now() - enrollment_tracking.last_update < timedelta(
+        hours=2
+    ):
+        return  # Skip update if it was updated less than 2 hours ago
     course = await sync_to_async(Course.objects.get)(id=course_id)
     latest_semester = await sync_to_async(lambda: Semester.latest())()
 
@@ -87,6 +102,10 @@ async def update_enrollment_data(course_id):
                 changed_sections += 1
 
     await asyncio.gather(*(process_section(section) for section in sections))
+
+    # Update the last_update timestamp
+    enrollment_tracking.last_update = timezone.now()
+    await sync_to_async(enrollment_tracking.save)()
 
 
 def update_section_enrollment(section, data):
