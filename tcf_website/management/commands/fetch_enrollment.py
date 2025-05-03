@@ -46,23 +46,6 @@ session.mount("http://", adapter)
 session.mount("https://", adapter)
 
 
-def build_sis_api_url(section):
-    """Build the SIS API URL for a given section.
-
-    Args:
-        section: Section object to build URL for
-
-    Returns:
-        str: The complete SIS API URL
-    """
-    return (
-        "https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM."
-        "H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch"
-        f"?institution=UVA01&term={section.semester.number}&page=1&"
-        f"class_nbr={section.sis_section_number}"
-    )
-
-
 def should_retry_request(exception):
     """Determine if we should retry the request based on the exception."""
     if isinstance(exception, requests.exceptions.RequestException):
@@ -90,7 +73,12 @@ def fetch_section_data(section):
     Returns:
         bool: True if successful, False otherwise
     """
-    url = build_sis_api_url(section)
+    url = (
+        "https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM."
+        "H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch"
+        f"?institution=UVA01&term={section.semester.number}&page=1&"
+        f"class_nbr={section.sis_section_number}"
+    )
 
     try:
         # Fetch and validate response
