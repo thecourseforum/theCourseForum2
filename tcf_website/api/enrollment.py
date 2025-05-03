@@ -4,21 +4,32 @@ Module for fetching and updating section enrollment data asynchronously.
 
 # pylint: disable=unnecessary-lambda
 import asyncio
-import time
 
 import requests
 from asgiref.sync import sync_to_async
 from django.http import HttpResponseNotFound
-from django.utils import timezone
 
 from tcf_website.models import Course, Section, SectionEnrollment, Semester
-from tcf_website.utils.enrollment import (
-    build_sis_api_url,
-    format_enrollment_update_message,
-)
 
 TIMEOUT = 10
 MAX_WORKERS = 5
+
+
+def build_sis_api_url(section):
+    """Build the SIS API URL for a given section.
+
+    Args:
+        section: Section object to build URL for
+
+    Returns:
+        str: The complete SIS API URL
+    """
+    return (
+        "https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM."
+        "H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch"
+        f"?institution=UVA01&term={section.semester.number}&page=1&"
+        f"class_nbr={section.sis_section_number}"
+    )
 
 
 def fetch_section_data(section):
@@ -48,7 +59,6 @@ def fetch_section_data(section):
 
 async def update_enrollment_data(course_id):
     """Asynchronous function to update enrollment data."""
-    start_time = time.monotonic()
 
     course_exists = await sync_to_async(Course.objects.filter(id=course_id).exists)()
     if not course_exists:
@@ -61,12 +71,7 @@ async def update_enrollment_data(course_id):
     sections = await sync_to_async(list)(sections_queryset)
 
     if not sections:
-        print(
-            f"No sections found for course {course.code()} in semester {latest_semester}."
-        )
         return
-
-    print(f"Starting async enrollment update for {len(sections)} sections...")
 
     changed_sections = 0
 
@@ -80,16 +85,8 @@ async def update_enrollment_data(course_id):
             was_changed = await sync_to_async(update_section_enrollment)(section, data)
             if was_changed:
                 changed_sections += 1
-            print(f"Updated enrollment for section {section.sis_section_number}")
 
     await asyncio.gather(*(process_section(section) for section in sections))
-
-    elapsed_time = time.monotonic() - start_time
-    print(
-        f"Enrollment update completed at {timezone.now()} "
-        f"(Total time: {elapsed_time:.2f} seconds, "
-        f"{changed_sections} sections changed)"
-    )
 
 
 def update_section_enrollment(section, data):
@@ -111,8 +108,5 @@ def update_section_enrollment(section, data):
         section_enrollment.waitlist_taken = data.get("waitlist_taken", 0)
         section_enrollment.waitlist_limit = data.get("waitlist_limit", 0)
         section_enrollment.save()
-        print(format_enrollment_update_message(section, section_enrollment))
-    else:
-        print(f"No changes in enrollment data for section {section.sis_section_number}")
 
     return has_changes
