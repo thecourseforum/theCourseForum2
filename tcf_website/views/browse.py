@@ -311,8 +311,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     """View for course instructor page."""
     section_last_taught = (
         Section.objects.filter(course=course_id, instructors=instructor_id)
-        .order_by("semester")
-        .last()
+        .order_by("-semester__number")
+        .first()
     )
     if section_last_taught is None:
         raise Http404
