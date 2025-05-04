@@ -672,7 +672,7 @@ class Course(models.Model):
             recent: If True, only include instructors teaching in latest_semester
         """
         # Set default values based on whether we're using the optimized path or historical path
-        default_value = 0 if recent else (-1 if not reverse else math.inf)
+        default_value = 0 if recent else (-1 if not reverse else 1e9)
 
         # Build the base query
         base_query = Instructor.objects.filter(hidden=False)
