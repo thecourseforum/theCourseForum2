@@ -9,6 +9,7 @@ import re
 import backoff
 import requests
 from tqdm import tqdm
+from django.core.management.base import BaseCommand
 
 BASE_URL = "https://api.presence.io/virginia/v1/organizations"
 session = requests.session()
@@ -95,5 +96,18 @@ def write_csv(csv_file):
     print("Done.")
 
 
-if __name__ == "__main__":
-    write_csv("club_data/csv/clubs.csv")
+class Command(BaseCommand):
+    help = "Fetch club data from UVA's Presence API and write to a CSV file."
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--output",
+            default="tcf_website/management/commands/club_data/csv/clubs.csv",
+            help="Output CSV file path",
+        )
+
+    def handle(self, *args, **options):
+        csv_file = options["output"]
+        self.stdout.write(f"Fetching club data and writing to {csv_file}...")
+        write_csv(csv_file)
+        self.stdout.write(self.style.SUCCESS("Successfully fetched club data."))
