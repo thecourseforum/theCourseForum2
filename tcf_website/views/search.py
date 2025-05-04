@@ -277,7 +277,6 @@ def fetch_courses(query, filters):
         results.filter(max_similarity__gte=similarity_threshold)
         .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
         .exclude(semester_last_taught_id__lt=48)
-        .distinct()
         .order_by("-max_similarity")
     )
 
@@ -297,7 +296,7 @@ def filter_courses(filters):
     # Apply filters
     results = apply_filters(results, filters)
 
-    results = results.distinct().order_by("subdepartment__mnemonic", "number")
+    results = results.order_by("subdepartment__mnemonic", "number")
 
     return results
 
@@ -343,4 +342,4 @@ def apply_filters(results, filters):
             # Silently ignore invalid values
             pass
 
-    return results
+    return results.distinct()
