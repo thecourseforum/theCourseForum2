@@ -242,6 +242,7 @@ def fetch_courses(query, filters):
         results.filter(max_similarity__gte=similarity_threshold)
         .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
         .exclude(semester_last_taught_id__lt=48)
+        .distinct()
         .order_by("-max_similarity")
     )[:15]
 
