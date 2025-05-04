@@ -67,9 +67,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const hasActiveFilters =
       Array.from(filterInputs).some((input) => input.checked) ||
       Array.from(dayFilters).some((input) => input.checked) ||
-      timeFrom.value !== "" ||
-      timeTo.value !== "" ||
-      openSections.checked ||
+      (timeFrom && timeFrom.value !== "") ||
+      (timeTo && timeTo.value !== "") ||
+      (openSections && openSections.checked) ||
       (minGpaInput && parseFloat(minGpaInput.value) !== 0.0);
 
     if (hasActiveFilters) {
