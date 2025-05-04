@@ -325,7 +325,6 @@ def apply_filters(results, filters):
             id__in=open_sections_filtered.values_list("id", flat=True)
         )
 
-    # Apply min GPA filter if provided - simplified approach
     min_gpa = filters.get("min_gpa")
     if min_gpa:
         try:

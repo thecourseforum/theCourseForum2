@@ -845,7 +845,9 @@ class Course(models.Model):
     def filter_by_open_sections(cls):
         """Filter courses that have at least one open section."""
         open_sections = SectionEnrollment.objects.filter(
-            section__course=OuterRef("pk"), enrollment_taken__lt=F("enrollment_limit")
+            section__course=OuterRef("pk"),
+            section__semester=Semester.latest(),
+            enrollment_taken__lt=F("enrollment_limit"),
         )
         return cls.objects.filter(Exists(open_sections))
 
