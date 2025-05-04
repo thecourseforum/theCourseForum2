@@ -9,8 +9,7 @@ from datetime import datetime
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from tcf_website.models import (Course, Instructor, Review, Semester,
-                                Subdepartment, User)
+from tcf_website.models import Course, Instructor, Review, Semester, Subdepartment, User
 
 DATA_DIR = "tcf_website/management/commands/review_drives/"
 

@@ -1,0 +1,53 @@
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'reviews/pagination.css' %}" />
+{% endblock %}
+
+
+<div class="pagination">
+  {% if paginated_items.has_previous %}
+    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ 1 }}">&lt;&lt;</a>
+    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ paginated_items.previous_page_number }}">&lt;</a>
+  {% endif %}
+  
+  {% if paginated_items.number == 1 %}
+    <span class="current">1</span>
+  {% else %}
+    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page=1">1</a>
+  {% endif %}
+  
+  {% if paginated_items.number > 4 %}
+    <span class="dots">...</span>
+  {% endif %}
+  
+  {% for page_num in paginated_items.paginator.page_range %}
+    {% if page_num > 1 and page_num < paginated_items.paginator.num_pages %}
+      {% if page_num >= paginated_items.number|add:'-2' and page_num <= paginated_items.number|add:'2' %}
+        {% if page_num == paginated_items.number %}
+          <span class="current">{{ page_num }}</span>
+        {% else %}
+          <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_num }}">{{ page_num }}</a>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  
+  {% if paginated_items.number < paginated_items.paginator.num_pages|add:'-3' %}
+    <span class="dots">...</span>
+  {% endif %}
+  
+  {% if paginated_items.paginator.num_pages > 1 %}
+    {% if paginated_items.number == paginated_items.paginator.num_pages %}
+      <span class="current">{{ paginated_items.paginator.num_pages }}</span>
+    {% else %}
+      <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ paginated_items.paginator.num_pages }}">
+          {{ paginated_items.paginator.num_pages }}
+      </a>
+    {% endif %}
+  {% endif %}
+  
+  {% if paginated_items.has_next %}
+    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ paginated_items.next_page_number }}">&gt;</a>
+    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ paginated_items.paginator.num_pages }}">&gt;&gt;</a>
+  {% endif %}
+</div>

@@ -5,8 +5,7 @@ import datetime
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import \
-    LoginRequiredMixin  # For class-based views
+from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect, JsonResponse

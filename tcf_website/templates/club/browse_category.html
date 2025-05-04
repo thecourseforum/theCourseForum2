@@ -1,0 +1,22 @@
+<div class="school card mb-3">
+    <div class="card-header pt-3" data-toggle="collapse"
+        data-target="#category-{{ category.id }}" aria-expanded="true"
+        id="header-{{ category.id }}">
+        <div class="float-left">
+            <h3 class="card-title mb-0 alignleft">{{ category.name }}</h3>
+        </div>
+        <div class="float-right">
+            <i class="fa fa-chevron-down-white" id="chevron-{{ category.id }}"></i>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="school-body collapse" id="category-{{ category.id }}">
+        <ul class="department-list">
+            {% for club in category.clubs %}
+            <li>
+                <a href="{% url 'course' mnemonic=category.slug course_number=club.id %}?mode=clubs">{{ club.name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div> 

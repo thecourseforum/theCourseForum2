@@ -10,8 +10,7 @@ import pandas as pd
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
-from tcf_website.models import (Course, CourseGrade, CourseInstructorGrade,
-                                Instructor)
+from tcf_website.models import Course, CourseGrade, CourseInstructorGrade, Instructor
 
 # Location of our grade data CSVs
 DATA_DIR = "tcf_website/management/commands/grade_data/csv/"

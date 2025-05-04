@@ -2,30 +2,62 @@
 # pylint: disable=too-many-locals
 
 """Views for Browse, department, and course/course instructor pages."""
-import asyncio
 import json
-from threading import Thread
 from typing import Any
-from urllib.parse import urlencode
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Avg, CharField, Count, F, Q, Value
-from django.db.models.functions import Concat
+from django.db.models import Avg, CharField, Count, F, Q, Value, Sum, Prefetch
+from django.db.models.functions import Concat, Coalesce
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils import timezone
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from tcf_website.api.enrollment import update_enrollment_data
-
-from ..models import (Answer, Course, CourseEnrollment, CourseInstructorGrade,
-                      Department, Instructor, Question, Review, School,
-                      Section, SectionEnrollment, Semester)
+from ..models import (
+    Answer,
+    Club,
+    ClubCategory,
+    Course,
+    CourseInstructorGrade,
+    Department,
+    Instructor,
+    Question,
+    Review,
+    School,
+    Section,
+    Semester,
+)
 
 
 def browse(request):
     """View for browse page."""
+    mode, is_club = parse_mode(request)
+
+    if is_club:
+        # Get all club categories
+        club_categories = (
+            ClubCategory.objects.all()
+            .prefetch_related(
+                Prefetch(
+                    "club_set",
+                    queryset=Club.objects.order_by("name"),
+                    to_attr="clubs",
+                )
+            )
+            .order_by("name")
+        )
+
+        return render(
+            request,
+            "browse/browse.html",
+            {
+                "is_club": True,
+                "mode": mode,
+                "club_categories": club_categories,
+            },
+        )
+
     clas = School.objects.get(name="College of Arts & Sciences")
     seas = School.objects.get(name="School of Engineering & Applied Science")
 
@@ -38,6 +70,8 @@ def browse(request):
         request,
         "browse/browse.html",
         {
+            "is_club": False,
+            "mode": mode,
             "CLAS": clas,
             "SEAS": seas,
             "other_schools": other_schools,
@@ -70,9 +104,6 @@ def department(request, dept_id: int, course_recency=None):
     season, year = course_recency.upper().split()
     active_semester = Semester.objects.filter(year=year, season=season).first()
 
-    query_params = request.GET.copy()
-    query_params.pop("page", None)
-    query_params = urlencode(query_params)
     # Fetch sorting variables
     sortby = request.GET.get("sortby", "course_id")
     order = request.GET.get("order", "asc")
@@ -95,7 +126,6 @@ def department(request, dept_id: int, course_recency=None):
             "sortby": sortby,
             "order": order,
             "last_five_years": str(last_five_years),
-            "query_params": query_params,
         },
     )
 
@@ -110,6 +140,12 @@ def course_view_legacy(request, course_id):
     )
 
 
+def parse_mode(request):
+    """Parse the mode parameter from the request."""
+    mode = request.GET.get("mode", "courses")
+    return mode, (mode == "clubs")
+
+
 def course_view(
     request,
     mnemonic: str,
@@ -118,6 +154,8 @@ def course_view(
 ):
     """A new Course view that allows you to input mnemonic and number instead."""
 
+    mode, is_club = parse_mode(request)
+
     if not instructor_recency:
         instructor_recency = str(Semester.latest())
 
@@ -125,6 +163,63 @@ def course_view(
     request.session["course_code"] = None
     request.session["course_title"] = None
     request.session["instructor_fullname"] = None
+
+    if is_club:
+        # 'mnemonic' is actually category_slug, 'course_number' is club.id
+        club = get_object_or_404(
+            Club, id=course_number, category__slug=mnemonic.upper()
+        )
+
+        # Pull reviews exactly as you do for courses, but filter on club=club
+        page_number = request.GET.get("page", 1)
+        paginated_reviews = Review.objects.filter(
+            club=club,
+            toxicity_rating__lt=settings.TOXICITY_THRESHOLD,
+            hidden=False,
+        ).exclude(text="")
+
+        if request.user.is_authenticated:
+            paginated_reviews = paginated_reviews.annotate(
+                sum_votes=Coalesce(Sum("vote__value"), Value(0)),
+                user_vote=Coalesce(
+                    Sum("vote__value", filter=Q(vote__user=request.user)),
+                    Value(0),
+                ),
+            )
+
+        paginated_reviews = Review.sort(
+            paginated_reviews, request.GET.get("method", "")
+        )
+
+        paginated_reviews = Review.paginate(paginated_reviews, page_number)
+
+        # Breadcrumbs for club
+        breadcrumbs = [
+            ("Clubs", reverse("browse") + "?mode=clubs", False),
+            (
+                club.category.name,
+                reverse("club_category", args=[club.category.slug]) + "?mode=clubs",
+                False,
+            ),
+            (club.name, None, True),
+        ]
+
+        # Save club info to session
+        request.session["course_code"] = f"{club.category.slug} {club.id}"
+        request.session["course_title"] = club.name
+
+        return render(
+            request,
+            "club/club.html",
+            {
+                "is_club": True,
+                "mode": mode,
+                "club": club,
+                "paginated_reviews": paginated_reviews,
+                "sort_method": request.GET.get("method", ""),
+                "breadcrumbs": breadcrumbs,
+            },
+        )
 
     # Redirect if the mnemonic is not all uppercase
     if mnemonic != mnemonic.upper():
@@ -194,6 +289,8 @@ def course_view(
         request,
         "course/course.html",
         {
+            "is_club": False,
+            "mode": mode,
             "course": course,
             "instructors": instructors,
             "latest_semester": str(latest_semester),
@@ -209,8 +306,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     """View for course instructor page."""
     section_last_taught = (
         Section.objects.filter(course=course_id, instructors=instructor_id)
-        .order_by("semester")
-        .last()
+        .order_by("-semester__number")
+        .first()
     )
     if section_last_taught is None:
         raise Http404
@@ -289,24 +386,6 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         for field in fields:
             data[field] = getattr(grades_data, field)
 
-    two_hours_ago = timezone.now() - timezone.timedelta(hours=2)
-    enrollment_tracking = CourseEnrollment.objects.filter(course=course).first()
-
-    if enrollment_tracking is None:
-        enrollment_tracking = CourseEnrollment.objects.create(course=course)
-        should_update = True
-    else:
-        should_update = (
-            not enrollment_tracking.last_update
-            or enrollment_tracking.last_update < two_hours_ago
-        )
-
-    if should_update:
-        run_async(update_enrollment_data, course.id)
-        request.session["fetching_enrollment"] = True
-    else:
-        request.session["fetching_enrollment"] = False
-
     sections_taught = Section.objects.filter(
         course=course_id,
         instructors__in=Instructor.objects.filter(pk=instructor_id),
@@ -324,27 +403,10 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             if len(time) > 0:
                 times.append(time)
 
-        section_enrollment = SectionEnrollment.objects.filter(section=section).first()
-        enrollment_data = {
-            "enrollment_taken": (
-                section_enrollment.enrollment_taken if section_enrollment else None
-            ),
-            "enrollment_limit": (
-                section_enrollment.enrollment_limit if section_enrollment else None
-            ),
-            "waitlist_taken": (
-                section_enrollment.waitlist_taken if section_enrollment else None
-            ),
-            "waitlist_limit": (
-                section_enrollment.waitlist_limit if section_enrollment else None
-            ),
-        }
-
         section_info["sections"][section.sis_section_number] = {
             "type": section.section_type,
             "units": section.units,
             "times": times,
-            "enrollment_data": enrollment_data,
         }
 
     request.session["course_code"] = course.code()
@@ -480,7 +542,40 @@ def safe_round(num):
     return "\u2014"
 
 
-def run_async(func, *args):
-    """Helper function to run an async function inside a thread."""
-    thread = Thread(target=lambda: asyncio.run(func(*args)))
-    thread.start()
+def club_category(request, category_slug: str):
+    """View for club category page."""
+    mode = parse_mode(request)[0]  # Only use the mode, ignoring is_club
+
+    # Get the category by slug
+    category = get_object_or_404(ClubCategory, slug=category_slug.upper())
+
+    # Get clubs in this category
+    clubs = Club.objects.filter(category=category).order_by("name")
+
+    # Pagination
+    page_number = request.GET.get("page", 1)
+    paginator = Paginator(clubs, 10)  # 10 clubs per page
+    try:
+        paginated_clubs = paginator.page(page_number)
+    except PageNotAnInteger:
+        paginated_clubs = paginator.page(1)
+    except EmptyPage:
+        paginated_clubs = paginator.page(paginator.num_pages)
+
+    # Navigation breadcrumbs
+    breadcrumbs = [
+        ("Clubs", reverse("browse") + "?mode=clubs", False),
+        (category.name, None, True),
+    ]
+
+    return render(
+        request,
+        "club/category.html",
+        {
+            "is_club": True,
+            "mode": mode,
+            "category": category,
+            "paginated_clubs": paginated_clubs,
+            "breadcrumbs": breadcrumbs,
+        },
+    )

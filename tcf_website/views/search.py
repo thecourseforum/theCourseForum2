@@ -5,11 +5,18 @@ import statistics
 from typing import Iterable
 
 from django.contrib.postgres.search import TrigramSimilarity
-from django.db.models import F, FloatField, Q
+from django.db.models import F, FloatField, Q, Value
 from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from ..models import Course, Instructor, Subdepartment
+from ..models import Club, Course, Instructor, Subdepartment
+
+
+def parse_mode(request):
+    """Parse the mode parameter from the request."""
+    mode = request.GET.get("mode", "courses")
+    return mode, (mode == "clubs")
 
 
 def group_by_dept(courses):
@@ -30,11 +37,42 @@ def group_by_dept(courses):
     return grouped_courses
 
 
+def group_by_club_category(clubs):
+    """Groups clubs by their category and adds relevant data."""
+    grouped = {}
+    for club in clubs:
+        slug = club["category_slug"]
+        if slug not in grouped:
+            grouped[slug] = {
+                "category_name": club["category_name"],
+                "category_slug": slug,
+                "clubs": [],
+            }
+        grouped[slug]["clubs"].append(club)
+    return grouped
+
+
+def paginate_results(request, items, per_page=15):
+    """Helper function to paginate items."""
+    page_number = request.GET.get("page", 1)
+    paginator = Paginator(items, per_page)
+
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    return page_obj, paginator.count
+
+
 def search(request):
     """Search results view."""
 
     # Set query
     query = request.GET.get("q", "").strip()
+    mode, is_club = parse_mode(request)
 
     filters = {
         "disciplines": request.GET.getlist("discipline"),
@@ -47,30 +85,105 @@ def search(request):
         ),
         "from_time": request.GET.get("from_time"),
         "to_time": request.GET.get("to_time"),
+        "page": request.GET.get("page"),
         "open_sections": request.GET.get("open_sections") == "on",
+        "min_gpa": request.GET.get("min_gpa"),
     }
 
     # Save filters to session
     request.session["search_filters"] = filters
 
-    if query:
-        courses = fetch_courses(query, filters)
-        instructors = fetch_instructors(query)
-        courses_first = decide_order(courses, instructors)
+    instructors = []
+    courses_first = True
+
+    if is_club:
+        # Club mode
+        clubs = fetch_clubs(query)
+        page_obj, total = paginate_results(request, clubs)
+        grouped = group_by_club_category(page_obj)
     else:
-        courses = filter_courses(filters)
-        instructors = []
-        courses_first = True
+        # Course mode
+        if query:
+            # Search mode
+            course_results = fetch_courses(query, filters)
+            instructors = fetch_instructors(query)
+        else:
+            # Filter mode
+            course_results = filter_courses(filters)
+
+        page_obj, total = paginate_results(request, course_results)
+
+        # Formulate course data
+        courses = [
+            {
+                "id": course.id,
+                "title": course.title,
+                "number": course.number,
+                "mnemonic": course.mnemonic,
+                "description": course.description,
+                "max_similarity": course.max_similarity if query else 1.0,
+            }
+            for course in page_obj
+        ]
+
+        # Determine display order - courses or instructors first
+        if not request.GET.get("page"):
+            courses_first = decide_order(courses, instructors) if query else True
+
+        grouped = group_by_dept(courses)
 
     ctx = {
+        "mode": mode,
+        "is_club": is_club,
         "query": query[:30] + ("..." if len(query) > 30 else ""),
         "courses_first": courses_first,
-        "courses": group_by_dept(courses),
+        "grouped": grouped,
         "instructors": instructors,
-        "total_courses": len(courses),
+        "total": total,
+        "page_obj": page_obj,
     }
 
     return render(request, "search/search.html", ctx)
+
+
+def fetch_clubs(query):
+    """Get club data using Django Trigram similarity."""
+    threshold = 0.15
+    if not query:
+        return list(
+            Club.objects.annotate(
+                max_similarity=Value(1.0, output_field=FloatField()),
+                category_slug=F("category__slug"),
+                category_name=F("category__name"),
+            ).values(
+                "id",
+                "name",
+                "description",
+                "max_similarity",
+                "category_slug",
+                "category_name",
+            )
+        )
+
+    qs = (
+        Club.objects.annotate(sim=TrigramSimilarity("combined_name", query))
+        .annotate(max_similarity=F("sim"))
+        .filter(max_similarity__gte=threshold)
+        .annotate(category_slug=F("category__slug"), category_name=F("category__name"))
+        .order_by("-max_similarity")
+    )
+
+    return [
+        {
+            "id": c.id,
+            "name": c.name,
+            "description": c.description,
+            "max_similarity": c.max_similarity,
+            "category_slug": c.category_slug,
+            "category_name": c.category_name,
+        }
+        for c in qs
+    ]
 
 
 def decide_order(courses: list[dict], instructors: list[dict]) -> bool:
@@ -165,24 +278,9 @@ def fetch_courses(query, filters):
         .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
         .exclude(semester_last_taught_id__lt=48)
         .order_by("-max_similarity")
-    )[:15]
+    )
 
-    courses = [
-        {
-            key: getattr(course, key)
-            for key in (
-                "id",
-                "title",
-                "number",
-                "mnemonic",
-                "description",
-                "max_similarity",
-            )
-        }
-        for course in results
-    ]
-
-    return courses
+    return results
 
 
 def filter_courses(filters):
@@ -198,22 +296,9 @@ def filter_courses(filters):
     # Apply filters
     results = apply_filters(results, filters)
 
-    results = results.distinct().order_by("subdepartment__mnemonic", "number")[:15]
+    results = results.order_by("subdepartment__mnemonic", "number")
 
-    # Convert to same format as fetch_courses
-    courses = [
-        {
-            "id": course.id,
-            "title": course.title,
-            "number": course.number,
-            "mnemonic": course.mnemonic,
-            "description": course.description,
-            "max_similarity": 1.0,  # default value since we're not searching
-        }
-        for course in results
-    ]
-
-    return courses
+    return results
 
 
 def apply_filters(results, filters):
@@ -247,4 +332,14 @@ def apply_filters(results, filters):
             id__in=open_sections_filtered.values_list("id", flat=True)
         )
 
-    return results
+    min_gpa = filters.get("min_gpa")
+    if min_gpa:
+        try:
+            min_gpa_float = float(min_gpa)
+            # Filter directly using a subquery on CourseGrade
+            results = results.filter(coursegrade__average__gte=min_gpa_float)
+        except (ValueError, TypeError):
+            # Silently ignore invalid values
+            pass
+
+    return results.distinct()
