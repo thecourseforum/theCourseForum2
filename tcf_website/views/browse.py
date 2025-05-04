@@ -45,7 +45,7 @@ def browse(request):
                     to_attr="clubs",
                 )
             )
-        .order_by("name")
+            .order_by("name")
         )
 
         return render(

@@ -5,7 +5,7 @@ from threading import Thread
 from django.db.models import Avg, Sum
 from django.http import JsonResponse
 from rest_framework import viewsets
-
+import requests
 from ..models import (
     Club,
     ClubCategory,
@@ -193,7 +193,7 @@ class SectionEnrollmentViewSet(viewsets.ViewSet):
         def _run_update():
             try:
                 asyncio.run(update_enrollment_data(pk))
-            except Exception as exc:
+            except (asyncio.TimeoutError, requests.RequestException, ValueError) as exc:
                 print(f"Enrollment update failed for course {pk}: {exc}")
 
         thread = Thread(target=_run_update, daemon=True)

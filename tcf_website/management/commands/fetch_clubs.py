@@ -102,6 +102,8 @@ def write_csv(csv_file):
 
 
 class Command(BaseCommand):
+    """Django command to fetch UVA club data from Presence API and export it to CSV format."""
+
     help = "Fetch club data from UVA's Presence API and write to a CSV file."
 
     def add_arguments(self, parser):

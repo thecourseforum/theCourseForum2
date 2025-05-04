@@ -1,7 +1,6 @@
 # pylint: disable=missing-class-docstring, wildcard-import, fixme, too-many-lines
 """TCF Database models."""
 
-import math
 from decimal import Decimal
 
 from django.conf import settings

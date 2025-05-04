@@ -269,6 +269,8 @@ def compare_csv_files(lous_list_file_path, sis_file_path):
 
 
 class Command(BaseCommand):
+    """Django command to fetch data from SIS API for the specified semester and save it to a CSV file."""
+
     help = "Fetches data from SIS API for the specified semester and saves it to a CSV file"
 
     def add_arguments(self, parser):
