@@ -7,11 +7,11 @@
 {% endcomment %}
 
 {% if toggle_type == "radio" %}
-<div class="mode-toggle {% if container_class %}{{ container_class }}{% endif %} {% if no_transition %}no-transition{% endif %}">
-  <input type="radio" id="search-mode-courses" name="mode" value="courses" {% if not is_club %}checked{% endif %}>
-  <input type="radio" id="search-mode-clubs" name="mode" value="clubs" {% if is_club %}checked{% endif %}>
-  <label for="search-mode-courses" class="mode-label">Courses</label>
-  <label for="search-mode-clubs" class="mode-label">Clubs</label>
+<div class="mode-toggle {% if container_class %}{{ container_class }}{% endif %} {% if no_transition %}no-transition{% endif %}" role="radiogroup" aria-label="View mode selection">
+  <input type="radio" id="search-mode-courses" name="mode" value="courses" {% if not is_club %}checked{% endif %} aria-checked="{% if not is_club %}true{% else %}false{% endif %}">
+  <input type="radio" id="search-mode-clubs" name="mode" value="clubs" {% if is_club %}checked{% endif %} aria-checked="{% if is_club %}true{% else %}false{% endif %}">
+  <label for="search-mode-courses" class="mode-label" role="radio">Courses</label>
+  <label for="search-mode-clubs" class="mode-label" role="radio">Clubs</label>
   <div class="toggle-indicator"></div>
 </div>
 {% else %}

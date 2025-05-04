@@ -60,6 +60,7 @@
 }
 
 /* Mode Toggle Styles - Radio Version */
+/* Main container for the radio toggle switch */
 .mode-toggle {
   position: relative;
   display: flex;
@@ -71,10 +72,12 @@
   min-width: 170px;
 }
 
+/* Disable transition effects when no-transition class is applied */
 .mode-toggle.no-transition .toggle-indicator {
   transition: none !important;
 }
 
+/* Hide radio inputs visually while keeping them accessible to screen readers and keyboard navigation */
 .mode-toggle input[type="radio"] {
   opacity: 0;
   position: absolute;
@@ -82,6 +85,7 @@
   height: 0;
 }
 
+/* Style for the clickable labels that appear as toggle buttons */
 .mode-toggle .mode-label {
   flex: 1;
   display: flex;
@@ -100,6 +104,18 @@
   text-align: center;
 }
 
+/* Remove individual label focus styling */
+.mode-toggle input[type="radio"]:focus-visible + .mode-label {
+  outline: none;
+}
+
+/* Add focus style to the entire toggle container when any radio input is focused */
+.mode-toggle:has(input[type="radio"]:focus-visible) {
+  outline: 2px solid #4d90fe;
+  outline-offset: 1px;
+}
+
+/* Moving background element that highlights the selected option */
 .mode-toggle .toggle-indicator {
   position: absolute;
   top: 2px;
@@ -111,10 +127,12 @@
   border-radius: 3px;
 }
 
+/* Move the indicator to the right when Clubs option is selected */
 #search-mode-clubs:checked ~ .toggle-indicator {
   transform: translateX(105%);
 }
 
+/* Change text color to white for the selected option */
 #search-mode-courses:checked ~ .mode-label[for="search-mode-courses"],
 #search-mode-clubs:checked ~ .mode-label[for="search-mode-clubs"] {
   color: white;
@@ -132,4 +150,4 @@
   opacity: 0.6;
   cursor: not-allowed;
   pointer-events: none;
-} 
+}
