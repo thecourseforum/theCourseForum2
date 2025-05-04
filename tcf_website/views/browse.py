@@ -12,7 +12,7 @@ from django.db.models.functions import Concat, Coalesce
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.core.paginator import Paginator, EmptyPage
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from ..models import (
     Answer,
@@ -551,6 +551,8 @@ def club_category(request, category_slug: str):
     paginator = Paginator(clubs, 10)  # 10 clubs per page
     try:
         paginated_clubs = paginator.page(page_number)
+    except PageNotAnInteger:
+        paginated_clubs = paginator.page(1)
     except EmptyPage:
         paginated_clubs = paginator.page(paginator.num_pages)
 
