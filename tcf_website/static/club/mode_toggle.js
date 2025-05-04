@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (radioToggle) {
     const coursesRadio = document.getElementById("search-mode-courses");
     const clubsRadio = document.getElementById("search-mode-clubs");
-    
+
     // Abort early if the expected inputs are missing
     if (!coursesRadio || !clubsRadio) {
       console.error(
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
       );
       return;
     }
-    
+
     const filterButtonElement = document.getElementById("filter-button");
 
     // If filter button exists, handle toggle state affecting filter button
