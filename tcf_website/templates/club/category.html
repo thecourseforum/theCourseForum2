@@ -6,6 +6,7 @@
 {% block styles %}
 <link rel="stylesheet" href="{% static 'department/department.css' %}" />
 <link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
+<link rel="stylesheet" href="{% static 'reviews/pagination.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -21,13 +22,14 @@
   <div class="club-category mt-3">
     <div class="category-description container-lg px-0 mb-4">
       <h2>{{ category.name }} Clubs</h2>
+      <p>{{ paginated_clubs|length }} clubs in this category</p>
       {% if category.description %}
         <p>{{ category.description }}</p>
       {% endif %}
     </div>
     
     <div class="club-list container-lg px-0">
-      {% if clubs|length == 0 %}
+      {% if paginated_clubs|length == 0 %}
         <div class="card col p-5 text-center">
           <div class="card-body">
             <h4 class="card-title">
@@ -37,7 +39,7 @@
         </div>
       {% else %}
         <ul class="list-unstyled">
-          {% for club in clubs %}
+          {% for club in paginated_clubs %}
             <li>
               <div class="card rating-card mb-2">
                 <div class="row no-gutters">
@@ -57,6 +59,55 @@
             </li>
           {% endfor %}
         </ul>
+        {% if paginated_clubs.paginator.num_pages > 1 %}
+        <div class="pagination">
+          {% if paginated_clubs.has_previous %}
+            <a href="?page=1">&lt;&lt;</a>
+            <a href="?page={{ paginated_clubs.previous_page_number }}">&lt;</a>
+          {% endif %}
+
+          {% if paginated_clubs.number == 1 %}
+            <span class="current">1</span>
+          {% else %}
+            <a href="?page=1">1</a>
+          {% endif %}
+
+          {% if paginated_clubs.number > 4 %}
+            <span class="dots">...</span>
+          {% endif %}
+
+          {% for page_num in paginated_clubs.paginator.page_range %}
+            {% if page_num > 1 and page_num < paginated_clubs.paginator.num_pages %}
+              {% if page_num >= paginated_clubs.number|add:'-2' and page_num <= paginated_clubs.number|add:'2' %}
+                {% if page_num == paginated_clubs.number %}
+                  <span class="current">{{ page_num }}</span>
+                {% else %}
+                  <a href="?page={{ page_num }}">{{ page_num }}</a>
+                {% endif %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+
+          {% if paginated_clubs.number < paginated_clubs.paginator.num_pages|add:'-3' %}
+            <span class="dots">...</span>
+          {% endif %}
+
+          {% if paginated_clubs.paginator.num_pages > 1 %}
+            {% if paginated_clubs.number == paginated_clubs.paginator.num_pages %}
+              <span class="current">{{ paginated_clubs.paginator.num_pages }}</span>
+            {% else %}
+              <a href="?page={{ paginated_clubs.paginator.num_pages }}">
+                {{ paginated_clubs.paginator.num_pages }}
+              </a>
+            {% endif %}
+          {% endif %}
+
+          {% if paginated_clubs.has_next %}
+            <a href="?page={{ paginated_clubs.next_page_number }}">&gt;</a>
+            <a href="?page={{ paginated_clubs.paginator.num_pages }}">&gt;&gt;</a>
+          {% endif %}
+        </div>
+        {% endif %}
       {% endif %}
     </div>
   </div>

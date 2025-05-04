@@ -13,6 +13,7 @@ from django.db.models.functions import Concat, Coalesce
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.core.paginator import Paginator, EmptyPage
 
 from ..models import (
     Answer,
@@ -550,6 +551,14 @@ def club_category(request, category_slug: str):
     # Get clubs in this category
     clubs = Club.objects.filter(category=category).order_by("name")
 
+    # Pagination
+    page_number = request.GET.get("page", 1)
+    paginator = Paginator(clubs, 10)  # 10 clubs per page
+    try:
+        paginated_clubs = paginator.page(page_number)
+    except EmptyPage:
+        paginated_clubs = paginator.page(paginator.num_pages)
+
     # Navigation breadcrumbs
     breadcrumbs = [
         ("Clubs", reverse("browse") + "?mode=clubs", False),
@@ -563,7 +572,7 @@ def club_category(request, category_slug: str):
             "is_club": True,
             "mode": mode,
             "category": category,
-            "clubs": clubs,
+            "paginated_clubs": paginated_clubs,
             "breadcrumbs": breadcrumbs,
         },
     )
