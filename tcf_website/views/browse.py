@@ -7,7 +7,7 @@ from typing import Any
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Avg, CharField, Count, F, Q, Value, Sum
+from django.db.models import Avg, CharField, Count, F, Q, Value, Sum, Prefetch
 from django.db.models.functions import Concat, Coalesce
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -36,11 +36,17 @@ def browse(request):
 
     if is_club:
         # Get all club categories
-        club_categories = ClubCategory.objects.all().order_by("name")
-
-        # For each category, get all clubs
-        for category in club_categories:
-            category.clubs = Club.objects.filter(category=category).order_by("name")
+        club_categories = (
+            ClubCategory.objects.all()
+            .prefetch_related(
+                Prefetch(
+                    "club_set",
+                    queryset=Club.objects.order_by("name"),
+                    to_attr="clubs",
+                )
+            )
+        .order_by("name")
+        )
 
         return render(
             request,
