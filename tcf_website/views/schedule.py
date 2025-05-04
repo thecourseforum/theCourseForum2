@@ -16,6 +16,7 @@ from django.template.loader import render_to_string
 from ..models import Course, Instructor, Schedule, ScheduledCourse, Section, Semester
 
 # pylint: disable=line-too-long
+# pylint: disable=duplicate-code
 # pylint: disable=no-else-return
 # pylint: disable=consider-using-generator
 
