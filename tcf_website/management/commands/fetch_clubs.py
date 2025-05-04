@@ -1,6 +1,11 @@
 """
 Fetch club data from UVA's Presence API and write to a CSV file.
-This module retrieves raw club data without any processing of categories.
+
+Usage:
+docker exec -it tcf_django python manage.py fetch_clubs
+
+Example:
+docker exec -it tcf_django python manage.py fetch_clubs
 """
 
 import csv

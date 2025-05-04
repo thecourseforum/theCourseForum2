@@ -15,7 +15,6 @@ docker exec -it tcf_django python manage.py fetch_data "2023_spring"
 import csv
 import json
 import os
-import sys
 from concurrent.futures import ThreadPoolExecutor
 
 import backoff
@@ -86,7 +85,7 @@ def retrieve_and_write_semester_courses(csv_path, sem_code, pages=None):
             (course["class_nbr"], sem_code) for course in page_data["classes"]
         ]
 
-        with ThreadPoolExecutor(max_workers=20) as executor:
+        with ThreadPoolExecutor(max_workers=10) as executor:
             all_classes = executor.map(
                 lambda params: compile_course_data(*params),
                 requests_to_make,
