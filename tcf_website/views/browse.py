@@ -4,7 +4,6 @@
 """Views for Browse, department, and course/course instructor pages."""
 import json
 from typing import Any
-from urllib.parse import urlencode
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
