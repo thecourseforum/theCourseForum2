@@ -99,9 +99,6 @@ def department(request, dept_id: int, course_recency=None):
     season, year = course_recency.upper().split()
     active_semester = Semester.objects.filter(year=year, season=season).first()
 
-    query_params = request.GET.copy()
-    query_params.pop("page", None)
-    query_params = urlencode(query_params)
     # Fetch sorting variables
     sortby = request.GET.get("sortby", "course_id")
     order = request.GET.get("order", "asc")
@@ -124,7 +121,6 @@ def department(request, dept_id: int, course_recency=None):
             "sortby": sortby,
             "order": order,
             "last_five_years": str(last_five_years),
-            "query_params": query_params,
         },
     )
 
