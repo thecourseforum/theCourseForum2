@@ -188,8 +188,15 @@ class SectionEnrollmentViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         """Retrieves enrollment data for all sections of a given course."""
-        # Start the update in a background thread with minimal code
-        thread = Thread(target=lambda: asyncio.run(update_enrollment_data(pk)))
+
+        # Start the update in a background thread
+        def _run_update():
+            try:
+                asyncio.run(update_enrollment_data(pk))
+            except Exception as exc:
+                print(f"Enrollment update failed for course {pk}: {exc}")
+
+        thread = Thread(target=_run_update, daemon=True)
         thread.start()
 
         # Get sections and return enrollment data
