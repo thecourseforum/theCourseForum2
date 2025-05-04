@@ -81,28 +81,49 @@ $ docker exec -it tcf_django python manage.py load_grades <year>_<season>.csv
 5. Commit the semesterly data to the repo
 6. Remove production credentialing (use `.env` credentials like normal)
 
-## Downloading Semester Data
+## Fetching Semester Data
 
-Use the [fetch_data](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/fetch_data.py)
-script to load data for a specified semester from the SIS API. The resulting CSV
-is stored in `tcf_website/management/commands/semester_data/sis_csv`.
-For example, loading the 2024 fall semester:
+Fetch semester data from SIS API (Very Slow):
 
-```sh
-$ cd tcf_website/management/commands/
-$ python fetch_data.py 2024_FALL
-$ cd -
+```console
+$ docker exec -it tcf_django python manage.py fetch_data <year>_<season>
 ```
+
+Saved in `tcf_website/management/commands/semester_data/csv`
+
+See [fetch_data.py](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/fetch_data.py) for more information.
 
 ## Loading Semester Data
 
-Load semester data from Lou's List (soon to be straight from the SIS API) using the provided Django management command:
+Load semester data from csv into database:
 
 ```console
 $ docker exec -it tcf_django python manage.py load_semester <year>_<season>
 ```
 
 See [load_semester.py](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/load_semester.py) for more information.
+
+## Fetching Club Data
+
+Fetch club data from virginia.presence.io API:
+
+```console
+$ docker exec -it tcf_django python manage.py fetch_clubs
+```
+
+Saved in `tcf_website/management/commands/club_data/csv`
+
+See [fetch_clubs.py](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/fetch_clubs.py) for more information.
+
+## Loading Club Data
+
+Load club data from csv into database:
+
+```console
+$ docker exec -it tcf_django python manage.py load_clubs
+```
+
+See [load_clubs.py](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/load_clubs.py) for more information.
 
 ## [Requesting Grade Data/FOIA Requests](doc/grade-data.md)
 
