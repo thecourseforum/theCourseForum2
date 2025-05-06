@@ -267,7 +267,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const resetButton = document.querySelector('button[type="reset"]');
   resetButton.addEventListener("click", function (e) {
     e.preventDefault(); // Prevent default reset behavior
+    clearFilters();
+  });
 
+  // Function to clear all filters
+  function clearFilters() {
     // Reset checkboxes
     document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
       checkbox.checked = false;
@@ -305,7 +309,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Reorder lists after clearing filters
     reorderList(".subject-list", ".form-check-subjects");
     reorderList(".discipline-list", ".form-check-disciplines");
-  });
+  }
 
   // Add weekdays handling
   function updateWeekdays() {
