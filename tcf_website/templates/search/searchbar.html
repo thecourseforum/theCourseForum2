@@ -107,7 +107,7 @@
                       type="checkbox" 
                       id="open-sections" 
                       name="open_sections" 
-                      {% if request.session.search_filters.open_sections %}checked{% endif %}
+                      {% if open_sections %}checked{% endif %}
                     >
                     <label class="form-check-label" for="open-sections">
                       Show Open Courses Only
