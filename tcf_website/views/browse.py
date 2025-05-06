@@ -159,10 +159,8 @@ def course_view(
     if not instructor_recency:
         instructor_recency = str(Semester.latest())
 
-    # Clears previously saved course information
-    request.session["course_code"] = None
-    request.session["course_title"] = None
-    request.session["instructor_fullname"] = None
+    # No longer storing in session - client-side storage will handle this
+    # (JavaScript now handles this via localStorage)
 
     if is_club:
         # 'mnemonic' is actually category_slug, 'course_number' is club.id
@@ -204,9 +202,8 @@ def course_view(
             (club.name, None, True),
         ]
 
-        # Save club info to session
-        request.session["course_code"] = f"{club.category.slug} {club.id}"
-        request.session["course_title"] = club.name
+        # Pass club info to template for meta tags
+        club_code = f"{club.category.slug} {club.id}"
 
         return render(
             request,
@@ -218,6 +215,8 @@ def course_view(
                 "paginated_reviews": paginated_reviews,
                 "sort_method": request.GET.get("method", ""),
                 "breadcrumbs": breadcrumbs,
+                "course_code": club_code,
+                "course_title": club.name,
             },
         )
 
@@ -280,10 +279,8 @@ def course_view(
         (course.code, None, True),
     ]
 
-    # Saves information of course to session for recently viewed modal
-    request.session["course_code"] = course.code()
-    request.session["course_title"] = course.title
-    request.session["instructor_fullname"] = None
+    # Pass course info to template for meta tags
+    # (JavaScript will retrieve these from meta tags)
 
     return render(
         request,
@@ -298,6 +295,8 @@ def course_view(
             "sortby": sortby,
             "order": order,
             "active_instructor_recency": instructor_recency,
+            "course_code": course.code(),
+            "course_title": course.title,
         },
     )
 
@@ -409,9 +408,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "times": times,
         }
 
-    request.session["course_code"] = course.code()
-    request.session["course_title"] = course.title
-    request.session["instructor_fullname"] = instructor.full_name
+    # No longer storing in session
+    # Course and instructor info is passed to template context for meta tags
 
     # QA Data
     questions = Question.objects.filter(course=course_id, instructor=instructor_id)
@@ -439,6 +437,9 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "answers": answers,
             "sort_method": method,
             "sem_code": section_last_taught.semester.number,
+            "course_code": course.code(),
+            "course_title": course.title,
+            "instructor_fullname": instructor.full_name,
         },
     )
 

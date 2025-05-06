@@ -90,8 +90,8 @@ def search(request):
         "min_gpa": request.GET.get("min_gpa"),
     }
 
-    # Save filters to session
-    request.session["search_filters"] = filters
+    # Filters are now managed by localStorage in the browser
+    # No need to save them to the session anymore
 
     instructors = []
     courses_first = True

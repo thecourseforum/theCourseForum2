@@ -22,29 +22,14 @@ class RecordMiddleware:  # pylint: disable=too-few-public-methods
             previous_paths = []
             previous_paths_titles = []
 
+        # Process the request and get response
         response = self.get_response(request)
-        if (
-            check_path(request.path)
-            and request.session.get("instructor_fullname") is not None
-        ):
-            previous_paths.insert(0, request.build_absolute_uri())
-            previous_paths = list(dict.fromkeys(previous_paths))
 
-            title = request.session.get("course_code")
-            if request.session.get("instructor_fullname") is not None:
-                title += " - " + request.session.get("instructor_fullname")
-            title += " - " + request.session.get("course_title")
+        # We no longer manage history through the middleware
+        # This is now handled by client-side JavaScript using localStorage
+        # The cookie is still retained for backwards compatibility
+        # but it's populated by JavaScript, not by the middleware
 
-            previous_paths_titles.insert(0, title)
-            previous_paths_titles = list(dict.fromkeys(previous_paths_titles))
-
-            # Keeps top 10 items in list
-            if len(previous_paths) > 10:
-                previous_paths = previous_paths[:10]
-                previous_paths_titles = previous_paths_titles[:10]
-
-            response.set_cookie("previous_paths", previous_paths)
-            response.set_cookie("previous_paths_titles", previous_paths_titles)
         return response
 
 

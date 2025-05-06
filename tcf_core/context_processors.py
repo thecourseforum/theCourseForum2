@@ -30,7 +30,7 @@ def history_cookies(request):
     else:
         previous_paths_titles = ""
 
-    previous_paths_titles = [title[:80] + "..." for title in previous_paths_titles]
+    previous_paths_titles = [title[:80] for title in previous_paths_titles]
 
     previous_paths_and_titles = None
     if len(previous_paths) > 0 and len(previous_paths_titles) > 0:
@@ -50,19 +50,18 @@ def searchbar_context(request):
         number__gte=latest_semester.number - 50  # 50 = 5 years * 10 semesters
     ).order_by("-number")
 
-    # Get saved filters from the session (or use defaults)
-    saved_filters = request.session.get("search_filters", {})
-
+    # No longer use session to store filters
+    # Empty defaults are provided instead
     context = {
         "disciplines": Discipline.objects.all().order_by("name"),
         "subdepartments": Subdepartment.objects.all().order_by("mnemonic"),
         "semesters": recent_semesters,
-        "selected_disciplines": saved_filters.get("disciplines", []),
-        "selected_subdepartments": saved_filters.get("subdepartments", []),
-        "selected_weekdays": saved_filters.get("weekdays", []),
-        "from_time": saved_filters.get("from_time", ""),
-        "to_time": saved_filters.get("to_time", ""),
-        "open_sections": saved_filters.get("open_sections", False),
-        "min_gpa": saved_filters.get("min_gpa", 0.0),
+        "selected_disciplines": [],
+        "selected_subdepartments": [],
+        "selected_weekdays": [],
+        "from_time": "",
+        "to_time": "",
+        "open_sections": False,
+        "min_gpa": 0.0,
     }
     return context
