@@ -26,10 +26,8 @@ def index(request):
         {
             "executive_team": team_info["executive_team"],
             "FAQs": faqs,
-            "visited": request.session.get("visited", False),
         },
     )
-    request.session["visited"] = True
     return response
 
 
