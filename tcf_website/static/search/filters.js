@@ -12,16 +12,25 @@ document.addEventListener("DOMContentLoaded", function () {
   const minGpaText = document.getElementById("min-gpa-text");
   const minGpaInput = document.getElementById("min-gpa-input");
 
+  // Check if filters should be loaded from localStorage
+  loadFiltersFromLocalStorage();
+
   // Check initial state (in case of page refresh with active filters)
   updateButtonState();
 
   // Add event listeners to all filter inputs
   [...filterInputs, ...dayFilters, openSections].forEach((input) => {
-    input.addEventListener("change", updateButtonState);
+    input.addEventListener("change", function () {
+      updateButtonState();
+      saveFiltersToLocalStorage();
+    });
   });
 
   [timeFrom, timeTo].forEach((input) => {
-    input.addEventListener("input", updateButtonState);
+    input.addEventListener("input", function () {
+      updateButtonState();
+      saveFiltersToLocalStorage();
+    });
   });
 
   // Min GPA slider and text input synchronization
@@ -30,6 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     minGpaText.value = value;
     minGpaInput.value = value;
     updateButtonState();
+    saveFiltersToLocalStorage();
   });
 
   minGpaText.addEventListener("change", function () {
@@ -51,6 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
     minGpaSlider.value = value;
     minGpaInput.value = value;
     updateButtonState();
+    saveFiltersToLocalStorage();
   });
 
   // Allow enter key on min-gpa-text to apply the filter
@@ -61,6 +72,101 @@ document.addEventListener("DOMContentLoaded", function () {
       document.querySelector('button[type="submit"]').click(); // Submit the form
     }
   });
+
+  // Save current filter state to localStorage
+  function saveFiltersToLocalStorage() {
+    // Get selected subdepartments
+    const selectedSubdepts = Array.from(
+      document.querySelectorAll(".form-check-subjects:checked"),
+    ).map((input) => input.value);
+
+    // Get selected disciplines
+    const selectedDisciplines = Array.from(
+      document.querySelectorAll(".form-check-disciplines:checked"),
+    ).map((input) => input.value);
+
+    // Get selected weekdays
+    const selectedWeekdays = Array.from(
+      document.querySelectorAll(".day-checkbox:checked"),
+    ).map((input) => input.value);
+
+    // Create filters object
+    const filters = {
+      subdepartments: selectedSubdepts,
+      disciplines: selectedDisciplines,
+      weekdays: selectedWeekdays,
+      from_time: timeFrom ? timeFrom.value : "",
+      to_time: timeTo ? timeTo.value : "",
+      open_sections: openSections ? openSections.checked : false,
+      min_gpa: minGpaInput ? parseFloat(minGpaInput.value || "0.0") : 0.0,
+    };
+
+    // Save to localStorage
+    localStorage.setItem("search_filters", JSON.stringify(filters));
+  }
+
+  // Load filters from localStorage
+  function loadFiltersFromLocalStorage() {
+    const savedFilters = localStorage.getItem("search_filters");
+    if (!savedFilters) return;
+
+    try {
+      const filters = JSON.parse(savedFilters);
+
+      // Set subdepartments
+      if (filters.subdepartments && filters.subdepartments.length) {
+        filters.subdepartments.forEach((mnemonic) => {
+          const input = document.getElementById(`subject-${mnemonic}`);
+          if (input) input.checked = true;
+        });
+      }
+
+      // Set disciplines
+      if (filters.disciplines && filters.disciplines.length) {
+        filters.disciplines.forEach((name) => {
+          const input = document.getElementById(
+            `discipline-${name.toLowerCase().replace(/\s+/g, "-")}`,
+          );
+          if (input) input.checked = true;
+        });
+      }
+
+      // Set weekdays
+      if (filters.weekdays && filters.weekdays.length) {
+        filters.weekdays.forEach((day) => {
+          const dayMap = {
+            MON: "monday",
+            TUE: "tuesday",
+            WED: "wednesday",
+            THU: "thursday",
+            FRI: "friday",
+          };
+          const input = document.getElementById(dayMap[day]);
+          if (input) input.checked = true;
+        });
+        updateWeekdays(); // Update the hidden input
+      }
+
+      // Set time values
+      if (timeFrom && filters.from_time) timeFrom.value = filters.from_time;
+      if (timeTo && filters.to_time) timeTo.value = filters.to_time;
+
+      // Set open sections
+      if (openSections && filters.open_sections !== undefined) {
+        openSections.checked = filters.open_sections;
+      }
+
+      // Set min GPA
+      if (filters.min_gpa !== undefined) {
+        const gpaValue = parseFloat(filters.min_gpa).toFixed(1);
+        if (minGpaSlider) minGpaSlider.value = gpaValue;
+        if (minGpaText) minGpaText.value = gpaValue;
+        if (minGpaInput) minGpaInput.value = gpaValue;
+      }
+    } catch (e) {
+      console.error("Error loading filters from localStorage:", e);
+    }
+  }
 
   // Checks for active filters or inactive day filters to determine button state
   function updateButtonState() {
@@ -161,7 +267,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const resetButton = document.querySelector('button[type="reset"]');
   resetButton.addEventListener("click", function (e) {
     e.preventDefault(); // Prevent default reset behavior
+    clearFilters();
+  });
 
+  // Function to clear all filters
+  function clearFilters() {
     // Reset checkboxes
     document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
       checkbox.checked = false;
@@ -193,10 +303,13 @@ document.addEventListener("DOMContentLoaded", function () {
     updateWeekdays();
     updateButtonState();
 
+    // Clear localStorage filters
+    localStorage.removeItem("search_filters");
+
     // Reorder lists after clearing filters
     reorderList(".subject-list", ".form-check-subjects");
     reorderList(".discipline-list", ".form-check-disciplines");
-  });
+  }
 
   // Add weekdays handling
   function updateWeekdays() {
@@ -219,6 +332,7 @@ document.addEventListener("DOMContentLoaded", function () {
       checkbox.dispatchEvent(new Event("change"));
       updateWeekdays();
       updateButtonState();
+      saveFiltersToLocalStorage();
     });
   });
 
@@ -227,6 +341,7 @@ document.addEventListener("DOMContentLoaded", function () {
     checkbox.addEventListener("change", () => {
       updateWeekdays();
       updateButtonState();
+      saveFiltersToLocalStorage();
     });
   });
 
@@ -236,25 +351,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Clear filters when window is resized to mobile view
   window.addEventListener("resize", function () {
     if (window.innerWidth <= 992) {
-      // Reset all checkboxes
-      document
-        .querySelectorAll('input[type="checkbox"]')
-        .forEach((checkbox) => {
-          checkbox.checked = false;
-        });
-
-      // Clear time inputs
-      timeFrom.value = "";
-      timeTo.value = "";
-
-      // Reset min GPA
-      if (minGpaSlider) minGpaSlider.value = 0.0;
-      if (minGpaText) minGpaText.value = 0.0;
-      if (minGpaInput) minGpaInput.value = 0.0;
-
-      // Update hidden inputs and button state
-      updateWeekdays();
-      updateButtonState();
+      clearFilters();
     }
   });
 });

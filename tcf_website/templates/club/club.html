@@ -1,7 +1,12 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}{{ club.name }} - theCourseForum{% endblock %}
+{% block title %}{{ club.name }} | theCourseForum{% endblock %}
+
+{% block page_metadata %}
+<!-- Club meta data for localStorage (using same structure as courses) -->
+{% if course_title %}<meta name="course-title" content="{{ course_title }}">{% endif %}
+{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'course/course_professor.css' %}" />

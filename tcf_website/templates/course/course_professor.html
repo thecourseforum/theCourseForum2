@@ -1,7 +1,14 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}{{course.code}} - {{instructor.full_name}} - theCourseForum{% endblock %}
+{% block title %}{{course.code}} - {{instructor.full_name}} | theCourseForum{% endblock %}
+
+{% block page_metadata %}
+<!-- Course and instructor meta data for localStorage -->
+{% if course_code %}<meta name="course-code" content="{{ course_code }}">{% endif %}
+{% if course_title %}<meta name="course-title" content="{{ course_title }}">{% endif %}
+{% if instructor_fullname %}<meta name="instructor-name" content="{{ instructor_fullname }}">{% endif %}
+{% endblock %}
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'course/course_professor.css' %}"/>

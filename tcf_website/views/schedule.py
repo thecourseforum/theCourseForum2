@@ -330,10 +330,8 @@ def edit_schedule(request):
         schedule.name = request.POST["schedule_name"]
         schedule.save()
 
-    # Store deleted courses in session before deleting them
     deleted_courses = request.POST.getlist("removed_course_ids[]")
     if deleted_courses:
-        request.session["deleted_courses"] = deleted_courses
         ScheduledCourse.objects.filter(id__in=deleted_courses).delete()
 
     messages.success(request, f"Successfully made changes to {schedule.name}")
