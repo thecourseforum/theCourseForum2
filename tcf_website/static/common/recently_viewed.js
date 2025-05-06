@@ -55,11 +55,17 @@ function saveCourseInfoIfPresent() {
   }
 
   // Insert at beginning and remove duplicates
-  previousPaths.unshift(currentUrl);
-  previousPaths = [...new Set(previousPaths)];
+  // First check if the title already exists in the array
+  const existingIndex = previousPathsTitles.indexOf(title);
+  if (existingIndex !== -1) {
+    // If the title exists, remove both the title and its corresponding path
+    previousPathsTitles.splice(existingIndex, 1);
+    previousPaths.splice(existingIndex, 1);
+  }
 
+  // Add the new path and title at the beginning
+  previousPaths.unshift(currentUrl);
   previousPathsTitles.unshift(title);
-  previousPathsTitles = [...new Set(previousPathsTitles)];
 
   // Keep only the top 10 items
   if (previousPaths.length > 10) {
