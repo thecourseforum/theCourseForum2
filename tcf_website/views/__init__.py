@@ -4,7 +4,7 @@
 # https://docs.djangoproject.com/en/3.0/topics/db/models/#organizing-models-in-a-package
 
 from .ads import ads
-from .auth import collect_extra_info, login, login_error, logout, password_error
+from .auth import login, logout
 from .browse import (
     browse,
     course_instructor,
