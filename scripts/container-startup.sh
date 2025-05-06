@@ -11,6 +11,8 @@ echo 'collectstatic ran'
 
 python manage.py invalidate_cachalot tcf_website
 
+python manage.py clearsessions
+
 # Add custom commands here
 
 echo 'Starting Django Server...'
