@@ -1,34 +1,22 @@
 """Middleware for recording cookie information."""
 
-import ast
-
 
 class RecordMiddleware:  # pylint: disable=too-few-public-methods
-    """Records information about course section info into cookies."""
+    """
+    Previously recorded course section info into cookies.
+    Now does nothing as this functionality has been moved to client-side
+    localStorage to avoid polluting Django sessions.
+    """
 
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        if "previous_paths_titles" in request.COOKIES:
-            previous_paths = request.COOKIES["previous_paths"]
-            # Converts string representation of list into list object
-            previous_paths = ast.literal_eval(previous_paths)
-
-            previous_paths_titles = request.COOKIES["previous_paths_titles"]
-            # Converts string representation of list into list object
-            previous_paths_titles = ast.literal_eval(previous_paths_titles)
-        else:
-            previous_paths = []
-            previous_paths_titles = []
-
         # Process the request and get response
         response = self.get_response(request)
 
-        # We no longer manage history through the middleware
-        # This is now handled by client-side JavaScript using localStorage
-        # The cookie is still retained for backwards compatibility
-        # but it's populated by JavaScript, not by the middleware
+        # We no longer set cookies for history tracking
+        # All history is now managed via localStorage in the browser
 
         return response
 

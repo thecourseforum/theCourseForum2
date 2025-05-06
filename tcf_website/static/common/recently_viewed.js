@@ -79,21 +79,4 @@ function saveCourseInfoIfPresent() {
     "previous_paths_titles",
     JSON.stringify(previousPathsTitles),
   );
-
-  // Also set cookies for compatibility with existing server-side code
-  setCookie("previous_paths", JSON.stringify(previousPaths), 30);
-  setCookie("previous_paths_titles", JSON.stringify(previousPathsTitles), 30);
-}
-
-/**
- * Helper function to set cookies
- */
-function setCookie(name, value, days) {
-  let expires = "";
-  if (days) {
-    const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    expires = "; expires=" + date.toUTCString();
-  }
-  document.cookie = name + "=" + (value || "") + expires + "; path=/";
 }

@@ -12,16 +12,62 @@
             </div>
             <div class="modal-body py-0 px-4">
                 <div class="text-center">
-                    {% if previous_paths_and_titles is None %}
+                    <div id="history-items-container">
                         <p class="text-muted my-4">No course sections viewed yet.</p>
-                    {% endif %}
-                    <div class="list-group list-group-flush mb-3">
-                    {% for path, title in previous_paths_and_titles %}
-                        <a class="list-group-item list-group-item-action border-left-0 border-right-0 rounded-0" href={{path}}>{{title}}</a>
-                    {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+// Load and display history from localStorage when the modal is opened
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the modal element
+    const historyModal = document.getElementById('{{ path_id }}');
+    
+    // Add event listener for when the modal is shown
+    $(historyModal).on('show.bs.modal', function() {
+        loadHistoryFromLocalStorage();
+    });
+    
+    // Function to load history from localStorage
+    function loadHistoryFromLocalStorage() {
+        const container = document.getElementById('history-items-container');
+        
+        try {
+            // Get history from localStorage
+            const paths = JSON.parse(localStorage.getItem('previous_paths') || '[]');
+            const titles = JSON.parse(localStorage.getItem('previous_paths_titles') || '[]');
+            
+            // Clear the container
+            container.innerHTML = '';
+            
+            // If no history, show message
+            if (paths.length === 0 || titles.length === 0) {
+                container.innerHTML = '<p class="text-muted my-4">No course sections viewed yet.</p>';
+                return;
+            }
+            
+            // Create list group
+            const listGroup = document.createElement('div');
+            listGroup.className = 'list-group list-group-flush mb-3';
+            
+            // Add each history item
+            for (let i = 0; i < Math.min(paths.length, titles.length); i++) {
+                const link = document.createElement('a');
+                link.className = 'list-group-item list-group-item-action border-left-0 border-right-0 rounded-0';
+                link.href = paths[i];
+                link.textContent = titles[i];
+                listGroup.appendChild(link);
+            }
+            
+            container.appendChild(listGroup);
+        } catch (e) {
+            console.error('Error loading history from localStorage:', e);
+            container.innerHTML = '<p class="text-muted my-4">Error loading history.</p>';
+        }
+    }
+});
+</script>

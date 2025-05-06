@@ -131,7 +131,6 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "tcf_core.context_processors.base",
-                "tcf_core.context_processors.history_cookies",
                 "tcf_core.context_processors.searchbar_context",
             ],
         },
