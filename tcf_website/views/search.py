@@ -77,7 +77,6 @@ def search(request):
     filters = {
         "disciplines": request.GET.getlist("discipline"),
         "subdepartments": request.GET.getlist("subdepartment"),
-        "instructors": request.GET.getlist("instructor"),
         "weekdays": (
             request.GET.get("weekdays", "").split("-")
             if request.GET.get("weekdays")
@@ -309,11 +308,6 @@ def apply_filters(results, filters):
     if filters.get("subdepartments"):
         results = results.filter(
             subdepartment__mnemonic__in=filters.get("subdepartments")
-        )
-
-    if filters.get("instructors"):
-        results = results.filter(
-            section__instructors__id__in=filters.get("instructors")
         )
 
     weekdays = [day for day in filters.get("weekdays", []) if day]
