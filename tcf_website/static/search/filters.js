@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Get selected disciplines
     const selectedDisciplines = Array.from(
       document.querySelectorAll(".form-check-disciplines:checked"),
-    ).map((input) => input.value);
+    ).map((input) => input.value.trim());
 
     // Get selected weekdays
     const selectedWeekdays = Array.from(
@@ -133,7 +133,11 @@ document.addEventListener("DOMContentLoaded", function () {
           let found = false;
 
           disciplineCheckboxes.forEach((checkbox) => {
-            if (checkbox.value === name) {
+            // Normalize both strings for comparison - trim whitespace and normalize case
+            const storedName = name.trim();
+            const checkboxValue = checkbox.value.trim();
+            
+            if (storedName === checkboxValue) {
               checkbox.checked = true;
               found = true;
             }
