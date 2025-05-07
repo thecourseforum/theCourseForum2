@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Normalize both strings for comparison - trim whitespace and normalize case
             const storedName = name.trim();
             const checkboxValue = checkbox.value.trim();
-            
+
             if (storedName === checkboxValue) {
               checkbox.checked = true;
               found = true;
