@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const minGpaText = document.getElementById("min-gpa-text");
   const minGpaInput = document.getElementById("min-gpa-input");
 
-  // Check if filters should be loaded from localStorage
+  // Load filters from localStorage before setting up any event handlers
   loadFiltersFromLocalStorage();
 
   // Check initial state (in case of page refresh with active filters)
@@ -117,17 +117,31 @@ document.addEventListener("DOMContentLoaded", function () {
       if (filters.subdepartments && filters.subdepartments.length) {
         filters.subdepartments.forEach((mnemonic) => {
           const input = document.getElementById(`subject-${mnemonic}`);
-          if (input) input.checked = true;
+          if (input) {
+            input.checked = true;
+          }
         });
       }
 
       // Set disciplines
       if (filters.disciplines && filters.disciplines.length) {
         filters.disciplines.forEach((name) => {
-          const input = document.getElementById(
-            `discipline-${name.toLowerCase().replace(/\s+/g, "-")}`,
+          // Find the discipline by checking all discipline checkboxes with matching value
+          const disciplineCheckboxes = document.querySelectorAll(
+            ".form-check-disciplines",
           );
-          if (input) input.checked = true;
+          let found = false;
+
+          disciplineCheckboxes.forEach((checkbox) => {
+            if (checkbox.value === name) {
+              checkbox.checked = true;
+              found = true;
+            }
+          });
+
+          if (!found) {
+            console.warn(`Discipline not found: ${name}`);
+          }
         });
       }
 
@@ -221,46 +235,53 @@ document.addEventListener("DOMContentLoaded", function () {
     ".discipline-list .form-check",
   );
 
-  // Reordering function to pin selected checkboxes to the top
-  function reorderList(containerSelector, checkboxSelector) {
+  // Create a safer version of the reordering function
+  function reorderItems(containerSelector, checkboxSelector) {
     const container = document.querySelector(containerSelector);
-    if (!container) return;
-    const items = Array.from(container.children);
-    items.sort((a, b) => {
-      const aCheckbox = a.querySelector(checkboxSelector);
-      const bCheckbox = b.querySelector(checkboxSelector);
+    if (!container) {
+      console.error(`Container not found: ${containerSelector}`);
+      return;
+    }
 
-      // Check if one is selected and the other is not
-      if (aCheckbox.checked && !bCheckbox.checked) return -1;
-      if (!aCheckbox.checked && bCheckbox.checked) return 1;
+    // Get all items and convert to array for sorting
+    const items = Array.from(container.querySelectorAll(".form-check"));
 
-      // If both are either checked or unchecked, sort alphabetically by label text
-      const aLabelText = a
-        .querySelector("label")
-        .textContent.trim()
-        .toLowerCase();
-      const bLabelText = b
-        .querySelector("label")
-        .textContent.trim()
-        .toLowerCase();
-      return aLabelText.localeCompare(bLabelText);
+    if (items.length === 0) {
+      console.warn(`No items found in container: ${containerSelector}`);
+      return;
+    }
+
+    // Instead of moving DOM elements, use CSS to set their order
+    items.forEach((item, index) => {
+      const checkbox = item.querySelector(checkboxSelector);
+      if (checkbox && checkbox.checked) {
+        item.style.order = "1"; // Checked items first
+      } else {
+        item.style.order = "2"; // Unchecked items second
+      }
     });
-    // Clear and reappend in new order
-    container.innerHTML = "";
-    items.forEach((item) => container.appendChild(item));
+
+    // Make sure container uses flexbox for ordering
+    container.style.display = "flex";
+    container.style.flexDirection = "column";
   }
 
   // Setup reordering for subjects and disciplines
   function setupReordering(checkboxSelector, containerSelector) {
+    // Initial ordering
+    reorderItems(containerSelector, checkboxSelector);
+
+    // Add change event to checkboxes
     document.querySelectorAll(checkboxSelector).forEach((checkbox) => {
       checkbox.addEventListener("change", () => {
-        reorderList(containerSelector, checkboxSelector);
+        // Reorder items when a checkbox changes
+        reorderItems(containerSelector, checkboxSelector);
+        saveFiltersToLocalStorage();
       });
     });
-    // Call reorder on page load in case some items are selected by default
-    reorderList(containerSelector, checkboxSelector);
   }
 
+  // Setup reordering after DOM is fully loaded
   setupReordering(".form-check-subjects", ".subject-list");
   setupReordering(".form-check-disciplines", ".discipline-list");
 
@@ -281,6 +302,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("subject-search").value = "";
     document.querySelectorAll(".subject-list .form-check").forEach((item) => {
       item.style.display = ""; // Show all subjects
+      item.style.order = "2"; // Reset ordering
     });
 
     // Clear discipline search
@@ -289,6 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .querySelectorAll(".discipline-list .form-check")
       .forEach((item) => {
         item.style.display = ""; // Show all disciplines
+        item.style.order = "2"; // Reset ordering
       });
 
     // Set time inputs to empty
@@ -305,10 +328,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Clear localStorage filters
     localStorage.removeItem("search_filters");
-
-    // Reorder lists after clearing filters
-    reorderList(".subject-list", ".form-check-subjects");
-    reorderList(".discipline-list", ".form-check-disciplines");
   }
 
   // Add weekdays handling

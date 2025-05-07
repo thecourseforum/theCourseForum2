@@ -21,18 +21,11 @@ def searchbar_context(request):
         number__gte=latest_semester.number - 50  # 50 = 5 years * 10 semesters
     ).order_by("-number")
 
-    # No longer use session to store filters
-    # Empty defaults are provided instead
+    # Provide only the data needed for the filter options
+    # Filter values are managed by localStorage on the client side
     context = {
         "disciplines": Discipline.objects.all().order_by("name"),
         "subdepartments": Subdepartment.objects.all().order_by("mnemonic"),
         "semesters": recent_semesters,
-        "selected_disciplines": [],
-        "selected_subdepartments": [],
-        "selected_weekdays": [],
-        "from_time": "",
-        "to_time": "",
-        "open_sections": False,
-        "min_gpa": 0.0,
     }
     return context
