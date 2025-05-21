@@ -9,9 +9,15 @@
         </button>
       </div>
       <div class="modal-body">
+          {% if is_club %}
+          It looks like you submitted zero total hours of participation per week for this club. Please double-check
+          that the club you are reviewing truly does not require any time commitment, as this is valuable
+          information for other students evaluating the club.
+          {% else %}
           It looks like you submitted zero total hours of work per week for this class. Please double-check
           that the class you are reviewing truly does not require any outside work, as this is valuable
           information for other students evaluating the class.
+          {% endif %}
           <br>
           <br>
           <div class="row justify-content-center">

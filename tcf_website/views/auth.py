@@ -2,20 +2,16 @@
 
 import logging
 from base64 import b64encode
-from datetime import datetime
 import json
 
 import requests
-from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
-from django.urls import reverse
 
-from .browse import browse
 
 logger = logging.getLogger(__name__)
 
@@ -99,67 +95,6 @@ def cognito_callback(request):
         logger.exception("Error in Cognito callback: %s", str(e))
         messages.error(request, "Authentication error. Please try again.")
         return redirect("index")
-
-
-def login_error(request):
-    """Login error view."""
-    messages.error(
-        request,
-        "There was an error logging you in. Please make \
-                   sure you're using an @virginia.edu email address.",
-    )
-    return browse(request)
-
-
-def password_error(request):
-    """Incorrect password error view."""
-    messages.error(
-        request,
-        "There was an error logging you in. Please check \
-                    your email and password",
-    )
-    return browse(request)
-
-
-class ExtraUserInfoForm(forms.Form):
-    """Form to collect extra user info on sign up."""
-
-    current_yr = datetime.now().year
-    max_yr = current_yr + 6
-    grad_year = forms.IntegerField(
-        widget=forms.NumberInput(
-            attrs={
-                "class": "form-control",
-                "min": "1900",
-                "max": max_yr,
-                "value": current_yr,
-            }
-        )
-    )
-
-
-def collect_extra_info(request, method):
-    """Extra sign up info collection view."""
-    if request.method == "POST":
-        form = ExtraUserInfoForm(request.POST)
-        if form.is_valid():
-            # because of FIELDS_STORED_IN_SESSION, this will get copied
-            # to the request dictionary when the pipeline is resumed
-            request.session["grad_year"] = form.cleaned_data["grad_year"]
-
-            # once we have the grad_year stashed in the session, we can
-            # tell the pipeline to resume by using the "complete" endpoint
-            return redirect(
-                reverse("social:complete", args=[method])
-                + "?verification_code="
-                + request.GET["verification_code"]
-                + "&partial_token="
-                + request.GET["partial_token"]
-            )
-    else:
-        form = ExtraUserInfoForm()
-
-    return render(request, "login/extra_info_form.html", {"form": form})
 
 
 def unauthenticated_index(request):

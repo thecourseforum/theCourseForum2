@@ -150,6 +150,16 @@ class CourseEnrollmentAdmin(admin.ModelAdmin):
         return qs.select_related("course__subdepartment")
 
 
+class ClubAdmin(admin.ModelAdmin):
+    ordering = ["name"]
+    search_fields = ["name"]
+
+
+class ClubCategoryAdmin(admin.ModelAdmin):
+    ordering = ["name"]
+    search_fields = ["name"]
+
+
 admin.site.register(Section, SectionAdmin)
 admin.site.register(Instructor, InstructorAdmin)
 admin.site.register(Discipline, DisciplineAdmin)
@@ -163,3 +173,5 @@ admin.site.register(CourseInstructorGrade, CourseInstructorGradeAdmin)
 admin.site.register(SectionTime, SectionTimeAdmin)
 admin.site.register(SectionEnrollment, SectionEnrollmentAdmin)
 admin.site.register(CourseEnrollment, CourseEnrollmentAdmin)
+admin.site.register(Club, ClubAdmin)
+admin.site.register(ClubCategory, ClubCategoryAdmin)

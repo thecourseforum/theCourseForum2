@@ -1,4 +1,6 @@
-<!-- Class Info -->
+<!-- Class/Club Info -->
+{% if not is_club %}
+<!-- Course Info -->
 <div class="new-review-course form-row mb-3">
   <h2 class="h4 review-form-header form-group col-12 mt-4 mb-2">
     Which class are you reviewing?</h2>
@@ -32,15 +34,49 @@
     </select>
   </div>
 </div>
+{% else %}
+<!-- Club Info -->
+<div class="new-review-club form-row mb-3">
+  <h2 class="h4 review-form-header form-group col-12 mt-4 mb-2">
+    Which club are you reviewing?</h2>
+  <div class="form-group col-12">
+    <p class="small">You can type or use Arrowkeys+Enter to select.</p>
+  </div>
+  <div class="form-group col-sm-6">
+    <label for="category" class="required-field">Category</label>
+    <select type="text" class="form-control" required id="category" name="category">
+      {% for cat in club_categories %}
+        <option value="{{ cat.id }}" {% if cat.id == form.instance.club.category.id %}selected{% endif %}>
+          {{ cat.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group col-sm-6">
+    <label for="club" class="required-field">Club</label>
+    <select type="text" class="form-control" required id="club" name="club">
+      <option value="{{ form.instance.club.id }}">{{ form.instance.club.name }}</option>
+    </select>
+  </div>
+</div>
+<div class="form-row mb-3">
+  <div class="form-group col-sm-6">
+    <label for="semester" class="required-field">Semester</label>
+    <select type="text" class="form-control" required id="semester" name="semester">
+      <option value="{{ form.instance.semester.id }}" selected>{{ form.instance.semester }}</option>
+    </select>
+  </div>
+</div>
+{% endif %}
 <hr>
 
 <!-- Review written content -->
 <div id="review-form-div" class="new-review-content form-row mb-3">
   <h2 class="h4 review-form-header form-group col-12 my-4">
-    Tell us more about the course and instructor</h2>
+    Tell us more about the {% if is_club %}club{% else %}course and instructor{% endif %}</h2>
   <div class="form-group col mb-3">
     <textarea class="form-control" id="reviewtext" name="text" rows="5"
-              placeholder="(Aim for 150 words or more! Some suggestions on what to write about are information about the professor's teaching style and ability to convey information, workload, assignment types and/or anything you think is important to know when taking the class. Include what you liked about the course and what could be improved on. Well-written reviews help other students get a good understanding of classes they're considering taking!)" minlength="100" maxlength="5000">{{ form.text.value }}</textarea>
+              placeholder="{% if is_club %}(Aim for 150 words or more! Some suggestions on what to write about are information about the club's activities, environment, leadership, and overall experience. Include what you liked about the club and what could be improved. Well-written reviews help other students get a good understanding of clubs they're considering joining!){% else %}(Aim for 150 words or more! Some suggestions on what to write about are information about the professor's teaching style and ability to convey information, workload, assignment types and/or anything you think is important to know when taking the class. Include what you liked about the course and what could be improved on. Well-written reviews help other students get a good understanding of classes they're considering taking!){% endif %}" minlength="100" maxlength="5000">{{ form.text.value }}</textarea>
   </div>
     <!-- Message for Progress Bar-->
   <div class="form-group col-12">
@@ -53,14 +89,14 @@
 </div>
 <hr>
 
-<!-- Review ratings for course -->
+<!-- Review ratings for course/club -->
 <div class="new-review-ratings form-row mb-3">
   <div class="form-group col-sm-6 pr-lg-5 pr-sm-4">
       <h2 class="h4 review-form-header col-12 p-0 my-4">
-        Rate the course</h2>
+        Rate the {% if is_club %}club{% else %}course{% endif %}</h2>
       <div class="mt-3">
           <label for="instructor_rating" class="m-0">
-            <i class="fas fa-user"></i> Instructor
+            <i class="fas fa-user"></i> {% if is_club %}Leadership{% else %}Instructor{% endif %}
           </label>
           <div class="row">
               <div class="col-xl-9 col-8 py-2">
@@ -114,7 +150,7 @@
       </div>
       <div class="mt-3">
           <label for="difficulty" class="m-0">
-            <i class="fas fa-dumbbell"></i> Difficulty
+            <i class="fas fa-dumbbell"></i> {% if is_club %}Commitment{% else %}Difficulty{% endif %}
           </label>
           <div class="row">
               <div class="col-xl-9 col-8 py-2">
@@ -133,11 +169,11 @@
   </div>
   <div class="form-group col-sm-6 pl-lg-5 pl-sm-4">
       <h2 class="h4 review-form-header p-0 my-4">
-        Hours of work/week</h2>
+        Hours of {% if is_club %}participation{% else %}work{% endif %}/week</h2>
       <div class="row py-3">
         <div class="col-8">
           <label for="amount_reading">
-            <i class="fas fa-book"></i> Reading
+            <i class="fas fa-book"></i> {% if is_club %}Events{% else %}Reading{% endif %}
           </label>
         </div>
         <div class="col-4">
@@ -149,7 +185,7 @@
       <div class="row py-3">
         <div class="col-8">
           <label for="amount_writing">
-            <i class="fas fa-pencil"></i> Writing
+            <i class="fas fa-pencil-alt"></i> {% if is_club %}Planning{% else %}Writing{% endif %}
           </label>
         </div>
         <div class="col-4">
@@ -161,7 +197,7 @@
       <div class="row py-3">
         <div class="col-8">
           <label for="amount_group">
-            <i class="fas fa-user-friends"></i> Groupwork
+            <i class="fas fa-user-friends"></i> {% if is_club %}Meetings{% else %}Groupwork{% endif %}
           </label>
         </div>
         <div class="col-4">
@@ -173,7 +209,7 @@
       <div class="row py-3">
         <div class="col-8">
           <label for="amount_homework">
-            <span tabindex="0" data-toggle="tooltip" data-placement="bottom" title="Labs, projects, etc.">
+            <span tabindex="0" data-toggle="tooltip" data-placement="bottom" title="{% if is_club %}Additional activities{% else %}Labs, projects, etc.{% endif %}">
               <i class="fas fa-flask"></i> Other
             </span>
           </label>

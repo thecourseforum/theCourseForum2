@@ -1,7 +1,6 @@
 # pylint: disable=missing-class-docstring, wildcard-import, fixme, too-many-lines
 """TCF Database models."""
 
-import math
 from decimal import Decimal
 
 from django.conf import settings
@@ -19,6 +18,7 @@ from django.db.models import (
     ExpressionWrapper,
     F,
     FloatField,
+    IntegerField,
     OuterRef,
     Q,
     QuerySet,
@@ -197,6 +197,55 @@ class Subdepartment(models.Model):
                 fields=["mnemonic", "department"],
                 name="unique subdepartment mnemonics per department",
             )
+        ]
+
+
+class ClubCategory(models.Model):
+    """ClubCategory model.
+
+    Has many Clubs.
+    """
+
+    # Human name
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True)
+    # slug for routing in the existing course URL
+    slug = models.SlugField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Club(models.Model):
+    """Club model.
+
+    Belongs to a ClubCategory.
+    Has many Reviews.
+    """
+
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    category = models.ForeignKey(ClubCategory, on_delete=models.CASCADE)
+    combined_name = models.CharField(max_length=255, blank=True, editable=False)
+    application_required = models.BooleanField(default=False)
+    photo_url = models.CharField(max_length=255, blank=True)
+    meeting_time = models.CharField(max_length=255, blank=True)
+
+    def save(self, *args, **kwargs):
+        # maintain combined_name for trigram search
+        self.combined_name = self.name
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        indexes = [
+            GinIndex(
+                fields=["combined_name"],
+                opclasses=["gin_trgm_ops"],
+                name="club_combined_name",
+            ),
         ]
 
 
@@ -613,59 +662,93 @@ class Course(models.Model):
         """Compute total number of course reviews."""
         return self.review_set.count()
 
-    def get_instructors_and_data(self, latest_semester, reverse):
-        # https://docs.djangoproject.com/en/5.0/ref/models/expressions/
-        """Annotate each instructor with the id of the semester last taught object
-        Those pks are converted to semester objects with the second annotation
-        """
+    def get_instructors_and_data(self, latest_semester, reverse, recent=False):
+        """Annotate instructors with relevant data including ratings, difficulty, GPA, etc.
 
-        semester_last_taught_subquery = Subquery(
-            Section.objects.filter(course=self, instructors=OuterRef("pk"))
-            .order_by("-semester__number")
-            .values("semester__id")[:1]
+        Args:
+            latest_semester: The most recent semester
+            reverse: Whether to reverse sort (used for historical view)
+            recent: If True, only include instructors teaching in latest_semester
+        """
+        # Set default values based on whether we're using the optimized path or historical path
+        default_value = 0 if recent else (-1 if not reverse else 1e9)
+
+        # Build the base query
+        base_query = Instructor.objects.filter(hidden=False)
+
+        # Apply filter based on whether we want recent or historical instructors
+        if recent:
+            base_query = base_query.filter(
+                section__course=self,
+                section__semester=latest_semester,
+            )
+        else:
+            base_query = base_query.filter(section__course=self)
+
+        instructors = base_query.distinct().annotate(
+            instructor_rating=Coalesce(
+                Avg("review__instructor_rating", filter=Q(review__course=self)),
+                Value(default_value / 3),  # Divide by 3 for average
+                output_field=FloatField(),
+            ),
+            enjoyability=Coalesce(
+                Avg("review__enjoyability", filter=Q(review__course=self)),
+                Value(default_value / 3),
+                output_field=FloatField(),
+            ),
+            recommendability=Coalesce(
+                Avg("review__recommendability", filter=Q(review__course=self)),
+                Value(default_value / 3),
+                output_field=FloatField(),
+            ),
+            # Now calculate the combined rating
+            rating=ExpressionWrapper(
+                F("instructor_rating") + F("enjoyability") + F("recommendability"),
+                output_field=FloatField(),
+            ),
+            gpa=Coalesce(
+                Avg(
+                    "courseinstructorgrade__average",
+                    filter=Q(courseinstructorgrade__course=self),
+                ),
+                Value(default_value),
+                output_field=FloatField(),
+            ),
+            difficulty=Coalesce(
+                Avg("review__difficulty", filter=Q(review__course=self)),
+                Value(default_value),
+                output_field=FloatField(),
+            ),
         )
 
-        instructors = (
-            Instructor.objects.filter(section__course=self, hidden=False)
-            .distinct()
-            .annotate(
-                gpa=Coalesce(
-                    Avg(
-                        "courseinstructorgrade__average",
-                        filter=Q(courseinstructorgrade__course=self),
-                    ),
-                    Value(math.inf) if reverse else Value(-1),
-                    output_field=FloatField(),
+        # Add section times, section numbers, and semester last taught
+        if recent:
+            # For recent instructors, use simpler annotation for current semester only
+            instructors = instructors.annotate(
+                section_times=ArrayAgg(
+                    "section__section_times",
+                    filter=Q(section__semester=latest_semester, section__course=self),
+                    distinct=True,
                 ),
-                difficulty=Coalesce(
-                    Avg("review__difficulty", filter=Q(review__course=self)),
-                    Value(math.inf) if reverse else Value(-1),
-                    output_field=FloatField(),
+                section_nums=ArrayAgg(
+                    "section__sis_section_number",
+                    filter=Q(section__semester=latest_semester, section__course=self),
+                    distinct=True,
                 ),
-                rating=Coalesce(
-                    (
-                        Avg(
-                            "review__instructor_rating",
-                            filter=Q(review__course=self),
-                        )
-                        + Avg(
-                            "review__enjoyability",
-                            filter=Q(review__course=self),
-                        )
-                        + Avg(
-                            "review__recommendability",
-                            filter=Q(review__course=self),
-                        )
-                    )
-                    / 3,
-                    # invalid value for if there are no reviews
-                    Value(math.inf) if reverse else Value(-1),
-                    output_field=FloatField(),
+                semester_last_taught=Value(
+                    latest_semester.pk, output_field=IntegerField()
                 ),
+            )
+        else:
+            # For historical, get last semester taught from subquery
+            semester_last_taught_subquery = Subquery(
+                Section.objects.filter(course=self, instructors=OuterRef("pk"))
+                .order_by("-semester__number")
+                .values("semester__id")[:1]
+            )
+
+            instructors = instructors.annotate(
                 semester_last_taught=semester_last_taught_subquery,
-                # ArrayAgg:
-                # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
-                # pylint: disable=duplicate-code
                 section_times=ArrayAgg(
                     Case(
                         When(
@@ -674,6 +757,7 @@ class Course(models.Model):
                         ),
                         output_field=CharField(),
                     ),
+                    filter=Q(section__course=self),
                     distinct=True,
                 ),
                 section_nums=ArrayAgg(
@@ -684,10 +768,10 @@ class Course(models.Model):
                         ),
                         output_field=CharField(),
                     ),
+                    filter=Q(section__course=self),
                     distinct=True,
                 ),
             )
-        )
 
         return instructors
 
@@ -699,22 +783,25 @@ class Course(models.Model):
         sortby: str,
     ):
         """Sort instructors by `sortby`"""
-        reverse = order != "desc"
-        instructors = self.get_instructors_and_data(latest_semester, reverse)
-
-        sort_field = {
+        # Map sort field names
+        sort_field_map = {
             "gpa": "gpa",
             "rating": "rating",
             "difficulty": "difficulty",
             "last_taught": "semester_last_taught",
-        }.get(sortby, "semester_last_taught")
+        }
+        sort_field = sort_field_map.get(sortby, "semester_last_taught")
 
+        # Determine sort order
+        reverse = order != "desc"
         order_prefix = "" if reverse else "-"
 
-        if recent:
-            instructors = instructors.filter(semester_last_taught=Semester.latest().pk)
+        # Get annotated instructors
+        instructors = self.get_instructors_and_data(latest_semester, reverse, recent)
 
-        instructors = instructors.order_by(order_prefix + sort_field)
+        # Apply sort
+        instructors = instructors.order_by(f"{order_prefix}{sort_field}")
+
         return instructors
 
     @classmethod
@@ -757,7 +844,9 @@ class Course(models.Model):
     def filter_by_open_sections(cls):
         """Filter courses that have at least one open section."""
         open_sections = SectionEnrollment.objects.filter(
-            section__course=OuterRef("pk"), enrollment_taken__lt=F("enrollment_limit")
+            section__course=OuterRef("pk"),
+            section__semester=Semester.latest(),
+            enrollment_taken__lt=F("enrollment_limit"),
         )
         return cls.objects.filter(Exists(open_sections))
 
@@ -813,6 +902,11 @@ class CourseGrade(models.Model):
             f"{self.course.subdepartment.mnemonic} {self.course.number} {self.average}"
         )
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["course"]),
+        ]
+
 
 class CourseInstructorGrade(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, null=True)
@@ -835,6 +929,14 @@ class CourseInstructorGrade(models.Model):
             f"{self.instructor.first_name} {self.instructor.last_name} "
             f"{self.course.subdepartment.mnemonic} {self.course.number} {self.average}"
         )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["course", "instructor"]),
+            models.Index(fields=["instructor", "course"]),
+            models.Index(fields=["course"]),
+            models.Index(fields=["instructor"]),
+        ]
 
 
 class Section(models.Model):
@@ -1004,16 +1106,21 @@ class Review(models.Model):
     Has a Course.
     Has an Instructor.
     Has an Semester.
+    Can optionally have a Club instead of a Course.
     """
 
     # Review text. Optional.
     text = models.TextField(blank=True)
     # Review user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # Review course foreign key. Required.
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    # Review instructor foreign key. Required.
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    # Review course foreign key. Required only if club is not provided.
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
+    # Review club foreign key. Optional alternative to course.
+    club = models.ForeignKey(Club, on_delete=models.CASCADE, null=True, blank=True)
+    # Review instructor foreign key. Required only if club is not provided.
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, null=True, blank=True
+    )
     # Review semester foreign key. Required.
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     # Email of reviewer for Review Drive, should be blank most of the time
@@ -1242,6 +1349,8 @@ class Review(models.Model):
         indexes = [
             models.Index(fields=["course", "instructor"]),
             models.Index(fields=["user", "-created"]),
+            models.Index(fields=["instructor", "course"]),
+            models.Index(fields=["instructor"]),
         ]
 
         # Some of the tCF 1.0 data did not honor this constraint.

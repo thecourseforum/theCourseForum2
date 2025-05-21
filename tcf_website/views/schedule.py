@@ -7,17 +7,16 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.aggregates.general import ArrayAgg
-from django.db.models import (Avg, Case, CharField, Max, Prefetch, Q, Value,
-                              When)
+from django.db.models import Avg, Case, CharField, Max, Prefetch, Q, Value, When
 from django.db.models.functions import Cast, Concat
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 
-from ..models import (Course, Instructor, Schedule, ScheduledCourse, Section,
-                      Semester)
+from ..models import Course, Instructor, Schedule, ScheduledCourse, Section, Semester
 
 # pylint: disable=line-too-long
+# pylint: disable=duplicate-code
 # pylint: disable=no-else-return
 # pylint: disable=consider-using-generator
 
@@ -331,10 +330,8 @@ def edit_schedule(request):
         schedule.name = request.POST["schedule_name"]
         schedule.save()
 
-    # Store deleted courses in session before deleting them
     deleted_courses = request.POST.getlist("removed_course_ids[]")
     if deleted_courses:
-        request.session["deleted_courses"] = deleted_courses
         ScheduledCourse.objects.filter(id__in=deleted_courses).delete()
 
     messages.success(request, f"Successfully made changes to {schedule.name}")

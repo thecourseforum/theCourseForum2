@@ -12,11 +12,19 @@
                 <div class="review-header mb-2">
                     <div class="d-flex">
                         <div class="review-subject mr-auto">
+                          {% if review.club %}
+                          <a href="{% url 'course' mnemonic=review.club.category.slug course_number=review.club.id %}?mode=clubs">
+                              <h5 class="text-tcf-orange">
+                                <strong>{{ review.club.name }}</strong>
+                              </h5>
+                          </a>
+                          {% else %}
                           <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
                               <h5 class="text-tcf-orange">
                                 <strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}
                               </h5>
                           </a>
+                          {% endif %}
                         </div>
                         <div class="review-actions d-inline-flex">
                           <a class="review-edit h5 px-2 text-tcf-blue" href="{% url 'edit_review' review_id=review.id %}">
@@ -83,7 +91,7 @@
                             <i class="fa fa-star fa-fw"></i>
                             {{ review.average|floatformat:2 }}
                         </div>
-                        <div class="mr-3 mr-sm-4"  data-toggle="tooltip" data-placement="bottom" title="Instructor Rating">
+                        <div class="mr-3 mr-sm-4"  data-toggle="tooltip" data-placement="bottom" title="{% if review.club %}Leadership{% else %}Instructor{% endif %} Rating">
                             <i class="fa fa-user"></i>
                             {{ review.instructor_rating }}
                         </div>
@@ -95,7 +103,7 @@
                             <i class="fas fa-heart"></i>
                             {{ review.recommendability }}
                         </div>
-                        <div class="mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="Difficulty">
+                        <div class="mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="{% if review.club %}Commitment{% else %}Difficulty{% endif %}">
                             <i class="fa fa-dumbbell fa-fw"></i>
                             {{ review.difficulty }}
                         </div>

@@ -2,14 +2,10 @@
 Fetch and save data from SIS API for a specified semester into a CSV file.
 
 Usage:
-cd tcf_website/management/commands
-python fetch_data.py "<year>_<season>"
-cd -
+docker exec -it tcf_django python manage.py fetch_data "<year>_<season>"
 
 Example:
-cd tcf_website/management/commands
-python fetch_data.py "2023_spring"
-cd -
+docker exec -it tcf_django python manage.py fetch_data "2023_spring"
 """
 
 # Classes intended stream finds each department, from there make a query to find each class in the department,
@@ -19,18 +15,19 @@ cd -
 import csv
 import json
 import os
-import sys
 from concurrent.futures import ThreadPoolExecutor
 
 import backoff
+
 # format -ClassNumber,Mnemonic,Number,Section,Type,Units,Instructor1,Days1,Room1,MeetingDates1,Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,Description
 # example call url
 # -https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassDetails?institution=UVA01&term=1242&class_nbr=16634&
 import requests
 from tqdm import tqdm
+from django.core.management.base import BaseCommand
 
 # url to find all courses in department for a semester to update semester Replace 1228 with the appropriate term.
-# The formula is “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
+# The formula is "1" + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
 # todo find out which is used for j term/summer probably 0,4, or 6?
 # https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch?institution=UVA01&term=1228&subject=CS&page=1
 
@@ -48,7 +45,7 @@ TIMEOUT = 300
 )
 def retrieve_and_write_semester_courses(csv_path, sem_code, pages=None):
     """
-    input: semester using the formula  “1” + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
+    input: semester using the formula  "1" + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
     output: list of dictionaries where each dictionary is all a course's information for the csv writing
     functionality: connects with sis API and looks at each class. It finds each course's course-number then passes it to compile_course_data
      which returns a dictionary of all of a course's information, which is added to a list containing the course info for all classes.
@@ -88,7 +85,7 @@ def retrieve_and_write_semester_courses(csv_path, sem_code, pages=None):
             (course["class_nbr"], sem_code) for course in page_data["classes"]
         ]
 
-        with ThreadPoolExecutor(max_workers=20) as executor:
+        with ThreadPoolExecutor(max_workers=10) as executor:
             all_classes = executor.map(
                 lambda params: compile_course_data(*params),
                 requests_to_make,
@@ -97,7 +94,6 @@ def retrieve_and_write_semester_courses(csv_path, sem_code, pages=None):
         all_classes = list(filter(lambda x: x is not None, all_classes))
 
         write_to_csv(csv_path, all_classes)
-        page += 1
 
     print("Data fetching complete.")
 
@@ -237,7 +233,7 @@ def write_to_csv(csv_path, course_list):
 
 
 SEASON_NUMBERS = {"fall": 8, "summer": 6, "spring": 2, "january": 1}
-COURSE_DATA_DIR = "semester_data/csv/"
+COURSE_DATA_DIR = "tcf_website/management/commands/semester_data/csv/"
 
 
 # test SIS data against Lous List data
@@ -272,35 +268,38 @@ def compare_csv_files(lous_list_file_path, sis_file_path):
                     print(f"Course {key} not in SIS\n")
 
 
-def main() -> None:
-    arguments = sys.argv[1:]
-    if not arguments:
-        sys.stdout.write(
-            "No argument given. Give an argument in format: <year>_<season>"
+class Command(BaseCommand):
+    """Django command to fetch data from SIS API for the specified semester and save it to a CSV file."""
+
+    help = "Fetches data from SIS API for the specified semester and saves it to a CSV file"
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "semester",
+            type=str,
+            help="Semester in format: <year>_<season> (e.g., 2024_spring)",
         )
-    elif "--help" in arguments or "-h" in arguments:
-        sys.stdout.write(
-            "Fetches data from SIS API for the specified semester and saves it to a CSV file.\nUsage: cd tcf_website/management/commands; python3 fetch_data.py 2024_spring"
-        )
-    elif not arguments[0]:
-        sys.stdout.write(
-            "No argument given. Give an argument in format: <year>_<season>"
-        )
-    elif (
-        len(elements := arguments[0].split("_")) != 2
-        or not elements[0].isdigit()
-        or len(elements[0]) != 4
-        or elements[1].lower() not in SEASON_NUMBERS
-    ):
-        sys.stdout.write(
-            "Argument given in improper format. Give an argument in format: <year>_<season>"
-        )
-    else:  # correct arguments
-        year, season = arguments[0].split("_")
+
+    def handle(self, *args, **options):
+        semester = options["semester"]
+        if (
+            len(elements := semester.split("_")) != 2
+            or not elements[0].isdigit()
+            or len(elements[0]) != 4
+            or elements[1].lower() not in SEASON_NUMBERS
+        ):
+            self.stdout.write(
+                self.style.ERROR(
+                    "Argument given in improper format. Give an argument in format: <year>_<season>"
+                )
+            )
+            return
+
+        year, season = semester.split("_")
         season = season.lower()
         year_code = str(year)[-2:]
         sem_code = f"1{year_code}{SEASON_NUMBERS.get(season)}"  # 1 represents 21st century in querying
-        sys.stdout.write(f"Fetching course data for {year} {season}...\n")
+        self.stdout.write(f"Fetching course data for {year} {season}...")
         filename = f"{year}_{season}.csv"
         csv_path = os.path.join(COURSE_DATA_DIR, filename)
 
@@ -308,7 +307,6 @@ def main() -> None:
             os.remove(csv_path)
         os.makedirs(os.path.dirname(csv_path), exist_ok=True)
         retrieve_and_write_semester_courses(csv_path, sem_code)
-
-
-if __name__ == "__main__":
-    main()
+        self.stdout.write(
+            self.style.SUCCESS(f"Successfully fetched data for {year} {season}")
+        )

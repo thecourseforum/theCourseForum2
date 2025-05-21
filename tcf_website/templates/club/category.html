@@ -1,0 +1,65 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}{{ category.name }} Clubs | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'department/department.css' %}" />
+<link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="department container">
+  <div class="container-lg mb-4">
+    {% include "../common/leaderboard_ad.html" with ad_slot="3719332473" %}
+  </div>
+  
+  <div class="container-lg">
+    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
+  </div>
+  
+  <div class="club-category mt-3">
+    <div class="category-description container-lg px-0 mb-4">
+      <h2>{{ category.name }} Clubs</h2>
+      {% if category.description %}
+        <p>{{ category.description }}</p>
+      {% endif %}
+    </div>
+    
+    <div class="club-list container-lg px-0">
+      {% if paginated_clubs|length == 0 %}
+        <div class="card col p-5 text-center">
+          <div class="card-body">
+            <h4 class="card-title">
+              No clubs found in this category. <i class="far fa-frown-open fa-fw"></i>
+            </h4>
+          </div>
+        </div>
+      {% else %}
+        <ul class="list-unstyled">
+          {% for club in paginated_clubs %}
+            <li>
+              <div class="card rating-card mb-2">
+                <div class="row no-gutters">
+                  <a class="col-md-4 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start align-items-center rating-card-link"
+                     href="{% url 'course' mnemonic=category.slug course_number=club.id %}?mode=clubs">
+                    <div class="text-center text-lg-left">
+                      <h3 id="title">{{ club.name }}</h3>
+                    </div>
+                  </a>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <p class="card-text mt-2">{{ club.description }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+        {% include "common/pagination.html" with paginated_items=paginated_clubs %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %} 

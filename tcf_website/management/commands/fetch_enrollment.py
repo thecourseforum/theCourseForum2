@@ -18,8 +18,6 @@ from tqdm import tqdm
 from urllib3.util.retry import Retry
 
 from tcf_website.models import Section, SectionEnrollment, Semester
-from tcf_website.utils.enrollment import (build_sis_api_url,
-                                          format_enrollment_update_message)
 
 # Maximum time to wait for a response from the server
 TIMEOUT = 30
@@ -75,7 +73,12 @@ def fetch_section_data(section):
     Returns:
         bool: True if successful, False otherwise
     """
-    url = build_sis_api_url(section)
+    url = (
+        "https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM."
+        "H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch"
+        f"?institution=UVA01&term={section.semester.number}&page=1&"
+        f"class_nbr={section.sis_section_number}"
+    )
 
     try:
         # Fetch and validate response
@@ -98,7 +101,6 @@ def fetch_section_data(section):
             section_enrollment.waitlist_limit = class_data.get("wait_cap", 0)
             section_enrollment.save()
 
-            print(format_enrollment_update_message(section, section_enrollment))
             return True
 
     except requests.exceptions.HTTPError as http_err:

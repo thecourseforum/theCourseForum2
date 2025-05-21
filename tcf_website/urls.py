@@ -6,6 +6,11 @@ from django.urls import include, path
 from . import views
 
 urlpatterns = [
+    path(
+        "club-category/<str:category_slug>/",
+        views.club_category,
+        name="club_category",
+    ),
     path("", views.index, name="index"),
     path("about/", views.AboutView.as_view(), name="about"),
     path("privacy/", views.privacy, name="privacy"),
