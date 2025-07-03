@@ -1,0 +1,324 @@
+table LogEntry {
+action_time datetime [note: "primary_key : False<br>nullable : False<br>blank : False"]
+user foreign_key
+content_type foreign_key
+object_id text [note: "primary_key : False<br>nullable : True<br>blank : True"]
+object_repr varchar [note: "primary_key : False<br>max_length : 200<br>nullable : False<br>blank : False"]
+action_flag positive_small_int [note: "primary_key : False<br>nullable : False<br>blank : False<br>choices : [(1, 'Addition'), (2, 'Change'), (3, 'Deletion')]"]
+change_message text [note: "primary_key : False<br>nullable : False<br>blank : True"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Permission {
+name varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : False"]
+content_type foreign_key
+codename varchar [note: "primary_key : False<br>max_length : 100<br>nullable : False<br>blank : False"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Group {
+name varchar [note: "primary_key : False<br>max_length : 150<br>nullable : False<br>blank : False"]
+permissions many_to_many
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table ContentType {
+app_label varchar [note: "primary_key : False<br>max_length : 100<br>nullable : False<br>blank : False"]
+model varchar [note: "primary_key : False<br>max_length : 100<br>nullable : False<br>blank : False"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Session {
+session_key varchar [note: "primary_key : True<br>max_length : 40<br>nullable : False<br>blank : False"]
+session_data text [note: "primary_key : False<br>nullable : False<br>blank : False"]
+expire_date datetime [note: "primary_key : False<br>nullable : False<br>blank : False"]
+}
+
+table School {
+name varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : False"]
+description text [note: "primary_key : False<br>nullable : False<br>blank : True"]
+website url [note: "primary_key : False<br>max_length : 200<br>nullable : False<br>blank : True"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Department {
+name varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : False"]
+description text [note: "primary_key : False<br>nullable : False<br>blank : True"]
+website url [note: "primary_key : False<br>max_length : 200<br>nullable : False<br>blank : True"]
+school foreign_key
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Subdepartment {
+name varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : False"]
+description text [note: "primary_key : False<br>nullable : False<br>blank : True"]
+mnemonic varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : False"]
+department foreign_key
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table ClubCategory {
+name varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : False"]
+description text [note: "primary_key : False<br>nullable : False<br>blank : True"]
+slug slug [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : False"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Club {
+name varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : False"]
+description text [note: "primary_key : False<br>nullable : False<br>blank : True"]
+category foreign_key
+combined_name varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : True"]
+application_required boolean [note: "primary_key : False<br>nullable : False<br>blank : False"]
+photo_url varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : True"]
+meeting_time varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : True"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table User {
+computing_id varchar [note: "primary_key : False<br>max_length : 20<br>nullable : False<br>blank : True"]
+graduation_year int [note: "primary_key : False<br>nullable : True<br>blank : True"]
+password varchar [note: "primary_key : False<br>max_length : 128<br>nullable : False<br>blank : False"]
+last_login datetime [note: "primary_key : False<br>nullable : True<br>blank : True"]
+is_superuser boolean [note: "primary_key : False<br>nullable : False<br>blank : False"]
+username varchar [note: "primary_key : False<br>max_length : 150<br>nullable : False<br>blank : False"]
+first_name varchar [note: "primary_key : False<br>max_length : 150<br>nullable : False<br>blank : True"]
+last_name varchar [note: "primary_key : False<br>max_length : 150<br>nullable : False<br>blank : True"]
+email email [note: "primary_key : False<br>max_length : 254<br>nullable : False<br>blank : True"]
+is_staff boolean [note: "primary_key : False<br>nullable : False<br>blank : False"]
+is_active boolean [note: "primary_key : False<br>nullable : False<br>blank : False"]
+date_joined datetime [note: "primary_key : False<br>nullable : False<br>blank : False"]
+groups many_to_many
+user_permissions many_to_many
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Instructor {
+first_name varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : True"]
+last_name varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : False"]
+full_name varchar [note: "primary_key : False<br>max_length : 511<br>nullable : False<br>blank : True"]
+email email [note: "primary_key : False<br>max_length : 254<br>nullable : False<br>blank : True"]
+departments many_to_many
+hidden boolean [note: "primary_key : False<br>nullable : False<br>blank : False"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Semester {
+year int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+season varchar [note: "primary_key : False<br>max_length : 7<br>nullable : False<br>blank : False<br>choices : (('FALL', 'Fall'), ('JANUARY', 'January'), ('SPRING', 'Spring'), ('SUMMER', 'Summer'))"]
+number int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Discipline {
+name varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : False"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Course {
+title varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : False"]
+description text [note: "primary_key : False<br>nullable : False<br>blank : True"]
+disciplines many_to_many
+number int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+subdepartment foreign_key
+semester_last_taught foreign_key
+combined_mnemonic_number varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : True"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table CourseEnrollment {
+course one_to_one
+last_update datetime [note: "primary_key : False<br>nullable : False<br>blank : True"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table CourseGrade {
+course foreign_key
+average float [note: "primary_key : False<br>nullable : True<br>blank : False"]
+a_plus int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+a int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+a_minus int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+b_plus int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+b int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+b_minus int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+c_plus int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+c int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+c_minus int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+dfw int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+total_enrolled int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table CourseInstructorGrade {
+instructor foreign_key
+course foreign_key
+average float [note: "primary_key : False<br>nullable : True<br>blank : False"]
+a_plus int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+a int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+a_minus int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+b_plus int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+b int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+b_minus int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+c_plus int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+c int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+c_minus int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+dfw int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+total_enrolled int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Section {
+sis_section_number int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+instructors many_to_many
+semester foreign_key
+course foreign_key
+topic text [note: "primary_key : False<br>nullable : False<br>blank : True"]
+cost varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : True"]
+units varchar [note: "primary_key : False<br>max_length : 10<br>nullable : False<br>blank : True"]
+section_type varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : True"]
+section_times varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : True"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table SectionTime {
+section foreign_key
+monday boolean [note: "primary_key : False<br>nullable : False<br>blank : False"]
+tuesday boolean [note: "primary_key : False<br>nullable : False<br>blank : False"]
+wednesday boolean [note: "primary_key : False<br>nullable : False<br>blank : False"]
+thursday boolean [note: "primary_key : False<br>nullable : False<br>blank : False"]
+friday boolean [note: "primary_key : False<br>nullable : False<br>blank : False"]
+start_time time [note: "primary_key : False<br>nullable : False<br>blank : False"]
+end_time time [note: "primary_key : False<br>nullable : False<br>blank : False"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table SectionEnrollment {
+section foreign_key
+enrollment_taken int [note: "primary_key : False<br>nullable : True<br>blank : True"]
+enrollment_limit int [note: "primary_key : False<br>nullable : True<br>blank : True"]
+waitlist_taken int [note: "primary_key : False<br>nullable : True<br>blank : True"]
+waitlist_limit int [note: "primary_key : False<br>nullable : True<br>blank : True"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Review {
+text text [note: "primary_key : False<br>nullable : False<br>blank : True"]
+user foreign_key
+course foreign_key
+club foreign_key
+instructor foreign_key
+semester foreign_key
+email varchar [note: "primary_key : False<br>nullable : True<br>blank : True"]
+toxicity_rating int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+toxicity_category varchar [note: "primary_key : False<br>nullable : False<br>blank : True"]
+instructor_rating positive_small_int [note: "primary_key : False<br>nullable : False<br>blank : False<br>choices : ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5))"]
+difficulty positive_small_int [note: "primary_key : False<br>nullable : False<br>blank : False<br>choices : ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5))"]
+recommendability positive_small_int [note: "primary_key : False<br>nullable : False<br>blank : False<br>choices : ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5))"]
+enjoyability positive_small_int [note: "primary_key : False<br>nullable : False<br>blank : False<br>choices : ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5))"]
+hours_per_week positive_small_int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+amount_reading positive_small_int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+amount_writing positive_small_int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+amount_group positive_small_int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+amount_homework positive_small_int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+created datetime [note: "primary_key : False<br>nullable : False<br>blank : True"]
+modified datetime [note: "primary_key : False<br>nullable : False<br>blank : True"]
+hidden boolean [note: "primary_key : False<br>nullable : False<br>blank : False"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Vote {
+value int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+user foreign_key
+review foreign_key
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Question {
+text text [note: "primary_key : False<br>nullable : False<br>blank : False"]
+course foreign_key
+instructor foreign_key
+user foreign_key
+created datetime [note: "primary_key : False<br>nullable : False<br>blank : True"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Answer {
+text text [note: "primary_key : False<br>nullable : False<br>blank : False"]
+question foreign_key
+user foreign_key
+created datetime [note: "primary_key : False<br>nullable : False<br>blank : True"]
+semester foreign_key
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table VoteQuestion {
+value int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+user foreign_key
+question foreign_key
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table VoteAnswer {
+value int [note: "primary_key : False<br>nullable : False<br>blank : False"]
+user foreign_key
+answer foreign_key
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table Schedule {
+name varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : False"]
+user foreign_key
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+table ScheduledCourse {
+schedule foreign_key
+section foreign_key
+instructor foreign_key
+time varchar [note: "primary_key : False<br>max_length : 255<br>nullable : False<br>blank : False"]
+id int [note: "primary_key : True<br>nullable : False<br>blank : True"]
+}
+
+ref: LogEntry.user > User.id
+ref: LogEntry.content_type > ContentType.id
+ref: Permission.content_type > ContentType.id
+ref: Group.permissions > Permission.name
+ref: Department.school > School.id
+ref: Subdepartment.department > Department.id
+ref: Club.category > ClubCategory.id
+ref: User.groups > Group.name
+ref: User.user_permissions > Permission.name
+ref: Instructor.departments > Department.name
+ref: Course.disciplines > Discipline.name
+ref: Course.subdepartment > Subdepartment.id
+ref: Course.semester_last_taught > Semester.id
+ref: CourseEnrollment.course > Course.id
+ref: CourseGrade.course > Course.id
+ref: CourseInstructorGrade.instructor > Instructor.id
+ref: CourseInstructorGrade.course > Course.id
+ref: Section.instructors > Instructor.first_name
+ref: Section.semester > Semester.id
+ref: Section.course > Course.id
+ref: SectionTime.section > Section.id
+ref: SectionEnrollment.section > Section.id
+ref: Review.user > User.id
+ref: Review.course > Course.id
+ref: Review.club > Club.id
+ref: Review.instructor > Instructor.id
+ref: Review.semester > Semester.id
+ref: Vote.user > User.id
+ref: Vote.review > Review.id
+ref: Question.course > Course.id
+ref: Question.instructor > Instructor.id
+ref: Question.user > User.id
+ref: Answer.question > Question.id
+ref: Answer.user > User.id
+ref: Answer.semester > Semester.id
+ref: VoteQuestion.user > User.id
+ref: VoteQuestion.question > Question.id
+ref: VoteAnswer.user > User.id
+ref: VoteAnswer.answer > Answer.id
+ref: Schedule.user > User.id
+ref: ScheduledCourse.schedule > Schedule.id
+ref: ScheduledCourse.section > Section.id
+ref: ScheduledCourse.instructor > Instructor.id
