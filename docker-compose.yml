@@ -21,7 +21,7 @@ services:
     depends_on:
       - db
   db:
-    image: postgres:15.4
+    image: postgres:17.5
     volumes:
       - ./db:/app
     restart: always
