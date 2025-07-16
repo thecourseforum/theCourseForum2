@@ -34,3 +34,5 @@ db/*.dump
 # Virtual Environments
 venv
 .venv
+# AWS key.pem
+key/
