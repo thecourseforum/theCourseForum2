@@ -7,12 +7,12 @@ from typing import Any
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Avg, CharField, Count, F, Q, Value, Sum, Prefetch
-from django.db.models.functions import Concat, Coalesce
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import Avg, CharField, Count, F, Prefetch, Q, Sum, Value
+from django.db.models.functions import Coalesce, Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from ..models import (
     Answer,
@@ -269,6 +269,8 @@ def course_view(
                     )
                     if num and times
                 }
+
+        instructor.rating = instructor.average_rating_for_course(course)
 
     dept = course.subdepartment.department
 
