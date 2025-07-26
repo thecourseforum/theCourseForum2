@@ -152,7 +152,17 @@ def course_view(
     course_number: int,
     instructor_recency=None,
 ):
-    """A new Course view that allows you to input mnemonic and number instead."""
+    """
+    Displays a detailed view for a course or club, including instructors or reviews, based on mnemonic and number.
+    
+    If viewing a club, retrieves the club by category and ID, fetches and paginates reviews, and renders the club detail page.  
+    If viewing a course, ensures the mnemonic is uppercase, retrieves the course, sorts and processes instructors, prepares navigation breadcrumbs, and renders the course detail page.
+    
+    Parameters:
+    	mnemonic (str): The course mnemonic or club category slug.
+    	course_number (int): The course number or club ID.
+    	instructor_recency (str, optional): Semester identifier for filtering instructor data; defaults to the latest semester.
+    """
 
     mode, is_club = parse_mode(request)
 
