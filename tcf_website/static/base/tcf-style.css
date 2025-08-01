@@ -26,6 +26,7 @@
   --input-background-color: #EBEBEB;
   --landing-page-input-background-color: white;
   --filter-background-color: white;
+  --mode-toggle-background-color: #f0f0f0;
 
   /* #f8f9fa is the og background color styled by .bg-light in _background_variant.scss */
   /* Note: Can use Bootstrap "light" color and white color */
@@ -48,6 +49,7 @@ body.dark-mode {
   --landing-page-background-color: black; /* replace tcf-blue as tcf logo text color */
   --title-color: white; /* make title and icons on landing page white */
   --filter-background-color: #333333;
+  --mode-toggle-background-color: #333333;
 }
 
 /*************DEFAULT STYLES**************/

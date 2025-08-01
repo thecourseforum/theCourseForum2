@@ -64,9 +64,9 @@
 .mode-toggle {
   position: relative;
   display: flex;
-  background-color: #f0f0f0;
+  background-color: var(--mode-toggle-background-color);
   border-radius: 4px;
-  border: 1px solid #cbd5e0;
+  border: 1px solid var(--input-border-color);
   height: 100%;
   overflow: hidden;
   min-width: 170px;
@@ -99,7 +99,7 @@
   margin: 0;
   font-size: 14px;
   font-weight: 500;
-  color: #555;
+  color: var(--basic-text-color);
   min-width: 80px;
   text-align: center;
 }
