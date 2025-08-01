@@ -46,8 +46,8 @@ body.dark-mode {
 }
 
 .school-body {
-  padding: 1.5rem;
-  background-color: white;
+  padding: 1.25rem;
+  background-color: var(--card-background-color);
 }
 
 /* Department list styling */
@@ -67,7 +67,7 @@ body.dark-mode {
 }
 
 .department-list a {
-  color: var(--dark-color);
+  color: var(--basic-text-color);
   text-decoration: none;
   display: inline-block;
   font-weight: 400;
@@ -107,9 +107,5 @@ body.dark-mode {
 .school .card-header,
 .school .card-header .card-title {
     color: var(--accent-text-white) !important;
-}
-
-.school-body {
-  padding: 1.25rem;
 }
 
