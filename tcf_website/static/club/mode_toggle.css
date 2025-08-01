@@ -8,11 +8,11 @@
 .mode-toggle-wrapper {
   position: relative;
   display: flex;
-  background-color: #f0f0f0;
+  background-color: var(--card-background-color);
   border-radius: 20px;
   padding: 4px;
   width: 100%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px var(--input-border-color);
 }
 
 .mode-toggle-option {
@@ -22,7 +22,7 @@
   z-index: 1;
   transition: color 0.3s ease;
   font-weight: 500;
-  color: #555;
+  color: var(--basic-text-color);
   text-decoration: none;
   font-size: 15px;
   display: flex;
