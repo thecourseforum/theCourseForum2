@@ -34,7 +34,6 @@
 
 /* only main-color (tcf blue) and accent-color (tcf organge) are being utilized by the landing page */
 body.dark-mode {
-
 /* Added updated variables names */
   --background-color: black; /* Dark background color */
   --card-background-color: #333333;  /* Dark card background */
@@ -296,6 +295,10 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: pointer;
 }
 
+.dark-mode input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
 #darkModeToggle {
   background: none;
   border: none;
@@ -306,4 +309,9 @@ input[type="range"]::-webkit-slider-thumb {
 
 #sunIcon {
   vertical-align: middle;
+}
+
+/* overrides _buttons.scss */
+.btn-outline-secondary {
+  color: var(--basic-text-color);
 }

@@ -74,8 +74,8 @@
 
 /* Standardized filter containers */
 .filter-option-container {
-  background: white;
-  border: 1px solid #cbd5e0;
+  background: var(--landing-page-background-color);
+  border: 1px solid var(--input-border-color);
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
   height: 3rem;
@@ -85,7 +85,7 @@
 }
 
 .filter-option-container:hover {
-  background: #f7fafc;
+  background: var(--landing-page-background-color);
   border-color: #90cdf4;
 }
 
@@ -139,15 +139,16 @@
 }
 
 .time-selection {
-  background: white;
-  border: 1px solid #cbd5e0;
+  background: var(--landing-page-background-color);
+  border: 1px solid var(--input-border-color);
   border-radius: 6px;
   padding: 0.4rem 0.4rem;
+  color: var(--basic-text-color);
 }
 
 .day-toggles .form-check-inline {
-  background: white;
-  border: 1px solid #cbd5e0;
+  background: var(--landing-page-background-color);
+  border: 1px solid var(--input-border-color);
   border-radius: 6px;
   padding: 0.55rem 0.67rem;
   transition: all 0.15s ease;
@@ -159,7 +160,7 @@
 }
 
 .day-toggles .form-check-inline:hover {
-  background: #f7fafc;
+  background: var(--background-color);
   border-color: #90cdf4;
 }
 
@@ -266,10 +267,15 @@
   font-size: 0.9rem;
 }
 
+.form-check:hover {
+  background-color: transparent;
+}
+
 .subject-list,
 .discipline-list {
   scrollbar-width: thin;
   scrollbar-color: #cbd5e0 transparent;
+  background-color: var(--landing-page-background-color);
 }
 
 .btn-custom {
