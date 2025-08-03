@@ -20,13 +20,14 @@
   /* changes the border color of the search bar on landing page */
   --input-border-color: #DEE2E6;
   /* changes the color of the title and icons on the landing page */
-  --title-color: #274f97;
+  --title-color: #4077c4;
   --filter-input-background-color: white;
   --icon-color-white: #ffffff; /* White icon color */
   --input-background-color: #EBEBEB;
   --landing-page-input-background-color: white;
   --filter-background-color: white;
   --mode-toggle-background-color: #f0f0f0;
+  --dark-mode-toggle-button-color: #d75626;
 
   /* #f8f9fa is the og background color styled by .bg-light in _background_variant.scss */
   /* Note: Can use Bootstrap "light" color and white color */
@@ -49,6 +50,7 @@ body.dark-mode {
   --title-color: white; /* make title and icons on landing page white */
   --filter-background-color: #333333;
   --mode-toggle-background-color: #333333;
+  --dark-mode-toggle-button-color: white;
 }
 
 /*************DEFAULT STYLES**************/
@@ -299,16 +301,104 @@ input[type="range"]::-webkit-slider-thumb {
   filter: invert(1);
 }
 
-#darkModeToggle {
+/* 
+  OPTIONAL STYLES FOR DARK MODE BUTTON (ALTERNATIVE TO TOGGLE)
+  These styles are associated with the dark mode button.
+  Uncomment if using the button instead of the toggle.
+*/
+/* .dark-mode-toggle {
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 1.3rem;
   cursor: pointer;
-  color: var(--icon-color, #212529); /* Customizable */
+  padding: 0.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon-color, #212529);
+  transition: color 0.3s ease;
+}
+.dark-mode-toggle svg {
+  display: none;
+}
+body:not(.dark-mode) #sunIcon {
+  display: inline;
+}
+body.dark-mode #moonIcon {
+  display: inline;
+} */
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  height: 32px;
+  width: 64px;
+  position: relative;
+  z-index: 1000;
 }
 
-#sunIcon {
-  vertical-align: middle;
+.theme-toggle .toggle-track {
+  background-color: var(--input-border-color);
+  border-radius: 999px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5px;
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.theme-toggle .icon {
+  width: 24px;
+  height: 24px;
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle .icon svg {
+  width: 100%;
+  height: 100%;
+  fill: var(--icon-color);
+}
+
+.theme-toggle .toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 28px;
+  height: 28px;
+  background-color: var(--dark-mode-toggle-button-color);
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+/* dark mode ON */
+body.dark-mode .theme-toggle .toggle-thumb {
+  transform: translateX(32px);
+}
+
+body.dark-mode .moon-icon {
+  opacity: 1;
+}
+
+body.dark-mode .sun-icon {
+  opacity: 0.4;
+}
+
+/* light mode ON */
+body:not(.dark-mode) .sun-icon {
+  opacity: 1;
+}
+
+body:not(.dark-mode) .moon-icon {
+  opacity: 0.4;
 }
 
 /* overrides _buttons.scss */
