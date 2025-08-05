@@ -29,8 +29,9 @@
   width: 100%;
 }
 
-.tabs .about-tab a:not(.collapsed) {
-  color: #ff7d4e;
+.tabs .about-tab a:not(.collapsed),
+.tabs .about-tab a:not(.collapsed) i {
+    filter: brightness(0) saturate(100%) invert(47%) sepia(84%) saturate(745%) hue-rotate(346deg) brightness(100%) contrast(91%);
 }
 
 .pfp {
@@ -44,6 +45,9 @@
 }
 .member:hover {
   box-shadow: 2px 2px 5px #888888 !important;
+}
+.dark-mode .member:hover {
+  box-shadow: 2px 2px 5px #000000 !important;
 }
 
 .fit-image {

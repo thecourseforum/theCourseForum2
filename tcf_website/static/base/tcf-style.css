@@ -405,3 +405,34 @@ body:not(.dark-mode) .moon-icon {
 .btn-outline-secondary {
   color: var(--basic-text-color);
 }
+
+.fa-clock:hover {
+  filter: brightness(0) saturate(100%) invert(47%) sepia(84%) saturate(745%) hue-rotate(346deg) brightness(92%) contrast(91%);
+}
+
+.dark-mode .fa-clock:hover {
+  filter: brightness(0) saturate(100%) invert(47%) sepia(84%) saturate(745%) hue-rotate(346deg) brightness(92%) contrast(91%);
+}
+.dark-mode .fa-history-book:checked {
+  filter: brightness(0) saturate(100%) invert(47%) sepia(84%) saturate(745%) hue-rotate(346deg) brightness(92%) contrast(91%);
+}
+
+/* overrides _close.scss */
+.close {
+  color: gray;
+  opacity: 100%;
+}
+
+.dark-mode .close {
+  color: white;
+  opacity: 100%;
+}
+
+/* overrides _shadows.scss */
+.shadow-sm {
+  box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;
+}
+
+.dark-mode .shadow-sm {
+  box-shadow: 0 .125rem .25rem rgba(0, 0, 0, 0.804) !important;
+}
