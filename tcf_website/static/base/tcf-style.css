@@ -221,9 +221,12 @@ p {
 }
 
 .form-control {
-  background-color: var(--input-background-color);
   color: var(--input-text-color);
   border: 1px solid var(--input-border-color);
+}
+
+.navbar .form-control {
+  background-color: var(--input-background-color);
 }
 
 .form-control:focus {
