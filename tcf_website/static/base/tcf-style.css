@@ -137,7 +137,10 @@ ul {
 
 /* Main color: Indigo/Dark blue */
 .text-tcf-indigo {
-  color: var(--title-color);
+  color: var(--main-color);
+}
+.dark-mode .text-tcf-indigo {
+  color: white
 }
 
 .bg-tcf-indigo {
@@ -435,4 +438,28 @@ body:not(.dark-mode) .moon-icon {
 
 .dark-mode .shadow-sm {
   box-shadow: 0 .125rem .25rem rgba(0, 0, 0, 0.804) !important;
+}
+
+.dark-mode .bg-white {
+  background-color: var(--card-background-color) !important;
+}
+
+.dark-mode .breadcrumb-item a {
+  color: white;
+}
+
+.dark-mode .breadcrumb-item+.breadcrumb-item::before {
+  color: white;
+}
+
+.dark-mode .breadcrumb-item.active {
+  color: #9ba1a7;
+}
+
+.dark-mode .breadcrumb a:hover {
+  color: var(--accent-color);
+}
+
+.dark-mode .mb-4 {
+  color: white;
 }
