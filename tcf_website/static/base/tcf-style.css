@@ -201,12 +201,12 @@ ul {
 }
 
 /* OVERRIDES scss stylings */
-/* Chai: background color on landing page is being styled by .bg-light in _background-variant.scss, has to have !important to override the !important in the scss */
+/* background color on landing page is being styled by .bg-light in _background-variant.scss, has to have !important to override the !important in the scss */
 .bg-light {
   background-color: var(--landing-page-background-color) !important;
 }
 
-/* Chai: card background color is being styled by .card in _card.scss; color will be card-background-color when in dark-mode */
+/* card background color is being styled by .card in _card.scss; color will be card-background-color when in dark-mode */
 .card {
   background-color: var(--card-background-color) !important;
   /* border: 1px solid var(--input-border-color); */
