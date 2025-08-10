@@ -229,8 +229,12 @@ p {
   background-color: var(--input-background-color);
 }
 
-.form-control:focus {
+.dark-mode .row .form-control {
   background-color: var(--input-background-color);
+}
+
+.form-control:focus {
+  /* background-color: var(--input-background-color); */
   color: var(--basic-text-color);
 }
 
