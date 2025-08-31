@@ -16,9 +16,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const filterButtonElement = document.getElementById("filter-button");
 
-    // If filter button exists, handle toggle state affecting filter button
-    if (filterButtonElement) {
-      function updateFilterButtonState() {
+    // Find search input element
+    const searchInput = document.querySelector('input[type="search"][name="q"]');
+
+    // Update both filter button state and search placeholder
+    function updateSearchbarState() {
+      // Update filter button if it exists
+      if (filterButtonElement) {
         if (clubsRadio.checked) {
           filterButtonElement.disabled = true;
           filterButtonElement.setAttribute("aria-disabled", "true");
@@ -30,13 +34,22 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      // Set initial state
-      updateFilterButtonState();
-
-      // Listen for changes
-      coursesRadio.addEventListener("change", updateFilterButtonState);
-      clubsRadio.addEventListener("change", updateFilterButtonState);
+      // Update search input placeholder if it exists
+      if (searchInput) {
+        if (clubsRadio.checked) {
+          searchInput.placeholder = "Search for a club...";
+        } else {
+          searchInput.placeholder = "Search for a class or professor...";
+        }
+      }
     }
+
+    // Set initial state
+    updateSearchbarState();
+
+    // Listen for changes
+    coursesRadio.addEventListener("change", updateSearchbarState);
+    clubsRadio.addEventListener("change", updateSearchbarState);
 
     // Remove no-transition class after page load to enable animations
     setTimeout(function () {
