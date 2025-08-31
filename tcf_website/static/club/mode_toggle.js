@@ -17,7 +17,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const filterButtonElement = document.getElementById("filter-button");
 
     // Find search input element
-    const searchInput = document.querySelector('input[type="search"][name="q"]');
+    const searchInput = document.querySelector(
+      'input[type="search"][name="q"]',
+    );
 
     // Update both filter button state and search placeholder
     function updateSearchbarState() {
