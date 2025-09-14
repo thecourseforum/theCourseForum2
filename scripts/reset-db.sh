@@ -2,6 +2,7 @@
 #
 # This script resets the local database by destroying the container and volume,
 # starting a new one, and restoring it from a dump file.
+source .env
 
 DB_FILE="${1:-latest.dump}"
 
