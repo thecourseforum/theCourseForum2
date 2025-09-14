@@ -30,23 +30,23 @@ cd theCourseForum2
 3. Build the project
 
 ```bash
-docker compose build --no-cache # from scratch (only necessary the first time)
-docker compose up --build
+docker compose build --no-cache
 ```
 
-4. Wait for the Django server to finish building (i.e. `tcf_django | Watching for file changes with StatReloader` is visible in stdout).
+4. Wait for the Django server to finish building (i.e. ` ✔ Service web  Built` is visible in stdout).
 5. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) (should be named `latest.dump`) from Google Drive into `db/latest.dump` in your local repo.
 6. Update the database:
 
-MacOS/Linux (or Windows, if you're using Git-Bash):
+```bash
+./scripts/reset-db.sh
+```
+7. Start the server
 
 ```bash
-sh scripts/reset-db.sh
+docker compose up
 ```
 
-If you're on windows, open up `scripts/reset-db.sh` and run the commands manually (sorry)
-
-7. Ensure the website is up, running, and functional at `localhost:8000`.
+8. Ensure the website is up, running, and functional at `localhost:8000`.
 
 ### VSCode Setup
 
