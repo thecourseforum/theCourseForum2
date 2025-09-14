@@ -18,30 +18,30 @@ curl -fL 'https://raw.githubusercontent.com/thecourseforum/theCourseForum2/refs/
 
 1. Clone the project:
 
-```console
-$ git clone https://github.com/thecourseforum/theCourseForum2.git
-$ cd theCourseForum
+```bash
+git clone https://github.com/thecourseforum/theCourseForum2.git
+cd theCourseForum2
 ```
 
-2. Download the `.env` secrets file from the [secrets repo](https://github.com/thecourseforum/tCF-env/blob/main/.env) and place it in the project root.
+2. Download the `.env` secrets file from the Google Drive /Engineering/ENV [folder](https://drive.google.com/drive/u/0/folders/1ETB7PZDbVC05xgjSAAIFiQ7qbDqIiz21) and place it in the project root.
 
 - _**Note**_: the file should be named exactly `.env`, not `.env.txt` or `env.txt` - rename if necessary.
 
 3. Build the project
 
-```console
-$ docker compose build --no-cache # from scratch (only necessary the first time)
-$ docker compose up --build
+```bash
+docker compose build --no-cache # from scratch (only necessary the first time)
+docker compose up --build
 ```
 
 4. Wait for the Django server to finish building (i.e. `tcf_django | Watching for file changes with StatReloader` is visible in stdout).
-5. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) (should be named `latest.sql`) from Google Drive into `db/latest.sql` in your local repo.
+5. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) (should be named `latest.dump`) from Google Drive into `db/latest.dump` in your local repo.
 6. Update the database:
 
 MacOS/Linux (or Windows, if you're using Git-Bash):
 
-```console
-$ sh scripts/reset-db.sh db/latest.sql
+```bash
+sh scripts/reset-db.sh
 ```
 
 If you're on windows, open up `scripts/reset-db.sh` and run the commands manually (sorry)
