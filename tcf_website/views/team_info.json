@@ -259,6 +259,13 @@
       "class": "2027",
       "img_filename": "ENG_Namai_Kureishi.jpg",
       "github": "namaikureishi"
+    },
+    {
+      "name": "Phong Le",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Phong_Le.jpg",
+      "github": "phongo1"
     }
   ],
   "design_team": [
