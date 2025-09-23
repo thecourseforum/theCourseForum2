@@ -259,6 +259,13 @@
       "class": "2027",
       "img_filename": "ENG_Namai_Kureishi.jpg",
       "github": "namaikureishi"
+    },
+    {
+      "name": "Michael Barnor",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Michael_Barnor.jpg",
+      "github": "MichaelBarnor"
     }
   ],
   "design_team": [
