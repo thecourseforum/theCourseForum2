@@ -1,99 +1,326 @@
-/* Base styles */
+/* Modern Browse Page Styles */
 .browse.container {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .schools {
-  margin-top: 30px;
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 0.5rem;
 }
 
-/* School card styling */
+/* Modern School Card Design */
 .school {
   border: none;
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  margin-bottom: 1.5rem;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 0;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.school::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--main-color), var(--secondary-color), var(--accent-color));
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .school:hover {
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(-4px) scale(1.01);
 }
 
+.school:hover::before {
+  opacity: 1;
+}
+
+/* Modern Header Design */
 .school > .card-header {
-  background-color: var(--secondary-color);
+  background: linear-gradient(135deg, var(--main-color) 0%, var(--secondary-color) 100%);
   color: white;
   border: none;
-  padding: 1rem 1.5rem;
+  padding: 1.5rem 2rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.school > .card-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.school > .card-header:hover::before {
+  left: 100%;
 }
 
 .school > .card-header:hover {
-  background-color: var(--main-color);
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
+  transform: translateY(-1px);
 }
 
 .card-title {
-  font-weight: 500;
-  font-size: 1.25rem;
+  font-weight: 600;
+  font-size: 1.4rem;
+  letter-spacing: -0.025em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0;
 }
 
+/* Override float styles for proper flexbox alignment */
+.school > .card-header .float-left,
+.school > .card-header .float-right {
+  float: none;
+  display: flex;
+  align-items: center;
+}
+
+.school > .card-header .clearfix {
+  display: none;
+}
+
+/* Remove Bootstrap padding that interferes with centering */
+.school > .card-header.pt-3 {
+  padding-top: 1.5rem !important;
+}
+
+/* Ensure the h3 title is properly aligned */
+.school > .card-header .card-title {
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+}
+
+/* Ensure the chevron icon is centered */
+.school > .card-header .fa-chevron-down-white,
+.school > .card-header .fa-chevron-up-white {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.4rem;
+  width: 1.4rem;
+}
+
+/* Modern Body Design */
 .school-body {
-  padding: 1.5rem;
-  background-color: white;
+  padding: 2rem;
+  background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+  position: relative;
 }
 
-/* Department list styling */
+.school-body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 2rem;
+  right: 2rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent);
+}
+
+/* Enhanced Department List */
 .department-list {
   list-style-type: none;
   padding: 0;
   margin: 0;
+  display: grid;
+  gap: 0.75rem;
 }
 
 .department-list li {
-  padding: 0.5rem 0;
-  transition: all 0.3s ease;
+  padding: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.department-list li::before {
+  content: '';
+  position: absolute;
+  left: -1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 0;
+  background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+  border-radius: 2px;
+  transition: height 0.3s ease;
+}
+
+.department-list li:hover::before {
+  height: 100%;
 }
 
 .department-list li:hover {
-  transform: translateX(5px);
+  transform: translateX(8px);
+  padding-left: 1rem;
 }
 
 .department-list a {
   color: var(--dark-color);
   text-decoration: none;
-  display: inline-block;
-  font-weight: 400;
-  transition: all 0.3s ease;
+  display: block;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  background: transparent;
+  border: 1px solid transparent;
 }
 
 .department-list a:hover {
-  color: var(--accent-color);
-  font-weight: 500;
+  color: var(--main-color);
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(39, 79, 151, 0.05), rgba(64, 119, 196, 0.05));
+  border-color: rgba(39, 79, 151, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+.department-list a:active {
+  transform: scale(0.98);
+}
+
+/* Enhanced Typography */
 .font-weight-bold {
-  margin-top: 20px;
+  margin-top: 1.5rem;
+  font-weight: 700;
+  color: var(--main-color);
 }
 
-/* Chevron icon styling */
+/* Modern Chevron Icons */
 .fa-chevron-down-white, .fa-chevron-up-white {
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1.1rem;
+  opacity: 0.9;
 }
 
-/* Responsive columns */
+.fa-chevron-down-white:hover, .fa-chevron-up-white:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Page Header Enhancements */
+.browse h2 {
+  font-weight: 700;
+  color: var(--main-color);
+  font-size: 2.25rem;
+  letter-spacing: -0.025em;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Enhanced Responsive Design */
+@media (min-width: 576px) {
+  .department-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .browse.container {
+    padding: 0 1.5rem;
+  }
+}
+
 @media (min-width: 768px) {
   .department-list {
-    columns: 2;
-    column-gap: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .schools {
+    gap: 0.75rem;
+  }
+  
+  .school > .card-header {
+    padding: 2rem 2.5rem;
+  }
+  
+  .school-body {
+    padding: 2.5rem;
   }
 }
 
 @media (min-width: 992px) {
   .department-list {
-    columns: 3;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
   }
+  
+  .browse h2 {
+    font-size: 2.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .department-list {
+    gap: 1.5rem;
+  }
+  
+  .schools {
+    gap: 1rem;
+  }
+}
+
+/* Smooth animations for collapsible content */
+.school-body.collapse {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.school-body.collapse:not(.show) {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.school-body.collapse.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Focus states for accessibility */
+.school > .card-header:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+.department-list a:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Loading animation for better UX */
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.school.loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
 }
