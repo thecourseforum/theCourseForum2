@@ -259,7 +259,15 @@
       "class": "2027",
       "img_filename": "ENG_Namai_Kureishi.jpg",
       "github": "namaikureishi"
+    },
+    {
+      "name": "Adrian Villanueva",
+      "role": "Developer",
+      "class": "2028",
+      "img_filename": "ENG_Adrian_Villanueva.jpg",
+      "github": "Adrian-E-V"
     }
+    
   ],
   "design_team": [
     {
