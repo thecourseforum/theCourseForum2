@@ -201,6 +201,56 @@
                     </div>
                 </div>
             </div>
+
+            <div class="gpa-trend-section container p-3 rounded shadow-sm mb-4" style="background-color: #ebebeb;">
+                <div id="gpa-analysis-content" class="row">
+                    {% if gpa_history|length < 3 %}
+                    <div class="col-12 text-center">
+                        <p class="text-muted" style="font-size: 16px; line-height: 300px;">Not enough information</p>
+                    </div>
+                    {% else %}
+                    <!-- Left Section (Sentiment Analysis) -->
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body" style="padding: 10px; height: 300px;">
+                                <p class="sentiment-text" style="text-align: center; font-size: 16px; margin-top: 1em; margin-bottom: 5px; color: black;">
+                                    How Students Feel About {{ course.code }} - {{ instructor.first_name }} {{ instructor.last_name }}
+                                </p>
+                                <div style="position: relative; height: 200px; width: 90%; margin: 0 auto;">
+                                    <canvas id="sentiment-chart" style="max-height: 200px;"></canvas>
+                                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center;" 
+                                         id="sentiment-chart-label">
+                                        <p class="sentiment-text" style="margin: 0; padding: 0; font-size: 16px;">
+                                            Not enough information
+                                        </p>
+                                    </div>
+                                    <div id="sentiment-labels" style="display: none; justify-content: space-between; margin-top: 2px; font-size: 14px;">
+                                        <span style="color: #BE4B20; font-weight: bold;">Strongly Negative</span>
+                                        <span style="color: #182D66; font-weight: bold;">Strongly Positive</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Section (GPA Graph) -->
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body p-2" style="height: 300px; position: relative;">
+                                <p class="sentiment-text" style="text-align: center; font-size: 16px; margin-top: 0.5em; margin-bottom: 5px; color: black;">
+                                    Average GPA Trend
+                                </p>
+                                <canvas id="gpaChart" class="w-100" style="max-height: 260px;"></canvas>
+                                <div id="gpa-no-data" class="d-none" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center;">
+                                    <p class="text-muted" style="margin: 0; font-size: 16px;">Not enough information</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
             {% if display_times %}
             <div class="times-info-container" id="reviews">
                 <div class="info-container" style="padding: 10px 15px; margin: 0;">
@@ -447,4 +497,203 @@
     <!-- For QA Form-->
     <script type="text/javascript" src="{% static 'qa/new_answer.js' %}"></script>
 
+    <script>
+        // Register custom plugin for vertical hover line
+        Chart.register({
+            id: 'verticalHoverLine',
+            afterDraw: function(chart) {
+                if (chart.tooltip._active && chart.tooltip._active.length) {
+                    const activePoint = chart.tooltip._active[0];
+                    const ctx = chart.ctx;
+                    const x = activePoint.element.x;
+                    const topY = chart.scales.y.top;
+                    const bottomY = chart.scales.y.bottom;
+
+                    // Draw vertical line
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(x, topY);
+                    ctx.lineTo(x, bottomY);
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = '#1e90ff';
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        });
+
+        // GPA Chart Script
+        const gpaHistory = JSON.parse('{{ gpa_history|escapejs }}');
+        const gpaChartCanvas = document.getElementById('gpaChart');
+        const gpaNoDataDiv = document.getElementById('gpa-no-data');
+        const gpaCtx = gpaChartCanvas ? gpaChartCanvas.getContext('2d') : null;
+
+        if (gpaHistory.length <= 1) {
+            gpaChartCanvas.classList.add('d-none');
+            gpaNoDataDiv.classList.remove('d-none');
+        } else {
+            const labels = gpaHistory.map(entry => `${entry.semester_term}`);
+            const gpaData = gpaHistory.map(entry => entry.average_gpa);
+
+            // Calculate a reasonable Y-axis minimum based on the data
+            const minGpa = Math.min(...gpaData);
+            const suggestedMin = Math.floor(minGpa * 2) / 2;
+            const yAxisMin = Math.max(2.0, suggestedMin);
+
+            new Chart(gpaCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Average GPA',
+                        data: gpaData,
+                        borderColor: '#FF8733',
+                        backgroundColor: '#fff',
+                        pointBackgroundColor: '#FF8733',
+                        pointBorderColor: '#fff',
+                        pointRadius: 5,
+                        fill: false,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { 
+                        padding: { 
+                            left: 10, 
+                            right: 10, 
+                            top: 20, 
+                            bottom: 20 
+                        } 
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false, drawBorder: false },
+                            ticks: { 
+                                color: '#2d1c1c', 
+                                font: { size: 14 },
+                                padding: 5
+                            },
+                            offset: true,
+                            min: labels[0],
+                            max: labels[labels.length - 1],
+                            afterFit: function(scaleInstance) {
+                                scaleInstance.paddingLeft = 5;
+                                scaleInstance.paddingRight = 5;
+                            }
+                        },
+                        y: {
+                            grid: { display: false, drawBorder: false },
+                            min: yAxisMin,
+                            max: 4.0,
+                            ticks: { 
+                                stepSize: 0.5, 
+                                color: '#2d1c1c', 
+                                font: { size: 14 },
+                                padding: 5
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#2e2e7e',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 12 },
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return tooltipItem.raw;
+                                },
+                                title: function() {
+                                    return '';
+                                }
+                            }
+                        },
+                        verticalHoverLine: true
+                    }
+                }
+            });
+        }
+        
+
+        // Sentiment Bar Chart
+        let rawData = `{{ sentiment_distribution|safe }}`;
+        const sentimentData = JSON.parse(rawData);
+        const sentimentLabels = Object.keys(sentimentData);
+        const dataValues = Object.values(sentimentData);
+        const totalReviews = dataValues.reduce((sum, current) => sum + current, 0);
+
+        const chartCanvas = document.getElementById("sentiment-chart");
+        const noReviewsMessage = document.getElementById("sentiment-chart-label");
+
+        if (totalReviews <= 1) { // Changed condition to <= 1
+            chartCanvas.style.display = "none";
+            noReviewsMessage.style.display = "block";
+            document.getElementById('sentiment-labels').style.display = "none";
+        } else {
+            chartCanvas.style.display = "block";
+            noReviewsMessage.style.display = "none";
+            document.getElementById('sentiment-labels').style.display = "flex";
+
+            const barColors = {
+                normal: ['#BE4B20', '#DD734C', '#B4A6B6', '#5D83D1', '#182D66'],
+                hover: ['#9E3B10', '#BD634C', '#948696', '#4D73C1', '#081D56']
+            };
+
+            const datasets = sentimentLabels.map((label, index) => ({
+                label: label,
+                data: [dataValues[index]],
+                backgroundColor: barColors.normal[index % barColors.normal.length],
+                hoverBackgroundColor: barColors.hover[index % barColors.hover.length],
+                borderWidth: 0
+            }));
+
+            const sentimentCtx = chartCanvas.getContext('2d');
+            new Chart(sentimentCtx, {
+                type: 'bar',
+                data: {
+                    labels: ["Review Positivity"],
+                    datasets: datasets
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { 
+                        padding: { 
+                            left: 20, 
+                            right: 20, 
+                            top: 20, 
+                            bottom: 20 
+                        } 
+                    },
+                    barPercentage: 0.8,
+                    categoryPercentage: 0.9,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'dataset',
+                            intersect: true,
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    let value = tooltipItem.raw;
+                                    let total = tooltipItem.chart.data.datasets.reduce((sum, ds) => sum + ds.data[tooltipItem.dataIndex], 0);
+                                    let percentage = Math.round((value / total) * 100);
+                                    return `${tooltipItem.dataset.label}: ${percentage}% of reviews`;
+                                }
+                            }
+                        }
+                    },
+                    hover: { mode: 'point', intersect: true },
+                    scales: {
+                        x: { display: false, stacked: true, min: 0, max: totalReviews, grid: { display: false } },
+                        y: { display: false, stacked: true, grid: { display: false } }
+                    }
+                }
+            });
+        }
+    </script>
 {% endblock %}
