@@ -30,7 +30,9 @@ class InstructorTestCase(TestCase):
             + self.review2.enjoyability
         ) / 6
 
-        self.assertAlmostEqual(self.instructor.average_rating_for_course(self.course), rating, 4)
+        self.assertAlmostEqual(
+            self.instructor.average_rating_for_course(self.course), rating, 4
+        )
 
     def test_average_difficulty_for_course(self):
         """Test average difficulty for a particular course."""
@@ -54,7 +56,9 @@ class InstructorTestCase(TestCase):
 
     def test_average_instructor_rating_for_course(self):
         """Test average instructor rating for a particular course."""
-        instructor_rating = (self.review1.instructor_rating + self.review2.instructor_rating) / 2
+        instructor_rating = (
+            self.review1.instructor_rating + self.review2.instructor_rating
+        ) / 2
 
         self.assertAlmostEqual(
             self.instructor.average_instructor_rating_for_course(self.course),
@@ -86,7 +90,9 @@ class InstructorTestCase(TestCase):
 
     def test_average_reading_hours_for_course(self):
         """Test average reading hours for a particular course."""
-        average_reading = (self.review1.amount_reading + self.review2.amount_reading) / 2
+        average_reading = (
+            self.review1.amount_reading + self.review2.amount_reading
+        ) / 2
 
         self.assertAlmostEqual(
             self.instructor.average_reading_hours_for_course(self.course),
@@ -96,7 +102,9 @@ class InstructorTestCase(TestCase):
 
     def test_average_writing_hours_for_course(self):
         """Test average writing hours for a particular course."""
-        average_writing = (self.review1.amount_writing + self.review2.amount_writing) / 2
+        average_writing = (
+            self.review1.amount_writing + self.review2.amount_writing
+        ) / 2
 
         self.assertAlmostEqual(
             self.instructor.average_writing_hours_for_course(self.course),
@@ -116,7 +124,9 @@ class InstructorTestCase(TestCase):
 
     def test_average_other_hours_for_course(self):
         """Test average other hours for a particular course."""
-        average_other = (self.review1.amount_homework + self.review2.amount_homework) / 2
+        average_other = (
+            self.review1.amount_homework + self.review2.amount_homework
+        ) / 2
 
         self.assertAlmostEqual(
             self.instructor.average_other_hours_for_course(self.course),
@@ -126,7 +136,9 @@ class InstructorTestCase(TestCase):
 
     def test_average_gpa_for_course(self):
         """Test average gpa for a particular course."""
-        average_gpa_course = (self.instructor_grade.average + self.instructor_grade2.average) / 2
+        average_gpa_course = (
+            self.instructor_grade.average + self.instructor_grade2.average
+        ) / 2
 
         self.assertAlmostEqual(
             self.instructor.average_gpa_for_course(self.course),
@@ -174,7 +186,9 @@ class InstructorTestCase(TestCase):
             + self.review6.enjoyability
         ) / 6
 
-        avg_rating = (avg_instructor_rating + avg_recommendability + avg_enjoyability) / 3
+        avg_rating = (
+            avg_instructor_rating + avg_recommendability + avg_enjoyability
+        ) / 3
 
         self.assertAlmostEqual(self.instructor.average_rating(), avg_rating, 4)
 

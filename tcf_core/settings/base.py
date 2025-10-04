@@ -23,7 +23,14 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")  # default value set on the top
 
-ALLOWED_HOSTS = ["localhost", ".ngrok.io", "127.0.0.1"]
+ALLOWED_HOSTS = []
+
+CORS_ALLOWED_ORIGINS = [
+    "https://thecourseforum.com",
+    "https://thecourseforumtest.com",
+    "https://pagead2.googlesyndication.com",
+    "https://securepubads.g.doubleclick.net",
+]
 
 # Application definition
 
@@ -33,13 +40,69 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    # "collectfast",
     "django.contrib.staticfiles",
-    "social_django",
     "cachalot",  # TODO: add Redis?
+    "storages",
     "rest_framework",
     "django_filters",
     "tcf_website",
 ]
+
+# Dev does not use S3 buckets
+if env.str("ENVIRONMENT") == "dev":
+    STATIC_URL = "/static/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+    ALLOWED_HOSTS.extend(["localhost", ".grok.io", "127.0.0.1"])
+
+    DATABASES = {
+        "default": {
+            "NAME": env.str("DB_NAME"),
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "USER": env.str("DB_USER"),
+            "PASSWORD": env.str("DB_PASSWORD"),
+            "HOST": env.str("DB_HOST"),
+            "PORT": env.int("DB_PORT"),
+        }
+    }
+else:
+    AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_REGION_NAME = env.str("AWS_S3_REGION_NAME", default="us-east-1")
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    AWS_DEFAULT_ACL = None
+    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+
+    ALLOWED_HOSTS.extend(
+        [
+            "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
+            "thecourseforum.com",
+            "thecourseforumtest.com",
+        ]
+    )
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+            "OPTIONS": {},
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+        },
+    }
+
+    DATABASES = {
+        "default": {
+            "NAME": env.str("AWS_RDS_NAME"),
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "USER": env.str("AWS_RDS_USER"),
+            "PASSWORD": env.str("AWS_RDS_PASSWORD"),
+            "HOST": env.str("AWS_RDS_HOST"),
+            "PORT": env.int("AWS_RDS_PORT"),
+        }
+    }
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -49,6 +112,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "tcf_core.cognito_middleware.CognitoAuthMiddleware",
     "tcf_core.settings.handle_exceptions_middleware.HandleExceptionsMiddleware",
     "tcf_core.settings.record_middleware.RecordMiddleware",
 ]
@@ -66,10 +130,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "social_django.context_processors.backends",
-                "social_django.context_processors.login_redirect",
                 "tcf_core.context_processors.base",
-                "tcf_core.context_processors.history_cookies",
+                "tcf_core.context_processors.searchbar_context",
             ],
         },
     },
@@ -111,71 +173,27 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "NAME": env.str("DB_NAME"),
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "USER": env.str("DB_USER"),
-        "PASSWORD": env.str("DB_PASSWORD"),
-        "HOST": env.str("DB_HOST"),
-        "PORT": env.int("DB_PORT"),
-    },
-    "legacy": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "tcf.db"),
-    },
-}
-
-
 # social-auth-app-django settings.
 
+# AWS Cognito Configuration
+COGNITO_USER_POOL_ID = env.str("COGNITO_USER_POOL_ID")
+COGNITO_APP_CLIENT_ID = env.str("COGNITO_APP_CLIENT_ID")
+COGNITO_APP_CLIENT_SECRET = env.str("COGNITO_APP_CLIENT_SECRET")
+COGNITO_DOMAIN = env.str("COGNITO_DOMAIN")
+COGNITO_REGION_NAME = env.str("COGNITO_REGION_NAME")
+
+# These should match exactly what you configured in Cognito
+COGNITO_REDIRECT_URI = "/cognito-callback"
+COGNITO_LOGOUT_URI = "/"
+
+# Replace social auth backends with custom Cognito backend
 AUTHENTICATION_BACKENDS = (
-    "social_core.backends.google.GoogleOAuth2",
-    "social_core.backends.email.EmailAuth",
+    "tcf_website.auth_backends.CognitoBackend",
     "django.contrib.auth.backends.ModelBackend",
 )
-# TODO: Look into options like SOCIAL_AUTH_LOGIN_ERROR_URL or LOGIN_ERROR_URL
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ["virginia.edu"]
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy("browse")
 
-SOCIAL_AUTH_EMAIL_FORM_URL = "/"
-EMAIL_VALIDATION_URL = "email_verification"
-SOCIAL_AUTH_EMAIL_VALIDATION_FUNCTION = "tcf_core.auth_pipeline.validate_email"
-SOCIAL_AUTH_EMAIL_AUTH_WHITELISTED_DOMAINS = ["virginia.edu"]
-
-WHITELISTED_DOMAINS = ["virginia.edu"]
-
-SOCIAL_AUTH_GOOGLE_OAUTH2_LOGIN_URL = reverse_lazy("social:begin", args=["google-oauth2"])
-SOCIAL_AUTH_RAISE_EXCEPTIONS = False
-SOCIAL_AUTH_PIPELINE = (
-    "tcf_core.auth_pipeline.password_validation",
-    "social_core.pipeline.social_auth.social_details",
-    "social_core.pipeline.social_auth.social_uid",
-    "tcf_core.auth_pipeline.auth_allowed",
-    "social_core.pipeline.social_auth.social_user",
-    "social_core.pipeline.user.get_username",
-    "tcf_core.auth_pipeline.mail_validation",
-    "social_core.pipeline.social_auth.associate_by_email",
-    "tcf_core.auth_pipeline.collect_extra_info",
-    "tcf_core.auth_pipeline.create_user",
-    "social_core.pipeline.social_auth.associate_user",
-    "tcf_core.auth_pipeline.check_user_password",
-    "social_core.pipeline.social_auth.load_extra_data",
-    "social_core.pipeline.user.user_details",
-)
-SOCIAL_AUTH_USER_MODEL = "tcf_website.User"
+# Login URL for redirecting unauthenticated users
+LOGIN_URL = reverse_lazy("login")
 
 AUTH_USER_MODEL = "tcf_website.User"
 
@@ -230,3 +248,6 @@ MESSAGE_TAGS = {
 
 # Required in Django 3.2+ (See https://stackoverflow.com/a/66971803)
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+# Toxicity threshold for filtering reviews
+TOXICITY_THRESHOLD = 74

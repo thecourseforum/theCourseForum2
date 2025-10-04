@@ -149,7 +149,9 @@ class Command(BaseCommand):
         if self.verbosity > 0:
             print(f"Found {df.size} sections in {file}")
 
-        for _, row in tqdm(df.iterrows(), total=df.shape[0], disable=self.suppress_tqdm):
+        for _, row in tqdm(
+            df.iterrows(), total=df.shape[0], disable=self.suppress_tqdm
+        ):
             if self.verbosity == 3:
                 print(str(row).encode("ascii", "ignore").decode("ascii"))
             self.load_row_into_dict(row)
@@ -287,8 +289,12 @@ class Command(BaseCommand):
         # Load course_instructor_grades data from dicts and create model instances
         unsaved_cig_instances = []
         for row in tqdm(self.course_instructor_grades, disable=self.suppress_tqdm):
-            course_instructor_grade_params = self.set_grade_params(row, is_instructor_grade=True)
-            unsaved_cig_instance = CourseInstructorGrade(**course_instructor_grade_params)
+            course_instructor_grade_params = self.set_grade_params(
+                row, is_instructor_grade=True
+            )
+            unsaved_cig_instance = CourseInstructorGrade(
+                **course_instructor_grade_params
+            )
             unsaved_cig_instances.append(unsaved_cig_instance)
         CourseInstructorGrade.objects.bulk_create(unsaved_cig_instances)
         if self.verbosity > 0:

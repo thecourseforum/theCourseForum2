@@ -202,7 +202,6 @@
   filter: invert(1);
 }
 
-
 .fa-thumbs-up {
   width: 1em;
   height: 1em;
@@ -311,6 +310,13 @@
 
 .fa-heart {
   background-image: url("../icons/img/fa-heart.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.fa-copy {
+  background-image: url("../icons/img/fa-copy.svg");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;

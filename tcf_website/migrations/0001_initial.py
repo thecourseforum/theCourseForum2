@@ -36,7 +36,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "last_login",
-                    models.DateTimeField(blank=True, null=True, verbose_name="last login"),
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
                 ),
                 (
                     "is_superuser",
@@ -49,25 +51,35 @@ class Migration(migrations.Migration):
                 (
                     "username",
                     models.CharField(
-                        error_messages={"unique": "A user with that username already exists."},
+                        error_messages={
+                            "unique": "A user with that username already exists."
+                        },
                         help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
                         max_length=150,
                         unique=True,
-                        validators=[django.contrib.auth.validators.UnicodeUsernameValidator()],
+                        validators=[
+                            django.contrib.auth.validators.UnicodeUsernameValidator()
+                        ],
                         verbose_name="username",
                     ),
                 ),
                 (
                     "first_name",
-                    models.CharField(blank=True, max_length=150, verbose_name="first name"),
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="first name"
+                    ),
                 ),
                 (
                     "last_name",
-                    models.CharField(blank=True, max_length=150, verbose_name="last name"),
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="last name"
+                    ),
                 ),
                 (
                     "email",
-                    models.EmailField(blank=True, max_length=254, verbose_name="email address"),
+                    models.EmailField(
+                        blank=True, max_length=254, verbose_name="email address"
+                    ),
                 ),
                 (
                     "is_staff",
@@ -425,7 +437,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "number",
-                    models.IntegerField(help_text="As defined in SIS/Lou's List", unique=True),
+                    models.IntegerField(
+                        help_text="As defined in SIS/Lou's List", unique=True
+                    ),
                 ),
             ],
         ),
@@ -492,7 +506,9 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="semester",
-            index=models.Index(fields=["year", "season"], name="tcf_website_year_caa60c_idx"),
+            index=models.Index(
+                fields=["year", "season"], name="tcf_website_year_caa60c_idx"
+            ),
         ),
         migrations.AddIndex(
             model_name="semester",
@@ -500,7 +516,9 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name="semester",
-            constraint=models.UniqueConstraint(fields=("season", "year"), name="unique semesters"),
+            constraint=models.UniqueConstraint(
+                fields=("season", "year"), name="unique semesters"
+            ),
         ),
         migrations.AddField(
             model_name="section",
@@ -637,7 +655,9 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="vote",
-            index=models.Index(fields=["review"], name="tcf_website_review__5435a6_idx"),
+            index=models.Index(
+                fields=["review"], name="tcf_website_review__5435a6_idx"
+            ),
         ),
         migrations.AddConstraint(
             model_name="vote",
@@ -648,7 +668,9 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="subdepartment",
-            index=models.Index(fields=["department"], name="tcf_website_departm_85d335_idx"),
+            index=models.Index(
+                fields=["department"], name="tcf_website_departm_85d335_idx"
+            ),
         ),
         migrations.AddConstraint(
             model_name="subdepartment",
@@ -666,7 +688,9 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="section",
-            index=models.Index(fields=["course"], name="tcf_website_course__ea693c_idx"),
+            index=models.Index(
+                fields=["course"], name="tcf_website_course__ea693c_idx"
+            ),
         ),
         migrations.AddConstraint(
             model_name="section",
@@ -691,7 +715,9 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="department",
-            index=models.Index(fields=["school"], name="tcf_website_school__d40b59_idx"),
+            index=models.Index(
+                fields=["school"], name="tcf_website_school__d40b59_idx"
+            ),
         ),
         migrations.AddConstraint(
             model_name="department",

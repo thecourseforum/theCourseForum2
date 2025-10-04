@@ -1,0 +1,119 @@
+# Based on https://github.com/actions/starter-workflows/blob/main/ci/django.yml
+name: AWS Deployment
+
+on:
+  # CI must pass on the master branch
+  workflow_run:
+    workflows: ["Continuous Integration"]
+    branches: [master]
+    types:
+      - completed
+
+env:
+  PYTHON_TARGET: 3.11
+  # Django
+  DJANGO_SETTINGS_MODULE: tcf_core.settings.prod
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  DEBUG: 0
+  ENVIRONMENT: production
+  # database
+  AWS_RDS_NAME: ${{ secrets.AWS_RDS_NAME }}
+  AWS_RDS_USER: ${{ secrets.AWS_RDS_USER }}
+  AWS_RDS_PASSWORD: ${{ secrets.AWS_DS_PASSWORD }}
+  AWS_RDS_HOST: ${{ secrets.AWS_RDS_HOST }}
+  AWS_RDS_PORT: ${{ secrets.AWS_RDS_PORT }}
+  # AWS Cognito
+  COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
+  COGNITO_APP_CLIENT_ID: ${{ secrets.COGNITO_APP_CLIENT_ID }}
+  COGNITO_APP_CLIENT_SECRET: ${{ secrets.COGNITO_APP_CLIENT_SECRET }}
+  COGNITO_DOMAIN: ${{ secrets.COGNITO_DOMAIN }}
+  COGNITO_REGION_NAME: ${{ secrets.COGNITO_REGION_NAME }}
+  # email for account verification
+  EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+  EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+  # review drive account information
+  REVIEW_DRIVE_ID: ${{ secrets.REVIEW_DRIVE_ID }}
+  REVIEW_DRIVE_EMAIL: ${{ secrets.REVIEW_DRIVE_EMAIL }}
+  REVIEW_DRIVE_PASSWORD: ${{ secrets.REVIEW_DRIVE_PASSWORD }}
+  # aws ecs image
+  AWS_REGION: us-east-1
+  ECS_SERVICE: barrett-fogle-love-v1
+  ECS_CLUSTER: tcf-fargate-cluster
+  ECR_REPO: tcf/thecourseforum2
+  ECR_CONTAINER_NAME: tcf-container
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
+
+jobs:
+  deploy:
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout `master`
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set up Python ${{ env.PYTHON_TARGET }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_TARGET }}
+
+      - name: Install Python packages, excluding the unnecessary ones
+        run: |
+          python -m pip install --upgrade pip
+          sed -i '/\(coverage\|lint\|types\-tqdm\|mypy\|black\|isort\|gunicorn\|django\-heroku\|django\-stubs\)/d' requirements.txt
+          pip install -r requirements.txt
+
+      - name: Collect static files
+        run: python manage.py collectstatic --no-input
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{github.sha}}
+
+      - name: Get latest task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition tcf-prod-task \
+            --query taskDefinition > task-definition.json
+
+      - name: Add image in ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.ECR_CONTAINER_NAME }}
+          image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{github.sha}}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+
+      - name: Force new deployment
+        run: |
+          aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --force-new-deployment

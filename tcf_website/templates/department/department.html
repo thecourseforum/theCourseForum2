@@ -1,7 +1,7 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}{{breadcrumbs.1.0}} - theCourseForum{% endblock %}
+{% block title %}{{breadcrumbs.1.0}} | theCourseForum{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'department/department.css' %}" />
@@ -19,8 +19,8 @@
     {% include "common/toolbar.html" with active_course_recency=active_course_recency latest_semester=latest_semester last_five_years=last_five_years dept_id=dept_id breadcrumbs=breadcrumbs sorting=True %}
   </div>
   <div class="subdepartments mt-3">
-    <div class="subdepartment container-lg">
-      {% if courses|length == 0 %}
+    <div class="subdepartment container-lg px-0">
+      {% if paginated_courses|length == 0 %}
         <div class="new card col p-5 text-center">
           <div class="card-body">
             <h4 class="card-title">
@@ -33,13 +33,14 @@
         </div>
       {% else %}
       <ul class="course-list">
-        {% for course in courses %} 
+        {% for course in paginated_courses %} 
           {% include "department/department_course.html" with course=course %}
         {% endfor %}
       </ul>
       {% endif %}
     </div>
   </div>
+  {% include "common/pagination.html" with paginated_items=paginated_courses %}
 </div>
 
 {% endblock %}

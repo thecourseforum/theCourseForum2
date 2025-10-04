@@ -1,11 +1,28 @@
 # pylint: disable=too-many-ancestors,fixme
 """DRF Viewsets"""
+import asyncio
+from threading import Thread
+from django.db import connection
 from django.db.models import Avg, Sum
+from django.http import JsonResponse
 from rest_framework import viewsets
-
-from ..models import Course, Department, Instructor, School, Semester, Subdepartment
+import requests
+from ..models import (
+    Club,
+    ClubCategory,
+    Course,
+    Department,
+    Instructor,
+    School,
+    Section,
+    SectionEnrollment,
+    Semester,
+    Subdepartment,
+)
 from .filters import InstructorFilter
 from .serializers import (
+    ClubCategorySerializer,
+    ClubSerializer,
     CourseAllStatsSerializer,
     CourseSerializer,
     CourseSimpleStatsSerializer,
@@ -15,6 +32,7 @@ from .serializers import (
     SemesterSerializer,
     SubdepartmentSerializer,
 )
+from .enrollment import update_enrollment_data
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
@@ -49,7 +67,9 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
         if "recent" in self.request.query_params:
             latest_semester = Semester.latest()
-            queryset = queryset.filter(semester_last_taught__year__gte=latest_semester.year - 5)
+            queryset = queryset.filter(
+                semester_last_taught__year__gte=latest_semester.year - 5
+            )
 
         if "allstats" in self.request.query_params:
             queryset = queryset.prefetch_related("review_set").annotate(
@@ -137,3 +157,65 @@ class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
             params["section__instructors"] = self.request.query_params["instructor"]
         # Returns filtered, unique semesters in reverse chronological order
         return super().get_queryset().filter(**params).distinct().order_by("-number")
+
+
+class ClubCategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    """DRF ViewSet for ClubCategory"""
+
+    queryset = ClubCategory.objects.all()
+    serializer_class = ClubCategorySerializer
+
+
+class ClubViewSet(viewsets.ReadOnlyModelViewSet):
+    """DRF ViewSet for Club"""
+
+    queryset = Club.objects.select_related("category")
+    serializer_class = ClubSerializer
+    filterset_fields = ["category"]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        # Filter by category if provided in query params
+        category_id = self.request.query_params.get("category")
+        if category_id:
+            queryset = queryset.filter(category_id=category_id)
+
+        return queryset.order_by("name")
+
+
+class SectionEnrollmentViewSet(viewsets.ViewSet):
+    """ViewSet for retrieving section enrollment data."""
+
+    def retrieve(self, request, pk=None):
+        """Retrieves enrollment data for all sections of a given course."""
+
+        # Start the update in a background thread
+        def _run_update():
+            try:
+                asyncio.run(update_enrollment_data(pk))
+            except (asyncio.TimeoutError, requests.RequestException, ValueError) as exc:
+                print(f"Enrollment update failed for course {pk}: {exc}")
+            finally:
+                connection.close()
+
+        thread = Thread(target=_run_update, daemon=True)
+        thread.start()
+
+        # Get sections and return enrollment data
+        sections = Section.objects.filter(course_id=pk)
+        enrollment_data = {}
+
+        for section in sections:
+            section_enrollment = SectionEnrollment.objects.filter(
+                section=section
+            ).first()
+            if section_enrollment:
+                enrollment_data[section.sis_section_number] = {
+                    "enrollment_taken": section_enrollment.enrollment_taken,
+                    "enrollment_limit": section_enrollment.enrollment_limit,
+                    "waitlist_taken": section_enrollment.waitlist_taken,
+                    "waitlist_limit": section_enrollment.waitlist_limit,
+                }
+
+        return JsonResponse({"enrollment_data": enrollment_data})

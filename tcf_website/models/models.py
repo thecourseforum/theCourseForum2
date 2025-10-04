@@ -1,8 +1,9 @@
 # pylint: disable=missing-class-docstring, wildcard-import, fixme, too-many-lines
 """TCF Database models."""
 
-import math
+from decimal import Decimal
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
@@ -13,9 +14,11 @@ from django.db.models import (
     Avg,
     Case,
     CharField,
+    Exists,
     ExpressionWrapper,
     F,
     FloatField,
+    IntegerField,
     OuterRef,
     Q,
     QuerySet,
@@ -25,7 +28,9 @@ from django.db.models import (
     When,
     fields,
 )
-from django.db.models.functions import Abs, Coalesce, Round
+from django.db.models.functions import Abs, Cast, Coalesce, Concat, Round
+
+# pylint: disable=line-too-long
 
 
 class School(models.Model):
@@ -74,10 +79,13 @@ class Department(models.Model):
         # to get the same season from n years earlier, subtract 10*n from semester number
         return Course.objects.filter(
             subdepartment__department=self,
-            semester_last_taught__number__gte=latest_semester.number - (10 * num_of_years),
+            semester_last_taught__number__gte=latest_semester.number
+            - (10 * num_of_years),
         ).order_by("number", "subdepartment__name")
 
-    def sort_courses_by_key(self, annotation, num_of_years: int = 5, reverse: bool = False):
+    def sort_courses_by_key(
+        self, annotation, num_of_years: int = 5, reverse: bool = False
+    ):
         """Sort recent courses by key `annotation`"""
         courses = self.fetch_recent_courses(num_of_years)
         sort_order = ("-" if reverse else "") + "sort_value"
@@ -121,13 +129,34 @@ class Department(models.Model):
 
         return self.sort_courses_by_key(annotation, num_of_years, reverse)
 
+    def get_paginated_department_courses(
+        self, sort_type: str, num_of_years: int, order: str, page_number=1
+    ) -> "Page[Course]":
+        """Generate sorted, paginated reviews"""
+        dept_courses = self.sort_courses(sort_type, num_of_years, order)
+        return self.paginate(dept_courses, page_number)
+
+    def paginate(
+        self, courses: "QuerySet[Course]", page_number, courses_per_page=10
+    ) -> "Page[Course]":
+        """Paginate reviews"""
+        paginator = Paginator(courses, courses_per_page)
+        try:
+            page_obj = paginator.page(page_number)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+
+        return page_obj
+
     class Meta:
         indexes = [
             models.Index(fields=["school"]),
         ]
 
         constraints = [
-            models.UniqueConstraint(fields=["name", "school"], name="unique departments per school")
+            models.UniqueConstraint(
+                fields=["name", "school"], name="unique departments per school"
+            )
         ]
 
 
@@ -171,6 +200,55 @@ class Subdepartment(models.Model):
         ]
 
 
+class ClubCategory(models.Model):
+    """ClubCategory model.
+
+    Has many Clubs.
+    """
+
+    # Human name
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True)
+    # slug for routing in the existing course URL
+    slug = models.SlugField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Club(models.Model):
+    """Club model.
+
+    Belongs to a ClubCategory.
+    Has many Reviews.
+    """
+
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    category = models.ForeignKey(ClubCategory, on_delete=models.CASCADE)
+    combined_name = models.CharField(max_length=255, blank=True, editable=False)
+    application_required = models.BooleanField(default=False)
+    photo_url = models.CharField(max_length=255, blank=True)
+    meeting_time = models.CharField(max_length=255, blank=True)
+
+    def save(self, *args, **kwargs):
+        # maintain combined_name for trigram search
+        self.combined_name = self.name
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        indexes = [
+            GinIndex(
+                fields=["combined_name"],
+                opclasses=["gin_trgm_ops"],
+                name="club_combined_name",
+            ),
+        ]
+
+
 class User(AbstractUser):
     """User model.
 
@@ -198,12 +276,18 @@ class User(AbstractUser):
     def reviews(self):
         """Return user reviews sorted by creation date."""
         return self.review_set.annotate(
-            sum_votes=models.functions.Coalesce(models.Sum("vote__value"), models.Value(0)),
+            sum_votes=models.functions.Coalesce(
+                models.Sum("vote__value"), models.Value(0)
+            ),
             user_vote=models.functions.Coalesce(
                 models.Sum("vote__value", filter=models.Q(vote__user=self)),
                 models.Value(0),
             ),
         ).order_by("-created")
+
+    def schedules(self):
+        """Return user schedules"""
+        return self.schedule_set.all()
 
 
 class Instructor(models.Model):
@@ -309,9 +393,9 @@ class Instructor(models.Model):
 
     def average_gpa_for_course(self, course):
         """Compute average GPA"""
-        return CourseInstructorGrade.objects.filter(course=course, instructor=self).aggregate(
-            models.Avg("average")
-        )["average__avg"]
+        return CourseInstructorGrade.objects.filter(
+            course=course, instructor=self
+        ).aggregate(models.Avg("average"))["average__avg"]
 
     def taught_courses(self):
         """Returns all sections taught by Instructor."""
@@ -339,9 +423,9 @@ class Instructor(models.Model):
 
     def average_difficulty(self):
         """Compute average difficulty for all this Instructor's Courses"""
-        return Review.objects.filter(instructor=self).aggregate(models.Avg("difficulty"))[
-            "difficulty__avg"
-        ]
+        return Review.objects.filter(instructor=self).aggregate(
+            models.Avg("difficulty")
+        )["difficulty__avg"]
 
     def average_gpa(self):
         """Compute average GPA for all this Instructor's Courses"""
@@ -356,10 +440,20 @@ class Instructor(models.Model):
     class Meta:
         indexes = [
             GinIndex(
-                fields=["first_name"], opclasses=["gin_trgm_ops"], name="first_name_instructor"
+                fields=["first_name"],
+                opclasses=["gin_trgm_ops"],
+                name="first_name_instructor",
             ),
-            GinIndex(fields=["last_name"], opclasses=["gin_trgm_ops"], name="last_name_instructor"),
-            GinIndex(fields=["full_name"], opclasses=["gin_trgm_ops"], name="full_name_instructor"),
+            GinIndex(
+                fields=["last_name"],
+                opclasses=["gin_trgm_ops"],
+                name="last_name_instructor",
+            ),
+            GinIndex(
+                fields=["full_name"],
+                opclasses=["gin_trgm_ops"],
+                name="full_name_instructor",
+            ),
         ]
 
 
@@ -379,7 +473,9 @@ class Semester(models.Model):
     )
 
     # Semester year. Required.
-    year = models.IntegerField(validators=[MinValueValidator(2000), MaxValueValidator(2999)])
+    year = models.IntegerField(
+        validators=[MinValueValidator(2000), MaxValueValidator(2999)]
+    )
     # Semester season. Required.
     season = models.CharField(max_length=7, choices=SEASONS)
 
@@ -420,7 +516,9 @@ class Semester(models.Model):
             models.Index(fields=["number"]),
         ]
 
-        constraints = [models.UniqueConstraint(fields=["season", "year"], name="unique semesters")]
+        constraints = [
+            models.UniqueConstraint(fields=["season", "year"], name="unique semesters")
+        ]
 
 
 class Discipline(models.Model):
@@ -451,7 +549,9 @@ class Course(models.Model):
     disciplines = models.ManyToManyField(Discipline, blank=True)
 
     # Course number. Required.
-    number = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99999)])
+    number = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(99999)]
+    )
 
     # Subdepartment foreign key. Required.
     subdepartment = models.ForeignKey(Subdepartment, on_delete=models.CASCADE)
@@ -464,7 +564,9 @@ class Course(models.Model):
         return f"{self.subdepartment.mnemonic} {self.number} | {self.title}"
 
     def save(self, *args, **kwargs):
-        self.combined_mnemonic_number = f"{self.subdepartment.mnemonic} {self.number}".strip()
+        self.combined_mnemonic_number = (
+            f"{self.subdepartment.mnemonic} {self.number}".strip()
+        )
         super().save(*args, **kwargs)
 
     def compute_pre_req(self):
@@ -483,7 +585,9 @@ class Course(models.Model):
         pre_req = ""
         if "Prerequisite" in self.description:
             # Get pre_req from beginning to end
-            from_pre_req_to_end = self.description[self.description.find("Prerequisite") :]
+            from_pre_req_to_end = self.description[
+                self.description.find("Prerequisite") :
+            ]
             # Get rid of title of "Prerequisite"
             pre_req_no_title = from_pre_req_to_end[from_pre_req_to_end.find(":") + 1 :]
 
@@ -558,58 +662,93 @@ class Course(models.Model):
         """Compute total number of course reviews."""
         return self.review_set.count()
 
-    def get_instructors_and_data(self, latest_semester, reverse):
-        # https://docs.djangoproject.com/en/5.0/ref/models/expressions/
-        """Annotate each instructor with the id of the semester last taught object
-        Those pks are converted to semester objects with the second annotation
-        """
+    def get_instructors_and_data(self, latest_semester, reverse, recent=False):
+        """Annotate instructors with relevant data including ratings, difficulty, GPA, etc.
 
-        semester_last_taught_subquery = Subquery(
-            Section.objects.filter(course=self, instructors=OuterRef("pk"))
-            .order_by("-semester__number")
-            .values("semester__id")[:1]
+        Args:
+            latest_semester: The most recent semester
+            reverse: Whether to reverse sort (used for historical view)
+            recent: If True, only include instructors teaching in latest_semester
+        """
+        # Set default values based on whether we're using the optimized path or historical path
+        default_value = 0 if recent else (-1 if not reverse else 1e9)
+
+        # Build the base query
+        base_query = Instructor.objects.filter(hidden=False)
+
+        # Apply filter based on whether we want recent or historical instructors
+        if recent:
+            base_query = base_query.filter(
+                section__course=self,
+                section__semester=latest_semester,
+            )
+        else:
+            base_query = base_query.filter(section__course=self)
+
+        instructors = base_query.distinct().annotate(
+            instructor_rating=Coalesce(
+                Avg("review__instructor_rating", filter=Q(review__course=self)),
+                Value(default_value / 3),  # Divide by 3 for average
+                output_field=FloatField(),
+            ),
+            enjoyability=Coalesce(
+                Avg("review__enjoyability", filter=Q(review__course=self)),
+                Value(default_value / 3),
+                output_field=FloatField(),
+            ),
+            recommendability=Coalesce(
+                Avg("review__recommendability", filter=Q(review__course=self)),
+                Value(default_value / 3),
+                output_field=FloatField(),
+            ),
+            # Now calculate the combined rating
+            rating=ExpressionWrapper(
+                F("instructor_rating") + F("enjoyability") + F("recommendability"),
+                output_field=FloatField(),
+            ),
+            gpa=Coalesce(
+                Avg(
+                    "courseinstructorgrade__average",
+                    filter=Q(courseinstructorgrade__course=self),
+                ),
+                Value(default_value),
+                output_field=FloatField(),
+            ),
+            difficulty=Coalesce(
+                Avg("review__difficulty", filter=Q(review__course=self)),
+                Value(default_value),
+                output_field=FloatField(),
+            ),
         )
 
-        instructors = (
-            Instructor.objects.filter(section__course=self, hidden=False)
-            .distinct()
-            .annotate(
-                gpa=Coalesce(
-                    Avg(
-                        "courseinstructorgrade__average",
-                        filter=Q(courseinstructorgrade__course=self),
-                    ),
-                    Value(math.inf) if reverse else Value(-1),
-                    output_field=FloatField(),
+        # Add section times, section numbers, and semester last taught
+        if recent:
+            # For recent instructors, use simpler annotation for current semester only
+            instructors = instructors.annotate(
+                section_times=ArrayAgg(
+                    "section__section_times",
+                    filter=Q(section__semester=latest_semester, section__course=self),
+                    distinct=True,
                 ),
-                difficulty=Coalesce(
-                    Avg("review__difficulty", filter=Q(review__course=self)),
-                    Value(math.inf) if reverse else Value(-1),
-                    output_field=FloatField(),
+                section_nums=ArrayAgg(
+                    "section__sis_section_number",
+                    filter=Q(section__semester=latest_semester, section__course=self),
+                    distinct=True,
                 ),
-                rating=Coalesce(
-                    (
-                        Avg(
-                            "review__instructor_rating",
-                            filter=Q(review__course=self),
-                        )
-                        + Avg(
-                            "review__enjoyability",
-                            filter=Q(review__course=self),
-                        )
-                        + Avg(
-                            "review__recommendability",
-                            filter=Q(review__course=self),
-                        )
-                    )
-                    / 3,
-                    # invalid value for if there are no reviews
-                    Value(math.inf) if reverse else Value(-1),
-                    output_field=FloatField(),
+                semester_last_taught=Value(
+                    latest_semester.pk, output_field=IntegerField()
                 ),
+            )
+        else:
+            # For historical, get last semester taught from subquery
+            semester_last_taught_subquery = Subquery(
+                Section.objects.filter(course=self, instructors=OuterRef("pk"))
+                .order_by("-semester__number")
+                .values("semester__id")[:1]
+            )
+
+            instructors = instructors.annotate(
                 semester_last_taught=semester_last_taught_subquery,
-                # ArrayAgg:
-                # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
                 section_times=ArrayAgg(
                     Case(
                         When(
@@ -618,6 +757,7 @@ class Course(models.Model):
                         ),
                         output_field=CharField(),
                     ),
+                    filter=Q(section__course=self),
                     distinct=True,
                 ),
                 section_nums=ArrayAgg(
@@ -628,10 +768,10 @@ class Course(models.Model):
                         ),
                         output_field=CharField(),
                     ),
+                    filter=Q(section__course=self),
                     distinct=True,
                 ),
             )
-        )
 
         return instructors
 
@@ -643,23 +783,72 @@ class Course(models.Model):
         sortby: str,
     ):
         """Sort instructors by `sortby`"""
-        reverse = order != "desc"
-        instructors = self.get_instructors_and_data(latest_semester, reverse)
-
-        sort_field = {
+        # Map sort field names
+        sort_field_map = {
             "gpa": "gpa",
             "rating": "rating",
             "difficulty": "difficulty",
             "last_taught": "semester_last_taught",
-        }.get(sortby, "semester_last_taught")
+        }
+        sort_field = sort_field_map.get(sortby, "semester_last_taught")
 
+        # Determine sort order
+        reverse = order != "desc"
         order_prefix = "" if reverse else "-"
 
-        if recent:
-            instructors = instructors.filter(semester_last_taught=Semester.latest().pk)
+        # Get annotated instructors
+        instructors = self.get_instructors_and_data(latest_semester, reverse, recent)
 
-        instructors = instructors.order_by(order_prefix + sort_field)
+        # Apply sort
+        instructors = instructors.order_by(f"{order_prefix}{sort_field}")
+
         return instructors
+
+    @classmethod
+    def filter_by_time(cls, days=None, start_time=None, end_time=None):
+        """Filter courses by available times."""
+        query = cls.objects.all()
+
+        # Get the latest semester
+        current_semester = Semester.latest()
+
+        section_conditions = Q(section__semester=current_semester)
+
+        if days:
+
+            # Map day codes to field names
+            day_map = {
+                "MON": "monday",
+                "TUE": "tuesday",
+                "WED": "wednesday",
+                "THU": "thursday",
+                "FRI": "friday",
+            }
+
+            # Get unavailable days
+            unavailable_days = {day_map[d] for d in days if d in day_map}
+
+            # Filter for sections that don't meet on unavailable days
+            for day in unavailable_days:
+                section_conditions &= Q(**{f"section__sectiontime__{day}": False})
+
+        if start_time:
+            section_conditions &= Q(section__sectiontime__start_time__gte=start_time)
+        if end_time:
+            section_conditions &= Q(section__sectiontime__end_time__lte=end_time)
+
+        query = query.filter(section_conditions)
+        return query.distinct()
+
+    @classmethod
+    def filter_by_open_sections(cls):
+        """Filter courses that have at least one open section."""
+        open_sections = SectionEnrollment.objects.filter(
+            section__course=OuterRef("pk"),
+            section__semester=Semester.latest(),
+            enrollment_taken__lt=F("enrollment_limit"),
+        )
+        return cls.objects.filter(Exists(open_sections))
 
     class Meta:
         indexes = [
@@ -683,6 +872,16 @@ class Course(models.Model):
         ]
 
 
+class CourseEnrollment(models.Model):
+    course = models.OneToOneField(
+        "Course", on_delete=models.CASCADE, related_name="enrollment_tracking"
+    )
+    last_update = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Enrollment tracking for {self.course.code()}"
+
+
 class CourseGrade(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
@@ -700,7 +899,14 @@ class CourseGrade(models.Model):
     total_enrolled = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.course.subdepartment.mnemonic} {self.course.number} {self.average}"
+        return (
+            f"{self.course.subdepartment.mnemonic} {self.course.number} {self.average}"
+        )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["course"]),
+        ]
 
 
 class CourseInstructorGrade(models.Model):
@@ -724,6 +930,14 @@ class CourseInstructorGrade(models.Model):
             f"{self.instructor.first_name} {self.instructor.last_name} "
             f"{self.course.subdepartment.mnemonic} {self.course.number} {self.average}"
         )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["course", "instructor"]),
+            models.Index(fields=["instructor", "course"]),
+            models.Index(fields=["course"]),
+            models.Index(fields=["instructor"]),
+        ]
 
 
 class Section(models.Model):
@@ -779,6 +993,113 @@ class Section(models.Model):
         ]
 
 
+class SectionTime(models.Model):
+    """Section meeting time model.
+
+    Belongs to a Section.
+    """
+
+    section = models.ForeignKey("Section", on_delete=models.CASCADE)
+
+    # Individual day fields
+    monday = models.BooleanField(default=False)
+    tuesday = models.BooleanField(default=False)
+    wednesday = models.BooleanField(default=False)
+    thursday = models.BooleanField(default=False)
+    friday = models.BooleanField(default=False)
+
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def __str__(self):
+        days = []
+        if self.monday:
+            days.append("MON")
+        if self.tuesday:
+            days.append("TUE")
+        if self.wednesday:
+            days.append("WED")
+        if self.thursday:
+            days.append("THU")
+        if self.friday:
+            days.append("FRI")
+        return f"{','.join(days)} {self.start_time}-{self.end_time}"
+
+    @property
+    def days_list(self):
+        """Return list of days this section meets."""
+        days = []
+        if self.monday:
+            days.append("MON")
+        if self.tuesday:
+            days.append("TUE")
+        if self.wednesday:
+            days.append("WED")
+        if self.thursday:
+            days.append("THU")
+        if self.friday:
+            days.append("FRI")
+        return days
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["monday"]),
+            models.Index(fields=["tuesday"]),
+            models.Index(fields=["wednesday"]),
+            models.Index(fields=["thursday"]),
+            models.Index(fields=["friday"]),
+            models.Index(fields=["start_time"]),
+            models.Index(fields=["end_time"]),
+        ]
+
+
+class SectionEnrollment(models.Model):
+    """Section meeting enrollment model.
+    Belongs to a Section.
+    """
+
+    section = models.ForeignKey("Section", on_delete=models.CASCADE)
+
+    # Total number of enrolled students. Optional.
+    enrollment_taken = models.IntegerField(null=True, blank=True)
+
+    # Maximum number of students allowed to enroll. Optional.
+    enrollment_limit = models.IntegerField(null=True, blank=True)
+
+    # Total number of students on the waitlist. Optional.
+    waitlist_taken = models.IntegerField(null=True, blank=True)
+
+    # Maximum number of students allowed on the waitlist. Optional.
+    waitlist_limit = models.IntegerField(null=True, blank=True)
+
+    @property
+    def enrollment_info(self):
+        """
+        Returns a dictionary containing enrollment and waitlist information.
+        """
+        return {
+            "enrollment_taken": self.enrollment_taken,
+            "enrollment_limit": self.enrollment_limit,
+            "waitlist_taken": self.waitlist_taken,
+            "waitlist_limit": self.waitlist_limit,
+        }
+
+    def __str__(self):
+        return (
+            f"Section: {self.section}, Enrolled: {self.enrollment_taken}/"
+            f"{self.enrollment_limit}, Waitlist: {self.waitlist_taken}/"
+            f"{self.waitlist_limit}"
+        )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["enrollment_taken"]),
+            models.Index(fields=["enrollment_limit"]),
+            models.Index(fields=["waitlist_taken"]),
+            models.Index(fields=["waitlist_limit"]),
+        ]
+
+
 class Review(models.Model):
     """Review model.
 
@@ -786,21 +1107,30 @@ class Review(models.Model):
     Has a Course.
     Has an Instructor.
     Has an Semester.
+    Can optionally have a Club instead of a Course.
     """
 
     # Review text. Optional.
     text = models.TextField(blank=True)
     # Review user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # Review course foreign key. Required.
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    # Review instructor foreign key. Required.
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    # Review course foreign key. Required only if club is not provided.
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
+    # Review club foreign key. Optional alternative to course.
+    club = models.ForeignKey(Club, on_delete=models.CASCADE, null=True, blank=True)
+    # Review instructor foreign key. Required only if club is not provided.
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, null=True, blank=True
+    )
     # Review semester foreign key. Required.
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     # Email of reviewer for Review Drive, should be blank most of the time
     # Only done for reviews without accounts
     email = models.CharField(default="", null=True, blank=True)
+    # Toxicity rating of review
+    toxicity_rating = models.IntegerField(default=0)
+    # Most relevant toxicity category, only exists if review has text
+    toxicity_category = models.CharField(blank=True)
 
     # Enum of Rating options.
     RATINGS = (
@@ -921,12 +1251,19 @@ class Review(models.Model):
     def get_sorted_reviews(course_id, instructor_id, user, method=""):
         """Prepare review list for course-instructor page."""
 
-        # Filter out reviews with no text and hidden field true.
+        # Filter out reviews that are hidden, have no text, or are toxic.
         reviews = (
-            Review.objects.filter(instructor=instructor_id, course=course_id, hidden=False)
+            Review.objects.filter(
+                instructor=instructor_id,
+                course=course_id,
+                toxicity_rating__lt=settings.TOXICITY_THRESHOLD,
+                hidden=False,
+            )
             .exclude(text="")
             .annotate(
-                sum_votes=models.functions.Coalesce(models.Sum("vote__value"), models.Value(0)),
+                sum_votes=models.functions.Coalesce(
+                    models.Sum("vote__value"), models.Value(0)
+                ),
             )
         )
 
@@ -947,7 +1284,9 @@ class Review(models.Model):
             case "Most Helpful":  # net votes
                 return reviews.annotate(
                     upvotes=Coalesce(Sum("vote__value", filter=Q(vote__value=1)), 0),
-                    downvotes=Coalesce(Abs(Sum("vote__value", filter=Q(vote__value=-1))), 0),
+                    downvotes=Coalesce(
+                        Abs(Sum("vote__value", filter=Q(vote__value=-1))), 0
+                    ),
                     helpful_score=ExpressionWrapper(
                         F("upvotes") - F("downvotes"),
                         output_field=fields.IntegerField(),
@@ -956,14 +1295,24 @@ class Review(models.Model):
             case "Highest Rating":
                 return reviews.annotate(
                     average=ExpressionWrapper(
-                        (F("instructor_rating") + F("recommendability") + F("enjoyability")) / 3,
+                        (
+                            F("instructor_rating")
+                            + F("recommendability")
+                            + F("enjoyability")
+                        )
+                        / 3,
                         output_field=fields.FloatField(),
                     )
                 ).order_by("-average")
             case "Lowest Rating":
                 return reviews.annotate(
                     average=ExpressionWrapper(
-                        (F("instructor_rating") + F("recommendability") + F("enjoyability")) / 3,
+                        (
+                            F("instructor_rating")
+                            + F("recommendability")
+                            + F("enjoyability")
+                        )
+                        / 3,
                         output_field=fields.FloatField(),
                     )
                 ).order_by("average")
@@ -973,7 +1322,9 @@ class Review(models.Model):
                 return reviews
 
     @staticmethod
-    def paginate(reviews: "QuerySet[Review]", page_number, reviews_per_page=10) -> "Page[Review]":
+    def paginate(
+        reviews: "QuerySet[Review]", page_number, reviews_per_page=10
+    ) -> "Page[Review]":
         """Paginate reviews"""
         paginator = Paginator(reviews, reviews_per_page)
         try:
@@ -999,6 +1350,8 @@ class Review(models.Model):
         indexes = [
             models.Index(fields=["course", "instructor"]),
             models.Index(fields=["user", "-created"]),
+            models.Index(fields=["instructor", "course"]),
+            models.Index(fields=["instructor"]),
         ]
 
         # Some of the tCF 1.0 data did not honor this constraint.
@@ -1021,7 +1374,9 @@ class Vote(models.Model):
     """
 
     # Vote value. Required.
-    value = models.IntegerField(validators=[MinValueValidator(-1), MaxValueValidator(1)])
+    value = models.IntegerField(
+        validators=[MinValueValidator(-1), MaxValueValidator(1)]
+    )
     # Vote user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     # Vote review foreign key. Required.
@@ -1257,7 +1612,9 @@ class VoteQuestion(models.Model):
     """
 
     # Vote value. Required.
-    value = models.IntegerField(validators=[MinValueValidator(-1), MaxValueValidator(1)])
+    value = models.IntegerField(
+        validators=[MinValueValidator(-1), MaxValueValidator(1)]
+    )
     # Vote user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     # Vote question foreign key. Required.
@@ -1287,7 +1644,9 @@ class VoteAnswer(models.Model):
     """
 
     # Vote value. Required.
-    value = models.IntegerField(validators=[MinValueValidator(-1), MaxValueValidator(1)])
+    value = models.IntegerField(
+        validators=[MinValueValidator(-1), MaxValueValidator(1)]
+    )
     # Vote user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     # Vote answer foreign key. Required.
@@ -1307,3 +1666,281 @@ class VoteAnswer(models.Model):
                 name="unique vote per user and answer",
             )
         ]
+
+
+class Schedule(models.Model):
+    """Schedule Model.
+
+    Belongs to a user.
+    Has a name.
+
+    """
+
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+    def get_schedule(self):
+        """Get the schedule and all its related information"""
+        # NOTE: there may be a way to combine all of these methods into
+        #       one query, but it would be very complicated
+
+        total_grade_points = 0
+        total_course_credits = 0
+        courses = self.get_scheduled_courses()
+
+        ret = [
+            0
+        ] * 5  # intialize return array for the schedule, which will have 5 fields
+        ret[0] = courses  # list of courses in the schedule
+        # pylint: disable=not-an-iterable
+        ret[1] = sum(
+            Decimal(course.section.units) for course in ret[0] if course.section.units
+        )
+        ret[2] = (
+            self.average_rating_for_schedule()
+        )  # average rating for the courses in this schedule
+        ret[3] = (
+            self.average_schedule_difficulty()
+        )  # average difficulty for the courses in this schedule
+
+        # calculate weighted gpa based on credits
+        for course in courses:
+            course_gpa = course.gpa
+            course_credits = float(course.credits) if course.credits else 0.0
+
+            if not course_gpa:
+                continue  # pass a given course if there is no gpa for it
+            total_grade_points += course_gpa * course_credits
+            total_course_credits += course_credits
+
+        if total_course_credits:
+            ret[4] = total_grade_points / total_course_credits
+        else:
+            ret[4] = 0.0
+        return ret
+
+    def get_scheduled_courses(self):
+        """
+        Return scheduled courses associated with this schedule,
+        including details about the section and instructor.
+        """
+
+        queryset = (
+            self.scheduledcourse_set.select_related("section", "instructor")
+            .annotate(
+                credits=Cast(
+                    "section__units",
+                    output_field=models.DecimalField(max_digits=3, decimal_places=2),
+                ),
+                avg_recommendability=Coalesce(
+                    models.Avg(
+                        "section__course__review__recommendability",
+                        filter=models.Q(
+                            section__course__review__instructor=models.F("instructor")
+                        ),
+                    ),
+                    models.Value(0.0),
+                ),
+                avg_instructor_rating=Coalesce(
+                    models.Avg(
+                        "section__course__review__instructor_rating",
+                        filter=models.Q(
+                            section__course__review__instructor=models.F("instructor")
+                        ),
+                    ),
+                    models.Value(0.0),
+                ),
+                avg_enjoyability=Coalesce(
+                    models.Avg(
+                        "section__course__review__enjoyability",
+                        filter=models.Q(
+                            section__course__review__instructor=models.F("instructor")
+                        ),
+                    ),
+                    models.Value(0.0),
+                ),
+                difficulty=Coalesce(
+                    models.Avg(
+                        "section__course__review__difficulty",
+                        filter=models.Q(
+                            section__course__review__instructor_id=models.F(
+                                "instructor"
+                            )
+                        ),
+                    ),
+                    models.Value(0.0),
+                ),
+                title=Concat(
+                    models.F("section__course__subdepartment__mnemonic"),
+                    models.Value(" "),
+                    models.F("section__course__number"),
+                    output_field=models.CharField(),
+                ),
+            )
+            .annotate(
+                total_rating=models.ExpressionWrapper(
+                    (
+                        models.F("avg_recommendability")
+                        + models.F("avg_instructor_rating")
+                        + models.F("avg_enjoyability")
+                    )
+                    / models.Value(3),
+                    output_field=models.FloatField(),
+                )
+            )
+        )
+
+        # Convert queryset to list to allow modifying each instance
+        scheduled_courses = list(queryset)
+
+        for scheduled_course in scheduled_courses:
+            # Use the average_gpa_for_course method to get the GPA
+            gpa = scheduled_course.instructor.average_gpa_for_course(
+                scheduled_course.section.course
+            )
+            # Store the GPA in an attribute of the ScheduledCourse instance
+            setattr(scheduled_course, "gpa", gpa)
+
+        return scheduled_courses
+
+    def calculate_total_rating(self, rating):
+        """Calculate the average rating across all categories"""
+        total, count = 0, 0
+        if rating["avg_recommendability"] is not None:
+            total += rating["avg_recommendability"]
+            count += 1
+        if rating["avg_instructor_rating"] is not None:
+            total += rating["avg_instructor_rating"]
+            count += 1
+        if rating["avg_enjoyability"] is not None:
+            total += rating["avg_enjoyability"]
+            count += 1
+        return total / count if count > 0 else None
+
+    def average_rating_for_schedule(self):
+        """Compute average rating for all courses in a schedule.
+
+        Rating is defined as the average of recommendability,
+        instructor rating, and enjoyability."""
+        # Aggregate average ratings for each instructor-section pair
+        aggregated_ratings = (
+            ScheduledCourse.objects.filter(schedule=self)
+            .annotate(
+                related_course_id=models.F("section__course_id"),
+                related_instructor_id=models.F("instructor_id"),
+                related_section_id=models.F("section_id"),
+            )
+            .values("related_course_id", "related_instructor_id", "related_section_id")
+            .annotate(
+                avg_recommendability=models.Avg(
+                    "section__course__review__recommendability",
+                    filter=models.Q(
+                        section__course__review__instructor=models.F(
+                            "related_instructor_id"
+                        )
+                    ),
+                ),
+                avg_instructor_rating=models.Avg(
+                    "section__course__review__instructor_rating",
+                    filter=models.Q(
+                        section__course__review__instructor=models.F(
+                            "related_instructor_id"
+                        )
+                    ),
+                ),
+                avg_enjoyability=models.Avg(
+                    "section__course__review__enjoyability",
+                    filter=models.Q(
+                        section__course__review__instructor=models.F(
+                            "related_instructor_id"
+                        )
+                    ),
+                ),
+            )
+        )
+
+        # Compute the overall average across all instructor-section pairs
+        total_ratings = 0
+        count = 0
+
+        for rating in aggregated_ratings:
+            if all(
+                key in rating
+                for key in [
+                    "avg_recommendability",
+                    "avg_instructor_rating",
+                    "avg_enjoyability",
+                ]
+            ):
+                summed_ratings = self.calculate_total_rating(rating)
+                # if summed_ratings is zero, just continue
+                # in order to provide better UX, could return some indication that courses
+                # were skipped in the calculation
+                if not summed_ratings:
+                    continue
+                total_ratings += summed_ratings
+                count += 1  # Since we're summing three ratings for each course
+
+        return total_ratings / count if count > 0 else 0.00
+
+    def average_schedule_difficulty(self):
+        """Compute average difficulty score."""
+
+        result = (
+            ScheduledCourse.objects.filter(schedule=self)
+            .annotate(
+                course_id=models.F("section__course_id"),  # Reference to the course
+                related_instructor_id=models.F(
+                    "instructor_id"
+                ),  # Reference to the instructor
+            )
+            .values("course_id", "related_instructor_id")
+            .annotate(
+                avg_difficulty=models.Avg(
+                    "section__course__review__difficulty",
+                    filter=models.Q(
+                        section__course__review__instructor_id=models.F(
+                            "related_instructor_id"
+                        )
+                    ),
+                )
+            )
+            .aggregate(overall_avg_difficulty=models.Avg("avg_difficulty"))
+        )
+        final_result = result.get("overall_avg_difficulty")
+        return final_result if final_result else 0.00
+
+    def average_schedule_gpa(self):
+        """Compute the average GPA for this schedule"""
+
+        average_gpa = CourseInstructorGrade.objects.filter(
+            course__in=ScheduledCourse.objects.values_list(
+                "section__course", flat=True
+            ),
+            instructor__in=ScheduledCourse.objects.values_list("instructor", flat=True),
+        ).aggregate(models.Avg("average"))["average__avg"]
+        return average_gpa
+
+
+class ScheduledCourse(models.Model):
+    """ScheduledCourse Model.
+
+    Belongs to a schedule and a course section.
+    Has a time and instructor.
+
+    """
+
+    # Schedule model foreign key. Required.
+    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
+    # Section model foreign key. Required.
+    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    # Instructor for the section. Required.
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    # Time of the section. Required.
+    time = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.section.course} | {self.instructor}"

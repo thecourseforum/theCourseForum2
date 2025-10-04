@@ -69,7 +69,9 @@ def new_question(request):
 
             instance.save()
 
-            messages.success(request, f"Successfully added a question for {instance.course}!")
+            messages.success(
+                request, f"Successfully added a question for {instance.course}!"
+            )
             return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
         return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
     return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
@@ -214,7 +216,9 @@ def check_duplicate(request):
         instance = form.save(commit=False)
 
         # First check if user has answered the question already
-        answers_on_same_class = request.user.answer_set.filter(question=instance.question)
+        answers_on_same_class = request.user.answer_set.filter(
+            question=instance.question
+        )
 
         # An answer already exists so it's a duplicate
         if answers_on_same_class.exists():

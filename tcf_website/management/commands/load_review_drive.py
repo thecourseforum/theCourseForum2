@@ -71,7 +71,9 @@ class Command(BaseCommand):
             return
 
         # Needs to be created ahead of time in the db
-        dummy_account = User.objects.filter(computing_id__iexact=settings.REVIEW_DRIVE_ID).first()
+        dummy_account = User.objects.filter(
+            computing_id__iexact=settings.REVIEW_DRIVE_ID
+        ).first()
         if dummy_account is None:
             dummy_account = User.objects.create_user(
                 computing_id=settings.REVIEW_DRIVE_ID,
@@ -112,7 +114,9 @@ def create_reviews(verbose, filename, semester, dummy_account):
             elif account is None:
                 account = dummy_account
 
-            subdepartment = Subdepartment.objects.filter(mnemonic__iexact=mnemonic).first()
+            subdepartment = Subdepartment.objects.filter(
+                mnemonic__iexact=mnemonic
+            ).first()
             if subdepartment is None:
                 print(
                     "Subdepartment not found for",
@@ -124,7 +128,9 @@ def create_reviews(verbose, filename, semester, dummy_account):
                 )
                 continue
 
-            course = Course.objects.filter(subdepartment=subdepartment, number=num).first()
+            course = Course.objects.filter(
+                subdepartment=subdepartment, number=num
+            ).first()
             if course is None:
                 print(
                     "Course not found for",
@@ -144,7 +150,9 @@ def create_reviews(verbose, filename, semester, dummy_account):
                     last_name__iexact=instructor_arr[1],
                 ).first()
             else:
-                instructor = Instructor.objects.filter(last_name__iexact=instructor_arr[0]).first()
+                instructor = Instructor.objects.filter(
+                    last_name__iexact=instructor_arr[0]
+                ).first()
 
             if instructor is None:
                 print(
@@ -180,7 +188,9 @@ def create_reviews(verbose, filename, semester, dummy_account):
             amount_writing = int(line[11].strip())
             amount_group = int(line[12].strip())
             amount_homework = int(line[13].strip())
-            hours_per_week = amount_reading + amount_writing + amount_group + amount_homework
+            hours_per_week = (
+                amount_reading + amount_writing + amount_group + amount_homework
+            )
 
             created = datetime.strptime(line[0].strip(), "%m/%d/%Y %H:%M:%S")
             modified = datetime.now()

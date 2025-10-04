@@ -1,16 +1,23 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}Write a Review - theCourseForum{% endblock %}
+{% block title %}Write a Review | theCourseForum{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'reviews/new_review.css' %}" />
+<link rel="stylesheet" href="{% static 'club/mode_toggle.css' %}" />
 {% endblock %}
 
 {% block content %}
 
 <div class="new-review container text-left mx-auto">
-  <h1 class="h2 mt-2 mb-4">Write a review</h1>
+  <!-- Header row with title and toggle -->
+  <div class="row mt-2 mb-3">
+    <div class="col-12 d-flex align-items-center justify-content-between">
+      <h1 class="h2 mb-0">Write a review</h1>
+      {% include "../club/mode_toggle.html" with is_club=is_club %}
+    </div>
+  </div>
   <div class="card">
     <form class="card-body px-md-5" id="reviewForm" action="{% url 'new_review' %}" method="POST">
         {% csrf_token %}
@@ -27,8 +34,13 @@
 {% endblock %}
 
 {% block js %}
-<script type="text/javascript" src="{% static 'reviews/new_review.js' %}"></script>
 <script type="text/javascript" src="{% static 'reviews/sync_review_sliders.js' %}"></script>
+{% if is_club %}
+<script type="text/javascript" src="{% static 'reviews/club_review.js' %}"></script>
+{% else %}
+<script type="text/javascript" src="{% static 'reviews/new_review.js' %}"></script>
+{% endif %}
+
 <script>
   // For Bootstrap tooltip
   $(function () {

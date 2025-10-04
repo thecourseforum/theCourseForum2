@@ -1,0 +1,305 @@
+.filter-summary {
+  background-color: #f7fafc;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #4a5568;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50%;
+}
+
+.dropdown-wrapper {
+  position: relative;
+}
+
+.filter-dropdown {
+  position: absolute !important;
+  top: 100% !important;
+  right: 0 !important;
+  left: auto !important;
+  margin-top: 0.5rem !important;
+  transform: none !important;
+  width: min(90vw, 800px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 0.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.filter-active {
+  background-color: #d75626;
+  color: white;
+}
+
+@media (max-width: 992px) {
+  #filter-button, 
+  .dropdown-wrapper, 
+  .filter-dropdown {
+    display: none !important;
+  }
+}
+
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+/* Top filter sections layout */
+.time-filter {
+  display: flex;
+  gap: 1.5rem;
+}
+
+/* Filter row layout (Availability and Min GPA side by side) */
+.filter-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.filter-row .filter-section {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Standardized filter containers */
+.filter-option-container {
+  background: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  transition: all 0.15s ease;
+}
+
+.filter-option-container:hover {
+  background: #f7fafc;
+  border-color: #90cdf4;
+}
+
+/* Min GPA controls */
+.min-gpa-controls {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.form-range {
+  flex: 1;
+  margin-right: 0.75rem;
+}
+
+.min-gpa-text {
+  width: 60px !important;
+  padding: 0.25rem 0.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.filter-section .filter-header {
+  margin-bottom: 0.35rem;
+  font-size: 1rem;
+}
+
+.form-check {
+  width: 100%;
+}
+
+/* Remove redundant styles */
+.filter-section.compact {
+  margin-bottom: 0.75rem;
+}
+
+.day-toggles {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.day-toggles p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.time-selection {
+  background: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  padding: 0.4rem 0.4rem;
+}
+
+.day-toggles .form-check-inline {
+  background: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  padding: 0.55rem 0.67rem;
+  transition: all 0.15s ease;
+}
+
+.day-toggles .form-check-input:checked + .form-check-label {
+  color: #d75626;
+  font-weight: 600;
+}
+
+.day-toggles .form-check-inline:hover {
+  background: #f7fafc;
+  border-color: #90cdf4;
+}
+
+/* Availability section styles */
+.availability-filters {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.availability-option {
+  background: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  padding: 0.55rem 0.67rem;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.availability-option:hover {
+  background: #f7fafc;
+  border-color: #90cdf4;
+}
+
+.min-gpa-container {
+  display: flex;
+  align-items: center;
+}
+
+.form-check-input:checked {
+  accent-color: #d75626;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #718096;
+  pointer-events: none;
+}
+
+.form-check-subjects,
+.form-check-disciplines {
+  margin-top: 1.2% !important;
+  align-self: start !important;
+}
+
+.subject-list,
+.discipline-list {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  background: #fff;
+  min-height: 200px;
+}
+
+.form-check.subdepartment-label,
+.form-check.discipline-label {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.discipline-list {
+  /* removed max-height: 250px; */
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-container .form-control {
+  width: 100%;
+  padding-left: 2rem;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.form-check {
+  padding: 0.375rem 0;
+  margin: 0;
+  align-items: center;
+}
+
+.form-check:hover {
+  background-color: #f7fafc;
+  border-radius: 4px;
+}
+
+.form-check-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.subject-list,
+.discipline-list {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 transparent;
+}
+
+.btn-custom {
+  background-color: #d75626;
+  border: 2px solid #d75626;
+  border-radius: 4px;
+  color: white;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.btn-custom:hover {
+  background-color: #b4441d;
+  border-color: #b4441d;
+}
+
+.btn-custom:focus,
+.btn-custom:active {
+  box-shadow: none !important;
+  outline: none !important;
+  border: 2px solid #b4441d;
+}
+
+.subject-list::-webkit-scrollbar,
+.discipline-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.subject-list::-webkit-scrollbar-thumb,
+.discipline-list::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0;
+  border-radius: 2px;
+}

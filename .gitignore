@@ -20,6 +20,7 @@ node_modules/
 db/*.csv
 # Data dumps
 db/*.sql
+db/*.dump
 # IDEs
 .idea/
 .vscode/
@@ -33,3 +34,5 @@ db/*.sql
 # Virtual Environments
 venv
 .venv
+# AWS key.pem
+key/
