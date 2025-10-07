@@ -259,7 +259,16 @@
       "class": "2027",
       "img_filename": "ENG_Namai_Kureishi.jpg",
       "github": "namaikureishi"
+    },
+    {
+      "name": "Shivaths Karne",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Shivaths_Karne.jpg",
+      "github": "skarne21"
     }
+
+
   ],
   "design_team": [
     {
