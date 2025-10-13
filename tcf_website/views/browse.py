@@ -8,7 +8,19 @@ from typing import Any
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import Avg, CharField, Count, F, Prefetch, Q, Sum, Value
+from django.db.models import (
+    Avg,
+    CharField,
+    Count,
+    F,
+    Max,
+    OuterRef,
+    Prefetch,
+    Q,
+    Subquery,
+    Sum,
+    Value,
+)
 from django.db.models.functions import Coalesce, Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -473,6 +485,14 @@ def instructor_view(request, instructor_id):
         "avg_gpa",
         "last_taught",
     ]
+    # Get the most recent semester for each course-instructor combination
+
+    latest_semester_subquery = (
+        Section.objects.filter(course=OuterRef("pk"), instructors=instructor)
+        .order_by("-semester__number")
+        .values("semester__season", "semester__year")[:1]
+    )
+
     courses: list[dict[str, Any]] = (
         Course.objects.filter(section__instructors=instructor, number__gte=1000)
         .prefetch_related("review_set")
@@ -508,14 +528,23 @@ def instructor_view(request, instructor_id):
                 )
             )
             / 3,
-            last_taught=Concat(
-                F("semester_last_taught__season"),
-                Value(" "),
-                F("semester_last_taught__year"),
-                output_field=CharField(),
+            latest_semester_season=Subquery(
+                latest_semester_subquery.values("semester__season")
+            ),
+            latest_semester_year=Subquery(
+                latest_semester_subquery.values("semester__year")
             ),
         )
-        .values("subdepartment_name", *course_fields)
+        .values(
+            "subdepartment_name",
+            "name",
+            "id",
+            "avg_rating",
+            "avg_difficulty",
+            "avg_gpa",
+            "latest_semester_season",
+            "latest_semester_year",
+        )
         .order_by("subdepartment_name", "name")
     )
 
@@ -524,7 +553,16 @@ def instructor_view(request, instructor_id):
         course["avg_rating"] = safe_round(course["avg_rating"])
         course["avg_difficulty"] = safe_round(course["avg_difficulty"])
         course["avg_gpa"] = safe_round(course["avg_gpa"])
-        course["last_taught"] = course["last_taught"].title()
+        # Construct last_taught from separate season and year fields
+        if course["latest_semester_season"] and course["latest_semester_year"]:
+            course["last_taught"] = (
+                f"{course['latest_semester_season']} {course['latest_semester_year']}".title()
+            )
+        else:
+            course["last_taught"] = "—"
+        # Remove the temporary fields
+        del course["latest_semester_season"]
+        del course["latest_semester_year"]
         grouped_courses.setdefault(course["subdepartment_name"], []).append(course)
 
     context: dict[str, Any] = {
