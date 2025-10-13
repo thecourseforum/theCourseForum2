@@ -461,32 +461,28 @@ def instructor_view(request, instructor_id):
     """View for instructor page, showing all their courses taught."""
     instructor: Instructor = get_object_or_404(Instructor, pk=instructor_id)
 
-    stats: dict[str, float] = (
-        Instructor.objects.filter(pk=instructor_id)
-        .prefetch_related("review_set")
-        .aggregate(
-            avg_gpa=Avg("courseinstructorgrade__average"),
-            avg_difficulty=Avg("review__difficulty"),
-            avg_rating=(
-                Avg("review__instructor_rating")
-                + Avg("review__enjoyability")
-                + Avg("review__recommendability")
-            )
-            / 3,
+    # Calculate aggregate stats for this instructor
+    stats: dict[str, float] = instructor.__class__.objects.filter(
+        pk=instructor.pk
+    ).aggregate(
+        avg_gpa=Avg("courseinstructorgrade__average"),
+        avg_difficulty=Avg("review__difficulty"),
+        avg_rating=(
+            Avg("review__instructor_rating")
+            + Avg("review__enjoyability")
+            + Avg("review__recommendability")
         )
+        / 3,
     )
 
     # Get the most recent semester for each course-instructor combination
 
-    latest_semester_subquery = (
-        Section.objects.filter(course=OuterRef("pk"), instructors=instructor)
-        .order_by("-semester__number")
-        .values("semester__season", "semester__year")[:1]
-    )
+    latest_section_qs = Section.objects.filter(
+        course=OuterRef("pk"), instructors=instructor
+    ).order_by("-semester__number")
 
     courses: list[dict[str, Any]] = (
         Course.objects.filter(section__instructors=instructor, number__gte=1000)
-        .prefetch_related("review_set")
         .annotate(
             subdepartment_name=F("subdepartment__name"),
             name=Concat(
@@ -520,16 +516,16 @@ def instructor_view(request, instructor_id):
             )
             / 3,
             latest_semester_season=Subquery(
-                latest_semester_subquery.values("semester__season")
+                latest_section_qs.values("semester__season")[:1]
             ),
             latest_semester_year=Subquery(
-                latest_semester_subquery.values("semester__year")
+                latest_section_qs.values("semester__year")[:1]
             ),
         )
         .values(
+            "id",
             "subdepartment_name",
             "name",
-            "id",
             "avg_rating",
             "avg_difficulty",
             "avg_gpa",
@@ -544,16 +540,10 @@ def instructor_view(request, instructor_id):
         course["avg_rating"] = safe_round(course["avg_rating"])
         course["avg_difficulty"] = safe_round(course["avg_difficulty"])
         course["avg_gpa"] = safe_round(course["avg_gpa"])
-        # Construct last_taught from separate season and year fields
-        if course["latest_semester_season"] and course["latest_semester_year"]:
-            course["last_taught"] = (
-                f"{course['latest_semester_season']} {course['latest_semester_year']}".title()
-            )
-        else:
-            course["last_taught"] = "—"
-        # Remove the temporary fields
-        del course["latest_semester_season"]
-        del course["latest_semester_year"]
+        season = course.pop("latest_semester_season", None)
+        year = course.pop("latest_semester_year", None)
+        course["last_taught"] = f"{season} {year}".title() if season and year else "—"
+
         grouped_courses.setdefault(course["subdepartment_name"], []).append(course)
 
     context: dict[str, Any] = {
