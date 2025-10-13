@@ -461,10 +461,7 @@ def instructor_view(request, instructor_id):
     """View for instructor page, showing all their courses taught."""
     instructor: Instructor = get_object_or_404(Instructor, pk=instructor_id)
 
-    # Calculate aggregate stats for this instructor
-    stats: dict[str, float] = instructor.__class__.objects.filter(
-        pk=instructor.pk
-    ).aggregate(
+    stats: dict[str, float] = Instructor.objects.filter(pk=instructor.pk).aggregate(
         avg_gpa=Avg("courseinstructorgrade__average"),
         avg_difficulty=Avg("review__difficulty"),
         avg_rating=(
