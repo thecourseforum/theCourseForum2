@@ -13,7 +13,6 @@ from django.db.models import (
     CharField,
     Count,
     F,
-    Max,
     OuterRef,
     Prefetch,
     Q,
@@ -477,14 +476,6 @@ def instructor_view(request, instructor_id):
         )
     )
 
-    course_fields: list[str] = [
-        "name",
-        "id",
-        "avg_rating",
-        "avg_difficulty",
-        "avg_gpa",
-        "last_taught",
-    ]
     # Get the most recent semester for each course-instructor combination
 
     latest_semester_subquery = (
