@@ -7,7 +7,12 @@ from tcf_website.models import Instructor, Section, Semester
 
 
 class Command(BaseCommand):
-    help = "Update instructor archived status based on whether they are teaching in the current semester"
+    """Management command to update instructor archived status."""
+
+    help = (
+        "Update instructor archived status based on whether they are "
+        "teaching in the current semester"
+    )
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -19,14 +24,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options["dry_run"]
         latest_semester = Semester.latest()
-        
+
         self.stdout.write(
             self.style.SUCCESS(f"Updating archived status for semester: {latest_semester}")
         )
 
         instructors = Instructor.objects.all()
         total_instructors = instructors.count()
-        
+
         archived_count = 0
         active_count = 0
 
@@ -36,9 +41,9 @@ class Command(BaseCommand):
                     instructors=instructor,
                     semester=latest_semester
                 ).exists()
-                
+
                 should_be_archived = not is_teaching_current
-                
+
                 if instructor.is_archived != should_be_archived:
                     if dry_run:
                         status = "WOULD BE ARCHIVED" if should_be_archived else "WOULD BE ACTIVATED"
@@ -52,7 +57,7 @@ class Command(BaseCommand):
                         self.stdout.write(
                             f"  {instructor.full_name}: {status}"
                         )
-                
+
                 if should_be_archived:
                     archived_count += 1
                 else:
