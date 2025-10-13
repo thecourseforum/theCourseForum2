@@ -8,6 +8,9 @@
 {% if course_code %}<meta name="course-code" content="{{ course_code }}">{% endif %}
 {% if course_title %}<meta name="course-title" content="{{ course_title }}">{% endif %}
 {% if instructor_fullname %}<meta name="instructor-name" content="{{ instructor_fullname }}">{% endif %}
+{% if not is_teaching_current_semester %}
+<meta name="robots" content="noindex, nofollow">
+{% endif %}
 {% endblock %}
 
 {% block styles %}
@@ -29,6 +32,12 @@
                     <h1 class="mr-md-3 text-nowrap">{{ course.code }}</h1>
                     <h2 class="mr-md-3">{{ course.title }}</h2>
                 </div>
+
+               {% if not is_teaching_current_semester %}
+                   <div class="alert alert-warning mt-2" role="alert">
+                       <strong>Archived:</strong> This instructor is no longer affiliated with the University of Virginia or is not teaching in the current semester. Reviews reflect past UVA courses.
+                   </div>
+               {% endif %}
 
                 <div class="instructor-info d-flex flex-sm-row flex-column align-items-baseline">
 

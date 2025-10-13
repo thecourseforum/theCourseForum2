@@ -325,6 +325,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         raise Http404
     course = section_last_taught.course
     instructor = section_last_taught.instructors.get(pk=instructor_id)
+    latest_semester = Semester.latest()
+    is_teaching_current_semester = not instructor.is_archived
 
     # ratings: reviews with and without text; reviews: ratings with text
     reviews = Review.objects.filter(
@@ -453,6 +455,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "course_code": course.code(),
             "course_title": course.title,
             "instructor_fullname": instructor.full_name,
+            "is_teaching_current_semester": is_teaching_current_semester,
+            "latest_semester": latest_semester,
         },
     )
 
@@ -460,6 +464,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
 def instructor_view(request, instructor_id):
     """View for instructor page, showing all their courses taught."""
     instructor: Instructor = get_object_or_404(Instructor, pk=instructor_id)
+    latest_semester = Semester.latest()
+    is_teaching_current_semester = not instructor.is_archived
 
     stats: dict[str, float] = Instructor.objects.filter(pk=instructor.pk).aggregate(
         avg_gpa=Avg("courseinstructorgrade__average"),
@@ -547,6 +553,8 @@ def instructor_view(request, instructor_id):
         "instructor": instructor,
         **{key: safe_round(value) for key, value in stats.items()},
         "courses": grouped_courses,
+        "is_teaching_current_semester": is_teaching_current_semester,
+        "latest_semester": latest_semester,
     }
     return render(request, "instructor/instructor.html", context)
 

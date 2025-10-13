@@ -3,6 +3,12 @@
 
 {% block title %}{{instructor.full_name}} | theCourseForum{% endblock %}
 
+{% block page_metadata %}
+{% if not is_teaching_current_semester %}
+<meta name="robots" content="noindex, nofollow">
+{% endif %}
+{% endblock %}
+
 {% block styles %}
 <link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
 <link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
@@ -19,6 +25,11 @@
                         {{ instructor.full_name }}
                     </h1>
                     {{ instructor.email }}
+                    {% if not is_teaching_current_semester %}
+                        <div class="alert alert-warning mt-3" role="alert">
+                            <strong> Archived:</strong> This instructor is no longer affiliated with the University of Virginia or is not teaching in the current semester. Reviews reflect past UVA courses.
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             <div class="col ">

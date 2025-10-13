@@ -310,6 +310,8 @@ class Instructor(models.Model):
     departments = models.ManyToManyField(Department)
     # hidden professor. Required. Default visible.
     hidden = models.BooleanField(default=False)
+    # archived status - whether instructor is teaching in current semester
+    is_archived = models.BooleanField(default=False, help_text="True if instructor is not teaching in current semester")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"

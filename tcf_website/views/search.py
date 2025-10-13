@@ -218,6 +218,7 @@ def fetch_instructors(query) -> list[dict]:
             )
         )
         .filter(Q(max_similarity__gte=similarity_threshold))
+        .filter(is_archived=False)  # Exclude archived instructors from search
         .order_by("-max_similarity")[:10]
     )
 
