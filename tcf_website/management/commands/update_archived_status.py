@@ -1,83 +1,88 @@
-"""Management command to update instructor archived status based on current semester teaching."""
+"""
+Update instructor archived status based on current semester teaching.
 
+Usage:
+python manage.py update_archived_status
+OR
+docker exec -it tcf_django python manage.py update_archived_status
+"""
+
+import time
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from tqdm import tqdm
 
 from tcf_website.models import Instructor, Section, Semester
 
 
 class Command(BaseCommand):
-    """Management command to update instructor archived status."""
+    """Django management command to update instructor archived status."""
 
-    help = (
-        "Update instructor archived status based on whether they are "
-        "teaching in the current semester"
-    )
+    help = "Updates instructor archived status based on whether they are teaching in the current semester"
 
     def add_arguments(self, parser):
+        """Add command arguments."""
         parser.add_argument(
-            "--dry-run",
-            action="store_true",
-            help="Show what would be updated without making changes",
+            "--semester",
+            type=str,
+            help='Semester number (e.g., "1242" for Spring 2024). Defaults to latest semester.',
         )
 
     def handle(self, *args, **options):
-        dry_run = options["dry_run"]
-        latest_semester = Semester.latest()
+        """Execute the command."""
+        start_time = time.time()
 
-        self.stdout.write(
-            self.style.SUCCESS(f"Updating archived status for semester: {latest_semester}")
-        )
+        # Use provided semester or get latest
+        if options["semester"]:
+            try:
+                semester = Semester.objects.get(number=options["semester"])
+            except Semester.DoesNotExist:
+                print(f"Semester {options['semester']} not found")
+                return
+        else:
+            semester = Semester.latest()
+
+        print(f"Updating archived status for semester: {semester}")
 
         instructors = Instructor.objects.all()
         total_instructors = instructors.count()
+        print(f"Found {total_instructors} instructors")
 
         archived_count = 0
         active_count = 0
+        updated_count = 0
 
-        with transaction.atomic():
-            for instructor in instructors:
-                is_teaching_current = Section.objects.filter(
-                    instructors=instructor,
-                    semester=latest_semester
-                ).exists()
+        try:
+            with transaction.atomic():
+                for instructor in tqdm(instructors, desc="Processing instructors"):
+                    is_teaching_current = Section.objects.filter(
+                        instructors=instructor,
+                        semester=semester
+                    ).exists()
 
-                should_be_archived = not is_teaching_current
+                    should_be_archived = not is_teaching_current
 
-                if instructor.is_archived != should_be_archived:
-                    if dry_run:
-                        status = "WOULD BE ARCHIVED" if should_be_archived else "WOULD BE ACTIVATED"
-                        self.stdout.write(
-                            f"  {instructor.full_name}: {status}"
-                        )
-                    else:
+                    if instructor.is_archived != should_be_archived:
                         instructor.is_archived = should_be_archived
                         instructor.save(update_fields=['is_archived'])
                         status = "ARCHIVED" if should_be_archived else "ACTIVATED"
-                        self.stdout.write(
-                            f"  {instructor.full_name}: {status}"
-                        )
+                        print(f"  {instructor.full_name}: {status}")
+                        updated_count += 1
 
-                if should_be_archived:
-                    archived_count += 1
-                else:
-                    active_count += 1
+                    if should_be_archived:
+                        archived_count += 1
+                    else:
+                        active_count += 1
 
-        if dry_run:
-            self.stdout.write(
-                self.style.WARNING(
-                    f"\nDRY RUN - No changes made\n"
-                    f"Total instructors: {total_instructors}\n"
-                    f"Would be archived: {archived_count}\n"
-                    f"Would be active: {active_count}"
-                )
-            )
-        else:
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f"\nSuccessfully updated archived status!\n"
-                    f"Total instructors: {total_instructors}\n"
-                    f"Archived: {archived_count}\n"
-                    f"Active: {active_count}"
-                )
-            )
+        except Exception as e:
+            print(f"Error processing instructors: {e}")
+            return
+
+        elapsed_time = time.time() - start_time
+
+        print(f"\nSuccessfully updated archived status!")
+        print(f"Total instructors: {total_instructors}")
+        print(f"Updated: {updated_count}")
+        print(f"Archived: {archived_count}")
+        print(f"Active: {active_count}")
+        print(f"Total time: {elapsed_time:.2f} seconds")
