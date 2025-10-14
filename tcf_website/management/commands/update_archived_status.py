@@ -18,21 +18,24 @@ from tcf_website.models import Instructor, Section, Semester
 class Command(BaseCommand):
     """Django management command to update instructor archived status."""
 
-    help = "Updates instructor archived status based on whether they are teaching in the current semester"
+    help = (
+        "Updates instructor archived status based on whether they are "
+        "teaching in the current semester"
+    )
 
     def add_arguments(self, parser):
         """Add command arguments."""
         parser.add_argument(
             "--semester",
             type=str,
-            help='Semester number (e.g., "1242" for Spring 2024). Defaults to latest semester.',
+            help='Semester number (e.g., "1242" for Spring 2024). Defaults to latest semester for archived status update.',
         )
 
     def handle(self, *args, **options):
         """Execute the command."""
         start_time = time.time()
 
-        # Use provided semester or get latest
+        # Get semester for archived status update
         if options["semester"]:
             try:
                 semester = Semester.objects.get(number=options["semester"])
@@ -48,6 +51,14 @@ class Command(BaseCommand):
         total_instructors = instructors.count()
         print(f"Found {total_instructors} instructors")
 
+        # Process instructors and track counts
+        counts = self._process_instructors(instructors, semester)
+
+        elapsed_time = time.time() - start_time
+        self._print_results(counts, total_instructors, elapsed_time)
+
+    def _process_instructors(self, instructors, semester):
+        """Process instructors and return counts."""
         archived_count = 0
         active_count = 0
         updated_count = 0
@@ -74,15 +85,22 @@ class Command(BaseCommand):
                     else:
                         active_count += 1
 
-        except Exception as e:
+        except (ValueError, TypeError, AttributeError,
+                transaction.TransactionManagementError) as e:
             print(f"Error processing instructors: {e}")
-            return
+            raise
 
-        elapsed_time = time.time() - start_time
+        return {
+            'archived': archived_count,
+            'active': active_count,
+            'updated': updated_count
+        }
 
-        print(f"\nSuccessfully updated archived status!")
+    def _print_results(self, counts, total_instructors, elapsed_time):
+        """Print the final results."""
+        print("\nSuccessfully updated archived status!")
         print(f"Total instructors: {total_instructors}")
-        print(f"Updated: {updated_count}")
-        print(f"Archived: {archived_count}")
-        print(f"Active: {active_count}")
+        print(f"Updated: {counts['updated']}")
+        print(f"Archived: {counts['archived']}")
+        print(f"Active: {counts['active']}")
         print(f"Total time: {elapsed_time:.2f} seconds")
