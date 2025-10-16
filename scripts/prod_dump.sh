@@ -1,5 +1,6 @@
 #!/bin/bash
 # This script dumps a remote database by connecting through an EC2 instance.
+source .env
 
 filename="$1"
 filename="${filename:-prod.dump}"

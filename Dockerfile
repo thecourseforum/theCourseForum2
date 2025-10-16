@@ -20,9 +20,9 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY package.json /app
+COPY package.json package-lock.json /app/
 
-RUN npm install --no-fund --no-audit
+RUN npm ci --no-fund --no-audit
 
 COPY requirements.txt /app
 
