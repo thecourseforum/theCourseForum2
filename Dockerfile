@@ -20,9 +20,9 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY package.json /app
+COPY package.json package-lock.json /app/
 
-RUN npm install --no-fund --no-audit
+RUN npm ci --no-fund --no-audit
 
 COPY requirements.txt /app
 
@@ -31,3 +31,6 @@ RUN pip3 install -r requirements.txt --disable-pip-version-check --no-cache-dir
 COPY . /app/
 
 RUN chmod +x /app/scripts/container-startup.sh
+
+# Collect static files during build
+RUN python manage.py collectstatic --no-input
