@@ -532,6 +532,10 @@ def instructor_view(request, instructor_id):
         .order_by("subdepartment_name", "name")
     )
 
+    # Check if instructor is teaching in the latest semester
+    latest_semester = Semester.latest()
+    is_teaching_current_semester = False
+
     grouped_courses: dict[str, list[dict[str, Any]]] = {}
     for course in courses:
         course["avg_rating"] = safe_round(course["avg_rating"])
@@ -541,12 +545,22 @@ def instructor_view(request, instructor_id):
         year = course.pop("latest_semester_year", None)
         course["last_taught"] = f"{season} {year}".title() if season and year else "—"
 
+        # Check if this course was taught in the latest semester
+        if (
+            season
+            and year
+            and season.upper() == latest_semester.season
+            and int(year) == latest_semester.year
+        ):
+            is_teaching_current_semester = True
+
         grouped_courses.setdefault(course["subdepartment_name"], []).append(course)
 
     context: dict[str, Any] = {
         "instructor": instructor,
         **{key: safe_round(value) for key, value in stats.items()},
         "courses": grouped_courses,
+        "is_teaching_current_semester": is_teaching_current_semester,
     }
     return render(request, "instructor/instructor.html", context)
 

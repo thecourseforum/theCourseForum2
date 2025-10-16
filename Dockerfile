@@ -27,9 +27,9 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# Install Node.js dependencies
-COPY package.json package-lock.json* ./
-RUN npm ci --no-fund --no-audit
+COPY package.json /app
+
+RUN npm install --no-fund --no-audit
 
 # Install Python dependencies into a virtual environment
 COPY requirements.txt ./
