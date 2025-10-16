@@ -31,6 +31,3 @@ RUN pip3 install -r requirements.txt --disable-pip-version-check --no-cache-dir
 COPY . /app/
 
 RUN chmod +x /app/scripts/container-startup.sh
-
-# Collect static files during build
-RUN python manage.py collectstatic --no-input
