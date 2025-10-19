@@ -73,7 +73,8 @@ else:
     AWS_S3_REGION_NAME = env.str("AWS_S3_REGION_NAME", default="us-east-1")
     AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
     AWS_DEFAULT_ACL = None
-    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=31536000"}  # 1 year cache
+    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
 
     ALLOWED_HOSTS.extend(
         [
@@ -89,7 +90,7 @@ else:
             "OPTIONS": {},
         },
         "staticfiles": {
-            "BACKEND": "storages.backends.s3.S3Storage",
+            "BACKEND": "storages.backends.s3.S3ManifestStaticStorage",
         },
     }
 
