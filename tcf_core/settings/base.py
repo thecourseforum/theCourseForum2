@@ -132,6 +132,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "tcf_core.context_processors.base",
                 "tcf_core.context_processors.searchbar_context",
+                "tcf_core.context_processors.flags",
             ],
         },
     },
@@ -251,3 +252,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Toxicity threshold for filtering reviews
 TOXICITY_THRESHOLD = 74
+
+# Presence / Calendar feature
+PRESENCE_SUBDOMAIN = env.str("PRESENCE_SUBDOMAIN", default="virginia")
+ENABLE_CLUB_CALENDAR = env.bool("ENABLE_CLUB_CALENDAR", default=True)
+PRESENCE_TIMEOUT_SECONDS = env.int("PRESENCE_TIMEOUT_SECONDS", default=8)
+PRESENCE_CACHE_SECONDS = env.int("PRESENCE_CACHE_SECONDS", default=300)
+
+# Ensure a default cache exists if not configured elsewhere
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "tcf-default",
+    }
+}
