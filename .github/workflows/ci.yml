@@ -54,13 +54,11 @@ jobs:
 
       - name: Install Python packages, excluding the unnecessary ones
         run: |
-          python -m pip install --upgrade pip
-          sed -i '/\(coverage\|types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
-          pip install -r requirements.txt
+          pip install --upgrade pip
+          pip install . --group all
 
       - name: Run pylint
         run: |
-          export PYTHONPATH="$(pwd)"
           pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
 
   django:
@@ -89,9 +87,8 @@ jobs:
 
       - name: Install Python packages, excluding the unnecessary ones
         run: |
-          python -m pip install --upgrade pip
-          sed -i '/\(lint\|mypy\|types\-tqdm\|black\|isort\|gunicorn\|django\-stubs\|uwsgi\)/d' requirements.txt
-          pip install -r requirements.txt
+          pip install --upgrade pip
+          pip install . --group all
 
       - name: Migrations & Tests
         run: |

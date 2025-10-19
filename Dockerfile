@@ -14,9 +14,9 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY requirements.txt /app
+COPY pyproject.toml /app/
 
-RUN pip3 install -r requirements.txt --disable-pip-version-check --no-cache-dir
+RUN pip3 install . --disable-pip-version-check --no-cache-dir
 
 COPY . /app/
 
