@@ -35,6 +35,7 @@ from ..models import (
     Instructor,
     Question,
     Review,
+    ReviewLLMSummary,
     School,
     Section,
     Semester,
@@ -432,6 +433,16 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     latest_semester = Semester.latest()
     is_current_semester = section_last_taught.semester.number == latest_semester.number
 
+    summary = (
+        ReviewLLMSummary.objects.filter(
+            course=course,
+            instructor=instructor,
+            club__isnull=True,
+        )
+        .order_by("-updated_at")
+        .first()
+    )
+
     return render(
         request,
         "course/course_professor.html",
@@ -455,6 +466,7 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "course_code": course.code(),
             "course_title": course.title,
             "instructor_fullname": instructor.full_name,
+            "ai_review_summary": summary,
         },
     )
 

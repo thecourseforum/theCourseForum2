@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
+from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, Page, Paginator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -1364,6 +1365,65 @@ class Review(models.Model):
     #             name='unique review per user, course, and instructor',
     #         )
     #     ]
+
+
+class ReviewLLMSummary(models.Model):
+    """Cached LLM summary for a course/instructor pairing or a club."""
+
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, null=True, blank=True, related_name="+"
+    )
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, null=True, blank=True, related_name="+"
+    )
+    club = models.ForeignKey(
+        Club, on_delete=models.CASCADE, null=True, blank=True, related_name="+"
+    )
+
+    summary_text = models.TextField(blank=True)
+    model_id = models.CharField(max_length=255, blank=True)
+    source_review_count = models.PositiveIntegerField(default=0)
+    last_review_id = models.PositiveIntegerField(default=0)
+    source_metadata = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["course", "instructor"],
+                condition=models.Q(club__isnull=True),
+                name="unique_review_llm_summary_course_instructor",
+            ),
+            models.UniqueConstraint(
+                fields=["club"],
+                condition=models.Q(club__isnull=False),
+                name="unique_review_llm_summary_club",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=["course", "instructor"]),
+            models.Index(fields=["club"]),
+        ]
+
+    def clean(self):
+        """Ensure only valid entity combinations are stored."""
+        if self.club_id:
+            if self.course_id or self.instructor_id:
+                raise ValidationError(
+                    "Club summaries cannot be linked to a course or instructor."
+                )
+        else:
+            if not (self.course_id and self.instructor_id):
+                raise ValidationError(
+                    "Course summaries must include both course and instructor."
+                )
+        super().clean()
+
+    def __str__(self):
+        if self.club:
+            return f"LLM summary for club {self.club}"
+        return f"LLM summary for {self.course} with {self.instructor}"
 
 
 class Vote(models.Model):

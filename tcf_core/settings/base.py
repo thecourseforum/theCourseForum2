@@ -255,3 +255,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Toxicity threshold for filtering reviews
 TOXICITY_THRESHOLD = 74
+
+# LLM review summary configuration
+BEDROCK_SUMMARY_ENABLED = env.bool("BEDROCK_SUMMARY_ENABLED", default=False)
+BEDROCK_REGION = env.str("BEDROCK_REGION", default="us-east-1")
+BEDROCK_MODEL_ID = env.str("BEDROCK_MODEL_ID", default="amazon.titan-text-lite-v1")
+AI_SUMMARY_MIN_NEW_REVIEWS = env.int("AI_SUMMARY_MIN_NEW_REVIEWS", default=5)
+AI_SUMMARY_MAX_REVIEWS = env.int("AI_SUMMARY_MAX_REVIEWS", default=12)
+AI_SUMMARY_REVIEW_SNIPPET_CHARS = env.int("AI_SUMMARY_REVIEW_SNIPPET_CHARS", default=400)

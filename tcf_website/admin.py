@@ -9,6 +9,7 @@ from .models import *
 
 admin.site.register(User)
 admin.site.register(Review)
+admin.site.register(ReviewLLMSummary)
 admin.site.register(Vote)
 admin.site.register(Question)
 admin.site.register(Answer)

@@ -12,6 +12,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from ..models import Review, ClubCategory, Club
+from ..services.review_llm import maybe_schedule_summary_generation
 
 # pylint: disable=fixme,unused-argument
 # Disable pylint errors on TODO messages, such as below
@@ -119,6 +120,7 @@ def new_review(request):
             )
 
             instance.save()
+            maybe_schedule_summary_generation(instance)
 
             # Determine redirect URL with appropriate mode
             redirect_url = "reviews"
@@ -265,6 +267,7 @@ def edit_review(request, review_id):
         form = ReviewForm(request.POST, instance=review)
         if form.is_valid():
             form.save()
+            maybe_schedule_summary_generation(form.instance)
             # Check if it's a club or course review
             if form.instance.club:
                 messages.success(
