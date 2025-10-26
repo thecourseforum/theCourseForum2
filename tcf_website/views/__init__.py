@@ -41,4 +41,4 @@ from .schedule import (
     view_select_schedules_modal,
 )
 from .search import search
-from .calendar import calendar_overview
+from .calendar import calendar_overview, event_detail

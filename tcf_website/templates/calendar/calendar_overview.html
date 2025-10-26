@@ -1,55 +1,135 @@
 {% extends "base/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 {% block title %}Club Calendar{% endblock %}
 
+{% block styles %}
+<link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid mt-3">
-  <div class="d-flex align-items-center justify-content-between mb-3">
-    <h2 class="mb-0">Club Calendar</h2>
-    <div class="input-group" style="max-width: 360px;">
-      <input type="text" class="form-control" placeholder="Search events or clubs (coming soon)" disabled>
-      <button class="btn btn-outline-secondary" type="button" disabled>
-        <i class="fa fa-search" aria-hidden="true"></i>
-      </button>
+<div class="department container">
+  <div class="container-lg mb-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="mb-0">Club Calendar</h2>
+      <div class="input-group" style="max-width: 360px;">
+        <!-- simple non-functional search input for now (stub for future) -->
+        <input type="text" class="form-control" placeholder="Search events or clubs (coming soon)" disabled>
+        <button class="btn btn-outline-secondary" type="button" disabled>
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
+      </div>
     </div>
   </div>
 
-  {% if groups %}
-    {% for date_key, items in groups.items %}
+  <div class="calendar-events container-lg px-0">
+    <!-- Past Events Dropdown -->
+    {% if past_groups %}
       <div class="mb-4">
-        <h5 class="text-muted">{{ date_key }}</h5>
-        <ul class="list-group">
-          {% for ev in items %}
-            <li class="list-group-item d-flex justify-content-between align-items-start">
-              <div class="ms-2 me-auto">
-                <div class="fw-bold">{{ ev.name }}</div>
-                <small class="text-muted">
-                  {{ ev.org }}{% if ev.location %} • {{ ev.location }}{% endif %}
-                  {% if ev.tags and ev.tags|length > 0 %} •
-                    {% for t in ev.tags|slice:":3" %}
-                      <span class="badge bg-secondary">{{ t }}</span>
-                    {% endfor %}
-                  {% endif %}
-                </small>
-                {% if ev.desc_text %}
-                  <div class="text-truncate" style="max-width: 700px;">{{ ev.desc_text }}</div>
-                {% endif %}
+        <button class="btn btn-outline-secondary w-100" type="button" data-toggle="collapse" data-target="#pastEvents" aria-expanded="false" aria-controls="pastEvents">
+          <i class="fa fa-history" aria-hidden="true"></i> View Previous Events ({{ past_groups|length }} date{{ past_groups|length|pluralize }})
+        </button>
+        <div class="collapse" id="pastEvents">
+          <div class="card card-body mt-2">
+            {% for date_key, items in past_groups.items %}
+              <div class="mb-3">
+                <h6 class="text-muted">{{ date_key }}</h6>
+                <ul class="list-unstyled">
+                  {% for ev in items %}
+                    <li>
+                      <div class="card rating-card mb-2">
+                        <div class="row no-gutters">
+                          <div class="col-md-8">
+                            <div class="card-body">
+                              <div class="fw-bold text-dark mb-1">{{ ev.name }}</div>
+                              <div class="mb-2">
+                                <span class="text-primary fw-semibold">{{ ev.org }}</span>
+                                {% if ev.location %} • <span class="text-muted">{{ ev.location }}</span>{% endif %}
+                              </div>
+                              {% if ev.tags and ev.tags|length > 0 %}
+                                <div class="mb-2">
+                                  {% for t in ev.tags|slice:":3" %}
+                                    <span class="badge {{ t|tag_color }} text-white me-1">{{ t }}</span>
+                                  {% endfor %}
+                                </div>
+                              {% endif %}
+                              {% if ev.desc_text %}
+                                <div class="text-muted text-truncate" style="max-width: 700px;">{{ ev.desc_text }}</div>
+                              {% endif %}
+                            </div>
+                          </div>
+                          <div class="col-md-4 d-flex align-items-center justify-content-center">
+                            <a class="btn btn-outline-primary btn-sm"
+                               href="{% url 'event_detail' event_uri=ev.uri %}"
+                               title="View event details">
+                               Details
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  {% endfor %}
+                </ul>
               </div>
-              <a class="btn btn-sm btn-outline-primary"
-                 href="{% url 'calendar_overview' %}?focus={{ ev.uri }}"
-                 title="Details coming soon">
-                 Details
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-    {% endfor %}
-  {% else %}
-    <div class="alert alert-info">No upcoming events found.</div>
-  {% endif %}
+    {% endif %}
+
+    <!-- Upcoming Events -->
+    {% if upcoming_groups %}
+      {% for date_key, items in upcoming_groups.items %}
+        <div class="mb-4">
+          <h5 class="text-muted">{{ date_key }}</h5>
+          <ul class="list-unstyled">
+            {% for ev in items %}
+              <li>
+                <div class="card rating-card mb-2">
+                  <div class="row no-gutters">
+                    <div class="col-md-8">
+                      <div class="card-body">
+                        <div class="fw-bold text-dark mb-1">{{ ev.name }}</div>
+                        <div class="mb-2">
+                          <span class="text-primary fw-semibold">{{ ev.org }}</span>
+                          {% if ev.location %} • <span class="text-muted">{{ ev.location }}</span>{% endif %}
+                        </div>
+                        {% if ev.tags and ev.tags|length > 0 %}
+                          <div class="mb-2">
+                            {% for t in ev.tags|slice:":3" %}
+                              <span class="badge {{ t|tag_color }} text-white me-1">{{ t }}</span>
+                            {% endfor %}
+                          </div>
+                        {% endif %}
+                        {% if ev.desc_text %}
+                          <div class="text-muted text-truncate" style="max-width: 700px;">{{ ev.desc_text }}</div>
+                        {% endif %}
+                      </div>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center justify-content-center">
+                      <a class="btn btn-outline-primary btn-sm"
+                         href="{% url 'event_detail' event_uri=ev.uri %}"
+                         title="View event details">
+                         Details
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="card col p-5 text-center">
+        <div class="card-body">
+          <h4 class="card-title">
+            No upcoming events found. <i class="far fa-frown-open fa-fw"></i>
+          </h4>
+        </div>
+      </div>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}
-
-
