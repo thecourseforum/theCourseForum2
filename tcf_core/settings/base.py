@@ -80,6 +80,7 @@ else:
             "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
             "thecourseforum.com",
             "thecourseforumtest.com",
+            "d1gr9vmyo0mkxv.cloudfront.net",
         ]
     )
 
@@ -106,6 +107,7 @@ else:
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "django.middleware.gzip.GZipMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
