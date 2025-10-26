@@ -10,6 +10,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from ..models import Review, Vote
+from ..services import review_llm
 from ..views.review import ReviewForm
 from .test_utils import setup, suppress_request_warnings
 
@@ -213,3 +214,47 @@ class ModelReviewTests(TestCase):
         self.assertFalse(
             Review.get_sorted_reviews(self.course, self.instructor, self.user1).exists()
         )
+
+
+class ReviewLLMServiceSmokeTests(TestCase):
+    """Tests for the review summary helpers."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_summary_target_validation(self):
+        """SummaryTarget enforces valid combinations."""
+        with self.assertRaises(ValueError):
+            review_llm.SummaryTarget(course_id=self.course.id).validate()
+
+        with self.assertRaises(ValueError):
+            review_llm.SummaryTarget(
+                club_id=1, course_id=self.course.id, instructor_id=self.instructor.id
+            ).validate()
+
+        # Valid cases should not raise.
+        review_llm.SummaryTarget(
+            course_id=self.course.id, instructor_id=self.instructor.id
+        ).validate()
+        review_llm.SummaryTarget(club_id=1).validate()
+
+    def test_build_prompt_payload_includes_reviews(self):
+        """Prompt payload contains review ids and prior summary."""
+        reviews = list(
+            Review.objects.filter(course=self.course, instructor=self.instructor)
+        )
+        target = review_llm.SummaryTarget(
+            course_id=self.course.id, instructor_id=self.instructor.id
+        )
+
+        payload = review_llm._build_prompt_payload(  # pylint: disable=protected-access
+            target=target,
+            reviews=reviews,
+            total_reviews=len(reviews),
+            prior_summary="previous summary",
+        )
+
+        review_ids = payload.metadata["review_ids"]
+        self.assertEqual(review_ids, [review.id for review in reviews])
+        self.assertIn("previous summary", payload.messages[1]["content"])
+        self.assertEqual(payload.metadata["stats"]["review_count"], len(reviews))
