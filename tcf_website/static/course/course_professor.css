@@ -189,6 +189,10 @@
 }
 
 @media (max-width: 1100px) {
+  .chart-container {
+    max-width: 600px;
+  }
+
   .grades-ratings-container {
     flex-direction: column;
     height: 650px;
@@ -208,6 +212,10 @@
   }
 
   .gpa-text {
+    font-size: 24px;
+  }
+
+  .sentiment-text {
     font-size: 24px;
   }
   .students-text {
@@ -259,6 +267,9 @@
     height: 50%;
   }
 
+  .chart-container {
+    width: 175px;
+  }
   .ratings-container {
     height: 50%;
   }
@@ -285,6 +296,11 @@
   .gpa-text {
     font-size: 18px;
   }
+
+  .sentiment-text {
+    font-size: 18px;
+  }
+  
   .students-text {
     font-size: 12px;
   }
