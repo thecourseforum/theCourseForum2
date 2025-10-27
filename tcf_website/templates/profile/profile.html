@@ -4,19 +4,30 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'profile/profile.css' %}" />
+<link rel="stylesheet" href="{% static 'reviews/review_stats.css' %}" />
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid">
-    <div class="row d-flex flex-column align-items-center">
-        <h2>Profile</h2>
-        <div class="card col-12 col-sm-9 col-md-9 col-xl-6 mt-3 px-0">
+    <div class="row">
+        <div class="card sticky-top top-0 align-self-start h-auto col-12 col-sm-9 col-md-9 col-xl-6 mt-3 px-0">
             <img class="card-img-top bg-dark" src="{% static 'base/img/alderman-and-peabody.jpg' %}" style="filter: brightness(150%) contrast(75%)">
-            <div class="card-body">
-                <h4 class="card-title"><i class="far fa-edit"></i> My Details</h4>
+            <div class="card-body position-relative">
+
+                <img class = "translate-middle" src="{% static 'base/img/alderman-and-peabody.jpg' %}"
+                    style="
+                    top: -30%;
+                    left: 5%;
+                    width: 15vh; 
+                    height: 15vh; 
+                    background-color: gray; 
+                    border-radius: 5%; 
+                    position: absolute; 
+                    border: 3px solid white;"/>
+                
                 <form method="POST" action="{% url 'profile' %}" id="ProfileForm">
                     {% csrf_token %}
-                    <div class="form-row">
+                    <div class="form-row mt-5">
                         <div class="col-12 col-lg-4 ">
                             {{ form.first_name.label_tag }}
                             {{ form.first_name }}
@@ -37,6 +48,13 @@
                     <button class="btn btn-danger mt-3" type="button" data-toggle="modal" data-target="#deleteProfileModal">Delete Profile</button>
                     {% include "profile/delete_confirm_modal.html" with profile=profile %}
                 </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-9 col-md-9 col-xl-6 mt-3 px-0">
+            <!-- taken from user_reviews.html, which may be removed -->
+            <div class="my-reviews container mx-auto">
+                {% include "reviews/review_stats.html" with total_reviews_written=total_reviews_written total_review_upvotes=total_review_upvotes average_review_rating=average_review_rating %}
+                {% include "reviews/reviews.html" with paginated_reviews=user.reviews profile=True %}
             </div>
         </div>
     </div>
