@@ -16,4 +16,4 @@ python manage.py clearsessions
 # Add custom commands here
 
 echo 'Starting Django Server...'
-python manage.py runserver 0.0.0.0:80 
+exec gunicorn tcf_core.wsgi:application --bind 0.0.0.0:80

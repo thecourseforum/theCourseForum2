@@ -9,7 +9,7 @@ services:
       python manage.py collectstatic --noinput && \
       python manage.py invalidate_cachalot tcf_website && \
       echo 'Starting Django Server...' && \
-      python manage.py runserver 0.0.0.0:8000"
+      gunicorn tcf_core.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/app
       - /app/db/ # exclude the subfolder to prevent potential interference
