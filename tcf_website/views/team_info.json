@@ -67,6 +67,12 @@
     }
   ],
   "engineering_team": [
+    {"name": "Ivan Kisselev",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Ivan_Kisselev.jpg",
+      "github": "IvanTheEngineer"
+    },
     {
       "name": "AJ Nye",
       "role": "Secretary",
