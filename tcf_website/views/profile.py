@@ -35,7 +35,7 @@ class ProfileForm(ModelForm):
 
 @login_required
 def profile(request):
-    """User profile view."""
+    """User profile."""
     if request.method == "POST":
         form = ProfileForm(request.POST, label_suffix="", instance=request.user)
 
@@ -47,12 +47,8 @@ def profile(request):
         return HttpResponseRedirect("/profile")
 
     form = ProfileForm(label_suffix="", instance=request.user)
-    return render(request, "profile/profile.html", {"form": form})
 
-
-@login_required
-def reviews(request):
-    """User reviews view."""
+    """User reviews."""
     # Handled separately because it requires joining 1 more table (i.e. Vote)
     upvote_stat = Review.objects.filter(user=request.user).aggregate(
         total_review_upvotes=Count("vote", filter=Q(vote__value=1)),
@@ -71,7 +67,12 @@ def reviews(request):
     merged = upvote_stat | other_stats
     # Round floats
     stats = {key: safe_round(value) for key, value in merged.items()}
-    return render(request, "reviews/user_reviews.html", context=stats)
+    # Combine everything into one context
+    context = {
+        "form": form,
+        **stats,  # expands the stats dictionary into the same level
+    }
+    return render(request, "profile/profile.html", context)
 
 
 class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):

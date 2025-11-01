@@ -15,7 +15,7 @@ from .browse import (
     club_category,
 )
 from .index import AboutView, index, privacy, terms
-from .profile import DeleteProfile, profile, reviews
+from .profile import DeleteProfile, profile
 from .qa import (
     DeleteAnswer,
     DeleteQuestion,

@@ -60,7 +60,6 @@ urlpatterns = [
         name="delete_review",
     ),
     path("reviews/<int:review_id>/edit/", views.edit_review, name="edit_review"),
-    path("reviews/", views.reviews, name="reviews"),
     path("reviews/<int:review_id>/upvote/", views.upvote),
     path("reviews/<int:review_id>/downvote/", views.downvote),
     path("reviews/check_duplicate/", views.review.check_duplicate),

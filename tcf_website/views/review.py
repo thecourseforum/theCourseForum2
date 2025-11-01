@@ -121,7 +121,7 @@ def new_review(request):
             instance.save()
 
             # Determine redirect URL with appropriate mode
-            redirect_url = "reviews"
+            redirect_url = "profile"
 
             # Check if this is a club review by directly checking if club field is set
             if instance.club:
