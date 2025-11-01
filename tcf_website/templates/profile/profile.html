@@ -8,50 +8,55 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="card sticky-top top-0 align-self-start h-auto col-12 col-sm-9 col-md-9 col-xl-6 mt-3 px-0">
-            <img class="card-img-top bg-dark" src="{% static 'base/img/alderman-and-peabody.jpg' %}" style="filter: brightness(150%) contrast(75%)">
-            <div class="card-body position-relative">
+<div class="container-fluid" style ="padding-bottom: 0; margin-top: -1rem; margin-bottom: -1rem; overflow:hidden;">
+    <div class="row" >
 
-                <img class = "translate-middle" src="{% static 'base/img/alderman-and-peabody.jpg' %}"
-                    style="
-                    top: -30%;
-                    left: 5%;
-                    width: 15vh; 
-                    height: 15vh; 
-                    background-color: gray; 
-                    border-radius: 5%; 
-                    position: absolute; 
-                    border: 3px solid white;"/>
-                
-                <form method="POST" action="{% url 'profile' %}" id="ProfileForm">
-                    {% csrf_token %}
-                    <div class="form-row mt-5">
-                        <div class="col-12 col-lg-4 ">
-                            {{ form.first_name.label_tag }}
-                            {{ form.first_name }}
-                            <small id="first_name" class="form-text text-muted">Your name is never public.</small>
+        <div class="col-12 col-sm-9 col-md-9 col-xl-6 px-0" style="height: 90vh; overflow: hidden;">
+            <div class="card sticky-top top-0 h-100 d-flex flex-column">
+                <img class="card-img-top bg-dark" src="{% static 'base/img/alderman-and-peabody.jpg' %}" style="filter: brightness(150%) contrast(75%)">
+                <div class="card-body position-relative">
+
+                    <img class = "translate-middle" src="{% static 'base/img/alderman-and-peabody.jpg' %}"
+                        style="
+                        top: -30%;
+                        left: 5%;
+                        width: 15vh; 
+                        height: 15vh; 
+                        background-color: gray; 
+                        border-radius: 5%; 
+                        position: absolute; 
+                        border: 3px solid white;"/>
+                    
+                    <form method="POST" action="{% url 'profile' %}" id="ProfileForm">
+                        {% csrf_token %}
+                        <div class="form-row mt-5">
+                            <div class="col-12 col-lg-4 ">
+                                {{ form.first_name.label_tag }}
+                                {{ form.first_name }}
+                                <small id="first_name" class="form-text text-muted">Your name is never public.</small>
+                            </div>
+                            <div class="col-12 col-lg-4 ">
+                                {{ form.last_name.label_tag }}
+                                {{ form.last_name }}
+                            </div>
+                            <div class="col-12 col-lg-4 ">
+                                {{ form.graduation_year.label_tag }}
+                                {{ form.graduation_year }}
+                            </div>
                         </div>
-                        <div class="col-12 col-lg-4 ">
-                            {{ form.last_name.label_tag }}
-                            {{ form.last_name }}
-                        </div>
-                        <div class="col-12 col-lg-4 ">
-                            {{ form.graduation_year.label_tag }}
-                            {{ form.graduation_year }}
-                        </div>
+                    </form>
+
+                    <div class="button-wrapper">
+                        <input type="submit" class="btn btn-primary mt-3" form="ProfileForm" value="Save Profile">
+                        <button class="btn btn-danger mt-3" type="button" data-toggle="modal" data-target="#deleteProfileModal">Delete Profile</button>
+                        {% include "profile/delete_confirm_modal.html" with profile=profile %}
                     </div>
-                </form>
-                <div class="button-wrapper">
-                    <input type="submit" class="btn btn-primary mt-3" form="ProfileForm" value="Save Profile">
-                    <button class="btn btn-danger mt-3" type="button" data-toggle="modal" data-target="#deleteProfileModal">Delete Profile</button>
-                    {% include "profile/delete_confirm_modal.html" with profile=profile %}
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-9 col-md-9 col-xl-6 mt-3 px-0">
-            <div class="my-reviews container mx-auto">
+
+        <div class="col-12 col-sm-9 col-md-9 col-xl-6 mt-0 px-0">
+            <div class="my-reviews container mx-auto" style="max-height: 90vh; overflow-y: auto;"> <!-- only added overflow to right div -->
                 {% include "reviews/review_stats.html" with total_reviews_written=total_reviews_written total_review_upvotes=total_review_upvotes average_review_rating=average_review_rating %}
                 {% include "reviews/reviews.html" with paginated_reviews=user.reviews profile=True %}
             </div>
