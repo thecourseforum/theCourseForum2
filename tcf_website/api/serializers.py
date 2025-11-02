@@ -152,12 +152,35 @@ class CourseAllStatsSerializer(CourseSimpleStatsSerializer):
         ]
 
 
+class CourseAutocompleteSerializer(serializers.ModelSerializer):
+    """DRF Serializer for autocomplete course"""
+
+    subdepartment = serializers.CharField(
+        source="subdepartment.mnemonic", read_only=True
+    )
+
+    class Meta:
+        model = Course
+        fields = ["id", "title", "number", "subdepartment"]
+
+
 class InstructorSerializer(serializers.ModelSerializer):
     """DRF Serializer for Instructor"""
 
     class Meta:
         model = Instructor
         fields = "__all__"
+
+
+class InstructorAutocompleteSerializer(serializers.ModelSerializer):
+    """DRF Serializer for autocomplete instructor"""
+
+    class Meta:
+        model = Instructor
+        fields = [
+            "id",
+            "full_name",
+        ]
 
 
 class ClubCategorySerializer(serializers.ModelSerializer):
