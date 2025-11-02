@@ -236,7 +236,7 @@ class DeleteReview(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
     """Review deletion view."""
 
     model = Review
-    success_url = reverse_lazy("reviews")
+    success_url = reverse_lazy("profile")
 
     def get_object(self):  # pylint: disable=arguments-differ
         """Override DeleteView's function to validate review belonging to user."""
@@ -276,7 +276,7 @@ def edit_review(request, review_id):
                     request,
                     f"Successfully updated your review for {form.instance.course}!",
                 )
-            return redirect("reviews")
+            return redirect("profile")
         messages.error(request, form.errors)
         return render(request, "reviews/edit_review.html", {"form": form})
     form = ReviewForm(instance=review)
