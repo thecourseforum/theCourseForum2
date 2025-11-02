@@ -431,6 +431,9 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         answers[question.id] = Answer.display_activity(question.id, request.user)
     questions = Question.display_activity(course_id, instructor_id, request.user)
 
+    latest_semester = Semester.latest()
+    is_current_semester = section_last_taught.semester.number == latest_semester.number
+
     return render(
         request,
         "course/course_professor.html",
@@ -446,6 +449,7 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "data": json.dumps(data),
             "section_info": section_info,
             "display_times": Semester.latest() == section_last_taught.semester,
+            "is_current_semester": is_current_semester,
             "questions": questions,
             "answers": answers,
             "sort_method": method,
