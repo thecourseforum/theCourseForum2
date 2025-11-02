@@ -47,13 +47,27 @@
                 </div>
                 {% endif %}
                 
-                <span class="badge {% if club.application_required %}badge-warning{% else %}badge-success{% endif %} p-2">
-                  {% if club.application_required %}
-                    Application Required
-                  {% else %}
+                {% if club.application_required %}
+                  <div class = "d-flex">
+                    <span class = "badge badge-warning p-2 mr-2">
+                      Application Required
+                    </span>
+                    <a href = "https://forms.gle/6RtVa4QVjoJAFdph7" target="_blank">
+                      <span class = "badge badge-info p-2 mr-2">
+                        Application Link
+                      </span>
+                    </a>
+                    <a href = "https://docs.google.com/spreadsheets/d/1Dl5d-0wiqos7Y32R77GfSX49jBDmIAJjvv7ZWsSm9tQ" target="_blank">
+                      <span class = "badge badge-secondary p-2">
+                        Responses
+                      </span>
+                    </a>
+                  </div>
+                {% else %}
+                  <span class = "badge badge-success p-2">
                     No Application Required
-                  {% endif %}
-                </span>
+                  </span>
+                {% endif %}
               </div>
             </div>
             
