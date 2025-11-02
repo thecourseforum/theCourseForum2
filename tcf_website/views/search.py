@@ -5,11 +5,17 @@ import statistics
 from typing import Iterable
 
 from django.contrib.postgres.search import TrigramSimilarity
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import F, FloatField, Q, Value
 from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
+from ..api.serializers import (
+    CourseAutocompleteSerializer,
+    InstructorAutocompleteSerializer,
+)
 from ..models import Club, Course, Instructor, Subdepartment
 
 
@@ -331,3 +337,54 @@ def apply_filters(results, filters):
         results = results.filter(coursegrade__average__gte=float(min_gpa))
 
     return results.distinct()
+
+
+@api_view(["GET"])
+def autocomplete(request):
+    """implement autocomplete for search bar"""
+    query = request.GET.get("q", "").strip()
+
+    if not query:
+        return Response({"courses": [], "instructors": []})  # empty list if no input
+
+    instructor_threshold = 0.5
+    instructors = (
+        Instructor.objects.annotate(
+            similarity_first=TrigramSimilarity("first_name", query),
+            similarity_second=TrigramSimilarity("last_name", query),
+            similarity_full=TrigramSimilarity("full_name", query),
+        )
+        .annotate(
+            max_similarity=Greatest(
+                F("similarity_first"),
+                F("similarity_second"),
+                F("similarity_full"),
+                output_field=FloatField(),
+            )
+        )
+        .filter(max_similarity__gte=instructor_threshold)
+        .order_by("-max_similarity")[:5]
+    )
+
+    course_threshold = 0.15
+    courses = (
+        Course.objects.select_related("subdepartment")
+        .annotate(
+            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", query),
+            title_similarity=TrigramSimilarity("title", query),
+        )
+        .annotate(
+            max_similarity=Greatest(F("mnemonic_similarity"), F("title_similarity"))
+        )
+        .filter(max_similarity__gte=course_threshold)
+        .order_by("-max_similarity")[:5]
+    )
+
+    return Response(
+        {
+            "courses": CourseAutocompleteSerializer(courses, many=True).data,
+            "instructors": InstructorAutocompleteSerializer(
+                instructors, many=True
+            ).data,
+        }
+    )
