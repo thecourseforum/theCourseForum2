@@ -1,5 +1,8 @@
 # pylint: disable=import-error,unused-wildcard-import,wildcard-import
 """Django settings module for development environment such as Heroku"""
+import os
+
+import dj_database_url
 
 from .base import *
 

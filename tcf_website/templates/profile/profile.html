@@ -16,26 +16,27 @@
                 <img class="card-img-top bg-dark" src="{% static 'base/img/alderman-and-peabody.jpg' %}" style="filter: brightness(150%) contrast(75%)">
                 <div class="card-body position-relative">
 
-                    <img class = "translate-middle" src="{% static 'base/img/alderman-and-peabody.jpg' %}"
+                    <img src="{% static 'base/img/alderman-and-peabody.jpg' %}"
                         style="
-                        top: -30%;
-                        left: 5%;
-                        width: 15vh; 
-                        height: 15vh; 
+                        position: absolute; 
+                        top: 0;
+                        left: 2rem;
+                        transform: translateY(-50%);
+                        width: clamp(80px, 12vh, 150px); 
+                        height: clamp(80px, 12vh, 150px);  
                         background-color: gray; 
                         border-radius: 5%; 
-                        position: absolute; 
                         border: 3px solid white;"/>
                     
                     <form method="POST" action="{% url 'profile' %}" id="ProfileForm">
                         {% csrf_token %}
                         <div class="form-row mt-5">
-                            <div class="col-12 col-lg-4 ">
+                            <div class="form-group col-12 col-lg-4">
                                 {{ form.first_name.label_tag }}
                                 {{ form.first_name }}
                                 <small id="first_name" class="form-text text-muted">Your name is never public.</small>
                             </div>
-                            <div class="col-12 col-lg-4 ">
+                            <div class="form-group col-12 col-lg-4">
                                 {{ form.last_name.label_tag }}
                                 {{ form.last_name }}
                             </div>

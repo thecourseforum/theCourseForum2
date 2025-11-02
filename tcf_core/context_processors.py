@@ -17,6 +17,14 @@ def base(request):
 def searchbar_context(request):
     """Provide context for the search bar."""
     latest_semester = Semester.latest()
+
+    if latest_semester is None:  # Then check if it's None
+        # Handle empty database - return empty context or default values
+        return {
+            "disciplines": [],
+            "subdepartments": [],
+            "semesters": [],
+        }
     recent_semesters = Semester.objects.filter(
         number__gte=latest_semester.number - 50  # 50 = 5 years * 10 semesters
     ).order_by("-number")

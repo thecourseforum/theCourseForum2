@@ -36,6 +36,25 @@ class ProfileForm(ModelForm):
 @login_required
 def profile(request):
     """User profile."""
+    if not request.user.is_authenticated:
+        from django.contrib.auth import login
+
+        # # local dev
+        # user, created = User.objects.get_or_create(
+        #     username="testuser",
+        #     defaults={
+        #         "email": "test@test.com",
+        #         "first_name": "Test",
+        #         "last_name": "User",
+        #         "graduation_year": 2025,
+        #     },
+        # )
+        # if created:
+        #     user.set_password("testpass123")
+        #     user.save()
+        # login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+        # return HttpResponseRedirect("/profile/")
+        # #
     if request.method == "POST":
         form = ProfileForm(request.POST, label_suffix="", instance=request.user)
 
