@@ -2,7 +2,7 @@
 """DRF Viewsets"""
 import asyncio
 from threading import Thread
-from django.db import connection
+from django.db import connections
 from django.db.models import Avg, Sum
 from django.http import JsonResponse
 from rest_framework import viewsets
@@ -197,7 +197,7 @@ class SectionEnrollmentViewSet(viewsets.ViewSet):
             except (asyncio.TimeoutError, requests.RequestException, ValueError) as exc:
                 print(f"Enrollment update failed for course {pk}: {exc}")
             finally:
-                connection.close()
+                connections.close_all()
 
         thread = Thread(target=_run_update, daemon=True)
         thread.start()

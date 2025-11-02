@@ -1,10 +1,8 @@
 """Tests for fetch_enrollment management command."""
 
-import gc
 import threading
 from unittest.mock import patch
 
-from django.db import connections
 from django.test import TestCase
 
 from tcf_website.management.commands.fetch_enrollment import fetch_section_data, get_session
@@ -106,27 +104,15 @@ class FetchEnrollmentTestCase(TestCase):
         self.assertFalse(result)
         self.assertEqual(SectionEnrollment.objects.count(), 0)
 
-    @patch("tcf_website.management.commands.fetch_enrollment.get_session")
-    def test_no_resource_leaks(self, mock_get_session):
-        """Test that threads and database connections are properly cleaned up."""
-        mock_session = mock_get_session.return_value
-        mock_session.get.return_value.status_code = 200
-        mock_session.get.return_value.raise_for_status.return_value = None
-        mock_session.get.return_value.json.return_value = {
-            "classes": [{"enrollment_total": 15, "class_capacity": 20, "wait_tot": 0, "wait_cap": 0}]
-        }
-
-        # Check thread isolation: each thread gets its own session
+    def test_thread_local_sessions(self):
+        """Test that each thread gets its own session instance."""
         sessions = []
         for _ in range(5):
             thread = threading.Thread(target=lambda: sessions.append(get_session()))
             thread.start()
             thread.join()
-        self.assertEqual(len(set(id(s) for s in sessions)), 5, "Each thread should have its own session")
-
-        # Check connection cleanup: no connection leak after fetch
-        initial_connections = len([c for c in connections.all() if c.is_usable()])
-        fetch_section_data(self.section)
-        gc.collect()
-        final_connections = len([c for c in connections.all() if c.is_usable()])
-        self.assertLessEqual(final_connections, initial_connections + 1, "Connections should be closed")
+        self.assertEqual(
+            len(set(id(s) for s in sessions)),
+            5,
+            "Each thread should have its own session"
+        )

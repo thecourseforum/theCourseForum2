@@ -165,7 +165,7 @@ class Command(BaseCommand):
         sections_queryset = Section.objects.filter(semester=semester)
         total_sections = sections_queryset.count()
         print(f"Found {total_sections} sections")
- 
+
         sections = list(sections_queryset)
 
         # Process sections in parallel using ThreadPoolExecutor
