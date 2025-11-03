@@ -1,10 +1,11 @@
 """Tests for fetch_enrollment management command."""
 
+import threading
 from unittest.mock import patch
 
 from django.test import TestCase
 
-from tcf_website.management.commands.fetch_enrollment import fetch_section_data
+from tcf_website.management.commands.fetch_enrollment import fetch_section_data, get_session
 from tcf_website.models import SectionEnrollment
 
 from .test_utils import setup
@@ -19,11 +20,13 @@ class FetchEnrollmentTestCase(TestCase):
         # pylint: disable=no-member
         self.section = self.section_course
 
-    @patch("tcf_website.management.commands.fetch_enrollment.session.get")
-    def test_fetch_enrollment_success(self, mock_get):
+    @patch("tcf_website.management.commands.fetch_enrollment.get_session")
+    def test_fetch_enrollment_success(self, mock_get_session):
         """Test successful enrollment fetch."""
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = {
+        mock_session = mock_get_session.return_value
+        mock_session.get.return_value.status_code = 200
+        mock_session.get.return_value.raise_for_status.return_value = None
+        mock_session.get.return_value.json.return_value = {
             "classes": [
                 {
                     "enrollment_total": 15,
@@ -42,8 +45,8 @@ class FetchEnrollmentTestCase(TestCase):
         self.assertEqual(enrollment.waitlist_taken, 5)
         self.assertEqual(enrollment.waitlist_limit, 10)
 
-    @patch("tcf_website.management.commands.fetch_enrollment.session.get")
-    def test_fetch_enrollment_update_existing(self, mock_get):
+    @patch("tcf_website.management.commands.fetch_enrollment.get_session")
+    def test_fetch_enrollment_update_existing(self, mock_get_session):
         """Test updating existing enrollment data."""
         # Create initial enrollment
         SectionEnrollment.objects.create(
@@ -54,8 +57,10 @@ class FetchEnrollmentTestCase(TestCase):
             waitlist_limit=5,
         )
 
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = {
+        mock_session = mock_get_session.return_value
+        mock_session.get.return_value.status_code = 200
+        mock_session.get.return_value.raise_for_status.return_value = None
+        mock_session.get.return_value.json.return_value = {
             "classes": [
                 {
                     "enrollment_total": 15,
@@ -74,24 +79,40 @@ class FetchEnrollmentTestCase(TestCase):
         self.assertEqual(enrollment.waitlist_taken, 8)
         self.assertEqual(enrollment.waitlist_limit, 12)
 
-    @patch("tcf_website.management.commands.fetch_enrollment.session.get")
-    def test_fetch_enrollment_empty_response(self, mock_get):
+    @patch("tcf_website.management.commands.fetch_enrollment.get_session")
+    def test_fetch_enrollment_empty_response(self, mock_get_session):
         """Test handling of empty API response."""
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = {"classes": []}
+        mock_session = mock_get_session.return_value
+        mock_session.get.return_value.status_code = 200
+        mock_session.get.return_value.raise_for_status.return_value = None
+        mock_session.get.return_value.json.return_value = {"classes": []}
 
         result = fetch_section_data(self.section)
 
         self.assertFalse(result)
         self.assertEqual(SectionEnrollment.objects.count(), 0)
 
-    @patch("tcf_website.management.commands.fetch_enrollment.session.get")
-    def test_fetch_enrollment_api_error(self, mock_get):
+    @patch("tcf_website.management.commands.fetch_enrollment.get_session")
+    def test_fetch_enrollment_api_error(self, mock_get_session):
         """Test handling of API error."""
-        mock_get.return_value.status_code = 500
-        mock_get.return_value.raise_for_status.side_effect = Exception("API Error")
+        mock_session = mock_get_session.return_value
+        mock_session.get.return_value.status_code = 500
+        mock_session.get.return_value.raise_for_status.side_effect = Exception("API Error")
 
         result = fetch_section_data(self.section)
 
         self.assertFalse(result)
         self.assertEqual(SectionEnrollment.objects.count(), 0)
+
+    def test_thread_local_sessions(self):
+        """Test that each thread gets its own session instance."""
+        sessions = []
+        for _ in range(5):
+            thread = threading.Thread(target=lambda: sessions.append(get_session()))
+            thread.start()
+            thread.join()
+        self.assertEqual(
+            len(set(id(s) for s in sessions)),
+            5,
+            "Each thread should have its own session"
+        )
