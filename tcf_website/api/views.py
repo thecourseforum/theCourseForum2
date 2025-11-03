@@ -1,7 +1,7 @@
 # pylint: disable=too-many-ancestors,fixme
 """DRF Viewsets"""
 import asyncio
-from threading import Thread
+# from threading import Thread
 from django.db import connection
 from django.db.models import Avg, Sum
 from django.http import JsonResponse
@@ -199,8 +199,8 @@ class SectionEnrollmentViewSet(viewsets.ViewSet):
             finally:
                 connection.close()
 
-        thread = Thread(target=_run_update, daemon=True)
-        thread.start()
+        # thread = Thread(target=_run_update, daemon=True)
+        # thread.start()
 
         # Get sections and return enrollment data
         sections = Section.objects.filter(course_id=pk)
