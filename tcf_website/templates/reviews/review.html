@@ -83,7 +83,7 @@
                             </a>
                             <span class="downvoteCount">{{ review.count_votes.downvotes }}</span>
                         </div>
-                        {% if user.email != instructor.email %}
+                        {% if user.is_authenticated and user.email != instructor.email %}
                             <a class="btn bg-tcf-orange text-white justify-content-end mt-0"
                                 data-toggle="modal"
                                 data-target="#prof-reply-modal-{{ review.id }}">
@@ -124,11 +124,13 @@
             
         </div>
     </div>
-    {% if professorReply %}
-    <div class="col-12 p-2" style="background-color: #f0f0f0;">
-        <p class="m-2 text-muted">Want to share more? Add a comment or feedback below.</p>
-    </div>
-    {% endif %}
+    {% for reply in review.replies.all %}
+        <div class="col-12 p-2" style="background-color: #f0f0f0;">
+            <p class="m-2 text-muted">
+                {{ reply }}
+            </p>
+        </div>
+    {% endfor %}
     <!-- Professor Reply Modal -->
     <div class="modal fade" id="prof-reply-modal-{{ review.id }}" tabindex="-1" role="dialog" aria-labelledby="prof-reply-label-{{ review.id }}" aria-hidden="true">
         <div class="modal-dialog" role="document">
