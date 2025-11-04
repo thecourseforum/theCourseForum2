@@ -8,7 +8,18 @@ from typing import Any
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import Avg, CharField, Count, F, Prefetch, Q, Sum, Value
+from django.db.models import (
+    Avg,
+    CharField,
+    Count,
+    F,
+    OuterRef,
+    Prefetch,
+    Q,
+    Subquery,
+    Sum,
+    Value,
+)
 from django.db.models.functions import Coalesce, Concat
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -450,32 +461,25 @@ def instructor_view(request, instructor_id):
     """View for instructor page, showing all their courses taught."""
     instructor: Instructor = get_object_or_404(Instructor, pk=instructor_id)
 
-    stats: dict[str, float] = (
-        Instructor.objects.filter(pk=instructor_id)
-        .prefetch_related("review_set")
-        .aggregate(
-            avg_gpa=Avg("courseinstructorgrade__average"),
-            avg_difficulty=Avg("review__difficulty"),
-            avg_rating=(
-                Avg("review__instructor_rating")
-                + Avg("review__enjoyability")
-                + Avg("review__recommendability")
-            )
-            / 3,
+    stats: dict[str, float] = Instructor.objects.filter(pk=instructor.pk).aggregate(
+        avg_gpa=Avg("courseinstructorgrade__average"),
+        avg_difficulty=Avg("review__difficulty"),
+        avg_rating=(
+            Avg("review__instructor_rating")
+            + Avg("review__enjoyability")
+            + Avg("review__recommendability")
         )
+        / 3,
     )
 
-    course_fields: list[str] = [
-        "name",
-        "id",
-        "avg_rating",
-        "avg_difficulty",
-        "avg_gpa",
-        "last_taught",
-    ]
+    # Get the most recent semester for each course-instructor combination
+
+    latest_section_qs = Section.objects.filter(
+        course=OuterRef("pk"), instructors=instructor
+    ).order_by("-semester__number")
+
     courses: list[dict[str, Any]] = (
         Course.objects.filter(section__instructors=instructor, number__gte=1000)
-        .prefetch_related("review_set")
         .annotate(
             subdepartment_name=F("subdepartment__name"),
             name=Concat(
@@ -508,29 +512,55 @@ def instructor_view(request, instructor_id):
                 )
             )
             / 3,
-            last_taught=Concat(
-                F("semester_last_taught__season"),
-                Value(" "),
-                F("semester_last_taught__year"),
-                output_field=CharField(),
+            latest_semester_season=Subquery(
+                latest_section_qs.values("semester__season")[:1]
+            ),
+            latest_semester_year=Subquery(
+                latest_section_qs.values("semester__year")[:1]
             ),
         )
-        .values("subdepartment_name", *course_fields)
+        .values(
+            "id",
+            "subdepartment_name",
+            "name",
+            "avg_rating",
+            "avg_difficulty",
+            "avg_gpa",
+            "latest_semester_season",
+            "latest_semester_year",
+        )
         .order_by("subdepartment_name", "name")
     )
+
+    # Check if instructor is teaching in the latest semester
+    latest_semester = Semester.latest()
+    is_teaching_current_semester = False
 
     grouped_courses: dict[str, list[dict[str, Any]]] = {}
     for course in courses:
         course["avg_rating"] = safe_round(course["avg_rating"])
         course["avg_difficulty"] = safe_round(course["avg_difficulty"])
         course["avg_gpa"] = safe_round(course["avg_gpa"])
-        course["last_taught"] = course["last_taught"].title()
+        season = course.pop("latest_semester_season", None)
+        year = course.pop("latest_semester_year", None)
+        course["last_taught"] = f"{season} {year}".title() if season and year else "—"
+
+        # Check if this course was taught in the latest semester
+        if (
+            season
+            and year
+            and season.upper() == latest_semester.season
+            and int(year) == latest_semester.year
+        ):
+            is_teaching_current_semester = True
+
         grouped_courses.setdefault(course["subdepartment_name"], []).append(course)
 
     context: dict[str, Any] = {
         "instructor": instructor,
         **{key: safe_round(value) for key, value in stats.items()},
         "courses": grouped_courses,
+        "is_teaching_current_semester": is_teaching_current_semester,
     }
     return render(request, "instructor/instructor.html", context)
 
