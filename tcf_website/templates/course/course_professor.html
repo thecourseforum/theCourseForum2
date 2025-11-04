@@ -228,9 +228,9 @@
                     <div id="sectionInfo">
                         {% for section, sec_info in section_info.sections.items %}
                         <a href="https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_DETAILS.FieldFormula.IScript_Main?institution=UVA01&term={{ sem_code }}&class_nbr={{ section }}" 
-                           target="_blank" 
-                           rel="noopener noreferrer" 
-                           class="section-row {% if forloop.counter > 5 %}hidden-section{% endif %}">
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            class="section-row {% if forloop.counter > 5 %}hidden-section{% endif %}">
                             <div style="color: var(--accent-color);">{{ section }}</div>
                             <div>
                                 {{ sec_info.type }}{% if sec_info.units is not None %} ({{ sec_info.units }} Unit{% if sec_info.units != 1 %}s{% endif %}){% endif %}
@@ -424,13 +424,13 @@
 {% block js %}
     <!-- For instructor data -->
     <script> // Create global js vars from template context vars
-       var courseID = "{{ course_id|escapejs }}";
+        var courseID = "{{ course_id|escapejs }}";
     </script>
     <script type="module" src="{% static 'course/javascript/instr_data.js' %}"></script>
 
     <!-- For Bootstrap tooltip -->
     <script>
-      $(function () { $('[data-toggle="tooltip"]').tooltip() })
+        $(function () { $('[data-toggle="tooltip"]').tooltip() })
     </script>
 
     <!-- For grade data -->

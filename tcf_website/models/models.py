@@ -1364,6 +1364,28 @@ class Review(models.Model):
     #         )
     #     ]
 
+class Reply(models.Model):
+    """Reply model.
+
+    Belongs to a user
+    Has a review
+
+    """
+
+    text = models.TextField()
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # optional: one reply per user per review
+        constraints = [
+            models.UniqueConstraint(fields=["review", "user"], name="one_reply_per_prof_per_review")
+        ]
+
+    def __str__(self):
+        return f"Response to {self.review}"
+
 
 class Vote(models.Model):
     """Vote model.
