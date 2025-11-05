@@ -8,6 +8,9 @@
 {% if course_code %}<meta name="course-code" content="{{ course_code }}">{% endif %}
 {% if course_title %}<meta name="course-title" content="{{ course_title }}">{% endif %}
 {% if instructor_fullname %}<meta name="instructor-name" content="{{ instructor_fullname }}">{% endif %}
+{% if not is_current_semester %}
+<meta name="robots" content="noindex">
+{% endif %}
 {% endblock %}
 
 {% block styles %}

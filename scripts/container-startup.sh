@@ -14,6 +14,7 @@ python manage.py invalidate_cachalot tcf_website
 python manage.py clearsessions
 
 # Add custom commands here
+# python manage.py load_semester 2026_spring 
 
 echo 'Starting Django Server...'
 exec gunicorn tcf_core.wsgi:application --bind 0.0.0.0:80
