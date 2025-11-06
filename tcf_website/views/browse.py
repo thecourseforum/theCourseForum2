@@ -281,8 +281,6 @@ def course_view(
                     if num and times
                 }
 
-        instructor.rating = instructor.average_rating_for_course(course)
-
     dept = course.subdepartment.department
 
     # Navigation breadcrumbs
