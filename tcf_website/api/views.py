@@ -15,7 +15,6 @@ from ..models import (
     Instructor,
     School,
     Section,
-    SectionEnrollment,
     Semester,
     Subdepartment,
 )
