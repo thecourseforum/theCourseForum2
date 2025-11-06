@@ -59,7 +59,7 @@ if env.str("ENVIRONMENT") == "dev":
     DATABASES = {
         "default": {
             "NAME": env.str("DB_NAME"),
-            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "ENGINE": "django.db.backends.postgresql",
             "USER": env.str("DB_USER"),
             "PASSWORD": env.str("DB_PASSWORD"),
             "HOST": env.str("DB_HOST"),
@@ -99,7 +99,7 @@ else:
     DATABASES = {
         "default": {
             "NAME": env.str("AWS_RDS_NAME"),
-            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "ENGINE": "django.db.backends.postgresql",
             "USER": env.str("AWS_RDS_USER"),
             "PASSWORD": env.str("AWS_RDS_PASSWORD"),
             "HOST": env.str("AWS_RDS_HOST"),
