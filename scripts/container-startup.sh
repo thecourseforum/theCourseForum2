@@ -17,4 +17,4 @@ python manage.py clearsessions
 # python manage.py load_semester 2026_spring 
 
 echo 'Starting Django Server...'
-python manage.py runserver 0.0.0.0:80 
+exec gunicorn tcf_core.wsgi:application --bind 0.0.0.0:80
