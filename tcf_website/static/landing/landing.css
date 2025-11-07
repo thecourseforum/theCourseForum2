@@ -371,6 +371,8 @@ ul.list-inline.mb-0 li h5 {
   border-radius: 16px;
   font-size: 0.9rem;
   line-height: 1.5;
+
+  overflow-wrap: break-word;
 }
 
 .bot-message .message-content {
