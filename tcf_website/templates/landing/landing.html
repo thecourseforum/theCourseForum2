@@ -17,7 +17,7 @@
 
 {% block body %}
 <div class="container-fluid px-0 bg-light">
-    
+
     <!-- Custom Landing Page Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
@@ -298,6 +298,53 @@
         </div>
     </section>
 
+    <!-- Chatbot Widget -->
+    <div class="chatbot-container">
+        <button class="chatbot-toggle" id="chatbotToggle" aria-label="Open chat">
+            <i class="fas fa-comments"></i>
+        </button>
+        
+        <div class="chatbot-window" id="chatbotWindow">
+            <div class="chatbot-header">
+                <div class="chatbot-header-content">
+                    <div class="chatbot-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="chatbot-header-text">
+                        <h5>theCourseForum Assistant</h5>
+                        <p>Always here to help</p>
+                    </div>
+                </div>
+                <button class="chatbot-close" id="chatbotClose" aria-label="Close chat">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="chatbot-body" id="chatbotBody">
+                <div class="chatbot-message bot-message">
+                    <div class="message-content">
+                        Hi! How can I help you today?
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chatbot-footer">
+                <form id="chatbotForm">
+                    <input 
+                        type="text" 
+                        id="chatbotInput" 
+                        class="chatbot-input" 
+                        placeholder="Type your message..."
+                        autocomplete="off"
+                    >
+                    <button type="submit" class="chatbot-send" aria-label="Send message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div>
 
         <!-- Footer -->
@@ -363,13 +410,12 @@
         {% endblock %}
 
         {% block js %}
-        <!-- <script type="module" src="{% static 'landing/feedbackform.js' %}"></script> -->
         <script type="text/javascript">
 
             document.addEventListener("DOMContentLoaded", function () {
                 document.querySelectorAll(".faqs-content h5").forEach(header => {
                     header.addEventListener("click", function () {
-                        let icon = this.querySelector("i.fas"); // Find the <i> inside the h5
+                        let icon = this.querySelector("i.fas");
             
                         if (icon) {
                             icon.classList.toggle("fa-chevron-down");
@@ -382,9 +428,61 @@
             
                 // Update copyright year at the bottom of landing page
                 $(".year").text(new Date().getFullYear());
+
+                // Chatbot functionality
+                const chatbotToggle = document.getElementById('chatbotToggle');
+                const chatbotWindow = document.getElementById('chatbotWindow');
+                const chatbotClose = document.getElementById('chatbotClose');
+                const chatbotForm = document.getElementById('chatbotForm');
+                const chatbotInput = document.getElementById('chatbotInput');
+                const chatbotBody = document.getElementById('chatbotBody');
+                
+                // Toggle chat window
+                chatbotToggle.addEventListener('click', function() {
+                    chatbotWindow.classList.toggle('active');
+                    chatbotToggle.classList.toggle('hidden');
+                    if (chatbotWindow.classList.contains('active')) {
+                        chatbotInput.focus();
+                    }
+                });
+                
+                // Close chat window
+                chatbotClose.addEventListener('click', function() {
+                    chatbotWindow.classList.remove('active');
+                    chatbotToggle.classList.remove('hidden');
+                });
+                
+                // Handle message submission
+                chatbotForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const message = chatbotInput.value.trim();
+                    
+                    if (message) {
+                        // Add user message
+                        addMessage(message, 'user');
+                        chatbotInput.value = '';
+                        
+                        // Simulate bot response (replace with actual API call)
+                        setTimeout(function() {
+                            addMessage('Thanks for your message! This is where the bot response will appear.', 'bot');
+                        }, 1000);
+                    }
+                });
+                
+                function addMessage(text, sender) {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `chatbot-message ${sender}-message`;
+                    
+                    const contentDiv = document.createElement('div');
+                    contentDiv.className = 'message-content';
+                    contentDiv.textContent = text;
+                    
+                    messageDiv.appendChild(contentDiv);
+                    chatbotBody.appendChild(messageDiv);
+                    
+                    // Scroll to bottom
+                    chatbotBody.scrollTop = chatbotBody.scrollHeight;
+                }
             });
-            
-            // Update copyright year at the bottom of landing page
-            $(".year").text(new Date().getFullYear());
         </script>
         {% endblock %}
