@@ -301,14 +301,14 @@
     <!-- Chatbot Widget -->
     <div class="chatbot-container">
         <button class="chatbot-toggle" id="chatbotToggle" aria-label="Open chat">
-            <i class="fas fa-comments"></i>
+            <i class="icon-bubble"></i>
         </button>
         
         <div class="chatbot-window" id="chatbotWindow">
             <div class="chatbot-header">
                 <div class="chatbot-header-content">
                     <div class="chatbot-icon">
-                        <i class="fas fa-comments"></i>
+                        <i class="icon-bubble"></i>
                     </div>
                     <div class="chatbot-header-text">
                         <h5>theCourseForum Assistant</h5>
@@ -316,7 +316,7 @@
                     </div>
                 </div>
                 <button class="chatbot-close" id="chatbotClose" aria-label="Close chat">
-                    <i class="fas fa-times"></i>
+                    <i class="icon-close"></i>
                 </button>
             </div>
             
@@ -338,7 +338,7 @@
                         autocomplete="off"
                     >
                     <button type="submit" class="chatbot-send" aria-label="Send message">
-                        <i class="fas fa-paper-plane"></i>
+                        <i class="icon-paper-plane"></i>
                     </button>
                 </form>
             </div>
@@ -437,19 +437,48 @@
                 const chatbotInput = document.getElementById('chatbotInput');
                 const chatbotBody = document.getElementById('chatbotBody');
                 
-                // Toggle chat window
-                chatbotToggle.addEventListener('click', function() {
-                    chatbotWindow.classList.toggle('active');
-                    chatbotToggle.classList.toggle('hidden');
-                    if (chatbotWindow.classList.contains('active')) {
-                        chatbotInput.focus();
+                // Prevent scroll propagation from chatbot to page
+                chatbotBody.addEventListener('wheel', function(e) {
+                    const atTop = chatbotBody.scrollTop === 0;
+                    const atBottom = chatbotBody.scrollTop + chatbotBody.clientHeight >= chatbotBody.scrollHeight - 1;
+                    
+                    // Prevent page scroll when at boundaries
+                    if ((atTop && e.deltaY < 0) || (atBottom && e.deltaY > 0)) {
+                        e.preventDefault();
+                        e.stopPropagation();
                     }
+                }, { passive: false });
+                
+                // Prevent touch scroll propagation on mobile
+                chatbotBody.addEventListener('touchmove', function(e) {
+                    const atTop = chatbotBody.scrollTop === 0;
+                    const atBottom = chatbotBody.scrollTop + chatbotBody.clientHeight >= chatbotBody.scrollHeight - 1;
+                    
+                    if ((atTop && e.touches[0].clientY > e.touches[0].pageY) || 
+                        (atBottom && e.touches[0].clientY < e.touches[0].pageY)) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                }, { passive: false });
+                
+                // Toggle chat window (open)
+                chatbotToggle.addEventListener('click', function() {
+                    chatbotWindow.classList.remove('closing');
+                    chatbotWindow.classList.add('active');
+                    chatbotToggle.classList.add('hidden');
+                    chatbotInput.focus();
                 });
                 
-                // Close chat window
+                // Close chat window with animation
                 chatbotClose.addEventListener('click', function() {
                     chatbotWindow.classList.remove('active');
-                    chatbotToggle.classList.remove('hidden');
+                    chatbotWindow.classList.add('closing');
+                    
+                    // Wait for animation to complete before hiding button
+                    setTimeout(function() {
+                        chatbotWindow.classList.remove('closing');
+                        chatbotToggle.classList.remove('hidden');
+                    }, 300); // Match the animation duration (0.3s)
                 });
                 
                 // Handle message submission
