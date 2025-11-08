@@ -2,6 +2,7 @@
 
 from django.conf import settings
 
+from django.core.cache import cache
 from tcf_website.models import Discipline, Semester, Subdepartment
 
 
@@ -16,16 +17,26 @@ def base(request):
 
 def searchbar_context(request):
     """Provide context for the search bar."""
-    latest_semester = Semester.latest()
-    recent_semesters = Semester.objects.filter(
-        number__gte=latest_semester.number - 50  # 50 = 5 years * 10 semesters
-    ).order_by("-number")
+    cache_key = "tcf_searchbar_context_v1"
+    ctx = cache.get(cache_key)
+    if ctx is not None:
+        return ctx
 
-    # Provide only the data needed for the filter options
-    # Filter values are managed by localStorage on the client side
-    context = {
-        "disciplines": Discipline.objects.all().order_by("name"),
-        "subdepartments": Subdepartment.objects.all().order_by("mnemonic"),
+    latest_semester = Semester.latest()
+    recent_semesters = list(
+        Semester.objects.filter(
+            number__gte=latest_semester.number - 50  # 50 = 5 years * 10 semesters
+        ).order_by("-number")
+    )
+
+    disciplines = list(Discipline.objects.all().order_by("name"))
+    subdepartments = list(Subdepartment.objects.all().order_by("mnemonic"))
+
+    ctx = {
+        "disciplines": disciplines,
+        "subdepartments": subdepartments,
         "semesters": recent_semesters,
     }
-    return context
+    # Cache for 24 hours; data changes rarely
+    cache.set(cache_key, ctx, 60 * 60 * 24)
+    return ctx
