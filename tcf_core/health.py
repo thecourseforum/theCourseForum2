@@ -15,5 +15,3 @@ def healthz(request):
     except Exception:  # pylint: disable=broad-except
         return JsonResponse({"status": "unhealthy"}, status=500)
     return HttpResponse("ok", content_type="text/plain")
-
-
