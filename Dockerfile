@@ -21,3 +21,7 @@ RUN pip3 install -r requirements.txt --disable-pip-version-check --no-cache-dir
 COPY . /app/
 
 RUN chmod +x /app/scripts/container-startup.sh
+
+# Container-level health check for ECS/Docker
+HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
+  CMD curl -fsS http://localhost:80/healthz || exit 1
