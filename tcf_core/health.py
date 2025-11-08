@@ -1,3 +1,5 @@
+"""Minimal health check endpoint for container and ALB health probes."""
+
 from django.http import HttpResponse, JsonResponse
 from django.db import connection
 
