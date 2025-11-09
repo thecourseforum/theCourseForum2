@@ -1,5 +1,6 @@
 #!/bin/bash
 # This script creates a compressed dump of the local Docker database.
+source .env
 
 filename="$1"
 filename="${filename:-local.dump}"

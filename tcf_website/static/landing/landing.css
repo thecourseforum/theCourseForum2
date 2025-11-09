@@ -51,6 +51,7 @@ header.masthead h1 {
 /* Features */
 .features-icons .card {
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
 }
 
 .features-icons .card:hover {
@@ -115,6 +116,7 @@ header.masthead h1 {
 
 .about-link {
   font-size: 1.25rem;
+  cursor: pointer;
 }
 
 /* About info box */
@@ -122,6 +124,7 @@ header.masthead h1 {
   /* border: 3px solid var(--accent-color); */
   /* border-radius: 0%; */
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
 }
 
 .about-team .about-info p {

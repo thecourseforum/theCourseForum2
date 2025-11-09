@@ -2,6 +2,7 @@
 #
 # This script resets the local database by destroying the container and volume,
 # starting a new one, and restoring it from a dump file.
+source .env
 
 DB_FILE="${1:-latest.dump}"
 
@@ -27,6 +28,6 @@ until docker exec tcf_db pg_isready -U "$DB_USER" -d "$DB_NAME" -q; do
 done
 
 echo "--- Database is ready! Restoring from dump file..."
-docker exec -i tcf_db pg_restore -U "$DB_USER" -d "$DB_NAME" --no-owner "/app/$DB_FILE"
+docker exec -i tcf_db pg_restore -U "$DB_USER" -d "$DB_NAME" --no-owner "//app/$DB_FILE"
 
 echo "--- Database restore complete!"
