@@ -125,7 +125,7 @@
     },
     {
       "name": "Kingsley Kim",
-      "role:": "Developer",
+      "role": "Developer",
       "class": "2026",
       "img_filename": "ENG_Kingsley_Kim.jpg",
       "github": "kingsleykimm"
@@ -259,6 +259,34 @@
       "class": "2027",
       "img_filename": "ENG_Namai_Kureishi.jpg",
       "github": "namaikureishi"
+    },
+    {
+      "name": "Shivaths Karne",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Shivaths_Karne.jpg",
+      "github": "skarne21"
+    },
+    {
+      "name": "Rohit Kamath",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Rohit_Kamath.jpg",
+      "github": "R0hit-0"
+    },
+    {
+      "name": "Himesh Ahuja",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Himesh_Ahuja.jpg",
+      "github": "meshhi13"
+    },
+    {
+      "name": "Vishwa Solaiappan",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Vishwa_Solaiappan.jpg",
+      "github": "TheSwanathan"
     },
     {
       "name": "Richard He",
