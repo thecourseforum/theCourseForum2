@@ -62,8 +62,8 @@ if env.str("ENVIRONMENT") == "dev":
             "ENGINE": "django.db.backends.postgresql_psycopg2",
             "USER": env.str("DB_USER"),
             "PASSWORD": env.str("DB_PASSWORD"),
-            "HOST": env.str("DB_HOST"),
-            "PORT": env.int("DB_PORT"),
+            "HOST": env.str("DB_HOST", default="localhost"),
+            "PORT": env.int("DB_PORT", default=5432),
         }
     }
 else:
@@ -136,7 +136,6 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "tcf_core.context_processors.base",
                 "tcf_core.context_processors.searchbar_context",
-                "tcf_core.context_processors.flags",
             ],
         },
     },
@@ -259,7 +258,6 @@ TOXICITY_THRESHOLD = 74
 
 # Presence / Calendar feature
 PRESENCE_SUBDOMAIN = env.str("PRESENCE_SUBDOMAIN", default="virginia")
-ENABLE_CLUB_CALENDAR = env.bool("ENABLE_CLUB_CALENDAR", default=True)
 PRESENCE_TIMEOUT_SECONDS = env.int("PRESENCE_TIMEOUT_SECONDS", default=8)
 PRESENCE_CACHE_SECONDS = env.int("PRESENCE_CACHE_SECONDS", default=300)
 

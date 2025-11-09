@@ -13,7 +13,7 @@
   <div class="container-lg mb-4">
     <div class="d-flex align-items-center justify-content-between mb-3">
       <h2 class="mb-0">Club Calendar</h2>
-      <div class="input-group" style="max-width: 360px;">
+      <div class="input-group">
         <!-- simple non-functional search input for now (stub for future) -->
         <input type="text" class="form-control" placeholder="Search events or clubs (coming soon)" disabled>
         <button class="btn btn-outline-secondary" type="button" disabled>
@@ -55,7 +55,7 @@
                                 </div>
                               {% endif %}
                               {% if ev.desc_text %}
-                                <div class="text-muted text-truncate" style="max-width: 700px;">{{ ev.desc_text }}</div>
+                                <div class="text-muted text-truncate">{{ ev.desc_text }}</div>
                               {% endif %}
                             </div>
                           </div>
@@ -103,7 +103,7 @@
                           </div>
                         {% endif %}
                         {% if ev.desc_text %}
-                          <div class="text-muted text-truncate" style="max-width: 700px;">{{ ev.desc_text }}</div>
+                          <div class="text-muted text-truncate">{{ ev.desc_text }}</div>
                         {% endif %}
                       </div>
                     </div>

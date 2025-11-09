@@ -103,12 +103,12 @@
               </div>
               <div class="card-body">
                 {% if event.registration_url %}
-                  <a href="{{ event.registration_url }}" target="_blank" class="btn btn-success btn-sm w-100 mb-2">
+                  <a href="{{ event.registration_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm w-100 mb-2">
                     <i class="fa fa-user-plus" aria-hidden="true"></i> Register
                   </a>
                 {% endif %}
                 {% if event.external_url %}
-                  <a href="{{ event.external_url }}" target="_blank" class="btn btn-primary btn-sm w-100">
+                  <a href="{{ event.external_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm w-100">
                     <i class="fa fa-external-link" aria-hidden="true"></i> More Info
                   </a>
                 {% endif %}
@@ -135,7 +135,7 @@
             </div>
           {% else %}
             <div class="event-description">
-              {{ event.description|safe }}
+              {{ event.description_text|linebreaks }}
             </div>
           {% endif %}
         </div>

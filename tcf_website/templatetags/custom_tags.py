@@ -1,7 +1,8 @@
-""" custom tags to be used in templates """
+"""Custom template tags for the website."""
+
+import hashlib
 
 from django import template
-import hashlib
 
 register = template.Library()
 
@@ -23,10 +24,10 @@ def tag_color(tag_name):
     """Returns a consistent Bootstrap color class for a given tag name"""
     if not tag_name:
         return "bg-secondary"
-    
+
     # Normalize tag name for comparison
     normalized_tag = tag_name.lower().strip().replace('-', ' ').replace('_', ' ')
-    
+
     # Special color mappings for common tags
     special_colors = {
         "first year": "bg-danger",  # Dark red color
@@ -50,24 +51,24 @@ def tag_color(tag_name):
         "fundraiser": "bg-danger",
         "community": "bg-info",
     }
-    
+
     # Check for special mappings first
     if normalized_tag in special_colors:
         return special_colors[normalized_tag]
-    
+
     # Define available Bootstrap color classes for fallback
     colors = [
         "bg-primary",
-        "bg-success", 
+        "bg-success",
         "bg-info",
         "bg-warning",
         "bg-danger",
         "bg-dark",
         "bg-secondary"
     ]
-    
+
     # Create a hash of the tag name to get consistent color
-    tag_hash = int(hashlib.md5(tag_name.lower().encode()).hexdigest(), 16)
+    tag_hash = int(hashlib.md5(normalized_tag.encode()).hexdigest(), 16)
     color_index = tag_hash % len(colors)
-    
+
     return colors[color_index]

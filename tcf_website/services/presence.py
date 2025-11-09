@@ -1,5 +1,8 @@
-import requests
+"""Service for interacting with the Presence API."""
+
 import backoff
+import requests
+
 from django.conf import settings
 from django.core.cache import cache
 
@@ -13,7 +16,7 @@ def _cache_key(key: str) -> str:
 
 
 @backoff.on_exception(backoff.expo, (requests.RequestException,), max_tries=3)
-def _get(url: str, params=None):
+def _get(url: str, params: dict | None = None) -> dict:
     resp = requests.get(url, params=params or {}, timeout=TIMEOUT)
     resp.raise_for_status()
     return resp.json()

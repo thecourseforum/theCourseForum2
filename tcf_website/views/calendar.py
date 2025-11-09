@@ -1,8 +1,11 @@
+"""Calendar views for displaying club events."""
+
+from datetime import datetime, timezone
+
 from django.conf import settings
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.utils.html import strip_tags
-from django.http import Http404
-from datetime import datetime, timezone
 
 from tcf_website.services import presence
 
@@ -31,7 +34,7 @@ def _is_upcoming(dt_string):
     """Check if event is upcoming (today or later)"""
     if not dt_string:
         return True  # Treat events without dates as upcoming
-    
+
     try:
         event_dt = datetime.fromisoformat(dt_string.replace('Z', '+00:00'))
         today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
@@ -41,9 +44,7 @@ def _is_upcoming(dt_string):
 
 
 def calendar_overview(request):
-    if not getattr(settings, "ENABLE_CLUB_CALENDAR", True):
-        return render(request, "calendar/disabled.html")
-
+    """Display an overview of upcoming and past club events."""
     raw = presence.get_events()
     events = []
     for e in raw or []:
@@ -65,7 +66,7 @@ def calendar_overview(request):
     # Separate upcoming and past events
     upcoming_events = []
     past_events = []
-    
+
     for ev in events:
         if _is_upcoming(ev["start_utc"]):
             upcoming_events.append(ev)
@@ -96,16 +97,12 @@ def calendar_overview(request):
         {
             "upcoming_groups": sorted_upcoming,
             "past_groups": sorted_past,
-            "enable_calendar": True,
         },
     )
 
 
 def event_detail(request, event_uri):
     """Display detailed information for a specific event"""
-    if not getattr(settings, "ENABLE_CLUB_CALENDAR", True):
-        return render(request, "calendar/disabled.html")
-
     try:
         event_data = presence.get_event_details(event_uri)
     except Exception:
@@ -139,7 +136,6 @@ def event_detail(request, event_uri):
         "calendar/event_detail.html",
         {
             "event": event,
-            "enable_calendar": True,
         },
     )
 
