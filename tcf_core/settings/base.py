@@ -59,7 +59,7 @@ if env.str("ENVIRONMENT") == "dev":
     DATABASES = {
         "default": {
             "NAME": env.str("DB_NAME"),
-            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "ENGINE": "django.db.backends.postgresql",
             "USER": env.str("DB_USER"),
             "PASSWORD": env.str("DB_PASSWORD"),
             "HOST": env.str("DB_HOST"),
@@ -71,7 +71,9 @@ else:
     AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
     AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
     AWS_S3_REGION_NAME = env.str("AWS_S3_REGION_NAME", default="us-east-1")
-    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    AWS_S3_CUSTOM_DOMAIN = env.str(
+        "AWS_S3_CUSTOM_DOMAIN", default=f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    )
     AWS_DEFAULT_ACL = None
     AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 
@@ -97,7 +99,7 @@ else:
     DATABASES = {
         "default": {
             "NAME": env.str("AWS_RDS_NAME"),
-            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "ENGINE": "django.db.backends.postgresql",
             "USER": env.str("AWS_RDS_USER"),
             "PASSWORD": env.str("AWS_RDS_PASSWORD"),
             "HOST": env.str("AWS_RDS_HOST"),

@@ -281,8 +281,6 @@ def course_view(
                     if num and times
                 }
 
-        instructor.rating = instructor.average_rating_for_course(course)
-
     dept = course.subdepartment.department
 
     # Navigation breadcrumbs
@@ -431,6 +429,9 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         answers[question.id] = Answer.display_activity(question.id, request.user)
     questions = Question.display_activity(course_id, instructor_id, request.user)
 
+    latest_semester = Semester.latest()
+    is_current_semester = section_last_taught.semester.number == latest_semester.number
+
     return render(
         request,
         "course/course_professor.html",
@@ -446,6 +447,7 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "data": json.dumps(data),
             "section_info": section_info,
             "display_times": Semester.latest() == section_last_taught.semester,
+            "is_current_semester": is_current_semester,
             "questions": questions,
             "answers": answers,
             "sort_method": method,
@@ -473,13 +475,17 @@ def instructor_view(request, instructor_id):
     )
 
     # Get the most recent semester for each course-instructor combination
-
-    latest_section_qs = Section.objects.filter(
-        course=OuterRef("pk"), instructors=instructor
-    ).order_by("-semester__number")
+    # Optimize subquery to get both season and year in one go
+    latest_section_subquery = (
+        Section.objects.filter(course=OuterRef("pk"), instructors=instructor)
+        .order_by("-semester__number")
+        .select_related("semester")
+    )
 
     courses: list[dict[str, Any]] = (
         Course.objects.filter(section__instructors=instructor, number__gte=1000)
+        .select_related("subdepartment")  # Optimize foreign key access
+        .distinct()  # Remove duplicates from many-to-many join
         .annotate(
             subdepartment_name=F("subdepartment__name"),
             name=Concat(
@@ -497,27 +503,34 @@ def instructor_view(request, instructor_id):
             avg_difficulty=Avg(
                 "review__difficulty", filter=Q(review__instructor=instructor)
             ),
-            avg_rating=(
-                Avg(
-                    "review__instructor_rating",
-                    filter=Q(review__instructor=instructor),
-                )
-                + Avg(
-                    "review__enjoyability",
-                    filter=Q(review__instructor=instructor),
-                )
-                + Avg(
-                    "review__recommendability",
-                    filter=Q(review__instructor=instructor),
-                )
-            )
-            / 3,
+            # Combine review aggregations to reduce repeated access
+            avg_instructor_rating=Avg(
+                "review__instructor_rating",
+                filter=Q(review__instructor=instructor),
+            ),
+            avg_enjoyability=Avg(
+                "review__enjoyability",
+                filter=Q(review__instructor=instructor),
+            ),
+            avg_recommendability=Avg(
+                "review__recommendability",
+                filter=Q(review__instructor=instructor),
+            ),
             latest_semester_season=Subquery(
-                latest_section_qs.values("semester__season")[:1]
+                latest_section_subquery.values("semester__season")[:1]
             ),
             latest_semester_year=Subquery(
-                latest_section_qs.values("semester__year")[:1]
+                latest_section_subquery.values("semester__year")[:1]
             ),
+        )
+        .annotate(
+            # Calculate avg_rating after individual aggregations
+            avg_rating=(
+                F("avg_instructor_rating")
+                + F("avg_enjoyability")
+                + F("avg_recommendability")
+            )
+            / 3
         )
         .values(
             "id",

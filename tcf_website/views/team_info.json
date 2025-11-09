@@ -287,6 +287,69 @@
       "class": "2029",
       "img_filename": "ENG_Vishwa_Solaiappan.jpg",
       "github": "TheSwanathan"
+    },
+    {
+      "name": "Jack Rhoa",
+      "role": "Developer",
+      "class": "2028",
+      "img_filename": "ENG_Jack_Rhoa.jpg",
+      "github": "jackrhoa"
+    },
+    {
+      "name": "Phong Le",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Phong_Le.jpg",
+      "github": "phongo1"
+    },
+    {
+      "name": "Ayan Rasulova",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Ayan_Rasulova.jpg",
+      "github": "ayanrasulova"
+    },
+    {
+      "name": "Michael Barnor",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Michael_Barnor.jpg",
+      "github": "MichaelBarnor"
+    },
+    {
+      "name": "Aneesh Mandapati",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Aneesh_Mandapati.jpg",
+      "github": "Accute9"
+    },
+    {
+      "name": "Pelin Sayar",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Pelin_Sayar.jpg",
+      "github": "pelin-sayar"
+    },
+    {
+      "name": "Yogesh Thambidurai",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Yogesh_Thambidurai.jpeg",
+      "github": "gyoge0"
+    },
+    {
+      "name": "Ishan Ajwani",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Ishan_Ajwani.jpg",
+      "github": "IshanA2007"
+    },
+    {
+      "name": "Adrian Villanueva",
+      "role": "Developer",
+      "class": "2028",
+      "img_filename": "ENG_Adrian_Villanueva.jpg",
+      "github": "Adrian-E-V"
     }
   ],
   "design_team": [
