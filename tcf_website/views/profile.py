@@ -73,7 +73,9 @@ def profile(request):
         total_review_upvotes=Count("vote", filter=Q(vote__value=1)),
     )
     # Get other statistics
-    other_stats = User.objects.filter(id=request.user.id).aggregate(
+    other_stats = User.objects.filter(
+        id=request.user.id
+    ).aggregate(  # karma probably goes in other stats because it's a number like these
         total_reviews_written=Count("review"),
         average_review_rating=(
             Avg("review__instructor_rating")
@@ -81,6 +83,8 @@ def profile(request):
             + Avg("review__recommendability")
         )
         / 3,
+        karma_stat=Count("review", filter=Q(review__vote__value=1))
+        - Count("review", filter=Q(review__vote__value=-1)),
     )
     # Merge the two dictionaries
     merged = upvote_stat | other_stats
@@ -117,4 +121,9 @@ class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView)
 
     def get_success_message(self, cleaned_data) -> str:
         """Overrides SuccessMessageMixin's get_success_message method."""
+        return "Successfully deleted your account!"
+        return "Successfully deleted your account!"
+        return "Successfully deleted your account!"
+        return "Successfully deleted your account!"
+        return "Successfully deleted your account!"
         return "Successfully deleted your account!"

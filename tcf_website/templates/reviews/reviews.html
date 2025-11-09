@@ -79,6 +79,7 @@
 <script type="module">
     import { handleVote } from "{% static 'reviews/review.js' %}";
     {% if user.is_authenticated %}
+    //if (user.is_authenticated == True) { // wtf?? it says user isn't authenticated
         $('.upvote').each(function(i, obj) {
             $(this).click(()=>{
                 handleVote(obj.id.substring(6), true);
@@ -91,5 +92,6 @@
             });
             $(this).removeAttr('href');
         });
+    //}
     {% endif %}
 </script>
