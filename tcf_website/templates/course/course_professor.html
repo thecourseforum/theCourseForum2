@@ -8,6 +8,9 @@
 {% if course_code %}<meta name="course-code" content="{{ course_code }}">{% endif %}
 {% if course_title %}<meta name="course-title" content="{{ course_title }}">{% endif %}
 {% if instructor_fullname %}<meta name="instructor-name" content="{{ instructor_fullname }}">{% endif %}
+{% if not is_current_semester %}
+<meta name="robots" content="noindex">
+{% endif %}
 {% endblock %}
 
 {% block styles %}
@@ -322,16 +325,16 @@
             }
 
             // Check for updates every 5 seconds for 15 seconds
-            let checkCount = 0;
-            const enrollmentCheck = setInterval(() => {
-                updateEnrollmentData();
-                checkCount++;
-                if (checkCount >= 3) {
-                    clearInterval(enrollmentCheck);
-                }
-            }, 5000);
+            // let checkCount = 0;
+            // const enrollmentCheck = setInterval(() => {
+            //     updateEnrollmentData();
+            //     checkCount++;
+            //     if (checkCount >= 3) {
+            //         clearInterval(enrollmentCheck);
+            //     }
+            // }, 5000);
 
-            updateEnrollmentData();
+            // updateEnrollmentData();
 
             document.addEventListener('DOMContentLoaded', function() {
                 const toggleOptions = document.querySelectorAll('.toggle-option');

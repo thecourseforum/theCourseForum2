@@ -703,7 +703,8 @@ class Course(models.Model):
             ),
             # Now calculate the combined rating
             rating=ExpressionWrapper(
-                F("instructor_rating") + F("enjoyability") + F("recommendability"),
+                (F("instructor_rating") + F("enjoyability") + F("recommendability"))
+                / 3,
                 output_field=FloatField(),
             ),
             gpa=Coalesce(
