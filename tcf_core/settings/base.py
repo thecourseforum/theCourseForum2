@@ -121,6 +121,14 @@ MIDDLEWARE = [
     "tcf_core.settings.record_middleware.RecordMiddleware",
 ]
 
+# Enable Django Debug Toolbar in development
+if DEBUG or env.str("ENVIRONMENT", default="") == "dev":
+    INSTALLED_APPS.append("debug_toolbar")
+    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
+    DEBUG_TOOLBAR_CONFIG = {
+        "SHOW_TOOLBAR_CALLBACK": lambda request: True,
+    }
+
 ROOT_URLCONF = "tcf_core.urls"
 
 TEMPLATES = [
