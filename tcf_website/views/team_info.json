@@ -350,6 +350,13 @@
       "class": "2028",
       "img_filename": "ENG_Adrian_Villanueva.jpg",
       "github": "Adrian-E-V"
+    },
+    {
+      "name": "Ivan Kisselev",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Ivan_Kisselev.jpg",
+      "github": "IvanTheEngineer"
     }
   ],
   "design_team": [
