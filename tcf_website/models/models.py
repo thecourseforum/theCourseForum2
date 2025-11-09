@@ -547,6 +547,8 @@ class Course(models.Model):
     description = models.TextField(blank=True)
     # Course disciplines. Optional.
     disciplines = models.ManyToManyField(Discipline, blank=True)
+    # Course prerequisites. Optional.
+    prerequisites = models.JSONField(default=list, blank=True)
 
     # Course number. Required.
     number = models.IntegerField(
