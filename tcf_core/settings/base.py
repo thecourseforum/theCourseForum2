@@ -122,7 +122,7 @@ MIDDLEWARE = [
 ]
 
 # Enable Django Debug Toolbar in development
-if DEBUG or env.str("ENVIRONMENT", default="") == "dev":
+if DEBUG:
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
     DEBUG_TOOLBAR_CONFIG = {
