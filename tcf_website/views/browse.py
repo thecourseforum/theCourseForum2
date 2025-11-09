@@ -474,98 +474,31 @@ def instructor_view(request, instructor_id):
         / 3,
     )
 
-    # Get the most recent semester for each course-instructor combination
-    # Optimize subquery to get both season and year in one go
-    latest_section_subquery = (
-        Section.objects.filter(course=OuterRef("pk"), instructors=instructor)
-        .order_by("-semester__number")
-        .select_related("semester")
-    )
+    courses = list(instructor.get_course_summaries())
+    is_teaching_current_semester = any(course.get("is_current") for course in courses)
 
-    courses: list[dict[str, Any]] = (
-        Course.objects.filter(section__instructors=instructor, number__gte=1000)
-        .select_related("subdepartment")  # Optimize foreign key access
-        .distinct()  # Remove duplicates from many-to-many join
-        .annotate(
-            subdepartment_name=F("subdepartment__name"),
-            name=Concat(
-                F("subdepartment__mnemonic"),
-                Value(" "),
-                F("number"),
-                Value(" | "),
-                F("title"),
-                output_field=CharField(),
-            ),
-            avg_gpa=Avg(
-                "courseinstructorgrade__average",
-                filter=Q(courseinstructorgrade__instructor=instructor),
-            ),
-            avg_difficulty=Avg(
-                "review__difficulty", filter=Q(review__instructor=instructor)
-            ),
-            # Combine review aggregations to reduce repeated access
-            avg_instructor_rating=Avg(
-                "review__instructor_rating",
-                filter=Q(review__instructor=instructor),
-            ),
-            avg_enjoyability=Avg(
-                "review__enjoyability",
-                filter=Q(review__instructor=instructor),
-            ),
-            avg_recommendability=Avg(
-                "review__recommendability",
-                filter=Q(review__instructor=instructor),
-            ),
-            latest_semester_season=Subquery(
-                latest_section_subquery.values("semester__season")[:1]
-            ),
-            latest_semester_year=Subquery(
-                latest_section_subquery.values("semester__year")[:1]
-            ),
+    # Build a mapping from semester number to (season, year) in one query
+    semester_numbers = {
+        num for num in (c.get("latest_semester_number") for c in courses) if num
+    }
+    semester_info = {
+        s["number"]: (s["season"], s["year"])
+        for s in Semester.objects.filter(number__in=semester_numbers).values(
+            "number", "season", "year"
         )
-        .annotate(
-            # Calculate avg_rating after individual aggregations
-            avg_rating=(
-                F("avg_instructor_rating")
-                + F("avg_enjoyability")
-                + F("avg_recommendability")
-            )
-            / 3
-        )
-        .values(
-            "id",
-            "subdepartment_name",
-            "name",
-            "avg_rating",
-            "avg_difficulty",
-            "avg_gpa",
-            "latest_semester_season",
-            "latest_semester_year",
-        )
-        .order_by("subdepartment_name", "name")
-    )
-
-    # Check if instructor is teaching in the latest semester
-    latest_semester = Semester.latest()
-    is_teaching_current_semester = False
+    }
 
     grouped_courses: dict[str, list[dict[str, Any]]] = {}
     for course in courses:
         course["avg_rating"] = safe_round(course["avg_rating"])
         course["avg_difficulty"] = safe_round(course["avg_difficulty"])
         course["avg_gpa"] = safe_round(course["avg_gpa"])
-        season = course.pop("latest_semester_season", None)
-        year = course.pop("latest_semester_year", None)
-        course["last_taught"] = f"{season} {year}".title() if season and year else "—"
-
-        # Check if this course was taught in the latest semester
-        if (
-            season
-            and year
-            and season.upper() == latest_semester.season
-            and int(year) == latest_semester.year
-        ):
-            is_teaching_current_semester = True
+        sem_num = course.pop("latest_semester_number", None)
+        if sem_num and sem_num in semester_info:
+            season, year = semester_info[sem_num]
+            course["last_taught"] = f"{season} {year}".title()
+        else:
+            course["last_taught"] = "—"
 
         grouped_courses.setdefault(course["subdepartment_name"], []).append(course)
 

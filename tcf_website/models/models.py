@@ -437,6 +437,73 @@ class Instructor(models.Model):
         self.full_name = f"{self.first_name} {self.last_name}".strip()
         super().save(*args, **kwargs)
 
+    def get_course_summaries(self):
+        """
+        Return a summary of courses taught by this instructor.
+        """
+        latest_semester = Semester.latest()
+
+        taught_by_exists = Exists(
+            Section.objects.filter(course=OuterRef("pk"), instructors=self)
+        )
+        latest_semester_number_sq = Subquery(
+            Section.objects.filter(course=OuterRef("pk"), instructors=self)
+            .order_by("-semester__number")
+            .values("semester__number")[:1]
+        )
+        is_current_exists = Exists(
+            Section.objects.filter(
+                course=OuterRef("pk"), instructors=self, semester=latest_semester
+            )
+        )
+
+        return (
+            Course.objects.filter(number__gte=1000)
+            .annotate(taught_by=taught_by_exists)
+            .filter(taught_by=True)
+            .annotate(
+                subdepartment_name=F("subdepartment__name"),
+                name=Concat(
+                    F("subdepartment__mnemonic"),
+                    Value(" "),
+                    F("number"),
+                    Value(" | "),
+                    F("title"),
+                    output_field=CharField(),
+                ),
+                # One aggregated expression for avg_rating across review rows
+                avg_rating=Avg(
+                    (
+                        F("review__instructor_rating")
+                        + F("review__enjoyability")
+                        + F("review__recommendability")
+                    )
+                    / Value(3.0),
+                    filter=Q(review__instructor=self),
+                ),
+                avg_difficulty=Avg(
+                    "review__difficulty", filter=Q(review__instructor=self)
+                ),
+                avg_gpa=Avg(
+                    "courseinstructorgrade__average",
+                    filter=Q(courseinstructorgrade__instructor=self),
+                ),
+                latest_semester_number=latest_semester_number_sq,
+                is_current=is_current_exists,
+            )
+            .values(
+                "id",
+                "subdepartment_name",
+                "name",
+                "avg_rating",
+                "avg_difficulty",
+                "avg_gpa",
+                "latest_semester_number",
+                "is_current",
+            )
+            .order_by("subdepartment_name", "name")
+        )
+
     class Meta:
         indexes = [
             GinIndex(
