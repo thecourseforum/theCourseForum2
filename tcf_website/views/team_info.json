@@ -294,6 +294,13 @@
       "class": "2028",
       "img_filename": "ENG_Jack_Rhoa.jpg",
       "github": "jackrhoa"
+    },
+    {
+      "name": "Phong Le",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Phong_Le.jpg",
+      "github": "phongo1"
     }
   ],
   "design_team": [
