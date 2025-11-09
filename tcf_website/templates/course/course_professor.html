@@ -325,16 +325,16 @@
             }
 
             // Check for updates every 5 seconds for 15 seconds
-            let checkCount = 0;
-            const enrollmentCheck = setInterval(() => {
-                updateEnrollmentData();
-                checkCount++;
-                if (checkCount >= 3) {
-                    clearInterval(enrollmentCheck);
-                }
-            }, 5000);
+            // let checkCount = 0;
+            // const enrollmentCheck = setInterval(() => {
+            //     updateEnrollmentData();
+            //     checkCount++;
+            //     if (checkCount >= 3) {
+            //         clearInterval(enrollmentCheck);
+            //     }
+            // }, 5000);
 
-            updateEnrollmentData();
+            // updateEnrollmentData();
 
             document.addEventListener('DOMContentLoaded', function() {
                 const toggleOptions = document.querySelectorAll('.toggle-option');
