@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 
 from django.conf import settings
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.utils.html import strip_tags
 
 from tcf_website.services import presence
@@ -15,7 +15,7 @@ def _safe_text(html):
 
 
 def _sort_key(evt):
-    return evt.get("startDateTimeUtc") or "9999-12-31T23:59:59Z"
+    return evt.get("start_utc") or "9999-12-31T23:59:59Z"
 
 
 def _format_datetime(dt_string):
@@ -23,7 +23,6 @@ def _format_datetime(dt_string):
     if not dt_string:
         return "TBD"
     try:
-        from datetime import datetime
         dt = datetime.fromisoformat(dt_string.replace('Z', '+00:00'))
         return dt.strftime("%A, %B %d, %Y at %I:%M %p")
     except (ValueError, AttributeError):
@@ -88,8 +87,10 @@ def calendar_overview(request):
         past_groups.setdefault(date_key, []).append(ev)
 
     # Sort groups by date (oldest first)
-    sorted_upcoming = dict(sorted(upcoming_groups.items(), key=lambda x: x[0] if x[0] != "TBD" else "9999-12-31"))
-    sorted_past = dict(sorted(past_groups.items(), key=lambda x: x[0] if x[0] != "TBD" else "9999-12-31"))
+    sorted_upcoming = dict(sorted(upcoming_groups.items(),
+                                  key=lambda x: x[0] if x[0] != "TBD" else "9999-12-31"))
+    sorted_past = dict(sorted(past_groups.items(),
+                              key=lambda x: x[0] if x[0] != "TBD" else "9999-12-31"))
 
     return render(
         request,
@@ -99,14 +100,12 @@ def calendar_overview(request):
             "past_groups": sorted_past,
         },
     )
-
-
 def event_detail(request, event_uri):
     """Display detailed information for a specific event"""
     try:
         event_data = presence.get_event_details(event_uri)
-    except Exception:
-        raise Http404("Event not found")
+    except Exception as exc:
+        raise Http404("Event not found") from exc
 
     if not event_data:
         raise Http404("Event not found")

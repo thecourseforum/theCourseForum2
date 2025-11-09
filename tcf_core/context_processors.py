@@ -30,5 +30,3 @@ def searchbar_context(request):
     }
     return context
 
-
-

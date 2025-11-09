@@ -129,15 +129,9 @@
           <h5 class="mb-0"><i class="fa fa-file-text" aria-hidden="true"></i> Description</h5>
         </div>
         <div class="card-body">
-          {% if event.description_text %}
-            <div class="event-description">
-              {{ event.description_text|linebreaks }}
-            </div>
-          {% else %}
-            <div class="event-description">
-              {{ event.description_text|linebreaks }}
-            </div>
-          {% endif %}
+        <div class="event-description">
+        {{ event.description_text|linebreaks }}
+        </div>
         </div>
       </div>
     {% endif %}
