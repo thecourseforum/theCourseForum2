@@ -30,3 +30,14 @@ def searchbar_context(request):
     }
     return context
 
+
+def flags(_request):
+    """Expose template context flags.
+
+    _request is unused.
+
+    Returns a dict containing ENABLE_CLUB_CALENDAR with its default.
+    """
+    return {
+        "ENABLE_CLUB_CALENDAR": getattr(settings, "ENABLE_CLUB_CALENDAR", False),
+    }
