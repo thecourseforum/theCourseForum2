@@ -68,6 +68,7 @@ urlpatterns = [
         "reviews/check_zero_hours_per_week/",
         views.review.check_zero_hours_per_week,
     ),
+    # Reply 
     path("profile/", views.profile, name="profile"),
     path(
         "profile/<int:pk>/delete/",
@@ -127,4 +128,5 @@ urlpatterns = [
     path("login/", views.auth.login, name="login"),
     path("cognito-callback/", views.auth.cognito_callback, name="cognito_callback"),
     path("logout/", views.auth.logout, name="logout"),
+
 ]
