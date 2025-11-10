@@ -206,10 +206,10 @@ class Command(BaseCommand):
                 attrs.append(attribute)
             course.disciplines.set(attrs)
         if not pd.isnull(description): #prerequisites
-            pre_req_format = "Pre-requisite" if "Pre-requisite" in course.description else "Prerequisite"
-            if pre_req_format in course.description:
+            pre_req_format = "Pre-requisite" if "Pre-requisite" in description else "Prerequisite"
+            if pre_req_format in description:
                 # Get pre_req from beginning to end
-                from_pre_req_to_end = course.description[course.description.find(pre_req_format) :]
+                from_pre_req_to_end = description[description.find(pre_req_format) :]
                 # Get rid of title of "Prerequisite" or "Pre-requisite"
                 pre_req_no_title = from_pre_req_to_end[from_pre_req_to_end.find(":") + 1 :]
 
@@ -219,7 +219,6 @@ class Command(BaseCommand):
                 else:
                     pre_req_text = pre_req_no_title
 
-                import re
                 # Match only on course mnemonic and code
                 matches = re.findall(r'([A-Z]{2,4}\s?\d{4})', pre_req_text)
                 prereq_codes = [m.strip().upper() for m in matches]
