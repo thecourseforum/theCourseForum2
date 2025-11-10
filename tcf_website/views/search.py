@@ -204,9 +204,23 @@ def decide_order(courses: list[dict], instructors: list[dict]) -> bool:
     return courses_avg > instructors_avg or not instructors
 
 
-def fetch_instructors(query) -> list[dict]:
+def fetch_instructors(query, limit: int = 10) -> list[dict]:
     """Get instructor data using Django Trigram similarity"""
     # arbitrarily chosen threshold
+    results = get_instructor_results(query, limit=limit)
+
+    instructors = [
+        {
+            key: getattr(instructor, key)
+            for key in ("first_name", "last_name", "email", "id", "max_similarity")
+        }
+        for instructor in results
+    ]
+
+    return instructors
+
+
+def get_instructor_results(query, limit: int = 10):
     similarity_threshold = 0.5
     results = (
         Instructor.objects.only("first_name", "last_name", "full_name", "email")
@@ -224,21 +238,13 @@ def fetch_instructors(query) -> list[dict]:
             )
         )
         .filter(Q(max_similarity__gte=similarity_threshold))
-        .order_by("-max_similarity")[:10]
+        .order_by("-max_similarity")[:limit]
     )
 
-    instructors = [
-        {
-            key: getattr(instructor, key)
-            for key in ("first_name", "last_name", "email", "id", "max_similarity")
-        }
-        for instructor in results
-    ]
-
-    return instructors
+    return results
 
 
-def fetch_courses(query, filters):
+def fetch_courses(query, filters, limit: int | None = None):
     """Get course data using Django Trigram similarity"""
     # lower similarity threshold for partial searches of course titles
     similarity_threshold = 0.15
@@ -284,6 +290,9 @@ def fetch_courses(query, filters):
         .exclude(semester_last_taught_id__lt=48)
         .order_by("-max_similarity")
     )
+
+    if limit:
+        results = results[:limit]
 
     return results
 
@@ -347,38 +356,8 @@ def autocomplete(request):
     if not query:
         return Response({"courses": [], "instructors": []})  # empty list if no input
 
-    instructor_threshold = 0.5
-    instructors = (
-        Instructor.objects.annotate(
-            similarity_first=TrigramSimilarity("first_name", query),
-            similarity_second=TrigramSimilarity("last_name", query),
-            similarity_full=TrigramSimilarity("full_name", query),
-        )
-        .annotate(
-            max_similarity=Greatest(
-                F("similarity_first"),
-                F("similarity_second"),
-                F("similarity_full"),
-                output_field=FloatField(),
-            )
-        )
-        .filter(max_similarity__gte=instructor_threshold)
-        .order_by("-max_similarity")[:5]
-    )
-
-    course_threshold = 0.15
-    courses = (
-        Course.objects.select_related("subdepartment")
-        .annotate(
-            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", query),
-            title_similarity=TrigramSimilarity("title", query),
-        )
-        .annotate(
-            max_similarity=Greatest(F("mnemonic_similarity"), F("title_similarity"))
-        )
-        .filter(max_similarity__gte=course_threshold)
-        .order_by("-max_similarity")[:5]
-    )
+    instructors = get_instructor_results(query, limit=5)
+    courses = fetch_courses(query, filters={}, limit=5)
 
     return Response(
         {

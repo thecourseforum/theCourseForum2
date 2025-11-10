@@ -1,17 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
   const searchInput = document.getElementById("search-input");
-  if (!searchInput) return; // Prevents errors if the element doesn't exist
+  if (!searchInput) return;
 
   // Create container for autocomplete suggestions
   const suggestionsContainer = document.createElement("div");
   suggestionsContainer.classList.add("autocomplete-suggestions");
   
-  // Ensure parent node exists before modifying
   if (searchInput.parentNode) {
     searchInput.parentNode.style.position = "relative"; // Ensure dropdown aligns properly
     searchInput.parentNode.appendChild(suggestionsContainer);
   } else {
-    console.warn("Search input has no parent node for autocomplete");
     return;
   }
   
@@ -26,9 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
     };
   }
 
-  // Fetch suggestions from backend
   async function fetchSuggestions(query) {
-    if (!query.trim()) { // Ignores empty or whitespace queries
+    if (!query.trim()) {
       clearSuggestions();
       return;
     }
@@ -83,8 +80,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Courses first
     data.courses.forEach((course) => {
-      const item = document.createElement("ul");
+      const item = document.createElement("div");
       item.classList.add("autocomplete-item");
+      item.style.cursor = "pointer";
       item.textContent = `${course.subdepartment} ${course.number} — ${course.title}`;
       item.addEventListener("click", () => {
         searchInput.value = `${course.subdepartment} ${course.number}`;
@@ -105,8 +103,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Instructor results
     data.instructors.forEach((instructor) => {
-      const item = document.createElement("ul");
+      const item = document.createElement("div");
       item.classList.add("autocomplete-item");
+      item.style.cursor = "pointer";
       item.textContent = instructor.full_name;
       item.addEventListener("click", () => {
         searchInput.value = instructor.full_name;
