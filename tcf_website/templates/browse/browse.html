@@ -48,28 +48,3 @@
         {% endif %}
     </div>
 {% endblock %}
-
-{% block js %}
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".card-header").forEach(header => {
-            header.addEventListener("click", function () {
-                let id = this.id.replace("header-", "").trim(); // Extract ID
-                let collapseId = "collapse-" + id;
-                let collapseElement = document.getElementById(collapseId);
-                
-                if (collapseElement) {
-                    let isExpanded = collapseElement.classList.contains("show");
-                    collapseElement.classList.toggle("show");
-                    
-                    let icon = document.getElementById(`chevron-${id}`); // Find the icon
-                    if (icon) {
-                        icon.classList.toggle("fa-chevron-down-white");
-                        icon.classList.toggle("fa-chevron-up-white");
-                    }
-                }
-            });
-        });
-    });    
-</script>
-{% endblock %}
