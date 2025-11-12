@@ -72,10 +72,6 @@
     {% endif %}
 </div>
 
-{% if reviews %}
-<script type="module" src="{% static 'reviews/sort_reviews.js' %}"></script>
-{% endif %}
-
 <script type="module">
     import { handleVote } from "{% static 'reviews/review.js' %}";
     {% if user.is_authenticated %}
