@@ -54,8 +54,17 @@
                          aria-haspopup="true" aria-expanded="false">▼
                       </a>
 
-                      <div id="instructorMenu" class="instructor-menu dropdown-menu w-200" aria-labelledby="dropdownMenuLink" disabled>
-                        <!-- To be populated by instr_data.js script -->
+                      <div id="instructorMenu" class="instructor-menu dropdown-menu w-200" aria-labelledby="dropdownMenuLink">
+                        {% for instr in all_instructors %}
+                            <a
+                            id="instr-{{ instr.id }}"
+                            class="dropdown-item{% if instr.id == instructor.id %} active{% endif %}"
+                            href="{% url 'course_instructor' course.id instr.id %}">
+                            {{ instr.last_name }}, {{ instr.first_name }}
+                            </a>
+                        {% empty %}
+                            <p class="dropdown-item text-muted">(No other instructors)</p>
+                        {% endfor %}
                       </div>
                     </div>
                   </div>
@@ -425,12 +434,6 @@
 {% endblock %}
 
 {% block js %}
-    <!-- For instructor data -->
-    <script> // Create global js vars from template context vars
-       var courseID = "{{ course_id|escapejs }}";
-    </script>
-    <script type="module" src="{% static 'course/javascript/instr_data.js' %}"></script>
-
     <!-- For Bootstrap tooltip -->
     <script>
       $(function () { $('[data-toggle="tooltip"]').tooltip() })

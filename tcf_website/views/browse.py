@@ -8,14 +8,7 @@ from typing import Any
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import (
-    Avg,
-    Count,
-    Prefetch,
-    Q,
-    Sum,
-    Value,
-)
+from django.db.models import Avg, Count, Prefetch, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -320,6 +313,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     course = section_last_taught.course
     instructor = section_last_taught.instructors.get(pk=instructor_id)
 
+    all_instructors = Instructor.objects.filter(section__course=course).distinct()
+
     # ratings: reviews with and without text; reviews: ratings with text
     reviews = Review.objects.filter(
         instructor=instructor_id,
@@ -435,6 +430,7 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "course": course,
             "course_id": course_id,
             "instructor": instructor,
+            "all_instructors": all_instructors,
             "semester_last_taught": section_last_taught.semester,
             "num_ratings": num_ratings,
             "num_reviews": num_reviews,
