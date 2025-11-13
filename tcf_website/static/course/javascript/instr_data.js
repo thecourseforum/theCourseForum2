@@ -19,7 +19,8 @@ jQuery(function ($) {
 
     const pageSize = "100";
     const instrEndpoint =
-      `/api/instructors/?course=${window.courseID}&semester=${window.latestSemesterID}` + `&page_size=${pageSize}`;
+      `/api/instructors/?course=${window.courseID}&semester=${window.latestSemesterID}` +
+      `&page_size=${pageSize}`;
     // window.courseID and window.latestSemesterID are from global vars in template
     $.getJSON(instrEndpoint, function (data) {
       // Handle both paginated response {results: [...]} and direct array [...]
@@ -38,12 +39,14 @@ jQuery(function ($) {
       instructorsLoaded = true;
       isLoading = false;
       return this;
-    }).done(function () {
-      // Enable instructor selector
-      $("#instructorMenu").prop("disabled", false);
-    }).fail(function () {
-      isLoading = false;
-    });
+    })
+      .done(function () {
+        // Enable instructor selector
+        $("#instructorMenu").prop("disabled", false);
+      })
+      .fail(function () {
+        isLoading = false;
+      });
   }
 
   // Load instructors when dropdown is clicked/opened

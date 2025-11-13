@@ -141,7 +141,8 @@ jQuery(function ($) {
     const semester = $("#semester").val();
     const pageSize = "100";
     const instrEndpoint =
-      `/api/instructors/?course=${course}&semester=${semester}` + `&page_size=${pageSize}`;
+      `/api/instructors/?course=${course}&semester=${semester}` +
+      `&page_size=${pageSize}`;
     $.getJSON(instrEndpoint, function (data) {
       clearDropdown("#instructor"); // Empty dropdown
 
