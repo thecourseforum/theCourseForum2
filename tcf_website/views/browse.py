@@ -392,31 +392,9 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         for field in fields:
             data[field] = getattr(grades_data, field)
 
-    sections_taught = Section.objects.filter(
-        course=course_id,
-        instructors__in=Instructor.objects.filter(pk=instructor_id),
-        semester=section_last_taught.semester,
-    )
-    section_info = {
-        "year": section_last_taught.semester.year,
-        "term": section_last_taught.semester.season.lower().capitalize(),
-        "sections": {},
-    }
-
-    for section in sections_taught:
-        times = []
-        for time in section.section_times.split(","):
-            if len(time) > 0:
-                times.append(time)
-
-        section_info["sections"][section.sis_section_number] = {
-            "type": section.section_type,
-            "units": section.units,
-            "times": times,
-        }
-
     # No longer storing in session
     # Course and instructor info is passed to template context for meta tags
+    # Sections will be fetched via API when dropdown is expanded
 
     # QA Data
     questions = Question.objects.filter(course=course_id, instructor=instructor_id)
@@ -441,13 +419,13 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "paginated_reviews": paginated_reviews,
             "breadcrumbs": breadcrumbs,
             "data": json.dumps(data),
-            "section_info": section_info,
-            "display_times": Semester.latest() == section_last_taught.semester,
+            "display_times": latest_semester == section_last_taught.semester,
             "is_current_semester": is_current_semester,
             "questions": questions,
             "answers": answers,
             "sort_method": method,
             "sem_code": section_last_taught.semester.number,
+            "latest_semester_id": latest_semester.id,
             "course_code": course.code(),
             "course_title": course.title,
             "instructor_fullname": instructor.full_name,
