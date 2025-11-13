@@ -7,7 +7,6 @@ requires-python = ">=3.12"
 dependencies = [
     "backoff~=2.2.1",
     "boto3~=1.37.4",
-    "coverage~=7.3.3",
     "django~=4.2.8",
     "django-cachalot~=2.6.1",
     "django-environ~=0.11.2",
@@ -27,6 +26,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "black~=24.1.1",
+    "coverage~=7.3.3",
     "html-linter~=0.4.0",
     "isort~=5.13.2",
     "mypy~=1.7.1",
