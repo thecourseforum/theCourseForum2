@@ -1,5 +1,7 @@
 """Tests for fetch_enrollment management command."""
 
+# pylint: disable=duplicate-code
+
 from unittest.mock import patch
 
 from django.test import TestCase
