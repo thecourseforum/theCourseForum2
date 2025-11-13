@@ -5,7 +5,7 @@ from unittest.mock import patch
 from django.test import TestCase
 
 from tcf_website.management.commands.fetch_enrollment import fetch_section_data
-from tcf_website.models import SectionEnrollment
+from tcf_website.models import Section
 
 from .test_utils import setup
 
@@ -23,6 +23,7 @@ class FetchEnrollmentTestCase(TestCase):
     def test_fetch_enrollment_success(self, mock_get):
         """Test successful enrollment fetch."""
         mock_get.return_value.status_code = 200
+        mock_get.return_value.raise_for_status = lambda: None
         mock_get.return_value.json.return_value = {
             "classes": [
                 {
@@ -34,27 +35,27 @@ class FetchEnrollmentTestCase(TestCase):
             ]
         }
 
-        fetch_section_data(self.section)
+        result = fetch_section_data(self.section)
+        self.section.refresh_from_db()
 
-        enrollment = SectionEnrollment.objects.get(section=self.section)
-        self.assertEqual(enrollment.enrollment_taken, 15)
-        self.assertEqual(enrollment.enrollment_limit, 20)
-        self.assertEqual(enrollment.waitlist_taken, 5)
-        self.assertEqual(enrollment.waitlist_limit, 10)
+        self.assertTrue(result)
+        self.assertEqual(self.section.enrollment_taken, 15)
+        self.assertEqual(self.section.enrollment_limit, 20)
+        self.assertEqual(self.section.waitlist_taken, 5)
+        self.assertEqual(self.section.waitlist_limit, 10)
 
     @patch("tcf_website.management.commands.fetch_enrollment.session.get")
     def test_fetch_enrollment_update_existing(self, mock_get):
         """Test updating existing enrollment data."""
-        # Create initial enrollment
-        SectionEnrollment.objects.create(
-            section=self.section,
-            enrollment_taken=10,
-            enrollment_limit=20,
-            waitlist_taken=2,
-            waitlist_limit=5,
-        )
+        # Set initial enrollment data on section
+        self.section.enrollment_taken = 10
+        self.section.enrollment_limit = 20
+        self.section.waitlist_taken = 2
+        self.section.waitlist_limit = 5
+        self.section.save()
 
         mock_get.return_value.status_code = 200
+        mock_get.return_value.raise_for_status = lambda: None
         mock_get.return_value.json.return_value = {
             "classes": [
                 {
@@ -66,24 +67,28 @@ class FetchEnrollmentTestCase(TestCase):
             ]
         }
 
-        fetch_section_data(self.section)
+        result = fetch_section_data(self.section)
+        self.section.refresh_from_db()
 
-        enrollment = SectionEnrollment.objects.get(section=self.section)
-        self.assertEqual(enrollment.enrollment_taken, 15)
-        self.assertEqual(enrollment.enrollment_limit, 25)
-        self.assertEqual(enrollment.waitlist_taken, 8)
-        self.assertEqual(enrollment.waitlist_limit, 12)
+        self.assertTrue(result)
+        self.assertEqual(self.section.enrollment_taken, 15)
+        self.assertEqual(self.section.enrollment_limit, 25)
+        self.assertEqual(self.section.waitlist_taken, 8)
+        self.assertEqual(self.section.waitlist_limit, 12)
 
     @patch("tcf_website.management.commands.fetch_enrollment.session.get")
     def test_fetch_enrollment_empty_response(self, mock_get):
         """Test handling of empty API response."""
         mock_get.return_value.status_code = 200
+        mock_get.return_value.raise_for_status = lambda: None
         mock_get.return_value.json.return_value = {"classes": []}
 
         result = fetch_section_data(self.section)
+        self.section.refresh_from_db()
 
         self.assertFalse(result)
-        self.assertEqual(SectionEnrollment.objects.count(), 0)
+        self.assertIsNone(self.section.enrollment_taken)
+        self.assertIsNone(self.section.enrollment_limit)
 
     @patch("tcf_website.management.commands.fetch_enrollment.session.get")
     def test_fetch_enrollment_api_error(self, mock_get):
@@ -91,7 +96,13 @@ class FetchEnrollmentTestCase(TestCase):
         mock_get.return_value.status_code = 500
         mock_get.return_value.raise_for_status.side_effect = Exception("API Error")
 
+        # Set initial values to verify they don't change on error
+        self.section.enrollment_taken = 10
+        self.section.save()
+
         result = fetch_section_data(self.section)
+        self.section.refresh_from_db()
 
         self.assertFalse(result)
-        self.assertEqual(SectionEnrollment.objects.count(), 0)
+        # Enrollment data should remain unchanged on error
+        self.assertEqual(self.section.enrollment_taken, 10)
