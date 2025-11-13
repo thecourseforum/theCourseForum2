@@ -1,4 +1,5 @@
 """Tests for enrollment data updates."""
+
 # pylint: disable=duplicate-code
 
 from unittest.mock import patch
