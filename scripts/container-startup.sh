@@ -17,4 +17,4 @@ uv run manage.py clearsessions
 # python manage.py load_semester 2026_spring 
 
 echo 'Starting Django Server...'
-exec gunicorn tcf_core.wsgi:application --bind 0.0.0.0:80 --log-level "info" --timeout 120
+exec uv run gunicorn tcf_core.wsgi:application --bind 0.0.0.0:80 --log-level "info" --timeout 120
