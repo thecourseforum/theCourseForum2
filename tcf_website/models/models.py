@@ -911,9 +911,9 @@ class Course(models.Model):
     @classmethod
     def filter_by_open_sections(cls):
         """Filter courses that have at least one open section."""
-        open_sections = SectionEnrollment.objects.filter(
-            section__course=OuterRef("pk"),
-            section__semester=Semester.latest(),
+        open_sections = Section.objects.filter(
+            course=OuterRef("pk"),
+            semester=Semester.latest(),
             enrollment_taken__lt=F("enrollment_limit"),
         )
         return cls.objects.filter(Exists(open_sections))
@@ -938,16 +938,6 @@ class Course(models.Model):
                 name="unique course subdepartment and number",
             )
         ]
-
-
-class CourseEnrollment(models.Model):
-    course = models.OneToOneField(
-        "Course", on_delete=models.CASCADE, related_name="enrollment_tracking"
-    )
-    last_update = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"Enrollment tracking for {self.course.code()}"
 
 
 class CourseGrade(models.Model):
@@ -1040,6 +1030,16 @@ class Section(models.Model):
     # Comma-separated list of times the section is taught.
     section_times = models.CharField(max_length=255, blank=True)
 
+    # Enrollment data fields
+    # Total number of enrolled students. Optional.
+    enrollment_taken = models.IntegerField(null=True, blank=True)
+    # Maximum number of students allowed to enroll. Optional.
+    enrollment_limit = models.IntegerField(null=True, blank=True)
+    # Total number of students on the waitlist. Optional.
+    waitlist_taken = models.IntegerField(null=True, blank=True)
+    # Maximum number of students allowed on the waitlist. Optional.
+    waitlist_limit = models.IntegerField(null=True, blank=True)
+
     def __str__(self):
         return (
             f"{self.course} | {self.semester} | "
@@ -1117,53 +1117,6 @@ class SectionTime(models.Model):
             models.Index(fields=["friday"]),
             models.Index(fields=["start_time"]),
             models.Index(fields=["end_time"]),
-        ]
-
-
-class SectionEnrollment(models.Model):
-    """Section meeting enrollment model.
-    Belongs to a Section.
-    """
-
-    section = models.ForeignKey("Section", on_delete=models.CASCADE)
-
-    # Total number of enrolled students. Optional.
-    enrollment_taken = models.IntegerField(null=True, blank=True)
-
-    # Maximum number of students allowed to enroll. Optional.
-    enrollment_limit = models.IntegerField(null=True, blank=True)
-
-    # Total number of students on the waitlist. Optional.
-    waitlist_taken = models.IntegerField(null=True, blank=True)
-
-    # Maximum number of students allowed on the waitlist. Optional.
-    waitlist_limit = models.IntegerField(null=True, blank=True)
-
-    @property
-    def enrollment_info(self):
-        """
-        Returns a dictionary containing enrollment and waitlist information.
-        """
-        return {
-            "enrollment_taken": self.enrollment_taken,
-            "enrollment_limit": self.enrollment_limit,
-            "waitlist_taken": self.waitlist_taken,
-            "waitlist_limit": self.waitlist_limit,
-        }
-
-    def __str__(self):
-        return (
-            f"Section: {self.section}, Enrolled: {self.enrollment_taken}/"
-            f"{self.enrollment_limit}, Waitlist: {self.waitlist_taken}/"
-            f"{self.waitlist_limit}"
-        )
-
-    class Meta:
-        indexes = [
-            models.Index(fields=["enrollment_taken"]),
-            models.Index(fields=["enrollment_limit"]),
-            models.Index(fields=["waitlist_taken"]),
-            models.Index(fields=["waitlist_limit"]),
         ]
 
 
