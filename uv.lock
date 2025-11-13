@@ -670,7 +670,6 @@ source = { virtual = "." }
 dependencies = [
     { name = "backoff" },
     { name = "boto3" },
-    { name = "coverage" },
     { name = "django" },
     { name = "django-cachalot" },
     { name = "django-environ" },
@@ -690,6 +689,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "black" },
+    { name = "coverage" },
     { name = "html-linter" },
     { name = "isort" },
     { name = "mypy" },
@@ -703,7 +703,6 @@ dev = [
 requires-dist = [
     { name = "backoff", specifier = "~=2.2.1" },
     { name = "boto3", specifier = "~=1.37.4" },
-    { name = "coverage", specifier = "~=7.3.3" },
     { name = "django", specifier = "~=4.2.8" },
     { name = "django-cachalot", specifier = "~=2.6.1" },
     { name = "django-environ", specifier = "~=0.11.2" },
@@ -723,6 +722,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "black", specifier = "~=24.1.1" },
+    { name = "coverage", specifier = "~=7.3.3" },
     { name = "html-linter", specifier = "~=0.4.0" },
     { name = "isort", specifier = "~=5.13.2" },
     { name = "mypy", specifier = "~=1.7.1" },
