@@ -25,6 +25,5 @@ COPY . /app/
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev
 
-# Run the application
+# Allow ECS to start the container (prod-only)
 RUN chmod +x /app/scripts/container-startup.sh
-CMD ["/app/scripts/container-startup.sh"]
