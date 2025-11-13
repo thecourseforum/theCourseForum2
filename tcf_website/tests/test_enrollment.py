@@ -5,7 +5,6 @@ from unittest.mock import patch
 from django.test import TestCase
 
 from tcf_website.management.commands.fetch_enrollment import fetch_section_data
-from tcf_website.models import Section
 
 from .test_utils import setup
 
