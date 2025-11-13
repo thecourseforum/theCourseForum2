@@ -102,17 +102,46 @@ jQuery(function ($) {
     });
   });
 
-  /* Fetch instructor data on course select */
+  /* Fetch semester data on course select */
   $("#course").change(function () {
     // Clear & disable sequenced dropdowns
-    clearDropdown("#instructor");
     clearDropdown("#semester");
+    clearDropdown("#instructor");
 
-    // Fetch instructor data from API, based on selected course
+    // Fetch semester data from API, based on selected course
     const course = $("#course").val();
+    const semEndpoint = `/api/semesters/?course=${course}`;
+    $.getJSON(semEndpoint, function (data) {
+      clearDropdown("#semester"); // Empty dropdown
+
+      // Generate option tags
+      $.each(data, function (i, semester) {
+        // Note: API returns semester list in reverse chronological order,
+        // Most recent 5 years only
+        $("<option />", {
+          val: semester.id,
+          text: semester.season + " " + semester.year,
+        }).appendTo("#semester");
+      });
+      return this;
+    }).done(function () {
+      // Enable semester selector, disable instructor
+      $("#semester").prop("disabled", false);
+      $("#instructor").prop("disabled", true);
+    });
+  });
+
+  /* Fetch instructor data on semester select */
+  $("#semester").change(function () {
+    // Clear & disable instructor dropdown
+    clearDropdown("#instructor");
+
+    // Fetch instructor data from API, based on selected course and semester
+    const course = $("#course").val();
+    const semester = $("#semester").val();
     const pageSize = "100";
     const instrEndpoint =
-      `/api/instructors/?course=${course}` + `&page_size=${pageSize}`;
+      `/api/instructors/?course=${course}&semester=${semester}` + `&page_size=${pageSize}`;
     $.getJSON(instrEndpoint, function (data) {
       clearDropdown("#instructor"); // Empty dropdown
 
@@ -131,35 +160,8 @@ jQuery(function ($) {
       });
       return this;
     }).done(function () {
-      // Enable instructor selector, disable the following
+      // Enable instructor selector
       $("#instructor").prop("disabled", false);
-      $("#semester").prop("disabled", true);
-    });
-  });
-
-  /* Fetch semester data on instructor select */
-  $("#instructor").change(function () {
-    // Clear & disable sequenced dropdowns
-    clearDropdown("#semester");
-
-    // Fetch all semester data from API
-    const course = $("#course").val();
-    const instrID = $("#instructor").val();
-    const semEndpoint = `/api/semesters/?course=${course}&instructor=${instrID}`;
-    $.getJSON(semEndpoint, function (data) {
-      // Generate option tags
-      $.each(data, function (i, semester) {
-        // Note: API returns semester list in reverse chronological order,
-        // Most recent 5 years only
-        $("<option />", {
-          val: semester.id,
-          text: semester.season + " " + semester.year,
-        }).appendTo("#semester");
-      });
-      return this;
-    }).done(function () {
-      // Enable semester selector
-      $("#semester").prop("disabled", false);
     });
   });
 

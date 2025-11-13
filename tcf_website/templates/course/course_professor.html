@@ -54,7 +54,7 @@
                          aria-haspopup="true" aria-expanded="false">▼
                       </a>
 
-                      <div id="instructorMenu" class="instructor-menu dropdown-menu w-200" aria-labelledby="dropdownMenuLink" disabled>
+                      <div id="instructorMenu" class="instructor-menu dropdown-menu w-200" aria-labelledby="dropdownMenuLink">
                         <!-- To be populated by instr_data.js script -->
                       </div>
                     </div>
@@ -430,10 +430,11 @@
 
 {% block js %}
     <!-- For instructor data -->
-    <script> // Create global js vars from template context vars
-       var courseID = "{{ course_id|escapejs }}";
+    <script>
+       window.courseID = "{{ course_id|escapejs }}";
+       window.latestSemesterID = {{ latest_semester_id }};
     </script>
-    <script type="module" src="{% static 'course/javascript/instr_data.js' %}"></script>
+    <script src="{% static 'course/javascript/instr_data.js' %}"></script>
 
     <!-- For Bootstrap tooltip -->
     <script>

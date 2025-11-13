@@ -14,7 +14,6 @@ from ..models import (
     Semester,
     Subdepartment,
 )
-from .filters import InstructorFilter
 from .serializers import (
     ClubCategorySerializer,
     ClubSerializer,
@@ -127,11 +126,27 @@ class InstructorViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = Instructor.objects.all()
     serializer_class = InstructorSerializer
-    filterset_class = InstructorFilter
 
     def get_queryset(self):
-        # Returns filtered instructors ordered by last name
-        return self.queryset.order_by("last_name")
+        """
+        Returns instructors filtered by course and semester.
+        Both course and semester parameters are required for filtering.
+        """
+        course_id = self.request.query_params.get("course")
+        semester_id = self.request.query_params.get("semester")
+
+        if not course_id or not semester_id:
+            return self.queryset.none()
+
+        return (
+            Instructor.objects.filter(
+                hidden=False,
+                section__course_id=course_id,
+                section__semester_id=semester_id,
+            )
+            .distinct()
+            .order_by("last_name")
+        )
 
 
 class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
