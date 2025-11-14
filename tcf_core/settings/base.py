@@ -75,7 +75,7 @@ else:
         "AWS_S3_CUSTOM_DOMAIN", default=f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
     )
     AWS_DEFAULT_ACL = None
-    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
 
     ALLOWED_HOSTS.extend(
         [
@@ -89,10 +89,17 @@ else:
     STORAGES = {
         "default": {
             "BACKEND": "storages.backends.s3.S3Storage",
-            "OPTIONS": {},
+            "OPTIONS": {
+                "location": "media",
+                "object_parameters": {"CacheControl": "max-age=86400"},  # 1 day for media
+            },
         },
         "staticfiles": {
-            "BACKEND": "storages.backends.s3.S3Storage",
+            "BACKEND": "storages.backends.s3.S3ManifestStaticStorage",
+            "OPTIONS": {
+                "location": "static",
+                "object_parameters": {"CacheControl": "max-age=31536000"},  # 1 year for static
+            },
         },
     }
 
