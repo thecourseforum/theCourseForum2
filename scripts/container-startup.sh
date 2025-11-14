@@ -3,18 +3,18 @@ set -e
 
 echo 'container running'
 
-uv run manage.py migrate
+python manage.py migrate
 echo 'migrate ran'
 
-uv run manage.py collectstatic --noinput
+python manage.py collectstatic --noinput
 echo 'collectstatic ran'
 
-uv run manage.py invalidate_cachalot tcf_website
+python manage.py invalidate_cachalot tcf_website
 
-uv run manage.py clearsessions
+python manage.py clearsessions
 
 # Add custom commands here
 # python manage.py load_semester 2026_spring 
 
 echo 'Starting Django Server...'
-exec uv run gunicorn tcf_core.wsgi:application --bind 0.0.0.0:80 --log-level "info" --timeout 120
+exec gunicorn tcf_core.wsgi:application --bind 0.0.0.0:80 --log-level "info" --timeout 120
