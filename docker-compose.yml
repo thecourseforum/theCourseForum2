@@ -1,12 +1,15 @@
+version: "3"
+
 services:
   web:
     build: .
     command:
-      bash -c "uv run manage.py migrate && \
-      uv run manage.py collectstatic --noinput && \
-      uv run manage.py invalidate_cachalot tcf_website && \
+      bash -c "if [ \"${ENVIRONMENT}\" = 'dev' ]; then /wait-for-it.sh tcf_db:${DB_PORT} || exit 1; fi && \
+      python manage.py migrate && \
+      python manage.py collectstatic --noinput && \
+      python manage.py invalidate_cachalot tcf_website && \
       echo 'Starting Django Server...' && \
-      uv run manage.py runserver 0.0.0.0:8000"
+      python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
       - /app/db/ # exclude the subfolder to prevent potential interference

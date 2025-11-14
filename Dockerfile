@@ -1,29 +1,23 @@
-FROM python:3.12-slim
+FROM python:3.12
 
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+ENV PYTHONUNBUFFERED=1
 
-# Compile bytecode for all uv commands
-ENV UV_COMPILE_BYTECODE=1
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Change the working directory to the `app` directory
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libpq-dev build-essential ca-certificates \
+        curl gnupg unattended-upgrades && \
+    rm -rf /var/lib/apt/lists/* && \
+    curl -sSL https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /wait-for-it.sh && \
+    chmod +x /wait-for-it.sh
+
 WORKDIR /app
 
-# Install dependencies
-COPY pyproject.toml /app/
-COPY uv.lock /app/
+COPY requirements.txt /app
 
-RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --locked --no-dev --no-install-project
+RUN pip3 install -r requirements.txt --disable-pip-version-check --no-cache-dir
 
-# Copy the project into the image
 COPY . /app/
 
-# Sync the project
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked --no-dev
-
-# Allow ECS to start the container (prod-only)
 RUN chmod +x /app/scripts/container-startup.sh

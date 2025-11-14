@@ -5,36 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "backoff~=2.2.1",
-    "boto3~=1.37.4",
-    "django~=4.2.8",
-    "django-cachalot~=2.6.1",
-    "django-environ~=0.11.2",
-    "django-filter~=23.5",
-    "django-storages~=1.14.5",
-    "django-stubs~=4.2.7",
-    "djangorestframework~=3.14.0",
-    "gunicorn~=21.2.0",
-    "numpy~=1.26.2",
-    "pandas~=2.1.4",
-    "psycopg[binary]>=3.2.12",
-    "python-jose~=3.4.0",
-    "requests~=2.31.0",
-    "tqdm~=4.66.1",
+    "astroid>=3.3.9",
+    "black>=25.1.0",
+    "dill>=0.3.9",
+    "pylint>=3.3.6",
 ]
-
-[dependency-groups]
-dev = [
-    "black~=24.1.1",
-    "coverage~=7.3.3",
-    "html-linter~=0.4.0",
-    "isort~=5.13.2",
-    "mypy~=1.7.1",
-    "mypy-extensions~=1.0.0",
-    "pylint~=3.0.3",
-    "pylint-django~=2.5.5",
-    "types-tqdm~=4.66.0",
-]
-
-[tool.setuptools.packages.find]
-include = ["tcf_core*", "tcf_website*"]
