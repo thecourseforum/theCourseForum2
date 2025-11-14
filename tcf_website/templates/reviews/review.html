@@ -35,20 +35,19 @@
                                 <i class="fa fa-trash-o"></i>
                             </a>
                             {% include "reviews/delete_confirm_modal.html" with review_id=review.id %}
-                            </div>
                         </div>
                     </div>
-                    {% else %}
-                    <!-- Display reviewer's semester and updated date of review if on review page -->
-                    <div class="review-header">
+                </div>
+                {% else %}
+                <!-- Display reviewer's semester and updated date of review if on review page -->
+                <div class="review-header">
                     <div class="d-flex justify-content-between">
                         <h6 class="font-weight-bold text-tcf-orange">{{ review.semester }}</h6>
                         <h6 id="date" class="text-muted">Updated {{ review.created|date:"n/d/y" }}</h6>
                     </div>
-                    </div>
-                    {% endif %}
-
-                    <div class="review-content mb-2">
+                </div>
+                {% endif %}
+                <div class="review-content mb-2">
                     <!-- Max-height container for the review text collapse feature -->
                     <div class="review-text-body collapse" id="reviewText{{review.id}}"
                         aria-expanded="false">
@@ -76,7 +75,7 @@
                             </a>
                             <span class="upvoteCount">{{ review.count_votes.upvotes }}</span>
                         </div>
-                        <div class="mr-3 mr-sm-4">
+                        <div class="mr-1 mr-sm-4">
                             <a id="downvote{{review.id}}" href="#loginModal" data-toggle="modal"
                                 class="downvote {% if review.user_vote == -1 %}active{% endif %}">
                                 <i class="fa fa-thumbs-down"></i>
@@ -84,11 +83,60 @@
                             <span class="downvoteCount">{{ review.count_votes.downvotes }}</span>
                         </div>
                         {% if user.is_authenticated and user.email != instructor.email %}
-                            <a class="btn bg-tcf-orange text-white justify-content-end mt-0"
+                            <a class="btn bg-tcf-orange text-white justify-content-end m-1 mb-0"
                                 data-toggle="modal"
                                 data-target="#prof-reply-modal-{{ review.id }}">
                                 Reply
                             </a>
+                        {% endif %}
+                        {% if review.replies.count > 0 %}
+                            <a id="toggleReplies{{ review.id }}" class="btn bg-tcf-orange text-white justify-content-end m-1 mb-0"
+                                data-toggle="collapse"
+                                data-target="#review-replies-{{ review.id }}"
+                                aria-expanded="false"
+                                aria-controls="review-replies-{{ review.id }}">
+                                Show Replies
+                            </a>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const button = document.getElementById('toggleReplies{{ review.id }}');
+                                    const repliesDiv = document.getElementById('review-replies-{{ review.id }}');
+                                    if (button && repliesDiv) {
+                                        const updateButtonText = function() {
+                                            const isVisible = repliesDiv.classList.contains('show');
+                                            button.innerText = isVisible ? 'Hide Replies' : 'Show Replies';
+                                        };
+                                        updateButtonText();
+
+                                        button.addEventListener('click', function(e) {
+                                            // prevent action while temporarily disabled
+                                            if (button.dataset.disabled === 'true') {
+                                                e.preventDefault();
+                                                return;
+                                            }
+
+                                            // disable button briefly to prevent rapid clicks
+                                            button.dataset.disabled = 'true';
+                                            button.classList.add('disabled');
+                                            setTimeout(function() {
+                                                button.dataset.disabled = 'false';
+                                                button.classList.remove('disabled');
+                                            }, 300); // disabled for 800ms
+
+                                            // optimistic toggle of text (actual state updated by events too)
+                                            const isCurrentlyVisible = repliesDiv.classList.contains('show');
+                                            button.innerText = isCurrentlyVisible ? 'Show Replies' : 'Hide Replies';
+                                        });
+
+                                        repliesDiv.addEventListener('shown.bs.collapse', function() {
+                                            button.innerText = 'Hide Replies';
+                                        });
+                                        repliesDiv.addEventListener('hidden.bs.collapse', function() {
+                                            button.innerText = 'Show Replies';
+                                        });
+                                    }
+                                });
+                            </script>
                         {% endif %}
                     </div>
 
@@ -124,14 +172,7 @@
             
         </div>
     </div>
-    {% for reply in review.replies.all %}
-        <div class="col-12 p-2" style="background-color: #f0f0f0;">
-            <p class="m-2 text-muted">
-                {{ reply }}
-            </p>
-        </div>
-    {% endfor %}
-    <!-- Professor Reply Modal -->
+    <!-- Reply Modal -->
     <div class="modal fade" id="prof-reply-modal-{{ review.id }}" tabindex="-1" role="dialog" aria-labelledby="prof-reply-label-{{ review.id }}" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -142,7 +183,8 @@
                     </button>
                 </div>
 
-                <form>
+                <!-- send formdata to reply url in views.py -->
+                <form action="{% url 'reply' review_id=review.id %}" method="POST">
                     {% csrf_token %}
                     <div class="modal-body">
                     <div class="form-group">
@@ -160,5 +202,18 @@
             </div>
         </div>
     </div>
+    
+</div>
 
+<div id="review-replies-{{ review.id }}" class="collapse review mb-2">
+    <div class="review-replies-scrollable ml-auto" style="max-height:200px; max-width:800px; overflow:auto;">
+        {% for reply in review.replies.all %}
+        <div class="d-flex border-top card justify-content-between pt-3 px-3" style="margin-bottom: 10px;">
+            <div class="mb-0 flex-grow-1 pr-3 longtext">
+                {{ reply.text|linebreaks }}
+            </div>
+            <p class="mb-2 text-nowrap text-muted">Updated {{ reply.created|date:"n/d/y" }}</p>
+        </div>
+        {% endfor %}
+    </div>
 </div>

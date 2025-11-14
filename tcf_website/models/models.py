@@ -1377,12 +1377,6 @@ class Reply(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        # optional: one reply per user per review
-        constraints = [
-            models.UniqueConstraint(fields=["review", "user"], name="one_reply_per_prof_per_review")
-        ]
-
     def __str__(self):
         return f"Reply by {self.user.first_name} ({self.user.email}) to {self.review}"
 

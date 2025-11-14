@@ -41,3 +41,11 @@
 .tooltip-inner {
   margin: 0;
 }
+
+.longtext {
+    min-width:0;
+    white-space:normal;
+    word-break:break-word;
+    overflow-wrap:break-word;
+    word-wrap:break-word;
+}

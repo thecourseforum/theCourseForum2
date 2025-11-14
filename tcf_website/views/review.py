@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from ..models import Review, ClubCategory, Club
+from ..models import Review, Reply, ClubCategory, Club
 
 # pylint: disable=fixme,unused-argument
 # Disable pylint errors on TODO messages, such as below
@@ -281,3 +281,34 @@ def edit_review(request, review_id):
         return render(request, "reviews/edit_review.html", {"form": form})
     form = ReviewForm(instance=review)
     return render(request, "reviews/edit_review.html", {"form": form})
+
+class ReplyForm(forms.ModelForm):
+    class Meta:
+        model = Reply
+        fields = ["text"]
+
+@login_required
+def new_reply(request, review_id):
+    review = get_object_or_404(Review, pk=review_id)
+    if request.method == "POST":
+        form = ReplyForm(request.POST)
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.review = review
+            reply.user = request.user
+            reply.save()
+            messages.success(request, "Reply posted.")
+            return redirect(f"/course/{review.course.id}/{review.instructor.id}")
+    else:
+        form = ReplyForm()
+
+    return render(
+        request,
+        "reviews/new_reply.html",
+        {"form": form, "review": review},
+    )
+
+@login_required
+def delete_reply(request, review_id):
+    review = get_object_or_404(Review, pk=review_id)
+    

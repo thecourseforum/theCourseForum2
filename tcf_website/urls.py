@@ -59,6 +59,7 @@ urlpatterns = [
         views.DeleteReview.as_view(),
         name="delete_review",
     ),
+    path("reviews/<int:review_id>/reply/", views.review.new_reply, name="reply"),
     path("reviews/<int:review_id>/edit/", views.edit_review, name="edit_review"),
     path("reviews/", views.reviews, name="reviews"),
     path("reviews/<int:review_id>/upvote/", views.upvote),
