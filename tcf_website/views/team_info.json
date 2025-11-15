@@ -435,6 +435,24 @@
       "role": "Marketing",
       "class": "2027",
       "img_filename": "DM_Alyssa_Zhang.jpg"
+    },
+    {
+      "name": "Dylan Klein",
+      "role": "Marketing",
+      "class": "2029",
+      "img_filename": "DM_Dylan_Klein.jpg"
+    },
+    {
+      "name": "Kelly Yue",
+      "role": "Marketing",
+      "class": "2027",
+      "img_filename": "DM_Kelly_Yue.JPG"
+    },
+    {
+      "name": "Tiffany Park",
+      "role": "Marketing",
+      "class": "2028",
+      "img_filename": "DM_Tiffany_Park.jpg"
     }
   ]
 }
