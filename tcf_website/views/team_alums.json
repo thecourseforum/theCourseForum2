@@ -23,12 +23,25 @@
           "class": "2027",
           "img_filename": "ENG_Arthur_Wu.jpg",
           "github": "arthurwu1227"
+        },
+        {
+          "name": "Carissa Chen",
+          "role": "Marketing",
+          "class": "2027",
+          "img_filename": "DM_Carissa_Chen.jpg"
         }
       ]
     },
     {
       "group_name": "Class of 2026",
       "members": [
+        {
+          "name": "Barrett Ruth",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Barrett_Ruth.webp",
+          "github": "barrett-ruth"
+        },
         {
           "name": "Bryan Katuari",
           "role": "Developer",
@@ -51,6 +64,13 @@
           "github": "t0mmylam"
         },
         {
+          "name": "Kingsley Kim",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Kingsley_Kim.jpg",
+          "github": "kingsleykimm"
+        },
+        {
           "name": "Raffi Khondaker",
           "role": "Developer",
           "class": "2026",
@@ -70,12 +90,39 @@
           "class": "2026",
           "img_filename": "ENG_Sebastian_Wiktorowicz.png",
           "github": "SebastianWikt"
+        },
+        {
+          "name": "Collin Togher",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Collin_Togher.jpg",
+          "github": "ctogs"
         }
       ]
     },
     {
       "group_name": "Class of 2025",
       "members": [
+        {
+        "name": "AJ Nye",
+        "role": "Secretary",
+        "class": "2025",
+        "img_filename": "ENG_AJ_Nye.jpg",
+        "github": "ajnye"
+        },
+        {
+          "name": "Hari Gajjala",
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "ENG_Hari_Gajjala.JPG",
+          "github": "hari-gajjala"
+        },
+        {
+          "name": "Chai Zhang",
+          "role": "Designer",
+          "class": "2025",
+          "img_filename": "DM_Chai_Zhang.JPG"
+        },
         {
           "name": "Shruti Bala",
           "role": "Developer",
@@ -120,6 +167,45 @@
           "class": "2025",
           "img_filename": "ENG_Vincent_Song.jpg",
           "github": "vsong15"
+        },
+        {
+          "name": "Zohaib Khalid",
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "ENG_Zohaib_Khalid.jpg",
+          "github": "zohaibk04"
+        },
+        {
+        "name": "Junho Lee",
+        "role": "Developer",
+        "class": "2025",
+        "img_filename": "ENG_Junho_Lee.jpg",
+        "github": "junholee6a"
+        },
+        {
+          "name": "Ja-Zhua Cheng",
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "ENG_Ja-Zhua_Cheng.jpeg"
+        },
+        {
+          "name": "Justin Park",
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "ENG_Justin_Park.jpg"
+        },
+        {
+          "name": "Olivia Seto",
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "ENG_Olivia_Seto.jpg",
+          "github": "oliviaseto"
+        },
+        {
+          "name": "Vivian Gao",
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "ENG_Vivian_Gao.jpg"
         }
       ]
     },
@@ -146,6 +232,20 @@
           "class": "2024",
           "img_filename": "ENG_Lilian_Zhang.png",
           "github": "lilizhhh"
+        },
+        {
+          "name": "Neha Bagalkot",
+          "role": "Developer",
+          "class": "2024",
+          "img_filename": "ENG_Neha_Bagalkot.jpg",
+          "github": "nehagb99"
+        },
+        {
+          "name": "Kyle Durrer",
+          "role": "Developer",
+          "class": "2024",
+          "img_filename": "ENG_Kyle_Durrer.jpg",
+          "github": "kmd2zjw"
         },
         {
           "name": "Jasmine Senesombath",
