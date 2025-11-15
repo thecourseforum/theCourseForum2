@@ -16,12 +16,28 @@ def _safe_text(html):
 
 
 def _sort_key(evt):
-    """Return the sort key for an event based on its start time."""
+    """
+    Produce a sortable datetime string representing an event's start time.
+    
+    Parameters:
+        evt (dict): Event mapping; if present, the `start_utc` key should be an ISO8601 UTC datetime string.
+    
+    Returns:
+        sort_key (str): The `start_utc` value when available, otherwise the placeholder "9999-12-31T23:59:59Z" so undated events sort after dated events.
+    """
     return evt.get("start_utc") or "9999-12-31T23:59:59Z"
 
 
 def _format_datetime(dt_string):
-    """Format UTC datetime string for display"""
+    """
+    Format an ISO 8601 UTC datetime string into a human-friendly display.
+    
+    Parameters:
+        dt_string (str | None): ISO 8601 UTC datetime (may end with 'Z'); if falsy, treated as missing.
+    
+    Returns:
+        str: Formatted datetime like "Weekday, Month day, Year at HH:MM AM/PM", "TBD" when input is missing, or the original string if parsing fails.
+    """
     if not dt_string:
         return "TBD"
     try:
@@ -32,7 +48,17 @@ def _format_datetime(dt_string):
 
 
 def _is_upcoming(dt_string):
-    """Check if event is upcoming (today or later)"""
+    """
+    Determine whether an event datetime string represents today or a future date.
+    
+    If `dt_string` is missing or cannot be parsed as an ISO-8601 datetime, the event is treated as upcoming.
+    
+    Parameters:
+        dt_string (str | None): UTC ISO-8601 datetime string (e.g. "2023-12-31T12:00:00Z") or None.
+    
+    Returns:
+        `True` if the event is today or in the future (or if `dt_string` is missing/invalid), `False` otherwise.
+    """
     if not dt_string:
         return True  # Treat events without dates as upcoming
 
@@ -45,7 +71,14 @@ def _is_upcoming(dt_string):
 
 
 def calendar_overview(request):
-    """Display an overview of upcoming and past club events."""
+    """
+    Render a calendar overview grouping upcoming and past events by date.
+    
+    Returns:
+        HttpResponse: The rendered "calendar/calendar_overview.html" response. Context includes
+        `upcoming_groups` and `past_groups`, each mapping a date key (YYYY-MM-DD or "TBD") to a
+        list of event dictionaries.
+    """
     raw = presence.get_events()
     events = []
     for e in raw or []:
