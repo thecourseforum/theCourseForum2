@@ -2,7 +2,7 @@
 
 from unittest.mock import patch
 
-from django.http import Http404
+
 from django.test import TestCase, Client
 
 
@@ -13,9 +13,9 @@ class EventDetailTests(TestCase):
         self.client = Client()
 
     def test_event_detail_route_ok(self):
-        """Test that event detail route handles valid event."""
-        # Assuming a valid event URI, but since mocked, we'll add mocks
-        pass  # Will be covered by mock tests
+    """Test that event detail route handles valid event."""
+    # Assuming a valid event URI, but since mocked, we'll add mocks
+    # Will be covered by mock tests
 
     @patch('tcf_website.views.calendar.presence.get_event_details')
     def test_event_detail_not_found_on_exception(self, mock_get_details):

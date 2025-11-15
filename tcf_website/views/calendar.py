@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 
-from django.conf import settings
+
 from django.http import Http404
 from django.shortcuts import render
 from django.utils.html import strip_tags
@@ -137,5 +137,3 @@ def event_detail(request, event_uri):
             "event": event,
         },
     )
-
-
