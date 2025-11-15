@@ -9,6 +9,11 @@ class CalendarOverviewTests(TestCase):
     """Tests for calendar overview functionality."""
 
     def setUp(self):
+        """
+        Prepare the test case by creating a Django test client.
+        
+        Attaches a django.test.Client instance to `self.client` for use in test methods; run before each test.
+        """
         self.client = Client()
 
     def test_calendar_route_ok(self):

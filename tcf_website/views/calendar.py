@@ -11,17 +11,41 @@ from tcf_website.services import presence
 
 
 def _safe_text(html):
-    """Strip HTML tags from text and remove leading/trailing whitespace."""
+    """
+    Return plain text with HTML tags removed and trimmed.
+    
+    Parameters:
+        html (str | None): HTML string to sanitize; falsy values are treated as an empty string.
+    
+    Returns:
+        str: Plain text with HTML tags removed and leading/trailing whitespace trimmed.
+    """
     return strip_tags(html or "").strip()
 
 
 def _sort_key(evt):
-    """Return the sort key for an event based on its start time."""
+    """
+    Produce a sortable key for an event that places unknown start times after dated events.
+    
+    Parameters:
+        evt (dict): Event mapping that may include a "start_utc" ISO 8601 UTC datetime string.
+    
+    Returns:
+        str: The event's "start_utc" value if present, otherwise the placeholder "9999-12-31T23:59:59Z".
+    """
     return evt.get("start_utc") or "9999-12-31T23:59:59Z"
 
 
 def _format_datetime(dt_string):
-    """Format UTC datetime string for display"""
+    """
+    Format a UTC ISO-8601 datetime string into a human-readable display string.
+    
+    Parameters:
+        dt_string (str | None): UTC datetime in ISO 8601 format (may end with 'Z'), or a falsy value.
+    
+    Returns:
+        str: A formatted datetime like "Friday, January 01, 2021 at 05:00 PM". Returns "TBD" when `dt_string` is falsy. If parsing fails, returns the original `dt_string`.
+    """
     if not dt_string:
         return "TBD"
     try:
@@ -32,7 +56,17 @@ def _format_datetime(dt_string):
 
 
 def _is_upcoming(dt_string):
-    """Check if event is upcoming (today or later)"""
+    """
+    Determine whether an event date is today or in the future.
+    
+    If `dt_string` is empty or cannot be parsed as an ISO 8601 datetime, the event is treated as upcoming.
+    
+    Parameters:
+        dt_string (str): ISO 8601 UTC datetime string (e.g. "2025-01-01T12:00:00Z") or None.
+    
+    Returns:
+        True if the event occurs today or later, False otherwise.
+    """
     if not dt_string:
         return True  # Treat events without dates as upcoming
 
@@ -103,7 +137,20 @@ def calendar_overview(request):
         },
     )
 def event_detail(request, event_uri):
-    """Display detailed information for a specific event"""
+    """
+    Render the detail page for a single calendar event.
+    
+    Fetches event details by `event_uri`, formats fields for display, and returns a response rendering the event detail template.
+    
+    Parameters:
+        event_uri (str): The event identifier/URI used to retrieve event details.
+    
+    Returns:
+        HttpResponse: The rendered "calendar/event_detail.html" page containing the event data.
+    
+    Raises:
+        Http404: If the event cannot be retrieved or no event data is returned.
+    """
     try:
         event_data = presence.get_event_details(event_uri)
     except Exception as exc:

@@ -10,6 +10,9 @@ class EventDetailTests(TestCase):
     """Tests for event detail functionality."""
 
     def setUp(self):
+        """
+        Create a Django test client instance and assign it to self.client for use by test methods.
+        """
         self.client = Client()
 
 

@@ -15,7 +15,14 @@ def base(request):
 
 
 def searchbar_context(request):
-    """Provide context for the search bar."""
+    """
+    Builds template context used by the site search bar.
+    
+    Provides a mapping with the following keys:
+    - "disciplines": QuerySet of all Discipline objects ordered by name.
+    - "subdepartments": QuerySet of all Subdepartment objects ordered by mnemonic.
+    - "semesters": QuerySet of recent Semester objects; if no latest Semester exists, an empty QuerySet is returned, otherwise semesters with number greater than or equal to latest.number - 50 ordered by descending number.
+    """
     latest_semester = Semester.latest()
     if latest_semester is None:
         recent_semesters = Semester.objects.none()
@@ -35,11 +42,14 @@ def searchbar_context(request):
 
 
 def flags(_request):
-    """Expose template context flags.
-
-    _request is unused.
-
-    Returns a dict containing ENABLE_CLUB_CALENDAR with its default.
+    """
+    Provide feature flags for templates.
+    
+    The `_request` argument is unused.
+    
+    Returns:
+        dict: Mapping containing `"ENABLE_CLUB_CALENDAR"` set to the value of
+        `settings.ENABLE_CLUB_CALENDAR` if defined, otherwise `False`.
     """
     return {
         "ENABLE_CLUB_CALENDAR": getattr(settings, "ENABLE_CLUB_CALENDAR", False),
