@@ -12,7 +12,6 @@ class EventDetailTests(TestCase):
     def setUp(self):
         self.client = Client()
 
-    
 
     @patch('tcf_website.views.calendar.presence.get_event_details')
     def test_event_detail_not_found_on_exception(self, mock_get_details):
