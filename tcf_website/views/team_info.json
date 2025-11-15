@@ -391,6 +391,30 @@
       "role": "Designer",
       "class": "2029",
       "img_filename": "DM_Rohan_Soma.jpg"
+    },
+    {
+      "name": "Bree Bonner",
+      "role": "Designer",
+      "class": "2026",
+      "img_filename": "DM_Bree_Bonner.JPG"
+    },
+    {
+      "name": "Maya Degafe",
+      "role": "Designer",
+      "class": "2027",
+      "img_filename": "DM_Maya_Degafe.png"
+    },
+    {
+      "name": "Kelly Tran",
+      "role": "Designer",
+      "class": "2028",
+      "img_filename": "DM_Kelly_Tran.jpg"
+    },
+    {
+      "name": "Ivy Kim",
+      "role": "Designer",
+      "class": "2029",
+      "img_filename": "DM_Ivy_Kim.jpg"
     }
   ],
   "marketing_team": [
