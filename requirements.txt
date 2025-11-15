@@ -25,3 +25,5 @@ tqdm~=4.66.1
 types-tqdm~=4.66.0
 uWSGI~=2.0.28
 python-jose~=3.4.0
+sentence-transformers~=3.0.0
+scikit-learn~=1.3.0
