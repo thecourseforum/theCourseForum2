@@ -64,6 +64,12 @@ def calendar_overview(request):
 
     events.sort(key=_sort_key)
 
+    # Collect unique tags for filtering
+    all_tags = set()
+    for ev in events:
+        all_tags.update(ev["tags"])
+    unique_tags = sorted(list(all_tags))
+
     # Separate upcoming and past events
     upcoming_events = []
     past_events = []
@@ -100,6 +106,7 @@ def calendar_overview(request):
         {
             "upcoming_groups": sorted_upcoming,
             "past_groups": sorted_past,
+            "unique_tags": unique_tags,
         },
     )
 def event_detail(request, event_uri):

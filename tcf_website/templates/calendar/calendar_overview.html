@@ -6,21 +6,67 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
+<style>
+.tag-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(100px, 1fr));
+  gap: 15px;
+  margin-left: 15px;
+}
+.tag-grid .form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.tag-grid .form-check-label {
+  font-size: 0.8em;
+  padding: 4px 8px;
+  margin-left: 5px;
+  white-space: nowrap;
+}
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="department container">
-  <div class="container-lg mb-4">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <h2 class="mb-0">Club Calendar</h2>
-      <div class="input-group">
-        <!-- simple non-functional search input for now (stub for future) -->
-        <input type="text" class="form-control" placeholder="Search events or clubs (coming soon)" disabled>
-        <button class="btn btn-outline-secondary" type="button" disabled>
-          <i class="fa fa-search" aria-hidden="true"></i>
-        </button>
+<div class="container-lg mb-4">
+<div class="d-flex align-items-center justify-content-between mb-3">
+<h2 class="mb-0">Club Calendar</h2>
+<div class="input-group">
+<!-- simple non-functional search input for now (stub for future) -->
+<input type="text" class="form-control" placeholder="Search events or clubs (coming soon)" disabled>
+<button class="btn btn-outline-secondary" type="button" disabled>
+<i class="fa fa-search" aria-hidden="true"></i>
+</button>
+</div>
+</div>
+
+    <!-- Tag Filter -->
+    {% if unique_tags %}
+    <div class="mb-4">
+    <div class="dropdown">
+      <button class="btn btn-outline-primary dropdown-toggle" type="button" id="tagFilterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Filters
+      </button>
+      <div class="dropdown-menu p-3" aria-labelledby="tagFilterDropdown" style="min-width: 500px;">
+        <div class="d-flex justify-content-between mb-2">
+        <button class="btn btn-sm btn-outline-primary" id="select-all-tags">Select All</button>
+        <button class="btn btn-sm btn-outline-secondary" id="clear-all-tags">Clear All</button>
+    </div>
+    <div id="tag-filter" class="tag-grid">
+    {% for tag in unique_tags %}
+      <div class="form-check">
+          <input class="form-check-input tag-checkbox" type="checkbox" id="tag-{{ forloop.counter }}" value="{{ tag }}" checked>
+          <label class="form-check-label badge {{ tag|tag_color }} text-white" for="tag-{{ forloop.counter }}">
+              {{ tag }}
+              </label>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
+    {% endif %}
   </div>
 
   <div class="calendar-events container-lg px-0">
@@ -37,8 +83,8 @@
                 <h6 class="text-muted">{{ date_key }}</h6>
                 <ul class="list-unstyled">
                   {% for ev in items %}
-                    <li>
-                      <div class="card rating-card mb-2">
+                  <li>
+                  <div class="card rating-card mb-2" data-tags="{% for t in ev.tags %}{{ t }}{% if not forloop.last %},{% endif %}{% endfor %}">
                         <div class="row no-gutters">
                           <div class="col-md-8">
                             <div class="card-body">
@@ -85,8 +131,8 @@
           <h5 class="text-muted">{{ date_key }}</h5>
           <ul class="list-unstyled">
             {% for ev in items %}
-              <li>
-                <div class="card rating-card mb-2">
+            <li>
+            <div class="card rating-card mb-2" data-tags="{% for t in ev.tags %}{{ t }}{% if not forloop.last %},{% endif %}{% endfor %}">
                   <div class="row no-gutters">
                     <div class="col-md-8">
                       <div class="card-body">
@@ -132,4 +178,59 @@
     {% endif %}
   </div>
 </div>
+
+{% block js %}
+<script>
+$(document).on('click', '.dropdown-menu', function (e) {
+  e.stopPropagation();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const tagCheckboxes = document.querySelectorAll('.tag-checkbox');
+    const selectAllBtn = document.getElementById('select-all-tags');
+    const clearAllBtn = document.getElementById('clear-all-tags');
+    const eventCards = document.querySelectorAll('.card.rating-card');
+
+    function getSelectedTags() {
+        const selected = [];
+        tagCheckboxes.forEach(cb => {
+            if (cb.checked) selected.push(cb.value);
+        });
+        return selected;
+    }
+
+    function filterEvents() {
+        const selectedTags = getSelectedTags();
+        eventCards.forEach(card => {
+            const cardTags = card.dataset.tags ? card.dataset.tags.split(',').map(t => t.trim()) : [];
+            const hasSelectedTag = selectedTags.some(tag => cardTags.includes(tag));
+            card.style.display = hasSelectedTag ? '' : 'none';
+        });
+    }
+
+    // Event listeners
+    tagCheckboxes.forEach(cb => {
+        cb.addEventListener('change', filterEvents);
+    });
+
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', function() {
+            tagCheckboxes.forEach(cb => cb.checked = true);
+            filterEvents();
+        });
+    }
+
+    if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', function() {
+            tagCheckboxes.forEach(cb => cb.checked = false);
+            filterEvents();
+        });
+    }
+
+    // Initial filter
+    filterEvents();
+});
+</script>
+{% endblock %}
+
 {% endblock %}
