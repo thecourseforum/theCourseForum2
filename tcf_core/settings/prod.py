@@ -24,3 +24,11 @@ if os.environ.get("DJANGO_SETTINGS_MODULE") == "tcf_core.settings.prod":
 
     # Use secure connection for database access
     DATABASES["default"]["OPTIONS"] = {"sslmode": "require"}
+
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": env.str("REDIS_URL", default="redis://127.0.0.1:6379/1"),
+            "TIMEOUT": None,
+        }
+    }

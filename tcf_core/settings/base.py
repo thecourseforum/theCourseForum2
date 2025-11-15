@@ -49,23 +49,23 @@ INSTALLED_APPS = [
     "tcf_website",
 ]
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env.str("DB_NAME"),
+        "USER": env.str("DB_USER"),
+        "PASSWORD": env.str("DB_PASSWORD"),
+        "HOST": env.str("DB_HOST", default="localhost"),
+        "PORT": env.int("DB_PORT", default=5432),
+    }
+}
+
 # Dev does not use S3 buckets
 if env.str("ENVIRONMENT") == "dev":
     STATIC_URL = "/static/"
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
     ALLOWED_HOSTS.extend(["localhost", ".grok.io", "127.0.0.1"])
-
-    DATABASES = {
-        "default": {
-            "NAME": env.str("DB_NAME"),
-            "ENGINE": "django.db.backends.postgresql",
-            "USER": env.str("DB_USER"),
-            "PASSWORD": env.str("DB_PASSWORD"),
-            "HOST": env.str("DB_HOST"),
-            "PORT": env.int("DB_PORT"),
-        }
-    }
 else:
     AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
@@ -96,16 +96,13 @@ else:
         },
     }
 
-    DATABASES = {
-        "default": {
-            "NAME": env.str("AWS_RDS_NAME"),
-            "ENGINE": "django.db.backends.postgresql",
-            "USER": env.str("AWS_RDS_USER"),
-            "PASSWORD": env.str("AWS_RDS_PASSWORD"),
-            "HOST": env.str("AWS_RDS_HOST"),
-            "PORT": env.int("AWS_RDS_PORT"),
-        }
-    }
+    DATABASES["default"].update({
+    "NAME": env.str("AWS_RDS_NAME"),
+    "USER": env.str("AWS_RDS_USER"),
+    "PASSWORD": env.str("AWS_RDS_PASSWORD"),
+    "HOST": env.str("AWS_RDS_HOST"),
+    "PORT": env.int("AWS_RDS_PORT"),
+    })
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -130,13 +127,13 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-                "tcf_core.context_processors.base",
-                "tcf_core.context_processors.searchbar_context",
-            ],
+"django.template.context_processors.debug",
+"django.template.context_processors.request",
+"django.contrib.auth.context_processors.auth",
+"django.contrib.messages.context_processors.messages",
+"tcf_core.context_processors.base",
+"tcf_core.context_processors.searchbar_context",
+],
         },
     },
 ]
@@ -255,3 +252,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Toxicity threshold for filtering reviews
 TOXICITY_THRESHOLD = 74
+
+# Presence / Calendar feature
+PRESENCE_SUBDOMAIN = env.str("PRESENCE_SUBDOMAIN", default="virginia")
+PRESENCE_TIMEOUT_SECONDS = env.int("PRESENCE_TIMEOUT_SECONDS", default=8)
+PRESENCE_CACHE_SECONDS = env.int("PRESENCE_CACHE_SECONDS", default=300)
