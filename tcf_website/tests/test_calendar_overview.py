@@ -21,23 +21,23 @@ class CalendarOverviewTests(TestCase):
         """Test that events are sorted ascending by start date."""
         # Mock events out of order
         mock_events = [
-        {
-            "eventName": "Event C",
-            "organizationName": "Org C",
+            {
+                "eventName": "Event C",
+                "organizationName": "Org C",
                 "uri": "c",
-                "startDateTimeUtc": "2025-01-03T10:00:00Z",
+                "startDateTimeUtc": "2026-01-03T10:00:00Z",
             },
             {
                 "eventName": "Event A",
                 "organizationName": "Org A",
                 "uri": "a",
-                "startDateTimeUtc": "2025-01-01T10:00:00Z",
+                "startDateTimeUtc": "2026-01-01T10:00:00Z",
             },
             {
                 "eventName": "Event B",
                 "organizationName": "Org B",
                 "uri": "b",
-                "startDateTimeUtc": "2025-01-02T10:00:00Z",
+                "startDateTimeUtc": "2026-01-02T10:00:00Z",
             },
         ]
         mock_get_events.return_value = mock_events
@@ -48,4 +48,4 @@ class CalendarOverviewTests(TestCase):
         # Check context has sorted groups
         upcoming_groups = resp.context['upcoming_groups']
         dates = list(upcoming_groups.keys())
-        self.assertEqual(dates, ['2025-01-01', '2025-01-02', '2025-01-03'])
+        self.assertEqual(dates, ['2026-01-01', '2026-01-02', '2026-01-03'])
