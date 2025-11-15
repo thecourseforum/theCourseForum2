@@ -32,5 +32,3 @@ def searchbar_context(request):
         "semesters": recent_semesters,
     }
     return context
-
-
