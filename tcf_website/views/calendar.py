@@ -11,10 +11,12 @@ from tcf_website.services import presence
 
 
 def _safe_text(html):
+    """Strip HTML tags from text and remove leading/trailing whitespace."""
     return strip_tags(html or "").strip()
 
 
 def _sort_key(evt):
+    """Return the sort key for an event based on its start time."""
     return evt.get("start_utc") or "9999-12-31T23:59:59Z"
 
 
