@@ -17,7 +17,7 @@ from requests.adapters import HTTPAdapter
 from tqdm import tqdm
 from urllib3.util.retry import Retry
 
-from tcf_website.models import Section, SectionEnrollment, Semester
+from tcf_website.models import Section, Semester
 
 # Maximum time to wait for a response from the server
 TIMEOUT = 30
@@ -90,16 +90,13 @@ def fetch_section_data(section):
         # Update enrollment data if available
         if data and "classes" in data and data["classes"]:
             class_data = data["classes"][0]
-            section_enrollment, _ = SectionEnrollment.objects.get_or_create(
-                section=section
-            )
 
-            # Update enrollment and waitlist numbers
-            section_enrollment.enrollment_taken = class_data.get("enrollment_total", 0)
-            section_enrollment.enrollment_limit = class_data.get("class_capacity", 0)
-            section_enrollment.waitlist_taken = class_data.get("wait_tot", 0)
-            section_enrollment.waitlist_limit = class_data.get("wait_cap", 0)
-            section_enrollment.save()
+            # Update enrollment and waitlist numbers directly on Section
+            section.enrollment_taken = class_data.get("enrollment_total", 0)
+            section.enrollment_limit = class_data.get("class_capacity", 0)
+            section.waitlist_taken = class_data.get("wait_tot", 0)
+            section.waitlist_limit = class_data.get("wait_cap", 0)
+            section.save()
 
             return True
 
