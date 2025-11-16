@@ -64,6 +64,7 @@ class Command(BaseCommand):
                     "Title": course.title,
                     "Topic": topic,
                     "Description": course.description or "",
+                    "Prerequisites": course.prerequisites
                 }
             )
 
@@ -179,6 +180,7 @@ class Command(BaseCommand):
         """
         course_mnemonic = df.iloc[course_idx]["Mnemonic"]
         course_number = df.iloc[course_idx]["Number"]
+        course_prerequisites = df.iloc[course_idx]["Prerequisites"]
 
         rescored = []
         for sim_idx in top_similar_indices:
@@ -193,6 +195,10 @@ class Command(BaseCommand):
             level_diff = abs(df.iloc[sim_idx]["Number"] - course_number)
             if level_diff <= 100:
                 bonus += 0.1 * (1 - level_diff / 100)  # decay as distance increases
+
+            # Prerequisite bonus
+            if df.iloc[sim_idx]["Prerequisites"] in course_prerequisites:
+                bonus += 0.3
 
             final_score = min(1.0, base_sim + bonus)
             rescored.append({"index": sim_idx, "final_score": final_score})
