@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("tcf_website", "0022_coursegrade_tcf_website_course__76e103_idx_and_more"),
+        ("tcf_website", "0023_remove_sectionenrollment_section_and_more"),
     ]
 
     operations = [

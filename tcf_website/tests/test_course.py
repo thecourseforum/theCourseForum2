@@ -120,3 +120,16 @@ class CourseTestCase(TestCase):
         # need to break into 2 lines because otherwise pylint gets mad
         # this link doesn't actually work because CS 420 is not a real class
         self.assertEqual(eval_link, self.course.eval_link())
+
+    def test_prerequisites_default(self):
+        """Test that prerequisites field defaults to empty list."""
+        self.assertEqual(self.course.prerequisites, [])
+
+    def test_prerequisites_set_and_get(self):
+        """Test that prerequisites can be set and retrieved."""
+        prerequisites = ["CS 1110", "CS 2100"]
+        self.course.prerequisites = prerequisites
+        self.course.save()
+        # Refresh from database
+        self.course.refresh_from_db()
+        self.assertEqual(self.course.prerequisites, prerequisites)
