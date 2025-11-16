@@ -330,13 +330,13 @@
             
             <div class="chatbot-footer">
                 <form id="chatbotForm">
-                    <input 
-                        type="text" 
+                    <textarea 
                         id="chatbotInput" 
                         class="chatbot-input" 
                         placeholder="Type your message..."
                         autocomplete="off"
-                    >
+                        rows="1"
+                    ></textarea>
                     <button type="submit" class="chatbot-send" aria-label="Send message">
                         <i class="icon-paper-plane"></i>
                     </button>
@@ -491,10 +491,40 @@
                         addMessage(message, 'user');
                         chatbotInput.value = '';
                         
+
+                        // Reset text area height after sending
+                        chatBotInput.style.heigth = 'auto';
+                        chatBotInput.style.height = chatBotinput.scrollHeight + 'px';
+
                         // Simulate bot response (replace with actual API call)
                         setTimeout(function() {
                             addMessage('Thanks for your message! This is where the bot response will appear.', 'bot');
                         }, 1000);
+                    }
+                });
+
+                //Auto resize textarea as user types
+                chatBotInput.addEventListener('input', function() {
+                    chatBotInput.style.height = 'auto';
+
+                    // Set height based on content, capped at 120px (~5 lines)
+                    const maxHeight = 120;
+                    const newHeight = Math.min(this.scrollHeight, maxHeight);
+                    chatBotInput.style.height = newHeight + 'px';
+                    
+                    // Enable scrolling when max height reached
+                    if (chatBotInput.scrollHeight > maxHeight) {
+                        chatBotInput.style.overflowY = 'auto';
+                    } else {
+                        chatBotInput.style.overflowY = 'hidden';
+                    }
+                });
+
+                // Handle Enter key (submit) vs Shift+Enter (new line)
+                chatbotInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        chatbotForm.dispatchEvent(new Event('submit'));
                     }
                 });
                 

@@ -398,7 +398,7 @@ ul.list-inline.mb-0 li h5 {
 #chatbotForm {
   display: flex;
   gap: 10px;
-  align-items: center;
+  align-items: flex-end;
 }
 
 .chatbot-input {
@@ -409,6 +409,10 @@ ul.list-inline.mb-0 li h5 {
   font-size: 0.9rem;
   outline: none;
   transition: border-color 0.2s ease;
+  min-height: 44px;
+  max-height: 120px;
+  line-height: 1.5;
+  overflow-y: hidden;
 }
 
 .chatbot-input:focus {
