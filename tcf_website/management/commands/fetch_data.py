@@ -19,7 +19,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import backoff
 
-# format -ClassNumber,Mnemonic,Number,Section,Type,Units,Instructor1,Days1,Room1,MeetingDates1,Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,Description
+# format -ClassNumber,Mnemonic,Number,Section,Type,Units,Instructor1,Days1,Room1,MeetingDates1,Instructor2,Days2,Room2,MeetingDates2,Instructor3,Days3,Room3,MeetingDates3,Instructor4,Days4,Room4,MeetingDates4,Title,Topic,Status,Enrollment,EnrollmentLimit,Waitlist,WaitlistLimit,Description
 # example call url
 # -https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassDetails?institution=UVA01&term=1242&class_nbr=16634&
 import requests
@@ -207,6 +207,7 @@ def compile_course_data(course_number, sem_code):
         "Enrollment": class_availability["enrollment_total"],
         "EnrollmentLimit": class_availability["class_capacity"],
         "Waitlist": class_availability["wait_list_total"],
+        "WaitlistLimit": class_availability["wait_list_capacity"],
         "Description": data["section_info"]["catalog_descr"]["crse_catalog_description"]
         .replace("\n", "")
         .replace("\r", " "),
