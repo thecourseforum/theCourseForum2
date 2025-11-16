@@ -18,4 +18,5 @@ router.register(r"clubs", views.ClubViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("liveblocks-auth", views.liveblocks_auth, name="liveblocks_auth"),
 ]

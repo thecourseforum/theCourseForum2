@@ -44,6 +44,11 @@ urlpatterns = [
         name="course",
     ),
     path(
+        "course/<str:mnemonic>/<int:course_number>/study-guide",
+        views.study_guide,
+        name="study_guide",
+    ),
+    path(
         "course/<str:mnemonic>/<int:course_number>/<str:instructor_recency>",
         views.course_view,
         name="course_recency",

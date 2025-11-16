@@ -1,0 +1,75 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Study Guide | {{ course.code }}{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" />
+  <style>
+    /* Keep the editor UI on theme */
+    #editor {
+      background: #fff;
+    }
+    .ql-toolbar.ql-snow {
+      border-top-left-radius: 0.25rem;
+      border-top-right-radius: 0.25rem;
+    }
+    .ql-container.ql-snow {
+      border-bottom-left-radius: 0.25rem;
+      border-bottom-right-radius: 0.25rem;
+      min-height: 240px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-lg mt-3 px-0">
+    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs sorting=False %}
+
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title">Study Guide for {{ course.code }} — {{ course.title }}</h3>
+            <p class="text-muted">
+                This is a starter page for collaborative study guides. We will add
+                a realtime editor (Quill + Liveblocks) and autosave next.
+            </p>
+            <div class="mb-3">
+              <div id="editor-toolbar" class="bg-light border">
+                <!-- minimal toolbar aligned with theme -->
+                <span class="ql-formats">
+                  <select class="ql-header">
+                    <option selected></option>
+                    <option value="1"></option>
+                    <option value="2"></option>
+                  </select>
+                  <select class="ql-font"></select>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-bold"></button>
+                  <button class="ql-italic"></button>
+                  <button class="ql-underline"></button>
+                  <button class="ql-strike"></button>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-list" value="ordered"></button>
+                  <button class="ql-list" value="bullet"></button>
+                  <select class="ql-align"></select>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-link"></button>
+                  <button class="ql-code-block"></button>
+                </span>
+              </div>
+              <div id="editor" class="border" data-room-id="{{ room_id }}" data-user-display="{{ user_display|default:'anonymous'|escapejs }}" data-liveblocks-public-key="{{ liveblocks_public_key|default:''|escapejs }}"></div>
+              </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+  <!-- Quill core JS -->
+  <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+  <!-- Bundled collaboration script using Liveblocks + Yjs (reads config from #editor dataset) -->
+  <script type="module" src="{% static 'course/study_guide.bundle.js' %}"></script>
+{% endblock %}

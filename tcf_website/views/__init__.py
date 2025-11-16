@@ -41,3 +41,4 @@ from .schedule import (
     view_select_schedules_modal,
 )
 from .search import search
+from .studyguide import study_guide

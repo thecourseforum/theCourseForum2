@@ -4,9 +4,13 @@ import asyncio
 # from threading import Thread
 from django.db import connection
 from django.db.models import Avg, Sum
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpRequest, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from django.utils.decorators import method_decorator
 from rest_framework import viewsets
 import requests
+import json
 from ..models import (
     Club,
     ClubCategory,
@@ -219,3 +223,88 @@ class SectionEnrollmentViewSet(viewsets.ViewSet):
                 }
 
         return JsonResponse({"enrollment_data": enrollment_data})
+
+
+@csrf_exempt
+def liveblocks_auth(request: HttpRequest) -> HttpResponse:
+    """Issue a Liveblocks access token for the requesting user.
+
+    Expects a JSON POST body from the Liveblocks client containing the `room` the
+    client is attempting to enter. Uses the Liveblocks REST API `POST /authorize-user`
+    to obtain an access token with appropriate permissions and returns the token
+    payload and status code directly.
+
+    Security:
+    - Requires authenticated Django user; otherwise returns 401.
+    - Uses server-side LIVEBLOCKS_SECRET_KEY to authorize with Liveblocks.
+    """
+
+    if request.method not in ("POST", "GET"):
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    if not getattr(request, "user", None) or not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
+
+    secret = getattr(settings, "LIVEBLOCKS_SECRET_KEY", None)
+    if not secret:
+        return JsonResponse({"error": "Liveblocks secret key not configured"}, status=500)
+
+    payload = {}
+    if request.method == "POST":
+        try:
+            payload = json.loads(request.body.decode("utf-8") or "{}")
+        except json.JSONDecodeError:
+            payload = {}
+    # Liveblocks client may send either "room" or "roomId" depending on version; support GET too
+    room = payload.get("room") or payload.get("roomId") or request.GET.get("room") or request.GET.get("roomId")
+    if not room:
+        return JsonResponse({"error": "Missing room"}, status=400)
+
+    # Build the permissions map. Grant write/read/presence to be explicit.
+    permissions = {room: ["room:write", "room:read", "room:presence:write"]}
+
+    # Identify the current user to Liveblocks and attach optional public metadata.
+    user_id = str(getattr(request.user, "pk", None) or getattr(request.user, "username", "anonymous"))
+    user_info = {
+        "name": getattr(request.user, "username", "anonymous") or "anonymous",
+    }
+
+    lb_body = {
+        "userId": user_id,
+        "userInfo": user_info,
+        "permissions": permissions,
+    }
+
+    try:
+        resp = requests.post(
+            "https://api.liveblocks.io/v2/authorize-user",
+            headers={
+                "Authorization": f"Bearer {secret}",
+                "Content-Type": "application/json",
+            },
+            data=json.dumps(lb_body),
+            timeout=10,
+        )
+    except requests.RequestException as exc:
+        # Log minimal context for debugging
+        print(f"[liveblocks_auth] HTTP error for room '{room}' user '{user_id}': {exc}")
+        return JsonResponse({"error": f"Liveblocks request failed: {exc}"}, status=502)
+
+    # Proxy the response body and status code directly; body contains the token.
+    try:
+        proxy_body = resp.json()
+    except ValueError:
+        proxy_body = {"raw": resp.text}
+
+    if resp.status_code >= 400:
+        print(
+            "[liveblocks_auth] Upstream error",
+            {
+                "status": resp.status_code,
+                "room": room,
+                "userId": user_id,
+                "body": proxy_body,
+            },
+        )
+
+    return JsonResponse(proxy_body, status=resp.status_code)

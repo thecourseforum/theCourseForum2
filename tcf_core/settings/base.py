@@ -121,6 +121,16 @@ MIDDLEWARE = [
     "tcf_core.settings.record_middleware.RecordMiddleware",
 ]
 
+# In local dev environment, automatically authenticate a session-scoped test user.
+# This enables seamless testing without Cognito and supports multiple users across
+# incognito windows via distinct session-derived usernames.
+if env.str("ENVIRONMENT") == "dev":
+    try:
+        _idx = MIDDLEWARE.index("django.contrib.auth.middleware.AuthenticationMiddleware")
+        MIDDLEWARE.insert(_idx + 1, "tcf_core.settings.dev_auto_auth_middleware.DevAutoAuthMiddleware")
+    except ValueError:
+        MIDDLEWARE.append("tcf_core.settings.dev_auto_auth_middleware.DevAutoAuthMiddleware")
+
 ROOT_URLCONF = "tcf_core.urls"
 
 TEMPLATES = [
@@ -249,6 +259,17 @@ MESSAGE_TAGS = {
     messages.WARNING: "alert-warning",
     messages.ERROR: "alert-danger",
 }
+
+# Liveblocks Client Public Key (optional; used for client-side auth)
+# Prefer LIVEBLOCKS_PUBLIC_KEY; fall back to LIVEBLOCKS_API_KEY if present
+LIVEBLOCKS_PUBLIC_KEY = env.str(
+    "LIVEBLOCKS_PUBLIC_KEY",
+    default=env.str("LIVEBLOCKS_API_KEY", default=None),
+)
+
+# Liveblocks Secret Key (server-side, used to issue access/ID tokens)
+# Set LIVEBLOCKS_SECRET_KEY in your .env for authentication endpoints
+LIVEBLOCKS_SECRET_KEY = env.str("LIVEBLOCKS_SECRET_KEY", default=None)
 
 # Required in Django 3.2+ (See https://stackoverflow.com/a/66971803)
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
