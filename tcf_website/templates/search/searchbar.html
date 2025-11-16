@@ -2,209 +2,216 @@
 <link rel="stylesheet" href="{% static 'club/mode_toggle.css' %}" />
 <link rel="stylesheet" href="{% static 'search/searchbar.css' %}" />
 <!-- searchbar.html -->
- 
-<form class="form-inline flex-grow-1" action="{% url 'search' %}" method="get">
-  <div class="input-group flex-grow-1">
-    <input 
-      type="search" 
-      class="form-control border border-right-0"
-      placeholder="{% if is_club %}Search for a club...{% else %}Search for a class or professor...{% endif %}" 
-      aria-label="Search" 
-      name="q" 
-      value="{{ query }}"
-    >
-    <div class="input-group-append">
-      <!-- Mode Toggle -->
-      {% include "../club/mode_toggle.html" with is_club=is_club toggle_type="radio" no_transition=True container_class="search-mode-toggle" %}
-      <!-- Search Button -->
-      <button 
-        class="btn btn-outline-secondary border border-left-0" 
-        id="search-button" 
+  <form class="form-inline flex-grow-1" action="{% url 'search' %}" method="get">
+    <div class="input-group flex-grow-1">
+      <input 
+        type="search" 
+        class="form-control border border-right-0"
+        id = "search-input"
+        placeholder="{% if is_club %}Search for a club...{% else %}Search for a class or professor...{% endif %}" 
         aria-label="Search" 
-        type="submit"
+        name="q" 
+        value="{{ query }}"
       >
-        <i class="fa fa-search" aria-hidden="true"></i>
-      </button>
-    </div>
-    <div class="dropdown-wrapper">
-      <div class="dropdown input-group">
+      <div class="input-group-append">
+        <!-- Mode Toggle -->
+        {% include "../club/mode_toggle.html" with is_club=is_club toggle_type="radio" no_transition=True container_class="search-mode-toggle" %}
+        <!-- Search Button -->
         <button 
-          class="btn btn-outline-secondary dropdown-toggle border border-left-0" 
-          id="filter-button" 
-          aria-label="Filter" 
-          type="button" 
-          data-toggle="dropdown" 
-          data-bs-display="static" 
-          data-bs-auto-close="outside" 
-          aria-expanded="false" 
+          class="btn btn-outline-secondary border border-left-0" 
+          id="search-button" 
+          aria-label="Search" 
+          type="submit"
         >
-          Filters
+          <i class="fa fa-search" aria-hidden="true"></i>
         </button>
-
-        <div 
-          class="dropdown-menu p-4 filter-dropdown dropdown-menu-end" 
-          aria-labelledby="filter-button" 
-          id="filter-dropdown"
-        >
-        <!-- Day and time selections -->
-          <div class="filter-container">
-            <div class="time-filter">
-              <div class="filter-section compact">
-                <h6 class="filter-header">
-                  Exclude Class Days
-                </h6>
-                <div class="day-toggles">
-                  <div class="form-check form-check-inline m-0">
-                    <input class="form-check-input day-checkbox" type="checkbox" id="monday" value="MON">
-                    <label class="form-check-label" for="monday">Mon</label>
+      </div>
+      <div class="dropdown-wrapper">
+        <div class="dropdown input-group">
+          <button 
+            class="btn btn-outline-secondary dropdown-toggle border border-left-0" 
+            id="filter-button" 
+            aria-label="Filter" 
+            type="button" 
+            data-toggle="dropdown" 
+            data-bs-display="static" 
+            data-bs-auto-close="outside" 
+            aria-expanded="false" 
+          >
+            Filters
+          </button>
+          <div
+            class="dropdown-menu p-4 filter-dropdown dropdown-menu-end" 
+            aria-labelledby="filter-button" 
+            id="filter-dropdown"
+          >
+          <!-- Day and time selections -->
+            <div class="filter-container">
+              <div class="time-filter">
+                <div class="filter-section compact">
+                  <h6 class="filter-header">
+                    Exclude Class Days
+                  </h6>
+                  <div class="day-toggles">
+                    <div class="form-check form-check-inline m-0">
+                      <input class="form-check-input day-checkbox" type="checkbox" id="monday" value="MON">
+                      <label class="form-check-label" for="monday">Mon</label>
+                    </div>
+                    <div class="form-check form-check-inline m-0">
+                      <input class="form-check-input day-checkbox" type="checkbox" id="tuesday" value="TUE">
+                      <label class="form-check-label" for="tuesday">Tue</label>
+                    </div>
+                    <div class="form-check form-check-inline m-0">
+                      <input class="form-check-input day-checkbox" type="checkbox" id="wednesday" value="WED">
+                      <label class="form-check-label" for="wednesday">Wed</label>
+                    </div>
+                    <div class="form-check form-check-inline m-0">
+                      <input class="form-check-input day-checkbox" type="checkbox" id="thursday" value="THU">
+                      <label class="form-check-label" for="thursday">Thu</label>
+                    </div>
+                    <div class="form-check form-check-inline m-0">
+                      <input class="form-check-input day-checkbox" type="checkbox" id="friday" value="FRI">
+                      <label class="form-check-label" for="friday">Fri</label>
+                    </div>
                   </div>
-                  <div class="form-check form-check-inline m-0">
-                    <input class="form-check-input day-checkbox" type="checkbox" id="tuesday" value="TUE">
-                    <label class="form-check-label" for="tuesday">Tue</label>
-                  </div>
-                  <div class="form-check form-check-inline m-0">
-                    <input class="form-check-input day-checkbox" type="checkbox" id="wednesday" value="WED">
-                    <label class="form-check-label" for="wednesday">Wed</label>
-                  </div>
-                  <div class="form-check form-check-inline m-0">
-                    <input class="form-check-input day-checkbox" type="checkbox" id="thursday" value="THU">
-                    <label class="form-check-label" for="thursday">Thu</label>
-                  </div>
-                  <div class="form-check form-check-inline m-0">
-                    <input class="form-check-input day-checkbox" type="checkbox" id="friday" value="FRI">
-                    <label class="form-check-label" for="friday">Fri</label>
+                </div>
+                <div class="filter-section compact">
+                  <h6 class="filter-header">
+                    Preferred Class Time
+                  </h6>
+                  <div class="day-toggles">
+                    <p>From</p>
+                    <input class="time-selection" type="time" id="from_time" name="from_time">
+                    <p>to</p>
+                    <input class="time-selection" type="time" id="to_time" name="to_time">
                   </div>
                 </div>
               </div>
-              <div class="filter-section compact">
-                <h6 class="filter-header">
-                  Preferred Class Time
-                </h6>
-                <div class="day-toggles">
-                  <p>From</p>
-                  <input class="time-selection" type="time" id="from_time" name="from_time">
-                  <p>to</p>
-                  <input class="time-selection" type="time" id="to_time" name="to_time">
-                </div>
-              </div>
-            </div>
-            <!-- Open Section selections -->
-            <div class="filter-row">
               <!-- Open Section selections -->
-              <div class="filter-section compact">
-                <h6 class="filter-header">
-                  Availability
-                </h6>
-                <div class="filter-option-container">
-                  <div class="form-check d-flex align-items-center">
-                    <input 
-                      class="form-check-input me-2" 
-                      type="checkbox" 
-                      id="open-sections" 
-                      name="open_sections"
-                    >
-                    <label class="form-check-label" for="open-sections">
-                      Show Open Courses Only
-                    </label>
+              <div class="filter-row">
+                <!-- Open Section selections -->
+                <div class="filter-section compact">
+                  <h6 class="filter-header">
+                    Availability
+                  </h6>
+                  <div class="filter-option-container">
+                    <div class="form-check d-flex align-items-center">
+                      <input 
+                        class="form-check-input me-2" 
+                        type="checkbox" 
+                        id="open-sections" 
+                        name="open_sections"
+                      >
+                      <label class="form-check-label" for="open-sections">
+                        Show Open Courses Only
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Min GPA Filter -->
+                <div class="filter-section compact">
+                  <h6 class="filter-header">
+                    Minimum GPA
+                  </h6>
+                  <div class="filter-option-container">
+                    <div class="min-gpa-controls">
+                      <input 
+                        type="range" 
+                        class="form-range" 
+                        id="min-gpa-slider" 
+                        min="0" 
+                        max="4" 
+                        step="0.1" 
+                        value="0.0" 
+                      >
+                      <input 
+                        type="text" 
+                        class="form-control min-gpa-text" 
+                        id="min-gpa-text" 
+                        value="0.0" 
+                      >
+                    </div>
                   </div>
                 </div>
               </div>
               
-              <!-- Min GPA Filter -->
-              <div class="filter-section compact">
-                <h6 class="filter-header">
-                  Minimum GPA
-                </h6>
-                <div class="filter-option-container">
-                  <div class="min-gpa-controls">
-                    <input 
-                      type="range" 
-                      class="form-range" 
-                      id="min-gpa-slider" 
-                      min="0" 
-                      max="4" 
-                      step="0.1" 
-                      value="0.0" 
-                    >
-                    <input 
-                      type="text" 
-                      class="form-control min-gpa-text" 
-                      id="min-gpa-text" 
-                      value="0.0" 
-                    >
+              <!-- List of subjects -->
+              <div class="filter-grid">
+                <div class="filter-section">
+                  <h6 class="filter-header">
+                    Subject
+                  </h6>
+                  <div class="search-container">
+                    <i class="fa fa-search search-icon"></i>
+                    <input type="text" class="form-control" id="subject-search" placeholder="Search subjects...">
+                  </div>
+                  <div class="subject-list">
+                    {% for subdept in subdepartments %}
+                      <div class="form-check subdepartment-label">
+                        <input 
+                          class="form-check-input form-check-subjects" 
+                          type="checkbox" 
+                          id="subject-{{ subdept.mnemonic }}" 
+                          name="subdepartment" 
+                          value="{{ subdept.mnemonic }}"
+                        >
+                        <label class="form-check-label" for="subject-{{ subdept.mnemonic }}">
+                          {{ subdept.mnemonic }} - {{ subdept.name }}
+                        </label>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+                <!-- List of disciplines -->
+                <div class="filter-section">
+                  <h6 class="filter-header">
+                    Discipline
+                  </h6>
+                  <div class="search-container">
+                    <i class="fa fa-search search-icon"></i>
+                    <input type="text" class="form-control" id="discipline-search" placeholder="Search disciplines...">
+                  </div>
+                  <div class="discipline-list">
+                    {% for discipline in disciplines %}
+                      <div class="form-check discipline-label">
+                        <input 
+                          class="form-check-input form-check-disciplines" 
+                          type="checkbox" 
+                          id="discipline-{{ discipline.name|slugify }}" 
+                          name="discipline" 
+                          value="{{ discipline.name }}"
+                        >
+                        <label class="form-check-label" for="discipline-{{ discipline.name|slugify }}">
+                          {{ discipline.name }}
+                        </label>
+                      </div>
+                    {% endfor %}
                   </div>
                 </div>
               </div>
             </div>
-            
-            <!-- List of subjects -->
-            <div class="filter-grid">
-              <div class="filter-section">
-                <h6 class="filter-header">
-                  Subject
-                </h6>
-                <div class="search-container">
-                  <i class="fa fa-search search-icon"></i>
-                  <input type="text" class="form-control" id="subject-search" placeholder="Search subjects...">
-                </div>
-                <div class="subject-list">
-                  {% for subdept in subdepartments %}
-                    <div class="form-check subdepartment-label">
-                      <input 
-                        class="form-check-input form-check-subjects" 
-                        type="checkbox" 
-                        id="subject-{{ subdept.mnemonic }}" 
-                        name="subdepartment" 
-                        value="{{ subdept.mnemonic }}"
-                      >
-                      <label class="form-check-label" for="subject-{{ subdept.mnemonic }}">
-                        {{ subdept.mnemonic }} - {{ subdept.name }}
-                      </label>
-                    </div>
-                  {% endfor %}
-                </div>
-              </div>
-              <!-- List of disciplines -->
-              <div class="filter-section">
-                <h6 class="filter-header">
-                  Discipline
-                </h6>
-                <div class="search-container">
-                  <i class="fa fa-search search-icon"></i>
-                  <input type="text" class="form-control" id="discipline-search" placeholder="Search disciplines...">
-                </div>
-                <div class="discipline-list">
-                  {% for discipline in disciplines %}
-                    <div class="form-check discipline-label">
-                      <input 
-                        class="form-check-input form-check-disciplines" 
-                        type="checkbox" 
-                        id="discipline-{{ discipline.name|slugify }}" 
-                        name="discipline" 
-                        value="{{ discipline.name }}"
-                      >
-                      <label class="form-check-label" for="discipline-{{ discipline.name|slugify }}">
-                        {{ discipline.name }}
-                      </label>
-                    </div>
-                  {% endfor %}
-                </div>
-              </div>
+    
+            <!-- Action buttons -->
+            <div class="filter-actions">
+              <button type="reset" class="btn btn-outline-secondary">Clear All</button>
+              <button type="submit" class ="btn-custom">Apply Filters</button>
             </div>
-          </div>
-  
-          <!-- Action buttons -->
-          <div class="filter-actions">
-            <button type="reset" class="btn btn-outline-secondary">Clear All</button>
-            <button type="submit" class ="btn-custom">Apply Filters</button>
           </div>
         </div>
       </div>
     </div>
+    <input type="hidden" name="weekdays" id="weekdays-input">
+    <input type="hidden" name="min_gpa" id="min-gpa-input" value="0.0">
+  </form>
+
+  <div class = "input-group" >
+    <div class = "dropdown-menu show w-100" id = "typeahead-menu">
+      <div id="autocomplete-results"></div>
+    </div>
   </div>
-  <input type="hidden" name="weekdays" id="weekdays-input">
-  <input type="hidden" name="min_gpa" id="min-gpa-input" value="0.0">
-</form>
+  </div>
 
 <script src="{% static 'club/mode_toggle.js' %}"></script>
 <script src="{% static 'search/filters.js' %}"></script>
+<script src="{% static 'search/autocomplete.js' %}"></script>
