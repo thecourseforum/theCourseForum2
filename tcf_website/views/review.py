@@ -309,6 +309,32 @@ def new_reply(request, review_id):
     )
 
 @login_required
-def delete_reply(request, review_id):
-    review = get_object_or_404(Review, pk=review_id)
+def delete_reply(request, reply_id):
+    reply = get_object_or_404(Reply, pk=reply_id)
+    if reply.user != request.user:
+        raise PermissionDenied("You are not allowed to delete this reply!")
     
+    review = reply.review
+    reply.delete()
+    messages.success(request, "Reply deleted.")
+    return redirect(f"/course/{review.course.id}/{review.instructor.id}")
+    
+
+@login_required
+def upvote_reply(request, reply_id):
+    """Upvote a view."""
+    if request.method == "POST":
+        reply = Reply.objects.get(pk=reply_id)
+        reply.upvote(request.user)
+        return JsonResponse({"ok": True})
+    return JsonResponse({"ok": False})
+
+
+@login_required
+def downvote_reply(request, reply_id):
+    """Downvote a view."""
+    if request.method == "POST":
+        reply = Reply.objects.get(pk=reply_id)
+        reply.downvote(request.user)
+        return JsonResponse({"ok": True})
+    return JsonResponse({"ok": False})
