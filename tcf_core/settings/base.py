@@ -23,6 +23,12 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")  # default value set on the top
 
+# Make ENVIRONMENT available on settings for runtime checks (e.g., middleware)
+ENVIRONMENT = env.str("ENVIRONMENT", default="dev")
+
+# Optional: allow specifying a fixed dev auto-login user
+DEV_AUTO_LOGIN_USER = env.str("DEV_AUTO_LOGIN_USER", default="")
+
 ALLOWED_HOSTS = []
 
 CORS_ALLOWED_ORIGINS = [
@@ -53,6 +59,9 @@ INSTALLED_APPS = [
 if env.str("ENVIRONMENT") == "dev":
     STATIC_URL = "/static/"
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
+    # Local media storage in development
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
     ALLOWED_HOSTS.extend(["localhost", ".grok.io", "127.0.0.1"])
 
@@ -76,6 +85,7 @@ else:
     )
     AWS_DEFAULT_ACL = None
     AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+    AWS_QUERYSTRING_AUTH = env.bool("AWS_QUERYSTRING_AUTH", default=True)
 
     ALLOWED_HOSTS.extend(
         [
@@ -95,6 +105,9 @@ else:
             "BACKEND": "storages.backends.s3.S3Storage",
         },
     }
+
+    # Media URLs will be served from S3/custom domain in production
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
     DATABASES = {
         "default": {
@@ -120,6 +133,10 @@ MIDDLEWARE = [
     "tcf_core.settings.handle_exceptions_middleware.HandleExceptionsMiddleware",
     "tcf_core.settings.record_middleware.RecordMiddleware",
 ]
+
+# Add dev-only auto login middleware at the end
+if env.str("ENVIRONMENT") == "dev":
+    MIDDLEWARE.append("tcf_core.settings.dev_auto_login_middleware.DevAutoLoginMiddleware")
 
 ROOT_URLCONF = "tcf_core.urls"
 

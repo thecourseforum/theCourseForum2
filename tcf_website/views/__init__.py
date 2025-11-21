@@ -12,6 +12,8 @@ from .browse import (
     department,
     instructor_view,
     club_category,
+    study_guide,
+    study_guide_upload,
 )
 from .index import AboutView, index, privacy, terms
 from .profile import DeleteProfile, profile, reviews

@@ -38,6 +38,16 @@ urlpatterns = [
         name="sort_reviews",
     ),
     path(
+        "course/<str:mnemonic>/<int:course_number>/study-guide",
+        views.study_guide,
+        name="study_guide",
+    ),
+    path(
+        "course/<str:mnemonic>/<int:course_number>/study-guide/upload",
+        views.study_guide_upload,
+        name="study_guide_upload",
+    ),
+    path(
         "course/<str:mnemonic>/<int:course_number>/",
         views.course_view,
         name="course",

@@ -1,0 +1,178 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Upload Study Document | {{ course.code }} | theCourseForum{% endblock %}
+
+{% block page_metadata %}
+{% if course_code %}<meta name="course-code" content="{{ course_code }}">{% endif %}
+{% if course_title %}<meta name="course-title" content="{{ course_title }}">{% endif %}
+{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
+  <style>
+    /* Chip styling for selected tags */
+    .tag-chip {
+      display: inline-flex;
+      align-items: center;
+      padding-right: 0.5rem;
+    }
+    .tag-chip .tag-remove {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 0.5rem;
+      color: #fff;
+      opacity: 0.9;
+    }
+    .tag-chip .tag-remove:hover { opacity: 1; }
+    #tag-suggestions button { white-space: nowrap; }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container text-left mx-auto">
+  <div class="container-lg mb-4">
+    {% include "../common/leaderboard_ad.html" with ad_slot="9533576562" %}
+  </div>
+  <div class="container-lg">
+    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs sorting=False %}
+  </div>
+
+  <div class="container-lg mt-3 px-0">
+    <div class="row mt-2 mb-3">
+      <div class="col-12 d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-baseline">
+          <h1 class="h2 mb-0 mr-3 text-nowrap">{{ course.code }}</h1>
+          <h2 class="mb-0">Upload Study Document</h2>
+        </div>
+        <a class="btn btn-outline-primary" href="{% url 'study_guide' mnemonic=course.subdepartment.mnemonic course_number=course.number %}">
+          <i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Study Guide
+        </a>
+      </div>
+    </div>
+
+    {% if upload_error %}
+    <div class="alert alert-danger" role="alert">{{ upload_error }}</div>
+    {% endif %}
+
+    <div class="card mb-4">
+      <form class="card-body px-md-5" method="post" enctype="multipart/form-data">
+        {% if user.is_authenticated %}
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="id_title">Title</label>
+              {{ form.title }}
+            </div>
+            <div class="form-group">
+              <label for="id_description">Description</label>
+              {{ form.description }}
+            </div>
+            <div class="form-group">
+              <label for="id_file">File</label>
+              {{ form.file }}
+              <small class="form-text text-muted">Max 25MB. Allowed: PDF, DOC, DOCX, TXT.</small>
+            </div>
+            {% if is_dev %}
+            <div class="form-group">
+              <label>Storage (development only)</label>
+              <div>
+                {{ form.storage_target }}
+              </div>
+              <small class="form-text text-muted">Choose to store locally or send to S3.</small>
+            </div>
+            {% endif %}
+            <div class="form-group">
+              <label for="tag-search">Tags</label>
+              <input type="text" id="tag-search" class="form-control mb-2" placeholder="Search tags..." aria-label="Search tags" />
+              <div id="selected-tags" class="mb-2"></div>
+              <div id="tag-suggestions" class="d-flex flex-wrap"></div>
+              <div class="d-none">{{ form.tags }}</div>
+              <small class="form-text text-muted">Search and select multiple tags. Includes instructors.</small>
+            </div>
+            <div class="row py-4">
+              <button type="submit" class="btn btn-primary mx-auto">
+                <i class="fas fa-upload" aria-hidden="true"></i> Upload Document
+              </button>
+            </div>
+        {% else %}
+          <p class="mb-0">Please <a href="{% url 'login' %}">log in</a> to upload documents.</p>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+  <script type="module" src="{% static 'common/bind-show-hide.js' %}"></script>
+  <script>
+    // Chip-based multi-select with search and remove
+    (function() {
+      var input = document.getElementById('tag-search');
+      var select = document.getElementById('id_tags');
+      var chips = document.getElementById('selected-tags');
+      var suggestions = document.getElementById('tag-suggestions');
+      if (!input || !select || !chips || !suggestions) return;
+
+      function renderChips() {
+        chips.innerHTML = '';
+        Array.prototype.forEach.call(select.options, function(opt) {
+          if (opt.selected) {
+            var chip = document.createElement('span');
+            chip.className = 'badge badge-primary mr-2 mb-2 tag-chip';
+            chip.textContent = opt.text;
+
+            var remove = document.createElement('span');
+            remove.className = 'tag-remove';
+            remove.setAttribute('role', 'button');
+            remove.setAttribute('tabindex', '0');
+            remove.setAttribute('aria-label', 'Remove tag');
+            remove.textContent = '×';
+            function removeTag() {
+              opt.selected = false;
+              renderChips();
+              renderSuggestions();
+            }
+            remove.addEventListener('click', removeTag);
+            remove.addEventListener('keydown', function(e) {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                removeTag();
+              }
+            });
+            chip.appendChild(remove);
+            chips.appendChild(chip);
+          }
+        });
+      }
+
+      function renderSuggestions() {
+        var q = input.value.toLowerCase().trim();
+        suggestions.innerHTML = '';
+        Array.prototype.forEach.call(select.options, function(opt) {
+          var text = (opt.text || '').toLowerCase();
+          var matches = !q || text.indexOf(q) !== -1;
+          if (!opt.selected && matches) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-outline-secondary btn-sm mr-2 mb-2';
+            btn.textContent = opt.text;
+            btn.addEventListener('click', function() {
+              opt.selected = true;
+              renderChips();
+              renderSuggestions();
+            });
+            suggestions.appendChild(btn);
+          }
+        });
+      }
+
+      // Initialize UI
+      renderChips();
+      renderSuggestions();
+      input.addEventListener('input', renderSuggestions);
+    })();
+  </script>
+{% endblock %}

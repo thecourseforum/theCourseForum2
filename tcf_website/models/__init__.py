@@ -15,6 +15,8 @@ from .models import (
     Department,
     Discipline,
     Instructor,
+    Tag,
+    StudyDocument,
     Question,
     Review,
     Schedule,

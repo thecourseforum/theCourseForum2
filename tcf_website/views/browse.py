@@ -1,13 +1,14 @@
 # pylint disable=bad-continuation
 # pylint: disable=too-many-locals
 
-"""Views for Browse, department, and course/course instructor pages."""
+"""Views for Browse, department, course pages, and course Study Guide."""
 import json
 from typing import Any
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django import forms
 from django.db.models import (
     Avg,
     Count,
@@ -20,6 +21,7 @@ from django.db.models.functions import Coalesce
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from storages.backends.s3boto3 import S3Boto3Storage
 
 from ..models import (
     Answer,
@@ -34,6 +36,8 @@ from ..models import (
     School,
     Section,
     Semester,
+    Tag,
+    StudyDocument,
 )
 
 
@@ -304,6 +308,231 @@ def course_view(
             "active_instructor_recency": instructor_recency,
             "course_code": course.code(),
             "course_title": course.title,
+        },
+    )
+
+
+class StudyDocumentForm(forms.ModelForm):
+    """Simple model form for uploading course study documents.
+
+    Includes a free-form comma-separated tags field that we will parse and
+    map to Tag objects.
+    """
+
+    # Dynamic multi-select of Tag objects, populated by the view
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.none(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={
+            "class": "form-control",
+            "id": "id_tags",
+            "size": "8",
+        }),
+        label="Tags",
+        help_text="Select one or more tags",
+    )
+
+    class Meta:
+        model = StudyDocument
+        fields = ["title", "description", "file", "tags"]
+        widgets = {
+            "title": forms.TextInput(attrs={"class": "form-control", "placeholder": "Document title"}),
+            "description": forms.Textarea(attrs={"class": "form-control", "rows": 4, "placeholder": "Brief description (optional)"}),
+            "file": forms.ClearableFileInput(attrs={"class": "form-control-file"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        tag_queryset = kwargs.pop("tag_queryset", None)
+        super().__init__(*args, **kwargs)
+        if tag_queryset is not None:
+            self.fields["tags"].queryset = tag_queryset.order_by("name")
+        # Dev-only storage toggle (local vs S3)
+        from django.conf import settings as dj_settings
+        environment = getattr(dj_settings, "ENVIRONMENT", "development")
+        if environment != "production":
+            self.fields["storage_target"] = forms.ChoiceField(
+                choices=[("local", "Store locally"), ("s3", "Send to S3")],
+                required=False,
+                initial="local",
+                label="Storage",
+                widget=forms.RadioSelect,
+            )
+
+    def clean_file(self):
+        f = self.cleaned_data.get("file")
+        if f is None:
+            return f
+        max_mb = 25
+        if f.size > max_mb * 1024 * 1024:
+            raise forms.ValidationError(f"File too large. Max {max_mb}MB.")
+        # Basic content-type allowlist
+        allowed = {
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "text/plain",
+        }
+        content_type = getattr(f, "content_type", None)
+        if content_type and content_type not in allowed:
+            raise forms.ValidationError("Unsupported file type.")
+        return f
+
+
+def study_guide(request, mnemonic: str, course_number: int):
+    """Study guide page for a course.
+
+    Displays a per-course hub for study documents and uploads.
+    Refactored to show listing and tag filters. Uploads moved to dedicated page.
+    """
+
+    # Redirect if mnemonic is not uppercase for consistency
+    if mnemonic != mnemonic.upper():
+        return redirect("study_guide", mnemonic=mnemonic.upper(), course_number=course_number)
+
+    course = get_object_or_404(
+        Course,
+        subdepartment__mnemonic=mnemonic.upper(),
+        number=course_number,
+    )
+
+    dept = course.subdepartment.department
+    # Build breadcrumbs mirroring course page, with Study Guide as final crumb
+    breadcrumbs = [
+        (dept.school.name, reverse("browse"), False),
+        (dept.name, reverse("department", args=[dept.pk]), False),
+        (course.code, reverse("course", args=[course.subdepartment.mnemonic, course.number]), False),
+        ("Study Guide", None, True),
+    ]
+
+    # Handle filtering by tag
+    tag_query = request.GET.get("tag", "").strip().lower()
+    documents = StudyDocument.objects.filter(course=course).order_by("-created_at")
+    active_tag = None
+    if tag_query:
+        active_tag = Tag.objects.filter(name=tag_query).first()
+        if active_tag:
+            documents = documents.filter(tags=active_tag)
+        else:
+            documents = documents.none()
+
+    # No uploads handled here; dedicated upload page handles POST/GET
+
+    return render(
+        request,
+        "course/study_guide.html",
+        {
+            "course": course,
+            "breadcrumbs": breadcrumbs,
+            # Meta values used by recently_viewed client script
+            "course_code": course.code(),
+            "course_title": course.title,
+            "documents": documents,
+            "active_tag": active_tag.name if active_tag else "",
+            # Upload moved to separate page
+        },
+    )
+
+
+def study_guide_upload(request, mnemonic: str, course_number: int):
+    """Upload page for course study documents."""
+
+    # Redirect if mnemonic is not uppercase for consistency
+    if mnemonic != mnemonic.upper():
+        return redirect("study_guide_upload", mnemonic=mnemonic.upper(), course_number=course_number)
+
+    course = get_object_or_404(
+        Course,
+        subdepartment__mnemonic=mnemonic.upper(),
+        number=course_number,
+    )
+
+    dept = course.subdepartment.department
+    breadcrumbs = [
+        (dept.school.name, reverse("browse"), False),
+        (dept.name, reverse("department", args=[dept.pk]), False),
+        (course.code, reverse("course", args=[course.subdepartment.mnemonic, course.number]), False),
+        ("Upload Document", None, True),
+    ]
+
+    upload_error = None
+
+    # Build available tags: defaults + instructor names
+    default_tags = ["notes", "homework", "exam"]
+    latest_semester = Semester.latest()
+    instructor_names = (
+        Instructor.objects.filter(section__course=course, section__semester=latest_semester)
+        .distinct()
+        .values_list("full_name", flat=True)
+    )
+    candidate_names = default_tags + [n.lower() for n in instructor_names]
+    # Ensure Tag objects exist for each candidate
+    for name in candidate_names:
+        if name:
+            Tag.objects.get_or_create(name=name.strip().lower())
+    tag_qs = Tag.objects.filter(name__in=[n.strip().lower() for n in candidate_names])
+    if request.method == "POST":
+        form = StudyDocumentForm(request.POST, request.FILES, tag_queryset=tag_qs)
+        if form.is_valid():
+            doc: StudyDocument = form.save(commit=False)
+            doc.course = course
+            if request.user.is_authenticated:
+                doc.uploader = request.user
+            f = doc.file
+            try:
+                doc.mime_type = getattr(f, "content_type", "")
+                doc.size = getattr(f, "size", 0) or 0
+            except Exception:  # pylint: disable=broad-except
+                doc.size = 0
+            # Decide storage target (dev only toggle)
+            environment = getattr(settings, "ENVIRONMENT", "development")
+            selected_storage = form.cleaned_data.get("storage_target", "local")
+            saved_ok = False
+            if environment != "production" and selected_storage == "s3":
+                # Ensure S3 is configured
+                required_keys = [
+                    "AWS_ACCESS_KEY_ID",
+                    "AWS_SECRET_ACCESS_KEY",
+                    "AWS_STORAGE_BUCKET_NAME",
+                ]
+                if not all(getattr(settings, k, None) for k in required_keys):
+                    upload_error = "S3 is not configured in development. Please set AWS_* env vars."
+                else:
+                    file_field = StudyDocument._meta.get_field("file")
+                    original_storage = file_field.storage
+                    try:
+                        file_field.storage = S3Boto3Storage()
+                        doc.save()
+                        saved_ok = True
+                    finally:
+                        file_field.storage = original_storage
+            else:
+                doc.save()
+                saved_ok = True
+
+            if saved_ok:
+                # Assign selected tags
+                selected_tags = form.cleaned_data.get("tags")
+                if selected_tags is not None:
+                    doc.tags.set(selected_tags)
+
+                return redirect("study_guide", mnemonic=course.subdepartment.mnemonic, course_number=course.number)
+            # else: fall through and re-render with error
+        else:
+            upload_error = "There was a problem with your upload. Please check the file and fields."
+    else:
+        form = StudyDocumentForm(tag_queryset=tag_qs)
+
+    return render(
+        request,
+        "course/study_guide_upload.html",
+        {
+            "course": course,
+            "breadcrumbs": breadcrumbs,
+            "course_code": course.code(),
+            "course_title": course.title,
+            "form": form,
+            "upload_error": upload_error,
+            "is_dev": getattr(settings, "ENVIRONMENT", "development") != "production",
         },
     )
 

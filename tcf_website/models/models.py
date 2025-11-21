@@ -249,6 +249,50 @@ class Club(models.Model):
         ]
 
 
+class Tag(models.Model):
+    """Tags for study documents (e.g., Exam, Notes, Homework)."""
+
+    name = models.CharField(max_length=64, unique=True)
+    slug = models.SlugField(max_length=64, unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        # Normalize tag names to lowercase and derive slug if missing
+        self.name = self.name.strip().lower()
+        if not self.slug:
+            self.slug = self.name.replace(" ", "-")
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+class StudyDocument(models.Model):
+    """A document uploaded for a specific course study guide."""
+
+    course = models.ForeignKey("Course", on_delete=models.CASCADE, related_name="study_documents")
+    uploader = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="uploaded_documents"
+    )
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    file = models.FileField(upload_to="study_docs/%Y/%m/%d")
+    tags = models.ManyToManyField(Tag, blank=True, related_name="documents")
+
+    mime_type = models.CharField(max_length=128, blank=True)
+    size = models.PositiveIntegerField(default=0)
+    is_public = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} ({self.course_id})"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["course", "created_at"]),
+        ]
+
+
 class User(AbstractUser):
     """User model.
 
