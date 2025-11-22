@@ -375,6 +375,12 @@
       "role": "Marketing",
       "class": "2028",
       "img_filename": "DM_Tiffany_Park.jpg"
+    },
+    {
+      "name": "Kate Dunkle",
+      "role": "Marketing",
+      "class": "2027",
+      "img_filename": "DM_Kate_Dunkle.jpg"
     }
   ]
 }
