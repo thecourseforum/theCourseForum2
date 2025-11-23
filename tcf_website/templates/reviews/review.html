@@ -1,120 +1,136 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
 
-<div id="review{{review.id}}" class="review card mb-2">
-    <div class="card-body text-left">
-        <div class="row">
-            <!-- Review Main Content -->
-            <div class="review-body col-xs-12 col-md-12 col-lg-12">
-                <!-- Review header content (subject, actions, text) -->
-                {% if profile %}
-                <!-- Subject and Edit/Delete actions show only on profile page -->
-                <div class="review-header mb-2">
-                    <div class="d-flex">
-                        <div class="review-subject mr-auto">
-                          {% if review.club %}
-                          <a href="{% url 'course' mnemonic=review.club.category.slug course_number=review.club.id %}?mode=clubs">
-                              <h5 class="text-tcf-orange">
-                                <strong>{{ review.club.name }}</strong>
-                              </h5>
-                          </a>
-                          {% else %}
-                          <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
-                              <h5 class="text-tcf-orange">
-                                <strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}
-                              </h5>
-                          </a>
-                          {% endif %}
+<div id="review{{review.id}}" class="review mb-2"> 
+    <!-- DIV to contain entire review card with picture -->
+
+    <div class="pl-5 ml-5 review-wrapper">
+        
+        <div class="review-pfp">
+        <!-- Profile Picture Container -->
+            <img src="{% static 'profile/profilepictures/place-holder.png' %}" alt="profile-img"> 
+        </div>
+
+        <!-- Original review (not including pfp/speech bubble)-->
+        <div class="card"> <!-- White review background --->
+            <div class="card-body text-left">
+                <div class="row">
+                    <!-- Review Main Content -->
+                    <div class="review-body col-xs-12 col-md-12 col-lg-12">
+                        <!-- Review header content (subject, actions, text) -->
+                        {% if profile %}
+                        <!-- Subject and Edit/Delete actions show only on profile page -->
+                        <div class="review-header mb-2">
+                            <div class="d-flex">
+                                <div class="review-subject mr-auto">
+                                {% if review.club %}
+                                <a href="{% url 'course' mnemonic=review.club.category.slug course_number=review.club.id %}?mode=clubs">
+                                    <h5 class="text-tcf-orange">
+                                        <strong>{{ review.club.name }}</strong>
+                                    </h5>
+                                </a>
+                                {% else %}
+                                <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
+                                    <h5 class="text-tcf-orange">
+                                        <strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}
+                                    </h5>
+                                </a>
+                                {% endif %}
+                                </div>
+                                <div class="review-actions d-inline-flex">
+                                <a class="review-edit h5 px-2 text-tcf-blue" href="{% url 'edit_review' review_id=review.id %}">
+                                    <i class="fas fa-pencil"></i>
+                                </a>
+                                <a class="review-delete h5 pl-2 text-danger" type="button"
+                                        data-toggle="modal" data-target="#deleteReviewModal{{review.id}}">
+                                    <i class="fa fa-trash-o"></i>
+                                </a>
+                                {% include "reviews/delete_confirm_modal.html" with review_id=review.id %}
+                                </div>
+                            </div>
                         </div>
-                        <div class="review-actions d-inline-flex">
-                          <a class="review-edit h5 px-2 text-tcf-blue" href="{% url 'edit_review' review_id=review.id %}">
-                              <i class="fas fa-pencil"></i>
-                          </a>
-                          <a class="review-delete h5 pl-2 text-danger" type="button"
-                                  data-toggle="modal" data-target="#deleteReviewModal{{review.id}}">
-                            <i class="fa fa-trash-o"></i>
-                          </a>
-                          {% include "reviews/delete_confirm_modal.html" with review_id=review.id %}
+                        {% else %}
+                        <!-- Display reviewer's semester and updated date of review if on review page -->
+                        <div class="review-header">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-bold text-tcf-orange">{{ review.semester }}</h6>
+                            <h6 id="date" class="text-muted">Updated {{ review.created|date:"n/d/y" }}</h6>
+                        </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="review-content mb-2">
+                        <!-- Max-height container for the review text collapse feature -->
+                        <div class="review-text-body collapse" id="reviewText{{review.id}}"
+                            aria-expanded="false">
+                            <!-- Full review text -->
+                            <div class="review-text-full">{{ review.text|linebreaks }}</div>
+                        </div>
+                        <!-- Collapser link (click target spans entire row block) -->
+                        <a role="button" class="review-collapse-link btn-block p-1 collapsed"
+                            data-toggle="collapse" href="#reviewText{{review.id}}"
+                            aria-expanded="false" aria-controls="reviewText{{review.id}}">
+                            <!-- Note: collapser text ("See more...") is encoded in review.css for this link -->
+                        </a>
+                        </div>
+
+                        <div class="review-footer row mt-3">
+                            <!-- Review upvote/downvote container -->
+                            <div class="vote-container col-sm-4 d-flex align-items-end text-center text-muted flex-wrap">
+                            <!-- Hidden HTML tag to sort reviews by helpfulness (net upvotes)-->
+                            <span id="vote-count" hidden>{{ review.sum_votes }}</span>
+                            <div class="mr-3 mr-sm-4">
+                                <!--Voting logic is implemented in the <script> tag of reviews.html-->
+                                <a id="upvote{{review.id}}" href="#loginModal" data-toggle="modal"
+                                    class="upvote {% if review.user_vote == 1 %}active{% endif %}">
+                                    <i class="fa fa-thumbs-up"></i>
+                                </a>
+                                <span class="upvoteCount">{{ review.count_votes.upvotes }}</span>
+                            </div>
+                            <div class="mr-3 mr-sm-4">
+                                <a id="downvote{{review.id}}" href="#loginModal" data-toggle="modal"
+                                    class="downvote {% if review.user_vote == -1 %}active{% endif %}">
+                                    <i class="fa fa-thumbs-down"></i>
+                                </a>
+                                <span class="downvoteCount">{{ review.count_votes.downvotes }}</span>
+                            </div>
+                            </div>
+
+                            <!-- Review Ratings -->
+                            <div class="review-ratings col-sm-8 d-flex align-items-end justify-content-end text-center text-muted flex-wrap mb-2">
+                                <div id="review-average" class="text-dark mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="Review Average">
+                                    <i class="fa fa-star fa-fw"></i>
+                                    {{ review.average|floatformat:2 }}
+                                </div>
+                                <div class="mr-3 mr-sm-4"  data-toggle="tooltip" data-placement="bottom" title="{% if review.club %}Leadership{% else %}Instructor{% endif %} Rating">
+                                    <i class="fa fa-user"></i>
+                                    {{ review.instructor_rating }}
+                                </div>
+                                <div class="mr-3 mr-sm-4"  data-toggle="tooltip" data-placement="bottom" title="Enjoyability">
+                                    <i class="fa fa-smile-beam"></i>
+                                    {{ review.enjoyability }}
+                                </div>
+                                <div class="mr-3 mr-sm-4"   data-toggle="tooltip" data-placement="bottom" title="Recommend">
+                                    <i class="fas fa-heart"></i>
+                                    {{ review.recommendability }}
+                                </div>
+                                <div class="mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="{% if review.club %}Commitment{% else %}Difficulty{% endif %}">
+                                    <i class="fa fa-dumbbell fa-fw"></i>
+                                    {{ review.difficulty }}
+                                </div>
+                                <div data-toggle="tooltip" data-placement="bottom" title="Hours Per Week">
+                                    <i class="fa fa-hourglass-half fa-fw"></i>
+                                    {{ review.hours_per_week }}
+                                </div>
+                            </div>
+
                         </div>
                     </div>
-                </div>
-                {% else %}
-                <!-- Display reviewer's semester and updated date of review if on review page -->
-                <div class="review-header">
-                  <div class="d-flex justify-content-between">
-                    <h6 class="font-weight-bold text-tcf-orange">{{ review.semester }}</h6>
-                    <h6 id="date" class="text-muted">Updated {{ review.created|date:"n/d/y" }}</h6>
-                  </div>
-                </div>
-                {% endif %}
-
-                <div class="review-content mb-2">
-                  <!-- Max-height container for the review text collapse feature -->
-                  <div class="review-text-body collapse" id="reviewText{{review.id}}"
-                     aria-expanded="false">
-                     <!-- Full review text -->
-                    <div class="review-text-full">{{ review.text|linebreaks }}</div>
-                  </div>
-                  <!-- Collapser link (click target spans entire row block) -->
-                  <a role="button" class="review-collapse-link btn-block p-1 collapsed"
-                     data-toggle="collapse" href="#reviewText{{review.id}}"
-                     aria-expanded="false" aria-controls="reviewText{{review.id}}">
-                     <!-- Note: collapser text ("See more...") is encoded in review.css for this link -->
-                  </a>
-                </div>
-
-                <div class="review-footer row mt-3">
-                    <!-- Review upvote/downvote container -->
-                    <div class="vote-container col-sm-4 d-flex align-items-end text-center text-muted flex-wrap">
-                      <!-- Hidden HTML tag to sort reviews by helpfulness (net upvotes)-->
-                      <span id="vote-count" hidden>{{ review.sum_votes }}</span>
-                      <div class="mr-3 mr-sm-4">
-                          <!--Voting logic is implemented in the <script> tag of reviews.html-->
-                          <a id="upvote{{review.id}}" href="#loginModal" data-toggle="modal"
-                             class="upvote {% if review.user_vote == 1 %}active{% endif %}">
-                              <i class="fa fa-thumbs-up"></i>
-                          </a>
-                          <span class="upvoteCount">{{ review.count_votes.upvotes }}</span>
-                      </div>
-                      <div class="mr-3 mr-sm-4">
-                          <a id="downvote{{review.id}}" href="#loginModal" data-toggle="modal"
-                             class="downvote {% if review.user_vote == -1 %}active{% endif %}">
-                              <i class="fa fa-thumbs-down"></i>
-                          </a>
-                          <span class="downvoteCount">{{ review.count_votes.downvotes }}</span>
-                      </div>
-                    </div>
-
-                    <!-- Review Ratings -->
-                    <div class="review-ratings col-sm-8 d-flex align-items-end justify-content-end text-center text-muted flex-wrap mb-2">
-                        <div id="review-average" class="text-dark mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="Review Average">
-                            <i class="fa fa-star fa-fw"></i>
-                            {{ review.average|floatformat:2 }}
-                        </div>
-                        <div class="mr-3 mr-sm-4"  data-toggle="tooltip" data-placement="bottom" title="{% if review.club %}Leadership{% else %}Instructor{% endif %} Rating">
-                            <i class="fa fa-user"></i>
-                            {{ review.instructor_rating }}
-                        </div>
-                        <div class="mr-3 mr-sm-4"  data-toggle="tooltip" data-placement="bottom" title="Enjoyability">
-                            <i class="fa fa-smile-beam"></i>
-                            {{ review.enjoyability }}
-                        </div>
-                        <div class="mr-3 mr-sm-4"   data-toggle="tooltip" data-placement="bottom" title="Recommend">
-                            <i class="fas fa-heart"></i>
-                            {{ review.recommendability }}
-                        </div>
-                        <div class="mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="{% if review.club %}Commitment{% else %}Difficulty{% endif %}">
-                            <i class="fa fa-dumbbell fa-fw"></i>
-                            {{ review.difficulty }}
-                        </div>
-                        <div data-toggle="tooltip" data-placement="bottom" title="Hours Per Week">
-                            <i class="fa fa-hourglass-half fa-fw"></i>
-                            {{ review.hours_per_week }}
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
-    </div>
+        <!-- pfp container div -->
+    </div> 
+
+
 </div>

@@ -41,3 +41,32 @@
 .tooltip-inner {
   margin: 0;
 }
+
+
+/* added these classes for updating the reviews  */
+
+/* wraps both the profile pic and the review card */
+.review-wrapper {
+    display: flex;   
+    align-items: flex-start;  
+    gap: 16px;  
+    background-color: #aaa;  
+}
+
+.review-pfp {
+    width: 10px;
+    height: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.review-pfp img {
+  width: 20%;
+  height: 20%;
+  scale: 0.2;
+  object-fit: cover;
+}
+
