@@ -265,6 +265,12 @@ class User(AbstractUser):
         blank=True,
         null=True,
     )
+    karma = models.PositiveIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(5000)],
+        blank=True,
+        null=True,
+        default=0
+    ) #only stores points not calculated from existing objects (ex reviews)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"

@@ -75,7 +75,7 @@ def profile(request):
     # Get other statistics
     other_stats = User.objects.filter(
         id=request.user.id
-    ).aggregate(  # karma probably goes in other stats because it's a number like these
+    ).aggregate( 
         total_reviews_written=Count("review"),
         average_review_rating=(
             Avg("review__instructor_rating")
@@ -83,13 +83,13 @@ def profile(request):
             + Avg("review__recommendability")
         )
         / 3,
-        karma_stat=Count("review", filter=Q(review__vote__value=1))
-        - Count("review", filter=Q(review__vote__value=-1)),
+        total_schedules_made=Count("schedule")
     )
     # Merge the two dictionaries
     merged = upvote_stat | other_stats
     # Round floats
     stats = {key: safe_round(value) for key, value in merged.items()}
+    stats["karma_stat"] = stats["total_reviews_written"] + stats["total_schedules_made"] + stats["total_review_upvotes"]
     # Combine everything into one context
     context = {
         "form": form,
