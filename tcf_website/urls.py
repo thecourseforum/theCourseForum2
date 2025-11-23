@@ -97,6 +97,7 @@ urlpatterns = [
     ),
     path("schedule/add_course/", views.schedule_add_course, name="schedule_add_course"),
     # QA URLs
+    path("qa/", views.qa_dashboard, name="qa"),
     path("answers/check_duplicate/", views.qa.check_duplicate),
     path("qa/new_question/", views.new_question, name="new_question"),
     path("qa/new_answer/", views.new_answer, name="new_answer"),

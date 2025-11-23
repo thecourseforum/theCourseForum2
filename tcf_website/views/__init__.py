@@ -24,6 +24,7 @@ from .qa import (
     edit_question,
     new_answer,
     new_question,
+    qa_dashboard,
     upvote_answer,
     upvote_question,
 )

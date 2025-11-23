@@ -9,11 +9,17 @@ from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based vie
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import generic
 
 from ..models import Answer, Question
+
+
+# @login_required
+def qa_dashboard(request):
+    """Q&A Dashboard view."""
+    return render(request, "qa/qa_dashboard.html")
 
 
 class QuestionForm(forms.ModelForm):
