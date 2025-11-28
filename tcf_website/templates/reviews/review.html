@@ -224,18 +224,32 @@
             <div id="reply{{ reply.id }}" class="justify-content-between">
                 <div class="mb-2 float-left">
                     <div class="float-left mr-3 mr-sm-4">
-                        <a id="upvote_reply{{reply.id}}" href="#loginModal" data-toggle="modal"
-                            class="upvote_reply {% if reply.user_vote == 1 %}active{% endif %}">
+                        {% if user.is_authenticated %}
+                        <a id="replyUpvote{{ reply.id }}" href="#" role="button"
+                            class="reply-upvote upvote {% if reply.user_vote == 1 %}active{% endif %}">
                             <i class="fa fa-thumbs-up"></i>
                         </a>
-                        <span class="upvoteCount">{{ reply.count_votes.upvotes }}</span>
+                        {% else %}
+                        <a id="replyUpvote{{ reply.id }}" href="#loginModal" data-toggle="modal"
+                            class="reply-upvote upvote {% if reply.user_vote == 1 %}active{% endif %}">
+                            <i class="fa fa-thumbs-up"></i>
+                        </a>
+                        {% endif %}
+                        <span class="reply-upvote-count">{{ reply.count_votes.upvotes }}</span>
                     </div>
                     <div class="float-left mr-1 mr-sm-4">
-                        <a id="downvote_reply{{reply.id}}" href="#loginModal" data-toggle="modal"
-                            class="downvote_reply {% if reply.user_vote == -1 %}active{% endif %}">
+                        {% if user.is_authenticated %}
+                        <a id="replyDownvote{{ reply.id }}" href="#" role="button"
+                            class="reply-downvote downvote {% if reply.user_vote == -1 %}active{% endif %}">
                             <i class="fa fa-thumbs-down"></i>
                         </a>
-                        <span class="downvoteCount">{{ reply.count_votes.downvotes }}</span>
+                        {% else %}
+                        <a id="replyDownvote{{ reply.id }}" href="#loginModal" data-toggle="modal"
+                            class="reply-downvote downvote {% if reply.user_vote == -1 %}active{% endif %}">
+                            <i class="fa fa-thumbs-down"></i>
+                        </a>
+                        {% endif %}
+                        <span class="reply-downvote-count">{{ reply.count_votes.downvotes }}</span>
                     </div>
                 </div>
                 {% if user == reply.user %}

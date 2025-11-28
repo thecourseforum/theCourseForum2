@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.db import IntegrityError
+from django.shortcuts import render_to_response
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -298,7 +300,12 @@ def new_reply(request, review_id):
             reply.user = request.user
             reply.save()
             messages.success(request, "Reply posted.")
-            return redirect(f"/course/{review.course.id}/{review.instructor.id}")
+            try: 
+                return redirect(f"/course/{review.course.id}/{review.instructor.id}")
+            except IntegrityError as e:
+                print("Integrity error")
+                return redirect(f"/reviews/{review.course.id}")
+    
     else:
         form = ReplyForm()
 
