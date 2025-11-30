@@ -308,8 +308,11 @@ def new_reply(request, review_id):
     else:
         form = ReplyForm()
 
-    return redirect('course_instructor', course_id=review.course.id, instructor_id=review.instructor.id)
-
+    return redirect(
+        'course_instructor', 
+        course_id=review.course.id, 
+        instructor_id=review.instructor.id
+    )
 
 @login_required
 def delete_reply(request, reply_id):
@@ -322,7 +325,11 @@ def delete_reply(request, reply_id):
     reply.delete()
     messages.success(request, "Reply deleted.")
 
-    return redirect('course_instructor', course_id=review.course.id, instructor_id=review.instructor.id)
+    return redirect(
+        'course_instructor',
+        course_id=review.course.id,
+        instructor_id=review.instructor.id
+    )
 
 @login_required
 def upvote_reply(request, reply_id):
