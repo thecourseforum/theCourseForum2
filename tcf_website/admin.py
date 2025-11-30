@@ -1,4 +1,4 @@
-# pylint: disable=missing-class-docstring, wildcard-import
+# pylint: disable=missing-class-docstring, wildcard-import, unused-wildcard-import
 
 """TCF Django Admin."""
 
