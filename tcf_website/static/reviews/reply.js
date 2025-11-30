@@ -5,19 +5,16 @@ function handleReplyVote(replyID, isUpvote) {
   const upvoteCount = parseInt(upvoteCountElem.text());
   const downvoteCount = parseInt(downvoteCountElem.text());
 
-
   let elem;
   let otherElem;
   let endpoint;
   let newUpvoteCount = upvoteCount;
   let newDownvoteCount = downvoteCount;
 
-
   if (isUpvote) {
     elem = $(`#reply${replyID} .reply-upvote`);
     otherElem = $(`#reply${replyID} .reply-downvote`);
     endpoint = `/reviews/reply/${replyID}/upvote/`;
-
 
     if (elem.hasClass("active")) {
       newUpvoteCount = upvoteCount - 1;
@@ -32,7 +29,6 @@ function handleReplyVote(replyID, isUpvote) {
     otherElem = $(`#reply${replyID} .reply-upvote`);
     endpoint = `/reviews/reply/${replyID}/downvote/`;
 
-
     if (elem.hasClass("active")) {
       newDownvoteCount = downvoteCount - 1;
     } else if (otherElem.hasClass("active")) {
@@ -43,16 +39,13 @@ function handleReplyVote(replyID, isUpvote) {
     }
   }
 
-
   fetch(endpoint, {
     method: "post",
     headers: { "X-CSRFToken": getCookie("csrftoken") },
   });
 
-
   upvoteCountElem.text(newUpvoteCount);
   downvoteCountElem.text(newDownvoteCount);
-
 
   if (elem.hasClass("active")) {
     elem.removeClass("active");
@@ -61,6 +54,5 @@ function handleReplyVote(replyID, isUpvote) {
     otherElem.removeClass("active");
   }
 }
-
 
 export { handleReplyVote };
