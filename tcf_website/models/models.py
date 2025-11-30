@@ -1408,7 +1408,7 @@ class Reply(models.Model):
         return f"Reply by {self.user.first_name} ({self.user.email}) to {self.review}"
 
     def count_votes(self):
-        """Sum votes for review."""
+        """Sum votes for reply."""
         return self.votereply_set.aggregate(
             upvotes=Coalesce(models.Sum("value", filter=models.Q(value=1)), 0),
             downvotes=Coalesce(Abs(models.Sum("value", filter=models.Q(value=-1))), 0),
