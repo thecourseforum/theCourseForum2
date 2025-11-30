@@ -1391,7 +1391,7 @@ class Reply(models.Model):
     Has a review
     """
 
-    text = models.TextField()
+    text = models.TextField(max_length=5000)
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="replies")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
