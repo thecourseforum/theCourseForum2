@@ -91,7 +91,7 @@
 
                         <!-- Actions block (Reply / Show Replies) -->
                         <div class="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center ml-sm-auto">
-                            {% if user.is_authenticated and user.email != instructor.email %}
+                            {% if user.is_authenticated %}
                                 <a class="btn bg-tcf-orange text-white m-1 flex-fill flex-sm-grow-0"
                                 data-toggle="modal"
                                 data-target="#reply-modal-{{ review.id }}">

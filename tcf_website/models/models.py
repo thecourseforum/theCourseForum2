@@ -1473,9 +1473,7 @@ class VoteReply(models.Model):
     """
 
     # Vote value. Required.
-    value = models.IntegerField(
-        validators=[MinValueValidator(-1), MaxValueValidator(1)]
-    )
+    value = models.IntegerField(choices=[(-1, 'Downvote'), (1, 'Upvote')])
     # Vote user foreign key. Required.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     # Vote review foreign key. Required.

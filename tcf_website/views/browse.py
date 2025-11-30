@@ -16,6 +16,7 @@ from django.db.models import (
     Sum,
     Value,
 )
+from django.db.models.query import prefetch_related_objects
 from django.db.models.functions import Coalesce
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -30,6 +31,7 @@ from ..models import (
     Department,
     Instructor,
     Question,
+    Reply,
     Review,
     School,
     Section,
@@ -333,6 +335,25 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     page_number = request.GET.get("page", 1)
     paginated_reviews = Review.get_paginated_reviews(
         course_id, instructor_id, request.user, page_number, method
+    )
+
+    replies_queryset = Reply.objects.select_related("user").order_by("created")
+    if request.user.is_authenticated:
+        replies_queryset = replies_queryset.annotate(
+            user_vote=Coalesce(
+                Sum(
+                    "votereply__value",
+                    filter=Q(votereply__user=request.user),
+                ),
+                Value(0),
+            )
+        )
+    else:
+        replies_queryset = replies_queryset.annotate(user_vote=Value(0))
+
+    prefetch_related_objects(
+        paginated_reviews.object_list,
+        Prefetch("replies", queryset=replies_queryset),
     )
 
     course_url = reverse("course", args=[course.subdepartment.mnemonic, course.number])

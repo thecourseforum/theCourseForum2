@@ -285,12 +285,14 @@ def edit_review(request, review_id):
 
 
 class ReplyForm(forms.ModelForm):
+    """Form for reply creation."""
     class Meta:
         model = Reply
         fields = ["text"]
 
 @login_required
 def new_reply(request, review_id):
+    """Create a new reply to a review."""
     review = get_object_or_404(Review, pk=review_id)
     if request.method == "POST":
         form = ReplyForm(request.POST)
@@ -306,11 +308,12 @@ def new_reply(request, review_id):
     else:
         form = ReplyForm()
 
-    return redirect(f"/course/{review.course.id}/{review.instructor.id}")
+    return redirect('course_instructor', course_id=review.course.id, instructor_id=review.instructor.id)
 
 
 @login_required
 def delete_reply(request, reply_id):
+    """Delete a reply."""
     reply = get_object_or_404(Reply, pk=reply_id)
     if reply.user != request.user:
         raise PermissionDenied("You are not allowed to delete this reply!")
@@ -318,13 +321,14 @@ def delete_reply(request, reply_id):
     review = reply.review
     reply.delete()
     messages.success(request, "Reply deleted.")
-    return redirect(f"/course/{review.course.id}/{review.instructor.id}")
+
+    return redirect('course_instructor', course_id=review.course.id, instructor_id=review.instructor.id)
 
 @login_required
 def upvote_reply(request, reply_id):
-    """Upvote a view."""
+    """Upvote a reply."""
     if request.method == "POST":
-        reply = Reply.objects.get(pk=reply_id)
+        reply = get_object_or_404(Reply, pk=reply_id)
         reply.upvote(request.user)
         return JsonResponse({"ok": True})
     return JsonResponse({"ok": False})
@@ -332,9 +336,9 @@ def upvote_reply(request, reply_id):
 
 @login_required
 def downvote_reply(request, reply_id):
-    """Downvote a view."""
+    """Downvote a reply."""
     if request.method == "POST":
-        reply = Reply.objects.get(pk=reply_id)
+        reply = get_object_or_404(Reply, pk=reply_id)
         reply.downvote(request.user)
         return JsonResponse({"ok": True})
     return JsonResponse({"ok": False})
