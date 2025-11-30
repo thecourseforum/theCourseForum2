@@ -310,7 +310,7 @@ def new_reply(request, review_id):
 
     return redirect(
         'course_instructor', 
-        course_id=review.course.id, 
+        course_id=review.course.id,
         instructor_id=review.instructor.id
     )
 
