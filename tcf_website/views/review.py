@@ -1,5 +1,6 @@
 """View pertaining to review creation/viewing."""
 
+from django.db import IntegrityError
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -11,7 +12,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from ..models import Review, ClubCategory, Club
+from ..models import Review, Reply, ClubCategory, Club
 
 # pylint: disable=fixme,unused-argument
 # Disable pylint errors on TODO messages, such as below
@@ -281,3 +282,59 @@ def edit_review(request, review_id):
         return render(request, "reviews/edit_review.html", {"form": form})
     form = ReviewForm(instance=review)
     return render(request, "reviews/edit_review.html", {"form": form})
+
+
+class ReplyForm(forms.ModelForm):
+    class Meta:
+        model = Reply
+        fields = ["text"]
+
+@login_required
+def new_reply(request, review_id):
+    review = get_object_or_404(Review, pk=review_id)
+    if request.method == "POST":
+        form = ReplyForm(request.POST)
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.review = review
+            reply.user = request.user
+            try:
+                reply.save()
+                messages.success(request, "Reply posted.")
+            except IntegrityError:
+                messages.error(request, "You have already replied to this review.")
+    else:
+        form = ReplyForm()
+
+    return redirect(f"/course/{review.course.id}/{review.instructor.id}")
+
+
+@login_required
+def delete_reply(request, reply_id):
+    reply = get_object_or_404(Reply, pk=reply_id)
+    if reply.user != request.user:
+        raise PermissionDenied("You are not allowed to delete this reply!")
+
+    review = reply.review
+    reply.delete()
+    messages.success(request, "Reply deleted.")
+    return redirect(f"/course/{review.course.id}/{review.instructor.id}")
+
+@login_required
+def upvote_reply(request, reply_id):
+    """Upvote a view."""
+    if request.method == "POST":
+        reply = Reply.objects.get(pk=reply_id)
+        reply.upvote(request.user)
+        return JsonResponse({"ok": True})
+    return JsonResponse({"ok": False})
+
+
+@login_required
+def downvote_reply(request, reply_id):
+    """Downvote a view."""
+    if request.method == "POST":
+        reply = Reply.objects.get(pk=reply_id)
+        reply.downvote(request.user)
+        return JsonResponse({"ok": True})
+    return JsonResponse({"ok": False})

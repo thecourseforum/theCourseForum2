@@ -78,16 +78,32 @@
 
 <script type="module">
     import { handleVote } from "{% static 'reviews/review.js' %}";
+    import { handleReplyVote } from "{% static 'reviews/reply.js' %}";
     {% if user.is_authenticated %}
-        $('.upvote').each(function(i, obj) {
+        $('.upvote').not('.reply-upvote').each(function(i, obj) {
             $(this).click(()=>{
                 handleVote(obj.id.substring(6), true);
             });
             $(this).removeAttr('href');
         });
-        $('.downvote').each(function(i, obj) {
+        $('.downvote').not('.reply-downvote').each(function(i, obj) {
             $(this).click(()=>{
                 handleVote(obj.id.substring(8), false);
+            });
+            $(this).removeAttr('href');
+        });
+
+        $('.reply-upvote').each(function(i, obj) {
+            $(this).click((e)=>{
+                e.preventDefault();
+                handleReplyVote(obj.id.substring(11), true);
+            });
+            $(this).removeAttr('href');
+        });
+        $('.reply-downvote').each(function(i, obj) {
+            $(this).click((e)=>{
+                e.preventDefault();
+                handleReplyVote(obj.id.substring(13), false);
             });
             $(this).removeAttr('href');
         });
