@@ -20,6 +20,7 @@ from django.db.models import (
     FloatField,
     IntegerField,
     OuterRef,
+    Prefetch,
     Q,
     QuerySet,
     Subquery,
@@ -275,15 +276,21 @@ class User(AbstractUser):
 
     def reviews(self):
         """Return user reviews sorted by creation date."""
-        return self.review_set.annotate(
-            sum_votes=models.functions.Coalesce(
-                models.Sum("vote__value"), models.Value(0)
-            ),
-            user_vote=models.functions.Coalesce(
-                models.Sum("vote__value", filter=models.Q(vote__user=self)),
-                models.Value(0),
-            ),
-        ).order_by("-created")
+        return (
+            self.review_set.annotate(
+                sum_votes=models.functions.Coalesce(
+                    models.Sum("vote__value"), models.Value(0)
+                ),
+                user_vote=models.functions.Coalesce(
+                    models.Sum("vote__value", filter=models.Q(vote__user=self)),
+                    models.Value(0),
+                ),
+            )
+            .order_by("-created")
+            .prefetch_related(
+                Prefetch("replies", queryset=Reply.with_user_vote(self))
+            )
+        )
 
     def schedules(self):
         """Return user schedules"""
@@ -1360,6 +1367,8 @@ class Review(models.Model):
     ) -> "Page[Review]":
         """Generate sorted, paginated reviews"""
         reviews = Review.get_sorted_reviews(course_id, instructor_id, user, method)
+        replies_prefetch = Prefetch("replies", queryset=Reply.with_user_vote(user))
+        reviews = reviews.prefetch_related(replies_prefetch)
         return Review.paginate(reviews, page_number)
 
     def __str__(self):
@@ -1407,12 +1416,26 @@ class Reply(models.Model):
     def __str__(self):
         return f"Reply by {self.user.first_name} ({self.user.email}) to {self.review}"
 
+    @property
     def count_votes(self):
-        """Sum votes for reply."""
+        """Sum votes for reply for template consumption."""
         return self.votereply_set.aggregate(
             upvotes=Coalesce(models.Sum("value", filter=models.Q(value=1)), 0),
             downvotes=Coalesce(Abs(models.Sum("value", filter=models.Q(value=-1))), 0),
         )
+
+    @staticmethod
+    def with_user_vote(user):
+        """Return replies annotated with the current user's vote."""
+        queryset = Reply.objects.select_related("user").order_by("created")
+        if getattr(user, "is_authenticated", False):
+            user_vote_annotation = Coalesce(
+                Sum("votereply__value", filter=Q(votereply__user=user)),
+                Value(0),
+            )
+        else:
+            user_vote_annotation = Value(0)
+        return queryset.annotate(user_vote=user_vote_annotation)
 
     def upvote(self, user):
         """Create an upvote."""
