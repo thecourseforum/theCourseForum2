@@ -221,6 +221,7 @@ def fetch_instructors(query, limit: int = 10) -> list[dict]:
 
 
 def get_instructor_results(query, limit: int = 10):
+    """Get instructor query results using Django Trigram similarity."""
     similarity_threshold = 0.5
     results = (
         Instructor.objects.only("first_name", "last_name", "full_name", "email")
