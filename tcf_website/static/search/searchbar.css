@@ -303,3 +303,58 @@
   background-color: #cbd5e0;
   border-radius: 2px;
 }
+
+/* Autocomplete suggestions positioning */
+.searchbar-wrapper {
+  position: relative;
+}
+
+/* Remove focus outline from search input */
+#search-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: inherit;
+}
+
+.autocomplete-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 0;
+  max-height: 400px;
+  overflow: hidden;
+  display: none;
+  padding: 0.5rem 0;
+}
+
+.autocomplete-header {
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #4a5568;
+  background-color: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+  margin: 0;
+}
+
+.autocomplete-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f7fafc;
+  margin: 0;
+  transition: background-color 0.15s ease;
+}
+
+.autocomplete-item:hover {
+  background-color: #f7fafc;
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}

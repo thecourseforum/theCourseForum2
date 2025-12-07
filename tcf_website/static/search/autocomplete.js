@@ -5,10 +5,10 @@ document.addEventListener("DOMContentLoaded", function () {
   // Create container for autocomplete suggestions
   const suggestionsContainer = document.createElement("div");
   suggestionsContainer.classList.add("autocomplete-suggestions");
-  
-  if (searchInput.parentNode) {
-    searchInput.parentNode.style.position = "relative"; // Ensure dropdown aligns properly
-    searchInput.parentNode.appendChild(suggestionsContainer);
+
+  const searchbarWrapper = searchInput.closest(".searchbar-wrapper");
+  if (searchbarWrapper) {
+    searchbarWrapper.appendChild(suggestionsContainer);
   } else {
     return;
   }
@@ -70,6 +70,10 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    const MAX_RESULTS = 8;
+    const courses = (data.courses || []).slice(0, MAX_RESULTS);
+    const instructors = (data.instructors || []).slice(0, MAX_RESULTS);
+
     // Add group headers for clarity
     if (hasCourses) {
       const header = document.createElement("div");
@@ -79,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Courses first
-    data.courses.forEach((course) => {
+    courses.forEach((course) => {
       const item = document.createElement("div");
       item.classList.add("autocomplete-item");
       item.style.cursor = "pointer";
@@ -94,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
       suggestionsContainer.appendChild(item);
     });
 
-    if (hasInstructors) {
+    if (instructors.length > 0) {
       const header = document.createElement("div");
       header.classList.add("autocomplete-header");
       header.textContent = "Instructors";
@@ -102,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Instructor results
-    data.instructors.forEach((instructor) => {
+    instructors.forEach((instructor) => {
       const item = document.createElement("div");
       item.classList.add("autocomplete-item");
       item.style.cursor = "pointer";
