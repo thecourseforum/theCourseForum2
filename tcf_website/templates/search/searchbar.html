@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="{% static 'club/mode_toggle.css' %}" />
 <link rel="stylesheet" href="{% static 'search/searchbar.css' %}" />
 <!-- searchbar.html -->
+  <div class="searchbar-wrapper">
   <form class="form-inline flex-grow-1" action="{% url 'search' %}" method="get">
     <div class="input-group flex-grow-1">
       <input 
@@ -204,12 +205,6 @@
     <input type="hidden" name="weekdays" id="weekdays-input">
     <input type="hidden" name="min_gpa" id="min-gpa-input" value="0.0">
   </form>
-
-  <div class = "input-group" >
-    <div class = "dropdown-menu show w-100" id = "typeahead-menu">
-      <div id="autocomplete-results"></div>
-    </div>
-  </div>
   </div>
 
 <script src="{% static 'club/mode_toggle.js' %}"></script>
