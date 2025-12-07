@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   } else {
     return;
   }
-  
+
   let debounceTimeout = null;
   let currentRequestController = null;
 
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const response = await fetch(
         `/api/autocomplete/?q=${encodeURIComponent(query)}`,
-        { signal: currentRequestController.signal }
+        { signal: currentRequestController.signal },
       );
 
       if (!response.ok) {
@@ -132,7 +132,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Hide dropdown when clicking outside
   document.addEventListener("click", (event) => {
-    if (!suggestionsContainer.contains(event.target) && event.target !== searchInput) {
+    if (
+      !suggestionsContainer.contains(event.target) &&
+      event.target !== searchInput
+    ) {
       clearSuggestions();
     }
   });
@@ -142,6 +145,6 @@ document.addEventListener("DOMContentLoaded", function () {
     "input",
     debounce((event) => {
       fetchSuggestions(event.target.value);
-    }, 250)
+    }, 250),
   );
 });
