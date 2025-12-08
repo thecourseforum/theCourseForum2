@@ -297,8 +297,14 @@
       "class": "2027",
       "img_filename": "ENG_Shrikar_Sirobhushanam.jpg",
       "github": "shrikar-siro"
+    },
+    {
+      "name": "Arislan Telek",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Arislan_Telek.jpg",
+      "github": "ArislanT"
     }
-    
   ],
   "design_team": [
     {
