@@ -104,11 +104,11 @@
       "group_name": "Class of 2025",
       "members": [
         {
-        "name": "AJ Nye",
-        "role": "Secretary",
-        "class": "2025",
-        "img_filename": "ENG_AJ_Nye.jpg",
-        "github": "ajnye"
+          "name": "AJ Nye",
+          "role": "Secretary",
+          "class": "2025",
+          "img_filename": "ENG_AJ_Nye.jpg",
+          "github": "ajnye"
         },
         {
           "name": "Hari Gajjala",
@@ -176,11 +176,11 @@
           "github": "zohaibk04"
         },
         {
-        "name": "Junho Lee",
-        "role": "Developer",
-        "class": "2025",
-        "img_filename": "ENG_Junho_Lee.jpg",
-        "github": "junholee6a"
+          "name": "Junho Lee",
+          "role": "Developer",
+          "class": "2025",
+          "img_filename": "ENG_Junho_Lee.jpg",
+          "github": "junholee6a"
         },
         {
           "name": "Ja-Zhua Cheng",
