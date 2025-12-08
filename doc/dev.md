@@ -2,19 +2,7 @@
 
 Ensure your system has [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), [git-lfs](https://git-lfs.com/), [Docker](https://docs.docker.com/install/), and [gdown](https://github.com/wkentaro/gdown) installed.
 
-## One-Command Setup
-
-Run the following command in a POSIX-compliant shell (i.e. Windows users - use GitBash).
-
-Replace `<install_dir>` with where you'd like to clone the script.
-
-_TODO_: correct branch to main/dev when merged
-
-```console
-curl -fL 'https://raw.githubusercontent.com/thecourseforum/theCourseForum2/refs/heads/master/scripts/setup.sh' | sh -s -- <install_dir>
-```
-
-## Setup (Old)
+## Setup
 
 1. Clone the project:
 
