@@ -24,6 +24,7 @@ from .models import (
     SectionTime,
     Semester,
     Subdepartment,
+    StudyGuide,
     User,
     Vote,
 )

@@ -138,3 +138,16 @@ admin.site.register(CourseInstructorGrade, CourseInstructorGradeAdmin)
 admin.site.register(SectionTime, SectionTimeAdmin)
 admin.site.register(Club, ClubAdmin)
 admin.site.register(ClubCategory, ClubCategoryAdmin)
+
+
+class StudyGuideAdmin(admin.ModelAdmin):
+    list_display = ("course", "google_doc_id", "updated_at")
+    search_fields = (
+        "course__title",
+        "course__subdepartment__mnemonic",
+        "course__number",
+        "google_doc_id",
+    )
+
+
+admin.site.register(StudyGuide, StudyGuideAdmin)

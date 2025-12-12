@@ -1964,3 +1964,19 @@ class ScheduledCourse(models.Model):
 
     def __str__(self):
         return f"{self.section.course} | {self.instructor}"
+
+
+# Study Guide: One per Course, stores an associated Google Doc ID
+class StudyGuide(models.Model):
+    """StudyGuide model.
+
+    One-to-one with Course; stores a Google Doc identifier to embed/edit.
+    """
+
+    course = models.OneToOneField(Course, on_delete=models.CASCADE)
+    google_doc_id = models.CharField(max_length=128, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"StudyGuide for {self.course.code()}"

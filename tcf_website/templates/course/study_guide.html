@@ -1,0 +1,56 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}{{ course.code }} Study Guide | theCourseForum{% endblock %}
+
+{% block page_metadata %}
+{% if course_code %}<meta name="course-code" content="{{ course_code }}">{% endif %}
+{% if course_title %}<meta name="course-title" content="{{ course_title }}">{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="course container">
+  <div class="container-lg mb-4">
+    {% include "../common/leaderboard_ad.html" with ad_slot="9533576562" %}
+  </div>
+  <div class="container-lg">
+    {% include "common/toolbar.html" with breadcrumbs=breadcrumbs %}
+  </div>
+
+  <div class="container-lg mt-3 px-0">
+    <div class="d-md-flex align-items-baseline my-3">
+      <h1 class="mr-md-3 text-nowrap">{{ course.code }}</h1>
+      <h2>Study Guide</h2>
+      <div class="ml-sm-auto d-flex justify-content-end">
+        <a class="ml-2 mt-2 btn bg-tcf-orange text-white" href="{% url 'course' course.subdepartment.mnemonic course.number %}">
+           Back to Course
+        </a>
+      </div>
+    </div>
+
+    {% if guide and guide.google_doc_id %}
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Collaborative Notes</h4>
+          <iframe
+            src="https://docs.google.com/document/d/{{ guide.google_doc_id }}/edit?rm=minimal"
+            style="width:100%;height:80vh;border:0;"
+            allow="clipboard-write"
+          ></iframe>
+          <p class="mt-2 text-muted">
+            Editing requires appropriate Google Docs sharing permissions.
+          </p>
+        </div>
+      </div>
+    {% else %}
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Study Guide</h4>
+          <p class="card-text">No study guide configured for this course yet.</p>
+          <p class="card-text">Add a Google Doc ID in the admin to enable editing.</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

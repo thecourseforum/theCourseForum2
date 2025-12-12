@@ -12,6 +12,7 @@ from .browse import (
     department,
     instructor_view,
     club_category,
+    study_guide,
 )
 from .index import AboutView, index, privacy, terms
 from .profile import DeleteProfile, profile, reviews

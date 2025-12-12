@@ -3,6 +3,8 @@
 
 """Views for Browse, department, and course/course instructor pages."""
 import json
+import os
+import logging
 from typing import Any
 
 from django.conf import settings
@@ -34,7 +36,21 @@ from ..models import (
     School,
     Section,
     Semester,
+    StudyGuide,
 )
+from django.db.utils import ProgrammingError, OperationalError
+
+logger = logging.getLogger(__name__)
+
+# Optional Google API imports for lazy Study Guide creation
+try:  # pragma: no cover
+    from google.oauth2 import service_account
+    from googleapiclient.discovery import build
+    from googleapiclient.errors import HttpError
+except Exception:  # pragma: no cover
+    service_account = None
+    build = None
+    HttpError = Exception
 
 
 def browse(request):
@@ -343,7 +359,7 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         (course.code, course_url, False),
         (instructor.full_name, None, True),
     ]
-
+    
     data = Review.objects.filter(course=course_id, instructor=instructor_id).aggregate(
         # rating stats
         average_rating=(
@@ -429,6 +445,122 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "course_code": course.code(),
             "course_title": course.title,
             "instructor_fullname": instructor.full_name,
+        },
+    )
+
+
+def study_guide(request, mnemonic, course_number):
+    """Per-course Study Guide page.
+
+    Behavior:
+    - If a StudyGuide with a `google_doc_id` exists, embed it.
+    - Otherwise, lazily create a Google Doc via service account (if configured),
+      save its ID, and embed it.
+    """
+    course = get_object_or_404(
+        Course,
+        subdepartment__mnemonic=mnemonic.upper(),
+        number=course_number,
+    )
+
+    try:
+        guide = StudyGuide.objects.filter(course=course).first()
+    except (ProgrammingError, OperationalError):
+        guide = None
+
+    # Attempt lazy creation if no guide or missing doc id
+    if (guide is None or not getattr(guide, "google_doc_id", None)) and service_account and build:
+        sa_path = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
+        folder_id = os.environ.get("GOOGLE_DRIVE_FOLDER_ID")
+        share_public = os.environ.get("STUDY_GUIDE_SHARE_PUBLIC", "false").lower() in {"1", "true", "yes"}
+
+        if not sa_path:
+            logger.warning("StudyGuide lazy create: GOOGLE_SERVICE_ACCOUNT_JSON not set; skipping doc creation for course_id=%s", course.id)
+        elif not os.path.exists(sa_path):
+            logger.warning("StudyGuide lazy create: service account file not found at %s; skipping doc creation for course_id=%s", sa_path, course.id)
+        elif sa_path and os.path.exists(sa_path):
+            try:  # pragma: no cover
+                scopes = [
+                    "https://www.googleapis.com/auth/drive",
+                    "https://www.googleapis.com/auth/documents",
+                ]
+                creds = service_account.Credentials.from_service_account_file(sa_path, scopes=scopes)
+                drive = build("drive", "v3", credentials=creds)
+                docs = build("docs", "v1", credentials=creds)
+
+                name = f"Study Guide – {course.subdepartment.mnemonic} {course.number}: {course.title}"
+                metadata = {"name": name, "mimeType": "application/vnd.google-apps.document"}
+                if folder_id:
+                    metadata["parents"] = [folder_id]
+                file = drive.files().create(body=metadata, fields="id").execute()
+                file_id = file.get("id")
+
+                # Initialize content header
+                header = (
+                    f"{course.subdepartment.mnemonic} {course.number} – {course.title} (Study Guide)\n"
+                    f"Course ID: {course.id}\n\n"
+                )
+                docs.documents().batchUpdate(
+                    documentId=file_id,
+                    body={
+                        "requests": [
+                            {
+                                "insertText": {
+                                    "location": {"index": 1},
+                                    "text": header,
+                                }
+                            }
+                        ]
+                    },
+                ).execute()
+
+                # Optionally make it publicly editable
+                if share_public:
+                    drive.permissions().create(
+                        fileId=file_id,
+                        body={
+                            "type": "anyone",
+                            "role": "writer",
+                            "allowFileDiscovery": False,
+                        },
+                    ).execute()
+
+                # Save StudyGuide row
+                try:
+                    if guide:
+                        guide.google_doc_id = file_id
+                        guide.save(update_fields=["google_doc_id"])
+                    else:
+                        guide = StudyGuide.objects.create(course=course, google_doc_id=file_id)
+                except (ProgrammingError, OperationalError):
+                    # If migrations aren't applied, skip creation silently
+                    pass
+            except HttpError as e:
+                # Google API failure, log and skip
+                logger.exception("StudyGuide lazy create: Google API error for course_id=%s: %s", course.id, e)
+            except Exception as e:
+                # Any other transient error, log and skip
+                logger.exception("StudyGuide lazy create: unexpected error for course_id=%s: %s", course.id, e)
+    elif (guide is None or not getattr(guide, "google_doc_id", None)) and not (service_account and build):
+        logger.warning("StudyGuide lazy create: Google libraries not available; install google-api-python-client, google-auth, google-auth-httplib2")
+
+    dept = course.subdepartment.department
+    breadcrumbs = [
+        (dept.school.name, reverse("browse"), False),
+        (dept.name, reverse("department", args=[dept.pk]), False),
+        (course.code(), reverse("course", args=[course.subdepartment.mnemonic, course.number]), False),
+        ("Study Guide", None, True),
+    ]
+
+    return render(
+        request,
+        "course/study_guide.html",
+        {
+            "course": course,
+            "guide": guide,
+            "breadcrumbs": breadcrumbs,
+            "course_code": course.code(),
+            "course_title": course.title,
         },
     )
 

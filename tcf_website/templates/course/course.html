@@ -36,6 +36,9 @@
                     class="open_select_modal_button"  data-toggle="modal" data-target="#selectScheduleModal" >
                         <i class="fas fa-plus" aria-hidden="true"></i> Add to Schedule
                     </a>
+                    <a class="ml-2 mt-2 btn bg-tcf-orange text-white invert-to-dark" href="{% url 'study_guide' course.subdepartment.mnemonic course.number %}">
+                        <i class="fas fa-book" aria-hidden="true"></i> Study Guide
+                    </a>
                     {% include "schedule/add_course_modal.html" with user_id=user.id course=course%}
                 </div>
             </div>
