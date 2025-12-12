@@ -285,7 +285,7 @@
       "name": "Vishwa Solaiappan",
       "role": "Developer",
       "class": "2029",
-      "img_filename": "ENG_Vishwa_Solaiappan.jpg",
+      "img_filename": "ENG_Vishwa_Solaiappan.JPG",
       "github": "TheSwanathan"
     },
     {
@@ -331,11 +331,46 @@
       "github": "pelin-sayar"
     },
     {
-      "name": "Amudhan Selvam",
+      "name": "Yogesh Thambidurai",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Yogesh_Thambidurai.jpeg",
+      "github": "gyoge0"
+    },
+    {
+      "name": "Ishan Ajwani",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Ishan_Ajwani.jpg",
+      "github": "IshanA2007"
+    },
+    {
+      "name": "Adrian Villanueva",
+      "role": "Developer",
+      "class": "2028",
+      "img_filename": "ENG_Adrian_Villanueva.jpg",
+      "github": "Adrian-E-V"
+    },
+    {
+      "name": "Ivan Kisselev",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Ivan_Kisselev.jpg",
+      "github": "IvanTheEngineer"
+    },
+    {
+      "name": "Nathan Kim",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Nathan_Kim.jpg",
+      "github": "Nathan-Kimm"
+    },
+    {
+      "name": "Lexie Chen",
       "role": "Developer",
       "class": "2027",
-      "img_filename": "ENG_Amudhan_Selvam.jpg",
-      "github": "Nahduma26"
+      "img_filename": "ENG_Lexie_Chen.jpg",
+      "github": "LexieChen1"
     }
   ],
   "design_team": [
@@ -350,6 +385,12 @@
       "role": "Designer",
       "class": "2028",
       "img_filename": "DM_Tara_Vidyababu.webp"
+    },
+    {
+      "name": "Rohan Soma",
+      "role": "Designer",
+      "class": "2029",
+      "img_filename": "DM_Rohan_Soma.jpg"
     }
   ],
   "marketing_team": [
