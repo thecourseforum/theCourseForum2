@@ -15,6 +15,7 @@ from rest_framework.response import Response
 from ..api.serializers import (
     CourseAutocompleteSerializer,
     InstructorAutocompleteSerializer,
+    ClubAutocompleteSerializer,
 )
 from ..models import Club, Course, Instructor, Subdepartment
 
@@ -151,7 +152,7 @@ def search(request):
     return render(request, "search/search.html", ctx)
 
 
-def fetch_clubs(query):
+def fetch_clubs(query, limit: int | None = None):
     """Get club data using Django Trigram similarity."""
     threshold = 0.15
     if not query:
@@ -178,7 +179,7 @@ def fetch_clubs(query):
         .order_by("-max_similarity")
     )
 
-    return [
+    qs = [
         {
             "id": c.id,
             "name": c.name,
@@ -189,6 +190,10 @@ def fetch_clubs(query):
         }
         for c in qs
     ]
+
+    if limit:
+        qs = qs[:limit]
+    return qs
 
 
 def decide_order(courses: list[dict], instructors: list[dict]) -> bool:
@@ -353,9 +358,16 @@ def apply_filters(results, filters):
 def autocomplete(request):
     """implement autocomplete for search bar"""
     query = request.GET.get("q", "").strip()
+    mode, is_club = parse_mode(request)
 
     if not query:
-        return Response({"courses": [], "instructors": []})  # empty list if no input
+        return Response(
+            {"courses": [], "instructors": [], "clubs": []}
+        )  # empty list if no input
+
+    if is_club:
+        clubs = fetch_clubs(query, limit=5)
+        return Response({"clubs": ClubAutocompleteSerializer(clubs, many=True).data})
 
     instructors = get_instructor_results(query, limit=5)
     courses = fetch_courses(query, filters={}, limit=5)
