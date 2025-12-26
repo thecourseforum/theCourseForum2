@@ -5,23 +5,23 @@
   <div class="searchbar-wrapper">
   <form class="form-inline flex-grow-1" action="{% url 'search' %}" method="get">
     <div class="input-group flex-grow-1">
-      <input 
-        type="search" 
+      <input
+        type="search"
         class="form-control border border-right-0"
         id = "search-input"
-        placeholder="{% if is_club %}Search for a club...{% else %}Search for a class or professor...{% endif %}" 
-        aria-label="Search" 
-        name="q" 
+        placeholder="{% if is_club %}Search for a club...{% else %}Search for a class or professor...{% endif %}"
+        aria-label="Search"
+        name="q"
         value="{{ query }}"
       >
       <div class="input-group-append">
         <!-- Mode Toggle -->
         {% include "../club/mode_toggle.html" with is_club=is_club toggle_type="radio" no_transition=True container_class="search-mode-toggle" %}
         <!-- Search Button -->
-        <button 
-          class="btn btn-outline-secondary border border-left-0" 
-          id="search-button" 
-          aria-label="Search" 
+        <button
+          class="btn btn-outline-secondary border border-left-0"
+          id="search-button"
+          aria-label="Search"
           type="submit"
         >
           <i class="fa fa-search" aria-hidden="true"></i>
@@ -29,21 +29,21 @@
       </div>
       <div class="dropdown-wrapper">
         <div class="dropdown input-group">
-          <button 
-            class="btn btn-outline-secondary dropdown-toggle border border-left-0" 
-            id="filter-button" 
-            aria-label="Filter" 
-            type="button" 
-            data-toggle="dropdown" 
-            data-bs-display="static" 
-            data-bs-auto-close="outside" 
-            aria-expanded="false" 
+          <button
+            class="btn btn-outline-secondary dropdown-toggle border border-left-0"
+            id="filter-button"
+            aria-label="Filter"
+            type="button"
+            data-toggle="dropdown"
+            data-bs-display="static"
+            data-bs-auto-close="outside"
+            aria-expanded="false"
           >
             Filters
           </button>
           <div
-            class="dropdown-menu p-4 filter-dropdown dropdown-menu-end" 
-            aria-labelledby="filter-button" 
+            class="dropdown-menu p-4 filter-dropdown dropdown-menu-end"
+            aria-labelledby="filter-button"
             id="filter-dropdown"
           >
           <!-- Day and time selections -->
@@ -97,10 +97,10 @@
                   </h6>
                   <div class="filter-option-container">
                     <div class="form-check d-flex align-items-center">
-                      <input 
-                        class="form-check-input me-2" 
-                        type="checkbox" 
-                        id="open-sections" 
+                      <input
+                        class="form-check-input me-2"
+                        type="checkbox"
+                        id="open-sections"
                         name="open_sections"
                       >
                       <label class="form-check-label" for="open-sections">
@@ -109,7 +109,7 @@
                     </div>
                   </div>
                 </div>
-                
+
                 <!-- Min GPA Filter -->
                 <div class="filter-section compact">
                   <h6 class="filter-header">
@@ -117,26 +117,26 @@
                   </h6>
                   <div class="filter-option-container">
                     <div class="min-gpa-controls">
-                      <input 
-                        type="range" 
-                        class="form-range" 
-                        id="min-gpa-slider" 
-                        min="0" 
-                        max="4" 
-                        step="0.1" 
-                        value="0.0" 
+                      <input
+                        type="range"
+                        class="form-range"
+                        id="min-gpa-slider"
+                        min="0"
+                        max="4"
+                        step="0.1"
+                        value="0.0"
                       >
-                      <input 
-                        type="text" 
-                        class="form-control min-gpa-text" 
-                        id="min-gpa-text" 
-                        value="0.0" 
+                      <input
+                        type="text"
+                        class="form-control min-gpa-text"
+                        id="min-gpa-text"
+                        value="0.0"
                       >
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               <!-- List of subjects -->
               <div class="filter-grid">
                 <div class="filter-section">
@@ -150,11 +150,11 @@
                   <div class="subject-list">
                     {% for subdept in subdepartments %}
                       <div class="form-check subdepartment-label">
-                        <input 
-                          class="form-check-input form-check-subjects" 
-                          type="checkbox" 
-                          id="subject-{{ subdept.mnemonic }}" 
-                          name="subdepartment" 
+                        <input
+                          class="form-check-input form-check-subjects"
+                          type="checkbox"
+                          id="subject-{{ subdept.mnemonic }}"
+                          name="subdepartment"
                           value="{{ subdept.mnemonic }}"
                         >
                         <label class="form-check-label" for="subject-{{ subdept.mnemonic }}">
@@ -176,11 +176,11 @@
                   <div class="discipline-list">
                     {% for discipline in disciplines %}
                       <div class="form-check discipline-label">
-                        <input 
-                          class="form-check-input form-check-disciplines" 
-                          type="checkbox" 
-                          id="discipline-{{ discipline.name|slugify }}" 
-                          name="discipline" 
+                        <input
+                          class="form-check-input form-check-disciplines"
+                          type="checkbox"
+                          id="discipline-{{ discipline.name|slugify }}"
+                          name="discipline"
                           value="{{ discipline.name }}"
                         >
                         <label class="form-check-label" for="discipline-{{ discipline.name|slugify }}">
@@ -192,7 +192,7 @@
                 </div>
               </div>
             </div>
-    
+
             <!-- Action buttons -->
             <div class="filter-actions">
               <button type="reset" class="btn btn-outline-secondary">Clear All</button>

@@ -199,3 +199,17 @@ class ClubSerializer(serializers.ModelSerializer):
     class Meta:
         model = Club
         fields = "__all__"
+
+
+class ClubAutocompleteSerializer(serializers.ModelSerializer):
+    """DEF Serializer for Club autocomplete"""
+
+    category_name = serializers.CharField(source="category.name", read_only=True)
+
+    class Meta:
+        model = Club
+        fields = (
+            "id",
+            "name",
+            "category_name",
+        )
