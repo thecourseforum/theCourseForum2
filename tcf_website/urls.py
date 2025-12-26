@@ -4,7 +4,6 @@
 from django.urls import include, path
 
 from . import views
-from .views.search import autocomplete
 
 urlpatterns = [
     path(
@@ -127,5 +126,5 @@ urlpatterns = [
     path("login/", views.auth.login, name="login"),
     path("cognito-callback/", views.auth.cognito_callback, name="cognito_callback"),
     path("logout/", views.auth.logout, name="logout"),
-    path("api/autocomplete/", autocomplete, name="autocomplete"),
+    path("api/autocomplete/", views.autocomplete, name="autocomplete"),
 ]
