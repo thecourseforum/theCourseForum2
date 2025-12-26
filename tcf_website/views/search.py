@@ -358,7 +358,7 @@ def apply_filters(results, filters):
 def autocomplete(request):
     """implement autocomplete for search bar"""
     query = request.GET.get("q", "").strip()
-    mode, is_club = parse_mode(request)
+    _, is_club = parse_mode(request)
 
     if not query:
         return Response(
