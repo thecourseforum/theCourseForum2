@@ -13,6 +13,11 @@
   <label for="search-mode-courses" class="mode-label" role="radio">Courses</label>
   <label for="search-mode-clubs" class="mode-label" role="radio">Clubs</label>
   <div class="toggle-indicator"></div>
+  {% if is_club %}
+    <input type="hidden" id="search-mode" name="mode" value="clubs">
+  {% else %}
+    <input type="hidden" id="search-mode" name="mode" value="courses">
+  {% endif %}
 </div>
 {% else %}
 <div class="mode-toggle-container {% if container_class %}{{ container_class }}{% endif %}">
@@ -22,4 +27,4 @@
     <div class="mode-toggle-slider {% if is_club %}slide-right{% endif %}"></div>
   </div>
 </div>
-{% endif %} 
+{% endif %}
