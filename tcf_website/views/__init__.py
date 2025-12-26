@@ -39,4 +39,4 @@ from .schedule import (
     view_schedules,
     view_select_schedules_modal,
 )
-from .search import search
+from .search import search, autocomplete
