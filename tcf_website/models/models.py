@@ -786,6 +786,30 @@ class Course(models.Model):
         else:
             base_query = base_query.filter(section__course=self)
 
+        # Get number of instructors with same last name
+        # for a given course
+        instructors_course_count = CourseInstructorGrade.objects.filter(
+            course=self,
+            instructor__last_name=OuterRef("last_name"),
+        ).values("course").annotate(
+            total=Count("instructor__pk", distinct=True)
+        ).values("total")
+
+        avg_gpa_subquery_by_full = CourseInstructorGrade.objects.filter(
+            course=self,
+            instructor=OuterRef("pk")
+        ).values("course").annotate(
+            calculated_avg=Avg("average")
+        ).values("calculated_avg")
+
+        avg_gpa_subquery_by_last = CourseInstructorGrade.objects.filter(
+            course=self,
+            instructor__last_name=OuterRef("last_name")
+        ).values("course").annotate(
+            calculated_avg=Avg("average")
+        ).values("calculated_avg")
+
+
         instructors = base_query.distinct().annotate(
             instructor_rating=Coalesce(
                 Avg("review__instructor_rating", filter=Q(review__course=self)),
@@ -808,10 +832,13 @@ class Course(models.Model):
                 / 3,
                 output_field=FloatField(),
             ),
+            instructors_count=Subquery(instructors_course_count),
             gpa=Coalesce(
-                Avg(
-                    "courseinstructorgrade__average",
-                    filter=Q(courseinstructorgrade__course=self),
+                # Use last name to get grades, but if a course has
+                # multiple instructors with same name, use full name
+                Case(
+                    When(instructors_count__gt=1, then=Subquery(avg_gpa_subquery_by_full, output_field=FloatField())),
+                    default=Subquery(avg_gpa_subquery_by_last, output_field=FloatField()),
                 ),
                 Value(default_value),
                 output_field=FloatField(),
