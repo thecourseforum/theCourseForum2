@@ -26,7 +26,7 @@ from django.db.models import (
     Sum,
     Value,
     When,
-    fields,
+    fields, Count,
 )
 from django.db.models.functions import Abs, Cast, Coalesce, Concat, Round
 
@@ -457,6 +457,34 @@ class Instructor(models.Model):
             )
         )
 
+        """
+        Create a subquery to get a CourseInstructorGrade
+        object based on last name since a standard query
+        in the distinct().annotate() below can only access
+        objects which have the instructor as a foreign key
+        """
+        instructors_course_count = CourseInstructorGrade.objects.filter(
+            course=OuterRef("pk"),
+            instructor__last_name=self.last_name,
+        ).values("course").annotate(
+            total=Count("instructor__pk", distinct=True)
+        ).values("total")
+
+        avg_gpa_subquery_by_full = CourseInstructorGrade.objects.filter(
+            course=OuterRef("pk"),
+            instructor=self
+        ).values("course").annotate(
+            calculated_avg=Avg("average")
+        ).values("calculated_avg")
+
+        avg_gpa_subquery_by_last = CourseInstructorGrade.objects.filter(
+            course=OuterRef("pk"),
+            instructor__last_name=self.last_name,
+        ).values("course").annotate(
+            calculated_avg=Avg("average")
+        ).values("calculated_avg")
+
+
         return (
             Course.objects.filter(number__gte=1000)
             .annotate(taught_by=taught_by_exists)
@@ -484,9 +512,15 @@ class Instructor(models.Model):
                 avg_difficulty=Avg(
                     "review__difficulty", filter=Q(review__instructor=self)
                 ),
-                avg_gpa=Avg(
-                    "courseinstructorgrade__average",
-                    filter=Q(courseinstructorgrade__instructor=self),
+                instructors_count=Subquery(instructors_course_count),
+                avg_gpa=
+                    Case(
+                        # Use last name to get grades, but if a course has
+                        # multiple instructors with same name, use full name
+                        When(instructors_count__gt=1,
+                             then=Subquery(avg_gpa_subquery_by_full, output_field=FloatField())),
+                        default=Subquery(avg_gpa_subquery_by_last, output_field=FloatField()),
+                    output_field=FloatField(),
                 ),
                 latest_semester_number=latest_semester_number_sq,
                 is_current=is_current_exists,
