@@ -6,7 +6,7 @@ import json
 from typing import Any
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import (
     Avg,
@@ -14,7 +14,7 @@ from django.db.models import (
     Prefetch,
     Q,
     Sum,
-    Value,
+    Value, QuerySet,
 )
 from django.db.models.functions import Coalesce
 from django.http import Http404
@@ -364,12 +364,42 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     data = {key: safe_round(value) for key, value in data.items()}
 
     try:
-        grades_data = CourseInstructorGrade.objects.get(
-            instructor=instructor, course=course
+        # Instructors' full names from SIS do not always
+        # match full names given in grade data .csv files
+        # but their last names are always the same
+        grades_query_by_last_name: QuerySet = CourseInstructorGrade.objects.filter(
+            instructor__last_name=instructor.last_name,
+            course=course
         )
+        # Filter by full name if a course has multiple
+        # instructors with same last name
+        if len(grades_query_by_last_name) > 1:
+            grades_query_by_instructor_obj: QuerySet = grades_query_by_last_name.filter(
+                instructor=instructor
+            )
+
+            if len(grades_query_by_instructor_obj) > 1:
+                # throw object does not exist error
+                raise MultipleObjectsReturned
+            else:
+                grades_data: CourseInstructorGrade = grades_query_by_instructor_obj.get()
+        else:
+            # Only runs if exactly one result
+            grades_data: CourseInstructorGrade = grades_query_by_last_name.get()
+
+
     except ObjectDoesNotExist:  # if no data found
         pass
     # NOTE: Don't catch MultipleObjectsReturned because we want to be notified
+
+    # This error is theoretically impossible since CourseInstructorGrade
+    # two instructors with same name would share one grade object (bad design!)
+    # but it should be treated in same way as an ObjectDoesNotExist error for
+    # the user to avoid an error
+    except MultipleObjectsReturned:
+        pass
+    # else clause below only runs if
+    # no errors are thrown in try clause
     else:  # Fill in the data found
         # grades stats
         data["average_gpa"] = (
