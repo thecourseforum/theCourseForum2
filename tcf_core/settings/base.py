@@ -104,6 +104,15 @@ else:
             "PASSWORD": env.str("AWS_RDS_PASSWORD"),
             "HOST": env.str("AWS_RDS_HOST"),
             "PORT": env.int("AWS_RDS_PORT"),
+            # Connection pooling - reuse connections between requests
+            "CONN_MAX_AGE": 60,  # Keep connections alive for 60 seconds
+            # Health checks (Django 4.1+) - verify connection is still valid
+            "CONN_HEALTH_CHECKS": True,
+            # Database connection options
+            "OPTIONS": {
+                "connect_timeout": 10,  # Timeout for establishing connection
+                "options": "-c statement_timeout=30000",  # 30 second query timeout
+            },
         }
     }
 
