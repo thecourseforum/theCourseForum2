@@ -327,13 +327,7 @@ def apply_filters(results, filters):
         )
 
     min_gpa = filters.get("min_gpa")
-    if min_gpa:
-        try:
-            min_gpa_float = float(min_gpa)
-            # Filter directly using a subquery on CourseGrade
-            results = results.filter(coursegrade__average__gte=min_gpa_float)
-        except (ValueError, TypeError):
-            # Silently ignore invalid values
-            pass
+    if min_gpa and float(min_gpa) > 0:
+        results = results.filter(coursegrade__average__gte=float(min_gpa))
 
     return results.distinct()

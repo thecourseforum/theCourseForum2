@@ -68,41 +68,6 @@
   ],
   "engineering_team": [
     {
-      "name": "AJ Nye",
-      "role": "Secretary",
-      "class": "2025",
-      "img_filename": "ENG_AJ_Nye.jpg",
-      "github": "ajnye"
-    },
-    {
-      "name": "Barrett Ruth",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Barrett_Ruth.webp",
-      "github": "barrett-ruth"
-    },
-    {
-      "name": "Hari Gajjala",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Hari_Gajjala.JPG",
-      "github": "hari-gajjala"
-    },
-    {
-      "name": "Neha Bagalkot",
-      "role": "Developer",
-      "class": "2024",
-      "img_filename": "ENG_Neha_Bagalkot.jpg",
-      "github": "nehagb99"
-    },
-    {
-      "name": "Kyle Durrer",
-      "role": "Developer",
-      "class": "2024",
-      "img_filename": "ENG_Kyle_Durrer.jpg",
-      "github": "kmd2zjw"
-    },
-    {
       "name": "Alex Yung",
       "role": "Developer",
       "class": "2026",
@@ -115,20 +80,6 @@
       "class": "2026",
       "img_filename": "ENG_Luke_Kohler.jpeg",
       "github": "ldkohler"
-    },
-    {
-      "name": "Zohaib Khalid",
-      "role": "Developer",
-      "class": "2025",
-      "img_filename": "ENG_Zohaib_Khalid.jpg",
-      "github": "zohaibk04"
-    },
-    {
-      "name": "Kingsley Kim",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Kingsley_Kim.jpg",
-      "github": "kingsleykimm"
     },
     {
       "name": "Artie Humphreys",
@@ -145,43 +96,11 @@
       "github": "blairezh"
     },
     {
-      "name": "Junho Lee",
-      "role": "Developer",
-      "class": "2025",
-      "img_filename": "ENG_Junho_Lee.jpg",
-      "github": "junholee6a"
-    },
-    {
-      "name": "Ja-Zhua Cheng",
-      "role": "Developer",
-      "class": "2025",
-      "img_filename": "ENG_Ja-Zhua_Cheng.jpeg"
-    },
-    {
-      "name": "Justin Park",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Justin_Park.jpg"
-    },
-    {
-      "name": "Vivian Gao",
-      "role": "Developer",
-      "class": "2027",
-      "img_filename": "ENG_Vivian_Gao.jpg"
-    },
-    {
       "name": "Jay Lalwani",
       "role": "Developer",
       "class": "2027",
       "img_filename": "ENG_Jay_Lalwani.jpg",
       "github": "Jay-Lalwani"
-    },
-    {
-      "name": "Olivia Seto",
-      "role": "Developer",
-      "class": "2025",
-      "img_filename": "ENG_Olivia_Seto.jpg",
-      "github": "oliviaseto"
     },
     {
       "name": "Hanzhe Dong",
@@ -203,13 +122,6 @@
       "class": "2028",
       "img_filename": "ENG_Yu_Cao.jpg",
       "github": "YuDavidCao"
-    },
-    {
-      "name": "Collin Togher",
-      "role": "Developer",
-      "class": "2026",
-      "img_filename": "ENG_Collin_Togher.jpg",
-      "github": "ctogs"
     },
     {
       "name": "Visvajit Murali",
@@ -285,7 +197,7 @@
       "name": "Vishwa Solaiappan",
       "role": "Developer",
       "class": "2029",
-      "img_filename": "ENG_Vishwa_Solaiappan.jpg",
+      "img_filename": "ENG_Vishwa_Solaiappan.JPG",
       "github": "TheSwanathan"
     },
     {
@@ -343,29 +255,96 @@
       "class": "2029",
       "img_filename": "ENG_Ishan_Ajwani.jpg",
       "github": "IshanA2007"
+    },
+    {
+      "name": "Adrian Villanueva",
+      "role": "Developer",
+      "class": "2028",
+      "img_filename": "ENG_Adrian_Villanueva.jpg",
+      "github": "Adrian-E-V"
+    },
+    {
+      "name": "Ivan Kisselev",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Ivan_Kisselev.jpg",
+      "github": "IvanTheEngineer"
+    },
+    {
+      "name": "Nathan Kim",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Nathan_Kim.jpg",
+      "github": "Nathan-Kimm"
+    },
+    {
+      "name": "Lexie Chen",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Lexie_Chen.jpg",
+      "github": "LexieChen1"
+    },
+    {
+      "name": "Julia Chen",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Julia_Chen.jpg",
+      "github": "juliaxchen"
+    },
+    {
+      "name": "Shrikar Sirobhushanam",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Shrikar_Sirobhushanam.jpg",
+      "github": "shrikar-siro"
+    },
+    {
+      "name": "Arislan Telek",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Arislan_Telek.jpg",
+      "github": "ArislanT"
     }
   ],
   "design_team": [
-    {
-      "name": "Chai Zhang",
-      "role": "Designer",
-      "class": "2025",
-      "img_filename": "DM_Chai_Zhang.JPG"
-    },
     {
       "name": "Tara Vidyababu",
       "role": "Designer",
       "class": "2028",
       "img_filename": "DM_Tara_Vidyababu.webp"
+    },
+    {
+      "name": "Rohan Soma",
+      "role": "Designer",
+      "class": "2029",
+      "img_filename": "DM_Rohan_Soma.jpg"
+    },
+    {
+      "name": "Bree Bonner",
+      "role": "Designer",
+      "class": "2026",
+      "img_filename": "DM_Bree_Bonner.JPG"
+    },
+    {
+      "name": "Maya Degafe",
+      "role": "Designer",
+      "class": "2027",
+      "img_filename": "DM_Maya_Degafe.png"
+    },
+    {
+      "name": "Kelly Tran",
+      "role": "Designer",
+      "class": "2028",
+      "img_filename": "DM_Kelly_Tran.jpg"
+    },
+    {
+      "name": "Ivy Kim",
+      "role": "Designer",
+      "class": "2029",
+      "img_filename": "DM_Ivy_Kim.jpg"
     }
   ],
   "marketing_team": [
-    {
-      "name": "Carissa Chen",
-      "role": "Marketing",
-      "class": "2027",
-      "img_filename": "DM_Carissa_Chen.jpg"
-    },
     {
       "name": "Julie Huang",
       "role": "Marketing",
@@ -377,6 +356,30 @@
       "role": "Marketing",
       "class": "2027",
       "img_filename": "DM_Alyssa_Zhang.jpg"
+    },
+    {
+      "name": "Dylan Klein",
+      "role": "Marketing",
+      "class": "2029",
+      "img_filename": "DM_Dylan_Klein.jpg"
+    },
+    {
+      "name": "Kelly Yue",
+      "role": "Marketing",
+      "class": "2027",
+      "img_filename": "DM_Kelly_Yue.JPG"
+    },
+    {
+      "name": "Tiffany Park",
+      "role": "Marketing",
+      "class": "2028",
+      "img_filename": "DM_Tiffany_Park.jpg"
+    },
+    {
+      "name": "Kate Dunkle",
+      "role": "Marketing",
+      "class": "2027",
+      "img_filename": "DM_Kate_Dunkle.jpg"
     }
   ]
 }
