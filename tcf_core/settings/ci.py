@@ -1,4 +1,4 @@
-# pylint: disable=unused-wildcard-import,wildcard-import
+# pylint: disable=unused-wildcard-import,wildcard-import,duplicate-code
 """Django settings for CI (GitHub Actions)."""
 from .base import *
 

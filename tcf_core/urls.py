@@ -23,7 +23,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 ]
 
-if settings.DEBUG:
-    import debug_toolbar
+if "debug_toolbar" in settings.INSTALLED_APPS:
+    import debug_toolbar  # pylint: disable=import-error
 
     urlpatterns.insert(0, path("__debug__/", include(debug_toolbar.urls)))
