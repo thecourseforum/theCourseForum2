@@ -13,6 +13,8 @@ services:
       python manage.py invalidate_cachalot tcf_website && \
       echo 'Starting Django Server...' && \
       python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=tcf_core.settings.dev
     volumes:
       - .:/app
       - /app/db/ # exclude the subfolder to prevent potential interference

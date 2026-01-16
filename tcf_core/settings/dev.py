@@ -23,6 +23,10 @@ STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Django Debug Toolbar
-INSTALLED_APPS += ["debug_toolbar"]
-MIDDLEWARE.insert(2, "debug_toolbar.middleware.DebugToolbarMiddleware")
+INSTALLED_APPS = INSTALLED_APPS + ["debug_toolbar"]
+MIDDLEWARE = (
+    MIDDLEWARE[:2]
+    + ["debug_toolbar.middleware.DebugToolbarMiddleware"]
+    + MIDDLEWARE[2:]
+)
 DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda r: True}
