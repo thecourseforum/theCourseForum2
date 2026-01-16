@@ -5,40 +5,19 @@ on:
   pull_request:
     branches:
       - "*"
-  # The following is needed to run tests upon direct push to dev or master
   push:
     branches: [dev, master]
+
 env:
   PYTHON_TARGET: 3.11
-  # Django
   DJANGO_SETTINGS_MODULE: tcf_core.settings.ci
-  SECRET_KEY: ${{ secrets.SECRET_KEY }}
-  DEBUG: 1
-  ENVIRONMENT: dev
-  # database
-  DB_NAME: tcf_db # arbitrary string
-  DB_USER: postgres # default user
-  DB_PASSWORD: postgres # default password
-  DB_HOST: localhost # required for GitHub Actions
-  DB_PORT: 5432 # default port
-  # AWS Cognito
-  COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
-  COGNITO_APP_CLIENT_ID: ${{ secrets.COGNITO_APP_CLIENT_ID }}
-  COGNITO_APP_CLIENT_SECRET: ${{ secrets.COGNITO_APP_CLIENT_SECRET }}
-  COGNITO_DOMAIN: ${{ secrets.COGNITO_DOMAIN }}
-  COGNITO_REGION_NAME: ${{ secrets.COGNITO_REGION_NAME }}
-  # email for account verification
-  EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
-  EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
-  # review drive account information
-  REVIEW_DRIVE_ID: ${{ secrets.REVIEW_DRIVE_ID }}
-  REVIEW_DRIVE_EMAIL: ${{ secrets.REVIEW_DRIVE_EMAIL }}
-  REVIEW_DRIVE_PASSWORD: ${{ secrets.REVIEW_DRIVE_PASSWORD }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-  AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
-  AWS_S3_CUSTOM_DOMAIN: ${{ secrets.AWS_S3_CUSTOM_DOMAIN }}
+  SECRET_KEY: ci-secret-key-not-for-production
+  # CI database (GitHub Actions postgres service)
+  DB_NAME: tcf_db
+  DB_USER: postgres
+  DB_PASSWORD: postgres
+  DB_HOST: localhost
+  DB_PORT: 5432
 
 jobs:
   pylint:
@@ -51,12 +30,12 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_TARGET }}
           cache: 'pip'
+          cache-dependency-path: 'requirements/*.txt'
 
-      - name: Install Python packages, excluding the unnecessary ones
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          sed -i '/\(coverage\|types\-tqdm\|black\|isort\|gunicorn\|django\-heroku\|uwsgi\)/d' requirements.txt
-          pip install -r requirements.txt
+          pip install -r requirements/ci.txt
 
       - name: Run pylint
         run: |
@@ -71,12 +50,11 @@ jobs:
       postgres:
         image: postgres:15.4
         env:
-          POSTGRES_USER: ${{ env.DB_USER}}
+          POSTGRES_USER: ${{ env.DB_USER }}
           POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
           POSTGRES_DB: ${{ env.DB_NAME }}
         ports:
           - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v4
@@ -86,16 +64,15 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_TARGET }}
           cache: 'pip'
+          cache-dependency-path: 'requirements/*.txt'
 
-      - name: Install Python packages, excluding the unnecessary ones
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          sed -i '/\(lint\|mypy\|types\-tqdm\|black\|isort\|gunicorn\|django\-stubs\|uwsgi\)/d' requirements.txt
-          pip install -r requirements.txt
+          pip install -r requirements/ci.txt
 
       - name: Migrations & Tests
         run: |
-          envsubst < .env.example > .env
           python manage.py migrate
           coverage run manage.py test
 
