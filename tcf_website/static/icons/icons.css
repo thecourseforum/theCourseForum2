@@ -336,6 +336,13 @@
   background-position: center;
 }
 
+.fa-comments {
+  background-image: url("../icons/img/fa-reply.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
 .invert-to-light {
   filter: invert(1);
 }
