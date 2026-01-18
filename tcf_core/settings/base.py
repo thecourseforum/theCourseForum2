@@ -20,15 +20,6 @@ environ.Env.read_env(env_file)
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env.str("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool("DEBUG")  # default value set on the top
-
-# Make ENVIRONMENT available on settings for runtime checks (e.g., middleware)
-ENVIRONMENT = env.str("ENVIRONMENT", default="dev")
-
-# Optional: allow specifying a fixed dev auto-login user
-DEV_AUTO_LOGIN_USER = env.str("DEV_AUTO_LOGIN_USER", default="")
-
 ALLOWED_HOSTS = []
 
 CORS_ALLOWED_ORIGINS = [
@@ -54,71 +45,6 @@ INSTALLED_APPS = [
     "django_filters",
     "tcf_website",
 ]
-
-# Dev does not use S3 buckets
-if env.str("ENVIRONMENT") == "dev":
-    STATIC_URL = "/static/"
-    STATIC_ROOT = os.path.join(BASE_DIR, "static")
-    # Local media storage in development
-    MEDIA_URL = "/media/"
-    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
-    ALLOWED_HOSTS.extend(["localhost", ".grok.io", "127.0.0.1"])
-
-    DATABASES = {
-        "default": {
-            "NAME": env.str("DB_NAME"),
-            "ENGINE": "django.db.backends.postgresql",
-            "USER": env.str("DB_USER"),
-            "PASSWORD": env.str("DB_PASSWORD"),
-            "HOST": env.str("DB_HOST"),
-            "PORT": env.int("DB_PORT"),
-        }
-    }
-else:
-    AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
-    AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
-    AWS_S3_REGION_NAME = env.str("AWS_S3_REGION_NAME", default="us-east-1")
-    AWS_S3_CUSTOM_DOMAIN = env.str(
-        "AWS_S3_CUSTOM_DOMAIN", default=f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-    )
-    AWS_DEFAULT_ACL = None
-    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
-    AWS_QUERYSTRING_AUTH = env.bool("AWS_QUERYSTRING_AUTH", default=True)
-
-    ALLOWED_HOSTS.extend(
-        [
-            "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
-            "thecourseforum.com",
-            "thecourseforumtest.com",
-            "d1gr9vmyo0mkxv.cloudfront.net",
-        ]
-    )
-
-    STORAGES = {
-        "default": {
-            "BACKEND": "storages.backends.s3.S3Storage",
-            "OPTIONS": {},
-        },
-        "staticfiles": {
-            "BACKEND": "storages.backends.s3.S3Storage",
-        },
-    }
-
-    # Media URLs will be served from S3/custom domain in production
-    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
-
-    DATABASES = {
-        "default": {
-            "NAME": env.str("AWS_RDS_NAME"),
-            "ENGINE": "django.db.backends.postgresql",
-            "USER": env.str("AWS_RDS_USER"),
-            "PASSWORD": env.str("AWS_RDS_PASSWORD"),
-            "HOST": env.str("AWS_RDS_HOST"),
-            "PORT": env.int("AWS_RDS_PORT"),
-        }
-    }
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -194,16 +120,12 @@ USE_L10N = True
 USE_TZ = True
 
 
-# social-auth-app-django settings.
-
-# AWS Cognito Configuration
-COGNITO_USER_POOL_ID = env.str("COGNITO_USER_POOL_ID")
-COGNITO_APP_CLIENT_ID = env.str("COGNITO_APP_CLIENT_ID")
-COGNITO_APP_CLIENT_SECRET = env.str("COGNITO_APP_CLIENT_SECRET")
-COGNITO_DOMAIN = env.str("COGNITO_DOMAIN")
-COGNITO_REGION_NAME = env.str("COGNITO_REGION_NAME")
-
-# These should match exactly what you configured in Cognito
+# AWS Cognito Configuration (optional - only needed for auth features)
+COGNITO_USER_POOL_ID = env.str("COGNITO_USER_POOL_ID", default="")
+COGNITO_APP_CLIENT_ID = env.str("COGNITO_APP_CLIENT_ID", default="")
+COGNITO_APP_CLIENT_SECRET = env.str("COGNITO_APP_CLIENT_SECRET", default="")
+COGNITO_DOMAIN = env.str("COGNITO_DOMAIN", default="")
+COGNITO_REGION_NAME = env.str("COGNITO_REGION_NAME", default="us-east-1")
 COGNITO_REDIRECT_URI = "/cognito-callback"
 COGNITO_LOGOUT_URI = "/"
 
@@ -245,15 +167,7 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
 
-# Automated email settings
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = env.str("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD")
-
-# Import review drive settings
+# Review drive settings (optional, for load_review_drive command)
 REVIEW_DRIVE_ID = env.str("REVIEW_DRIVE_ID", default=None)
 REVIEW_DRIVE_EMAIL = env.str("REVIEW_DRIVE_EMAIL", default=None)
 REVIEW_DRIVE_PASSWORD = env.str("REVIEW_DRIVE_PASSWORD", default=None)
