@@ -2,14 +2,19 @@ version: "3"
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        REQUIREMENTS: requirements/dev.txt
     command:
-      bash -c "if [ \"${ENVIRONMENT}\" = 'dev' ]; then /wait-for-it.sh tcf_db:${DB_PORT} || exit 1; fi && \
+      bash -c "/wait-for-it.sh tcf_db:${DB_PORT} -- \
       python manage.py migrate && \
       python manage.py collectstatic --noinput && \
       python manage.py invalidate_cachalot tcf_website && \
       echo 'Starting Django Server...' && \
       python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=tcf_core.settings.dev
     volumes:
       - .:/app
       - /app/db/ # exclude the subfolder to prevent potential interference
