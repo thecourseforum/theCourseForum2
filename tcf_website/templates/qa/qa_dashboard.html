@@ -2,13 +2,210 @@
 {% load static %}
 
 
-<link rel="stylesheet" href="{% static 'qa/qa_dashboard.css' %}">
-<script type="module" src="{% static 'qa/sort_qa.js' %}"></script>
+{% block title %}Q & A | theCourseForum{% endblock %}
 
-<div class="panel">
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'qa/qa_dashboard.css' %}">
+{% endblock %}
 
-</div>
-<div class="question-container">
+{% block content %}
+    <div class="qa-container">
+        <!-- Left Sidebar: Posts List -->
+        <div class="qa-sidebar">
+            <!-- Header with New Post button and Search -->
+            <div class="qa-header">
+                <button class="btn-new-post">
+                    <i class="fa fa-plus"></i> New Post
+                </button>
+                <div class="search-container">
+                    <i class="fa fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search posts...">
+                </div>
+            </div>
+
+            <!-- Filter/Category Section -->
+            <div class="qa-filters">
+                <button class="filter-btn active">
+                    <i class="fa fa-list"></i> Filter
+                </button>
+                <div class="dropdown">
+                </div>
+            </div>
+
+            <!-- Posts List -->
+            <div class="posts-list">
+                <!-- Sample Post Item -->
+                <div class="post-item active">
+                    <div class="post-header">
+                        <span class="post-tag">CS 2100</span>
+                        <span class="post-title">Final Grades</span>
+                        <span class="post-date">12/22/25</span>
+                    </div>
+                    <div class="post-preview">
+                        How difficult is CS 2100?
+                    </div>
+                    <div class="post-footer">
+                    </div>
+                </div>
+
+                <!-- Add more sample posts -->
+                <div class="post-item">
+                    <div class="post-header">
+                        <span class="post-tag">CS 3100</span>
+                        <span class="post-title">Language</span>
+                        <span class="post-date">12/6/25</span>
+                    </div>
+                    <div class="post-preview">
+                        What language is used in this course?
+                    </div>
+                    <div class="post-footer">
+                        <i class="fa fa-exclamation-circle text-warning"></i>
+                    </div>
+                </div>
+
+                <div class="post-item">
+                    <div class="post-header">
+                        <span class="post-tag">ENWR 1510</span>
+                        <span class="post-title">Teacher Question</span>
+                        <span class="post-date">12/6/25</span>
+                    </div>
+                    <div class="post-preview">
+                        Which teacher/suject is recommended?
+                    </div>
+                    <div class="post-footer">
+                        <i class="fa fa-exclamation-circle text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Content: Post Display -->
+        <div class="qa-content">
+            <!-- Top Navigation -->
+            <div class="content-nav">
+                <div class="post-info">
+                    <h3>CS 2100</h3>
+                </div>
+                <button class="nav-btn">
+                    <i class="fa fa-ellipsis-v"></i>
+                </button>
+            </div>
+
+            <!-- Post Content -->
+            <div class="post-content">
+                <!-- Main Question -->
+                <div class="main-question">
+                    <h2 class="post-content-title">Final Grades</h2>
+                    <div class="post-meta">
+                        <span>Updated 3 weeks ago by Anonymous</span>
+                    </div>
+
+                    <div class="post-body">
+                        <p>How difficult is CS 2100?</p>
+                    </div>
+
+                    <div class="post-tags">
+                        <span class="tag">Course Inquiry</span>
+                    </div>
+
+                    <!-- Post Actions -->
+                    <div class="post-actions">
+                        <button class="action-btn">
+                            <i class="fa fa-pencil"></i> Edit
+                        </button>
+                        <button class="action-btn">
+                            <i class="fa fa-thumbs-up"></i> 3
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Comments/Replies Section -->
+                <div class="comments-section">
+                    <h3 class="comments-header">Responses</h3>
+
+                    <div class="thread-container">
+                        <!-- Reply 1 -->
+                        <div class="thread-post">
+                            <div class="post-avatar">
+                                <i class="fa fa-user-circle"></i>
+                            </div>
+                            <div class="post-main">
+                                <div class="post-header-info">
+                                    <span class="post-author">Student</span>
+                                    <span class="post-time">4 weeks ago</span>
+                                </div>
+                                <div class="post-body">
+                                    <p>I found the course not too difficult as long as you keep up with the homeworks and studied sufficiently for the quizzes. I'd love to hear what others think!</p>
+                                </div>
+                                <div class="post-actions">
+                                    <button class="action-btn">
+                                        <i class="fa fa-thumbs-up"></i> 3
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nested Reply 1.1 -->
+                        <div class="thread-post reply-indent">
+                            <div class="reply-line"></div>
+                            <div class="post-avatar">
+                                <i class="fa fa-user-circle"></i>
+                            </div>
+                            <div class="post-main">
+                                <div class="post-header-info">
+                                    <span class="post-author">Student</span>
+                                    <span class="post-time">4 weeks ago</span>
+                                </div>
+                                <div class="post-body">
+                                    <p>Yeah I agree with that. Turning in assignments early for the extra credit is a game changer!</p>
+                                </div>
+                                <div class="post-actions">
+                                    <button class="action-btn">
+                                        <i class="fa fa-thumbs-up"></i> 2
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nested Reply 1.1.1 -->
+                        <div class="thread-post reply-indent-2">
+                            <div class="reply-line"></div>
+                            <div class="post-avatar">
+                                <i class="fa fa-user-circle"></i>
+                            </div>
+                            <div class="post-main">
+                                <div class="post-header-info">
+                                    <span class="post-author">Graham Hollon</span>
+                                    <span class="post-time">4 weeks ago</span>
+                                </div>
+                                <div class="post-body">
+                                    <p>Your post is super interesting. By chance I was actually reading about the usefulness of non-coding RNA earlier today including its link to endometrial cancer through the...</p>
+                                </div>
+                                <div class="post-actions">
+                                    <button class="action-btn">
+                                        <i class="fa fa-thumbs-up"></i> 0
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reply Input -->
+                <div class="reply-input-container">
+                    <div class="post-avatar">
+                        <i class="fa fa-user-circle"></i>
+                    </div>
+                    <div class="reply-input-wrapper">
+                        <textarea class="reply-textarea" placeholder="Write a reply..."></textarea>
+                        <button class="btn-submit-reply">Post Reply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
     
-</div>
-
+{% block js %}
+    <script src="{% static 'qa/qa_dashboard.js' %}"></script>
+{% endblock %}
