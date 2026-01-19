@@ -35,6 +35,9 @@
   cursor: pointer;
   margin-bottom: 0.75rem;
   transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-new-post:hover {
@@ -224,14 +227,12 @@
 
 /* Main Question Section */
 .main-question {
-  padding-bottom: 2rem;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #dee2e6;
+  margin-bottom: 1rem;
 }
 
 /* Comments Section */
 .comments-section {
-  margin-top: 2rem;
+  margin-top: 0.5rem;
 }
 
 .comments-header {
@@ -255,17 +256,6 @@
   position: relative;
 }
 
-.post-avatar {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-}
-
-.post-avatar i {
-  font-size: 3rem;
-  color: #adb5bd;
-}
-
 .post-main {
   flex: 1;
   min-width: 0;
@@ -279,15 +269,18 @@
 
 .post-header-info {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
 }
 
-.post-author {
-  font-weight: 700;
-  color: #212529;
-  font-size: 1.05rem;
+.semester-tag {
+  background: var(--accent-color);
+  color: white;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .post-time {
@@ -312,18 +305,6 @@
   margin-bottom: 0.75rem;
 }
 
-.post-attachment {
-  color: var(--main-color);
-  text-decoration: underline;
-  display: inline-block;
-  margin: 0.5rem 0;
-  font-size: 0.95rem;
-}
-
-.post-attachment:hover {
-  color: var(--secondary-color);
-}
-
 .post-tags {
   margin-bottom: 1rem;
 }
@@ -332,9 +313,9 @@
   display: inline-block;
   background: var(--main-color);
   color: white;
-  padding: 0.35rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
   margin-right: 0.5rem;
 }
 
@@ -372,6 +353,10 @@
   color: var(--accent-color);
 }
 
+.thread-container .post-actions {
+  gap: 0.25rem;
+}
+
 .comments-section .action-btn {
   background: transparent;
   border: none;
@@ -383,39 +368,44 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  position: relative;
 }
 
 .comments-section .action-btn:hover {
   color: var(--main-color);
 }
 
+.comments-section .action-btn[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  margin-bottom: 4px;
+}
+
 .action-btn i {
   font-size: 1rem;
 }
 
-.endorsed-badge {
-  display: inline-flex;
-  align-items: center;
-  background: #d4edda;
-  color: #155724;
-  padding: 0.4rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
 /* Reply Indentation */
 .reply-indent {
-  margin-left: 3.5rem;
+  margin-left: 2rem;
 }
 
 .reply-indent-2 {
-  margin-left: 7rem;
+  margin-left: 4rem;
 }
 
 .reply-line {
   position: absolute;
-  left: 24px;
+  left: -1rem;
   top: 0;
   bottom: 0;
   width: 2px;
@@ -457,9 +447,10 @@
   background: var(--main-color);
   color: white;
   border: none;
-  padding: 0.5rem 1.5rem;
+  padding: 0.35rem 1rem;
   border-radius: 4px;
   font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: background 0.2s;
 }
