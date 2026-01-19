@@ -27,3 +27,5 @@ RUN if [ "$INSTALL_DEV" = "true" ]; then \
 COPY . /app/
 
 RUN chmod +x /app/scripts/container-startup.sh
+
+ENTRYPOINT ["/app/scripts/container-startup.sh"]
