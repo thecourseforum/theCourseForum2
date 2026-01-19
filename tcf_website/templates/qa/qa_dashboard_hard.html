@@ -1,0 +1,262 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+
+{% block title %}Q&A | theCourseForum{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'qa/qa_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="qa-container">
+        <!-- Left Sidebar: Posts List -->
+        <div class="qa-sidebar">
+            <!-- Header with New Post button and Search -->
+            <div class="qa-header">
+                <button class="btn-new-post">
+                    <i class="fa fa-plus"></i> New Post
+                </button>
+                <div class="search-container">
+                    <i class="fa fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search posts...">
+                </div>
+            </div>
+
+            <!-- Filter/Category Section -->
+            <div class="qa-filters">
+                <button class="filter-btn active">
+                    <i class="fa fa-list"></i> Filter
+                </button>
+                <div class="dropdown">
+                </div>
+            </div>
+
+            <!-- Posts List -->
+            <div class="posts-list">
+                <!-- Sample Post Item -->
+                <div class="post-item active">
+                    <div class="post-header">
+                        <span class="post-tag">CS 2100</span>
+                        <span class="post-title">Final Grades</span>
+                        <span class="post-date">12/22/25</span>
+                    </div>
+                    <div class="post-preview">
+                        How difficult is CS 2100?
+                    </div>
+                    <div class="post-footer">
+                    </div>
+                </div>
+
+                <!-- Add more sample posts -->
+                <div class="post-item">
+                    <div class="post-header">
+                        <span class="post-tag">CS 3100</span>
+                        <span class="post-title">Language</span>
+                        <span class="post-date">12/6/25</span>
+                    </div>
+                    <div class="post-preview">
+                        What language is used in this course?
+                    </div>
+                    <div class="post-footer">
+                        <i class="fa fa-exclamation-circle text-warning"></i>
+                    </div>
+                </div>
+
+                <div class="post-item">
+                    <div class="post-header">
+                        <span class="post-tag">ENWR 1510</span>
+                        <span class="post-title">Teacher Question</span>
+                        <span class="post-date">12/6/25</span>
+                    </div>
+                    <div class="post-preview">
+                        Which teacher/suject is recommended?
+                    </div>
+                    <div class="post-footer">
+                        <i class="fa fa-exclamation-circle text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Content: Post Display -->
+        <div class="qa-content">
+            <!-- Top Navigation -->
+            <div class="content-nav">
+                <div class="post-info">
+                    <h3>CS 2100</h3>
+                </div>
+                <button class="nav-btn">
+                    <i class="fa fa-ellipsis-v"></i>
+                </button>
+            </div>
+
+            <!-- Post Content -->
+            <div class="post-content">
+                <!-- Main Question -->
+                <div class="main-question">
+                    <h2 class="post-content-title">Final Grades</h2>
+                    <div class="post-meta">
+                        <span>Updated 3 weeks ago</span>
+                    </div>
+
+                    <div class="post-body">
+                        <p>How difficult is CS 2100?</p>
+                    </div>
+
+                    <div class="post-tags">
+                        <span class="tag">Course Inquiry</span>
+                    </div>
+
+                    <!-- Post Actions -->
+                    <div class="post-actions">
+                        <button class="action-btn">
+                            <i class="fa fa-pencil"></i> Edit
+                        </button>
+                        <button class="action-btn">
+                            <i class="fa fa-thumbs-up"></i> 3
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Comments/Replies Section -->
+                <div class="comments-section">
+                    <h3 class="comments-header">Responses</h3>
+
+                    <div class="thread-container">
+                        <!-- Reply 1 -->
+                        <div class="thread-post">
+                            <div class="post-main">
+                                <div class="post-header-info">
+                                    <span class="semester-tag">Fall 2025</span>
+                                    <span class="post-time">4 weeks ago</span>
+                                </div>
+                                <div class="post-body">
+                                    <p>I found the course not too difficult as long as you keep up with the homeworks and studied sufficiently for the quizzes. I'd love to hear what others think!</p>
+                                </div>
+                                <div class="post-actions">
+                                    <div class="action-btn">
+                                        <i class="fa fa-thumbs-up"></i> 3
+                                    </div>
+                                    <div class="action-btn" title="Reply">
+                                        <i class="fa fa-reply"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nested Reply 1.1 -->
+                        <div class="thread-post reply-indent">
+                            <div class="reply-line"></div>
+                            <div class="post-main">
+                                <div class="post-header-info">
+                                    <span class="semester-tag">Spring 2025</span>
+                                    <span class="post-time">4 weeks ago</span>
+                                </div>
+                                <div class="post-body">
+                                    <p>Yeah I agree with that. Turning in assignments early for the extra credit is a game changer!</p>
+                                </div>
+                                <div class="post-actions">
+                                    <div class="action-btn">
+                                        <i class="fa fa-thumbs-up"></i> 2
+                                    </div>
+                                    <div class="action-btn" title="Reply">
+                                        <i class="fa fa-reply"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nested Reply 1.1.1 -->
+                        <div class="thread-post reply-indent-2">
+                            <div class="reply-line"></div>
+                            <div class="post-main">
+                                <div class="post-header-info">
+                                    <span class="semester-tag">Fall 2024</span>
+                                    <span class="post-time">4 weeks ago</span>
+                                </div>
+                                <div class="post-body">
+                                    <p>I also agree!</p>
+                                </div>
+                                <div class="post-actions">
+                                    <div class="action-btn">
+                                        <i class="fa fa-thumbs-up"></i> 0
+                                    </div>
+                                    <div class="action-btn" title="Reply">
+                                        <i class="fa fa-reply"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reply Input -->
+                <div class="reply-input-container">
+                    <div class="reply-input-wrapper">
+                        <textarea class="reply-textarea" placeholder="Write a response..."></textarea>
+                        <button class="btn-submit-reply">Post</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Post Modal -->
+    <div id="newPostModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Create New Post</h2>
+                <button class="modal-close" id="closeModal">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <form id="newPostForm" class="modal-body">
+                <div class="form-group">
+                    <label for="postTitle">Title</label>
+                    <input type="text" id="postTitle" name="title" placeholder="Enter post title..." required>
+                </div>
+                <div class="form-group">
+                    <label for="postDescription">Description</label>
+                    <textarea id="postDescription" name="description" placeholder="Describe your question or topic..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="primaryTag">Primary Tag</label>
+                    <select id="primaryTag" name="primary_tag" required>
+                        <option value="">Select a course...</option>
+                        <option value="CS 1110">CS 1110</option>
+                        <option value="CS 2100">CS 2100</option>
+                        <option value="CS 2150">CS 2150</option>
+                        <option value="CS 3100">CS 3100</option>
+                        <option value="CS 3240">CS 3240</option>
+                        <option value="CS 4102">CS 4102</option>
+                        <option value="ENWR 1510">ENWR 1510</option>
+                        <option value="MATH 1310">MATH 1310</option>
+                        <option value="MATH 2310">MATH 2310</option>
+                        <option value="ECON 2010">ECON 2010</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="postTags">Tags</label>
+                    <select id="postTags" name="tags" multiple>
+                            <option value="Course Inquiry">Course Inquiry</option>
+                            <option value="Professor Question">Professor Question</option>
+                            <option value="Study Tips">Study Tips</option>
+                            <option value="Exam Help">Exam Help</option>
+                            <option value="Career Advice">Career Advice</option>
+                            <option value="General Discussion">General Discussion</option>
+                    </select>
+                    <p class="form-hint">Hold Ctrl/Cmd to select multiple tags</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="cancelModal">Cancel</button>
+                    <button type="submit" class="btn-submit">Create Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+    
+{% block js %}
+    <script src="{% static 'qa/qa_dashboard.js' %}"></script>
+{% endblock %}

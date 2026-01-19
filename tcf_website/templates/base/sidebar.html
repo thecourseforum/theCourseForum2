@@ -39,7 +39,6 @@
       {% endif %}
     </li>
 
-    
     <li>
       {% if user.is_authenticated %}
       <a href="{% url 'qa' %}"
@@ -65,6 +64,33 @@
       </a>
       {% endif %}
     </li>
+
+    <li>
+      {% if user.is_authenticated %}
+      <a href="{% url 'qaTest' %}"
+        class="list-group-item list-group-item-action pb-0
+        {% if request.resolver_match.url_name == 'qaTest' %}active{% endif %}">
+        <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-info" style="top: 12px; left: 80px; transform: translate(-50%, -50%);">New</span>
+        <h4> 
+          <i class="fa fa-comments" aria-hidden="true" style="width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
+        </h4>
+        <p>Q&A Test</p>
+        <hr>
+      </a>
+      {% else %}
+      <a href="#loginModal" data-toggle="modal"
+       class="list-group-item list-group-item-action pb-0
+       {% if request.resolver_match.url_name == 'qaTest' %}active{% endif %}">
+       <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-info" style="top: 12px; left: 80px; transform: translate(-50%, -50%);">New</span>
+      <h4>
+        <i class="fa fa-comments" aria-hidden="true" style="width: 1em; height: 1em; vertical-align: middle; display: inline-block; filter: invert(100%) brightness(150%);"></i>
+      </h4>
+      <p>Q&A Test</p>
+      <hr>
+      </a>
+      {% endif %}
+    </li>
+
     <li>
       {% if user.is_authenticated %}
 

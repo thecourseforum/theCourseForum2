@@ -1,0 +1,80 @@
+{% load static %}
+
+<!-- Response/Reply Item -->
+<div class="thread-post {% if depth > 0 %}reply-indent{% if depth > 1 %}-{{ depth }}{% endif %}{% endif %}" 
+     data-response-id="{{ response.id }}"
+     data-depth="{{ depth }}">
+    {% if depth > 0 %}
+    <div class="reply-line"></div>
+    {% endif %}
+    <div class="post-main">
+        <div class="post-header-info">
+            {% if response.semester %}
+            <span class="semester-tag">{{ response.semester }}</span>
+            {% endif %}
+            <span class="response-author">{{ response.user.first_name|default:"Anonymous" }}</span>
+            <span class="post-time">{{ response.created|timesince }} ago</span>
+            {% if response.is_accepted %}
+            <span class="accepted-badge" title="Accepted Answer">
+                <i class="fa fa-check-circle"></i> Accepted
+            </span>
+            {% endif %}
+        </div>
+        <div class="post-body">
+            <p>{{ response.content|linebreaks }}</p>
+        </div>
+        <div class="post-actions">
+            {% if user.is_authenticated %}
+            <button class="action-btn vote-btn {% if response.user_vote == 1 %}voted{% endif %}" 
+                    data-type="response" 
+                    data-id="{{ response.id }}" 
+                    data-action="up">
+                <i class="fa fa-thumbs-up"></i>
+            </button>
+            <span class="vote-count" id="response-vote-count-{{ response.id }}">{{ response.vote_count|default:0 }}</span>
+            <button class="action-btn vote-btn {% if response.user_vote == -1 %}voted{% endif %}" 
+                    data-type="response" 
+                    data-id="{{ response.id }}" 
+                    data-action="down">
+                <i class="fa fa-thumbs-down"></i>
+            </button>
+            
+            {% if depth < 2 %}
+            <button class="action-btn reply-btn" 
+                    data-response-id="{{ response.id }}"
+                    data-post-id="{{ response.post_id }}"
+                    title="Reply">
+                <i class="fa fa-reply"></i>
+            </button>
+            {% endif %}
+            
+            {% if user == response.user %}
+            <div class="dropdown d-inline-block">
+                <button class="action-btn dropdown-toggle" type="button" data-toggle="dropdown">
+                    <i class="fa fa-ellipsis-h"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item edit-response-btn" href="#" data-response-id="{{ response.id }}">
+                        <i class="fa fa-pencil"></i> Edit
+                    </a>
+                    <a class="dropdown-item delete-response-btn text-danger" href="#" data-response-id="{{ response.id }}">
+                        <i class="fa fa-trash"></i> Delete
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            {% else %}
+            <span class="vote-display">
+                <i class="fa fa-thumbs-up"></i> {{ response.vote_count|default:0 }}
+            </span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Nested Replies -->
+{% if response.nested_replies %}
+{% for reply in response.nested_replies %}
+{% include 'forum/_response_item.html' with response=reply depth=reply.depth %}
+{% endfor %}
+{% endif %}

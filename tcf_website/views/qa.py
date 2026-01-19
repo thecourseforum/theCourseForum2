@@ -16,10 +16,16 @@ from django.views import generic
 from ..models import Answer, Question
 
 
-# @login_required
+@login_required
 def qa_dashboard(request):
     """Q&A Dashboard view."""
     return render(request, "qa/qa_dashboard.html")
+
+
+@login_required
+def qa_dashboard_hard(request):
+    """Hardedcoded Q&A Dashboard"""
+    return render(request, "qa/qa_dashboard_hard.html")
 
 
 class QuestionForm(forms.ModelForm):

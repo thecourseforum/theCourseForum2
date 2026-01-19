@@ -1,0 +1,239 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Forum | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'forum/forum_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="qa-container">
+    <!-- Left Sidebar: Posts List -->
+    <div class="qa-sidebar">
+        <!-- Header with New Post button and Search -->
+        <div class="qa-header">
+            {% if user.is_authenticated %}
+            <button class="btn-new-post" id="openNewPostModal">
+                <i class="fa fa-plus"></i> New Post
+            </button>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn-new-post">
+                <i class="fa fa-sign-in"></i> Login to Post
+            </a>
+            {% endif %}
+            <div class="search-container">
+                <i class="fa fa-search search-icon"></i>
+                <input type="text" 
+                       class="search-input" 
+                       id="searchInput"
+                       placeholder="Search posts..."
+                       value="{{ search_query }}">
+            </div>
+        </div>
+
+        <!-- Filter/Category Section -->
+        <div class="qa-filters">
+            <div class="dropdown">
+                <button class="filter-btn dropdown-toggle" type="button" id="categoryDropdown" data-toggle="dropdown">
+                    <i class="fa fa-filter"></i> 
+                    {% if selected_category %}
+                        {{ selected_category }}
+                    {% else %}
+                        All Categories
+                    {% endif %}
+                </button>
+                <div class="dropdown-menu" aria-labelledby="categoryDropdown">
+                    <a class="dropdown-item {% if not selected_category %}active{% endif %}" 
+                       href="{% url 'forum_dashboard' %}{% if search_query %}?q={{ search_query }}{% endif %}">
+                        All Categories
+                    </a>
+                    {% for category in categories %}
+                    <a class="dropdown-item {% if selected_category == category.slug %}active{% endif %}" 
+                       href="{% url 'forum_dashboard' %}?category={{ category.slug }}{% if search_query %}&q={{ search_query }}{% endif %}">
+                        <span class="category-dot" style="background-color: {{ category.color }}"></span>
+                        {{ category.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Posts List -->
+        <div class="posts-list" id="postsList">
+            {% for post in posts %}
+            <div class="post-item {% if selected_post.id == post.id %}active{% endif %}" 
+                 data-post-id="{{ post.id }}">
+                <div class="post-header">
+                    {% if post.course %}
+                    <span class="post-tag">{{ post.course.subdepartment.mnemonic }} {{ post.course.number }}</span>
+                    {% elif post.category %}
+                    <span class="post-tag" style="background-color: {{ post.category.color }}20; color: {{ post.category.color }}">
+                        {{ post.category.name }}
+                    </span>
+                    {% endif %}
+                    <span class="post-title">{{ post.title|truncatechars:30 }}</span>
+                    <span class="post-date">{{ post.created|date:"n/j/y" }}</span>
+                </div>
+                <div class="post-preview">
+                    {{ post.content|truncatechars:80 }}
+                </div>
+                <div class="post-footer">
+                    <span class="post-stats">
+                        <i class="fa fa-thumbs-up"></i> {{ post.vote_count }}
+                        <i class="fa fa-comment ml-2"></i> {{ post.reply_count }}
+                    </span>
+                    {% if post.is_pinned %}
+                    <i class="fa fa-thumb-tack text-primary" title="Pinned"></i>
+                    {% endif %}
+                    {% if post.is_locked %}
+                    <i class="fa fa-lock text-warning" title="Locked"></i>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-posts">
+                <i class="fa fa-comments-o fa-3x mb-3"></i>
+                <p>No posts found.</p>
+                {% if user.is_authenticated %}
+                <button class="btn btn-primary btn-sm" id="openNewPostModalEmpty">
+                    Create the first post!
+                </button>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Right Content: Post Display -->
+    <div class="qa-content" id="postContent">
+        {% if selected_post %}
+        {% include 'forum/_post_detail.html' with post=selected_post responses=responses %}
+        {% else %}
+        <div class="no-post-selected">
+            <i class="fa fa-hand-o-left fa-3x mb-3"></i>
+            <p>Select a post to view its details</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- New Post Modal -->
+<div id="newPostModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2>Create New Post</h2>
+            <button class="modal-close" id="closeModal">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+        <form id="newPostForm" class="modal-body" method="POST" action="{% url 'forum_create_post' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="postTitle">Title <span class="required">*</span></label>
+                <input type="text" 
+                       id="postTitle" 
+                       name="title" 
+                       class="form-control"
+                       placeholder="Enter post title..." 
+                       required
+                       maxlength="255">
+            </div>
+            <div class="form-group">
+                <label for="postContent">Description <span class="required">*</span></label>
+                <textarea id="postContent" 
+                          name="content" 
+                          class="form-control"
+                          placeholder="Describe your question or topic..." 
+                          required
+                          rows="5"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="courseSearch">Course (Optional)</label>
+                <input type="text" 
+                       id="courseSearch" 
+                       class="form-control"
+                       placeholder="Search for a course (e.g., CS 2100)..."
+                       autocomplete="off">
+                <input type="hidden" id="courseId" name="course">
+                <div id="courseResults" class="course-search-results"></div>
+                <p class="form-hint">Associate your post with a specific course</p>
+            </div>
+            <div class="form-group">
+                <label for="postCategory">Category</label>
+                <select id="postCategory" name="category" class="form-control">
+                    <option value="">Select a category...</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="cancelModal">Cancel</button>
+                <button type="submit" class="btn-submit">Create Post</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Reply Modal (for nested replies) -->
+<div id="replyModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container modal-sm">
+        <div class="modal-header">
+            <h2>Reply</h2>
+            <button class="modal-close" id="closeReplyModal">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+        <form id="replyForm" class="modal-body">
+            {% csrf_token %}
+            <input type="hidden" id="replyParentId" name="parent">
+            <input type="hidden" id="replyPostId" name="post_id">
+            <div class="form-group">
+                <label for="replySemester">When did you take this course?</label>
+                <select id="replySemester" name="semester" class="form-control">
+                    <option value="">Select semester (optional)...</option>
+                    {% for semester in semesters %}
+                    <option value="{{ semester.id }}">{{ semester }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="replyContent">Your Reply <span class="required">*</span></label>
+                <textarea id="replyContent" 
+                          name="content" 
+                          class="form-control"
+                          placeholder="Write your reply..." 
+                          required
+                          rows="4"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="cancelReplyModal">Cancel</button>
+                <button type="submit" class="btn-submit">Post Reply</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+    
+{% block js %}
+<script>
+    // Pass URLs to JavaScript
+    const FORUM_URLS = {
+        postDetail: '{% url "forum_post_detail" post_id=0 %}'.replace('0', ''),
+        createPost: '{% url "forum_create_post" %}',
+        createResponse: '{% url "forum_create_response" post_id=0 %}'.replace('0', ''),
+        votePost: '{% url "forum_vote_post" post_id=0 %}'.replace('0', ''),
+        voteResponse: '{% url "forum_vote_response" response_id=0 %}'.replace('0', ''),
+        editPost: '{% url "forum_edit_post" post_id=0 %}'.replace('0', ''),
+        deletePost: '{% url "forum_delete_post" post_id=0 %}'.replace('0', ''),
+        editResponse: '{% url "forum_edit_response" response_id=0 %}'.replace('0', ''),
+        deleteResponse: '{% url "forum_delete_response" response_id=0 %}'.replace('0', ''),
+        searchCourses: '{% url "forum_search_courses" %}',
+        dashboard: '{% url "forum_dashboard" %}',
+    };
+    const IS_AUTHENTICATED = {{ user.is_authenticated|yesno:"true,false" }};
+    const CSRF_TOKEN = '{{ csrf_token }}';
+</script>
+<script src="{% static 'forum/forum_dashboard.js' %}"></script>
+{% endblock %}

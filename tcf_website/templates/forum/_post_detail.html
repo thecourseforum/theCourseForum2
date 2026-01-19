@@ -1,0 +1,160 @@
+{% load static %}
+
+<!-- Top Navigation -->
+<div class="content-nav">
+    <div class="post-info">
+        {% if post.course %}
+        <h3>
+            <a href="{% url 'course' mnemonic=post.course.subdepartment.mnemonic course_number=post.course.number %}">
+                {{ post.course.subdepartment.mnemonic }} {{ post.course.number }}
+            </a>
+        </h3>
+        {% elif post.category %}
+        <h3>
+            <span class="category-badge" style="background-color: {{ post.category.color }}20; color: {{ post.category.color }}">
+                {{ post.category.name }}
+            </span>
+        </h3>
+        {% else %}
+        <h3>General Discussion</h3>
+        {% endif %}
+    </div>
+    {% if user.is_authenticated and user == post.user %}
+    <div class="dropdown">
+        <button class="nav-btn dropdown-toggle" type="button" data-toggle="dropdown">
+            <i class="fa fa-ellipsis-v"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item edit-post-btn" href="#" data-post-id="{{ post.id }}">
+                <i class="fa fa-pencil"></i> Edit
+            </a>
+            <a class="dropdown-item delete-post-btn text-danger" href="#" data-post-id="{{ post.id }}">
+                <i class="fa fa-trash"></i> Delete
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Post Content -->
+<div class="post-content">
+    <!-- Main Question -->
+    <div class="main-question">
+        <h2 class="post-content-title">{{ post.title }}</h2>
+        <div class="post-meta">
+            <span class="post-author">
+                <i class="fa fa-user"></i> {{ post.user.first_name|default:"Anonymous" }}
+            </span>
+            <span class="post-timestamp">
+                <i class="fa fa-clock-o"></i> {{ post.created|timesince }} ago
+            </span>
+            {% if post.modified > post.created %}
+            <span class="post-edited" title="Last edited {{ post.modified|date:'M d, Y g:i a' }}">
+                (edited)
+            </span>
+            {% endif %}
+        </div>
+
+        <div class="post-body">
+            <p>{{ post.content|linebreaks }}</p>
+        </div>
+
+        {% if post.course %}
+        <div class="post-tags">
+            <a href="{% url 'course' mnemonic=post.course.subdepartment.mnemonic course_number=post.course.number %}" 
+               class="tag course-tag">
+                {{ post.course.subdepartment.mnemonic }} {{ post.course.number }}
+            </a>
+        </div>
+        {% endif %}
+        
+        {% if post.category %}
+        <div class="post-tags">
+            <span class="tag" style="background-color: {{ post.category.color }}20; color: {{ post.category.color }}">
+                {{ post.category.name }}
+            </span>
+        </div>
+        {% endif %}
+
+        <!-- Post Actions -->
+        <div class="post-actions">
+            {% if user.is_authenticated %}
+            <button class="action-btn vote-btn {% if post.user_vote == 1 %}voted{% endif %}" 
+                    data-type="post" 
+                    data-id="{{ post.id }}" 
+                    data-action="up">
+                <i class="fa fa-thumbs-up"></i>
+            </button>
+            <span class="vote-count" id="post-vote-count-{{ post.id }}">{{ post.vote_count|default:0 }}</span>
+            <button class="action-btn vote-btn {% if post.user_vote == -1 %}voted{% endif %}" 
+                    data-type="post" 
+                    data-id="{{ post.id }}" 
+                    data-action="down">
+                <i class="fa fa-thumbs-down"></i>
+            </button>
+            {% else %}
+            <span class="vote-display">
+                <i class="fa fa-thumbs-up"></i> {{ post.vote_count|default:0 }}
+            </span>
+            {% endif %}
+            
+            {% if user.is_authenticated and user == post.user %}
+            <button class="action-btn edit-post-btn ml-3" data-post-id="{{ post.id }}">
+                <i class="fa fa-pencil"></i> Edit
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Comments/Replies Section -->
+    <div class="comments-section">
+        <h3 class="comments-header">
+            Responses 
+            <span class="response-count">({{ responses|length }})</span>
+        </h3>
+
+        <div class="thread-container" id="responsesContainer">
+            {% for response in responses %}
+            {% include 'forum/_response_item.html' with response=response depth=0 %}
+            {% empty %}
+            <div class="no-responses">
+                <p>No responses yet. Be the first to respond!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Reply Input -->
+    {% if user.is_authenticated %}
+    {% if not post.is_locked %}
+    <div class="reply-input-container">
+        <form id="mainResponseForm" method="POST" action="{% url 'forum_create_response' post_id=post.id %}">
+            {% csrf_token %}
+            <div class="reply-input-wrapper">
+                <div class="reply-form-row">
+                    <select name="semester" class="form-control semester-select">
+                        <option value="">Select semester (optional)...</option>
+                        {% for semester in semesters %}
+                        <option value="{{ semester.id }}">{{ semester }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <textarea class="reply-textarea" 
+                          name="content" 
+                          placeholder="Write a response..."
+                          required></textarea>
+                <button type="submit" class="btn-submit-reply">Post</button>
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <div class="locked-notice">
+        <i class="fa fa-lock"></i> This post is locked and cannot receive new responses.
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="login-prompt">
+        <a href="{% url 'login' %}">Login</a> to post a response.
+    </div>
+    {% endif %}
+</div>

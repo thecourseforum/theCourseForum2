@@ -14,6 +14,7 @@ from django.db.models import (
     Avg,
     Case,
     CharField,
+    Count,
     Exists,
     ExpressionWrapper,
     F,
@@ -1685,6 +1686,284 @@ class VoteAnswer(models.Model):
                 fields=["user", "answer"],
                 name="unique vote per user and answer",
             )
+        ]
+
+
+class ForumCategory(models.Model):
+    """Category for forum posts."""
+
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+    color = models.CharField(max_length=7, default="#6c757d")  # Hex color for UI
+
+    class Meta:
+        verbose_name_plural = "Forum Categories"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class ForumPost(models.Model):
+    """Main forum post/question model."""
+
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    # Optional course/instructor association
+    course = models.ForeignKey(
+        "Course",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        help_text="Optional: Associate this post with a specific course",
+    )
+    instructor = models.ForeignKey(
+        "Instructor",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        help_text="Optional: Associate this post with a specific instructor",
+    )
+
+    # Categorization
+    category = models.ForeignKey(
+        ForumCategory, on_delete=models.SET_NULL, null=True, blank=True
+    )
+
+    # Moderation
+    is_pinned = models.BooleanField(default=False)
+    is_locked = models.BooleanField(default=False)
+    is_hidden = models.BooleanField(default=False)
+
+    # Semester when the user took/is taking the course (optional context)
+    semester = models.ForeignKey(
+        "Semester", on_delete=models.SET_NULL, null=True, blank=True
+    )
+
+    class Meta:
+        ordering = ["-is_pinned", "-created"]
+        indexes = [
+            models.Index(fields=["-created"]),
+            models.Index(fields=["course"]),
+            models.Index(fields=["user"]),
+            models.Index(fields=["category"]),
+        ]
+
+    def __str__(self):
+        return self.title
+
+    def response_count(self):
+        """Get total number of responses including nested replies."""
+        return ForumResponse.objects.filter(post=self, is_hidden=False).count()
+
+    def vote_score(self):
+        """Calculate net vote score."""
+        result = self.forumpostvote_set.aggregate(
+            score=Coalesce(Sum("value"), Value(0))
+        )
+        return result["score"]
+
+    def upvote(self, user):
+        """Upvote the post."""
+        existing = ForumPostVote.objects.filter(user=user, post=self).first()
+        if existing:
+            if existing.value == 1:
+                existing.delete()  # Remove upvote if already upvoted
+                return
+            existing.delete()
+        ForumPostVote.objects.create(value=1, user=user, post=self)
+
+    def downvote(self, user):
+        """Downvote the post."""
+        existing = ForumPostVote.objects.filter(user=user, post=self).first()
+        if existing:
+            if existing.value == -1:
+                existing.delete()  # Remove downvote if already downvoted
+                return
+            existing.delete()
+        ForumPostVote.objects.create(value=-1, user=user, post=self)
+
+    def get_course_code(self):
+        """Get the course code if a course is associated."""
+        if self.course:
+            return f"{self.course.subdepartment.mnemonic} {self.course.number}"
+        return None
+
+    @staticmethod
+    def get_filtered_posts(user=None, course=None, category=None, search_query=None):
+        """Get filtered and annotated posts."""
+        posts = ForumPost.objects.filter(is_hidden=False).select_related(
+            "user", "course", "course__subdepartment", "category", "instructor"
+        )
+
+        if course:
+            posts = posts.filter(course=course)
+
+        if category:
+            posts = posts.filter(category=category)
+
+        if search_query:
+            posts = posts.filter(
+                Q(title__icontains=search_query) | Q(content__icontains=search_query)
+            )
+
+        posts = posts.annotate(
+            vote_count=Coalesce(Sum("forumpostvote__value"), Value(0)),
+            reply_count=Count(
+                "forumresponse", filter=Q(forumresponse__is_hidden=False)
+            ),
+        )
+
+        if user and user.is_authenticated:
+            posts = posts.annotate(
+                user_vote=Coalesce(
+                    Sum("forumpostvote__value", filter=Q(forumpostvote__user=user)),
+                    Value(0),
+                )
+            )
+
+        return posts.order_by("-is_pinned", "-created")
+
+    @staticmethod
+    def paginate(posts, page_number, per_page=15):
+        """Paginate posts."""
+        paginator = Paginator(posts, per_page)
+        try:
+            return paginator.page(page_number)
+        except EmptyPage:
+            return paginator.page(paginator.num_pages)
+
+
+class ForumResponse(models.Model):
+    """Response to a forum post, supports threading."""
+
+    post = models.ForeignKey(ForumPost, on_delete=models.CASCADE)
+    parent = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="replies"
+    )
+    content = models.TextField()
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    # Semester context (when did user take the course)
+    semester = models.ForeignKey(
+        "Semester", on_delete=models.SET_NULL, null=True, blank=True
+    )
+
+    # Moderation
+    is_hidden = models.BooleanField(default=False)
+    is_accepted = models.BooleanField(default=False)  # Mark as accepted answer
+
+    class Meta:
+        ordering = ["created"]
+        indexes = [
+            models.Index(fields=["post", "created"]),
+            models.Index(fields=["parent"]),
+            models.Index(fields=["user"]),
+        ]
+
+    def __str__(self):
+        return f"Response to '{self.post.title}' by {self.user}"
+
+    def vote_score(self):
+        """Calculate net vote score."""
+        result = self.forumresponsevote_set.aggregate(
+            score=Coalesce(Sum("value"), Value(0))
+        )
+        return result["score"]
+
+    def upvote(self, user):
+        """Upvote the response."""
+        existing = ForumResponseVote.objects.filter(user=user, response=self).first()
+        if existing:
+            if existing.value == 1:
+                existing.delete()
+                return
+            existing.delete()
+        ForumResponseVote.objects.create(value=1, user=user, response=self)
+
+    def downvote(self, user):
+        """Downvote the response."""
+        existing = ForumResponseVote.objects.filter(user=user, response=self).first()
+        if existing:
+            if existing.value == -1:
+                existing.delete()
+                return
+            existing.delete()
+        ForumResponseVote.objects.create(value=-1, user=user, response=self)
+
+    def get_nested_replies(self, user=None, depth=0, max_depth=3):
+        """Get nested replies with vote annotations."""
+        if depth >= max_depth:
+            return []
+
+        replies = (
+            ForumResponse.objects.filter(parent=self, is_hidden=False)
+            .select_related("user", "semester")
+            .annotate(vote_count=Coalesce(Sum("forumresponsevote__value"), Value(0)))
+        )
+
+        if user and user.is_authenticated:
+            replies = replies.annotate(
+                user_vote=Coalesce(
+                    Sum(
+                        "forumresponsevote__value",
+                        filter=Q(forumresponsevote__user=user),
+                    ),
+                    Value(0),
+                )
+            )
+
+        result = []
+        for reply in replies:
+            reply.depth = depth + 1
+            reply.nested_replies = reply.get_nested_replies(user, depth + 1, max_depth)
+            result.append(reply)
+
+        return result
+
+
+class ForumPostVote(models.Model):
+    """Vote on a forum post."""
+
+    value = models.IntegerField()  # 1 for upvote, -1 for downvote
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    post = models.ForeignKey(ForumPost, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "post"], name="unique_forum_post_vote"
+            )
+        ]
+        indexes = [
+            models.Index(fields=["post"]),
+        ]
+
+
+class ForumResponseVote(models.Model):
+    """Vote on a forum response."""
+
+    value = models.IntegerField()  # 1 for upvote, -1 for downvote
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    response = models.ForeignKey(ForumResponse, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "response"], name="unique_forum_response_vote"
+            )
+        ]
+        indexes = [
+            models.Index(fields=["response"]),
         ]
 
 

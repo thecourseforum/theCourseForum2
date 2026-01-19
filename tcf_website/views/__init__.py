@@ -6,12 +6,26 @@
 from .auth import login, logout
 from .browse import (
     browse,
+    club_category,
     course_instructor,
     course_view,
     course_view_legacy,
     department,
     instructor_view,
-    club_category,
+)
+from .forum import (
+    create_post,
+    create_response,
+    delete_post,
+    delete_response,
+    edit_post,
+    edit_response,
+    forum_dashboard,
+    forum_post_detail,
+    get_categories,
+    search_courses,
+    vote_post,
+    vote_response,
 )
 from .index import AboutView, index, privacy, terms
 from .profile import DeleteProfile, profile, reviews
@@ -25,6 +39,7 @@ from .qa import (
     new_answer,
     new_question,
     qa_dashboard,
+    qa_dashboard_hard,
     upvote_answer,
     upvote_question,
 )
