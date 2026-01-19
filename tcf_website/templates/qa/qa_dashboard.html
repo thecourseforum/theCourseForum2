@@ -201,6 +201,60 @@
             </div>
         </div>
     </div>
+
+    <!-- New Post Modal -->
+    <div id="newPostModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Create New Post</h2>
+                <button class="modal-close" id="closeModal">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <form id="newPostForm" class="modal-body">
+                <div class="form-group">
+                    <label for="postTitle">Title</label>
+                    <input type="text" id="postTitle" name="title" placeholder="Enter post title..." required>
+                </div>
+                <div class="form-group">
+                    <label for="postDescription">Description</label>
+                    <textarea id="postDescription" name="description" placeholder="Describe your question or topic..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="primaryTag">Primary Tag (Course)</label>
+                    <select id="primaryTag" name="primary_tag" required>
+                        <option value="">Select a course...</option>
+                        <option value="CS 1110">CS 1110</option>
+                        <option value="CS 2100">CS 2100</option>
+                        <option value="CS 2150">CS 2150</option>
+                        <option value="CS 3100">CS 3100</option>
+                        <option value="CS 3240">CS 3240</option>
+                        <option value="CS 4102">CS 4102</option>
+                        <option value="ENWR 1510">ENWR 1510</option>
+                        <option value="MATH 1310">MATH 1310</option>
+                        <option value="MATH 2310">MATH 2310</option>
+                        <option value="ECON 2010">ECON 2010</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="postTags">Tags</label>
+                    <select id="postTags" name="tags" multiple>
+                            <option value="Course Inquiry">Course Inquiry</option>
+                            <option value="Professor Question">Professor Question</option>
+                            <option value="Study Tips">Study Tips</option>
+                            <option value="Exam Help">Exam Help</option>
+                            <option value="Career Advice">Career Advice</option>
+                            <option value="General Discussion">General Discussion</option>
+                    </select>
+                    <p class="form-hint">Hold Ctrl/Cmd to select multiple tags</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="cancelModal">Cancel</button>
+                    <button type="submit" class="btn-submit">Create Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}
     
 {% block js %}
