@@ -1,0 +1,14 @@
+[project]
+name = "test-django-app"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "boto3>=1.42.43",
+    "django>=6.0.2",
+    "django-environ>=0.12.0",
+    "django-storages[s3]>=1.14.6",
+    "gunicorn>=25.0.2",
+    "psycopg[binary]>=3.3.2",
+    "python-dotenv>=1.2.1",
+]

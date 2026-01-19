@@ -1,0 +1,5 @@
+# Include base requirements
+-r base.txt
+
+# Development tools
+python-dotenv>=1.2.0

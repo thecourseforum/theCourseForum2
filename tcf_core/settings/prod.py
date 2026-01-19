@@ -13,8 +13,6 @@ ALLOWED_HOSTS = [
 ]
 
 # AWS S3 for static files
-AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME = env.str("AWS_S3_REGION_NAME", default="us-east-1")
 AWS_S3_CUSTOM_DOMAIN = env.str(
@@ -25,7 +23,7 @@ AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 
 STORAGES = {
     "default": {"BACKEND": "storages.backends.s3.S3Storage", "OPTIONS": {}},
-    "staticfiles": {"BACKEND": "storages.backends.s3.S3Storage"},
+    "staticfiles": {"BACKEND": "storages.backends.s3.S3Storage", "OPTIONS": { "location": "static" } },
 }
 
 # AWS RDS PostgreSQL
