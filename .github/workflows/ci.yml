@@ -46,6 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       code-coverage: ${{ steps.coverage.outputs.percentage }}
+      money: 100
     services:
       postgres:
         image: postgres:15.4
@@ -106,3 +107,4 @@ jobs:
         run: |
           echo "Pylint, Django Tests, and ESLint jobs completed."
           echo "Code coverage from Django tests: ${{ needs.django.outputs.code-coverage }}"
+          echo "Money value from Django job: ${{ needs.django.outputs.money }}"
