@@ -304,7 +304,22 @@
       "class": "2029",
       "img_filename": "ENG_Arislan_Telek.jpg",
       "github": "ArislanT"
+    },
+    {
+      "name": "Julia Chen",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Julia_Chen.jpg",
+      "github": "juliaxchen"
+    },
+    {
+      "name": "Shrikar Sirobhushanam",
+      "role": "Developer",
+      "class": "2027",
+      "img_filename": "ENG_Shrikar_Sirobhushanam.jpg",
+      "github": "shrikar-siro"
     }
+    
   ],
   "design_team": [
     {

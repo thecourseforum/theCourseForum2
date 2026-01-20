@@ -30,6 +30,7 @@ from ..models import (
     Department,
     Instructor,
     Question,
+    Reply,
     Review,
     School,
     Section,
@@ -177,14 +178,14 @@ def course_view(
 
         # Pull reviews exactly as you do for courses, but filter on club=club
         page_number = request.GET.get("page", 1)
-        paginated_reviews = Review.objects.filter(
+        reviews_qs = Review.objects.filter(
             club=club,
             toxicity_rating__lt=settings.TOXICITY_THRESHOLD,
             hidden=False,
         ).exclude(text="")
 
         if request.user.is_authenticated:
-            paginated_reviews = paginated_reviews.annotate(
+            reviews_qs = reviews_qs.annotate(
                 sum_votes=Coalesce(Sum("vote__value"), Value(0)),
                 user_vote=Coalesce(
                     Sum("vote__value", filter=Q(vote__user=request.user)),
@@ -192,11 +193,14 @@ def course_view(
                 ),
             )
 
-        paginated_reviews = Review.sort(
-            paginated_reviews, request.GET.get("method", "")
-        )
+        reviews_qs = Review.sort(reviews_qs, request.GET.get("method", ""))
 
-        paginated_reviews = Review.paginate(paginated_reviews, page_number)
+        reply_prefetch = Prefetch(
+            "replies", queryset=Reply.with_user_vote(request.user)
+        )
+        reviews_qs = reviews_qs.prefetch_related(reply_prefetch)
+
+        paginated_reviews = Review.paginate(reviews_qs, page_number)
 
         # Breadcrumbs for club
         breadcrumbs = [

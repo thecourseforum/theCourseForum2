@@ -12,109 +12,255 @@
                 <div class="review-header mb-2">
                     <div class="d-flex">
                         <div class="review-subject mr-auto">
-                          {% if review.club %}
-                          <a href="{% url 'course' mnemonic=review.club.category.slug course_number=review.club.id %}?mode=clubs">
-                              <h5 class="text-tcf-orange">
-                                <strong>{{ review.club.name }}</strong>
-                              </h5>
-                          </a>
-                          {% else %}
-                          <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
-                              <h5 class="text-tcf-orange">
-                                <strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}
-                              </h5>
-                          </a>
-                          {% endif %}
+                            {% if review.club %}
+                            <a href="{% url 'course' mnemonic=review.club.category.slug course_number=review.club.id %}?mode=clubs">
+                                <h5 class="text-tcf-orange">
+                                    <strong>{{ review.club.name }}</strong>
+                                </h5>
+                            </a>
+                            {% else %}
+                            <a href="{% url 'course_instructor' course_id=review.course.pk instructor_id=review.instructor.pk %}">
+                                <h5 class="text-tcf-orange">
+                                    <strong>{{ review.course }}</strong> — {{ review.instructor.full_name }}
+                                </h5>
+                            </a>
+                            {% endif %}
                         </div>
                         <div class="review-actions d-inline-flex">
-                          <a class="review-edit h5 px-2 text-tcf-blue" href="{% url 'edit_review' review_id=review.id %}">
-                              <i class="fas fa-pencil-alt"></i>
-                          </a>
-                          <a class="review-delete h5 pl-2 text-danger" type="button"
-                                  data-toggle="modal" data-target="#deleteReviewModal{{review.id}}">
-                            <i class="fa fa-trash-o"></i>
-                          </a>
-                          {% include "reviews/delete_confirm_modal.html" with review_id=review.id %}
+                            <a class="review-edit h5 px-2 text-tcf-blue" href="{% url 'edit_review' review_id=review.id %}">
+                                <i class="fas fa-pencil-alt"></i>
+                            </a>
+                            <a class="review-delete h5 pl-2 text-danger" type="button"
+                                    data-toggle="modal" data-target="#deleteReviewModal{{review.id}}">
+                                <i class="fa fa-trash-o"></i>
+                            </a>
+                            {% include "reviews/delete_confirm_modal.html" with review_id=review.id %}
                         </div>
                     </div>
                 </div>
                 {% else %}
                 <!-- Display reviewer's semester and updated date of review if on review page -->
                 <div class="review-header">
-                  <div class="d-flex justify-content-between">
-                    <h6 class="font-weight-bold text-tcf-orange">{{ review.semester }}</h6>
-                    <h6 id="date" class="text-muted">Updated {{ review.created|date:"n/d/y" }}</h6>
-                  </div>
+                    <div class="d-flex justify-content-between">
+                        <h6 class="font-weight-bold text-tcf-orange">{{ review.semester }}</h6>
+                        <h6 id="date" class="text-muted">Updated {{ review.created|date:"n/d/y" }}</h6>
+                    </div>
                 </div>
                 {% endif %}
-
                 <div class="review-content mb-2">
-                  <!-- Max-height container for the review text collapse feature -->
-                  <div class="review-text-body collapse" id="reviewText{{review.id}}"
-                     aria-expanded="false">
-                     <!-- Full review text -->
-                    <div class="review-text-full">{{ review.text|linebreaks }}</div>
-                  </div>
-                  <!-- Collapser link (click target spans entire row block) -->
-                  <a role="button" class="review-collapse-link btn-block p-1 collapsed"
-                     data-toggle="collapse" href="#reviewText{{review.id}}"
-                     aria-expanded="false" aria-controls="reviewText{{review.id}}">
-                     <!-- Note: collapser text ("See more...") is encoded in review.css for this link -->
-                  </a>
+                    <!-- Max-height container for the review text collapse feature -->
+                    <div class="review-text-body collapse" id="reviewText{{review.id}}"
+                        aria-expanded="false">
+                        <!-- Full review text -->
+                        <div class="review-text-full">{{ review.text|linebreaks }}</div>
+                    </div>
+                    <!-- Collapser link (click target spans entire row block) -->
+                    <a role="button" class="review-collapse-link btn-block p-1 collapsed"
+                        data-toggle="collapse" href="#reviewText{{review.id}}"
+                        aria-expanded="false" aria-controls="reviewText{{review.id}}">
+                        <!-- Note: collapser text ("See more...") is encoded in review.css for this link -->
+                    </a>
                 </div>
-
-                <div class="review-footer row mt-3">
+                <div class="review-footer row mt-3 mb-3">
                     <!-- Review upvote/downvote container -->
-                    <div class="vote-container col-sm-4 d-flex align-items-end text-center text-muted flex-wrap">
-                      <!-- Hidden HTML tag to sort reviews by helpfulness (net upvotes)-->
-                      <span id="vote-count" hidden>{{ review.sum_votes }}</span>
-                      <div class="mr-3 mr-sm-4">
-                          <!--Voting logic is implemented in the <script> tag of reviews.html-->
-                          <a id="upvote{{review.id}}" href="#loginModal" data-toggle="modal"
-                             class="upvote {% if review.user_vote == 1 %}active{% endif %}">
-                              <i class="fa fa-thumbs-up"></i>
-                          </a>
-                          <span class="upvoteCount">{{ review.count_votes.upvotes }}</span>
-                      </div>
-                      <div class="mr-3 mr-sm-4">
-                          <a id="downvote{{review.id}}" href="#loginModal" data-toggle="modal"
-                             class="downvote {% if review.user_vote == -1 %}active{% endif %}">
-                              <i class="fa fa-thumbs-down"></i>
-                          </a>
-                          <span class="downvoteCount">{{ review.count_votes.downvotes }}</span>
-                      </div>
-                    </div>
+                    <div class="vote-container col-12 d-flex flex-column flex-sm-row text-center text-sm-left text-muted w-100">
 
-                    <!-- Review Ratings -->
-                    <div class="review-ratings col-sm-8 d-flex align-items-end justify-content-end text-center text-muted flex-wrap mb-2">
-                        <div id="review-average" class="text-dark mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="Review Average">
-                            <i class="fa fa-star fa-fw"></i>
-                            {{ review.average|floatformat:2 }}
+                        <!-- Hidden HTML tag to sort reviews by helpfulness (net upvotes)-->
+                        <span id="vote-count" hidden>{{ review.sum_votes }}</span>
+
+                        <!-- Votes block -->
+                        <div class="d-flex justify-content-center justify-content-sm-start align-items-center flex-wrap mb-2 mb-sm-0">
+                            <div class="mr-3 mr-sm-4 d-flex align-items-center">
+                                <a id="upvote{{review.id}}" href="#loginModal" data-toggle="modal"
+                                class="upvote {% if review.user_vote == 1 %}active{% endif %}">
+                                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                                    <span class="sr-only">Upvote</span>
+                                </a>
+                                <span class="upvoteCount ml-1">{{ review.count_votes.upvotes }}</span>
+                            </div>
+
+                            <div class="mr-1 mr-sm-4 d-flex align-items-center">
+                                <a id="downvote{{review.id}}" href="#loginModal" data-toggle="modal"
+                                class="downvote {% if review.user_vote == -1 %}active{% endif %}">
+                                    <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                                    <span class="sr-only">Downvote</span>
+                                </a>
+                                <span class="downvoteCount ml-1">{{ review.count_votes.downvotes }}</span>
+                            </div>
                         </div>
-                        <div class="mr-3 mr-sm-4"  data-toggle="tooltip" data-placement="bottom" title="{% if review.club %}Leadership{% else %}Instructor{% endif %} Rating">
-                            <i class="fa fa-user"></i>
-                            {{ review.instructor_rating }}
-                        </div>
-                        <div class="mr-3 mr-sm-4"  data-toggle="tooltip" data-placement="bottom" title="Enjoyability">
-                            <i class="fa fa-smile-beam"></i>
-                            {{ review.enjoyability }}
-                        </div>
-                        <div class="mr-3 mr-sm-4"   data-toggle="tooltip" data-placement="bottom" title="Recommend">
-                            <i class="fas fa-heart"></i>
-                            {{ review.recommendability }}
-                        </div>
-                        <div class="mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="{% if review.club %}Commitment{% else %}Difficulty{% endif %}">
-                            <i class="fa fa-dumbbell fa-fw"></i>
-                            {{ review.difficulty }}
-                        </div>
-                        <div data-toggle="tooltip" data-placement="bottom" title="Hours Per Week">
-                            <i class="fa fa-hourglass-half fa-fw"></i>
-                            {{ review.hours_per_week }}
+
+                        <!-- Actions block (Reply / Show Replies) -->
+                        <div class="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center ml-sm-auto">
+                            {% if user.is_authenticated %}
+                                <a class="btn bg-tcf-orange text-white m-1 flex-fill flex-sm-grow-0"
+                                data-toggle="modal"
+                                data-target="#reply-modal-{{ review.id }}">
+                                    Reply
+                                </a>
+                            {% endif %}
+
+                            {% if review.replies.count > 0 %}
+                                <a id="toggleReplies{{ review.id }}"
+                                class="btn bg-tcf-orange text-white m-1 flex-fill flex-sm-grow-0"
+                                data-toggle="collapse"
+                                data-target="#review-replies-{{ review.id }}"
+                                aria-expanded="false"
+                                aria-controls="review-replies-{{ review.id }}">
+                                    Show Replies
+                                </a>
+
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const button = document.getElementById('toggleReplies{{ review.id }}');
+                                        const repliesDiv = document.getElementById('review-replies-{{ review.id }}');
+                                        if (button && repliesDiv) {
+                                            const updateButtonText = function() {
+                                                const isVisible = repliesDiv.classList.contains('show');
+                                                button.innerText = isVisible ? 'Hide Replies' : 'Show Replies';
+                                            };
+                                            updateButtonText();
+
+                                            button.addEventListener('click', function(e) {
+                                                if (button.dataset.disabled === 'true') {
+                                                    e.preventDefault();
+                                                    return;
+                                                }
+
+                                                button.dataset.disabled = 'true';
+                                                button.classList.add('disabled');
+                                                setTimeout(function() {
+                                                    button.dataset.disabled = 'false';
+                                                    button.classList.remove('disabled');
+                                                }, 300);
+
+                                                const isCurrentlyVisible = repliesDiv.classList.contains('show');
+                                                button.innerText = isCurrentlyVisible ? 'Show Replies' : 'Hide Replies';
+                                            });
+
+                                            repliesDiv.addEventListener('shown.bs.collapse', function() {
+                                                button.innerText = 'Hide Replies';
+                                            });
+                                            repliesDiv.addEventListener('hidden.bs.collapse', function() {
+                                                button.innerText = 'Show Replies';
+                                            });
+                                        }
+                                    });
+                                </script>
+                            {% endif %}
                         </div>
                     </div>
-
                 </div>
+
+                <!-- Review Ratings (moved to right) -->
+                <div class="review-ratings col-auto ml-sm-auto d-flex align-items-end justify-content-end text-center text-muted flex-wrap mb-2">
+                    <div id="review-average" class="text-dark mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="Review Average">
+                        <i class="fa fa-star fa-fw"></i>
+                        {{ review.average|floatformat:2 }}
+                    </div>
+                    <div class="mr-3 mr-sm-4"  data-toggle="tooltip" data-placement="bottom" title="{% if review.club %}Leadership{% else %}Instructor{% endif %} Rating">
+                        <i class="fa fa-user"></i>
+                        {{ review.instructor_rating }}
+                    </div>
+                    <div class="mr-3 mr-sm-4"  data-toggle="tooltip" data-placement="bottom" title="Enjoyability">
+                        <i class="fa fa-smile-beam"></i>
+                        {{ review.enjoyability }}
+                    </div>
+                    <div class="mr-3 mr-sm-4"   data-toggle="tooltip" data-placement="bottom" title="Recommend">
+                        <i class="fas fa-heart"></i>
+                        {{ review.recommendability }}
+                    </div>
+                    <div class="mr-3 mr-sm-4" data-toggle="tooltip" data-placement="bottom" title="{% if review.club %}Commitment{% else %}Difficulty{% endif %}">
+                        <i class="fa fa-dumbbell fa-fw"></i>
+                        {{ review.difficulty }}
+                    </div>
+                    <div data-toggle="tooltip" data-placement="bottom" title="Hours Per Week">
+                        <i class="fa fa-hourglass-half fa-fw"></i>
+                        {{ review.hours_per_week }}
+                    </div>
+                </div>
+            </div>      
+        </div>
+    </div>
+    <!-- Reply Modal -->
+    <div class="modal fade" id="reply-modal-{{ review.id }}" tabindex="-1" role="dialog" aria-labelledby="reply-label-{{ review.id }}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="reply-label-{{ review.id }}" class="modal-title">Reply to Review</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- send formdata to reply url in views.py -->
+                <form action="{% url 'reply' review_id=review.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                    <div class="form-group">
+                        <textarea id="reply-text-{{ review.id }}" name="text" class="form-control" rows="4" minlength="2" maxlength="5000" required placeholder="Write your reply..."></textarea>
+                    </div>
+                    <!-- pass which review this reply belongs to -->
+                    <input type="hidden" name="review" value="{{ review.id }}">
+                    </div>
+
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn bg-tcf-orange text-white">Post Reply</button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
+    
+</div>
+
+<div id="review-replies-{{ review.id }}" class="collapse review mb-2">
+    <div class="review-replies-scrollable ml-auto" style="max-height:200px; max-width:800px; overflow:auto;">
+        {% for reply in review.replies.all %}
+        <div class="d-flex border-top card justify-content-between pt-3 px-3" style="margin-bottom: 10px;">
+            <div class="mb-0 flex-grow-1 pr-3 longtext">
+                {{ reply.text | linebreaks }}
+            </div>
+            <div id="reply{{ reply.id }}" class="justify-content-between">
+                <div class="mb-2 float-left">
+                    <div class="float-left mr-3 mr-sm-4">
+                        {% if user.is_authenticated %}
+                        <a id="replyUpvote{{ reply.id }}" href="#" role="button"
+                            class="reply-upvote upvote {% if reply.user_vote == 1 %}active{% endif %}">
+                            <i class="fa fa-thumbs-up"></i>
+                        </a>
+                        {% else %}
+                        <a id="replyUpvote{{ reply.id }}" href="#loginModal" data-toggle="modal"
+                            class="reply-upvote upvote {% if reply.user_vote == 1 %}active{% endif %}">
+                            <i class="fa fa-thumbs-up"></i>
+                        </a>
+                        {% endif %}
+                        <span class="reply-upvote-count">{{ reply.count_votes.upvotes }}</span>
+                    </div>
+                    <div class="float-left mr-1 mr-sm-4">
+                        {% if user.is_authenticated %}
+                        <a id="replyDownvote{{ reply.id }}" href="#" role="button"
+                            class="reply-downvote downvote {% if reply.user_vote == -1 %}active{% endif %}">
+                            <i class="fa fa-thumbs-down"></i>
+                        </a>
+                        {% else %}
+                        <a id="replyDownvote{{ reply.id }}" href="#loginModal" data-toggle="modal"
+                            class="reply-downvote downvote {% if reply.user_vote == -1 %}active{% endif %}">
+                            <i class="fa fa-thumbs-down"></i>
+                        </a>
+                        {% endif %}
+                        <span class="reply-downvote-count">{{ reply.count_votes.downvotes }}</span>
+                    </div>
+                </div>
+                {% if user == reply.user %}
+                    <a class="float-right review-reply h5 pl-2 text-danger" type="button"
+                            data-toggle="modal" data-target="#deleteReplyModal{{reply.id}}">
+                        <i class="fa fa-trash-o"></i>
+                    </a>
+                    {% include "reviews/delete_reply_confirm_modal.html" with reply_id=reply.id %}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
