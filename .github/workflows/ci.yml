@@ -97,3 +97,12 @@ jobs:
 
       - name: Run ESLint
         run: npx eslint -c .config/.eslintrc.yml tcf_website/static/
+
+  testjob:
+    needs: [pylint, django, eslint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display results
+        run: |
+          echo "Pylint, Django Tests, and ESLint jobs completed."
+          echo "Code coverage from Django tests: ${{ needs.django.outputs.code-coverage }}"
