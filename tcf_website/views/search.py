@@ -5,11 +5,18 @@ import statistics
 from typing import Iterable
 
 from django.contrib.postgres.search import TrigramSimilarity
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import F, FloatField, Q, Value
 from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
+from ..api.serializers import (
+    CourseAutocompleteSerializer,
+    InstructorAutocompleteSerializer,
+    ClubAutocompleteSerializer,
+)
 from ..models import Club, Course, Instructor, Subdepartment
 
 
@@ -145,7 +152,7 @@ def search(request):
     return render(request, "search/search.html", ctx)
 
 
-def fetch_clubs(query):
+def fetch_clubs(query, limit: int | None = None):
     """Get club data using Django Trigram similarity."""
     threshold = 0.15
     if not query:
@@ -172,7 +179,7 @@ def fetch_clubs(query):
         .order_by("-max_similarity")
     )
 
-    return [
+    qs = [
         {
             "id": c.id,
             "name": c.name,
@@ -183,6 +190,10 @@ def fetch_clubs(query):
         }
         for c in qs
     ]
+
+    if limit:
+        qs = qs[:limit]
+    return qs
 
 
 def decide_order(courses: list[dict], instructors: list[dict]) -> bool:
@@ -198,9 +209,24 @@ def decide_order(courses: list[dict], instructors: list[dict]) -> bool:
     return courses_avg > instructors_avg or not instructors
 
 
-def fetch_instructors(query) -> list[dict]:
+def fetch_instructors(query, limit: int = 10) -> list[dict]:
     """Get instructor data using Django Trigram similarity"""
     # arbitrarily chosen threshold
+    results = get_instructor_results(query, limit=limit)
+
+    instructors = [
+        {
+            key: getattr(instructor, key)
+            for key in ("first_name", "last_name", "email", "id", "max_similarity")
+        }
+        for instructor in results
+    ]
+
+    return instructors
+
+
+def get_instructor_results(query, limit: int = 10):
+    """Get instructor query results using Django Trigram similarity."""
     similarity_threshold = 0.5
     results = (
         Instructor.objects.only("first_name", "last_name", "full_name", "email")
@@ -218,21 +244,13 @@ def fetch_instructors(query) -> list[dict]:
             )
         )
         .filter(Q(max_similarity__gte=similarity_threshold))
-        .order_by("-max_similarity")[:10]
+        .order_by("-max_similarity")[:limit]
     )
 
-    instructors = [
-        {
-            key: getattr(instructor, key)
-            for key in ("first_name", "last_name", "email", "id", "max_similarity")
-        }
-        for instructor in results
-    ]
-
-    return instructors
+    return results
 
 
-def fetch_courses(query, filters):
+def fetch_courses(query, filters, limit: int | None = None):
     """Get course data using Django Trigram similarity"""
     # lower similarity threshold for partial searches of course titles
     similarity_threshold = 0.15
@@ -278,6 +296,9 @@ def fetch_courses(query, filters):
         .exclude(semester_last_taught_id__lt=48)
         .order_by("-max_similarity")
     )
+
+    if limit:
+        results = results[:limit]
 
     return results
 
@@ -331,3 +352,31 @@ def apply_filters(results, filters):
         results = results.filter(coursegrade__average__gte=float(min_gpa))
 
     return results.distinct()
+
+
+@api_view(["GET"])
+def autocomplete(request):
+    """implement autocomplete for search bar"""
+    query = request.GET.get("q", "").strip()
+    _, is_club = parse_mode(request)
+
+    if not query:
+        return Response(
+            {"courses": [], "instructors": [], "clubs": []}
+        )  # empty list if no input
+
+    if is_club:
+        clubs = fetch_clubs(query, limit=5)
+        return Response({"clubs": ClubAutocompleteSerializer(clubs, many=True).data})
+
+    instructors = get_instructor_results(query, limit=5)
+    courses = fetch_courses(query, filters={}, limit=5)
+
+    return Response(
+        {
+            "courses": CourseAutocompleteSerializer(courses, many=True).data,
+            "instructors": InstructorAutocompleteSerializer(
+                instructors, many=True
+            ).data,
+        }
+    )

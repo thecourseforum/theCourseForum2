@@ -126,4 +126,5 @@ urlpatterns = [
     path("login/", views.auth.login, name="login"),
     path("cognito-callback/", views.auth.cognito_callback, name="cognito_callback"),
     path("logout/", views.auth.logout, name="logout"),
+    path("api/autocomplete/", views.autocomplete, name="autocomplete"),
 ]
