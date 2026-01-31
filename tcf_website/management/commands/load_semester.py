@@ -9,6 +9,8 @@ from tqdm import tqdm
 
 from tcf_website.models import *
 
+from .generate_related_courses import generate_related_courses_for_semester
+
 
 class Command(BaseCommand):
     help = "Imports data from lous list csv's into default database"
@@ -44,7 +46,9 @@ class Command(BaseCommand):
 
         if semester == "ALL_DANGEROUS":
             for file in sorted(os.listdir(self.data_dir)):
-                self.load_semester_file(file)
+                sem = self.load_semester_file(file)
+                print(f"Generating related courses for {sem}...")
+                generate_related_courses_for_semester(sem)
         elif semester == "FIX_LAST_TAUGHT_SEMESTERS":
             # This should be done automatically when loading a semester,
             # but run this command if you notice that it hasn't been done.
@@ -55,7 +59,9 @@ class Command(BaseCommand):
                     section.course.save()
                     section.save()
         else:
-            self.load_semester_file(f"{semester.lower()}.csv")
+            sem = self.load_semester_file(f"{semester.lower()}.csv")
+            print(f"Generating related courses for {sem}...")
+            generate_related_courses_for_semester(sem)
 
         print("Completed. Hooray!")
 
@@ -79,6 +85,8 @@ class Command(BaseCommand):
             # print(row)
             self.load_section_row(semester, row)
             # break
+
+        return semester
 
     def load_semester(self, year, season):
         year_code = str(year)[-2:]
@@ -205,13 +213,17 @@ class Command(BaseCommand):
                     attribute.save()
                 attrs.append(attribute)
             course.disciplines.set(attrs)
-        if not pd.isnull(description): #prerequisites
-            pre_req_format = "Pre-requisite" if "Pre-requisite" in description else "Prerequisite"
+        if not pd.isnull(description):  # prerequisites
+            pre_req_format = (
+                "Pre-requisite" if "Pre-requisite" in description else "Prerequisite"
+            )
             if pre_req_format in description:
                 # Get pre_req from beginning to end
                 from_pre_req_to_end = description[description.find(pre_req_format) :]
                 # Get rid of title of "Prerequisite" or "Pre-requisite"
-                pre_req_no_title = from_pre_req_to_end[from_pre_req_to_end.find(":") + 1 :]
+                pre_req_no_title = from_pre_req_to_end[
+                    from_pre_req_to_end.find(":") + 1 :
+                ]
 
                 # Check if in-line or not for pre_req
                 if pre_req_no_title.find(".") > 0:
@@ -220,7 +232,7 @@ class Command(BaseCommand):
                     pre_req_text = pre_req_no_title
 
                 # Match only on course mnemonic and code
-                matches = re.findall(r'([A-Z]{2,4}\s?\d{4})', pre_req_text)
+                matches = re.findall(r"([A-Z]{2,4}\s?\d{4})", pre_req_text)
                 prereq_codes = [m.strip().upper() for m in matches]
                 course.prerequisites = prereq_codes
         if not course.description and not pd.isnull(description):
