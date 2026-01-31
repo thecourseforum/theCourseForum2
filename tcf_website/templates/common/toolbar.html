@@ -36,7 +36,7 @@
     <div id="sortButtons" class="btn-group btn-group-sm" role="toolbar" aria-label="Sorting Buttons">
         {% if active_course_recency %}
         <a href="{% url 'department_course_recency' dept_id active_course_recency %}?sortby=course_id&order={% if sortby == 'course_id' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'course_id' %}active{% endif %}">
-            Course ID {% if sortby == 'course_id' %}{% if order == 'asc' %}&#11014;{% else %}&#11015;{% endif %}{% endif %}
+            Course Number {% if sortby == 'course_id' %}{% if order == 'asc' %}&#11014;{% else %}&#11015;{% endif %}{% endif %}
         </a>
         <a href="{% url 'department_course_recency' dept_id active_course_recency %}?sortby=rating&order={% if sortby == 'rating' and order == 'asc' %}desc{% else %}asc{% endif %}" class="btn btn-outline-primary {% if sortby == 'rating' %}active{% endif %}">
             Rating {% if sortby == 'rating' %}{% if order == 'asc' %}&#11014;{% else %}&#11015;{% endif %}{% endif %}
