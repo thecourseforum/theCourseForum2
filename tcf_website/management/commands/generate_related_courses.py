@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 from pathlib import Path
@@ -9,7 +10,7 @@ project_root = str(Path(__file__).resolve().parent.parent.parent.parent)
 sys.path.insert(0, project_root)
 
 # Configure Django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tcf_core.settings.dev")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tcf_core.settings.ci")
 django.setup()
 
 import numpy as np
@@ -24,6 +25,13 @@ from tcf_website.models import Course, Section, Semester
 
 class Command(BaseCommand):
     help = "Generate related courses using content fingerprints"
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--course",
+            type=str,
+            help='Test with a specific course code (e.g., "CS 1110")',
+        )
 
     def handle(self, *args, **options):
         ####### Phase 1: Content Fingerprint #######
@@ -64,15 +72,27 @@ class Command(BaseCommand):
                     "Title": course.title,
                     "Topic": topic,
                     "Description": course.description or "",
-                    "Prerequisites": course.prerequisites
+                    "Prerequisites": course.prerequisites,
                 }
             )
 
         df = pd.DataFrame(course_data)
         self.stdout.write(f"Loaded {len(df)} courses from database")
 
-        # Filter out courses without descriptions
-        df_with_desc = df[df["Description"].str.strip() != ""]
+        # Filter by specific course if requested
+        test_course = options.get("course")
+        if test_course:
+            parts = test_course.split()
+            mnemonic = parts[0]
+            number = parts[1] if len(parts) > 1 else None
+            df_with_desc = df[(df["Mnemonic"] == mnemonic) & (df["Number"] == number)]
+            if df_with_desc.empty:
+                self.stdout.write(self.style.ERROR(f"Course {test_course} not found"))
+                return
+            self.stdout.write(f"Testing with course: {test_course}")
+        else:
+            # Filter out courses without descriptions
+            df_with_desc = df[df["Description"].str.strip() != ""]
         self.stdout.write(f"Found {len(df_with_desc)} courses with descriptions")
 
         if len(df_with_desc) == 0:
@@ -139,7 +159,7 @@ class Command(BaseCommand):
                     {
                         "rank": rank,
                         "mnemonic": related_row["Mnemonic"],
-                        "number": related_row["Number"],
+                        "number": int(related_row["Number"]),
                         "title": related_row["Title"],
                         "similarity_score": float(sim_score),
                     }
@@ -166,9 +186,14 @@ class Command(BaseCommand):
                     f"  {rel['rank']}. {rel['mnemonic']} {rel['number']}: {rel['similarity_score']:.4f}"
                 )
 
+        # Save results to JSON file
+        output_file = "related_courses_output.json"
+        with open(output_file, "w") as f:
+            json.dump(related_courses_list, f, indent=2)
         self.stdout.write(
             self.style.SUCCESS(f"\nSuccessfully generated and ranked related courses!")
         )
+        self.stdout.write(self.style.SUCCESS(f"Results saved to {output_file}"))
 
     def _rerank_with_metadata(
         self, course_idx, top_similar_indices, df, similarity_matrix
@@ -177,6 +202,7 @@ class Command(BaseCommand):
         Rerank similar courses by adding weights for:
         - Same department (Mnemonic): +0.15 bonus
         - Close course level (Number within 100): +0.1 bonus (decaying with distance)
+        - Prerequisties: +0.3 bonus
         """
         course_mnemonic = df.iloc[course_idx]["Mnemonic"]
         course_number = df.iloc[course_idx]["Number"]
@@ -197,7 +223,11 @@ class Command(BaseCommand):
                 bonus += 0.1 * (1 - level_diff / 100)  # decay as distance increases
 
             # Prerequisite bonus
-            if df.iloc[sim_idx]["Prerequisites"] in course_prerequisites:
+            # Check if related course is a prerequisite for current course
+            related_course_code = (
+                f"{df.iloc[sim_idx]['Mnemonic']} {df.iloc[sim_idx]['Number']}"
+            )
+            if course_prerequisites and related_course_code in course_prerequisites:
                 bonus += 0.3
 
             final_score = min(1.0, base_sim + bonus)
