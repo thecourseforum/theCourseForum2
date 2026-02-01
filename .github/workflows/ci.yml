@@ -107,10 +107,12 @@ jobs:
         - name: Build & start stack
           run: |
             docker compose up --build
+            docker compose logs -f
 
         - name: Wait for app health
           run: |
             for i in {1..60}; do
+              docker compose ps
               if curl -fsS http://localhost:8000; then
                 echo "App is up"
                 exit 0
