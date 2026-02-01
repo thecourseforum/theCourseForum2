@@ -100,7 +100,6 @@ jobs:
 
   probe_endpoint:
     name: Endpoint probe (compose)
-    needs: [pylint, django, eslint]
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
