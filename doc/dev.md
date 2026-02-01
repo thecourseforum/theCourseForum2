@@ -1,6 +1,6 @@
 # tCF Developer Info
 
-Ensure your system has [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), [git-lfs](https://git-lfs.com/), [Docker](https://docs.docker.com/install/), and [gdown](https://github.com/wkentaro/gdown) installed.
+Ensure your system has [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [Docker](https://docs.docker.com/install/) installed.
 
 ## Setup
 
@@ -11,9 +11,11 @@ git clone https://github.com/thecourseforum/theCourseForum2.git
 cd theCourseForum2
 ```
 
-2. Download the `.env` secrets file from the Google Drive /Engineering/ENV [folder](https://drive.google.com/drive/u/0/folders/1ETB7PZDbVC05xgjSAAIFiQ7qbDqIiz21) and place it in the project root.
+2. Setup environment variables
 
-- _**Note**_: the file should be named exactly `.env`, not `.env.txt` or `env.txt` - rename if necessary.
+```bash
+cp .env.example .env
+```
 
 3. Build the project
 
