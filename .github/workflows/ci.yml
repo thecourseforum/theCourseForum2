@@ -113,12 +113,12 @@ jobs:
 
         - name: Build & start stack
           run: |
+            echo ${{ env.SECRET_KEY }}
             docker compose up --build
             docker compose logs -f
 
         - name: Wait for app health
           run: |
-            echo ${{ env.SECRET_KEY }}
             for i in {1..60}; do
               docker compose ps
               if curl -fsS http://localhost:8000; then
