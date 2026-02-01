@@ -31,6 +31,7 @@ from ..models import (
     Instructor,
     Question,
     Review,
+    ReviewLLMSummary,
     School,
     Section,
     Semester,
@@ -396,6 +397,33 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     # Course and instructor info is passed to template context for meta tags
     # Sections will be fetched via API when dropdown is expanded
 
+    # AI summary block
+    visible_reviews = (
+        Review.objects.filter(
+            instructor=instructor_id,
+            course=course_id,
+            toxicity_rating__lt=settings.TOXICITY_THRESHOLD,
+            hidden=False,
+        )
+        .exclude(text="")
+        .order_by("-created")
+    )
+    current_review_count = visible_reviews.count()
+    summary_record = ReviewLLMSummary.objects.filter(
+        course=course, instructor=instructor
+    ).first()
+
+    summary_text = None
+    summary_error = None
+    summary_state = "missing"
+    summary_source_count = summary_record.source_review_count if summary_record else 0
+    summary_model = summary_record.model_id if summary_record else None
+    summary_updated = summary_record.updated_at if summary_record else None
+
+    if summary_record:
+        summary_text = summary_record.summary_text
+        summary_state = "available"
+
     # QA Data
     questions = Question.objects.filter(course=course_id, instructor=instructor_id)
     answers = {}
@@ -467,6 +495,12 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "instructor_fullname": instructor.full_name,
             "other_instructors": other_instructors,
             "sections": sections,
+            "review_summary_text": summary_text,
+            "review_summary_error": summary_error,
+            "review_summary_state": summary_state,
+            "review_summary_source_count": summary_source_count,
+            "review_summary_model": summary_model,
+            "review_summary_updated": summary_updated,
         },
     )
 

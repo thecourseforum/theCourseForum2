@@ -17,6 +17,15 @@ env = environ.Env(
 env_file = os.path.join(BASE_DIR, ".env")
 environ.Env.read_env(env_file)
 
+# AI review summary configuration
+OPENROUTER_API_KEY = env.str("OPENROUTER_API_KEY", default="")
+OPENROUTER_MODEL = env.str("OPENROUTER_MODEL", default="openrouter/auto")
+OPENROUTER_REFERER = env.str(
+    "OPENROUTER_REFERER", default="https://thecourseforum.com"
+)
+OPENROUTER_TITLE = env.str("OPENROUTER_TITLE", default="theCourseForum AI Summary")
+OPENROUTER_FALLBACK_MODELS = env.list("OPENROUTER_FALLBACK_MODELS", default=[])
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env.str("SECRET_KEY")
 
