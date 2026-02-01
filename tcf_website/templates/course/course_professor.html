@@ -283,28 +283,18 @@
             });
         </script>
 
-        <div class="ai-summary-box mb-4">
-            <div class="d-flex align-items-center mb-2">
-                <h3 class="mb-0">AI Review Summary</h3>
-                <span class="badge badge-secondary ml-2">Beta</span>
-            </div>
-            {% if review_summary_text %}
+        {% if review_summary_text %}
+            <div class="ai-summary-box">
+                <div class="d-flex align-items-center mb-2">
+                    <h3 class="mb-0">AI Review Summary</h3>
+                    <span class="badge badge-secondary ml-2">Beta</span>
+                </div>
                 <p class="mb-2">{{ review_summary_text|linebreaksbr }}</p>
-                <p class="text-primary small mb-0">
+                <p class="text-muted small mb-0">
                     AI generated based on {{ review_summary_source_count }} review{% if review_summary_source_count != 1 %}s{% endif %}.
                 </p>
-            {% elif review_summary_state == "no_reviews" %}
-                <p class="text-muted mb-0">No written reviews yet. Add yours to unlock a summary.</p>
-            {% elif review_summary_state == "fallback" %}
-                <p class="mb-2">{{ review_summary_text|default:"" }}</p>
-                <p class="text-warning small mb-0">Showing last saved summary. Error: {{ review_summary_error }}</p>
-            {% elif review_summary_state == "error" %}
-                <p class="text-danger mb-0">We couldn't load the AI summary right now. Please try again later.</p>
-                {% if review_summary_error %}<p class="text-muted small mb-0">{{ review_summary_error }}</p>{% endif %}
-            {% else %}
-                <p class="text-muted mb-0">AI summary not available yet.</p>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
 
         <ul class="nav nav-tabs" id="reviews">
             <li class="nav-item">
