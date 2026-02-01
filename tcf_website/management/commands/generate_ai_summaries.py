@@ -1,3 +1,5 @@
+"""Manual generator for AI review summaries."""
+
 from typing import Any
 
 from django.conf import settings
@@ -8,8 +10,11 @@ from ...models import Course, Instructor, Review, ReviewLLMSummary
 from ...services.review_summary import generate_review_summary
 
 
+# pylint: disable=too-many-branches,too-many-locals,no-member
+
+
 class Command(BaseCommand):
-    """command to manually generate AI summaries for course/instructor pairs.
+    """Command to manually generate AI summaries for course/instructor pairs.
 
     Usage examples:
     # Help command:
@@ -27,8 +32,8 @@ class Command(BaseCommand):
 
     # Generate for a specific course/instructor pair
     python manage.py generate_ai_summaries --course-id 1 --instructor-id 4019
-    OR
-    docker compose exec web python manage.py generate_ai_summaries --course-id 1 --instructor-id 4019
+    docker compose exec web python manage.py generate_ai_summaries \\
+        --course-id 1 --instructor-id 4019
     """
 
     help = "Generate AI summaries manually for course/instructor pairs."
@@ -68,7 +73,7 @@ class Command(BaseCommand):
             help="Show which pairs would be processed without calling the model.",
         )
 
-    def handle(self, *args: Any, **options: Any):
+    def handle(self, *args: Any, **options: Any):  # pylint: disable=unused-argument,too-many-locals
         if not getattr(settings, "OPENROUTER_API_KEY", ""):
             raise CommandError("OPENROUTER_API_KEY is not configured.")
 
@@ -96,11 +101,11 @@ class Command(BaseCommand):
                 course_id=course_id, instructor_id=instructor_id
             ).count()
             if review_count < min_reviews:
-                self.stdout.write(
-                    self.style.WARNING(
-                        f"Skipping course {course_id} / instructor {instructor_id}: only {review_count} reviews."
-                    )
+                msg = (
+                    f"Skipping course {course_id} / instructor {instructor_id}: "
+                    f"only {review_count} reviews."
                 )
+                self.stdout.write(self.style.WARNING(msg))
                 return
             latest_id = (
                 base_reviews.filter(course_id=course_id, instructor_id=instructor_id)
