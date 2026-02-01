@@ -109,19 +109,11 @@ def generate_review_summary(
 
     messages = _build_prompt(course.code(), instructor.full_name, reviews)
 
-    primary_model = getattr(settings, "OPENROUTER_MODEL", "openrouter/auto")
-    fallback_models = getattr(settings, "OPENROUTER_FALLBACK_MODELS", []) or []
-    models_to_try = [primary_model] + [m for m in fallback_models if m]
-
-    last_error = None
-    for model_name in models_to_try:
-        try:
-            content, error = _call_openrouter(model_name, messages)
-            if content:
-                return content, None, model_name
-            last_error = error
-        except Exception as exc:  # pylint: disable=broad-except
-            last_error = str(exc)
-            continue
-
-    return None, last_error or "No summary generated.", models_to_try[-1] if models_to_try else None
+    model_name = getattr(settings, "OPENROUTER_MODEL", "openrouter/auto")
+    try:
+        content, error = _call_openrouter(model_name, messages)
+        if content:
+            return content, None, model_name
+        return None, error, model_name
+    except Exception as exc:  # pylint: disable=broad-except
+        return None, str(exc), model_name
