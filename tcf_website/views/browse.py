@@ -8,18 +8,13 @@ from typing import Any
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import (
-    Avg,
-    Count,
-    Prefetch,
-    Q,
-    Sum,
-    Value,
-)
+from django.db.models import Avg, Count, Prefetch, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+
+from tcf_website.analytics_utils import record_course_view, record_instructor_view
 
 from ..models import (
     Answer,
@@ -288,6 +283,8 @@ def course_view(
 
     # Pass course info to template for meta tags
     # (JavaScript will retrieve these from meta tags)
+    # count view for analytics
+    record_course_view(course.id)
 
     return render(
         request,
@@ -319,6 +316,9 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         raise Http404
     course = section_last_taught.course
     instructor = section_last_taught.instructors.get(pk=instructor_id)
+
+    # count view for analytics
+    record_instructor_view(instructor.id)
 
     # ratings: reviews with and without text; reviews: ratings with text
     reviews = Review.objects.filter(
@@ -436,6 +436,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
 def instructor_view(request, instructor_id):
     """View for instructor page, showing all their courses taught."""
     instructor: Instructor = get_object_or_404(Instructor, pk=instructor_id)
+    # count view for analytics
+    record_instructor_view(instructor.id)
 
     stats: dict[str, float] = Instructor.objects.filter(pk=instructor.pk).aggregate(
         avg_gpa=Avg("courseinstructorgrade__average"),
