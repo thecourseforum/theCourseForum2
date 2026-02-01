@@ -74,7 +74,7 @@ jobs:
       - name: Migrations & Tests
         run: |
           python manage.py migrate
-          echo curl -fsS http://localhost:8000
+          curl -fsS http://localhost:8000
           coverage run manage.py test
 
       - name: Get code coverage
