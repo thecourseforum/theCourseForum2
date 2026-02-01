@@ -1,39 +1,36 @@
-"""command to manually generate AI summaries for course/instructor pairs.
-if an AI summary exists for a course/instructor object then it will be displayed on the page
-Prereq to use this command is to have openrouter key in .env file (`OPENROUTER_API_KEY`) and model name (`OPENROUTER_MODEL`)
-
-Usage examples:
-  # Help command:
-  docker compose exec web python manage.py generate_ai_summaries help
-
-  # Dry run: show top 20 pairs by written-review count (no LLM calls)
-  python manage.py generate_ai_summaries --dry-run
-  OR
-  docker compose exec web python manage.py generate_ai_summaries --dry-run
-
-  # Generate for top 30 course / instructor pairs with at least 3 written reviews
-  python manage.py generate_ai_summaries --limit 30 --min-reviews 3
-  OR
-  docker compose exec web python manage.py generate_ai_summaries --limit 30 --min-reviews 3
-
-  # Generate for a specific course/instructor pair
-  python manage.py generate_ai_summaries --course-id 1 --instructor-id 4019
-  OR
-  docker compose exec web python manage.py generate_ai_summaries --course-id 1 --instructor-id 4019
-"""
-
-from collections import defaultdict
 from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.db.models import Count, Max, Q
+from django.db.models import Count, Max
 
 from ...models import Course, Instructor, Review, ReviewLLMSummary
 from ...services.review_summary import generate_review_summary
 
 
 class Command(BaseCommand):
+    """command to manually generate AI summaries for course/instructor pairs.
+
+    Usage examples:
+    # Help command:
+    docker compose exec web python manage.py generate_ai_summaries help
+
+    # Dry run: show top 20 pairs by written-review count (no LLM calls)
+    python manage.py generate_ai_summaries --dry-run
+    OR
+    docker compose exec web python manage.py generate_ai_summaries --dry-run
+
+    # Generate for top 30 course / instructor pairs with at least 3 written reviews
+    python manage.py generate_ai_summaries --limit 30 --min-reviews 3
+    OR
+    docker compose exec web python manage.py generate_ai_summaries --limit 30 --min-reviews 3
+
+    # Generate for a specific course/instructor pair
+    python manage.py generate_ai_summaries --course-id 1 --instructor-id 4019
+    OR
+    docker compose exec web python manage.py generate_ai_summaries --course-id 1 --instructor-id 4019
+    """
+
     help = "Generate AI summaries manually for course/instructor pairs."
 
     def add_arguments(self, parser):
