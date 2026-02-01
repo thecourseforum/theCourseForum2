@@ -1,12 +1,8 @@
 # pylint: disable=too-many-ancestors,fixme
 """DRF Viewsets"""
-import asyncio
-from threading import Thread
-from django.db import connection
 from django.db.models import Avg, Sum
 from django.http import JsonResponse
 from rest_framework import viewsets
-import requests
 from ..models import (
     Club,
     ClubCategory,
@@ -15,11 +11,9 @@ from ..models import (
     Instructor,
     School,
     Section,
-    SectionEnrollment,
     Semester,
     Subdepartment,
 )
-from .filters import InstructorFilter
 from .serializers import (
     ClubCategorySerializer,
     ClubSerializer,
@@ -32,7 +26,6 @@ from .serializers import (
     SemesterSerializer,
     SubdepartmentSerializer,
 )
-from .enrollment import update_enrollment_data
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
@@ -133,11 +126,27 @@ class InstructorViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = Instructor.objects.all()
     serializer_class = InstructorSerializer
-    filterset_class = InstructorFilter
 
     def get_queryset(self):
-        # Returns filtered instructors ordered by last name
-        return self.queryset.order_by("last_name")
+        """
+        Returns instructors filtered by course and semester.
+        Both course and semester parameters are required for filtering.
+        """
+        course_id = self.request.query_params.get("course")
+        semester_id = self.request.query_params.get("semester")
+
+        if not course_id or not semester_id:
+            return self.queryset.none()
+
+        return (
+            Instructor.objects.filter(
+                hidden=False,
+                section__course_id=course_id,
+                section__semester_id=semester_id,
+            )
+            .distinct()
+            .order_by("last_name")
+        )
 
 
 class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
@@ -184,38 +193,49 @@ class ClubViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset.order_by("name")
 
 
-class SectionEnrollmentViewSet(viewsets.ViewSet):
-    """ViewSet for retrieving section enrollment data."""
+class SectionViewSet(viewsets.ViewSet):
+    """ViewSet for retrieving sections with enrollment data."""
 
-    def retrieve(self, request, pk=None):
-        """Retrieves enrollment data for all sections of a given course."""
+    def list(self, request):
+        """Returns sections with enrollment data for a course-instructor pair."""
+        course_id = request.query_params.get("course_id")
+        instructor_id = request.query_params.get("instructor_id")
 
-        # Start the update in a background thread
-        def _run_update():
-            try:
-                asyncio.run(update_enrollment_data(pk))
-            except (asyncio.TimeoutError, requests.RequestException, ValueError) as exc:
-                print(f"Enrollment update failed for course {pk}: {exc}")
-            finally:
-                connection.close()
+        if not course_id or not instructor_id:
+            return JsonResponse(
+                {"error": "course_id and instructor_id are required"}, status=400
+            )
 
-        thread = Thread(target=_run_update, daemon=True)
-        thread.start()
+        latest_semester = Semester.latest()
+        if not latest_semester:
+            return JsonResponse({"sections": []})
 
-        # Get sections and return enrollment data
-        sections = Section.objects.filter(course_id=pk)
-        enrollment_data = {}
+        sections = Section.objects.filter(
+            course_id=course_id,
+            instructors__id=instructor_id,
+            semester=latest_semester,
+        ).order_by("sis_section_number")
 
+        sections_data = []
         for section in sections:
-            section_enrollment = SectionEnrollment.objects.filter(
-                section=section
-            ).first()
-            if section_enrollment:
-                enrollment_data[section.sis_section_number] = {
-                    "enrollment_taken": section_enrollment.enrollment_taken,
-                    "enrollment_limit": section_enrollment.enrollment_limit,
-                    "waitlist_taken": section_enrollment.waitlist_taken,
-                    "waitlist_limit": section_enrollment.waitlist_limit,
-                }
+            # Parse section times
+            times = []
+            if section.section_times:
+                for time in section.section_times.split(","):
+                    if time.strip():
+                        times.append(time.strip())
 
-        return JsonResponse({"enrollment_data": enrollment_data})
+            sections_data.append(
+                {
+                    "sis_section_number": section.sis_section_number,
+                    "section_type": section.section_type,
+                    "units": section.units,
+                    "times": times,
+                    "enrollment_taken": section.enrollment_taken,
+                    "enrollment_limit": section.enrollment_limit,
+                    "waitlist_taken": section.waitlist_taken,
+                    "waitlist_limit": section.waitlist_limit,
+                }
+            )
+
+        return JsonResponse({"sections": sections_data})

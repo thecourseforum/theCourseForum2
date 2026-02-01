@@ -3,6 +3,12 @@
 
 {% block title %}{{instructor.full_name}} | theCourseForum{% endblock %}
 
+{% block page_metadata %}
+{% if not is_teaching_current_semester %}
+<meta name="robots" content="noindex">
+{% endif %}
+{% endblock %}
+
 {% block styles %}
 <link rel="stylesheet" href="{% static 'common/rating_card.css' %}"/>
 <link rel="stylesheet" href="{% static 'common/show-hide.css' %}"/>
@@ -19,6 +25,11 @@
                         {{ instructor.full_name }}
                     </h1>
                     {{ instructor.email }}
+                    {% if not is_teaching_current_semester %}
+                    <div class="alert alert-info mt-4 mb-0" role="alert">
+                        <strong>Not currently teaching UVA courses</strong>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             <div class="col ">

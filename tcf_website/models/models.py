@@ -443,6 +443,73 @@ class Instructor(models.Model):
         self.full_name = f"{self.first_name} {self.last_name}".strip()
         super().save(*args, **kwargs)
 
+    def get_course_summaries(self):
+        """
+        Return a summary of courses taught by this instructor.
+        """
+        latest_semester = Semester.latest()
+
+        taught_by_exists = Exists(
+            Section.objects.filter(course=OuterRef("pk"), instructors=self)
+        )
+        latest_semester_number_sq = Subquery(
+            Section.objects.filter(course=OuterRef("pk"), instructors=self)
+            .order_by("-semester__number")
+            .values("semester__number")[:1]
+        )
+        is_current_exists = Exists(
+            Section.objects.filter(
+                course=OuterRef("pk"), instructors=self, semester=latest_semester
+            )
+        )
+
+        return (
+            Course.objects.filter(number__gte=1000)
+            .annotate(taught_by=taught_by_exists)
+            .filter(taught_by=True)
+            .annotate(
+                subdepartment_name=F("subdepartment__name"),
+                name=Concat(
+                    F("subdepartment__mnemonic"),
+                    Value(" "),
+                    F("number"),
+                    Value(" | "),
+                    F("title"),
+                    output_field=CharField(),
+                ),
+                # One aggregated expression for avg_rating across review rows
+                avg_rating=Avg(
+                    (
+                        F("review__instructor_rating")
+                        + F("review__enjoyability")
+                        + F("review__recommendability")
+                    )
+                    / Value(3.0),
+                    filter=Q(review__instructor=self),
+                ),
+                avg_difficulty=Avg(
+                    "review__difficulty", filter=Q(review__instructor=self)
+                ),
+                avg_gpa=Avg(
+                    "courseinstructorgrade__average",
+                    filter=Q(courseinstructorgrade__instructor=self),
+                ),
+                latest_semester_number=latest_semester_number_sq,
+                is_current=is_current_exists,
+            )
+            .values(
+                "id",
+                "subdepartment_name",
+                "name",
+                "avg_rating",
+                "avg_difficulty",
+                "avg_gpa",
+                "latest_semester_number",
+                "is_current",
+            )
+            .order_by("subdepartment_name", "name")
+        )
+
     class Meta:
         indexes = [
             GinIndex(
@@ -709,7 +776,8 @@ class Course(models.Model):
             ),
             # Now calculate the combined rating
             rating=ExpressionWrapper(
-                F("instructor_rating") + F("enjoyability") + F("recommendability"),
+                (F("instructor_rating") + F("enjoyability") + F("recommendability"))
+                / 3,
                 output_field=FloatField(),
             ),
             gpa=Coalesce(
@@ -849,9 +917,9 @@ class Course(models.Model):
     @classmethod
     def filter_by_open_sections(cls):
         """Filter courses that have at least one open section."""
-        open_sections = SectionEnrollment.objects.filter(
-            section__course=OuterRef("pk"),
-            section__semester=Semester.latest(),
+        open_sections = Section.objects.filter(
+            course=OuterRef("pk"),
+            semester=Semester.latest(),
             enrollment_taken__lt=F("enrollment_limit"),
         )
         return cls.objects.filter(Exists(open_sections))
@@ -876,16 +944,6 @@ class Course(models.Model):
                 name="unique course subdepartment and number",
             )
         ]
-
-
-class CourseEnrollment(models.Model):
-    course = models.OneToOneField(
-        "Course", on_delete=models.CASCADE, related_name="enrollment_tracking"
-    )
-    last_update = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"Enrollment tracking for {self.course.code()}"
 
 
 class CourseGrade(models.Model):
@@ -978,6 +1036,16 @@ class Section(models.Model):
     # Comma-separated list of times the section is taught.
     section_times = models.CharField(max_length=255, blank=True)
 
+    # Enrollment data fields
+    # Total number of enrolled students. Optional.
+    enrollment_taken = models.IntegerField(null=True, blank=True)
+    # Maximum number of students allowed to enroll. Optional.
+    enrollment_limit = models.IntegerField(null=True, blank=True)
+    # Total number of students on the waitlist. Optional.
+    waitlist_taken = models.IntegerField(null=True, blank=True)
+    # Maximum number of students allowed on the waitlist. Optional.
+    waitlist_limit = models.IntegerField(null=True, blank=True)
+
     def __str__(self):
         return (
             f"{self.course} | {self.semester} | "
@@ -1055,53 +1123,6 @@ class SectionTime(models.Model):
             models.Index(fields=["friday"]),
             models.Index(fields=["start_time"]),
             models.Index(fields=["end_time"]),
-        ]
-
-
-class SectionEnrollment(models.Model):
-    """Section meeting enrollment model.
-    Belongs to a Section.
-    """
-
-    section = models.ForeignKey("Section", on_delete=models.CASCADE)
-
-    # Total number of enrolled students. Optional.
-    enrollment_taken = models.IntegerField(null=True, blank=True)
-
-    # Maximum number of students allowed to enroll. Optional.
-    enrollment_limit = models.IntegerField(null=True, blank=True)
-
-    # Total number of students on the waitlist. Optional.
-    waitlist_taken = models.IntegerField(null=True, blank=True)
-
-    # Maximum number of students allowed on the waitlist. Optional.
-    waitlist_limit = models.IntegerField(null=True, blank=True)
-
-    @property
-    def enrollment_info(self):
-        """
-        Returns a dictionary containing enrollment and waitlist information.
-        """
-        return {
-            "enrollment_taken": self.enrollment_taken,
-            "enrollment_limit": self.enrollment_limit,
-            "waitlist_taken": self.waitlist_taken,
-            "waitlist_limit": self.waitlist_limit,
-        }
-
-    def __str__(self):
-        return (
-            f"Section: {self.section}, Enrolled: {self.enrollment_taken}/"
-            f"{self.enrollment_limit}, Waitlist: {self.waitlist_taken}/"
-            f"{self.waitlist_limit}"
-        )
-
-    class Meta:
-        indexes = [
-            models.Index(fields=["enrollment_taken"]),
-            models.Index(fields=["enrollment_limit"]),
-            models.Index(fields=["waitlist_taken"]),
-            models.Index(fields=["waitlist_limit"]),
         ]
 
 
