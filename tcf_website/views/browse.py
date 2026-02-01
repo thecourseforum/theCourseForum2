@@ -1,5 +1,5 @@
 # pylint disable=bad-continuation
-# pylint: disable=too-many-locals
+# pylint: disable=too-many-locals, duplicate-code, line-too-long
 
 """Views for Browse, department, and course/course instructor pages."""
 import json
@@ -408,7 +408,6 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         .exclude(text="")
         .order_by("-created")
     )
-    current_review_count = visible_reviews.count()
     summary_record = ReviewLLMSummary.objects.filter(
         course=course, instructor=instructor
     ).first()
