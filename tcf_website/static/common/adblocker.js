@@ -9,5 +9,5 @@ window.addEventListener("DOMContentLoaded", function () {
       });
       $("#adblockModal").modal("show");
     }
-  }, 1000);
+  }, 100);
 });
