@@ -1,6 +1,8 @@
 """View for question and answer creation."""
 
 import datetime
+from datetime import datetime
+from types import SimpleNamespace
 
 from django import forms
 from django.contrib import messages
@@ -19,7 +21,35 @@ from ..models import Answer, Question
 @login_required
 def qa_dashboard(request):
     """Q&A Dashboard view."""
-    return render(request, "qa/qa_dashboard.html")
+    questions = Question.objects.select_related("course").order_by("-created")
+
+    active_question = questions.first()
+
+    answers = (
+        Answer.display_activity(
+            question_id=active_question.id,
+            user=request.user,
+        )
+        if active_question
+        else []
+    )
+
+    test_question = SimpleNamespace(
+        title="How difficult?",
+        text="How difficult is CS 2100?",
+        created=datetime.now(),
+        course=SimpleNamespace(code="CS 2100"),
+    )
+
+    return render(
+        request,
+        "qa/qa_dashboard.html",
+        {
+            "questions": [test_question],
+            "active_question": test_question,
+            "answers": answers,
+        },
+    )
 
 
 @login_required

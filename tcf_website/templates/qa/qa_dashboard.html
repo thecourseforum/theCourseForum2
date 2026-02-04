@@ -1,0 +1,34 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+
+{% block title %}Q&A | theCourseForum{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'qa/qa_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="qa-container">
+        <div class="qa-sidebar">
+ <!-- Sidebar Post List -->
+        <div class="posts-list">
+            {% for q in questions %}
+                <div class="post-item {% if q == active_question %}active{% endif %}">
+                    <div class="post-header">
+                        <span class="post-tag">{{ q.course.code }}</span>
+                        <span class="post-title">{{ q.title }}</span>
+                        <span class="post-date">{{ q.created|date:"m/d/y" }}</span>
+                    </div>
+                <div class="post-preview">
+                    {{ q.text }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        </div>
+       
+    </div> 
+        
+     
+{% endblock %}

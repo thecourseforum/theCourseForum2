@@ -1425,6 +1425,7 @@ class Question(models.Model):
     Has a course and instructor.
     """
 
+    title = models.CharField(max_length=200, blank=True)
     text = models.TextField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, default=None)
