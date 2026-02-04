@@ -7,8 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}theCourseForum{% endblock %}</title>
     <link rel="icon"
-      type="image/png"
-      href="{% static 'base/img/new_logo.svg' %}">
+      type="image/svg+xml"
+      href="{% static 'base/img/new_logo.svg' %}"
+      sizes="any">
 
     <!-- Open Graph Protocol -->
     <meta property="og:title" content="theCourseForum - Your Guide to Courses at UVA">
@@ -70,6 +71,12 @@
 
   <!-- Donate page modal -->
   {% include "common/donate_page_modal.html" with path_id="donatePage"  path=request.get_full_path %}
+
+  <!-- Adblock modal -->
+  {% include "common/adblock_modal.html" %}
+
+  <script src="{% static 'common/adblocker.js' %}"></script>
+
 
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54T5TXX"
