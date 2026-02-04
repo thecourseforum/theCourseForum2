@@ -45,7 +45,7 @@ def qa_dashboard(request):
         request,
         "qa/qa_dashboard.html",
         {
-            "questions": [test_question],
+            "questions": [],
             "active_question": test_question,
             "answers": answers,
         },
@@ -291,4 +291,6 @@ def downvote_answer(request, answer_id):
         answer = Answer.objects.get(pk=answer_id)
         answer.downvote(request.user)
         return JsonResponse({"ok": True})
+    return JsonResponse({"ok": False})
+    return JsonResponse({"ok": False})
     return JsonResponse({"ok": False})

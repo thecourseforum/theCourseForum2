@@ -11,23 +11,42 @@
 {% block content %}
     <div class="qa-container">
         <div class="qa-sidebar">
- <!-- Sidebar Post List -->
-        <div class="posts-list">
-            {% for q in questions %}
-                <div class="post-item {% if q == active_question %}active{% endif %}">
-                    <div class="post-header">
-                        <span class="post-tag">{{ q.course.code }}</span>
-                        <span class="post-title">{{ q.title }}</span>
-                        <span class="post-date">{{ q.created|date:"m/d/y" }}</span>
-                    </div>
-                <div class="post-preview">
-                    {{ q.text }}
+            <!-- TODO: Add functionality to post button and searching-->
+            <div class="qa-header">
+                <button class="btn-new-post">
+                    <i class="fa fa-plus"></i> New Post
+                </button>
+                <div class="search-container">
+                    <i class="fa fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search posts...">
                 </div>
             </div>
-            {% endfor %}
+            <!-- Sidebar Post List -->
+            <div class="posts-list">
+                {% if questions %}
+                    {% for q in questions %}
+                        <div class="post-item {% if q == active_question %}active{% endif %}">
+                            <div class="post-header">
+                                <span class="post-tag">{{ q.course.code }}</span>
+                                <span class="post-title">{{ q.title }}</span>
+                                <span class="post-date">{{ q.created|date:"m/d/y" }}</span>
+                            </div>
+
+                        <div class="post-preview">
+                            {{ q.text|truncatechars:60 }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-state">No questions posted yet.</p>
+            {% endif %}
+            </div>
         </div>
-        </div>
-       
+
+        <!-- Post Content -->
+         <div class="qa-content">
+
+         </div>
     </div> 
         
      

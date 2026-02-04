@@ -609,6 +609,10 @@
   background: var(--secondary-color);
 }
 
+.empty-state {
+  text-align: center;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .qa-container {
