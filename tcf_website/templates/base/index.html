@@ -46,9 +46,7 @@
     <!-- Manual Fontawesome icon css file-->
     <link rel="stylesheet" href="{% static 'icons/icons.css' %}" />
 
-    <!--Google AdSense-->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1816162577232603"
-    crossorigin="anonymous"></script>
+
     <!-- tCF Custom Styling -->
     <link rel="stylesheet" href="{% static 'base/tcf-style.css' %}" />
     <!-- Google Fonts: Lato, Open Sans -->
@@ -72,6 +70,9 @@
   <!-- Donate page modal -->
   {% include "common/donate_page_modal.html" with path_id="donatePage"  path=request.get_full_path %}
 
+  <!-- Adblock modal -->
+  {% include "common/adblock_modal.html" %}
+
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54T5TXX"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -84,6 +85,10 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
           integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
           crossorigin="anonymous"></script>
+
+  <!--Google AdSense (after jQuery so onerror can show modal)-->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1816162577232603"
+    crossorigin="anonymous" onerror="$('#adblockModal').modal({backdrop:'static',keyboard:false}).modal('show');"></script>
   
   <!-- Recently viewed courses JavaScript -->
   <script src="{% static 'common/recently_viewed.js' %}"></script>
