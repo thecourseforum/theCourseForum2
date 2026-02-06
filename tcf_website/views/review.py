@@ -136,8 +136,7 @@ def new_review(request):
     # Handle GET - require context or redirect to search
     if is_club:
         return _handle_club_review_get(request, mode)
-    else:
-        return _handle_course_review_get(request, mode)
+    return _handle_course_review_get(request, mode)
 
 
 def _handle_course_review_get(request, mode):
