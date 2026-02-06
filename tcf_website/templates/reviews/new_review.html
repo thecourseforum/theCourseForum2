@@ -93,7 +93,7 @@
         <div class="form-group col-12">
           <textarea class="form-control" id="reviewtext" name="text" rows="5"
                     placeholder="Share your experience (aim for 100+ words)"
-                    minlength="100" maxlength="5000">{% if form.text.value %}{{ form.text.value }}{% endif %}</textarea>
+                    required minlength="100" maxlength="5000">{% if form.text.value %}{{ form.text.value }}{% endif %}</textarea>
           <small class="text-muted" id="word-count">0 words</small>
         </div>
       </div>
