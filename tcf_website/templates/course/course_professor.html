@@ -48,6 +48,7 @@
                     </a>
 
                     <!-- Instructor Dropdown -->
+                    {% if other_instructors %}
                     <div class="instructor dropdown">
                       <a class="instructor-dropdown btn btn-sm btn-outline-primary text-tcf-orange mt-2" href="#"
                          role="button" id="dropdownMenuLink" data-toggle="dropdown"
@@ -55,9 +56,14 @@
                       </a>
 
                       <div id="instructorMenu" class="instructor-menu dropdown-menu w-200" aria-labelledby="dropdownMenuLink">
-                        <!-- To be populated by instr_data.js script -->
+                        {% for instr in other_instructors %}
+                        <a class="dropdown-item" href="{% url 'course_instructor' course.id instr.id %}">
+                          {{ instr.last_name }}, {{ instr.first_name }}
+                        </a>
+                        {% endfor %}
                       </div>
                     </div>
+                    {% endif %}
                   </div>
 
                   <!-- Semester last taught -->
@@ -204,161 +210,74 @@
                     </div>
                 </div>
             </div>
-            {% if display_times %}
+            {% if display_times and sections %}
             <div class="times-info-container">
                 <div class="sections-container">
                     <div class="sections-header">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <p class="rating-card-desc mb-0 d-flex align-items-center">Sections
-                                <span class="section-count ml-2" id="sectionCount"></span>
-                            </p>
-                            <div class="sections-toggle-wrapper">
-                                <div class="sections-toggle">
-                                    <div class="toggle-option active" data-action="hide">Hide</div>
-                                    <div class="toggle-option" data-action="show">Show</div>
+                        <p class="rating-card-desc mb-0 d-flex align-items-center">
+                            Sections
+                            <span class="section-count ml-2">{{ sections|length }}</span>
+                        </p>
+                    </div>
+                    <div id="sectionInfo" class="sections-list">
+                        {% for section in sections %}
+                        <a href="https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_DETAILS.FieldFormula.IScript_Main?institution=UVA01&term={{ sem_code }}&class_nbr={{ section.number }}" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="section-row">
+                            <div class="section-number">{{ section.number }}</div>
+                            <div>{{ section.type }}{% if section.units %} ({{ section.units }} Unit{{ section.units|pluralize }}){% endif %}</div>
+                            <div class="enrollment-info">
+                                <div class="enrollment-wrapper">
+                                    <div class="enrollment-metrics">
+                                        <div class="enrollment-metric">
+                                            <span class="metric-label">Enrolled:</span>
+                                            <div class="progress enrollment-progress">
+                                                <div class="progress-bar bg-{% if section.enrollment_taken >= section.enrollment_limit %}danger{% else %}success{% endif %}" 
+                                                     role="progressbar" 
+                                                     style="width: {% widthratio section.enrollment_taken section.enrollment_limit 100 %}%;"></div>
+                                            </div>
+                                            <span class="metric-text">{{ section.enrollment_taken }}/{{ section.enrollment_limit }}</span>
+                                        </div>
+                                        <div class="enrollment-metric">
+                                            <span class="metric-label">Waitlist:</span>
+                                            <div class="progress waitlist-progress">
+                                                <div class="progress-bar bg-warning" 
+                                                     role="progressbar" 
+                                                     style="width: {% widthratio section.waitlist_taken section.waitlist_limit 100 %}%;"></div>
+                                            </div>
+                                            <span class="metric-text">{{ section.waitlist_taken }}/{{ section.waitlist_limit }}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="section-times">{{ section.times }}</div>
+                        </a>
+                        {% endfor %}
                     </div>
-                    <div id="sectionInfo" class="section-info section-info-hidden">
-                        <div class="text-center">
-                            <div class="spinner-border spinner-border-sm" role="status">
-                                <span class="sr-only">Loading...</span>
-                            </div>
-                            <p class="mt-2">Loading sections...</p>
-                        </div>
-                    </div>
+                    {% if sections|length > 3 %}
+                    <a href="javascript:void(0)" class="show-more-sections" id="showMoreSections">
+                        Show {{ sections|length|add:"-3" }} more <i class="fas fa-chevron-down ml-1"></i>
+                    </a>
+                    {% endif %}
                 </div>
             </div>
             {% endif %}
         </div>
 
-
         <script>
-            const courseId = "{{ course.id }}";
-            const instructorId = "{{ instructor.id }}";
-            const semCode = "{{ sem_code }}";
-            let sectionsLoaded = false;
-
-            function renderSections(sections) {
-                const sectionInfo = document.getElementById('sectionInfo');
-                const sectionCount = document.getElementById('sectionCount');
-                
-                if (sections.length === 0) {
-                    sectionInfo.innerHTML = '<p class="text-center mt-2">No sections found.</p>';
-                    sectionCount.textContent = '0';
-                    return;
-                }
-
-                sectionCount.textContent = sections.length;
-                
-                let html = '';
-                sections.forEach((section) => {
-                    const timesHtml = section.times.map((time, i) => 
-                        i > 0 ? '<br>' + time : time
-                    ).join('');
-                    
-                    const taken = section.enrollment_taken || 0;
-                    const limit = section.enrollment_limit || 0;
-                    const waitTaken = section.waitlist_taken || 0;
-                    const waitLimit = section.waitlist_limit || 0;
-                    
-                    let enrollPercentage = 0;
-                    let enrollColor = '#28a745';
-                    let enrollText = 'N/A';
-                    if (limit > 0) {
-                        enrollPercentage = (taken / limit) * 100;
-                        enrollColor = enrollPercentage >= 100 ? '#dc3545' : '#28a745';
-                        enrollText = `${taken}/${limit}`;
-                    }
-                    
-                    let waitPercentage = 0;
-                    let waitText = 'N/A';
-                    if (waitLimit > 0) {
-                        waitPercentage = (waitTaken / waitLimit) * 100;
-                        waitText = `${waitTaken}/${waitLimit}`;
-                    }
-                    
-                    const unitsText = section.units ? ` (${section.units} Unit${section.units != 1 ? 's' : ''})` : '';
-                    
-                    html += `
-                        <a href="https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_DETAILS.FieldFormula.IScript_Main?institution=UVA01&term=${semCode}&class_nbr=${section.sis_section_number}" 
-                           target="_blank" 
-                           rel="noopener noreferrer" 
-                           class="section-row">
-                            <div style="color: var(--accent-color);">${section.sis_section_number}</div>
-                            <div>${section.section_type || ''}${unitsText}</div>
-                            <div class="enrollment-info">
-                                <div class="enrollment-wrapper">
-                                    <div class="enrollment-metrics">
-                                        <div class="enrollment-metric">
-                                            <span class="metric-label">Enrollment:</span>
-                                            <div class="progress enrollment-progress">
-                                                <div class="progress-bar enrollment-bar" role="progressbar" style="width: ${enrollPercentage}%; background-color: ${enrollColor};"></div>
-                                            </div>
-                                            <span class="enrollment-text metric-text">${enrollText}</span>
-                                        </div>
-                                        <div class="enrollment-metric">
-                                            <span class="metric-label">Waitlist:</span>
-                                            <div class="progress waitlist-progress">
-                                                <div class="progress-bar waitlist-bar" role="progressbar" style="width: ${waitPercentage}%;"></div>
-                                            </div>
-                                            <span class="waitlist-text metric-text">${waitText}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="text-align: right;">
-                                ${timesHtml}
-                            </div>
-                        </a>
-                    `;
-                });
-                
-                sectionInfo.innerHTML = html;
-            }
-
-            function loadSections() {
-                if (sectionsLoaded) return;
-                sectionsLoaded = true;
-                
-                fetch(`/api/sections/?course_id=${courseId}&instructor_id=${instructorId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        renderSections(data.sections || []);
-                    })
-                    .catch(error => {
-                        console.error('Error loading sections:', error);
-                        document.getElementById('sectionInfo').innerHTML = 
-                            '<p class="text-center mt-2 text-danger">Error loading sections. Please try again.</p>';
-                    });
-            }
-
+            // Toggle for sections visibility
             document.addEventListener('DOMContentLoaded', function() {
-                const sectionInfo = document.getElementById('sectionInfo');
-                const toggleOptions = document.querySelectorAll('.sections-toggle .toggle-option');
+                const showMoreBtn = document.getElementById('showMoreSections');
+                const sectionsList = document.getElementById('sectionInfo');
                 
-                if (toggleOptions.length) {
-                    toggleOptions.forEach(option => {
-                        option.addEventListener('click', function() {
-                            const action = this.dataset.action;
-                            const isShow = action === 'show';
-                            
-                            // Toggle visibility
-                            if (sectionInfo) {
-                                if (isShow) {
-                                    sectionInfo.classList.remove('section-info-hidden');
-                                    // Load sections when showing for the first time
-                                    loadSections();
-                                } else {
-                                    sectionInfo.classList.add('section-info-hidden');
-                                }
-                            }
-                            
-                            // Update toggle state
-                            toggleOptions.forEach(opt => opt.classList.remove('active'));
-                            this.classList.add('active');
-                        });
+                if (showMoreBtn && sectionsList) {
+                    showMoreBtn.addEventListener('click', function() {
+                        const isExpanded = sectionsList.classList.toggle('expanded');
+                        this.classList.toggle('expanded', isExpanded);
+                        this.innerHTML = isExpanded 
+                            ? 'Show less <i class="fas fa-chevron-up ml-1"></i>'
+                            : 'Show {{ sections|length|add:"-3" }} more <i class="fas fa-chevron-down ml-1"></i>';
                     });
                 }
             });
@@ -366,10 +285,10 @@
 
         <ul class="nav nav-tabs" id="reviews">
             <li class="nav-item">
-                <a class="nav-link active" id="reviewsTab" data-toggle="tab" href="#reviewsTabContent" style="font-size: 18px;">Reviews</a>
+                <a class="nav-link active" id="reviewsTab" data-toggle="tab" href="#reviewsTabContent">Reviews</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="qaTab" data-toggle="tab" href="#qaTabContent" style="font-size: 18px;">Q&A
+                <a class="nav-link" id="qaTab" data-toggle="tab" href="#qaTabContent">Q&A
                     <span class="badge badge-pill badge-info ml-2">New</span>
                 </a>
             </li>
@@ -382,7 +301,7 @@
                         <h3 class="reviews-heading mb-0 mt-1 mr-4">{{ num_reviews }} {% if num_reviews == 1 %} Review {% else %} Reviews {% endif %}</h3>
                         <div class="reviews-options d-flex flex-sm-row flex-column col p-0">
                             {% if user.is_authenticated %}
-                                <a href="{% url 'new_review' %}?subdept_id={{course.subdepartment.id}}&course_id={{course.id}}&instr_id={{instructor.id}}" class="btn bg-tcf-orange text-white mb-3">
+                                <a href="{% url 'new_review' %}?course={{course.id}}&instructor={{instructor.id}}" class="btn bg-tcf-orange text-white mb-3">
                                     <i class="fa fa-plus" aria-hidden="true"></i> Add your review!
                                 </a>
                             {% else %}
@@ -420,22 +339,12 @@
                     {% include "reviews/reviews.html" with paginated_reviews=paginated_reviews %}
                 </div>
             </div>
-            <div class="tab-pane fade" id="qaTabContent" role="tabpanel" aria-labelledby="qa-tab">
-                {% include 'qa/qa.html' %}
-            </div>
         </div>
     </div>
 
 {% endblock %}
 
 {% block js %}
-    <!-- For instructor data -->
-    <script>
-       window.courseID = "{{ course_id|escapejs }}";
-       window.latestSemesterID = {{ latest_semester_id }};
-    </script>
-    <script src="{% static 'course/javascript/instr_data.js' %}"></script>
-
     <!-- For Bootstrap tooltip -->
     <script>
       $(function () { $('[data-toggle="tooltip"]').tooltip() })
@@ -451,8 +360,5 @@
         import {loadData} from "{% static 'course/javascript/course_data.js' %}";
         loadData(JSON.parse("{{ data|escapejs }}"))
     </script>
-
-    <!-- For QA Form-->
-    <script type="text/javascript" src="{% static 'qa/new_answer.js' %}"></script>
 
 {% endblock %}

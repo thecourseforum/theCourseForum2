@@ -406,6 +406,42 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     latest_semester = Semester.latest()
     is_current_semester = section_last_taught.semester.number == latest_semester.number
 
+    # instructor dropdown
+    other_instructors = (
+        Instructor.objects.filter(
+            section__course_id=course_id,
+            section__semester=section_last_taught.semester,
+            hidden=False,
+        )
+        .exclude(id=instructor_id)
+        .distinct()
+        .order_by("last_name")[:30]
+    )
+
+    # sections (current semester only)
+    sections = []
+    if is_current_semester:
+        sections_qs = Section.objects.filter(
+            course_id=course_id, instructors__id=instructor_id, semester=latest_semester
+        ).order_by("sis_section_number")
+
+        for section in sections_qs:
+            times_display = ""
+            if section.section_times:
+                times_display = section.section_times.rstrip(",")
+
+            sections.append(
+                {
+                    "number": section.sis_section_number,
+                    "type": section.section_type or "Lecture",
+                    "units": section.units,
+                    "times": times_display,
+                    "enrollment_taken": section.enrollment_taken or 0,
+                    "enrollment_limit": section.enrollment_limit or 0,
+                    "waitlist_taken": section.waitlist_taken or 0,
+                    "waitlist_limit": section.waitlist_limit or 0,
+                }
+            )
     return render(
         request,
         "course/course_professor.html",
@@ -429,6 +465,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "course_code": course.code(),
             "course_title": course.title,
             "instructor_fullname": instructor.full_name,
+            "other_instructors": other_instructors,
+            "sections": sections,
         },
     )
 
