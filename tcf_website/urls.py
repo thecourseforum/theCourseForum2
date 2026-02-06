@@ -58,7 +58,6 @@ urlpatterns = [
         views.DeleteReview.as_view(),
         name="delete_review",
     ),
-    path("reviews/<int:review_id>/edit/", views.edit_review, name="edit_review"),
     path("reviews/", views.reviews, name="reviews"),
     path("reviews/<int:review_id>/upvote/", views.upvote),
     path("reviews/<int:review_id>/downvote/", views.downvote),
@@ -120,8 +119,6 @@ urlpatterns = [
         name="delete_answer",
     ),
     path("answers/<int:answer_id>/edit/", views.edit_answer, name="edit_answer"),
-    # API URLs
-    path("api/", include("tcf_website.api.urls"), name="api"),
     # AUTH URLS
     path("login/", views.auth.login, name="login"),
     path("cognito-callback/", views.auth.cognito_callback, name="cognito_callback"),

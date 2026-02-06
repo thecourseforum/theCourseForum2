@@ -11,22 +11,182 @@
 {% block content %}
 
 <div class="new-review container text-left mx-auto">
-  <!-- Header row with title and toggle -->
   <div class="row mt-2 mb-3">
     <div class="col-12 d-flex align-items-center justify-content-between">
       <h1 class="h2 mb-0">Write a review</h1>
       {% include "../club/mode_toggle.html" with is_club=is_club %}
     </div>
   </div>
+  
   <div class="card">
     <form class="card-body px-md-5" id="reviewForm" action="{% url 'new_review' %}" method="POST">
-        {% csrf_token %}
-        {% include 'reviews/review_form_content.html' %}
-        {% include 'reviews/duplicate_review_modal.html' %}
-        {% include 'reviews/zero_hours_modal.html' %}
-        <div class="new-review-submit row py-4">
-          <button type="submit" class="btn btn-primary mx-auto" id="submitBtn">Submit Review</button>
+      {% csrf_token %}
+      
+      {% if is_club %}
+        <!-- Club Review -->
+        <div class="form-row mb-3">
+          <h2 class="h4 review-form-header form-group col-12 mt-4 mb-2">Which club are you reviewing?</h2>
+          <div class="form-group col-12">
+            <div class="form-control-plaintext">
+              <strong>{{ club.name }}</strong>
+              <span class="text-muted ml-2">{{ club.category.name }}</span>
+            </div>
+            <input type="hidden" name="club" value="{{ club.id }}">
+          </div>
         </div>
+        
+        <div class="form-row mb-3">
+          <div class="form-group col-sm-6">
+            <label for="semester" class="required-field">Semester</label>
+            <select class="form-control" required id="semester" name="semester">
+              {% for sem in semesters %}
+                <option value="{{ sem.id }}">{{ sem.season|title }} {{ sem.year }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      {% else %}
+        <!-- Course Review -->
+        <div class="form-row mb-3">
+          <h2 class="h4 review-form-header form-group col-12 mt-4 mb-2">Which class are you reviewing?</h2>
+          <div class="form-group col-12">
+            <div class="form-control-plaintext">
+              <strong>{{ course.code }}</strong> — {{ course.title }}
+            </div>
+            <input type="hidden" name="course" value="{{ course.id }}">
+          </div>
+        </div>
+        
+        <div class="form-row mb-3">
+          <div class="form-group col-sm-6">
+            <label for="instructor" class="required-field">Instructor</label>
+            {% if instructor %}
+              <div class="form-control-plaintext">{{ instructor.full_name }}</div>
+              <input type="hidden" name="instructor" value="{{ instructor.id }}">
+            {% else %}
+              <select class="form-control" required id="instructor" name="instructor">
+                <option value="">Select instructor...</option>
+                {% for instr in instructors %}
+                  <option value="{{ instr.id }}">{{ instr.last_name }}, {{ instr.first_name }}</option>
+                {% endfor %}
+              </select>
+            {% endif %}
+          </div>
+          <div class="form-group col-sm-6">
+            <label for="semester" class="required-field">Semester</label>
+            <select class="form-control" required id="semester" name="semester">
+              {% for sem in semesters %}
+                <option value="{{ sem.id }}">{{ sem.season|title }} {{ sem.year }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      {% endif %}
+      
+      <hr>
+      
+      <!-- Review Text -->
+      <div class="form-row mb-3">
+        <h2 class="h4 review-form-header form-group col-12 my-4">
+          Tell us about the {% if is_club %}club{% else %}course{% endif %}
+        </h2>
+        <div class="form-group col-12">
+          <textarea class="form-control" id="reviewtext" name="text" rows="5"
+                    placeholder="Share your experience (aim for 100+ words)"
+                    minlength="100" maxlength="5000">{% if form.text.value %}{{ form.text.value }}{% endif %}</textarea>
+          <small class="text-muted" id="word-count">0 words</small>
+        </div>
+      </div>
+      
+      <hr>
+      
+      <!-- Ratings -->
+      <div class="form-row mb-3">
+        <div class="form-group col-sm-6">
+          <h2 class="h4 review-form-header my-4">Rate the {% if is_club %}club{% else %}course{% endif %}</h2>
+          
+          <div class="rating-row">
+            <label>👤 {% if is_club %}Leadership{% else %}Instructor{% endif %}</label>
+            <select class="form-control rating-select" name="instructor_rating" required>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+          
+          <div class="rating-row">
+            <label>😊 Enjoyability</label>
+            <select class="form-control rating-select" name="enjoyability" required>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+          
+          <div class="rating-row">
+            <label>❤️ Recommend</label>
+            <select class="form-control rating-select" name="recommendability" required>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+          
+          <div class="rating-row">
+            <label>💪 {% if is_club %}Commitment{% else %}Difficulty{% endif %}</label>
+            <select class="form-control rating-select" name="difficulty" required>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group col-sm-6">
+          <h2 class="h4 review-form-header my-4">Hours per week</h2>
+          
+          <div class="hours-row">
+            <label>📖 {% if is_club %}Events{% else %}Reading{% endif %}</label>
+            <input type="number" class="form-control hours-input" name="amount_reading"
+                   value="{{ form.amount_reading.value|default:0 }}" min="0" max="20" required>
+          </div>
+          
+          <div class="hours-row">
+            <label>✏️ {% if is_club %}Planning{% else %}Writing{% endif %}</label>
+            <input type="number" class="form-control hours-input" name="amount_writing"
+                   value="{{ form.amount_writing.value|default:0 }}" min="0" max="20" required>
+          </div>
+          
+          <div class="hours-row">
+            <label>👥 {% if is_club %}Meetings{% else %}Groupwork{% endif %}</label>
+            <input type="number" class="form-control hours-input" name="amount_group"
+                   value="{{ form.amount_group.value|default:0 }}" min="0" max="20" required>
+          </div>
+          
+          <div class="hours-row">
+            <label>🔬 Other</label>
+            <input type="number" class="form-control hours-input" name="amount_homework"
+                   value="{{ form.amount_homework.value|default:0 }}" min="0" max="20" required>
+          </div>
+        </div>
+      </div>
+      
+      <hr>
+      
+      {% include 'reviews/duplicate_review_modal.html' %}
+      {% include 'reviews/zero_hours_modal.html' %}
+      
+      <div class="text-center py-4">
+        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">Submit Review</button>
+      </div>
     </form>
   </div>
 </div>
@@ -34,70 +194,47 @@
 {% endblock %}
 
 {% block js %}
-<script type="text/javascript" src="{% static 'reviews/sync_review_sliders.js' %}"></script>
-{% if is_club %}
-<script type="text/javascript" src="{% static 'reviews/club_review.js' %}"></script>
-{% else %}
-<script type="text/javascript" src="{% static 'reviews/new_review.js' %}"></script>
-{% endif %}
-
 <script>
-  // For Bootstrap tooltip
-  $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
+  // Word count
+  document.getElementById('reviewtext').addEventListener('input', function() {
+    const words = this.value.trim().split(/\s+/).filter(w => w).length;
+    document.getElementById('word-count').textContent = words + ' words';
   });
 
-  // Counter to keep track of number of times "zero-hours-review" modal is shown
-  // Boolean to track whether "zero-hours-review" modal has already been shown or not
-  // True if already shown, false if not
+  // Form submission with duplicate check
   var zeroHoursModalShown = false;
-  $(document).ready(function () {
-    // Stop normal submit to check for duplicate review with ajax request
-    $("#reviewForm").submit(function(e) {
-        e.preventDefault();
+  document.getElementById('reviewForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var form = this;
+    var formData = new FormData(form);
 
-        $.ajax({
-            type: "POST",
-            url: "/reviews/check_duplicate/",
-            data: $("#reviewForm").serialize(),
-            async: false,
-            success: function (check) {
-                if(check.duplicate) {
-                    $("#duplicate-review").modal();
-                } else {
-                    // Check if review has 0 total hours/week and warn user if it does
-                    $.ajax({
-                        type: "POST",
-                        url: "/reviews/check_zero_hours_per_week/",
-                        data: $("#reviewForm").serialize(),
-                        async: false,
-                        success: function (check) {
-                            // Only show "zero-hours-review" modal once
-                            if(check.zero && !zeroHoursModalShown) {
-                                $("#zero-hours-review").modal();
-                                zeroHoursModalShown = true;
-                            } else {
-                                // Timeout button for 3 seconds so user can't spam button while form is submitting
-                                $("#submitBtn").prop("disabled", true);
-                                setTimeout(enableButton, 3000);
-                                // $("#reviewForm") didn't work for some reason
-                                // Not a duplicate review and the zero hours modal has been shown or wasn't
-                                // necessary to show, so proceed with normal form submission for new review
-                                document.getElementById("reviewForm").action = "{% url 'new_review' %}";
-                                document.getElementById("reviewForm").submit();
-                            }
-                        }
-                    });
-                }
-            }
+    fetch('/reviews/check_duplicate/', {
+      method: 'POST',
+      body: formData,
+      headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') }
+    })
+    .then(r => r.json())
+    .then(check => {
+      if (check.duplicate) {
+        $('#duplicate-review').modal();
+      } else {
+        fetch('/reviews/check_zero_hours_per_week/', {
+          method: 'POST',
+          body: formData,
+          headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') }
+        })
+        .then(r => r.json())
+        .then(check => {
+          if (check.zero && !zeroHoursModalShown) {
+            $('#zero-hours-review').modal();
+            zeroHoursModalShown = true;
+          } else {
+            document.getElementById('submitBtn').disabled = true;
+            form.submit();
+          }
         });
+      }
     });
   });
-
-  // Re-enable button
-  function enableButton() {
-        $("#submitBtn").prop("disabled", false);
-  }
-
 </script>
 {% endblock %}
