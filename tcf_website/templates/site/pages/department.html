@@ -123,7 +123,12 @@
 {% block scripts %}
 <script>
 function updateSort(value) {
-  const [sortby, order] = value.split('_');
+  const separatorIndex = value.lastIndexOf('_');
+  if (separatorIndex === -1) {
+    return;
+  }
+  const sortby = value.slice(0, separatorIndex);
+  const order = value.slice(separatorIndex + 1);
   const url = new URL(window.location.href);
   url.searchParams.set('sortby', sortby);
   url.searchParams.set('order', order);

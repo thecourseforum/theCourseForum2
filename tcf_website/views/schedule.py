@@ -280,12 +280,11 @@ class ScheduleForm(forms.ModelForm):
     Django form for interacting with a schedule
     """
 
-    user_id = forms.IntegerField(widget=forms.HiddenInput())
     name = forms.CharField(max_length=15)
 
     class Meta:
         model = Schedule
-        fields = ["name", "user_id"]
+        fields = ["name"]
 
 
 def schedule_data_helper(request):
@@ -366,7 +365,6 @@ def view_schedules(request):
                 "gpa": (selected_schedule_data[4] if selected_schedule_data else 0),
             },
             "calendar": calendar,
-            "new_schedule_user_id": request.user.id,
         }
     )
 
@@ -493,13 +491,10 @@ def remove_scheduled_course(request, scheduled_course_id):
     return redirect(_safe_next_url(request, default_url))
 
 
-@login_required
-def schedule_add_course(request, course_id):
-    """Add a course to a schedule from the course flow."""
-    course = get_object_or_404(Course, id=course_id)
-    latest_semester = Semester.latest()
-    schedules = Schedule.objects.filter(user=request.user).order_by("name")
-
+def _build_schedule_add_options(
+    course: Course, latest_semester: Semester
+) -> tuple[list[dict], list[dict]]:
+    """Build lecture and non-lecture options for the add-course form."""
     lecture_options = []
     other_options = []
     sections = (
@@ -531,100 +526,128 @@ def schedule_add_course(request, course_id):
                 lecture_options.append(option)
             else:
                 other_options.append(option)
+    return lecture_options, other_options
 
-    selected_schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule", "")
-    selected_option = request.POST.get("selection", "")
 
-    fallback_course_url = reverse(
-        "course",
-        args=[course.subdepartment.mnemonic, course.number],
+def _parse_schedule_add_selection(
+    selected_schedule_id: str, selected_option: str
+) -> tuple[int | None, int | None, int | None, str | None]:
+    """Parse schedule and section selection values from POST data."""
+    if not selected_schedule_id:
+        return None, None, None, "Choose a schedule first."
+    if not selected_option:
+        return None, None, None, "Choose a section to add."
+
+    try:
+        section_id_raw, instructor_id_raw = selected_option.split(":")
+        schedule_id = int(selected_schedule_id)
+        section_id = int(section_id_raw)
+        instructor_id = int(instructor_id_raw)
+    except (AttributeError, TypeError, ValueError):
+        return None, None, None, "Invalid section selection."
+
+    return schedule_id, section_id, instructor_id, None
+
+
+def _resolve_schedule_add_selection(
+    user,
+    course: Course,
+    latest_semester: Semester,
+    selection_ids: tuple[int, int, int],
+) -> tuple[Schedule | None, Section | None, Instructor | None, str | None]:
+    """Validate selected schedule/section/instructor objects."""
+    schedule_id, section_id, instructor_id = selection_ids
+
+    schedule = Schedule.objects.filter(id=schedule_id, user=user).first()
+    if schedule is None:
+        return None, None, None, "Invalid schedule selection."
+
+    section = Section.objects.filter(
+        id=section_id, course=course, semester=latest_semester
+    ).first()
+    if section is None:
+        return None, None, None, "Invalid section selection."
+
+    instructor = Instructor.objects.filter(id=instructor_id, hidden=False).first()
+    if instructor is None:
+        return None, None, None, "Invalid instructor selection."
+
+    if not section.instructors.filter(id=instructor.id).exists():
+        return None, None, None, "The selected instructor does not teach that section."
+
+    return schedule, section, instructor, None
+
+
+def _schedule_add_success_redirect(request, schedule_id: int):
+    """Return success redirect response for schedule add flow."""
+    default_url = f"{reverse('schedule')}?{urlencode({'schedule': schedule_id})}"
+    return redirect(_safe_next_url(request, default_url))
+
+
+def _add_course_to_schedule(
+    request, schedule: Schedule, section: Section, instructor: Instructor
+):
+    """Attempt to add the selected section and emit user-facing messages."""
+    if ScheduledCourse.objects.filter(
+        schedule=schedule, section=section, instructor=instructor
+    ).exists():
+        messages.info(request, "That section is already in this schedule.")
+        return None
+
+    candidate_blocks = _section_time_rows_to_blocks(list(section.sectiontime_set.all()))
+    if not candidate_blocks:
+        candidate_blocks = _parse_fallback_meeting_blocks(section.section_times)
+
+    if _has_schedule_conflict(schedule, candidate_blocks):
+        messages.error(
+            request,
+            "This section conflicts with another meeting in the selected schedule.",
+        )
+        return None
+
+    ScheduledCourse.objects.create(
+        schedule=schedule,
+        section=section,
+        instructor=instructor,
+        time=(section.section_times or "").rstrip(","),
     )
-    next_url = _safe_next_url(request, fallback_course_url)
+    messages.success(request, "Successfully added course to schedule.")
+    return _schedule_add_success_redirect(request, schedule.id)
 
-    if request.method == "POST":
-        if not selected_schedule_id:
-            messages.error(request, "Choose a schedule first.")
-        elif not selected_option:
-            messages.error(request, "Choose a section to add.")
-        else:
-            schedule = None
-            try:
-                section_id_raw, instructor_id_raw = selected_option.split(":")
-                section_id = int(section_id_raw)
-                instructor_id = int(instructor_id_raw)
-                schedule_id = int(selected_schedule_id)
-            except (TypeError, ValueError):
-                messages.error(request, "Invalid section selection.")
-            else:
-                schedule = Schedule.objects.filter(
-                    id=schedule_id,
-                    user=request.user,
-                ).first()
-                if schedule is None:
-                    messages.error(request, "Invalid schedule selection.")
-                else:
-                    section = Section.objects.filter(
-                        id=section_id,
-                        course=course,
-                        semester=latest_semester,
-                    ).first()
-                    if section is None:
-                        messages.error(request, "Invalid section selection.")
-                    else:
-                        instructor = Instructor.objects.filter(
-                            id=instructor_id,
-                            hidden=False,
-                        ).first()
-                        if instructor is None:
-                            messages.error(request, "Invalid instructor selection.")
-                        elif not section.instructors.filter(id=instructor.id).exists():
-                            messages.error(
-                                request,
-                                "The selected instructor does not teach that section.",
-                            )
-                        elif ScheduledCourse.objects.filter(
-                            schedule=schedule,
-                            section=section,
-                            instructor=instructor,
-                        ).exists():
-                            messages.info(
-                                request,
-                                "That section is already in this schedule.",
-                            )
-                        else:
-                            candidate_blocks = _section_time_rows_to_blocks(
-                                list(section.sectiontime_set.all())
-                            )
-                            if not candidate_blocks:
-                                candidate_blocks = _parse_fallback_meeting_blocks(
-                                    section.section_times
-                                )
 
-                            if _has_schedule_conflict(schedule, candidate_blocks):
-                                messages.error(
-                                    request,
-                                    (
-                                        "This section conflicts with another meeting "
-                                        "in the selected schedule."
-                                    ),
-                                )
-                            else:
-                                ScheduledCourse.objects.create(
-                                    schedule=schedule,
-                                    section=section,
-                                    instructor=instructor,
-                                    time=(section.section_times or "").rstrip(","),
-                                )
-                                messages.success(
-                                    request, "Successfully added course to schedule."
-                                )
+def _handle_schedule_add_post(
+    request,
+    course: Course,
+    latest_semester: Semester,
+    selected_schedule_id: str,
+    selected_option: str,
+):
+    """Handle POST submission for schedule add flow."""
+    schedule_id, section_id, instructor_id, parse_error = _parse_schedule_add_selection(
+        selected_schedule_id, selected_option
+    )
+    if parse_error:
+        messages.error(request, parse_error)
+        return None
 
-                                default_url = (
-                                    f"{reverse('schedule')}?"
-                                    f"{urlencode({'schedule': schedule.id})}"
-                                )
-                                return redirect(_safe_next_url(request, default_url))
+    schedule, section, instructor, validation_error = _resolve_schedule_add_selection(
+        request.user,
+        course,
+        latest_semester,
+        (schedule_id, section_id, instructor_id),
+    )
+    if validation_error:
+        messages.error(request, validation_error)
+        return None
 
+    return _add_course_to_schedule(request, schedule, section, instructor)
+
+
+def _build_schedule_add_page_context(
+    course: Course,
+    page_state: dict,
+) -> dict:
+    """Build template context for schedule add page."""
     dept = course.subdepartment.department
     breadcrumbs = [
         (dept.school.name, reverse("browse"), False),
@@ -636,20 +659,64 @@ def schedule_add_course(request, course_id):
         ),
         ("Add to Schedule", None, True),
     ]
+    return {
+        "course": course,
+        "breadcrumbs": breadcrumbs,
+        "lecture_options": page_state["lecture_options"],
+        "other_options": page_state["other_options"],
+        "schedules": page_state["schedules"],
+        "selected_schedule_id": (
+            str(page_state["selected_schedule_id"])
+            if page_state["selected_schedule_id"]
+            else ""
+        ),
+        "selected_option": page_state["selected_option"],
+        "default_next_url": page_state["fallback_course_url"],
+        "next_url": page_state["next_url"],
+    }
+
+
+@login_required
+def schedule_add_course(request, course_id):
+    """Add a course to a schedule from the course flow."""
+    course = get_object_or_404(Course, id=course_id)
+    latest_semester = Semester.latest()
+    schedules = Schedule.objects.filter(user=request.user).order_by("name")
+    lecture_options, other_options = _build_schedule_add_options(course, latest_semester)
+
+    selected_schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule", "")
+    selected_option = request.POST.get("selection", "")
+
+    fallback_course_url = reverse(
+        "course",
+        args=[course.subdepartment.mnemonic, course.number],
+    )
+    next_url = _safe_next_url(request, fallback_course_url)
+
+    if request.method == "POST":
+        success_response = _handle_schedule_add_post(
+            request,
+            course,
+            latest_semester,
+            selected_schedule_id,
+            selected_option,
+        )
+        if success_response is not None:
+            return success_response
 
     return render(
         request,
         "site/pages/schedule_add_course.html",
-        {
-            "course": course,
-            "breadcrumbs": breadcrumbs,
-            "lecture_options": lecture_options,
-            "other_options": other_options,
-            "schedules": schedules,
-            "selected_schedule_id": str(selected_schedule_id) if selected_schedule_id else "",
-            "selected_option": selected_option,
-            "new_schedule_user_id": request.user.id,
-            "default_next_url": fallback_course_url,
-            "next_url": next_url,
-        },
+        _build_schedule_add_page_context(
+            course,
+            {
+                "lecture_options": lecture_options,
+                "other_options": other_options,
+                "schedules": schedules,
+                "selected_schedule_id": selected_schedule_id,
+                "selected_option": selected_option,
+                "fallback_course_url": fallback_course_url,
+                "next_url": next_url,
+            },
+        ),
     )

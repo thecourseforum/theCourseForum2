@@ -67,10 +67,15 @@ urlpatterns = [
     path("reviews/<int:review_id>/upvote/", views.upvote),
     path("reviews/<int:review_id>/downvote/", views.downvote),
     path("reviews/<int:review_id>/vote/", views.vote_review, name="vote_review"),
-    path("reviews/check_duplicate/", views.review.check_duplicate),
+    path(
+        "reviews/check_duplicate/",
+        views.review.check_duplicate,
+        name="check_review_duplicate",
+    ),
     path(
         "reviews/check_zero_hours_per_week/",
         views.review.check_zero_hours_per_week,
+        name="check_zero_hours_per_week",
     ),
     path("profile/", views.profile, name="profile"),
     path(

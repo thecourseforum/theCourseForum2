@@ -32,7 +32,6 @@
       <p>You need at least one schedule before adding courses.</p>
       <form method="post" action="{% url 'new_schedule' %}" class="schedule-add__create-form">
         {% csrf_token %}
-        <input type="hidden" name="user_id" value="{{ new_schedule_user_id }}">
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
         <input type="text" class="input" name="name" maxlength="15" required placeholder="New schedule name">
         <button type="submit" class="btn btn--primary btn--sm">Create</button>

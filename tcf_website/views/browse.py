@@ -83,7 +83,9 @@ def browse(request):
 
 def department(request, dept_id: int, course_recency=None):
     """View for department page - Modern design."""
-    dept = Department.objects.prefetch_related("subdepartment_set").get(pk=dept_id)
+    dept = get_object_or_404(
+        Department.objects.prefetch_related("subdepartment_set"), pk=dept_id
+    )
 
     if not course_recency:
         course_recency = str(Semester.latest())

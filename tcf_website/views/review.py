@@ -228,6 +228,8 @@ class DeleteReview(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
         # Check if it's a club review
         if self.object.club:
             return f"Successfully deleted your review for {self.object.club}!"
+        return f"Successfully deleted your review for {self.object.course}!"
+
 
 @login_required
 def new_review(request):
@@ -256,8 +258,16 @@ def new_review(request):
 
             # Redirect to the new relevant page
             if instance.club:
-                return redirect("club", category_slug=instance.club.category.slug, club_id=instance.club.id)
-            return redirect("course", mnemonic=instance.course.subdepartment.mnemonic, course_number=instance.course.number)
+                return redirect(
+                    "club",
+                    category_slug=instance.club.category.slug,
+                    club_id=instance.club.id,
+                )
+            return redirect(
+                "course",
+                mnemonic=instance.course.subdepartment.mnemonic,
+                course_number=instance.course.number,
+            )
 
         # Form invalid - re-render with errors
         return _render_review_form_with_errors(request, form, is_club, mode)

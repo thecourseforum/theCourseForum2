@@ -238,6 +238,9 @@
 
 {% block scripts %}
 <script>
+  const duplicateCheckUrl = "{% url 'check_review_duplicate' %}";
+  const zeroHoursCheckUrl = "{% url 'check_zero_hours_per_week' %}";
+
   // Word count logic
   const textarea = document.getElementById('reviewtext');
   const countDisplay = document.getElementById('word-count');
@@ -272,7 +275,7 @@
     submitBtn.textContent = 'Checking...';
 
     // 1. Check Duplicate
-    fetch('/reviews/check_duplicate/', {
+    fetch(duplicateCheckUrl, {
         method: 'POST',
         body: formData,
         headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') }
@@ -286,7 +289,7 @@
             submitBtn.textContent = 'Submit Review';
         } else {
             // 2. Check Zero Hours
-            fetch('/reviews/check_zero_hours_per_week/', {
+            fetch(zeroHoursCheckUrl, {
                 method: 'POST',
                 body: formData,
                 headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') }
@@ -305,6 +308,12 @@
                 } else {
                     form.submit(); // Submit for real
                 }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("An error occurred checking hours. Please try again.");
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Review';
             });
         }
     })

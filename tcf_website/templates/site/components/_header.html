@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_tags %}
 {# Header Component #}
 <header class="header">
   <div class="header__inner">
@@ -35,10 +36,10 @@
     <div class="header__actions">
       <!-- Mode Toggle -->
       <div class="mode-toggle">
-        <a href="?mode=courses" class="mode-toggle__item {% if request.GET.mode != 'clubs' %}is-active{% endif %}" aria-label="Switch to Courses">
+        <a href="{% mode_toggle_url request 'courses' %}" class="mode-toggle__item {% if request.GET.mode != 'clubs' %}is-active{% endif %}" aria-label="Switch to Courses">
           Courses
         </a>
-        <a href="?mode=clubs" class="mode-toggle__item {% if request.GET.mode == 'clubs' %}is-active{% endif %}" aria-label="Switch to Clubs">
+        <a href="{% mode_toggle_url request 'clubs' %}" class="mode-toggle__item {% if request.GET.mode == 'clubs' %}is-active{% endif %}" aria-label="Switch to Clubs">
           Clubs
         </a>
       </div>

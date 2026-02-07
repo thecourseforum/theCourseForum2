@@ -24,3 +24,10 @@ class CourseViewTestCase(TestCase):
         url = reverse("course", args=["CS", 9999])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
+
+    @suppress_request_warnings
+    def test_unknown_department_returns_404(self):
+        """Unknown department should return 404."""
+        url = reverse("department", args=[999999])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)

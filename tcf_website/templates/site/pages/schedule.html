@@ -19,7 +19,6 @@
 
       <form method="post" action="{% url 'new_schedule' %}" class="schedule-builder__create-form">
         {% csrf_token %}
-        <input type="hidden" name="user_id" value="{{ new_schedule_user_id }}">
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
         <input
           type="text"

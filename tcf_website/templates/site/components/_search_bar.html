@@ -1,6 +1,7 @@
 {% load static %}
+{% load custom_tags %}
 <div class="search-bar-container {{ container_classes }}">
-  <form class="search-bar {{ form_classes }}" action="{% url 'search' %}" method="get" id="globalSearchForm">
+  <form class="search-bar {{ form_classes }}" action="{% url 'search' %}" method="get">
     <div class="search-bar__input-wrapper">
       <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"></circle>
@@ -24,7 +25,6 @@
         <button 
           type="button" 
           class="search-bar__filter-trigger {% if request.GET.weekdays or request.GET.from_time or request.GET.to_time or request.GET.open_sections or request.GET.min_gpa or request.GET.subdepartment or request.GET.discipline %}is-active-filter{% endif %}" 
-          id="searchFilterToggle" 
           aria-label="Filters"
           title="Advanced Filters"
         >
@@ -62,7 +62,7 @@
           <div class="filter-title">Min GPA</div>
           <div class="flex items-center gap-3 w-full justify-center px-2">
              <input type="range" name="min_gpa" min="0" max="4" step="0.1" value="{{ request.GET.min_gpa|default:'0' }}" class="flex-1" style="max-width: 140px;">
-             <span style="min-width: 2.5rem; text-align: center; font-variant-numeric: tabular-nums; font-size: var(--text-sm); font-weight: bold; background: var(--bg-muted); padding: 2px 6px; rounded-md border border-border;">{{ request.GET.min_gpa|default:'0.0' }}</span>
+             <span class="gpa-value-display" style="min-width: 2.5rem; text-align: center; font-variant-numeric: tabular-nums; font-size: var(--text-sm); font-weight: bold; background: var(--bg-muted); padding: 2px 6px;">{{ request.GET.min_gpa|default:'0.0' }}</span>
           </div>
         </div>
       </div>
@@ -78,8 +78,9 @@
             </div>
             <div class="filter-list">
               {% for subdept in subdepartments %}
+              {% getlist_contains request 'subdepartment' subdept.mnemonic as subdepartment_selected %}
               <label class="filter-item">
-                <input type="checkbox" name="subdepartment" value="{{ subdept.mnemonic }}">
+                <input type="checkbox" name="subdepartment" value="{{ subdept.mnemonic }}" {% if subdepartment_selected %}checked{% endif %}>
                 <span>{{ subdept.mnemonic }} - {{ subdept.name }}</span>
               </label>
               {% endfor %}
@@ -96,8 +97,9 @@
             </div>
             <div class="filter-list">
               {% for discipline in disciplines %}
+              {% getlist_contains request 'discipline' discipline.name as discipline_selected %}
               <label class="filter-item">
-                <input type="checkbox" name="discipline" value="{{ discipline.name }}">
+                <input type="checkbox" name="discipline" value="{{ discipline.name }}" {% if discipline_selected %}checked{% endif %}>
                 <span>{{ discipline.name }}</span>
               </label>
               {% endfor %}

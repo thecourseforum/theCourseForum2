@@ -25,14 +25,14 @@
   
   <div class="course-card__ratings">
     <div class="rating-stat">
-      <div class="rating-stat__value {% if course.average_rating >= 4 %}rating-stat__value--success{% elif course.average_rating >= 3 %}rating-stat__value--warning{% elif course.average_rating %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
+      <div class="rating-stat__value {% if course.average_rating and course.average_rating >= 4 %}rating-stat__value--success{% elif course.average_rating and course.average_rating >= 3 %}rating-stat__value--warning{% elif course.average_rating %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
         {% if course.average_rating %}{{ course.average_rating|floatformat:1 }}{% else %}—{% endif %}
       </div>
       <div class="rating-stat__label">Rating</div>
     </div>
 
     <div class="rating-stat">
-      <div class="rating-stat__value {% if course.average_gpa >= 3.5 %}rating-stat__value--success{% elif course.average_gpa >= 2.5 %}rating-stat__value--warning{% elif course.average_gpa %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
+      <div class="rating-stat__value {% if course.average_gpa and course.average_gpa >= 3.5 %}rating-stat__value--success{% elif course.average_gpa and course.average_gpa >= 2.5 %}rating-stat__value--warning{% elif course.average_gpa %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
         {% if course.average_gpa %}{{ course.average_gpa|floatformat:2 }}{% else %}—{% endif %}
       </div>
       <div class="rating-stat__label">GPA</div>
