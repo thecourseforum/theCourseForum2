@@ -1,5 +1,6 @@
 # pylint: disable=fixme
 """Base Django settings for tcf_core project."""
+# pylint: disable=duplicate-code
 import os
 
 import environ
@@ -16,6 +17,10 @@ env = environ.Env(
 )
 env_file = os.path.join(BASE_DIR, ".env")
 environ.Env.read_env(env_file)
+
+# AI review summary configuration
+OPENROUTER_API_KEY = env.str("OPENROUTER_API_KEY", default="")
+OPENROUTER_MODEL = env.str("OPENROUTER_MODEL", default="openrouter/auto")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env.str("SECRET_KEY")
