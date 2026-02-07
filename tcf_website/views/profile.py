@@ -37,7 +37,7 @@ def _review_stats_for_user(user):
     return {key: safe_round(value) for key, value in merged.items()}
 
 
-class ProfileForm(ModelForm):
+class ProfileFormLegacy(ModelForm):
     """Form updating user profile."""
 
     class Meta:
@@ -49,6 +49,36 @@ class ProfileForm(ModelForm):
             "first_name": forms.TextInput(attrs={"class": "form-control"}),
             "last_name": forms.TextInput(attrs={"class": "form-control"}),
             "graduation_year": forms.NumberInput(attrs={"class": "form-control"}),
+        }
+
+
+@login_required
+def profile_legacy(request):
+    """User profile view."""
+    if request.method == "POST":
+        form = ProfileFormLegacy(request.POST, label_suffix="", instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your profile was updated successfully!")
+        else:
+            messages.error(request, form.errors)
+        return HttpResponseRedirect("/profile")
+
+    form = ProfileFormLegacy(label_suffix="", instance=request.user)
+    return render(request, "profile/profile.html", {"form": form})
+
+
+class ProfileForm(ModelForm):
+    """Form for profile page."""
+
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "graduation_year"]
+        widgets = {
+            "first_name": forms.TextInput(attrs={"class": "form-group__input"}),
+            "last_name": forms.TextInput(attrs={"class": "form-group__input"}),
+            "graduation_year": forms.NumberInput(attrs={"class": "form-group__input"}),
         }
 
 
@@ -66,55 +96,25 @@ def profile(request):
         return HttpResponseRedirect("/profile")
 
     form = ProfileForm(label_suffix="", instance=request.user)
-    return render(request, "profile/profile.html", {"form": form})
-
-
-class ProfileFormV2(ModelForm):
-    """Form for v2 profile page."""
-
-    class Meta:
-        model = User
-        fields = ["first_name", "last_name", "graduation_year"]
-        widgets = {
-            "first_name": forms.TextInput(attrs={"class": "form-group__input"}),
-            "last_name": forms.TextInput(attrs={"class": "form-group__input"}),
-            "graduation_year": forms.NumberInput(attrs={"class": "form-group__input"}),
-        }
+    return render(request, "site/pages/profile.html", {"form": form})
 
 
 @login_required
-def profile_v2(request):
-    """V2 User profile view."""
-    if request.method == "POST":
-        form = ProfileFormV2(request.POST, label_suffix="", instance=request.user)
-
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Your profile was updated successfully!")
-        else:
-            messages.error(request, form.errors)
-        return HttpResponseRedirect("/profile")
-
-    form = ProfileFormV2(label_suffix="", instance=request.user)
-    return render(request, "v2/pages/profile.html", {"form": form})
-
-
-@login_required
-def reviews(request):
+def reviews_legacy(request):
     """User reviews view."""
     stats = _review_stats_for_user(request.user)
     return render(request, "reviews/user_reviews.html", context=stats)
 
 
 @login_required
-def reviews_v2(request):
-    """V2 user reviews view."""
+def reviews(request):
+    """User reviews view."""
     page_number = request.GET.get("page", 1)
     paginated_reviews = Review.paginate(request.user.reviews(), page_number)
 
     context = _review_stats_for_user(request.user)
     context["paginated_reviews"] = paginated_reviews
-    return render(request, "v2/pages/reviews.html", context=context)
+    return render(request, "site/pages/reviews.html", context=context)
 
 
 class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
@@ -124,7 +124,7 @@ class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView)
     success_url = reverse_lazy("browse")
 
     def get_success_url(self):
-        """Use caller-provided next URL when safe, otherwise pick v2-aware default."""
+        """Use caller-provided next URL when safe, otherwise pick default."""
         next_url = self.request.POST.get("next") or self.request.GET.get("next")
         if next_url and url_has_allowed_host_and_scheme(
             next_url,

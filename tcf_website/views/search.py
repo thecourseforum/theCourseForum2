@@ -142,7 +142,7 @@ def search(request):
         "page_obj": page_obj,
     }
 
-    template_name = "v2/pages/search.html"
+    template_name = "site/pages/search.html"
     return render(request, template_name, ctx)
 
 

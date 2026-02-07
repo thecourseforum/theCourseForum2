@@ -1,11 +1,11 @@
-{% extends "v2/base.html" %}
+{% extends "site/base.html" %}
 {% load static %}
 
 {% block title %}{{ club.name }} | theCourseForum{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/v2/pages/course_instructor.css' %}">
-<link rel="stylesheet" href="{% static 'css/v2/pages/club.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/course_instructor.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/club.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -193,7 +193,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/v2/review_votes.js' %}"></script>
+<script src="{% static 'js/site/review_votes.js' %}"></script>
 <script>
 const sortSelect = document.getElementById('review-sort');
 const reviewsResults = document.getElementById('reviews-results');

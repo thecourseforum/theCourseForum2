@@ -1,15 +1,15 @@
-{% extends "v2/base.html" %}
+{% extends "site/base.html" %}
 {% load static %}
 
 {% block title %}theCourseForum{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/v2/pages/landing.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/landing.css' %}">
 {% endblock %}
 
 {% block header %}
 {# Use transparent header for landing #}
-{% include "v2/components/_header.html" %}
+{% include "site/components/_header.html" %}
 {% endblock %}
 
 {% block content %}
@@ -26,7 +26,7 @@
     <!-- Search Bar -->
     <div class="hero__search">
       <!-- Hero Search -->
-      {% include "v2/components/_search_bar.html" with container_classes="max-w-xl w-full" form_classes="search-bar--hero" %}
+      {% include "site/components/_search_bar.html" with container_classes="max-w-xl w-full" form_classes="search-bar--hero" %}
     </div>
     
   </div>

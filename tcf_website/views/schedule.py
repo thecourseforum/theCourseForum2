@@ -149,7 +149,7 @@ def _format_minutes(minutes: int) -> str:
 
 
 def _build_weekly_calendar(schedule_courses: list[ScheduledCourse]) -> dict:
-    """Build normalized weekly calendar payload for v2 calendar component."""
+    """Build normalized weekly calendar payload for calendar component."""
     if not schedule_courses:
         return {
             "columns": [{"code": code, "label": label, "events": []} for code, label, _ in DAY_FIELDS],
@@ -435,7 +435,7 @@ def schedule_data_helper(request):
 
 
 @login_required
-def view_schedules(request):
+def view_schedules_legacy(request):
     """
     Get all schedules, and the related courses, for a given user.
     """
@@ -468,8 +468,8 @@ def view_select_schedules_modal(request, mode):
 
 
 @login_required
-def view_schedules_v2(request):
-    """Render v2 schedule builder page."""
+def view_schedules(request):
+    """Render schedule builder page."""
     schedule_context = schedule_data_helper(request)
     schedules = list(schedule_context["schedules"])
 
@@ -503,7 +503,7 @@ def view_schedules_v2(request):
         }
     )
 
-    return render(request, "v2/pages/schedule.html", schedule_context)
+    return render(request, "site/pages/schedule.html", schedule_context)
 
 
 @login_required
@@ -701,7 +701,7 @@ def modal_load_sections(request):
 
 
 @login_required
-def schedule_add_course(request):
+def schedule_add_course_legacy(request):
     """Add a course to a schedule, the request should be FormData for the SectionForm class."""
 
     if request.method == "POST":
@@ -769,8 +769,8 @@ def schedule_add_course(request):
 
 
 @login_required
-def remove_scheduled_course_v2(request, scheduled_course_id):
-    """Remove one scheduled course from the active user's schedule (v2)."""
+def remove_scheduled_course(request, scheduled_course_id):
+    """Remove one scheduled course from the active user's schedule."""
     if request.method != "POST":
         return redirect(reverse("schedule"))
 
@@ -792,8 +792,8 @@ def remove_scheduled_course_v2(request, scheduled_course_id):
 
 
 @login_required
-def schedule_add_course_v2(request, course_id):
-    """Add a course to a schedule from the v2 course flow."""
+def schedule_add_course(request, course_id):
+    """Add a course to a schedule from the course flow."""
     course = get_object_or_404(Course, id=course_id)
     latest_semester = Semester.latest()
     schedules = Schedule.objects.filter(user=request.user).order_by("name")
@@ -937,7 +937,7 @@ def schedule_add_course_v2(request, course_id):
 
     return render(
         request,
-        "v2/pages/schedule_add_course.html",
+        "site/pages/schedule_add_course.html",
         {
             "course": course,
             "breadcrumbs": breadcrumbs,

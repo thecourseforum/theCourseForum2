@@ -1,4 +1,4 @@
-{% extends "v2/base.html" %}
+{% extends "site/base.html" %}
 {% load static %}
 
 {% block title %}{{ course.code }} | {{ instructor.full_name }} | theCourseForum{% endblock %}
@@ -13,8 +13,8 @@
 {% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/v2/pages/course_instructor.css' %}">
-<link rel="stylesheet" href="{% static 'css/v2/pages/course_instructor_grades.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/course_instructor.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/course_instructor_grades.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -45,7 +45,7 @@
       <div class="instructor-row__left">
         <a href="{% url 'instructor' instructor.id %}" class="instructor-link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v 2"></path>
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
           {{ instructor.full_name }}
@@ -192,7 +192,7 @@
         <div class="sections-panel__group">
           <h3 class="sections-panel__group-title">Lecture ({{ lecture_sections|length }})</h3>
           {% for section in lecture_sections %}
-          {% include "v2/components/_section_card.html" with section=section sem_code=sem_code %}
+          {% include "site/components/_section_card.html" with section=section sem_code=sem_code %}
           {% endfor %}
         </div>
         {% endif %}
@@ -201,7 +201,7 @@
         <div class="sections-panel__group">
           <h3 class="sections-panel__group-title">Other Sections ({{ other_sections|length }})</h3>
           {% for section in other_sections %}
-          {% include "v2/components/_section_card.html" with section=section sem_code=sem_code %}
+          {% include "site/components/_section_card.html" with section=section sem_code=sem_code %}
           {% endfor %}
         </div>
         {% endif %}
@@ -366,7 +366,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/v2/review_votes.js' %}"></script>
+<script src="{% static 'js/site/review_votes.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 // Sort dropdown

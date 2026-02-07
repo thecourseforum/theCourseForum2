@@ -1,10 +1,10 @@
-{% extends "v2/base.html" %}
+{% extends "site/base.html" %}
 {% load static %}
 
 {% block title %}Write a Review | theCourseForum{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/v2/pages/review.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/review.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -281,7 +281,7 @@
     .then(data => {
         if (data.duplicate) {
             // Show duplicate modal
-            alert("You have already reviewed this course/instructor for this semester."); // Replace with v2 modal
+            alert("You have already reviewed this course/instructor for this semester."); // Replace with modal
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit Review';
         } else {

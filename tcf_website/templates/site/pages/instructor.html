@@ -1,4 +1,4 @@
-{% extends "v2/base.html" %}
+{% extends "site/base.html" %}
 {% load static %}
 
 {% block title %}{{ instructor.full_name }} | theCourseForum{% endblock %}
@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/v2/pages/instructor.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/instructor.css' %}">
 {% endblock %}
 
 {% block content %}

@@ -37,7 +37,7 @@ from ..models import (
 )
 
 
-def browse(request):
+def browse_legacy(request):
     """View for browse page."""
     mode, is_club = parse_mode(request)
 
@@ -86,8 +86,8 @@ def browse(request):
     )
 
 
-def browse_v2(request):
-    """V2 View for browse page - Modern design."""
+def browse(request):
+    """View for browse page - Modern design."""
     mode, is_club = parse_mode(request)
 
     if is_club:
@@ -105,7 +105,7 @@ def browse_v2(request):
 
         return render(
             request,
-            "v2/pages/browse.html",
+            "site/pages/browse.html",
             {
                 "is_club": True,
                 "mode": mode,
@@ -121,7 +121,7 @@ def browse_v2(request):
 
     return render(
         request,
-        "v2/pages/browse.html",
+        "site/pages/browse.html",
         {
             "is_club": False,
             "mode": mode,
@@ -132,7 +132,7 @@ def browse_v2(request):
     )
 
 
-def department(request, dept_id: int, course_recency=None):
+def department_legacy(request, dept_id: int, course_recency=None):
     """View for department page."""
 
     # Prefetch related subdepartments and courses to improve performance.
@@ -183,8 +183,8 @@ def department(request, dept_id: int, course_recency=None):
     )
 
 
-def department_v2(request, dept_id: int, course_recency=None):
-    """V2 View for department page - Modern design."""
+def department(request, dept_id: int, course_recency=None):
+    """View for department page - Modern design."""
     dept = Department.objects.prefetch_related("subdepartment_set").get(pk=dept_id)
 
     if not course_recency:
@@ -210,7 +210,7 @@ def department_v2(request, dept_id: int, course_recency=None):
 
     return render(
         request,
-        "v2/pages/department.html",
+        "site/pages/department.html",
         {
             "dept_id": dept_id,
             "latest_semester": str(latest_semester),
@@ -224,7 +224,7 @@ def department_v2(request, dept_id: int, course_recency=None):
     )
 
 
-def course_view_legacy(request, course_id):
+def course_view_lookup_legacy(request, course_id):
     """Legacy view for course page."""
     course = get_object_or_404(Course, pk=course_id)
     return redirect(
@@ -308,16 +308,16 @@ def _get_paginated_club_reviews(club: Club, user, page_number=1, method=""):
     return Review.paginate(Review.sort(reviews, method), page_number)
 
 
-def _build_club_page_context(request, club: Club, mode: str, *, v2: bool = False):
+def _build_club_page_context(request, club: Club, mode: str, *, modern: bool = False):
     """Build shared context for club detail pages."""
-    sort_key = "sort" if v2 else "method"
+    sort_key = "sort" if modern else "method"
     sort_method = request.GET.get(sort_key, "")
     page_number = request.GET.get("page", 1)
     paginated_reviews = _get_paginated_club_reviews(
         club, request.user, page_number, sort_method
     )
 
-    if v2:
+    if modern:
         breadcrumbs = [
             ("Clubs", reverse("browse") + "?mode=clubs", False),
             (
@@ -351,8 +351,7 @@ def _build_club_page_context(request, club: Club, mode: str, *, v2: bool = False
     }
 
 
-def course_view(
-    request,
+def course_view_legacy(request,
     mnemonic: str,
     course_number: int,
     instructor_recency=None,
@@ -374,7 +373,7 @@ def course_view(
         return render(
             request,
             "club/club.html",
-            _build_club_page_context(request, club, mode, v2=False),
+            _build_club_page_context(request, club, mode, modern=False),
         )
 
     # Redirect if the mnemonic is not all uppercase
@@ -458,8 +457,8 @@ def course_view(
     )
 
 
-def course_view_v2(request, mnemonic: str, course_number: int, instructor_recency=None):
-    """V2 Course view - Modern design."""
+def course_view(request, mnemonic: str, course_number: int, instructor_recency=None):
+    """Course view."""
     if mnemonic != mnemonic.upper():
         return redirect(
             "course", mnemonic=mnemonic.upper(), course_number=course_number
@@ -513,7 +512,7 @@ def course_view_v2(request, mnemonic: str, course_number: int, instructor_recenc
 
     return render(
         request,
-        "v2/pages/course.html",
+        "site/pages/course.html",
         {
             "course": course,
             "instructors": instructors,
@@ -529,7 +528,7 @@ def course_view_v2(request, mnemonic: str, course_number: int, instructor_recenc
     )
 
 
-def course_instructor(request, course_id, instructor_id, method="Default"):
+def course_instructor_legacy(request, course_id, instructor_id, method="Default"):
     """View for course instructor page."""
     section_last_taught = (
         Section.objects.filter(course=course_id, instructors=instructor_id)
@@ -692,8 +691,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     )
 
 
-def course_instructor_v2(request, course_id, instructor_id, method="Default"):
-    """V2 Course-Instructor view - Modern design."""
+def course_instructor(request, course_id, instructor_id, method="Default"):
+    """Course-instructor view."""
     section_last_taught = (
         Section.objects.filter(course_id=course_id, instructors__id=instructor_id)
         .order_by("-semester__number")
@@ -808,7 +807,7 @@ def course_instructor_v2(request, course_id, instructor_id, method="Default"):
 
     return render(
         request,
-        "v2/pages/course_instructor.html",
+        "site/pages/course_instructor.html",
         {
             "course": course,
             "course_id": course_id,
@@ -833,7 +832,7 @@ def course_instructor_v2(request, course_id, instructor_id, method="Default"):
     )
 
 
-def instructor_view(request, instructor_id):
+def instructor_view_legacy(request, instructor_id):
     """View for instructor page, showing all their courses taught."""
     instructor: Instructor = get_object_or_404(Instructor, pk=instructor_id)
 
@@ -885,8 +884,8 @@ def instructor_view(request, instructor_id):
     return render(request, "instructor/instructor.html", context)
 
 
-def instructor_view_v2(request, instructor_id):
-    """V2 Instructor view - Modern design."""
+def instructor_view(request, instructor_id):
+    """Instructor view."""
     instructor: Instructor = get_object_or_404(Instructor, pk=instructor_id)
 
     stats: dict[str, float] = Instructor.objects.filter(pk=instructor.pk).aggregate(
@@ -933,7 +932,7 @@ def instructor_view_v2(request, instructor_id):
         "courses": grouped_courses,
         "is_teaching_current_semester": is_teaching_current_semester,
     }
-    return render(request, "v2/pages/instructor.html", context)
+    return render(request, "site/pages/instructor.html", context)
 
 
 def safe_round(num):
@@ -946,7 +945,7 @@ def safe_round(num):
     return "\u2014"
 
 
-def club_category(request, category_slug: str):
+def club_category_legacy(request, category_slug: str):
     """View for club category page."""
     mode = parse_mode(request)[0]  # Only use the mode, ignoring is_club
 
@@ -985,8 +984,8 @@ def club_category(request, category_slug: str):
     )
 
 
-def club_category_v2(request, category_slug: str):
-    """V2 view for club category page."""
+def club_category(request, category_slug: str):
+    """View for club category page."""
     mode = parse_mode(request)[0]
     category = get_object_or_404(ClubCategory, slug=category_slug.upper())
     clubs = Club.objects.filter(category=category).order_by("name")
@@ -1007,7 +1006,7 @@ def club_category_v2(request, category_slug: str):
 
     return render(
         request,
-        "v2/pages/club_category.html",
+        "site/pages/club_category.html",
         {
             "is_club": True,
             "mode": mode,
@@ -1018,12 +1017,12 @@ def club_category_v2(request, category_slug: str):
     )
 
 
-def club_view_v2(request, category_slug: str, club_id: int):
-    """V2 view for club detail page."""
+def club_view(request, category_slug: str, club_id: int):
+    """View for club detail page."""
     mode = parse_mode(request)[0]
     club = get_object_or_404(Club, id=club_id, category__slug=category_slug.upper())
     return render(
         request,
-        "v2/pages/club.html",
-        _build_club_page_context(request, club, mode, v2=True),
+        "site/pages/club.html",
+        _build_club_page_context(request, club, mode, modern=True),
     )

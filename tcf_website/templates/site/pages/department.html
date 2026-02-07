@@ -1,10 +1,10 @@
-{% extends "v2/base.html" %}
+{% extends "site/base.html" %}
 {% load static %}
 
 {% block title %}{{ breadcrumbs.1.0 }} | theCourseForum{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/v2/pages/department.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/department.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -84,7 +84,7 @@
   
   <div class="course-list">
     {% for course in paginated_courses %}
-    {% include "v2/components/_course_card.html" with course=course %}
+    {% include "site/components/_course_card.html" with course=course %}
     {% endfor %}
   </div>
   

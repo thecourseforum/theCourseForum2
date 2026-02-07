@@ -1,10 +1,10 @@
-{% extends "v2/base.html" %}
+{% extends "site/base.html" %}
 {% load static %}
 
 {% block title %}Browse | theCourseForum{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/v2/pages/browse.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/browse.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -48,15 +48,15 @@
   <!-- Schools Accordion -->
   
   {% if CLAS %}
-  {% include "v2/components/_school_section.html" with school=CLAS %}
+  {% include "site/components/_school_section.html" with school=CLAS %}
   {% endif %}
   
   {% if SEAS %}
-  {% include "v2/components/_school_section.html" with school=SEAS %}
+  {% include "site/components/_school_section.html" with school=SEAS %}
   {% endif %}
   
   {% for school in other_schools %}
-  {% include "v2/components/_school_section.html" with school=school %}
+  {% include "site/components/_school_section.html" with school=school %}
   {% endfor %}
   
   {% endif %}

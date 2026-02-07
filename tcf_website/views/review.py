@@ -124,7 +124,7 @@ def vote_review(request, review_id):
 
 
 @login_required
-def new_review(request):
+def new_review_legacy(request):
     """Review creation view with context-required logic.
 
     Routes:
@@ -158,15 +158,15 @@ def new_review(request):
 
         # Form invalid - re-render with errors
         # Need to re-fetch context for the template
-        return _render_review_form_with_errors(request, form, is_club, mode)
+        return _render_review_form_with_errors_legacy(request, form, is_club, mode)
 
     # Handle GET - require context or redirect to search
     if is_club:
-        return _handle_club_review_get(request, mode)
-    return _handle_course_review_get(request, mode)
+        return _handle_club_review_get_legacy(request, mode)
+    return _handle_course_review_get_legacy(request, mode)
 
 
-def _handle_course_review_get(request, mode):
+def _handle_course_review_get_legacy(request, mode):
     """Handle GET for course reviews - require course context."""
     course_id = request.GET.get("course")
     instructor_id = request.GET.get("instructor")
@@ -226,7 +226,7 @@ def _handle_course_review_get(request, mode):
     )
 
 
-def _handle_club_review_get(request, mode):
+def _handle_club_review_get_legacy(request, mode):
     """Handle GET for club reviews - require club context."""
     club_id = request.GET.get("club")
 
@@ -255,7 +255,7 @@ def _handle_club_review_get(request, mode):
     )
 
 
-def _render_review_form_with_errors(request, form, is_club, mode):
+def _render_review_form_with_errors_legacy(request, form, is_club, mode):
     """Re-render the form with validation errors, fetching context from POST data."""
     context = {"form": form, "is_club": is_club, "mode": mode}
 
@@ -381,8 +381,8 @@ class DeleteReview(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
             return f"Successfully deleted your review for {self.object.club}!"
 
 @login_required
-def new_review_v2(request):
-    """V2 Review creation view with context-required logic."""
+def new_review(request):
+    """Review creation view with context-required logic."""
     mode, is_club = parse_mode(request)
 
     # Handle POST (form submission)
@@ -411,16 +411,16 @@ def new_review_v2(request):
             return redirect("course", mnemonic=instance.course.subdepartment.mnemonic, course_number=instance.course.number)
 
         # Form invalid - re-render with errors
-        return _render_review_form_with_errors_v2(request, form, is_club, mode)
+        return _render_review_form_with_errors(request, form, is_club, mode)
 
     # Handle GET
     if is_club:
-        return _handle_club_review_get_v2(request, mode)
-    return _handle_course_review_get_v2(request, mode)
+        return _handle_club_review_get(request, mode)
+    return _handle_course_review_get(request, mode)
 
 
-def _handle_course_review_get_v2(request, mode):
-    """Handle GET for V2 course reviews."""
+def _handle_course_review_get(request, mode):
+    """Handle GET for course reviews."""
     course_id = request.GET.get("course")
     instructor_id = request.GET.get("instructor")
 
@@ -462,7 +462,7 @@ def _handle_course_review_get_v2(request, mode):
 
     return render(
         request,
-        "v2/pages/review.html",
+        "site/pages/review.html",
         {
             "is_club": False,
             "mode": mode,
@@ -474,8 +474,8 @@ def _handle_course_review_get_v2(request, mode):
     )
 
 
-def _handle_club_review_get_v2(request, mode):
-    """Handle GET for V2 club reviews."""
+def _handle_club_review_get(request, mode):
+    """Handle GET for club reviews."""
     club_id = request.GET.get("club")
 
     if not club_id:
@@ -491,7 +491,7 @@ def _handle_club_review_get_v2(request, mode):
 
     return render(
         request,
-        "v2/pages/review.html",
+        "site/pages/review.html",
         {
             "is_club": True,
             "mode": mode,
@@ -501,8 +501,8 @@ def _handle_club_review_get_v2(request, mode):
     )
 
 
-def _render_review_form_with_errors_v2(request, form, is_club, mode):
-    """Re-render the V2 form with validation errors."""
+def _render_review_form_with_errors(request, form, is_club, mode):
+    """Re-render the form with validation errors."""
     context = {"form": form, "is_club": is_club, "mode": mode}
 
     if is_club and form.cleaned_data.get("club"):
@@ -516,4 +516,4 @@ def _render_review_form_with_errors_v2(request, form, is_club, mode):
         "-number"
     )[:10]
 
-    return render(request, "v2/pages/review.html", context)
+    return render(request, "site/pages/review.html", context)

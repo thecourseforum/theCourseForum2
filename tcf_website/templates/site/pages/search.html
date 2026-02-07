@@ -1,4 +1,4 @@
-{% extends "v2/base.html" %}
+{% extends "site/base.html" %}
 {% load static %}
 
 {% block title %}
@@ -10,7 +10,7 @@ Search | theCourseForum
 {% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/v2/pages/search.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/search.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -125,7 +125,7 @@ Search | theCourseForum
     </section>
     {% endfor %}
 
-    {% include "v2/components/_pagination.html" with paginated_items=page_obj aria_label="Club pagination" %}
+    {% include "site/components/_pagination.html" with paginated_items=page_obj aria_label="Club pagination" %}
     {% else %}
     <div class="search-empty">
       <h3>No clubs matched your search.</h3>
@@ -175,7 +175,7 @@ Search | theCourseForum
     </section>
     {% endfor %}
 
-    {% include "v2/components/_pagination.html" with paginated_items=page_obj aria_label="Course pagination" %}
+    {% include "site/components/_pagination.html" with paginated_items=page_obj aria_label="Course pagination" %}
     {% else %}
     <div class="search-empty">
       <h3>No courses matched your search.</h3>

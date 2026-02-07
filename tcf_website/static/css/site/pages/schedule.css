@@ -1,9 +1,9 @@
-.schedule-v2,
+.schedule-builder,
 .schedule-add {
   padding: var(--space-8) 0 var(--space-16);
 }
 
-.schedule-v2__inner,
+.schedule-builder__inner,
 .schedule-add__inner {
   max-width: var(--size-max);
   margin: 0 auto;
@@ -11,20 +11,20 @@
 }
 
 @media (min-width: 640px) {
-  .schedule-v2__inner,
+  .schedule-builder__inner,
   .schedule-add__inner {
     padding: 0 var(--space-6);
   }
 }
 
 @media (min-width: 1024px) {
-  .schedule-v2__inner,
+  .schedule-builder__inner,
   .schedule-add__inner {
     padding: 0 var(--space-8);
   }
 }
 
-.schedule-v2__header,
+.schedule-builder__header,
 .schedule-add__header {
   display: flex;
   flex-wrap: wrap;
@@ -34,31 +34,31 @@
   margin-bottom: var(--space-6);
 }
 
-.schedule-v2__title,
+.schedule-builder__title,
 .schedule-add__title {
   font-size: var(--text-3xl);
   margin: 0;
 }
 
-.schedule-v2__subtitle,
+.schedule-builder__subtitle,
 .schedule-add__subtitle {
   margin: var(--space-1) 0 0;
   color: var(--fg-muted);
 }
 
-.schedule-v2__create-form,
+.schedule-builder__create-form,
 .schedule-add__create-form {
   display: flex;
   gap: var(--space-2);
   align-items: center;
 }
 
-.schedule-v2__create-form .input,
+.schedule-builder__create-form .input,
 .schedule-add__create-form .input {
   min-width: 14rem;
 }
 
-.schedule-v2__grid {
+.schedule-builder__grid {
   display: grid;
   gap: var(--space-5);
   grid-template-columns: minmax(17rem, 22rem) minmax(0, 1fr);
@@ -66,7 +66,7 @@
 }
 
 @media (max-width: 1024px) {
-  .schedule-v2__grid {
+  .schedule-builder__grid {
     grid-template-columns: 1fr;
   }
 }

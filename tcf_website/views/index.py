@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.views.generic.base import TemplateView
 
 
-def index(request):
+def index_legacy(request):
     """
     Index view.
 
@@ -31,9 +31,9 @@ def index(request):
     return response
 
 
-def index_v2(request):
+def index(request):
     """
-    V2 Index view - New modern design.
+    Index view.
     """
     # Load team info for the landing page
     with open("tcf_website/views/team_info.json", encoding="UTF-8") as data_file:
@@ -51,32 +51,32 @@ def index_v2(request):
 
     return render(
         request,
-        "v2/pages/landing.html",
+        "site/pages/landing.html",
         context,
     )
 
 
-def privacy(request):
+def privacy_legacy(request):
     """Privacy view."""
     return render(request, "about/privacy.html")
 
 
-def privacy_v2(request):
-    """V2 Privacy view."""
-    return render(request, "v2/pages/privacy.html")
+def privacy(request):
+    """Privacy view."""
+    return render(request, "site/pages/privacy.html")
 
 
-def terms(request):
+def terms_legacy(request):
     """Terms view."""
     return render(request, "about/terms.html")
 
 
-def terms_v2(request):
-    """V2 Terms view."""
-    return render(request, "v2/pages/terms.html")
+def terms(request):
+    """Terms view."""
+    return render(request, "site/pages/terms.html")
 
 
-class AboutView(TemplateView):
+class AboutViewLegacy(TemplateView):
     """About view."""
 
     template_name = "about/about.html"
@@ -99,10 +99,10 @@ class AboutView(TemplateView):
         return context
 
 
-class AboutViewV2(TemplateView):
-    """V2 About view - modern design."""
+class AboutView(TemplateView):
+    """About view."""
 
-    template_name = "v2/pages/about.html"
+    template_name = "site/pages/about.html"
 
     with open("tcf_website/views/team_info.json", encoding="UTF-8") as data_file:
         team_info = json.load(data_file)
@@ -112,7 +112,7 @@ class AboutViewV2(TemplateView):
 
     @staticmethod
     def _normalize_member(member: dict, fallback_role: str = "") -> dict:
-        """Normalize member fields for v2 template rendering."""
+        """Normalize member fields for template rendering."""
         name = member.get("name", "").strip()
         parts = name.split()
         first_name = parts[0] if parts else ""

@@ -1,7 +1,7 @@
 /**
  * Review Vote Manager
  * ===================
- * Handles secure in-place voting updates for v2 review cards.
+ * Handles secure in-place voting updates for review cards.
  */
 
 (function () {

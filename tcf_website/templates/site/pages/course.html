@@ -1,4 +1,4 @@
-{% extends "v2/base.html" %}
+{% extends "site/base.html" %}
 {% load static %}
 
 {% block title %}{{ course.code }} | theCourseForum{% endblock %}
@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/v2/pages/course.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/course.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -114,7 +114,7 @@
   
   <div class="instructor-list">
     {% for instructor in instructors %}
-    {% include "v2/components/_instructor_card.html" with instructor=instructor course=course latest_semester=latest_semester %}
+    {% include "site/components/_instructor_card.html" with instructor=instructor course=course latest_semester=latest_semester %}
     {% endfor %}
   </div>
   

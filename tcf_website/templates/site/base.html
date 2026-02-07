@@ -44,7 +44,7 @@
   </script>
   
   <!-- Main CSS -->
-  <link rel="stylesheet" href="{% static 'css/v2/main.css' %}">
+  <link rel="stylesheet" href="{% static 'css/site/main.css' %}">
   
   <!-- Page-specific styles -->
   {% block styles %}{% endblock %}
@@ -69,12 +69,12 @@
   
   <!-- Header -->
   {% block header %}
-  {% include "v2/components/_header.html" %}
+  {% include "site/components/_header.html" %}
   {% endblock %}
 
-  {% include "v2/components/_messages.html" %}
+  {% include "site/components/_messages.html" %}
   {% if request.resolver_match and request.resolver_match.url_name != "index" %}
-  {% include "v2/components/_leaderboard_ad.html" %}
+  {% include "site/components/_leaderboard_ad.html" %}
   {% endif %}
   
   <!-- Main Content -->
@@ -84,19 +84,19 @@
   
   <!-- Footer -->
   {% block footer %}
-  {% include "v2/components/_footer.html" %}
+  {% include "site/components/_footer.html" %}
   {% endblock %}
   
   <!-- Modals -->
   {% block modals %}
-  {% include "v2/modals/_login.html" %}
-  {% include "v2/modals/_adblock.html" %}
+  {% include "site/modals/_login.html" %}
+  {% include "site/modals/_adblock.html" %}
   {% endblock %}
   
   <!-- Core JavaScript -->
-  <script src="{% static 'js/v2/theme.js' %}"></script>
-  <script src="{% static 'js/v2/modal.js' %}"></script>
-  <script src="{% static 'js/v2/search_bar.js' %}"></script>
+  <script src="{% static 'js/site/theme.js' %}"></script>
+  <script src="{% static 'js/site/modal.js' %}"></script>
+  <script src="{% static 'js/site/search_bar.js' %}"></script>
   <script>
     function showAdblockGate() {
       const gate = document.getElementById("adblockGate");

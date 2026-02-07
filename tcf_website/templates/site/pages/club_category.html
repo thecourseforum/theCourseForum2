@@ -1,10 +1,10 @@
-{% extends "v2/base.html" %}
+{% extends "site/base.html" %}
 {% load static %}
 
 {% block title %}{{ category.name }} Clubs | theCourseForum{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/v2/pages/club_category.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/club_category.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -45,7 +45,7 @@
     {% endfor %}
   </div>
 
-  {% include "v2/components/_pagination.html" with paginated_items=paginated_clubs aria_label="Club pagination" %}
+  {% include "site/components/_pagination.html" with paginated_items=paginated_clubs aria_label="Club pagination" %}
   {% else %}
   <div class="club-category-empty">
     <h2 class="club-category-empty__title">No clubs found in this category.</h2>

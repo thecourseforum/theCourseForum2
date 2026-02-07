@@ -2,7 +2,7 @@
   <h3 class="about-section__title">{{ title }}</h3>
   <div class="team-grid">
     {% for member in members %}
-      {% include "v2/components/_about_member_card.html" with member=member image_dir=image_dir %}
+      {% include "site/components/_about_member_card.html" with member=member image_dir=image_dir %}
     {% empty %}
       <p class="about-empty">No members available.</p>
     {% endfor %}

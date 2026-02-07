@@ -1,23 +1,23 @@
-{% extends "v2/base.html" %}
+{% extends "site/base.html" %}
 {% load custom_tags %}
 
 {% block title %}Schedule Builder | theCourseForum{% endblock %}
 
 {% block styles %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/v2/pages/schedule.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/schedule.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="schedule-v2">
-  <div class="schedule-v2__inner">
-    <div class="schedule-v2__header">
+<div class="schedule-builder">
+  <div class="schedule-builder__inner">
+    <div class="schedule-builder__header">
       <div>
-        <h1 class="schedule-v2__title">Schedule Builder</h1>
-        <p class="schedule-v2__subtitle">Build and compare schedules with a weekly calendar view.</p>
+        <h1 class="schedule-builder__title">Schedule Builder</h1>
+        <p class="schedule-builder__subtitle">Build and compare schedules with a weekly calendar view.</p>
       </div>
 
-      <form method="post" action="{% url 'new_schedule' %}" class="schedule-v2__create-form">
+      <form method="post" action="{% url 'new_schedule' %}" class="schedule-builder__create-form">
         {% csrf_token %}
         <input type="hidden" name="user_id" value="{{ new_schedule_user_id }}">
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
@@ -34,7 +34,7 @@
       </form>
     </div>
 
-    <div class="schedule-v2__grid">
+    <div class="schedule-builder__grid">
       <aside class="schedule-list">
         <h2 class="schedule-list__title">Your Schedules</h2>
 
@@ -155,17 +155,17 @@
 
         <div class="schedule-detail__calendar">
           <h2 class="schedule-detail__section-title">Weekly Calendar</h2>
-          {% include "v2/components/_weekly_calendar.html" with calendar=calendar %}
+          {% include "site/components/_weekly_calendar.html" with calendar=calendar %}
         </div>
         {% else %}
         <div class="schedule-detail__empty-state">
           <h2>Create your first schedule</h2>
-          <p>Use the form above to create a schedule, then add courses from any v2 course page.</p>
+          <p>Use the form above to create a schedule, then add courses from any course page.</p>
         </div>
         {% endif %}
 
         <p class="schedule-detail__note">
-          Add courses from the course page using “Add to Schedule”. Schedule-page search/autocomplete will be added later and reused for the v2 new-review flow.
+          Add courses from the course page using “Add to Schedule”. Schedule-page search/autocomplete will be added later and reused for the new-review flow.
         </p>
       </section>
     </div>

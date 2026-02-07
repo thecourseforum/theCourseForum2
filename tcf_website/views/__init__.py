@@ -6,31 +6,21 @@
 from .auth import login, logout
 from .browse import (
     browse,
-    browse_v2,
-    course_instructor,
-    course_instructor_v2,
-    course_view,
-    course_view_legacy,
-    course_view_v2,
-    department,
-    department_v2,
-    instructor_view,
-    instructor_view_v2,
     club_category,
-    club_category_v2,
-    club_view_v2,
+    club_view,
+    course_instructor,
+    course_view,
+    course_view_lookup_legacy,
+    department,
+    instructor_view,
 )
 from .index import (
     AboutView,
-    AboutViewV2,
     index,
-    index_v2,
     privacy,
-    privacy_v2,
     terms,
-    terms_v2,
 )
-from .profile import DeleteProfile, profile, profile_v2, reviews, reviews_v2
+from .profile import DeleteProfile, profile, reviews
 from .qa import (
     DeleteAnswer,
     DeleteQuestion,
@@ -47,7 +37,6 @@ from .review import (
     DeleteReview,
     downvote,
     new_review,
-    new_review_v2,
     upvote,
     vote_review,
 )
@@ -58,11 +47,9 @@ from .schedule import (
     modal_load_editor,
     modal_load_sections,
     new_schedule,
-    remove_scheduled_course_v2,
+    remove_scheduled_course,
     schedule_add_course,
-    schedule_add_course_v2,
     view_schedules,
-    view_schedules_v2,
     view_select_schedules_modal,
 )
 from .search import search
