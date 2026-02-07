@@ -19,21 +19,16 @@
   <div class="hero__content">
     <img src="{% static 'base/img/new_logo.svg' %}" alt="theCourseForum logo" class="hero__logo">
 
-    
     <h1 class="hero__title">
       Find the perfect<span class="hero__title-gradient"> {{ mode_noun }} for you</span>
     </h1>
-    
 
-    
     <!-- Search Bar -->
     <div class="hero__search">
       <!-- Hero Search -->
       {% include "v2/components/_search_bar.html" with container_classes="max-w-xl w-full" form_classes="search-bar--hero" %}
     </div>
     
-    <!-- Quick Stats -->
-
   </div>
 </section>
 
@@ -44,8 +39,7 @@
     <div class="features__subtitle">Features</div>
     <h2 class="features__title">Everything you need to plan your semester</h2>
     <p class="features__description">
-      From discovering new courses to building your schedule, 
-      we've got you covered every step of the way.
+      We've got you covered every step of the way.
     </p>
   </div>
   
@@ -60,8 +54,7 @@
       </div>
       <h3 class="feature-card__title">Explore Courses</h3>
       <p class="feature-card__description">
-        Browse departments, discover new classes, and find courses 
-        that match your interests and requirements.
+        Browse departments and find courses that match your interests and requirements.
       </p>
       <a href="{% url 'browse_v2' %}" class="feature-card__link">
         Browse courses
@@ -83,8 +76,7 @@
       </div>
       <h3 class="feature-card__title">Build Your Schedule</h3>
       <p class="feature-card__description">
-        Plan your semester with our visual schedule builder. 
-        Compare sections and find the perfect fit.
+        Plan your semester with our visual schedule builder. Compare sections and find the perfect fit.
       </p>
       <a href="{% url 'schedule_v2' %}" class="feature-card__link">
         Build schedule
@@ -104,8 +96,7 @@
       </div>
       <h3 class="feature-card__title">Share Your Experience</h3>
       <p class="feature-card__description">
-        Help fellow Wahoos by writing reviews. Your insights 
-        help build a stronger community.
+        Help fellow Hoos by writing reviews. Your insights help build a stronger community.
       </p>
       <a href="{% url 'new_review_v2' %}" class="feature-card__link">
         Write a review
