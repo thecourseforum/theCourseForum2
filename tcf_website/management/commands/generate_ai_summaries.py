@@ -4,7 +4,7 @@ from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.db.models import Count, Max
+from django.db.models import Count, Exists, Max, OuterRef
 
 from ...models import Course, Instructor, Review, ReviewLLMSummary
 from ...services.review_summary import generate_review_summary
@@ -30,9 +30,14 @@ class Command(BaseCommand):
     OR
     docker compose exec web python manage.py generate_ai_summaries --limit 30 --min-reviews 3
 
+    # Generate for top 20 course / instructor pairs missing a summary
+    python manage.py generate_ai_summaries --limit 20 --missing-only
+    OR
+    docker compose exec web python manage.py generate_ai_summaries --limit 20 --missing-only
+
     # Generate for a specific course/instructor pair
     python manage.py generate_ai_summaries --course-id 1 --instructor-id 4019
-    docker compose exec web python manage.py generate_ai_summaries \\
+    docker compose exec web python manage.py generate_ai_summaries
         --course-id 1 --instructor-id 4019
     """
 
@@ -68,6 +73,11 @@ class Command(BaseCommand):
             help="Use only the top N most recent written reviews in the prompt (default: 25).",
         )
         parser.add_argument(
+            "--missing-only",
+            action="store_true",
+            help="Only include pairs without an existing summary.",
+        )
+        parser.add_argument(
             "--dry-run",
             action="store_true",
             help="Show which pairs would be processed without calling the model.",
@@ -82,6 +92,7 @@ class Command(BaseCommand):
         limit = options.get("limit")
         min_reviews = options.get("min_reviews")
         max_reviews = options.get("max_reviews") or 20
+        missing_only = options.get("missing_only")
         dry_run = options.get("dry_run")
 
         if bool(course_id) ^ bool(instructor_id):
@@ -97,6 +108,16 @@ class Command(BaseCommand):
         pairs: list[tuple[int, int, int, int]] = []
 
         if course_id and instructor_id:
+            if missing_only and ReviewLLMSummary.objects.filter(
+                course_id=course_id, instructor_id=instructor_id, club__isnull=True
+            ).exists():
+                self.stdout.write(
+                    self.style.WARNING(
+                        f"Skipping course {course_id} / instructor {instructor_id}: "
+                        "summary already exists."
+                    )
+                )
+                return
             review_count = base_reviews.filter(
                 course_id=course_id, instructor_id=instructor_id
             ).count()
@@ -120,8 +141,18 @@ class Command(BaseCommand):
                 base_reviews.values("course_id", "instructor_id")
                 .annotate(review_count=Count("id"), last_id=Max("id"))
                 .filter(review_count__gte=min_reviews)
-                .order_by("-review_count")[:limit]
+                .order_by("-review_count")
             )
+            if missing_only:
+                existing_summaries = ReviewLLMSummary.objects.filter(
+                    course_id=OuterRef("course_id"),
+                    instructor_id=OuterRef("instructor_id"),
+                    club__isnull=True,
+                )
+                agg = agg.annotate(has_summary=Exists(existing_summaries)).filter(
+                    has_summary=False
+                )
+            agg = agg[:limit]
             pairs = [
                 (row["course_id"], row["instructor_id"], row["review_count"], row["last_id"])
                 for row in agg
