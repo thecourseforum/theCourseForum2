@@ -61,7 +61,7 @@ def _call_openrouter(model_name: str, messages):
     payload = {
         "model": model_name,
         "messages": messages,
-        "max_tokens": 220,
+        "max_tokens": 280, # summaries are 4 - 6 sentences
         "temperature": 0.3,
     }
 
