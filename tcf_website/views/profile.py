@@ -50,6 +50,36 @@ def profile(request):
     return render(request, "profile/profile.html", {"form": form})
 
 
+class ProfileFormV2(ModelForm):
+    """Form for v2 profile page."""
+
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "graduation_year"]
+        widgets = {
+            "first_name": forms.TextInput(attrs={"class": "form-group__input"}),
+            "last_name": forms.TextInput(attrs={"class": "form-group__input"}),
+            "graduation_year": forms.NumberInput(attrs={"class": "form-group__input"}),
+        }
+
+
+@login_required
+def profile_v2(request):
+    """V2 User profile view."""
+    if request.method == "POST":
+        form = ProfileFormV2(request.POST, label_suffix="", instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your profile was updated successfully!")
+        else:
+            messages.error(request, form.errors)
+        return HttpResponseRedirect("/v2/profile")
+
+    form = ProfileFormV2(label_suffix="", instance=request.user)
+    return render(request, "v2/pages/profile.html", {"form": form})
+
+
 @login_required
 def reviews(request):
     """User reviews view."""

@@ -1,0 +1,56 @@
+
+/* ===== GRADES CHART ===== */
+
+.grades-panel {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  
+  padding: var(--space-6);
+  
+  display: flex;
+  flex-direction: column;
+}
+
+.grades-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  margin-bottom: var(--space-6);
+}
+
+.grades-panel__title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+}
+
+.grades-panel__chart-container {
+  position: relative;
+  height: 250px;
+  width: 100%;
+}
+
+.grades-panel__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--fg-muted);
+  text-align: center;
+}
+
+.grades-panel__empty-icon {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: var(--space-2);
+  opacity: 0.5;
+}
+
+/* Ensure stats grid has 3 columns on large screens if possible, or reflow */
+@media (min-width: 1280px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}

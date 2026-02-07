@@ -1,0 +1,139 @@
+{% extends "v2/base.html" %}
+{% load static %}
+
+{% block title %}{{ breadcrumbs.1.0 }} | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/v2/pages/department.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Header with Breadcrumb and Toolbar -->
+<div class="department-header">
+  <div class="department-header__inner">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      {% for item in breadcrumbs %}
+        {% if item.2 %}
+          <span class="breadcrumb__current">{{ item.0 }}</span>
+        {% else %}
+          <a href="{{ item.1 }}" class="breadcrumb__link">{{ item.0 }}</a>
+          <span class="breadcrumb__separator">/</span>
+        {% endif %}
+      {% endfor %}
+    </nav>
+    
+    <!-- Toolbar -->
+    <div class="department-toolbar">
+      <h1 class="department-toolbar__title">{{ breadcrumbs.1.0 }}</h1>
+      
+      <div class="department-toolbar__filters">
+        <!-- Recency Toggle -->
+        <div class="recency-toggle">
+          <a href="?sortby={{ sortby }}&order={{ order }}" 
+             class="recency-toggle__option {% if active_course_recency == latest_semester %}is-active{% endif %}">
+            Current Semester
+          </a>
+          <a href="{% url 'department_v2_course_recency' dept_id=dept_id course_recency=last_five_years %}?sortby={{ sortby }}&order={{ order }}" 
+             class="recency-toggle__option {% if active_course_recency == last_five_years %}is-active{% endif %}">
+            Last 5 Years
+          </a>
+        </div>
+        
+        <!-- Sort Dropdown -->
+        <div class="sort-select">
+          <label class="sort-select__label" for="sortSelect">Sort by:</label>
+          <select id="sortSelect" class="input input--sm" onchange="updateSort(this.value)">
+            <option value="course_id_asc" {% if sortby == 'course_id' and order == 'asc' %}selected{% endif %}>Course # (A-Z)</option>
+            <option value="course_id_desc" {% if sortby == 'course_id' and order == 'desc' %}selected{% endif %}>Course # (Z-A)</option>
+            <option value="rating_desc" {% if sortby == 'rating' and order == 'desc' %}selected{% endif %}>Rating (High-Low)</option>
+            <option value="rating_asc" {% if sortby == 'rating' and order == 'asc' %}selected{% endif %}>Rating (Low-High)</option>
+            <option value="gpa_desc" {% if sortby == 'gpa' and order == 'desc' %}selected{% endif %}>GPA (High-Low)</option>
+            <option value="gpa_asc" {% if sortby == 'gpa' and order == 'asc' %}selected{% endif %}>GPA (Low-High)</option>
+            <option value="difficulty_desc" {% if sortby == 'difficulty' and order == 'desc' %}selected{% endif %}>Difficulty (High-Low)</option>
+            <option value="difficulty_asc" {% if sortby == 'difficulty' and order == 'asc' %}selected{% endif %}>Difficulty (Low-High)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Course List -->
+<div class="department-content">
+  {% if paginated_courses|length == 0 %}
+  <!-- Empty State -->
+  <div class="empty-state">
+    <svg class="empty-state__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="M8 15h8"></path>
+      <path d="M9 9h.01"></path>
+      <path d="M15 9h.01"></path>
+    </svg>
+    <h2 class="empty-state__title">
+      {% if active_course_recency == latest_semester %}
+        No courses this semester
+      {% else %}
+        No courses found
+      {% endif %}
+    </h2>
+    <p class="empty-state__description">
+      {% if active_course_recency == latest_semester %}
+        It appears no courses are being taught this semester. Try viewing courses from the last 5 years.
+      {% else %}
+        Consider selecting a different department.
+      {% endif %}
+    </p>
+  </div>
+  {% else %}
+  
+  <div class="course-list">
+    {% for course in paginated_courses %}
+    {% include "v2/components/_course_card.html" with course=course %}
+    {% endfor %}
+  </div>
+  
+  <!-- Pagination -->
+  {% if paginated_courses.has_other_pages %}
+  <nav class="pagination mt-8" aria-label="Course pagination">
+    {% if paginated_courses.has_previous %}
+    <a href="?page={{ paginated_courses.previous_page_number }}&sortby={{ sortby }}&order={{ order }}" class="pagination__link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      Previous
+    </a>
+    {% endif %}
+    
+    <span class="pagination__info">
+      Page {{ paginated_courses.number }} of {{ paginated_courses.paginator.num_pages }}
+    </span>
+    
+    {% if paginated_courses.has_next %}
+    <a href="?page={{ paginated_courses.next_page_number }}&sortby={{ sortby }}&order={{ order }}" class="pagination__link">
+      Next
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </a>
+    {% endif %}
+  </nav>
+  {% endif %}
+  
+  {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateSort(value) {
+  const [sortby, order] = value.split('_');
+  const url = new URL(window.location.href);
+  url.searchParams.set('sortby', sortby);
+  url.searchParams.set('order', order);
+  window.location.href = url.toString();
+}
+</script>
+{% endblock %}

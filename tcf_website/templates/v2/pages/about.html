@@ -1,0 +1,144 @@
+{% extends "v2/base.html" %}
+{% load static %}
+
+{% block title %}About | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/v2/pages/about.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="about-page">
+  <!-- Hero -->
+  <div class="about-hero">
+    <img src="{% static 'base/img/new_logo.svg' %}" alt="theCourseForum logo" class="about-hero__logo">
+    <h1 class="about-hero__title">theCourseForum</h1>
+    <p class="about-hero__tagline">Connecting you to the courses you love.</p>
+  </div>
+  
+  <!-- Description -->
+  <p class="about-description">
+    <strong>theCourseForum</strong> is a place for University of Virginia students to share their academic experiences.
+    These are captured in the form of course reviews, which provide insight, advice, and caution to students before course enrollment.
+    We believe that reading <em>student</em> reflections is the best way to understand a class and its professor without actually experiencing it.
+    <br><br>
+    <em>Of the students, by the students, for the students...</em>
+  </p>
+  
+  <!-- Tabs -->
+  <div class="about-tabs">
+    <button class="about-tab" data-tab="history">
+      <svg class="about-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+      </svg>
+      History
+    </button>
+    
+    <button class="about-tab is-active" data-tab="team">
+      <svg class="about-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+      Current Team
+    </button>
+    
+    <button class="about-tab" data-tab="contributors">
+      <svg class="about-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+      </svg>
+      Past Contributors
+    </button>
+    
+    <button class="about-tab" data-tab="sponsors">
+      <svg class="about-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+      Sponsors
+    </button>
+  </div>
+  
+  <!-- Tab Content: History -->
+  <div class="about-content" id="tab-history">
+    <div class="history-content">
+      <h3>Our Story</h3>
+      <p>
+        theCourseForum was founded in 2005 as a student-run nonprofit CIO at the University of Virginia.
+        We started as a simple website where students could share their experiences in classes and help
+        fellow Wahoos make informed decisions about their course selections.
+      </p>
+      <p>
+        Over the years, we've grown to become one of the most essential tools for UVA students during
+        enrollment periods. With over 80,000 reviews covering thousands of courses and instructors,
+        we continue to be the go-to resource for students planning their academic journeys.
+      </p>
+      <p>
+        Our mission remains the same: to empower students with honest, peer-sourced information about
+        courses and instructors at UVA.
+      </p>
+    </div>
+  </div>
+  
+  <!-- Tab Content: Current Team -->
+  <div class="about-content is-active" id="tab-team">
+    <div class="team-grid">
+      {% for member in team %}
+      <div class="member-card">
+        <div class="member-card__avatar">{{ member.first_name|slice:":1" }}{{ member.last_name|slice:":1" }}</div>
+        <div class="member-card__name">{{ member.name }}</div>
+        <div class="member-card__role">{{ member.role }}</div>
+      </div>
+      {% empty %}
+      <div class="member-card">
+        <div class="member-card__avatar">TC</div>
+        <div class="member-card__name">Team Member</div>
+        <div class="member-card__role">Developer</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  
+  <!-- Tab Content: Past Contributors -->
+  <div class="about-content" id="tab-contributors">
+    <div class="history-content">
+      <h3>Thank You to Our Alumni</h3>
+      <p>
+        theCourseForum is built on the contributions of generations of UVA students.
+        We're grateful to everyone who has contributed code, designs, data, and ideas over the years.
+      </p>
+    </div>
+  </div>
+  
+  <!-- Tab Content: Sponsors -->
+  <div class="about-content" id="tab-sponsors">
+    <div class="history-content">
+      <h3>Our Sponsors</h3>
+      <p>
+        We're grateful to our sponsors who help keep theCourseForum running as a free service for all UVA students.
+      </p>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Tab switching
+document.querySelectorAll('.about-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    // Update tabs
+    document.querySelectorAll('.about-tab').forEach(t => t.classList.remove('is-active'));
+    tab.classList.add('is-active');
+    
+    // Update content
+    document.querySelectorAll('.about-content').forEach(c => c.classList.remove('is-active'));
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('is-active');
+  });
+});
+</script>
+{% endblock %}

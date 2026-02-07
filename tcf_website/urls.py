@@ -12,15 +12,24 @@ urlpatterns = [
         name="club_category",
     ),
     path("", views.index, name="index"),
+    path("v2/", views.index_v2, name="index_v2"),
     path("about/", views.AboutView.as_view(), name="about"),
+    path("v2/about/", views.AboutViewV2.as_view(), name="about_v2"),
     path("privacy/", views.privacy, name="privacy"),
     path("terms/", views.terms, name="terms"),
     path("browse/", views.browse, name="browse"),
+    path("v2/browse/", views.browse_v2, name="browse_v2"),
     path("department/<int:dept_id>/", views.department, name="department"),
     path(
         "department/<int:dept_id>/<str:course_recency>/",
         views.department,
         name="department_course_recency",
+    ),
+    path("v2/department/<int:dept_id>/", views.department_v2, name="department_v2"),
+    path(
+        "v2/department/<int:dept_id>/<str:course_recency>/",
+        views.department_v2,
+        name="department_v2_course_recency",
     ),
     path(
         "course/<int:course_id>/",
@@ -38,6 +47,16 @@ urlpatterns = [
         name="sort_reviews",
     ),
     path(
+        "v2/course/<int:course_id>/<int:instructor_id>/",
+        views.course_instructor_v2,
+        name="course_instructor_v2",
+    ),
+    path(
+        "v2/course/<int:course_id>/<int:instructor_id>/sort=<str:method>",
+        views.course_instructor_v2,
+        name="sort_reviews_v2",
+    ),
+    path(
         "course/<str:mnemonic>/<int:course_number>/",
         views.course_view,
         name="course",
@@ -48,11 +67,22 @@ urlpatterns = [
         name="course_recency",
     ),
     path(
+        "v2/course/<str:mnemonic>/<int:course_number>/",
+        views.course_view_v2,
+        name="course_v2",
+    ),
+    path(
         "instructor/<int:instructor_id>/",
         views.instructor_view,
         name="instructor",
     ),
+    path(
+        "v2/instructor/<int:instructor_id>/",
+        views.instructor_view_v2,
+        name="instructor_v2",
+    ),
     path("reviews/new/", views.new_review, name="new_review"),
+    path("v2/reviews/new/", views.new_review_v2, name="new_review_v2"),
     path(
         "reviews/<int:pk>/delete/",
         views.DeleteReview.as_view(),
@@ -67,6 +97,7 @@ urlpatterns = [
         views.review.check_zero_hours_per_week,
     ),
     path("profile/", views.profile, name="profile"),
+    path("v2/profile/", views.profile_v2, name="profile_v2"),
     path(
         "profile/<int:pk>/delete/",
         views.DeleteProfile.as_view(),

@@ -1,0 +1,508 @@
+{% extends "v2/base.html" %}
+{% load static %}
+
+{% block title %}{{ course.code }} | {{ instructor.full_name }} | theCourseForum{% endblock %}
+
+{% block page_metadata %}
+{% if course_code %}<meta name="course-code" content="{{ course_code }}">{% endif %}
+{% if course_title %}<meta name="course-title" content="{{ course_title }}">{% endif %}
+{% if instructor_fullname %}<meta name="instructor-name" content="{{ instructor_fullname }}">{% endif %}
+{% if not is_current_semester %}
+<meta name="robots" content="noindex">
+{% endif %}
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/v2/pages/course_instructor.css' %}">
+<link rel="stylesheet" href="{% static 'css/v2/pages/course_instructor_grades.css' %}">
+<link rel="stylesheet" href="{% static 'css/v2/pages/course_instructor_grades.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="course-instructor-header">
+  <div class="course-instructor-header__inner">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      {% for crumb in breadcrumbs %}
+      {% if crumb.2 %}
+      <span class="breadcrumb__current">{{ crumb.0 }}</span>
+      {% else %}
+      <a href="{{ crumb.1 }}" class="breadcrumb__link">{{ crumb.0 }}</a>
+      <span class="breadcrumb__separator">/</span>
+      {% endif %}
+      {% endfor %}
+    </nav>
+    
+    <!-- Title -->
+    <div class="course-instructor-title">
+      <span class="course-instructor-title__code">{{ course.code }}</span>
+      <span class="course-instructor-title__name">{{ course.title }}</span>
+    </div>
+    
+    <!-- Instructor Row -->
+    <div class="instructor-row">
+      <div class="instructor-row__left">
+        <a href="{% url 'instructor_v2' instructor.id %}" class="instructor-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          {{ instructor.full_name }}
+        </a>
+      </div>
+      
+      <span class="semester-badge">
+        Last taught: {{ semester_last_taught }}
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="course-instructor-content">
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <!-- Ratings Panel -->
+    <div class="ratings-panel">
+      <div class="ratings-panel__header">
+        <h2 class="ratings-panel__title">Ratings</h2>
+        <span class="ratings-panel__count">{{ num_ratings }} rating{{ num_ratings|pluralize }}</span>
+      </div>
+      
+      <div id="ratings-container">
+        <div class="rating-row">
+          <span class="rating-row__label">Instructor</span>
+          <div class="rating-row__bar">
+            <div class="rating-row__fill rating-row__fill--success instructor-bar" style="width: 0%"></div>
+          </div>
+          <span class="rating-row__value rating-row__value--muted instructor-num">—</span>
+        </div>
+        
+        <div class="rating-row">
+          <span class="rating-row__label">Enjoyability</span>
+          <div class="rating-row__bar">
+            <div class="rating-row__fill rating-row__fill--success fun-bar" style="width: 0%"></div>
+          </div>
+          <span class="rating-row__value rating-row__value--muted fun-num">—</span>
+        </div>
+        
+        <div class="rating-row">
+          <span class="rating-row__label">Difficulty</span>
+          <div class="rating-row__bar">
+            <div class="rating-row__fill rating-row__fill--warning difficulty-bar" style="width: 0%"></div>
+          </div>
+          <span class="rating-row__value rating-row__value--muted difficulty-num">—</span>
+        </div>
+        
+        <div class="rating-row">
+          <span class="rating-row__label">Recommend</span>
+          <div class="rating-row__bar">
+            <div class="rating-row__fill rating-row__fill--success recommend-bar" style="width: 0%"></div>
+          </div>
+          <span class="rating-row__value rating-row__value--muted recommend-num">—</span>
+        </div>
+        
+        <div class="rating-row">
+          <span class="rating-row__label">Hours/Week</span>
+          <div class="rating-row__bar">
+            <div class="rating-row__fill rating-row__fill--warning hours-bar" style="width: 0%"></div>
+          </div>
+          <span class="rating-row__value rating-row__value--muted hours-num">—</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Grades Panel -->
+    <div class="grades-panel">
+      <div class="grades-panel__header">
+        <h2 class="grades-panel__title">Grade Distribution</h2>
+        <div class="grades-panel__toogle">
+           <button id="toggle-chart-type" class="btn-sm btn-outline">Switch to Bar</button>
+        </div>
+      </div>
+      
+      <div class="grades-panel__chart-container">
+        <canvas id="gradesChart"></canvas>
+        <div id="grades-empty" class="grades-panel__empty" style="display: none;">
+          <svg class="grades-panel__empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 15h8"></path>
+            <path d="M9 9h.01"></path>
+            <path d="M15 9h.01"></path>
+          </svg>
+          <p>No grade data available</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sections Panel -->
+    {% if display_times and sections %}
+    <div class="sections-panel">
+      <div class="sections-panel__header">
+        <h2 class="sections-panel__title">Current Sections</h2>
+        <span class="sections-panel__count">{{ sections|length }}</span>
+      </div>
+      
+      {% for section in sections %}
+      <a href="https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_DETAILS.FieldFormula.IScript_Main?institution=UVA01&term={{ sem_code }}&class_nbr={{ section.number }}" 
+         target="_blank" 
+         rel="noopener noreferrer" 
+         class="section-card">
+        <div class="section-card__header">
+          <span class="section-card__number">Section {{ section.number }}</span>
+          <span class="section-card__type">{{ section.type }}{% if section.units %} ({{ section.units }} Unit{{ section.units|pluralize }}){% endif %}</span>
+        </div>
+        
+        {% if section.times %}
+        <div class="section-card__times">{{ section.times }}</div>
+        {% endif %}
+        
+        <div class="section-card__enrollment">
+          <div class="enrollment-stat">
+            <span>Enrolled:</span>
+            <div class="enrollment-stat__bar">
+              <div class="enrollment-stat__fill {% if section.enrollment_taken >= section.enrollment_limit %}enrollment-stat__fill--danger{% else %}enrollment-stat__fill--success{% endif %}" 
+                   style="width: {% widthratio section.enrollment_taken section.enrollment_limit 100 %}%"></div>
+            </div>
+            <span>{{ section.enrollment_taken }}/{{ section.enrollment_limit }}</span>
+          </div>
+          
+          {% if section.waitlist_limit > 0 %}
+          <div class="enrollment-stat">
+            <span>Waitlist:</span>
+            <div class="enrollment-stat__bar">
+              <div class="enrollment-stat__fill enrollment-stat__fill--warning" 
+                   style="width: {% widthratio section.waitlist_taken section.waitlist_limit 100 %}%"></div>
+            </div>
+            <span>{{ section.waitlist_taken }}/{{ section.waitlist_limit }}</span>
+          </div>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  
+  <!-- Tabs -->
+  <div class="content-tabs">
+    <button class="content-tab is-active" data-tab="reviews">Reviews</button>
+    <button class="content-tab" data-tab="qa">
+      Q&A
+      <span class="content-tab__badge">New</span>
+    </button>
+  </div>
+  
+  <!-- Reviews Tab -->
+  <div class="tab-content is-active" id="tab-reviews">
+    <div class="reviews-header">
+      <h2 class="reviews-header__title">{{ num_reviews }} Review{{ num_reviews|pluralize }}</h2>
+      
+      <div class="reviews-header__actions">
+        {% if user.is_authenticated %}
+        <a href="{% url 'new_review' %}?course={{ course.id }}&instructor={{ instructor.id }}" class="add-review-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Add Review
+        </a>
+        {% else %}
+        <a href="#" class="add-review-btn" data-action="login">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Add Review
+        </a>
+        {% endif %}
+        
+        {% if paginated_reviews and num_reviews > 0 %}
+        <select class="dropdown" id="review-sort">
+          <option value="">Sort by...</option>
+          <option value="Most Helpful" {% if sort_method == "Most Helpful" %}selected{% endif %}>Most Helpful</option>
+          <option value="Most Recent" {% if sort_method == "Most Recent" %}selected{% endif %}>Most Recent</option>
+          <option value="Highest Rating" {% if sort_method == "Highest Rating" %}selected{% endif %}>Highest Rating</option>
+          <option value="Lowest Rating" {% if sort_method == "Lowest Rating" %}selected{% endif %}>Lowest Rating</option>
+        </select>
+        {% endif %}
+      </div>
+    </div>
+    
+    {% if paginated_reviews and num_reviews > 0 %}
+    {% for review in paginated_reviews %}
+    <article class="review-card">
+      <div class="review-card__header">
+        <div class="review-card__meta">
+          <span class="review-card__semester">{{ review.semester }}</span>
+          {% if review.grade %}
+          <span>Grade: {{ review.grade }}</span>
+          {% endif %}
+        </div>
+        
+        <div class="review-card__ratings">
+          <div class="review-rating">
+            <div class="review-rating__value">{{ review.instructor_rating|floatformat:1 }}</div>
+            <div class="review-rating__label">Instructor</div>
+          </div>
+          <div class="review-rating">
+            <div class="review-rating__value">{{ review.difficulty|floatformat:1 }}</div>
+            <div class="review-rating__label">Difficulty</div>
+          </div>
+        </div>
+      </div>
+      
+      {% if review.text %}
+      <p class="review-card__text">{{ review.text }}</p>
+      {% endif %}
+      
+      <div class="review-card__footer">
+        <div class="review-card__votes">
+          <button class="vote-btn {% if review.user_vote > 0 %}is-active{% endif %}" 
+                  data-action="upvote" 
+                  data-review="{{ review.id }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m5 15 7-7 7 7"/>
+            </svg>
+            <span>{{ review.sum_votes|default:0 }}</span>
+          </button>
+          <button class="vote-btn {% if review.user_vote < 0 %}is-active{% endif %}" 
+                  data-action="downvote" 
+                  data-review="{{ review.id }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m19 9-7 7-7-7"/>
+            </svg>
+          </button>
+        </div>
+        
+        <span class="review-card__date">{{ review.created }}</span>
+      </div>
+    </article>
+    {% endfor %}
+    
+    <!-- Pagination -->
+    {% if paginated_reviews.has_other_pages %}
+    <nav class="pagination">
+      {% if paginated_reviews.has_previous %}
+      <a href="?page={{ paginated_reviews.previous_page_number }}" class="pagination__link">← Previous</a>
+      {% endif %}
+      
+      <span class="pagination__current">
+        Page {{ paginated_reviews.number }} of {{ paginated_reviews.paginator.num_pages }}
+      </span>
+      
+      {% if paginated_reviews.has_next %}
+      <a href="?page={{ paginated_reviews.next_page_number }}" class="pagination__link">Next →</a>
+      {% endif %}
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="reviews-empty">
+      <svg class="reviews-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      <h3 class="reviews-empty__title">No reviews yet</h3>
+      <p class="reviews-empty__text">Be the first to share your experience with this course!</p>
+      {% if user.is_authenticated %}
+      <a href="{% url 'new_review' %}?course={{ course.id }}&instructor={{ instructor.id }}" class="add-review-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Add Review
+      </a>
+      {% else %}
+      <a href="#" class="add-review-btn" data-action="login">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Sign in to Add Review
+      </a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+  
+  <!-- Q&A Tab (placeholder) -->
+  <div class="tab-content" id="tab-qa">
+    <div class="reviews-empty">
+      <svg class="reviews-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+      <h3 class="reviews-empty__title">Questions & Answers</h3>
+      <p class="reviews-empty__text">Q&A feature coming soon in the v2 redesign.</p>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Tab switching
+document.querySelectorAll('.content-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    // Update tabs
+    document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('is-active'));
+    tab.classList.add('is-active');
+    
+    // Update content
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('is-active'));
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('is-active');
+  });
+});
+
+// Sort dropdown
+const sortSelect = document.getElementById('review-sort');
+if (sortSelect) {
+  sortSelect.addEventListener('change', (e) => {
+    if (e.target.value) {
+      const baseUrl = '/v2/course/{{ course.id }}/{{ instructor.id }}/sort=' + encodeURIComponent(e.target.value);
+      window.location.href = baseUrl + '#reviews';
+    }
+  });
+}
+
+// Load ratings data and grades
+const data = JSON.parse('{{ data|escapejs }}');
+if (data) {
+  // Ratings Bars
+  const ratings = [
+    { key: 'instructor', bar: '.instructor-bar', num: '.instructor-num' },
+    { key: 'enjoyability', bar: '.fun-bar', num: '.fun-num' },
+    { key: 'difficulty', bar: '.difficulty-bar', num: '.difficulty-num' },
+    { key: 'recommendability', bar: '.recommend-bar', num: '.recommend-num' },
+    { key: 'hours', bar: '.hours-bar', num: '.hours-num' },
+  ];
+  
+  ratings.forEach(({ key, bar, num }) => {
+    const value = data[key];
+    if (value !== null && value !== undefined) {
+      const barEl = document.querySelector(bar);
+      const numEl = document.querySelector(num);
+      if (barEl && numEl) {
+        barEl.style.width = (value / 5 * 100) + '%';
+        numEl.textContent = value.toFixed(1);
+        numEl.classList.remove('rating-row__value--muted');
+      }
+    }
+  });
+
+  // Grades Chart
+  const gradeKeys = ['a_plus', 'a', 'a_minus', 'b_plus', 'b', 'b_minus', 'c_plus', 'c', 'c_minus', 'dfw'];
+  const gradeLabels = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'DFW'];
+  const gradeValues = gradeKeys.map(k => data[k] || 0);
+  const totalGrades = gradeValues.reduce((a, b) => a + b, 0);
+
+  if (totalGrades > 0) {
+    const ctx = document.getElementById('gradesChart').getContext('2d');
+    let chartType = 'pie';
+    
+    // Check local storage for preference
+    if (localStorage.getItem('chartType')) {
+        chartType = localStorage.getItem('chartType');
+        const toggleBtn = document.getElementById('toggle-chart-type');
+        if (toggleBtn) {
+            toggleBtn.textContent = chartType === 'pie' ? 'Switch to Bar' : 'Switch to Pie';
+        }
+    }
+
+    let chart = new Chart(ctx, {
+      type: chartType,
+      data: {
+        labels: gradeLabels,
+        datasets: [{
+          data: gradeValues,
+          backgroundColor: [
+            '#22c55e', '#4ade80', '#86efac', // Greens
+            '#facc15', '#fde047', '#fef08a', // Yellows
+            '#fb923c', '#fdba74', // Oranges
+            '#f87171', '#ef4444'  // Reds/DFW
+          ],
+          borderWidth: 1,
+          borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1f2937' : '#ffffff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: chartType === 'pie',
+            position: 'right'
+          }
+        },
+        scales: {
+            y: {
+                display: chartType === 'bar',
+                beginAtZero: true
+            },
+            x: {
+                display: chartType === 'bar'
+            }
+        }
+      }
+    });
+
+    // Toggle button logic
+    const toggleBtn = document.getElementById('toggle-chart-type');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            const newType = chart.config.type === 'pie' ? 'bar' : 'pie';
+            chart.destroy();
+            chart = new Chart(ctx, {
+                type: newType,
+                data: {
+                    labels: gradeLabels,
+                    datasets: [{
+                        data: gradeValues,
+                        backgroundColor: [
+                            '#22c55e', '#4ade80', '#86efac', 
+                            '#facc15', '#fde047', '#fef08a', 
+                            '#fb923c', '#fdba74', 
+                            '#f87171', '#ef4444'
+                        ],
+                        borderWidth: 1,
+                        borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1f2937' : '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: newType === 'pie',
+                            position: 'right'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            display: newType === 'bar',
+                            beginAtZero: true
+                        },
+                        x: {
+                            display: newType === 'bar'
+                        }
+                    }
+                }
+            });
+            toggleBtn.textContent = newType === 'pie' ? 'Switch to Bar' : 'Switch to Pie';
+            localStorage.setItem('chartType', newType);
+        });
+    }
+  } else {
+    document.getElementById('gradesChart').style.display = 'none';
+    document.querySelector('.grades-panel__chart-container').style.height = 'auto';
+    document.getElementById('grades-empty').style.display = 'flex';
+    const toggle = document.querySelector('.grades-panel__toogle');
+    if (toggle) toggle.style.display = 'none';
+  }
+}
+</script>
+{% endblock %}

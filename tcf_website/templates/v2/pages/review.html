@@ -1,0 +1,319 @@
+{% extends "v2/base.html" %}
+{% load static %}
+
+{% block title %}Write a Review | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/v2/pages/review.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="review-container">
+  
+  <header class="review-header">
+    <h1 class="review-header__title">Write a Review</h1>
+    <p class="review-header__subtitle">Share your experience to help other students.</p>
+  </header>
+
+  <form id="reviewForm" action="{% url 'new_review' %}" method="POST">
+    {% csrf_token %}
+
+    <!-- hidden mode fields -->
+    {% if is_club %}
+      <input type="hidden" name="club" value="{{ club.id }}">
+    {% else %}
+      <input type="hidden" name="course" value="{{ course.id }}">
+    {% endif %}
+
+
+    <!-- Context Info -->
+    <div class="context-info">
+      <div class="context-icon">
+        {% if is_club %}🛡️{% else %}📚{% endif %}
+      </div>
+      <div class="context-details">
+        {% if is_club %}
+          <div class="context-title">{{ club.name }}</div>
+          <div class="context-subtitle">{{ club.category.name }}</div>
+        {% else %}
+          <div class="context-title">{{ course.code }}</div>
+          <div class="context-subtitle">{{ course.title }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Logistics Section -->
+    <section class="review-section">
+      <h2 class="review-section__title">
+        <span class="review-section__title-icon">🗓️</span> Logistics
+      </h2>
+      
+      <div class="rating-grid">
+        <!-- Semester -->
+        <div class="rating-field">
+          <label class="rating-field__label" for="semester">When did you take this?</label>
+          <select class="instructor-select" id="semester" name="semester" required>
+            {% for sem in semesters %}
+              <option value="{{ sem.id }}">{{ sem.season|title }} {{ sem.year }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Instructor (if course) -->
+        {% if not is_club %}
+          <div class="rating-field">
+            <label class="rating-field__label" for="instructor">Instructor</label>
+            {% if instructor %}
+              <div class="instructor-select" style="background: var(--bg-muted); cursor: not-allowed; opacity: 0.7;">
+                {{ instructor.full_name }}
+              </div>
+              <input type="hidden" name="instructor" value="{{ instructor.id }}">
+            {% else %}
+              <select class="instructor-select" id="instructor" name="instructor" required>
+                <option value="">Select instructor...</option>
+                {% for instr in instructors %}
+                  <option value="{{ instr.id }}">{{ instr.last_name }}, {{ instr.first_name }}</option>
+                {% endfor %}
+              </select>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="review-section">
+      <h2 class="review-section__title">
+        <span class="review-section__title-icon">✍️</span> Your Review
+      </h2>
+      
+      <div class="rating-field">
+        <textarea 
+          class="review-textarea" 
+          id="reviewtext" 
+          name="text" 
+          rows="6"
+          placeholder="What was the course like? How was the workload? Any tips for future students? (Minimum 100 characters)"
+          required 
+          minlength="100" 
+          maxlength="5000"
+        >{% if form.text.value %}{{ form.text.value }}{% endif %}</textarea>
+        <span class="word-count" id="word-count">0 words</span>
+      </div>
+    </section>
+
+    <!-- Ratings Section -->
+    <section class="review-section">
+      <h2 class="review-section__title">
+        <span class="review-section__title-icon">⭐</span> Ratings
+      </h2>
+      
+      <div class="rating-grid">
+        
+        <!-- Field 1: Instructor/Leadership -->
+        <div class="rating-field">
+            <label class="rating-field__label">
+                {% if is_club %}Leadership{% else %}Instructor Rating{% endif %}
+            </label>
+            <div class="rating-options">
+                {% for i in "12345" %}
+                <label class="rating-option">
+                    <input type="radio" name="instructor_rating" value="{{ i }}" {% if i == "3" %}checked{% endif %}>
+                    <span class="rating-option__label">{{ i }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Field 2: Ensure -->
+        <div class="rating-field">
+            <label class="rating-field__label">Enjoyability</label>
+            <div class="rating-options">
+                {% for i in "12345" %}
+                <label class="rating-option">
+                    <input type="radio" name="enjoyability" value="{{ i }}" {% if i == "3" %}checked{% endif %}>
+                    <span class="rating-option__label">{{ i }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Field 3: Recommend -->
+        <div class="rating-field">
+            <label class="rating-field__label">Recommendability</label>
+            <div class="rating-options">
+                {% for i in "12345" %}
+                <label class="rating-option">
+                    <input type="radio" name="recommendability" value="{{ i }}" {% if i == "3" %}checked{% endif %}>
+                    <span class="rating-option__label">{{ i }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Field 4: Difficulty -->
+        <div class="rating-field">
+            <label class="rating-field__label">
+                {% if is_club %}Commitment{% else %}Difficulty{% endif %}
+            </label>
+            <div class="rating-options">
+                {% for i in "12345" %}
+                <label class="rating-option">
+                    <input type="radio" name="difficulty" value="{{ i }}" {% if i == "3" %}checked{% endif %}>
+                    <span class="rating-option__label">{{ i }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Workload Section -->
+    <section class="review-section">
+      <h2 class="review-section__title">
+        <span class="review-section__title-icon">⏱️</span> Weekly Hours
+      </h2>
+      
+      <div class="workload-grid">
+        <div class="workload-field">
+            <label>{% if is_club %}Events{% else %}Reading{% endif %}</label>
+            <div class="workload-input-wrapper">
+                <input type="number" class="workload-input" name="amount_reading" value="0" min="0" max="40" step="0.5">
+                <span class="workload-suffix">hrs</span>
+            </div>
+        </div>
+
+        <div class="workload-field">
+            <label>{% if is_club %}Planning{% else %}Writing{% endif %}</label>
+            <div class="workload-input-wrapper">
+                <input type="number" class="workload-input" name="amount_writing" value="0" min="0" max="40" step="0.5">
+                <span class="workload-suffix">hrs</span>
+            </div>
+        </div>
+
+        <div class="workload-field">
+            <label>{% if is_club %}Meetings{% else %}Group Work{% endif %}</label>
+            <div class="workload-input-wrapper">
+                <input type="number" class="workload-input" name="amount_group" value="0" min="0" max="40" step="0.5">
+                <span class="workload-suffix">hrs</span>
+            </div>
+        </div>
+
+        <div class="workload-field">
+            <label>{% if is_club %}Other{% else %}Homework{% endif %}</label>
+            <div class="workload-input-wrapper">
+                <input type="number" class="workload-input" name="amount_homework" value="0" min="0" max="40" step="0.5">
+                <span class="workload-suffix">hrs</span>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modals Placeholders (Reusing logic) -->
+    <div id="duplicate-warning" class="modal" aria-hidden="true">
+        <div class="modal__overlay" tabindex="-1" data-modal-close></div>
+        <div class="modal__container" role="dialog" aria-modal="true">
+          <header class="modal__header">
+            <h2 class="modal__title">Duplicate Review</h2>
+            <button class="modal__close" aria-label="Close modal" data-modal-close></button>
+          </header>
+          <div class="modal__content">
+            <p>You have already reviewed this course/instructor for this semester.</p>
+          </div>
+          <footer class="modal__footer">
+            <button class="btn btn--primary" data-modal-close>Okay</button>
+          </footer>
+        </div>
+    </div>
+
+    <!-- Submit -->
+    <div style="text-align: center;">
+      <button type="submit" class="btn btn--primary btn--lg" id="submitBtn">Submit Review</button>
+    </div>
+
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Word count logic
+  const textarea = document.getElementById('reviewtext');
+  const countDisplay = document.getElementById('word-count');
+  
+  textarea.addEventListener('input', function() {
+    // Count words roughly
+    const text = this.value.trim();
+    const words = text ? text.split(/\s+/).length : 0;
+    countDisplay.textContent = words + ' words';
+    
+    // Simple validation visual
+    if (words < 20) { // arbitrary soft limit for color
+        countDisplay.style.color = 'var(--danger)';
+    } else {
+        countDisplay.style.color = 'var(--fg-muted)';
+    }
+  });
+
+  // Zero Hours Modal Logic (Simple Alert for now, or Custom Modal)
+  // We will replicate the fetch logic from the original template
+  
+  let zeroHoursWarned = false;
+
+  document.getElementById('reviewForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = this;
+    const formData = new FormData(form);
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Disable button to prevent double submit
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Checking...';
+
+    // 1. Check Duplicate
+    fetch('/reviews/check_duplicate/', {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.duplicate) {
+            // Show duplicate modal
+            alert("You have already reviewed this course/instructor for this semester."); // Replace with v2 modal
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Review';
+        } else {
+            // 2. Check Zero Hours
+            fetch('/reviews/check_zero_hours_per_week/', {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') }
+            })
+            .then(r => r.json())
+            .then(zData => {
+                if (zData.zero && !zeroHoursWarned) {
+                    const confirmZero = confirm("You entered 0 total hours per week. Is this correct?");
+                    if (confirmZero) {
+                        zeroHoursWarned = true;
+                        form.submit();
+                    } else {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Submit Review';
+                    }
+                } else {
+                    form.submit(); // Submit for real
+                }
+            });
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("An error occurred. Please try again.");
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Review';
+    });
+  });
+</script>
+{% endblock %}

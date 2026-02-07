@@ -1,0 +1,61 @@
+{# Instructor Card Component #}
+<a href="{% url 'course_instructor' course_id=course.pk instructor_id=instructor.pk %}" class="instructor-card">
+  <div class="instructor-card__main">
+    <h3 class="instructor-card__name">{{ instructor.full_name }}</h3>
+    
+    <div class="instructor-card__meta">
+      <span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        {{ instructor.semester_last_taught }}
+      </span>
+      
+      {% if instructor.semester_last_taught == latest_semester %}
+      <span class="instructor-card__badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        Teaching Now
+      </span>
+      {% endif %}
+    </div>
+    
+    {% if instructor.times %}
+    <div class="section-times">
+      {% for section_num, times in instructor.times.items %}
+        {% for time in times %}
+        <span class="section-time">{{ time }}</span>
+        {% endfor %}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  
+  <div class="instructor-card__ratings">
+    <div class="rating-stat">
+      <div class="rating-stat__value {% if instructor.rating >= 4 %}rating-stat__value--success{% elif instructor.rating >= 3 %}rating-stat__value--warning{% elif instructor.rating %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
+        {% if instructor.rating %}{{ instructor.rating|floatformat:1 }}{% else %}—{% endif %}
+      </div>
+      <div class="rating-stat__label">Rating</div>
+    </div>
+    
+    <div class="rating-stat">
+      <div class="rating-stat__value {% if instructor.difficulty <= 2.5 %}rating-stat__value--success{% elif instructor.difficulty <= 3.5 %}rating-stat__value--warning{% elif instructor.difficulty %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
+        {% if instructor.difficulty %}{{ instructor.difficulty|floatformat:1 }}{% else %}—{% endif %}
+      </div>
+      <div class="rating-stat__label">Difficulty</div>
+    </div>
+    
+    <div class="rating-stat">
+      <div class="rating-stat__value {% if instructor.gpa >= 3.5 %}rating-stat__value--success{% elif instructor.gpa >= 2.5 %}rating-stat__value--warning{% elif instructor.gpa %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
+        {% if instructor.gpa %}{{ instructor.gpa|floatformat:2 }}{% else %}—{% endif %}
+      </div>
+      <div class="rating-stat__label">GPA</div>
+    </div>
+  </div>
+</a>

@@ -1,0 +1,235 @@
+/*
+ * About Page Styles
+ * =================
+ */
+
+/* ===== PAGE LAYOUT ===== */
+
+.about-page {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-16);
+}
+
+@media (min-width: 640px) {
+  .about-page {
+    padding: var(--space-8) var(--space-6) var(--space-16);
+  }
+}
+
+@media (min-width: 1024px) {
+  .about-page {
+    padding: var(--space-12) var(--space-8) var(--space-16);
+  }
+}
+
+
+/* ===== HERO SECTION ===== */
+
+.about-hero {
+  text-align: center;
+  padding: var(--space-12) 0;
+  
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-10);
+}
+
+.about-hero__logo {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto var(--space-6);
+}
+
+.about-hero__title {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-normal);
+  margin-bottom: var(--space-2);
+}
+
+.about-hero__tagline {
+  font-size: var(--text-xl);
+  color: var(--fg-muted);
+}
+
+
+/* ===== DESCRIPTION ===== */
+
+.about-description {
+  max-width: 700px;
+  margin: 0 auto var(--space-10);
+  
+  font-size: var(--text-lg);
+  text-align: center;
+  line-height: var(--leading-relaxed);
+  color: var(--fg-muted);
+}
+
+.about-description strong {
+  color: var(--fg);
+}
+
+
+/* ===== TABS ===== */
+
+.about-tabs {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  
+  margin-bottom: var(--space-8);
+  
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.about-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  
+  padding: var(--space-4) var(--space-6);
+  
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--fg-muted);
+  
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  
+  cursor: pointer;
+  
+  transition: all var(--duration-fast) var(--ease-default);
+}
+
+.about-tab:hover {
+  border-color: var(--primary);
+  color: var(--fg);
+}
+
+.about-tab.is-active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.about-tab__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+
+/* ===== TAB CONTENT ===== */
+
+.about-content {
+  display: none;
+}
+
+.about-content.is-active {
+  display: block;
+}
+
+
+/* ===== TEAM GRID ===== */
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--space-6);
+}
+
+
+/* ===== MEMBER CARD ===== */
+
+.member-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  padding: var(--space-6);
+  
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  
+  text-align: center;
+}
+
+.member-card__avatar {
+  width: 80px;
+  height: 80px;
+  
+  margin-bottom: var(--space-4);
+  
+  background: linear-gradient(135deg, var(--primary) 0%, var(--color-blue-700) 100%);
+  border-radius: var(--radius-full);
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: white;
+}
+
+.member-card__name {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  margin-bottom: var(--space-1);
+}
+
+.member-card__role {
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+}
+
+
+/* ===== HISTORY SECTION ===== */
+
+.history-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.history-content h3 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  margin-bottom: var(--space-4);
+}
+
+.history-content p {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--fg-muted);
+  margin-bottom: var(--space-4);
+}
+
+
+/* ===== SPONSORS SECTION ===== */
+
+.sponsors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-6);
+}
+
+.sponsor-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  padding: var(--space-6);
+  
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+}
+
+.sponsor-card__logo {
+  max-width: 150px;
+  max-height: 60px;
+  object-fit: contain;
+}
