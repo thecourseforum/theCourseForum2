@@ -71,6 +71,11 @@ def _call_openrouter(model_name: str, messages):
         json=payload,
         timeout=20,
     )
+    request_id = (
+        response.headers.get("x-request-id")
+        or response.headers.get("x-openrouter-request-id")
+        or response.headers.get("x-ratelimit-request-id")
+    )
     try:
         data = response.json()
     except ValueError:
@@ -79,10 +84,17 @@ def _call_openrouter(model_name: str, messages):
     if not response.ok:
         error_info = (data or {}).get("error") or {}
         error_msg = error_info.get("message") or response.reason or "Unknown API error"
-        return None, f"{response.status_code}: {error_msg}"
+        request_id_str = f", request_id={request_id}" if request_id else ""
+        return None, f"{response.status_code}: {error_msg}{request_id_str}"
 
     if data is None:
-        return None, "Invalid JSON response from OpenRouter."
+        text_snippet = (response.text or "")[:300].replace("\n", " ").strip()
+        details = f"status {response.status_code}"
+        if request_id:
+            details += f", request_id={request_id}"
+        if text_snippet:
+            details += f", body='{text_snippet}'"
+        return None, f"Invalid JSON response from OpenRouter ({details})."
     choices = data.get("choices") or []
     content = ""
     if choices:
@@ -97,7 +109,13 @@ def _call_openrouter(model_name: str, messages):
 
     error_info = data.get("error") or {}
     error_msg = error_info.get("message") or "Received empty summary from OpenRouter."
-    return None, error_msg
+    keys = sorted(data.keys()) if isinstance(data, dict) else []
+    details = f"status {response.status_code}"
+    if request_id:
+        details += f", request_id={request_id}"
+    if keys:
+        details += f", response_keys={keys}"
+    return None, f"{error_msg} ({details})."
 
 
 def generate_review_summary(

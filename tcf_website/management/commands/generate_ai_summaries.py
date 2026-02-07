@@ -1,5 +1,6 @@
 """Manual generator for AI review summaries."""
 
+import time
 from typing import Any
 
 from django.conf import settings
@@ -164,7 +165,7 @@ class Command(BaseCommand):
 
         self.stdout.write(f"Processing {len(pairs)} pair(s)...")
 
-        for course_id, instructor_id, review_count, latest_id in pairs:
+        for idx, (course_id, instructor_id, review_count, latest_id) in enumerate(pairs):
             course = Course.objects.get(id=course_id)
             instructor = Instructor.objects.get(id=instructor_id)
             qs = base_reviews.filter(course=course, instructor=instructor).order_by(
@@ -208,3 +209,6 @@ class Command(BaseCommand):
                     f"({review_count} reviews) using {model_used or 'unknown model'}"
                 )
             )
+
+            if not dry_run and idx < len(pairs) - 1:
+                time.sleep(2.0) # avoids rate limits 
