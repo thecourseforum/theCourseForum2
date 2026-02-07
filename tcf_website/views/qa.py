@@ -1,9 +1,5 @@
 """View for question and answer creation."""
 
-import datetime
-from datetime import datetime
-from types import SimpleNamespace
-
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -15,7 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from ..models import Answer, Question
+from ..models import Answer, Course, Question
 
 
 @login_required
@@ -34,22 +30,32 @@ def qa_dashboard(request):
         else []
     )
 
-    test_question = SimpleNamespace(
-        title="How difficult?",
-        text="How difficult is CS 2100?",
-        created=datetime.now(),
-        course=SimpleNamespace(code="CS 2100"),
-    )
-
     return render(
         request,
         "qa/qa_dashboard.html",
         {
-            "questions": [],
-            "active_question": test_question,
-            "answers": answers,
+            "questions": questions,
+            "active_question": active_question,
+            "courses": Course.objects.all(),
         },
     )
+
+
+@login_required
+def create_question(request):
+    if request.method == "POST":
+        from ..models import Instructor
+
+        # Get a placeholder instructor (just use the first one in the database)
+        placeholder_instructor = Instructor.objects.first()
+
+        Question.objects.create(
+            text=request.POST["text"],
+            course_id=request.POST["course"],
+            instructor=placeholder_instructor,
+            user=request.user,
+        )
+        return redirect("qa")
 
 
 @login_required
