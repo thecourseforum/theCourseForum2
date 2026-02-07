@@ -237,3 +237,59 @@ body.modal-open {
                 opacity var(--duration-normal) var(--ease-out);
   }
 }
+
+
+/* ===== ADBLOCK GATE ===== */
+
+.adblock-gate {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.adblock-gate.is-open {
+  display: flex;
+}
+
+.adblock-gate__backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.adblock-gate__dialog {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 32rem;
+  padding: var(--space-8);
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  background-color: var(--bg-elevated);
+  box-shadow: var(--shadow-xl);
+}
+
+.adblock-gate__logo {
+  width: auto;
+  max-width: 11rem;
+  max-height: 3.25rem;
+  margin: 0 auto var(--space-4);
+}
+
+.adblock-gate__title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-semibold);
+}
+
+.adblock-gate__description {
+  margin: 0 0 var(--space-6);
+  color: var(--fg-muted);
+  line-height: var(--leading-relaxed);
+}

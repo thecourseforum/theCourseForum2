@@ -73,6 +73,9 @@
   {% endblock %}
 
   {% include "v2/components/_messages.html" %}
+  {% if request.resolver_match and request.resolver_match.url_name != "index_v2" %}
+  {% include "v2/components/_leaderboard_ad.html" %}
+  {% endif %}
   
   <!-- Main Content -->
   <main id="main-content" class="flex-1">
@@ -87,12 +90,29 @@
   <!-- Modals -->
   {% block modals %}
   {% include "v2/modals/_login.html" %}
+  {% include "v2/modals/_adblock.html" %}
   {% endblock %}
   
   <!-- Core JavaScript -->
   <script src="{% static 'js/v2/theme.js' %}"></script>
   <script src="{% static 'js/v2/modal.js' %}"></script>
   <script src="{% static 'js/v2/search_bar.js' %}"></script>
+  <script>
+    function showAdblockGate() {
+      const gate = document.getElementById("adblockGate");
+      if (!gate) {
+        return;
+      }
+      gate.classList.add("is-open");
+      document.body.classList.add("modal-open");
+    }
+  </script>
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1816162577232603"
+    crossorigin="anonymous"
+    onerror="showAdblockGate();"
+  ></script>
   
   <!-- Page-specific scripts -->
   {% block scripts %}{% endblock %}
