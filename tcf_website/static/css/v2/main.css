@@ -12,7 +12,6 @@
 
 /* Components */
 @import url('./components/button.css');
-@import url('./components/card.css');
 @import url('./components/input.css');
 @import url('./components/modal.css');
 @import url('./components/header.css');

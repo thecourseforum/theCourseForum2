@@ -845,6 +845,7 @@ def schedule_add_course_v2(request, course_id):
         elif not selected_option:
             messages.error(request, "Choose a section to add.")
         else:
+            schedule = None
             try:
                 section_id_raw, instructor_id_raw = selected_option.split(":")
                 section_id = int(section_id_raw)
@@ -853,55 +854,74 @@ def schedule_add_course_v2(request, course_id):
             except (TypeError, ValueError):
                 messages.error(request, "Invalid section selection.")
             else:
-                schedule = get_object_or_404(
-                    Schedule,
+                schedule = Schedule.objects.filter(
                     id=schedule_id,
                     user=request.user,
-                )
-                section = get_object_or_404(
-                    Section,
-                    id=section_id,
-                    course=course,
-                    semester=latest_semester,
-                )
-                instructor = get_object_or_404(
-                    Instructor,
-                    id=instructor_id,
-                    hidden=False,
-                )
-                if not section.instructors.filter(id=instructor.id).exists():
-                    messages.error(request, "The selected instructor does not teach that section.")
-                elif ScheduledCourse.objects.filter(
-                    schedule=schedule,
-                    section=section,
-                    instructor=instructor,
-                ).exists():
-                    messages.info(request, "That section is already in this schedule.")
+                ).first()
+                if schedule is None:
+                    messages.error(request, "Invalid schedule selection.")
                 else:
-                    candidate_blocks = _section_time_rows_to_blocks(
-                        list(section.sectiontime_set.all())
-                    )
-                    if not candidate_blocks:
-                        candidate_blocks = _parse_fallback_meeting_blocks(
-                            section.section_times
-                        )
-
-                    if _has_schedule_conflict(schedule, candidate_blocks):
-                        messages.error(
-                            request,
-                            "This section conflicts with another meeting in the selected schedule.",
-                        )
+                    section = Section.objects.filter(
+                        id=section_id,
+                        course=course,
+                        semester=latest_semester,
+                    ).first()
+                    if section is None:
+                        messages.error(request, "Invalid section selection.")
                     else:
-                        ScheduledCourse.objects.create(
+                        instructor = Instructor.objects.filter(
+                            id=instructor_id,
+                            hidden=False,
+                        ).first()
+                        if instructor is None:
+                            messages.error(request, "Invalid instructor selection.")
+                        elif not section.instructors.filter(id=instructor.id).exists():
+                            messages.error(
+                                request,
+                                "The selected instructor does not teach that section.",
+                            )
+                        elif ScheduledCourse.objects.filter(
                             schedule=schedule,
                             section=section,
                             instructor=instructor,
-                            time=(section.section_times or "").rstrip(","),
-                        )
-                        messages.success(request, "Successfully added course to schedule.")
+                        ).exists():
+                            messages.info(
+                                request,
+                                "That section is already in this schedule.",
+                            )
+                        else:
+                            candidate_blocks = _section_time_rows_to_blocks(
+                                list(section.sectiontime_set.all())
+                            )
+                            if not candidate_blocks:
+                                candidate_blocks = _parse_fallback_meeting_blocks(
+                                    section.section_times
+                                )
 
-                        default_url = f"{reverse('schedule_v2')}?{urlencode({'schedule': schedule.id})}"
-                        return redirect(_safe_next_url(request, default_url))
+                            if _has_schedule_conflict(schedule, candidate_blocks):
+                                messages.error(
+                                    request,
+                                    (
+                                        "This section conflicts with another meeting "
+                                        "in the selected schedule."
+                                    ),
+                                )
+                            else:
+                                ScheduledCourse.objects.create(
+                                    schedule=schedule,
+                                    section=section,
+                                    instructor=instructor,
+                                    time=(section.section_times or "").rstrip(","),
+                                )
+                                messages.success(
+                                    request, "Successfully added course to schedule."
+                                )
+
+                                default_url = (
+                                    f"{reverse('schedule_v2')}?"
+                                    f"{urlencode({'schedule': schedule.id})}"
+                                )
+                                return redirect(_safe_next_url(request, default_url))
 
     dept = course.subdepartment.department
     breadcrumbs = [
