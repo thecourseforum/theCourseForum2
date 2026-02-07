@@ -17,9 +17,11 @@ from .browse import (
     instructor_view,
     instructor_view_v2,
     club_category,
+    club_category_v2,
+    club_view_v2,
 )
 from .index import AboutView, AboutViewV2, index, index_v2, privacy, terms
-from .profile import DeleteProfile, profile, profile_v2, reviews
+from .profile import DeleteProfile, profile, profile_v2, reviews, reviews_v2
 from .qa import (
     DeleteAnswer,
     DeleteQuestion,
@@ -32,7 +34,14 @@ from .qa import (
     upvote_answer,
     upvote_question,
 )
-from .review import DeleteReview, downvote, new_review, upvote, new_review_v2
+from .review import (
+    DeleteReview,
+    downvote,
+    new_review,
+    new_review_v2,
+    upvote,
+    vote_review,
+)
 from .schedule import (
     delete_schedule,
     duplicate_schedule,

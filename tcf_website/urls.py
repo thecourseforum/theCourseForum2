@@ -11,6 +11,16 @@ urlpatterns = [
         views.club_category,
         name="club_category",
     ),
+    path(
+        "v2/club-category/<str:category_slug>/",
+        views.club_category_v2,
+        name="club_category_v2",
+    ),
+    path(
+        "v2/club/<str:category_slug>/<int:club_id>/",
+        views.club_view_v2,
+        name="club_v2",
+    ),
     path("", views.index, name="index"),
     path("v2/", views.index_v2, name="index_v2"),
     path("about/", views.AboutView.as_view(), name="about"),
@@ -89,8 +99,10 @@ urlpatterns = [
         name="delete_review",
     ),
     path("reviews/", views.reviews, name="reviews"),
+    path("v2/reviews/", views.reviews_v2, name="reviews_v2"),
     path("reviews/<int:review_id>/upvote/", views.upvote),
     path("reviews/<int:review_id>/downvote/", views.downvote),
+    path("reviews/<int:review_id>/vote/", views.vote_review, name="vote_review"),
     path("reviews/check_duplicate/", views.review.check_duplicate),
     path(
         "reviews/check_zero_hours_per_week/",

@@ -134,6 +134,16 @@
           <p>No grade data available</p>
         </div>
       </div>
+      <div class="grades-panel__summary">
+        <div class="grades-metric">
+          <span class="grades-metric__label">Average GPA</span>
+          <span class="grades-metric__value" id="average-gpa-value">—</span>
+        </div>
+        <div class="grades-metric">
+          <span class="grades-metric__label">Students Measured</span>
+          <span class="grades-metric__value" id="grade-sample-size">—</span>
+        </div>
+      </div>
     </div>
 
     <!-- Sections Panel -->
@@ -232,6 +242,7 @@
       </div>
     </div>
     
+    <div id="reviews-results">
     {% if paginated_reviews and num_reviews > 0 %}
     {% for review in paginated_reviews %}
     <article class="review-card">
@@ -245,12 +256,8 @@
         
         <div class="review-card__ratings">
           <div class="review-rating">
-            <div class="review-rating__value">{{ review.instructor_rating|floatformat:1 }}</div>
-            <div class="review-rating__label">Instructor</div>
-          </div>
-          <div class="review-rating">
-            <div class="review-rating__value">{{ review.difficulty|floatformat:1 }}</div>
-            <div class="review-rating__label">Difficulty</div>
+            <div class="review-rating__value">{{ review.average|floatformat:1 }}</div>
+            <div class="review-rating__label">Average</div>
           </div>
         </div>
       </div>
@@ -258,10 +265,34 @@
       {% if review.text %}
       <p class="review-card__text">{{ review.text }}</p>
       {% endif %}
+
+      <div class="review-card__category-grid">
+        <div class="review-category">
+          <span class="review-category__label">Instructor</span>
+          <span class="review-category__value">{{ review.instructor_rating|floatformat:1 }}</span>
+        </div>
+        <div class="review-category">
+          <span class="review-category__label">Enjoyability</span>
+          <span class="review-category__value">{{ review.enjoyability|floatformat:1 }}</span>
+        </div>
+        <div class="review-category">
+          <span class="review-category__label">Recommend</span>
+          <span class="review-category__value">{{ review.recommendability|floatformat:1 }}</span>
+        </div>
+        <div class="review-category">
+          <span class="review-category__label">Difficulty</span>
+          <span class="review-category__value">{{ review.difficulty|floatformat:1 }}</span>
+        </div>
+        <div class="review-category">
+          <span class="review-category__label">Hours/Week</span>
+          <span class="review-category__value">{{ review.hours_per_week|floatformat:1 }}</span>
+        </div>
+      </div>
       
       <div class="review-card__footer">
         <div class="review-card__votes">
           <button class="vote-btn {% if review.user_vote > 0 %}is-active{% endif %}" 
+                  type="button"
                   data-action="upvote" 
                   data-review="{{ review.id }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -270,6 +301,7 @@
             <span>{{ review.sum_votes|default:0 }}</span>
           </button>
           <button class="vote-btn {% if review.user_vote < 0 %}is-active{% endif %}" 
+                  type="button"
                   data-action="downvote" 
                   data-review="{{ review.id }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -287,7 +319,7 @@
     {% if paginated_reviews.has_other_pages %}
     <nav class="pagination">
       {% if paginated_reviews.has_previous %}
-      <a href="?page={{ paginated_reviews.previous_page_number }}#reviews" class="pagination__item">← Previous</a>
+      <a href="?page={{ paginated_reviews.previous_page_number }}{% if sort_method and sort_method != 'Default' %}&sort={{ sort_method|urlencode }}{% endif %}#reviews" class="pagination__item">← Previous</a>
       {% endif %}
       
       <span class="pagination__item pagination__status">
@@ -295,7 +327,7 @@
       </span>
       
       {% if paginated_reviews.has_next %}
-      <a href="?page={{ paginated_reviews.next_page_number }}#reviews" class="pagination__item">Next →</a>
+      <a href="?page={{ paginated_reviews.next_page_number }}{% if sort_method and sort_method != 'Default' %}&sort={{ sort_method|urlencode }}{% endif %}#reviews" class="pagination__item">Next →</a>
       {% endif %}
     </nav>
     {% endif %}
@@ -325,6 +357,7 @@
       {% endif %}
     </div>
     {% endif %}
+    </div>
   </div>
   
   <!-- Q&A Tab (placeholder) -->
@@ -344,6 +377,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{% static 'js/v2/review_votes.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 // Tab switching
@@ -361,11 +395,54 @@ document.querySelectorAll('.content-tab').forEach(tab => {
 
 // Sort dropdown
 const sortSelect = document.getElementById('review-sort');
+const reviewsResults = document.getElementById('reviews-results');
 if (sortSelect) {
-  sortSelect.addEventListener('change', (e) => {
-    if (e.target.value) {
-      const baseUrl = '/v2/course/{{ course.id }}/{{ instructor.id }}/sort=' + encodeURIComponent(e.target.value);
-      window.location.href = baseUrl + '#reviews';
+  sortSelect.addEventListener('change', async (e) => {
+    if (!reviewsResults) {
+      return;
+    }
+
+    const selectedMethod = e.target.value;
+    const url = new URL(window.location.href);
+    url.searchParams.delete('page');
+    if (selectedMethod && selectedMethod !== 'Default') {
+      url.searchParams.set('sort', selectedMethod);
+    } else {
+      url.searchParams.delete('sort');
+    }
+    url.hash = 'reviews';
+
+    sortSelect.disabled = true;
+    try {
+      const response = await fetch(url.pathname + url.search, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'same-origin'
+      });
+      if (!response.ok) {
+        throw new Error('Failed to load sorted reviews.');
+      }
+
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const nextResults = doc.getElementById('reviews-results');
+      if (!nextResults) {
+        throw new Error('Missing reviews content.');
+      }
+
+      reviewsResults.innerHTML = nextResults.innerHTML;
+      history.replaceState({}, '', url.pathname + url.search + '#reviews');
+
+      if (window.reviewVotes && typeof window.reviewVotes.init === 'function') {
+        window.reviewVotes.init();
+      }
+    } catch (error) {
+      const fallback = selectedMethod
+        ? '/v2/course/{{ course.id }}/{{ instructor.id }}/sort=' + encodeURIComponent(selectedMethod) + '#reviews'
+        : '/v2/course/{{ course.id }}/{{ instructor.id }}/#reviews';
+      window.location.href = fallback;
+    } finally {
+      sortSelect.disabled = false;
     }
   });
 }
@@ -373,6 +450,19 @@ if (sortSelect) {
 // Load ratings data and grades
 const data = JSON.parse('{{ data|escapejs }}');
 if (data) {
+  const averageGpaValue = document.getElementById('average-gpa-value');
+  const gradeSampleSize = document.getElementById('grade-sample-size');
+  if (averageGpaValue) {
+    averageGpaValue.textContent = Number.isFinite(data.average_gpa)
+      ? data.average_gpa.toFixed(2)
+      : '—';
+  }
+  if (gradeSampleSize) {
+    gradeSampleSize.textContent = Number.isFinite(data.total_enrolled)
+      ? data.total_enrolled
+      : '—';
+  }
+
   // Ratings Bars
   const ratings = [
     { key: 'instructor', bar: '.instructor-bar', num: '.instructor-num' },

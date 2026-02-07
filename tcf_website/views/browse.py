@@ -282,6 +282,69 @@ def _build_lecture_times_by_instructor(course_id: int, semester: Semester) -> di
     return lecture_times_by_instructor
 
 
+def _get_paginated_club_reviews(club: Club, user, page_number=1, method=""):
+    """Build sorted/paginated club reviews with vote annotations."""
+    reviews = Review.objects.filter(
+        club=club,
+        toxicity_rating__lt=settings.TOXICITY_THRESHOLD,
+        hidden=False,
+    ).exclude(text="")
+
+    if user.is_authenticated:
+        reviews = reviews.annotate(
+            sum_votes=Coalesce(Sum("vote__value"), Value(0)),
+            user_vote=Coalesce(
+                Sum("vote__value", filter=Q(vote__user=user)),
+                Value(0),
+            ),
+        )
+
+    return Review.paginate(Review.sort(reviews, method), page_number)
+
+
+def _build_club_page_context(request, club: Club, mode: str, *, v2: bool = False):
+    """Build shared context for club detail pages."""
+    sort_key = "sort" if v2 else "method"
+    sort_method = request.GET.get(sort_key, "")
+    page_number = request.GET.get("page", 1)
+    paginated_reviews = _get_paginated_club_reviews(
+        club, request.user, page_number, sort_method
+    )
+
+    if v2:
+        breadcrumbs = [
+            ("Clubs", reverse("browse_v2") + "?mode=clubs", False),
+            (
+                club.category.name,
+                reverse("club_category_v2", args=[club.category.slug]),
+                False,
+            ),
+            (club.name, None, True),
+        ]
+    else:
+        breadcrumbs = [
+            ("Clubs", reverse("browse") + "?mode=clubs", False),
+            (
+                club.category.name,
+                reverse("club_category", args=[club.category.slug]) + "?mode=clubs",
+                False,
+            ),
+            (club.name, None, True),
+        ]
+
+    return {
+        "is_club": True,
+        "mode": mode,
+        "club": club,
+        "paginated_reviews": paginated_reviews,
+        "num_reviews": paginated_reviews.paginator.count,
+        "sort_method": sort_method,
+        "breadcrumbs": breadcrumbs,
+        "course_code": f"{club.category.slug} {club.id}",
+        "course_title": club.name,
+    }
+
+
 def course_view(
     request,
     mnemonic: str,
@@ -299,61 +362,11 @@ def course_view(
     # (JavaScript now handles this via localStorage)
 
     if is_club:
-        # 'mnemonic' is actually category_slug, 'course_number' is club.id
-        club = get_object_or_404(
-            Club, id=course_number, category__slug=mnemonic.upper()
-        )
-
-        # Pull reviews exactly as you do for courses, but filter on club=club
-        page_number = request.GET.get("page", 1)
-        paginated_reviews = Review.objects.filter(
-            club=club,
-            toxicity_rating__lt=settings.TOXICITY_THRESHOLD,
-            hidden=False,
-        ).exclude(text="")
-
-        if request.user.is_authenticated:
-            paginated_reviews = paginated_reviews.annotate(
-                sum_votes=Coalesce(Sum("vote__value"), Value(0)),
-                user_vote=Coalesce(
-                    Sum("vote__value", filter=Q(vote__user=request.user)),
-                    Value(0),
-                ),
-            )
-
-        paginated_reviews = Review.sort(
-            paginated_reviews, request.GET.get("method", "")
-        )
-
-        paginated_reviews = Review.paginate(paginated_reviews, page_number)
-
-        # Breadcrumbs for club
-        breadcrumbs = [
-            ("Clubs", reverse("browse") + "?mode=clubs", False),
-            (
-                club.category.name,
-                reverse("club_category", args=[club.category.slug]) + "?mode=clubs",
-                False,
-            ),
-            (club.name, None, True),
-        ]
-
-        # Pass club info to template for meta tags
-        club_code = f"{club.category.slug} {club.id}"
-
+        club = get_object_or_404(Club, id=course_number, category__slug=mnemonic.upper())
         return render(
             request,
             "club/club.html",
-            {
-                "is_club": True,
-                "mode": mode,
-                "club": club,
-                "paginated_reviews": paginated_reviews,
-                "sort_method": request.GET.get("method", ""),
-                "breadcrumbs": breadcrumbs,
-                "course_code": club_code,
-                "course_title": club.name,
-            },
+            _build_club_page_context(request, club, mode, v2=False),
         )
 
     # Redirect if the mnemonic is not all uppercase
@@ -692,9 +705,10 @@ def course_instructor_v2(request, course_id, instructor_id, method="Default"):
 
     dept = course.subdepartment.department
 
+    sort_method = request.GET.get("sort", method)
     page_number = request.GET.get("page", 1)
     paginated_reviews = Review.get_paginated_reviews(
-        course_id, instructor_id, request.user, page_number, method
+        course_id, instructor_id, request.user, page_number, sort_method
     )
 
     course_url = reverse("course_v2", args=[course.subdepartment.mnemonic, course.number])
@@ -789,7 +803,7 @@ def course_instructor_v2(request, course_id, instructor_id, method="Default"):
             "data": json.dumps(data),
             "display_times": latest_semester == section_last_taught.semester,
             "is_current_semester": is_current_semester,
-            "sort_method": method,
+            "sort_method": sort_method,
             "sem_code": section_last_taught.semester.number,
             "course_code": course.code(),
             "course_title": course.title,
@@ -948,4 +962,48 @@ def club_category(request, category_slug: str):
             "paginated_clubs": paginated_clubs,
             "breadcrumbs": breadcrumbs,
         },
+    )
+
+
+def club_category_v2(request, category_slug: str):
+    """V2 view for club category page."""
+    mode = parse_mode(request)[0]
+    category = get_object_or_404(ClubCategory, slug=category_slug.upper())
+    clubs = Club.objects.filter(category=category).order_by("name")
+
+    page_number = request.GET.get("page", 1)
+    paginator = Paginator(clubs, 10)
+    try:
+        paginated_clubs = paginator.page(page_number)
+    except PageNotAnInteger:
+        paginated_clubs = paginator.page(1)
+    except EmptyPage:
+        paginated_clubs = paginator.page(paginator.num_pages)
+
+    breadcrumbs = [
+        ("Clubs", reverse("browse_v2") + "?mode=clubs", False),
+        (category.name, None, True),
+    ]
+
+    return render(
+        request,
+        "v2/pages/club_category.html",
+        {
+            "is_club": True,
+            "mode": mode,
+            "category": category,
+            "paginated_clubs": paginated_clubs,
+            "breadcrumbs": breadcrumbs,
+        },
+    )
+
+
+def club_view_v2(request, category_slug: str, club_id: int):
+    """V2 view for club detail page."""
+    mode = parse_mode(request)[0]
+    club = get_object_or_404(Club, id=club_id, category__slug=category_slug.upper())
+    return render(
+        request,
+        "v2/pages/club.html",
+        _build_club_page_context(request, club, mode, v2=True),
     )

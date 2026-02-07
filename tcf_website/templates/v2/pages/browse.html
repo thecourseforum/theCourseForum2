@@ -35,7 +35,7 @@
   <!-- Club Categories Grid -->
   <div class="club-grid">
     {% for category in club_categories %}
-    <a href="{% url 'club_category' category_slug=category.slug %}?mode=clubs" class="club-card">
+    <a href="{% url 'club_category_v2' category_slug=category.slug %}" class="club-card">
       <h3 class="club-card__title">{{ category.name }}</h3>
       <span class="club-card__count">{{ category.clubs|length }} club{{ category.clubs|length|pluralize }}</span>
     </a>

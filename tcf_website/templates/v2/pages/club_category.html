@@ -1,0 +1,55 @@
+{% extends "v2/base.html" %}
+{% load static %}
+
+{% block title %}{{ category.name }} Clubs | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/v2/pages/club_category.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="club-category-header">
+  <div class="club-category-header__inner">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      {% for crumb in breadcrumbs %}
+      {% if crumb.2 %}
+      <span class="breadcrumb__current">{{ crumb.0 }}</span>
+      {% else %}
+      <a href="{{ crumb.1 }}" class="breadcrumb__link">{{ crumb.0 }}</a>
+      <span class="breadcrumb__separator">/</span>
+      {% endif %}
+      {% endfor %}
+    </nav>
+
+    <h1 class="club-category-header__title">{{ category.name }} Clubs</h1>
+    {% if category.description %}
+    <p class="club-category-header__description">{{ category.description }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="club-category-content">
+  {% if paginated_clubs %}
+  <div class="club-list">
+    {% for club in paginated_clubs %}
+    <a href="{% url 'club_v2' category_slug=category.slug club_id=club.id %}" class="club-list-card">
+      <h3 class="club-list-card__title">{{ club.name }}</h3>
+      <p class="club-list-card__description">
+        {% if club.description %}
+        {{ club.description|truncatewords:40 }}
+        {% else %}
+        No club description available.
+        {% endif %}
+      </p>
+    </a>
+    {% endfor %}
+  </div>
+
+  {% include "v2/components/_pagination.html" with paginated_items=paginated_clubs aria_label="Club pagination" %}
+  {% else %}
+  <div class="club-category-empty">
+    <h2 class="club-category-empty__title">No clubs found in this category.</h2>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

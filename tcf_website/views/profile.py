@@ -18,6 +18,24 @@ from ..models import Review, User
 from .browse import safe_round
 
 
+def _review_stats_for_user(user):
+    """Build review stats for a given user."""
+    upvote_stat = Review.objects.filter(user=user).aggregate(
+        total_review_upvotes=Count("vote", filter=Q(vote__value=1)),
+    )
+    other_stats = User.objects.filter(id=user.id).aggregate(
+        total_reviews_written=Count("review"),
+        average_review_rating=(
+            Avg("review__instructor_rating")
+            + Avg("review__enjoyability")
+            + Avg("review__recommendability")
+        )
+        / 3,
+    )
+    merged = upvote_stat | other_stats
+    return {key: safe_round(value) for key, value in merged.items()}
+
+
 class ProfileForm(ModelForm):
     """Form updating user profile."""
 
@@ -83,25 +101,19 @@ def profile_v2(request):
 @login_required
 def reviews(request):
     """User reviews view."""
-    # Handled separately because it requires joining 1 more table (i.e. Vote)
-    upvote_stat = Review.objects.filter(user=request.user).aggregate(
-        total_review_upvotes=Count("vote", filter=Q(vote__value=1)),
-    )
-    # Get other statistics
-    other_stats = User.objects.filter(id=request.user.id).aggregate(
-        total_reviews_written=Count("review"),
-        average_review_rating=(
-            Avg("review__instructor_rating")
-            + Avg("review__enjoyability")
-            + Avg("review__recommendability")
-        )
-        / 3,
-    )
-    # Merge the two dictionaries
-    merged = upvote_stat | other_stats
-    # Round floats
-    stats = {key: safe_round(value) for key, value in merged.items()}
+    stats = _review_stats_for_user(request.user)
     return render(request, "reviews/user_reviews.html", context=stats)
+
+
+@login_required
+def reviews_v2(request):
+    """V2 user reviews view."""
+    page_number = request.GET.get("page", 1)
+    paginated_reviews = Review.paginate(request.user.reviews(), page_number)
+
+    context = _review_stats_for_user(request.user)
+    context["paginated_reviews"] = paginated_reviews
+    return render(request, "v2/pages/reviews.html", context=context)
 
 
 class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):

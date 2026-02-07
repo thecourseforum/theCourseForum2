@@ -6,10 +6,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.urls import reverse_lazy
 from django.views import generic
+from django.views.decorators.http import require_POST
 
 from ..models import Review, Club, Course, Instructor, Semester
 
@@ -76,24 +79,48 @@ class ReviewForm(forms.ModelForm):
         return instance
 
 
+def _vote_response_payload(review: Review, user) -> dict[str, int]:
+    """Return vote state payload for frontend updates."""
+    user_vote = (
+        review.vote_set.filter(user=user).values_list("value", flat=True).first() or 0
+    )
+    sum_votes = review.vote_set.aggregate(total=Sum("value"))["total"] or 0
+    return {"ok": True, "sum_votes": sum_votes, "user_vote": user_vote}
+
+
 @login_required
+@require_POST
 def upvote(request, review_id):
     """Upvote a view."""
-    if request.method == "POST":
-        review = Review.objects.get(pk=review_id)
-        review.upvote(request.user)
-        return JsonResponse({"ok": True})
-    return JsonResponse({"ok": False})
+    review = get_object_or_404(Review, pk=review_id)
+    review.upvote(request.user)
+    return JsonResponse(_vote_response_payload(review, request.user))
 
 
 @login_required
+@require_POST
 def downvote(request, review_id):
     """Downvote a view."""
-    if request.method == "POST":
-        review = Review.objects.get(pk=review_id)
+    review = get_object_or_404(Review, pk=review_id)
+    review.downvote(request.user)
+    return JsonResponse(_vote_response_payload(review, request.user))
+
+
+@login_required
+@require_POST
+def vote_review(request, review_id):
+    """Vote on a review using a single endpoint."""
+    review = get_object_or_404(Review, pk=review_id)
+    action = request.POST.get("action")
+
+    if action == "up":
+        review.upvote(request.user)
+    elif action == "down":
         review.downvote(request.user)
-        return JsonResponse({"ok": True})
-    return JsonResponse({"ok": False})
+    else:
+        return JsonResponse({"ok": False, "error": "Invalid action"}, status=400)
+
+    return JsonResponse(_vote_response_payload(review, request.user))
 
 
 @login_required
@@ -327,6 +354,17 @@ class DeleteReview(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
 
     model = Review
     success_url = reverse_lazy("reviews")
+
+    def get_success_url(self):
+        """Use caller-provided next URL when safe, otherwise default."""
+        next_url = self.request.POST.get("next") or self.request.GET.get("next")
+        if next_url and url_has_allowed_host_and_scheme(
+            next_url,
+            allowed_hosts={self.request.get_host()},
+            require_https=self.request.is_secure(),
+        ):
+            return next_url
+        return str(self.success_url)
 
     def get_object(self):  # pylint: disable=arguments-differ
         """Override DeleteView's function to validate review belonging to user."""

@@ -30,14 +30,7 @@
       </div>
       <div class="rating-stat__label">Rating</div>
     </div>
-    
-    <div class="rating-stat">
-      <div class="rating-stat__value {% if course.average_difficulty <= 2.5 %}rating-stat__value--success{% elif course.average_difficulty <= 3.5 %}rating-stat__value--warning{% elif course.average_difficulty %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
-        {% if course.average_difficulty %}{{ course.average_difficulty|floatformat:1 }}{% else %}—{% endif %}
-      </div>
-      <div class="rating-stat__label">Difficulty</div>
-    </div>
-    
+
     <div class="rating-stat">
       <div class="rating-stat__value {% if course.average_gpa >= 3.5 %}rating-stat__value--success{% elif course.average_gpa >= 2.5 %}rating-stat__value--warning{% elif course.average_gpa %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
         {% if course.average_gpa %}{{ course.average_gpa|floatformat:2 }}{% else %}—{% endif %}

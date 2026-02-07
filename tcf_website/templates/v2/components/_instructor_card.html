@@ -19,22 +19,15 @@
   
   <div class="instructor-card__ratings">
     <div class="rating-stat">
-      <div class="rating-stat__value {% if instructor.rating >= 4 %}rating-stat__value--success{% elif instructor.rating >= 3 %}rating-stat__value--warning{% elif instructor.rating %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
-        {% if instructor.rating %}{{ instructor.rating|floatformat:1 }}{% else %}—{% endif %}
+      <div class="rating-stat__value {% if instructor.rating and instructor.rating <= 5 and instructor.rating >= 4 %}rating-stat__value--success{% elif instructor.rating and instructor.rating <= 5 and instructor.rating >= 3 %}rating-stat__value--warning{% elif instructor.rating and instructor.rating <= 5 and instructor.rating >= 0 %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
+        {% if instructor.rating and instructor.rating <= 5 and instructor.rating >= 0 %}{{ instructor.rating|floatformat:1 }}{% else %}—{% endif %}
       </div>
       <div class="rating-stat__label">Rating</div>
     </div>
-    
+
     <div class="rating-stat">
-      <div class="rating-stat__value {% if instructor.difficulty <= 2.5 %}rating-stat__value--success{% elif instructor.difficulty <= 3.5 %}rating-stat__value--warning{% elif instructor.difficulty %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
-        {% if instructor.difficulty %}{{ instructor.difficulty|floatformat:1 }}{% else %}—{% endif %}
-      </div>
-      <div class="rating-stat__label">Difficulty</div>
-    </div>
-    
-    <div class="rating-stat">
-      <div class="rating-stat__value {% if instructor.gpa >= 3.5 %}rating-stat__value--success{% elif instructor.gpa >= 2.5 %}rating-stat__value--warning{% elif instructor.gpa %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
-        {% if instructor.gpa %}{{ instructor.gpa|floatformat:2 }}{% else %}—{% endif %}
+      <div class="rating-stat__value {% if instructor.gpa and instructor.gpa <= 4 and instructor.gpa >= 3.5 %}rating-stat__value--success{% elif instructor.gpa and instructor.gpa <= 4 and instructor.gpa >= 2.5 %}rating-stat__value--warning{% elif instructor.gpa and instructor.gpa <= 4 and instructor.gpa >= 0 %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
+        {% if instructor.gpa and instructor.gpa <= 4 and instructor.gpa >= 0 %}{{ instructor.gpa|floatformat:2 }}{% else %}—{% endif %}
       </div>
       <div class="rating-stat__label">GPA</div>
     </div>

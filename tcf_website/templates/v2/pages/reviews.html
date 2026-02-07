@@ -1,0 +1,176 @@
+{% extends "v2/base.html" %}
+{% load static %}
+
+{% block title %}My Reviews | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/v2/pages/course_instructor.css' %}">
+<link rel="stylesheet" href="{% static 'css/v2/pages/reviews.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="reviews-page">
+  <div class="reviews-page__header">
+    <h1 class="reviews-page__title">My Reviews</h1>
+    <a href="{% url 'new_review_v2' %}" class="btn btn--primary btn--md">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      New Review
+    </a>
+  </div>
+
+  <div class="reviews-stats">
+    <article class="reviews-stat-card">
+      <p class="reviews-stat-card__label">Total Reviews</p>
+      <p class="reviews-stat-card__value">{{ total_reviews_written|default:0 }}</p>
+    </article>
+    <article class="reviews-stat-card">
+      <p class="reviews-stat-card__label">Upvotes Received</p>
+      <p class="reviews-stat-card__value">{{ total_review_upvotes|default:0 }}</p>
+    </article>
+    <article class="reviews-stat-card">
+      <p class="reviews-stat-card__label">Average Rating</p>
+      <p class="reviews-stat-card__value">
+        {% if average_review_rating %}
+        {{ average_review_rating|floatformat:2 }}
+        {% else %}
+        —
+        {% endif %}
+      </p>
+    </article>
+  </div>
+
+  <section id="reviews">
+    {% if paginated_reviews %}
+    {% for review in paginated_reviews %}
+    <article class="review-card">
+      <div class="review-card__header">
+        <div class="review-card__context">
+          {% if review.club %}
+          <a href="{% url 'club_v2' category_slug=review.club.category.slug club_id=review.club.id %}" class="review-card__subject">
+            {{ review.club.name }}
+          </a>
+          {% else %}
+          <a href="{% url 'course_instructor_v2' course_id=review.course.id instructor_id=review.instructor.id %}" class="review-card__subject">
+            {{ review.course }} — {{ review.instructor.full_name }}
+          </a>
+          {% endif %}
+
+          <div class="review-card__meta">
+            <span class="review-card__semester">{{ review.semester }}</span>
+            {% if review.grade %}
+            <span>Grade: {{ review.grade }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="review-card__ratings">
+          <div class="review-rating">
+            <div class="review-rating__value">{{ review.average|floatformat:1 }}</div>
+            <div class="review-rating__label">Average</div>
+          </div>
+        </div>
+      </div>
+
+      {% if review.text %}
+      <p class="review-card__text">{{ review.text }}</p>
+      {% endif %}
+
+      <div class="review-card__category-grid">
+        <div class="review-category">
+          <span class="review-category__label">Instructor</span>
+          <span class="review-category__value">{{ review.instructor_rating|floatformat:1 }}</span>
+        </div>
+        <div class="review-category">
+          <span class="review-category__label">Enjoyability</span>
+          <span class="review-category__value">{{ review.enjoyability|floatformat:1 }}</span>
+        </div>
+        <div class="review-category">
+          <span class="review-category__label">Recommend</span>
+          <span class="review-category__value">{{ review.recommendability|floatformat:1 }}</span>
+        </div>
+        <div class="review-category">
+          <span class="review-category__label">Difficulty</span>
+          <span class="review-category__value">{{ review.difficulty|floatformat:1 }}</span>
+        </div>
+        <div class="review-category">
+          <span class="review-category__label">Hours/Week</span>
+          <span class="review-category__value">{{ review.hours_per_week|floatformat:1 }}</span>
+        </div>
+      </div>
+
+      <div class="review-card__footer">
+        <div class="review-card__votes">
+          <button class="vote-btn {% if review.user_vote > 0 %}is-active{% endif %}"
+                  type="button"
+                  data-action="upvote"
+                  data-review="{{ review.id }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m5 15 7-7 7 7"/>
+            </svg>
+            <span>{{ review.sum_votes|default:0 }}</span>
+          </button>
+          <button class="vote-btn {% if review.user_vote < 0 %}is-active{% endif %}"
+                  type="button"
+                  data-action="downvote"
+                  data-review="{{ review.id }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m19 9-7 7-7-7"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="review-card__footer-right">
+          <span class="review-card__date">{{ review.created }}</span>
+          <form method="POST" action="{% url 'delete_review' review.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}#reviews">
+            <button type="submit" class="review-delete-btn" aria-label="Delete review">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                <path d="M10 11v6"></path>
+                <path d="M14 11v6"></path>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+
+    {% if paginated_reviews.has_other_pages %}
+    <nav class="pagination reviews-page__pagination">
+      {% if paginated_reviews.has_previous %}
+      <a href="?page={{ paginated_reviews.previous_page_number }}#reviews" class="pagination__item">← Previous</a>
+      {% endif %}
+
+      <span class="pagination__item pagination__status">
+        Page {{ paginated_reviews.number }} of {{ paginated_reviews.paginator.num_pages }}
+      </span>
+
+      {% if paginated_reviews.has_next %}
+      <a href="?page={{ paginated_reviews.next_page_number }}#reviews" class="pagination__item">Next →</a>
+      {% endif %}
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="reviews-empty">
+      <svg class="reviews-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      <h3 class="reviews-empty__title">No reviews yet</h3>
+      <p class="reviews-empty__text">Write your first review to help other students.</p>
+      <a href="{% url 'new_review_v2' %}" class="btn btn--primary btn--md">Write a Review</a>
+    </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/v2/review_votes.js' %}"></script>
+{% endblock %}
