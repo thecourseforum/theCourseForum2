@@ -197,26 +197,4 @@
   </div>
 </section>
 
-
-<!-- CTA Section -->
-<section class="cta">
-  <div class="cta__inner">
-    <h2 class="cta__title">Ready to explore?</h2>
-    <p class="cta__description">
-      Join thousands of UVA students who use theCourseForum 
-      to make smarter course decisions.
-    </p>
-    <div class="flex justify-center gap-4">
-      <a href="{% url 'browse_v2' %}" class="btn btn--secondary btn--lg">
-        Browse Courses
-      </a>
-      {% if not user.is_authenticated %}
-      <button class="btn btn--ghost btn--lg" data-modal-open="loginModal" style="color: white; border-color: rgba(255,255,255,0.3);">
-        Sign In
-      </button>
-      {% endif %}
-    </div>
-  </div>
-</section>
-
 {% endblock %}
