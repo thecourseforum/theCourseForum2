@@ -180,51 +180,31 @@
     </div>
 
     <!-- Sections Panel -->
-    {% if display_times and sections %}
+    {% if display_times and sections_count %}
     <div class="sections-panel">
       <div class="sections-panel__header">
-        <h2 class="sections-panel__title">Lecture Sections</h2>
-        <span class="sections-panel__count">{{ sections|length }}</span>
+        <h2 class="sections-panel__title">Sections</h2>
+        <span class="sections-panel__count">{{ sections_count }}</span>
       </div>
 
       <div class="sections-panel__list">
-      {% for section in sections %}
-      <a href="https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_DETAILS.FieldFormula.IScript_Main?institution=UVA01&term={{ sem_code }}&class_nbr={{ section.number }}" 
-         target="_blank" 
-         rel="noopener noreferrer" 
-         class="section-card">
-        <div class="section-card__header">
-          <span class="section-card__number">Section {{ section.number }}</span>
-          <span class="section-card__type">{{ section.type }}{% if section.units %} ({{ section.units }} Unit{{ section.units|pluralize }}){% endif %}</span>
+        {% if lecture_sections %}
+        <div class="sections-panel__group">
+          <h3 class="sections-panel__group-title">Lecture ({{ lecture_sections|length }})</h3>
+          {% for section in lecture_sections %}
+          {% include "v2/components/_section_card.html" with section=section sem_code=sem_code %}
+          {% endfor %}
         </div>
-        
-        {% if section.times %}
-        <div class="section-card__times">{{ section.times }}</div>
         {% endif %}
-        
-        <div class="section-card__enrollment">
-          <div class="enrollment-stat">
-            <span>Enrolled:</span>
-            <div class="enrollment-stat__bar">
-              <div class="enrollment-stat__fill {% if section.enrollment_taken >= section.enrollment_limit %}enrollment-stat__fill--danger{% else %}enrollment-stat__fill--success{% endif %}" 
-                   style="width: {% widthratio section.enrollment_taken section.enrollment_limit 100 %}%"></div>
-            </div>
-            <span>{{ section.enrollment_taken }}/{{ section.enrollment_limit }}</span>
-          </div>
-          
-          {% if section.waitlist_limit > 0 %}
-          <div class="enrollment-stat">
-            <span>Waitlist:</span>
-            <div class="enrollment-stat__bar">
-              <div class="enrollment-stat__fill enrollment-stat__fill--warning" 
-                   style="width: {% widthratio section.waitlist_taken section.waitlist_limit 100 %}%"></div>
-            </div>
-            <span>{{ section.waitlist_taken }}/{{ section.waitlist_limit }}</span>
-          </div>
-          {% endif %}
+
+        {% if other_sections %}
+        <div class="sections-panel__group">
+          <h3 class="sections-panel__group-title">Other Sections ({{ other_sections|length }})</h3>
+          {% for section in other_sections %}
+          {% include "v2/components/_section_card.html" with section=section sem_code=sem_code %}
+          {% endfor %}
         </div>
-      </a>
-      {% endfor %}
+        {% endif %}
       </div>
     </div>
     {% endif %}

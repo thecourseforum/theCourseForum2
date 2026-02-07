@@ -245,18 +245,23 @@ def _is_lecture_section(section_type: str | None) -> bool:
     if not section_type:
         return True
     normalized = section_type.strip().lower()
-    return normalized.startswith("lec") or "lecture" in normalized
+    return normalized.startswith("lec")
 
 
 def _split_section_times(section_times: str) -> list[str]:
     """Convert comma-separated section times into a clean list."""
     if not section_times:
         return []
-    return [entry.strip() for entry in section_times.rstrip(",").split(",") if entry.strip()]
+    return [
+        entry.strip() for entry in section_times.rstrip(",").split(",") if entry.strip()
+    ]
 
 
-def _build_lecture_times_by_instructor(course_id: int, semester: Semester) -> dict[int, dict[str, list[str]]]:
-    """Build mapping of instructor ID to lecture section numbers/times for a course."""
+def _build_section_times_maps_by_instructor(
+    course_id: int, semester: Semester
+) -> tuple[dict[int, dict[str, list[str]]], dict[int, dict[str, list[str]]]]:
+    """Build all-sections and lecture-only section-time maps keyed by instructor ID."""
+    all_times_by_instructor: dict[int, dict[str, list[str]]] = {}
     lecture_times_by_instructor: dict[int, dict[str, list[str]]] = {}
 
     sections = (
@@ -266,20 +271,21 @@ def _build_lecture_times_by_instructor(course_id: int, semester: Semester) -> di
     )
 
     for section in sections:
-        if not _is_lecture_section(section.section_type):
-            continue
-
         times = _split_section_times(section.section_times)
         if not times:
             continue
 
         section_number = str(section.sis_section_number)
         for section_instructor in section.instructors.all():
-            lecture_times_by_instructor.setdefault(section_instructor.id, {})[
+            all_times_by_instructor.setdefault(section_instructor.id, {})[
                 section_number
             ] = times
+            if _is_lecture_section(section.section_type):
+                lecture_times_by_instructor.setdefault(section_instructor.id, {})[
+                    section_number
+                ] = times
 
-    return lecture_times_by_instructor
+    return all_times_by_instructor, lecture_times_by_instructor
 
 
 def _get_paginated_club_reviews(club: Club, user, page_number=1, method=""):
@@ -362,7 +368,9 @@ def course_view(
     # (JavaScript now handles this via localStorage)
 
     if is_club:
-        club = get_object_or_404(Club, id=course_number, category__slug=mnemonic.upper())
+        club = get_object_or_404(
+            Club, id=course_number, category__slug=mnemonic.upper()
+        )
         return render(
             request,
             "club/club.html",
@@ -484,8 +492,8 @@ def course_view_v2(request, mnemonic: str, course_number: int, instructor_recenc
                 s for s in instructor.section_nums if s is not None
             ]
 
-    lecture_times_by_instructor = _build_lecture_times_by_instructor(
-        course.id, latest_semester
+    all_times_by_instructor, lecture_times_by_instructor = (
+        _build_section_times_maps_by_instructor(course.id, latest_semester)
     )
 
     for instructor in instructors:
@@ -493,6 +501,7 @@ def course_view_v2(request, mnemonic: str, course_number: int, instructor_recenc
             get_object_or_404(Semester, pk=instructor.semester_last_taught)
         )
         instructor.times = lecture_times_by_instructor.get(instructor.id, {})
+        instructor.all_times = all_times_by_instructor.get(instructor.id, {})
 
     dept = course.subdepartment.department
 
@@ -515,6 +524,7 @@ def course_view_v2(request, mnemonic: str, course_number: int, instructor_recenc
             "active_instructor_recency": "all_time" if show_all else instructor_recency,
             "course_code": course.code(),
             "course_title": course.title,
+            "all_section_times_by_instructor": all_times_by_instructor,
         },
     )
 
@@ -711,7 +721,9 @@ def course_instructor_v2(request, course_id, instructor_id, method="Default"):
         course_id, instructor_id, request.user, page_number, sort_method
     )
 
-    course_url = reverse("course_v2", args=[course.subdepartment.mnemonic, course.number])
+    course_url = reverse(
+        "course_v2", args=[course.subdepartment.mnemonic, course.number]
+    )
     breadcrumbs = [
         (dept.school.name, reverse("browse_v2"), False),
         (dept.name, reverse("department_v2", args=[dept.pk]), False),
@@ -745,7 +757,9 @@ def course_instructor_v2(request, course_id, instructor_id, method="Default"):
     except ObjectDoesNotExist:
         pass
     else:
-        data["average_gpa"] = round(grades_data.average, 2) if grades_data.average else None
+        data["average_gpa"] = (
+            round(grades_data.average, 2) if grades_data.average else None
+        )
         fields = [
             "a_plus",
             "a",
@@ -765,32 +779,32 @@ def course_instructor_v2(request, course_id, instructor_id, method="Default"):
     latest_semester = Semester.latest()
     is_current_semester = section_last_taught.semester.number == latest_semester.number
 
-    sections = []
+    lecture_sections = []
+    other_sections = []
     if is_current_semester:
         sections_qs = Section.objects.filter(
             course_id=course_id, instructors__id=instructor_id, semester=latest_semester
         ).order_by("sis_section_number")
 
         for section in sections_qs:
-            if not _is_lecture_section(section.section_type):
-                continue
-
             times_display = ""
             if section.section_times:
                 times_display = section.section_times.rstrip(",")
 
-            sections.append(
-                {
-                    "number": section.sis_section_number,
-                    "type": "Lecture",
-                    "units": section.units,
-                    "times": times_display,
-                    "enrollment_taken": section.enrollment_taken or 0,
-                    "enrollment_limit": section.enrollment_limit or 0,
-                    "waitlist_taken": section.waitlist_taken or 0,
-                    "waitlist_limit": section.waitlist_limit or 0,
-                }
-            )
+            section_data = {
+                "number": section.sis_section_number,
+                "type": section.section_type or "Section",
+                "units": section.units,
+                "times": times_display,
+                "enrollment_taken": section.enrollment_taken or 0,
+                "enrollment_limit": section.enrollment_limit or 0,
+                "waitlist_taken": section.waitlist_taken or 0,
+                "waitlist_limit": section.waitlist_limit or 0,
+            }
+            if _is_lecture_section(section.section_type):
+                lecture_sections.append(section_data)
+            else:
+                other_sections.append(section_data)
 
     return render(
         request,
@@ -812,7 +826,9 @@ def course_instructor_v2(request, course_id, instructor_id, method="Default"):
             "course_code": course.code(),
             "course_title": course.title,
             "instructor_fullname": instructor.full_name,
-            "sections": sections,
+            "lecture_sections": lecture_sections,
+            "other_sections": other_sections,
+            "sections_count": len(lecture_sections) + len(other_sections),
         },
     )
 

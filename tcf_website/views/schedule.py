@@ -799,15 +799,13 @@ def schedule_add_course_v2(request, course_id):
     schedules = Schedule.objects.filter(user=request.user).order_by("name")
 
     lecture_options = []
+    other_options = []
     sections = (
         Section.objects.filter(course=course, semester=latest_semester)
         .prefetch_related("instructors")
         .order_by("sis_section_number")
     )
     for section in sections:
-        if not _is_lecture_section(section.section_type):
-            continue
-
         section_time = (section.section_times or "").rstrip(",")
         for instructor in section.instructors.all():
             if instructor.hidden:
@@ -817,18 +815,20 @@ def schedule_add_course_v2(request, course_id):
                 if instructor.full_name
                 else f"{instructor.first_name} {instructor.last_name}".strip()
             )
-            lecture_options.append(
-                {
-                    "value": f"{section.id}:{instructor.id}",
-                    "section_id": section.id,
-                    "instructor_id": instructor.id,
-                    "section_number": section.sis_section_number,
-                    "section_type": section.section_type or "Lecture",
-                    "section_units": section.units,
-                    "section_time": section_time,
-                    "instructor_name": display_name,
-                }
-            )
+            option = {
+                "value": f"{section.id}:{instructor.id}",
+                "section_id": section.id,
+                "instructor_id": instructor.id,
+                "section_number": section.sis_section_number,
+                "section_type": section.section_type or "Lecture",
+                "section_units": section.units,
+                "section_time": section_time,
+                "instructor_name": display_name,
+            }
+            if _is_lecture_section(section.section_type):
+                lecture_options.append(option)
+            else:
+                other_options.append(option)
 
     selected_schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule", "")
     selected_option = request.POST.get("selection", "")
@@ -843,7 +843,7 @@ def schedule_add_course_v2(request, course_id):
         if not selected_schedule_id:
             messages.error(request, "Choose a schedule first.")
         elif not selected_option:
-            messages.error(request, "Choose a lecture section to add.")
+            messages.error(request, "Choose a section to add.")
         else:
             try:
                 section_id_raw, instructor_id_raw = selected_option.split(":")
@@ -922,6 +922,7 @@ def schedule_add_course_v2(request, course_id):
             "course": course,
             "breadcrumbs": breadcrumbs,
             "lecture_options": lecture_options,
+            "other_options": other_options,
             "schedules": schedules,
             "selected_schedule_id": str(selected_schedule_id) if selected_schedule_id else "",
             "selected_option": selected_option,
