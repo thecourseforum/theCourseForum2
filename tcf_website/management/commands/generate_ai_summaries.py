@@ -63,7 +63,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--min-reviews",
             type=int,
-            default=1,
+            default=5,
             help="Minimum number of written reviews required to generate a summary.",
         )
         parser.add_argument(
@@ -174,7 +174,8 @@ class Command(BaseCommand):
             if dry_run:
                 self.stdout.write(
                     f"[DRY RUN] Would summarize {course.code()} / {instructor.full_name} "
-                    f"({review_count} reviews)"
+                    f"(course_id={course_id}, instructor_id={instructor_id}, "
+                    f"{review_count} reviews)"
                 )
                 continue
 
