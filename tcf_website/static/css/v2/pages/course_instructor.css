@@ -254,6 +254,7 @@
   border-radius: var(--radius-2xl);
   
   padding: var(--space-6);
+  min-height: 0;
 }
 
 .sections-panel__header {
@@ -286,6 +287,12 @@
   color: white;
   
   border-radius: var(--radius-full);
+}
+
+.sections-panel__list {
+  max-height: 31rem;
+  overflow-y: auto;
+  padding-right: var(--space-2);
 }
 
 
@@ -340,6 +347,7 @@
 
 .section-card__enrollment {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-4);
   
   margin-top: var(--space-2);
@@ -466,6 +474,8 @@
 
 .reviews-header__actions {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-3);
 }
 
@@ -611,11 +621,23 @@
 
 .add-review-btn:hover {
   background-color: var(--color-warning-400);
+  text-decoration: none;
+  color: var(--color-gray-900);
 }
 
 .add-review-btn svg {
   width: 1rem;
   height: 1rem;
+}
+
+.reviews-sort-select {
+  min-width: 10.5rem;
+}
+
+.pagination__status {
+  background-color: var(--bg-muted);
+  color: var(--fg);
+  cursor: default;
 }
 
 

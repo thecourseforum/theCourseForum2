@@ -64,62 +64,74 @@
   
   <!-- Tab Content: History -->
   <div class="about-content" id="tab-history">
-    <div class="history-content">
-      <h3>Our Story</h3>
-      <p>
-        theCourseForum was founded in 2005 as a student-run nonprofit CIO at the University of Virginia.
-        We started as a simple website where students could share their experiences in classes and help
-        fellow Wahoos make informed decisions about their course selections.
-      </p>
-      <p>
-        Over the years, we've grown to become one of the most essential tools for UVA students during
-        enrollment periods. With over 80,000 reviews covering thousands of courses and instructors,
-        we continue to be the go-to resource for students planning their academic journeys.
-      </p>
-      <p>
-        Our mission remains the same: to empower students with honest, peer-sourced information about
-        courses and instructors at UVA.
-      </p>
+    <div class="about-history-grid">
+      <article class="history-card">
+        <img class="history-card__image" src="{% static 'about/history/tCF-2005-team.png' %}" alt="theCourseForum founding team in 2005" loading="lazy">
+        <div class="history-card__content">
+          <h3 class="history-card__title">Founding</h3>
+          <p>In Fall 2005, Jeff Bordogna and Alan Webb started theCourseForum to let UVA students share classroom experiences.</p>
+        </div>
+      </article>
+
+      <article class="history-card">
+        <img class="history-card__image" src="{% static 'about/history/tCF-2014-team.jpeg' %}" alt="theCourseForum team in 2014" loading="lazy">
+        <div class="history-card__content">
+          <h3 class="history-card__title">Revival</h3>
+          <p>In 2012-2013, a student engineering team redesigned the platform and modernized the overall architecture.</p>
+        </div>
+      </article>
+
+      <article class="history-card">
+        <img class="history-card__image" src="{% static 'about/history/tCF-2017-team.png' %}" alt="theCourseForum team in 2017" loading="lazy">
+        <div class="history-card__content">
+          <h3 class="history-card__title">CIO Era</h3>
+          <p>In 2017, organizational growth and student impact led to theCourseForum becoming an official UVA CIO.</p>
+        </div>
+      </article>
+
+      <article class="history-card">
+        <img class="history-card__image" src="{% static 'about/history/tCF-2020-team.png' %}" alt="theCourseForum team in 2020" loading="lazy">
+        <div class="history-card__content">
+          <h3 class="history-card__title">Django Rebuild</h3>
+          <p>In Spring 2020, the site was rebuilt from scratch in Django to create a more stable and extensible platform.</p>
+        </div>
+      </article>
     </div>
   </div>
   
   <!-- Tab Content: Current Team -->
   <div class="about-content is-active" id="tab-team">
-    <div class="team-grid">
-      {% for member in team %}
-      <div class="member-card">
-        <div class="member-card__avatar">{{ member.first_name|slice:":1" }}{{ member.last_name|slice:":1" }}</div>
-        <div class="member-card__name">{{ member.name }}</div>
-        <div class="member-card__role">{{ member.role }}</div>
-      </div>
-      {% empty %}
-      <div class="member-card">
-        <div class="member-card__avatar">TC</div>
-        <div class="member-card__name">Team Member</div>
-        <div class="member-card__role">Developer</div>
-      </div>
-      {% endfor %}
-    </div>
+    {% include "v2/components/_about_member_section.html" with title="Executive Team" members=executive_team image_dir="about/team-pfps" %}
+    {% include "v2/components/_about_member_section.html" with title="Engineering Team" members=engineering_team image_dir="about/team-pfps" %}
+    {% include "v2/components/_about_member_section.html" with title="Design Team" members=design_team image_dir="about/team-pfps" %}
+    {% include "v2/components/_about_member_section.html" with title="Marketing Team" members=marketing_team image_dir="about/team-pfps" %}
   </div>
   
   <!-- Tab Content: Past Contributors -->
   <div class="about-content" id="tab-contributors">
-    <div class="history-content">
-      <h3>Thank You to Our Alumni</h3>
-      <p>
-        theCourseForum is built on the contributions of generations of UVA students.
-        We're grateful to everyone who has contributed code, designs, data, and ideas over the years.
-      </p>
-    </div>
+    {% include "v2/components/_about_member_section.html" with title="Founders" members=founders image_dir="about/alum-pfps" %}
+
+    {% for group in contributors %}
+    {% include "v2/components/_about_member_section.html" with title=group.group_name members=group.members image_dir="about/alum-pfps" %}
+    {% endfor %}
+    {% if not contributors %}
+    <p class="about-empty">No contributors available.</p>
+    {% endif %}
   </div>
-  
+
   <!-- Tab Content: Sponsors -->
   <div class="about-content" id="tab-sponsors">
-    <div class="history-content">
+    <div class="sponsor-copy">
       <h3>Our Sponsors</h3>
-      <p>
-        We're grateful to our sponsors who help keep theCourseForum running as a free service for all UVA students.
-      </p>
+      <p>Our sponsors help us keep theCourseForum running as a free resource for UVA students.</p>
+    </div>
+    <div class="sponsors-grid">
+      <article class="sponsor-card">
+        <img class="sponsor-card__logo" src="{% static 'about/history/UVA-parents-fund-logo.png' %}" alt="UVA Parents Fund logo" loading="lazy">
+      </article>
+      <article class="sponsor-card">
+        <img class="sponsor-card__logo" src="{% static 'about/history/UVA-student-council-logo.png' %}" alt="UVA Student Council logo" loading="lazy">
+      </article>
     </div>
   </div>
 </div>
@@ -139,6 +151,29 @@ document.querySelectorAll('.about-tab').forEach(tab => {
     document.querySelectorAll('.about-content').forEach(c => c.classList.remove('is-active'));
     document.getElementById('tab-' + tab.dataset.tab).classList.add('is-active');
   });
+});
+
+// Hide initials when an image successfully loads; keep initials as fallback on load failure.
+document.querySelectorAll('.member-card__image').forEach((img) => {
+  const avatar = img.closest('.member-card__avatar');
+  if (!avatar) return;
+
+  const showImage = () => avatar.classList.add('has-image');
+  const hideImage = () => {
+    avatar.classList.remove('has-image');
+    img.remove();
+  };
+
+  img.addEventListener('load', showImage);
+  img.addEventListener('error', hideImage);
+
+  if (img.complete) {
+    if (img.naturalWidth > 0) {
+      showImage();
+    } else {
+      hideImage();
+    }
+  }
 });
 </script>
 {% endblock %}

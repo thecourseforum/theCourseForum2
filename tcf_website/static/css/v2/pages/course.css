@@ -153,6 +153,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
   
   margin-bottom: var(--space-6);
 }
@@ -165,6 +167,38 @@
 .instructors-header__count {
   font-size: var(--text-sm);
   color: var(--fg-muted);
+}
+
+
+/* ===== RECENCY TOGGLE ===== */
+
+.recency-toggle {
+  display: inline-flex;
+  padding: var(--space-1);
+  background-color: var(--bg-muted);
+  border-radius: var(--radius-lg);
+}
+
+.recency-toggle__option {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--fg-muted);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-default),
+              background-color var(--duration-fast) var(--ease-default);
+}
+
+.recency-toggle__option:hover {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.recency-toggle__option.is-active {
+  color: var(--fg);
+  background-color: var(--bg-elevated);
+  box-shadow: var(--shadow-sm);
 }
 
 
@@ -279,6 +313,9 @@
   gap: var(--space-2);
   
   margin-top: var(--space-2);
+  max-height: 5.75rem;
+  overflow-y: auto;
+  padding-right: var(--space-1);
 }
 
 .section-time {
@@ -291,4 +328,5 @@
   
   background-color: var(--bg-muted);
   border-radius: var(--radius-md);
+  white-space: nowrap;
 }

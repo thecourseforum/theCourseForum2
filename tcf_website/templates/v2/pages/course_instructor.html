@@ -15,7 +15,6 @@
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/v2/pages/course_instructor.css' %}">
 <link rel="stylesheet" href="{% static 'css/v2/pages/course_instructor_grades.css' %}">
-<link rel="stylesheet" href="{% static 'css/v2/pages/course_instructor_grades.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -118,7 +117,7 @@
     <div class="grades-panel">
       <div class="grades-panel__header">
         <h2 class="grades-panel__title">Grade Distribution</h2>
-        <div class="grades-panel__toogle">
+        <div class="grades-panel__toggle">
            <button id="toggle-chart-type" class="btn-sm btn-outline">Switch to Bar</button>
         </div>
       </div>
@@ -144,7 +143,8 @@
         <h2 class="sections-panel__title">Current Sections</h2>
         <span class="sections-panel__count">{{ sections|length }}</span>
       </div>
-      
+
+      <div class="sections-panel__list">
       {% for section in sections %}
       <a href="https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_DETAILS.FieldFormula.IScript_Main?institution=UVA01&term={{ sem_code }}&class_nbr={{ section.number }}" 
          target="_blank" 
@@ -182,6 +182,7 @@
         </div>
       </a>
       {% endfor %}
+      </div>
     </div>
     {% endif %}
   </div>
@@ -202,7 +203,7 @@
       
       <div class="reviews-header__actions">
         {% if user.is_authenticated %}
-        <a href="{% url 'new_review' %}?course={{ course.id }}&instructor={{ instructor.id }}" class="add-review-btn">
+        <a href="{% url 'new_review_v2' %}?course={{ course.id }}&instructor={{ instructor.id }}" class="add-review-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -220,7 +221,7 @@
         {% endif %}
         
         {% if paginated_reviews and num_reviews > 0 %}
-        <select class="dropdown" id="review-sort">
+        <select class="input input--sm reviews-sort-select" id="review-sort" aria-label="Sort reviews">
           <option value="">Sort by...</option>
           <option value="Most Helpful" {% if sort_method == "Most Helpful" %}selected{% endif %}>Most Helpful</option>
           <option value="Most Recent" {% if sort_method == "Most Recent" %}selected{% endif %}>Most Recent</option>
@@ -286,15 +287,15 @@
     {% if paginated_reviews.has_other_pages %}
     <nav class="pagination">
       {% if paginated_reviews.has_previous %}
-      <a href="?page={{ paginated_reviews.previous_page_number }}" class="pagination__link">← Previous</a>
+      <a href="?page={{ paginated_reviews.previous_page_number }}" class="pagination__item">← Previous</a>
       {% endif %}
       
-      <span class="pagination__current">
+      <span class="pagination__item pagination__status">
         Page {{ paginated_reviews.number }} of {{ paginated_reviews.paginator.num_pages }}
       </span>
       
       {% if paginated_reviews.has_next %}
-      <a href="?page={{ paginated_reviews.next_page_number }}" class="pagination__link">Next →</a>
+      <a href="?page={{ paginated_reviews.next_page_number }}" class="pagination__item">Next →</a>
       {% endif %}
     </nav>
     {% endif %}
@@ -306,7 +307,7 @@
       <h3 class="reviews-empty__title">No reviews yet</h3>
       <p class="reviews-empty__text">Be the first to share your experience with this course!</p>
       {% if user.is_authenticated %}
-      <a href="{% url 'new_review' %}?course={{ course.id }}&instructor={{ instructor.id }}" class="add-review-btn">
+      <a href="{% url 'new_review_v2' %}?course={{ course.id }}&instructor={{ instructor.id }}" class="add-review-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -500,7 +501,7 @@ if (data) {
     document.getElementById('gradesChart').style.display = 'none';
     document.querySelector('.grades-panel__chart-container').style.height = 'auto';
     document.getElementById('grades-empty').style.display = 'flex';
-    const toggle = document.querySelector('.grades-panel__toogle');
+    const toggle = document.querySelector('.grades-panel__toggle');
     if (toggle) toggle.style.display = 'none';
   }
 }

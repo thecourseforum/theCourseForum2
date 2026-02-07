@@ -409,9 +409,10 @@ def course_view_v2(request, mnemonic: str, course_number: int, instructor_recenc
     )
 
     latest_semester = Semester.latest()
+    show_all = request.GET.get("show") == "all"
     if not instructor_recency:
         instructor_recency = str(latest_semester)
-    recent = str(latest_semester) == instructor_recency
+    recent = not show_all and str(latest_semester) == instructor_recency
 
     sortby = request.GET.get("sortby", "last_taught")
     order = request.GET.get("order", "desc")
@@ -460,7 +461,7 @@ def course_view_v2(request, mnemonic: str, course_number: int, instructor_recenc
             "breadcrumbs": breadcrumbs,
             "sortby": sortby,
             "order": order,
-            "active_instructor_recency": instructor_recency,
+            "active_instructor_recency": "all_time" if show_all else instructor_recency,
             "course_code": course.code(),
             "course_title": course.title,
         },
