@@ -176,6 +176,11 @@ class Command(BaseCommand):
         try:
             last_name, first_and_middle = row["Primary Instructor Name"].split(",")
             first_name = first_and_middle.split(" ")[0]
+
+            if last_name == "Hott" and first_and_middle == "John Robert":
+                first_name = "Robbie"
+            elif last_name == "Nguyen" and first_and_middle == "Nhat H":
+                first_name = "Rich"
         except ValueError as e:
             # Script should stop if name that doesn't fit this pattern is given
             if self.verbosity > 0:
