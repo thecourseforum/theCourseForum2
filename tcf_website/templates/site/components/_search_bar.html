@@ -61,7 +61,7 @@
         <div class="filter-section">
           <div class="filter-title">Min GPA</div>
           <div class="flex items-center gap-3 w-full justify-center px-2">
-             <input type="range" name="min_gpa" min="0" max="4" step="0.1" value="{{ request.GET.min_gpa|default:'0' }}" class="flex-1" style="max-width: 140px;">
+             <input type="range" name="min_gpa" min="0" max="4" step="0.1" value="{{ request.GET.min_gpa|default:'0.0' }}" class="flex-1" style="max-width: 140px;">
              <span class="gpa-value-display" style="min-width: 2.5rem; text-align: center; font-variant-numeric: tabular-nums; font-size: var(--text-sm); font-weight: bold; background: var(--bg-muted); padding: 2px 6px;">{{ request.GET.min_gpa|default:'0.0' }}</span>
           </div>
         </div>
@@ -110,7 +110,7 @@
 
       <!-- Actions -->
       <div class="filter-actions">
-        <button type="button" class="btn btn--ghost btn--sm">Clear All</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-action="clear-filters">Clear All</button>
         <button type="submit" class="btn btn--primary btn--sm">Apply Filters</button>
       </div>
 

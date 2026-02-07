@@ -9,12 +9,12 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.http import url_has_allowed_host_and_scheme
 from django.urls import reverse_lazy
 from django.views import generic
 from django.views.decorators.http import require_POST
 
 from ..models import Review, Club, Course, Instructor, Semester
+from .utils import safe_next_url
 
 # pylint: disable=fixme,unused-argument
 
@@ -206,14 +206,7 @@ class DeleteReview(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
 
     def get_success_url(self):
         """Use caller-provided next URL when safe, otherwise default."""
-        next_url = self.request.POST.get("next") or self.request.GET.get("next")
-        if next_url and url_has_allowed_host_and_scheme(
-            next_url,
-            allowed_hosts={self.request.get_host()},
-            require_https=self.request.is_secure(),
-        ):
-            return next_url
-        return str(self.success_url)
+        return safe_next_url(self.request, str(self.success_url))
 
     def get_object(self):  # pylint: disable=arguments-differ
         """Override DeleteView's function to validate review belonging to user."""

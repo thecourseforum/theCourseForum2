@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
+from django.views.decorators.http import require_POST
 
 
 logger = logging.getLogger(__name__)
@@ -98,6 +99,7 @@ def cognito_callback(request):
 
 
 @login_required
+@require_POST
 def logout(request):
     """Logs out user and redirects to Cognito logout."""
     auth_logout(request)

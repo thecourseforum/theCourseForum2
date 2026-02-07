@@ -91,7 +91,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    const clearButton = container.querySelector(".search-filters .btn--ghost");
+    const clearButton = container.querySelector(
+      '[data-action="clear-filters"]',
+    );
     if (clearButton && form) {
       clearButton.addEventListener("click", () => {
         form.reset();

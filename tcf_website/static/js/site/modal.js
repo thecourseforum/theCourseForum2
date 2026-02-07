@@ -10,6 +10,8 @@
   const BACKDROP_CLASS = "modal-backdrop";
   const OPEN_CLASS = "is-open";
   const BODY_OPEN_CLASS = "modal-open";
+  const FOCUSABLE_SELECTOR =
+    'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
 
   let activeModal = null;
   let previouslyFocused = null;
@@ -20,6 +22,10 @@
   function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
+
+    if (activeModal) {
+      closeModal();
+    }
 
     const backdrop = modal.previousElementSibling;
 
@@ -38,9 +44,7 @@
     activeModal = modal;
 
     // Focus first focusable element
-    const focusable = modal.querySelector(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-    );
+    const focusable = modal.querySelector(FOCUSABLE_SELECTOR);
     if (focusable) {
       setTimeout(() => focusable.focus(), 100);
     }
@@ -139,9 +143,8 @@
 
       // Trap focus within modal
       if (e.key === "Tab") {
-        const focusableElements = activeModal.querySelectorAll(
-          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        );
+        const focusableElements =
+          activeModal.querySelectorAll(FOCUSABLE_SELECTOR);
 
         const firstFocusable = focusableElements[0];
         const lastFocusable = focusableElements[focusableElements.length - 1];

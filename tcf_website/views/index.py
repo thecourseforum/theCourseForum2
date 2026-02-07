@@ -16,12 +16,16 @@ def index(request):
 
     mode = request.GET.get("mode", "courses")
     is_club = mode == "clubs"
-    
+
     context = {
         "executive_team": team_info["executive_team"],
         "mode": mode,
         "mode_noun": "club" if is_club else "course",
-        "search_placeholder": "Search for a club..." if is_club else "Search for a course or professor...",
+        "search_placeholder": (
+            "Search for a club..."
+            if is_club
+            else "Search for a course or professor..."
+        ),
     }
 
     return render(

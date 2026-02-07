@@ -66,8 +66,16 @@
       {% if user.is_authenticated %}
       <div class="header__user dropdown" id="userDropdown">
         <button class="header__user-trigger" onclick="this.parentElement.classList.toggle('is-open')">
-          <span class="header__user-avatar">{{ user.first_name|slice:":1" }}</span>
-          <span class="sm:block hidden">{{ user.first_name }}</span>
+          <span class="header__user-avatar">
+            {% if user.first_name %}
+              {{ user.first_name|slice:":1"|upper }}
+            {% elif user.email %}
+              {{ user.email|slice:":1"|upper }}
+            {% else %}
+              U
+            {% endif %}
+          </span>
+          <span class="sm:block hidden">{% firstof user.first_name user.email "User" %}</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
@@ -88,14 +96,17 @@
             My Reviews
           </a>
           <div class="dropdown__divider"></div>
-          <a href="{% url 'logout' %}" class="dropdown__item dropdown__item--danger">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16 17 21 12 16 7"></polyline>
-              <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-            Sign Out
-          </a>
+          <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="dropdown__item dropdown__item--danger">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              Sign Out
+            </button>
+          </form>
         </div>
       </div>
       {% else %}
