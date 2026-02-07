@@ -135,6 +135,7 @@
 .sort-select__label {
   font-size: var(--text-sm);
   color: var(--fg-muted);
+  white-space: nowrap;
 }
 
 .sort-select select {
