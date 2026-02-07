@@ -142,7 +142,12 @@ def search(request):
         "page_obj": page_obj,
     }
 
-    return render(request, "search/search.html", ctx)
+    template_name = (
+        "v2/pages/search.html"
+        if request.resolver_match and request.resolver_match.url_name == "search_v2"
+        else "search/search.html"
+    )
+    return render(request, template_name, ctx)
 
 
 def fetch_clubs(query):

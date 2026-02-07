@@ -104,6 +104,7 @@ urlpatterns = [
         name="delete_profile",
     ),
     path("search/", views.search, name="search"),
+    path("v2/search/", views.search, name="search_v2"),
     # SCHEDULE URLs
     path("schedule/", views.view_schedules, name="schedule"),
     path("schedule/new/", views.new_schedule, name="new_schedule"),
