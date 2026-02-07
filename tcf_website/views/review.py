@@ -407,8 +407,8 @@ def new_review_v2(request):
 
             # Redirect to the new relevant page
             if instance.club:
-                return redirect("club_v2", category_slug=instance.club.category.slug, club_id=instance.club.id)
-            return redirect("course_v2", mnemonic=instance.course.subdepartment.mnemonic, course_number=instance.course.number)
+                return redirect("club", category_slug=instance.club.category.slug, club_id=instance.club.id)
+            return redirect("course", mnemonic=instance.course.subdepartment.mnemonic, course_number=instance.course.number)
 
         # Form invalid - re-render with errors
         return _render_review_form_with_errors_v2(request, form, is_club, mode)
@@ -426,7 +426,7 @@ def _handle_course_review_get_v2(request, mode):
 
     if not course_id:
         messages.info(request, "Please select a course to review from a course page.")
-        return redirect("browse_v2")
+        return redirect("browse")
 
     course = get_object_or_404(Course, id=course_id)
     latest = Semester.latest()
@@ -480,7 +480,7 @@ def _handle_club_review_get_v2(request, mode):
 
     if not club_id:
         messages.info(request, "Please select a club to review.")
-        return redirect("browse_v2")
+        return redirect("browse")
 
     club = get_object_or_404(Club, id=club_id)
     latest = Semester.latest()

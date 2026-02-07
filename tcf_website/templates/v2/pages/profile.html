@@ -22,7 +22,7 @@
     </div>
     
     <div class="profile-card__body">
-      <form method="POST" action="{% url 'profile_v2' %}" id="profile-form">
+      <form method="POST" action="{% url 'profile' %}" id="profile-form">
         {% csrf_token %}
         
         <section class="form-section">
@@ -109,7 +109,7 @@
       <button class="btn btn--secondary" data-action="close-modal">Cancel</button>
       <form method="POST" action="{% url 'delete_profile' user.id %}">
         {% csrf_token %}
-        <input type="hidden" name="next" value="{% url 'browse_v2' %}">
+        <input type="hidden" name="next" value="{% url 'browse' %}">
         <button type="submit" class="btn-danger">Yes, Delete My Profile</button>
       </form>
     </div>

@@ -20,7 +20,7 @@
   <div class="instructor-header__inner">
     <!-- Breadcrumb -->
     <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="{% url 'browse_v2' %}" class="breadcrumb__link">Browse</a>
+      <a href="{% url 'browse' %}" class="breadcrumb__link">Browse</a>
       <span class="breadcrumb__separator">/</span>
       <span class="breadcrumb__current">{{ instructor.full_name }}</span>
     </nav>
@@ -83,7 +83,7 @@
     <h2 class="courses-section__title">{{ subdepartment_name }}</h2>
     
     {% for course in subdepartment_courses %}
-    <a href="{% url 'course_instructor_v2' course_id=course.id instructor_id=instructor.id %}" class="course-taught">
+    <a href="{% url 'course_instructor' course_id=course.id instructor_id=instructor.id %}" class="course-taught">
       <span class="course-taught__name">{{ course.name }}</span>
       
       <div class="course-taught__stats">

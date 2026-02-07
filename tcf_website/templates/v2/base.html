@@ -73,7 +73,7 @@
   {% endblock %}
 
   {% include "v2/components/_messages.html" %}
-  {% if request.resolver_match and request.resolver_match.url_name != "index_v2" %}
+  {% if request.resolver_match and request.resolver_match.url_name != "index" %}
   {% include "v2/components/_leaderboard_ad.html" %}
   {% endif %}
   

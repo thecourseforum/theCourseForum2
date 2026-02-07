@@ -142,11 +142,7 @@ def search(request):
         "page_obj": page_obj,
     }
 
-    template_name = (
-        "v2/pages/search.html"
-        if request.resolver_match and request.resolver_match.url_name == "search_v2"
-        else "search/search.html"
-    )
+    template_name = "v2/pages/search.html"
     return render(request, template_name, ctx)
 
 

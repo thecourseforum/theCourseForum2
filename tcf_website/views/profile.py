@@ -93,7 +93,7 @@ def profile_v2(request):
             messages.success(request, "Your profile was updated successfully!")
         else:
             messages.error(request, form.errors)
-        return HttpResponseRedirect("/v2/profile")
+        return HttpResponseRedirect("/profile")
 
     form = ProfileFormV2(label_suffix="", instance=request.user)
     return render(request, "v2/pages/profile.html", {"form": form})

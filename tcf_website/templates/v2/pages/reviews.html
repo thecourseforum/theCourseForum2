@@ -12,7 +12,7 @@
 <div class="reviews-page">
   <div class="reviews-page__header">
     <h1 class="reviews-page__title">My Reviews</h1>
-    <a href="{% url 'new_review_v2' %}" class="btn btn--primary btn--md">
+    <a href="{% url 'new_review' %}" class="btn btn--primary btn--md">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="12" y1="5" x2="12" y2="19"></line>
         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -49,11 +49,11 @@
       <div class="review-card__header">
         <div class="review-card__context">
           {% if review.club %}
-          <a href="{% url 'club_v2' category_slug=review.club.category.slug club_id=review.club.id %}" class="review-card__subject">
+          <a href="{% url 'club' category_slug=review.club.category.slug club_id=review.club.id %}" class="review-card__subject">
             {{ review.club.name }}
           </a>
           {% else %}
-          <a href="{% url 'course_instructor_v2' course_id=review.course.id instructor_id=review.instructor.id %}" class="review-card__subject">
+          <a href="{% url 'course_instructor' course_id=review.course.id instructor_id=review.instructor.id %}" class="review-card__subject">
             {{ review.course }} — {{ review.instructor.full_name }}
           </a>
           {% endif %}
@@ -164,7 +164,7 @@
       </svg>
       <h3 class="reviews-empty__title">No reviews yet</h3>
       <p class="reviews-empty__text">Write your first review to help other students.</p>
-      <a href="{% url 'new_review_v2' %}" class="btn btn--primary btn--md">Write a Review</a>
+      <a href="{% url 'new_review' %}" class="btn btn--primary btn--md">Write a Review</a>
     </div>
     {% endif %}
   </section>

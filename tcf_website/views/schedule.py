@@ -196,7 +196,7 @@ def _build_weekly_calendar(schedule_courses: list[ScheduledCourse]) -> dict:
                     "meta": section_label,
                     "tone": ((schedule_course.section.course_id % 6) + 1),
                     "href": reverse(
-                        "course_instructor_v2",
+                        "course_instructor",
                         args=[schedule_course.section.course_id, schedule_course.instructor_id],
                     ),
                 }
@@ -772,7 +772,7 @@ def schedule_add_course(request):
 def remove_scheduled_course_v2(request, scheduled_course_id):
     """Remove one scheduled course from the active user's schedule (v2)."""
     if request.method != "POST":
-        return redirect(reverse("schedule_v2"))
+        return redirect(reverse("schedule"))
 
     scheduled_course = get_object_or_404(
         ScheduledCourse,
@@ -787,7 +787,7 @@ def remove_scheduled_course_v2(request, scheduled_course_id):
     scheduled_course.delete()
     messages.success(request, f"Removed {course_label} from your schedule.")
 
-    default_url = f"{reverse('schedule_v2')}?{urlencode({'schedule': schedule_id})}"
+    default_url = f"{reverse('schedule')}?{urlencode({'schedule': schedule_id})}"
     return redirect(_safe_next_url(request, default_url))
 
 
@@ -834,7 +834,7 @@ def schedule_add_course_v2(request, course_id):
     selected_option = request.POST.get("selection", "")
 
     fallback_course_url = reverse(
-        "course_v2",
+        "course",
         args=[course.subdepartment.mnemonic, course.number],
     )
     next_url = _safe_next_url(request, fallback_course_url)
@@ -918,18 +918,18 @@ def schedule_add_course_v2(request, course_id):
                                 )
 
                                 default_url = (
-                                    f"{reverse('schedule_v2')}?"
+                                    f"{reverse('schedule')}?"
                                     f"{urlencode({'schedule': schedule.id})}"
                                 )
                                 return redirect(_safe_next_url(request, default_url))
 
     dept = course.subdepartment.department
     breadcrumbs = [
-        (dept.school.name, reverse("browse_v2"), False),
-        (dept.name, reverse("department_v2", args=[dept.id]), False),
+        (dept.school.name, reverse("browse"), False),
+        (dept.name, reverse("department", args=[dept.id]), False),
         (
             course.code(),
-            reverse("course_v2", args=[course.subdepartment.mnemonic, course.number]),
+            reverse("course", args=[course.subdepartment.mnemonic, course.number]),
             False,
         ),
         ("Add to Schedule", None, True),

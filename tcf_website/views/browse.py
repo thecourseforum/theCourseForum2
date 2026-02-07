@@ -191,7 +191,7 @@ def department_v2(request, dept_id: int, course_recency=None):
         course_recency = str(Semester.latest())
 
     breadcrumbs = [
-        (dept.school.name, reverse("browse_v2"), False),
+        (dept.school.name, reverse("browse"), False),
         (dept.name, None, True),
     ]
 
@@ -319,10 +319,10 @@ def _build_club_page_context(request, club: Club, mode: str, *, v2: bool = False
 
     if v2:
         breadcrumbs = [
-            ("Clubs", reverse("browse_v2") + "?mode=clubs", False),
+            ("Clubs", reverse("browse") + "?mode=clubs", False),
             (
                 club.category.name,
-                reverse("club_category_v2", args=[club.category.slug]),
+                reverse("club_category", args=[club.category.slug]),
                 False,
             ),
             (club.name, None, True),
@@ -462,7 +462,7 @@ def course_view_v2(request, mnemonic: str, course_number: int, instructor_recenc
     """V2 Course view - Modern design."""
     if mnemonic != mnemonic.upper():
         return redirect(
-            "course_v2", mnemonic=mnemonic.upper(), course_number=course_number
+            "course", mnemonic=mnemonic.upper(), course_number=course_number
         )
 
     course = get_object_or_404(
@@ -506,8 +506,8 @@ def course_view_v2(request, mnemonic: str, course_number: int, instructor_recenc
     dept = course.subdepartment.department
 
     breadcrumbs = [
-        (dept.school.name, reverse("browse_v2"), False),
-        (dept.name, reverse("department_v2", args=[dept.pk]), False),
+        (dept.school.name, reverse("browse"), False),
+        (dept.name, reverse("department", args=[dept.pk]), False),
         (course.code, None, True),
     ]
 
@@ -722,11 +722,11 @@ def course_instructor_v2(request, course_id, instructor_id, method="Default"):
     )
 
     course_url = reverse(
-        "course_v2", args=[course.subdepartment.mnemonic, course.number]
+        "course", args=[course.subdepartment.mnemonic, course.number]
     )
     breadcrumbs = [
-        (dept.school.name, reverse("browse_v2"), False),
-        (dept.name, reverse("department_v2", args=[dept.pk]), False),
+        (dept.school.name, reverse("browse"), False),
+        (dept.name, reverse("department", args=[dept.pk]), False),
         (course.code, course_url, False),
         (instructor.full_name, None, True),
     ]
@@ -1001,7 +1001,7 @@ def club_category_v2(request, category_slug: str):
         paginated_clubs = paginator.page(paginator.num_pages)
 
     breadcrumbs = [
-        ("Clubs", reverse("browse_v2") + "?mode=clubs", False),
+        ("Clubs", reverse("browse") + "?mode=clubs", False),
         (category.name, None, True),
     ]
 

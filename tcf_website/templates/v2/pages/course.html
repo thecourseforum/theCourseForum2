@@ -40,7 +40,7 @@
       <div class="course-title__actions">
         <a
           class="btn btn--primary btn--md"
-          href="{% url 'schedule_add_course_v2' course.id %}?next={{ request.get_full_path|urlencode }}"
+          href="{% url 'schedule_add_course' course.id %}?next={{ request.get_full_path|urlencode }}"
           id="addToScheduleBtn"
         >
           Add to Schedule

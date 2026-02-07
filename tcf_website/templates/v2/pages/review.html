@@ -15,7 +15,7 @@
     <p class="review-header__subtitle">Share your experience to help other students.</p>
   </header>
 
-  <form id="reviewForm" action="{% url 'new_review_v2' %}" method="POST">
+  <form id="reviewForm" action="{% url 'new_review' %}" method="POST">
     {% csrf_token %}
 
     <!-- hidden mode fields -->

@@ -20,7 +20,7 @@
   
   <div class="departments-grid {% if expanded %}is-open{% endif %}">
     {% for dept in school.department_set.all|dictsort:"name" %}
-    <a href="{% url 'department_v2' dept_id=dept.pk %}" class="department-card">
+    <a href="{% url 'department' dept_id=dept.pk %}" class="department-card">
       <span class="department-card__name">{{ dept.name }}</span>
       <svg class="department-card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M5 12h14M12 5l7 7-7 7"></path>

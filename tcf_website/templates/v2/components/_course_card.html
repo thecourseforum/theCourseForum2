@@ -1,5 +1,5 @@
 {# Course Card Component #}
-<a href="{% url 'course_v2' course.subdepartment.mnemonic course.number %}" class="course-card">
+<a href="{% url 'course' course.subdepartment.mnemonic course.number %}" class="course-card">
   <div class="course-card__main">
     <div class="course-card__header">
       <span class="course-card__code">{{ course.subdepartment.mnemonic }} {{ course.number }}</span>

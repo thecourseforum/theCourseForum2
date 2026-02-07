@@ -42,7 +42,7 @@
         <div class="schedule-list__items">
           {% for schedule in schedules %}
           <article class="schedule-list-card {% if selected_schedule and selected_schedule.id == schedule.id %}is-active{% endif %}">
-            <a href="{% url 'schedule_v2' %}?schedule={{ schedule.id }}" class="schedule-list-card__name">{{ schedule.name }}</a>
+            <a href="{% url 'schedule' %}?schedule={{ schedule.id }}" class="schedule-list-card__name">{{ schedule.name }}</a>
 
             <div class="schedule-list-card__metrics">
               <div>
@@ -74,13 +74,13 @@
             <div class="schedule-list-card__actions">
               <form method="post" action="{% url 'duplicate_schedule' schedule.id %}">
                 {% csrf_token %}
-                <input type="hidden" name="next" value="{% url 'schedule_v2' %}?schedule={{ schedule.id }}">
+                <input type="hidden" name="next" value="{% url 'schedule' %}?schedule={{ schedule.id }}">
                 <button type="submit" class="btn btn--ghost btn--sm">Duplicate</button>
               </form>
               <form method="post" action="{% url 'delete_schedule' %}">
                 {% csrf_token %}
                 <input type="hidden" name="selected_schedules" value="{{ schedule.id }}">
-                <input type="hidden" name="next" value="{% url 'schedule_v2' %}">
+                <input type="hidden" name="next" value="{% url 'schedule' %}">
                 <button type="submit" class="btn btn--ghost btn--sm schedule-list-card__danger">Delete</button>
               </form>
             </div>
@@ -142,7 +142,7 @@
               <span>Rating: {% if course.total_rating %}{{ course.total_rating|floatformat:2 }}{% else %}—{% endif %}</span>
             </div>
 
-            <form method="post" action="{% url 'remove_scheduled_course_v2' course.id %}">
+            <form method="post" action="{% url 'remove_scheduled_course' course.id %}">
               {% csrf_token %}
               <input type="hidden" name="next" value="{{ request.get_full_path }}">
               <button type="submit" class="btn btn--ghost btn--sm scheduled-course-card__remove">Remove</button>

@@ -35,7 +35,7 @@
              class="recency-toggle__option {% if active_course_recency == latest_semester %}is-active{% endif %}">
             Current Semester
           </a>
-          <a href="{% url 'department_v2_course_recency' dept_id=dept_id course_recency=last_five_years %}?sortby={{ sortby }}&order={{ order }}" 
+          <a href="{% url 'department_course_recency' dept_id=dept_id course_recency=last_five_years %}?sortby={{ sortby }}&order={{ order }}" 
              class="recency-toggle__option {% if active_course_recency == last_five_years %}is-active{% endif %}">
             Last 5 Years
           </a>

@@ -1,5 +1,5 @@
 {# Instructor Card Component #}
-<a href="{% url 'course_instructor_v2' course_id=course.pk instructor_id=instructor.pk %}" class="instructor-card">
+<a href="{% url 'course_instructor' course_id=course.pk instructor_id=instructor.pk %}" class="instructor-card">
   <div class="instructor-card__main">
     <div class="instructor-card__title-row">
       <h3 class="instructor-card__name">{{ instructor.full_name }}</h3>

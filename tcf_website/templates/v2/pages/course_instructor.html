@@ -43,7 +43,7 @@
     <!-- Instructor Row -->
     <div class="instructor-row">
       <div class="instructor-row__left">
-        <a href="{% url 'instructor_v2' instructor.id %}" class="instructor-link">
+        <a href="{% url 'instructor' instructor.id %}" class="instructor-link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
@@ -216,7 +216,7 @@
 
       <div class="reviews-header__actions">
         {% if user.is_authenticated %}
-        <a href="{% url 'new_review_v2' %}?course={{ course.id }}&instructor={{ instructor.id }}" class="btn btn--primary btn--md add-review-btn">
+        <a href="{% url 'new_review' %}?course={{ course.id }}&instructor={{ instructor.id }}" class="btn btn--primary btn--md add-review-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -341,7 +341,7 @@
       <h3 class="reviews-empty__title">No reviews yet</h3>
       <p class="reviews-empty__text">Be the first to share your experience with this course!</p>
       {% if user.is_authenticated %}
-      <a href="{% url 'new_review_v2' %}?course={{ course.id }}&instructor={{ instructor.id }}" class="btn btn--primary btn--md add-review-btn">
+      <a href="{% url 'new_review' %}?course={{ course.id }}&instructor={{ instructor.id }}" class="btn btn--primary btn--md add-review-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -413,10 +413,7 @@ if (sortSelect) {
         window.reviewVotes.init();
       }
     } catch (error) {
-      const fallback = selectedMethod
-        ? '/v2/course/{{ course.id }}/{{ instructor.id }}/sort=' + encodeURIComponent(selectedMethod) + '#reviews'
-        : '/v2/course/{{ course.id }}/{{ instructor.id }}/#reviews';
-      window.location.href = fallback;
+      window.location.href = url.pathname + url.search + '#reviews';
     } finally {
       sortSelect.disabled = false;
     }

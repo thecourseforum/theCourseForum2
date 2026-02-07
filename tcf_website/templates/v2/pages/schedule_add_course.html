@@ -37,7 +37,7 @@
         <input type="text" class="input" name="name" maxlength="15" required placeholder="New schedule name">
         <button type="submit" class="btn btn--primary btn--sm">Create</button>
       </form>
-      <a href="{% url 'schedule_v2' %}" class="btn btn--ghost btn--sm">Go to Schedule Builder</a>
+      <a href="{% url 'schedule' %}" class="btn btn--ghost btn--sm">Go to Schedule Builder</a>
     </section>
     {% else %}
     <form method="post" class="schedule-add__form">

@@ -64,7 +64,7 @@
 
       <div class="reviews-header__actions">
         {% if user.is_authenticated %}
-        <a href="{% url 'new_review_v2' %}?mode=clubs&club={{ club.id }}" class="btn btn--primary btn--md add-review-btn">
+        <a href="{% url 'new_review' %}?mode=clubs&club={{ club.id }}" class="btn btn--primary btn--md add-review-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>

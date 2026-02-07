@@ -6,7 +6,7 @@
     <div class="footer__top">
       <!-- Brand -->
       <div class="footer__brand">
-        <a href="{% url 'index_v2' %}" class="footer__logo">
+        <a href="{% url 'index' %}" class="footer__logo">
           <img src="{% static 'base/img/new_logo.svg' %}" alt="theCourseForum" class="footer__logo-icon">
           <span class="footer__logo-text">theCourseForum</span>
         </a>
@@ -43,9 +43,9 @@
       <div class="footer__section">
         <h4 class="footer__section-title">Product</h4>
         <ul class="footer__links">
-          <li><a href="{% url 'browse_v2' %}" class="footer__link">Browse Courses</a></li>
-          <li><a href="{% url 'schedule_v2' %}" class="footer__link">Schedule Builder</a></li>
-          <li><a href="{% url 'new_review_v2' %}" class="footer__link">Write a Review</a></li>
+          <li><a href="{% url 'browse' %}" class="footer__link">Browse Courses</a></li>
+          <li><a href="{% url 'schedule' %}" class="footer__link">Schedule Builder</a></li>
+          <li><a href="{% url 'new_review' %}" class="footer__link">Write a Review</a></li>
         </ul>
       </div>
       
@@ -53,7 +53,7 @@
       <div class="footer__section">
         <h4 class="footer__section-title">Company</h4>
         <ul class="footer__links">
-          <li><a href="{% url 'about_v2' %}" class="footer__link">About Us</a></li>
+          <li><a href="{% url 'about' %}" class="footer__link">About Us</a></li>
           <li><a href="mailto:support@thecourseforum.com" class="footer__link">Contact</a></li>
           <li><a href="#donatePage" class="footer__link" data-modal-open="donateModal">Donate</a></li>
         </ul>
@@ -63,8 +63,8 @@
       <div class="footer__section">
         <h4 class="footer__section-title">Legal</h4>
         <ul class="footer__links">
-          <li><a href="{% url 'terms_v2' %}" class="footer__link">Terms of Service</a></li>
-          <li><a href="{% url 'privacy_v2' %}" class="footer__link">Privacy Policy</a></li>
+          <li><a href="{% url 'terms' %}" class="footer__link">Terms of Service</a></li>
+          <li><a href="{% url 'privacy' %}" class="footer__link">Privacy Policy</a></li>
         </ul>
       </div>
     </div>
@@ -75,8 +75,8 @@
         &copy; <span id="footerYear"></span> theCourseForum. All rights reserved.
       </p>
       <div class="footer__legal">
-        <a href="{% url 'terms_v2' %}" class="footer__legal-link">Terms</a>
-        <a href="{% url 'privacy_v2' %}" class="footer__legal-link">Privacy</a>
+        <a href="{% url 'terms' %}" class="footer__legal-link">Terms</a>
+        <a href="{% url 'privacy' %}" class="footer__legal-link">Privacy</a>
       </div>
     </div>
   </div>
