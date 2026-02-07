@@ -26,18 +26,6 @@
       <p class="schedule-add__subtitle">Select a schedule and section.</p>
     </div>
 
-    {% if messages %}
-    <div class="schedule-add__messages" aria-live="polite">
-      {% for message in messages %}
-      <div class="alert {% if 'error' in message.tags %}alert--danger{% elif 'success' in message.tags %}alert--success{% elif 'warning' in message.tags %}alert--warning{% else %}alert--info{% endif %}">
-        <div class="alert__content">
-          <p class="alert__description">{{ message }}</p>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-    {% endif %}
-
     {% if not schedules %}
     <section class="schedule-add__empty">
       <h2>Create a schedule first</h2>

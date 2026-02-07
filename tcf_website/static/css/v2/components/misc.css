@@ -306,6 +306,37 @@
 
 
 /*
+ * Flash Messages
+ * ==============
+ */
+
+.flash-messages {
+  padding: var(--space-4) 0 0;
+}
+
+.flash-messages__inner {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+@media (min-width: 640px) {
+  .flash-messages__inner {
+    padding: 0 var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .flash-messages__inner {
+    padding: 0 var(--space-8);
+  }
+}
+
+
+/*
  * Skeleton Loading
  * ================
  */
