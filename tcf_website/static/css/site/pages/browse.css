@@ -1,0 +1,331 @@
+/*
+ * Browse Page Styles
+ * ==================
+ */
+
+/* ===== PAGE HEADER ===== */
+
+.browse-header {
+  padding: var(--space-12) 0 var(--space-8);
+}
+
+.browse-header__inner {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .browse-header__inner {
+    padding: 0 var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .browse-header__inner {
+    padding: 0 var(--space-8);
+  }
+}
+
+.browse-header__title {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-normal);
+  margin-bottom: var(--space-2);
+}
+
+.browse-header__description {
+  font-size: var(--text-lg);
+  color: var(--fg-muted);
+  max-width: 48rem;
+}
+
+
+/* ===== MODE TOGGLE ===== */
+
+.mode-toggle {
+  display: inline-flex;
+  padding: var(--space-1);
+  
+  background-color: var(--bg-muted);
+  border-radius: var(--radius-lg);
+}
+
+.mode-toggle__option {
+  padding: var(--space-2) var(--space-4);
+  
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--fg-muted);
+  
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-default),
+              background-color var(--duration-fast) var(--ease-default);
+}
+
+.mode-toggle__option:hover {
+  color: var(--fg);
+}
+
+.mode-toggle__option.is-active {
+  color: var(--fg);
+  background-color: var(--bg-elevated);
+  box-shadow: var(--shadow-sm);
+}
+
+
+/* ===== SCHOOLS CONTAINER ===== */
+
+.browse-content {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4) var(--space-16);
+}
+
+@media (min-width: 640px) {
+  .browse-content {
+    padding: 0 var(--space-6) var(--space-16);
+  }
+}
+
+@media (min-width: 1024px) {
+  .browse-content {
+    padding: 0 var(--space-8) var(--space-16);
+  }
+}
+
+
+/* ===== SCHOOL SECTION ===== */
+
+.school-section {
+  margin-bottom: var(--space-8);
+}
+
+.school-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  
+  padding: var(--space-4) var(--space-5);
+  
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-default),
+              box-shadow var(--duration-fast) var(--ease-default);
+}
+
+.school-header:hover {
+  border-color: var(--fg-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+.school-header.is-open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+
+.school-header__info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.school-header__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  width: 3rem;
+  height: 3rem;
+  
+  background: linear-gradient(135deg, var(--color-primary-100) 0%, var(--color-primary-50) 100%);
+  color: var(--primary);
+  
+  border-radius: var(--radius-lg);
+}
+
+[data-theme="dark"] .school-header__icon {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%);
+}
+
+.school-header__icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.school-header__title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+}
+
+.school-header__count {
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+}
+
+.school-header__chevron {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--fg-muted);
+  transition: transform var(--duration-normal) var(--ease-default);
+}
+
+.school-header.is-open .school-header__chevron {
+  transform: rotate(180deg);
+}
+
+
+/* ===== DEPARTMENTS GRID ===== */
+
+.departments-grid {
+  display: none;
+  
+  padding: var(--space-4);
+  
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-bottom-left-radius: var(--radius-xl);
+  border-bottom-right-radius: var(--radius-xl);
+}
+
+.departments-grid.is-open {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+}
+
+@media (min-width: 640px) {
+  .departments-grid.is-open {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .departments-grid.is-open {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .departments-grid.is-open {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+
+/* ===== DEPARTMENT CARD ===== */
+
+.department-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  
+  padding: var(--space-3) var(--space-4);
+  
+  text-decoration: none;
+  color: var(--fg);
+  
+  border-radius: var(--radius-lg);
+  
+  transition: background-color var(--duration-fast) var(--ease-default);
+}
+
+.department-card:hover {
+  background-color: var(--bg-muted);
+  text-decoration: none;
+}
+
+.department-card__name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  flex: 1;
+}
+
+.department-card__arrow {
+  width: 1rem;
+  height: 1rem;
+  color: var(--fg-subtle);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-default),
+              transform var(--duration-fast) var(--ease-default);
+}
+
+.department-card:hover .department-card__arrow {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+
+/* ===== CLUB CATEGORIES ===== */
+
+.club-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .club-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .club-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.club-card {
+  display: flex;
+  flex-direction: column;
+  
+  padding: var(--space-6);
+  
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  
+  text-decoration: none;
+  color: var(--fg);
+  
+  transition: border-color var(--duration-fast) var(--ease-default),
+              box-shadow var(--duration-fast) var(--ease-default),
+              transform var(--duration-fast) var(--ease-default);
+}
+
+.club-card:hover {
+  border-color: var(--fg-subtle);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.club-card__title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  margin-bottom: var(--space-2);
+}
+
+.club-card__count {
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+}
+
+
+/* ===== SEARCH SECTION ===== */
+
+.browse-search {
+  max-width: 32rem;
+  margin-bottom: var(--space-6);
+}

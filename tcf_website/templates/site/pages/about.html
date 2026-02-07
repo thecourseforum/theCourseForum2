@@ -1,0 +1,179 @@
+{% extends "site/base.html" %}
+{% load static %}
+
+{% block title %}About | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/site/pages/about.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="about-page">
+  <!-- Hero -->
+  <div class="about-hero">
+    <img src="{% static 'base/img/new_logo.svg' %}" alt="theCourseForum logo" class="about-hero__logo">
+    <h1 class="about-hero__title">theCourseForum</h1>
+    <p class="about-hero__tagline">Connecting you to the courses you love.</p>
+  </div>
+  
+  <!-- Description -->
+  <p class="about-description">
+    <strong>theCourseForum</strong> is a place for University of Virginia students to share their academic experiences.
+    These are captured in the form of course reviews, which provide insight, advice, and caution to students before course enrollment.
+    We believe that reading <em>student</em> reflections is the best way to understand a class and its professor without actually experiencing it.
+    <br><br>
+    <em>Of the students, by the students, for the students...</em>
+  </p>
+  
+  <!-- Tabs -->
+  <div class="about-tabs">
+    <button class="about-tab" data-tab="history">
+      <svg class="about-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+        <path d="M6.5 2H20v 20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+      </svg>
+      History
+    </button>
+    
+    <button class="about-tab is-active" data-tab="team">
+      <svg class="about-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v 2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+      Current Team
+    </button>
+    
+    <button class="about-tab" data-tab="contributors">
+      <svg class="about-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+      </svg>
+      Past Contributors
+    </button>
+    
+    <button class="about-tab" data-tab="sponsors">
+      <svg class="about-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+      Sponsors
+    </button>
+  </div>
+  
+  <!-- Tab Content: History -->
+  <div class="about-content" id="tab-history">
+    <div class="about-history-grid">
+      <article class="history-card">
+        <img class="history-card__image" src="{% static 'about/history/tCF-2005-team.png' %}" alt="theCourseForum founding team in 2005" loading="lazy">
+        <div class="history-card__content">
+          <h3 class="history-card__title">Founding</h3>
+          <p>In Fall 2005, Jeff Bordogna and Alan Webb started theCourseForum to let UVA students share classroom experiences.</p>
+        </div>
+      </article>
+
+      <article class="history-card">
+        <img class="history-card__image" src="{% static 'about/history/tCF-2014-team.jpeg' %}" alt="theCourseForum team in 2014" loading="lazy">
+        <div class="history-card__content">
+          <h3 class="history-card__title">Revival</h3>
+          <p>In 2012-2013, a student engineering team redesigned the platform and modernized the overall architecture.</p>
+        </div>
+      </article>
+
+      <article class="history-card">
+        <img class="history-card__image" src="{% static 'about/history/tCF-2017-team.png' %}" alt="theCourseForum team in 2017" loading="lazy">
+        <div class="history-card__content">
+          <h3 class="history-card__title">CIO Era</h3>
+          <p>In 2017, organizational growth and student impact led to theCourseForum becoming an official UVA CIO.</p>
+        </div>
+      </article>
+
+      <article class="history-card">
+        <img class="history-card__image" src="{% static 'about/history/tCF-2020-team.png' %}" alt="theCourseForum team in 2020" loading="lazy">
+        <div class="history-card__content">
+          <h3 class="history-card__title">Django Rebuild</h3>
+          <p>In Spring 2020, the site was rebuilt from scratch in Django to create a more stable and extensible platform.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+  
+  <!-- Tab Content: Current Team -->
+  <div class="about-content is-active" id="tab-team">
+    {% include "site/components/_about_member_section.html" with title="Executive Team" members=executive_team image_dir="about/team-pfps" %}
+    {% include "site/components/_about_member_section.html" with title="Engineering Team" members=engineering_team image_dir="about/team-pfps" %}
+    {% include "site/components/_about_member_section.html" with title="Design Team" members=design_team image_dir="about/team-pfps" %}
+    {% include "site/components/_about_member_section.html" with title="Marketing Team" members=marketing_team image_dir="about/team-pfps" %}
+  </div>
+  
+  <!-- Tab Content: Past Contributors -->
+  <div class="about-content" id="tab-contributors">
+    {% include "site/components/_about_member_section.html" with title="Founders" members=founders image_dir="about/alum-pfps" %}
+
+    {% for group in contributors %}
+    {% include "site/components/_about_member_section.html" with title=group.group_name members=group.members image_dir="about/alum-pfps" %}
+    {% endfor %}
+    {% if not contributors %}
+    <p class="about-empty">No contributors available.</p>
+    {% endif %}
+  </div>
+
+  <!-- Tab Content: Sponsors -->
+  <div class="about-content" id="tab-sponsors">
+    <div class="sponsor-copy">
+      <h3>Our Sponsors</h3>
+      <p>Our sponsors help us keep theCourseForum running as a free resource for UVA students.</p>
+    </div>
+    <div class="sponsors-grid">
+      <article class="sponsor-card">
+        <img class="sponsor-card__logo" src="{% static 'about/history/UVA-parents-fund-logo.png' %}" alt="UVA Parents Fund logo" loading="lazy">
+      </article>
+      <article class="sponsor-card">
+        <img class="sponsor-card__logo" src="{% static 'about/history/UVA-student-council-logo.png' %}" alt="UVA Student Council logo" loading="lazy">
+      </article>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Tab switching
+document.querySelectorAll('.about-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    // Update tabs
+    document.querySelectorAll('.about-tab').forEach(t => t.classList.remove('is-active'));
+    tab.classList.add('is-active');
+    
+    // Update content
+    document.querySelectorAll('.about-content').forEach(c => c.classList.remove('is-active'));
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('is-active');
+  });
+});
+
+// Hide initials when an image successfully loads; keep initials as fallback on load failure.
+document.querySelectorAll('.member-card__image').forEach((img) => {
+  const avatar = img.closest('.member-card__avatar');
+  if (!avatar) return;
+
+  const showImage = () => avatar.classList.add('has-image');
+  const hideImage = () => {
+    avatar.classList.remove('has-image');
+    img.remove();
+  };
+
+  img.addEventListener('load', showImage);
+  img.addEventListener('error', hideImage);
+
+  if (img.complete) {
+    if (img.naturalWidth > 0) {
+      showImage();
+    } else {
+      hideImage();
+    }
+  }
+});
+</script>
+{% endblock %}

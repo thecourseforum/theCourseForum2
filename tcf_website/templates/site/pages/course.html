@@ -1,0 +1,124 @@
+{% extends "site/base.html" %}
+{% load static %}
+
+{% block title %}{{ course.code }} | theCourseForum{% endblock %}
+
+{% block page_metadata %}
+{% if course_code %}<meta name="course-code" content="{{ course_code }}">{% endif %}
+{% if course_title %}<meta name="course-title" content="{{ course_title }}">{% endif %}
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/site/pages/course.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Header with Breadcrumb -->
+<div class="course-header">
+  <div class="course-header__inner">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      {% for item in breadcrumbs %}
+        {% if item.2 %}
+          <span class="breadcrumb__current">{{ item.0 }}</span>
+        {% else %}
+          <a href="{{ item.1 }}" class="breadcrumb__link">{{ item.0 }}</a>
+          <span class="breadcrumb__separator">/</span>
+        {% endif %}
+      {% endfor %}
+    </nav>
+    
+    <!-- Course Title -->
+    <div class="course-title">
+      <div class="course-title__main">
+        <h1 class="course-title__code">{{ course.code }}</h1>
+        <p class="course-title__name">{{ course.title }}</p>
+      </div>
+      
+      {% if user.is_authenticated %}
+      <div class="course-title__actions">
+        <a
+          class="btn btn--primary btn--md"
+          href="{% url 'schedule_add_course' course.id %}?next={{ request.get_full_path|urlencode }}"
+          id="addToScheduleBtn"
+        >
+          Add to Schedule
+        </a>
+      </div>
+      {% endif %}
+    </div>
+    
+    <!-- Course Description -->
+    {% if course.description %}
+    <div class="course-description">
+      <h2 class="course-description__title">Course Description</h2>
+      
+      <div class="course-description__meta">
+        {% if course.compute_pre_req %}
+        <div class="course-meta-item">
+          <div>
+            <span class="course-meta-item__label">Prerequisites</span>
+            <p class="course-meta-item__value">{{ course.compute_pre_req }}</p>
+          </div>
+        </div>
+        {% endif %}
+        
+        {% if course.disciplines.exists %}
+        <div class="course-meta-item">
+          <div>
+            <span class="course-meta-item__label">Disciplines</span>
+            <p class="course-meta-item__value">
+              {% for discipline in course.disciplines.all %}
+                {{ discipline.name }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+            </p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      
+      <p class="course-description__text">{{ course.course_description_without_pre_req }}</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Instructors List -->
+<div class="course-content">
+  <div class="instructors-header">
+    <h2 class="instructors-header__title">Instructors</h2>
+    
+    <!-- Recency Toggle -->
+    <div class="recency-toggle">
+      <a href="?sortby={{ sortby }}&order={{ order }}" 
+         class="recency-toggle__option {% if active_instructor_recency == latest_semester %}is-active{% endif %}">
+        Current
+      </a>
+      <a href="?sortby={{ sortby }}&order={{ order }}&show=all" 
+         class="recency-toggle__option {% if active_instructor_recency != latest_semester %}is-active{% endif %}">
+        All Time
+      </a>
+    </div>
+  </div>
+  
+  {% if instructors|length == 0 %}
+  <!-- Empty State -->
+  <div class="empty-state">
+    <h2 class="empty-state__title">No instructors this semester</h2>
+    <p class="empty-state__description">
+      This course isn't being taught this semester. Click "All Time" to see previous instructors.
+    </p>
+  </div>
+  {% else %}
+  
+  <div class="instructor-list">
+    {% for instructor in instructors %}
+    {% include "site/components/_instructor_card.html" with instructor=instructor course=course latest_semester=latest_semester %}
+    {% endfor %}
+  </div>
+  
+  {% endif %}
+</div>
+
+{% endblock %}
