@@ -71,8 +71,18 @@ def _call_openrouter(model_name: str, messages):
         json=payload,
         timeout=20,
     )
-    response.raise_for_status()
-    data = response.json()
+    try:
+        data = response.json()
+    except ValueError:
+        data = None
+
+    if not response.ok:
+        error_info = (data or {}).get("error") or {}
+        error_msg = error_info.get("message") or response.reason or "Unknown API error"
+        return None, f"{response.status_code}: {error_msg}"
+
+    if data is None:
+        return None, "Invalid JSON response from OpenRouter."
     choices = data.get("choices") or []
     content = ""
     if choices:
