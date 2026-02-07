@@ -1,0 +1,35 @@
+<a href="https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_DETAILS.FieldFormula.IScript_Main?institution=UVA01&term={{ sem_code }}&class_nbr={{ section.number }}" 
+   target="_blank" 
+   rel="noopener noreferrer" 
+   class="section-card">
+  <div class="section-card__header">
+    <span class="section-card__number">Section {{ section.number }}</span>
+    <span class="section-card__type">{{ section.type }}{% if section.units %} ({{ section.units }} Unit{{ section.units|pluralize }}){% endif %}</span>
+  </div>
+  
+  {% if section.times %}
+  <div class="section-card__times">{{ section.times }}</div>
+  {% endif %}
+  
+  <div class="section-card__enrollment">
+    <div class="enrollment-stat">
+      <span>Enrolled:</span>
+      <div class="enrollment-stat__bar">
+        <div class="enrollment-stat__fill {% if section.enrollment_taken >= section.enrollment_limit %}enrollment-stat__fill--danger{% else %}enrollment-stat__fill--success{% endif %}" 
+             style="width: {% widthratio section.enrollment_taken section.enrollment_limit 100 %}%"></div>
+      </div>
+      <span>{{ section.enrollment_taken }}/{{ section.enrollment_limit }}</span>
+    </div>
+    
+    {% if section.waitlist_limit > 0 %}
+    <div class="enrollment-stat">
+      <span>Waitlist:</span>
+      <div class="enrollment-stat__bar">
+        <div class="enrollment-stat__fill enrollment-stat__fill--warning" 
+             style="width: {% widthratio section.waitlist_taken section.waitlist_limit 100 %}%"></div>
+      </div>
+      <span>{{ section.waitlist_taken }}/{{ section.waitlist_limit }}</span>
+    </div>
+    {% endif %}
+  </div>
+</a>

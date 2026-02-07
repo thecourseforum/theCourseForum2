@@ -10,7 +10,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.views.decorators.http import require_POST
 
 
 logger = logging.getLogger(__name__)
@@ -97,12 +98,8 @@ def cognito_callback(request):
         return redirect("index")
 
 
-def unauthenticated_index(request):
-    """Index shown to non-logged in users."""
-    return render(request, "landing/landing.html")
-
-
 @login_required
+@require_POST
 def logout(request):
     """Logs out user and redirects to Cognito logout."""
     auth_logout(request)
