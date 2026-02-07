@@ -84,6 +84,11 @@ urlpatterns = [
         name="course_v2",
     ),
     path(
+        "v2/course/<int:course_id>/add-to-schedule/",
+        views.schedule_add_course_v2,
+        name="schedule_add_course_v2",
+    ),
+    path(
         "instructor/<int:instructor_id>/",
         views.instructor_view,
         name="instructor",
@@ -121,9 +126,15 @@ urlpatterns = [
     path("v2/search/", views.search, name="search_v2"),
     # SCHEDULE URLs
     path("schedule/", views.view_schedules, name="schedule"),
+    path("v2/schedule/", views.view_schedules_v2, name="schedule_v2"),
     path("schedule/new/", views.new_schedule, name="new_schedule"),
     path("schedule/delete/", views.delete_schedule, name="delete_schedule"),
     path("schedule/edit/", views.edit_schedule, name="edit_schedule"),
+    path(
+        "v2/schedule/course/<int:scheduled_course_id>/remove/",
+        views.remove_scheduled_course_v2,
+        name="remove_scheduled_course_v2",
+    ),
     path(
         "schedule/duplicate/<int:schedule_id>/",
         views.duplicate_schedule,

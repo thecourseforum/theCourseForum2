@@ -1,0 +1,342 @@
+.schedule-v2,
+.schedule-add {
+  padding: var(--space-8) 0 var(--space-16);
+}
+
+.schedule-v2__inner,
+.schedule-add__inner {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .schedule-v2__inner,
+  .schedule-add__inner {
+    padding: 0 var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .schedule-v2__inner,
+  .schedule-add__inner {
+    padding: 0 var(--space-8);
+  }
+}
+
+.schedule-v2__header,
+.schedule-add__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.schedule-v2__title,
+.schedule-add__title {
+  font-size: var(--text-3xl);
+  margin: 0;
+}
+
+.schedule-v2__subtitle,
+.schedule-add__subtitle {
+  margin: var(--space-1) 0 0;
+  color: var(--fg-muted);
+}
+
+.schedule-v2__create-form,
+.schedule-add__create-form {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.schedule-v2__create-form .input,
+.schedule-add__create-form .input {
+  min-width: 14rem;
+}
+
+.schedule-v2__grid {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: minmax(17rem, 22rem) minmax(0, 1fr);
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .schedule-v2__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.schedule-list,
+.schedule-detail,
+.schedule-add__form,
+.schedule-add__empty {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background-color: var(--bg-elevated);
+  padding: var(--space-4);
+}
+
+.schedule-list__title,
+.schedule-detail__section-title {
+  font-size: var(--text-lg);
+  margin: 0 0 var(--space-3);
+}
+
+.schedule-list__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.schedule-list__empty {
+  margin: 0;
+  color: var(--fg-muted);
+}
+
+.schedule-list-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  background-color: var(--bg);
+}
+
+.schedule-list-card.is-active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.schedule-list-card__name {
+  font-weight: var(--font-semibold);
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.schedule-list-card__name:hover {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.schedule-list-card__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.schedule-list-card__metric-label {
+  display: block;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  letter-spacing: var(--tracking-wide);
+}
+
+.schedule-list-card__metric-value {
+  display: block;
+  margin-top: 0.1rem;
+  font-weight: var(--font-semibold);
+}
+
+.schedule-list-card__actions {
+  margin-top: var(--space-3);
+  display: flex;
+  gap: var(--space-2);
+}
+
+.schedule-list-card__danger {
+  color: var(--danger);
+}
+
+.schedule-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.schedule-detail__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.schedule-detail__rename-form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.schedule-detail__name-input {
+  min-width: 14rem;
+}
+
+.schedule-detail__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.schedule-detail__stats span {
+  display: block;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--fg-muted);
+}
+
+.schedule-detail__stats strong {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: var(--text-base);
+}
+
+@media (max-width: 640px) {
+  .schedule-detail__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.schedule-detail__course-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.scheduled-course-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scheduled-course-card__title {
+  margin: 0;
+  font-size: var(--text-base);
+}
+
+.scheduled-course-card__meta,
+.scheduled-course-card__time {
+  margin: 0.1rem 0 0;
+  color: var(--fg-muted);
+  font-size: var(--text-sm);
+}
+
+.scheduled-course-card__stats {
+  display: flex;
+  gap: var(--space-3);
+  color: var(--fg-muted);
+  font-size: var(--text-sm);
+}
+
+.scheduled-course-card__remove {
+  color: var(--danger);
+}
+
+.schedule-detail__empty,
+.schedule-detail__empty-state {
+  margin: 0;
+  color: var(--fg-muted);
+}
+
+.schedule-detail__note {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--fg-muted);
+  font-size: var(--text-sm);
+}
+
+.schedule-add__controls {
+  margin-bottom: var(--space-4);
+}
+
+.schedule-add__label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--fg-muted);
+}
+
+.schedule-add__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.schedule-add-option {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg);
+  padding: var(--space-3);
+  cursor: pointer;
+}
+
+.schedule-add-option:has(input:checked) {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.schedule-add-option input {
+  margin-top: 0.2rem;
+}
+
+.schedule-add-option__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.schedule-add-option__row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.schedule-add-option__row--meta {
+  margin-top: var(--space-1);
+  color: var(--fg-muted);
+}
+
+@media (max-width: 640px) {
+  .schedule-add-option__row {
+    flex-direction: column;
+  }
+}
+
+.schedule-add__actions {
+  margin-top: var(--space-4);
+  display: flex;
+  gap: var(--space-2);
+}
+
+.schedule-add__empty-options {
+  margin: 0;
+  color: var(--fg-muted);
+}
+
+.schedule-add__empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.schedule-add__empty h2,
+.schedule-add__empty p {
+  margin: 0;
+}

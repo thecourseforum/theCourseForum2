@@ -24,14 +24,14 @@
       
       <h3 class="text-xl font-semibold mb-2">Welcome to theCourseForum</h3>
       <p class="text-muted text-sm mb-6">
-        Sign in with your UVA account to access reviews, schedules, and more.
+        Sign in to access reviews, schedules, and more.
       </p>
       
       <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn--primary btn--lg btn--full">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
         </svg>
-        Sign in with UVA NetBadge
+        Sign in with UVA Email
       </a>
       
       <p class="text-subtle text-xs mt-4">

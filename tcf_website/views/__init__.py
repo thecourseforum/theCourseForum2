@@ -58,8 +58,11 @@ from .schedule import (
     modal_load_editor,
     modal_load_sections,
     new_schedule,
+    remove_scheduled_course_v2,
     schedule_add_course,
+    schedule_add_course_v2,
     view_schedules,
+    view_schedules_v2,
     view_select_schedules_modal,
 )
 from .search import search

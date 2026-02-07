@@ -1,0 +1,97 @@
+{% extends "v2/base.html" %}
+{% load static %}
+
+{% block title %}Add {{ course.code }} to Schedule | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/v2/pages/schedule.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="schedule-add">
+  <div class="schedule-add__inner">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      {% for item in breadcrumbs %}
+        {% if item.2 %}
+          <span class="breadcrumb__current">{{ item.0 }}</span>
+        {% else %}
+          <a href="{{ item.1 }}" class="breadcrumb__link">{{ item.0 }}</a>
+          <span class="breadcrumb__separator">/</span>
+        {% endif %}
+      {% endfor %}
+    </nav>
+
+    <div class="schedule-add__header">
+      <h1 class="schedule-add__title">Add {{ course.code }} to a Schedule</h1>
+      <p class="schedule-add__subtitle">Select a schedule and lecture section.</p>
+    </div>
+
+    {% if not schedules %}
+    <section class="schedule-add__empty">
+      <h2>Create a schedule first</h2>
+      <p>You need at least one schedule before adding courses.</p>
+      <form method="post" action="{% url 'new_schedule' %}" class="schedule-add__create-form">
+        {% csrf_token %}
+        <input type="hidden" name="user_id" value="{{ new_schedule_user_id }}">
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <input type="text" class="input" name="name" maxlength="15" required placeholder="New schedule name">
+        <button type="submit" class="btn btn--primary btn--sm">Create</button>
+      </form>
+      <a href="{% url 'schedule_v2' %}" class="btn btn--ghost btn--sm">Go to Schedule Builder</a>
+    </section>
+    {% else %}
+    <form method="post" class="schedule-add__form">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next_url|default:default_next_url }}">
+
+      <div class="schedule-add__controls">
+        <label class="schedule-add__label" for="schedule_id">Schedule</label>
+        <select id="schedule_id" name="schedule_id" class="select" required>
+          <option value="">Choose a schedule</option>
+          {% for schedule in schedules %}
+          <option value="{{ schedule.id }}" {% if selected_schedule_id == schedule.id|stringformat:"s" %}selected{% endif %}>
+            {{ schedule.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="schedule-add__options">
+        {% if lecture_options %}
+          {% for option in lecture_options %}
+          <label class="schedule-add-option">
+            <input
+              type="radio"
+              name="selection"
+              value="{{ option.value }}"
+              {% if selected_option == option.value %}checked{% endif %}
+              required
+            >
+            <div class="schedule-add-option__content">
+              <div class="schedule-add-option__row">
+                <strong>{{ option.instructor_name }}</strong>
+                <span>Section {{ option.section_number }}</span>
+              </div>
+              <div class="schedule-add-option__row schedule-add-option__row--meta">
+                <span>{{ option.section_type }}{% if option.section_units %} ({{ option.section_units }} units){% endif %}</span>
+                <span>{{ option.section_time|default:"No time listed" }}</span>
+              </div>
+            </div>
+          </label>
+          {% endfor %}
+        {% else %}
+        <p class="schedule-add__empty-options">No lecture sections are available this semester.</p>
+        {% endif %}
+      </div>
+
+      <div class="schedule-add__actions">
+        <button type="submit" class="btn btn--primary btn--md" {% if not lecture_options %}disabled{% endif %}>
+          Add to Schedule
+        </button>
+        <a href="{{ default_next_url }}" class="btn btn--ghost btn--md">Cancel</a>
+      </div>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

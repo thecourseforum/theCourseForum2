@@ -1,0 +1,174 @@
+{% extends "v2/base.html" %}
+{% load custom_tags %}
+
+{% block title %}Schedule Builder | theCourseForum{% endblock %}
+
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/v2/pages/schedule.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="schedule-v2">
+  <div class="schedule-v2__inner">
+    <div class="schedule-v2__header">
+      <div>
+        <h1 class="schedule-v2__title">Schedule Builder</h1>
+        <p class="schedule-v2__subtitle">Build and compare schedules with a weekly calendar view.</p>
+      </div>
+
+      <form method="post" action="{% url 'new_schedule' %}" class="schedule-v2__create-form">
+        {% csrf_token %}
+        <input type="hidden" name="user_id" value="{{ new_schedule_user_id }}">
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <input
+          type="text"
+          name="name"
+          maxlength="15"
+          required
+          class="input"
+          placeholder="New schedule name"
+          aria-label="New schedule name"
+        >
+        <button type="submit" class="btn btn--primary btn--sm">Create</button>
+      </form>
+    </div>
+
+    <div class="schedule-v2__grid">
+      <aside class="schedule-list">
+        <h2 class="schedule-list__title">Your Schedules</h2>
+
+        {% if schedules %}
+        <div class="schedule-list__items">
+          {% for schedule in schedules %}
+          <article class="schedule-list-card {% if selected_schedule and selected_schedule.id == schedule.id %}is-active{% endif %}">
+            <a href="{% url 'schedule_v2' %}?schedule={{ schedule.id }}" class="schedule-list-card__name">{{ schedule.name }}</a>
+
+            <div class="schedule-list-card__metrics">
+              <div>
+                <span class="schedule-list-card__metric-label">Units</span>
+                <span class="schedule-list-card__metric-value">
+                  {% with units=credits|get_item:schedule.id %}
+                    {% if units %}{{ units }}{% else %}—{% endif %}
+                  {% endwith %}
+                </span>
+              </div>
+              <div>
+                <span class="schedule-list-card__metric-label">Rating</span>
+                <span class="schedule-list-card__metric-value">
+                  {% with rating_value=ratings|get_item:schedule.id %}
+                    {% if rating_value %}{{ rating_value|floatformat:2 }}{% else %}—{% endif %}
+                  {% endwith %}
+                </span>
+              </div>
+              <div>
+                <span class="schedule-list-card__metric-label">GPA</span>
+                <span class="schedule-list-card__metric-value">
+                  {% with gpa_value=schedules_gpa|get_item:schedule.id %}
+                    {% if gpa_value %}{{ gpa_value|floatformat:2 }}{% else %}—{% endif %}
+                  {% endwith %}
+                </span>
+              </div>
+            </div>
+
+            <div class="schedule-list-card__actions">
+              <form method="post" action="{% url 'duplicate_schedule' schedule.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{% url 'schedule_v2' %}?schedule={{ schedule.id }}">
+                <button type="submit" class="btn btn--ghost btn--sm">Duplicate</button>
+              </form>
+              <form method="post" action="{% url 'delete_schedule' %}">
+                {% csrf_token %}
+                <input type="hidden" name="selected_schedules" value="{{ schedule.id }}">
+                <input type="hidden" name="next" value="{% url 'schedule_v2' %}">
+                <button type="submit" class="btn btn--ghost btn--sm schedule-list-card__danger">Delete</button>
+              </form>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="schedule-list__empty">You do not have any schedules yet.</p>
+        {% endif %}
+      </aside>
+
+      <section class="schedule-detail">
+        {% if selected_schedule %}
+        <div class="schedule-detail__header">
+          <form method="post" action="{% url 'edit_schedule' %}" class="schedule-detail__rename-form">
+            {% csrf_token %}
+            <input type="hidden" name="schedule_id" value="{{ selected_schedule.id }}">
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <input
+              type="text"
+              name="schedule_name"
+              value="{{ selected_schedule.name }}"
+              maxlength="15"
+              class="input schedule-detail__name-input"
+              aria-label="Schedule name"
+            >
+            <button type="submit" class="btn btn--secondary btn--sm">Rename</button>
+          </form>
+
+          <div class="schedule-detail__stats">
+            <div>
+              <span>Units</span>
+              <strong>{% if selected_schedule_stats.credits %}{{ selected_schedule_stats.credits }}{% else %}—{% endif %}</strong>
+            </div>
+            <div>
+              <span>Rating</span>
+              <strong>{% if selected_schedule_stats.rating %}{{ selected_schedule_stats.rating|floatformat:2 }}{% else %}—{% endif %}</strong>
+            </div>
+            <div>
+              <span>GPA</span>
+              <strong>{% if selected_schedule_stats.gpa %}{{ selected_schedule_stats.gpa|floatformat:2 }}{% else %}—{% endif %}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="schedule-detail__course-list">
+          {% for course in selected_courses %}
+          <article class="scheduled-course-card">
+            <div class="scheduled-course-card__info">
+              <h3 class="scheduled-course-card__title">{{ course.title }}</h3>
+              <p class="scheduled-course-card__meta">
+                {{ course.instructor|remove_email }} • Section {{ course.section.sis_section_number }}
+              </p>
+              <p class="scheduled-course-card__time">{{ course.time|default:course.section.section_times|default:"No time listed" }}</p>
+            </div>
+
+            <div class="scheduled-course-card__stats">
+              <span>GPA: {% if course.gpa %}{{ course.gpa|floatformat:2 }}{% else %}—{% endif %}</span>
+              <span>Rating: {% if course.total_rating %}{{ course.total_rating|floatformat:2 }}{% else %}—{% endif %}</span>
+            </div>
+
+            <form method="post" action="{% url 'remove_scheduled_course_v2' course.id %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit" class="btn btn--ghost btn--sm scheduled-course-card__remove">Remove</button>
+            </form>
+          </article>
+          {% empty %}
+          <p class="schedule-detail__empty">This schedule has no courses yet.</p>
+          {% endfor %}
+        </div>
+
+        <div class="schedule-detail__calendar">
+          <h2 class="schedule-detail__section-title">Weekly Calendar</h2>
+          {% include "v2/components/_weekly_calendar.html" with calendar=calendar %}
+        </div>
+        {% else %}
+        <div class="schedule-detail__empty-state">
+          <h2>Create your first schedule</h2>
+          <p>Use the form above to create a schedule, then add courses from any v2 course page.</p>
+        </div>
+        {% endif %}
+
+        <p class="schedule-detail__note">
+          Add courses from the course page using “Add to Schedule”. Schedule-page search/autocomplete will be added later and reused for the v2 new-review flow.
+        </p>
+      </section>
+    </div>
+  </div>
+</div>
+{% endblock %}
