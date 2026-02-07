@@ -211,4 +211,4 @@ class Command(BaseCommand):
             )
 
             if not dry_run and idx < len(pairs) - 1:
-                time.sleep(2.0) # avoids rate limits 
+                time.sleep(4.0) # avoids rate limits
