@@ -103,12 +103,45 @@
           <span class="rating-row__value rating-row__value--muted recommend-num">—</span>
         </div>
         
-        <div class="rating-row">
-          <span class="rating-row__label">Hours/Week</span>
+        <div class="ratings-panel__divider"></div>
+        <div class="ratings-panel__subheading-row">
+          <p class="ratings-panel__subheading">Weekly Breakdown</p>
+          <span class="ratings-panel__hours-summary">
+            <span class="ratings-panel__hours-value hours-num">—</span>
+            <span class="ratings-panel__hours-unit">hrs/wk</span>
+          </span>
+        </div>
+
+        <div class="rating-row rating-row--compact">
+          <span class="rating-row__label">Reading</span>
           <div class="rating-row__bar">
-            <div class="rating-row__fill rating-row__fill--warning hours-bar" style="width: 0%"></div>
+            <div class="rating-row__fill rating-row__fill--warning reading-bar" style="width: 0%"></div>
           </div>
-          <span class="rating-row__value rating-row__value--muted hours-num">—</span>
+          <span class="rating-row__value rating-row__value--muted reading-num">—</span>
+        </div>
+
+        <div class="rating-row rating-row--compact">
+          <span class="rating-row__label">Writing</span>
+          <div class="rating-row__bar">
+            <div class="rating-row__fill rating-row__fill--warning writing-bar" style="width: 0%"></div>
+          </div>
+          <span class="rating-row__value rating-row__value--muted writing-num">—</span>
+        </div>
+
+        <div class="rating-row rating-row--compact">
+          <span class="rating-row__label">Groupwork</span>
+          <div class="rating-row__bar">
+            <div class="rating-row__fill rating-row__fill--warning group-bar" style="width: 0%"></div>
+          </div>
+          <span class="rating-row__value rating-row__value--muted group-num">—</span>
+        </div>
+
+        <div class="rating-row rating-row--compact">
+          <span class="rating-row__label">Other</span>
+          <div class="rating-row__bar">
+            <div class="rating-row__fill rating-row__fill--warning homework-bar" style="width: 0%"></div>
+          </div>
+          <span class="rating-row__value rating-row__value--muted homework-num">—</span>
         </div>
       </div>
     </div>
@@ -197,20 +230,10 @@
     {% endif %}
   </div>
   
-  <!-- Tabs -->
-  <div class="content-tabs">
-    <button class="content-tab is-active" data-tab="reviews">Reviews</button>
-    <button class="content-tab" data-tab="qa">
-      Q&A
-      <span class="content-tab__badge">New</span>
-    </button>
-  </div>
-  
-  <!-- Reviews Tab -->
-  <div class="tab-content is-active" id="tab-reviews">
-    <div class="reviews-header" id="reviews">
+  <section class="reviews-section" id="reviews">
+    <div class="reviews-header">
       <h2 class="reviews-header__title">{{ num_reviews }} Review{{ num_reviews|pluralize }}</h2>
-      
+
       <div class="reviews-header__actions">
         {% if user.is_authenticated %}
         <a href="{% url 'new_review_v2' %}?course={{ course.id }}&instructor={{ instructor.id }}" class="btn btn--primary btn--md add-review-btn">
@@ -229,7 +252,7 @@
           Add Review
         </a>
         {% endif %}
-        
+
         {% if paginated_reviews and num_reviews > 0 %}
         <select class="select reviews-sort-select" id="review-sort" aria-label="Sort reviews">
           <option value="">Sort by...</option>
@@ -241,7 +264,7 @@
         {% endif %}
       </div>
     </div>
-    
+
     <div id="reviews-results">
     {% if paginated_reviews and num_reviews > 0 %}
     {% for review in paginated_reviews %}
@@ -253,7 +276,7 @@
           <span>Grade: {{ review.grade }}</span>
           {% endif %}
         </div>
-        
+
         <div class="review-card__ratings">
           <div class="review-rating">
             <div class="review-rating__value">{{ review.average|floatformat:1 }}</div>
@@ -261,7 +284,7 @@
           </div>
         </div>
       </div>
-      
+
       {% if review.text %}
       <p class="review-card__text">{{ review.text }}</p>
       {% endif %}
@@ -288,44 +311,43 @@
           <span class="review-category__value">{{ review.hours_per_week|floatformat:1 }}</span>
         </div>
       </div>
-      
+
       <div class="review-card__footer">
         <div class="review-card__votes">
-          <button class="vote-btn {% if review.user_vote > 0 %}is-active{% endif %}" 
+          <button class="vote-btn {% if review.user_vote > 0 %}is-active{% endif %}"
                   type="button"
-                  data-action="upvote" 
+                  data-action="upvote"
                   data-review="{{ review.id }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="m5 15 7-7 7 7"/>
             </svg>
             <span>{{ review.sum_votes|default:0 }}</span>
           </button>
-          <button class="vote-btn {% if review.user_vote < 0 %}is-active{% endif %}" 
+          <button class="vote-btn {% if review.user_vote < 0 %}is-active{% endif %}"
                   type="button"
-                  data-action="downvote" 
+                  data-action="downvote"
                   data-review="{{ review.id }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="m19 9-7 7-7-7"/>
             </svg>
           </button>
         </div>
-        
+
         <span class="review-card__date">{{ review.created }}</span>
       </div>
     </article>
     {% endfor %}
-    
-    <!-- Pagination -->
+
     {% if paginated_reviews.has_other_pages %}
     <nav class="pagination">
       {% if paginated_reviews.has_previous %}
       <a href="?page={{ paginated_reviews.previous_page_number }}{% if sort_method and sort_method != 'Default' %}&sort={{ sort_method|urlencode }}{% endif %}#reviews" class="pagination__item">← Previous</a>
       {% endif %}
-      
+
       <span class="pagination__item pagination__status">
         Page {{ paginated_reviews.number }} of {{ paginated_reviews.paginator.num_pages }}
       </span>
-      
+
       {% if paginated_reviews.has_next %}
       <a href="?page={{ paginated_reviews.next_page_number }}{% if sort_method and sort_method != 'Default' %}&sort={{ sort_method|urlencode }}{% endif %}#reviews" class="pagination__item">Next →</a>
       {% endif %}
@@ -358,20 +380,7 @@
     </div>
     {% endif %}
     </div>
-  </div>
-  
-  <!-- Q&A Tab (placeholder) -->
-  <div class="tab-content" id="tab-qa">
-    <div class="reviews-empty">
-      <svg class="reviews-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"></circle>
-        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-      </svg>
-      <h3 class="reviews-empty__title">Questions & Answers</h3>
-      <p class="reviews-empty__text">Q&A feature coming soon in the v2 redesign.</p>
-    </div>
-  </div>
+  </section>
 </div>
 
 {% endblock %}
@@ -380,19 +389,6 @@
 <script src="{% static 'js/v2/review_votes.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Tab switching
-document.querySelectorAll('.content-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    // Update tabs
-    document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('is-active'));
-    tab.classList.add('is-active');
-    
-    // Update content
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('is-active'));
-    document.getElementById('tab-' + tab.dataset.tab).classList.add('is-active');
-  });
-});
-
 // Sort dropdown
 const sortSelect = document.getElementById('review-sort');
 const reviewsResults = document.getElementById('reviews-results');
@@ -469,20 +465,55 @@ if (data) {
     { key: 'enjoyability', bar: '.fun-bar', num: '.fun-num' },
     { key: 'difficulty', bar: '.difficulty-bar', num: '.difficulty-num' },
     { key: 'recommendability', bar: '.recommend-bar', num: '.recommend-num' },
-    { key: 'hours', bar: '.hours-bar', num: '.hours-num' },
   ];
   
   ratings.forEach(({ key, bar, num }) => {
-    const value = data[key];
-    if (value !== null && value !== undefined) {
-      const barEl = document.querySelector(bar);
-      const numEl = document.querySelector(num);
-      if (barEl && numEl) {
-        barEl.style.width = (value / 5 * 100) + '%';
-        numEl.textContent = value.toFixed(1);
-        numEl.classList.remove('rating-row__value--muted');
-      }
+    const value = Number(data[key]);
+    if (!Number.isFinite(value)) {
+      return;
     }
+
+    const barEl = document.querySelector(bar);
+    const numEl = document.querySelector(num);
+    if (!barEl || !numEl) {
+      return;
+    }
+
+    barEl.style.width = Math.max(0, Math.min(100, (value / 5) * 100)) + '%';
+    numEl.textContent = value.toFixed(1);
+    numEl.classList.remove('rating-row__value--muted');
+  });
+
+  const workloadRows = [
+    { key: 'amount_reading', bar: '.reading-bar', num: '.reading-num' },
+    { key: 'amount_writing', bar: '.writing-bar', num: '.writing-num' },
+    { key: 'amount_group', bar: '.group-bar', num: '.group-num' },
+    { key: 'amount_homework', bar: '.homework-bar', num: '.homework-num' },
+  ];
+  const totalHours = Number(data.hours);
+  const totalHoursEl = document.querySelector('.hours-num');
+  if (totalHoursEl && Number.isFinite(totalHours)) {
+    totalHoursEl.textContent = totalHours.toFixed(1);
+    totalHoursEl.classList.remove('rating-row__value--muted');
+  }
+
+  workloadRows.forEach(({ key, bar, num }) => {
+    const value = Number(data[key]);
+    if (!Number.isFinite(value)) {
+      return;
+    }
+
+    const barEl = document.querySelector(bar);
+    const numEl = document.querySelector(num);
+    if (!barEl || !numEl) {
+      return;
+    }
+
+    if (Number.isFinite(totalHours) && totalHours > 0) {
+      barEl.style.width = Math.max(0, Math.min(100, (value / totalHours) * 100)) + '%';
+    }
+    numEl.textContent = value.toFixed(1);
+    numEl.classList.remove('rating-row__value--muted');
   });
 
   // Grades Chart

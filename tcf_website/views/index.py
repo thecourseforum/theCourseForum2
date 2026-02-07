@@ -61,9 +61,19 @@ def privacy(request):
     return render(request, "about/privacy.html")
 
 
+def privacy_v2(request):
+    """V2 Privacy view."""
+    return render(request, "v2/pages/privacy.html")
+
+
 def terms(request):
     """Terms view."""
     return render(request, "about/terms.html")
+
+
+def terms_v2(request):
+    """V2 Terms view."""
+    return render(request, "v2/pages/terms.html")
 
 
 class AboutView(TemplateView):

@@ -11,6 +11,7 @@ from django.db.models import Avg, Count, Q
 from django.forms import ModelForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.urls import reverse_lazy
 from django.views import generic
 
@@ -121,6 +122,17 @@ class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView)
 
     model = User
     success_url = reverse_lazy("browse")
+
+    def get_success_url(self):
+        """Use caller-provided next URL when safe, otherwise pick v2-aware default."""
+        next_url = self.request.POST.get("next") or self.request.GET.get("next")
+        if next_url and url_has_allowed_host_and_scheme(
+            next_url,
+            allowed_hosts={self.request.get_host()},
+            require_https=self.request.is_secure(),
+        ):
+            return next_url
+        return str(self.success_url)
 
     def form_valid(self, form):
         """Override DeleteView's function to just call logout before deleting"""

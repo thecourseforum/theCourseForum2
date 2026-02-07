@@ -729,6 +729,10 @@ def course_instructor_v2(request, course_id, instructor_id, method="Default"):
         difficulty=Avg("difficulty"),
         recommendability=Avg("recommendability"),
         hours=Avg("hours_per_week"),
+        amount_reading=Avg("amount_reading"),
+        amount_writing=Avg("amount_writing"),
+        amount_group=Avg("amount_group"),
+        amount_homework=Avg("amount_homework"),
     )
     for key, value in data.items():
         if value is not None:

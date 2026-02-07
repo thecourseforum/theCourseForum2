@@ -20,7 +20,16 @@ from .browse import (
     club_category_v2,
     club_view_v2,
 )
-from .index import AboutView, AboutViewV2, index, index_v2, privacy, terms
+from .index import (
+    AboutView,
+    AboutViewV2,
+    index,
+    index_v2,
+    privacy,
+    privacy_v2,
+    terms,
+    terms_v2,
+)
 from .profile import DeleteProfile, profile, profile_v2, reviews, reviews_v2
 from .qa import (
     DeleteAnswer,

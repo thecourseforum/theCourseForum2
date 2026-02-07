@@ -109,6 +109,7 @@
       <button class="btn btn--secondary" data-action="close-modal">Cancel</button>
       <form method="POST" action="{% url 'delete_profile' user.id %}">
         {% csrf_token %}
+        <input type="hidden" name="next" value="{% url 'browse_v2' %}">
         <button type="submit" class="btn-danger">Yes, Delete My Profile</button>
       </form>
     </div>
