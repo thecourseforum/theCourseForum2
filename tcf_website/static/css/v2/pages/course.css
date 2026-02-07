@@ -249,40 +249,22 @@
   min-width: 0;
 }
 
+.instructor-card__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
 .instructor-card__name {
   font-size: var(--text-lg);
   font-weight: var(--font-semibold);
-  margin-bottom: var(--space-1);
 }
 
-.instructor-card__meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-4);
-  
+.instructor-card__semester {
   font-size: var(--text-sm);
   color: var(--fg-muted);
-}
-
-.instructor-card__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  
-  padding: var(--space-1) var(--space-2);
-  
-  font-size: var(--text-xs);
-  font-weight: var(--font-medium);
-  
-  background-color: var(--color-primary-50);
-  color: var(--primary);
-  
-  border-radius: var(--radius-md);
-}
-
-[data-theme="dark"] .instructor-card__badge {
-  background-color: rgba(59, 130, 246, 0.15);
 }
 
 .instructor-card__ratings {
@@ -313,9 +295,6 @@
   gap: var(--space-2);
   
   margin-top: var(--space-2);
-  max-height: 5.75rem;
-  overflow-y: auto;
-  padding-right: var(--space-1);
 }
 
 .section-time {

@@ -253,6 +253,8 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-2xl);
   
+  display: flex;
+  flex-direction: column;
   padding: var(--space-6);
   min-height: 0;
 }
@@ -290,9 +292,16 @@
 }
 
 .sections-panel__list {
-  max-height: 31rem;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding-right: var(--space-2);
+}
+
+@media (min-width: 1280px) {
+  .sections-panel {
+    height: 23rem;
+  }
 }
 
 
@@ -474,7 +483,7 @@
 
 .reviews-header__actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: var(--space-3);
 }
@@ -598,40 +607,18 @@
 
 /* ===== ADD REVIEW BUTTON ===== */
 
-.add-review-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  
-  padding: var(--space-3) var(--space-5);
-  
-  font-size: var(--text-base);
-  font-weight: var(--font-semibold);
-  
-  background-color: var(--warning);
-  color: var(--color-gray-900);
-  
-  border: none;
-  border-radius: var(--radius-xl);
-  
-  cursor: pointer;
-  
-  transition: background-color var(--duration-fast) var(--ease-default);
-}
-
-.add-review-btn:hover {
-  background-color: var(--color-warning-400);
-  text-decoration: none;
-  color: var(--color-gray-900);
-}
-
 .add-review-btn svg {
   width: 1rem;
   height: 1rem;
 }
 
 .reviews-sort-select {
-  min-width: 10.5rem;
+  width: 11rem;
+  flex-shrink: 0;
+}
+
+.add-review-btn {
+  flex-shrink: 0;
 }
 
 .pagination__status {

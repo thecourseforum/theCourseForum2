@@ -3,25 +3,25 @@
 <header class="header">
   <div class="header__inner">
     <!-- Logo -->
-    <a href="{% url 'index' %}" class="header__logo">
+    <a href="{% url 'index_v2' %}" class="header__logo">
       <img src="{% static 'base/img/new_logo.svg' %}" alt="theCourseForum" class="header__logo-icon">
       <span class="header__logo-text">theCourseForum</span>
     </a>
     
     <!-- Navigation -->
     <nav class="header__nav">
-      <a href="{% url 'browse' %}" class="header__nav-link {% if request.resolver_match.url_name == 'browse' %}is-active{% endif %}">
+      <a href="{% url 'browse_v2' %}" class="header__nav-link {% if request.resolver_match.url_name == 'browse_v2' %}is-active{% endif %}">
         Browse
       </a>
       {% if user.is_authenticated %}
       <a href="{% url 'schedule' %}" class="header__nav-link {% if request.resolver_match.url_name == 'schedule' %}is-active{% endif %}">
         Schedule
       </a>
-      <a href="{% url 'new_review' %}" class="header__nav-link {% if request.resolver_match.url_name == 'new_review' %}is-active{% endif %}">
-        Write Review
+      <a href="{% url 'new_review_v2' %}" class="header__nav-link {% if request.resolver_match.url_name == 'new_review_v2' %}is-active{% endif %}">
+        Review
       </a>
       {% endif %}
-      <a href="{% url 'about' %}" class="header__nav-link {% if request.resolver_match.url_name == 'about' %}is-active{% endif %}">
+      <a href="{% url 'about_v2' %}" class="header__nav-link {% if request.resolver_match.url_name == 'about_v2' %}is-active{% endif %}">
         About
       </a>
     </nav>
@@ -72,7 +72,7 @@
           </svg>
         </button>
         <div class="dropdown__menu dropdown__menu--right">
-          <a href="{% url 'profile' %}" class="dropdown__item">
+          <a href="{% url 'profile_v2' %}" class="dropdown__item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>

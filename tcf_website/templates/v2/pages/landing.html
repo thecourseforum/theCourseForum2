@@ -17,6 +17,7 @@
 <!-- Hero Section -->
 <section class="hero">
   <div class="hero__content">
+    <img src="{% static 'base/img/new_logo.svg' %}" alt="theCourseForum logo" class="hero__logo">
 
     
     <h1 class="hero__title">
@@ -62,7 +63,7 @@
         Browse departments, discover new classes, and find courses 
         that match your interests and requirements.
       </p>
-      <a href="{% url 'browse' %}" class="feature-card__link">
+      <a href="{% url 'browse_v2' %}" class="feature-card__link">
         Browse courses
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M5 12h14M12 5l7 7-7 7"></path>
@@ -106,7 +107,7 @@
         Help fellow Wahoos by writing reviews. Your insights 
         help build a stronger community.
       </p>
-      <a href="{% url 'new_review' %}" class="feature-card__link">
+      <a href="{% url 'new_review_v2' %}" class="feature-card__link">
         Write a review
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M5 12h14M12 5l7 7-7 7"></path>
@@ -206,7 +207,7 @@
       to make smarter course decisions.
     </p>
     <div class="flex justify-center gap-4">
-      <a href="{% url 'browse' %}" class="btn btn--secondary btn--lg">
+      <a href="{% url 'browse_v2' %}" class="btn btn--secondary btn--lg">
         Browse Courses
       </a>
       {% if not user.is_authenticated %}

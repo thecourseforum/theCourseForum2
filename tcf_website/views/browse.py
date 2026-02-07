@@ -240,6 +240,48 @@ def parse_mode(request):
     return mode, (mode == "clubs")
 
 
+def _is_lecture_section(section_type: str | None) -> bool:
+    """Return True when a section type should be treated as lecture."""
+    if not section_type:
+        return True
+    normalized = section_type.strip().lower()
+    return normalized.startswith("lec") or "lecture" in normalized
+
+
+def _split_section_times(section_times: str) -> list[str]:
+    """Convert comma-separated section times into a clean list."""
+    if not section_times:
+        return []
+    return [entry.strip() for entry in section_times.rstrip(",").split(",") if entry.strip()]
+
+
+def _build_lecture_times_by_instructor(course_id: int, semester: Semester) -> dict[int, dict[str, list[str]]]:
+    """Build mapping of instructor ID to lecture section numbers/times for a course."""
+    lecture_times_by_instructor: dict[int, dict[str, list[str]]] = {}
+
+    sections = (
+        Section.objects.filter(course_id=course_id, semester=semester)
+        .prefetch_related("instructors")
+        .order_by("sis_section_number")
+    )
+
+    for section in sections:
+        if not _is_lecture_section(section.section_type):
+            continue
+
+        times = _split_section_times(section.section_times)
+        if not times:
+            continue
+
+        section_number = str(section.sis_section_number)
+        for section_instructor in section.instructors.all():
+            lecture_times_by_instructor.setdefault(section_instructor.id, {})[
+                section_number
+            ] = times
+
+    return lecture_times_by_instructor
+
+
 def course_view(
     request,
     mnemonic: str,
@@ -429,19 +471,15 @@ def course_view_v2(request, mnemonic: str, course_number: int, instructor_recenc
                 s for s in instructor.section_nums if s is not None
             ]
 
+    lecture_times_by_instructor = _build_lecture_times_by_instructor(
+        course.id, latest_semester
+    )
+
     for instructor in instructors:
         instructor.semester_last_taught = str(
             get_object_or_404(Semester, pk=instructor.semester_last_taught)
         )
-        if instructor.section_times and instructor.section_nums:
-            if instructor.section_times[0] and instructor.section_nums[0]:
-                instructor.times = {
-                    num: times[:-1].split(",")
-                    for num, times in zip(
-                        instructor.section_nums, instructor.section_times
-                    )
-                    if num and times
-                }
+        instructor.times = lecture_times_by_instructor.get(instructor.id, {})
 
     dept = course.subdepartment.department
 
@@ -716,6 +754,9 @@ def course_instructor_v2(request, course_id, instructor_id, method="Default"):
         ).order_by("sis_section_number")
 
         for section in sections_qs:
+            if not _is_lecture_section(section.section_type):
+                continue
+
             times_display = ""
             if section.section_times:
                 times_display = section.section_times.rstrip(",")
@@ -723,7 +764,7 @@ def course_instructor_v2(request, course_id, instructor_id, method="Default"):
             sections.append(
                 {
                     "number": section.sis_section_number,
-                    "type": section.section_type or "Lecture",
+                    "type": "Lecture",
                     "units": section.units,
                     "times": times_display,
                     "enrollment_taken": section.enrollment_taken or 0,

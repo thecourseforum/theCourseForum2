@@ -1,28 +1,9 @@
 {# Instructor Card Component #}
 <a href="{% url 'course_instructor_v2' course_id=course.pk instructor_id=instructor.pk %}" class="instructor-card">
   <div class="instructor-card__main">
-    <h3 class="instructor-card__name">{{ instructor.full_name }}</h3>
-    
-    <div class="instructor-card__meta">
-      <span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
-        </svg>
-        {{ instructor.semester_last_taught }}
-      </span>
-      
-      {% if instructor.semester_last_taught == latest_semester %}
-      <span class="instructor-card__badge">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <polyline points="12 6 12 12 16 14"></polyline>
-        </svg>
-        Teaching Now
-      </span>
-      {% endif %}
+    <div class="instructor-card__title-row">
+      <h3 class="instructor-card__name">{{ instructor.full_name }}</h3>
+      <span class="instructor-card__semester">{{ instructor.semester_last_taught }}</span>
     </div>
     
     {% if instructor.times %}

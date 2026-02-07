@@ -64,6 +64,11 @@
   margin: 0 auto;
 }
 
+.hero__logo {
+  width: clamp(128px, 18vw, 232px);
+  height: auto;
+  margin: 0 auto var(--space-5);
+}
 
 
 .hero__title {
