@@ -210,7 +210,7 @@ def _build_club_page_context(request, club: Club, mode: str):
         ("Clubs", reverse("browse") + "?mode=clubs", False),
         (
             club.category.name,
-            reverse("club_category", args=[club.category.slug]),
+            reverse("club_category", args=[club.category.slug]) + "?mode=clubs",
             False,
         ),
         (club.name, None, True),
@@ -504,7 +504,7 @@ def safe_round(num):
 
 def club_category(request, category_slug: str):
     """View for club category page."""
-    mode = parse_mode(request)[0]
+    mode = "clubs"
     category = get_object_or_404(ClubCategory, slug=category_slug.upper())
     clubs = Club.objects.filter(category=category).order_by("name")
 
@@ -537,7 +537,7 @@ def club_category(request, category_slug: str):
 
 def club_view(request, category_slug: str, club_id: int):
     """View for club detail page."""
-    mode = parse_mode(request)[0]
+    mode = "clubs"
     club = get_object_or_404(Club, id=club_id, category__slug=category_slug.upper())
     return render(
         request,

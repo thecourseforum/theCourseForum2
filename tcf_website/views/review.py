@@ -9,6 +9,7 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.urls import reverse_lazy
 from django.views import generic
 from django.views.decorators.http import require_POST
@@ -251,10 +252,15 @@ def new_review(request):
 
             # Redirect to the new relevant page
             if instance.club:
-                return redirect(
+                club_url = reverse(
                     "club",
-                    category_slug=instance.club.category.slug,
-                    club_id=instance.club.id,
+                    kwargs={
+                        "category_slug": instance.club.category.slug,
+                        "club_id": instance.club.id,
+                    },
+                )
+                return redirect(
+                    f"{club_url}?mode=clubs"
                 )
             return redirect(
                 "course",

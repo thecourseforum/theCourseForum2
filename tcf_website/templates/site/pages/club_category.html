@@ -32,7 +32,7 @@
   {% if paginated_clubs %}
   <div class="club-list">
     {% for club in paginated_clubs %}
-    <a href="{% url 'club' category_slug=category.slug club_id=club.id %}" class="club-list-card">
+    <a href="{% url 'club' category_slug=category.slug club_id=club.id %}?mode=clubs" class="club-list-card">
       <h3 class="club-list-card__title">{{ club.name }}</h3>
       <p class="club-list-card__description">
         {% if club.description %}

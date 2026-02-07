@@ -101,7 +101,7 @@ Search | theCourseForum
     {% for category_slug, category_data in grouped.items %}
     <section class="search-group">
       <h3 class="search-group__title">
-        <a href="{% url 'club_category' category_slug=category_data.category_slug %}">
+        <a href="{% url 'club_category' category_slug=category_data.category_slug %}?mode=clubs">
           {{ category_data.category_name }}
         </a>
       </h3>
@@ -109,7 +109,7 @@ Search | theCourseForum
       <div class="search-result-list">
         {% for club in category_data.clubs %}
         <article class="search-result-card">
-          <a class="search-result-card__link" href="{% url 'club' category_slug=category_data.category_slug club_id=club.id %}">
+          <a class="search-result-card__link" href="{% url 'club' category_slug=category_data.category_slug club_id=club.id %}?mode=clubs">
             <span class="search-result-card__title">{{ club.name }}</span>
           </a>
           <p class="search-result-card__description">

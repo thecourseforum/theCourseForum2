@@ -166,7 +166,7 @@
       {% if paginated_reviews.has_other_pages %}
       <nav class="pagination">
         {% if paginated_reviews.has_previous %}
-        <a href="?page={{ paginated_reviews.previous_page_number }}{% if sort_method %}&sort={{ sort_method|urlencode }}{% endif %}#reviews" class="pagination__item">← Previous</a>
+        <a href="?mode=clubs&page={{ paginated_reviews.previous_page_number }}{% if sort_method %}&sort={{ sort_method|urlencode }}{% endif %}#reviews" class="pagination__item">← Previous</a>
         {% endif %}
 
         <span class="pagination__item pagination__status">
@@ -174,7 +174,7 @@
         </span>
 
         {% if paginated_reviews.has_next %}
-        <a href="?page={{ paginated_reviews.next_page_number }}{% if sort_method %}&sort={{ sort_method|urlencode }}{% endif %}#reviews" class="pagination__item">Next →</a>
+        <a href="?mode=clubs&page={{ paginated_reviews.next_page_number }}{% if sort_method %}&sort={{ sort_method|urlencode }}{% endif %}#reviews" class="pagination__item">Next →</a>
         {% endif %}
       </nav>
       {% endif %}

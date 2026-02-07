@@ -6,6 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const gpaSlider = container.querySelector('input[name="min_gpa"]');
 
     const updateActiveState = () => {
+      if (!toggle) {
+        return;
+      }
+
       let hasActiveFilters = false;
 
       container
@@ -26,9 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
         hasActiveFilters = true;
       }
 
-      if (!toggle) {
-        return;
-      }
       toggle.classList.toggle("is-active-filter", hasActiveFilters);
     };
 
@@ -41,6 +42,12 @@ document.addEventListener("DOMContentLoaded", () => {
           .forEach((openDropdown) => {
             if (openDropdown !== dropdown) {
               openDropdown.classList.remove("is-open");
+              const openTrigger = openDropdown
+                .closest(".search-bar-container")
+                ?.querySelector(".search-bar__filter-trigger");
+              if (openTrigger) {
+                openTrigger.classList.remove("is-active");
+              }
             }
           });
 
@@ -99,11 +106,14 @@ document.addEventListener("DOMContentLoaded", () => {
         form.reset();
 
         if (gpaSlider) {
+          gpaSlider.value = "0.0";
           const valueDisplay =
             gpaSlider.parentElement.querySelector(".gpa-value-display");
           if (valueDisplay) {
             valueDisplay.textContent = "0.0";
           }
+          gpaSlider.dispatchEvent(new Event("input", { bubbles: true }));
+          gpaSlider.dispatchEvent(new Event("change", { bubbles: true }));
         }
 
         searchInputs.forEach((input) => {
