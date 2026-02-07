@@ -37,38 +37,6 @@ def _review_stats_for_user(user):
     return {key: safe_round(value) for key, value in merged.items()}
 
 
-class ProfileFormLegacy(ModelForm):
-    """Form updating user profile."""
-
-    class Meta:
-        model = User
-        fields = ["first_name", "last_name", "graduation_year"]
-
-        # Add the form-control class to make the form work with Bootstrap
-        widgets = {
-            "first_name": forms.TextInput(attrs={"class": "form-control"}),
-            "last_name": forms.TextInput(attrs={"class": "form-control"}),
-            "graduation_year": forms.NumberInput(attrs={"class": "form-control"}),
-        }
-
-
-@login_required
-def profile_legacy(request):
-    """User profile view."""
-    if request.method == "POST":
-        form = ProfileFormLegacy(request.POST, label_suffix="", instance=request.user)
-
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Your profile was updated successfully!")
-        else:
-            messages.error(request, form.errors)
-        return HttpResponseRedirect("/profile")
-
-    form = ProfileFormLegacy(label_suffix="", instance=request.user)
-    return render(request, "profile/profile.html", {"form": form})
-
-
 class ProfileForm(ModelForm):
     """Form for profile page."""
 
@@ -97,13 +65,6 @@ def profile(request):
 
     form = ProfileForm(label_suffix="", instance=request.user)
     return render(request, "site/pages/profile.html", {"form": form})
-
-
-@login_required
-def reviews_legacy(request):
-    """User reviews view."""
-    stats = _review_stats_for_user(request.user)
-    return render(request, "reviews/user_reviews.html", context=stats)
 
 
 @login_required

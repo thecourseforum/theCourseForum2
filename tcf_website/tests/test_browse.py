@@ -12,21 +12,15 @@ class CourseViewTestCase(TestCase):
     def setUp(self):
         setup(self)
 
-    @suppress_request_warnings
-    def test_legacy_course_url_404(self):
-        """Test if the legacy course view can handle wrong URLs"""
-        url = reverse("course_legacy", args=[999999])
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
-
-    def test_legacy_course_url_redirect(self):
-        """Test if the legacy course view can handle redirects"""
-        url = reverse("course_legacy", args=[self.course.id])
-        response = self.client.get(url)
-        self.assertRedirects(response, "/course/CS/1420/")
-
     def test_redirect_lowercase_mnemonic(self):
         """Test if course page URLs with lowercase mnemonics are redirected"""
         url = reverse("course", args=["cs", 1421])
         response = self.client.get(url)
         self.assertRedirects(response, "/course/CS/1421/")
+
+    @suppress_request_warnings
+    def test_unknown_course_returns_404(self):
+        """Unknown course should return 404."""
+        url = reverse("course", args=["CS", 9999])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)

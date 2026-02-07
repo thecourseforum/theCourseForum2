@@ -10,7 +10,6 @@ from .browse import (
     club_view,
     course_instructor,
     course_view,
-    course_view_lookup_legacy,
     department,
     instructor_view,
 )
@@ -44,12 +43,9 @@ from .schedule import (
     delete_schedule,
     duplicate_schedule,
     edit_schedule,
-    modal_load_editor,
-    modal_load_sections,
     new_schedule,
     remove_scheduled_course,
     schedule_add_course,
     view_schedules,
-    view_select_schedules_modal,
 )
 from .search import search
