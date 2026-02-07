@@ -31,7 +31,7 @@
       <div class="department-toolbar__filters">
         <!-- Recency Toggle -->
         <div class="recency-toggle">
-          <a href="?sortby={{ sortby }}&order={{ order }}" 
+          <a href="{% url 'department' dept_id=dept_id %}?sortby={{ sortby }}&order={{ order }}" 
              class="recency-toggle__option {% if active_course_recency == latest_semester %}is-active{% endif %}">
             Current Semester
           </a>
