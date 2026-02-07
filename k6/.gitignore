@@ -1,0 +1,11 @@
+# k6 output files
+result.json
+*.har
+summary.html
+summary.json
+
+# Local config overrides
+config.local.js
+
+# k6 cloud token
+.k6cloud
