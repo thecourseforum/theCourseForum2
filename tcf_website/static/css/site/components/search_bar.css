@@ -219,6 +219,8 @@
 
 /* Responsive adjustment */
 @media (max-width: 768px) {
+  .search-bar__filter-trigger { display: none; }
+
   .search-filters {
     position: fixed;
     top: 4rem;
