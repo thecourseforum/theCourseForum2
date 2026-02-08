@@ -17,6 +17,7 @@ from .models import (
     Instructor,
     Question,
     Review,
+    ReviewLLMSummary,
     Schedule,
     ScheduledCourse,
     School,
