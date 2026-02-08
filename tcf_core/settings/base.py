@@ -69,13 +69,13 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-                "tcf_core.context_processors.base",
-                "tcf_core.context_processors.searchbar_context",
-            ],
+"django.template.context_processors.debug",
+"django.template.context_processors.request",
+"django.contrib.auth.context_processors.auth",
+"django.contrib.messages.context_processors.messages",
+"tcf_core.context_processors.base",
+"tcf_core.context_processors.searchbar_context",
+],
         },
     },
 ]
@@ -182,3 +182,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Toxicity threshold for filtering reviews
 TOXICITY_THRESHOLD = 74
+
+# Presence / Calendar feature
+PRESENCE_SUBDOMAIN = env.str("PRESENCE_SUBDOMAIN", default="virginia")
+PRESENCE_TIMEOUT_SECONDS = env.int("PRESENCE_TIMEOUT_SECONDS", default=8)
+PRESENCE_CACHE_SECONDS = env.int("PRESENCE_CACHE_SECONDS", default=300)

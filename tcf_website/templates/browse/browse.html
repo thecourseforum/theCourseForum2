@@ -39,11 +39,15 @@
         </div>
         {% else %}
         <div class="schools text-left">
-            {% include "browse/school.html" with school=CLAS %}
-            {% include "browse/school.html" with school=SEAS %}
-            {% for school in other_schools %}
-                {% include "browse/school.html" with school=school %}
-            {% endfor %}
+            {% if schools_loaded %}
+                {% if CLAS %}{% include "browse/school.html" with school=CLAS %}{% endif %}
+                {% if SEAS %}{% include "browse/school.html" with school=SEAS %}{% endif %}
+                {% for school in other_schools %}
+                    {% include "browse/school.html" with school=school %}
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">Course browse data is not loaded. For local development, load the database dump (see <code>doc/dev.md</code>). You can browse <a href="?mode=clubs">Clubs</a> instead.</p>
+            {% endif %}
         </div>
         {% endif %}
     </div>

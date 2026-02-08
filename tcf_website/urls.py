@@ -123,4 +123,6 @@ urlpatterns = [
     path("login/", views.auth.login, name="login"),
     path("cognito-callback/", views.auth.cognito_callback, name="cognito_callback"),
     path("logout/", views.auth.logout, name="logout"),
+    path("clubs/calendar/", views.calendar_overview, name="calendar_overview"),
+    path("clubs/calendar/event/<str:event_uri>/", views.event_detail, name="event_detail"),
 ]
