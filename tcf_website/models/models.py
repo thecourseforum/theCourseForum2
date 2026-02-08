@@ -1,3 +1,4 @@
+# pylint: disable=missing-class-docstring, wildcard-import, fixme, too-many-lines
 """TCF Database models."""
 
 from decimal import Decimal
