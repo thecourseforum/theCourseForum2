@@ -8,7 +8,9 @@ from django.shortcuts import render
 class GameForm(forms.Form):
     # fields to be submitted during a guess
     dept = forms.CharField(max_length=4)
-    course_number = forms.IntegerField(max_digits=4)
+    course_number = (
+        forms.IntegerField()
+    )  # got rid of max_digits=4... was messing up view
     rating = forms.DecimalField(
         max_digits=3, decimal_places=2, validators=[MaxValueValidator(5)]
     )
@@ -20,8 +22,8 @@ class GameForm(forms.Form):
 def game(request):
     if request.method == "GET":
         # fetch review - check doc for details
-        return render(request, "game.html")
+        return render(request, "game/game.html")
     elif request.method == "POST":
         # process guess
         # use ajax to get feedback information (correctness of guesses) to display on page
-        return render(request, "game.html")
+        return render(request, "game/game.html")

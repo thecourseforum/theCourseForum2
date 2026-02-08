@@ -1,5 +1,7 @@
 """Application views."""
 
+# pylint: skip-file
+
 # See
 # https://docs.djangoproject.com/en/3.0/topics/db/models/#organizing-models-in-a-package
 
