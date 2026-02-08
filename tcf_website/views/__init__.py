@@ -6,13 +6,14 @@
 from .auth import login, logout
 from .browse import (
     browse,
+    club_category,
     course_instructor,
     course_view,
     course_view_legacy,
     department,
     instructor_view,
-    club_category,
 )
+from .game import game
 from .index import AboutView, index, privacy, terms
 from .profile import DeleteProfile, profile, reviews
 from .qa import (

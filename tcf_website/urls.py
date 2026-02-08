@@ -16,6 +16,7 @@ urlpatterns = [
     path("privacy/", views.privacy, name="privacy"),
     path("terms/", views.terms, name="terms"),
     path("browse/", views.browse, name="browse"),
+    path("game/", views.game, name="game"),
     path("department/<int:dept_id>/", views.department, name="department"),
     path(
         "department/<int:dept_id>/<str:course_recency>/",
