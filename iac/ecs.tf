@@ -17,15 +17,17 @@ resource "aws_ecs_task_definition" "django" {
   execution_role_arn       = aws_iam_role.ecs_task_execution.arn
   task_role_arn            = aws_iam_role.ecs_task.arn
 
+# NOTE: changed image to use prod image for testing
   container_definitions = jsonencode([
     {
       name      = "django-app"
-      image     = "${aws_ecr_repository.app.repository_url}:${var.ecr_image_tag}"
+      image     = "396913701887.dkr.ecr.us-east-1.amazonaws.com/tcf/thecourseforum2:2fca38b280e737d11f20b33aef32b0286869cef5"
+      command   = ["/app/scripts/container-startup.sh"]
       essential = true
 
       portMappings = [
         {
-          containerPort = 8000
+          containerPort = 80
           protocol      = "tcp"
         }
       ]
@@ -45,7 +47,7 @@ resource "aws_ecs_task_definition" "django" {
         },
         {
           name  = "AWS_S3_CUSTOM_DOMAIN"
-          value = "${aws_cloudfront_distribution.main.domain_name}/static"
+          value = aws_cloudfront_distribution.main.domain_name
         },
         {
           name  = "ALLOWED_HOSTS"
@@ -58,6 +60,14 @@ resource "aws_ecs_task_definition" "django" {
         {
           name  = "AWS_LOG_LEVEL"
           value = "DEBUG"
+        },
+        {
+          name  = "AWS_ACCESS_KEY_ID"
+          value = ""
+        },
+        {
+          name  = "AWS_SECRET_ACCESS_KEY"
+          value = ""
         }
       ]
 
@@ -139,21 +149,23 @@ resource "aws_ecs_service" "django" {
   task_definition  = aws_ecs_task_definition.django.arn
   desired_count    = var.ecs_desired_count
   launch_type      = "FARGATE"
-  platform_version = "LATEST"
+  platform_version = "1.4.0"
 
   network_configuration {
-    subnets          = aws_subnet.private[*].id
+    subnets          = data.aws_subnets.public.ids
     security_groups  = [aws_security_group.ecs_tasks.id]
-    assign_public_ip = false
+    assign_public_ip = true
   }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.ecs.arn
     container_name   = "django-app"
-    container_port   = 8000
+    container_port   = 80
   }
 
-  deployment_minimum_healthy_percent = 50
+  health_check_grace_period_seconds = 300
+
+  deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
 
   deployment_circuit_breaker {
