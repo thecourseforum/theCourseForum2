@@ -6,15 +6,17 @@ services:
       context: .
       args:
         REQUIREMENTS: requirements/dev.txt
+    environment:
+      DJANGO_SETTINGS_MODULE: tcf_core.settings.dev
+      DB_HOST: db
+      DB_PORT: "5432"
     command:
-      bash -c "/wait-for-it.sh tcf_db:${DB_PORT} -- \
+      bash -c "/wait-for-it.sh db:5432 -- \
       python manage.py migrate && \
       python manage.py collectstatic --noinput && \
       python manage.py invalidate_cachalot tcf_website && \
       echo 'Starting Django Server...' && \
       python manage.py runserver 0.0.0.0:8000"
-    environment:
-      - DJANGO_SETTINGS_MODULE=tcf_core.settings.dev
     volumes:
       - .:/app
       - /app/db/ # exclude the subfolder to prevent potential interference
@@ -32,9 +34,9 @@ services:
     restart: always
     container_name: tcf_db
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_PORT: ${DB_PORT}
+      # Defaults (postgres/postgres/tcf) when .env is missing or empty
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-tcf}
 volumes:
   node_modules:

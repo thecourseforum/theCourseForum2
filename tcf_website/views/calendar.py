@@ -1,8 +1,8 @@
 """Calendar views for displaying club events."""
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
-
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render
 from django.utils.html import strip_tags
@@ -44,6 +44,36 @@ def _is_upcoming(dt_string):
         return True
 
 
+def _sample_events_for_dev():
+    """Return sample events for local dev when the Presence API is unavailable."""
+    now = datetime.now(timezone.utc)
+    samples = []
+    for i, (name, org, tags) in enumerate(
+        [
+            ("Sample Club Meetup", "Example Club", ["social", "meetup"]),
+            ("Dev Workshop", "CS Department", ["workshop", "tech"]),
+            ("Coffee & Code", "Engineering Council", ["social", "tech"]),
+        ],
+        1,
+    ):
+        start = (now + timedelta(days=i)).replace(hour=18, minute=0, second=0, microsecond=0)
+        end = start + timedelta(hours=1)
+        iso = lambda dt: dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+        samples.append(
+            {
+                "name": name,
+                "org": org,
+                "uri": f"sample-event-{i}",
+                "location": "TBD",
+                "start_utc": iso(start),
+                "end_utc": iso(end),
+                "tags": tags,
+                "desc_text": "Sample event for local development. Load real events by using the Presence API in production.",
+            }
+        )
+    return samples
+
+
 def calendar_overview(request):
     """Display an overview of upcoming and past club events."""
     raw = presence.get_events()
@@ -61,6 +91,10 @@ def calendar_overview(request):
                 "desc_text": _safe_text(e.get("description")),
             }
         )
+
+    # Only in dev, when API returns no events (e.g. still 403), show sample data so the calendar UI is visible
+    if settings.DEBUG and not events:
+        events = _sample_events_for_dev()
 
     events.sort(key=_sort_key)
 
