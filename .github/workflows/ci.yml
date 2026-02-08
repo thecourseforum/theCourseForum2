@@ -102,12 +102,6 @@ jobs:
   probe_endpoint:
     name: Endpoint probe (compose)
     runs-on: ubuntu-latest
-    env: 
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: tcf_db
-      DB_PORT: 5432
-      SECRET_KEY: ci-secret-key-not-for-production
     steps:
         - uses: actions/checkout@v4
 
