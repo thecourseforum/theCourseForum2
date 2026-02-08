@@ -1,0 +1,226 @@
+/*
+ * Base Styles
+ * ===========
+ * Default styling for HTML elements using design tokens.
+ */
+
+/* ===== ROOT ===== */
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--font-normal);
+  color: var(--fg);
+  background-color: var(--bg);
+  transition: background-color var(--duration-normal) var(--ease-default),
+              color var(--duration-normal) var(--ease-default);
+}
+
+
+/* ===== TYPOGRAPHY ===== */
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--font-semibold);
+  color: var(--fg);
+  letter-spacing: var(--tracking-tight);
+}
+
+h1 {
+  font-size: var(--text-4xl);
+  line-height: var(--leading-tight);
+}
+
+h2 {
+  font-size: var(--text-3xl);
+  line-height: var(--leading-tight);
+}
+
+h3 {
+  font-size: var(--text-2xl);
+  line-height: var(--leading-snug);
+}
+
+h4 {
+  font-size: var(--text-xl);
+  line-height: var(--leading-snug);
+}
+
+h5 {
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+}
+
+h6 {
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+}
+
+p {
+  color: var(--fg);
+  line-height: var(--leading-relaxed);
+}
+
+/* Display heading (serif) */
+.display {
+  font-family: var(--font-display);
+  font-weight: var(--font-normal);
+  letter-spacing: var(--tracking-tight);
+}
+
+.display-xl {
+  font-family: var(--font-display);
+  font-size: var(--text-6xl);
+  font-weight: var(--font-normal);
+  line-height: var(--leading-none);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Muted text */
+.text-muted {
+  color: var(--fg-muted);
+}
+
+.text-subtle {
+  color: var(--fg-subtle);
+}
+
+/* Text sizes */
+.text-xs { font-size: var(--text-xs); }
+.text-sm { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-lg { font-size: var(--text-lg); }
+.text-xl { font-size: var(--text-xl); }
+.text-2xl { font-size: var(--text-2xl); }
+.text-3xl { font-size: var(--text-3xl); }
+.text-4xl { font-size: var(--text-4xl); }
+
+/* Font weights */
+.font-normal { font-weight: var(--font-normal); }
+.font-medium { font-weight: var(--font-medium); }
+.font-semibold { font-weight: var(--font-semibold); }
+.font-bold { font-weight: var(--font-bold); }
+
+
+/* ===== LINKS ===== */
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-default);
+}
+
+a:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+/* Unstyled link */
+.link-unstyled {
+  color: inherit;
+  text-decoration: none;
+}
+
+.link-unstyled:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Subtle link (muted until hover) */
+.link-subtle {
+  color: var(--fg-muted);
+}
+
+.link-subtle:hover {
+  color: var(--fg);
+}
+
+
+/* ===== LISTS ===== */
+
+ul, ol {
+  padding-left: var(--space-6);
+}
+
+li {
+  margin-bottom: var(--space-2);
+}
+
+/* Remove list styles */
+.list-none {
+  list-style: none;
+  padding-left: 0;
+}
+
+
+/* ===== CODE ===== */
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background-color: var(--bg-muted);
+  padding: var(--space-0-5) var(--space-1-5);
+  border-radius: var(--radius-sm);
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background-color: var(--bg-muted);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+}
+
+
+/* ===== HORIZONTAL RULE ===== */
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--space-8) 0;
+}
+
+
+/* ===== SELECTION ===== */
+
+::selection {
+  background-color: var(--primary);
+  color: var(--primary-fg);
+}
+
+
+/* ===== PLACEHOLDER ===== */
+
+::placeholder {
+  color: var(--fg-subtle);
+  opacity: 1;
+}
+
+
+/* ===== SCROLLBAR (WebKit) ===== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--fg-subtle);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fg-muted);
+}

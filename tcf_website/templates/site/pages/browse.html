@@ -1,0 +1,82 @@
+{% extends "site/base.html" %}
+{% load static %}
+
+{% block title %}Browse | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/site/pages/browse.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="browse-header">
+  <div class="browse-header__inner">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="browse-header__title">Browse {% if is_club %}Categories{% else %}Departments{% endif %}</h1>
+        <p class="browse-header__description">
+          {% if is_club %}
+          Explore student organizations by category.
+          {% else %}
+          Find courses and instructors across all UVA departments.
+          {% endif %}
+        </p>
+      </div>
+      
+      <!-- Mode Toggle (Removed separate toggle, using header global toggle) -->
+    </div>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="browse-content">
+  {% if is_club %}
+  <!-- Club Categories Grid -->
+  <div class="club-grid">
+    {% for category in club_categories %}
+    <a href="{% url 'club_category' category_slug=category.slug %}?mode=clubs" class="club-card">
+      <h3 class="club-card__title">{{ category.name }}</h3>
+      <span class="club-card__count">{{ category.clubs|length }} club{{ category.clubs|length|pluralize }}</span>
+    </a>
+    {% empty %}
+    <p class="text-muted">No club categories available.</p>
+    {% endfor %}
+  </div>
+  
+  {% else %}
+  <!-- Schools Accordion -->
+  
+  {% if CLAS %}
+  {% include "site/components/_school_section.html" with school=CLAS %}
+  {% endif %}
+  
+  {% if SEAS %}
+  {% include "site/components/_school_section.html" with school=SEAS %}
+  {% endif %}
+  
+  {% for school in other_schools %}
+  {% include "site/components/_school_section.html" with school=school %}
+  {% endfor %}
+  
+  {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // School accordion toggle
+  document.querySelectorAll('.school-header').forEach(header => {
+    header.addEventListener('click', function() {
+      const section = this.parentElement;
+      const grid = section.querySelector('.departments-grid');
+      
+      this.classList.toggle('is-open');
+      grid.classList.toggle('is-open');
+    });
+  });
+});
+</script>
+{% endblock %}

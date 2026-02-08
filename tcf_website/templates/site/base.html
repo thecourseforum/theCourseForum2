@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>{% block title %}theCourseForum{% endblock %}</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="{% static 'base/img/new_logo.svg' %}" sizes="any">
+  
+  <!-- Open Graph Protocol -->
+  <meta property="og:title" content="{% block og_title %}theCourseForum{% endblock %}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.thecourseforum.com">
+  <meta property="og:image" content="{% static 'base/img/logo-orange-small.png' %}">
+  <meta property="og:description" content="{% block og_description %}Explore course reviews, ratings, and insights to help you make informed decisions at UVA.{% endblock %}">
+  <meta property="og:site_name" content="theCourseForum">
+  <meta property="og:locale" content="en_US">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="theCourseForum">
+  <meta name="twitter:description" content="Explore course reviews, ratings, and insights to help you make informed decisions at UVA.">
+  <meta name="twitter:image" content="{% static 'base/img/logo-orange-small.png' %}">
+  <meta name="twitter:site" content="@theCourseForum">
+  
+  <!-- Preconnect to external resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Google Fonts: Inter + Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Theme initialization (prevent flash) -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme') || 
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="{% static 'css/site/main.css' %}">
+  
+  <!-- Page-specific styles -->
+  {% block styles %}{% endblock %}
+  {% block page_metadata %}{% endblock %}
+  
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-54T5TXX');</script>
+  
+  {% block head %}{% endblock %}
+</head>
+
+<body class="min-h-screen flex flex-col" data-user-authenticated="{{ user.is_authenticated|yesno:'true,false' }}">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54T5TXX"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <!-- Skip to main content (accessibility) -->
+  <a href="#main-content" class="sr-only">Skip to main content</a>
+  
+  <!-- Header -->
+  {% block header %}
+  {% include "site/components/_header.html" %}
+  {% endblock %}
+
+  {% include "site/components/_messages.html" %}
+  {% if request.resolver_match and request.resolver_match.url_name != "index" %}
+  {% include "site/components/_leaderboard_ad.html" %}
+  {% endif %}
+  
+  <!-- Main Content -->
+  <main id="main-content" class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+  
+  <!-- Footer -->
+  {% block footer %}
+  {% include "site/components/_footer.html" %}
+  {% endblock %}
+  
+  <!-- Modals -->
+  {% block modals %}
+  {% include "site/modals/_login.html" %}
+  {% include "site/modals/_adblock.html" %}
+  {% endblock %}
+  
+  <!-- Core JavaScript -->
+  <script src="{% static 'js/site/theme.js' %}"></script>
+  <script src="{% static 'js/site/modal.js' %}"></script>
+  <script src="{% static 'js/site/search_bar.js' %}"></script>
+  <script>
+    function showAdblockGate() {
+      window.modal.open("adblockGate");
+    }
+  </script>
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1816162577232603"
+    crossorigin="anonymous"
+    onerror="showAdblockGate();"
+  ></script>
+  
+  <!-- Page-specific scripts -->
+  {% block scripts %}{% endblock %}
+</body>
+</html>

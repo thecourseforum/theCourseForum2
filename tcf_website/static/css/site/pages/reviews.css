@@ -1,0 +1,126 @@
+/*
+ * My Reviews Page Styles
+ * ======================
+ */
+
+.reviews-page {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-16);
+}
+
+@media (min-width: 640px) {
+  .reviews-page {
+    padding: var(--space-8) var(--space-6) var(--space-16);
+  }
+}
+
+@media (min-width: 1024px) {
+  .reviews-page {
+    padding: var(--space-8) var(--space-8) var(--space-16);
+  }
+}
+
+.reviews-page__header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.reviews-page__title {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-normal);
+}
+
+.reviews-page__header .btn svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.reviews-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .reviews-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.reviews-stat-card {
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  background: var(--bg-elevated);
+}
+
+.reviews-stat-card__label {
+  color: var(--fg-muted);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-2);
+}
+
+.reviews-stat-card__value {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-semibold);
+}
+
+.review-card__context {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.review-card__subject {
+  color: var(--primary);
+  font-weight: var(--font-medium);
+  text-decoration: none;
+}
+
+.review-card__subject:hover {
+  text-decoration: underline;
+}
+
+.review-card__footer-right {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.review-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-default),
+              border-color var(--duration-fast) var(--ease-default),
+              background-color var(--duration-fast) var(--ease-default);
+}
+
+.review-delete-btn svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.review-delete-btn:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+  background-color: rgba(239, 68, 68, 0.08);
+}
+
+.reviews-page__pagination {
+  margin-top: var(--space-6);
+}

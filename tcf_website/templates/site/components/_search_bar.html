@@ -1,0 +1,120 @@
+{% load static %}
+{% load custom_tags %}
+<div class="search-bar-container {{ container_classes }}">
+  <form class="search-bar {{ form_classes }}" action="{% url 'search' %}" method="get">
+    <div class="search-bar__input-wrapper">
+      <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="M21 21l-4.35-4.35"></path>
+      </svg>
+      
+      <input type="hidden" name="mode" value="{{ request.GET.mode|default:'courses' }}">
+      
+      <input 
+        type="search" 
+        name="q" 
+        class="search-bar__input" 
+        value="{{ request.GET.q|default:'' }}"
+        placeholder="{{ search_placeholder|default:'Search...' }}" 
+        autocomplete="off"
+        aria-label="Search"
+      >
+
+      <div class="search-bar__actions-group">
+        {% if request.GET.mode != 'clubs' %}
+        <button 
+          type="button" 
+          class="search-bar__filter-trigger {% if request.GET.weekdays or request.GET.from_time or request.GET.to_time or request.GET.open_sections or request.GET.min_gpa or request.GET.subdepartment or request.GET.discipline %}is-active-filter{% endif %}" 
+          aria-label="Filters"
+          title="Advanced Filters"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
+        </button>
+        {% endif %}
+        
+        <button type="submit" class="search-bar__submit" aria-label="Submit Search">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+             <path d="M5 12h14M12 5l7 7-7 7"></path>
+           </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Dropdown -->
+    {% if request.GET.mode != 'clubs' %}
+    <div class="search-filters">
+      
+      <!-- Top Row: Requirements -->
+      <div class="filter-grid">
+        <!-- Open Sections -->
+        <div class="filter-section">
+          <div class="filter-title">Availability</div>
+          <label class="flex items-center gap-2 cursor-pointer border border-border rounded-md px-3 py-2 bg-bg hover:bg-bg-muted transition-colors">
+            <input type="checkbox" name="open_sections" class="form-checkbox" {% if request.GET.open_sections %}checked{% endif %}>
+            <span style="font-size: var(--text-sm); color: var(--fg); font-weight: var(--font-medium);">Open Sections Only</span>
+          </label>
+        </div>
+
+        <!-- GPA -->
+        <div class="filter-section">
+          <div class="filter-title">Min GPA</div>
+          <div class="flex items-center gap-3 w-full justify-center px-2">
+             <input type="range" name="min_gpa" min="0" max="4" step="0.1" value="{{ request.GET.min_gpa|default:'0.0' }}" class="flex-1" style="max-width: 140px;">
+             <span class="gpa-value-display" style="min-width: 2.5rem; text-align: center; font-variant-numeric: tabular-nums; font-size: var(--text-sm); font-weight: bold; background: var(--bg-muted); padding: 2px 6px;">{{ request.GET.min_gpa|default:'0.0' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Row: Subjects & Disciplines -->
+      <div class="filter-grid">
+        <!-- Subjects -->
+        <div class="filter-section">
+          <div class="filter-title">Subject</div>
+          <div class="filter-list-container">
+            <div class="filter-list-search">
+              <input type="text" placeholder="Search subjects..." data-filter-list="subjectList">
+            </div>
+            <div class="filter-list">
+              {% for subdept in subdepartments %}
+              {% getlist_contains request 'subdepartment' subdept.mnemonic as subdepartment_selected %}
+              <label class="filter-item">
+                <input type="checkbox" name="subdepartment" value="{{ subdept.mnemonic }}" {% if subdepartment_selected %}checked{% endif %}>
+                <span>{{ subdept.mnemonic }} - {{ subdept.name }}</span>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        
+        <!-- Disciplines -->
+        <div class="filter-section">
+          <div class="filter-title">Discipline</div>
+          <div class="filter-list-container">
+            <div class="filter-list-search">
+              <input type="text" placeholder="Search disciplines..." data-filter-list="disciplineList">
+            </div>
+            <div class="filter-list">
+              {% for discipline in disciplines %}
+              {% getlist_contains request 'discipline' discipline.name as discipline_selected %}
+              <label class="filter-item">
+                <input type="checkbox" name="discipline" value="{{ discipline.name }}" {% if discipline_selected %}checked{% endif %}>
+                <span>{{ discipline.name }}</span>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="filter-actions">
+        <button type="button" class="btn btn--ghost btn--sm" data-action="clear-filters">Clear All</button>
+        <button type="submit" class="btn btn--primary btn--sm">Apply Filters</button>
+      </div>
+
+    </div>
+    {% endif %}
+  </form>
+</div>

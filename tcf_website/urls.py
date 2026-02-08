@@ -11,6 +11,11 @@ urlpatterns = [
         views.club_category,
         name="club_category",
     ),
+    path(
+        "club/<str:category_slug>/<int:club_id>/",
+        views.club_view,
+        name="club",
+    ),
     path("", views.index, name="index"),
     path("about/", views.AboutView.as_view(), name="about"),
     path("privacy/", views.privacy, name="privacy"),
@@ -21,11 +26,6 @@ urlpatterns = [
         "department/<int:dept_id>/<str:course_recency>/",
         views.department,
         name="department_course_recency",
-    ),
-    path(
-        "course/<int:course_id>/",
-        views.course_view_legacy,
-        name="course_legacy",
     ),
     path(
         "course/<int:course_id>/<int:instructor_id>/",
@@ -48,6 +48,11 @@ urlpatterns = [
         name="course_recency",
     ),
     path(
+        "course/<int:course_id>/add-to-schedule/",
+        views.schedule_add_course,
+        name="schedule_add_course",
+    ),
+    path(
         "instructor/<int:instructor_id>/",
         views.instructor_view,
         name="instructor",
@@ -61,10 +66,16 @@ urlpatterns = [
     path("reviews/", views.reviews, name="reviews"),
     path("reviews/<int:review_id>/upvote/", views.upvote),
     path("reviews/<int:review_id>/downvote/", views.downvote),
-    path("reviews/check_duplicate/", views.review.check_duplicate),
+    path("reviews/<int:review_id>/vote/", views.vote_review, name="vote_review"),
+    path(
+        "reviews/check_duplicate/",
+        views.review.check_duplicate,
+        name="check_review_duplicate",
+    ),
     path(
         "reviews/check_zero_hours_per_week/",
         views.review.check_zero_hours_per_week,
+        name="check_zero_hours_per_week",
     ),
     path("profile/", views.profile, name="profile"),
     path(
@@ -79,22 +90,15 @@ urlpatterns = [
     path("schedule/delete/", views.delete_schedule, name="delete_schedule"),
     path("schedule/edit/", views.edit_schedule, name="edit_schedule"),
     path(
+        "schedule/course/<int:scheduled_course_id>/remove/",
+        views.remove_scheduled_course,
+        name="remove_scheduled_course",
+    ),
+    path(
         "schedule/duplicate/<int:schedule_id>/",
         views.duplicate_schedule,
         name="duplicate_schedule",
     ),
-    path("schedule/modal/editor", views.modal_load_editor, name="modal_load_editor"),
-    path(
-        "schedule/modal/sections/",
-        views.modal_load_sections,
-        name="modal_load_sections",
-    ),
-    path(
-        "schedule/modal/<str:mode>/",
-        views.view_select_schedules_modal,
-        name="modal_load_schedules",
-    ),
-    path("schedule/add_course/", views.schedule_add_course, name="schedule_add_course"),
     # QA URLs
     path("answers/check_duplicate/", views.qa.check_duplicate),
     path("qa/new_question/", views.new_question, name="new_question"),

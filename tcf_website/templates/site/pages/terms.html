@@ -1,0 +1,18 @@
+{% extends "site/base.html" %}
+{% load static %}
+
+{% block title %}Terms | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/site/pages/legal.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="legal-page">
+  <article class="legal-card">
+    <h1>Terms of Use</h1>
+    <h6>Date of Last Revision: September 1, 2021.</h6>
+    {% include "site/partials/terms_content.html" with privacy_url_name="privacy" %}
+  </article>
+</div>
+{% endblock %}

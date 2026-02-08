@@ -1,0 +1,27 @@
+{% load static %}
+<article class="member-card">
+  <div class="member-card__avatar">
+    {% if member.img_filename %}
+    <img
+      class="member-card__image"
+      src="{% static image_dir|add:'/'|add:member.img_filename %}"
+      alt="{{ member.name }}"
+      loading="lazy"
+    >
+    {% else %}
+    <span class="member-card__initials">{{ member.initials }}</span>
+    {% endif %}
+  </div>
+  <div class="member-card__name">{{ member.name }}</div>
+  {% if member.role %}
+  <div class="member-card__role">{{ member.role }}</div>
+  {% endif %}
+  {% if member.class %}
+  <div class="member-card__class">Class of {{ member.class }}</div>
+  {% endif %}
+  {% if member.github %}
+  <a class="member-card__link" href="https://github.com/{{ member.github }}" target="_blank" rel="noopener noreferrer">
+    GitHub
+  </a>
+  {% endif %}
+</article>
