@@ -116,7 +116,7 @@
       {% endif %}
       
       <!-- Mobile Menu Toggle -->
-      <button class="header__mobile-trigger" id="mobileMenuTrigger" aria-label="Open menu">
+      <button class="header__mobile-trigger" id="mobileMenuTrigger" aria-label="Open menu" onclick="document.querySelector('.header').classList.toggle('is-mobile-open')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -133,6 +133,13 @@ document.addEventListener('click', function(e) {
   const dropdown = document.getElementById('userDropdown');
   if (dropdown && !dropdown.contains(e.target)) {
     dropdown.classList.remove('is-open');
+  }
+
+  // Close mobile menu when clicking outside
+  const header = document.querySelector('.header');
+  const mobileTrigger = document.getElementById('mobileMenuTrigger');
+  if (header && mobileTrigger && !header.contains(e.target)) {
+    header.classList.remove('is-mobile-open');
   }
 });
 </script>
