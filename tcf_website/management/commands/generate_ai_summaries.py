@@ -84,7 +84,9 @@ class Command(BaseCommand):
             help="Show which pairs would be processed without calling the model.",
         )
 
-    def handle(self, *args: Any, **options: Any):  # pylint: disable=unused-argument,too-many-locals
+    def handle(
+        self, *args: Any, **options: Any
+    ):  # pylint: disable=unused-argument,too-many-locals
         if not getattr(settings, "OPENROUTER_API_KEY", ""):
             raise CommandError("OPENROUTER_API_KEY is not configured.")
 
@@ -92,7 +94,7 @@ class Command(BaseCommand):
         instructor_id = options.get("instructor_id")
         limit = options.get("limit")
         min_reviews = options.get("min_reviews")
-        max_reviews = options.get("max_reviews") or 20
+        max_reviews = options.get("max_reviews")
         missing_only = options.get("missing_only")
         dry_run = options.get("dry_run")
 
@@ -109,9 +111,12 @@ class Command(BaseCommand):
         pairs: list[tuple[int, int, int, int]] = []
 
         if course_id and instructor_id:
-            if missing_only and ReviewLLMSummary.objects.filter(
-                course_id=course_id, instructor_id=instructor_id, club__isnull=True
-            ).exists():
+            if (
+                missing_only
+                and ReviewLLMSummary.objects.filter(
+                    course_id=course_id, instructor_id=instructor_id, club__isnull=True
+                ).exists()
+            ):
                 self.stdout.write(
                     self.style.WARNING(
                         f"Skipping course {course_id} / instructor {instructor_id}: "
@@ -155,7 +160,12 @@ class Command(BaseCommand):
                 )
             agg = agg[:limit]
             pairs = [
-                (row["course_id"], row["instructor_id"], row["review_count"], row["last_id"])
+                (
+                    row["course_id"],
+                    row["instructor_id"],
+                    row["review_count"],
+                    row["last_id"],
+                )
                 for row in agg
             ]
 
@@ -165,7 +175,9 @@ class Command(BaseCommand):
 
         self.stdout.write(f"Processing {len(pairs)} pair(s)...")
 
-        for idx, (course_id, instructor_id, review_count, latest_id) in enumerate(pairs):
+        for idx, (course_id, instructor_id, review_count, latest_id) in enumerate(
+            pairs
+        ):
             course = Course.objects.get(id=course_id)
             instructor = Instructor.objects.get(id=instructor_id)
             qs = base_reviews.filter(course=course, instructor=instructor).order_by(
@@ -194,6 +206,7 @@ class Command(BaseCommand):
             ReviewLLMSummary.objects.update_or_create(
                 course=course,
                 instructor=instructor,
+                club=None,
                 defaults={
                     "summary_text": summary_text,
                     "source_review_count": review_count,
@@ -211,4 +224,4 @@ class Command(BaseCommand):
             )
 
             if not dry_run and idx < len(pairs) - 1:
-                time.sleep(4.0) # avoids rate limits
+                time.sleep(4.0)  # avoids rate limits

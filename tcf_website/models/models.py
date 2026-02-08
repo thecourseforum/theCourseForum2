@@ -1,4 +1,3 @@
-# pylint: disable=missing-class-docstring, wildcard-import, fixme, too-many-lines
 """TCF Database models."""
 
 from decimal import Decimal
@@ -1944,7 +1943,8 @@ class Schedule(models.Model):
         result = (
             ScheduledCourse.objects.filter(schedule=self)
             .annotate(
-                course_id=models.F("section__course_id"),  # Reference to the course
+                # Reference to the course
+                course_id=models.F("section__course_id"),
                 related_instructor_id=models.F(
                     "instructor_id"
                 ),  # Reference to the instructor
