@@ -17,10 +17,11 @@ resource "aws_ecs_task_definition" "django" {
   execution_role_arn       = aws_iam_role.ecs_task_execution.arn
   task_role_arn            = aws_iam_role.ecs_task.arn
 
-  container_definitions = jsonencode([
+container_definitions = jsonencode([
     {
       name      = "django-app"
       image     = "${aws_ecr_repository.app.repository_url}:${var.ecr_image_tag}"
+      command   = ["/app/scripts/container-startup.sh"]
       essential = true
 
       portMappings = [
@@ -45,7 +46,7 @@ resource "aws_ecs_task_definition" "django" {
         },
         {
           name  = "AWS_S3_CUSTOM_DOMAIN"
-          value = "${aws_cloudfront_distribution.main.domain_name}/static"
+          value = aws_cloudfront_distribution.main.domain_name
         },
         {
           name  = "ALLOWED_HOSTS"
@@ -58,6 +59,14 @@ resource "aws_ecs_task_definition" "django" {
         {
           name  = "AWS_LOG_LEVEL"
           value = "DEBUG"
+        },
+        {
+          name  = "AWS_ACCESS_KEY_ID"
+          value = ""
+        },
+        {
+          name  = "AWS_SECRET_ACCESS_KEY"
+          value = ""
         }
       ]
 
@@ -139,12 +148,12 @@ resource "aws_ecs_service" "django" {
   task_definition  = aws_ecs_task_definition.django.arn
   desired_count    = var.ecs_desired_count
   launch_type      = "FARGATE"
-  platform_version = "LATEST"
+  platform_version = "1.4.0"
 
   network_configuration {
-    subnets          = aws_subnet.private[*].id
+    subnets          = aws_subnet.public[*].id
     security_groups  = [aws_security_group.ecs_tasks.id]
-    assign_public_ip = false
+    assign_public_ip = true
   }
 
   load_balancer {
@@ -153,7 +162,9 @@ resource "aws_ecs_service" "django" {
     container_port   = 8000
   }
 
-  deployment_minimum_healthy_percent = 50
+  health_check_grace_period_seconds = 300
+
+  deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
 
   deployment_circuit_breaker {
