@@ -5,10 +5,15 @@ resource "random_password" "db_password" {
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
+# Generate random ID for final snapshot identifier (stays stable across applies)
+resource "random_id" "db_snapshot" {
+  byte_length = 4
+}
+
 # RDS Subnet Group
 resource "aws_db_subnet_group" "main" {
   name       = "${local.name_prefix}-db-subnet-group"
-  subnet_ids = aws_subnet.private[*].id
+  subnet_ids = aws_subnet.public[*].id
 
   tags = {
     Name = "${local.name_prefix}-db-subnet-group"
@@ -37,7 +42,7 @@ resource "aws_db_instance" "postgres" {
 
   backup_retention_period   = 7
   skip_final_snapshot       = false
-  final_snapshot_identifier = "${local.name_prefix}-final-snapshot-${formatdate("YYYY-MM-DD-hhmm", timestamp())}"
+  final_snapshot_identifier = "${local.name_prefix}-final-snapshot-${random_id.db_snapshot.hex}"
 
   tags = {
     Name = "${local.name_prefix}-postgres"
