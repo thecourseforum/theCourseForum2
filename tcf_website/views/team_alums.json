@@ -97,6 +97,12 @@
           "class": "2026",
           "img_filename": "ENG_Collin_Togher.jpg",
           "github": "ctogs"
+        },
+        {
+          "name": "Vivian Gao",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Vivian_Gao.jpg"
         }
       ]
     },
@@ -200,12 +206,6 @@
           "class": "2025",
           "img_filename": "ENG_Olivia_Seto.jpg",
           "github": "oliviaseto"
-        },
-        {
-          "name": "Vivian Gao",
-          "role": "Developer",
-          "class": "2025",
-          "img_filename": "ENG_Vivian_Gao.jpg"
         }
       ]
     },

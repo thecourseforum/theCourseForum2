@@ -311,6 +311,20 @@
       "class": "2029",
       "img_filename": "ENG_Arislan_Telek.jpg",
       "github": "ArislanT"
+    },
+    {
+      "name": "Emily Zhou",
+      "role": "Developer",
+      "class": "2026",
+      "img_filename": "ENG_Emily_Zhou.jpg",
+      "github": "emilyzhou"
+    }, 
+    {
+      "name": "Riti Lahoti",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Riti_Lahoti.jpg",
+      "github": "ritilahoti"
     }
   ],
   "design_team": [

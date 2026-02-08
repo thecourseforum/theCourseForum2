@@ -14,9 +14,10 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY requirements.txt /app
-
-RUN pip3 install -r requirements.txt --disable-pip-version-check --no-cache-dir
+# Copy requirements and install (use dev.txt for local, base.txt for prod)
+ARG REQUIREMENTS=requirements/base.txt
+COPY requirements/ /app/requirements/
+RUN pip3 install -r /app/${REQUIREMENTS} --disable-pip-version-check --no-cache-dir
 
 COPY . /app/
 

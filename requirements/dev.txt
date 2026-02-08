@@ -1,0 +1,24 @@
+# Development dependencies (includes base)
+-r base.txt
+
+# Debug toolbar
+django-debug-toolbar~=4.4.0
+
+# Linting & formatting
+black~=24.1.1
+isort~=5.13.2
+pylint~=3.0.3
+pylint-django~=2.5.5
+html-linter~=0.4.0
+
+# Type checking
+mypy~=1.7.1
+mypy-extensions~=1.0.0
+django-stubs~=4.2.7
+types-tqdm~=4.66.0
+
+# Testing
+coverage~=7.3.3
+
+# WSGI server (for local testing)
+uWSGI~=2.0.28
