@@ -46,6 +46,39 @@
   margin: 0 auto;
 }
 
+@media (max-width: 767px) {
+  :root {
+    --mobile-header-offset: 6.5rem;
+  }
+
+  .header {
+    height: auto;
+    min-height: 4rem;
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+
+  .header__inner {
+    flex-wrap: wrap;
+    row-gap: var(--space-2);
+  }
+
+  .header__logo {
+    order: 1;
+  }
+
+  .header__actions {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .header .search-bar-container {
+    order: 3;
+    flex: 1 0 100%;
+    width: 100%;
+  }
+}
+
 
 /* ===== LOGO ===== */
 
