@@ -306,50 +306,6 @@
 
 
 /*
- * Leaderboard Ad
- * ==============
- */
-
-.leaderboard-ad {
-  padding: var(--space-4) 0 0;
-}
-
-.leaderboard-ad__inner {
-  max-width: var(--size-max);
-  margin: 0 auto;
-  padding: 0 var(--space-4);
-}
-
-@media (min-width: 640px) {
-  .leaderboard-ad__inner {
-    padding: 0 var(--space-6);
-  }
-}
-
-@media (min-width: 1024px) {
-  .leaderboard-ad__inner {
-    padding: 0 var(--space-8);
-  }
-}
-
-.leaderboard-ad__label {
-  display: inline-block;
-  margin-bottom: var(--space-2);
-  font-size: var(--text-xs);
-  color: var(--fg-subtle);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-}
-
-.leaderboard-ad__slot {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  background-color: var(--bg-elevated);
-  overflow: hidden;
-}
-
-
-/*
  * Flash Messages
  * ==============
  */

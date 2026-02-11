@@ -115,6 +115,9 @@
   <div class="instructor-list">
     {% for instructor in instructors %}
     {% include "site/components/_instructor_card.html" with instructor=instructor course=course latest_semester=latest_semester %}
+    {% if forloop.counter == 3 and not forloop.last %}
+    {% include "site/components/_in_feed_ad.html" %}
+    {% endif %}
     {% endfor %}
   </div>
   

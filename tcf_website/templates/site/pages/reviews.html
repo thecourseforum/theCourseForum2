@@ -140,6 +140,9 @@
         </div>
       </div>
     </article>
+    {% if forloop.counter == 3 and not forloop.last %}
+    {% include "site/components/_in_feed_ad.html" %}
+    {% endif %}
     {% endfor %}
 
     {% if paginated_reviews.has_other_pages %}

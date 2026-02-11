@@ -85,6 +85,9 @@
   <div class="course-list">
     {% for course in paginated_courses %}
     {% include "site/components/_course_card.html" with course=course %}
+    {% if forloop.counter == 4 and not forloop.last %}
+    {% include "site/components/_in_feed_ad.html" %}
+    {% endif %}
     {% endfor %}
   </div>
   

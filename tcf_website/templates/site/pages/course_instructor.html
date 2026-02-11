@@ -210,6 +210,9 @@
     {% endif %}
   </div>
   
+  <!-- In-Article Ad between stats and reviews -->
+  {% include "site/components/_in_article_ad.html" %}
+
   <section class="reviews-section" id="reviews">
     <div class="reviews-header">
       <h2 class="reviews-header__title">{{ num_reviews }} Review{{ num_reviews|pluralize }}</h2>
@@ -316,6 +319,9 @@
         <span class="review-card__date">{{ review.created }}</span>
       </div>
     </article>
+    {% if forloop.counter == 3 and not forloop.last %}
+    {% include "site/components/_in_feed_ad.html" %}
+    {% endif %}
     {% endfor %}
 
     {% if paginated_reviews.has_other_pages %}

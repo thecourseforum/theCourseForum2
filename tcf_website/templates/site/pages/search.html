@@ -173,6 +173,9 @@ Search | theCourseForum
         {% endfor %}
       </div>
     </section>
+    {% if forloop.counter == 2 and not forloop.last %}
+    {% include "site/components/_in_feed_ad.html" %}
+    {% endif %}
     {% endfor %}
 
     {% include "site/components/_pagination.html" with paginated_items=page_obj aria_label="Course pagination" %}

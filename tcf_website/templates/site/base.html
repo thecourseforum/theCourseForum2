@@ -57,10 +57,26 @@
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-54T5TXX');</script>
   
+  <!--
+    Google AdSense — loaded in <head> for faster ad initialization.
+    The client param also enables Auto Ads (configure in AdSense dashboard:
+    Settings > Auto ads > toggle Anchor, Vignette, In-page formats).
+  -->
+  <script>
+    /* Ad-block detection flag (set before AdSense loads) */
+    window.__tcfAdBlocked = false;
+  </script>
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1816162577232603"
+    crossorigin="anonymous"
+    onerror="window.__tcfAdBlocked = true;"
+  ></script>
+
   {% block head %}{% endblock %}
 </head>
 
-<body class="min-h-screen flex flex-col" data-user-authenticated="{{ user.is_authenticated|yesno:'true,false' }}">
+<body class="min-h-screen flex flex-col {% block body_class %}{% endblock %}" data-user-authenticated="{{ user.is_authenticated|yesno:'true,false' }}">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54T5TXX"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -78,11 +94,21 @@
   {% include "site/components/_leaderboard_ad.html" %}
   {% endif %}
   
+  <!-- Sidebar Ads (visible on wide screens only, via CSS) -->
+  {% if request.resolver_match and request.resolver_match.url_name != "index" %}
+  {% include "site/components/_sidebar_ad.html" %}
+  {% endif %}
+
   <!-- Main Content -->
   <main id="main-content" class="flex-1">
     {% block content %}{% endblock %}
   </main>
   
+  <!-- Footer Ad (multiplex / recommendation ads above footer) -->
+  {% if request.resolver_match and request.resolver_match.url_name != "index" %}
+  {% include "site/components/_footer_ad.html" %}
+  {% endif %}
+
   <!-- Footer -->
   {% block footer %}
   {% include "site/components/_footer.html" %}
@@ -99,16 +125,11 @@
   <script src="{% static 'js/site/modal.js' %}"></script>
   <script src="{% static 'js/site/search_bar.js' %}"></script>
   <script>
-    function showAdblockGate() {
+    /* Show ad-block gate if AdSense failed to load (flag set in <head>) */
+    if (window.__tcfAdBlocked) {
       window.modal.open("adblockGate");
     }
   </script>
-  <script
-    async
-    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1816162577232603"
-    crossorigin="anonymous"
-    onerror="showAdblockGate();"
-  ></script>
   
   <!-- Page-specific scripts -->
   {% block scripts %}{% endblock %}
