@@ -1,0 +1,41 @@
+{% if calendar.time_labels %}
+<section class="weekly-calendar" style="--calendar-slots: {% if calendar.slot_markers %}{{ calendar.slot_markers|length }}{% else %}1{% endif %};">
+  <div class="weekly-calendar__header">
+    <div class="weekly-calendar__time-header">Time</div>
+    {% for column in calendar.columns %}
+    <div class="weekly-calendar__day-header">{{ column.label }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="weekly-calendar__schedule">
+    <div class="weekly-calendar__time-scale">
+      {% for label in calendar.time_labels %}
+      <span class="weekly-calendar__time-label">{{ label }}</span>
+      {% endfor %}
+    </div>
+
+    {% for column in calendar.columns %}
+    <div class="weekly-calendar__day-column">
+      <div class="weekly-calendar__day-track" aria-hidden="true"></div>
+      <div class="weekly-calendar__events">
+        {% for event in column.events %}
+        <a
+          class="weekly-calendar__event weekly-calendar__event--tone-{{ event.tone }}"
+          href="{{ event.href }}"
+          style="top: {{ event.top_pct|floatformat:4 }}%; height: {{ event.height_pct|floatformat:4 }}%;"
+        >
+          <span class="weekly-calendar__event-title">{{ event.title }}</span>
+          <span class="weekly-calendar__event-subtitle">{{ event.subtitle }}</span>
+          <span class="weekly-calendar__event-time">{{ event.start_label }} - {{ event.end_label }}</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% else %}
+<div class="weekly-calendar weekly-calendar--empty">
+  <p class="weekly-calendar__empty-text">No meeting times to display yet.</p>
+</div>
+{% endif %}

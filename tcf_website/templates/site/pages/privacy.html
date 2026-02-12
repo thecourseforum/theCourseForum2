@@ -1,0 +1,18 @@
+{% extends "site/base.html" %}
+{% load static %}
+
+{% block title %}Privacy | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/site/pages/legal.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="legal-page">
+  <article class="legal-card">
+    <h1>Privacy Policy</h1>
+    <h6>This policy is effective as of January 14, 2008.</h6>
+    {% include "site/partials/privacy_content.html" %}
+  </article>
+</div>
+{% endblock %}

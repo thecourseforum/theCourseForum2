@@ -1,0 +1,201 @@
+/*
+ * Ad Components
+ * =============
+ * Styles for all Google AdSense ad placements.
+ * Optimized for revenue with best-practice sizing and positioning.
+ */
+
+
+/* ===== LEADERBOARD AD (728x90 / responsive) ===== */
+
+.leaderboard-ad {
+  padding: var(--space-4) 0 0;
+}
+
+.leaderboard-ad__inner {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .leaderboard-ad__inner {
+    padding: 0 var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .leaderboard-ad__inner {
+    padding: 0 var(--space-8);
+  }
+}
+
+.leaderboard-ad__label {
+  display: inline-block;
+  margin-bottom: var(--space-1);
+  font-size: 0.6875rem;
+  color: var(--fg-subtle);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.leaderboard-ad__slot {
+  min-height: 50px;
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-elevated);
+  overflow: hidden;
+}
+
+
+/* ===== SIDEBAR ADS (fixed-position rail ads) ===== */
+/* Visible only on very wide screens (1760px+) where there's */
+/* space outside the 1280px content area for 160px ad units. */
+
+.sidebar-ad {
+  display: none;
+}
+
+@media (min-width: 1760px) {
+  .sidebar-ad {
+    display: block;
+    position: fixed;
+    top: 5rem; /* below the header */
+    width: 160px;
+    z-index: 10;
+  }
+
+  .sidebar-ad--left {
+    left: calc(50% - 640px - 160px - 24px);
+  }
+
+  .sidebar-ad--right {
+    right: calc(50% - 640px - 160px - 24px);
+  }
+
+  .sidebar-ad__label {
+    display: block;
+    margin-bottom: var(--space-1);
+    font-size: 0.625rem;
+    color: var(--fg-subtle);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .sidebar-ad__slot {
+    min-height: 600px;
+    border: 1px solid var(--border-muted);
+    border-radius: var(--radius-lg);
+    background-color: var(--bg-elevated);
+    overflow: hidden;
+  }
+}
+
+
+/* ===== IN-FEED AD (between list items) ===== */
+
+.in-feed-ad {
+  padding: var(--space-4) 0;
+}
+
+.in-feed-ad__inner {
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-xl);
+  background-color: var(--bg-elevated);
+  padding: var(--space-3);
+  overflow: hidden;
+}
+
+.in-feed-ad__label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: 0.625rem;
+  color: var(--fg-subtle);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.in-feed-ad__slot {
+  min-height: 100px;
+  overflow: hidden;
+}
+
+
+/* ===== IN-ARTICLE AD (between content sections) ===== */
+
+.in-article-ad {
+  padding: var(--space-6) 0;
+  max-width: var(--size-max);
+  margin: 0 auto;
+}
+
+.in-article-ad__inner {
+  text-align: center;
+}
+
+.in-article-ad__label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: 0.625rem;
+  color: var(--fg-subtle);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.in-article-ad__slot {
+  min-height: 250px;
+  overflow: hidden;
+}
+
+
+/* ===== FOOTER / MULTIPLEX AD (above footer) ===== */
+
+.footer-ad {
+  padding: var(--space-8) 0 0;
+  border-top: 1px solid var(--border-muted);
+  margin-top: var(--space-8);
+}
+
+.footer-ad__inner {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .footer-ad__inner {
+    padding: 0 var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .footer-ad__inner {
+    padding: 0 var(--space-8);
+  }
+}
+
+.footer-ad__label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: 0.625rem;
+  color: var(--fg-subtle);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.footer-ad__slot {
+  min-height: 250px;
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-elevated);
+  overflow: hidden;
+}
+
+
+/* ===== UTILITY: No ads on landing page sidebars ===== */
+
+body.page-landing .sidebar-ad {
+  display: none !important;
+}

@@ -1,0 +1,277 @@
+{% extends "site/base.html" %}
+{% load static %}
+
+{% block title %}
+{% if query %}
+{{ query }} | Search | theCourseForum
+{% else %}
+Search | theCourseForum
+{% endif %}
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/site/pages/search.css' %}">
+{% endblock %}
+
+{% block content %}
+<header class="search-results-header">
+  <div class="search-results-header__inner">
+    <h1 class="search-results-header__title">Search Results</h1>
+    <p class="search-results-header__subtitle">
+      {% if query %}
+      Showing matches for <span class="search-results-header__query">"{{ query }}"</span>
+      {% elif is_club %}
+      Browse clubs by category.
+      {% else %}
+      Use filters to narrow down courses.
+      {% endif %}
+    </p>
+  </div>
+</header>
+
+<div class="search-results-content">
+  <div class="search-tabs" role="tablist" aria-label="Search result categories">
+    {% if is_club %}
+    <button
+      type="button"
+      class="search-tab is-active"
+      id="search-tab-trigger-clubs"
+      data-tab-target="clubs"
+      role="tab"
+      aria-controls="search-tab-clubs"
+      aria-selected="true"
+    >
+      Clubs
+      <span class="search-tab__count">{{ total }}</span>
+    </button>
+    {% else %}
+    <button
+      type="button"
+      class="search-tab {% if courses_first %}is-active{% endif %}"
+      id="search-tab-trigger-courses"
+      data-tab-target="courses"
+      role="tab"
+      aria-controls="search-tab-courses"
+      aria-selected="{% if courses_first %}true{% else %}false{% endif %}"
+    >
+      Courses
+      <span class="search-tab__count">{{ total }}</span>
+    </button>
+    <button
+      type="button"
+      class="search-tab {% if not courses_first %}is-active{% endif %}"
+      id="search-tab-trigger-instructors"
+      data-tab-target="instructors"
+      role="tab"
+      aria-controls="search-tab-instructors"
+      aria-selected="{% if not courses_first %}true{% else %}false{% endif %}"
+    >
+      Instructors
+      <span class="search-tab__count">{{ instructors|length }}</span>
+    </button>
+    <button
+      type="button"
+      class="search-tab"
+      id="search-tab-trigger-departments"
+      data-tab-target="departments"
+      role="tab"
+      aria-controls="search-tab-departments"
+      aria-selected="false"
+    >
+      Departments
+      <span class="search-tab__count">{{ grouped|length }}</span>
+    </button>
+    {% endif %}
+  </div>
+
+  {% if is_club %}
+  <section
+    class="search-panel is-active"
+    id="search-tab-clubs"
+    data-tab-panel="clubs"
+    role="tabpanel"
+    aria-labelledby="search-tab-trigger-clubs"
+  >
+    <div class="search-panel__header">
+      <h2 class="search-panel__title">Clubs</h2>
+      <p class="search-panel__count">{{ total }} result{{ total|pluralize }}</p>
+    </div>
+
+      {% if grouped %}
+    {% for category_slug, category_data in grouped.items %}
+    <section class="search-group">
+      <h3 class="search-group__title">
+        <a href="{% url 'club_category' category_slug=category_data.category_slug %}?mode=clubs">
+          {{ category_data.category_name }}
+        </a>
+      </h3>
+
+      <div class="search-result-list">
+        {% for club in category_data.clubs %}
+        <article class="search-result-card">
+          <a class="search-result-card__link" href="{% url 'club' category_slug=category_data.category_slug club_id=club.id %}?mode=clubs">
+            <span class="search-result-card__title">{{ club.name }}</span>
+          </a>
+          <p class="search-result-card__description">
+            {% if club.description %}
+            {{ club.description }}
+            {% else %}
+            No club description available.
+            {% endif %}
+          </p>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+    {% endfor %}
+
+    {% include "site/components/_pagination.html" with paginated_items=page_obj aria_label="Club pagination" %}
+    {% else %}
+    <div class="search-empty">
+      <h3>No clubs matched your search.</h3>
+      <p>Try a broader keyword.</p>
+    </div>
+    {% endif %}
+  </section>
+  {% else %}
+  <section
+    class="search-panel {% if courses_first %}is-active{% endif %}"
+    id="search-tab-courses"
+    data-tab-panel="courses"
+    role="tabpanel"
+    aria-labelledby="search-tab-trigger-courses"
+    {% if not courses_first %}hidden{% endif %}
+  >
+    <div class="search-panel__header">
+      <h2 class="search-panel__title">Courses</h2>
+      <p class="search-panel__count">{{ total }} result{{ total|pluralize }}</p>
+    </div>
+
+    {% if grouped %}
+    {% for dept, dept_data in grouped.items %}
+    <section class="search-group">
+      <h3 class="search-group__title">
+        <a href="{% url 'department' dept_id=dept_data.dept_id %}">
+          {{ dept }} / {{ dept_data.subdept_name }}
+        </a>
+      </h3>
+      <div class="search-result-list">
+        {% for c in dept_data.courses %}
+        <article class="search-result-card">
+          <a class="search-result-card__link" href="{% url 'course' mnemonic=c.mnemonic course_number=c.number %}">
+            <span class="search-result-card__code">{{ c.mnemonic }} {{ c.number }}</span>
+            <span class="search-result-card__title">{{ c.title }}</span>
+          </a>
+          <p class="search-result-card__description">
+            {% if c.description %}
+            {{ c.description }}
+            {% else %}
+            No course description available.
+            {% endif %}
+          </p>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+    {% if forloop.counter == 2 and not forloop.last %}
+    {% include "site/components/_in_feed_ad.html" %}
+    {% endif %}
+    {% endfor %}
+
+    {% include "site/components/_pagination.html" with paginated_items=page_obj aria_label="Course pagination" %}
+    {% else %}
+    <div class="search-empty">
+      <h3>No courses matched your search.</h3>
+      <p>Try adjusting your filters or search terms.</p>
+    </div>
+    {% endif %}
+  </section>
+
+  <section
+    class="search-panel {% if not courses_first %}is-active{% endif %}"
+    id="search-tab-instructors"
+    data-tab-panel="instructors"
+    role="tabpanel"
+    aria-labelledby="search-tab-trigger-instructors"
+    {% if courses_first %}hidden{% endif %}
+  >
+    <div class="search-panel__header">
+      <h2 class="search-panel__title">Instructors</h2>
+      <p class="search-panel__count">{{ instructors|length }} result{{ instructors|length|pluralize }}</p>
+    </div>
+
+    {% if instructors %}
+    <div class="search-simple-list">
+      {% for i in instructors %}
+      <a class="search-simple-item" href="{% url 'instructor' instructor_id=i.id %}">
+        {{ i.first_name }} {{ i.last_name }}
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="search-empty">
+      <h3>No professors matched your search.</h3>
+      <p>Try searching by last name.</p>
+    </div>
+    {% endif %}
+  </section>
+
+  <section
+    class="search-panel"
+    id="search-tab-departments"
+    data-tab-panel="departments"
+    role="tabpanel"
+    aria-labelledby="search-tab-trigger-departments"
+    hidden
+  >
+    <div class="search-panel__header">
+      <h2 class="search-panel__title">Departments</h2>
+      <p class="search-panel__count">{{ grouped|length }} result{{ grouped|length|pluralize }}</p>
+    </div>
+
+    {% if grouped %}
+    <div class="search-simple-list">
+      {% for dept, dept_data in grouped.items %}
+      <a class="search-simple-item search-simple-item--split" href="{% url 'department' dept_id=dept_data.dept_id %}">
+        <span class="search-simple-item__code">{{ dept }}</span>
+        <span class="search-simple-item__name">{{ dept_data.subdept_name }}</span>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="search-empty">
+      <h3>No departments matched your search.</h3>
+      <p>Try searching for a specific course code.</p>
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const tabs = document.querySelectorAll('[data-tab-target]');
+  const panels = document.querySelectorAll('[data-tab-panel]');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', function () {
+      const target = this.dataset.tabTarget;
+
+      tabs.forEach((candidate) => {
+        const isActive = candidate === this;
+        candidate.classList.toggle('is-active', isActive);
+        candidate.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+
+      panels.forEach((panel) => {
+        const isActive = panel.dataset.tabPanel === target;
+        panel.classList.toggle('is-active', isActive);
+        panel.hidden = !isActive;
+      });
+    });
+  });
+});
+</script>
+{% endblock %}
