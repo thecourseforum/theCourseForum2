@@ -67,10 +67,13 @@ function saveCourseInfoIfPresent() {
   previousPaths.unshift(currentUrl);
   previousPathsTitles.unshift(title);
 
-  // Keep only the top 10 items
+  // Only display last 10 items
   if (previousPaths.length > 10) {
-    previousPaths = previousPaths.slice(0, 10);
     previousPathsTitles = previousPathsTitles.slice(0, 10);
+  }
+  if (previousPaths.length % 5 === 0 && previousPaths.length >= 10) {
+    previousPaths = previousPaths.slice(0, 0);
+    $('#viewLimitModal').modal('show');
   }
 
   // Save back to localStorage
