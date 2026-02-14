@@ -81,27 +81,7 @@ $ docker exec -it tcf_django python manage.py load_grades <year>_<season>.csv
 5. Commit the semesterly data to the repo
 6. Remove production credentialing (use `.env` credentials like normal)
 
-## Fetching Semester Data
-
-Fetch semester data from SIS API (Very Slow):
-
-```console
-$ docker exec -it tcf_django python manage.py fetch_data <year>_<season>
-```
-
-Saved in `tcf_website/management/commands/semester_data/csv`
-
-See [fetch_data.py](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/fetch_data.py) for more information.
-
-## Loading Semester Data
-
-Load semester data from csv into database:
-
-```console
-$ docker exec -it tcf_django python manage.py load_semester <year>_<season>
-```
-
-See [load_semester.py](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/load_semester.py) for more information.
+## [Fetching and Loading Semester Data](https://github.com/thecourseforum/theCourseForum2/blob/dev/doc/semester-data.md)
 
 ## Fetching Club Data
 
