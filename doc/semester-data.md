@@ -27,3 +27,7 @@ See [load_semester.py](https://github.com/thecourseforum/theCourseForum2/blob/de
 The semester data for a semester should be updated at least two times:
 1. Before course enrollment for that semester opens 
 2. After the first day of classes of that semester
+
+## Other useful commands
+
+For other useful commands, see [useful-commands.md](https://github.com/thecourseforum/theCourseForum2/blob/dev/doc/useful-commands.md)
