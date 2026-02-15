@@ -75,6 +75,10 @@ class Command(BaseCommand):
 
         semester = self.load_semester(year, season)
 
+        print(f"Deleting existing sections for {semester}...")
+        Section.objects.filter(semester=semester).delete()
+        print(f"Loading new data for {semester}...")
+
         for index, row in tqdm(df.iterrows(), total=df.shape[0]):
             # print(row)
             self.load_section_row(semester, row)
