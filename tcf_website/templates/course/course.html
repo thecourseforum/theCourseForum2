@@ -98,6 +98,43 @@
                 {% endfor %}
             </ul>
         </div>
+
+        <!-- Related Courses Section -->
+        {% if related_courses %}
+        <div class="container-lg mt-5">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">
+                        <i class="fas fa-link"></i> Related Courses
+                    </h4>
+                    <div class="row">
+                        {% for related in related_courses %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100 border-light shadow-sm">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">
+                                        {{ related.mnemonic }} {{ related.number }}
+                                    </h6>
+                                    <h5 class="card-title">
+                                        <a href="{% url 'course' mnemonic=related.mnemonic course_number=related.number %}" class="text-decoration-none">
+                                            {{ related.title }}
+                                        </a>
+                                    </h5>
+                                    <p class="card-text small mb-2">
+                                        <span class="badge bg-info">Rank #{{ related.rank }}</span>
+                                        <span class="badge bg-light text-dark">
+                                            Similarity: {{ related.similarity_score|floatformat:2 }}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
     <div id="modal-target-course-page">
 
