@@ -67,10 +67,24 @@ function saveCourseInfoIfPresent() {
   previousPaths.unshift(currentUrl);
   previousPathsTitles.unshift(title);
 
-  // Keep only the top 10 items
+  // Only display last 10 items
   if (previousPaths.length > 10) {
-    previousPaths = previousPaths.slice(0, 10);
+    // previousPaths = previousPaths.slice(0, 10);
     previousPathsTitles = previousPathsTitles.slice(0, 10);
+  }
+  // Prevent too many courses from being stored, max 20
+  if (previousPaths.length > 20) {
+    previousPaths = previousPaths.slice(0, 20);
+    previousPathsTitles = previousPathsTitles.slice(0, 20);
+  }
+
+  
+  if (previousPaths.length % 5 === 0 && previousPaths.length >= 10) {
+    // Check if URL matches .../course/[letters]/[numbers] and ends there
+    const courseRegex = /course\/[a-zA-Z]+\/\d+\/?$/;
+    if (courseRegex.test(currentUrl)) {
+      $('#viewLimitModal').modal('show');
+    }
   }
 
   // Save back to localStorage
