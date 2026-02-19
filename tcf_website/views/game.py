@@ -35,7 +35,8 @@ def get_daily_review():  # fetch or retrieve cached daily review, refreshes at m
     review = cache.get(cache_key)
     if not review:
         # if the date has changed (12:00 am) then get the new review and reset cache timer
-        review = Review.objects.order_by("?").first()
+        # choose only reviews that contain actual text
+        review = Review.objects.filter(text__gt="").order_by("?").first()
         cache.set(cache_key, review, cache_timeout)
 
     return review
