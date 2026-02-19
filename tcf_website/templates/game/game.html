@@ -19,7 +19,7 @@
             list="course-list"
             value="{{ form.course.value|default_if_none:'' }}"
         />
-        
+
         <datalist id="course-list">
             {% for c in courses %}
                 <option value="{{ c.combined_mnemonic_number }}"></option>
@@ -28,5 +28,9 @@
 
         <button type="submit">Submit Guess</button>
     </form>
+
+    {% if info %}
+        <p>{{ info }}</p>
+    {% endif %}
 </div>
 {% endblock %}

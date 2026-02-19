@@ -47,12 +47,20 @@ def get_daily_review():  # fetch or retrieve cached daily review, refreshes at m
     return review
 
 
-def print_guess_info(course_text, course_obj=None):
-    # return a string so it can be shown on the page instead of just printing.
-    if course_obj is not None:
-        msg = f"Guess info - Course: {course_text} (id={course_obj.id})"
+def print_guess_info(dept, number, rating, difficulty, gpa):
+    parts = []
+    if dept is not None and number is not None:
+        parts.append(f"{dept} {number}")
     else:
-        msg = f"Guess info - Course: {course_text} (not valid course)"
+        parts.append("unknown course")
+
+    # other course stats
+    parts.append(f"rating={rating if rating is not None else 'N/A'}")
+    parts.append(f"difficulty={difficulty if difficulty is not None else 'N/A'}")
+    parts.append(f"gpa={gpa if gpa is not None else 'N/A'}")
+    msg = "Guess info - " + ", ".join(parts)
+
+    print(msg)
     return msg
 
 
@@ -74,14 +82,20 @@ def game(request):
         info = None
         if form.is_valid():
             course_text = form.cleaned_data["course"]
-            # optionally look up Course object
+
+            # looking up course information
             try:
                 course_obj = Course.objects.get(combined_mnemonic_number=course_text)
+                dept = course_obj.subdepartment.mnemonic
+                number = course_obj.number
+                rating = course_obj.average_rating()
+                difficulty = course_obj.average_difficulty()
+                gpa = course_obj.average_gpa()
+
             except Course.DoesNotExist:
-                course_obj = None
-            info = print_guess_info(
-                course_text, course_obj
-            )  # guess information printed
+                dept = number = rating = difficulty = gpa = None
+
+            info = print_guess_info(dept, number, rating, difficulty, gpa)
 
         # process guess
         # use ajax to get feedback information (correctness of guesses) to display on page
