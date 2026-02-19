@@ -48,10 +48,12 @@ def get_daily_review():  # fetch or retrieve cached daily review, refreshes at m
 
 
 def print_guess_info(course_text, course_obj=None):
+    # return a string so it can be shown on the page instead of just printing.
     if course_obj is not None:
-        print(f"Guess info - Course: {course_text} (id={course_obj.id})")
+        msg = f"Guess info - Course: {course_text} (id={course_obj.id})"
     else:
-        print(f"Guess info - Course: {course_text} (not valid course")
+        msg = f"Guess info - Course: {course_text} (not valid course)"
+    return msg
 
 
 def game(request):
@@ -77,7 +79,9 @@ def game(request):
                 course_obj = Course.objects.get(combined_mnemonic_number=course_text)
             except Course.DoesNotExist:
                 course_obj = None
-            info = print_guess_info(course_text, course_obj)
+            info = print_guess_info(
+                course_text, course_obj
+            )  # guess information printed
 
         # process guess
         # use ajax to get feedback information (correctness of guesses) to display on page
