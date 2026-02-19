@@ -8,4 +8,25 @@
 
 {% block content %}
 <div><p>{{ review.text }}</p></div>
+<div>
+    <p>Please type in a course:</p>
+    <form method="post">
+        {% csrf_token %}
+        <input
+            type="text"
+            name="course"
+            id="id_course"
+            list="course-list"
+            value="{{ form.course.value|default_if_none:'' }}"
+        />
+        
+        <datalist id="course-list">
+            {% for c in courses %}
+                <option value="{{ c.combined_mnemonic_number }}"></option>
+            {% endfor %}
+        </datalist>
+
+        <button type="submit">Submit Guess</button>
+    </form>
+</div>
 {% endblock %}
