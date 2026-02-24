@@ -202,34 +202,6 @@
   pointer-events: none;
 }
 
-.form-check-subjects,
-.form-check-disciplines {
-  margin-top: 1.2% !important;
-  align-self: start !important;
-}
-
-.subject-list,
-.discipline-list {
-  max-height: 150px;
-  overflow-y: auto;
-  border: 1px solid #cbd5e0;
-  border-radius: 8px;
-  padding: 0.75rem;
-  margin-top: 0.5rem;
-  background: #fff;
-  min-height: 200px;
-}
-
-.form-check.subdepartment-label,
-.form-check.discipline-label {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.discipline-list {
-  /* removed max-height: 250px; */
-}
-
 .search-container {
   position: relative;
 }
@@ -266,12 +238,6 @@
   font-size: 0.9rem;
 }
 
-.subject-list,
-.discipline-list {
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e0 transparent;
-}
-
 .btn-custom {
   background-color: #d75626;
   border: 2px solid #d75626;
@@ -291,15 +257,4 @@
   box-shadow: none !important;
   outline: none !important;
   border: 2px solid #b4441d;
-}
-
-.subject-list::-webkit-scrollbar,
-.discipline-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.subject-list::-webkit-scrollbar-thumb,
-.discipline-list::-webkit-scrollbar-thumb {
-  background-color: #cbd5e0;
-  border-radius: 2px;
 }

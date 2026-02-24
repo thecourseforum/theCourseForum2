@@ -136,61 +136,6 @@
                 </div>
               </div>
             </div>
-            
-            <!-- List of subjects -->
-            <div class="filter-grid">
-              <div class="filter-section">
-                <h6 class="filter-header">
-                  Subject
-                </h6>
-                <div class="search-container">
-                  <i class="fa fa-search search-icon"></i>
-                  <input type="text" class="form-control" id="subject-search" placeholder="Search subjects...">
-                </div>
-                <div class="subject-list">
-                  {% for subdept in subdepartments %}
-                    <div class="form-check subdepartment-label">
-                      <input 
-                        class="form-check-input form-check-subjects" 
-                        type="checkbox" 
-                        id="subject-{{ subdept.mnemonic }}" 
-                        name="subdepartment" 
-                        value="{{ subdept.mnemonic }}"
-                      >
-                      <label class="form-check-label" for="subject-{{ subdept.mnemonic }}">
-                        {{ subdept.mnemonic }} - {{ subdept.name }}
-                      </label>
-                    </div>
-                  {% endfor %}
-                </div>
-              </div>
-              <!-- List of disciplines -->
-              <div class="filter-section">
-                <h6 class="filter-header">
-                  Discipline
-                </h6>
-                <div class="search-container">
-                  <i class="fa fa-search search-icon"></i>
-                  <input type="text" class="form-control" id="discipline-search" placeholder="Search disciplines...">
-                </div>
-                <div class="discipline-list">
-                  {% for discipline in disciplines %}
-                    <div class="form-check discipline-label">
-                      <input 
-                        class="form-check-input form-check-disciplines" 
-                        type="checkbox" 
-                        id="discipline-{{ discipline.name|slugify }}" 
-                        name="discipline" 
-                        value="{{ discipline.name }}"
-                      >
-                      <label class="form-check-label" for="discipline-{{ discipline.name|slugify }}">
-                        {{ discipline.name }}
-                      </label>
-                    </div>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
           </div>
   
           <!-- Action buttons -->
