@@ -1,0 +1,140 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load custom_tags %}
+
+{% block title %}{{ event.name }} - Event Details{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="department container">
+  <div class="container-lg mb-4">
+    <!-- Back button -->
+    <div class="mb-3">
+      <a href="{% url 'calendar_overview' %}" class="btn btn-outline-secondary">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i> Back to Calendar
+      </a>
+    </div>
+
+    <!-- Event Header -->
+    <div class="card rating-card mb-4">
+      <div class="card-header bg-primary text-white">
+        <h2 class="mb-0">{{ event.name }}</h2>
+        <p class="mb-0">{{ event.org }}</p>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-8">
+            <!-- Event Details -->
+            <div class="mb-3">
+              <h5><i class="fa fa-calendar" aria-hidden="true"></i> When</h5>
+              <p class="mb-1"><strong>Start:</strong> {{ event.start_formatted }}</p>
+              {% if event.end_formatted and event.end_formatted != event.start_formatted %}
+                <p class="mb-0"><strong>End:</strong> {{ event.end_formatted }}</p>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <h5><i class="fa fa-map-marker" aria-hidden="true"></i> Where</h5>
+              <p class="mb-0">{{ event.location }}</p>
+            </div>
+
+            {% if event.tags %}
+              <div class="mb-3">
+                <h5><i class="fa fa-tags" aria-hidden="true"></i> Tags</h5>
+                {% for tag in event.tags %}
+                  <span class="badge {{ tag|tag_color }} text-white me-1 mb-1">{{ tag }}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% if event.event_type %}
+              <div class="mb-3">
+                <h5><i class="fa fa-info-circle" aria-hidden="true"></i> Event Type</h5>
+                <p class="mb-0">{{ event.event_type }}</p>
+              </div>
+            {% endif %}
+
+            {% if event.capacity %}
+              <div class="mb-3">
+                <h5><i class="fa fa-users" aria-hidden="true"></i> Capacity</h5>
+                <p class="mb-0">{{ event.capacity }} people</p>
+              </div>
+            {% endif %}
+
+            {% if event.cost %}
+              <div class="mb-3">
+                <h5><i class="fa fa-dollar" aria-hidden="true"></i> Cost</h5>
+                <p class="mb-0">{{ event.cost }}</p>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-md-4">
+            <!-- Contact Information -->
+            {% if event.contact_email or event.contact_phone %}
+              <div class="card mb-3">
+                <div class="card-header">
+                  <h5 class="mb-0"><i class="fa fa-envelope" aria-hidden="true"></i> Contact</h5>
+                </div>
+                <div class="card-body">
+                  {% if event.contact_email %}
+                    <p class="mb-1">
+                      <strong>Email:</strong> 
+                      <a href="mailto:{{ event.contact_email }}">{{ event.contact_email }}</a>
+                    </p>
+                  {% endif %}
+                  {% if event.contact_phone %}
+                    <p class="mb-0">
+                      <strong>Phone:</strong> 
+                      <a href="tel:{{ event.contact_phone }}">{{ event.contact_phone }}</a>
+                    </p>
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+
+            <!-- Action Buttons -->
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0"><i class="fa fa-external-link" aria-hidden="true"></i> Links</h5>
+              </div>
+              <div class="card-body">
+                {% if event.registration_url %}
+                  <a href="{{ event.registration_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm w-100 mb-2">
+                    <i class="fa fa-user-plus" aria-hidden="true"></i> Register
+                  </a>
+                {% endif %}
+                {% if event.external_url %}
+                  <a href="{{ event.external_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm w-100">
+                    <i class="fa fa-external-link" aria-hidden="true"></i> More Info
+                  </a>
+                {% endif %}
+                {% if not event.registration_url and not event.external_url %}
+                  <p class="text-muted mb-0">No external links available</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Description -->
+    {% if event.description %}
+      <div class="card rating-card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fa fa-file-text" aria-hidden="true"></i> Description</h5>
+        </div>
+        <div class="card-body">
+        <div class="event-description">
+        {{ event.description_text|linebreaks }}
+        </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

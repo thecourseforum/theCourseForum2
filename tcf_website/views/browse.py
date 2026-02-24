@@ -65,13 +65,18 @@ def browse(request):
             },
         )
 
-    clas = School.objects.get(name="College of Arts & Sciences")
-    seas = School.objects.get(name="School of Engineering & Applied Science")
-
-    excluded_list = [clas.pk, seas.pk]
-
-    # Other schools besides CLAS, SEAS, and Misc.
-    other_schools = School.objects.exclude(pk__in=excluded_list).order_by("name")
+    # School data may be missing in fresh/empty DB (e.g. local dev without dump)
+    try:
+        clas = School.objects.get(name="College of Arts & Sciences")
+        seas = School.objects.get(name="School of Engineering & Applied Science")
+        excluded_list = [clas.pk, seas.pk]
+        other_schools = School.objects.exclude(pk__in=excluded_list).order_by("name")
+        schools_loaded = True
+    except School.DoesNotExist:
+        clas = None
+        seas = None
+        other_schools = School.objects.none()
+        schools_loaded = False
 
     return render(
         request,
@@ -82,6 +87,7 @@ def browse(request):
             "CLAS": clas,
             "SEAS": seas,
             "other_schools": other_schools,
+            "schools_loaded": schools_loaded,
         },
     )
 
@@ -106,6 +112,8 @@ def department(request, dept_id: int, course_recency=None):
 
     # Setting up sorting and course age variables
     latest_semester = Semester.latest()
+    if latest_semester is None:
+        raise Http404("No semester data loaded. Run migrations and ensure the database has semester data.")
     last_five_years = get_object_or_404(Semester, number=latest_semester.number - 50)
     # Fetch season and year (either current semester or 5 years previous)
     season, year = course_recency.upper().split()
