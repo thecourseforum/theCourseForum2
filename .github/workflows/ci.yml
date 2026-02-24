@@ -74,6 +74,7 @@ jobs:
       - name: Migrations & Tests
         run: |
           python manage.py migrate
+          curl -fsS http://localhost:8000
           coverage run manage.py test
 
       - name: Get code coverage
@@ -97,3 +98,23 @@ jobs:
 
       - name: Run ESLint
         run: npx eslint -c .config/.eslintrc.yml tcf_website/static/
+
+  probe_endpoint:
+    name: Endpoint probe (compose)
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+
+        - name: Build & start stack
+          run: |
+            docker compose up -d --build
+
+        - name: Probe endpoint
+          run: |
+            sleep 5
+            curl -i http://localhost:8000
+
+        - name: test app is still running
+          run: curl -i localhost:3000
+
+
