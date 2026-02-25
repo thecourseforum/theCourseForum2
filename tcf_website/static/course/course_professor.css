@@ -26,6 +26,20 @@
   row-gap: 10px;
 }
 
+.ai-summary-box {
+  background: #fff;
+  border: 1px solid #e6e9f2;
+  border-radius: 8px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 40px;
+}
+
+.ai-summary-box .badge-secondary {
+  background-color: #007bff;
+  color: #fff;
+}
+
 .times-info-container {
   width: 100%;
   display: flex;

@@ -1418,6 +1418,38 @@ class Vote(models.Model):
         ]
 
 
+class ReviewLLMSummary(models.Model):
+    """AI-generated summaries for course/instructor page"""
+
+    club = models.ForeignKey(Club, on_delete=models.CASCADE, null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    summary_text = models.TextField()
+    model_id = models.CharField(max_length=255, default="openrouter/auto")
+    source_review_count = models.PositiveIntegerField(default=0)
+    last_review_id = models.IntegerField(default=0)
+    source_metadata = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True, db_column="created_at")
+    updated_at = models.DateTimeField(auto_now=True, db_column="updated_at")
+
+    def __str__(self):
+        return f"Summary for {self.course} / {self.instructor}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["course", "instructor"],
+                name="unique_summary_per_course_instructor",
+                condition=models.Q(club__isnull=True),
+            ),
+            models.UniqueConstraint(
+                fields=["club"],
+                name="unique_summary_per_club",
+                condition=models.Q(club__isnull=False),
+            ),
+        ]
+
+
 class Question(models.Model):
     """Question model.
     Belongs to a User.
@@ -1912,7 +1944,8 @@ class Schedule(models.Model):
         result = (
             ScheduledCourse.objects.filter(schedule=self)
             .annotate(
-                course_id=models.F("section__course_id"),  # Reference to the course
+                # Reference to the course
+                course_id=models.F("section__course_id"),
                 related_instructor_id=models.F(
                     "instructor_id"
                 ),  # Reference to the instructor
