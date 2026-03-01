@@ -6,14 +6,19 @@
 from .auth import login, logout
 from .browse import (
     browse,
+    club_category,
+    club_view,
     course_instructor,
     course_view,
-    course_view_legacy,
     department,
     instructor_view,
-    club_category,
 )
-from .index import AboutView, index, privacy, terms
+from .index import (
+    AboutView,
+    index,
+    privacy,
+    terms,
+)
 from .profile import DeleteProfile, profile, reviews
 from .qa import (
     DeleteAnswer,
@@ -27,16 +32,20 @@ from .qa import (
     upvote_answer,
     upvote_question,
 )
-from .review import DeleteReview, downvote, new_review, upvote
+from .review import (
+    DeleteReview,
+    downvote,
+    new_review,
+    upvote,
+    vote_review,
+)
 from .schedule import (
     delete_schedule,
     duplicate_schedule,
     edit_schedule,
-    modal_load_editor,
-    modal_load_sections,
     new_schedule,
+    remove_scheduled_course,
     schedule_add_course,
     view_schedules,
-    view_select_schedules_modal,
 )
 from .search import search

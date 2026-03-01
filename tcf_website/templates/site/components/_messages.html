@@ -1,0 +1,13 @@
+{% if messages %}
+<section class="flash-messages" aria-live="polite">
+  <div class="flash-messages__inner">
+    {% for message in messages %}
+    <div class="alert {% if 'error' in message.tags %}alert--danger{% elif 'success' in message.tags %}alert--success{% elif 'warning' in message.tags %}alert--warning{% else %}alert--info{% endif %}">
+      <div class="alert__content">
+        <p class="alert__description">{{ message }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

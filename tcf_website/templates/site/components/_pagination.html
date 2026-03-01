@@ -1,0 +1,48 @@
+{% load custom_tags %}
+{% if paginated_items.has_other_pages %}
+<nav class="pagination {% if extra_classes %}{{ extra_classes }}{% else %}search-pagination{% endif %}" aria-label="{{ aria_label|default:'Pagination' }}">
+  {% if paginated_items.has_previous %}
+  <a class="pagination__item" href="?{% querystring request remove='page' page=1 %}">First</a>
+  <a class="pagination__item" href="?{% querystring request remove='page' page=paginated_items.previous_page_number %}">Prev</a>
+  {% endif %}
+
+  {% if paginated_items.number == 1 %}
+  <span class="pagination__item is-active">1</span>
+  {% else %}
+  <a class="pagination__item" href="?{% querystring request remove='page' page=1 %}">1</a>
+  {% endif %}
+
+  {% if paginated_items.number > 4 %}
+  <span class="pagination__ellipsis">...</span>
+  {% endif %}
+
+  {% for page_num in paginated_items.paginator.page_range %}
+  {% if page_num > 1 and page_num < paginated_items.paginator.num_pages %}
+  {% if page_num >= paginated_items.number|add:'-2' and page_num <= paginated_items.number|add:'2' %}
+  {% if page_num == paginated_items.number %}
+  <span class="pagination__item is-active">{{ page_num }}</span>
+  {% else %}
+  <a class="pagination__item" href="?{% querystring request remove='page' page=page_num %}">{{ page_num }}</a>
+  {% endif %}
+  {% endif %}
+  {% endif %}
+  {% endfor %}
+
+  {% if paginated_items.number < paginated_items.paginator.num_pages|add:'-3' %}
+  <span class="pagination__ellipsis">...</span>
+  {% endif %}
+
+  {% if paginated_items.paginator.num_pages > 1 %}
+  {% if paginated_items.number == paginated_items.paginator.num_pages %}
+  <span class="pagination__item is-active">{{ paginated_items.paginator.num_pages }}</span>
+  {% else %}
+  <a class="pagination__item" href="?{% querystring request remove='page' page=paginated_items.paginator.num_pages %}">{{ paginated_items.paginator.num_pages }}</a>
+  {% endif %}
+  {% endif %}
+
+  {% if paginated_items.has_next %}
+  <a class="pagination__item" href="?{% querystring request remove='page' page=paginated_items.next_page_number %}">Next</a>
+  <a class="pagination__item" href="?{% querystring request remove='page' page=paginated_items.paginator.num_pages %}">Last</a>
+  {% endif %}
+</nav>
+{% endif %}

@@ -1,19 +1,27 @@
 """View pertaining to schedule creation/viewing."""
 
-import json
 import logging
+import re
+from datetime import datetime, time
+from urllib.parse import urlencode
 
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.postgres.aggregates.general import ArrayAgg
-from django.db.models import Avg, Case, CharField, Max, Prefetch, Q, Value, When
-from django.db.models.functions import Cast, Concat
-from django.http import HttpResponse, JsonResponse
+from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template.loader import render_to_string
+from django.urls import reverse
 
-from ..models import Course, Instructor, Schedule, ScheduledCourse, Section, Semester
+from ..models import (
+    Course,
+    Instructor,
+    Schedule,
+    ScheduledCourse,
+    Section,
+    SectionTime,
+    Semester,
+)
+from .utils import safe_next_url
 
 # pylint: disable=line-too-long
 # pylint: disable=duplicate-code
@@ -23,89 +31,310 @@ from ..models import Course, Instructor, Schedule, ScheduledCourse, Section, Sem
 logger = logging.getLogger(__name__)
 
 
-def load_secs_helper(course, latest_semester):
-    """Helper function for course_view and for a view in schedule.py"""
-    instructors = (
-        Instructor.objects.filter(section__course=course, hidden=False)
-        .distinct()
-        .annotate(
-            gpa=Avg(
-                "courseinstructorgrade__average",
-                filter=Q(courseinstructorgrade__course=course),
-            ),
-            difficulty=Avg("review__difficulty", filter=Q(review__course=course)),
-            rating=(
-                Avg("review__instructor_rating", filter=Q(review__course=course))
-                + Avg("review__enjoyability", filter=Q(review__course=course))
-                + Avg("review__recommendability", filter=Q(review__course=course))
-            )
-            / 3,
-            semester_last_taught=Max(
-                "section__semester", filter=Q(section__course=course)
-            ),
-            # ArrayAgg:
-            # https://docs.djangoproject.com/en/3.2/ref/contrib/postgres/aggregates/#arrayagg
-            section_times=ArrayAgg(
-                Case(
-                    When(
-                        section__semester=latest_semester,
-                        then="section__section_times",
-                    ),
-                    output_field=CharField(),
-                ),
-                distinct=True,
-            ),
-            section_nums=ArrayAgg(
-                Case(
-                    When(
-                        section__semester=latest_semester,
-                        then="section__sis_section_number",
-                    ),
-                    output_field=CharField(),
-                ),
-                distinct=True,
-            ),
-            section_details=ArrayAgg(
-                # this is to get sections in this format: section.id /%
-                # section.section_num /% section.time /% section_type
-                Concat(
-                    Cast("section__id", CharField()),
-                    Value(" /% "),
-                    Case(
-                        When(
-                            section__semester=latest_semester,
-                            then=Cast("section__sis_section_number", CharField()),
-                        ),
-                        default=Value(""),
-                        output_field=CharField(),
-                    ),
-                    Value(" /% "),
-                    "section__section_times",
-                    Value(" /% "),
-                    "section__section_type",
-                    Value(" /% "),
-                    "section__units",
-                    output_field=CharField(),
-                ),
-                distinct=True,
-            ),
-        )
+DAY_FIELDS = (
+    ("MON", "Mon", "monday"),
+    ("TUE", "Tue", "tuesday"),
+    ("WED", "Wed", "wednesday"),
+    ("THU", "Thu", "thursday"),
+    ("FRI", "Fri", "friday"),
+)
+DAY_TOKEN_MAP = {
+    "mo": "MON",
+    "tu": "TUE",
+    "we": "WED",
+    "th": "THU",
+    "fr": "FRI",
+}
+DAY_TOKEN_PATTERN = re.compile(r"(mo|tu|we|th|fr)", flags=re.IGNORECASE)
+MEETING_BLOCK_PATTERN = re.compile(
+    r"(?P<days>[A-Za-z]+)\s+(?P<start>\d{1,2}:\d{2}\s*[APMapm]{2})\s*-\s*(?P<end>\d{1,2}:\d{2}\s*[APMapm]{2})"
+)
+
+
+def _is_lecture_section(section_type: str | None) -> bool:
+    """Return True when a section type should be treated as lecture."""
+    if not section_type:
+        return True
+    normalized = section_type.strip().lower()
+    return normalized.startswith("lec") or "lecture" in normalized
+
+
+def _clock_to_minutes(raw_clock: str) -> int | None:
+    """Convert clock string like '9:30am' into minutes from midnight."""
+    if not raw_clock:
+        return None
+    try:
+        parsed = datetime.strptime(raw_clock.replace(" ", "").upper(), "%I:%M%p")
+    except ValueError:
+        return None
+    return (parsed.hour * 60) + parsed.minute
+
+
+def _time_to_minutes(value: time) -> int:
+    """Convert a Python time object into minutes from midnight."""
+    return (value.hour * 60) + value.minute
+
+
+def _parse_fallback_meeting_blocks(raw_times: str) -> list[tuple[str, int, int]]:
+    """Parse serialized section_times string into day/time tuples."""
+    if not raw_times:
+        return []
+
+    parsed_blocks: list[tuple[str, int, int]] = []
+    for block in raw_times.split(","):
+        stripped = block.strip()
+        if not stripped:
+            continue
+
+        match = MEETING_BLOCK_PATTERN.search(stripped)
+        if not match:
+            continue
+
+        start_minutes = _clock_to_minutes(match.group("start"))
+        end_minutes = _clock_to_minutes(match.group("end"))
+        if start_minutes is None or end_minutes is None or end_minutes <= start_minutes:
+            continue
+
+        day_tokens = DAY_TOKEN_PATTERN.findall(match.group("days"))
+        for token in day_tokens:
+            day_code = DAY_TOKEN_MAP.get(token.lower())
+            if day_code:
+                parsed_blocks.append((day_code, start_minutes, end_minutes))
+
+    return parsed_blocks
+
+
+def _section_time_rows_to_blocks(
+    section_time_rows: list[SectionTime],
+) -> list[tuple[str, int, int]]:
+    """Convert SectionTime rows into day/time tuples."""
+    blocks: list[tuple[str, int, int]] = []
+    for section_time in section_time_rows:
+        start_minutes = _time_to_minutes(section_time.start_time)
+        end_minutes = _time_to_minutes(section_time.end_time)
+        if end_minutes <= start_minutes:
+            continue
+        for day_code, _, day_field in DAY_FIELDS:
+            if getattr(section_time, day_field):
+                blocks.append((day_code, start_minutes, end_minutes))
+    return blocks
+
+
+def _format_minutes(minutes: int) -> str:
+    """Render minutes from midnight into 12-hour clock text."""
+    hour = minutes // 60
+    minute = minutes % 60
+    suffix = "AM" if hour < 12 else "PM"
+    hour_12 = hour % 12 or 12
+    if minute:
+        return f"{hour_12}:{minute:02d} {suffix}"
+    return f"{hour_12} {suffix}"
+
+
+def _empty_weekly_calendar() -> dict:
+    """Return empty calendar payload structure."""
+    return {
+        "columns": [{"code": code, "label": label, "events": []} for code, label, _ in DAY_FIELDS],
+        "time_labels": [],
+        "slot_markers": [],
+    }
+
+
+def _build_section_time_map(section_ids: set[int]) -> dict[int, list[SectionTime]]:
+    """Build map of section_id -> section time rows."""
+    if not section_ids:
+        return {}
+
+    section_time_map: dict[int, list[SectionTime]] = {section_id: [] for section_id in section_ids}
+    for section_time in SectionTime.objects.filter(section_id__in=section_ids):
+        section_time_map.setdefault(section_time.section_id, []).append(section_time)
+    return section_time_map
+
+
+def _meeting_blocks_for_schedule_course(
+    schedule_course: ScheduledCourse,
+    section_time_map: dict[int, list[SectionTime]],
+) -> list[tuple[str, int, int]]:
+    """Return meeting blocks for one scheduled course."""
+    section_rows = section_time_map.get(schedule_course.section_id, [])
+    meeting_blocks = _section_time_rows_to_blocks(section_rows)
+    if meeting_blocks:
+        return meeting_blocks
+    return _parse_fallback_meeting_blocks(
+        schedule_course.time or schedule_course.section.section_times
     )
 
-    # Note: Refactor pls
 
-    for i in instructors:
-        if i.section_times[0] is not None and i.section_nums[0] is not None:
-            i.times = {}
-            for idx, _ in enumerate(i.section_times):
-                if i.section_times[idx] is not None and i.section_nums[idx] is not None:
-                    i.times[str(i.section_nums[idx])] = i.section_times[idx][:-1].split(
-                        ","
-                    )
-        if None in i.section_nums:
-            i.section_nums.remove(None)
+def _schedule_course_title(schedule_course: ScheduledCourse) -> str:
+    """Return display title for a scheduled course."""
+    return getattr(
+        schedule_course,
+        "title",
+        f"{schedule_course.section.course.subdepartment.mnemonic} "
+        f"{schedule_course.section.course.number}",
+    )
 
-    return instructors
+
+def _schedule_course_instructor_name(schedule_course: ScheduledCourse) -> str:
+    """Return display name for a scheduled course instructor."""
+    if schedule_course.instructor.full_name:
+        return schedule_course.instructor.full_name
+    return (
+        f"{schedule_course.instructor.first_name} {schedule_course.instructor.last_name}".strip()
+    )
+
+
+def _event_payloads_for_course(
+    schedule_course: ScheduledCourse,
+    meeting_blocks: list[tuple[str, int, int]],
+) -> list[dict]:
+    """Build event payloads for one scheduled course."""
+    if not meeting_blocks:
+        return []
+
+    section = schedule_course.section
+    common_payload = {
+        "title": _schedule_course_title(schedule_course),
+        "subtitle": _schedule_course_instructor_name(schedule_course),
+        "meta": f"Section {section.sis_section_number}",
+        "tone": ((section.course_id % 6) + 1),
+        "href": reverse(
+            "course_instructor",
+            args=[section.course_id, schedule_course.instructor_id],
+        ),
+    }
+
+    events = []
+    for day_code, start_minutes, end_minutes in meeting_blocks:
+        events.append(
+            {
+                "day_code": day_code,
+                "start_minutes": start_minutes,
+                "end_minutes": end_minutes,
+                "start_label": _format_minutes(start_minutes),
+                "end_label": _format_minutes(end_minutes),
+                **common_payload,
+            }
+        )
+    return events
+
+
+def _weekly_events(
+    schedule_courses: list[ScheduledCourse],
+    section_time_map: dict[int, list[SectionTime]],
+) -> list[dict]:
+    """Build all calendar events for schedule courses."""
+    events: list[dict] = []
+    for schedule_course in schedule_courses:
+        meeting_blocks = _meeting_blocks_for_schedule_course(
+            schedule_course,
+            section_time_map,
+        )
+        events.extend(_event_payloads_for_course(schedule_course, meeting_blocks))
+    return events
+
+
+def _calendar_window(events: list[dict]) -> tuple[int, int]:
+    """Return calendar window start/end minutes."""
+    earliest_start = min(event["start_minutes"] for event in events)
+    latest_end = max(event["end_minutes"] for event in events)
+    start_minutes = max(7 * 60, min(8 * 60, (earliest_start // 60) * 60))
+    end_minutes = min(22 * 60, max(18 * 60, ((latest_end + 59) // 60) * 60))
+    if end_minutes <= start_minutes:
+        end_minutes = start_minutes + 60
+    return start_minutes, end_minutes
+
+
+def _apply_event_geometry(events: list[dict], start_minutes: int, end_minutes: int) -> None:
+    """Mutate event payloads with layout geometry fields."""
+    total_minutes = end_minutes - start_minutes
+    for event in events:
+        clamped_start = max(start_minutes, min(end_minutes, event["start_minutes"]))
+        clamped_end = max(clamped_start, min(end_minutes, event["end_minutes"]))
+        event["top_pct"] = ((clamped_start - start_minutes) / total_minutes) * 100
+        event["height_pct"] = max(
+            4.0,
+            ((clamped_end - clamped_start) / total_minutes) * 100,
+        )
+
+
+def _calendar_columns(events: list[dict]) -> list[dict]:
+    """Group and sort events by day."""
+    columns = []
+    for day_code, day_label, _ in DAY_FIELDS:
+        day_events = sorted(
+            [event for event in events if event["day_code"] == day_code],
+            key=lambda item: (item["start_minutes"], item["end_minutes"]),
+        )
+        columns.append({"code": day_code, "label": day_label, "events": day_events})
+    return columns
+
+
+def _build_weekly_calendar(schedule_courses: list[ScheduledCourse]) -> dict:
+    """Build normalized weekly calendar payload for calendar component."""
+    if not schedule_courses:
+        return _empty_weekly_calendar()
+
+    section_ids = {course.section_id for course in schedule_courses}
+    section_time_map = _build_section_time_map(section_ids)
+    events = _weekly_events(schedule_courses, section_time_map)
+
+    if not events:
+        return _empty_weekly_calendar()
+
+    start_minutes, end_minutes = _calendar_window(events)
+    _apply_event_geometry(events, start_minutes, end_minutes)
+
+    columns = _calendar_columns(events)
+    slot_count = max(1, (end_minutes - start_minutes) // 60)
+    time_labels = [_format_minutes(start_minutes + (hour * 60)) for hour in range(slot_count + 1)]
+
+    return {
+        "columns": columns,
+        "time_labels": time_labels,
+        "slot_markers": list(range(slot_count)),
+    }
+
+
+def _existing_schedule_blocks(schedule: Schedule) -> list[tuple[str, int, int]]:
+    """Return meeting blocks for all existing courses in a schedule."""
+    existing_courses = list(
+        ScheduledCourse.objects.filter(schedule=schedule).select_related("section")
+    )
+    if not existing_courses:
+        return []
+
+    section_ids = {course.section_id for course in existing_courses}
+    section_time_map = _build_section_time_map(section_ids)
+
+    existing_blocks: list[tuple[str, int, int]] = []
+    for existing_course in existing_courses:
+        existing_blocks.extend(
+            _meeting_blocks_for_schedule_course(existing_course, section_time_map)
+        )
+    return existing_blocks
+
+
+def _has_schedule_conflict(
+    schedule: Schedule,
+    candidate_blocks: list[tuple[str, int, int]],
+) -> bool:
+    """Return True if candidate meeting blocks conflict with schedule contents."""
+    if not candidate_blocks:
+        return False
+
+    existing_blocks = _existing_schedule_blocks(schedule)
+    if not existing_blocks:
+        return False
+
+    for candidate_day, candidate_start, candidate_end in candidate_blocks:
+        for existing_day, existing_start, existing_end in existing_blocks:
+            if candidate_day != existing_day:
+                continue
+            if candidate_start < existing_end and candidate_end > existing_start:
+                return True
+
+    return False
 
 
 class ScheduleForm(forms.ModelForm):
@@ -113,30 +342,18 @@ class ScheduleForm(forms.ModelForm):
     Django form for interacting with a schedule
     """
 
-    user_id = forms.IntegerField(widget=forms.HiddenInput())
     name = forms.CharField(max_length=15)
 
     class Meta:
         model = Schedule
-        fields = ["name", "user_id"]
+        fields = ["name"]
 
 
-class SectionForm(forms.ModelForm):
-    """
-    Django form for adding a course to a schedule
-    """
-
-    class Meta:
-        model = ScheduledCourse
-        fields = ["schedule", "section", "instructor", "time"]
-
-
-@login_required
 def schedule_data_helper(request):
     """
     This helper method is for getting schedule data for a request.
     """
-    schedules = Schedule.objects.filter(user=request.user).prefetch_related(
+    schedules = Schedule.objects.filter(user=request.user).order_by("name").prefetch_related(
         Prefetch(
             "scheduledcourse_set",
             queryset=ScheduledCourse.objects.select_related("section", "instructor"),
@@ -178,35 +395,42 @@ def schedule_data_helper(request):
     return ret
 
 
+@login_required
 def view_schedules(request):
-    """
-    Get all schedules, and the related courses, for a given user.
-    """
+    """Render schedule builder page."""
     schedule_context = schedule_data_helper(request)
+    schedules = list(schedule_context["schedules"])
 
-    # add an empty schedule form into the context
-    # to be used in the create_schedule_modal
-    form = ScheduleForm()
-    schedule_context["form"] = form
+    selected_schedule = None
+    selected_schedule_data = None
+    selected_schedule_id = request.GET.get("schedule")
+    if schedules:
+        if selected_schedule_id:
+            selected_schedule = next(
+                (schedule for schedule in schedules if str(schedule.id) == selected_schedule_id),
+                None,
+            )
+        if selected_schedule is None:
+            selected_schedule = schedules[0]
+        selected_schedule_data = selected_schedule.get_schedule()
 
-    return render(request, "schedule/user_schedules.html", schedule_context)
+    selected_courses = selected_schedule_data[0] if selected_schedule_data else []
+    calendar = _build_weekly_calendar(selected_courses)
 
-
-def view_select_schedules_modal(request, mode):
-    """
-    Get all schedules and display in the modal.
-    """
-    schedule_context = schedule_data_helper(request)
-
-    if mode == "add_course":
-        schedule_context["mode"] = mode
-    else:
-        schedule_context["mode"] = "edit_schedule"
-    modal_content = render_to_string(
-        "schedule/select_schedule_modal.html", schedule_context, request
+    schedule_context.update(
+        {
+            "selected_schedule": selected_schedule,
+            "selected_courses": selected_courses,
+            "selected_schedule_stats": {
+                "credits": (selected_schedule_data[1] if selected_schedule_data else 0),
+                "rating": (selected_schedule_data[2] if selected_schedule_data else 0),
+                "gpa": (selected_schedule_data[4] if selected_schedule_data else 0),
+            },
+            "calendar": calendar,
+        }
     )
 
-    return HttpResponse(modal_content)
+    return render(request, "site/pages/schedule.html", schedule_context)
 
 
 @login_required
@@ -222,14 +446,12 @@ def new_schedule(request):
             schedule.user = request.user
             if schedule.user is None:
                 messages.error(request, "There was an error")
-                return render(request, "schedule/user_schedules.html", {"form": form})
+                return redirect(safe_next_url(request, reverse("schedule")))
             schedule.save()
             messages.success(request, "Successfully created schedule!")
-    else:
-        # if schedule isn't getting saved, then don't do anything
-        # for part two of the this project, load the actual course builder page
-        form = ScheduleForm()
-    return redirect("schedule")
+        else:
+            messages.error(request, "Invalid schedule data.")
+    return redirect(safe_next_url(request, reverse("schedule")))
 
 
 @login_required
@@ -254,7 +476,7 @@ def delete_schedule(request):
                 request,
                 f"Successfully deleted {schedule_count} schedules and {deleted_count - schedule_count} courses",
             )
-    return redirect("schedule")
+    return redirect(safe_next_url(request, reverse("schedule")))
 
 
 @login_required
@@ -262,7 +484,7 @@ def duplicate_schedule(request, schedule_id):
     """
     Duplicate a schedule given a schedule id in the request.
     """
-    schedule = get_object_or_404(Schedule, pk=schedule_id)
+    schedule = get_object_or_404(Schedule, pk=schedule_id, user=request.user)
     schedule.pk = None  # reset the key so it will be recreated when it's saved
     old_name = schedule.name
     schedule.name = "Copy of " + old_name
@@ -277,43 +499,7 @@ def duplicate_schedule(request, schedule_id):
         course.save()
 
     messages.success(request, f"Successfully duplicated {old_name}")
-    return redirect("schedule")
-
-
-@login_required
-def modal_load_editor(request):
-    """
-    Load the schedule editor modal with schedule data.
-    """
-    if request.method != "POST":
-        messages.error(request, f"Invalid request method: {request.method}")
-        return JsonResponse({"status": "Method Not Allowed"}, status=405)
-
-    body_unicode = request.body.decode("utf-8")
-    body = json.loads(body_unicode)
-    schedule_id = body.get("schedule_id")
-
-    if not schedule_id:
-        messages.error(request, "Schedule ID is missing")
-        return JsonResponse({"status": "Bad Request"}, status=400)
-
-    try:
-        schedule = Schedule.objects.get(pk=schedule_id)
-    except Schedule.DoesNotExist:
-        messages.error(request, "Schedule not found")
-        return JsonResponse({"status": "Not Found"}, status=404)
-
-    schedule_data = schedule.get_schedule()
-
-    context = {
-        "schedule": schedule,
-        "schedule_courses": schedule_data[0],
-        "schedule_credits": schedule_data[1],
-        "schedule_ratings": schedule_data[2],
-        "schedule_difficulty": schedule_data[3],
-        "schedule_gpa": schedule_data[4],
-    }
-    return render(request, "schedule/schedule_editor.html", context)
+    return redirect(safe_next_url(request, reverse("schedule")))
 
 
 @login_required
@@ -323,127 +509,276 @@ def edit_schedule(request):
     """
     if request.method != "POST":
         messages.error(request, f"Invalid request method: {request.method}")
-        return JsonResponse({"status": "Method Not Allowed"}, status=405)
+        return redirect(safe_next_url(request, reverse("schedule")))
 
-    schedule = Schedule.objects.get(pk=request.POST["schedule_id"])
-    if schedule.name != request.POST["schedule_name"]:
-        schedule.name = request.POST["schedule_name"]
+    schedule = get_object_or_404(
+        Schedule, pk=request.POST["schedule_id"], user=request.user
+    )
+    updated_name = request.POST.get("schedule_name", "").strip()
+    if updated_name and schedule.name != updated_name:
+        schedule.name = updated_name
         schedule.save()
 
     deleted_courses = request.POST.getlist("removed_course_ids[]")
     if deleted_courses:
-        ScheduledCourse.objects.filter(id__in=deleted_courses).delete()
+        ScheduledCourse.objects.filter(
+            id__in=deleted_courses,
+            schedule__user=request.user,
+        ).delete()
 
     messages.success(request, f"Successfully made changes to {schedule.name}")
-    return redirect("schedule")
+    return redirect(safe_next_url(request, reverse("schedule")))
 
 
 @login_required
-def modal_load_sections(request):
-    """
-    Load the instructors and section times for a course, and the schedule, when adding to schedule from the modal.
-    """
-    # pylint: disable=too-many-locals
-    body_unicode = request.body.decode("utf-8")
-    body = json.loads(body_unicode)
-    course_id = body["course_id"]
-    schedule_id = body["schedule_id"]
+def remove_scheduled_course(request, scheduled_course_id):
+    """Remove one scheduled course from the active user's schedule."""
+    if request.method != "POST":
+        return redirect(reverse("schedule"))
 
-    # get the course based off passed in course_id
-    course = Course.objects.get(pk=course_id)
-    latest_semester = Semester.latest()
-
-    data = {}
-    instructors = load_secs_helper(course, latest_semester).filter(
-        semester_last_taught=latest_semester.id
+    scheduled_course = get_object_or_404(
+        ScheduledCourse,
+        id=scheduled_course_id,
+        schedule__user=request.user,
     )
+    schedule_id = scheduled_course.schedule_id
+    course_label = (
+        f"{scheduled_course.section.course.subdepartment.mnemonic} "
+        f"{scheduled_course.section.course.number}"
+    )
+    scheduled_course.delete()
+    messages.success(request, f"Removed {course_label} from your schedule.")
 
-    for i in instructors:
-        temp = {}
-        data[i.id] = temp
+    default_url = f"{reverse('schedule')}?{urlencode({'schedule': schedule_id})}"
+    return redirect(safe_next_url(request, default_url))
 
-        # decode the string in section_details and take skip strings without a time or section_id
-        encoded_sections = [
-            x.split(" /% ")
-            for x in i.section_details
-            if x.split(" /% ")[2] != "" and x.split(" /% ")[1] != ""
-        ]
 
-        # strip the traling comma
-        for section in encoded_sections:
-            if section[2].endswith(","):
-                section[2] = section[2].rstrip(",")
+def _build_schedule_add_options(
+    course: Course, latest_semester: Semester
+) -> tuple[list[dict], list[dict]]:
+    """Build lecture and non-lecture options for the add-course form."""
+    lecture_options = []
+    other_options = []
+    sections = (
+        Section.objects.filter(course=course, semester=latest_semester)
+        .prefetch_related("instructors")
+        .order_by("sis_section_number")
+    )
+    for section in sections:
+        section_time = (section.section_times or "").rstrip(",")
+        for instructor in section.instructors.all():
+            if instructor.hidden:
+                continue
+            display_name = (
+                instructor.full_name
+                if instructor.full_name
+                else f"{instructor.first_name} {instructor.last_name}".strip()
+            )
+            option = {
+                "value": f"{section.id}:{instructor.id}",
+                "section_id": section.id,
+                "instructor_id": instructor.id,
+                "section_number": section.sis_section_number,
+                "section_type": section.section_type or "Lecture",
+                "section_units": section.units,
+                "section_time": section_time,
+                "instructor_name": display_name,
+            }
+            if _is_lecture_section(section.section_type):
+                lecture_options.append(option)
+            else:
+                other_options.append(option)
+    return lecture_options, other_options
 
-        temp["sections"] = encoded_sections
-        temp["name"] = i.first_name + " " + i.last_name
-        temp["rating"] = i.rating
-        temp["difficulty"] = i.difficulty
-        temp["gpa"] = i.gpa
 
-    schedule = Schedule.objects.get(pk=schedule_id)
-    schedule_data = schedule.get_schedule()
-    context = {
-        "instructors_data": data,
-        "schedule": schedule,
-        "schedule_courses": schedule_data[0],
-        "schedule_credits": schedule_data[1],
-        "schedule_ratings": schedule_data[2],
-        "schedule_difficulty": schedule_data[3],
-        "schedule_gpa": schedule_data[4],
+def _parse_schedule_add_selection(
+    selected_schedule_id: str, selected_option: str
+) -> tuple[int | None, int | None, int | None, str | None]:
+    """Parse schedule and section selection values from POST data."""
+    if not selected_schedule_id:
+        return None, None, None, "Choose a schedule first."
+    if not selected_option:
+        return None, None, None, "Choose a section to add."
+
+    try:
+        section_id_raw, instructor_id_raw = selected_option.split(":")
+        schedule_id = int(selected_schedule_id)
+        section_id = int(section_id_raw)
+        instructor_id = int(instructor_id_raw)
+    except (AttributeError, TypeError, ValueError):
+        return None, None, None, "Invalid section selection."
+
+    return schedule_id, section_id, instructor_id, None
+
+
+def _resolve_schedule_add_selection(
+    user,
+    course: Course,
+    latest_semester: Semester,
+    selection_ids: tuple[int, int, int],
+) -> tuple[Schedule | None, Section | None, Instructor | None, str | None]:
+    """Validate selected schedule/section/instructor objects."""
+    schedule_id, section_id, instructor_id = selection_ids
+
+    schedule = Schedule.objects.filter(id=schedule_id, user=user).first()
+    if schedule is None:
+        return None, None, None, "Invalid schedule selection."
+
+    section = Section.objects.filter(
+        id=section_id, course=course, semester=latest_semester
+    ).first()
+    if section is None:
+        return None, None, None, "Invalid section selection."
+
+    instructor = Instructor.objects.filter(id=instructor_id, hidden=False).first()
+    if instructor is None:
+        return None, None, None, "Invalid instructor selection."
+
+    if not section.instructors.filter(id=instructor.id).exists():
+        return None, None, None, "The selected instructor does not teach that section."
+
+    return schedule, section, instructor, None
+
+
+def _schedule_add_success_redirect(request, schedule_id: int):
+    """Return success redirect response for schedule add flow."""
+    default_url = f"{reverse('schedule')}?{urlencode({'schedule': schedule_id})}"
+    return redirect(safe_next_url(request, default_url))
+
+
+def _add_course_to_schedule(
+    request, schedule: Schedule, section: Section, instructor: Instructor
+):
+    """Attempt to add the selected section and emit user-facing messages."""
+    if ScheduledCourse.objects.filter(
+        schedule=schedule, section=section, instructor=instructor
+    ).exists():
+        messages.info(request, "That section is already in this schedule.")
+        return None
+
+    candidate_blocks = _section_time_rows_to_blocks(list(section.sectiontime_set.all()))
+    if not candidate_blocks:
+        candidate_blocks = _parse_fallback_meeting_blocks(section.section_times)
+
+    if _has_schedule_conflict(schedule, candidate_blocks):
+        messages.error(
+            request,
+            "This section conflicts with another meeting in the selected schedule.",
+        )
+        return None
+
+    ScheduledCourse.objects.create(
+        schedule=schedule,
+        section=section,
+        instructor=instructor,
+        time=(section.section_times or "").rstrip(","),
+    )
+    messages.success(request, "Successfully added course to schedule.")
+    return _schedule_add_success_redirect(request, schedule.id)
+
+
+def _handle_schedule_add_post(
+    request,
+    course: Course,
+    latest_semester: Semester,
+    selected_schedule_id: str,
+    selected_option: str,
+):
+    """Handle POST submission for schedule add flow."""
+    schedule_id, section_id, instructor_id, parse_error = _parse_schedule_add_selection(
+        selected_schedule_id, selected_option
+    )
+    if parse_error:
+        messages.error(request, parse_error)
+        return None
+
+    schedule, section, instructor, validation_error = _resolve_schedule_add_selection(
+        request.user,
+        course,
+        latest_semester,
+        (schedule_id, section_id, instructor_id),
+    )
+    if validation_error:
+        messages.error(request, validation_error)
+        return None
+
+    return _add_course_to_schedule(request, schedule, section, instructor)
+
+
+def _build_schedule_add_page_context(
+    course: Course,
+    page_state: dict,
+) -> dict:
+    """Build template context for schedule add page."""
+    dept = course.subdepartment.department
+    breadcrumbs = [
+        (dept.school.name, reverse("browse"), False),
+        (dept.name, reverse("department", args=[dept.id]), False),
+        (
+            course.code(),
+            reverse("course", args=[course.subdepartment.mnemonic, course.number]),
+            False,
+        ),
+        ("Add to Schedule", None, True),
+    ]
+    return {
+        "course": course,
+        "breadcrumbs": breadcrumbs,
+        "lecture_options": page_state["lecture_options"],
+        "other_options": page_state["other_options"],
+        "schedules": page_state["schedules"],
+        "selected_schedule_id": (
+            str(page_state["selected_schedule_id"])
+            if page_state["selected_schedule_id"]
+            else ""
+        ),
+        "selected_option": page_state["selected_option"],
+        "default_next_url": page_state["fallback_course_url"],
+        "next_url": page_state["next_url"],
     }
-    return render(request, "schedule/schedule_with_sections.html", context)
 
 
 @login_required
-def schedule_add_course(request):
-    """Add a course to a schedule, the request should be FormData for the SectionForm class."""
+def schedule_add_course(request, course_id):
+    """Add a course to a schedule from the course flow."""
+    course = get_object_or_404(Course, id=course_id)
+    latest_semester = Semester.latest()
+    schedules = Schedule.objects.filter(user=request.user).order_by("name")
+    lecture_options, other_options = _build_schedule_add_options(course, latest_semester)
+
+    selected_schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule", "")
+    selected_option = request.POST.get("selection", "")
+
+    fallback_course_url = reverse(
+        "course",
+        args=[course.subdepartment.mnemonic, course.number],
+    )
+    next_url = safe_next_url(request, fallback_course_url)
 
     if request.method == "POST":
-        # Parse the JSON-encoded 'selected_course' field
-        try:
-            selected_course = json.loads(
-                request.POST.get("selected_course", "{}")
-            )  # Default to empty dict if not found
-        except json.JSONDecodeError:
-            return JsonResponse(
-                {"status": "error", "message": "Invalid JSON data"}, status=400
-            )
+        success_response = _handle_schedule_add_post(
+            request,
+            course,
+            latest_semester,
+            selected_schedule_id,
+            selected_option,
+        )
+        if success_response is not None:
+            return success_response
 
-        form_data = {
-            "schedule": request.POST.get("schedule_id"),
-            "instructor": int(selected_course.get("instructor")),
-            "section": int(selected_course.get("section")),
-            "time": selected_course.get("section_time"),
-        }
-
-        # make form object with our passed in data
-        form = SectionForm(form_data)
-
-        if form.is_valid():
-            scheduled_course = form.save(commit=False)
-            # extract id's for all related fields
-            schedule_id = form.cleaned_data[
-                "schedule"
-            ].id  # get the schedule's primary key
-            instructor_id = form.cleaned_data[
-                "instructor"
-            ].id  # get the instructor's primary key
-            section_id = form.cleaned_data[
-                "section"
-            ].id  # get the section's primary key
-            course_time = form.cleaned_data["time"]
-
-            # update the form object with the related objects returned from the database
-            # Note: there might be some optimzation where we could do the request in
-            # bulk instead of 4 seperate queries
-            scheduled_course.schedule = Schedule.objects.get(id=schedule_id)
-            scheduled_course.instructor = Instructor.objects.get(id=instructor_id)
-            scheduled_course.section = Section.objects.get(id=section_id)
-            scheduled_course.time = course_time
-            scheduled_course.save()
-        else:
-            messages.error(request, "Invalid form data")
-            return JsonResponse({"status": "error"}, status=400)
-
-    messages.success(request, "Succesfully added course!")
-    return JsonResponse({"status": "success"})
+    return render(
+        request,
+        "site/pages/schedule_add_course.html",
+        _build_schedule_add_page_context(
+            course,
+            {
+                "lecture_options": lecture_options,
+                "other_options": other_options,
+                "schedules": schedules,
+                "selected_schedule_id": selected_schedule_id,
+                "selected_option": selected_option,
+                "fallback_course_url": fallback_course_url,
+                "next_url": next_url,
+            },
+        ),
+    )

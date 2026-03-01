@@ -1,0 +1,134 @@
+{% extends "site/base.html" %}
+{% load static %}
+
+{% block title %}{{ instructor.full_name }} | theCourseForum{% endblock %}
+
+{% block page_metadata %}
+{% if not is_teaching_current_semester %}
+<meta name="robots" content="noindex">
+{% endif %}
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/site/pages/instructor.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="instructor-header">
+  <div class="instructor-header__inner">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'browse' %}" class="breadcrumb__link">Browse</a>
+      <span class="breadcrumb__separator">/</span>
+      <span class="breadcrumb__current">{{ instructor.full_name }}</span>
+    </nav>
+    
+    <!-- Profile -->
+    <div class="instructor-profile">
+      <div class="instructor-profile__info">
+        <h1 class="instructor-profile__name">{{ instructor.full_name }}</h1>
+        
+        {% if instructor.email %}
+        <p class="instructor-profile__email">
+          <a href="mailto:{{ instructor.email }}">{{ instructor.email }}</a>
+        </p>
+        {% endif %}
+        
+        {% if not is_teaching_current_semester %}
+        <div class="not-teaching-alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>Not currently teaching UVA courses</span>
+        </div>
+        {% endif %}
+      </div>
+      
+      <!-- Stats Card -->
+      <div class="stats-card">
+        <div class="stats-card__item">
+          <div class="stats-card__value {% if avg_rating >= 4 %}stats-card__value--success{% elif avg_rating >= 3 %}stats-card__value--warning{% elif avg_rating %}stats-card__value--danger{% else %}stats-card__value--muted{% endif %}">
+            {% if avg_rating %}{{ avg_rating }}{% else %}—{% endif %}
+          </div>
+          <div class="stats-card__label">Rating</div>
+        </div>
+        
+        <div class="stats-card__item">
+          <div class="stats-card__value {% if avg_difficulty <= 2.5 %}stats-card__value--success{% elif avg_difficulty <= 3.5 %}stats-card__value--warning{% elif avg_difficulty %}stats-card__value--danger{% else %}stats-card__value--muted{% endif %}">
+            {% if avg_difficulty %}{{ avg_difficulty }}{% else %}—{% endif %}
+          </div>
+          <div class="stats-card__label">Difficulty</div>
+        </div>
+        
+        <div class="stats-card__item">
+          <div class="stats-card__value {% if avg_gpa >= 3.5 %}stats-card__value--success{% elif avg_gpa >= 2.5 %}stats-card__value--warning{% elif avg_gpa %}stats-card__value--danger{% else %}stats-card__value--muted{% endif %}">
+            {% if avg_gpa and avg_gpa != "—" %}{{ avg_gpa }}{% else %}—{% endif %}
+          </div>
+          <div class="stats-card__label">GPA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Courses Taught -->
+<div class="instructor-content">
+  {% if courses %}
+  {% for subdepartment_name, subdepartment_courses in courses.items %}
+  <section class="courses-section">
+    <h2 class="courses-section__title">{{ subdepartment_name }}</h2>
+    
+    {% for course in subdepartment_courses %}
+    <a href="{% url 'course_instructor' course_id=course.id instructor_id=instructor.id %}" class="course-taught">
+      <span class="course-taught__name">{{ course.name }}</span>
+      
+      <div class="course-taught__stats">
+        <div class="course-taught__stat">
+          <div class="course-taught__stat-value">{{ course.avg_rating|floatformat:1 }}</div>
+          <div class="course-taught__stat-label">Rating</div>
+        </div>
+        
+        <div class="course-taught__stat">
+          <div class="course-taught__stat-value">{{ course.avg_difficulty|floatformat:1 }}</div>
+          <div class="course-taught__stat-label">Difficulty</div>
+        </div>
+        
+        <div class="course-taught__stat">
+          <div class="course-taught__stat-value">
+            {% if course.avg_gpa == 0.0 %}
+            —
+            {% else %}
+            {{ course.avg_gpa|floatformat:2 }}
+            {% endif %}
+          </div>
+          <div class="course-taught__stat-label">GPA</div>
+        </div>
+        
+        <div class="course-taught__stat">
+          <div class="course-taught__stat-value">{{ course.last_taught }}</div>
+          <div class="course-taught__stat-label">Last Taught</div>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </section>
+  {% if forloop.counter == 1 and not forloop.last %}
+  {% include "site/components/_in_feed_ad.html" %}
+  {% endif %}
+  {% endfor %}
+  {% else %}
+  <!-- Empty State -->
+  <div class="empty-state">
+    <h2 class="empty-state__title">No courses found</h2>
+    <p class="empty-state__description">
+      This instructor hasn't taught any courses recently.
+    </p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

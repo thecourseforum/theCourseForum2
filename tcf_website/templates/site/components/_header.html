@@ -1,0 +1,145 @@
+{% load static %}
+{% load custom_tags %}
+{# Header Component #}
+<header class="header">
+  <div class="header__inner">
+    <!-- Logo -->
+    <a href="{% url 'index' %}" class="header__logo">
+      <img src="{% static 'base/img/new_logo.svg' %}" alt="theCourseForum" class="header__logo-icon">
+      <span class="header__logo-text">theCourseForum</span>
+    </a>
+    
+    <!-- Navigation -->
+    <nav class="header__nav">
+      <a href="{% url 'browse' %}" class="header__nav-link {% if request.resolver_match.url_name == 'browse' %}is-active{% endif %}">
+        Browse
+      </a>
+      {% if user.is_authenticated %}
+      <a href="{% url 'schedule' %}" class="header__nav-link {% if request.resolver_match.url_name == 'schedule' or request.resolver_match.url_name == 'schedule_add_course' %}is-active{% endif %}">
+        Schedule
+      </a>
+      <a href="{% url 'new_review' %}" class="header__nav-link {% if request.resolver_match.url_name == 'new_review' %}is-active{% endif %}">
+        Review
+      </a>
+      {% endif %}
+      <a href="{% url 'about' %}" class="header__nav-link {% if request.resolver_match.url_name == 'about' %}is-active{% endif %}">
+        About
+      </a>
+    </nav>
+    
+    <!-- Global Search (Hidden on Landing Page) -->
+    {% if request.resolver_match.url_name != 'index' %}
+      {% include "site/components/_search_bar.html" %}
+    {% endif %}
+    
+    <!-- Actions -->
+    <div class="header__actions">
+      <!-- Mode Toggle -->
+      <div class="mode-toggle">
+        <a href="{% mode_toggle_url request 'courses' %}" class="mode-toggle__item {% if request.GET.mode != 'clubs' %}is-active{% endif %}" aria-label="Switch to Courses">
+          Courses
+        </a>
+        <a href="{% mode_toggle_url request 'clubs' %}" class="mode-toggle__item {% if request.GET.mode == 'clubs' %}is-active{% endif %}" aria-label="Switch to Clubs">
+          Clubs
+        </a>
+      </div>
+
+      <!-- Theme Toggle -->
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
+        <svg class="theme-toggle__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        <svg class="theme-toggle__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </button>
+      
+      <!-- User Menu -->
+      {% if user.is_authenticated %}
+      <div class="header__user dropdown" id="userDropdown">
+        <button class="header__user-trigger" onclick="this.parentElement.classList.toggle('is-open')">
+          <span class="header__user-avatar">
+            {% if user.first_name %}
+              {{ user.first_name|slice:":1"|upper }}
+            {% elif user.email %}
+              {{ user.email|slice:":1"|upper }}
+            {% else %}
+              U
+            {% endif %}
+          </span>
+          <span class="sm:block hidden">{% firstof user.first_name user.email "User" %}</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="dropdown__menu dropdown__menu--right">
+          <a href="{% url 'profile' %}" class="dropdown__item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v 2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            My Profile
+          </a>
+          <a href="{% url 'reviews' %}" class="dropdown__item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            My Reviews
+          </a>
+          <div class="dropdown__divider"></div>
+          <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="dropdown__item dropdown__item--danger">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              Sign Out
+            </button>
+          </form>
+        </div>
+      </div>
+      {% else %}
+      <button class="btn btn--primary btn--sm" data-modal-open="loginModal">
+        Sign In
+      </button>
+      {% endif %}
+      
+      <!-- Mobile Menu Toggle -->
+      <button class="header__mobile-trigger" id="mobileMenuTrigger" aria-label="Open menu" onclick="document.querySelector('.header').classList.toggle('is-mobile-open')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  const dropdown = document.getElementById('userDropdown');
+  if (dropdown && !dropdown.contains(e.target)) {
+    dropdown.classList.remove('is-open');
+  }
+
+  // Close mobile menu when clicking outside
+  const header = document.querySelector('.header');
+  const mobileTrigger = document.getElementById('mobileMenuTrigger');
+  if (header && mobileTrigger && !header.contains(e.target)) {
+    header.classList.remove('is-mobile-open');
+  }
+});
+</script>

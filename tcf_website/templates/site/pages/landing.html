@@ -1,0 +1,186 @@
+{% extends "site/base.html" %}
+{% load static %}
+
+{% block title %}theCourseForum{% endblock %}
+
+{% block body_class %}page-landing{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/site/pages/landing.css' %}">
+{% endblock %}
+
+{% block header %}
+{# Use transparent header for landing #}
+{% include "site/components/_header.html" %}
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero__content">
+    <img src="{% static 'base/img/new_logo.svg' %}" alt="theCourseForum logo" class="hero__logo">
+
+    <h1 class="hero__title">
+      Find the perfect<span class="hero__title-gradient"> {{ mode_noun }} for you</span>
+    </h1>
+
+    <!-- Search Bar -->
+    <div class="hero__search">
+      <!-- Hero Search -->
+      {% include "site/components/_search_bar.html" with container_classes="max-w-xl w-full" form_classes="search-bar--hero" %}
+    </div>
+    
+  </div>
+</section>
+
+
+<!-- Features Section -->
+<section class="features" id="features">
+  <div class="features__subtitle">Features</div>
+  <div class="features__grid">
+    <!-- Feature 1: Browse -->
+    <div class="feature-card">
+      <div class="feature-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+        </svg>
+      </div>
+      <h3 class="feature-card__title">Explore Courses</h3>
+      <p class="feature-card__description">
+        Browse departments and find courses that match your interests and requirements.
+      </p>
+      <a href="{% url 'browse' %}" class="feature-card__link">
+        Browse courses
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+    
+    <!-- Feature 2: Schedule -->
+    <div class="feature-card">
+      <div class="feature-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+      </div>
+      <h3 class="feature-card__title">Build Your Schedule</h3>
+      <p class="feature-card__description">
+        Plan your semester with our visual schedule builder. Compare sections and find the perfect fit.
+      </p>
+      <a href="{% url 'schedule' %}" class="feature-card__link">
+        Build schedule
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+    
+    <!-- Feature 3: Reviews -->
+    <div class="feature-card">
+      <div class="feature-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+      </div>
+      <h3 class="feature-card__title">Share Your Experience</h3>
+      <p class="feature-card__description">
+        Help fellow Hoos by writing reviews. Your insights help build a stronger community.
+      </p>
+      <a href="{% url 'new_review' %}" class="feature-card__link">
+        Write a review
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- FAQ Section -->
+<section class="faq" id="faq">
+  <div class="faq__inner">
+    <div class="faq__header">
+      <h2 class="faq__title">Frequently Asked Questions</h2>
+    </div>
+    
+    <div class="accordion">
+      <!-- FAQ 1 -->
+      <div class="accordion__item">
+        <button class="accordion__trigger" onclick="this.parentElement.classList.toggle('is-open')">
+          What is theCourseForum?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="accordion__content">
+          <p>
+            theCourseForum is a student-run nonprofit dedicated to helping UVA students 
+            make informed decisions about their courses. We've been serving the UVA community 
+            since 2005, providing course reviews, instructor ratings, and scheduling tools.
+          </p>
+        </div>
+      </div>
+      
+      <!-- FAQ 2 -->
+      <div class="accordion__item">
+        <button class="accordion__trigger" onclick="this.parentElement.classList.toggle('is-open')">
+          How do I write a review?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="accordion__content">
+          <p>
+            Simply sign in with your UVA Email, navigate to a course you've taken, 
+            and click "Write a Review." Share your experience with ratings for instructor quality, 
+            course difficulty, and a written review to help other students.
+          </p>
+        </div>
+      </div>
+      
+      <!-- FAQ 3 -->
+      <div class="accordion__item">
+        <button class="accordion__trigger" onclick="this.parentElement.classList.toggle('is-open')">
+          Are reviews anonymous?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="accordion__content">
+          <p>
+            Yes! All reviews are completely anonymous. While you need to sign in to write a review 
+            (to verify you're a UVA student), your identity is never displayed publicly. 
+            Only team administrators have access to review author information.
+          </p>
+        </div>
+      </div>
+      
+      <!-- FAQ 4 -->
+      <div class="accordion__item">
+        <button class="accordion__trigger" onclick="this.parentElement.classList.toggle('is-open')">
+          How can I support theCourseForum?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="accordion__content">
+          <p>
+            The best way to support us is by writing reviews! You can also follow us on social media, 
+            join our Discord community, or consider making a donation to help cover hosting costs 
+            and support our development efforts.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

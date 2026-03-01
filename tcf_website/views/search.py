@@ -142,7 +142,8 @@ def search(request):
         "page_obj": page_obj,
     }
 
-    return render(request, "search/search.html", ctx)
+    template_name = "site/pages/search.html"
+    return render(request, template_name, ctx)
 
 
 def fetch_clubs(query):
