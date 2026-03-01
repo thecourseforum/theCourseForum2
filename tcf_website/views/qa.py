@@ -43,19 +43,15 @@ def qa_dashboard(request):
 
 @login_required
 def create_question(request):
+    """Create a new question via the Q&A dashboard modal."""
     if request.method == "POST":
-        from ..models import Instructor
-
-        # Get a placeholder instructor (just use the first one in the database)
-        placeholder_instructor = Instructor.objects.first()
-
-        Question.objects.create(
-            text=request.POST["text"],
-            course_id=request.POST["course"],
-            instructor=placeholder_instructor,
-            user=request.user,
-        )
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.save()
         return redirect("qa")
+    return redirect("qa")
 
 
 @login_required
@@ -69,7 +65,7 @@ class QuestionForm(forms.ModelForm):
 
     class Meta:
         model = Question
-        fields = ["text", "course", "instructor"]
+        fields = ["title", "text", "course", "instructor"]
 
 
 class DeleteQuestion(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
