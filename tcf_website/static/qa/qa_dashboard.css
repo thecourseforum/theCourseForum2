@@ -76,7 +76,7 @@
 
 /* Filters Section */
 .qa-filters {
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem;
   background: #ffffff;
   border-bottom: 1px solid #dee2e6;
   display: flex;
@@ -86,9 +86,9 @@
 .filter-btn {
   background: transparent;
   border: 1px solid #dee2e6;
-  padding: 0.4rem 0.75rem;
+  padding: 0.35rem 0.75rem;
   border-radius: 4px;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   cursor: pointer;
   color: #495057;
   transition: all 0.2s;
@@ -98,14 +98,44 @@
   background: #e9ecef;
 }
 
-.filter-btn.active {
-  background: var(--main-color);
-  color: white;
+.filter-btn.filter-active {
+  background: #e7f3ff;
+  color: var(--main-color);
   border-color: var(--main-color);
+  font-weight: 600;
 }
 
 .filter-btn i {
   margin-right: 0.25rem;
+}
+
+/* Dropdown search input */
+.dropdown-search-wrapper {
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.dropdown-search-input {
+  width: 100%;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.825rem;
+  outline: none;
+}
+
+.dropdown-search-input:focus {
+  border-color: var(--main-color);
+  box-shadow: 0 0 0 0.15rem rgba(39, 79, 151, 0.15);
+}
+
+.dropdown-items-list {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.dropdown-items-list .dropdown-item.d-none {
+  display: none !important;
 }
 
 /* Posts List */
@@ -270,8 +300,42 @@
 .post-header-info {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
+}
+
+.answer-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.answer-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.action-btn-sm {
+  background: transparent;
+  border: none;
+  padding: 0.2rem 0.4rem;
+  cursor: pointer;
+  color: #adb5bd;
+  font-size: 0.8rem;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.action-btn-sm:hover {
+  color: #495057;
+  background: #f0f0f0;
+}
+
+.action-btn-sm.delete-answer-btn:hover {
+  color: #dc3545;
+  background: #fdf0f0;
 }
 
 .semester-tag {
@@ -351,6 +415,19 @@
 .main-question .action-btn:hover {
   background: #f8f9fa;
   color: var(--accent-color);
+}
+
+.main-question .action-btn.delete-question-btn:hover {
+  color: #dc3545;
+  border-color: #dc3545;
+  background: #fdf0f0;
+}
+
+.question-actions-divider {
+  width: 1px;
+  height: 1.5rem;
+  background: #dee2e6;
+  margin: 0 0.25rem;
 }
 
 .thread-container .post-actions {
@@ -706,4 +783,32 @@
 /* Required asterisk */
 .required {
     color: red;
+}
+
+/* Dropdown overrides — replace Bootstrap gray defaults with brand styling */
+.qa-container .dropdown-menu {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 0.25rem 0;
+    background: #ffffff;
+}
+
+.qa-container .dropdown-item {
+    font-size: 0.875rem;
+    padding: 0.4rem 0.75rem;
+    color: #495057;
+    background: transparent;
+}
+
+.qa-container .dropdown-item:hover,
+.qa-container .dropdown-item:focus {
+    background: #f0f4ff;
+    color: var(--main-color);
+}
+
+.qa-container .dropdown-item.active,
+.qa-container .dropdown-item:active {
+    background: var(--main-color);
+    color: white;
 }

@@ -35,25 +35,34 @@
         <!-- Course Filter -->
         <div class="qa-filters">
             <div class="dropdown">
-                <button class="filter-btn dropdown-toggle" type="button" id="courseDropdown" data-toggle="dropdown">
+                <button class="filter-btn dropdown-toggle {% if selected_course %}filter-active{% endif %}" type="button" id="courseDropdown" data-toggle="dropdown">
                     <i class="fa fa-filter"></i>
-                    {% if selected_course %}
-                        Filter active
+                    {% if selected_course_obj %}
+                        {{ selected_course_obj.subdepartment.mnemonic }} {{ selected_course_obj.number }}
                     {% else %}
                         All Courses
                     {% endif %}
                 </button>
                 <div class="dropdown-menu" aria-labelledby="courseDropdown">
-                    <a class="dropdown-item {% if not selected_course %}active{% endif %}"
-                       href="{% url 'qa' %}{% if search_query %}?q={{ search_query }}{% endif %}">
-                        All Courses
-                    </a>
-                    {% for course in courses_with_questions %}
-                    <a class="dropdown-item {% if selected_course == course.id|stringformat:'s' %}active{% endif %}"
-                       href="{% url 'qa' %}?course={{ course.id }}{% if search_query %}&q={{ search_query }}{% endif %}">
-                        {{ course.subdepartment.mnemonic }} {{ course.number }}
-                    </a>
-                    {% endfor %}
+                    <div class="dropdown-search-wrapper">
+                        <input type="text"
+                               class="dropdown-search-input"
+                               id="courseFilterSearch"
+                               placeholder="Search courses..."
+                               autocomplete="off">
+                    </div>
+                    <div class="dropdown-items-list" id="courseFilterList">
+                        <a class="dropdown-item {% if not selected_course %}active{% endif %}"
+                           href="{% url 'qa' %}{% if search_query %}?q={{ search_query }}{% endif %}">
+                            All Courses
+                        </a>
+                        {% for course in courses_with_questions %}
+                        <a class="dropdown-item {% if selected_course == course.id|stringformat:'s' %}active{% endif %}"
+                           href="{% url 'qa' %}?course={{ course.id }}{% if search_query %}&q={{ search_query }}{% endif %}">
+                            {{ course.subdepartment.mnemonic }} {{ course.number }}
+                        </a>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -74,8 +83,8 @@
                     {{ question.text|truncatechars:80 }}
                 </div>
                 <div class="post-footer">
-                    <span class="post-stats">
-                        <i class="fa fa-thumbs-up"></i> {{ question.sum_q_votes|default:0 }}
+                    <span class="post-stats" id="sidebar-vote-count-{{ question.id }}">
+                        <i class="fa fa-thumbs-up"></i> <span class="sidebar-vote-num">{{ question.sum_q_votes|default:0 }}</span>
                     </span>
                 </div>
             </div>
@@ -134,8 +143,8 @@
                     <div id="courseResults" class="course-search-results"></div>
                 </div>
                 <div class="form-group">
-                    <label for="instructorSelect">Instructor <span class="required">*</span></label>
-                    <select id="instructorSelect" name="instructor" class="form-control" required disabled>
+                    <label for="instructorSelect">Instructor</label>
+                    <select id="instructorSelect" name="instructor" class="form-control" disabled>
                         <option value="">Select a course first...</option>
                     </select>
                 </div>
@@ -232,8 +241,8 @@
         createQuestion: '{% url "create_question" %}',
         searchCourses: '{% url "qa_search_courses" %}',
         getInstructors: '{% url "qa_get_instructors" course_id=0 %}'.replace('/0/instructors/', '/'),
-        editQuestion: '{% url "edit_question" question_id=0 %}'.replace('/0/', '/'),
-        editAnswer: '{% url "edit_answer" answer_id=0 %}'.replace('/0/', '/'),
+        editQuestion: '{% url "edit_question" question_id=0 %}'.replace('0/edit/', ''),
+        editAnswer: '{% url "edit_answer" answer_id=0 %}'.replace('0/edit/', ''),
         dashboard: '{% url "qa" %}',
     };
     const IS_AUTHENTICATED = {{ user.is_authenticated|yesno:"true,false" }};

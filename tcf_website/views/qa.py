@@ -55,7 +55,10 @@ def qa_dashboard(request):
 
     if search_query:
         questions = questions.filter(
-            Q(title__icontains=search_query) | Q(text__icontains=search_query)
+            Q(title__icontains=search_query)
+            | Q(text__icontains=search_query)
+            | Q(course__subdepartment__mnemonic__icontains=search_query)
+            | Q(course__number__icontains=search_query)
         )
 
     if course_filter:
@@ -88,6 +91,12 @@ def qa_dashboard(request):
         .order_by("subdepartment__mnemonic", "number")
     )
 
+    selected_course_obj = None
+    if course_filter:
+        selected_course_obj = (
+            courses_with_questions.filter(pk=course_filter).first()
+        )
+
     semesters = Semester.objects.order_by("-number")[:20]
 
     return render(
@@ -100,6 +109,7 @@ def qa_dashboard(request):
             "courses_with_questions": courses_with_questions,
             "search_query": search_query,
             "selected_course": course_filter,
+            "selected_course_obj": selected_course_obj,
             "semesters": semesters,
         },
     )
@@ -285,21 +295,27 @@ def edit_question(request, question_id):
 
 @login_required
 def upvote_question(request, question_id):
-    """Upvote a view."""
+    """Upvote a question."""
     if request.method == "POST":
         question = Question.objects.get(pk=question_id)
         question.upvote(request.user)
-        return JsonResponse({"ok": True})
+        net = question.votequestion_set.aggregate(total=models.Sum("value"))["total"] or 0
+        vote_obj = question.votequestion_set.filter(user=request.user).first()
+        user_vote = vote_obj.value if vote_obj else 0
+        return JsonResponse({"ok": True, "votes": net, "user_vote": user_vote})
     return JsonResponse({"ok": False})
 
 
 @login_required
 def downvote_question(request, question_id):
-    """Downvote a view."""
+    """Downvote a question."""
     if request.method == "POST":
         question = Question.objects.get(pk=question_id)
         question.downvote(request.user)
-        return JsonResponse({"ok": True})
+        net = question.votequestion_set.aggregate(total=models.Sum("value"))["total"] or 0
+        vote_obj = question.votequestion_set.filter(user=request.user).first()
+        user_vote = vote_obj.value if vote_obj else 0
+        return JsonResponse({"ok": True, "votes": net, "user_vote": user_vote})
     return JsonResponse({"ok": False})
 
 
@@ -408,19 +424,25 @@ def check_duplicate(request):
 
 @login_required
 def upvote_answer(request, answer_id):
-    """Upvote a view."""
+    """Upvote an answer."""
     if request.method == "POST":
         answer = Answer.objects.get(pk=answer_id)
         answer.upvote(request.user)
-        return JsonResponse({"ok": True})
+        net = answer.voteanswer_set.aggregate(total=models.Sum("value"))["total"] or 0
+        vote_obj = answer.voteanswer_set.filter(user=request.user).first()
+        user_vote = vote_obj.value if vote_obj else 0
+        return JsonResponse({"ok": True, "votes": net, "user_vote": user_vote})
     return JsonResponse({"ok": False})
 
 
 @login_required
 def downvote_answer(request, answer_id):
-    """Downvote a view."""
+    """Downvote an answer."""
     if request.method == "POST":
         answer = Answer.objects.get(pk=answer_id)
         answer.downvote(request.user)
-        return JsonResponse({"ok": True})
+        net = answer.voteanswer_set.aggregate(total=models.Sum("value"))["total"] or 0
+        vote_obj = answer.voteanswer_set.filter(user=request.user).first()
+        user_vote = vote_obj.value if vote_obj else 0
+        return JsonResponse({"ok": True, "votes": net, "user_vote": user_vote})
     return JsonResponse({"ok": False})

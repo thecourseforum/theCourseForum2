@@ -6,6 +6,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     initQuestionSelection();
     initSearch();
+    initCourseFilter();
     initNewPostModal();
     initVoting();
     initAnswerForm();
@@ -81,6 +82,46 @@ function initSearch() {
             url.searchParams.delete('question');
             window.location.href = url.toString();
         }
+    });
+}
+
+// ─── Course Filter ────────────────────────────────────────────────────────────
+
+function initCourseFilter() {
+    const searchInput = document.getElementById('courseFilterSearch');
+    const itemsList = document.getElementById('courseFilterList');
+    if (!searchInput || !itemsList) return;
+
+    const dropdown = searchInput.closest('.dropdown');
+
+    // Auto-focus search input when dropdown opens
+    if (dropdown) {
+        $(dropdown).on('shown.bs.dropdown', function () {
+            searchInput.value = '';
+            searchInput.focus();
+            // Reset visibility
+            itemsList.querySelectorAll('.dropdown-item').forEach(item => {
+                item.classList.remove('d-none');
+            });
+        });
+    }
+
+    // Prevent dropdown from closing when clicking/typing in the search input
+    searchInput.addEventListener('click', function (e) {
+        e.stopPropagation();
+    });
+
+    // Filter items as user types
+    searchInput.addEventListener('input', function () {
+        const query = this.value.trim().toLowerCase();
+        itemsList.querySelectorAll('.dropdown-item').forEach(item => {
+            const text = item.textContent.trim().toLowerCase();
+            if (!query || text === 'all courses' || text.includes(query)) {
+                item.classList.remove('d-none');
+            } else {
+                item.classList.add('d-none');
+            }
+        });
     });
 }
 
@@ -185,13 +226,14 @@ function initNewPostModal() {
             .then(data => {
                 if (data.instructors && data.instructors.length > 0) {
                     instructorSelect.innerHTML =
-                        '<option value="">Select an instructor...</option>' +
+                        '<option value="">No instructor</option>' +
                         data.instructors.map(i =>
                             `<option value="${i.id}">${i.name}</option>`
                         ).join('');
                     instructorSelect.disabled = false;
                 } else {
-                    instructorSelect.innerHTML = '<option value="">No instructors found</option>';
+                    instructorSelect.innerHTML = '<option value="">No instructor</option>';
+                    instructorSelect.disabled = false;
                 }
             })
             .catch(() => {
@@ -245,18 +287,14 @@ function initVoting() {
                     const downBtn = container.querySelector('[data-action="down"]');
                     const counterEl = document.getElementById(counterId);
 
-                    const wasVoted = this.classList.contains('voted');
-                    upBtn.classList.remove('voted');
-                    downBtn.classList.remove('voted');
-                    if (!wasVoted) this.classList.add('voted');
+                    upBtn.classList.toggle('voted', data.user_vote === 1);
+                    downBtn.classList.toggle('voted', data.user_vote === -1);
+                    if (counterEl) counterEl.textContent = data.votes;
 
-                    if (counterEl) {
-                        let current = parseInt(counterEl.textContent) || 0;
-                        if (action === 'up') {
-                            counterEl.textContent = wasVoted ? current - 1 : current + 1;
-                        } else {
-                            counterEl.textContent = wasVoted ? current + 1 : current - 1;
-                        }
+                    // Keep sidebar list in sync for question votes
+                    if (type === 'question') {
+                        const sidebarEl = document.querySelector(`#sidebar-vote-count-${id} .sidebar-vote-num`);
+                        if (sidebarEl) sidebarEl.textContent = data.votes;
                     }
                 }
             })
@@ -340,7 +378,7 @@ function initQuestionActions() {
             document.getElementById('editText').value = this.dataset.text || '';
             document.getElementById('editCourse').value = this.dataset.course || '';
             document.getElementById('editInstructor').value = this.dataset.instructor || '';
-            document.getElementById('editQuestionForm').action = `${QA_URLS.editQuestion}${qId}/`;
+            document.getElementById('editQuestionForm').action = `${QA_URLS.editQuestion}${qId}/edit/`;
 
             editModal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -400,7 +438,7 @@ function initAnswerActions() {
             const mainForm = document.getElementById('mainAnswerForm');
             const questionId = mainForm ? mainForm.querySelector('[name="question"]').value : '';
             document.getElementById('editAnswerQuestion').value = questionId;
-            document.getElementById('editAnswerForm').action = `${QA_URLS.editAnswer}${answerId}/`;
+            document.getElementById('editAnswerForm').action = `${QA_URLS.editAnswer}${answerId}/edit/`;
 
             editAnswerModal.style.display = 'flex';
             document.body.style.overflow = 'hidden';

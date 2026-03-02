@@ -11,27 +11,6 @@
         </h3>
         {% endif %}
     </div>
-    {% if user.is_authenticated and user == question.user %}
-    <div class="dropdown">
-        <button class="nav-btn dropdown-toggle" type="button" data-toggle="dropdown">
-            <i class="fa fa-ellipsis-v"></i>
-        </button>
-        <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item edit-question-btn" href="#"
-               data-question-id="{{ question.id }}"
-               data-title="{{ question.title }}"
-               data-text="{{ question.text }}"
-               data-course="{{ question.course_id }}"
-               data-instructor="{{ question.instructor_id }}">
-                <i class="fa fa-pencil"></i> Edit
-            </a>
-            <a class="dropdown-item delete-question-btn text-danger" href="#"
-               data-question-id="{{ question.id }}">
-                <i class="fa fa-trash"></i> Delete
-            </a>
-        </div>
-    </div>
-    {% endif %}
 </div>
 
 <!-- Post Content -->
@@ -76,6 +55,22 @@
                     data-action="down">
                 <i class="fa fa-thumbs-down"></i>
             </button>
+
+            {% if user == question.user %}
+            <span class="question-actions-divider"></span>
+            <button class="action-btn edit-question-btn"
+                    data-question-id="{{ question.id }}"
+                    data-title="{{ question.title }}"
+                    data-text="{{ question.text }}"
+                    data-course="{{ question.course_id }}"
+                    data-instructor="{{ question.instructor_id|default_if_none:'' }}">
+                <i class="fa fa-pencil"></i> Edit
+            </button>
+            <button class="action-btn delete-question-btn text-danger"
+                    data-question-id="{{ question.id }}">
+                <i class="fa fa-trash"></i> Delete
+            </button>
+            {% endif %}
             {% else %}
             <span class="vote-display">
                 <i class="fa fa-thumbs-up"></i> {{ question.sum_q_votes|default:0 }}
@@ -96,13 +91,31 @@
             <div class="thread-post" data-answer-id="{{ answer.id }}">
                 <div class="post-main">
                     <div class="post-header-info">
-                        {% if answer.semester %}
-                        <span class="semester-tag">{{ answer.semester }}</span>
+                        <div class="answer-header-left">
+                            {% if answer.semester %}
+                            <span class="semester-tag">{{ answer.semester }}</span>
+                            {% endif %}
+                            <span class="response-author">
+                                {{ answer.user.first_name|default:answer.user.computing_id|default:"Anonymous" }}
+                            </span>
+                            <span class="post-time">{{ answer.created|timesince }} ago</span>
+                        </div>
+                        {% if user.is_authenticated and user == answer.user %}
+                        <div class="answer-header-actions">
+                            <button class="action-btn-sm edit-answer-btn"
+                                    title="Edit"
+                                    data-answer-id="{{ answer.id }}"
+                                    data-text="{{ answer.text }}"
+                                    data-semester="{{ answer.semester.id|default:'' }}">
+                                <i class="fa fa-pencil"></i>
+                            </button>
+                            <button class="action-btn-sm delete-answer-btn"
+                                    title="Delete"
+                                    data-answer-id="{{ answer.id }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
                         {% endif %}
-                        <span class="response-author">
-                            {{ answer.user.first_name|default:answer.user.computing_id|default:"Anonymous" }}
-                        </span>
-                        <span class="post-time">{{ answer.created|timesince }} ago</span>
                     </div>
                     <div class="post-body">
                         <p>{{ answer.text|linebreaks }}</p>
@@ -124,26 +137,6 @@
                                 data-action="down">
                             <i class="fa fa-thumbs-down"></i>
                         </button>
-
-                        {% if user == answer.user %}
-                        <div class="dropdown d-inline-block">
-                            <button class="action-btn dropdown-toggle" type="button" data-toggle="dropdown">
-                                <i class="fa fa-ellipsis-h"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item edit-answer-btn" href="#"
-                                   data-answer-id="{{ answer.id }}"
-                                   data-text="{{ answer.text }}"
-                                   data-semester="{{ answer.semester.id|default:'' }}">
-                                    <i class="fa fa-pencil"></i> Edit
-                                </a>
-                                <a class="dropdown-item delete-answer-btn text-danger" href="#"
-                                   data-answer-id="{{ answer.id }}">
-                                    <i class="fa fa-trash"></i> Delete
-                                </a>
-                            </div>
-                        </div>
-                        {% endif %}
                         {% else %}
                         <span class="vote-display">
                             <i class="fa fa-thumbs-up"></i> {{ answer.sum_a_votes|default:0 }}

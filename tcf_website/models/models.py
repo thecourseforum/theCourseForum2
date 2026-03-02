@@ -1428,7 +1428,7 @@ class Question(models.Model):
     title = models.CharField(max_length=200, blank=True)
     text = models.TextField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, default=None)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, null=True, blank=True, default=None)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
