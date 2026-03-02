@@ -149,6 +149,54 @@ def question_detail(request, question_id):
     )
 
 
+def search_courses_qa(request):
+    """API: search courses by mnemonic/number for the New Post modal."""
+    from django.contrib.postgres.search import TrigramSimilarity
+
+    query = request.GET.get("q", "").strip()
+    if len(query) < 2:
+        return JsonResponse({"results": []})
+
+    courses = (
+        Course.objects.annotate(
+            similarity=TrigramSimilarity("combined_mnemonic_number", query)
+        )
+        .filter(similarity__gte=0.1)
+        .select_related("subdepartment")
+        .order_by("-similarity")[:10]
+    )
+
+    results = [
+        {
+            "id": course.id,
+            "code": f"{course.subdepartment.mnemonic} {course.number}",
+            "title": course.title,
+        }
+        for course in courses
+    ]
+    return JsonResponse({"results": results})
+
+
+def get_instructors_for_course(request, course_id):
+    """API: get instructors who have taught a given course."""
+    from ..models import Instructor
+
+    course = get_object_or_404(Course, pk=course_id)
+    instructors = (
+        Instructor.objects.filter(section__course=course)
+        .distinct()
+        .order_by("last_name", "first_name")
+    )
+    return JsonResponse(
+        {
+            "instructors": [
+                {"id": i.id, "name": f"{i.first_name} {i.last_name}".strip()}
+                for i in instructors
+            ]
+        }
+    )
+
+
 @login_required
 def qa_dashboard_hard(request):
     """Hardedcoded Q&A Dashboard"""

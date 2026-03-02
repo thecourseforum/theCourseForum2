@@ -106,6 +106,16 @@ urlpatterns = [
         views.question_detail,
         name="qa_question_detail",
     ),
+    path(
+        "qa/api/courses/search/",
+        views.search_courses_qa,
+        name="qa_search_courses",
+    ),
+    path(
+        "qa/api/courses/<int:course_id>/instructors/",
+        views.get_instructors_for_course,
+        name="qa_get_instructors",
+    ),
     # Post detail (AJAX)
     path(
         "forum/post/<int:post_id>/",

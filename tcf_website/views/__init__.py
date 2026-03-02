@@ -36,11 +36,13 @@ from .qa import (
     downvote_question,
     edit_answer,
     edit_question,
+    get_instructors_for_course,
     new_answer,
     new_question,
     qa_dashboard,
     qa_dashboard_hard,
     question_detail,
+    search_courses_qa,
     upvote_answer,
     upvote_question,
 )

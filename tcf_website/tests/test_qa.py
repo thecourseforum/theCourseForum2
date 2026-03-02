@@ -168,3 +168,54 @@ class QuestionDetailTests(TestCase):
             reverse("qa_question_detail", args=[99999])
         )
         self.assertEqual(response.status_code, 404)
+
+
+class SearchCoursesQaTests(TestCase):
+    """Tests for search_courses_qa API."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_empty_query_returns_empty(self):
+        """Short query returns empty results."""
+        self.client.force_login(self.user1)
+        response = self.client.get(reverse("qa_search_courses") + "?q=a")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["results"], [])
+
+    def test_course_search_returns_json(self):
+        """Course search endpoint returns JSON with results key."""
+        self.client.force_login(self.user1)
+        response = self.client.get(reverse("qa_search_courses") + "?q=CS")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("results", data)
+
+
+class GetInstructorsForCourseTests(TestCase):
+    """Tests for get_instructors_for_course API."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_returns_instructors_for_course(self):
+        """Returns instructors who have taught the course."""
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("qa_get_instructors", args=[self.course.id])
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("instructors", data)
+        instructor_ids = [i["id"] for i in data["instructors"]]
+        self.assertIn(self.instructor.id, instructor_ids)
+
+    @suppress_request_warnings
+    def test_returns_404_for_invalid_course(self):
+        """Returns 404 for a nonexistent course ID."""
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("qa_get_instructors", args=[99999])
+        )
+        self.assertEqual(response.status_code, 404)
