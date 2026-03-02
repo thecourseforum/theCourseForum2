@@ -152,7 +152,7 @@
                     </div>
                 </div>
             </div>
-            <hr>
+            {% if not forloop.last %}<hr>{% endif %}
             {% empty %}
             <div class="no-responses">
                 <p>No answers yet. Be the first to answer!</p>
