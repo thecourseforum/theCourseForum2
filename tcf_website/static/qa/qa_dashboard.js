@@ -364,9 +364,15 @@ function initQuestionActions() {
             e.preventDefault();
             const qId = this.dataset.questionId;
             if (confirm('Are you sure you want to delete this question?')) {
+                const deleteData = new FormData();
+                deleteData.append('csrfmiddlewaretoken', CSRF_TOKEN);
                 fetch(`/questions/${qId}/delete/`, {
                     method: 'POST',
-                    headers: { 'X-CSRFToken': CSRF_TOKEN },
+                    headers: {
+                        'X-CSRFToken': CSRF_TOKEN,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: deleteData,
                 })
                 .then(() => {
                     window.location.href = QA_URLS.dashboard;
@@ -420,9 +426,15 @@ function initAnswerActions() {
             e.preventDefault();
             const answerId = this.dataset.answerId;
             if (confirm('Are you sure you want to delete this answer?')) {
+                const deleteData = new FormData();
+                deleteData.append('csrfmiddlewaretoken', CSRF_TOKEN);
                 fetch(`/answers/${answerId}/delete/`, {
                     method: 'POST',
-                    headers: { 'X-CSRFToken': CSRF_TOKEN },
+                    headers: {
+                        'X-CSRFToken': CSRF_TOKEN,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: deleteData,
                 })
                 .then(() => {
                     const url = new URL(window.location);

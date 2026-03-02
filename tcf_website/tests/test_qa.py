@@ -129,12 +129,12 @@ class QuestionDetailTests(TestCase):
             semester=self.semester,
         )
 
-    def test_question_detail_requires_login(self):
-        """Unauthenticated request redirects to login."""
+    def test_question_detail_accessible_without_login(self):
+        """Unauthenticated request returns 200 (read-only access)."""
         response = self.client.get(
             reverse("qa_question_detail", args=[self.question.id])
         )
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
 
     def test_question_detail_returns_200(self):
         """Returns 200 for a valid question ID."""

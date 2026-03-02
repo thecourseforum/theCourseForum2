@@ -21,7 +21,6 @@ from django.contrib.postgres.search import TrigramSimilarity
 from ..models import Answer, Course, Instructor, Question, Semester
 
 
-@login_required
 def qa_dashboard(request):
     """Q&A Dashboard view."""
     search_query = request.GET.get("q", "").strip()
@@ -119,15 +118,18 @@ def create_question(request):
     return redirect("qa")
 
 
-@login_required
 def question_detail(request, question_id):
     """AJAX endpoint: returns rendered HTML partial for a question + its answers."""
-    question = get_object_or_404(
+    qs = (
         Question.objects.select_related("course", "course__subdepartment", "instructor", "user")
         .annotate(
             sum_q_votes=models.functions.Coalesce(
                 models.Sum("votequestion__value"), models.Value(0)
             ),
+        )
+    )
+    if request.user.is_authenticated:
+        qs = qs.annotate(
             user_q_vote=models.functions.Coalesce(
                 models.Sum(
                     "votequestion__value",
@@ -135,9 +137,8 @@ def question_detail(request, question_id):
                 ),
                 models.Value(0),
             ),
-        ),
-        pk=question_id,
-    )
+        )
+    question = get_object_or_404(qs, pk=question_id)
 
     answers = Answer.display_activity(question_id=question.id, user=request.user)
     semesters = Semester.objects.order_by("-number")[:20]  # for the answer form in _question_detail.html
@@ -341,8 +342,6 @@ def new_answer(request):
 
     if request.method == "POST":
         form = AnswerForm(request.POST)
-
-        print(form)
 
         if form.is_valid():
             instance = form.save(commit=False)
