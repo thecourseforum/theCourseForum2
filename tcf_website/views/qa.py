@@ -435,5 +435,3 @@ def downvote_answer(request, answer_id):
         answer.downvote(request.user)
         return JsonResponse({"ok": True})
     return JsonResponse({"ok": False})
-    return JsonResponse({"ok": False})
-    return JsonResponse({"ok": False})
