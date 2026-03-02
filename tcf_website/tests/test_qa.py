@@ -220,3 +220,53 @@ class GetInstructorsForCourseTests(TestCase):
             reverse("qa_get_instructors", args=[99999])
         )
         self.assertEqual(response.status_code, 404)
+
+
+class QaDashboardIntegrationTest(TestCase):
+    """End-to-end smoke test for the Q&A dashboard flow."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_full_qa_flow(self):
+        """User creates a question, another user answers it."""
+        self.client.force_login(self.user1)
+
+        # Create question
+        response = self.client.post(
+            reverse("create_question"),
+            {
+                "title": "How is the grading?",
+                "text": "Is it curve-based?",
+                "course": self.course.id,
+                "instructor": self.instructor.id,
+            },
+        )
+        self.assertRedirects(response, reverse("qa"), fetch_redirect_response=False)
+
+        question = Question.objects.get(title="How is the grading?")
+
+        # Load question detail AJAX
+        self.client.force_login(self.user2)
+        response = self.client.get(
+            reverse("qa_question_detail", args=[question.id])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Is it curve-based?")
+
+        # Post answer
+        response = self.client.post(
+            reverse("new_answer"),
+            {
+                "text": "Yes, there is a generous curve.",
+                "question": question.id,
+                "semester": self.semester.id,
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+
+        # Verify answer appears in detail
+        response = self.client.get(
+            reverse("qa_question_detail", args=[question.id])
+        )
+        self.assertContains(response, "Yes, there is a generous curve.")
