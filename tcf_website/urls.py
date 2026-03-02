@@ -103,7 +103,7 @@ urlpatterns = [
     path("qa/create/", views.qa.create_question, name="create_question"),
     path(
         "qa/question/<int:question_id>/",
-        views.qa.question_detail,
+        views.question_detail,
         name="qa_question_detail",
     ),
     # Post detail (AJAX)

@@ -136,7 +136,7 @@ def question_detail(request, question_id):
     )
 
     answers = Answer.display_activity(question_id=question.id, user=request.user)
-    semesters = Semester.objects.order_by("-number")[:20]
+    semesters = Semester.objects.order_by("-number")[:20]  # for the answer form in _question_detail.html
 
     return render(
         request,

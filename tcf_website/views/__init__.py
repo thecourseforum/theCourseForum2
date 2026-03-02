@@ -40,6 +40,7 @@ from .qa import (
     new_question,
     qa_dashboard,
     qa_dashboard_hard,
+    question_detail,
     upvote_answer,
     upvote_question,
 )
