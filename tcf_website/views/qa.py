@@ -215,13 +215,7 @@ class DeleteQuestion(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView
     model = Question
 
     def get_success_url(self):
-        return reverse_lazy(
-            "course_instructor",
-            kwargs={
-                "course_id": self.object.course_id,
-                "instructor_id": self.object.instructor_id,
-            },
-        )
+        return reverse_lazy("qa")
 
     def get_object(self):  # pylint: disable=arguments-differ
         """Override DeleteView's function to validate question belonging to user."""
@@ -320,13 +314,7 @@ class DeleteAnswer(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
     model = Answer
 
     def get_success_url(self):
-        return reverse_lazy(
-            "course_instructor",
-            kwargs={
-                "course_id": self.object.question.course_id,
-                "instructor_id": self.object.question.instructor_id,
-            },
-        )
+        return reverse_lazy("qa")
 
     def get_object(self):  # pylint: disable=arguments-differ
         """Override DeleteView's function to validate answer belonging to user."""

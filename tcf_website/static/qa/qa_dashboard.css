@@ -629,3 +629,81 @@
     max-height: calc(100vh - 2rem);
   }
 }
+
+/* Course Search Results */
+.course-search-results {
+    display: none;
+    position: absolute;
+    z-index: 1050;
+    background: white;
+    border: 1px solid #ced4da;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.course-search-results.show {
+    display: block;
+}
+
+.course-result-item {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.course-result-item:hover {
+    background: #f8f9fa;
+}
+
+.course-result-code {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.course-result-title {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Loading state for content panel */
+.qa-content.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* No post selected / empty state */
+.no-post-selected,
+.no-posts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #6c757d;
+    text-align: center;
+    padding: 2rem;
+}
+
+/* Voted button state */
+.vote-btn.voted {
+    color: var(--main-color, #007bff);
+}
+
+/* Login prompt */
+.login-prompt {
+    padding: 1rem 2rem;
+    color: #6c757d;
+}
+
+/* Form group relative for dropdown */
+.modal-body .form-group {
+    position: relative;
+}
+
+/* Required asterisk */
+.required {
+    color: red;
+}
