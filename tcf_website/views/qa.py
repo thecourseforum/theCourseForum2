@@ -116,6 +116,40 @@ def create_question(request):
 
 
 @login_required
+def question_detail(request, question_id):
+    """AJAX endpoint: returns rendered HTML partial for a question + its answers."""
+    question = get_object_or_404(
+        Question.objects.select_related("course", "course__subdepartment", "instructor", "user")
+        .annotate(
+            sum_q_votes=models.functions.Coalesce(
+                models.Sum("votequestion__value"), models.Value(0)
+            ),
+            user_q_vote=models.functions.Coalesce(
+                models.Sum(
+                    "votequestion__value",
+                    filter=models.Q(votequestion__user=request.user),
+                ),
+                models.Value(0),
+            ),
+        ),
+        pk=question_id,
+    )
+
+    answers = Answer.display_activity(question_id=question.id, user=request.user)
+    semesters = Semester.objects.order_by("-number")[:20]
+
+    return render(
+        request,
+        "qa/_question_detail.html",
+        {
+            "question": question,
+            "answers": answers,
+            "semesters": semesters,
+        },
+    )
+
+
+@login_required
 def qa_dashboard_hard(request):
     """Hardedcoded Q&A Dashboard"""
     return render(request, "qa/qa_dashboard_hard.html")

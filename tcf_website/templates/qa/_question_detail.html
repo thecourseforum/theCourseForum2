@@ -1,0 +1,8 @@
+{% load static %}
+<div class="post-content">
+    <h2>{{ question.title }}</h2>
+    <p>{{ question.text }}</p>
+    {% for answer in answers %}
+    <div class="answer">{{ answer.text }}</div>
+    {% endfor %}
+</div>

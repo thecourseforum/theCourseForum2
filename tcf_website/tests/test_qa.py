@@ -108,3 +108,63 @@ class QaDashboardTests(TestCase):
         """Dashboard context includes courses list for filter dropdown."""
         response = self.client.get(reverse("qa"))
         self.assertIn("courses_with_questions", response.context)
+
+
+class QuestionDetailTests(TestCase):
+    """Tests for the question_detail AJAX view."""
+
+    def setUp(self):
+        setup(self)
+        self.question = Question.objects.create(
+            title="Best study tips?",
+            text="What study strategies work well?",
+            course=self.course,
+            instructor=self.instructor,
+            user=self.user1,
+        )
+        self.answer = Answer.objects.create(
+            text="Review lecture notes daily.",
+            question=self.question,
+            user=self.user2,
+            semester=self.semester,
+        )
+
+    def test_question_detail_requires_login(self):
+        """Unauthenticated request redirects to login."""
+        response = self.client.get(
+            reverse("qa_question_detail", args=[self.question.id])
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_question_detail_returns_200(self):
+        """Returns 200 for a valid question ID."""
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("qa_question_detail", args=[self.question.id])
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_question_detail_contains_question_text(self):
+        """Response HTML contains the question text."""
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("qa_question_detail", args=[self.question.id])
+        )
+        self.assertContains(response, "What study strategies work well?")
+
+    def test_question_detail_contains_answer(self):
+        """Response HTML contains the answer text."""
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("qa_question_detail", args=[self.question.id])
+        )
+        self.assertContains(response, "Review lecture notes daily.")
+
+    @suppress_request_warnings
+    def test_question_detail_404_for_nonexistent(self):
+        """Returns 404 for a nonexistent question ID."""
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("qa_question_detail", args=[99999])
+        )
+        self.assertEqual(response.status_code, 404)

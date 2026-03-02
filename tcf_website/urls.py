@@ -101,6 +101,11 @@ urlpatterns = [
     path("qaTest/", views.qa_dashboard_hard, name="qaTest"),
     path("forum/", views.forum.forum_dashboard, name="forum_dashboard"),
     path("qa/create/", views.qa.create_question, name="create_question"),
+    path(
+        "qa/question/<int:question_id>/",
+        views.qa.question_detail,
+        name="qa_question_detail",
+    ),
     # Post detail (AJAX)
     path(
         "forum/post/<int:post_id>/",
