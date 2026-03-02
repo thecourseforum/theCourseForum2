@@ -14,7 +14,9 @@ from django.views import generic
 from django.db import models
 from django.db.models import Q
 
-from ..models import Answer, Course, Question, Semester
+from django.contrib.postgres.search import TrigramSimilarity
+
+from ..models import Answer, Course, Instructor, Question, Semester
 
 
 @login_required
@@ -151,8 +153,6 @@ def question_detail(request, question_id):
 
 def search_courses_qa(request):
     """API: search courses by mnemonic/number for the New Post modal."""
-    from django.contrib.postgres.search import TrigramSimilarity
-
     query = request.GET.get("q", "").strip()
     if len(query) < 2:
         return JsonResponse({"results": []})
@@ -179,11 +179,9 @@ def search_courses_qa(request):
 
 def get_instructors_for_course(request, course_id):
     """API: get instructors who have taught a given course."""
-    from ..models import Instructor
-
     course = get_object_or_404(Course, pk=course_id)
     instructors = (
-        Instructor.objects.filter(section__course=course)
+        Instructor.objects.filter(section__course=course, hidden=False)
         .distinct()
         .order_by("last_name", "first_name")
     )

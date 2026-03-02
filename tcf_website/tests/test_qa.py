@@ -176,8 +176,8 @@ class SearchCoursesQaTests(TestCase):
     def setUp(self):
         setup(self)
 
-    def test_empty_query_returns_empty(self):
-        """Short query returns empty results."""
+    def test_short_query_returns_empty(self):
+        """Short (1-char) query returns empty results per min-length guard."""
         self.client.force_login(self.user1)
         response = self.client.get(reverse("qa_search_courses") + "?q=a")
         self.assertEqual(response.status_code, 200)
@@ -191,6 +191,7 @@ class SearchCoursesQaTests(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertIn("results", data)
+        self.assertIsInstance(data["results"], list)
 
 
 class GetInstructorsForCourseTests(TestCase):
