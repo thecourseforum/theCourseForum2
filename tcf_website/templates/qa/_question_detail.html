@@ -1,8 +1,197 @@
 {% load static %}
+
+<!-- Top Navigation -->
+<div class="content-nav">
+    <div class="post-info">
+        {% if question.course %}
+        <h3>
+            <a href="{% url 'course' mnemonic=question.course.subdepartment.mnemonic course_number=question.course.number %}">
+                {{ question.course.subdepartment.mnemonic }} {{ question.course.number }}
+            </a>
+        </h3>
+        {% endif %}
+    </div>
+    {% if user.is_authenticated and user == question.user %}
+    <div class="dropdown">
+        <button class="nav-btn dropdown-toggle" type="button" data-toggle="dropdown">
+            <i class="fa fa-ellipsis-v"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item edit-question-btn" href="#"
+               data-question-id="{{ question.id }}"
+               data-title="{{ question.title }}"
+               data-text="{{ question.text }}"
+               data-course="{{ question.course_id }}"
+               data-instructor="{{ question.instructor_id }}">
+                <i class="fa fa-pencil"></i> Edit
+            </a>
+            <a class="dropdown-item delete-question-btn text-danger" href="#"
+               data-question-id="{{ question.id }}">
+                <i class="fa fa-trash"></i> Delete
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Post Content -->
 <div class="post-content">
-    <h2>{{ question.title }}</h2>
-    <p>{{ question.text }}</p>
-    {% for answer in answers %}
-    <div class="answer">{{ answer.text }}</div>
-    {% endfor %}
+    <!-- Main Question -->
+    <div class="main-question">
+        <h2 class="post-content-title">{{ question.title|default:"(No title)" }}</h2>
+        <div class="post-meta">
+            <span class="post-author">
+                <i class="fa fa-user"></i>
+                {{ question.user.first_name|default:question.user.computing_id|default:"Anonymous" }}
+            </span>
+            <span class="post-timestamp">
+                <i class="fa fa-clock-o"></i> {{ question.created|timesince }} ago
+            </span>
+            {% if question.instructor %}
+            <span class="post-instructor">
+                <i class="fa fa-graduation-cap"></i> {{ question.instructor }}
+            </span>
+            {% endif %}
+        </div>
+
+        <div class="post-body">
+            <p>{{ question.text|linebreaks }}</p>
+        </div>
+
+        <!-- Question Vote Actions -->
+        <div class="post-actions">
+            {% if user.is_authenticated %}
+            <button class="action-btn vote-btn {% if question.user_q_vote == 1 %}voted{% endif %}"
+                    data-type="question"
+                    data-id="{{ question.id }}"
+                    data-action="up">
+                <i class="fa fa-thumbs-up"></i>
+            </button>
+            <span class="vote-count" id="question-vote-count-{{ question.id }}">
+                {{ question.sum_q_votes|default:0 }}
+            </span>
+            <button class="action-btn vote-btn {% if question.user_q_vote == -1 %}voted{% endif %}"
+                    data-type="question"
+                    data-id="{{ question.id }}"
+                    data-action="down">
+                <i class="fa fa-thumbs-down"></i>
+            </button>
+            {% else %}
+            <span class="vote-display">
+                <i class="fa fa-thumbs-up"></i> {{ question.sum_q_votes|default:0 }}
+            </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Answers Section -->
+    <div class="comments-section">
+        <h3 class="comments-header">
+            Answers
+            <span class="response-count">({{ answers|length }})</span>
+        </h3>
+
+        <div class="thread-container" id="answersContainer">
+            {% for answer in answers %}
+            <div class="thread-post" data-answer-id="{{ answer.id }}">
+                <div class="post-main">
+                    <div class="post-header-info">
+                        {% if answer.semester %}
+                        <span class="semester-tag">{{ answer.semester }}</span>
+                        {% endif %}
+                        <span class="response-author">
+                            {{ answer.user.first_name|default:answer.user.computing_id|default:"Anonymous" }}
+                        </span>
+                        <span class="post-time">{{ answer.created|timesince }} ago</span>
+                    </div>
+                    <div class="post-body">
+                        <p>{{ answer.text|linebreaks }}</p>
+                    </div>
+                    <div class="post-actions">
+                        {% if user.is_authenticated %}
+                        <button class="action-btn vote-btn {% if answer.user_a_vote == 1 %}voted{% endif %}"
+                                data-type="answer"
+                                data-id="{{ answer.id }}"
+                                data-action="up">
+                            <i class="fa fa-thumbs-up"></i>
+                        </button>
+                        <span class="vote-count" id="answer-vote-count-{{ answer.id }}">
+                            {{ answer.sum_a_votes|default:0 }}
+                        </span>
+                        <button class="action-btn vote-btn {% if answer.user_a_vote == -1 %}voted{% endif %}"
+                                data-type="answer"
+                                data-id="{{ answer.id }}"
+                                data-action="down">
+                            <i class="fa fa-thumbs-down"></i>
+                        </button>
+
+                        {% if user == answer.user %}
+                        <div class="dropdown d-inline-block">
+                            <button class="action-btn dropdown-toggle" type="button" data-toggle="dropdown">
+                                <i class="fa fa-ellipsis-h"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item edit-answer-btn" href="#"
+                                   data-answer-id="{{ answer.id }}"
+                                   data-text="{{ answer.text }}"
+                                   data-semester="{{ answer.semester.id|default:'' }}">
+                                    <i class="fa fa-pencil"></i> Edit
+                                </a>
+                                <a class="dropdown-item delete-answer-btn text-danger" href="#"
+                                   data-answer-id="{{ answer.id }}">
+                                    <i class="fa fa-trash"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% else %}
+                        <span class="vote-display">
+                            <i class="fa fa-thumbs-up"></i> {{ answer.sum_a_votes|default:0 }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <hr>
+            {% empty %}
+            <div class="no-responses">
+                <p>No answers yet. Be the first to answer!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Answer Submission Form -->
+    {% if user.is_authenticated %}
+    <div class="reply-input-container">
+        <form id="mainAnswerForm" method="POST" action="{% url 'new_answer' %}">
+            {% csrf_token %}
+            <input type="hidden" name="question" value="{{ question.id }}">
+            <div class="reply-input-wrapper">
+                <div class="reply-form-row mb-2">
+                    <select name="semester" class="form-control semester-select" required>
+                        <option value="">Select semester you took this course...</option>
+                        {% for semester in semesters %}
+                        <option value="{{ semester.id }}">{{ semester }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <textarea class="reply-textarea"
+                          name="text"
+                          placeholder="Write your answer..."
+                          required></textarea>
+                <div class="d-flex align-items-center mt-2">
+                    <span id="duplicate-answer-warning" class="text-danger mr-3" style="display:none;">
+                        You have already answered this question.
+                    </span>
+                    <button type="submit" class="btn-submit-reply ml-auto">Post Answer</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <div class="login-prompt">
+        <a href="{% url 'login' %}">Login</a> to post an answer.
+    </div>
+    {% endif %}
 </div>
