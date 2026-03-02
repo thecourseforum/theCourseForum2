@@ -12,6 +12,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from django.db import models
+from django.db.models import Q
 
 from ..models import Answer, Course, Question, Semester
 
@@ -19,11 +20,13 @@ from ..models import Answer, Course, Question, Semester
 @login_required
 def qa_dashboard(request):
     """Q&A Dashboard view."""
-    from django.db.models import Q as DQ
-
     search_query = request.GET.get("q", "").strip()
     course_filter = request.GET.get("course", "")
     selected_question_id = request.GET.get("question", None)
+    try:
+        selected_question_id = int(selected_question_id) if selected_question_id else None
+    except (TypeError, ValueError):
+        selected_question_id = None
 
     # Base queryset annotated with vote totals
     questions = (
@@ -49,7 +52,7 @@ def qa_dashboard(request):
 
     if search_query:
         questions = questions.filter(
-            DQ(title__icontains=search_query) | DQ(text__icontains=search_query)
+            Q(title__icontains=search_query) | Q(text__icontains=search_query)
         )
 
     if course_filter:
@@ -65,7 +68,7 @@ def qa_dashboard(request):
             selected_question = questions.get(id=selected_question_id)
         except Question.DoesNotExist:
             pass
-    if selected_question is None and questions.exists():
+    if selected_question is None:
         selected_question = questions.first()
 
     if selected_question:
