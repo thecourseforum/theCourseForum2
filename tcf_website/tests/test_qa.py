@@ -53,3 +53,58 @@ class CreateQuestionTests(TestCase):
             },
         )
         self.assertRedirects(response, reverse("qa"), fetch_redirect_response=False)
+
+
+class QaDashboardTests(TestCase):
+    """Tests for the qa_dashboard view."""
+
+    def setUp(self):
+        setup(self)
+        self.question1 = Question.objects.create(
+            title="Workload?",
+            text="How hard is this course?",
+            course=self.course,
+            instructor=self.instructor,
+            user=self.user1,
+        )
+        self.question2 = Question.objects.create(
+            title="Exams?",
+            text="How many exams?",
+            course=self.course2,
+            instructor=self.instructor,
+            user=self.user2,
+        )
+        self.client.force_login(self.user1)
+
+    def test_dashboard_returns_200(self):
+        """Dashboard page loads successfully."""
+        response = self.client.get(reverse("qa"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_dashboard_contains_questions(self):
+        """Dashboard context includes all questions."""
+        response = self.client.get(reverse("qa"))
+        self.assertIn(self.question1, response.context["questions"])
+        self.assertIn(self.question2, response.context["questions"])
+
+    def test_dashboard_search_filter(self):
+        """?q= param filters questions by title/text."""
+        response = self.client.get(reverse("qa") + "?q=Workload")
+        self.assertIn(self.question1, response.context["questions"])
+        self.assertNotIn(self.question2, response.context["questions"])
+
+    def test_dashboard_course_filter(self):
+        """?course= param filters questions by course."""
+        response = self.client.get(reverse("qa") + f"?course={self.course.id}")
+        self.assertIn(self.question1, response.context["questions"])
+        self.assertNotIn(self.question2, response.context["questions"])
+
+    def test_dashboard_selected_question(self):
+        """?question= param sets the active question in context."""
+        response = self.client.get(reverse("qa") + f"?question={self.question2.id}")
+        self.assertEqual(response.context["selected_question"].id, self.question2.id)
+
+    def test_dashboard_has_courses_in_context(self):
+        """Dashboard context includes courses list for filter dropdown."""
+        response = self.client.get(reverse("qa"))
+        self.assertIn("courses_with_questions", response.context)

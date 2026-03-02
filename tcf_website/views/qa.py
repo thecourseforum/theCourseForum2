@@ -11,32 +11,90 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from ..models import Answer, Course, Question
+from django.db import models
+
+from ..models import Answer, Course, Question, Semester
 
 
 @login_required
 def qa_dashboard(request):
     """Q&A Dashboard view."""
-    questions = Question.objects.select_related("course").order_by("-created")
+    from django.db.models import Q as DQ
 
-    active_question = questions.first()
+    search_query = request.GET.get("q", "").strip()
+    course_filter = request.GET.get("course", "")
+    selected_question_id = request.GET.get("question", None)
 
-    answers = (
-        Answer.display_activity(
-            question_id=active_question.id,
+    # Base queryset annotated with vote totals
+    questions = (
+        Question.objects.select_related("course", "course__subdepartment", "instructor", "user")
+        .exclude(text="")
+        .annotate(
+            sum_q_votes=models.functions.Coalesce(
+                models.Sum("votequestion__value"), models.Value(0)
+            )
+        )
+    )
+
+    if request.user.is_authenticated:
+        questions = questions.annotate(
+            user_q_vote=models.functions.Coalesce(
+                models.Sum(
+                    "votequestion__value",
+                    filter=models.Q(votequestion__user=request.user),
+                ),
+                models.Value(0),
+            )
+        )
+
+    if search_query:
+        questions = questions.filter(
+            DQ(title__icontains=search_query) | DQ(text__icontains=search_query)
+        )
+
+    if course_filter:
+        questions = questions.filter(course_id=course_filter)
+
+    questions = questions.order_by("-created")
+
+    # Determine selected question
+    selected_question = None
+    answers = []
+    if selected_question_id:
+        try:
+            selected_question = questions.get(id=selected_question_id)
+        except Question.DoesNotExist:
+            pass
+    if selected_question is None and questions.exists():
+        selected_question = questions.first()
+
+    if selected_question:
+        answers = Answer.display_activity(
+            question_id=selected_question.id,
             user=request.user,
         )
-        if active_question
-        else []
+
+    # Courses that have at least one question (for filter dropdown)
+    courses_with_questions = (
+        Course.objects.filter(question__isnull=False)
+        .select_related("subdepartment")
+        .distinct()
+        .order_by("subdepartment__mnemonic", "number")
     )
+
+    semesters = Semester.objects.order_by("-number")[:20]
 
     return render(
         request,
         "qa/qa_dashboard.html",
         {
             "questions": questions,
-            "active_question": active_question,
-            "courses": Course.objects.all(),
+            "selected_question": selected_question,
+            "answers": answers,
+            "courses_with_questions": courses_with_questions,
+            "search_query": search_query,
+            "selected_course": course_filter,
+            "semesters": semesters,
         },
     )
 
