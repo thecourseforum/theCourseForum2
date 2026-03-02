@@ -231,7 +231,7 @@
         questionDetail: '{% url "qa_question_detail" question_id=0 %}'.replace('/0/', '/'),
         createQuestion: '{% url "create_question" %}',
         searchCourses: '{% url "qa_search_courses" %}',
-        getInstructors: '{% url "qa_get_instructors" course_id=0 %}'.replace('/0/', '/'),
+        getInstructors: '{% url "qa_get_instructors" course_id=0 %}'.replace('/0/instructors/', '/'),
         editQuestion: '{% url "edit_question" question_id=0 %}'.replace('/0/', '/'),
         editAnswer: '{% url "edit_answer" answer_id=0 %}'.replace('/0/', '/'),
         dashboard: '{% url "qa" %}',

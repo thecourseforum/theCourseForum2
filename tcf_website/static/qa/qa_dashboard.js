@@ -180,7 +180,7 @@ function initNewPostModal() {
         instructorSelect.disabled = true;
         instructorSelect.innerHTML = '<option value="">Loading...</option>';
 
-        fetch(`${QA_URLS.getInstructors}${courseId}/`)
+        fetch(`${QA_URLS.getInstructors}${courseId}/instructors/`)
             .then(r => r.json())
             .then(data => {
                 if (data.instructors && data.instructors.length > 0) {
