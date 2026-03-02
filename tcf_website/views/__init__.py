@@ -30,6 +30,7 @@ from .forum import (
 from .index import AboutView, index, privacy, terms
 from .profile import DeleteProfile, profile, reviews
 from .qa import (
+    create_question,
     DeleteAnswer,
     DeleteQuestion,
     downvote_answer,
