@@ -1,7 +1,6 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-
 {% block title %}Q&A | theCourseForum{% endblock %}
 
 {% block styles %}
@@ -9,147 +8,241 @@
 {% endblock %}
 
 {% block content %}
-    <div class="qa-container">
-        <div class="qa-sidebar">
-            <!-- TODO: Add functionality to post/filter button and searching-->
-            <div class="qa-header">
-                <button class="btn-new-post">
-                    <i class="fa fa-plus"></i> New Post
-                </button>
-                <div class="search-container">
-                    <i class="fa fa-search search-icon"></i>
-                    <input type="text" class="search-input" placeholder="Search posts...">
-                </div>
-            </div>
-
-            <div class="qa-filters">
-                <button class="filter-btn active">
-                    <i class="fa fa-list"></i> Filter
-                </button>
-                <div class="dropdown">
-                </div>
-            </div>
-
-            <!-- Sidebar Post List -->
-            <div class="posts-list">
-                {% if questions %}
-                    {% for q in questions %}
-                        <div class="post-item {% if q == active_question %}active{% endif %}">
-                            <div class="post-header">
-                                <span class="post-tag">{{ q.course.code }}</span>
-                                <span class="post-title">{{ q.title }}</span>
-                                <span class="post-date">{{ q.created|date:"m/d/y" }}</span>
-                            </div>
-
-                        <div class="post-preview">
-                            {{ q.text|truncatechars:60 }}
-                        </div>
-                    </div>
-                {% endfor %}
+<div class="qa-container">
+    <!-- Left Sidebar: Posts List -->
+    <div class="qa-sidebar">
+        <!-- Header with New Post button and Search -->
+        <div class="qa-header">
+            {% if user.is_authenticated %}
+            <button class="btn-new-post" id="openNewPostModal">
+                <i class="fa fa-plus"></i> New Post
+            </button>
             {% else %}
-                <p class="empty-state">No questions posted yet.</p>
+            <a href="{% url 'login' %}" class="btn-new-post">
+                <i class="fa fa-sign-in"></i> Login to Post
+            </a>
             {% endif %}
+            <div class="search-container">
+                <i class="fa fa-search search-icon"></i>
+                <input type="text"
+                       class="search-input"
+                       id="searchInput"
+                       placeholder="Search questions..."
+                       value="{{ search_query }}">
             </div>
         </div>
 
-        <!-- Right Side Content -->
-         <div class="qa-content">
-            {% if active_question %}
-            <div class="content-nav">
-                <div class="post-info">
-                    <h3>{{ active_question.course.code }}</h3>
-                </div>
-                <button class="nav-btn">
-                    <i class="fa fa-ellipsis-v"></i>
+        <!-- Course Filter -->
+        <div class="qa-filters">
+            <div class="dropdown">
+                <button class="filter-btn dropdown-toggle" type="button" id="courseDropdown" data-toggle="dropdown">
+                    <i class="fa fa-filter"></i>
+                    {% if selected_course %}
+                        Filter active
+                    {% else %}
+                        All Courses
+                    {% endif %}
                 </button>
+                <div class="dropdown-menu" aria-labelledby="courseDropdown">
+                    <a class="dropdown-item {% if not selected_course %}active{% endif %}"
+                       href="{% url 'qa' %}{% if search_query %}?q={{ search_query }}{% endif %}">
+                        All Courses
+                    </a>
+                    {% for course in courses_with_questions %}
+                    <a class="dropdown-item {% if selected_course == course.id|stringformat:'s' %}active{% endif %}"
+                       href="{% url 'qa' %}?course={{ course.id }}{% if search_query %}&q={{ search_query }}{% endif %}">
+                        {{ course.subdepartment.mnemonic }} {{ course.number }}
+                    </a>
+                    {% endfor %}
+                </div>
             </div>
+        </div>
 
-            <!-- Post Content -->
-             <div class="post-content">
-                <div class="main-question">
-                    <h2 class="post-content-title"> {{ active_question.title }}</h2>
-
-                    <div class="post-meta">
-                        <span>Asked {{ active_question.created|timesince }} ago</span>
-                    </div>
-
-                    <div class="post-body">
-                        <p> {{ active_question.text }}</p>
-                    </div>
-
-                    <!-- TODO: Increment count for upvote. Also adding edit button? -->
-                    <div class="post-actions">
-                        <button class="action-btn">
-                            <i class="fa fa-thumbs-up"></i>
-                            {{ active_question.sum_q_votes|default:0 }}
-                        </button>
-                    </div>
+        <!-- Posts List -->
+        <div class="posts-list" id="postsList">
+            {% for question in questions %}
+            <div class="post-item {% if selected_question.id == question.id %}active{% endif %}"
+                 data-question-id="{{ question.id }}">
+                <div class="post-header">
+                    <span class="post-tag">
+                        {{ question.course.subdepartment.mnemonic }} {{ question.course.number }}
+                    </span>
+                    <span class="post-date">{{ question.created|date:"n/j/y" }}</span>
                 </div>
-
-                <!-- Responses -->
-                <div class="comments-section">
-                    <h3 class="comments-header">Responses</h3>
+                <div class="post-title">{{ question.title|default:question.text|truncatechars:60 }}</div>
+                <div class="post-preview">
+                    {{ question.text|truncatechars:80 }}
                 </div>
-             </div>
-            {% else %}
-                <p class="empty-state">No responses yet.</p>
-            {% endif %}
-         </div>
-    </div> 
-
-
-    <!-- New Post Modal -->
-    <div id="newPostModal" class="modal-overlay" style="display:none">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h2>Create New Post</h2>
-                <button class="modal-close" onclick="closeModal()">
-                    <i class="fa fa-times"></i>
-                </button>
+                <div class="post-footer">
+                    <span class="post-stats">
+                        <i class="fa fa-thumbs-up"></i> {{ question.sum_q_votes|default:0 }}
+                    </span>
+                </div>
             </div>
-
-            <form method="post" action="{% url 'create_question' %}">
-                {% csrf_token %}
-
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="course">Course</label>
-                        <select name="course" required>
-                            <!-- Doing this causes a lot of lag -->
-                            <!-- {% for course in course %}
-                                <option value="{{ course.id }}">
-                                    {{ course.code }}
-                                </option>
-                            {% endfor %} -->
-                            <option>2100</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="text">Questions</label>
-                        <textarea
-                            name="text"
-                            placeholder="Ask your question..."
-                            required
-                        ></textarea>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn-cancel" onclick="closeModal()">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn-submit">
-                        Create Post
-                    </button>
-                </div>
-            </form>
+            {% empty %}
+            <div class="no-posts">
+                <i class="fa fa-comments-o fa-3x mb-3"></i>
+                <p>No questions found.</p>
+            </div>
+            {% endfor %}
         </div>
     </div>
-        
-     
+
+    <!-- Right Content: Question Detail -->
+    <div class="qa-content" id="questionContent">
+        {% if selected_question %}
+        {% include 'qa/_question_detail.html' with question=selected_question answers=answers semesters=semesters %}
+        {% else %}
+        <div class="no-post-selected">
+            <i class="fa fa-hand-o-left fa-3x mb-3"></i>
+            <p>Select a question to view its details</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- New Post Modal -->
+<div id="newPostModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2>Ask a Question</h2>
+            <button class="modal-close" id="closeModal">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+        <form id="newPostForm" method="POST" action="{% url 'create_question' %}">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="postTitle">Title <span class="required">*</span></label>
+                    <input type="text"
+                           id="postTitle"
+                           name="title"
+                           class="form-control"
+                           placeholder="e.g. How hard is the final exam?"
+                           required
+                           maxlength="200">
+                </div>
+                <div class="form-group">
+                    <label for="courseSearch">Course <span class="required">*</span></label>
+                    <input type="text"
+                           id="courseSearch"
+                           class="form-control"
+                           placeholder="Search for a course (e.g. CS 2100)..."
+                           autocomplete="off">
+                    <input type="hidden" id="courseId" name="course">
+                    <div id="courseResults" class="course-search-results"></div>
+                </div>
+                <div class="form-group">
+                    <label for="instructorSelect">Instructor <span class="required">*</span></label>
+                    <select id="instructorSelect" name="instructor" class="form-control" required disabled>
+                        <option value="">Select a course first...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="postText">Question <span class="required">*</span></label>
+                    <textarea id="postText"
+                              name="text"
+                              class="form-control"
+                              placeholder="Describe your question in detail..."
+                              required
+                              rows="4"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="cancelModal">Cancel</button>
+                <button type="submit" class="btn-submit">Post Question</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Question Modal -->
+<div id="editQuestionModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2>Edit Question</h2>
+            <button class="modal-close" id="closeEditModal">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+        <form id="editQuestionForm" method="POST">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editTitle">Title</label>
+                    <input type="text" id="editTitle" name="title" class="form-control" maxlength="200">
+                </div>
+                <div class="form-group">
+                    <label for="editText">Question</label>
+                    <textarea id="editText" name="text" class="form-control" rows="4" required></textarea>
+                </div>
+                <!-- course and instructor are required by form but shouldn't change on edit -->
+                <input type="hidden" id="editCourse" name="course">
+                <input type="hidden" id="editInstructor" name="instructor">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="cancelEditModal">Cancel</button>
+                <button type="submit" class="btn-submit">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Answer Modal -->
+<div id="editAnswerModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2>Edit Answer</h2>
+            <button class="modal-close" id="closeEditAnswerModal">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+        <form id="editAnswerForm" method="POST">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editAnswerSemester">Semester</label>
+                    <select id="editAnswerSemester" name="semester" class="form-control">
+                        {% for semester in semesters %}
+                        <option value="{{ semester.id }}">{{ semester }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editAnswerText">Answer</label>
+                    <textarea id="editAnswerText" name="text" class="form-control" rows="4" required></textarea>
+                </div>
+                <input type="hidden" id="editAnswerQuestion" name="question">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="cancelEditAnswerModal">Cancel</button>
+                <button type="submit" class="btn-submit">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block js %}
-    <script src="{% static 'qa/qa_dashboard.js' %}"></script>
+<script>
+    const QA_URLS = {
+        questionDetail: '{% url "qa_question_detail" question_id=0 %}'.replace('/0/', '/'),
+        createQuestion: '{% url "create_question" %}',
+        searchCourses: '{% url "qa_search_courses" %}',
+        getInstructors: '{% url "qa_get_instructors" course_id=0 %}'.replace('/0/', '/'),
+        editQuestion: '{% url "edit_question" question_id=0 %}'.replace('/0/', '/'),
+        editAnswer: '{% url "edit_answer" answer_id=0 %}'.replace('/0/', '/'),
+        dashboard: '{% url "qa" %}',
+    };
+    const IS_AUTHENTICATED = {{ user.is_authenticated|yesno:"true,false" }};
+    const CSRF_TOKEN = '{{ csrf_token }}';
+    const SEMESTERS = [
+        {% for semester in semesters %}
+        {"id": {{ semester.id }}, "label": "{{ semester }}"}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+</script>
+<script src="{% static 'qa/qa_dashboard.js' %}"></script>
 {% endblock %}
