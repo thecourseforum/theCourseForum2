@@ -107,6 +107,9 @@
 
 .filter-btn i {
   margin-right: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Dropdown search input */

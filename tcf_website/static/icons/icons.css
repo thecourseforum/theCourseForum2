@@ -289,11 +289,6 @@
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
-  width: 1em;
-  height: 1em;
-  vertical-align: middle;
-  display: inline-block;
-  filter: invert(100%) brightness(150%);
 }
 
 .fa-user-friends {
