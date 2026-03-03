@@ -49,12 +49,6 @@
             <span class="vote-count" id="question-vote-count-{{ question.id }}">
                 {{ question.sum_q_votes|default:0 }}
             </span>
-            <button class="action-btn vote-btn {% if question.user_q_vote == -1 %}voted{% endif %}"
-                    data-type="question"
-                    data-id="{{ question.id }}"
-                    data-action="down">
-                <i class="fa fa-thumbs-down"></i>
-            </button>
 
             {% if user == question.user %}
             <span class="question-actions-divider"></span>
@@ -68,7 +62,7 @@
             </button>
             <button class="action-btn delete-question-btn text-danger"
                     data-question-id="{{ question.id }}">
-                <i class="fa fa-trash"></i> Delete
+                <i class="fa fa-trash-o"></i> Delete
             </button>
             {% endif %}
             {% else %}
@@ -95,9 +89,6 @@
                             {% if answer.semester %}
                             <span class="semester-tag">{{ answer.semester }}</span>
                             {% endif %}
-                            <span class="response-author">
-                                {{ answer.user.first_name|default:answer.user.computing_id|default:"Anonymous" }}
-                            </span>
                             <span class="post-time">{{ answer.created|timesince }} ago</span>
                         </div>
                         {% if user.is_authenticated and user == answer.user %}
@@ -131,12 +122,6 @@
                         <span class="vote-count" id="answer-vote-count-{{ answer.id }}">
                             {{ answer.sum_a_votes|default:0 }}
                         </span>
-                        <button class="action-btn vote-btn {% if answer.user_a_vote == -1 %}voted{% endif %}"
-                                data-type="answer"
-                                data-id="{{ answer.id }}"
-                                data-action="down">
-                            <i class="fa fa-thumbs-down"></i>
-                        </button>
                         {% else %}
                         <span class="vote-display">
                             <i class="fa fa-thumbs-up"></i> {{ answer.sum_a_votes|default:0 }}

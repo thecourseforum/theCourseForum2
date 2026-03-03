@@ -1428,7 +1428,9 @@ class Question(models.Model):
     title = models.CharField(max_length=200, blank=True)
     text = models.TextField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, null=True, blank=True, default=None)
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, null=True, blank=True, default=None
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -1464,32 +1466,6 @@ class Question(models.Model):
 
         VoteQuestion.objects.create(
             value=1,
-            user=user,
-            question=self,
-        )
-
-    def downvote(self, user):
-        """Create a downvote."""
-
-        # Check if already downvoted.
-        downvoted = VoteQuestion.objects.filter(
-            user=user,
-            question=self,
-            value=-1,
-        ).exists()
-
-        # Delete all prior votes.
-        VoteQuestion.objects.filter(
-            user=user,
-            question=self,
-        ).delete()
-
-        # Don't downvote again if previously downvoted.
-        if downvoted:
-            return
-
-        VoteQuestion.objects.create(
-            value=-1,
             user=user,
             question=self,
         )
@@ -1563,32 +1539,6 @@ class Answer(models.Model):
 
         VoteAnswer.objects.create(
             value=1,
-            user=user,
-            answer=self,
-        )
-
-    def downvote(self, user):
-        """Create a downvote."""
-
-        # Check if already downvoted.
-        downvoted = VoteAnswer.objects.filter(
-            user=user,
-            answer=self,
-            value=-1,
-        ).exists()
-
-        # Delete all prior votes.
-        VoteAnswer.objects.filter(
-            user=user,
-            answer=self,
-        ).delete()
-
-        # Don't downvote again if previously downvoted.
-        if downvoted:
-            return
-
-        VoteAnswer.objects.create(
-            value=-1,
             user=user,
             answer=self,
         )

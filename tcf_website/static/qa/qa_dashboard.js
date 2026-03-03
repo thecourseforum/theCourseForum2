@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initSearch();
     initCourseFilter();
     initNewPostModal();
+    initDeleteQuestionModal();
     initVoting();
     initAnswerForm();
     initQuestionActions();
@@ -242,6 +243,44 @@ function initNewPostModal() {
     }
 }
 
+// ─── Delete Question Modal ────────────────────────────────────────────────────
+
+let questionIdToDelete = null;
+
+function initDeleteQuestionModal() {
+    const confirmDeleteBtn = document.getElementById('confirmDeleteQuestion');
+
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', function () {
+            if (!questionIdToDelete) return;
+
+            const deleteData = new FormData();
+            deleteData.append('csrfmiddlewaretoken', CSRF_TOKEN);
+            fetch(`/questions/${questionIdToDelete}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': CSRF_TOKEN,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: deleteData,
+            })
+            .then(() => {
+                $('#deleteQuestionModal').modal('hide');
+                window.location.href = QA_URLS.dashboard;
+            })
+            .catch(err => {
+                console.error('Delete question error:', err);
+                $('#deleteQuestionModal').modal('hide');
+            });
+        });
+    }
+}
+
+function openDeleteQuestionModal(qId) {
+    questionIdToDelete = qId;
+    $('#deleteQuestionModal').modal('show');
+}
+
 // ─── Voting ───────────────────────────────────────────────────────────────────
 
 function initVoting() {
@@ -397,26 +436,12 @@ function initQuestionActions() {
     if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditModal);
     if (editModal) editModal.addEventListener('click', e => { if (e.target === editModal) closeEditModal(); });
 
+    // Delete question button handler
     document.querySelectorAll('.delete-question-btn').forEach(btn => {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             const qId = this.dataset.questionId;
-            if (confirm('Are you sure you want to delete this question?')) {
-                const deleteData = new FormData();
-                deleteData.append('csrfmiddlewaretoken', CSRF_TOKEN);
-                fetch(`/questions/${qId}/delete/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': CSRF_TOKEN,
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                    body: deleteData,
-                })
-                .then(() => {
-                    window.location.href = QA_URLS.dashboard;
-                })
-                .catch(err => console.error('Delete question error:', err));
-            }
+            openDeleteQuestionModal(qId);
         });
     });
 }

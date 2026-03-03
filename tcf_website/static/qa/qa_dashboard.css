@@ -498,6 +498,11 @@
   border-top: 1px solid #dee2e6;
 }
 
+.reply-input-container form {
+  width: 100%;
+  flex: 1;
+}
+
 .reply-input-wrapper {
   flex: 1;
 }
