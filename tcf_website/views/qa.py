@@ -7,16 +7,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.postgres.search import TrigramSimilarity
 from django.core.exceptions import PermissionDenied
+from django.db import models
+from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import generic
-
-from django.db import models
-from django.db.models import Q
-
-from django.contrib.postgres.search import TrigramSimilarity
 
 from ..models import Answer, Course, Instructor, Question, Semester
 
@@ -27,13 +25,17 @@ def qa_dashboard(request):
     course_filter = request.GET.get("course", "")
     selected_question_id = request.GET.get("question", None)
     try:
-        selected_question_id = int(selected_question_id) if selected_question_id else None
+        selected_question_id = (
+            int(selected_question_id) if selected_question_id else None
+        )
     except (TypeError, ValueError):
         selected_question_id = None
 
     # Base queryset annotated with vote totals
     questions = (
-        Question.objects.select_related("course", "course__subdepartment", "instructor", "user")
+        Question.objects.select_related(
+            "course", "course__subdepartment", "instructor", "user"
+        )
         .exclude(text="")
         .annotate(
             sum_q_votes=models.functions.Coalesce(
@@ -93,9 +95,7 @@ def qa_dashboard(request):
 
     selected_course_obj = None
     if course_filter:
-        selected_course_obj = (
-            courses_with_questions.filter(pk=course_filter).first()
-        )
+        selected_course_obj = courses_with_questions.filter(pk=course_filter).first()
 
     semesters = Semester.objects.order_by("-number")[:20]
 
@@ -130,13 +130,12 @@ def create_question(request):
 
 def question_detail(request, question_id):
     """AJAX endpoint: returns rendered HTML partial for a question + its answers."""
-    qs = (
-        Question.objects.select_related("course", "course__subdepartment", "instructor", "user")
-        .annotate(
-            sum_q_votes=models.functions.Coalesce(
-                models.Sum("votequestion__value"), models.Value(0)
-            ),
-        )
+    qs = Question.objects.select_related(
+        "course", "course__subdepartment", "instructor", "user"
+    ).annotate(
+        sum_q_votes=models.functions.Coalesce(
+            models.Sum("votequestion__value"), models.Value(0)
+        ),
     )
     if request.user.is_authenticated:
         qs = qs.annotate(
@@ -151,7 +150,9 @@ def question_detail(request, question_id):
     question = get_object_or_404(qs, pk=question_id)
 
     answers = Answer.display_activity(question_id=question.id, user=request.user)
-    semesters = Semester.objects.order_by("-number")[:20]  # for the answer form in _question_detail.html
+    semesters = Semester.objects.order_by("-number")[
+        :20
+    ]  # for the answer form in _question_detail.html
 
     return render(
         request,
@@ -170,14 +171,26 @@ def search_courses_qa(request):
     if len(query) < 2:
         return JsonResponse({"results": []})
 
+    # Shows recent courses
+    recent_courses = Course.objects.filter(semester_last_taught__year__gte=2022)
+
+    # Check for exact match
     courses = (
-        Course.objects.annotate(
-            similarity=TrigramSimilarity("combined_mnemonic_number", query)
-        )
-        .filter(similarity__gte=0.1)
-        .select_related("subdepartment")
-        .order_by("-similarity")[:10]
+        recent_courses.filter(combined_mnemonic_number__istartswith=query)
+        .select_related("subdepartment", "semester_last_taught")
+        .order_by("combined_mnemonic_number")[:10]
     )
+
+    ## Falls back to TrigramSimilarity if exact match doesnt exist
+    if not courses.exists():
+        courses = (
+            recent_courses.annotate(
+                similarity=TrigramSimilarity("combined_mnemonic_number", query)
+            )
+            .filter(similarity__gte=0.3)
+            .select_related("subdepartment", "semester_last_taught")
+            .order_by("-similarity")[:10]
+        )
 
     results = [
         {
@@ -299,7 +312,9 @@ def upvote_question(request, question_id):
     if request.method == "POST":
         question = Question.objects.get(pk=question_id)
         question.upvote(request.user)
-        net = question.votequestion_set.aggregate(total=models.Sum("value"))["total"] or 0
+        net = (
+            question.votequestion_set.aggregate(total=models.Sum("value"))["total"] or 0
+        )
         vote_obj = question.votequestion_set.filter(user=request.user).first()
         user_vote = vote_obj.value if vote_obj else 0
         return JsonResponse({"ok": True, "votes": net, "user_vote": user_vote})
@@ -312,7 +327,9 @@ def downvote_question(request, question_id):
     if request.method == "POST":
         question = Question.objects.get(pk=question_id)
         question.downvote(request.user)
-        net = question.votequestion_set.aggregate(total=models.Sum("value"))["total"] or 0
+        net = (
+            question.votequestion_set.aggregate(total=models.Sum("value"))["total"] or 0
+        )
         vote_obj = question.votequestion_set.filter(user=request.user).first()
         user_vote = vote_obj.value if vote_obj else 0
         return JsonResponse({"ok": True, "votes": net, "user_vote": user_vote})
@@ -445,4 +462,8 @@ def downvote_answer(request, answer_id):
         vote_obj = answer.voteanswer_set.filter(user=request.user).first()
         user_vote = vote_obj.value if vote_obj else 0
         return JsonResponse({"ok": True, "votes": net, "user_vote": user_vote})
+    return JsonResponse({"ok": False})
+    return JsonResponse({"ok": False})
+    return JsonResponse({"ok": False})
+    return JsonResponse({"ok": False})
     return JsonResponse({"ok": False})
