@@ -17,19 +17,20 @@
 <div class="post-content">
     <!-- Main Question -->
     <div class="main-question">
-        <h2 class="post-content-title">{{ question.title|default:"(No title)" }}</h2>
-        <div class="post-meta">
-            <span class="post-author">
-                <i class="fa fa-user"></i>
-                {{ question.user.first_name|default:question.user.computing_id|default:"Anonymous" }}
-            </span>
-            <span class="post-timestamp">
-                <i class="fa fa-clock-o"></i> {{ question.created|timesince }} ago
-            </span>
+        <div class="question-header-wrapper">
+            <div class="question-header-content">
+                <h2 class="post-content-title">{{ question.title|default:"(No title)" }}</h2>
+                <div class="post-meta">
+                    <span class="post-timestamp">
+                        <i class="fa fa-clock"></i> {{ question.created|timesince }} ago
+                    </span>
+                </div>
+            </div>
             {% if question.instructor %}
-            <span class="post-instructor">
-                <i class="fa fa-graduation-cap"></i> {{ question.instructor }}
-            </span>
+            <div class="question-instructor-card">
+                <div class="instructor-card-label">Instructor:</div>
+                <div class="instructor-card-name">{{ question.instructor.first_name }} {{ question.instructor.last_name }}</div>
+            </div>
             {% endif %}
         </div>
 
@@ -103,7 +104,7 @@
                             <button class="action-btn-sm delete-answer-btn"
                                     title="Delete"
                                     data-answer-id="{{ answer.id }}">
-                                <i class="fa fa-trash"></i>
+                                <i class="fa fa-trash-o"></i>
                             </button>
                         </div>
                         {% endif %}

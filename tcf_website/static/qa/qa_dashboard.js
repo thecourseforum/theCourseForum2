@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initCourseFilter();
     initNewPostModal();
     initDeleteQuestionModal();
+    initDeleteAnswerModal();
     initVoting();
     initAnswerForm();
     initQuestionActions();
@@ -281,6 +282,48 @@ function openDeleteQuestionModal(qId) {
     $('#deleteQuestionModal').modal('show');
 }
 
+// ─── Delete Answer Modal ──────────────────────────────────────────────────────
+
+let answerIdToDelete = null;
+
+function initDeleteAnswerModal() {
+    const confirmDeleteBtn = document.getElementById('confirmDeleteAnswer');
+
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', function () {
+            if (!answerIdToDelete) return;
+
+            const deleteData = new FormData();
+            deleteData.append('csrfmiddlewaretoken', CSRF_TOKEN);
+            fetch(`/answers/${answerIdToDelete}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': CSRF_TOKEN,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: deleteData,
+            })
+            .then(() => {
+                $('#deleteAnswerModal').modal('hide');
+                const url = new URL(window.location);
+                const qId = url.searchParams.get('question');
+                const activeItem = document.querySelector('.post-item.active');
+                const questionId = qId || (activeItem && activeItem.dataset.questionId);
+                if (questionId) loadQuestionDetail(questionId);
+            })
+            .catch(err => {
+                console.error('Delete answer error:', err);
+                $('#deleteAnswerModal').modal('hide');
+            });
+        });
+    }
+}
+
+function openDeleteAnswerModal(aId) {
+    answerIdToDelete = aId;
+    $('#deleteAnswerModal').modal('show');
+}
+
 // ─── Voting ───────────────────────────────────────────────────────────────────
 
 function initVoting() {
@@ -482,26 +525,7 @@ function initAnswerActions() {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             const answerId = this.dataset.answerId;
-            if (confirm('Are you sure you want to delete this answer?')) {
-                const deleteData = new FormData();
-                deleteData.append('csrfmiddlewaretoken', CSRF_TOKEN);
-                fetch(`/answers/${answerId}/delete/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': CSRF_TOKEN,
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                    body: deleteData,
-                })
-                .then(() => {
-                    const url = new URL(window.location);
-                    const qId = url.searchParams.get('question');
-                    const activeItem = document.querySelector('.post-item.active');
-                    const questionId = qId || (activeItem && activeItem.dataset.questionId);
-                    if (questionId) loadQuestionDetail(questionId);
-                })
-                .catch(err => console.error('Delete answer error:', err));
-            }
+            openDeleteAnswerModal(answerId);
         });
     });
 }

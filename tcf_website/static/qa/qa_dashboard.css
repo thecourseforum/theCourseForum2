@@ -107,9 +107,6 @@
 
 .filter-btn i {
   margin-right: 0.25rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* Dropdown search input */
@@ -261,6 +258,39 @@
 /* Main Question Section */
 .main-question {
   margin-bottom: 1rem;
+}
+
+.question-header-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.question-header-content {
+  flex: 1;
+}
+
+.question-instructor-card {
+  background: #e7f3ff;
+  border: 1px solid #b8daff;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  min-width: 200px;
+  flex-shrink: 0;
+}
+
+.instructor-card-label {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
+}
+
+.instructor-card-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--main-color);
 }
 
 /* Comments Section */
