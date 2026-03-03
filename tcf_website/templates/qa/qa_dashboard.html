@@ -83,7 +83,7 @@
                     {{ question.text|truncatechars:80 }}
                 </div>
                 <div class="post-footer">
-                    <span class="post-stats" id="sidebar-vote-count-{{ question.id }}">
+                    <span class="post-stats {% if question.user_q_vote == 1%}voted{% endif %}" id="sidebar-vote-count-{{ question.id }}">
                         <i class="fa fa-thumbs-up"></i> <span class="sidebar-vote-num">{{ question.sum_q_votes|default:0 }}</span>
                     </span>
                 </div>

@@ -297,19 +297,11 @@ function initVoting() {
 
             const type = this.dataset.type;   // 'question' or 'answer'
             const id = this.dataset.id;
-            const action = this.dataset.action; // 'up' or 'down'
 
-            let url;
-            if (type === 'question') {
-                url = action === 'up'
-                    ? `/questions/${id}/upvote/`
-                    : `/questions/${id}/downvote/`;
-            } else {
-                url = action === 'up'
-                    ? `/answers/${id}/upvote/`
-                    : `/answers/${id}/downvote/`;
-            }
-
+            const url = type === 'question'
+                ? `/questions/${id}/upvote/`
+                : `/answers/${id}/upvote/`;
+                
             const counterId = type === 'question'
                 ? `question-vote-count-${id}`
                 : `answer-vote-count-${id}`;
@@ -323,17 +315,19 @@ function initVoting() {
                 if (data.ok) {
                     const container = this.closest('.post-actions');
                     const upBtn = container.querySelector('[data-action="up"]');
-                    const downBtn = container.querySelector('[data-action="down"]');
                     const counterEl = document.getElementById(counterId);
 
                     upBtn.classList.toggle('voted', data.user_vote === 1);
-                    downBtn.classList.toggle('voted', data.user_vote === -1);
                     if (counterEl) counterEl.textContent = data.votes;
 
                     // Keep sidebar list in sync for question votes
                     if (type === 'question') {
-                        const sidebarEl = document.querySelector(`#sidebar-vote-count-${id} .sidebar-vote-num`);
-                        if (sidebarEl) sidebarEl.textContent = data.votes;
+                        const sidebarContainer = document.querySelector(`#sidebar-vote-count-${id}`);
+                        if (sidebarContainer) {
+                            const sidebarNum = sidebarContainer.querySelector('.sidebar-vote-num');
+                            if(sidebarNum) sidebarNum.textContent = data.votes;
+                            sidebarContainer.classList.toggle('voted', data.user_vote === 1)
+                        }
                     }
                 }
             })

@@ -211,6 +211,15 @@
   background-position: center;
 }
 
+.fa-thumbs-up-solid {
+  width: 1em;
+  height: 1em;
+  background-image:url("../icons/img/fa-thumbs-up-solid.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
 .fa-thumbs-down {
   width: 1em;
   height: 1em;
