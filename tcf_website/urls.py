@@ -168,6 +168,7 @@ urlpatterns = [
     path("answers/check_duplicate/", views.qa.check_duplicate),
     path("qa/new_question/", views.new_question, name="new_question"),
     path("qa/new_answer/", views.new_answer, name="new_answer"),
+    path("qa/new_reply/", views.qa.new_reply, name="new_reply"),
     path("questions/<int:question_id>/upvote/", views.upvote_question),
     path("questions/<int:question_id>/downvote/", views.downvote_question),
     path(

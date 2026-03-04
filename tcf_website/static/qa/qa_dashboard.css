@@ -314,7 +314,8 @@
 
 .thread-post {
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0;
   margin-bottom: 2rem;
   position: relative;
 }
@@ -506,11 +507,11 @@
 
 /* Reply Indentation */
 .reply-indent {
-  margin-left: 2rem;
+  margin-left: 0;
 }
 
 .reply-indent-2 {
-  margin-left: 4rem;
+  margin-left: 0;
 }
 
 .reply-line {
@@ -520,6 +521,83 @@
   bottom: 0;
   width: 2px;
   background: #dee2e6;
+}
+
+/* Replies Container */
+.replies-container {
+  margin-top: 1rem;
+  margin-left: 2rem;
+  padding-left: 1rem;
+  border-left: 2px solid #e9ecef;
+}
+
+.replies-container .thread-post {
+  margin-bottom: 1rem;
+}
+
+/* Reply Button */
+.reply-btn {
+  background: transparent;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  color: #6c757d;
+  font-size: 0.875rem;
+  transition: color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.reply-btn:hover {
+  color: var(--main-color);
+}
+
+.reply-btn i {
+  font-size: 0.9rem;
+}
+
+/* Reply Form Container */
+.reply-form-container {
+  margin-top: 1rem;
+  margin-left: 2rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--main-color);
+}
+
+.reply-form-container .reply-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: vertical;
+  margin-bottom: 0.75rem;
+}
+
+.reply-form-container .reply-textarea:focus {
+  outline: none;
+  border-color: var(--main-color);
+  box-shadow: 0 0 0 0.2rem rgba(39, 79, 151, 0.15);
+}
+
+.btn-cancel-reply {
+  background: transparent;
+  border: 1px solid #dee2e6;
+  padding: 0.35rem 1rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #495057;
+  transition: all 0.2s;
+}
+
+.btn-cancel-reply:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
 }
 
 /* Reply Input */

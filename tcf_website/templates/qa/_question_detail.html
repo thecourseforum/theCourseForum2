@@ -123,6 +123,9 @@
                         <span class="vote-count" id="answer-vote-count-{{ answer.id }}">
                             {{ answer.sum_a_votes|default:0 }}
                         </span>
+                        <button class="action-btn reply-btn" data-answer-id="{{ answer.id }}">
+                            <i class="fa fa-reply"></i> Reply
+                        </button>
                         {% else %}
                         <span class="vote-display">
                             <i class="fa fa-thumbs-up"></i> {{ answer.sum_a_votes|default:0 }}
@@ -130,6 +133,91 @@
                         {% endif %}
                     </div>
                 </div>
+
+                <!-- Replies -->
+                {% if answer.replies_list %}
+                <div class="replies-container">
+                    {% for reply in answer.replies_list %}
+                    <div class="thread-post reply-indent" data-answer-id="{{ reply.id }}">
+                        <div class="post-main">
+                            <div class="post-header-info">
+                                <div class="answer-header-left">
+                                    {% if reply.semester %}
+                                    <span class="semester-tag">{{ reply.semester }}</span>
+                                    {% endif %}
+                                    <span class="post-time">{{ reply.created|timesince }} ago</span>
+                                </div>
+                                {% if user.is_authenticated and user == reply.user %}
+                                <div class="answer-header-actions">
+                                    <button class="action-btn-sm edit-answer-btn"
+                                            title="Edit"
+                                            data-answer-id="{{ reply.id }}"
+                                            data-text="{{ reply.text }}"
+                                            data-semester="{{ reply.semester.id|default:'' }}">
+                                        <i class="fa fa-pencil"></i>
+                                    </button>
+                                    <button class="action-btn-sm delete-answer-btn"
+                                            title="Delete"
+                                            data-answer-id="{{ reply.id }}">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="post-body">
+                                <p>{{ reply.text|linebreaks }}</p>
+                            </div>
+                            <div class="post-actions">
+                                {% if user.is_authenticated %}
+                                <button class="action-btn vote-btn {% if reply.user_a_vote == 1 %}voted{% endif %}"
+                                        data-type="answer"
+                                        data-id="{{ reply.id }}"
+                                        data-action="up">
+                                    <i class="fa fa-thumbs-up"></i>
+                                </button>
+                                <span class="vote-count" id="answer-vote-count-{{ reply.id }}">
+                                    {{ reply.sum_a_votes|default:0 }}
+                                </span>
+                                {% else %}
+                                <span class="vote-display">
+                                    <i class="fa fa-thumbs-up"></i> {{ reply.sum_a_votes|default:0 }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Reply Form (hidden by default) -->
+                {% if user.is_authenticated %}
+                <div class="reply-form-container" id="reply-form-{{ answer.id }}" style="display: none;">
+                    <form class="reply-form" method="POST" action="{% url 'new_reply' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="question" value="{{ question.id }}">
+                        <input type="hidden" name="parent_answer" value="{{ answer.id }}">
+                        <div class="reply-input-wrapper">
+                            <div class="reply-form-row mb-2">
+                                <select name="semester" class="form-control semester-select" required>
+                                    <option value="">Select semester you took this course...</option>
+                                    {% for semester in semesters %}
+                                    <option value="{{ semester.id }}">{{ semester }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <textarea class="reply-textarea"
+                                      name="text"
+                                      placeholder="Write your reply..."
+                                      required></textarea>
+                            <div class="d-flex align-items-center mt-2">
+                                <button type="submit" class="btn-submit-reply">Post Reply</button>
+                                <button type="button" class="btn-cancel-reply ml-2">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
             </div>
             {% if not forloop.last %}<hr>{% endif %}
             {% empty %}

@@ -344,6 +344,14 @@ class AnswerForm(forms.ModelForm):
         fields = ["text", "semester", "question"]
 
 
+class ReplyForm(forms.ModelForm):
+    """Form for reply creation (reply to an answer)"""
+
+    class Meta:
+        model = Answer
+        fields = ["text", "semester", "question", "parent_answer"]
+
+
 class DeleteAnswer(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
     """Answer deletion view."""
 
@@ -408,6 +416,24 @@ def edit_answer(request, answer_id):
             answer.save()
             return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
         messages.error(request, form.errors)
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+
+
+@login_required
+def new_reply(request):
+    """Reply creation view (reply to an answer)."""
+    if request.method == "POST":
+        form = ReplyForm(request.POST)
+
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.save()
+
+            messages.success(request, "Successfully added a reply!")
+            return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+        messages.error(request, "Invalid Form")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
     return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
 

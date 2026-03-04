@@ -1499,6 +1499,7 @@ class Answer(models.Model):
     """Answer model.
     Belongs to a User.
     Has a question.
+    Can have a parent answer for replies.
     """
 
     text = models.TextField()
@@ -1506,6 +1507,7 @@ class Answer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, default=None)
+    parent_answer = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
 
     def __str__(self):
         return f"Answer for {self.question}"
@@ -1545,10 +1547,12 @@ class Answer(models.Model):
 
     @staticmethod
     def display_activity(question_id, user):
-        """Prepare answers for course-instructor page."""
+        """Prepare answers and replies for question detail page."""
+        # Get only top-level answers (those without a parent)
         answer = (
-            Answer.objects.filter(question=question_id)
+            Answer.objects.filter(question=question_id, parent_answer__isnull=True)
             .exclude(text="")
+            .prefetch_related('replies', 'replies__user', 'replies__semester')
             .annotate(
                 sum_a_votes=models.functions.Coalesce(
                     models.Sum("voteanswer__value"), models.Value(0)
@@ -1565,12 +1569,34 @@ class Answer(models.Model):
                     models.Value(0),
                 ),
             )
-        return answer.order_by("-created")
+
+        # Annotate replies with vote counts
+        answers_list = list(answer.order_by("-created"))
+        for ans in answers_list:
+            replies = ans.replies.annotate(
+                sum_a_votes=models.functions.Coalesce(
+                    models.Sum("voteanswer__value"), models.Value(0)
+                ),
+            )
+            if user.is_authenticated:
+                replies = replies.annotate(
+                    user_a_vote=models.functions.Coalesce(
+                        models.Sum(
+                            "voteanswer__value",
+                            filter=models.Q(voteanswer__user=user),
+                        ),
+                        models.Value(0),
+                    ),
+                )
+            ans.replies_list = list(replies.order_by("created"))
+
+        return answers_list
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "question"],
+                condition=models.Q(parent_answer__isnull=True),
                 name="unique answer per user and question",
             )
         ]

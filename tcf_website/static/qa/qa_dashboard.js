@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initAnswerForm();
     initQuestionActions();
     initAnswerActions();
+    initReplyForms();
 });
 
 // ─── Question Selection ───────────────────────────────────────────────────────
@@ -48,6 +49,7 @@ function loadQuestionDetail(questionId) {
             initAnswerForm();
             initQuestionActions();
             initAnswerActions();
+            initReplyForms();
         })
         .catch(() => {
             contentArea.classList.remove('loading');
@@ -526,6 +528,48 @@ function initAnswerActions() {
             e.preventDefault();
             const answerId = this.dataset.answerId;
             openDeleteAnswerModal(answerId);
+        });
+    });
+}
+
+// ─── Reply Forms ──────────────────────────────────────────────────────────────
+
+function initReplyForms() {
+    // Handle Reply button clicks
+    document.querySelectorAll('.reply-btn').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const answerId = this.dataset.answerId;
+            const replyForm = document.getElementById(`reply-form-${answerId}`);
+
+            // Hide all other reply forms
+            document.querySelectorAll('.reply-form-container').forEach(form => {
+                if (form.id !== `reply-form-${answerId}`) {
+                    form.style.display = 'none';
+                }
+            });
+
+            // Toggle this reply form
+            if (replyForm) {
+                replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
+            }
+        });
+    });
+
+    // Handle Cancel button clicks
+    document.querySelectorAll('.btn-cancel-reply').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const replyForm = this.closest('.reply-form-container');
+            if (replyForm) {
+                replyForm.style.display = 'none';
+                // Clear the form
+                const form = replyForm.querySelector('form');
+                if (form) {
+                    form.querySelector('textarea').value = '';
+                    form.querySelector('select').selectedIndex = 0;
+                }
+            }
         });
     });
 }
