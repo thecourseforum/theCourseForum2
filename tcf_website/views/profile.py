@@ -59,6 +59,10 @@ def profile(request):
         form = ProfileForm(request.POST, label_suffix="", instance=request.user)
 
         if form.is_valid():
+            pfp_selection = request.POST.get("pfp_selection")
+            if pfp_selection:
+                request.user.selected_pfp = pfp_selection
+
             form.save()
             messages.success(request, "Your profile was updated successfully!")
         else:
@@ -73,9 +77,7 @@ def profile(request):
         total_review_upvotes=Count("vote", filter=Q(vote__value=1)),
     )
     # Get other statistics
-    other_stats = User.objects.filter(
-        id=request.user.id
-    ).aggregate( 
+    other_stats = User.objects.filter(id=request.user.id).aggregate(
         total_reviews_written=Count("review"),
         average_review_rating=(
             Avg("review__instructor_rating")
@@ -83,16 +85,21 @@ def profile(request):
             + Avg("review__recommendability")
         )
         / 3,
-        total_schedules_made=Count("schedule")
+        total_schedules_made=Count("schedule"),
     )
     # Merge the two dictionaries
     merged = upvote_stat | other_stats
     # Round floats
     stats = {key: safe_round(value) for key, value in merged.items()}
-    stats["karma_stat"] = stats["total_reviews_written"] + stats["total_schedules_made"] + stats["total_review_upvotes"]
+    stats["karma_stat"] = (
+        stats["total_reviews_written"]
+        + stats["total_schedules_made"]
+        + stats["total_review_upvotes"]
+    )
     # Combine everything into one context
     context = {
         "form": form,
+        "selected_pfp": request.user.selected_pfp,
         **stats,  # expands the stats dictionary into the same level
     }
     return render(request, "profile/profile.html", context)

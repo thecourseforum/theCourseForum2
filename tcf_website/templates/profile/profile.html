@@ -17,7 +17,7 @@
                     style="filter: brightness(150%) contrast(75%)">
                 <div class="card-body position-relative">
 
-                    <img id="profile-image-display" src="{% static 'profile/profilepictures/pfpteam1.png' %}"
+                    <img id="profile-image-display" src="{% static 'profile/profilepictures/' %}{{ selected_pfp }}"
                         data-toggle="modal" data-target="#pfpModal" style="
                         position: absolute; 
                         top: 0;
@@ -31,7 +31,7 @@
                         cursor: pointer;" />
                     <form method="POST" action="{% url 'profile' %}" id="ProfileForm">
                         {% csrf_token %}
-                        <input type="hidden" name="pfp_selection" id="id_pfp_selection" value="pfpteam1.png">
+                        <input type="hidden" name="pfp_selection" id="id_pfp_selection" value="{{ selected_pfp }}">
                         <div class="form-row mt-5">
                             <div class="form-group col-12 col-lg-4">
                                 {{ form.first_name.label_tag }}

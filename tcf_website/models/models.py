@@ -271,6 +271,8 @@ class User(AbstractUser):
         null=True,
         default=0
     ) #only stores points not calculated from existing objects (ex reviews)
+    # User selected profile picture team
+    selected_pfp = models.CharField(max_length=50, blank=True, default="pfpteam1.png")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
