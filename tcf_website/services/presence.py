@@ -14,23 +14,23 @@ BASE = f"https://api.presence.io/{settings.PRESENCE_SUBDOMAIN}/v1"
 CACHE_TTL = getattr(settings, "PRESENCE_CACHE_SECONDS", 300)
 TIMEOUT = getattr(settings, "PRESENCE_TIMEOUT_SECONDS", 8)
 
-# Use a session with browser-like headers so the API allows the request (avoids 403 in some environments)
-_SESSION = requests.Session()
-_SESSION.headers.update(
-    {
-        "User-Agent": "Mozilla/5.0 (compatible; theCourseForum/1.0; +https://thecourseforum.com)",
-        "Accept": "application/json",
-    }
-)
-
 
 def _cache_key(key: str) -> str:
     return f"presence::{settings.PRESENCE_SUBDOMAIN}::{key}"
 
 
+# Request with browser-like headers so the API allows the request (avoids 403 in some environments)
+PRESENCE_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (compatible; theCourseForum/1.0; +https://thecourseforum.com)",
+    "Accept": "application/json",
+}
+
+
 @backoff.on_exception(backoff.expo, (requests.RequestException,), max_tries=3)
 def _get(url: str, params: dict | None = None) -> dict:
-    resp = _SESSION.get(url, params=params or {}, timeout=TIMEOUT)
+    resp = requests.get(
+        url, params=params or {}, timeout=TIMEOUT, headers=PRESENCE_HEADERS
+    )
     resp.raise_for_status()
     return resp.json()
 
