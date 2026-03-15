@@ -209,7 +209,9 @@ class Command(BaseCommand):
                 club=None,
                 defaults={
                     "summary_text": summary_text,
-                    "source_review_count": review_count,
+                    "source_review_count": min(review_count, max_reviews)
+                    if max_reviews is not None
+                    else review_count,
                     "last_review_id": latest_id,
                     "source_metadata": {},
                     "model_id": model_used or getattr(settings, "OPENROUTER_MODEL", ""),
