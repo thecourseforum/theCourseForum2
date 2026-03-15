@@ -203,6 +203,12 @@
   justify-content: flex-end;
 }
 
+.post-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
 /* Right Content Area */
 .qa-content {
   flex: 1;
@@ -291,7 +297,9 @@
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--main-color);
+  text-decoration: underline;
 }
+
 
 /* Comments Section */
 .comments-section {
@@ -444,6 +452,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  outline: none;
 }
 
 .main-question .action-btn:hover {

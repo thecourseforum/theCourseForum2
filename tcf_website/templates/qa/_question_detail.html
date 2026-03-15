@@ -29,7 +29,9 @@
             {% if question.instructor %}
             <div class="question-instructor-card">
                 <div class="instructor-card-label">Instructor:</div>
-                <div class="instructor-card-name">{{ question.instructor.first_name }} {{ question.instructor.last_name }}</div>
+                <a class="instructor-card-name" href="{% url 'course_instructor' course_id=question.course.id instructor_id=question.instructor.id %}" target="_blank">
+                    {{ question.instructor.first_name }} {{ question.instructor.last_name }}
+                </a>
             </div>
             {% endif %}
         </div>
@@ -46,10 +48,8 @@
                     data-id="{{ question.id }}"
                     data-action="up">
                 <i class="fa fa-thumbs-up"></i>
+                <span class="vote-count" id="question-vote-count-{{ question.id }}">{{ question.sum_q_votes|default:0 }}</span>
             </button>
-            <span class="vote-count" id="question-vote-count-{{ question.id }}">
-                {{ question.sum_q_votes|default:0 }}
-            </span>
 
             {% if user == question.user %}
             <span class="question-actions-divider"></span>
@@ -119,10 +119,8 @@
                                 data-id="{{ answer.id }}"
                                 data-action="up">
                             <i class="fa fa-thumbs-up"></i>
+                            <span class="vote-count" id="answer-vote-count-{{ answer.id }}">{{ answer.sum_a_votes|default:0 }}</span>
                         </button>
-                        <span class="vote-count" id="answer-vote-count-{{ answer.id }}">
-                            {{ answer.sum_a_votes|default:0 }}
-                        </span>
                         <button class="action-btn reply-btn" data-answer-id="{{ answer.id }}">
                             <i class="fa fa-reply"></i> Reply
                         </button>
@@ -174,10 +172,8 @@
                                         data-id="{{ reply.id }}"
                                         data-action="up">
                                     <i class="fa fa-thumbs-up"></i>
+                                    <span class="vote-count" id="answer-vote-count-{{ reply.id }}">{{ reply.sum_a_votes|default:0 }}</span>
                                 </button>
-                                <span class="vote-count" id="answer-vote-count-{{ reply.id }}">
-                                    {{ reply.sum_a_votes|default:0 }}
-                                </span>
                                 {% else %}
                                 <span class="vote-display">
                                     <i class="fa fa-thumbs-up"></i> {{ reply.sum_a_votes|default:0 }}
