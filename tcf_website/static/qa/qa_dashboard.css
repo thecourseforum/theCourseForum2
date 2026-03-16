@@ -300,6 +300,11 @@
   text-decoration: underline;
 }
 
+.instructor-card-name:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
 
 /* Comments Section */
 .comments-section {
