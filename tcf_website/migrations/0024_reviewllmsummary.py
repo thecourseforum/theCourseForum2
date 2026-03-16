@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "id",
-                    models.BigAutoField(
+                    models.AutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
@@ -29,8 +29,14 @@ class Migration(migrations.Migration):
                 ("source_review_count", models.PositiveIntegerField(default=0)),
                 ("last_review_id", models.IntegerField(default=0)),
                 ("source_metadata", models.JSONField(default=dict)),
-                ("created_at", models.DateTimeField(auto_now_add=True)),
-                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, db_column="created_at"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, db_column="updated_at"),
+                ),
                 (
                     "course",
                     models.ForeignKey(
