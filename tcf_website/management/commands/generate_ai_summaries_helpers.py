@@ -7,7 +7,7 @@ from typing import Iterable, Tuple
 import requests
 from django.conf import settings
 
-from ..models import Review
+from ...models import Review
 
 SUMMARY_THRESHOLD = 5
 MAX_REVIEWS_FOR_PROMPT = 20
@@ -23,16 +23,23 @@ def _build_prompt(course_code: str, instructor_name: str, reviews: Iterable[Revi
             continue
 
         truncated_text = text[:MAX_REVIEW_CHARS]
-        bullets.append(
-            f"- Ratings (instructor {review.instructor_rating}/5, enjoyability {review.enjoyability}/5, recommend {review.recommendability}/5, difficulty {review.difficulty}/5): {truncated_text}"
+        ratings = (
+            f"instructor {review.instructor_rating}/5, "
+            f"enjoyability {review.enjoyability}/5, "
+            f"recommend {review.recommendability}/5, "
+            f"difficulty {review.difficulty}/5"
         )
+        bullets.append(f"- Ratings ({ratings}): {truncated_text}")
 
     joined = "\n".join(bullets)
     user_prompt = (
         f"Course: {course_code}\n"
         f"Instructor: {instructor_name}\n\n"
-        "Write a concise 4-6 sentence summary of student reviews. Capture overall sentiment, teaching style, difficulty and workload patterns, and actionable advice for future students. "
-        "Be neutral, specific, and avoid hedging. If themes conflict, state both. Do not invent details.\n\n"
+        "Write a concise 4-6 sentence summary of student reviews. "
+        "Capture overall sentiment, teaching style, difficulty and workload "
+        "patterns, and actionable advice for future students. Be neutral, "
+        "specific, and avoid hedging. If themes conflict, state both. "
+        "Do not invent details.\n\n"
         f"Reviews:\n{joined}"
     )
 
@@ -41,7 +48,8 @@ def _build_prompt(course_code: str, instructor_name: str, reviews: Iterable[Revi
             "role": "system",
             "content": (
                 "You summarize university course reviews into clear, honest guidance. "
-                "Do not preface the summary with headings, labels, or restating the course/instructor; "
+                "Do not preface the summary with headings, labels, or "
+                "restating the course/instructor; "
                 "just provide the summary sentences. Keep it 4-6 sentences."
             ),
         },
@@ -49,7 +57,9 @@ def _build_prompt(course_code: str, instructor_name: str, reviews: Iterable[Revi
     ]
 
 
-def _call_openrouter(model_name: str, messages):
+def _call_openrouter(
+    model_name: str, messages
+):  # pylint: disable=too-many-locals
     headers = {
         "Authorization": f"Bearer {getattr(settings, 'OPENROUTER_API_KEY', '')}",
         "Content-Type": "application/json",
@@ -81,7 +91,9 @@ def _call_openrouter(model_name: str, messages):
 
     if not response.ok:
         error_info = (data or {}).get("error") or {}
-        error_msg = error_info.get("message") or response.reason or "Unknown API error"
+        error_msg = (
+            error_info.get("message") or response.reason or "Unknown API error"
+        )
         request_id_str = f", request_id={request_id}" if request_id else ""
         return None, f"{response.status_code}: {error_msg}{request_id_str}"
 
@@ -98,9 +110,7 @@ def _call_openrouter(model_name: str, messages):
     if choices:
         first = choices[0] or {}
         content = (
-            first.get("message", {}).get("content")
-            or first.get("text")
-            or ""
+            first.get("message", {}).get("content") or first.get("text") or ""
         ).strip()
     if content:
         return content, None
@@ -125,10 +135,10 @@ def generate_review_summary(
     if not api_key:
         return None, "OpenRouter API key is missing.", None
 
-    max_reviews = max(1, min(max_reviews or MAX_REVIEWS_FOR_PROMPT, MAX_REVIEWS_FOR_PROMPT))
-    reviews = list(
-        reviews_qs.order_by("-created")[:max_reviews]
-    )  # Most recent first
+    max_reviews = max(
+        1, min(max_reviews or MAX_REVIEWS_FOR_PROMPT, MAX_REVIEWS_FOR_PROMPT)
+    )
+    reviews = list(reviews_qs.order_by("-created")[:max_reviews])  # Most recent first
     reviews = [r for r in reviews if (r.text or "").strip()]
     if not reviews:
         return None, "No reviews with text to summarize.", None

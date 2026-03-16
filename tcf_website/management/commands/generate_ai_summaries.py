@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Count, Exists, Max, OuterRef
 
 from ...models import Course, Instructor, Review, ReviewLLMSummary
-from ...services.review_summary import generate_review_summary
+from .generate_ai_summaries_helpers import generate_review_summary
 
 
 # pylint: disable=too-many-branches,too-many-locals,no-member
