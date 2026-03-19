@@ -1,6 +1,6 @@
 {% extends "base/base.html" %}
 {% load static %}
-{% block title %}My Profile | theCourseForum{% endblock %}
+{% block title %}Review Game{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'game/game.css' %}" />
@@ -10,7 +10,7 @@
 <div><p>{{ review.text }}</p></div>
 <div>
     <p>Please type in a course:</p>
-    <form method="post">
+    <form id="game-form" method="post">
         {% csrf_token %}
         <input
             type="text"
@@ -26,11 +26,70 @@
             {% endfor %}
         </datalist>
 
+        <label>Rating (1-5): <input type="number" name="rating" min="1" max="5"></label>
+        <label>Difficulty (1-5): <input type="number" name="difficulty" min="1" max="5"></label>
+        <label>GPA (0-4): <input type="number" name="gpa" min="0" max="4"></label>
+        
         <button type="submit">Submit Guess</button>
     </form>
 
-    {% if info %}
-        <p>{{ info }}</p>
-    {% endif %}
+    <div id="guesses">
+        <p>GUESSES</p>
+        <div id="guess-1" class="guess-row"></div>
+        <div id="guess-2" class="guess-row"></div>
+        <div id="guess-3" class="guess-row"></div>
+        <div id="guess-4" class="guess-row"></div>
+        <div id="guess-5" class="guess-row"></div>
+    </div>
+
 </div>
+{% endblock %}
+
+{% block js %}
+<script>
+    var guessIndex = 1
+
+    function updateRow(feedback, guess) {
+        var row = document.getElementById(`guess-${guessIndex}`);
+        row.innerHTML = `
+         <div class="guess-values">
+            <span>${guess.dept}</span>
+            <span>${guess.number}</span>
+            <span>${guess.rating ?? "N/A"}</span>
+            <span>${guess.difficulty ?? "N/A"}</span>
+            <span>${guess.gpa ?? "N/A"}</span>
+        </div>
+        <div class="guess-feedback">
+            <span class="${feedback.dept}">${feedback.dept}</span>
+            <span class="${feedback.number}">${feedback.number}</span>
+            <span class="${feedback.rating}">${feedback.rating}</span>
+            <span class="${feedback.difficulty}">${feedback.difficulty}</span>
+            <span class="${feedback.gpa}">${feedback.gpa}</span>
+        </div>
+        `  
+    }
+
+    document.getElementById("game-form").addEventListener("submit", function(e) {
+        e.preventDefault() //prevent page refresh
+        var form = this
+        var formData = new FormData(form)
+
+        fetch("/game/", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+            }
+        })
+        .then(r => r.json()) //turn into JSON
+        .then(response => { //pass JSON parsed data into function
+            if (guessIndex === 1) {
+                console.log(response.review_info) //for testing
+            }
+            updateRow(response.feedback, response.guess)
+            guessIndex ++;
+        })
+        /*any responsive UI for invalid guesses also implemented here (ex new_review.html)*/
+    })
+</script>
 {% endblock %}
