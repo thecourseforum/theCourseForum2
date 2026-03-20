@@ -50,16 +50,22 @@
 <script>
     var guessIndex = 1
 
-    function updateRow(feedback, guess) {
+    function updateRow(guess, feedback) {
         var row = document.getElementById(`guess-${guessIndex}`);
         row.innerHTML = `
-         <div class="guess-values">
+        <div class="guess-values">
             <span>${guess.dept}</span>
             <span>${guess.number}</span>
+            <span>${guess.rating ?? "N/A"}</span>
+            <span>${guess.difficulty ?? "N/A"}</span>
+            <span>${guess.gpa ?? "N/A"}</span>
         </div>
         <div class="guess-feedback">
-            <span class="${feedback.dept}">${feedback.dept}</span>
-            <span class="${feedback.number}">${feedback.number}</span>
+            <span>${feedback.dept}</span>
+            <span>${feedback.number}</span>
+            <span>${feedback.rating}</span>
+            <span>${feedback.difficulty}</span>
+            <span>${feedback.gpa}</span>
         </div>
         `  
     }
@@ -80,8 +86,9 @@
         .then(response => { //pass JSON parsed data into function
             if (guessIndex === 1) {
                 console.log(response.review_info) //for testing
+                //console.log(response.guess)
             }
-            updateRow(response.feedback, response.guess)
+            updateRow(response.guess, response.feedback)
             guessIndex ++;
         })
         /*any responsive UI for invalid guesses also implemented here (ex new_review.html)*/

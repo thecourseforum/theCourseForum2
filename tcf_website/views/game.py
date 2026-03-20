@@ -68,9 +68,9 @@ def get_course_info(course_obj):
     return {
         "dept": course_id[0],
         "number": course_id[1],
-        # "rating": course_obj.average_rating(),
-        # "difficulty": course_obj.average_difficulty(),
-        # "gpa": course_obj.average_gpa(),
+        "rating": round(course_obj.average_rating(), 2),
+        "difficulty": round(course_obj.average_difficulty(), 2),
+        "gpa": round(course_obj.average_gpa(), 2),
     }
 
 '''Returns dict with correct/incorrect or directional hints for numeric fields'''
@@ -81,8 +81,7 @@ def compare_guess(review_info, guess_info):
     feedback = {}
 
     feedback["dept"] = "correct" if guess_info["dept"] == review_info["dept"] else "incorrect"
-    #for field in ["number", "rating", "difficulty", "gpa"]:
-    for field in ["number"]:
+    for field in ["number", "rating", "difficulty", "gpa"]:
         g = guess_info[field]
         r = review_info[field]
         if g is None or r is None:  
@@ -117,24 +116,11 @@ def game(request):
 
         if form.is_valid():
             course_text = form.cleaned_data["course"].upper()
-            # course_text = form.cleaned_data["course"].upper().split()
-            # course_mnemonic = course_text[0]
-            # course_number = course_text[1]
-            # guess_rating = request.POST.get("rating")
-            # guess_difficulty = request.POST.get("difficulty")
-            # guess_gpa = request.POST.get("gpa")
 
             # looking up course information
             try:
                 guess_course = Course.objects.get(combined_mnemonic_number=course_text)
                 guess_info = get_course_info(guess_course)
-                # guess_info = {
-                #     "dept": course_mnemonic,
-                #     "number": course_number,
-                #     "rating": float(request.POST.get("rating")) if request.POST.get("rating") else None,
-                #     "difficulty": float(request.POST.get("difficulty")) if request.POST.get("difficulty") else None,
-                #     "gpa": float(request.POST.get("gpa")) if request.POST.get("gpa") else None,
-                # }
                 review_info = get_course_info(review.course) 
 
             except Course.DoesNotExist:
