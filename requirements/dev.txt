@@ -22,3 +22,5 @@ coverage~=7.3.3
 
 # WSGI server (for local testing)
 uWSGI~=2.0.28
+
+django-debug-toolbar==4.4.6

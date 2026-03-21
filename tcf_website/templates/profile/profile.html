@@ -8,16 +8,17 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid" style ="padding-bottom: 0; margin-top: -1rem; margin-bottom: -1rem; overflow:hidden;">
-    <div class="row" >
+<div class="container-fluid" style="padding-bottom: 0; margin-top: -1rem; margin-bottom: -1rem; overflow:hidden;">
+    <div class="row">
 
         <div class="col-12 col-sm-9 col-md-9 col-xl-6 px-0" style="height: 90vh; overflow: hidden;">
             <div class="card sticky-top top-0 h-100 d-flex flex-column">
-                <img class="card-img-top bg-dark" src="{% static 'base/img/alderman-and-peabody.jpg' %}" style="filter: brightness(150%) contrast(75%)">
+                <img class="card-img-top bg-dark" src="{% static 'base/img/alderman-and-peabody.jpg' %}"
+                    style="filter: brightness(150%) contrast(75%)">
                 <div class="card-body position-relative">
 
-                    <img src="{% static 'base/img/alderman-and-peabody.jpg' %}"
-                        style="
+                    <img id="profile-image-display" src="{% static 'profile/profilepictures/' %}{{ selected_pfp }}"
+                        data-toggle="modal" data-target="#pfpModal" style="
                         position: absolute; 
                         top: 0;
                         left: 2rem;
@@ -26,10 +27,11 @@
                         height: clamp(80px, 12vh, 150px);  
                         background-color: gray; 
                         border-radius: 5%; 
-                        border: 3px solid white;"/>
-                    
+                        border: 3px solid white;
+                        cursor: pointer;" />
                     <form method="POST" action="{% url 'profile' %}" id="ProfileForm">
                         {% csrf_token %}
+                        <input type="hidden" name="pfp_selection" id="id_pfp_selection" value="{{ selected_pfp }}">
                         <div class="form-row mt-5">
                             <div class="form-group col-12 col-lg-4">
                                 {{ form.first_name.label_tag }}
@@ -49,7 +51,8 @@
 
                     <div class="button-wrapper">
                         <input type="submit" class="btn btn-primary mt-3" form="ProfileForm" value="Save Profile">
-                        <button class="btn btn-danger mt-3" type="button" data-toggle="modal" data-target="#deleteProfileModal">Delete Profile</button>
+                        <button class="btn btn-danger mt-3" type="button" data-toggle="modal"
+                            data-target="#deleteProfileModal">Delete Profile</button>
                         {% include "profile/delete_confirm_modal.html" with profile=profile %}
                     </div>
                 </div>
@@ -57,12 +60,69 @@
         </div>
 
         <div class="col-12 col-sm-9 col-md-9 col-xl-6 mt-0 px-0">
-            <div class="my-reviews container mx-auto" style="max-height: 90vh; overflow-y: auto;"> <!-- only added overflow to right div -->
-                {% include "reviews/review_stats.html" with total_reviews_written=total_reviews_written total_review_upvotes=total_review_upvotes average_review_rating=average_review_rating %}
+            <div class="my-reviews container mx-auto" style="max-height: 90vh; overflow-y: auto;">
+                <!-- only added overflow to right div -->
+                {% include "reviews/review_stats.html" with total_reviews_written=total_reviews_written
+                total_review_upvotes=total_review_upvotes average_review_rating=average_review_rating %}
                 {% include "reviews/reviews.html" with paginated_reviews=user.reviews profile=True %}
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
+<!-- PFP Selection Modal -->
+<div class="modal fade" id="pfpModal" tabindex="-1" role="dialog" aria-labelledby="pfpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pfpModalLabel">Select a Team</h5>
+            </div>
+            <div class="modal-body row text-center">
+                <div class="col-4 pfp-option" data-pfp-value="pfpteam1.png"><img
+                        src="{% static 'profile/profilepictures/pfpteam1.png' %}" class="img-fluid rounded"
+                        style="cursor: pointer;" onclick="selectPFP('pfpteam1.png', this.src)">
+                    <p class="mt-2">Description for Team 1</p>
+                </div>
+                <div class="col-4 pfp-option" data-pfp-value="pfpteam2.png"><img
+                        src="{% static 'profile/profilepictures/pfpteam2.png' %}" class="img-fluid rounded"
+                        style="cursor: pointer;" onclick="selectPFP('pfpteam2.png', this.src)">
+                    <p class="mt-2">Description for Team 2</p>
+                </div>
+                <div class="col-4 pfp-option" data-pfp-value="pfpteam3.png"><img
+                        src="{% static 'profile/profilepictures/pfpteam3.png' %}" class="img-fluid rounded"
+                        style="cursor: pointer;" onclick="selectPFP('pfpteam3.png', this.src)">
+                    <p class="mt-2">Description for Team 3</p>
+                </div>
+            </div>
+            <div class="modal-footer text-left">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updatePFPOpacity(selectedVal) {
+        $('.pfp-option').each(function () {
+            if ($(this).attr('data-pfp-value') === selectedVal) {
+                $(this).css('opacity', '1');
+            } else {
+                $(this).css('opacity', '0.5');
+            }
+        });
+    }
+
+    function selectPFP(val, src) {
+        document.getElementById('id_pfp_selection').value = val;
+        document.getElementById('profile-image-display').src = src;
+        updatePFPOpacity(val);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        $('#pfpModal').on('show.bs.modal', function () {
+            var currentVal = document.getElementById('id_pfp_selection').value;
+            updatePFPOpacity(currentVal);
+        });
+    });
+</script>
+{% endblock %}
