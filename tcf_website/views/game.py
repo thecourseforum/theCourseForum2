@@ -38,11 +38,9 @@ def get_daily_review():
     review = cache.get(cache_key)
     if not review:
         # if the date has changed (12:00 am) then get the new review and reset cache timer
-        review = (
-            Review.objects.filter(text__gt="").order_by("?").first() #change later for performance
-        )  # reviews w text only
+        review = (Review.objects.filter(text__gt="").order_by("?").first()) # reviews w text only, change later for performance
         cache.set(cache_key, review, cache_timeout)
-
+    review = (Review.objects.filter(text__gt="").order_by("?").first())
     return review
 
 
@@ -63,14 +61,17 @@ def get_daily_review():
 #     return msg
 
 '''Extract stats of correct review'''
+def safe_round(value, digits=2):
+    return round(value, digits) if value is not None else None
+    
 def get_course_info(course_obj):
     course_id = course_obj.combined_mnemonic_number.split()
     return {
         "dept": course_id[0],
         "number": course_id[1],
-        "rating": round(course_obj.average_rating(), 2),
-        "difficulty": round(course_obj.average_difficulty(), 2),
-        "gpa": round(course_obj.average_gpa(), 2),
+        "rating": safe_round(course_obj.average_rating(), 2),
+        "difficulty": safe_round(course_obj.average_difficulty(), 2),
+        "gpa": safe_round(course_obj.average_gpa(), 2),
     }
 
 '''Returns dict with correct/incorrect or directional hints for numeric fields'''
@@ -82,10 +83,10 @@ def compare_guess(review_info, guess_info):
 
     feedback["dept"] = "correct" if guess_info["dept"] == review_info["dept"] else "incorrect"
     for field in ["number", "rating", "difficulty", "gpa"]:
-        g = guess_info[field]
-        r = review_info[field]
+        g = guess_info[field] if guess_info[field] == None else float(guess_info[field])
+        r = review_info[field] if review_info[field] == None else float(review_info[field])
         if g is None or r is None:  
-            feedback[field] = "unknown" 
+            feedback[field] = "N/A" 
         elif g == r:
             feedback[field] = "correct"
         elif g < r:
@@ -98,9 +99,12 @@ def compare_guess(review_info, guess_info):
 '''Handles HTTPRequests for game'''
 def game(request):
     courses = Course.objects.all().order_by("subdepartment__mnemonic", "number")
-    review = get_daily_review()
+    #review = get_daily_review() 
 
     if request.method == "GET":
+        #for testing - can get new review per session (cookies cleared)
+        review = (Review.objects.filter(text__gt="").order_by("?").first()) 
+        request.session["review_id"] = review.id
         form = GameForm()
         return render(
             request,
@@ -109,6 +113,7 @@ def game(request):
         )
 
     elif request.method == "POST":
+        review = Review.objects.get(id=request.session["review_id"])
         form = GameForm(request.POST)
         feedback = None
         guess_info = None
