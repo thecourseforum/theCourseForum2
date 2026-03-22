@@ -8,7 +8,15 @@ from typing import Any
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import Avg, Count, Prefetch, Q, Sum, Value
+from django.db.models import (
+    
+    Avg, 
+    Count, 
+    Prefetch, 
+    Q, 
+    Sum, 
+    Value,
+)
 from django.db.models.functions import Coalesce
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
