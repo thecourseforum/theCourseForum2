@@ -12,9 +12,12 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 
 import boto3
+import environ
 from botocore.config import Config
 from botocore.exceptions import ClientError
-from decouple import config
+
+# Initialize environ
+env = environ.Env()
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +27,7 @@ logger = logging.getLogger(__name__)
 _MAX_BACKLOG = 100
 # Number of worker threads for processing,
 _MAX_WORKERS = 5
-_TTL_DAYS = config("ANALYTICS_TTL_DAYS", default=2, cast=int)
+_TTL_DAYS = env.int("ANALYTICS_TTL_DAYS", default=2)
 
 # Thread Pool Setup
 
@@ -47,9 +50,9 @@ _BOTO_CONFIG = Config(
 # Initialize DynamoDB session
 try:
     _SESSION = boto3.Session(
-        aws_access_key_id=config("AWS_ANALYTICS_ACCESS_KEY_ID"),
-        aws_secret_access_key=config("AWS_ANALYTICS_SECRET_ACCESS_KEY"),
-        region_name=config("AWS_REGION", default="us-east-1"),
+        aws_access_key_id=env("AWS_ANALYTICS_ACCESS_KEY_ID"),
+        aws_secret_access_key=env("AWS_ANALYTICS_SECRET_ACCESS_KEY"),
+        region_name=env("AWS_REGION", default="us-east-1"),
     )
     _DYNAMODB = _SESSION.resource("dynamodb", config=_BOTO_CONFIG)
     logger.info("Analytics DynamoDB session initialized")
@@ -74,7 +77,8 @@ def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
         return  # Skip if DynamoDB session failed to initailize
 
     try:
-        table = _DYNAMODB.Table(config("DYNAMODB_TABLE_NAME"))
+        table_name = env("DYNAMODB_TABLE_NAME", default="trending_analytics")
+        table = _DYNAMODB.Table(table_name)
 
         # Get current UTC time (for consistency)
         now = datetime.now(timezone.utc)
