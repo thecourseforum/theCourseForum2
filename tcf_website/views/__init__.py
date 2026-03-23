@@ -27,7 +27,7 @@ from .qa import (
     upvote_answer,
     upvote_question,
 )
-from .review import DeleteReview, downvote, edit_review, new_review, upvote
+from .review import DeleteReview, downvote, new_review, upvote
 from .schedule import (
     delete_schedule,
     duplicate_schedule,

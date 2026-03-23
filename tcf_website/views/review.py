@@ -11,13 +11,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from ..models import Review, ClubCategory, Club
+from ..models import Review, Club, Course, Instructor, Semester
 
 # pylint: disable=fixme,unused-argument
-# Disable pylint errors on TODO messages, such as below
-
-# TODO: use a proper django form, make it more robust.
-# (i.e. better Course/Instructor/Semester search).
 
 
 def parse_mode(request):
@@ -102,10 +98,16 @@ def downvote(request, review_id):
 
 @login_required
 def new_review(request):
-    """Review creation view."""
+    """Review creation view with context-required logic.
+
+    Routes:
+    - /reviews/new/?course=X&instructor=Y → Full form, server-rendered
+    - /reviews/new/?club=Z → Full club review form
+    - /reviews/new/
+    """
     mode, is_club = parse_mode(request)
 
-    # Collect form data into Review model instance.
+    # Handle POST (form submission)
     if request.method == "POST":
         form = ReviewForm(request.POST)
         if form.is_valid():
@@ -117,42 +119,130 @@ def new_review(request):
                 + instance.amount_group
                 + instance.amount_homework
             )
-
             instance.save()
 
-            # Determine redirect URL with appropriate mode
-            redirect_url = "reviews"
-
-            # Check if this is a club review by directly checking if club field is set
+            # Success message
             if instance.club:
                 messages.success(request, f"Successfully reviewed {instance.club}!")
             else:
                 messages.success(request, f"Successfully reviewed {instance.course}!")
 
-            return redirect(redirect_url)
-        return render(
-            request,
-            "reviews/new_review.html",
-            {"form": form, "is_club": is_club, "mode": mode},
+            return redirect("reviews")
+
+        # Form invalid - re-render with errors
+        # Need to re-fetch context for the template
+        return _render_review_form_with_errors(request, form, is_club, mode)
+
+    # Handle GET - require context or redirect to search
+    if is_club:
+        return _handle_club_review_get(request, mode)
+    return _handle_course_review_get(request, mode)
+
+
+def _handle_course_review_get(request, mode):
+    """Handle GET for course reviews - require course context."""
+    course_id = request.GET.get("course")
+    instructor_id = request.GET.get("instructor")
+
+    # No context - need course ID, redirect to home
+    if not course_id:
+        messages.info(request, "Please select a course to review from a course page.")
+        return redirect("/browse?mode=courses")
+
+    course = get_object_or_404(Course, id=course_id)
+    latest = Semester.latest()
+
+    if instructor_id:
+        # Full context: course + instructor
+        instructor = get_object_or_404(Instructor, id=instructor_id)
+        instructors = None
+        # Semesters when this instructor taught this course (last 5 years)
+        semesters = (
+            Semester.objects.filter(
+                section__course=course,
+                section__instructors=instructor,
+                year__gte=latest.year - 5,
+            )
+            .distinct()
+            .order_by("-number")
+        )
+    else:
+        # Partial context: only course - let user pick instructor
+        instructor = None
+        instructors = (
+            Instructor.objects.filter(
+                section__course=course,
+                section__semester__year__gte=latest.year - 5,
+                hidden=False,
+            )
+            .distinct()
+            .order_by("last_name")[:50]
+        )
+        # All recent semesters for this course
+        semesters = (
+            Semester.objects.filter(section__course=course, year__gte=latest.year - 5)
+            .distinct()
+            .order_by("-number")
         )
 
-    # Prepare context data for GET requests
-    context = {"is_club": is_club, "mode": mode}
+    return render(
+        request,
+        "reviews/new_review.html",
+        {
+            "is_club": False,
+            "mode": mode,
+            "course": course,
+            "instructor": instructor,
+            "instructors": instructors,
+            "semesters": semesters,
+        },
+    )
 
-    # For club reviews, fetch club categories and clubs if needed
-    if is_club:
-        # Get all club categories for the form
-        context["club_categories"] = ClubCategory.objects.all().order_by("name")
 
-        # If a specific club is pre-selected in the URL
-        club_id = request.GET.get("club")
-        if club_id:
-            try:
-                club = Club.objects.get(id=club_id)
-                context["selected_club"] = club
-                context["selected_category"] = club.category
-            except Club.DoesNotExist:
-                pass
+def _handle_club_review_get(request, mode):
+    """Handle GET for club reviews - require club context."""
+    club_id = request.GET.get("club")
+
+    # No context - need club ID, redirect to home
+    if not club_id:
+        messages.info(request, "Please select a club to review.")
+        return redirect("/browse?mode=clubs")
+
+    club = get_object_or_404(Club, id=club_id)
+    latest = Semester.latest()
+
+    # Recent semesters for the dropdown
+    semesters = Semester.objects.filter(year__gte=latest.year - 5).order_by("-number")[
+        :10
+    ]
+
+    return render(
+        request,
+        "reviews/new_review.html",
+        {
+            "is_club": True,
+            "mode": mode,
+            "club": club,
+            "semesters": semesters,
+        },
+    )
+
+
+def _render_review_form_with_errors(request, form, is_club, mode):
+    """Re-render the form with validation errors, fetching context from POST data."""
+    context = {"form": form, "is_club": is_club, "mode": mode}
+
+    if is_club and form.cleaned_data.get("club"):
+        context["club"] = form.cleaned_data["club"]
+    elif form.cleaned_data.get("course"):
+        context["course"] = form.cleaned_data["course"]
+        context["instructor"] = form.cleaned_data.get("instructor")
+
+    # Fetch semesters for re-render
+    latest = Semester.latest()
+    context["semesters"] = Semester.objects.filter(year__gte=latest.year - 5).order_by(
+        "-number"
+    )[:10]
 
     return render(request, "reviews/new_review.html", context)
 
@@ -252,32 +342,3 @@ class DeleteReview(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
         if self.object.club:
             return f"Successfully deleted your review for {self.object.club}!"
         return f"Successfully deleted your review for {self.object.course}!"
-
-
-@login_required
-def edit_review(request, review_id):
-    """Review modification view."""
-    review = get_object_or_404(Review, pk=review_id)
-    if review.user != request.user:
-        raise PermissionDenied("You are not allowed to edit this review!")
-
-    if request.method == "POST":
-        form = ReviewForm(request.POST, instance=review)
-        if form.is_valid():
-            form.save()
-            # Check if it's a club or course review
-            if form.instance.club:
-                messages.success(
-                    request,
-                    f"Successfully updated your review for {form.instance.club}!",
-                )
-            else:
-                messages.success(
-                    request,
-                    f"Successfully updated your review for {form.instance.course}!",
-                )
-            return redirect("reviews")
-        messages.error(request, form.errors)
-        return render(request, "reviews/edit_review.html", {"form": form})
-    form = ReviewForm(instance=review)
-    return render(request, "reviews/edit_review.html", {"form": form})

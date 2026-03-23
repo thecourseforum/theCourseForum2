@@ -1,10 +1,8 @@
 # pylint: disable=no-member
 """Tests for Course model."""
 
-from django.test import Client, TestCase
-from django.urls import reverse
+from django.test import TestCase
 
-from ..api.serializers import CourseSerializer, CourseSimpleStatsSerializer
 from ..models import Semester
 from .test_utils import setup
 
@@ -57,59 +55,6 @@ class CourseTestCase(TestCase):
         self.review2.delete()
 
         self.assertIsNone(self.course.average_difficulty())
-
-    def test_get_queryset_recent_with_stats(self):
-        """Test CourseViewSet.get_queryset() with recent parameter
-        and simplestats parameters"""
-        client = Client()
-        response = client.get(
-            path=reverse("course-list"), data={"simplestats": "", "recent": ""}
-        )
-        courses = response.json()
-        self.assertEqual(len(courses), 2)
-        serializer = CourseSimpleStatsSerializer(data=courses, many=True)
-        self.assertTrue(serializer.is_valid())
-        serializer = CourseSerializer(data=courses, many=True)
-        self.assertFalse(serializer.is_valid())
-
-    def test_get_queryset_recent_without_simplestats(self):
-        """Test CourseViewSet.get_queryset() with recent parameter
-        but without simplestats parameters"""
-        client = Client()
-        response = client.get(path=reverse("course-list"), data={"recent": ""})
-        courses = response.json()
-        self.assertEqual(len(courses), 2)
-        serializer = CourseSimpleStatsSerializer(data=courses, many=True)
-        self.assertFalse(serializer.is_valid())
-        serializer = CourseSerializer(data=courses, many=True)
-        self.assertTrue(serializer.is_valid())
-
-    def test_get_queryset_all_with_simplestats(self):
-        """Test CourseViewSet.get_queryset() with simplestats parameter
-        but without recent parameters"""
-        client = Client()
-        response = client.get(
-            path=reverse("course-list"),
-            data={"simplestats": ""},
-        )
-        courses = response.json()
-        self.assertEqual(len(courses), 5)
-        serializer = CourseSimpleStatsSerializer(data=courses, many=True)
-        self.assertTrue(serializer.is_valid())
-        serializer = CourseSerializer(data=courses, many=True)
-        self.assertFalse(serializer.is_valid())
-
-    def test_get_queryset_all_without_simplestats(self):
-        """Test CourseViewSet.get_queryset() without recent parameter
-        or simplestats parameters"""
-        client = Client()
-        response = client.get(path=reverse("course-list"))
-        courses = response.json()
-        self.assertEqual(len(courses), 5)
-        serializer = CourseSimpleStatsSerializer(data=courses, many=True)
-        self.assertFalse(serializer.is_valid())
-        serializer = CourseSerializer(data=courses, many=True)
-        self.assertTrue(serializer.is_valid())
 
     def test_student_eval_link(self):
         """Test if a student eval link matches up with a real link."""

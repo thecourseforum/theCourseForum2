@@ -27,9 +27,6 @@
                           {% endif %}
                         </div>
                         <div class="review-actions d-inline-flex">
-                          <a class="review-edit h5 px-2 text-tcf-blue" href="{% url 'edit_review' review_id=review.id %}">
-                              <i class="fas fa-pencil-alt"></i>
-                          </a>
                           <a class="review-delete h5 pl-2 text-danger" type="button"
                                   data-toggle="modal" data-target="#deleteReviewModal{{review.id}}">
                             <i class="fa fa-trash-o"></i>

@@ -244,8 +244,10 @@
                                                                         <div class="row justify-content-center">
                                                                             <div class="row form-group col-sm-8 justify-content-center">
                                                                                 <label for="semester" class="required-field">Semester you took this class</label>
-                                                                                <select type="text" class="form-control semester-dropdown" required id="semester{{answer.id}}-{{answer.semester.id}}" name="semester">
-                                                                                    <option value="{{ form.instance.semester.id }}" selected>{{ form.instance.semester }}</option>
+                                                                                <select type="text" class="form-control" required id="semester{{answer.id}}" name="semester">
+                                                                                    {% for sem in qa_semesters %}
+                                                                                    <option value="{{ sem.id }}" {% if sem.id == answer.semester.id %}selected{% endif %}>{{ sem.season|title }} {{ sem.year }}</option>
+                                                                                    {% endfor %}
                                                                                 </select>
                                                                             </div>
                                                                         </div>
@@ -342,8 +344,10 @@
                             <div class="row justify-content-center">
                                 <div class="row form-group col-sm-8 justify-content-center">
                                     <label for="semester" class="required-field">Semester you took this class</label>
-                                    <select type="text" class="form-control semester-dropdown" required id="semester" name="semester">
-                                        <option value="{{ form.instance.semester.id }}" selected>{{ form.instance.semester }}</option>
+                                    <select type="text" class="form-control" required id="semester" name="semester">
+                                        {% for sem in qa_semesters %}
+                                        <option value="{{ sem.id }}">{{ sem.season|title }} {{ sem.year }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
