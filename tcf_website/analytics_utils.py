@@ -178,7 +178,7 @@ def get_analytics_health() -> dict:
     Get current health status of the analytics system
 
     Returns:
-        status (healthy/session_failed),
+        status (healthy/disabled),
         pending_tasks (# waiting to be processed),
         max_backlog (max pending tasks),
         utilization_percent (backlog use 0-100),
