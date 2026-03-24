@@ -1,13 +1,14 @@
 """
 Analytics tracking metric for course and instructor page views
-Uses DynamoDB atomic counters with non-blocking concept to ensure analytics never block user requests
-Handles high traffic with bounded thread pool and overflow protection (Limit on backlog)
+Uses DynamoDB atomic counters with a non-blocking concept to
+ensure analytics never block user requests. Handles high traffic
+ with bounded thread pool and overflow protection (Limit on backlog)
 """
 
+# pylint: disable=broad-exception-caught,logging-fstring-interpolation,global-statement,redefined-outer-name,invalid-name
 import atexit
 import logging
 import threading
-import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 
@@ -48,16 +49,22 @@ _BOTO_CONFIG = Config(
     retries={"max_attempts": 1},  # Don't retry if fail
 )
 # Initialize DynamoDB session
+_ANALYTICS_ENABLED = False
 try:
-    _SESSION = boto3.Session(
-        aws_access_key_id=env("AWS_ANALYTICS_ACCESS_KEY_ID"),
-        aws_secret_access_key=env("AWS_ANALYTICS_SECRET_ACCESS_KEY"),
-        region_name=env("AWS_REGION", default="us-east-1"),
-    )
-    _DYNAMODB = _SESSION.resource("dynamodb", config=_BOTO_CONFIG)
-    logger.info("Analytics DynamoDB session initialized")
+    access_key = env("AWS_ANALYTICS_ACCESS_KEY_ID", default=None)
+    secret_key = env("AWS_ANALYTICS_SECRET_ACCESS_KEY", default=None)
+    if access_key and secret_key:
+        _DYNAMODB = boto3.Session(
+            aws_access_key_id=access_key,
+            aws_secret_access_key=secret_key,
+            region_name=env("AWS_REGION", default="us-east-1"),
+        ).resource("dynamodb", config=_BOTO_CONFIG)
+        _ANALYTICS_ENABLED = True
+        logger.info("Analytics DynamoDB session initialized")
+    else:
+        _DYNAMODB = None
+        logger.info("Analytics disabled: missing credentials")
 except Exception as e:
-    _SESSION = None
     _DYNAMODB = None
     logger.error(f"Failed to initialize analytics: {e}")
 
@@ -98,22 +105,26 @@ def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
     except ClientError as e:
         # AWS-specific Errors (Access Denied, Table Not Found, etc)
         error_code = e.response.get("Error", {}).get("Code", "Unknown")
-        logger.error(
+        logger.warning(
             f"DynamoDB ClientError for {entity_type}:{entity_id}: {error_code}"
         )
     except Exception as e:
         # Network errors, timeouts, etc
-        logger.error(f"Analytics failed for {entity_type}:{entity_id}: {e}")
+        logger.warning(f"Analytics failed for {entity_type}:{entity_id}: {e}")
 
 
 def _fire_and_forget(entity_type: str, entity_id: int) -> None:
     """
     Submit analytics task to bounded thread pool without blocking
 
-    Implements overflow protections by dropping events when backlog is full (site stability >>> analytic accuracy)
+    Implements overflow protections by dropping events when
+    backlog is full (site stability >>> analytic accuracy)
 
     Args: Type (course or instructor) & ID (Numeric ID of the entity)
     """
+    # To ensure analytics never block user requests
+    if not _ANALYTICS_ENABLED:
+        return
     global _pending
 
     # Check if backlog is full (with lock for thread safety)
@@ -166,21 +177,27 @@ def get_analytics_health() -> dict:
     """
     Get current health status of the analytics system
 
-    Returns: status (healthy/session_failed), pending_tasks (# waiting to be processed), max_backlog (max pending tasks),
-    utilization_percent (backlog use 0-100), workers (number of workers threads), ttl_days (days before data expires)
+    Returns:
+        status (healthy/session_failed),
+        pending_tasks (# waiting to be processed),
+        max_backlog (max pending tasks),
+        utilization_percent (backlog use 0-100),
+        workers (number of workers threads),
+        ttl_days (days before data expires)
 
     Can Check with:
        python manage.py shell
        from tcf_website.analytics_utils import get_analytics_health
        print(get_analytics_health())
     will see:
-    {'status': 'healthy', 'pending_tasks': 0, 'max_backlog': 100, 'utilization_percent': 0.0, 'workers': 5}
+    {'status': 'healthy', 'pending_tasks': 0, 'max_backlog': 100,
+    'utilization_percent': 0.0, 'workers': 5}
     """
     with _pending_lock:
         pending = _pending
 
     return {
-        "status": "healthy" if _SESSION else "session_failed",
+        "status": "healthy" if _ANALYTICS_ENABLED else "disabled",
         "pending_tasks": pending,
         "max_backlog": _MAX_BACKLOG,
         "utilization_percent": round((pending / _MAX_BACKLOG) * 100, 1),
