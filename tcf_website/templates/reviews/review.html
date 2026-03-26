@@ -8,7 +8,7 @@
         
         <div class="review-pfp">
         <!-- Profile Picture Container -->
-            <img src="{% static 'profile/profilepictures/place-holder.png' %}" alt="profile-img"> 
+            <img src="{% static 'profile/profilepictures/' %}{{ review.user.selected_pfp }}" alt="profile-img"> 
         </div>
 
         <!-- Original review (not including pfp/speech bubble)-->
