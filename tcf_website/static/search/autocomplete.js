@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    const MAX_RESULTS = 8;
+    let MAX_RESULTS = 8;
     if (window.innerWidth < 600) {
       MAX_RESULTS = 4;
     }
