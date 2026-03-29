@@ -6,6 +6,7 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css">
 <style>
 .tag-grid {
   display: grid;
@@ -23,6 +24,14 @@
   padding: 4px 8px;
   margin-left: 5px;
   white-space: nowrap;
+}
+
+#calendar {
+  max-width: 1100px;
+  margin: 20px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
 }
 </style>
 {% endblock %}
@@ -192,17 +201,17 @@
   </div>
 </div>
 
-</div> <div id="calendar-view-container" style="display: none;">
-    <div class="container-lg card p-5 text-center">
-      <h3><i class="fa fa-calendar-plus mb-3"></i></h3>
-      <h4>Calendar View Coming Soon</h4>
-      <p class="text-muted">This is where the monthly/weekly grid will be rendered.</p>
-    </div>
+<div id="calendar-view-container" style="display: none;">
+  <div class="container-lg">
+    <div id="calendar"></div>
   </div>
+</div>
 
 </div>
 
 {% block js %}
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 <script>
 $(document).on('click', '.dropdown-menu', function (e) {
   e.stopPropagation();
@@ -252,6 +261,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initial filter
     filterEvents();
+
+    const listView = document.getElementById('list-view-container');
+    const calendarView = document.getElementById('calendar-view-container');
+    const listBtn = document.getElementById('show-list-view');
+    const calendarBtn = document.getElementById('show-calendar-view');
+
+    const calendarEl = document.getElementById('calendar');
+
+    // Initialize the calendar (but don't render yet if hidden)
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek'
+        },
+        themeSystem: 'bootstrap5' // Works well since you are using Bootstrap
+    });
+
+    // Only run if these buttons actually exist on the page
+    if (listBtn && calendarBtn) {
+        calendarBtn.addEventListener('click', function() {
+            listView.style.display = 'none';
+            calendarView.style.display = 'block';
+
+            calendar.render();
+            
+            // Switch button active states
+            calendarBtn.classList.replace('btn-outline-primary', 'btn-primary');
+            listBtn.classList.replace('btn-primary', 'btn-outline-primary');
+        });
+
+        listBtn.addEventListener('click', function() {
+            calendarView.style.display = 'none';
+            listView.style.display = 'block';
+            
+            // Switch button active states
+            listBtn.classList.replace('btn-outline-primary', 'btn-primary');
+            calendarBtn.classList.replace('btn-primary', 'btn-outline-primary');
+        });
+    }
 });
 </script>
 {% endblock %}
