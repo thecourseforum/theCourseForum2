@@ -19,9 +19,7 @@
     if (stored && THEMES.includes(stored)) {
       return stored;
     }
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
+    return "light";
   }
 
   /**
@@ -71,19 +69,6 @@
     });
   }
 
-  /**
-   * Listen for system preference changes.
-   */
-  function initSystemPreferenceListener() {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-    mediaQuery.addEventListener("change", (e) => {
-      if (!localStorage.getItem(USER_SET_KEY)) {
-        setTheme(e.matches ? "dark" : "light", false);
-      }
-    });
-  }
-
   function initializeThemeState() {
     if (
       localStorage.getItem(STORAGE_KEY) &&
@@ -100,12 +85,10 @@
     document.addEventListener("DOMContentLoaded", () => {
       initializeThemeState();
       initThemeToggle();
-      initSystemPreferenceListener();
     });
   } else {
     initializeThemeState();
     initThemeToggle();
-    initSystemPreferenceListener();
   }
 
   // Expose API globally
