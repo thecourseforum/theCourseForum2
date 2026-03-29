@@ -19,13 +19,9 @@ def setup(obj):
     obj.subdepartment = Subdepartment.objects.create(
         name="Computer Science", mnemonic="CS", department=obj.department
     )
-    obj.semester = Semester.objects.create(
-        year=2020, season="FALL", number=1208, id=100
-    )
-    obj.past_semester = Semester.objects.create(
-        year=2010, season="FALL", number=1108, id=99
-    )
-    obj.incomplete_semester = Semester.objects.create(year=2019, number=1198, id=98)
+    obj.semester = Semester.objects.create(year=2020, season="FALL", number=1208)
+    obj.past_semester = Semester.objects.create(year=2010, season="FALL", number=1108)
+    obj.incomplete_semester = Semester.objects.create(year=2019, number=1198)
 
     obj.course = Course.objects.create(
         title="Software Testing",
