@@ -116,9 +116,6 @@
     </a>
     {% endfor %}
   </section>
-  {% if forloop.counter == 1 and not forloop.last %}
-  {% include "site/components/_in_feed_ad.html" %}
-  {% endif %}
   {% endfor %}
   {% else %}
   <!-- Empty State -->
