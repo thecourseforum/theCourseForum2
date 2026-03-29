@@ -69,6 +69,19 @@
     {% endif %}
   </div>
 
+  <div class="container-lg mb-3">
+  <div class="btn-group w-100" role="group" aria-label="View Switcher">
+    <button type="button" class="btn btn-primary view-toggle-btn" id="show-list-view">
+      <i class="fa fa-list me-2"></i> List View
+    </button>
+    <button type="button" class="btn btn-outline-primary view-toggle-btn" id="show-calendar-view">
+      <i class="fa fa-calendar-alt me-2"></i> Calendar View
+    </button>
+  </div>
+</div>
+
+<div id="list-view-container">
+
   <div class="calendar-events container-lg px-0">
     <!-- Past Events Dropdown -->
     {% if past_groups %}
@@ -177,6 +190,16 @@
       </div>
     {% endif %}
   </div>
+</div>
+
+</div> <div id="calendar-view-container" style="display: none;">
+    <div class="container-lg card p-5 text-center">
+      <h3><i class="fa fa-calendar-plus mb-3"></i></h3>
+      <h4>Calendar View Coming Soon</h4>
+      <p class="text-muted">This is where the monthly/weekly grid will be rendered.</p>
+    </div>
+  </div>
+
 </div>
 
 {% block js %}
