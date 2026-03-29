@@ -15,8 +15,54 @@
   ],
   "contributors": [
     {
+      "group_name": "Class of 2028",
+      "members": [
+        {
+          "name": "Yu Cao",
+          "role": "Developer",
+          "class": "2028",
+          "img_filename": "ENG_Yu_Cao.jpg",
+          "github": "YuDavidCao"
+        },
+        {
+          "name": "Adrian Villanueva",
+          "role": "Developer",
+          "class": "2028",
+          "img_filename": "ENG_Adrian_Villanueva.jpg",
+          "github": "Adrian-E-V"
+        },
+        {
+          "name": "Brian Tran",
+          "role": "Developer",
+          "class": "2028",
+          "img_filename": "ENG_Brian_Tran.jpg",
+          "github": "brianlogic"
+      }
+      ]
+    },
+    {
       "group_name": "Class of 2027",
       "members": [
+        {
+          "name": "Alyssa Zhang",
+          "role": "Marketing",
+          "class": "2027",
+          "img_filename": "DM_Alyssa_Zhang.jpg"
+        },
+        {
+          "name": "Lexie Chen",
+          "role": "Developer",
+          "class": "2027",
+          "img_filename": "ENG_Lexie_Chen.jpg",
+          "github": "LexieChen1"
+        },
+        {
+          "name": "Namai Kureishi",
+          "role": "Developer",
+          "class": "2027",
+          "img_filename": "ENG_Namai_Kureishi.jpg",
+          "github": "namaikureishi"
+        },
         {
           "name": "Arthur Wu",
           "role": "Developer",
@@ -36,6 +82,13 @@
       "group_name": "Class of 2026",
       "members": [
         {
+          "name": "Jay Lalwani",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Jay_Lalwani.jpg",
+          "github": "Jay-Lalwani"
+        },
+        {
           "name": "Barrett Ruth",
           "role": "Developer",
           "class": "2026",
@@ -43,11 +96,81 @@
           "github": "barrett-ruth"
         },
         {
+          "name": "Artie Humphreys",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Artie_Humphreys.jpg",
+          "github": "artiehumphreys"
+        },
+        {
+          "name": "Blaire Zhao",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Blaire_Zhao.jpg",
+          "github": "blairezh"
+        },
+        {
+          "name": "Brandon Istfan",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Brandon_Istfan.jpg",
+          "github": "brandonistfan"
+        },
+        {
+          "name": "Luke Kohler",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Luke_Kohler.jpeg",
+          "github": "ldkohler"
+        },
+        {
+          "name": "Alex Yung",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Alex_Yung.jpg",
+          "github": "alex-yung-github"
+        },
+        {
+          "name": "Ivan Kisselev",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Ivan_Kisselev.jpg",
+          "github": "IvanTheEngineer"
+        },
+        {
+          "name": "Emily Zhou",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Emily_Zhou.jpg",
+          "github": "emilyzhou"
+        },
+        {
+          "name": "Phong Le",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Phong_Le.jpg",
+          "github": "phongo1"
+        },
+        {
+          "name": "Grace Kang",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Grace_Kang.jpg",
+          "github": "gckang"
+        },
+        {
           "name": "Bryan Katuari",
           "role": "Developer",
           "class": "2026",
           "img_filename": "ENG_Bryan_Katuari.jpg",
           "github": "bryankatuari"
+        },
+        {
+          "name": "Michael Barnor",
+          "role": "Developer",
+          "class": "2026",
+          "img_filename": "ENG_Michael_Barnor.jpg",
+          "github": "MichaelBarnor"
         },
         {
           "name": "Ruiyu Zhang",
