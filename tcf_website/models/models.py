@@ -1339,7 +1339,7 @@ class Review(models.Model):
             case "Most Recent":
                 return reviews.order_by("-created")
             case "Default" | _:
-                return reviews
+                return reviews.order_by("-created")
 
     @staticmethod
     def paginate(
