@@ -157,8 +157,20 @@
 
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-6);
+}
+
+@media (max-width: 640px) {
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 
@@ -179,8 +191,8 @@
 }
 
 .member-card__avatar {
-  width: 88px;
-  height: 88px;
+  width: 140px;
+  height: 140px;
   
   margin-bottom: var(--space-4);
   
@@ -204,8 +216,8 @@
 
 .member-card__initials {
   position: absolute;
-  
-  font-size: var(--text-2xl);
+
+  font-size: var(--text-3xl);
   font-weight: var(--font-bold);
   color: white;
 }
