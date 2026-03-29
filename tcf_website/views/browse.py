@@ -8,14 +8,7 @@ from typing import Any
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import (
-    Avg,
-    Count,
-    Prefetch,
-    Q,
-    Sum,
-    Value,
-)
+from django.db.models import Avg, Count, Prefetch, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -289,6 +282,38 @@ def course_view(
     # Pass course info to template for meta tags
     # (JavaScript will retrieve these from meta tags)
 
+    # Get related courses if available and enrich with rating/difficulty/gpa
+    raw_related = course.related_courses if course.related_courses else []
+    related_courses = []
+    for rc in raw_related:
+        # defensive: ensure keys exist
+        mnemonic = (rc.get("mnemonic") or "").upper()
+        number = rc.get("number")
+        related_course_obj = None
+        if mnemonic and number is not None:
+            related_course_obj = Course.objects.filter(
+                subdepartment__mnemonic=mnemonic, number=number
+            ).first()
+
+        if related_course_obj:
+            avg_rating = safe_round(related_course_obj.average_rating())
+            avg_difficulty = safe_round(related_course_obj.average_difficulty())
+            avg_gpa = safe_round(related_course_obj.average_gpa())
+        else:
+            avg_rating = safe_round(None)
+            avg_difficulty = safe_round(None)
+            avg_gpa = safe_round(None)
+
+        enriched = dict(rc)
+        enriched.update(
+            {
+                "avg_rating": avg_rating,
+                "avg_difficulty": avg_difficulty,
+                "avg_gpa": avg_gpa,
+            }
+        )
+        related_courses.append(enriched)
+
     return render(
         request,
         "course/course.html",
@@ -304,6 +329,7 @@ def course_view(
             "active_instructor_recency": instructor_recency,
             "course_code": course.code(),
             "course_title": course.title,
+            "related_courses": related_courses,
         },
     )
 

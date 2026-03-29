@@ -109,23 +109,58 @@
                     </h4>
                     <div class="row">
                         {% for related in related_courses %}
-                        <div class="col-md-6 col-lg-4 mb-3">
-                            <div class="card h-100 border-light shadow-sm">
-                                <div class="card-body">
-                                    <h6 class="card-subtitle mb-2 text-muted">
-                                        {{ related.mnemonic }} {{ related.number }}
-                                    </h6>
-                                    <h5 class="card-title">
-                                        <a href="{% url 'course' mnemonic=related.mnemonic course_number=related.number %}" class="text-decoration-none">
-                                            {{ related.title }}
-                                        </a>
-                                    </h5>
-                                    <p class="card-text small mb-2">
-                                        <span class="badge bg-info">Rank #{{ related.rank }}</span>
-                                        <span class="badge bg-light text-dark">
-                                            Similarity: {{ related.similarity_score|floatformat:2 }}
-                                        </span>
-                                    </p>
+                        <div class="col-12 mb-3">
+                            <div class="card rating-card h-100 border-light shadow-sm">
+                                <div class="row no-gutters">
+                                    <a class="col-md-6 pl-3 pr-3 card-body d-flex justify-content-center justify-content-lg-start align-items-center rating-card-link"
+                                       href="{% url 'course' mnemonic=related.mnemonic course_number=related.number %}">
+                                        <div class="text-center text-lg-left">
+                                            <h5 id="title">{{ related.mnemonic }} {{ related.number }}</h5>
+                                            <h6>{{ related.title }}</h6>
+                                        </div>
+                                    </a>
+                                    <div class="col-md-6">
+                                        <div class="card-body">
+                                            <div class="row justify-content-between text-center text-md-left">
+                                                <div class="col-4 text-nowrap">
+                                                    <small class="mb-0 text-uppercase">
+                                                        <i class="fa fa-star fa-fw" aria-hidden="true"></i>&nbsp;Rating
+                                                    </small>
+                                                    <p class="mb-0 info" id="rating">
+                                                    {% if related.avg_rating %}
+                                                        {{ related.avg_rating|floatformat:2 }}
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                    </p>
+                                                </div>
+                                                <div class="col-4 text-nowrap">
+                                                    <small class="mb-0 text-uppercase">
+                                                        <i class="fa fa-dumbbell fa-fw" aria-hidden="true"></i>&nbsp;Difficulty
+                                                    </small>
+                                                    <p class="mb-0 info" id="difficulty">
+                                                    {% if related.avg_difficulty %}
+                                                        {{ related.avg_difficulty|floatformat:2 }}
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                    </p>
+                                                </div>
+                                                <div class="col-4 text-nowrap">
+                                                    <small class="mb-0 text-uppercase">
+                                                        <i class="fa fa-chart-bar fa-fw" aria-hidden="true"></i>&nbsp;GPA
+                                                    </small>
+                                                    <p class="mb-0 info" id="gpa">
+                                                    {% if related.avg_gpa %}
+                                                        {{ related.avg_gpa|floatformat:2 }}
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
