@@ -14,9 +14,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from ..api.serializers import (
+    ClubAutocompleteSerializer,
     CourseAutocompleteSerializer,
     InstructorAutocompleteSerializer,
-    ClubAutocompleteSerializer,
 )
 from ..models import Club, Course, Instructor, Subdepartment
 
@@ -33,8 +33,7 @@ def group_by_dept(courses):
     for course in courses:
         course_dept = course["mnemonic"]
         if course_dept not in grouped_courses:
-            subdept = Subdepartment.objects.filter(
-                mnemonic=course_dept).first()
+            subdept = Subdepartment.objects.filter(mnemonic=course_dept).first()
             # should only ever have one returned with that mnemonic
             grouped_courses[course_dept] = {
                 "subdept_name": subdept.name,
@@ -136,8 +135,7 @@ def search(request):
 
         # Determine display order - courses or instructors first
         if not request.GET.get("page"):
-            courses_first = decide_order(
-                courses, instructors) if query else True
+            courses_first = decide_order(courses, instructors) if query else True
 
         grouped = group_by_dept(courses)
 
@@ -207,8 +205,7 @@ def decide_order(courses: list[dict], instructors: list[dict]) -> bool:
         return statistics.mean(_scores) if (_scores := list(scores)) else 0
 
     courses_avg = mean(course["max_similarity"] for course in courses)
-    instructors_avg = mean(instructor["max_similarity"]
-                           for instructor in instructors)
+    instructors_avg = mean(instructor["max_similarity"] for instructor in instructors)
 
     return courses_avg > instructors_avg or not instructors
 
@@ -233,8 +230,7 @@ def get_instructor_results(query, limit: int = 10):
     """Get instructor query results using Django Trigram similarity."""
     similarity_threshold = 0.5
     results = (
-        Instructor.objects.only(
-            "first_name", "last_name", "full_name", "email")
+        Instructor.objects.only("first_name", "last_name", "full_name", "email")
         .annotate(
             similarity_first=TrigramSimilarity("first_name", query),
             similarity_last=TrigramSimilarity("last_name", query),
@@ -329,8 +325,7 @@ def filter_courses(filters):
 def apply_filters(results, filters):
     """Apply filters to course queryset."""
     if filters.get("disciplines"):
-        results = results.filter(
-            disciplines__name__in=filters.get("disciplines"))
+        results = results.filter(disciplines__name__in=filters.get("disciplines"))
 
     if filters.get("subdepartments"):
         results = results.filter(
@@ -345,8 +340,7 @@ def apply_filters(results, filters):
         time_filtered = Course.filter_by_time(
             days=weekdays, start_time=from_time, end_time=to_time
         )
-        results = results.filter(
-            id__in=time_filtered.values_list("id", flat=True))
+        results = results.filter(id__in=time_filtered.values_list("id", flat=True))
 
     if filters.get("open_sections"):
         open_sections_filtered = Course.filter_by_open_sections()
@@ -376,10 +370,6 @@ def autocomplete(request):
         clubs = fetch_clubs(query, limit=5)
         return Response({"clubs": ClubAutocompleteSerializer(clubs, many=True).data})
 
-<<<<<<< HEAD
-    instructors = get_instructor_results(query, limit=5)
-    courses = fetch_courses(query, filters={}, limit=5)
-=======
     with ThreadPoolExecutor(max_workers=2) as executor:
         # wrap results in a list to avoid lazy eval, parallelizing requests
         instructors_future = executor.submit(
@@ -390,7 +380,6 @@ def autocomplete(request):
         )
         instructors = instructors_future.result()
         courses = courses_future.result()
->>>>>>> d0709ba51fa2bd257c2c5ab4076fb16df7b0552b
 
     return Response(
         {
