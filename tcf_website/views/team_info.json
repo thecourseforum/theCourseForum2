@@ -42,12 +42,6 @@
       "img_filename": "DM_Tara_Vidyababu.webp"
     },
     {
-      "name": "Akeeb Kalam",
-      "role": "VP | Marketing",
-      "class": "2027",
-      "img_filename": "DM_Akeeb_Kalam.jpg"
-    },
-    {
       "name": "Ishan Ajwani",
       "role": "Treasurer",
       "class": "2029",
@@ -235,12 +229,6 @@
     }
   ],
   "marketing_team": [
-    {
-      "name": "Akeeb Kalam",
-      "role": "VP | Marketing",
-      "class": "2027",
-      "img_filename": "DM_Akeeb_Kalam.jpg"
-    },
     {
       "name": "Kate Dunkle",
       "role": "Marketing",
