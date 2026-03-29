@@ -202,7 +202,7 @@ class ClubSerializer(serializers.ModelSerializer):
 
 
 class ClubAutocompleteSerializer(serializers.ModelSerializer):
-    """DEF Serializer for Club autocomplete"""
+    """DRF Serializer for Club autocomplete"""
 
     category_name = serializers.CharField(source="category.name", read_only=True)
 

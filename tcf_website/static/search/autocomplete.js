@@ -80,6 +80,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const MAX_RESULTS = 8;
+    if (window.innerWidth < 600) {
+      MAX_RESULTS = 4;
+    }
+    if (window.innerWidth < 1024) {
+      MAX_RESULTS = 6;
+    }
     const courses = (data.courses || []).slice(0, MAX_RESULTS);
     const instructors = (data.instructors || []).slice(0, MAX_RESULTS);
     const clubs = (data.clubs || []).slice(0, MAX_RESULTS);
