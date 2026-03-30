@@ -1,0 +1,59 @@
+{% if not courses and not instructors %}
+<ul class="autocomplete-list" role="listbox">
+  <li class="autocomplete-item autocomplete-item--empty" role="option" aria-disabled="true">
+    <span class="autocomplete-item__title">No results found.</span>
+  </li>
+</ul>
+{% else %}
+<ul class="autocomplete-list" role="listbox">
+  
+  {% if courses_first %}
+    {% if courses %}
+      <li class="autocomplete-group-header" role="presentation">Courses</li>
+      {% for course in courses %}
+      <li class="autocomplete-item" role="option">
+        <a href="{% url 'course' mnemonic=course.mnemonic course_number=course.number %}" class="autocomplete-item__link">
+          <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
+          <span class="autocomplete-item__title">{{ course.title }}</span>
+        </a>
+      </li>
+      {% endfor %}
+    {% endif %}
+
+    {% if instructors %}
+      <li class="autocomplete-group-header" role="presentation">Instructors</li>
+      {% for instructor in instructors %}
+      <li class="autocomplete-item" role="option">
+        <a href="{% url 'instructor' instructor_id=instructor.id %}" class="autocomplete-item__link">
+          <span class="autocomplete-item__title">{{ instructor.first_name }} {{ instructor.last_name }}</span>
+        </a>
+      </li>
+      {% endfor %}
+    {% endif %}
+  {% else %}
+    {% if instructors %}
+      <li class="autocomplete-group-header" role="presentation">Instructors</li>
+      {% for instructor in instructors %}
+      <li class="autocomplete-item" role="option">
+        <a href="{% url 'instructor' instructor_id=instructor.id %}" class="autocomplete-item__link">
+          <span class="autocomplete-item__title">{{ instructor.first_name }} {{ instructor.last_name }}</span>
+        </a>
+      </li>
+      {% endfor %}
+    {% endif %}
+
+    {% if courses %}
+      <li class="autocomplete-group-header" role="presentation">Courses</li>
+      {% for course in courses %}
+      <li class="autocomplete-item" role="option">
+        <a href="{% url 'course' mnemonic=course.mnemonic course_number=course.number %}" class="autocomplete-item__link">
+          <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
+          <span class="autocomplete-item__title">{{ course.title }}</span>
+        </a>
+      </li>
+      {% endfor %}
+    {% endif %}
+  {% endif %}
+
+</ul>
+{% endif %}

@@ -142,6 +142,12 @@ def search(request):
         "page_obj": page_obj,
     }
 
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        if not is_club and "courses" in locals():
+            ctx["courses"] = courses[:5]
+        ctx["instructors"] = instructors[:3]
+        return render(request, "site/components/_autocomplete_dropdown.html", ctx)
+
     template_name = "site/pages/search.html"
     return render(request, template_name, ctx)
 
