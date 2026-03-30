@@ -205,9 +205,6 @@
   font-size: var(--text-xs);
 }
 
-.team-grid--compact .member-card__link {
-  font-size: var(--text-xs);
-}
 
 .team-grid--compact .member-card__initials {
   font-size: var(--text-3xl);
@@ -220,14 +217,33 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  
+
   padding: var(--space-6);
-  
+
   background-color: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  
+
   text-align: center;
+}
+
+.member-card__github {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  margin-left: var(--space-1);
+
+  color: var(--fg-subtle);
+  transition: color var(--duration-fast) var(--ease-default);
+}
+
+.member-card__github:hover {
+  color: var(--fg);
+}
+
+.member-card__github svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 .member-card__avatar {
@@ -283,16 +299,6 @@
   color: var(--fg-subtle);
 }
 
-.member-card__link {
-  margin-top: var(--space-2);
-  font-size: var(--text-sm);
-  color: var(--primary);
-  text-decoration: none;
-}
-
-.member-card__link:hover {
-  text-decoration: underline;
-}
 
 
 /* ===== HISTORY SECTION ===== */
