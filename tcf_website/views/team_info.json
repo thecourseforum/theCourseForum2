@@ -42,6 +42,12 @@
       "img_filename": "DM_Tara_Vidyababu.webp"
     },
     {
+      "name": "Akeeb Kalam",
+      "role": "VP | Marketing",
+      "class": "2027",
+      "img_filename": "DM_Akeeb_Kalam.jpeg"
+    },
+    {
       "name": "Ishan Ajwani",
       "role": "Treasurer",
       "class": "2029",
@@ -199,7 +205,7 @@
   "design_team": [
     {
       "name": "Tara Vidyababu",
-      "role": "Designer",
+      "role": "VP | Design",
       "class": "2028",
       "img_filename": "DM_Tara_Vidyababu.webp"
     },
@@ -229,6 +235,12 @@
     }
   ],
   "marketing_team": [
+    {
+      "name": "Akeeb Kalam",
+      "role": "VP | Marketing",
+      "class": "2027",
+      "img_filename": "DM_Akeeb_Kalam.jpeg"
+    },
     {
       "name": "Kate Dunkle",
       "role": "Marketing",
