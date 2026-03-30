@@ -23,13 +23,14 @@ class ProfileForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "graduation_year"]
+        fields = ["first_name", "last_name", "nickname", "graduation_year"]
 
         # Add the form-control class to make the form work with Bootstrap
         widgets = {
             "first_name": forms.TextInput(attrs={"class": "form-control"}),
             "last_name": forms.TextInput(attrs={"class": "form-control"}),
             "graduation_year": forms.NumberInput(attrs={"class": "form-control"}),
+            "nickname": forms.TextInput(attrs={"class": "form-control"}),
         }
 
 

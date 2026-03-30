@@ -269,10 +269,15 @@ class User(AbstractUser):
         validators=[MinValueValidator(0), MaxValueValidator(5000)],
         blank=True,
         null=True,
-        default=0
-    ) #only stores points not calculated from existing objects (ex reviews)
+        default=0,
+    )  # only stores points not calculated from existing objects (ex reviews)
+
     # User selected profile picture team
     selected_pfp = models.CharField(max_length=50, blank=True, default="pfpteam1.png")
+
+    # User nickname for display on reviews. Defaults to "anonymous".
+    # Character limit matches AbstractUser's first_name/last_name length (150 chars).
+    nickname = models.CharField(max_length=150, blank=True, default="anonymous")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
