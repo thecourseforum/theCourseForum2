@@ -319,7 +319,7 @@ span.pagination__item {
  */
 
 .leaderboard-ad {
-  padding: var(--space-4) 0 0;
+  padding: 0 0 var(--space-4);
 }
 
 .leaderboard-ad__inner {
