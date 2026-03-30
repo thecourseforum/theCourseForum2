@@ -112,7 +112,7 @@ a {
   transition: color var(--duration-fast) var(--ease-default);
 }
 
-a:hover {
+a:hover:not([class]) {
   color: var(--primary-hover);
   text-decoration: underline;
 }

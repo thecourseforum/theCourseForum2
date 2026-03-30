@@ -37,8 +37,8 @@
   <!-- Theme initialization (prevent flash) -->
   <script>
     (function() {
-      const theme = localStorage.getItem('theme') || 
-        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      const saved = localStorage.getItem('theme');
+      const theme = saved || 'light';
       document.documentElement.setAttribute('data-theme', theme);
     })();
   </script>

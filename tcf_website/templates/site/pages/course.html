@@ -39,7 +39,7 @@
       {% if user.is_authenticated %}
       <div class="course-title__actions">
         <a
-          class="btn btn--primary btn--md"
+          class="btn btn--accent btn--md"
           href="{% url 'schedule_add_course' course.id %}?next={{ request.get_full_path|urlencode }}"
           id="addToScheduleBtn"
         >

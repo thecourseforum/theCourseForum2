@@ -17,7 +17,7 @@
   align-items: center;
   justify-content: space-between;
   
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-4);
 }
 
 .grades-panel__title {
@@ -27,8 +27,9 @@
 
 .grades-panel__chart-container {
   position: relative;
-  height: 250px;
+  height: 280px;
   width: 100%;
+  flex: 1;
 }
 
 .grades-panel__empty {
@@ -75,9 +76,12 @@
   font-weight: var(--font-semibold);
 }
 
-/* Ensure stats grid has 3 columns on large screens if possible, or reflow */
-@media (min-width: 1280px) {
-  .stats-grid {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
+/* Sections panel as separate full-width row below stats */
+.sections-panel {
+  margin-bottom: var(--space-8);
+}
+
+.sections-panel__list--horizontal {
+  max-height: 14rem;
+  overflow-y: auto;
 }

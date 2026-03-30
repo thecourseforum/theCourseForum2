@@ -63,21 +63,21 @@
   
   
   /* ===== SEMANTIC TOKENS (Light Theme) ===== */
-  --bg: var(--color-neutral-50);
+  --bg: #f8f8f8;
   --bg-elevated: var(--color-white);
-  --bg-muted: var(--color-neutral-100);
+  --bg-muted: #f0f0ee;
   --bg-hover: var(--color-neutral-200);
   
   --fg: var(--color-neutral-900);
   --fg-muted: var(--color-neutral-500);
   --fg-subtle: var(--color-neutral-400);
   
-  --primary: var(--color-primary-600);
-  --primary-hover: var(--color-primary-700);
+  --primary: var(--color-primary-500);
+  --primary-hover: var(--color-primary-400);
   --primary-fg: var(--color-white);
   
-  --accent: var(--color-accent-600);
-  --accent-hover: var(--color-accent-700);
+  --accent: var(--color-accent-500);
+  --accent-hover: var(--color-accent-600);
   --accent-fg: var(--color-white);
   
   --border: var(--color-neutral-200);
@@ -211,8 +211,8 @@
   --fg-muted: var(--color-neutral-400);
   --fg-subtle: var(--color-neutral-500);
   
-  --primary: var(--color-primary-500);
-  --primary-hover: var(--color-primary-400);
+  --primary: var(--color-primary-800);
+  --primary-hover: var(--color-primary-700);
   
   --accent: var(--color-accent-500);
   --accent-hover: var(--color-accent-400);
@@ -244,8 +244,8 @@
     --fg-muted: var(--color-neutral-400);
     --fg-subtle: var(--color-neutral-500);
     
-    --primary: var(--color-primary-500);
-    --primary-hover: var(--color-primary-400);
+    --primary: var(--color-primary-800);
+    --primary-hover: var(--color-primary-700);
     
     --accent: var(--color-accent-500);
     --accent-hover: var(--color-accent-400);

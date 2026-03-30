@@ -196,8 +196,8 @@
 }
 
 .mode-toggle__item.is-active {
-  background-color: var(--bg);
-  color: var(--fg);
+  background-color: var(--accent);
+  color: var(--accent-fg);
   box-shadow: var(--shadow-sm);
   font-weight: var(--font-semibold);
 }

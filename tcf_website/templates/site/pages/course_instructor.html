@@ -63,98 +63,94 @@
 <div class="course-instructor-content">
   <!-- Stats Grid -->
   <div class="stats-grid">
-    <!-- Ratings Panel -->
-    <div class="ratings-panel">
-      <div class="ratings-panel__header">
-        <h2 class="ratings-panel__title">Ratings</h2>
-        <span class="ratings-panel__count">{{ num_ratings }} rating{{ num_ratings|pluralize }}</span>
+    <!-- Left Column: Ratings + Hours -->
+    <div class="stats-left">
+      <!-- Big Numbers Row -->
+      <div class="stats-summary">
+        <div class="stats-card">
+          <span class="stats-card__value stats-card__value--muted" id="avg-rating-big">—</span>
+          <span class="stats-card__label">☆ <span id="avg-rating-count">{{ num_ratings }}</span> Rating{{ num_ratings|pluralize }}</span>
+        </div>
+        <div class="stats-card">
+          <span class="stats-card__value stats-card__value--muted" id="avg-hours-big">—</span>
+          <span class="stats-card__label">⏱ Hours/Week</span>
+        </div>
       </div>
-      
-      <div id="ratings-container">
-        <div class="rating-row">
-          <span class="rating-row__label">Instructor</span>
-          <div class="rating-row__bar">
-            <div class="rating-row__fill rating-row__fill--success instructor-bar" style="width: 0%"></div>
-          </div>
-          <span class="rating-row__value rating-row__value--muted instructor-num">—</span>
-        </div>
-        
-        <div class="rating-row">
-          <span class="rating-row__label">Enjoyability</span>
-          <div class="rating-row__bar">
-            <div class="rating-row__fill rating-row__fill--success fun-bar" style="width: 0%"></div>
-          </div>
-          <span class="rating-row__value rating-row__value--muted fun-num">—</span>
-        </div>
-        
-        <div class="rating-row">
-          <span class="rating-row__label">Difficulty</span>
-          <div class="rating-row__bar">
-            <div class="rating-row__fill rating-row__fill--warning difficulty-bar" style="width: 0%"></div>
-          </div>
-          <span class="rating-row__value rating-row__value--muted difficulty-num">—</span>
-        </div>
-        
-        <div class="rating-row">
-          <span class="rating-row__label">Recommend</span>
-          <div class="rating-row__bar">
-            <div class="rating-row__fill rating-row__fill--success recommend-bar" style="width: 0%"></div>
-          </div>
-          <span class="rating-row__value rating-row__value--muted recommend-num">—</span>
-        </div>
-        
-        <div class="ratings-panel__divider"></div>
-        <div class="ratings-panel__subheading-row">
-          <p class="ratings-panel__subheading">Weekly Breakdown</p>
-          <span class="ratings-panel__hours-summary">
-            <span class="ratings-panel__hours-value hours-num">—</span>
-            <span class="ratings-panel__hours-unit">hrs/wk</span>
-          </span>
-        </div>
 
-        <div class="rating-row rating-row--compact">
-          <span class="rating-row__label">Reading</span>
-          <div class="rating-row__bar">
-            <div class="rating-row__fill rating-row__fill--warning reading-bar" style="width: 0%"></div>
+      <!-- Ratings Panel -->
+      <div class="ratings-panel">
+        <div id="ratings-container">
+          <div class="rating-row">
+            <span class="rating-row__label">Instructor</span>
+            <div class="rating-row__bar">
+              <div class="rating-row__fill rating-row__fill--success instructor-bar" style="width: 0%"></div>
+            </div>
+            <span class="rating-row__value rating-row__value--muted instructor-num">—</span>
           </div>
-          <span class="rating-row__value rating-row__value--muted reading-num">—</span>
-        </div>
+          <div class="rating-row">
+            <span class="rating-row__label">Enjoyability</span>
+            <div class="rating-row__bar">
+              <div class="rating-row__fill rating-row__fill--success fun-bar" style="width: 0%"></div>
+            </div>
+            <span class="rating-row__value rating-row__value--muted fun-num">—</span>
+          </div>
+          <div class="rating-row">
+            <span class="rating-row__label">Difficulty</span>
+            <div class="rating-row__bar">
+              <div class="rating-row__fill rating-row__fill--warning difficulty-bar" style="width: 0%"></div>
+            </div>
+            <span class="rating-row__value rating-row__value--muted difficulty-num">—</span>
+          </div>
+          <div class="rating-row">
+            <span class="rating-row__label">Recommend</span>
+            <div class="rating-row__bar">
+              <div class="rating-row__fill rating-row__fill--success recommend-bar" style="width: 0%"></div>
+            </div>
+            <span class="rating-row__value rating-row__value--muted recommend-num">—</span>
+          </div>
 
-        <div class="rating-row rating-row--compact">
-          <span class="rating-row__label">Writing</span>
-          <div class="rating-row__bar">
-            <div class="rating-row__fill rating-row__fill--warning writing-bar" style="width: 0%"></div>
-          </div>
-          <span class="rating-row__value rating-row__value--muted writing-num">—</span>
-        </div>
+          <div class="ratings-panel__divider"></div>
 
-        <div class="rating-row rating-row--compact">
-          <span class="rating-row__label">Groupwork</span>
-          <div class="rating-row__bar">
-            <div class="rating-row__fill rating-row__fill--warning group-bar" style="width: 0%"></div>
+          <div class="rating-row rating-row--compact">
+            <span class="rating-row__label">Reading</span>
+            <div class="rating-row__bar">
+              <div class="rating-row__fill rating-row__fill--warning reading-bar" style="width: 0%"></div>
+            </div>
+            <span class="rating-row__value rating-row__value--muted reading-num">—</span>
           </div>
-          <span class="rating-row__value rating-row__value--muted group-num">—</span>
-        </div>
-
-        <div class="rating-row rating-row--compact">
-          <span class="rating-row__label">Other</span>
-          <div class="rating-row__bar">
-            <div class="rating-row__fill rating-row__fill--warning homework-bar" style="width: 0%"></div>
+          <div class="rating-row rating-row--compact">
+            <span class="rating-row__label">Writing</span>
+            <div class="rating-row__bar">
+              <div class="rating-row__fill rating-row__fill--warning writing-bar" style="width: 0%"></div>
+            </div>
+            <span class="rating-row__value rating-row__value--muted writing-num">—</span>
           </div>
-          <span class="rating-row__value rating-row__value--muted homework-num">—</span>
+          <div class="rating-row rating-row--compact">
+            <span class="rating-row__label">Groupwork</span>
+            <div class="rating-row__bar">
+              <div class="rating-row__fill rating-row__fill--warning group-bar" style="width: 0%"></div>
+            </div>
+            <span class="rating-row__value rating-row__value--muted group-num">—</span>
+          </div>
+          <div class="rating-row rating-row--compact">
+            <span class="rating-row__label">Other</span>
+            <div class="rating-row__bar">
+              <div class="rating-row__fill rating-row__fill--warning homework-bar" style="width: 0%"></div>
+            </div>
+            <span class="rating-row__value rating-row__value--muted homework-num">—</span>
+          </div>
         </div>
       </div>
     </div>
-    
-    <!-- Grades Panel -->
+
+    <!-- Right Column: Grade Distribution -->
     <div class="grades-panel">
       <div class="grades-panel__header">
         <h2 class="grades-panel__title">Grade Distribution</h2>
         <div class="grades-panel__toggle">
-           <button id="toggle-chart-type" class="btn-sm btn-outline">Switch to Bar</button>
+          <button id="toggle-chart-type" class="btn-sm btn-outline">Bar</button>
         </div>
       </div>
-      
       <div class="grades-panel__chart-container">
         <canvas id="gradesChart"></canvas>
         <div id="grades-empty" class="grades-panel__empty" style="display: none;">
@@ -178,37 +174,36 @@
         </div>
       </div>
     </div>
-
-    <!-- Sections Panel -->
-    {% if display_times and sections_count %}
-    <div class="sections-panel">
-      <div class="sections-panel__header">
-        <h2 class="sections-panel__title">Sections</h2>
-        <span class="sections-panel__count">{{ sections_count }}</span>
-      </div>
-
-      <div class="sections-panel__list">
-        {% if lecture_sections %}
-        <div class="sections-panel__group">
-          <h3 class="sections-panel__group-title">Lecture ({{ lecture_sections|length }})</h3>
-          {% for section in lecture_sections %}
-          {% include "site/components/_section_card.html" with section=section sem_code=sem_code %}
-          {% endfor %}
-        </div>
-        {% endif %}
-
-        {% if other_sections %}
-        <div class="sections-panel__group">
-          <h3 class="sections-panel__group-title">Other Sections ({{ other_sections|length }})</h3>
-          {% for section in other_sections %}
-          {% include "site/components/_section_card.html" with section=section sem_code=sem_code %}
-          {% endfor %}
-        </div>
-        {% endif %}
-      </div>
-    </div>
-    {% endif %}
   </div>
+
+  <!-- Sections Panel (separate row) -->
+  {% if display_times and sections_count %}
+  <div class="sections-panel">
+    <div class="sections-panel__header">
+      <h2 class="sections-panel__title">Sections</h2>
+      <span class="sections-panel__count">{{ sections_count }}</span>
+    </div>
+    <div class="sections-panel__list sections-panel__list--horizontal">
+      {% if lecture_sections %}
+      <div class="sections-panel__group">
+        <h3 class="sections-panel__group-title">Lecture ({{ lecture_sections|length }})</h3>
+        {% for section in lecture_sections %}
+        {% include "site/components/_section_card.html" with section=section sem_code=sem_code %}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if other_sections %}
+      <div class="sections-panel__group">
+        <h3 class="sections-panel__group-title">Other Sections ({{ other_sections|length }})</h3>
+        {% for section in other_sections %}
+        {% include "site/components/_section_card.html" with section=section sem_code=sem_code %}
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
   
   <section class="reviews-section" id="reviews">
     <div class="reviews-header">
@@ -436,6 +431,28 @@ if (data) {
       : '—';
   }
 
+  // Big summary numbers
+  function colorForRating(val) {
+    if (val >= 3.5) return 'stats-card__value--success';
+    if (val >= 2.5) return 'stats-card__value--warning';
+    return 'stats-card__value--danger';
+  }
+
+  const avgRating = (Number(data.instructor) + Number(data.enjoyability) + Number(data.difficulty) + Number(data.recommendability)) / 4;
+  const avgRatingEl = document.getElementById('avg-rating-big');
+  if (avgRatingEl && Number.isFinite(avgRating)) {
+    avgRatingEl.textContent = avgRating.toFixed(2);
+    avgRatingEl.classList.remove('stats-card__value--muted');
+    avgRatingEl.classList.add(colorForRating(avgRating));
+  }
+
+  const totalHoursVal = Number(data.hours);
+  const avgHoursEl = document.getElementById('avg-hours-big');
+  if (avgHoursEl && Number.isFinite(totalHoursVal)) {
+    avgHoursEl.textContent = totalHoursVal.toFixed(1);
+    avgHoursEl.classList.remove('stats-card__value--muted');
+  }
+
   // Ratings Bars
   const ratings = [
     { key: 'instructor', bar: '.instructor-bar', num: '.instructor-num' },
@@ -468,11 +485,6 @@ if (data) {
     { key: 'amount_homework', bar: '.homework-bar', num: '.homework-num' },
   ];
   const totalHours = Number(data.hours);
-  const totalHoursEl = document.querySelector('.hours-num');
-  if (totalHoursEl && Number.isFinite(totalHours)) {
-    totalHoursEl.textContent = totalHours.toFixed(1);
-    totalHoursEl.classList.remove('rating-row__value--muted');
-  }
 
   workloadRows.forEach(({ key, bar, num }) => {
     const value = Number(data[key]);
@@ -499,101 +511,83 @@ if (data) {
   const gradeValues = gradeKeys.map(k => data[k] || 0);
   const totalGrades = gradeValues.reduce((a, b) => a + b, 0);
 
-  if (totalGrades > 0) {
-    const ctx = document.getElementById('gradesChart').getContext('2d');
-    let chartType = 'pie';
-    
-    // Check local storage for preference
-    if (localStorage.getItem('chartType')) {
-        chartType = localStorage.getItem('chartType');
-        const toggleBtn = document.getElementById('toggle-chart-type');
-        if (toggleBtn) {
-            toggleBtn.textContent = chartType === 'pie' ? 'Switch to Bar' : 'Switch to Pie';
-        }
+  const sliceLabelPlugin = {
+    id: 'sliceLabels',
+    afterDraw(chart) {
+      if (chart.config.type !== 'pie') return;
+      const ctx2 = chart.ctx;
+      const meta = chart.getDatasetMeta(0);
+      ctx2.save();
+      ctx2.font = 'bold 11px Inter, sans-serif';
+      ctx2.textAlign = 'center';
+      ctx2.textBaseline = 'middle';
+      meta.data.forEach((arc, i) => {
+        const pct = gradeValues[i] / totalGrades;
+        if (pct < 0.06) return;
+        const midAngle = (arc.startAngle + arc.endAngle) / 2;
+        const r = (arc.innerRadius + arc.outerRadius) / 2;
+        const x = arc.x + Math.cos(midAngle) * r;
+        const y = arc.y + Math.sin(midAngle) * r;
+        // Use white text on dark slices (red/orange), dark on light slices
+        const darkSlices = [8, 9]; // C-, DFW indices
+        ctx2.fillStyle = darkSlices.includes(i) ? '#fff' : '#000';
+        ctx2.fillText(gradeLabels[i], x, y);
+      });
+      ctx2.restore();
     }
+  };
 
-    let chart = new Chart(ctx, {
-      type: chartType,
+  const gradeColors = [
+    '#22c55e', '#4ade80', '#86efac',
+    '#facc15', '#fde047', '#fef08a',
+    '#fb923c', '#fdba74',
+    '#f87171', '#ef4444'
+  ];
+
+  function buildChartConfig(type) {
+    return {
+      type: type,
       data: {
         labels: gradeLabels,
         datasets: [{
           data: gradeValues,
-          backgroundColor: [
-            '#22c55e', '#4ade80', '#86efac', // Greens
-            '#facc15', '#fde047', '#fef08a', // Yellows
-            '#fb923c', '#fdba74', // Oranges
-            '#f87171', '#ef4444'  // Reds/DFW
-          ],
-          borderWidth: 1,
-          borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1f2937' : '#ffffff'
+          backgroundColor: gradeColors,
+          borderWidth: 0
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            display: chartType === 'pie',
-            position: 'right'
-          }
+          legend: { display: false }
         },
         scales: {
-            y: {
-                display: chartType === 'bar',
-                beginAtZero: true
-            },
-            x: {
-                display: chartType === 'bar'
-            }
+          y: { display: type === 'bar', beginAtZero: true },
+          x: { display: type === 'bar' }
         }
-      }
-    });
+      },
+      plugins: type === 'pie' ? [sliceLabelPlugin] : []
+    };
+  }
 
-    // Toggle button logic
+  if (totalGrades > 0) {
+    const ctx = document.getElementById('gradesChart').getContext('2d');
+    let chartType = localStorage.getItem('chartType') || 'pie';
     const toggleBtn = document.getElementById('toggle-chart-type');
     if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            const newType = chart.config.type === 'pie' ? 'bar' : 'pie';
-            chart.destroy();
-            chart = new Chart(ctx, {
-                type: newType,
-                data: {
-                    labels: gradeLabels,
-                    datasets: [{
-                        data: gradeValues,
-                        backgroundColor: [
-                            '#22c55e', '#4ade80', '#86efac', 
-                            '#facc15', '#fde047', '#fef08a', 
-                            '#fb923c', '#fdba74', 
-                            '#f87171', '#ef4444'
-                        ],
-                        borderWidth: 1,
-                        borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1f2937' : '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: newType === 'pie',
-                            position: 'right'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            display: newType === 'bar',
-                            beginAtZero: true
-                        },
-                        x: {
-                            display: newType === 'bar'
-                        }
-                    }
-                }
-            });
-            toggleBtn.textContent = newType === 'pie' ? 'Switch to Bar' : 'Switch to Pie';
-            localStorage.setItem('chartType', newType);
-        });
+      toggleBtn.textContent = chartType === 'pie' ? 'Bar' : 'Pie';
+    }
+
+    let chart = new Chart(ctx, buildChartConfig(chartType));
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        const newType = chart.config.type === 'pie' ? 'bar' : 'pie';
+        chart.destroy();
+        chart = new Chart(ctx, buildChartConfig(newType));
+        toggleBtn.textContent = newType === 'pie' ? 'Bar' : 'Pie';
+        localStorage.setItem('chartType', newType);
+      });
     }
   } else {
     document.getElementById('gradesChart').style.display = 'none';
