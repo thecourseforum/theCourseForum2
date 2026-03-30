@@ -8,20 +8,15 @@
   "use strict";
 
   const STORAGE_KEY = "theme";
-  const USER_SET_KEY = "theme-user-set";
   const THEMES = ["light", "dark"];
 
   /**
-   * Get the current theme from localStorage or system preference.
+   * Get the current theme from localStorage.
+   * Defaults to 'light' if not set.
    */
   function getTheme() {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored && THEMES.includes(stored)) {
-      return stored;
-    }
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
+    return stored && THEMES.includes(stored) ? stored : "light";
   }
 
   /**
@@ -36,15 +31,10 @@
   /**
    * Set the theme on the document and persist to localStorage.
    */
-  function setTheme(theme, persist = true) {
+  function setTheme(theme) {
     if (!THEMES.includes(theme)) return;
-
     applyTheme(theme);
-    if (persist) {
-      localStorage.setItem(STORAGE_KEY, theme);
-      return;
-    }
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.setItem(STORAGE_KEY, theme);
   }
 
   /**
@@ -53,7 +43,6 @@
   function toggleTheme() {
     const current = getTheme();
     const newTheme = current === "dark" ? "light" : "dark";
-    localStorage.setItem(USER_SET_KEY, "1");
     setTheme(newTheme);
   }
 
@@ -71,41 +60,19 @@
     });
   }
 
-  /**
-   * Listen for system preference changes.
-   */
-  function initSystemPreferenceListener() {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-    mediaQuery.addEventListener("change", (e) => {
-      if (!localStorage.getItem(USER_SET_KEY)) {
-        setTheme(e.matches ? "dark" : "light", false);
-      }
-    });
-  }
-
-  function initializeThemeState() {
-    if (
-      localStorage.getItem(STORAGE_KEY) &&
-      !localStorage.getItem(USER_SET_KEY)
-    ) {
-      // Preserve existing explicit user choices from before USER_SET_KEY existed.
-      localStorage.setItem(USER_SET_KEY, "1");
-    }
+  function initializeTheme() {
     applyTheme(getTheme());
   }
 
-  // Initialize on DOM ready
+  // Initialize on DOM ready or immediate if already loaded
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
-      initializeThemeState();
+      initializeTheme();
       initThemeToggle();
-      initSystemPreferenceListener();
     });
   } else {
-    initializeThemeState();
+    initializeTheme();
     initThemeToggle();
-    initSystemPreferenceListener();
   }
 
   // Expose API globally
@@ -115,3 +82,4 @@
     toggle: toggleTheme,
   };
 })();
+
