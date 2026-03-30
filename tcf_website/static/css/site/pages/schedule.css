@@ -99,6 +99,7 @@
 }
 
 .schedule-list-card {
+  position: relative;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-3);
@@ -116,6 +117,12 @@
   text-decoration: none;
   word-break: break-word;
   overflow-wrap: break-word;
+}
+
+.schedule-list-card__name::after {
+  content: '';
+  position: absolute;
+  inset: 0;
 }
 
 .schedule-list-card__name:hover {
@@ -145,6 +152,8 @@
 }
 
 .schedule-list-card__actions {
+  position: relative;
+  z-index: 1;
   margin-top: var(--space-3);
   display: flex;
   gap: var(--space-2);
