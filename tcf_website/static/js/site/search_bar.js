@@ -26,6 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
           url.searchParams.set("q", query);
           url.searchParams.set("mode", mode);
 
+          const action = autocompleteContainer.getAttribute("data-autocomplete-action");
+          const target = autocompleteContainer.getAttribute("data-autocomplete-target");
+          if (action) url.searchParams.set("autocomplete_action", action);
+          if (target) url.searchParams.set("autocomplete_target", target);
+
           fetch(url, {
             headers: {
               "X-Requested-With": "XMLHttpRequest"

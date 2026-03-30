@@ -19,7 +19,10 @@
         autocomplete="off"
         aria-label="Search"
       >
-      <div class="autocomplete-dropdown-container" style="display: none;"></div>
+      <div class="autocomplete-dropdown-container" 
+           data-autocomplete-action="{{ autocomplete_action|default:'' }}"
+           data-autocomplete-target="{{ autocomplete_target|default:'' }}"
+           style="display: none;"></div>
 
       <div class="search-bar__actions-group">
         {% if request.GET.mode != 'clubs' %}

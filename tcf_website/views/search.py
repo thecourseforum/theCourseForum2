@@ -146,6 +146,8 @@ def search(request):
         if not is_club and "courses" in locals():
             ctx["courses"] = courses[:5]
         ctx["instructors"] = instructors[:3]
+        ctx["autocomplete_action"] = request.GET.get("autocomplete_action")
+        ctx["autocomplete_target"] = request.GET.get("autocomplete_target")
         return render(request, "site/components/_autocomplete_dropdown.html", ctx)
 
     template_name = "site/pages/search.html"

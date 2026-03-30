@@ -283,8 +283,7 @@ def _handle_course_review_get(request, mode):
     instructor_id = request.GET.get("instructor")
 
     if not course_id:
-        messages.info(request, "Please select a course to review from a course page.")
-        return redirect("browse")
+        return render(request, "site/pages/review_search.html", {"mode": mode})
 
     course = get_object_or_404(Course, id=course_id)
     latest = Semester.latest()

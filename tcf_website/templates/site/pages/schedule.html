@@ -93,23 +93,17 @@
 
       <section class="schedule-detail">
         {% if selected_schedule %}
-        <div class="schedule-detail__header">
-          <form method="post" action="{% url 'edit_schedule' %}" class="schedule-detail__rename-form">
-            {% csrf_token %}
-            <input type="hidden" name="schedule_id" value="{{ selected_schedule.id }}">
-            <input type="hidden" name="next" value="{{ request.get_full_path }}">
-            <input
-              type="text"
-              name="schedule_name"
-              value="{{ selected_schedule.name }}"
-              maxlength="15"
-              class="input schedule-detail__name-input"
-              aria-label="Schedule name"
-            >
-            <button type="submit" class="btn btn--secondary btn--sm">Rename</button>
-          </form>
+        <div class="schedule-detail__header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4);">
+          
+          <h2 class="schedule-detail__name" style="margin: 0; color: var(--fg-muted); font-size: var(--text-2xl); font-weight: var(--font-semibold); flex-shrink: 0;">
+            {{ selected_schedule.name }}
+          </h2>
 
-          <div class="schedule-detail__stats">
+          <div class="schedule-detail__add-course" style="flex: 1; min-width: 250px; max-width: 500px; margin: 0 var(--space-4);">
+            {% include "site/components/_search_bar.html" with autocomplete_action="schedule" autocomplete_target=selected_schedule.id search_placeholder="Search for a course to add..." container_classes="search-bar-container--inline" %}
+          </div>
+
+          <div class="schedule-detail__stats" style="flex-shrink: 0;">
             <div>
               <span>Units</span>
               <strong>{% if selected_schedule_stats.credits %}{{ selected_schedule_stats.credits }}{% else %}—{% endif %}</strong>
@@ -162,11 +156,8 @@
           <p>Use the form above to create a schedule, then add courses from any course page.</p>
         </div>
         {% endif %}
-
-        <p class="schedule-detail__note">
-          Add courses from the course page using “Add to Schedule”.
-        </p>
       </section>
+
     </div>
   </div>
 </div>

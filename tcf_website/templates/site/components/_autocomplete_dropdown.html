@@ -12,7 +12,7 @@
       <li class="autocomplete-group-header" role="presentation">Courses</li>
       {% for course in courses %}
       <li class="autocomplete-item" role="option">
-        <a href="{% url 'course' mnemonic=course.mnemonic course_number=course.number %}" class="autocomplete-item__link">
+        <a href="{% if autocomplete_action == 'schedule' %}{% url 'schedule_add_course' course_id=course.id %}{% if autocomplete_target %}?schedule={{ autocomplete_target }}{% endif %}{% elif autocomplete_action == 'review' %}{% url 'new_review' %}?course={{ course.id }}{% else %}{% url 'course' mnemonic=course.mnemonic course_number=course.number %}{% endif %}" class="autocomplete-item__link">
           <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
           <span class="autocomplete-item__title">{{ course.title }}</span>
         </a>
@@ -20,7 +20,7 @@
       {% endfor %}
     {% endif %}
 
-    {% if instructors %}
+    {% if instructors and not autocomplete_action %}
       <li class="autocomplete-group-header" role="presentation">Instructors</li>
       {% for instructor in instructors %}
       <li class="autocomplete-item" role="option">
@@ -31,7 +31,7 @@
       {% endfor %}
     {% endif %}
   {% else %}
-    {% if instructors %}
+    {% if instructors and not autocomplete_action %}
       <li class="autocomplete-group-header" role="presentation">Instructors</li>
       {% for instructor in instructors %}
       <li class="autocomplete-item" role="option">
@@ -46,7 +46,7 @@
       <li class="autocomplete-group-header" role="presentation">Courses</li>
       {% for course in courses %}
       <li class="autocomplete-item" role="option">
-        <a href="{% url 'course' mnemonic=course.mnemonic course_number=course.number %}" class="autocomplete-item__link">
+        <a href="{% if autocomplete_action == 'schedule' %}{% url 'schedule_add_course' course_id=course.id %}{% if autocomplete_target %}?schedule={{ autocomplete_target }}{% endif %}{% elif autocomplete_action == 'review' %}{% url 'new_review' %}?course={{ course.id }}{% else %}{% url 'course' mnemonic=course.mnemonic course_number=course.number %}{% endif %}" class="autocomplete-item__link">
           <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
           <span class="autocomplete-item__title">{{ course.title }}</span>
         </a>

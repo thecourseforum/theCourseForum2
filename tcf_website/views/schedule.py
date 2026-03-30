@@ -749,11 +749,12 @@ def schedule_add_course(request, course_id):
     selected_schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule", "")
     selected_option = request.POST.get("selection", "")
 
-    fallback_course_url = reverse(
-        "course",
-        args=[course.subdepartment.mnemonic, course.number],
+    fallback_url = (
+        f"{reverse('schedule')}?{urlencode({'schedule': selected_schedule_id})}"
+        if selected_schedule_id
+        else reverse("schedule")
     )
-    next_url = safe_next_url(request, fallback_course_url)
+    next_url = safe_next_url(request, fallback_url)
 
     if request.method == "POST":
         success_response = _handle_schedule_add_post(
@@ -777,7 +778,7 @@ def schedule_add_course(request, course_id):
                 "schedules": schedules,
                 "selected_schedule_id": selected_schedule_id,
                 "selected_option": selected_option,
-                "fallback_course_url": fallback_course_url,
+                "fallback_course_url": fallback_url,
                 "next_url": next_url,
             },
         ),
