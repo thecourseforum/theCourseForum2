@@ -311,6 +311,9 @@
         <span class="review-card__date">{{ review.created }}</span>
       </div>
     </article>
+    {% if forloop.counter|divisibleby:5 %}
+    {% include "site/components/_leaderboard_ad.html" %}
+    {% endif %}
     {% endfor %}
 
     {% if paginated_reviews.has_other_pages %}
