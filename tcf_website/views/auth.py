@@ -1,6 +1,7 @@
 """Auth related views."""
 
 import logging
+import urllib.parse
 from base64 import b64encode
 import json
 
@@ -11,6 +12,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 
@@ -24,6 +26,7 @@ def login(request):
         return redirect("profile")
 
     cognito_base_url = settings.COGNITO_DOMAIN
+    next_url = request.GET.get("next")
 
     # Redirect to Cognito hosted UI
     cognito_login_url = (
@@ -33,6 +36,9 @@ def login(request):
         + "scope=email+openid+profile&"
         + f"redirect_uri={request.build_absolute_uri(settings.COGNITO_REDIRECT_URI).rstrip('/')}"
     )
+
+    if next_url:
+        cognito_login_url += f"&state={urllib.parse.quote(next_url)}"
 
     return HttpResponseRedirect(cognito_login_url)
 
@@ -90,6 +96,15 @@ def cognito_callback(request):
         # Log the user in
         auth_login(request, user)
         messages.success(request, "Logged in successfully!")
+
+        next_url = request.GET.get("state")
+        if next_url and url_has_allowed_host_and_scheme(
+            url=next_url,
+            allowed_hosts={request.get_host()},
+            require_https=request.is_secure(),
+        ):
+            return redirect(next_url)
+
         return redirect("browse")
 
     except (requests.RequestException, ValueError, json.JSONDecodeError) as e:
