@@ -15,7 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (autocompleteContainer.getAttribute("data-autocomplete-action")) {
         form.addEventListener("submit", (e) => {
           e.preventDefault();
-          const firstLink = autocompleteContainer.querySelector(".autocomplete-item__link");
+          const firstLink = autocompleteContainer.querySelector(
+            ".autocomplete-item__link",
+          );
           if (firstLink) {
             firstLink.click();
           }
