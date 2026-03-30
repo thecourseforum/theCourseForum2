@@ -92,13 +92,6 @@
       "github": "R0hit-0"
     },
     {
-      "name": "Angad Brar",
-      "role": "Developer",
-      "class": "2027",
-      "img_filename": "ENG_Angad_Brar.jpg",
-      "github": "angadv12"
-    },
-    {
       "name": "Hanzhe Dong",
       "role": "Developer",
       "class": "2027",
@@ -106,25 +99,11 @@
       "github": "Charka123"
     },
     {
-      "name": "Visvajit Murali",
-      "role": "Developer",
-      "class": "2027",
-      "img_filename": "ENG_Visvajit_Murali.jpg",
-      "github": "visva-murali"
-    },
-    {
       "name": "Ayan Rasulova",
       "role": "Developer",
       "class": "2027",
       "img_filename": "ENG_Ayan_Rasulova.jpg",
       "github": "ayanrasulova"
-    },
-    {
-      "name": "Shrikar Sirobhushanam",
-      "role": "Developer",
-      "class": "2027",
-      "img_filename": "ENG_Shrikar_Sirobhushanam.jpg",
-      "github": "shrikar-siro"
     },
     {
       "name": "Yilin Wang",
