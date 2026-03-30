@@ -113,67 +113,134 @@
       <!-- FAQ 1 -->
       <div class="accordion__item">
         <button class="accordion__trigger" onclick="this.parentElement.classList.toggle('is-open')">
-          What is theCourseForum?
+          Why the switch to tCF 2.0?
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
         <div class="accordion__content">
           <p>
-            theCourseForum is a student-run nonprofit dedicated to helping UVA students 
-            make informed decisions about their courses. We've been serving the UVA community 
-            since 2005, providing course reviews, instructor ratings, and scheduling tools.
+            The previous version of theCourseForum was developed using the Ruby on Rails framework in 2012, over 8 years ago. That's a long time in tech years! Not many of our student developers know Ruby anymore, so we rebuilt the site from scratch with Django, a popular Python web framework that's taught in UVA's CS 3240 (Advanced Software Development). What this means for you is that it's easier for us in the long term to maintain the site and develop new features for you.
           </p>
         </div>
       </div>
-      
+
       <!-- FAQ 2 -->
       <div class="accordion__item">
         <button class="accordion__trigger" onclick="this.parentElement.classList.toggle('is-open')">
-          How do I write a review?
+          Where did [previous feature] go?
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
         <div class="accordion__content">
           <p>
-            Simply sign in with your UVA Email, navigate to a course you've taken, 
-            and click "Write a Review." Share your experience with ratings for instructor quality, 
-            course difficulty, and a written review to help other students.
+            During our tCF2.0 rewrite, some features had to be left out due to low usage. If you'd like to propose we bring one of them back, or suggest an entirely new feature, submit a feedback form or join the discussion on our <a href="https://discord.gg/tAjzH7eyvW">Discord server</a>!
           </p>
         </div>
       </div>
-      
+
       <!-- FAQ 3 -->
       <div class="accordion__item">
         <button class="accordion__trigger" onclick="this.parentElement.classList.toggle('is-open')">
-          Are reviews anonymous?
+          Do you profit from people using the site?
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
         <div class="accordion__content">
           <p>
-            Yes! All reviews are completely anonymous. While you need to sign in to write a review 
-            (to verify you're a UVA student), your identity is never displayed publicly. 
-            Only team administrators have access to review author information.
+            No, our site is entirely a student volunteer effort. To be clear: <i><b>We have never and will never profit from the site.</b></i> While we do run ads to cover part of our server costs, they are only a small fraction of our budget and we don't pocket any of it. We get most of our funding from university grants, sponsors, and donations from users like you!
           </p>
         </div>
       </div>
-      
+
       <!-- FAQ 4 -->
       <div class="accordion__item">
         <button class="accordion__trigger" onclick="this.parentElement.classList.toggle('is-open')">
-          How can I support theCourseForum?
+          Where does your grade data come from?
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
         <div class="accordion__content">
           <p>
-            The best way to support us is by writing reviews! You can also follow us on social media, 
-            join our Discord community, or consider making a donation to help cover hosting costs 
-            and support our development efforts.
+            We use completely anonymized official grade data provided by UVA! Don't worry, nobody will find out about the C you got in MATH 1200.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 5 -->
+      <div class="accordion__item">
+        <button class="accordion__trigger" onclick="this.parentElement.classList.toggle('is-open')">
+          How can I join the team?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="accordion__content">
+          <p>
+            We're currently recruiting for both our dev team and design team — apply <a href="https://forms.gle/jZdSMhD3jpZrJrsW9">here!</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 6 -->
+      <div class="accordion__item">
+        <button class="accordion__trigger" onclick="this.parentElement.classList.toggle('is-open')">
+          What does the dev team do?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="accordion__content">
+          <p>
+            Our dev team develops and maintains the site! We do front-end, back-end, infrastructure, and database work.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 7 -->
+      <div class="accordion__item">
+        <button class="accordion__trigger" onclick="this.parentElement.classList.toggle('is-open')">
+          What does the design team do?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="accordion__content">
+          <p>
+            Our design team works on UI design and publicity, getting the word out about theCourseForum.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 8 -->
+      <div class="accordion__item">
+        <button class="accordion__trigger" onclick="this.parentElement.classList.toggle('is-open')">
+          How do you protect reviewers' privacy?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="accordion__content">
+          <p>
+            We will never display your name on reviews, nor release this information to anyone. Read our <a href="/privacy/">Privacy Policy</a> to learn more!
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 9 -->
+      <div class="accordion__item">
+        <button class="accordion__trigger" onclick="this.parentElement.classList.toggle('is-open')">
+          Where should I report bugs or leave a comment?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="accordion__content">
+          <p>
+            Fill out the feedback form or report a bug form on the site or join our <a href="https://discord.gg/tAjzH7eyvW">Discord server</a>!
           </p>
         </div>
       </div>
