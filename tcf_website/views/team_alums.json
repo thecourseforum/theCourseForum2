@@ -42,7 +42,7 @@
       "members": [
         {
           "name": "Alyssa Zhang",
-          "role": "Marketing",
+          "role": "Treasurer | Marketing",
                     "img_filename": "DM_Alyssa_Zhang.jpg"
         },
         {
@@ -75,43 +75,43 @@
       "members": [
         {
           "name": "Jay Lalwani",
-          "role": "Developer",
+          "role": "President",
                     "img_filename": "ENG_Jay_Lalwani.jpg",
           "github": "Jay-Lalwani"
         },
         {
           "name": "Barrett Ruth",
-          "role": "Developer",
+          "role": "President",
                     "img_filename": "ENG_Barrett_Ruth.webp",
           "github": "barrett-ruth"
         },
         {
           "name": "Artie Humphreys",
-          "role": "Developer",
+          "role": "VP | Infrastructure Engineering",
                     "img_filename": "ENG_Artie_Humphreys.jpg",
           "github": "artiehumphreys"
         },
         {
           "name": "Blaire Zhao",
-          "role": "Developer",
+          "role": "VP | Product Engineering",
                     "img_filename": "ENG_Blaire_Zhao.jpg",
           "github": "blairezh"
         },
         {
           "name": "Brandon Istfan",
-          "role": "Developer",
+          "role": "VP | Product Engineering",
                     "img_filename": "ENG_Brandon_Istfan.jpg",
           "github": "brandonistfan"
         },
         {
           "name": "Luke Kohler",
-          "role": "Developer",
+          "role": "VP | Infrastructure Engineering",
                     "img_filename": "ENG_Luke_Kohler.jpeg",
           "github": "ldkohler"
         },
         {
           "name": "Alex Yung",
-          "role": "Developer",
+          "role": "VP | Infrastructure Engineering",
                     "img_filename": "ENG_Alex_Yung.jpg",
           "github": "alex-yung-github"
         },
