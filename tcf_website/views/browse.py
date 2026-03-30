@@ -8,19 +8,13 @@ from typing import Any
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import (
-    Avg,
-    Count,
-    Prefetch,
-    Q,
-    Sum,
-    Value,
-)
+from django.db.models import Avg, Count, F, Prefetch, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
+from ..forms import AdvancedSearchForm
 from ..models import (
     Club,
     ClubCategory,
@@ -33,10 +27,11 @@ from ..models import (
     Section,
     Semester,
 )
+from .search import group_by_dept, paginate_results
 
 
 def browse(request):
-    """View for browse page - Modern design."""
+    """View for browse page with advanced course search."""
     mode, is_club = parse_mode(request)
 
     if is_club:
@@ -62,6 +57,39 @@ def browse(request):
             },
         )
 
+    form = AdvancedSearchForm(request.GET or None)
+    has_search = form.is_bound and form.has_search_params()
+
+    if has_search:
+        results = _execute_advanced_search(form.cleaned_data)
+        page_obj, total = paginate_results(request, results)
+
+        courses = [
+            {
+                "id": c.id,
+                "title": c.title,
+                "number": c.number,
+                "mnemonic": c.mnemonic,
+                "description": c.description,
+            }
+            for c in page_obj
+        ]
+        grouped = group_by_dept(courses)
+
+        return render(
+            request,
+            "site/pages/browse.html",
+            {
+                "is_club": False,
+                "mode": mode,
+                "form": form,
+                "has_search": True,
+                "grouped": grouped,
+                "total": total,
+                "page_obj": page_obj,
+            },
+        )
+
     clas = School.objects.get(name="College of Arts & Sciences")
     seas = School.objects.get(name="School of Engineering & Applied Science")
 
@@ -74,11 +102,101 @@ def browse(request):
         {
             "is_club": False,
             "mode": mode,
+            "form": form if form.is_bound else AdvancedSearchForm(),
+            "has_search": False,
             "CLAS": clas,
             "SEAS": seas,
             "other_schools": other_schools,
         },
     )
+
+
+def _execute_advanced_search(filters):
+    """Build and execute advanced search queryset from validated form data."""
+    qs = (
+        Course.objects.select_related("subdepartment")
+        .only("title", "number", "subdepartment__mnemonic", "description")
+        .annotate(mnemonic=F("subdepartment__mnemonic"))
+        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+        .exclude(semester_last_taught_id__lt=48)
+    )
+
+    qs = _apply_course_filters(qs, filters)
+    qs = _apply_section_filters(qs, filters)
+
+    return qs.distinct().order_by("subdepartment__mnemonic", "number")
+
+
+def _apply_course_filters(qs, filters):
+    """Apply course-level filters (school, subject, title, etc.)."""
+    if filters.get("school"):
+        qs = qs.filter(subdepartment__department__school_id=filters["school"])
+
+    if filters.get("subject"):
+        qs = qs.filter(subdepartment__mnemonic=filters["subject"])
+
+    if filters.get("course_number"):
+        qs = qs.filter(number__startswith=filters["course_number"])
+
+    if filters.get("title"):
+        qs = qs.filter(title__icontains=filters["title"])
+
+    if filters.get("description"):
+        qs = qs.filter(description__icontains=filters["description"])
+
+    if filters.get("discipline"):
+        qs = qs.filter(disciplines__name__in=filters["discipline"])
+
+    if filters.get("level"):
+        level = int(filters["level"])
+        if level < 5:
+            qs = qs.filter(number__gte=level * 1000, number__lt=(level + 1) * 1000)
+        else:
+            qs = qs.filter(number__gte=5000)
+
+    if filters.get("min_gpa"):
+        qs = qs.filter(coursegrade__average__gte=filters["min_gpa"])
+
+    return qs
+
+
+def _apply_section_filters(qs, filters):
+    """Apply section-level filters (semester, instructor, days, time, etc.)."""
+    if filters.get("semester"):
+        qs = qs.filter(section__semester_id=filters["semester"])
+
+    if filters.get("component"):
+        qs = qs.filter(section__section_type__icontains=filters["component"])
+
+    if filters.get("instructor"):
+        qs = qs.filter(section__instructors__full_name__icontains=filters["instructor"])
+
+    if filters.get("open_sections"):
+        open_ids = Course.filter_by_open_sections().values_list("id", flat=True)
+        qs = qs.filter(id__in=open_ids)
+
+    # Day filter: show courses that MEET on the selected days
+    day_map = {
+        "MON": "monday",
+        "TUE": "tuesday",
+        "WED": "wednesday",
+        "THU": "thursday",
+        "FRI": "friday",
+    }
+    days = filters.get("days", [])
+    if days:
+        day_q = Q()
+        for day_code in days:
+            if day_code in day_map:
+                day_q |= Q(**{f"section__sectiontime__{day_map[day_code]}": True})
+        qs = qs.filter(day_q)
+
+    if filters.get("start_time"):
+        qs = qs.filter(section__sectiontime__start_time__gte=filters["start_time"])
+    if filters.get("end_time"):
+        qs = qs.filter(section__sectiontime__end_time__lte=filters["end_time"])
+
+    return qs
 
 
 def department(request, dept_id: int, course_recency=None):
@@ -329,9 +447,7 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         course_id, instructor_id, request.user, page_number, sort_method
     )
 
-    course_url = reverse(
-        "course", args=[course.subdepartment.mnemonic, course.number]
-    )
+    course_url = reverse("course", args=[course.subdepartment.mnemonic, course.number])
     breadcrumbs = [
         (dept.school.name, reverse("browse"), False),
         (dept.name, reverse("department", args=[dept.pk]), False),

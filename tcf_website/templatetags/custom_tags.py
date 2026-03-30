@@ -6,16 +6,6 @@ from django import template
 
 register = template.Library()
 
-COURSE_FILTER_KEYS = {
-    "discipline",
-    "subdepartment",
-    "weekdays",
-    "from_time",
-    "to_time",
-    "open_sections",
-    "min_gpa",
-}
-
 
 @register.filter
 def get_item(dictionary, key):
@@ -38,10 +28,7 @@ def _split_csv_keys(raw_keys):
 
 def _querydict_to_lists(query_dict):
     """Convert QueryDict to a mutable dict[str, list[str]]."""
-    return {
-        key: [str(value) for value in values]
-        for key, values in query_dict.lists()
-    }
+    return {key: [str(value) for value in values] for key, values in query_dict.lists()}
 
 
 @register.simple_tag
@@ -51,11 +38,7 @@ def querystring(request, include="", remove="", **overrides):
 
     include_keys = set(_split_csv_keys(include))
     if include_keys:
-        params = {
-            key: values
-            for key, values in params.items()
-            if key in include_keys
-        }
+        params = {key: values for key, values in params.items() if key in include_keys}
 
     remove_keys = set(_split_csv_keys(remove))
     for key in remove_keys:
@@ -73,10 +56,7 @@ def querystring(request, include="", remove="", **overrides):
 @register.simple_tag
 def mode_toggle_url(request, target_mode):
     """Build a mode-toggle URL while preserving an allowlist of query parameters."""
-    url_name = getattr(request.resolver_match, "url_name", "")
     allowed = {"q"}
-    if url_name == "search" and target_mode == "courses":
-        allowed = allowed.union(COURSE_FILTER_KEYS)
 
     params = {
         key: values
@@ -90,10 +70,3 @@ def mode_toggle_url(request, target_mode):
     if not query:
         return request.path
     return f"{request.path}?{query}"
-
-
-@register.simple_tag
-def getlist_contains(request, key, value):
-    """Return True when value exists in request.GET list for key."""
-    values = request.GET.getlist(key)
-    return str(value) in values

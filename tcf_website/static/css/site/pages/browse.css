@@ -325,9 +325,283 @@
 }
 
 
-/* ===== SEARCH SECTION ===== */
+/* ===== ADVANCED SEARCH FORM ===== */
 
-.browse-search {
-  max-width: 32rem;
+.advanced-search {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
   margin-bottom: var(--space-6);
+}
+
+.advanced-search__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+@media (max-width: 767px) {
+  .advanced-search__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .advanced-search__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.advanced-search__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* Span 2 columns in the 3-col grid */
+.advanced-search__field--span2 {
+  grid-column: span 2;
+}
+
+@media (max-width: 1023px) {
+  .advanced-search__field--span2 {
+    grid-column: span 1;
+  }
+}
+
+.advanced-search__field label:not(.advanced-search__checkbox) {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.advanced-search__field input:not([type="checkbox"]),
+.advanced-search__field select {
+  width: 100%;
+  height: 2.25rem;
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--fg);
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--duration-fast) var(--ease-default);
+}
+
+.advanced-search__field input:not([type="checkbox"]):focus,
+.advanced-search__field select:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary-100);
+}
+
+.advanced-search__range {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.advanced-search__range input {
+  flex: 1;
+  min-width: 0;
+  height: 2.25rem;
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--fg);
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--duration-fast) var(--ease-default);
+}
+
+.advanced-search__range input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary-100);
+}
+
+.advanced-search__range-sep {
+  color: var(--fg-muted);
+  font-size: var(--text-sm);
+}
+
+/* Combo box (searchable dropdown) */
+.combo {
+  position: relative;
+}
+
+.combo__input {
+  width: 100%;
+  height: 2.25rem;
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--fg);
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--duration-fast) var(--ease-default);
+  cursor: pointer;
+}
+
+.combo__input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary-100);
+}
+
+.combo__list {
+  position: absolute;
+  z-index: 200;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  right: 0;
+  max-height: 12rem;
+  overflow-y: auto;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  list-style: none;
+  padding: var(--space-1) 0;
+  margin: 0;
+}
+
+.combo__option {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--fg);
+  cursor: pointer;
+}
+
+.combo__option:hover,
+.combo__option.is-active {
+  background-color: var(--bg-muted);
+}
+
+/* Checkbox field (aligned to input row in grid) */
+.advanced-search__field--checkbox label:first-child {
+  visibility: hidden;
+}
+
+.advanced-search__checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--fg);
+}
+
+/* Divider between basic and advanced fields */
+.advanced-search__divider {
+  border-top: 1px solid var(--border);
+  margin-bottom: var(--space-4);
+}
+
+/* Fieldset (disciplines, days & times) */
+.advanced-search__fieldset {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.advanced-search__fieldset legend {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  padding: 0 var(--space-2);
+}
+
+/* Inline checkbox lists (disciplines, days) */
+.advanced-search__days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Days & times combined row */
+.advanced-search__days-times {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.advanced-search__days-times .advanced-search__days {
+  flex: 1;
+  min-width: 0;
+}
+
+.advanced-search__times {
+  display: flex;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.advanced-search__times .advanced-search__field input {
+  width: 8rem;
+}
+
+/* Advanced collapsible section */
+.advanced-search__advanced {
+  margin-bottom: var(--space-2);
+}
+
+.advanced-search__advanced > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--accent);
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: var(--space-4);
+  list-style: none;
+}
+
+.advanced-search__advanced > summary::-webkit-details-marker { display: none; }
+
+.advanced-search__advanced > summary::after {
+  content: '▾';
+  font-size: var(--text-xs);
+  transition: transform var(--duration-fast) var(--ease-default);
+}
+
+.advanced-search__advanced[open] > summary::after {
+  transform: rotate(180deg);
+}
+
+/* Actions */
+.advanced-search__actions {
+  display: flex;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+/* Separator between form and department list */
+.browse-separator {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0 0 var(--space-8);
+}
+
+/* Search empty state */
+.search-empty {
+  text-align: center;
+  padding: var(--space-12) var(--space-4);
+  color: var(--fg-muted);
+}
+
+.search-empty h3 {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-2);
 }

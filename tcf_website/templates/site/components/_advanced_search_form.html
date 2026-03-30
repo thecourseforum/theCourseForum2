@@ -1,0 +1,163 @@
+<form method="get" action="{% url 'browse' %}" class="advanced-search">
+
+  <!-- Row 1: Term, School, Subject -->
+  <div class="advanced-search__grid">
+    <div class="advanced-search__field">
+      <label>Term</label>
+      <div class="combo">
+        <input type="text" class="combo__input" placeholder="Any" autocomplete="off" aria-label="Term">
+        <ul class="combo__list" hidden>
+          {% for value, label in form.semester.field.choices %}
+          <li class="combo__option" data-value="{{ value }}" {% if form.semester.value|stringformat:"s" == value|stringformat:"s" %}data-selected{% endif %}>{{ label }}</li>
+          {% endfor %}
+        </ul>
+        <input type="hidden" name="semester" value="{{ form.semester.value|default:'' }}">
+      </div>
+    </div>
+
+    <div class="advanced-search__field">
+      <label>Department</label>
+      <div class="combo">
+        <input type="text" class="combo__input" placeholder="Any" autocomplete="off" aria-label="School">
+        <ul class="combo__list" hidden>
+          {% for value, label in form.school.field.choices %}
+          <li class="combo__option" data-value="{{ value }}" {% if form.school.value|stringformat:"s" == value|stringformat:"s" %}data-selected{% endif %}>{{ label }}</li>
+          {% endfor %}
+        </ul>
+        <input type="hidden" name="school" value="{{ form.school.value|default:'' }}">
+      </div>
+    </div>
+
+    <div class="advanced-search__field">
+      <label>Subject</label>
+      <div class="combo">
+        <input type="text" class="combo__input" placeholder="Any" autocomplete="off" aria-label="Subject">
+        <ul class="combo__list" hidden>
+          {% for value, label in form.subject.field.choices %}
+          <li class="combo__option" data-value="{{ value }}" {% if form.subject.value == value %}data-selected{% endif %}>{{ label }}</li>
+          {% endfor %}
+        </ul>
+        <input type="hidden" name="subject" value="{{ form.subject.value|default:'' }}">
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Course Number, Title, Min GPA -->
+  <div class="advanced-search__grid">
+    <div class="advanced-search__field">
+      <label for="id_course_number">Course Number</label>
+      <input type="text" name="course_number" id="id_course_number" value="{{ form.course_number.value|default:'' }}" placeholder="e.g. 31, 3100">
+    </div>
+
+    <div class="advanced-search__field">
+      <label for="id_title">Title</label>
+      <input type="text" name="title" id="id_title" value="{{ form.title.value|default:'' }}" placeholder="Enter a course title">
+    </div>
+
+    <div class="advanced-search__field">
+      <label for="id_min_gpa">Min GPA</label>
+      <input type="number" name="min_gpa" id="id_min_gpa" value="{{ form.min_gpa.value|default:'' }}" placeholder="0.0 – 4.0" min="0" max="4" step="0.1">
+    </div>
+  </div>
+
+  <!-- Advanced collapsible -->
+  <details class="advanced-search__advanced">
+    <summary>Advanced</summary>
+
+    <!-- Row 3: Level, Component, Instructor -->
+    <div class="advanced-search__grid">
+      <div class="advanced-search__field">
+        <label>Level</label>
+        <div class="combo">
+          <input type="text" class="combo__input" placeholder="Any" autocomplete="off" aria-label="Level">
+          <ul class="combo__list" hidden>
+            {% for value, label in form.level.field.choices %}
+            <li class="combo__option" data-value="{{ value }}" {% if form.level.value == value %}data-selected{% endif %}>{{ label }}</li>
+            {% endfor %}
+          </ul>
+          <input type="hidden" name="level" value="{{ form.level.value|default:'' }}">
+        </div>
+      </div>
+
+      <div class="advanced-search__field">
+        <label for="id_component">Component</label>
+        <input type="text" name="component" id="id_component" value="{{ form.component.value|default:'' }}" placeholder="e.g. Lecture, Lab">
+      </div>
+
+      <div class="advanced-search__field">
+        <label for="id_instructor">Instructor</label>
+        <input type="text" name="instructor" id="id_instructor" value="{{ form.instructor.value|default:'' }}" placeholder="Instructor name">
+      </div>
+    </div>
+
+    <!-- Row 4: Units, Description, Open Sections -->
+    <div class="advanced-search__grid">
+      <div class="advanced-search__field">
+        <label>Units</label>
+        <div class="advanced-search__range">
+          <input type="text" name="units_min" value="{{ form.units_min.value|default:'' }}" placeholder="Min">
+          <span class="advanced-search__range-sep">&ndash;</span>
+          <input type="text" name="units_max" value="{{ form.units_max.value|default:'' }}" placeholder="Max">
+        </div>
+      </div>
+
+      <div class="advanced-search__field">
+        <label for="id_description">Description</label>
+        <input type="text" name="description" id="id_description" value="{{ form.description.value|default:'' }}" placeholder="Search within description">
+      </div>
+
+      <div class="advanced-search__field advanced-search__field--checkbox">
+        <label>&nbsp;</label>
+        <label class="advanced-search__checkbox">
+          <input type="checkbox" name="open_sections" {% if form.open_sections.value %}checked{% endif %}>
+          <span>Open sections only</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Disciplines -->
+    <fieldset class="advanced-search__fieldset">
+      <legend>Discipline</legend>
+      <div class="advanced-search__days">
+        {% for value, label in form.discipline.field.choices %}
+        <label class="advanced-search__checkbox">
+          <input type="checkbox" name="discipline" value="{{ value }}" {% if value in form.discipline.value|default:"" %}checked{% endif %}>
+          <span>{{ label }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    <!-- Days + Times on one row -->
+    <fieldset class="advanced-search__fieldset">
+      <legend>Days &amp; Times</legend>
+      <div class="advanced-search__days-times">
+        <div class="advanced-search__days">
+          {% for value, label in form.days.field.choices %}
+          <label class="advanced-search__checkbox">
+            <input type="checkbox" name="days" value="{{ value }}" {% if value in form.days.value|default:"" %}checked{% endif %}>
+            <span>{{ label }}</span>
+          </label>
+          {% endfor %}
+        </div>
+        <div class="advanced-search__times">
+          <div class="advanced-search__field">
+            <label for="id_start_time">Start</label>
+            <input type="time" name="start_time" id="id_start_time" value="{{ form.start_time.value|default:'' }}">
+          </div>
+          <div class="advanced-search__field">
+            <label for="id_end_time">End</label>
+            <input type="time" name="end_time" id="id_end_time" value="{{ form.end_time.value|default:'' }}">
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+  </details>
+
+  <!-- Actions -->
+  <div class="advanced-search__actions">
+    <button type="submit" class="btn btn--primary btn--md">Search Classes</button>
+    <a href="{% url 'browse' %}" class="btn btn--ghost btn--md">Clear</a>
+  </div>
+</form>

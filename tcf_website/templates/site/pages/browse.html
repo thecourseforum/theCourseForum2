@@ -5,6 +5,7 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/site/pages/browse.css' %}">
+<link rel="stylesheet" href="{% static 'css/site/pages/search.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -14,23 +15,31 @@
   <div class="browse-header__inner">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div>
-        <h1 class="browse-header__title">Browse {% if is_club %}Categories{% else %}Departments{% endif %}</h1>
+        <h1 class="browse-header__title">
+          {% if has_search %}Search Results{% else %}Browse{% endif %}
+        </h1>
         <p class="browse-header__description">
           {% if is_club %}
           Explore student organizations by category.
+          {% elif has_search %}
+          {{ total }} course{{ total|pluralize }} found.
           {% else %}
           Find courses and instructors across all UVA departments.
           {% endif %}
         </p>
       </div>
-      
-      <!-- Mode Toggle (Removed separate toggle, using header global toggle) -->
     </div>
   </div>
 </div>
 
 <!-- Content -->
 <div class="browse-content">
+
+  {% if not is_club %}
+  <!-- Advanced Search Form -->
+  {% include "site/components/_advanced_search_form.html" %}
+  {% endif %}
+
   {% if is_club %}
   <!-- Club Categories Grid -->
   <div class="club-grid">
@@ -43,22 +52,59 @@
     <p class="text-muted">No club categories available.</p>
     {% endfor %}
   </div>
-  
+
+  {% elif has_search %}
+  <!-- Search Results -->
+  {% if grouped %}
+  {% for dept, dept_data in grouped.items %}
+  <section class="search-group">
+    <h3 class="search-group__title">
+      <a href="{% url 'department' dept_id=dept_data.dept_id %}">
+        {{ dept }} / {{ dept_data.subdept_name }}
+      </a>
+    </h3>
+    <div class="search-result-list">
+      {% for c in dept_data.courses %}
+      <article class="search-result-card">
+        <a class="search-result-card__link" href="{% url 'course' mnemonic=c.mnemonic course_number=c.number %}">
+          <span class="search-result-card__code">{{ c.mnemonic }} {{ c.number }}</span>
+          <span class="search-result-card__title">{{ c.title }}</span>
+        </a>
+        <p class="search-result-card__description">
+          {% if c.description %}
+          {{ c.description }}
+          {% else %}
+          No course description available.
+          {% endif %}
+        </p>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+
+  {% include "site/components/_pagination.html" with paginated_items=page_obj aria_label="Search results pagination" %}
   {% else %}
-  <!-- Schools Accordion -->
-  
+  <div class="search-empty">
+    <h3>No courses matched your search.</h3>
+    <p>Try adjusting your filters or broadening your search.</p>
+  </div>
+  {% endif %}
+
+  {% else %}
+  <!-- Schools Accordion (default browse) -->
+  <hr class="browse-separator">
   {% if CLAS %}
   {% include "site/components/_school_section.html" with school=CLAS %}
   {% endif %}
-  
+
   {% if SEAS %}
   {% include "site/components/_school_section.html" with school=SEAS %}
   {% endif %}
-  
+
   {% for school in other_schools %}
   {% include "site/components/_school_section.html" with school=school %}
   {% endfor %}
-  
   {% endif %}
 </div>
 
@@ -72,10 +118,49 @@ document.addEventListener('DOMContentLoaded', function() {
     header.addEventListener('click', function() {
       const section = this.parentElement;
       const grid = section.querySelector('.departments-grid');
-      
+
       this.classList.toggle('is-open');
       grid.classList.toggle('is-open');
     });
+  });
+
+  // Combo box: searchable dropdowns
+  document.querySelectorAll('.combo').forEach(combo => {
+    const input = combo.querySelector('.combo__input');
+    const list = combo.querySelector('.combo__list');
+    const hidden = combo.querySelector('input[type="hidden"]');
+    const options = Array.from(list.querySelectorAll('.combo__option'));
+
+    // Set initial display value from pre-selected option
+    const preselected = options.find(o => o.hasAttribute('data-selected') && o.dataset.value !== '');
+    if (preselected) input.value = preselected.textContent.trim();
+
+    function showList() {
+      list.hidden = false;
+      options.forEach(o => { o.hidden = false; });
+    }
+
+    function hideList() { list.hidden = true; }
+
+    input.addEventListener('focus', showList);
+    input.addEventListener('input', () => {
+      list.hidden = false;
+      const q = input.value.toLowerCase();
+      options.forEach(o => {
+        o.hidden = q !== '' && !o.textContent.toLowerCase().includes(q);
+      });
+    });
+
+    list.addEventListener('mousedown', e => {
+      const opt = e.target.closest('.combo__option');
+      if (!opt) return;
+      e.preventDefault();
+      hidden.value = opt.dataset.value;
+      input.value = opt.dataset.value ? opt.textContent.trim() : '';
+      hideList();
+    });
+
+    input.addEventListener('blur', hideList);
   });
 });
 </script>
