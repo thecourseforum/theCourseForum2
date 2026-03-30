@@ -266,7 +266,7 @@
       </div>
 
       {% if review.text %}
-      <p class="review-card__text">{{ review.text }}</p>
+      <p class="review-card__text">{{ review.text|linebreaksbr }}</p>
       {% endif %}
 
       <div class="review-card__category-grid">
