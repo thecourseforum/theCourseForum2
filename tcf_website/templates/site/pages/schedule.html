@@ -93,17 +93,12 @@
 
       <section class="schedule-detail">
         {% if selected_schedule %}
-        <div class="schedule-detail__header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4);">
-          
+        <div class="schedule-detail__header">
           <h2 class="schedule-detail__name">
             {{ selected_schedule.name }}
           </h2>
 
-          <div class="schedule-detail__add-course" style="flex: 1; min-width: 250px; max-width: 500px; margin: 0 var(--space-4);">
-            {% include "site/components/_search_bar.html" with autocomplete_action="schedule" autocomplete_target=selected_schedule.id search_placeholder="Search for a course to add..." container_classes="search-bar-container--inline" %}
-          </div>
-
-          <div class="schedule-detail__stats" style="flex-shrink: 0;">
+          <div class="schedule-detail__stats">
             <div>
               <span>Units</span>
               <strong>{% if selected_schedule_stats.credits %}{{ selected_schedule_stats.credits }}{% else %}—{% endif %}</strong>
@@ -118,6 +113,8 @@
             </div>
           </div>
         </div>
+
+        {% include "site/components/_search_bar.html" with autocomplete_action="schedule" autocomplete_target=selected_schedule.id search_placeholder="Search for a course to add..." container_classes="search-bar-container--inline" %}
 
         <div class="schedule-detail__course-list">
           {% for course in selected_courses %}

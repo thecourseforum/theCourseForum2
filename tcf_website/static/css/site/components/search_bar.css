@@ -270,6 +270,12 @@
   }
 }
 
+/* Inline Search Variant (e.g. schedule page) */
+.search-bar-container--inline .search-bar {
+  max-width: 100%;
+  margin: 0;
+}
+
 /* Hero Search Variant */
 /* Hero Search Variant */
 .search-bar--hero {
