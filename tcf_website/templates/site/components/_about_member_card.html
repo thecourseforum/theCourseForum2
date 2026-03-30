@@ -12,8 +12,10 @@
     <span class="member-card__initials">{{ member.initials }}</span>
     {% endif %}
   </div>
-  <div class="member-card__name">
-    {{ member.name }}
+  <div class="member-card__name">{{ member.name }}</div>
+  {% if member.role %}
+  <div class="member-card__role">
+    {{ member.role }}
     {% if member.github %}
     <a class="member-card__github" href="https://github.com/{{ member.github }}" target="_blank" rel="noopener noreferrer" aria-label="{{ member.name }} on GitHub">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -22,8 +24,6 @@
     </a>
     {% endif %}
   </div>
-  {% if member.role %}
-  <div class="member-card__role">{{ member.role }}</div>
   {% endif %}
   {% if member.class %}
   <div class="member-card__class">Class of {{ member.class }}</div>
