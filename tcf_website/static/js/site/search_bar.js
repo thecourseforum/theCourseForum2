@@ -12,6 +12,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let autocompleteTimeout = null;
 
     if (searchInput && autocompleteContainer) {
+      if (autocompleteContainer.getAttribute("data-autocomplete-action")) {
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const firstLink = autocompleteContainer.querySelector(".autocomplete-item__link");
+          if (firstLink) {
+            firstLink.click();
+          }
+        });
+      }
       searchInput.addEventListener("input", (e) => {
         const query = e.target.value.trim();
         const mode =
