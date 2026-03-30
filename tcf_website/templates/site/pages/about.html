@@ -102,9 +102,9 @@
   <!-- Tab Content: Current Team -->
   <div class="about-content is-active" id="tab-team">
     {% include "site/components/_about_member_section.html" with title="Executive Team" members=executive_team image_dir="about/team-pfps" %}
-    {% include "site/components/_about_member_section.html" with title="Engineering Team" members=engineering_team image_dir="about/team-pfps" %}
-    {% include "site/components/_about_member_section.html" with title="Design Team" members=design_team image_dir="about/team-pfps" %}
-    {% include "site/components/_about_member_section.html" with title="Marketing Team" members=marketing_team image_dir="about/team-pfps" %}
+    {% include "site/components/_about_member_section.html" with title="Engineering Team" members=engineering_team image_dir="about/team-pfps" compact=True %}
+    {% include "site/components/_about_member_section.html" with title="Design Team" members=design_team image_dir="about/team-pfps" compact=True %}
+    {% include "site/components/_about_member_section.html" with title="Marketing Team" members=marketing_team image_dir="about/team-pfps" compact=True %}
   </div>
   
   <!-- Tab Content: Past Contributors -->
@@ -112,7 +112,7 @@
     {% include "site/components/_about_member_section.html" with title="Founders" members=founders image_dir="about/alum-pfps" %}
 
     {% for group in contributors %}
-    {% include "site/components/_about_member_section.html" with title=group.group_name members=group.members image_dir="about/alum-pfps" %}
+    {% include "site/components/_about_member_section.html" with title=group.group_name members=group.members image_dir="about/alum-pfps" compact=True %}
     {% endfor %}
     {% if not contributors %}
     <p class="about-empty">No contributors available.</p>

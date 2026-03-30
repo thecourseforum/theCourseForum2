@@ -157,8 +157,57 @@
 
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-6);
+}
+
+@media (max-width: 640px) {
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.team-grid--compact {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 640px) {
+  .team-grid--compact {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .team-grid--compact {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.team-grid--compact .member-card {
+  padding: var(--space-3);
+}
+
+.team-grid--compact .member-card__name {
+  font-size: var(--text-sm);
+}
+
+.team-grid--compact .member-card__role {
+  font-size: var(--text-xs);
+}
+
+.team-grid--compact .member-card__class {
+  font-size: var(--text-xs);
+}
+
+
+.team-grid--compact .member-card__initials {
+  font-size: var(--text-3xl);
 }
 
 
@@ -168,27 +217,46 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  
+
   padding: var(--space-6);
-  
+
   background-color: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  
+
   text-align: center;
 }
 
+.member-card__github {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  margin-left: var(--space-1);
+
+  color: var(--fg-subtle);
+  transition: color var(--duration-fast) var(--ease-default);
+}
+
+.member-card__github:hover {
+  color: var(--fg);
+}
+
+.member-card__github svg {
+  width: 1rem;
+  height: 1rem;
+}
+
 .member-card__avatar {
-  width: 88px;
-  height: 88px;
-  
+  width: 100%;
+  aspect-ratio: 1 / 1;
+
   margin-bottom: var(--space-4);
-  
+
   background: linear-gradient(135deg, var(--primary) 0%, var(--color-blue-700) 100%);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border);
   overflow: hidden;
-  
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -204,8 +272,8 @@
 
 .member-card__initials {
   position: absolute;
-  
-  font-size: var(--text-2xl);
+
+  font-size: var(--text-5xl);
   font-weight: var(--font-bold);
   color: white;
 }
@@ -231,16 +299,6 @@
   color: var(--fg-subtle);
 }
 
-.member-card__link {
-  margin-top: var(--space-2);
-  font-size: var(--text-sm);
-  color: var(--primary);
-  text-decoration: none;
-}
-
-.member-card__link:hover {
-  text-decoration: underline;
-}
 
 
 /* ===== HISTORY SECTION ===== */
