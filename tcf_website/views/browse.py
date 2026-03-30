@@ -176,6 +176,7 @@ def _apply_section_filters(qs, filters):
         qs = qs.filter(id__in=open_ids)
 
     # Day filter: show courses that MEET on the selected days
+    #pylint: disable=duplicate-code
     day_map = {
         "MON": "monday",
         "TUE": "tuesday",
