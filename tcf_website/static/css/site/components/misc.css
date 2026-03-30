@@ -62,15 +62,19 @@
   gap: var(--space-1);
 }
 
+a.pagination__item {
+  color: var(--primary);
+}
+
 .pagination__item {
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   min-width: 2rem;
   height: 2rem;
   padding: 0 var(--space-2);
-  
+
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
   color: var(--fg-muted);
@@ -83,6 +87,10 @@
   cursor: pointer;
   transition: color var(--duration-fast) var(--ease-default),
               background-color var(--duration-fast) var(--ease-default);
+}
+
+span.pagination__item {
+  cursor: default;
 }
 
 .pagination__item:hover {
