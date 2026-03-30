@@ -23,7 +23,7 @@
         <input
           type="text"
           name="name"
-          maxlength="15"
+          maxlength="100"
           required
           class="input"
           placeholder="New schedule name"
@@ -95,7 +95,7 @@
         {% if selected_schedule %}
         <div class="schedule-detail__header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4);">
           
-          <h2 class="schedule-detail__name" style="margin: 0; color: var(--fg-muted); font-size: var(--text-2xl); font-weight: var(--font-semibold); flex-shrink: 0;">
+          <h2 class="schedule-detail__name">
             {{ selected_schedule.name }}
           </h2>
 

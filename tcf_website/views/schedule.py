@@ -342,7 +342,7 @@ class ScheduleForm(forms.ModelForm):
     Django form for interacting with a schedule
     """
 
-    name = forms.CharField(max_length=15)
+    name = forms.CharField(max_length=100)
 
     class Meta:
         model = Schedule
