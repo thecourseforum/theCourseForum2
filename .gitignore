@@ -36,3 +36,6 @@ venv
 .venv
 # AWS key.pem
 key/
+# Nix
+.direnv
+.envrc
