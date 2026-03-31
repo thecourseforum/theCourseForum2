@@ -30,7 +30,7 @@ from django.db.models import (
 )
 from django.db.models.functions import Abs, Cast, Coalesce, Concat, Round
 
-from tcf_website.utils import paginate
+from tcf_website.utils import SECTION_DAY_CODE_TO_SECTIONTIME_FIELD, paginate
 
 # pylint: disable=line-too-long
 
@@ -872,18 +872,12 @@ class Course(models.Model):
         section_conditions = Q(section__semester=current_semester)
 
         if days:
-
-            # Map day codes to field names
-            day_map = {
-                "MON": "monday",
-                "TUE": "tuesday",
-                "WED": "wednesday",
-                "THU": "thursday",
-                "FRI": "friday",
-            }
-
             # Get unavailable days
-            unavailable_days = {day_map[d] for d in days if d in day_map}
+            unavailable_days = {
+                SECTION_DAY_CODE_TO_SECTIONTIME_FIELD[d]
+                for d in days
+                if d in SECTION_DAY_CODE_TO_SECTIONTIME_FIELD
+            }
 
             # Filter for sections that don't meet on unavailable days
             for day in unavailable_days:

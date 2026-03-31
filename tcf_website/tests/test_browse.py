@@ -1,5 +1,5 @@
 # pylint: disable=no-member
-"""Tests for browse.py."""
+"""Tests for browse views."""
 from django.test import TestCase
 from django.urls import reverse
 

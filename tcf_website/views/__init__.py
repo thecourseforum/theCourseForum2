@@ -4,15 +4,12 @@
 # https://docs.djangoproject.com/en/3.0/topics/db/models/#organizing-models-in-a-package
 
 from .auth import login, logout
-from .browse import (
-    browse,
-    club_category,
-    club_view,
-    course_instructor,
-    course_view,
-    department,
-    instructor_view,
-)
+from .browse import browse
+from .club import club_category, club_view
+from .course import course_view
+from .course_instructor import course_instructor
+from .department import department
+from .instructor import instructor_view
 from .index import (
     AboutView,
     index,
