@@ -1277,6 +1277,16 @@ class Review(models.Model):
         return Review.sort(reviews, method)
 
     @staticmethod
+    def _annotate_average(reviews):
+        """Annotate reviews with the average of the three rating fields."""
+        return reviews.annotate(
+            average=ExpressionWrapper(
+                (F("instructor_rating") + F("recommendability") + F("enjoyability")) / 3,
+                output_field=fields.FloatField(),
+            )
+        )
+
+    @staticmethod
     def sort(reviews: "QuerySet[Review]", method="") -> "QuerySet[Review]":
         """Sort reviews by given method - upvotes, rating (low or high), or recent."""
         match method:
@@ -1292,35 +1302,14 @@ class Review(models.Model):
                     ),
                 ).order_by("-helpful_score")
             case "Highest Rating":
-                return reviews.annotate(
-                    average=ExpressionWrapper(
-                        (
-                            F("instructor_rating")
-                            + F("recommendability")
-                            + F("enjoyability")
-                        )
-                        / 3,
-                        output_field=fields.FloatField(),
-                    )
-                ).order_by("-average")
+                return Review._annotate_average(reviews).order_by("-average")
             case "Lowest Rating":
-                return reviews.annotate(
-                    average=ExpressionWrapper(
-                        (
-                            F("instructor_rating")
-                            + F("recommendability")
-                            + F("enjoyability")
-                        )
-                        / 3,
-                        output_field=fields.FloatField(),
-                    )
-                ).order_by("average")
+                return Review._annotate_average(reviews).order_by("average")
             case "Most Recent":
                 return reviews.order_by("-created")
             case "Default" | _:
                 return reviews.order_by("-created")
 
-    @staticmethod
     @staticmethod
     def get_paginated_reviews(
         course_id, instructor_id, user, page_number=1, method=""
