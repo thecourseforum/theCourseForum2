@@ -470,12 +470,18 @@
   color: var(--fg-muted);
 }
 
+.section-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
 .section-card__enrollment {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-4);
-
-  margin-top: var(--space-2);
 }
 
 .enrollment-stat {
