@@ -1,13 +1,14 @@
 // Shared utility: add Up/Down arrow key navigation between an input and a
 // container of focusable items. Used by both the search bar autocomplete and
 // the combo-box dropdowns on the browse page.
-function addArrowKeyNav(input, container, itemSelector) {
+function addArrowKeyNav(input, container, itemSelector, { upLoops = true, downLoops = true } = {}) {
   function getItems() {
     return Array.from(container.querySelectorAll(itemSelector));
   }
   function isOpen() {
     return !container.hidden && container.style.display !== "none";
   }
+  // Handles arrow keys when focus is on the input itself.
   input.addEventListener("keydown", (e) => {
     if (!isOpen()) return;
     const items = getItems();
@@ -15,22 +16,26 @@ function addArrowKeyNav(input, container, itemSelector) {
     const activeIdx = items.findIndex((item) => document.activeElement === item);
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      items[activeIdx < items.length - 1 ? activeIdx + 1 : 0].focus();
-    } else if (e.key === "ArrowUp") {
+      const next = activeIdx < items.length - 1 ? activeIdx + 1 : (downLoops ? 0 : -1);
+      if (next >= 0) items[next].focus();
+    } else if (e.key === "ArrowUp" && upLoops) {
       e.preventDefault();
       items[activeIdx > 0 ? activeIdx - 1 : items.length - 1].focus();
     }
   });
+  // Handles arrow keys when focus is inside the container.
   container.addEventListener("keydown", (e) => {
     const items = getItems();
     const activeIdx = items.findIndex((item) => document.activeElement === item);
     if (e.key === "ArrowDown") {
       e.preventDefault();
       if (activeIdx < items.length - 1) items[activeIdx + 1].focus();
+      else if (downLoops) items[0].focus();
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (activeIdx > 0) items[activeIdx - 1].focus();
-      else input.focus();
+      else if (upLoops) input.focus();
+      // else: no-op — stay at top without returning focus to input (which would reset the filter)
     }
   });
 }

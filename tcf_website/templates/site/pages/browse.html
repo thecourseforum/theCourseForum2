@@ -164,15 +164,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       if (mnemonicSearch) {
-        const primary = [], secondary = [];
+        const exact = [], primary = [], secondary = [];
         options.forEach(o => {
           const text = o.textContent.trim().toLowerCase();
-          const mnemonic = text.split(' - ')[0];
-          if (mnemonic.includes(q)) { o.hidden = false; primary.push(o); }
+          const mnemonic = text.split(' - ')[0].trim();
+          if (mnemonic === q) { o.hidden = false; exact.push(o); }
+          else if (mnemonic.includes(q)) { o.hidden = false; primary.push(o); }
           else if (text.includes(q)) { o.hidden = false; secondary.push(o); }
           else { o.hidden = true; }
         });
-        [...primary, ...secondary].forEach(o => list.appendChild(o));
+        [...exact, ...primary, ...secondary].forEach(o => list.appendChild(o));
       } else {
         options.forEach(o => {
           o.hidden = !o.textContent.toLowerCase().includes(q);
@@ -231,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (e.key === 'Escape') hideList();
     });
 
-    addArrowKeyNav(input, list, '.combo__option:not([hidden])');
+    addArrowKeyNav(input, list, '.combo__option:not([hidden])', { upLoops: false, downLoops: false });
   });
 });
 </script>
