@@ -690,6 +690,10 @@
   color: var(--fg-muted);
 }
 
+.review-card + .leaderboard-ad {
+  margin-top: calc(var(--space-2) * -1);
+}
+
 /* ===== ADD REVIEW BUTTON ===== */
 
 .add-review-btn svg {
