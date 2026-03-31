@@ -734,6 +734,72 @@ def _add_course_to_schedule(
     return _schedule_add_success_redirect(request, schedule)
 
 
+def _enrolled_units_from_schedule_add_post(
+    request, section: Section, section_id: int, instructor_id: int
+):
+    """Parse credit hours from POST for variable-credit sections; (units, None) or (None, error)."""
+    if section.units_min >= section.units_max:
+        return section.units_min, None
+
+    raw = request.POST.get(
+        f"enrolled_units_{section_id}_{instructor_id}", ""
+    ).strip()
+    if not raw:
+        return None, "Choose how many credits to take for this section."
+    try:
+        units = int(raw)
+    except ValueError:
+        return None, "Invalid credit value."
+    if units < section.units_min or units > section.units_max:
+        return None, "Credits are outside the range for this section."
+    return units, None
+
+
+def _resolve_schedule_add_post(
+    request,
+    course: Course,
+    selected_schedule_id: str,
+    selected_option: str,
+):
+    """Validate schedule add POST; return (schedule, section, instructor, units) or error message."""
+    schedule_id, section_id, instructor_id, err = _parse_schedule_add_selection(
+        selected_schedule_id, selected_option
+    )
+    schedule = section = instructor = None
+    enrolled_units = None
+
+    if not err:
+        schedule = Schedule.objects.filter(id=schedule_id, user=request.user).first()
+        if schedule is None:
+            err = "Invalid schedule selection."
+
+    if not err:
+        section = Section.objects.filter(
+            id=section_id,
+            course=course,
+            semester_id=schedule.semester_id,
+        ).first()
+        if section is None:
+            err = "Invalid section selection."
+
+    if not err:
+        instructor = Instructor.objects.filter(id=instructor_id, hidden=False).first()
+        if instructor is None:
+            err = "Invalid instructor selection."
+        elif not section.instructors.filter(id=instructor.id).exists():
+            err = "The selected instructor does not teach that section."
+
+    if not err:
+        enrolled_units, credit_err = _enrolled_units_from_schedule_add_post(
+            request, section, section_id, instructor_id
+        )
+        err = credit_err
+
+    if err:
+        return err
+    return schedule, section, instructor, enrolled_units
+
+
 def _handle_schedule_add_post(
     request,
     course: Course,
@@ -741,58 +807,13 @@ def _handle_schedule_add_post(
     selected_option: str,
 ):
     """Handle POST submission for schedule add flow."""
-    schedule_id, section_id, instructor_id, parse_error = _parse_schedule_add_selection(
-        selected_schedule_id, selected_option
+    resolved = _resolve_schedule_add_post(
+        request, course, selected_schedule_id, selected_option
     )
-    if parse_error:
-        messages.error(request, parse_error)
+    if isinstance(resolved, str):
+        messages.error(request, resolved)
         return None
-
-    schedule = Schedule.objects.filter(id=schedule_id, user=request.user).first()
-    if schedule is None:
-        messages.error(request, "Invalid schedule selection.")
-        return None
-
-    section = Section.objects.filter(
-        id=section_id,
-        course=course,
-        semester_id=schedule.semester_id,
-    ).first()
-    if section is None:
-        messages.error(request, "Invalid section selection.")
-        return None
-
-    instructor = Instructor.objects.filter(id=instructor_id, hidden=False).first()
-    if instructor is None:
-        messages.error(request, "Invalid instructor selection.")
-        return None
-
-    if not section.instructors.filter(id=instructor.id).exists():
-        messages.error(
-            request, "The selected instructor does not teach that section."
-        )
-        return None
-
-    if section.units_min < section.units_max:
-        raw = request.POST.get(
-            f"enrolled_units_{section_id}_{instructor_id}", ""
-        ).strip()
-        if not raw:
-            messages.error(
-                request, "Choose how many credits to take for this section."
-            )
-            return None
-        try:
-            enrolled_units = int(raw)
-        except ValueError:
-            messages.error(request, "Invalid credit value.")
-            return None
-        if enrolled_units < section.units_min or enrolled_units > section.units_max:
-            messages.error(request, "Credits are outside the range for this section.")
-            return None
-    else:
-        enrolled_units = section.units_min
-
+    schedule, section, instructor, enrolled_units = resolved
     return _add_course_to_schedule(
         request, schedule, section, instructor, enrolled_units
     )

@@ -46,8 +46,51 @@ def _apply_course_filters(qs, filters):
     return qs
 
 
-def _apply_section_filters(qs, filters):
-    """Apply section-level filters in one Q so joins refer to the same Section row."""
+def _units_section_filter(filters):
+    """Parse units_min/units_max from filter dict.
+
+    Returns (empty_result, q):
+      empty_result True → caller should use qs.none();
+      otherwise AND q into section_q when q is not None.
+    """
+    def _parse_bound(key):
+        raw = str(filters.get(key) or "").strip()
+        if not raw:
+            return None
+        try:
+            return int(round(float(raw)))
+        except ValueError:
+            return None
+
+    lo = _parse_bound("units_min")
+    hi = _parse_bound("units_max")
+    if lo is None and hi is None:
+        return False, None
+    if lo is not None and hi is not None and lo > hi:
+        return True, None
+    if lo is not None and hi is not None:
+        return False, Q(section__units_max__gte=lo) & Q(section__units_min__lte=hi)
+    if lo is not None:
+        return False, Q(section__units_max__gte=lo)
+    return False, Q(section__units_min__lte=hi)
+
+
+def _days_section_q(day_codes):
+    """OR day-of-week flags on section times; None if nothing to constrain."""
+    if not day_codes:
+        return None
+    day_q = Q()
+    matched = False
+    for code in day_codes:
+        field = SECTION_DAY_CODE_TO_SECTIONTIME_FIELD.get(code)
+        if field:
+            matched = True
+            day_q |= Q(**{f"section__sectiontime__{field}": True})
+    return day_q if matched else None
+
+
+def _section_filters_query(filters):
+    """Build combined section Q; returns (query, units_impossible)."""
     section_q = Q()
 
     if semester := filters.get("semester"):
@@ -65,14 +108,8 @@ def _apply_section_filters(qs, filters):
             section__instructors__courseinstructorgrade__average__gte=min_gpa,
         )
 
-    if days := filters.get("days", []):
-        day_q = Q()
-        for day_code in days:
-            if day_code in SECTION_DAY_CODE_TO_SECTIONTIME_FIELD:
-                field = SECTION_DAY_CODE_TO_SECTIONTIME_FIELD[day_code]
-                day_q |= Q(**{f"section__sectiontime__{field}": True})
-        if day_q:
-            section_q &= day_q
+    if day_q := _days_section_q(filters.get("days", [])):
+        section_q &= day_q
 
     if start_time := filters.get("start_time"):
         section_q &= Q(section__sectiontime__start_time__gte=start_time)
@@ -80,28 +117,20 @@ def _apply_section_filters(qs, filters):
     if end_time := filters.get("end_time"):
         section_q &= Q(section__sectiontime__end_time__lte=end_time)
 
-    units_lo = units_hi = None
-    if (u := str(filters.get("units_min") or "").strip()):
-        try:
-            units_lo = int(round(float(u)))
-        except ValueError:
-            pass
-    if (u := str(filters.get("units_max") or "").strip()):
-        try:
-            units_hi = int(round(float(u)))
-        except ValueError:
-            pass
-    if units_lo is not None or units_hi is not None:
-        if units_lo is not None and units_hi is not None and units_lo > units_hi:
-            return qs.none()
-        if units_lo is not None and units_hi is not None:
-            section_q &= Q(section__units_max__gte=units_lo) & Q(
-                section__units_min__lte=units_hi
-            )
-        elif units_lo is not None:
-            section_q &= Q(section__units_max__gte=units_lo)
-        else:
-            section_q &= Q(section__units_min__lte=units_hi)
+    empty, units_q = _units_section_filter(filters)
+    if empty:
+        return None, True
+    if units_q is not None:
+        section_q &= units_q
+
+    return section_q, False
+
+
+def _apply_section_filters(qs, filters):
+    """Apply section-level filters in one Q so joins refer to the same Section row."""
+    section_q, units_impossible = _section_filters_query(filters)
+    if units_impossible:
+        return qs.none()
 
     if section_q:
         qs = qs.filter(section_q)
@@ -172,7 +201,10 @@ def browse(request):  # pylint: disable=too-many-locals
     featured = {
         s.name: s
         for s in School.objects.filter(
-            name__in=["College of Arts & Sciences", "School of Engineering & Applied Science"]
+            name__in=[
+                "College of Arts & Sciences",
+                "School of Engineering & Applied Science",
+            ]
         )
     }
     clas = featured["College of Arts & Sciences"]

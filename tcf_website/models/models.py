@@ -1035,6 +1035,7 @@ class Section(models.Model):
 
     @property
     def is_variable_credit(self) -> bool:
+        """True when the section allows a range of credit hours (min != max)."""
         return self.units_min < self.units_max
 
 
