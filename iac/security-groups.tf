@@ -5,19 +5,11 @@ resource "aws_security_group" "alb" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    description = "HTTP from internet"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "HTTPS from internet"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    description     = "HTTPS from CloudFront"
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    prefix_list_ids = [data.aws_ec2_managed_prefix_list.cloudfront.id]
   }
 
   egress {
