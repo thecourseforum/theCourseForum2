@@ -21,6 +21,13 @@
       <a href="{% url 'new_review' %}" class="header__nav-link {% if request.resolver_match.url_name == 'new_review' %}is-active{% endif %}">
         Review
       </a>
+      {% else %}
+      <a href="#" class="header__nav-link" data-modal-open="loginModal" data-login-modal-message="Sign in to access schedules.">
+        Schedule
+      </a>
+      <a href="#" class="header__nav-link" data-modal-open="loginModal" data-login-modal-message="Sign in to review.">
+        Review
+      </a>
       {% endif %}
       <a href="{% url 'about' %}" class="header__nav-link {% if request.resolver_match.url_name == 'about' %}is-active{% endif %}">
         About

@@ -175,37 +175,16 @@
   padding: var(--space-8);
 }
 
-.modal__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  
-  width: 4rem;
-  height: 4rem;
-  margin-bottom: var(--space-4);
-  
-  background-color: var(--bg-muted);
-  border-radius: var(--radius-full);
-}
 
-.modal__icon svg {
-  width: 2rem;
-  height: 2rem;
-}
+/* ===== LOGIN MODAL ===== */
 
-.modal__icon--success {
-  background-color: rgba(34, 197, 94, 0.1);
-  color: var(--color-success-600);
-}
-
-.modal__icon--warning {
-  background-color: rgba(234, 179, 8, 0.1);
-  color: var(--color-warning-600);
-}
-
-.modal__icon--danger {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: var(--color-danger-600);
+.login-modal__logo {
+  display: block;
+  width: auto;
+  height: 3.25rem;
+  max-width: min(17.5rem, 100%);
+  margin: 0 auto var(--space-6);
+  object-fit: contain;
 }
 
 

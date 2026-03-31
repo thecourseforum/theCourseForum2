@@ -16,10 +16,34 @@
   let activeModal = null;
   let previouslyFocused = null;
 
+  const LOGIN_MODAL_ID = "loginModal";
+
+  /**
+   * Optional short hint above the login modal body (data-login-modal-message on the trigger).
+   */
+  function setLoginModalMessage(text) {
+    const el = document.getElementById("loginModalHint");
+    if (!el) return;
+    const trimmed = text && String(text).trim();
+    if (trimmed) {
+      el.textContent = trimmed;
+      el.classList.remove("hidden");
+    } else {
+      el.textContent = "";
+      el.classList.add("hidden");
+    }
+  }
+
   /**
    * Open a modal by ID.
+   * @param {string} modalId
+   * @param {{ skipLoginMessageReset?: boolean }} [options] - When opening loginModal from a trigger that already called setLoginModalMessage, pass { skipLoginMessageReset: true }.
    */
-  function openModal(modalId) {
+  function openModal(modalId, options) {
+    if (modalId === LOGIN_MODAL_ID && !options?.skipLoginMessageReset) {
+      setLoginModalMessage(null);
+    }
+
     const modal = document.getElementById(modalId);
     if (!modal) return;
 
@@ -101,7 +125,13 @@
       trigger.addEventListener("click", (e) => {
         e.preventDefault();
         const modalId = trigger.getAttribute("data-modal-open");
-        openModal(modalId);
+        if (modalId === LOGIN_MODAL_ID) {
+          const raw = trigger.getAttribute("data-login-modal-message");
+          setLoginModalMessage(raw && raw.trim() ? raw.trim() : null);
+          openModal(modalId, { skipLoginMessageReset: true });
+        } else {
+          openModal(modalId);
+        }
       });
     });
 
@@ -175,7 +205,7 @@
 
   // Expose API globally
   window.modal = {
-    open: openModal,
+    open: (modalId) => openModal(modalId),
     close: closeModal,
     closeById: closeModalById,
   };
