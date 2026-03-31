@@ -247,9 +247,7 @@ def new_review(request):
                         "club_id": instance.club.id,
                     },
                 )
-                return redirect(
-                    f"{club_url}?mode=clubs"
-                )
+                return redirect(f"{club_url}?mode=clubs")
             return redirect(
                 "course",
                 mnemonic=instance.course.subdepartment.mnemonic,

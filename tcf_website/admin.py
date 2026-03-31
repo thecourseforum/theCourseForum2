@@ -12,6 +12,8 @@ admin.site.register(Review)
 admin.site.register(Vote)
 admin.site.register(Question)
 admin.site.register(Answer)
+
+
 class ScheduleAdmin(admin.ModelAdmin):
     list_display = ["name", "user", "semester"]
     list_filter = ["semester"]

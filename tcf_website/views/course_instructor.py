@@ -97,12 +97,9 @@ def _pair_sections_this_semester(course_id, instructor_id, semester):
     """Lecture vs other sections for the given semester."""
     lecture_sections = []
     other_sections = []
-    sections_qs = (
-        Section.objects.filter(
-            course_id=course_id, instructors__id=instructor_id, semester=semester
-        )
-        .order_by("sis_section_number")
-    )
+    sections_qs = Section.objects.filter(
+        course_id=course_id, instructors__id=instructor_id, semester=semester
+    ).order_by("sis_section_number")
 
     for section in sections_qs:
         times_display = ""
@@ -138,7 +135,9 @@ def _course_instructor_breadcrumbs(course, instructor):
     ]
 
 
-def course_instructor(request, course_id, instructor_id, method="Default"):  # pylint: disable=too-many-locals
+def course_instructor(
+    request, course_id, instructor_id, method="Default"
+):  # pylint: disable=too-many-locals
     """Course-instructor view."""
     section_last_taught, course, instructor = _fetch_pair_section_anchor(
         course_id, instructor_id

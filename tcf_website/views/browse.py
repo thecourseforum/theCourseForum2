@@ -53,6 +53,7 @@ def _units_section_filter(filters):
       empty_result True → caller should use qs.none();
       otherwise AND q into section_q when q is not None.
     """
+
     def _parse_bound(key):
         raw = str(filters.get(key) or "").strip()
         if not raw:

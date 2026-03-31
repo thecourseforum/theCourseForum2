@@ -22,9 +22,7 @@ def index(request):
         "mode": mode,
         "mode_noun": "club" if is_club else "course",
         "search_placeholder": (
-            "Search for a club..."
-            if is_club
-            else "Search for a course or professor..."
+            "Search for a club..." if is_club else "Search for a course or professor..."
         ),
     }
 
@@ -79,7 +77,9 @@ class AboutView(TemplateView):
             "github": member.get("github", ""),
         }
 
-    def _normalize_members(self, members: list[dict], fallback_role: str = "") -> list[dict]:
+    def _normalize_members(
+        self, members: list[dict], fallback_role: str = ""
+    ) -> list[dict]:
         """Normalize a list of members for shared card rendering."""
         return [
             self._normalize_member(member, fallback_role=fallback_role)
@@ -88,7 +88,9 @@ class AboutView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        executive_team = self._normalize_members(self.team_info.get("executive_team", []))
+        executive_team = self._normalize_members(
+            self.team_info.get("executive_team", [])
+        )
         engineering_team = self._normalize_members(
             self.team_info.get("engineering_team", [])
         )
@@ -110,7 +112,11 @@ class AboutView(TemplateView):
         context["engineering_team"] = engineering_team
         context["design_team"] = design_team
         context["marketing_team"] = marketing_team
-        context["team"] = executive_team + engineering_team + design_team + marketing_team
-        context["founders"] = self._normalize_members(self.alum_info.get("founders", []))
+        context["team"] = (
+            executive_team + engineering_team + design_team + marketing_team
+        )
+        context["founders"] = self._normalize_members(
+            self.alum_info.get("founders", [])
+        )
         context["contributors"] = contributors
         return context

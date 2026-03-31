@@ -51,7 +51,9 @@ def fetch_courses(query: str):
     return (
         browsable_course_queryset()
         .annotate(
-            mnemonic_similarity=TrigramSimilarity("combined_mnemonic_number", search_query),
+            mnemonic_similarity=TrigramSimilarity(
+                "combined_mnemonic_number", search_query
+            ),
             title_similarity=TrigramSimilarity("title", search_query),
         )
         .annotate(
@@ -94,7 +96,14 @@ def fetch_clubs(query: str) -> list[dict]:
         "category_slug": F("category__slug"),
         "category_name": F("category__name"),
     }
-    base_fields = ("id", "name", "description", "max_similarity", "category_slug", "category_name")
+    base_fields = (
+        "id",
+        "name",
+        "description",
+        "max_similarity",
+        "category_slug",
+        "category_name",
+    )
 
     if not query:
         return list(
@@ -113,7 +122,9 @@ def fetch_clubs(query: str) -> list[dict]:
             "category_slug": c.category_slug,
             "category_name": c.category_name,
         }
-        for c in Club.objects.annotate(max_similarity=TrigramSimilarity("combined_name", query))
+        for c in Club.objects.annotate(
+            max_similarity=TrigramSimilarity("combined_name", query)
+        )
         .filter(max_similarity__gte=_SIMILARITY_THRESHOLD)
         .annotate(**category_annotations)
         .order_by("-max_similarity")
@@ -248,7 +259,9 @@ def search(request):
             return redirect("browse")
 
         if is_ajax:
-            courses = _serialize_courses(fetch_courses(query)[:_AUTOCOMPLETE_COURSE_LIMIT])
+            courses = _serialize_courses(
+                fetch_courses(query)[:_AUTOCOMPLETE_COURSE_LIMIT]
+            )
             instructors = fetch_instructors(query)[:_AUTOCOMPLETE_INSTRUCTOR_LIMIT]
             return _render_autocomplete(
                 request,
@@ -265,7 +278,9 @@ def search(request):
         )
         total = page_obj.paginator.count
         courses = _serialize_courses(page_obj)
-        courses_first = decide_order(courses, instructors) if not request.GET.get("page") else True
+        courses_first = (
+            decide_order(courses, instructors) if not request.GET.get("page") else True
+        )
         grouped = group_by_dept(courses)
 
     return render(

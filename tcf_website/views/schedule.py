@@ -741,9 +741,7 @@ def _enrolled_units_from_schedule_add_post(
     if section.units_min >= section.units_max:
         return section.units_min, None
 
-    raw = request.POST.get(
-        f"enrolled_units_{section_id}_{instructor_id}", ""
-    ).strip()
+    raw = request.POST.get(f"enrolled_units_{section_id}_{instructor_id}", "").strip()
     if not raw:
         return None, "Choose how many credits to take for this section."
     try:

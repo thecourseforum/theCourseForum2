@@ -1281,7 +1281,8 @@ class Review(models.Model):
         """Annotate reviews with the average of the three rating fields."""
         return reviews.annotate(
             average=ExpressionWrapper(
-                (F("instructor_rating") + F("recommendability") + F("enjoyability")) / 3,
+                (F("instructor_rating") + F("recommendability") + F("enjoyability"))
+                / 3,
                 output_field=fields.FloatField(),
             )
         )
