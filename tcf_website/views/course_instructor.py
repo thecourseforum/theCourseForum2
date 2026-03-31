@@ -187,5 +187,7 @@ def course_instructor(
             "lecture_sections": lecture_sections,
             "other_sections": other_sections,
             "sections_count": len(lecture_sections) + len(other_sections),
+            "show_schedule_add": is_current_semester
+            and bool(lecture_sections or other_sections),
         },
     )

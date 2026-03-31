@@ -4,7 +4,7 @@
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from ..models import Schedule, ScheduledCourse, Section
+from ..models import CourseInstructorGrade, Schedule, ScheduledCourse, Section
 from .test_utils import setup
 
 
@@ -83,6 +83,41 @@ class ScheduleSemesterTestCase(TestCase):
             ScheduledCourse.objects.filter(
                 schedule=schedule, section=section_current
             ).exists()
+        )
+
+    def test_schedule_add_course_cancel_link_uses_next(self):
+        """Cancel returns to the originating page when next is provided."""
+        Schedule.objects.create(name="Current", user=self.user1, semester=self.semester)
+        response = self.client.get(
+            reverse("schedule_add_course", args=[self.course.pk]),
+            {
+                "next": reverse(
+                    "course_instructor", args=[self.course.pk, self.instructor.pk]
+                )
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            f'href="{reverse("course_instructor", args=[self.course.pk, self.instructor.pk])}"',
+        )
+
+    def test_course_instructor_page_links_to_schedule_add(self):
+        """Instructor page add button uses the same schedule-add entry point."""
+        CourseInstructorGrade.objects.filter(
+            course=self.course,
+            instructor=self.instructor,
+        ).exclude(pk=self.instructor_grade.pk).delete()
+
+        response = self.client.get(
+            reverse("course_instructor", args=[self.course.pk, self.instructor.pk])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            f'{reverse("schedule_add_course", args=[self.course.pk])}?next=',
         )
 
     def test_add_course_allows_multiple_selected_sections(self):

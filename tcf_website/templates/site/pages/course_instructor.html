@@ -36,8 +36,13 @@
     
     <!-- Title -->
     <div class="course-instructor-title">
-      <span class="course-instructor-title__code">{{ course.code }}</span>
-      <span class="course-instructor-title__name">{{ course.title }}</span>
+      <div class="course-instructor-title__content">
+        <span class="course-instructor-title__code">{{ course.code }}</span>
+        <span class="course-instructor-title__name">{{ course.title }}</span>
+      </div>
+      {% if show_schedule_add %}
+      {% include "site/components/_schedule_add_button.html" with course=course button_id="addToScheduleBtn" %}
+      {% endif %}
     </div>
     
     <!-- Instructor Row -->
@@ -51,7 +56,7 @@
           {{ instructor.full_name }}
         </a>
       </div>
-      
+
       <span class="semester-badge">
         Last taught: {{ semester_last_taught }}
       </span>

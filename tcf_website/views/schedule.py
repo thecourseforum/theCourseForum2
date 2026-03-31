@@ -672,31 +672,70 @@ def _build_schedule_add_options(
 
 
 def _parse_schedule_add_selection(
-    selected_schedule_id: str, selected_option: str
-) -> tuple[int | None, int | None, int | None, str | None]:
-    """Parse schedule and section selection from POST data."""
-    if not selected_schedule_id:
-        return None, None, None, "Choose a schedule first."
+    selected_option: str,
+) -> tuple[int | None, int | None, str | None]:
+    """Parse one section selection from POST data."""
     if not selected_option:
-        return None, None, None, "Choose at least one section to add."
+        return None, None, "Choose at least one section to add."
 
     parts = selected_option.strip().split(":")
     if len(parts) != 2:
-        return None, None, None, "Invalid section selection."
+        return None, None, "Invalid section selection."
 
     try:
-        schedule_id = int(selected_schedule_id)
         section_id = int(parts[0])
         instructor_id = int(parts[1])
     except (TypeError, ValueError):
-        return None, None, None, "Invalid section selection."
+        return None, None, "Invalid section selection."
 
-    return schedule_id, section_id, instructor_id, None
+    return section_id, instructor_id, None
 
 
 def _schedule_add_success_redirect(request, schedule: Schedule):
     """Return success redirect response for schedule add flow."""
     return redirect(safe_next_url(request, _schedule_page_url(schedule_id=schedule.pk)))
+
+
+def _candidate_blocks_for_section(section: Section) -> list[tuple[str, int, int]]:
+    """Return meeting blocks for one section."""
+    candidate_blocks = _section_time_rows_to_blocks(list(section.sectiontime_set.all()))
+    if not candidate_blocks:
+        candidate_blocks = _parse_fallback_meeting_blocks(section.section_times)
+    return candidate_blocks
+
+
+def _blocks_conflict(
+    existing_blocks: list[tuple[str, int, int]],
+    candidate_blocks: list[tuple[str, int, int]],
+) -> bool:
+    """Return True when any block in two sets overlaps."""
+    for existing_day, existing_start, existing_end in existing_blocks:
+        for candidate_day, candidate_start, candidate_end in candidate_blocks:
+            if existing_day != candidate_day:
+                continue
+            if candidate_start < existing_end and candidate_end > existing_start:
+                return True
+    return False
+
+
+def _resolve_schedule_add_request(
+    request,
+    selected_schedule_id: str,
+    selected_options: list[str],
+):
+    """Validate request-level schedule add inputs once per submit."""
+    if not selected_options:
+        return "Choose at least one section to add."
+    if not selected_schedule_id:
+        return "Choose a schedule first."
+
+    schedule = Schedule.objects.filter(
+        id=selected_schedule_id, user=request.user
+    ).first()
+    if schedule is None:
+        return "Invalid schedule selection."
+
+    return schedule, list(dict.fromkeys(selected_options))
 
 
 def _add_course_to_schedule(
@@ -705,6 +744,7 @@ def _add_course_to_schedule(
     section: Section,
     instructor: Instructor,
     enrolled_units: int,
+    existing_blocks: list[tuple[str, int, int]],
 ) -> bool:
     """Attempt to add one selected section and emit user-facing messages."""
     if ScheduledCourse.objects.filter(
@@ -716,11 +756,8 @@ def _add_course_to_schedule(
         )
         return False
 
-    candidate_blocks = _section_time_rows_to_blocks(list(section.sectiontime_set.all()))
-    if not candidate_blocks:
-        candidate_blocks = _parse_fallback_meeting_blocks(section.section_times)
-
-    if _has_schedule_conflict(schedule, candidate_blocks):
+    candidate_blocks = _candidate_blocks_for_section(section)
+    if _blocks_conflict(existing_blocks, candidate_blocks):
         messages.error(
             request,
             f"Section {section.sis_section_number} conflicts with another meeting in the selected schedule.",
@@ -734,6 +771,7 @@ def _add_course_to_schedule(
         time=(section.section_times or "").rstrip(","),
         enrolled_units=enrolled_units,
     )
+    existing_blocks.extend(candidate_blocks)
     return True
 
 
@@ -759,20 +797,13 @@ def _enrolled_units_from_schedule_add_post(
 def _resolve_schedule_add_post(
     request,
     course: Course,
-    selected_schedule_id: str,
+    schedule: Schedule,
     selected_option: str,
 ):
-    """Validate schedule add POST; return (schedule, section, instructor, units) or error message."""
-    schedule_id, section_id, instructor_id, err = _parse_schedule_add_selection(
-        selected_schedule_id, selected_option
-    )
-    schedule = section = instructor = None
+    """Validate one selected section; return (section, instructor, units) or error message."""
+    section_id, instructor_id, err = _parse_schedule_add_selection(selected_option)
+    section = instructor = None
     enrolled_units = None
-
-    if not err:
-        schedule = Schedule.objects.filter(id=schedule_id, user=request.user).first()
-        if schedule is None:
-            err = "Invalid schedule selection."
 
     if not err:
         section = Section.objects.filter(
@@ -798,7 +829,7 @@ def _resolve_schedule_add_post(
 
     if err:
         return err
-    return schedule, section, instructor, enrolled_units
+    return section, instructor, enrolled_units
 
 
 def _handle_schedule_add_post(
@@ -808,24 +839,33 @@ def _handle_schedule_add_post(
     selected_options: list[str],
 ):
     """Handle POST submission for schedule add flow."""
-    if not selected_options:
-        messages.error(request, "Choose at least one section to add.")
+    resolved_request = _resolve_schedule_add_request(
+        request, selected_schedule_id, selected_options
+    )
+    if isinstance(resolved_request, str):
+        messages.error(request, resolved_request)
         return None
 
-    schedule = None
+    schedule, unique_options = resolved_request
+    existing_blocks = _existing_schedule_blocks(schedule)
     with transaction.atomic():
-        for selected_option in selected_options:
+        for selected_option in unique_options:
             resolved = _resolve_schedule_add_post(
-                request, course, selected_schedule_id, selected_option
+                request, course, schedule, selected_option
             )
             if isinstance(resolved, str):
                 messages.error(request, resolved)
                 transaction.set_rollback(True)
                 return None
 
-            schedule, section, instructor, enrolled_units = resolved
+            section, instructor, enrolled_units = resolved
             if not _add_course_to_schedule(
-                request, schedule, section, instructor, enrolled_units
+                request,
+                schedule,
+                section,
+                instructor,
+                enrolled_units,
+                existing_blocks,
             ):
                 transaction.set_rollback(True)
                 return None

@@ -37,25 +37,7 @@
       </div>
       
       <div class="course-title__actions">
-        {% if user.is_authenticated %}
-        <a
-          class="btn btn--accent btn--md"
-          href="{% url 'schedule_add_course' course.id %}?next={{ request.get_full_path|urlencode }}"
-          id="addToScheduleBtn"
-        >
-          Add to Schedule
-        </a>
-        {% else %}
-        <a
-          href="#"
-          class="btn btn--accent btn--md"
-          id="addToScheduleBtn"
-          data-modal-open="loginModal"
-          data-login-modal-message="Sign in to add courses."
-        >
-          Add to Schedule
-        </a>
-        {% endif %}
+        {% include "site/components/_schedule_add_button.html" with course=course button_id="addToScheduleBtn" %}
       </div>
     </div>
     

@@ -141,7 +141,7 @@
         <button type="submit" class="btn btn--primary btn--md" {% if not lecture_options and not other_options %}disabled{% endif %}>
           Add to Schedule
         </button>
-        <a href="{{ default_next_url }}" class="btn btn--ghost btn--md">Cancel</a>
+        <a href="{{ next_url|default:default_next_url }}" class="btn btn--ghost btn--md">Cancel</a>
       </div>
     </form>
     {% endif %}
