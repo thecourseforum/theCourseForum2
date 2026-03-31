@@ -4,41 +4,17 @@
   <div class="advanced-search__grid">
     <div class="advanced-search__field">
       <label>Term</label>
-      <div class="combo">
-        <input type="text" class="combo__input" placeholder="Any" autocomplete="off" aria-label="Term">
-        <ul class="combo__list" hidden>
-          {% for value, label in form.semester.field.choices %}
-          <li class="combo__option" tabindex="-1" data-value="{{ value }}" {% if form.semester.value|stringformat:"s" == value|stringformat:"s" %}data-selected{% endif %}>{{ label }}</li>
-          {% endfor %}
-        </ul>
-        <input type="hidden" name="semester" value="{{ form.semester.value|default:'' }}">
-      </div>
+      {% include "site/components/_combo_dropdown.html" with combo_name="semester" combo_choices=form.semester.field.choices combo_selected=form.semester.value combo_aria_label="Term" %}
     </div>
 
     <div class="advanced-search__field">
       <label>Department</label>
-      <div class="combo">
-        <input type="text" class="combo__input" placeholder="Any" autocomplete="off" aria-label="School">
-        <ul class="combo__list" hidden>
-          {% for value, label in form.school.field.choices %}
-          <li class="combo__option" tabindex="-1" data-value="{{ value }}" {% if form.school.value|stringformat:"s" == value|stringformat:"s" %}data-selected{% endif %}>{{ label }}</li>
-          {% endfor %}
-        </ul>
-        <input type="hidden" name="school" value="{{ form.school.value|default:'' }}">
-      </div>
+      {% include "site/components/_combo_dropdown.html" with combo_name="school" combo_choices=form.school.field.choices combo_selected=form.school.value combo_aria_label="School" %}
     </div>
 
     <div class="advanced-search__field">
       <label>Subject</label>
-      <div class="combo">
-        <input type="text" class="combo__input" placeholder="Any" autocomplete="off" aria-label="Subject" data-mnemonic-search>
-        <ul class="combo__list" hidden>
-          {% for value, label in form.subject.field.choices %}
-          <li class="combo__option" tabindex="-1" data-value="{{ value }}" {% if form.subject.value == value %}data-selected{% endif %}>{{ label }}</li>
-          {% endfor %}
-        </ul>
-        <input type="hidden" name="subject" value="{{ form.subject.value|default:'' }}">
-      </div>
+      {% include "site/components/_combo_dropdown.html" with combo_name="subject" combo_choices=form.subject.field.choices combo_selected=form.subject.value combo_aria_label="Subject" combo_mnemonic_search=1 %}
     </div>
   </div>
 

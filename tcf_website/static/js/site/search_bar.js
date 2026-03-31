@@ -1,6 +1,6 @@
 // Shared utility: add Up/Down arrow key navigation between an input and a
-// container of focusable items. Used by both the search bar autocomplete and
-// the combo-box dropdowns on the browse page.
+// container of focusable items. Used by the search bar autocomplete and
+// combo_dropdown.js (searchable selects).
 function addArrowKeyNav(
   input,
   container,

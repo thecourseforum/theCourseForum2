@@ -1,0 +1,22 @@
+<div class="combo"{% if combo_submit_on_select %} data-submit-on-select{% endif %}>
+  <input
+    type="text"
+    class="combo__input"
+    placeholder="{{ combo_placeholder|default:'Any' }}"
+    autocomplete="off"
+    {% if combo_aria_label %}aria-label="{{ combo_aria_label }}"{% endif %}
+    {% if combo_input_id %}id="{{ combo_input_id }}"{% endif %}
+    {% if combo_mnemonic_search %}data-mnemonic-search{% endif %}
+  >
+  <ul class="combo__list" hidden>
+    {% for value, label in combo_choices %}
+    <li
+      class="combo__option"
+      tabindex="-1"
+      data-value="{{ value }}"
+      {% if combo_selected|stringformat:"s" == value|stringformat:"s" %}data-selected{% endif %}
+    >{{ label }}</li>
+    {% endfor %}
+  </ul>
+  <input type="hidden" name="{{ combo_name }}" value="{{ combo_selected|default:'' }}">
+</div>

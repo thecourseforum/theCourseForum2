@@ -17,18 +17,8 @@
         <p class="schedule-builder__subtitle">Build and compare schedules with a weekly calendar view.</p>
         {% if all_semesters %}
         <form method="get" action="{% url 'schedule' %}" class="schedule-builder__semester-form">
-          <label class="schedule-builder__semester-label" for="schedule-semester-select">Term</label>
-          <select
-            name="semester"
-            id="schedule-semester-select"
-            class="select schedule-builder__semester-select"
-            aria-label="Academic term"
-            onchange="this.form.submit()"
-          >
-            {% for sem in all_semesters %}
-            <option value="{{ sem.pk }}" {% if active_semester and sem.pk == active_semester.pk %}selected{% endif %}>{{ sem }}</option>
-            {% endfor %}
-          </select>
+          <label class="schedule-builder__semester-label" for="schedule-semester-combo">Term</label>
+          {% include "site/components/_combo_dropdown.html" with combo_name="semester" combo_choices=semester_choices combo_selected=semester_combo_selected combo_placeholder="Select term" combo_aria_label="Academic term" combo_input_id="schedule-semester-combo" combo_submit_on_select=1 %}
         </form>
         {% endif %}
       </div>

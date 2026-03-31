@@ -1,11 +1,11 @@
 """Utility helpers shared across the Django app."""
 
-from django.db.models import F, Q
+from django.db.models import F, Q, QuerySet
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .models import Course
+from .models import Course, Semester
 
-# Courses/instructors taught only in semesters newer than this are shown in search.
+# Courses last taught before this semester are hidden; term pickers use the same floor (semester PK).
 OLDEST_VISIBLE_SEMESTER_ID = 48
 
 
@@ -18,6 +18,13 @@ def browsable_course_queryset():
         .annotate(mnemonic=F("subdepartment__mnemonic"))
         .filter(Q(number__isnull=True) | Q(number__range=(1000, 9999)))
         .exclude(semester_last_taught_id__lt=OLDEST_VISIBLE_SEMESTER_ID)
+    )
+
+
+def recent_semesters() -> QuerySet:
+    """Get semesters after the oldest visible semester."""
+    return Semester.objects.filter(pk__gte=OLDEST_VISIBLE_SEMESTER_ID).order_by(
+        "-number"
     )
 
 

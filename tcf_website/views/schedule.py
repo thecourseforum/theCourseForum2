@@ -21,7 +21,7 @@ from ..models import (
     SectionTime,
     Semester,
 )
-from ..utils import safe_next_url
+from ..utils import safe_next_url, recent_semesters
 
 # pylint: disable=line-too-long
 # pylint: disable=duplicate-code
@@ -31,7 +31,9 @@ from ..utils import safe_next_url
 logger = logging.getLogger(__name__)
 
 
-def _schedule_page_url(*, semester_id: int | None = None, schedule_id: int | str | None = None) -> str:
+def _schedule_page_url(
+    *, semester_id: int | None = None, schedule_id: int | str | None = None
+) -> str:
     """Builder URL: prefer ?schedule= (row defines the term); else ?semester= for term-only views."""
     if schedule_id:
         return f"{reverse('schedule')}?{urlencode({'schedule': schedule_id})}"
@@ -389,12 +391,16 @@ def schedules_for_user(user, semester: Semester | None):
     """Schedules for one user in one term, with courses prefetched."""
     if semester is None:
         return Schedule.objects.none()
-    return Schedule.objects.filter(user=user, semester=semester).order_by(
-        "name"
-    ).prefetch_related(
-        Prefetch(
-            "scheduledcourse_set",
-            queryset=ScheduledCourse.objects.select_related("section", "instructor"),
+    return (
+        Schedule.objects.filter(user=user, semester=semester)
+        .order_by("name")
+        .prefetch_related(
+            Prefetch(
+                "scheduledcourse_set",
+                queryset=ScheduledCourse.objects.select_related(
+                    "section", "instructor"
+                ),
+            )
         )
     )
 
@@ -432,7 +438,9 @@ def schedule_data_helper(request, semester: Semester | None):
 def view_schedules(request):
     """Render schedule builder page."""
     active_semester = resolve_builder_semester(request, request.user)
-    all_semesters = Semester.objects.order_by("-number")
+    all_semesters = recent_semesters()
+    semester_choices = [(sem.pk, str(sem)) for sem in all_semesters]
+    semester_combo_selected = active_semester.pk if active_semester else ""
     schedule_context = schedule_data_helper(request, active_semester)
     schedules = list(schedule_context["schedules"])
 
@@ -440,9 +448,9 @@ def view_schedules(request):
     selected_schedule_data = None
     if schedules:
         wanted = request.GET.get("schedule")
-        selected_schedule = next(
-            (s for s in schedules if str(s.id) == wanted), None
-        ) or schedules[0]
+        selected_schedule = (
+            next((s for s in schedules if str(s.id) == wanted), None) or schedules[0]
+        )
         selected_schedule_data = selected_schedule.get_schedule()
 
     selected_courses = selected_schedule_data[0] if selected_schedule_data else []
@@ -452,6 +460,8 @@ def view_schedules(request):
         {
             "active_semester": active_semester,
             "all_semesters": all_semesters,
+            "semester_choices": semester_choices,
+            "semester_combo_selected": semester_combo_selected,
             "selected_schedule": selected_schedule,
             "selected_courses": selected_courses,
             "selected_schedule_stats": {
@@ -540,9 +550,7 @@ def duplicate_schedule(request, schedule_id):
         course.save()
 
     messages.success(request, f"Successfully duplicated {old_name}")
-    return redirect(
-        safe_next_url(request, _schedule_page_url(schedule_id=schedule.pk))
-    )
+    return redirect(safe_next_url(request, _schedule_page_url(schedule_id=schedule.pk)))
 
 
 @login_required
@@ -592,9 +600,7 @@ def remove_scheduled_course(request, scheduled_course_id):
     scheduled_course.delete()
     messages.success(request, f"Removed {course_label} from your schedule.")
 
-    return redirect(
-        safe_next_url(request, _schedule_page_url(schedule_id=schedule_id))
-    )
+    return redirect(safe_next_url(request, _schedule_page_url(schedule_id=schedule_id)))
 
 
 def _build_schedule_add_options(
@@ -685,9 +691,7 @@ def _resolve_schedule_add_selection(
 
 def _schedule_add_success_redirect(request, schedule: Schedule):
     """Return success redirect response for schedule add flow."""
-    return redirect(
-        safe_next_url(request, _schedule_page_url(schedule_id=schedule.pk))
-    )
+    return redirect(safe_next_url(request, _schedule_page_url(schedule_id=schedule.pk)))
 
 
 def _add_course_to_schedule(

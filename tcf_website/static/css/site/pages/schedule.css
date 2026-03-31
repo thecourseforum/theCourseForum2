@@ -59,7 +59,7 @@
   color: var(--fg-muted);
 }
 
-.schedule-builder__semester-select {
+.schedule-builder__semester-form .combo {
   min-width: 10rem;
 }
 

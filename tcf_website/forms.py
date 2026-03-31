@@ -3,6 +3,7 @@
 from django import forms
 
 from .models import Discipline, School, Semester, Subdepartment
+from .utils import recent_semesters
 
 
 class AdvancedSearchForm(forms.Form):
@@ -45,9 +46,7 @@ class AdvancedSearchForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         latest = Semester.latest()
-        semesters = Semester.objects.filter(number__gte=latest.number - 50).order_by(
-            "-number"
-        )
+        semesters = recent_semesters()
         self.fields["semester"].choices = [("", "Any")] + [
             (s.pk, str(s)) for s in semesters
         ]
