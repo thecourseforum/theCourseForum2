@@ -31,6 +31,15 @@ from ..utils import safe_next_url
 logger = logging.getLogger(__name__)
 
 
+def _schedule_page_url(*, semester_id: int | None = None, schedule_id: int | str | None = None) -> str:
+    """Builder URL: prefer ?schedule= (row defines the term); else ?semester= for term-only views."""
+    if schedule_id:
+        return f"{reverse('schedule')}?{urlencode({'schedule': schedule_id})}"
+    if semester_id is not None:
+        return f"{reverse('schedule')}?{urlencode({'semester': semester_id})}"
+    return reverse("schedule")
+
+
 DAY_FIELDS = (
     ("MON", "Mon", "monday"),
     ("TUE", "Tue", "tuesday"),
@@ -134,7 +143,10 @@ def _format_minutes(minutes: int) -> str:
 def _empty_weekly_calendar() -> dict:
     """Return empty calendar payload structure."""
     return {
-        "columns": [{"code": code, "label": label, "events": []} for code, label, _ in DAY_FIELDS],
+        "columns": [
+            {"code": code, "label": label, "events": []}
+            for code, label, _ in DAY_FIELDS
+        ],
         "time_labels": [],
         "slot_markers": [],
     }
@@ -145,7 +157,9 @@ def _build_section_time_map(section_ids: set[int]) -> dict[int, list[SectionTime
     if not section_ids:
         return {}
 
-    section_time_map: dict[int, list[SectionTime]] = {section_id: [] for section_id in section_ids}
+    section_time_map: dict[int, list[SectionTime]] = {
+        section_id: [] for section_id in section_ids
+    }
     for section_time in SectionTime.objects.filter(section_id__in=section_ids):
         section_time_map.setdefault(section_time.section_id, []).append(section_time)
     return section_time_map
@@ -179,9 +193,7 @@ def _schedule_course_instructor_name(schedule_course: ScheduledCourse) -> str:
     """Return display name for a scheduled course instructor."""
     if schedule_course.instructor.full_name:
         return schedule_course.instructor.full_name
-    return (
-        f"{schedule_course.instructor.first_name} {schedule_course.instructor.last_name}".strip()
-    )
+    return f"{schedule_course.instructor.first_name} {schedule_course.instructor.last_name}".strip()
 
 
 def _event_payloads_for_course(
@@ -245,7 +257,9 @@ def _calendar_window(events: list[dict]) -> tuple[int, int]:
     return start_minutes, end_minutes
 
 
-def _apply_event_geometry(events: list[dict], start_minutes: int, end_minutes: int) -> None:
+def _apply_event_geometry(
+    events: list[dict], start_minutes: int, end_minutes: int
+) -> None:
     """Mutate event payloads with layout geometry fields."""
     total_minutes = end_minutes - start_minutes
     for event in events:
@@ -287,7 +301,9 @@ def _build_weekly_calendar(schedule_courses: list[ScheduledCourse]) -> dict:
 
     columns = _calendar_columns(events)
     slot_count = max(1, (end_minutes - start_minutes) // 60)
-    time_labels = [_format_minutes(start_minutes + (hour * 60)) for hour in range(slot_count + 1)]
+    time_labels = [
+        _format_minutes(start_minutes + (hour * 60)) for hour in range(slot_count + 1)
+    ]
 
     return {
         "columns": columns,
@@ -349,32 +365,49 @@ class ScheduleForm(forms.ModelForm):
         fields = ["name"]
 
 
-def schedule_data_helper(request):
-    """
-    This helper method is for getting schedule data for a request.
-    """
-    schedules = Schedule.objects.filter(user=request.user).order_by("name").prefetch_related(
+def resolve_builder_semester(request, user) -> Semester | None:
+    """Active term: follow schedule id if present (authoritative), else explicit semester param, else latest."""
+    raw_sched = request.GET.get("schedule") or request.POST.get("schedule_id")
+    if raw_sched:
+        try:
+            sched = (
+                Schedule.objects.filter(pk=int(raw_sched), user=user)
+                .select_related("semester")
+                .first()
+            )
+            if sched:
+                return sched.semester
+        except (TypeError, ValueError):
+            pass
+    raw = request.POST.get("semester") or request.GET.get("semester")
+    if raw:
+        return Semester.objects.filter(pk=raw).first()
+    return Semester.latest()
+
+
+def schedules_for_user(user, semester: Semester | None):
+    """Schedules for one user in one term, with courses prefetched."""
+    if semester is None:
+        return Schedule.objects.none()
+    return Schedule.objects.filter(user=user, semester=semester).order_by(
+        "name"
+    ).prefetch_related(
         Prefetch(
             "scheduledcourse_set",
             queryset=ScheduledCourse.objects.select_related("section", "instructor"),
         )
     )
-    courses_context = (
-        {}
-    )  # contains the joined table for Schedule and ScheduledCourse models
-    ratings_context = (
-        {}
-    )  # contains aggregated ratings for schedules, using the model's method
-    difficulty_context = (
-        {}
-    )  # contains aggregated difficulty of schedules, using the model's method
-    credits_context = (
-        {}
-    )  # contains the total credits of schedules, calculated in this view
-    gpa_context = {}  # contains the weighted gpa, calculated in the model function
 
-    # iterate over the schedules for this request in order to set up the context
-    # this could also be optimized for the database by combining these queries
+
+def schedule_data_helper(request, semester: Semester | None):
+    """Schedule list and per-schedule aggregates for the schedule builder."""
+    schedules = schedules_for_user(request.user, semester)
+    courses_context = {}
+    ratings_context = {}
+    difficulty_context = {}
+    credits_context = {}
+    gpa_context = {}
+
     for s in schedules:
         s_data = s.get_schedule()
         courses_context[s.id] = s_data[0]
@@ -398,20 +431,18 @@ def schedule_data_helper(request):
 @login_required
 def view_schedules(request):
     """Render schedule builder page."""
-    schedule_context = schedule_data_helper(request)
+    active_semester = resolve_builder_semester(request, request.user)
+    all_semesters = Semester.objects.order_by("-number")
+    schedule_context = schedule_data_helper(request, active_semester)
     schedules = list(schedule_context["schedules"])
 
     selected_schedule = None
     selected_schedule_data = None
-    selected_schedule_id = request.GET.get("schedule")
     if schedules:
-        if selected_schedule_id:
-            selected_schedule = next(
-                (schedule for schedule in schedules if str(schedule.id) == selected_schedule_id),
-                None,
-            )
-        if selected_schedule is None:
-            selected_schedule = schedules[0]
+        wanted = request.GET.get("schedule")
+        selected_schedule = next(
+            (s for s in schedules if str(s.id) == wanted), None
+        ) or schedules[0]
         selected_schedule_data = selected_schedule.get_schedule()
 
     selected_courses = selected_schedule_data[0] if selected_schedule_data else []
@@ -419,6 +450,8 @@ def view_schedules(request):
 
     schedule_context.update(
         {
+            "active_semester": active_semester,
+            "all_semesters": all_semesters,
             "selected_schedule": selected_schedule,
             "selected_courses": selected_courses,
             "selected_schedule_stats": {
@@ -444,11 +477,19 @@ def new_schedule(request):
         if form.is_valid():
             schedule = form.save(commit=False)
             schedule.user = request.user
-            if schedule.user is None:
-                messages.error(request, "There was an error")
+            semester = resolve_builder_semester(request, request.user)
+            if semester is None:
+                messages.error(request, "No semester data available.")
                 return redirect(safe_next_url(request, reverse("schedule")))
+            schedule.semester = semester
             schedule.save()
             messages.success(request, "Successfully created schedule!")
+            return redirect(
+                safe_next_url(
+                    request,
+                    _schedule_page_url(schedule_id=schedule.pk),
+                )
+            )
         else:
             messages.error(request, "Invalid schedule data.")
     return redirect(safe_next_url(request, reverse("schedule")))
@@ -465,7 +506,6 @@ def delete_schedule(request):
         schedule_ids = request.POST.getlist("selected_schedules")
         schedule_count = len(schedule_ids)
 
-        # Perform bulk delete
         deleted_count, _ = Schedule.objects.filter(
             id__in=schedule_ids, user=request.user
         ).delete()
@@ -485,12 +525,13 @@ def duplicate_schedule(request, schedule_id):
     Duplicate a schedule given a schedule id in the request.
     """
     schedule = get_object_or_404(Schedule, pk=schedule_id, user=request.user)
+    source_pk = schedule.pk
     schedule.pk = None  # reset the key so it will be recreated when it's saved
     old_name = schedule.name
     schedule.name = "Copy of " + old_name
     schedule.save()
 
-    courses = ScheduledCourse.objects.filter(schedule_id=schedule_id)
+    courses = ScheduledCourse.objects.filter(schedule_id=source_pk)
 
     for course in courses:
         # loop through all courses and add them to the new schedule
@@ -499,7 +540,9 @@ def duplicate_schedule(request, schedule_id):
         course.save()
 
     messages.success(request, f"Successfully duplicated {old_name}")
-    return redirect(safe_next_url(request, reverse("schedule")))
+    return redirect(
+        safe_next_url(request, _schedule_page_url(schedule_id=schedule.pk))
+    )
 
 
 @login_required
@@ -549,18 +592,19 @@ def remove_scheduled_course(request, scheduled_course_id):
     scheduled_course.delete()
     messages.success(request, f"Removed {course_label} from your schedule.")
 
-    default_url = f"{reverse('schedule')}?{urlencode({'schedule': schedule_id})}"
-    return redirect(safe_next_url(request, default_url))
+    return redirect(
+        safe_next_url(request, _schedule_page_url(schedule_id=schedule_id))
+    )
 
 
 def _build_schedule_add_options(
-    course: Course, latest_semester: Semester
+    course: Course, term_semester: Semester
 ) -> tuple[list[dict], list[dict]]:
     """Build lecture and non-lecture options for the add-course form."""
     lecture_options = []
     other_options = []
     sections = (
-        Section.objects.filter(course=course, semester=latest_semester)
+        Section.objects.filter(course=course, semester=term_semester)
         .prefetch_related("instructors")
         .order_by("sis_section_number")
     )
@@ -614,7 +658,6 @@ def _parse_schedule_add_selection(
 def _resolve_schedule_add_selection(
     user,
     course: Course,
-    latest_semester: Semester,
     selection_ids: tuple[int, int, int],
 ) -> tuple[Schedule | None, Section | None, Instructor | None, str | None]:
     """Validate selected schedule/section/instructor objects."""
@@ -625,7 +668,7 @@ def _resolve_schedule_add_selection(
         return None, None, None, "Invalid schedule selection."
 
     section = Section.objects.filter(
-        id=section_id, course=course, semester=latest_semester
+        id=section_id, course=course, semester_id=schedule.semester_id
     ).first()
     if section is None:
         return None, None, None, "Invalid section selection."
@@ -640,10 +683,11 @@ def _resolve_schedule_add_selection(
     return schedule, section, instructor, None
 
 
-def _schedule_add_success_redirect(request, schedule_id: int):
+def _schedule_add_success_redirect(request, schedule: Schedule):
     """Return success redirect response for schedule add flow."""
-    default_url = f"{reverse('schedule')}?{urlencode({'schedule': schedule_id})}"
-    return redirect(safe_next_url(request, default_url))
+    return redirect(
+        safe_next_url(request, _schedule_page_url(schedule_id=schedule.pk))
+    )
 
 
 def _add_course_to_schedule(
@@ -674,13 +718,12 @@ def _add_course_to_schedule(
         time=(section.section_times or "").rstrip(","),
     )
     messages.success(request, "Successfully added course to schedule.")
-    return _schedule_add_success_redirect(request, schedule.id)
+    return _schedule_add_success_redirect(request, schedule)
 
 
 def _handle_schedule_add_post(
     request,
     course: Course,
-    latest_semester: Semester,
     selected_schedule_id: str,
     selected_option: str,
 ):
@@ -695,7 +738,6 @@ def _handle_schedule_add_post(
     schedule, section, instructor, validation_error = _resolve_schedule_add_selection(
         request.user,
         course,
-        latest_semester,
         (schedule_id, section_id, instructor_id),
     )
     if validation_error:
@@ -712,6 +754,7 @@ def _build_schedule_add_page_context(
     """Build template context for schedule add page."""
     dept = course.subdepartment.department
     breadcrumbs = [
+        ("Schedule Builder", page_state["schedule_builder_url"], False),
         (dept.school.name, reverse("browse"), False),
         (dept.name, reverse("department", args=[dept.id]), False),
         (
@@ -724,6 +767,7 @@ def _build_schedule_add_page_context(
     return {
         "course": course,
         "breadcrumbs": breadcrumbs,
+        "active_semester": page_state["active_semester"],
         "lecture_options": page_state["lecture_options"],
         "other_options": page_state["other_options"],
         "schedules": page_state["schedules"],
@@ -735,6 +779,7 @@ def _build_schedule_add_page_context(
         "selected_option": page_state["selected_option"],
         "default_next_url": page_state["fallback_course_url"],
         "next_url": page_state["next_url"],
+        "schedule_builder_url": page_state["schedule_builder_url"],
     }
 
 
@@ -742,25 +787,33 @@ def _build_schedule_add_page_context(
 def schedule_add_course(request, course_id):
     """Add a course to a schedule from the course flow."""
     course = get_object_or_404(Course, id=course_id)
-    latest_semester = Semester.latest()
-    schedules = Schedule.objects.filter(user=request.user).order_by("name")
-    lecture_options, other_options = _build_schedule_add_options(course, latest_semester)
+    active_semester = resolve_builder_semester(request, request.user)
+    schedules = schedules_for_user(request.user, active_semester)
+    lecture_options, other_options = (
+        _build_schedule_add_options(course, active_semester)
+        if active_semester
+        else ([], [])
+    )
 
-    selected_schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule", "")
+    selected_schedule_id = request.POST.get("schedule_id") or request.GET.get(
+        "schedule", ""
+    )
     selected_option = request.POST.get("selection", "")
 
-    fallback_url = (
-        f"{reverse('schedule')}?{urlencode({'schedule': selected_schedule_id})}"
-        if selected_schedule_id
-        else reverse("schedule")
-    )
+    if selected_schedule_id:
+        schedule_builder_url = _schedule_page_url(schedule_id=selected_schedule_id)
+        fallback_url = schedule_builder_url
+    else:
+        schedule_builder_url = _schedule_page_url(
+            semester_id=active_semester.pk if active_semester else None
+        )
+        fallback_url = schedule_builder_url
     next_url = safe_next_url(request, fallback_url)
 
     if request.method == "POST":
         success_response = _handle_schedule_add_post(
             request,
             course,
-            latest_semester,
             selected_schedule_id,
             selected_option,
         )
@@ -773,6 +826,7 @@ def schedule_add_course(request, course_id):
         _build_schedule_add_page_context(
             course,
             {
+                "active_semester": active_semester,
                 "lecture_options": lecture_options,
                 "other_options": other_options,
                 "schedules": schedules,
@@ -780,6 +834,7 @@ def schedule_add_course(request, course_id):
                 "selected_option": selected_option,
                 "fallback_course_url": fallback_url,
                 "next_url": next_url,
+                "schedule_builder_url": schedule_builder_url,
             },
         ),
     )

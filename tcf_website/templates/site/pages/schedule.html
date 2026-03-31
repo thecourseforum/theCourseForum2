@@ -15,11 +15,30 @@
       <div>
         <h1 class="schedule-builder__title">Schedule Builder</h1>
         <p class="schedule-builder__subtitle">Build and compare schedules with a weekly calendar view.</p>
+        {% if all_semesters %}
+        <form method="get" action="{% url 'schedule' %}" class="schedule-builder__semester-form">
+          <label class="schedule-builder__semester-label" for="schedule-semester-select">Term</label>
+          <select
+            name="semester"
+            id="schedule-semester-select"
+            class="select schedule-builder__semester-select"
+            aria-label="Academic term"
+            onchange="this.form.submit()"
+          >
+            {% for sem in all_semesters %}
+            <option value="{{ sem.pk }}" {% if active_semester and sem.pk == active_semester.pk %}selected{% endif %}>{{ sem }}</option>
+            {% endfor %}
+          </select>
+        </form>
+        {% endif %}
       </div>
 
       <form method="post" action="{% url 'new_schedule' %}" class="schedule-builder__create-form">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        {% if active_semester %}
+        <input type="hidden" name="semester" value="{{ active_semester.pk }}">
+        {% endif %}
         <input
           type="text"
           name="name"
@@ -73,13 +92,13 @@
             <div class="schedule-list-card__actions">
               <form method="post" action="{% url 'duplicate_schedule' schedule.id %}">
                 {% csrf_token %}
-                <input type="hidden" name="next" value="{% url 'schedule' %}?schedule={{ schedule.id }}">
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
                 <button type="submit" class="btn btn--ghost btn--sm">Duplicate</button>
               </form>
               <form method="post" action="{% url 'delete_schedule' %}">
                 {% csrf_token %}
                 <input type="hidden" name="selected_schedules" value="{{ schedule.id }}">
-                <input type="hidden" name="next" value="{% url 'schedule' %}">
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
                 <button type="submit" class="btn btn--ghost btn--sm schedule-list-card__danger">Delete</button>
               </form>
             </div>
@@ -87,7 +106,7 @@
           {% endfor %}
         </div>
         {% else %}
-        <p class="schedule-list__empty">You do not have any schedules yet.</p>
+        <p class="schedule-list__empty">You do not have any schedules for this term yet.</p>
         {% endif %}
       </aside>
 
@@ -150,7 +169,7 @@
         {% else %}
         <div class="schedule-detail__empty-state">
           <h2>Create your first schedule</h2>
-          <p>Use the form above to create a schedule, then add courses from any course page.</p>
+          <p>Use the form above to create a schedule for this term, then add courses from any course page.</p>
         </div>
         {% endif %}
       </section>

@@ -46,6 +46,23 @@
   color: var(--fg-muted);
 }
 
+.schedule-builder__semester-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.schedule-builder__semester-label {
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+}
+
+.schedule-builder__semester-select {
+  min-width: 10rem;
+}
+
 .schedule-builder__create-form,
 .schedule-add__create-form {
   display: flex;

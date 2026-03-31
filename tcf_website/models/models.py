@@ -1652,16 +1652,22 @@ class VoteAnswer(models.Model):
 class Schedule(models.Model):
     """Schedule Model.
 
-    Belongs to a user.
+    Belongs to a user and a semester.
     Has a name.
 
     """
 
     name = models.CharField(max_length=255)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["user", "semester"]),
+        ]
 
     def get_schedule(self):
         """Get the schedule and all its related information"""

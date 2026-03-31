@@ -33,15 +33,21 @@
       <form method="post" action="{% url 'new_schedule' %}" class="schedule-add__create-form">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        {% if active_semester %}
+        <input type="hidden" name="semester" value="{{ active_semester.pk }}">
+        {% endif %}
         <input type="text" class="input" name="name" maxlength="15" required placeholder="New schedule name">
         <button type="submit" class="btn btn--primary btn--sm">Create</button>
       </form>
-      <a href="{% url 'schedule' %}" class="btn btn--ghost btn--sm">Go to Schedule Builder</a>
+      <a href="{{ schedule_builder_url }}" class="btn btn--ghost btn--sm">Go to Schedule Builder</a>
     </section>
     {% else %}
     <form method="post" class="schedule-add__form">
       {% csrf_token %}
       <input type="hidden" name="next" value="{{ next_url|default:default_next_url }}">
+      {% if active_semester %}
+      <input type="hidden" name="semester" value="{{ active_semester.pk }}">
+      {% endif %}
 
       <div class="schedule-add__controls">
         <label class="schedule-add__label" for="schedule_id">Schedule</label>
