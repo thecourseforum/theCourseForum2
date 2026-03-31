@@ -4,10 +4,12 @@
 from decimal import Decimal
 
 from django.conf import settings
+
+from tcf_website.utils import paginate
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
-from django.core.paginator import EmptyPage, Page, Paginator
+from django.core.paginator import Page
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import (
@@ -132,21 +134,8 @@ class Department(models.Model):
     def get_paginated_department_courses(
         self, sort_type: str, num_of_years: int, order: str, page_number=1
     ) -> "Page[Course]":
-        """Generate sorted, paginated reviews"""
-        dept_courses = self.sort_courses(sort_type, num_of_years, order)
-        return self.paginate(dept_courses, page_number)
-
-    def paginate(
-        self, courses: "QuerySet[Course]", page_number, courses_per_page=10
-    ) -> "Page[Course]":
-        """Paginate reviews"""
-        paginator = Paginator(courses, courses_per_page)
-        try:
-            page_obj = paginator.page(page_number)
-        except EmptyPage:
-            page_obj = paginator.page(paginator.num_pages)
-
-        return page_obj
+        """Generate sorted, paginated courses"""
+        return paginate(self.sort_courses(sort_type, num_of_years, order), page_number)
 
     class Meta:
         indexes = [
@@ -1342,25 +1331,13 @@ class Review(models.Model):
                 return reviews.order_by("-created")
 
     @staticmethod
-    def paginate(
-        reviews: "QuerySet[Review]", page_number, reviews_per_page=10
-    ) -> "Page[Review]":
-        """Paginate reviews"""
-        paginator = Paginator(reviews, reviews_per_page)
-        try:
-            page_obj = paginator.page(page_number)
-        except EmptyPage:
-            page_obj = paginator.page(paginator.num_pages)
-
-        return page_obj
-
     @staticmethod
     def get_paginated_reviews(
         course_id, instructor_id, user, page_number=1, method=""
     ) -> "Page[Review]":
         """Generate sorted, paginated reviews"""
         reviews = Review.get_sorted_reviews(course_id, instructor_id, user, method)
-        return Review.paginate(reviews, page_number)
+        return paginate(reviews, page_number)
 
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"

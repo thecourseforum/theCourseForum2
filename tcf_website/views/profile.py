@@ -16,7 +16,7 @@ from django.views import generic
 
 from ..models import Review, User
 from .browse import safe_round
-from .utils import safe_next_url
+from ..utils import paginate, safe_next_url
 
 
 def _review_stats_for_user(user):
@@ -71,7 +71,7 @@ def profile(request):
 def reviews(request):
     """User reviews view."""
     page_number = request.GET.get("page", 1)
-    paginated_reviews = Review.paginate(request.user.reviews(), page_number)
+    paginated_reviews = paginate(request.user.reviews(), page_number)
 
     context = _review_stats_for_user(request.user)
     context["paginated_reviews"] = paginated_reviews

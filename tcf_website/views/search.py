@@ -5,12 +5,12 @@ import statistics
 from typing import Iterable
 
 from django.contrib.postgres.search import TrigramSimilarity
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import F, FloatField, Q, Value
 from django.db.models.functions import Greatest, Round
 from django.shortcuts import redirect, render
 
 from ..models import Club, Course, Instructor, Subdepartment
+from ..utils import paginate
 
 
 def parse_mode(request):
@@ -52,21 +52,6 @@ def group_by_club_category(clubs):
     return grouped
 
 
-def paginate_results(request, items, per_page=15):
-    """Helper function to paginate items."""
-    page_number = request.GET.get("page", 1)
-    paginator = Paginator(items, per_page)
-
-    try:
-        page_obj = paginator.page(page_number)
-    except PageNotAnInteger:
-        page_obj = paginator.page(1)
-    except EmptyPage:
-        page_obj = paginator.page(paginator.num_pages)
-
-    return page_obj, paginator.count
-
-
 def search(request):
     """Search results view."""
 
@@ -77,8 +62,8 @@ def search(request):
     courses_first = True
 
     if is_club:
-        clubs = fetch_clubs(query)
-        page_obj, total = paginate_results(request, clubs)
+        page_obj = paginate(fetch_clubs(query), request.GET.get("page", 1))
+        total = page_obj.paginator.count
         grouped = group_by_club_category(page_obj)
     else:
         if not query:
@@ -87,7 +72,8 @@ def search(request):
         course_results = fetch_courses(query)
         instructors = fetch_instructors(query)
 
-        page_obj, total = paginate_results(request, course_results)
+        page_obj = paginate(course_results, request.GET.get("page", 1), per_page=15)
+        total = page_obj.paginator.count
 
         courses = [
             {

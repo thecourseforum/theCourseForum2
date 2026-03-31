@@ -316,21 +316,7 @@
     {% endif %}
     {% endfor %}
 
-    {% if paginated_reviews.has_other_pages %}
-    <nav class="pagination">
-      {% if paginated_reviews.has_previous %}
-      <a href="?page={{ paginated_reviews.previous_page_number }}{% if sort_method and sort_method != 'Default' %}&sort={{ sort_method|urlencode }}{% endif %}#reviews" class="pagination__item">← Previous</a>
-      {% endif %}
-
-      <span class="pagination__item pagination__status">
-        Page {{ paginated_reviews.number }} of {{ paginated_reviews.paginator.num_pages }}
-      </span>
-
-      {% if paginated_reviews.has_next %}
-      <a href="?page={{ paginated_reviews.next_page_number }}{% if sort_method and sort_method != 'Default' %}&sort={{ sort_method|urlencode }}{% endif %}#reviews" class="pagination__item">Next →</a>
-      {% endif %}
-    </nav>
-    {% endif %}
+    {% include "site/components/_pagination.html" with paginated_items=paginated_reviews anchor="reviews" aria_label="Reviews pagination" %}
     {% else %}
     <div class="reviews-empty">
       <svg class="reviews-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

@@ -15,7 +15,7 @@ from django.views import generic
 from django.views.decorators.http import require_POST
 
 from ..models import Review, Club, Course, Instructor, Semester
-from .utils import safe_next_url
+from ..utils import safe_next_url
 
 # pylint: disable=fixme,unused-argument
 

@@ -21,7 +21,7 @@ from ..models import (
     SectionTime,
     Semester,
 )
-from .utils import safe_next_url
+from ..utils import safe_next_url
 
 # pylint: disable=line-too-long
 # pylint: disable=duplicate-code

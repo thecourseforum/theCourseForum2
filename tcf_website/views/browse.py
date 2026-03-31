@@ -7,7 +7,6 @@ from typing import Any
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Avg, Count, F, Prefetch, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.http import Http404
@@ -27,7 +26,8 @@ from ..models import (
     Section,
     Semester,
 )
-from .search import group_by_dept, paginate_results
+from ..utils import paginate
+from .search import group_by_dept
 
 
 def browse(request):
@@ -62,7 +62,8 @@ def browse(request):
 
     if has_search:
         results = _execute_advanced_search(form.cleaned_data)
-        page_obj, total = paginate_results(request, results)
+        page_obj = paginate(results, request.GET.get("page", 1), per_page=15)
+        total = page_obj.paginator.count
 
         courses = [
             {
@@ -625,14 +626,7 @@ def club_category(request, category_slug: str):
     category = get_object_or_404(ClubCategory, slug=category_slug.upper())
     clubs = Club.objects.filter(category=category).order_by("name")
 
-    page_number = request.GET.get("page", 1)
-    paginator = Paginator(clubs, 10)
-    try:
-        paginated_clubs = paginator.page(page_number)
-    except PageNotAnInteger:
-        paginated_clubs = paginator.page(1)
-    except EmptyPage:
-        paginated_clubs = paginator.page(paginator.num_pages)
+    paginated_clubs = paginate(clubs, request.GET.get("page", 1))
 
     breadcrumbs = [
         ("Clubs", reverse("browse") + "?mode=clubs", False),
