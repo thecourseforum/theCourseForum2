@@ -151,7 +151,7 @@ resource "aws_ecs_service" "django" {
   platform_version = "1.4.0"
 
   network_configuration {
-    subnets          = aws_subnet.public[*].id
+    subnets          = [aws_subnet.public[1].id]
     security_groups  = [aws_security_group.ecs_tasks.id]
     assign_public_ip = true
   }
