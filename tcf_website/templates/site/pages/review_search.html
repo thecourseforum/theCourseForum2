@@ -8,7 +8,11 @@
   <h1 class="heading-1" style="margin-bottom: var(--space-4);">Write a Review</h1>
 
   <div style="width: 100%; max-width: 600px; position: relative; margin: 0 auto; text-align: left;">
+    {% if is_club %}
+    {% include "site/components/_search_bar.html" with autocomplete_action="review" search_placeholder="Search for a club by name..." container_classes="w-full" form_classes="search-bar--hero" %}
+    {% else %}
     {% include "site/components/_search_bar.html" with autocomplete_action="review" search_placeholder="Search for a course by mnemonic, number, or title..." container_classes="w-full" form_classes="search-bar--hero" %}
+    {% endif %}
   </div>
 
 </main>

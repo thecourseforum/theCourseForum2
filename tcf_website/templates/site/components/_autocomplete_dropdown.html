@@ -10,7 +10,7 @@
   <li class="autocomplete-group-header" role="presentation">Clubs <span class="autocomplete-group-header__hint">Tab to select</span></li>
   {% for club in clubs %}
   <li class="autocomplete-item" role="option">
-    <a href="{% url 'club' category_slug=club.category_slug club_id=club.id %}" class="autocomplete-item__link">
+    <a href="{% if autocomplete_action == 'review' %}{% url 'new_review' %}?mode=clubs&club={{ club.id }}{% else %}{% url 'club' category_slug=club.category_slug club_id=club.id %}{% endif %}" class="autocomplete-item__link">
       <span class="autocomplete-item__title">{{ club.name }}</span>
     </a>
   </li>

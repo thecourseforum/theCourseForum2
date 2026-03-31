@@ -322,8 +322,11 @@ def _handle_club_review_get(request, mode):
     club_id = request.GET.get("club")
 
     if not club_id:
-        messages.info(request, "Please select a club to review.")
-        return redirect("browse")
+        return render(
+            request,
+            "site/pages/review_search.html",
+            {"mode": mode, "is_club": True},
+        )
 
     club = get_object_or_404(Club, id=club_id)
     latest = Semester.latest()

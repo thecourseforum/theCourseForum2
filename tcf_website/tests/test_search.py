@@ -155,6 +155,4 @@ class SearchViewTestCase(TCFDataTestCase):
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "site/components/_autocomplete_dropdown.html"
-        )
+        self.assertTemplateUsed(response, "site/components/_autocomplete_dropdown.html")

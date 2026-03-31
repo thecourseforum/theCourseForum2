@@ -18,7 +18,7 @@
       <a href="{% url 'schedule' %}" class="header__nav-link {% if request.resolver_match.url_name == 'schedule' or request.resolver_match.url_name == 'schedule_add_course' %}is-active{% endif %}">
         Schedule
       </a>
-      <a href="{% url 'new_review' %}" class="header__nav-link {% if request.resolver_match.url_name == 'new_review' %}is-active{% endif %}">
+      <a href="{% url 'new_review' %}{% if request.GET.mode == 'clubs' %}?mode=clubs{% endif %}" class="header__nav-link {% if request.resolver_match.url_name == 'new_review' %}is-active{% endif %}">
         Review
       </a>
       {% else %}

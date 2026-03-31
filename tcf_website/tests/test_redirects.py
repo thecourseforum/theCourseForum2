@@ -413,28 +413,26 @@ class ReviewRedirectTestCase(TCFDataTestCase):
 
 
 # ---------------------------------------------------------------------------
-# New review GET: club mode without club -> browse
+# New review GET: club mode without club -> club search (like courses)
 # ---------------------------------------------------------------------------
 
 
-class NewReviewClubRedirectTestCase(TCFDataTestCase):
-    """Club review entry validates ``club`` query param."""
+class NewReviewClubSearchTestCase(TCFDataTestCase):
+    """Club review entry without ``club`` shows searchable picker."""
 
     def setUp(self):
         super().setUp()
         self.client.force_login(self.user1)
 
-    def test_club_review_get_without_club_redirects_to_browse(self):
-        """Club mode without ``club`` id cannot render the form."""
+    def test_club_review_get_without_club_renders_search(self):
+        """Club mode without ``club`` id shows review search with club autocomplete."""
         response = self.client.get(
             reverse("new_review"),
             {"mode": "clubs"},
         )
-        self.assertRedirects(
-            response,
-            reverse("browse"),
-            fetch_redirect_response=False,
-        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "site/pages/review_search.html")
+        self.assertContains(response, "Search for a club by name")
 
 
 # ---------------------------------------------------------------------------
@@ -448,8 +446,8 @@ class QaRefererRedirectTestCase(TCFDataTestCase):
     def setUp(self):
         super().setUp()
         self.client.force_login(self.user1)
-        self.referer = (
-            reverse("course_instructor", args=[self.course.pk, self.instructor.pk])
+        self.referer = reverse(
+            "course_instructor", args=[self.course.pk, self.instructor.pk]
         )
 
     def test_new_question_post_valid_redirects_to_referer(self):

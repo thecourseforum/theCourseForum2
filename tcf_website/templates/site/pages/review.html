@@ -51,7 +51,7 @@
       <div class="rating-grid">
         <!-- Semester -->
         <div class="rating-field">
-          <label class="rating-field__label" for="semester">When did you take this?</label>
+          <label class="rating-field__label" for="semester">{% if is_club %}When did you join?{% else %}When did you take this?{% endif %}</label>
           <select class="instructor-select" id="semester" name="semester" required>
             {% for sem in semesters %}
               <option value="{{ sem.id }}">{{ sem.season|title }} {{ sem.year }}</option>
@@ -93,7 +93,7 @@
           id="reviewtext" 
           name="text" 
           rows="6"
-          placeholder="What was the course like? How was the workload? Any tips for future students? (Minimum 100 characters)"
+          placeholder="{% if is_club %}What was the club like? How was the workload? Any tips for future members? (Minimum 100 characters){% else %}What was the course like? How was the workload? Any tips for future students? (Minimum 100 characters){% endif %}"
           required 
           minlength="100" 
           maxlength="5000"
@@ -219,7 +219,7 @@
             <button class="modal__close" aria-label="Close modal" data-modal-close></button>
           </header>
           <div class="modal__content">
-            <p>You have already reviewed this course/instructor for this semester.</p>
+            <p>{% if is_club %}You have already reviewed this club.{% else %}You have already reviewed this course/instructor for this semester.{% endif %}</p>
           </div>
           <footer class="modal__footer">
             <button class="btn btn--primary" data-modal-close>Okay</button>
@@ -284,7 +284,7 @@
     .then(data => {
         if (data.duplicate) {
             // Show duplicate modal
-            alert("You have already reviewed this course/instructor for this semester."); // Replace with modal
+            alert("{% if is_club %}You have already reviewed this club.{% else %}You have already reviewed this course/instructor for this semester.{% endif %}"); // Replace with modal
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit Review';
         } else {
