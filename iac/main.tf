@@ -2,9 +2,9 @@ provider "aws" {
   region = var.aws_region
 
   default_tags {
-    tags = {
+    tags = merge(local.common_tags, {
       ManagedBy = "terraform"
-    }
+    })
   }
 }
 
@@ -13,8 +13,8 @@ provider "aws" {
   region = "us-east-1"
 
   default_tags {
-    tags = {
+    tags = merge(local.common_tags, {
       ManagedBy = "terraform"
-    }
+    })
   }
 }
