@@ -5,7 +5,6 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 from .models import Course, Semester
 
-# Courses last taught before this semester are hidden; term pickers use the same floor (semester PK).
 OLDEST_SEM_ID = 48
 
 
