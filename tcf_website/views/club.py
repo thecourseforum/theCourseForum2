@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
 from ..models import Club, ClubCategory, Review
-from ..utils import paginate
+from ..pagination import paginate
 
 
 def _get_paginated_club_reviews(club: Club, user, page_number=1, method=""):

@@ -5,12 +5,8 @@ from django.shortcuts import render
 
 from ..forms import AdvancedSearchForm
 from ..models import Club, ClubCategory, School, Section, Semester
-from ..utils import (
-    SECTION_DAY_CODE_TO_SECTIONTIME_FIELD,
-    browsable_course_queryset,
-    paginate,
-    parse_mode,
-)
+from ..pagination import SECTION_DAY_CODE_TO_SECTIONTIME_FIELD, paginate
+from ..utils import browsable_course_queryset, parse_mode
 from .search import course_to_row_dict, group_by_dept
 
 

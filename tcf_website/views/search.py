@@ -11,7 +11,8 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 from ..models import Club, Instructor, Subdepartment
-from ..utils import browsable_course_queryset, paginate, parse_mode
+from ..pagination import paginate
+from ..utils import browsable_course_queryset, parse_mode
 
 # --- Constants ----------------------------------------------------------------
 

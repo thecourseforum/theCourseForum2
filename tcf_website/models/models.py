@@ -30,7 +30,7 @@ from django.db.models import (
 )
 from django.db.models.functions import Abs, Cast, Coalesce, Concat, Round
 
-from tcf_website.utils import SECTION_DAY_CODE_TO_SECTIONTIME_FIELD, paginate
+from tcf_website.pagination import SECTION_DAY_CODE_TO_SECTIONTIME_FIELD, paginate
 
 # pylint: disable=line-too-long
 

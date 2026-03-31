@@ -15,7 +15,8 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from ..models import Review, User
-from ..utils import paginate, safe_next_url, safe_round
+from ..pagination import paginate
+from ..utils import safe_next_url, safe_round
 
 
 def _review_stats_for_user(user):

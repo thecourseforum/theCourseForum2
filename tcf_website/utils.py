@@ -1,20 +1,10 @@
 """Utility helpers shared across the Django app."""
 
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import F, Q
 from django.utils.http import url_has_allowed_host_and_scheme
 
 # Courses/instructors taught only in semesters newer than this are shown in search.
 OLDEST_VISIBLE_SEMESTER_ID = 48
-
-# SectionTime weekday flags (forms / advanced search / Course.filter_by_time).
-SECTION_DAY_CODE_TO_SECTIONTIME_FIELD = {
-    "MON": "monday",
-    "TUE": "tuesday",
-    "WED": "wednesday",
-    "THU": "thursday",
-    "FRI": "friday",
-}
 
 
 def browsable_course_queryset():
@@ -35,17 +25,6 @@ def parse_mode(request):
     """Parse the mode parameter from the request."""
     mode = request.GET.get("mode", "courses")
     return mode, (mode == "clubs")
-
-
-def paginate(items, page_number, per_page=10):
-    """Paginate a queryset or list. Returns a Page object."""
-    paginator = Paginator(items, per_page)
-    try:
-        return paginator.page(page_number)
-    except PageNotAnInteger:
-        return paginator.page(1)
-    except EmptyPage:
-        return paginator.page(paginator.num_pages)
 
 
 def safe_round(num):
