@@ -433,10 +433,21 @@
   position: relative;
 }
 
+.combo::after {
+  content: '▾';
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+  pointer-events: none;
+}
+
 .combo__input {
   width: 100%;
   height: 2.25rem;
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-7) 0 var(--space-3);
   font-size: var(--text-sm);
   color: var(--fg);
   background-color: var(--bg);

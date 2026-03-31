@@ -143,6 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function hideList() { list.hidden = true; }
 
     input.addEventListener('focus', showList);
+    input.addEventListener('click', showList);
     input.addEventListener('input', () => {
       list.hidden = false;
       const q = input.value.toLowerCase();
