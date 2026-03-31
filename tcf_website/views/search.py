@@ -181,11 +181,13 @@ def search(request):
 
     if is_club:
         if is_ajax:
+            clubs = fetch_clubs(query)[:5]
             return render(request, "site/components/_autocomplete_dropdown.html", {
                 "mode": mode,
                 "is_club": is_club,
                 "courses": [],
                 "instructors": [],
+                "clubs": clubs,
                 "courses_first": True,
                 "autocomplete_action": request.GET.get("autocomplete_action"),
                 "autocomplete_target": request.GET.get("autocomplete_target"),
