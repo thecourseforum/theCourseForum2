@@ -199,6 +199,9 @@
 }
 
 .autocomplete-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
   padding: var(--space-1) var(--space-4);
   font-size: var(--text-xs);
   font-weight: var(--font-bold);
@@ -206,6 +209,13 @@
   letter-spacing: var(--tracking-wide);
   color: var(--primary);
   opacity: 0.8;
+}
+
+.autocomplete-group-header__hint {
+  color: var(--fg-subtle);
+  font-weight: var(--font-normal);
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .autocomplete-item {
@@ -248,3 +258,4 @@
   color: var(--fg-subtle);
   display: block;
 }
+

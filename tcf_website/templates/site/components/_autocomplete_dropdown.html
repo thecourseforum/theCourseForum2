@@ -7,7 +7,7 @@
 </ul>
 {% else %}
 <ul class="autocomplete-list" role="listbox">
-  <li class="autocomplete-group-header" role="presentation">Clubs</li>
+  <li class="autocomplete-group-header" role="presentation">Clubs <span class="autocomplete-group-header__hint">Tab to select</span></li>
   {% for club in clubs %}
   <li class="autocomplete-item" role="option">
     <a href="{% url 'club' category_slug=club.category_slug club_id=club.id %}" class="autocomplete-item__link">
@@ -25,10 +25,9 @@
 </ul>
 {% else %}
 <ul class="autocomplete-list" role="listbox">
-  
   {% if courses_first %}
     {% if courses %}
-      <li class="autocomplete-group-header" role="presentation">Courses</li>
+      <li class="autocomplete-group-header" role="presentation">Courses <span class="autocomplete-group-header__hint">Tab to select</span></li>
       {% for course in courses %}
       <li class="autocomplete-item" role="option">
         <a href="{% if autocomplete_action == 'schedule' %}{% url 'schedule_add_course' course_id=course.id %}{% if autocomplete_target %}?schedule={{ autocomplete_target }}{% endif %}{% elif autocomplete_action == 'review' %}{% url 'new_review' %}?course={{ course.id }}{% else %}{% url 'course' mnemonic=course.mnemonic course_number=course.number %}{% endif %}" class="autocomplete-item__link">
@@ -51,7 +50,7 @@
     {% endif %}
   {% else %}
     {% if instructors and not autocomplete_action %}
-      <li class="autocomplete-group-header" role="presentation">Instructors</li>
+      <li class="autocomplete-group-header" role="presentation">Instructors <span class="autocomplete-group-header__hint">Tab to select</span></li>
       {% for instructor in instructors %}
       <li class="autocomplete-item" role="option">
         <a href="{% url 'instructor' instructor_id=instructor.id %}" class="autocomplete-item__link">
@@ -73,6 +72,5 @@
       {% endfor %}
     {% endif %}
   {% endif %}
-
 </ul>
 {% endif %}
