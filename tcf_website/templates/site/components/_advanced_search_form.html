@@ -8,7 +8,7 @@
         <input type="text" class="combo__input" placeholder="Any" autocomplete="off" aria-label="Term">
         <ul class="combo__list" hidden>
           {% for value, label in form.semester.field.choices %}
-          <li class="combo__option" data-value="{{ value }}" {% if form.semester.value|stringformat:"s" == value|stringformat:"s" %}data-selected{% endif %}>{{ label }}</li>
+          <li class="combo__option" tabindex="-1" data-value="{{ value }}" {% if form.semester.value|stringformat:"s" == value|stringformat:"s" %}data-selected{% endif %}>{{ label }}</li>
           {% endfor %}
         </ul>
         <input type="hidden" name="semester" value="{{ form.semester.value|default:'' }}">
@@ -21,7 +21,7 @@
         <input type="text" class="combo__input" placeholder="Any" autocomplete="off" aria-label="School">
         <ul class="combo__list" hidden>
           {% for value, label in form.school.field.choices %}
-          <li class="combo__option" data-value="{{ value }}" {% if form.school.value|stringformat:"s" == value|stringformat:"s" %}data-selected{% endif %}>{{ label }}</li>
+          <li class="combo__option" tabindex="-1" data-value="{{ value }}" {% if form.school.value|stringformat:"s" == value|stringformat:"s" %}data-selected{% endif %}>{{ label }}</li>
           {% endfor %}
         </ul>
         <input type="hidden" name="school" value="{{ form.school.value|default:'' }}">
@@ -34,7 +34,7 @@
         <input type="text" class="combo__input" placeholder="Any" autocomplete="off" aria-label="Subject" data-mnemonic-search>
         <ul class="combo__list" hidden>
           {% for value, label in form.subject.field.choices %}
-          <li class="combo__option" data-value="{{ value }}" {% if form.subject.value == value %}data-selected{% endif %}>{{ label }}</li>
+          <li class="combo__option" tabindex="-1" data-value="{{ value }}" {% if form.subject.value == value %}data-selected{% endif %}>{{ label }}</li>
           {% endfor %}
         </ul>
         <input type="hidden" name="subject" value="{{ form.subject.value|default:'' }}">

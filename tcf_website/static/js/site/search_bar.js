@@ -1,3 +1,40 @@
+// Shared utility: add Up/Down arrow key navigation between an input and a
+// container of focusable items. Used by both the search bar autocomplete and
+// the combo-box dropdowns on the browse page.
+function addArrowKeyNav(input, container, itemSelector) {
+  function getItems() {
+    return Array.from(container.querySelectorAll(itemSelector));
+  }
+  function isOpen() {
+    return !container.hidden && container.style.display !== "none";
+  }
+  input.addEventListener("keydown", (e) => {
+    if (!isOpen()) return;
+    const items = getItems();
+    if (!items.length) return;
+    const activeIdx = items.findIndex((item) => document.activeElement === item);
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      items[activeIdx < items.length - 1 ? activeIdx + 1 : 0].focus();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      items[activeIdx > 0 ? activeIdx - 1 : items.length - 1].focus();
+    }
+  });
+  container.addEventListener("keydown", (e) => {
+    const items = getItems();
+    const activeIdx = items.findIndex((item) => document.activeElement === item);
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (activeIdx < items.length - 1) items[activeIdx + 1].focus();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (activeIdx > 0) items[activeIdx - 1].focus();
+      else input.focus();
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".search-bar-container").forEach((container) => {
     const form = container.querySelector("form");
@@ -82,53 +119,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // Handle keyboard navigation simple way: Up/Down
-      searchInput.addEventListener("keydown", (e) => {
-        if (autocompleteContainer.style.display !== "block") return;
-        const items = Array.from(
-          autocompleteContainer.querySelectorAll(
-            ".autocomplete-item__link, .autocomplete-item__title",
-          ),
-        ); // if no link, select title
-        if (!items.length) return;
-
-        const activeIdx = items.findIndex(
-          (item) => document.activeElement === item,
-        );
-
-        if (e.key === "ArrowDown") {
-          e.preventDefault();
-          if (activeIdx < items.length - 1) items[activeIdx + 1].focus();
-          else items[0].focus();
-        } else if (e.key === "ArrowUp") {
-          e.preventDefault();
-          if (activeIdx > 0) items[activeIdx - 1].focus();
-          else items[items.length - 1].focus();
-        } else if (
-          document.activeElement !== searchInput &&
-          e.key === "Enter"
-        ) {
-          // Allow natural link following
-        }
-      });
-
-      autocompleteContainer.addEventListener("keydown", (e) => {
-        // Similar handling inside container
-        const items = Array.from(
-          autocompleteContainer.querySelectorAll(".autocomplete-item__link"),
-        );
-        const activeIdx = items.findIndex(
-          (item) => document.activeElement === item,
-        );
-        if (e.key === "ArrowDown") {
-          e.preventDefault();
-          if (activeIdx < items.length - 1) items[activeIdx + 1].focus();
-        } else if (e.key === "ArrowUp") {
-          e.preventDefault();
-          if (activeIdx > 0) items[activeIdx - 1].focus();
-          else searchInput.focus();
-        }
-      });
+      addArrowKeyNav(
+        searchInput,
+        autocompleteContainer,
+        ".autocomplete-item__link, .autocomplete-item__title",
+      );
     }
   });
 });

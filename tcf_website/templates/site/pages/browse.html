@@ -136,7 +136,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const preselected = options.find(o => o.hasAttribute('data-selected') && o.dataset.value !== '');
     if (preselected) input.value = preselected.textContent.trim();
 
+    let suppressShow = false;
+
     function showList() {
+      if (suppressShow) return;
       list.hidden = false;
       options.forEach(o => { o.hidden = false; });
       if (mnemonicSearch) options.forEach(o => list.appendChild(o));
@@ -171,16 +174,51 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 
+    function selectOption(opt) {
+      hidden.value = opt.dataset.value;
+      input.value = opt.dataset.value ? opt.textContent.trim() : '';
+      suppressShow = true;
+      hideList();
+      input.focus();
+      suppressShow = false;
+    }
+
     list.addEventListener('mousedown', e => {
       const opt = e.target.closest('.combo__option');
       if (!opt) return;
       e.preventDefault();
-      hidden.value = opt.dataset.value;
-      input.value = opt.dataset.value ? opt.textContent.trim() : '';
+      selectOption(opt);
+    });
+
+    // Don't hide when focus moves into the list (keyboard navigation).
+    input.addEventListener('blur', e => {
+      if (list.contains(e.relatedTarget)) return;
+      hideList();
+    });
+    list.addEventListener('focusout', e => {
+      if (e.relatedTarget === input || list.contains(e.relatedTarget)) return;
       hideList();
     });
 
-    input.addEventListener('blur', hideList);
+    // Enter to select the focused option; Escape to close.
+    list.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const focused = list.querySelector('.combo__option:focus');
+        if (!focused) return;
+        e.preventDefault();
+        selectOption(focused);
+      } else if (e.key === 'Escape') {
+        suppressShow = true;
+        hideList();
+        input.focus();
+        suppressShow = false;
+      }
+    });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Escape') hideList();
+    });
+
+    addArrowKeyNav(input, list, '.combo__option:not([hidden])');
   });
 });
 </script>
