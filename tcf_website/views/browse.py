@@ -148,13 +148,6 @@ def _apply_course_filters(qs, filters):
     if filters.get("discipline"):
         qs = qs.filter(disciplines__name__in=filters["discipline"])
 
-    if filters.get("level"):
-        level = int(filters["level"])
-        if level < 5:
-            qs = qs.filter(number__gte=level * 1000, number__lt=(level + 1) * 1000)
-        else:
-            qs = qs.filter(number__gte=5000)
-
     if filters.get("min_gpa"):
         qs = qs.filter(coursegrade__average__gte=filters["min_gpa"])
 

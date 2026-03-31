@@ -21,7 +21,6 @@ class AdvancedSearchForm(forms.Form):
 
     # Advanced fields
     discipline = forms.MultipleChoiceField(required=False, label="Discipline")
-    level = forms.ChoiceField(required=False, label="Level")
     component = forms.CharField(required=False, label="Component")
     instructor = forms.CharField(required=False, label="Instructor")
     units_min = forms.CharField(required=False, label="Units (min)")
@@ -64,15 +63,6 @@ class AdvancedSearchForm(forms.Form):
 
         self.fields["discipline"].choices = [
             (d.name, d.name) for d in Discipline.objects.order_by("name")
-        ]
-
-        self.fields["level"].choices = [
-            ("", "Any"),
-            ("1", "1xxx"),
-            ("2", "2xxx"),
-            ("3", "3xxx"),
-            ("4", "4xxx"),
-            ("5", "5xxx+"),
         ]
 
     def has_search_params(self):

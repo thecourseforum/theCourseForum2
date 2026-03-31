@@ -67,19 +67,6 @@
     <!-- Row 3: Level, Component, Instructor -->
     <div class="advanced-search__grid">
       <div class="advanced-search__field">
-        <label>Level</label>
-        <div class="combo">
-          <input type="text" class="combo__input" placeholder="Any" autocomplete="off" aria-label="Level">
-          <ul class="combo__list" hidden>
-            {% for value, label in form.level.field.choices %}
-            <li class="combo__option" data-value="{{ value }}" {% if form.level.value == value %}data-selected{% endif %}>{{ label }}</li>
-            {% endfor %}
-          </ul>
-          <input type="hidden" name="level" value="{{ form.level.value|default:'' }}">
-        </div>
-      </div>
-
-      <div class="advanced-search__field">
         <label for="id_component">Component</label>
         <input type="text" name="component" id="id_component" value="{{ form.component.value|default:'' }}" placeholder="e.g. Lecture, Lab">
       </div>
