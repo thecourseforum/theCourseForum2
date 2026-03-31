@@ -3,14 +3,14 @@
 from django.db.models import F, Q
 from django.utils.http import url_has_allowed_host_and_scheme
 
+from .models import Course
+
 # Courses/instructors taught only in semesters newer than this are shown in search.
 OLDEST_VISIBLE_SEMESTER_ID = 48
 
 
 def browsable_course_queryset():
     """Visible catalog courses: subdepartment join, mnemonic, number range, recency."""
-    # Deferred import: `models` imports this module at load time (avoids circular import).
-    from .models import Course  # pylint: disable=import-outside-toplevel
 
     return (
         Course.objects.select_related("subdepartment")
