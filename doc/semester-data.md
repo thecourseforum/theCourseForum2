@@ -25,7 +25,8 @@ See [load_semester.py](https://github.com/thecourseforum/theCourseForum2/blob/de
 ## Frequency
 
 The semester data for a semester should be updated at least two times:
-1. Before course enrollment for that semester opens 
+1. When the courses offered for following semester are released
+   - Fall and Summer and Spring and January can typically be added around the same time
 2. After the first day of classes of that semester
 
 ## Other useful commands
