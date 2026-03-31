@@ -66,6 +66,21 @@ class AdvancedSearchForm(forms.Form):
             (d.name, d.name) for d in Discipline.objects.order_by("name")
         ]
 
+    _ADVANCED_FIELDS = frozenset(
+        (
+            "component",
+            "instructor",
+            "units_min",
+            "units_max",
+            "days",
+            "start_time",
+            "end_time",
+            "description",
+            "open_sections",
+            "discipline",
+        )
+    )
+
     def has_search_params(self):
         """Return True if any search field has a value."""
         if not self.is_valid():
@@ -73,3 +88,9 @@ class AdvancedSearchForm(forms.Form):
         return any(
             v for k, v in self.cleaned_data.items() if v and v != [] and k != "page"
         )
+
+    def has_advanced_params(self):
+        """Return True if any advanced (hidden) field has a value."""
+        if not self.is_valid():
+            return False
+        return any(self.cleaned_data.get(f) for f in self._ADVANCED_FIELDS)

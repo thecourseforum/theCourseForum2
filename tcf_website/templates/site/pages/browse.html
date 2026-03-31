@@ -234,6 +234,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     addArrowKeyNav(input, list, '.combo__option:not([hidden])', { upLoops: false, downLoops: false });
   });
+
+  // Scroll to results after a search submission, clearing the sticky header
+  const firstResult = document.querySelector('.search-group, .search-empty');
+  if (firstResult) {
+    const headerH = document.querySelector('.header')?.offsetHeight ?? 0;
+    const top = firstResult.getBoundingClientRect().top + window.scrollY - headerH - 16;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
 });
 </script>
 {% endblock %}

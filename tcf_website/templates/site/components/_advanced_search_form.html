@@ -61,7 +61,7 @@
   </div>
 
   <!-- Advanced collapsible -->
-  <details class="advanced-search__advanced">
+  <details class="advanced-search__advanced"{% if form.has_advanced_params %} open{% endif %}>
     <summary>Advanced</summary>
 
     <!-- Row 3: Level, Component, Instructor -->
