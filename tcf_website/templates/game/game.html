@@ -1,38 +1,53 @@
 {% extends "base/base.html" %}
 {% load static %}
+
 {% block title %}Review Game{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'game/game.css' %}" />
+<link rel="stylesheet" href="{% static 'reviews/review_stats.css' %}" />
 {% endblock %}
 
 {% block content %}
-<div><p>{{ review.text }}</p></div>
+<!-- might need to wrap everything in a container -->
+<div class="top-half row">
+    <div class="persistent-display col-4">
+        <div class="info-display">
+            <h1 class="info-header">Guess today's course!</h1>
+            <h3 class="info-text">Enter a course to begin</h3>
+        </div>
+        <div class="guess-wrapper">
+            <form id="game-form" class="input-group flex-grow-1" method="post">
+                {% csrf_token %}
+                <input
+                    type="text"
+                    class="form-control border border-right-0"
+                    placeholder="Type course name... (e.g. CS 1110)"
+                    name="course"
+                    id="course-input"
+                    list="course-list"
+                    value="{{ form.course.value|default_if_none:'' }}"
+                />
+
+                <datalist id="course-list">
+                    {% for c in courses %}
+                        <option value="{{ c.combined_mnemonic_number }}"></option>
+                    {% endfor %}
+                </datalist>
+
+                <button 
+                    class="input-group-append btn btn-outline-secondary border border-left-0" 
+                    type="submit" aria-label="Search">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="review-container col-8">
+        {% include "reviews/review.html" with course_id=review.course instructor_id=review.instructor %}
+    </div>
+</div>
 <div>
-    <p>Please type in a course:</p>
-    <form id="game-form" method="post">
-        {% csrf_token %}
-        <input
-            type="text"
-            name="course"
-            id="id_course"
-            list="course-list"
-            value="{{ form.course.value|default_if_none:'' }}"
-        />
-
-        <datalist id="course-list">
-            {% for c in courses %}
-                <option value="{{ c.combined_mnemonic_number }}"></option>
-            {% endfor %}
-        </datalist>
-
-        <!-- <label>Rating (1-5): <input type="number" name="rating" min="1" max="5"></label>
-        <label>Difficulty (1-5): <input type="number" name="difficulty" min="1" max="5"></label>
-        <label>GPA (0-4): <input type="number" name="gpa" min="0" max="4"></label> -->
-        
-        <button type="submit">Submit Guess</button>
-    </form>
-
     <div id="guesses">
         <p>GUESSES</p>
         <p>Your guess: mnemonic | number | avg rating | avg difficulty | avg gpa</p>
@@ -50,8 +65,8 @@
         <div id="guess-10" class="guess-row"></div> 
 
     </div>
-
 </div>
+
 {% endblock %}
 
 {% block js %}

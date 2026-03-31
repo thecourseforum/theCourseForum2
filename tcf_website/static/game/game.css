@@ -4,3 +4,22 @@
     display: block;
     background-color: #ffffff;
 }
+
+.guess-row {
+    background-color: tomato;
+}
+
+.info-display {
+    background-color: var(--shaded-color);
+}
+
+/*overwrite form-control gray background*/
+#course-input { 
+    background-color: white;
+}
+
+/*need it to be like 2 cols
+
+information      review-display (like 60%)
+guess-section    review-display (like 60%)
+*/
