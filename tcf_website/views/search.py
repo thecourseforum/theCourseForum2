@@ -21,19 +21,24 @@ def parse_mode(request):
 
 def group_by_dept(courses):
     """Groups courses by their department and adds relevant data."""
+    mnemonics = {course["mnemonic"] for course in courses}
+    subdepts = {
+        s.mnemonic: s
+        for s in Subdepartment.objects.filter(mnemonic__in=mnemonics).only(
+            "mnemonic", "name", "department_id"
+        )
+    }
     grouped_courses = {}
     for course in courses:
-        course_dept = course["mnemonic"]
-        if course_dept not in grouped_courses:
-            subdept = Subdepartment.objects.filter(mnemonic=course_dept).first()
-            # should only ever have one returned with that mnemonic
-            grouped_courses[course_dept] = {
+        mnemonic = course["mnemonic"]
+        if mnemonic not in grouped_courses:
+            subdept = subdepts[mnemonic]
+            grouped_courses[mnemonic] = {
                 "subdept_name": subdept.name,
                 "dept_id": subdept.department_id,
                 "courses": [],
             }
-        grouped_courses[course_dept]["courses"].append(course)
-
+        grouped_courses[mnemonic]["courses"].append(course)
     return grouped_courses
 
 
@@ -57,17 +62,52 @@ def search(request):
 
     query = request.GET.get("q", "").strip()
     mode, is_club = parse_mode(request)
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
 
     instructors = []
     courses_first = True
 
     if is_club:
+        if is_ajax:
+            return render(request, "site/components/_autocomplete_dropdown.html", {
+                "mode": mode,
+                "is_club": is_club,
+                "courses": [],
+                "instructors": [],
+                "courses_first": True,
+                "autocomplete_action": request.GET.get("autocomplete_action"),
+                "autocomplete_target": request.GET.get("autocomplete_target"),
+            })
         page_obj = paginate(fetch_clubs(query), request.GET.get("page", 1))
         total = page_obj.paginator.count
         grouped = group_by_club_category(page_obj)
     else:
         if not query:
             return redirect("browse")
+
+        if is_ajax:
+            course_qs = fetch_courses(query)[:5]
+            courses = [
+                {
+                    "id": c.id,
+                    "title": c.title,
+                    "number": c.number,
+                    "mnemonic": c.mnemonic,
+                    "description": c.description,
+                    "max_similarity": c.max_similarity,
+                }
+                for c in course_qs
+            ]
+            instructors = fetch_instructors(query)[:3]
+            return render(request, "site/components/_autocomplete_dropdown.html", {
+                "mode": mode,
+                "is_club": is_club,
+                "courses_first": decide_order(courses, instructors),
+                "courses": courses,
+                "instructors": instructors,
+                "autocomplete_action": request.GET.get("autocomplete_action"),
+                "autocomplete_target": request.GET.get("autocomplete_target"),
+            })
 
         course_results = fetch_courses(query)
         instructors = fetch_instructors(query)
@@ -103,14 +143,6 @@ def search(request):
         "page_obj": page_obj,
     }
 
-    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        if not is_club and "courses" in locals():
-            ctx["courses"] = courses[:5]
-        ctx["instructors"] = instructors[:3]
-        ctx["autocomplete_action"] = request.GET.get("autocomplete_action")
-        ctx["autocomplete_target"] = request.GET.get("autocomplete_target")
-        return render(request, "site/components/_autocomplete_dropdown.html", ctx)
-
     return render(request, "site/pages/search.html", ctx)
 
 
@@ -134,8 +166,7 @@ def fetch_clubs(query):
         )
 
     qs = (
-        Club.objects.annotate(sim=TrigramSimilarity("combined_name", query))
-        .annotate(max_similarity=F("sim"))
+        Club.objects.annotate(max_similarity=TrigramSimilarity("combined_name", query))
         .filter(max_similarity__gte=threshold)
         .annotate(category_slug=F("category__slug"), category_name=F("category__name"))
         .order_by("-max_similarity")
@@ -172,7 +203,7 @@ def fetch_instructors(query) -> list[dict]:
     # arbitrarily chosen threshold
     similarity_threshold = 0.5
     results = (
-        Instructor.objects.only("first_name", "last_name", "full_name", "email")
+        Instructor.objects.only("first_name", "last_name", "email")
         .annotate(
             similarity_first=TrigramSimilarity("first_name", query),
             similarity_last=TrigramSimilarity("last_name", query),
@@ -237,7 +268,7 @@ def fetch_courses(query):
         # expose mnemonic to view
         .annotate(mnemonic=F("subdepartment__mnemonic"))
         .filter(max_similarity__gte=similarity_threshold)
-        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+        .filter(Q(number__isnull=True) | Q(number__range=(1000, 9999)))
         .exclude(semester_last_taught_id__lt=48)
         .order_by("-max_similarity")
     )

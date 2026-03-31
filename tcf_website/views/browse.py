@@ -118,7 +118,7 @@ def _execute_advanced_search(filters):
         Course.objects.select_related("subdepartment")
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(mnemonic=F("subdepartment__mnemonic"))
-        .filter(Q(number__isnull=True) | Q(number__regex=r"^\d{4}$"))
+        .filter(Q(number__isnull=True) | Q(number__range=(1000, 9999)))
         .exclude(semester_last_taught_id__lt=48)
     )
 
