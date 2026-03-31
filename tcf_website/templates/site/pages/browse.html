@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const list = combo.querySelector('.combo__list');
     const hidden = combo.querySelector('input[type="hidden"]');
     const options = Array.from(list.querySelectorAll('.combo__option'));
+    const mnemonicSearch = input.hasAttribute('data-mnemonic-search');
 
     // Set initial display value from pre-selected option
     const preselected = options.find(o => o.hasAttribute('data-selected') && o.dataset.value !== '');
@@ -138,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function showList() {
       list.hidden = false;
       options.forEach(o => { o.hidden = false; });
+      if (mnemonicSearch) options.forEach(o => list.appendChild(o));
     }
 
     function hideList() { list.hidden = true; }
@@ -147,9 +149,26 @@ document.addEventListener('DOMContentLoaded', function() {
     input.addEventListener('input', () => {
       list.hidden = false;
       const q = input.value.toLowerCase();
-      options.forEach(o => {
-        o.hidden = q !== '' && !o.textContent.toLowerCase().includes(q);
-      });
+      if (!q) {
+        options.forEach(o => { o.hidden = false; });
+        if (mnemonicSearch) options.forEach(o => list.appendChild(o));
+        return;
+      }
+      if (mnemonicSearch) {
+        const primary = [], secondary = [];
+        options.forEach(o => {
+          const text = o.textContent.trim().toLowerCase();
+          const mnemonic = text.split(' - ')[0];
+          if (mnemonic.includes(q)) { o.hidden = false; primary.push(o); }
+          else if (text.includes(q)) { o.hidden = false; secondary.push(o); }
+          else { o.hidden = true; }
+        });
+        [...primary, ...secondary].forEach(o => list.appendChild(o));
+      } else {
+        options.forEach(o => {
+          o.hidden = !o.textContent.toLowerCase().includes(q);
+        });
+      }
     });
 
     list.addEventListener('mousedown', e => {

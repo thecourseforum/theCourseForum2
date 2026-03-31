@@ -31,7 +31,7 @@
     <div class="advanced-search__field">
       <label>Subject</label>
       <div class="combo">
-        <input type="text" class="combo__input" placeholder="Any" autocomplete="off" aria-label="Subject">
+        <input type="text" class="combo__input" placeholder="Any" autocomplete="off" aria-label="Subject" data-mnemonic-search>
         <ul class="combo__list" hidden>
           {% for value, label in form.subject.field.choices %}
           <li class="combo__option" data-value="{{ value }}" {% if form.subject.value == value %}data-selected{% endif %}>{{ label }}</li>
