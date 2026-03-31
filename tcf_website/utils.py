@@ -1,11 +1,18 @@
 """Utility helpers shared across the Django app."""
 
 from django.db.models import F, Q, QuerySet
+from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 
 from .models import Course, Semester
 
-OLDEST_SEM_ID = 48
+# Rolling window for catalog browse/search and term pickers (calendar years).
+_CATALOG_YEAR_WINDOW = 5
+
+
+def _min_catalog_semester_year() -> int:
+    """First calendar year (inclusive) to show in the course catalog."""
+    return timezone.now().year - _CATALOG_YEAR_WINDOW
 
 
 def browsable_course_queryset():
@@ -16,13 +23,15 @@ def browsable_course_queryset():
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(mnemonic=F("subdepartment__mnemonic"))
         .filter(Q(number__isnull=True) | Q(number__range=(1000, 9999)))
-        .exclude(semester_last_taught_id__lt=OLDEST_SEM_ID)
+        .filter(semester_last_taught__year__gte=_min_catalog_semester_year())
     )
 
 
 def recent_semesters() -> QuerySet:
-    """Get semesters after the oldest visible semester."""
-    return Semester.objects.filter(pk__gte=OLDEST_SEM_ID).order_by("-number")
+    """Semesters in the catalog year window, newest SIS number first."""
+    return Semester.objects.filter(year__gte=_min_catalog_semester_year()).order_by(
+        "-number"
+    )
 
 
 def parse_mode(request):

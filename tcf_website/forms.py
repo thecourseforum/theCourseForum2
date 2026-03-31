@@ -50,7 +50,8 @@ class AdvancedSearchForm(forms.Form):
         self.fields["semester"].choices = [("", "Any")] + [
             (s.pk, str(s)) for s in semesters
         ]
-        self.fields["semester"].initial = latest.pk
+        if latest is not None:
+            self.fields["semester"].initial = latest.pk
 
         self.fields["school"].choices = [("", "Any")] + [
             (s.pk, s.name) for s in School.objects.order_by("name")

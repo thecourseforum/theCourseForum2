@@ -19,9 +19,10 @@ def setup(obj):
     obj.subdepartment = Subdepartment.objects.create(
         name="Computer Science", mnemonic="CS", department=obj.department
     )
-    obj.semester = Semester.objects.create(year=2020, season="FALL", number=1208)
-    obj.past_semester = Semester.objects.create(year=2010, season="FALL", number=1108)
-    obj.incomplete_semester = Semester.objects.create(year=2019, number=1198)
+    # Years must fall in browsable window (see utils._min_catalog_semester_year).
+    obj.semester = Semester.objects.create(year=2025, season="FALL", number=1258)
+    obj.past_semester = Semester.objects.create(year=2022, season="FALL", number=1228)
+    obj.incomplete_semester = Semester.objects.create(year=2023, season="", number=1238)
 
     obj.course = Course.objects.create(
         title="Software Testing",
@@ -254,13 +255,12 @@ def suppress_request_warnings(original_function):
     """
 
     def new_function(*args, **kwargs):
-        # raise logging level to ERROR
         logger = logging.getLogger("django.request")
         previous_logging_level = logger.getEffectiveLevel()
         logger.setLevel(logging.ERROR)
-        # trigger original function that would throw warning
-        original_function(*args, **kwargs)
-        # lower logging level back to previous
-        logger.setLevel(previous_logging_level)
+        try:
+            return original_function(*args, **kwargs)
+        finally:
+            logger.setLevel(previous_logging_level)
 
     return new_function

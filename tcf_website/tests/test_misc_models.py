@@ -27,7 +27,7 @@ class MiscModelsTestCase(TestCase):
     def test_section_name(self):
         """Test __str__ method in Section mdoel"""
         self.assertEqual(
-            "CS 1420 | Software Testing | Fall 2020 | Tom Jefferson (tjt3rea@virginia.edu)",
+            "CS 1420 | Software Testing | Fall 2025 | Tom Jefferson (tjt3rea@virginia.edu)",
             str(self.section_course),
         )
 
