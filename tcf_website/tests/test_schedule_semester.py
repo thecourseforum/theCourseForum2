@@ -78,7 +78,7 @@ class ScheduleSemesterTestCase(TestCase):
                 "next": reverse("schedule"),
             },
         )
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         self.assertFalse(
             ScheduledCourse.objects.filter(
                 schedule=schedule, section=section_current

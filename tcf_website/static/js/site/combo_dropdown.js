@@ -1,4 +1,4 @@
-// Searchable dropdowns (.combo). Depends on addArrowKeyNav from search_bar.js.
+// Searchable dropdowns (.combo). Requires search_bar.js (defines window.addArrowKeyNav).
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".combo").forEach((combo) => {
     const input = combo.querySelector(".combo__input");
@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.key === "Escape") hideList();
     });
 
-    addArrowKeyNav(input, list, ".combo__option:not([hidden])", {
+    window.addArrowKeyNav(input, list, ".combo__option:not([hidden])", {
       upLoops: false,
       downLoops: false,
     });

@@ -6,7 +6,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from .models import Course, Semester
 
 # Courses last taught before this semester are hidden; term pickers use the same floor (semester PK).
-OLDEST_VISIBLE_SEMESTER_ID = 48
+OLDEST_SEM_ID = 48
 
 
 def browsable_course_queryset():
@@ -17,15 +17,13 @@ def browsable_course_queryset():
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(mnemonic=F("subdepartment__mnemonic"))
         .filter(Q(number__isnull=True) | Q(number__range=(1000, 9999)))
-        .exclude(semester_last_taught_id__lt=OLDEST_VISIBLE_SEMESTER_ID)
+        .exclude(semester_last_taught_id__lt=OLDEST_SEM_ID)
     )
 
 
 def recent_semesters() -> QuerySet:
     """Get semesters after the oldest visible semester."""
-    return Semester.objects.filter(pk__gte=OLDEST_VISIBLE_SEMESTER_ID).order_by(
-        "-number"
-    )
+    return Semester.objects.filter(pk__gte=OLDEST_SEM_ID).order_by("-number")
 
 
 def parse_mode(request):

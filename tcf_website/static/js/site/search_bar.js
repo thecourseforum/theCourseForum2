@@ -50,6 +50,8 @@ function addArrowKeyNav(
   });
 }
 
+window.addArrowKeyNav = addArrowKeyNav;
+
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".search-bar-container").forEach((container) => {
     const form = container.querySelector("form");
