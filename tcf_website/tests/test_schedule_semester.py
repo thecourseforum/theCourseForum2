@@ -84,3 +84,98 @@ class ScheduleSemesterTestCase(TestCase):
                 schedule=schedule, section=section_current
             ).exists()
         )
+
+    def test_add_course_allows_multiple_selected_sections(self):
+        """Posting multiple selections adds one scheduled row per checked section."""
+        schedule = Schedule.objects.create(
+            name="Current", user=self.user1, semester=self.semester
+        )
+        lecture_section = Section.objects.create(
+            course=self.course,
+            semester=self.semester,
+            sis_section_number=101,
+        )
+        discussion_section = Section.objects.create(
+            course=self.course,
+            semester=self.semester,
+            sis_section_number=102,
+            section_type="LAB",
+        )
+        lecture_section.instructors.set([self.instructor])
+        discussion_section.instructors.set([self.instructor])
+
+        post_url = reverse("schedule_add_course", args=[self.course.pk])
+        response = self.client.post(
+            post_url,
+            {
+                "schedule_id": str(schedule.pk),
+                "selection": [
+                    f"{lecture_section.pk}:{self.instructor.pk}",
+                    f"{discussion_section.pk}:{self.instructor.pk}",
+                ],
+                "semester": str(self.semester.pk),
+                "next": reverse("schedule"),
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            ScheduledCourse.objects.filter(schedule=schedule).count(),
+            2,
+        )
+
+    def test_add_course_does_not_partially_add_multiple_selected_sections(self):
+        """If one selected section fails, none of the new selections are added."""
+        schedule = Schedule.objects.create(
+            name="Current", user=self.user1, semester=self.semester
+        )
+        existing_section = Section.objects.create(
+            course=self.course,
+            semester=self.semester,
+            sis_section_number=100,
+        )
+        lecture_section = Section.objects.create(
+            course=self.course,
+            semester=self.semester,
+            sis_section_number=101,
+        )
+        discussion_section = Section.objects.create(
+            course=self.course,
+            semester=self.semester,
+            sis_section_number=102,
+            section_type="LAB",
+        )
+        existing_section.instructors.set([self.instructor])
+        lecture_section.instructors.set([self.instructor])
+        discussion_section.instructors.set([self.instructor])
+        ScheduledCourse.objects.create(
+            schedule=schedule,
+            section=existing_section,
+            instructor=self.instructor,
+            enrolled_units=3,
+        )
+
+        post_url = reverse("schedule_add_course", args=[self.course.pk])
+        response = self.client.post(
+            post_url,
+            {
+                "schedule_id": str(schedule.pk),
+                "selection": [
+                    f"{lecture_section.pk}:{self.instructor.pk}",
+                    f"{existing_section.pk}:{self.instructor.pk}",
+                ],
+                "semester": str(self.semester.pk),
+                "next": reverse("schedule"),
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            ScheduledCourse.objects.filter(schedule=schedule).count(),
+            1,
+        )
+        self.assertFalse(
+            ScheduledCourse.objects.filter(
+                schedule=schedule, section=lecture_section
+            ).exists()
+        )

@@ -23,7 +23,7 @@
 
     <div class="schedule-add__header">
       <h1 class="schedule-add__title">Add {{ course.code }} to a Schedule</h1>
-      <p class="schedule-add__subtitle">Select a schedule and section.</p>
+      <p class="schedule-add__subtitle">Select a schedule and section(s).</p>
     </div>
 
     {% if not schedules %}
@@ -68,11 +68,10 @@
           {% for option in lecture_options %}
           <label class="schedule-add-option">
             <input
-              type="radio"
+              type="checkbox"
               name="selection"
               value="{{ option.value }}"
-              {% if selected_option == option.value %}checked{% endif %}
-              required
+              {% if option.value in selected_options %}checked{% endif %}
             >
             <div class="schedule-add-option__content">
               <div class="schedule-add-option__row">
@@ -104,11 +103,10 @@
           {% for option in other_options %}
           <label class="schedule-add-option">
             <input
-              type="radio"
+              type="checkbox"
               name="selection"
               value="{{ option.value }}"
-              {% if selected_option == option.value %}checked{% endif %}
-              required
+              {% if option.value in selected_options %}checked{% endif %}
             >
             <div class="schedule-add-option__content">
               <div class="schedule-add-option__row">

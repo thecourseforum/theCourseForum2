@@ -8,6 +8,7 @@ from urllib.parse import urlencode
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -677,7 +678,7 @@ def _parse_schedule_add_selection(
     if not selected_schedule_id:
         return None, None, None, "Choose a schedule first."
     if not selected_option:
-        return None, None, None, "Choose a section to add."
+        return None, None, None, "Choose at least one section to add."
 
     parts = selected_option.strip().split(":")
     if len(parts) != 2:
@@ -704,13 +705,16 @@ def _add_course_to_schedule(
     section: Section,
     instructor: Instructor,
     enrolled_units: int,
-):
-    """Attempt to add the selected section and emit user-facing messages."""
+) -> bool:
+    """Attempt to add one selected section and emit user-facing messages."""
     if ScheduledCourse.objects.filter(
         schedule=schedule, section=section, instructor=instructor
     ).exists():
-        messages.info(request, "That section is already in this schedule.")
-        return None
+        messages.info(
+            request,
+            f"Section {section.sis_section_number} is already in this schedule.",
+        )
+        return False
 
     candidate_blocks = _section_time_rows_to_blocks(list(section.sectiontime_set.all()))
     if not candidate_blocks:
@@ -719,9 +723,9 @@ def _add_course_to_schedule(
     if _has_schedule_conflict(schedule, candidate_blocks):
         messages.error(
             request,
-            "This section conflicts with another meeting in the selected schedule.",
+            f"Section {section.sis_section_number} conflicts with another meeting in the selected schedule.",
         )
-        return None
+        return False
 
     ScheduledCourse.objects.create(
         schedule=schedule,
@@ -730,8 +734,7 @@ def _add_course_to_schedule(
         time=(section.section_times or "").rstrip(","),
         enrolled_units=enrolled_units,
     )
-    messages.success(request, "Successfully added course to schedule.")
-    return _schedule_add_success_redirect(request, schedule)
+    return True
 
 
 def _enrolled_units_from_schedule_add_post(
@@ -802,19 +805,33 @@ def _handle_schedule_add_post(
     request,
     course: Course,
     selected_schedule_id: str,
-    selected_option: str,
+    selected_options: list[str],
 ):
     """Handle POST submission for schedule add flow."""
-    resolved = _resolve_schedule_add_post(
-        request, course, selected_schedule_id, selected_option
-    )
-    if isinstance(resolved, str):
-        messages.error(request, resolved)
+    if not selected_options:
+        messages.error(request, "Choose at least one section to add.")
         return None
-    schedule, section, instructor, enrolled_units = resolved
-    return _add_course_to_schedule(
-        request, schedule, section, instructor, enrolled_units
-    )
+
+    schedule = None
+    with transaction.atomic():
+        for selected_option in selected_options:
+            resolved = _resolve_schedule_add_post(
+                request, course, selected_schedule_id, selected_option
+            )
+            if isinstance(resolved, str):
+                messages.error(request, resolved)
+                transaction.set_rollback(True)
+                return None
+
+            schedule, section, instructor, enrolled_units = resolved
+            if not _add_course_to_schedule(
+                request, schedule, section, instructor, enrolled_units
+            ):
+                transaction.set_rollback(True)
+                return None
+
+    messages.success(request, "Successfully added course to schedule.")
+    return _schedule_add_success_redirect(request, schedule)
 
 
 def _build_schedule_add_page_context(
@@ -846,7 +863,7 @@ def _build_schedule_add_page_context(
             if page_state["selected_schedule_id"]
             else ""
         ),
-        "selected_option": page_state["selected_option"],
+        "selected_options": page_state["selected_options"],
         "default_next_url": page_state["fallback_course_url"],
         "next_url": page_state["next_url"],
         "schedule_builder_url": page_state["schedule_builder_url"],
@@ -868,7 +885,7 @@ def schedule_add_course(request, course_id):
     selected_schedule_id = request.POST.get("schedule_id") or request.GET.get(
         "schedule", ""
     )
-    selected_option = request.POST.get("selection", "")
+    selected_options = request.POST.getlist("selection")
 
     if selected_schedule_id:
         schedule_builder_url = _schedule_page_url(schedule_id=selected_schedule_id)
@@ -885,7 +902,7 @@ def schedule_add_course(request, course_id):
             request,
             course,
             selected_schedule_id,
-            selected_option,
+            selected_options,
         )
         if success_response is not None:
             return success_response
@@ -901,7 +918,7 @@ def schedule_add_course(request, course_id):
                 "other_options": other_options,
                 "schedules": schedules,
                 "selected_schedule_id": selected_schedule_id,
-                "selected_option": selected_option,
+                "selected_options": selected_options,
                 "fallback_course_url": fallback_url,
                 "next_url": next_url,
                 "schedule_builder_url": schedule_builder_url,
