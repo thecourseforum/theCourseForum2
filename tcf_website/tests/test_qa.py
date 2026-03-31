@@ -18,7 +18,12 @@ class CreateQuestionTests(TestCase):
         """Unauthenticated POST is redirected to login."""
         response = self.client.post(
             reverse("create_question"),
-            {"title": "Test?", "text": "Body", "course": self.course.id, "instructor": self.instructor.id},
+            {
+                "title": "Test?",
+                "text": "Body",
+                "course": self.course.id,
+                "instructor": self.instructor.id,
+            },
         )
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login", response["Location"])
@@ -164,9 +169,7 @@ class QuestionDetailTests(TestCase):
     def test_question_detail_404_for_nonexistent(self):
         """Returns 404 for a nonexistent question ID."""
         self.client.force_login(self.user1)
-        response = self.client.get(
-            reverse("qa_question_detail", args=[99999])
-        )
+        response = self.client.get(reverse("qa_question_detail", args=[99999]))
         self.assertEqual(response.status_code, 404)
 
 
@@ -203,9 +206,7 @@ class GetInstructorsForCourseTests(TestCase):
     def test_returns_instructors_for_course(self):
         """Returns instructors who have taught the course."""
         self.client.force_login(self.user1)
-        response = self.client.get(
-            reverse("qa_get_instructors", args=[self.course.id])
-        )
+        response = self.client.get(reverse("qa_get_instructors", args=[self.course.id]))
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertIn("instructors", data)
@@ -216,9 +217,7 @@ class GetInstructorsForCourseTests(TestCase):
     def test_returns_404_for_invalid_course(self):
         """Returns 404 for a nonexistent course ID."""
         self.client.force_login(self.user1)
-        response = self.client.get(
-            reverse("qa_get_instructors", args=[99999])
-        )
+        response = self.client.get(reverse("qa_get_instructors", args=[99999]))
         self.assertEqual(response.status_code, 404)
 
 
@@ -248,9 +247,7 @@ class QaDashboardIntegrationTest(TestCase):
 
         # Load question detail AJAX
         self.client.force_login(self.user2)
-        response = self.client.get(
-            reverse("qa_question_detail", args=[question.id])
-        )
+        response = self.client.get(reverse("qa_question_detail", args=[question.id]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Is it curve-based?")
 
@@ -266,7 +263,5 @@ class QaDashboardIntegrationTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
         # Verify answer appears in detail
-        response = self.client.get(
-            reverse("qa_question_detail", args=[question.id])
-        )
+        response = self.client.get(reverse("qa_question_detail", args=[question.id]))
         self.assertContains(response, "Yes, there is a generous curve.")

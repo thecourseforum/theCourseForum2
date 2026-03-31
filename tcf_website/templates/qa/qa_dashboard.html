@@ -69,44 +69,13 @@
 
         <!-- Posts List -->
         <div class="posts-list" id="postsList">
-            {% for question in questions %}
-            <div class="post-item {% if selected_question.id == question.id %}active{% endif %}"
-                 data-question-id="{{ question.id }}">
-                <div class="post-header">
-                    <span class="post-tag">
-                        {{ question.course.subdepartment.mnemonic }} {{ question.course.number }}
-                    </span>
-                    <span class="post-date">{{ question.created|date:"n/j/y" }}</span>
-                </div>
-                <div class="post-title">{{ question.title|default:question.text|truncatechars:60 }}</div>
-                <div class="post-preview">
-                    {{ question.text|truncatechars:80 }}
-                </div>
-                <div class="post-footer">
-                    <span class="post-stats {% if question.user_q_vote == 1%}voted{% endif %}" id="sidebar-vote-count-{{ question.id }}">
-                        <i class="fa fa-thumbs-up"></i> <span class="sidebar-vote-num">{{ question.sum_q_votes|default:0 }}</span>
-                    </span>
-                </div>
-            </div>
-            {% empty %}
-            <div class="no-posts">
-                <i class="fa fa-comments-o fa-3x mb-3"></i>
-                <p>No questions found.</p>
-            </div>
-            {% endfor %}
+            {% include 'qa/_question_list.html' %}
         </div>
     </div>
 
     <!-- Right Content: Question Detail -->
     <div class="qa-content" id="questionContent">
-        {% if selected_question %}
-        {% include 'qa/_question_detail.html' with question=selected_question answers=answers semesters=semesters %}
-        {% else %}
-        <div class="no-post-selected">
-            <i class="fa fa-hand-o-left fa-3x mb-3"></i>
-            <p>Select a question to view its details</p>
-        </div>
-        {% endif %}
+        {% include 'qa/_question_content.html' %}
     </div>
 </div>
 

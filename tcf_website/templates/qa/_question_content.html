@@ -1,0 +1,8 @@
+{% if selected_question %}
+{% include 'qa/_question_detail.html' with question=selected_question answers=answers semesters=semesters %}
+{% else %}
+<div class="no-post-selected">
+    <i class="fa fa-hand-o-left fa-3x mb-3"></i>
+    <p>Select a question to view its details</p>
+</div>
+{% endif %}

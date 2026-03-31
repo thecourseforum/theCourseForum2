@@ -64,27 +64,54 @@ function initSearch() {
     if (!input) return;
 
     let timeout;
+    function runSearch() {
+        const q = input.value.trim();
+        const url = new URL(window.location);
+        if (q) url.searchParams.set('q', q);
+        else url.searchParams.delete('q');
+        url.searchParams.delete('question');
+
+        fetch(url.toString(), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+            .then(r => r.json())
+            .then(data => {
+                const postsList = document.getElementById('postsList');
+                const contentArea = document.getElementById('questionContent');
+
+                if (postsList) postsList.innerHTML = data.posts_html;
+                if (contentArea) contentArea.innerHTML = data.detail_html;
+
+                initQuestionSelection();
+                initVoting();
+                initAnswerForm();
+                initQuestionActions();
+                initAnswerActions();
+                initReplyForms();
+
+                if (data.selected_question_id) {
+                    url.searchParams.set('question', data.selected_question_id);
+                }
+
+                window.history.pushState({}, '', url);
+            })
+            .catch(() => {
+                window.location.href = url.toString();
+            });
+    }
+
     input.addEventListener('input', function () {
         clearTimeout(timeout);
-        const q = this.value.trim();
         timeout = setTimeout(() => {
-            const url = new URL(window.location);
-            if (q) url.searchParams.set('q', q);
-            else url.searchParams.delete('q');
-            url.searchParams.delete('question');
-            window.location.href = url.toString();
+            runSearch();
         }, 500);
     });
 
     input.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             clearTimeout(timeout);
-            const url = new URL(window.location);
-            const q = this.value.trim();
-            if (q) url.searchParams.set('q', q);
-            else url.searchParams.delete('q');
-            url.searchParams.delete('question');
-            window.location.href = url.toString();
+            e.preventDefault();
+            runSearch();
         }
     });
 }

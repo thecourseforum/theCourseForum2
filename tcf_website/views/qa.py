@@ -13,6 +13,7 @@ from django.db import models
 from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views import generic
 
@@ -99,20 +100,39 @@ def qa_dashboard(request):
 
     semesters = Semester.objects.order_by("-number")[:20]
 
-    return render(
-        request,
-        "qa/qa_dashboard.html",
-        {
-            "questions": questions,
-            "selected_question": selected_question,
-            "answers": answers,
-            "courses_with_questions": courses_with_questions,
-            "search_query": search_query,
-            "selected_course": course_filter,
-            "selected_course_obj": selected_course_obj,
-            "semesters": semesters,
-        },
-    )
+    context = {
+        "questions": questions,
+        "selected_question": selected_question,
+        "answers": answers,
+        "courses_with_questions": courses_with_questions,
+        "search_query": search_query,
+        "selected_course": course_filter,
+        "selected_course_obj": selected_course_obj,
+        "semesters": semesters,
+    }
+
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        posts_html = render_to_string(
+            "qa/_question_list.html",
+            context,
+            request=request,
+        )
+        detail_html = render_to_string(
+            "qa/_question_content.html",
+            context,
+            request=request,
+        )
+        return JsonResponse(
+            {
+                "posts_html": posts_html,
+                "detail_html": detail_html,
+                "selected_question_id": (
+                    selected_question.id if selected_question else None
+                ),
+            }
+        )
+
+    return render(request, "qa/qa_dashboard.html", context)
 
 
 @login_required
@@ -488,6 +508,7 @@ def downvote_answer(request, answer_id):
         vote_obj = answer.voteanswer_set.filter(user=request.user).first()
         user_vote = vote_obj.value if vote_obj else 0
         return JsonResponse({"ok": True, "votes": net, "user_vote": user_vote})
+    return JsonResponse({"ok": False})
     return JsonResponse({"ok": False})
     return JsonResponse({"ok": False})
     return JsonResponse({"ok": False})
