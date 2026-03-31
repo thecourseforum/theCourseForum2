@@ -147,10 +147,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function hideList() { list.hidden = true; }
 
-    input.addEventListener('focus', showList);
+    input.addEventListener('focus', () => {
+      showList();
+      // Select all so the first keystroke replaces the current label.
+      // Skip when focus is coming back from selectOption (suppressShow is true).
+      if (hidden.value && !suppressShow) setTimeout(() => input.select(), 0);
+    });
     input.addEventListener('click', showList);
     input.addEventListener('input', () => {
       list.hidden = false;
+      hidden.value = '';
       const q = input.value.toLowerCase();
       if (!q) {
         options.forEach(o => { o.hidden = false; });
@@ -193,6 +199,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Don't hide when focus moves into the list (keyboard navigation).
     input.addEventListener('blur', e => {
       if (list.contains(e.relatedTarget)) return;
+      // Restore the selected label, or clear if nothing is selected.
+      if (hidden.value) {
+        const sel = options.find(o => String(o.dataset.value) === String(hidden.value));
+        if (sel) input.value = sel.textContent.trim();
+      } else {
+        input.value = '';
+      }
       hideList();
     });
     list.addEventListener('focusout', e => {
