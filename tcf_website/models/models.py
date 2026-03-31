@@ -1,8 +1,6 @@
 # pylint: disable=missing-class-docstring, wildcard-import, fixme, too-many-lines
 """TCF Database models."""
 
-from decimal import Decimal
-
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.aggregates.general import ArrayAgg
@@ -28,7 +26,7 @@ from django.db.models import (
     When,
     fields,
 )
-from django.db.models.functions import Abs, Cast, Coalesce, Concat, Round
+from django.db.models.functions import Abs, Coalesce, Concat, Round
 
 from tcf_website.pagination import SECTION_DAY_CODE_TO_SECTIONTIME_FIELD, paginate
 
@@ -997,6 +995,9 @@ class Section(models.Model):
 
     # Section # of units. Optional.
     units = models.CharField(max_length=10, blank=True)
+    # Parsed catalog credits (whole units; 0,0 if SIS text is missing or unparseable).
+    units_min = models.IntegerField(default=0)
+    units_max = models.IntegerField(default=0)
     # Section section_type. Optional. e.g. 'lec' or 'lab'.
     section_type = models.CharField(max_length=255, blank=True)
 
@@ -1031,6 +1032,10 @@ class Section(models.Model):
                 name="unique sections per semesters",
             )
         ]
+
+    @property
+    def is_variable_credit(self) -> bool:
+        return self.units_min < self.units_max
 
 
 class SectionTime(models.Model):
@@ -1683,9 +1688,7 @@ class Schedule(models.Model):
         ] * 5  # intialize return array for the schedule, which will have 5 fields
         ret[0] = courses  # list of courses in the schedule
         # pylint: disable=not-an-iterable
-        ret[1] = sum(
-            Decimal(course.section.units) for course in ret[0] if course.section.units
-        )
+        ret[1] = sum(c.enrolled_units for c in ret[0])
         ret[2] = (
             self.average_rating_for_schedule()
         )  # average rating for the courses in this schedule
@@ -1696,7 +1699,7 @@ class Schedule(models.Model):
         # calculate weighted gpa based on credits
         for course in courses:
             course_gpa = course.gpa
-            course_credits = float(course.credits) if course.credits else 0.0
+            course_credits = float(course.enrolled_units)
 
             if not course_gpa:
                 continue  # pass a given course if there is no gpa for it
@@ -1718,10 +1721,6 @@ class Schedule(models.Model):
         queryset = (
             self.scheduledcourse_set.select_related("section", "instructor")
             .annotate(
-                credits=Cast(
-                    "section__units",
-                    output_field=models.DecimalField(max_digits=3, decimal_places=2),
-                ),
                 avg_recommendability=Coalesce(
                     models.Avg(
                         "section__course__review__recommendability",
@@ -1790,6 +1789,7 @@ class Schedule(models.Model):
             )
             # Store the GPA in an attribute of the ScheduledCourse instance
             setattr(scheduled_course, "gpa", gpa)
+            setattr(scheduled_course, "credits", scheduled_course.enrolled_units)
 
         return scheduled_courses
 
@@ -1928,6 +1928,8 @@ class ScheduledCourse(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     # Time of the section. Required.
     time = models.CharField(max_length=255)
+    # Credits the student is taking for this section (always set; equals units_min when fixed).
+    enrolled_units = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.section.course} | {self.instructor}"

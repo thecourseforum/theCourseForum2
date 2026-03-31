@@ -80,7 +80,16 @@
                 <span>Section {{ option.section_number }}</span>
               </div>
               <div class="schedule-add-option__row schedule-add-option__row--meta">
-                <span>{{ option.section_type }}{% if option.section_units %} ({{ option.section_units }} units){% endif %}</span>
+                <span class="schedule-add-option__meta-left">
+                  {{ option.section_type }}{% if option.section_units %} ({{ option.section_units }} units){% endif %}
+                  {% if option.variable_credit %}
+                  <select name="enrolled_units_{{ option.section_id }}_{{ option.instructor_id }}" class="select select--sm schedule-add-option__credits-select" aria-label="Credits">
+                    {% for co in option.credit_options %}
+                    <option value="{{ co.value }}"{% if co.selected %} selected{% endif %}>{{ co.value }} cr</option>
+                    {% endfor %}
+                  </select>
+                  {% endif %}
+                </span>
                 <span>{{ option.section_time|default:"No time listed" }}</span>
               </div>
             </div>
@@ -107,7 +116,16 @@
                 <span>Section {{ option.section_number }}</span>
               </div>
               <div class="schedule-add-option__row schedule-add-option__row--meta">
-                <span>{{ option.section_type }}{% if option.section_units %} ({{ option.section_units }} units){% endif %}</span>
+                <span class="schedule-add-option__meta-left">
+                  {{ option.section_type }}{% if option.section_units %} ({{ option.section_units }} units){% endif %}
+                  {% if option.variable_credit %}
+                  <select name="enrolled_units_{{ option.section_id }}_{{ option.instructor_id }}" class="select select--sm schedule-add-option__credits-select" aria-label="Credits">
+                    {% for co in option.credit_options %}
+                    <option value="{{ co.value }}"{% if co.selected %} selected{% endif %}>{{ co.value }} cr</option>
+                    {% endfor %}
+                  </select>
+                  {% endif %}
+                </span>
                 <span>{{ option.section_time|default:"No time listed" }}</span>
               </div>
             </div>

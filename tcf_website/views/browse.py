@@ -80,6 +80,29 @@ def _apply_section_filters(qs, filters):
     if end_time := filters.get("end_time"):
         section_q &= Q(section__sectiontime__end_time__lte=end_time)
 
+    units_lo = units_hi = None
+    if (u := str(filters.get("units_min") or "").strip()):
+        try:
+            units_lo = int(round(float(u)))
+        except ValueError:
+            pass
+    if (u := str(filters.get("units_max") or "").strip()):
+        try:
+            units_hi = int(round(float(u)))
+        except ValueError:
+            pass
+    if units_lo is not None or units_hi is not None:
+        if units_lo is not None and units_hi is not None and units_lo > units_hi:
+            return qs.none()
+        if units_lo is not None and units_hi is not None:
+            section_q &= Q(section__units_max__gte=units_lo) & Q(
+                section__units_min__lte=units_hi
+            )
+        elif units_lo is not None:
+            section_q &= Q(section__units_max__gte=units_lo)
+        else:
+            section_q &= Q(section__units_min__lte=units_hi)
+
     if section_q:
         qs = qs.filter(section_q)
 

@@ -21,7 +21,7 @@ from ..models import (
     SectionTime,
     Semester,
 )
-from ..utils import safe_next_url, recent_semesters
+from ..utils import recent_semesters, safe_next_url
 
 # pylint: disable=line-too-long
 # pylint: disable=duplicate-code
@@ -603,6 +603,41 @@ def remove_scheduled_course(request, scheduled_course_id):
     return redirect(safe_next_url(request, _schedule_page_url(schedule_id=schedule_id)))
 
 
+# Credits: users pick hours only on this add form; enrolled_units is stored and not edited later.
+
+
+def _append_schedule_add_option(
+    bucket: list[dict],
+    section: Section,
+    instructor: Instructor,
+    display_name: str,
+    section_time: str,
+) -> None:
+    """One row per section/instructor; variable sections get a credits dropdown (add flow only)."""
+    if section.is_variable_credit:
+        credit_options = [
+            {"value": str(c), "selected": c == section.units_max}
+            for c in range(section.units_min, section.units_max + 1)
+        ]
+    else:
+        credit_options = []
+
+    bucket.append(
+        {
+            "value": f"{section.id}:{instructor.id}",
+            "section_id": section.id,
+            "instructor_id": instructor.id,
+            "section_number": section.sis_section_number,
+            "section_type": section.section_type or "Lecture",
+            "section_units": section.units,
+            "variable_credit": section.is_variable_credit,
+            "credit_options": credit_options,
+            "section_time": section_time,
+            "instructor_name": display_name,
+        }
+    )
+
+
 def _build_schedule_add_options(
     course: Course, term_semester: Semester
 ) -> tuple[list[dict], list[dict]]:
@@ -624,69 +659,38 @@ def _build_schedule_add_options(
                 if instructor.full_name
                 else f"{instructor.first_name} {instructor.last_name}".strip()
             )
-            option = {
-                "value": f"{section.id}:{instructor.id}",
-                "section_id": section.id,
-                "instructor_id": instructor.id,
-                "section_number": section.sis_section_number,
-                "section_type": section.section_type or "Lecture",
-                "section_units": section.units,
-                "section_time": section_time,
-                "instructor_name": display_name,
-            }
-            if _is_lecture_section(section.section_type):
-                lecture_options.append(option)
-            else:
-                other_options.append(option)
+            target = (
+                lecture_options
+                if _is_lecture_section(section.section_type)
+                else other_options
+            )
+            _append_schedule_add_option(
+                target, section, instructor, display_name, section_time
+            )
     return lecture_options, other_options
 
 
 def _parse_schedule_add_selection(
     selected_schedule_id: str, selected_option: str
 ) -> tuple[int | None, int | None, int | None, str | None]:
-    """Parse schedule and section selection values from POST data."""
+    """Parse schedule and section selection from POST data."""
     if not selected_schedule_id:
         return None, None, None, "Choose a schedule first."
     if not selected_option:
         return None, None, None, "Choose a section to add."
 
+    parts = selected_option.strip().split(":")
+    if len(parts) != 2:
+        return None, None, None, "Invalid section selection."
+
     try:
-        section_id_raw, instructor_id_raw = selected_option.split(":")
         schedule_id = int(selected_schedule_id)
-        section_id = int(section_id_raw)
-        instructor_id = int(instructor_id_raw)
-    except (AttributeError, TypeError, ValueError):
+        section_id = int(parts[0])
+        instructor_id = int(parts[1])
+    except (TypeError, ValueError):
         return None, None, None, "Invalid section selection."
 
     return schedule_id, section_id, instructor_id, None
-
-
-def _resolve_schedule_add_selection(
-    user,
-    course: Course,
-    selection_ids: tuple[int, int, int],
-) -> tuple[Schedule | None, Section | None, Instructor | None, str | None]:
-    """Validate selected schedule/section/instructor objects."""
-    schedule_id, section_id, instructor_id = selection_ids
-
-    schedule = Schedule.objects.filter(id=schedule_id, user=user).first()
-    if schedule is None:
-        return None, None, None, "Invalid schedule selection."
-
-    section = Section.objects.filter(
-        id=section_id, course=course, semester_id=schedule.semester_id
-    ).first()
-    if section is None:
-        return None, None, None, "Invalid section selection."
-
-    instructor = Instructor.objects.filter(id=instructor_id, hidden=False).first()
-    if instructor is None:
-        return None, None, None, "Invalid instructor selection."
-
-    if not section.instructors.filter(id=instructor.id).exists():
-        return None, None, None, "The selected instructor does not teach that section."
-
-    return schedule, section, instructor, None
 
 
 def _schedule_add_success_redirect(request, schedule: Schedule):
@@ -695,7 +699,11 @@ def _schedule_add_success_redirect(request, schedule: Schedule):
 
 
 def _add_course_to_schedule(
-    request, schedule: Schedule, section: Section, instructor: Instructor
+    request,
+    schedule: Schedule,
+    section: Section,
+    instructor: Instructor,
+    enrolled_units: int,
 ):
     """Attempt to add the selected section and emit user-facing messages."""
     if ScheduledCourse.objects.filter(
@@ -720,6 +728,7 @@ def _add_course_to_schedule(
         section=section,
         instructor=instructor,
         time=(section.section_times or "").rstrip(","),
+        enrolled_units=enrolled_units,
     )
     messages.success(request, "Successfully added course to schedule.")
     return _schedule_add_success_redirect(request, schedule)
@@ -739,16 +748,54 @@ def _handle_schedule_add_post(
         messages.error(request, parse_error)
         return None
 
-    schedule, section, instructor, validation_error = _resolve_schedule_add_selection(
-        request.user,
-        course,
-        (schedule_id, section_id, instructor_id),
-    )
-    if validation_error:
-        messages.error(request, validation_error)
+    schedule = Schedule.objects.filter(id=schedule_id, user=request.user).first()
+    if schedule is None:
+        messages.error(request, "Invalid schedule selection.")
         return None
 
-    return _add_course_to_schedule(request, schedule, section, instructor)
+    section = Section.objects.filter(
+        id=section_id,
+        course=course,
+        semester_id=schedule.semester_id,
+    ).first()
+    if section is None:
+        messages.error(request, "Invalid section selection.")
+        return None
+
+    instructor = Instructor.objects.filter(id=instructor_id, hidden=False).first()
+    if instructor is None:
+        messages.error(request, "Invalid instructor selection.")
+        return None
+
+    if not section.instructors.filter(id=instructor.id).exists():
+        messages.error(
+            request, "The selected instructor does not teach that section."
+        )
+        return None
+
+    if section.units_min < section.units_max:
+        raw = request.POST.get(
+            f"enrolled_units_{section_id}_{instructor_id}", ""
+        ).strip()
+        if not raw:
+            messages.error(
+                request, "Choose how many credits to take for this section."
+            )
+            return None
+        try:
+            enrolled_units = int(raw)
+        except ValueError:
+            messages.error(request, "Invalid credit value.")
+            return None
+        if enrolled_units < section.units_min or enrolled_units > section.units_max:
+            messages.error(request, "Credits are outside the range for this section.")
+            return None
+    else:
+        enrolled_units = section.units_min
+
+    return _add_course_to_schedule(
+        request, schedule, section, instructor, enrolled_units
+    )
 
 
 def _build_schedule_add_page_context(
