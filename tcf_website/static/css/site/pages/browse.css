@@ -115,25 +115,21 @@
 
   background-color: var(--bg-elevated);
   color: var(--fg);
+  border: 1px solid var(--border);
   border-radius: var(--radius-xl);
 
   cursor: pointer;
-  transition: background-color var(--duration-fast) var(--ease-default),
-              box-shadow var(--duration-fast) var(--ease-default);
+  transition: border-color var(--duration-fast) var(--ease-default);
 }
 
 .school-header:hover {
-  background-color: var(--color-primary-50);
-  box-shadow: var(--shadow-sm);
-}
-
-[data-theme="dark"] .school-header:hover {
-  background-color: var(--bg-muted);
+  border-color: var(--fg-subtle);
 }
 
 .school-header.is-open {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
 }
 
 .school-header__info {
