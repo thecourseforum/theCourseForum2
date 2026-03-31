@@ -110,28 +110,30 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  
+
   padding: var(--space-3) var(--space-5);
-  
-  background-color: var(--primary);
-  color: var(--primary-fg);
-  border: 1px solid var(--primary);
+
+  background-color: var(--bg-elevated);
+  color: var(--fg);
   border-radius: var(--radius-xl);
-  
+
   cursor: pointer;
   transition: background-color var(--duration-fast) var(--ease-default),
               box-shadow var(--duration-fast) var(--ease-default);
 }
 
 .school-header:hover {
-  background-color: var(--primary-hover);
+  background-color: var(--color-primary-50);
   box-shadow: var(--shadow-sm);
+}
+
+[data-theme="dark"] .school-header:hover {
+  background-color: var(--bg-muted);
 }
 
 .school-header.is-open {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  border-bottom-color: transparent;
 }
 
 .school-header__info {
@@ -144,18 +146,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   width: 2.5rem;
   height: 2.5rem;
-  
-  background-color: rgba(255, 255, 255, 0.15);
-  color: var(--primary-fg);
-  
+
+  background-color: var(--color-primary-100);
+  color: var(--primary);
+
   border-radius: var(--radius-lg);
 }
 
 [data-theme="dark"] .school-header__icon {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--bg-muted);
+  color: var(--color-primary-400);
 }
 
 .school-header__icon svg {
@@ -166,18 +169,18 @@
 .school-header__title {
   font-size: var(--text-base);
   font-weight: var(--font-semibold);
-  color: var(--primary-fg);
+  color: var(--fg);
 }
 
 .school-header__count {
   font-size: var(--text-sm);
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--fg-muted);
 }
 
 .school-header__chevron {
   width: 1.25rem;
   height: 1.25rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--fg-muted);
   transition: transform var(--duration-normal) var(--ease-default);
 }
 
