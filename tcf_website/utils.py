@@ -1,3 +1,5 @@
+"""Utility helpers shared across the Django app."""
+
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.utils.http import url_has_allowed_host_and_scheme
 

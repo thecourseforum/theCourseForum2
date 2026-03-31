@@ -7,7 +7,7 @@ from typing import Any
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Avg, Count, F, Prefetch, Q, Sum, Value
+from django.db.models import Avg, Count, Exists, F, OuterRef, Prefetch, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -129,47 +129,51 @@ def _execute_advanced_search(filters):
 
 
 def _apply_course_filters(qs, filters):
-    """Apply course-level filters (school, subject, title, etc.)."""
-    if filters.get("school"):
-        qs = qs.filter(subdepartment__department__school_id=filters["school"])
+    """Apply course-level filters in one Q."""
+    course_q = Q()
 
-    if filters.get("subject"):
-        qs = qs.filter(subdepartment__mnemonic=filters["subject"])
+    if school := filters.get("school"):
+        course_q &= Q(subdepartment__department__school_id=school)
 
-    if filters.get("course_number"):
-        qs = qs.filter(number__startswith=filters["course_number"])
+    if subject := filters.get("subject"):
+        course_q &= Q(subdepartment__mnemonic=subject)
 
-    if filters.get("title"):
-        qs = qs.filter(title__icontains=filters["title"])
+    if course_number := filters.get("course_number"):
+        course_q &= Q(number__startswith=course_number)
 
-    if filters.get("description"):
-        qs = qs.filter(description__icontains=filters["description"])
+    if title := filters.get("title"):
+        course_q &= Q(title__icontains=title)
 
-    if filters.get("discipline"):
-        qs = qs.filter(disciplines__name__in=filters["discipline"])
+    if description := filters.get("description"):
+        course_q &= Q(description__icontains=description)
 
-    if filters.get("min_gpa"):
-        qs = qs.filter(coursegrade__average__gte=filters["min_gpa"])
+    if discipline := filters.get("discipline"):
+        course_q &= Q(disciplines__name__in=discipline)
+
+    if course_q:
+        qs = qs.filter(course_q)
 
     return qs
 
 
 def _apply_section_filters(qs, filters):
-    """Apply section-level filters (semester, instructor, days, time, etc.)."""
-    if filters.get("semester"):
-        qs = qs.filter(section__semester_id=filters["semester"])
+    """Apply section-level filters in one Q so joins refer to the same Section row."""
+    section_q = Q()
 
-    if filters.get("component"):
-        qs = qs.filter(section__section_type__icontains=filters["component"])
+    if semester := filters.get("semester"):
+        section_q &= Q(section__semester_id=semester)
 
-    if filters.get("instructor"):
-        qs = qs.filter(section__instructors__full_name__icontains=filters["instructor"])
+    if component := filters.get("component"):
+        section_q &= Q(section__section_type__icontains=component)
 
-    if filters.get("open_sections"):
-        open_ids = Course.filter_by_open_sections().values_list("id", flat=True)
-        qs = qs.filter(id__in=open_ids)
+    if instructor := filters.get("instructor"):
+        section_q &= Q(section__instructors__full_name__icontains=instructor)
 
-    # Day filter: show courses that MEET on the selected days
+    if min_gpa := filters.get("min_gpa"):
+        section_q &= Q(
+            section__instructors__courseinstructorgrade__course_id=F("id"),
+            section__instructors__courseinstructorgrade__average__gte=min_gpa,
+        )
     #pylint: disable=duplicate-code
     day_map = {
         "MON": "monday",
@@ -178,18 +182,30 @@ def _apply_section_filters(qs, filters):
         "THU": "thursday",
         "FRI": "friday",
     }
-    days = filters.get("days", [])
-    if days:
+    if days := filters.get("days", []):
         day_q = Q()
         for day_code in days:
             if day_code in day_map:
                 day_q |= Q(**{f"section__sectiontime__{day_map[day_code]}": True})
-        qs = qs.filter(day_q)
+        if day_q:
+            section_q &= day_q
 
-    if filters.get("start_time"):
-        qs = qs.filter(section__sectiontime__start_time__gte=filters["start_time"])
-    if filters.get("end_time"):
-        qs = qs.filter(section__sectiontime__end_time__lte=filters["end_time"])
+    if start_time := filters.get("start_time"):
+        section_q &= Q(section__sectiontime__start_time__gte=start_time)
+
+    if end_time := filters.get("end_time"):
+        section_q &= Q(section__sectiontime__end_time__lte=end_time)
+
+    if section_q:
+        qs = qs.filter(section_q)
+
+    if filters.get("open_sections"):
+        open_sec = Section.objects.filter(
+            course=OuterRef("pk"),
+            semester=Semester.latest(),
+            enrollment_taken__lt=F("enrollment_limit"),
+        )
+        qs = qs.filter(Exists(open_sec))
 
     return qs
 
@@ -308,7 +324,7 @@ def _get_paginated_club_reviews(club: Club, user, page_number=1, method=""):
             ),
         )
 
-    return Review.paginate(Review.sort(reviews, method), page_number)
+    return paginate(Review.sort(reviews, method), page_number)
 
 
 def _build_club_page_context(request, club: Club, mode: str):

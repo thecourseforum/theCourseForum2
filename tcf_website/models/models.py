@@ -4,8 +4,6 @@
 from decimal import Decimal
 
 from django.conf import settings
-
-from tcf_website.utils import paginate
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
@@ -31,6 +29,8 @@ from django.db.models import (
     fields,
 )
 from django.db.models.functions import Abs, Cast, Coalesce, Concat, Round
+
+from tcf_website.utils import paginate
 
 # pylint: disable=line-too-long
 
@@ -896,16 +896,6 @@ class Course(models.Model):
 
         query = query.filter(section_conditions)
         return query.distinct()
-
-    @classmethod
-    def filter_by_open_sections(cls):
-        """Filter courses that have at least one open section."""
-        open_sections = Section.objects.filter(
-            course=OuterRef("pk"),
-            semester=Semester.latest(),
-            enrollment_taken__lt=F("enrollment_limit"),
-        )
-        return cls.objects.filter(Exists(open_sections))
 
     class Meta:
         indexes = [
