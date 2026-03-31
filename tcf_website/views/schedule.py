@@ -741,12 +741,11 @@ def _resolve_schedule_add_request(
 def _add_course_to_schedule(
     request,
     schedule: Schedule,
-    section: Section,
-    instructor: Instructor,
-    enrolled_units: int,
+    resolved_selection: tuple[Section, Instructor, int],
     existing_blocks: list[tuple[str, int, int]],
 ) -> bool:
     """Attempt to add one selected section and emit user-facing messages."""
+    section, instructor, enrolled_units = resolved_selection
     if ScheduledCourse.objects.filter(
         schedule=schedule, section=section, instructor=instructor
     ).exists():
@@ -858,13 +857,10 @@ def _handle_schedule_add_post(
                 transaction.set_rollback(True)
                 return None
 
-            section, instructor, enrolled_units = resolved
             if not _add_course_to_schedule(
                 request,
                 schedule,
-                section,
-                instructor,
-                enrolled_units,
+                resolved,
                 existing_blocks,
             ):
                 transaction.set_rollback(True)
