@@ -5,9 +5,6 @@ resource "aws_cognito_user_pool" "main" {
   # Allow users to sign in with email
   username_attributes = ["email"]
 
-  # Auto-verify email addresses
-  auto_verified_attributes = ["email"]
-
   # Password policy
   password_policy {
     minimum_length    = 8
