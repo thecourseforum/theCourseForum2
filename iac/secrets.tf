@@ -57,7 +57,7 @@ resource "aws_secretsmanager_secret_version" "cognito_credentials" {
     user_pool_id      = aws_cognito_user_pool.main.id
     app_client_id     = aws_cognito_user_pool_client.main.id
     app_client_secret = aws_cognito_user_pool_client.main.client_secret
-    domain            = aws_cognito_user_pool_domain.main.domain
+    domain            = "https://${aws_cognito_user_pool_domain.main.domain}.auth.${var.aws_region}.amazoncognito.com"
     region            = var.aws_region
   })
 }
