@@ -13,7 +13,7 @@ resource "random_id" "db_snapshot" {
 # RDS Subnet Group
 resource "aws_db_subnet_group" "main" {
   name       = "${local.name_prefix}-db-subnet-group"
-  subnet_ids = aws_subnet.public[*].id
+  subnet_ids = [aws_subnet.public[1].id]
 
   tags = {
     Name = "${local.name_prefix}-db-subnet-group"
