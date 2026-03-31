@@ -5,6 +5,11 @@ resource "aws_cognito_user_pool" "main" {
   # Allow users to sign in with email
   username_attributes = ["email"]
 
+  # Enable passwordless email OTP and password sign-in
+  sign_in_policy {
+    allowed_first_auth_factors = ["EMAIL_OTP", "PASSWORD"]
+  }
+
   # Password policy
   password_policy {
     minimum_length    = 8
@@ -63,7 +68,8 @@ resource "aws_cognito_user_pool_client" "main" {
   explicit_auth_flows = [
     "ALLOW_REFRESH_TOKEN_AUTH",
     "ALLOW_USER_PASSWORD_AUTH",
-    "ALLOW_USER_SRP_AUTH"
+    "ALLOW_USER_SRP_AUTH",
+    "ALLOW_USER_AUTH"
   ]
 }
 
