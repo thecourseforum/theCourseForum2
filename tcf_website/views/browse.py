@@ -26,7 +26,7 @@ from ..models import (
     Section,
     Semester,
 )
-from ..utils import paginate
+from ..utils import OLDEST_VISIBLE_SEMESTER_ID, paginate, parse_mode
 from .search import group_by_dept
 
 
@@ -91,8 +91,14 @@ def browse(request):
             },
         )
 
-    clas = School.objects.get(name="College of Arts & Sciences")
-    seas = School.objects.get(name="School of Engineering & Applied Science")
+    featured = {
+        s.name: s
+        for s in School.objects.filter(
+            name__in=["College of Arts & Sciences", "School of Engineering & Applied Science"]
+        )
+    }
+    clas = featured["College of Arts & Sciences"]
+    seas = featured["School of Engineering & Applied Science"]
 
     excluded_list = [clas.pk, seas.pk]
     other_schools = School.objects.exclude(pk__in=excluded_list).order_by("name")
@@ -119,7 +125,7 @@ def _execute_advanced_search(filters):
         .only("title", "number", "subdepartment__mnemonic", "description")
         .annotate(mnemonic=F("subdepartment__mnemonic"))
         .filter(Q(number__isnull=True) | Q(number__range=(1000, 9999)))
-        .exclude(semester_last_taught_id__lt=48)
+        .exclude(semester_last_taught_id__lt=OLDEST_VISIBLE_SEMESTER_ID)
     )
 
     qs = _apply_course_filters(qs, filters)
@@ -251,12 +257,6 @@ def department(request, dept_id: int, course_recency=None):
             "last_five_years": str(last_five_years),
         },
     )
-
-
-def parse_mode(request):
-    """Parse the mode parameter from the request."""
-    mode = request.GET.get("mode", "courses")
-    return mode, (mode == "clubs")
 
 
 def _is_lecture_section(section_type: str | None) -> bool:
@@ -396,10 +396,11 @@ def course_view(request, mnemonic: str, course_number: int, instructor_recency=N
         _build_section_times_maps_by_instructor(course.id, latest_semester)
     )
 
+    sem_ids = {i.semester_last_taught for i in instructors if i.semester_last_taught}
+    sems = {s.pk: s for s in Semester.objects.filter(pk__in=sem_ids)}
     for instructor in instructors:
-        instructor.semester_last_taught = str(
-            get_object_or_404(Semester, pk=instructor.semester_last_taught)
-        )
+        sem = sems.get(instructor.semester_last_taught)
+        instructor.semester_last_taught = str(sem) if sem else "Unknown"
         instructor.times = lecture_times_by_instructor.get(instructor.id, {})
         instructor.all_times = all_times_by_instructor.get(instructor.id, {})
 

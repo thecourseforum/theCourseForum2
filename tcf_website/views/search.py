@@ -10,7 +10,7 @@ from django.db.models.functions import Greatest, Round
 from django.shortcuts import redirect, render
 
 from ..models import Club, Course, Instructor, Subdepartment
-from ..utils import paginate
+from ..utils import OLDEST_VISIBLE_SEMESTER_ID, paginate, parse_mode
 
 # Compiled once at import time; matches patterns like "CS1110" → ("CS", "1110")
 _MNEMONIC_PATTERN = re.compile(r"^([A-Za-z]{1,4})(\d{4})$")
@@ -18,12 +18,6 @@ _MNEMONIC_PATTERN = re.compile(r"^([A-Za-z]{1,4})(\d{4})$")
 # Minimum trigram similarity score for course/club results (instructors use a higher threshold)
 _SIMILARITY_THRESHOLD = 0.15
 _INSTRUCTOR_SIMILARITY_THRESHOLD = 0.5
-
-
-def parse_mode(request):
-    """Parse the mode parameter from the request."""
-    mode = request.GET.get("mode", "courses")
-    return mode, (mode == "clubs")
 
 
 def normalize_search_query(q: str) -> str:
@@ -50,7 +44,7 @@ def fetch_courses(query):
         .annotate(mnemonic=F("subdepartment__mnemonic"))
         .filter(max_similarity__gte=_SIMILARITY_THRESHOLD)
         .filter(Q(number__isnull=True) | Q(number__range=(1000, 9999)))
-        .exclude(semester_last_taught_id__lt=48)
+        .exclude(semester_last_taught_id__lt=OLDEST_VISIBLE_SEMESTER_ID)
         .order_by("-max_similarity")
     )
 
@@ -181,6 +175,9 @@ def search(request):
     query = request.GET.get("q", "").strip()
     mode, is_club = parse_mode(request)
     is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+    courses_first = True
+    instructors = []
 
     if is_club:
         if is_ajax:

@@ -3,6 +3,15 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.utils.http import url_has_allowed_host_and_scheme
 
+# Courses/instructors taught only in semesters newer than this are shown in search.
+OLDEST_VISIBLE_SEMESTER_ID = 48
+
+
+def parse_mode(request):
+    """Parse the mode parameter from the request."""
+    mode = request.GET.get("mode", "courses")
+    return mode, (mode == "clubs")
+
 
 def paginate(items, page_number, per_page=10):
     """Paginate a queryset or list. Returns a Page object."""

@@ -6,7 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied, ValidationError
-from django.db.models import Sum
+from django.db.models import Q, Sum
+from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -15,15 +16,9 @@ from django.views import generic
 from django.views.decorators.http import require_POST
 
 from ..models import Review, Club, Course, Instructor, Semester
-from ..utils import safe_next_url
+from ..utils import parse_mode, safe_next_url
 
 # pylint: disable=fixme,unused-argument
-
-
-def parse_mode(request):
-    """Parse the mode parameter from the request."""
-    mode = request.GET.get("mode", "courses")
-    return mode, (mode == "clubs")
 
 
 class ReviewForm(forms.ModelForm):
@@ -82,11 +77,11 @@ class ReviewForm(forms.ModelForm):
 
 def _vote_response_payload(review: Review, user) -> dict[str, int]:
     """Return vote state payload for frontend updates."""
-    user_vote = (
-        review.vote_set.filter(user=user).values_list("value", flat=True).first() or 0
+    agg = review.vote_set.aggregate(
+        sum_votes=Coalesce(Sum("value"), 0),
+        user_vote=Coalesce(Sum("value", filter=Q(user=user)), 0),
     )
-    sum_votes = review.vote_set.aggregate(total=Sum("value"))["total"] or 0
-    return {"ok": True, "sum_votes": sum_votes, "user_vote": user_vote}
+    return {"ok": True, "sum_votes": agg["sum_votes"], "user_vote": agg["user_vote"]}
 
 
 @login_required
@@ -177,16 +172,9 @@ def check_zero_hours_per_week(request):
     if form.is_valid():
         instance = form.save(commit=False)
 
-        hours_per_week = (
-            instance.amount_reading
-            + instance.amount_writing
-            + instance.amount_group
-            + instance.amount_homework
-        )
-
         # Review has 0 total hours/week
         # Send user a warning message that they have entered 0 hours
-        if hours_per_week == 0:
+        if instance.hours_per_week == 0:
             response = {"zero": True}
             return JsonResponse(response)
 
