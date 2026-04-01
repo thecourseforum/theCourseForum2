@@ -8,6 +8,7 @@ from django.urls import reverse
 
 from ..models import Club, ClubCategory, Review
 from ..pagination import paginate
+from ..utils import with_mode
 
 
 def _get_paginated_club_reviews(club: Club, user, page_number=1, method=""):
@@ -39,10 +40,10 @@ def _build_club_page_context(request, club: Club, mode: str):
     )
 
     breadcrumbs = [
-        ("Clubs", reverse("browse") + "?mode=clubs", False),
+        ("Clubs", with_mode(reverse("browse"), "clubs"), False),
         (
             club.category.name,
-            reverse("club_category", args=[club.category.slug]) + "?mode=clubs",
+            with_mode(reverse("club_category", args=[club.category.slug]), "clubs"),
             False,
         ),
         (club.name, None, True),
@@ -70,7 +71,7 @@ def club_category(request, category_slug: str):
     paginated_clubs = paginate(clubs, request.GET.get("page", 1))
 
     breadcrumbs = [
-        ("Clubs", reverse("browse") + "?mode=clubs", False),
+        ("Clubs", with_mode(reverse("browse"), "clubs"), False),
         (category.name, None, True),
     ]
 

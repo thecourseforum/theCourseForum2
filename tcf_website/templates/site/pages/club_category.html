@@ -1,5 +1,6 @@
 {% extends "site/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 {% block title %}{{ category.name }} Clubs | theCourseForum{% endblock %}
 
@@ -32,7 +33,7 @@
   {% if paginated_clubs %}
   <div class="club-list">
     {% for club in paginated_clubs %}
-    <a href="{% url 'club' category_slug=category.slug club_id=club.id %}?mode=clubs" class="club-list-card">
+    <a href="{% mode_url request 'club' category_slug=category.slug club_id=club.id mode='clubs' %}" class="club-list-card">
       <h3 class="club-list-card__title">{{ club.name }}</h3>
       <p class="club-list-card__description">
         {% if club.description %}

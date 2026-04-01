@@ -16,7 +16,7 @@ from django.views import generic
 from django.views.decorators.http import require_POST
 
 from ..models import Review, Club, Course, Instructor, Semester
-from ..utils import parse_mode, safe_next_url
+from ..utils import parse_mode, safe_next_url, with_mode
 
 # pylint: disable=fixme,unused-argument
 
@@ -247,7 +247,7 @@ def new_review(request):
                         "club_id": instance.club.id,
                     },
                 )
-                return redirect(f"{club_url}?mode=clubs")
+                return redirect(with_mode(club_url, "clubs"))
             return redirect(
                 "course",
                 mnemonic=instance.course.subdepartment.mnemonic,

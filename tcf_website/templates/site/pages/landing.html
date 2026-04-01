@@ -1,5 +1,6 @@
 {% extends "site/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 {% block title %}theCourseForum{% endblock %}
 
@@ -36,7 +37,7 @@
 <section class="features" id="features">
   <div class="features__grid">
     <!-- Feature 1: Browse -->
-    <a href="{% url 'browse' %}" class="feature-card">
+    <a href="{% mode_url request 'browse' %}" class="feature-card">
       <div class="feature-card__icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"></circle>
@@ -71,7 +72,7 @@
     
     <!-- Feature 3: Reviews -->
     {% if user.is_authenticated %}
-    <a href="{% url 'new_review' %}" class="feature-card">
+    <a href="{% mode_url request 'new_review' %}" class="feature-card">
     {% else %}
     <a href="#" class="feature-card" data-modal-open="loginModal" data-login-modal-message="Sign in to review.">
     {% endif %}

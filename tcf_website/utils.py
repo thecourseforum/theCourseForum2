@@ -1,5 +1,7 @@
 """Utility helpers shared across the Django app."""
 
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+
 from django.db.models import F, Q, QuerySet
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -38,6 +40,36 @@ def parse_mode(request):
     """Parse the mode parameter from the request."""
     mode = request.GET.get("mode", "courses")
     return mode, (mode == "clubs")
+
+
+def update_query_params(url: str, **overrides) -> str:
+    """Return ``url`` with query params added, replaced, or removed."""
+    split_url = urlsplit(url)
+    params = dict(parse_qsl(split_url.query, keep_blank_values=True))
+
+    for key, value in overrides.items():
+        if value in (None, ""):
+            params.pop(key, None)
+            continue
+        params[key] = str(value)
+
+    query = urlencode(params, doseq=True)
+    return urlunsplit(
+        (
+            split_url.scheme,
+            split_url.netloc,
+            split_url.path,
+            query,
+            split_url.fragment,
+        )
+    )
+
+
+def with_mode(url: str, mode: str | None) -> str:
+    """Return ``url`` with the current non-default mode encoded in the querystring."""
+    if mode in (None, "", "courses"):
+        return update_query_params(url, mode=None)
+    return update_query_params(url, mode=mode)
 
 
 def safe_round(num):

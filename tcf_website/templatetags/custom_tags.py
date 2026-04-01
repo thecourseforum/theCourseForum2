@@ -3,6 +3,9 @@
 from urllib.parse import urlencode
 
 from django import template
+from django.urls import reverse
+
+from ..utils import update_query_params, with_mode
 
 register = template.Library()
 
@@ -56,17 +59,20 @@ def querystring(request, include="", remove="", **overrides):
 @register.simple_tag
 def mode_toggle_url(request, target_mode):
     """Build a mode-toggle URL while preserving an allowlist of query parameters."""
-    allowed = {"q"}
+    url = update_query_params(request.path, q=request.GET.get("q"))
+    return with_mode(url, target_mode)
 
-    params = {
-        key: values
-        for key, values in _querydict_to_lists(request.GET).items()
-        if key in allowed
-    }
-    params["mode"] = [str(target_mode)]
-    params.pop("page", None)
 
-    query = urlencode(params, doseq=True)
-    if not query:
-        return request.path
-    return f"{request.path}?{query}"
+@register.simple_tag
+def mode_url(request, view_name, *args, **kwargs):
+    """Reverse a URL and preserve or override the current mode query parameter."""
+    target_mode = kwargs.pop("mode", request.GET.get("mode"))
+    query_kwargs = {}
+
+    for key in list(kwargs):
+        if key.startswith("query_"):
+            query_kwargs[key.removeprefix("query_")] = kwargs.pop(key)
+
+    url = reverse(view_name, args=args, kwargs=kwargs)
+    url = update_query_params(url, **query_kwargs)
+    return with_mode(url, target_mode)

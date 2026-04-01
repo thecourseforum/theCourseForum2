@@ -1,4 +1,5 @@
-<form method="get" action="{% url 'browse' %}" class="advanced-search">
+{% load custom_tags %}
+<form method="get" action="{% mode_url request 'browse' %}" class="advanced-search">
 
   <!-- Row 1: Term, School, Subject -->
   <div class="advanced-search__grid">
@@ -121,6 +122,6 @@
   <!-- Actions -->
   <div class="advanced-search__actions">
     <button type="submit" class="btn btn--primary btn--md">Search Classes</button>
-    <a href="{% url 'browse' %}" class="btn btn--ghost btn--md">Clear</a>
+    <a href="{% mode_url request 'browse' %}" class="btn btn--ghost btn--md">Clear</a>
   </div>
 </form>
