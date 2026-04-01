@@ -14,4 +14,4 @@ python manage.py invalidate_cachalot tcf_website
 python manage.py clearsessions
 
 echo 'Starting Django Server...'
-exec gunicorn tcf_core.wsgi:application --bind 0.0.0.0:80 --log-level "info" --timeout 120
+exec gunicorn tcf_core.wsgi:application --bind 0.0.0.0:8000 --log-level "info" --timeout 120
