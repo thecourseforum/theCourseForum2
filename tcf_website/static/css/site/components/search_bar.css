@@ -73,26 +73,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   width: 1.75rem;
   height: 1.75rem;
-  
-  color: var(--fg-muted);
+
+  color: var(--primary);
   background: transparent;
   border: none;
   border-radius: var(--radius-md);
-  
+
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease-default);
-}
-
-.search-bar__submit:hover {
-  color: var(--fg);
-  background-color: var(--bg-surface-hover);
-}
-
-.search-bar__submit {
-  color: var(--primary);
 }
 
 .search-bar__submit:hover {

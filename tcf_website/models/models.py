@@ -1329,6 +1329,7 @@ class Review(models.Model):
             models.Index(fields=["user", "-created"]),
             models.Index(fields=["instructor", "course"]),
             models.Index(fields=["instructor"]),
+            models.Index(fields=["user", "course"]),
         ]
 
         # Some of the tCF 1.0 data did not honor this constraint.

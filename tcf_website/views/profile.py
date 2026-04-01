@@ -21,20 +21,15 @@ from ..utils import safe_next_url, safe_round
 
 def _review_stats_for_user(user):
     """Build review stats for a given user."""
-    upvote_stat = Review.objects.filter(user=user).aggregate(
+    stats = Review.objects.filter(user=user).aggregate(
         total_review_upvotes=Count("vote", filter=Q(vote__value=1)),
-    )
-    other_stats = User.objects.filter(id=user.id).aggregate(
-        total_reviews_written=Count("review"),
+        total_reviews_written=Count("id"),
         average_review_rating=(
-            Avg("review__instructor_rating")
-            + Avg("review__enjoyability")
-            + Avg("review__recommendability")
+            Avg("instructor_rating") + Avg("enjoyability") + Avg("recommendability")
         )
         / 3,
     )
-    merged = upvote_stat | other_stats
-    return {key: safe_round(value) for key, value in merged.items()}
+    return {key: safe_round(value) for key, value in stats.items()}
 
 
 class ProfileForm(ModelForm):

@@ -20,7 +20,7 @@
         class="login-modal__logo"
         decoding="async"
       >
-      <p id="loginModalHint" class="text-muted text-sm mb-6 hidden" role="status"></p>
+      <p id="loginModalHint" class="text-muted text-sm mb-6 hidden" role="status" aria-live="polite" aria-atomic="true"></p>
       
       <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn--primary btn--lg btn--full">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
