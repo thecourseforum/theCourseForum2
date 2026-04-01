@@ -15,6 +15,7 @@
             pkgs.uv 
             pkgs.python312
             pkgs.nodejs_22
+            pkgs.awscli2
           ];
 
           UV_PYTHON_DOWNLOADS = "never";
