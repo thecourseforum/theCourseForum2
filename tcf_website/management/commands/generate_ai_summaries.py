@@ -1,13 +1,13 @@
 """Generate AI review summaries for course-instructor pairs via OpenRouter."""
 
+import requests
+
 from datetime import datetime
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Count, Exists, F, OuterRef
 
 from ...models import Course, Instructor, Review, ReviewLLMSummary, Semester
-
-import requests
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 MAX_REVIEW_CHARS = 1000
