@@ -865,8 +865,8 @@ def _handle_schedule_add_post(
             ):
                 transaction.set_rollback(True)
                 return None
-
-    messages.success(request, "Successfully added course to schedule.")
+    course_label = f"{course.subdepartment.mnemonic} {course.number}"
+    messages.success(request, f"Successfully added {course_label} to schedule.")
     return _schedule_add_success_redirect(request, schedule)
 
 

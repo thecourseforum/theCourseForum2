@@ -54,7 +54,7 @@
         <select id="schedule_id" name="schedule_id" class="select" required>
           <option value="">Choose a schedule</option>
           {% for schedule in schedules %}
-          <option value="{{ schedule.id }}" {% if selected_schedule_id == schedule.id|stringformat:"s" %}selected{% endif %}>
+          <option value="{{ schedule.id }}" {% if selected_schedule_id == schedule.id|stringformat:"s" or not selected_schedule_id and forloop.first %}selected{% endif %}>
             {{ schedule.name }}
           </option>
           {% endfor %}
