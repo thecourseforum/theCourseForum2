@@ -20,6 +20,8 @@ environ.Env.read_env(env_file)
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env.str("SECRET_KEY")
 
+OPENROUTER_API_KEY = env.str("OPENROUTER_API_KEY", default="")
+
 ALLOWED_HOSTS = []
 
 CORS_ALLOWED_ORIGINS = [

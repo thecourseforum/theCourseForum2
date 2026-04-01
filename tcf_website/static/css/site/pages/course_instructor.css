@@ -534,6 +534,43 @@
   background-color: var(--warning);
 }
 
+/* ===== AI SUMMARY ===== */
+
+.ai-summary {
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+}
+
+.ai-summary__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.ai-summary__label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ai-summary__meta {
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+}
+
+.ai-summary__text {
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--fg);
+  margin: 0;
+}
+
 /* ===== REVIEWS SECTION ===== */
 
 .reviews-header {

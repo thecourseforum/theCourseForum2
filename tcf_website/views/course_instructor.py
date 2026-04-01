@@ -9,7 +9,7 @@ from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
 
-from ..models import CourseInstructorGrade, Review, Section, Semester
+from ..models import CourseInstructorGrade, Review, ReviewLLMSummary, Section, Semester
 from .course import is_lecture_section
 
 _GRADE_BREAKDOWN_FIELDS = (
@@ -124,6 +124,16 @@ def _pair_sections_this_semester(course_id, instructor_id, semester):
     return lecture_sections, other_sections
 
 
+def _get_review_summary(course_id, instructor_id):
+    """Return ReviewLLMSummary for this pair, or None."""
+    try:
+        return ReviewLLMSummary.objects.get(
+            course_id=course_id, instructor_id=instructor_id
+        )
+    except ReviewLLMSummary.DoesNotExist:
+        return None
+
+
 def _course_instructor_breadcrumbs(course, instructor):
     dept = course.subdepartment.department
     course_url = reverse("course", args=[course.subdepartment.mnemonic, course.number])
@@ -153,6 +163,7 @@ def course_instructor(
 
     breadcrumbs = _course_instructor_breadcrumbs(course, instructor)
     data = _pair_aggregate_chart_data(course, instructor, course_id, instructor_id)
+    review_summary = _get_review_summary(course_id, instructor_id)
 
     latest_semester = Semester.latest()
     is_current_semester = section_last_taught.semester.number == latest_semester.number
@@ -189,5 +200,6 @@ def course_instructor(
             "sections_count": len(lecture_sections) + len(other_sections),
             "show_schedule_add": is_current_semester
             and bool(lecture_sections or other_sections),
+            "review_summary": review_summary,
         },
     )

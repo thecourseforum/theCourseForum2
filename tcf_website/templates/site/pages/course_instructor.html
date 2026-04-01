@@ -211,6 +211,16 @@
   </div>
   {% endif %}
   
+  {% if review_summary %}
+  <div class="ai-summary">
+    <div class="ai-summary__header">
+      <span class="ai-summary__label">Review Summary</span>
+      <span class="ai-summary__meta">Last updated: {{ review_summary.updated_at|date:"F d, Y" }}</span>
+    </div>
+    <p class="ai-summary__text">{{ review_summary.summary_text }}</p>
+  </div>
+  {% endif %}
+
   <section class="reviews-section" id="reviews">
     <div class="reviews-header">
       <h2 class="reviews-header__title">{{ num_reviews }} Review{{ num_reviews|pluralize }}</h2>

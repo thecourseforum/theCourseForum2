@@ -1375,6 +1375,29 @@ class Vote(models.Model):
         ]
 
 
+class ReviewLLMSummary(models.Model):
+    """AI-generated summary of reviews for a course-instructor pair."""
+
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    summary_text = models.TextField()
+    model_id = models.CharField(max_length=255)
+    source_review_count = models.PositiveIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Summary for {self.course} / {self.instructor}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["course", "instructor"],
+                name="unique_course_instructor_summary",
+            )
+        ]
+
+
 class Question(models.Model):
     """Question model.
     Belongs to a User.
