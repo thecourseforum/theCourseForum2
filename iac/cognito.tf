@@ -49,6 +49,7 @@ resource "aws_cognito_user_pool_client" "main" {
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
   callback_urls                        = ["https://${var.domain_name}/cognito-callback"]
   logout_urls                          = ["https://${var.domain_name}/"]
+  supported_identity_providers         = ["COGNITO"]
 
   # Token validity
   access_token_validity  = 60
