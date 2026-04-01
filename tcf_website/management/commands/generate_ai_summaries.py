@@ -1,8 +1,8 @@
 """Generate AI review summaries for course-instructor pairs via OpenRouter."""
 
+from datetime import datetime
 import requests
 
-from datetime import datetime
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Count, Exists, F, OuterRef
