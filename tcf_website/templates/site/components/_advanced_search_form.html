@@ -1,7 +1,7 @@
 {% load custom_tags %}
 <form method="get" action="{% mode_url request 'browse' %}" class="advanced-search">
 
-  <!-- Row 1: Term, School, Subject -->
+  <!-- Row 1: Term, School, Min GPA -->
   <div class="advanced-search__grid">
     <div class="advanced-search__field">
       <label>Term</label>
@@ -14,13 +14,18 @@
     </div>
 
     <div class="advanced-search__field">
-      <label>Subject</label>
-      {% include "site/components/_combo_dropdown.html" with combo_name="subject" combo_choices=form.subject.field.choices combo_selected=form.subject.value combo_aria_label="Subject" combo_mnemonic_search=1 %}
+      <label for="id_min_gpa">Min GPA</label>
+      <input type="number" name="min_gpa" id="id_min_gpa" value="{{ form.min_gpa.value|default:'' }}" placeholder="0.0 – 4.0" min="0" max="4" step="0.1">
     </div>
   </div>
 
-  <!-- Row 2: Course Number, Title, Min GPA -->
+  <!-- Row 2: Subject, Course Number, Title -->
   <div class="advanced-search__grid">
+    <div class="advanced-search__field">
+      <label>Subject</label>
+      {% include "site/components/_combo_dropdown.html" with combo_name="subject" combo_choices=form.subject.field.choices combo_selected=form.subject.value combo_aria_label="Subject" combo_mnemonic_search=1 %}
+    </div>
+
     <div class="advanced-search__field">
       <label for="id_course_number">Course Number</label>
       <input type="text" name="course_number" id="id_course_number" value="{{ form.course_number.value|default:'' }}" placeholder="e.g. 31, 3100">
@@ -31,10 +36,6 @@
       <input type="text" name="title" id="id_title" value="{{ form.title.value|default:'' }}" placeholder="Enter a course title">
     </div>
 
-    <div class="advanced-search__field">
-      <label for="id_min_gpa">Min GPA</label>
-      <input type="number" name="min_gpa" id="id_min_gpa" value="{{ form.min_gpa.value|default:'' }}" placeholder="0.0 – 4.0" min="0" max="4" step="0.1">
-    </div>
   </div>
 
   <!-- Advanced collapsible -->
