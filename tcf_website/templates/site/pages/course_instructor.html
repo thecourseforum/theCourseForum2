@@ -324,7 +324,7 @@
           </button>
         </div>
 
-        <span class="review-card__date">{{ review.created }}</span>
+        <span class="review-card__date">{{ review.created|date }}</span>
       </div>
     </article>
     {% if forloop.counter|divisibleby:5 %}
