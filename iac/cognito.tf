@@ -76,6 +76,43 @@ resource "aws_cognito_user_pool_client" "main" {
 
 # Cognito User Pool Domain
 resource "aws_cognito_user_pool_domain" "main" {
-  domain       = "${local.name_prefix}-auth"
-  user_pool_id = aws_cognito_user_pool.main.id
+  domain                = "${local.name_prefix}-auth"
+  user_pool_id          = aws_cognito_user_pool.main.id
+  managed_login_version = 2
+}
+
+# Cognito Managed Login Branding
+resource "aws_cognito_managed_login_branding" "main" {
+  user_pool_id       = aws_cognito_user_pool.main.id
+  client_id          = aws_cognito_user_pool_client.main.id
+
+  settings = file("${path.module}/branding-settings.json")
+
+  asset {
+    category = "FORM_LOGO"
+    color_mode = "LIGHT"
+    extension = "SVG"
+    bytes = filebase64("${path.module}/assets/form_logo_light.svg")
+  }
+
+  asset {
+    category = "PAGE_HEADER_LOGO"
+    color_mode = "LIGHT"
+    extension = "PNG"
+    bytes = filebase64("${path.module}/assets/page_header_logo_light.png")
+  }
+
+  asset {
+    category = "PAGE_FOOTER_LOGO"
+    color_mode = "LIGHT"
+    extension = "PNG"
+    bytes = filebase64("${path.module}/assets/page_footer_logo_light.png")
+  }
+
+  asset {
+    category = "PAGE_BACKGROUND"
+    color_mode = "LIGHT"
+    extension = "PNG"
+    bytes = filebase64("${path.module}/assets/page_background_light.png")
+  }
 }
