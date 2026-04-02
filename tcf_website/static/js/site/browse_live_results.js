@@ -16,7 +16,9 @@
     "component",
   ]);
 
-  const form = document.querySelector(".advanced-search[data-browse-live-results]");
+  const form = document.querySelector(
+    ".advanced-search[data-browse-live-results]",
+  );
   const resultsRoot = document.getElementById("browse-advanced-results-root");
   if (!form || !resultsRoot) {
     return;
@@ -130,7 +132,7 @@
     }
     debounceTimer = window.setTimeout(() => {
       debounceTimer = null;
-      void refreshResults();
+      refreshResults();
     }, DEBOUNCE_MS);
   }
 
@@ -140,7 +142,7 @@
     }
     changeTimer = window.setTimeout(() => {
       changeTimer = null;
-      void refreshResults();
+      refreshResults();
     }, CHANGE_FLUSH_MS);
   }
 
@@ -173,6 +175,6 @@
       clearTimeout(changeTimer);
       changeTimer = null;
     }
-    void refreshResults();
+    refreshResults();
   });
 })();

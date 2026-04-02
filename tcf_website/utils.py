@@ -39,10 +39,7 @@ def recent_semesters() -> QuerySet:
 def semesters_for_course(course: Course) -> QuerySet:
     """Recent-catalog semesters in which ``course`` has at least one section, newest first."""
     return (
-        recent_semesters()
-        .filter(section__course=course)
-        .distinct()
-        .order_by("-number")
+        recent_semesters().filter(section__course=course).distinct().order_by("-number")
     )
 
 

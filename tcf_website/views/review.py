@@ -231,9 +231,7 @@ def review_semester_options(request):
         return JsonResponse({"error": "course required"}, status=400)
 
     course = get_object_or_404(Course, id=course_id)
-    rows = [
-        {"id": s.id, "label": str(s)} for s in semesters_for_course(course)
-    ]
+    rows = [{"id": s.id, "label": str(s)} for s in semesters_for_course(course)]
     return JsonResponse({"semesters": rows})
 
 
