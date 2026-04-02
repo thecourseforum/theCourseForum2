@@ -82,6 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function selectOption(opt) {
       hidden.value = opt.dataset.value;
       input.value = opt.dataset.value ? opt.textContent.trim() : "";
+      hidden.dispatchEvent(new Event("change", { bubbles: true }));
       suppressShow = true;
       hideList();
       input.focus();

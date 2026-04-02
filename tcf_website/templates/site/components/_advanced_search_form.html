@@ -1,5 +1,7 @@
 {% load custom_tags %}
-<form method="get" action="{% mode_url request 'browse' %}" class="advanced-search">
+<form method="get" action="{% mode_url request 'browse' %}" class="advanced-search"
+      data-browse-live-results="1"
+      data-browse-base-url="{% mode_url request 'browse' %}">
 
   <!-- Row 1: Term, School, Min GPA -->
   <div class="advanced-search__grid">

@@ -1,0 +1,38 @@
+{% load custom_tags %}
+<div class="browse-advanced-results" data-browse-total="{{ total }}">
+  {% if grouped %}
+  {% for dept, dept_data in grouped.items %}
+  <section class="search-group">
+    <h3 class="search-group__title">
+      <a href="{% url 'department' dept_id=dept_data.dept_id %}">
+        {{ dept }} / {{ dept_data.subdept_name }}
+      </a>
+    </h3>
+    <div class="search-result-list">
+      {% for c in dept_data.courses %}
+      <article class="search-result-card">
+        <a class="search-result-card__link" href="{% url 'course' mnemonic=c.mnemonic course_number=c.number %}">
+          <span class="search-result-card__code">{{ c.mnemonic }} {{ c.number }}</span>
+          <span class="search-result-card__title">{{ c.title }}</span>
+        </a>
+        <p class="search-result-card__description">
+          {% if c.description %}
+          {{ c.description }}
+          {% else %}
+          No course description available.
+          {% endif %}
+        </p>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+
+  {% include "site/components/_pagination.html" with paginated_items=page_obj aria_label="Search results pagination" %}
+  {% else %}
+  <div class="search-empty">
+    <h3>No courses matched your search.</h3>
+    <p>Try adjusting your filters or broadening your search.</p>
+  </div>
+  {% endif %}
+</div>

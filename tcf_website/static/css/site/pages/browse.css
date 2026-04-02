@@ -551,3 +551,24 @@
   font-size: var(--text-lg);
   margin-bottom: var(--space-2);
 }
+
+/* Live advanced search (XHR partial) */
+.browse-advanced-results-root[aria-busy="true"] {
+  position: relative;
+  min-height: 10rem;
+  opacity: 0.65;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-default);
+}
+
+.browse-advanced-results-root[aria-busy="true"]::after {
+  content: "Updating results…";
+  position: absolute;
+  top: var(--space-2);
+  left: 0;
+  right: 0;
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+  text-align: center;
+  pointer-events: none;
+}

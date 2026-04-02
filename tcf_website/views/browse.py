@@ -1,6 +1,7 @@
 """Browse landing page (course catalog vs clubs) and advanced search queryset."""
 
 from django.db.models import Exists, F, OuterRef, Prefetch, Q
+from django.http import HttpResponse
 from django.shortcuts import render
 
 from ..forms import AdvancedSearchForm
@@ -147,6 +148,27 @@ def _apply_section_filters(qs, filters):
     return qs
 
 
+def _is_browse_results_partial_request(request) -> bool:
+    return (
+        request.headers.get("X-Requested-With") == "XMLHttpRequest"
+        and request.GET.get("partial") == "results"
+    )
+
+
+def _advanced_search_results_payload(request, form: AdvancedSearchForm) -> dict:
+    """Run advanced search for a bound valid form with search params."""
+    results = execute_advanced_search(form.cleaned_data)
+    page_obj = paginate(results, request.GET.get("page", 1), per_page=15)
+    total = page_obj.paginator.count
+    courses = [course_to_row_dict(c) for c in page_obj]
+    grouped = group_by_dept(courses)
+    return {
+        "grouped": grouped,
+        "page_obj": page_obj,
+        "total": total,
+    }
+
+
 def browse(request):  # pylint: disable=too-many-locals
     """View for browse page with advanced course search."""
     mode, is_club = parse_mode(request)
@@ -177,14 +199,18 @@ def browse(request):  # pylint: disable=too-many-locals
     form = AdvancedSearchForm(request.GET or None)
     has_search = form.is_bound and form.has_search_params()
 
+    if _is_browse_results_partial_request(request):
+        if not has_search:
+            return HttpResponse(status=204)
+        payload = _advanced_search_results_payload(request, form)
+        return render(
+            request,
+            "site/partials/_browse_advanced_results.html",
+            {"request": request, **payload},
+        )
+
     if has_search:
-        results = execute_advanced_search(form.cleaned_data)
-        page_obj = paginate(results, request.GET.get("page", 1), per_page=15)
-        total = page_obj.paginator.count
-
-        courses = [course_to_row_dict(c) for c in page_obj]
-        grouped = group_by_dept(courses)
-
+        payload = _advanced_search_results_payload(request, form)
         return render(
             request,
             "site/pages/browse.html",
@@ -193,9 +219,7 @@ def browse(request):  # pylint: disable=too-many-locals
                 "mode": mode,
                 "form": form,
                 "has_search": True,
-                "grouped": grouped,
-                "total": total,
-                "page_obj": page_obj,
+                **payload,
             },
         )
 
