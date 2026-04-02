@@ -30,15 +30,7 @@
     <section class="schedule-add__empty">
       <h2>Create a schedule first</h2>
       <p>You need at least one schedule before adding courses.</p>
-      <form method="post" action="{% url 'new_schedule' %}" class="schedule-add__create-form">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        {% if active_semester %}
-        <input type="hidden" name="semester" value="{{ active_semester.pk }}">
-        {% endif %}
-        <input type="text" class="input" name="name" maxlength="15" required placeholder="New schedule name">
-        <button type="submit" class="btn btn--primary btn--sm">Create</button>
-      </form>
+      {% include "site/components/_new_schedule_form.html" with form_class="schedule-add__create-form" %}
       <a href="{{ schedule_builder_url }}" class="btn btn--ghost btn--sm">Go to Schedule Builder</a>
     </section>
     {% else %}

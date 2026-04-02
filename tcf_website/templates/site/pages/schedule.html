@@ -23,23 +23,7 @@
         {% endif %}
       </div>
 
-      <form method="post" action="{% url 'new_schedule' %}" class="schedule-builder__create-form">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        {% if active_semester %}
-        <input type="hidden" name="semester" value="{{ active_semester.pk }}">
-        {% endif %}
-        <input
-          type="text"
-          name="name"
-          maxlength="100"
-          required
-          class="input"
-          placeholder="New schedule name"
-          aria-label="New schedule name"
-        >
-        <button type="submit" class="btn btn--primary btn--sm">Create</button>
-      </form>
+      {% include "site/components/_new_schedule_form.html" with form_class="schedule-builder__create-form" %}
     </div>
 
     <div class="schedule-builder__grid">
@@ -159,7 +143,7 @@
         {% else %}
         <div class="schedule-detail__empty-state">
           <h2>Create your first schedule</h2>
-          <p>Use the form above to create a schedule for this term, then add courses from any course page.</p>
+          <p>Use the field above to create a schedule for this term, then add courses from any course page.</p>
         </div>
         {% endif %}
       </section>
