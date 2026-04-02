@@ -194,6 +194,7 @@ class ReviewCascadeJsonEndpointsTests(TestCase):
         setup(self)
 
     def test_semesters_anonymous_redirects(self):
+        """Anonymous requests redirect to login."""
         response = self.client.get(
             reverse("review_semester_options"),
             {"course": self.course.pk},
@@ -201,6 +202,7 @@ class ReviewCascadeJsonEndpointsTests(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_semesters_returns_terms_with_sections(self):
+        """Semester options only include terms with matching sections."""
         self.client.force_login(self.user1)
         response = self.client.get(
             reverse("review_semester_options"),
@@ -212,11 +214,13 @@ class ReviewCascadeJsonEndpointsTests(TestCase):
         self.assertIn(self.semester.pk, ids)
 
     def test_instructors_bad_request_without_params(self):
+        """Missing query params yields 400 instead of silent fallback."""
         self.client.force_login(self.user1)
         response = self.client.get(reverse("review_instructor_options"))
         self.assertEqual(response.status_code, 400)
 
     def test_instructors_returns_json(self):
+        """Instructor options returns JSON including expected instructors."""
         self.client.force_login(self.user1)
         response = self.client.get(
             reverse("review_instructor_options"),
