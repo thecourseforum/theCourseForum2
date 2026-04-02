@@ -77,6 +77,16 @@ urlpatterns = [
         views.review.check_zero_hours_per_week,
         name="check_zero_hours_per_week",
     ),
+    path(
+        "reviews/semesters-for-course/",
+        views.review.review_semester_options,
+        name="review_semester_options",
+    ),
+    path(
+        "reviews/instructors-for-course/",
+        views.review.review_instructor_options,
+        name="review_instructor_options",
+    ),
     path("profile/", views.profile, name="profile"),
     path(
         "profile/<int:pk>/delete/",

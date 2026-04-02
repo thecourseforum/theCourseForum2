@@ -15,8 +15,14 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.views.decorators.http import require_POST
 
-from ..models import Review, Club, Course, Instructor, Semester
-from ..utils import parse_mode, safe_next_url, with_mode
+from ..models import Review, Club, Course, Instructor, Section, Semester
+from ..utils import (
+    parse_mode,
+    recent_semesters,
+    safe_next_url,
+    semesters_for_course,
+    with_mode,
+)
 
 # pylint: disable=fixme,unused-argument
 
@@ -48,6 +54,7 @@ class ReviewForm(forms.ModelForm):
         club = cleaned_data.get("club")
         course = cleaned_data.get("course")
         instructor = cleaned_data.get("instructor")
+        semester = cleaned_data.get("semester")
 
         # If it's a club review, course and instructor are not required
         if club:
@@ -58,6 +65,15 @@ class ReviewForm(forms.ModelForm):
             raise ValidationError("Course is required for course reviews")
         if not instructor:
             raise ValidationError("Instructor is required for course reviews")
+        if not semester:
+            raise ValidationError("Semester is required for course reviews")
+
+        if not Section.objects.filter(
+            course=course, semester=semester, instructors=instructor
+        ).exists():
+            raise ValidationError(
+                "Selected instructor did not teach this course in the chosen semester."
+            )
 
         return cleaned_data
 
@@ -184,6 +200,64 @@ def check_zero_hours_per_week(request):
     return redirect("new_review")
 
 
+def _recent_semester_id_set() -> set[int]:
+    return set(recent_semesters().values_list("pk", flat=True))
+
+
+def _club_semester_choices_payload():
+    """JSON-serializable term rows for club-mode review (inline club pick)."""
+    return [{"id": s.id, "label": str(s)} for s in recent_semesters()]
+
+
+def instructors_for_course_semester(course_id: int, semester_id: int):
+    """Instructors with a section for this course in this semester."""
+    return (
+        Instructor.objects.filter(
+            section__course_id=course_id,
+            section__semester_id=semester_id,
+            hidden=False,
+        )
+        .distinct()
+        .order_by("last_name", "first_name")
+    )
+
+
+@login_required
+def review_semester_options(request):
+    """Return terms (recent catalog window) in which a course has at least one section."""
+    try:
+        course_id = int(request.GET["course"])
+    except (KeyError, ValueError):
+        return JsonResponse({"error": "course required"}, status=400)
+
+    course = get_object_or_404(Course, id=course_id)
+    rows = [
+        {"id": s.id, "label": str(s)} for s in semesters_for_course(course)
+    ]
+    return JsonResponse({"semesters": rows})
+
+
+@login_required
+def review_instructor_options(request):
+    """Return instructors teaching a course in a semester (for review cascade XHR)."""
+    try:
+        course_id = int(request.GET["course"])
+        semester_id = int(request.GET["semester"])
+    except (KeyError, ValueError):
+        return JsonResponse({"error": "course and semester required"}, status=400)
+
+    if semester_id not in _recent_semester_id_set():
+        return JsonResponse({"error": "invalid semester"}, status=400)
+
+    get_object_or_404(Course, id=course_id)
+
+    rows = [
+        {"id": i.id, "last_name": i.last_name, "first_name": i.first_name}
+        for i in instructors_for_course_semester(course_id, semester_id)
+    ]
+    return JsonResponse({"instructors": rows})
+
+
 # Note: Class-based views can't use the @login_required decorator
 
 
@@ -269,39 +343,37 @@ def _handle_course_review_get(request, mode):
     instructor_id = request.GET.get("instructor")
 
     if not course_id:
-        return render(request, "site/pages/review_search.html", {"mode": mode})
+        return render(
+            request,
+            "site/pages/review.html",
+            {
+                "is_club": False,
+                "mode": mode,
+                "course": None,
+                "club": None,
+                "instructor": None,
+                "instructors": [],
+                "semesters": recent_semesters(),
+                "review_main_unlocked": False,
+            },
+        )
 
-    course = get_object_or_404(Course, id=course_id)
-    latest = Semester.latest()
-
+    course = get_object_or_404(
+        Course.objects.select_related("subdepartment"), id=course_id
+    )
+    semesters = semesters_for_course(course)
+    prefill_instructor = None
+    prefill_semester = None
+    instructors_list = []
     if instructor_id:
-        instructor = get_object_or_404(Instructor, id=instructor_id)
-        instructors = None
-        semesters = (
-            Semester.objects.filter(
-                section__course=course,
-                section__instructors=instructor,
-                year__gte=latest.year - 5,
+        prefill_instructor = get_object_or_404(Instructor, id=instructor_id)
+        prefill_semester = semesters.filter(
+            section__instructors=prefill_instructor
+        ).first()
+        if prefill_semester:
+            instructors_list = list(
+                instructors_for_course_semester(course.id, prefill_semester.id)
             )
-            .distinct()
-            .order_by("-number")
-        )
-    else:
-        instructor = None
-        instructors = (
-            Instructor.objects.filter(
-                section__course=course,
-                section__semester__year__gte=latest.year - 5,
-                hidden=False,
-            )
-            .distinct()
-            .order_by("last_name")[:50]
-        )
-        semesters = (
-            Semester.objects.filter(section__course=course, year__gte=latest.year - 5)
-            .distinct()
-            .order_by("-number")
-        )
 
     return render(
         request,
@@ -310,9 +382,13 @@ def _handle_course_review_get(request, mode):
             "is_club": False,
             "mode": mode,
             "course": course,
-            "instructor": instructor,
-            "instructors": instructors,
+            "club": None,
+            "instructor": None,
+            "prefill_instructor": prefill_instructor,
+            "prefill_semester": prefill_semester,
+            "instructors": instructors_list,
             "semesters": semesters,
+            "review_main_unlocked": False,
         },
     )
 
@@ -320,20 +396,24 @@ def _handle_course_review_get(request, mode):
 def _handle_club_review_get(request, mode):
     """Handle GET for club reviews."""
     club_id = request.GET.get("club")
+    semesters = recent_semesters()
 
     if not club_id:
         return render(
             request,
-            "site/pages/review_search.html",
-            {"mode": mode, "is_club": True},
+            "site/pages/review.html",
+            {
+                "is_club": True,
+                "mode": mode,
+                "club": None,
+                "course": None,
+                "semesters": semesters,
+                "club_semester_choices": _club_semester_choices_payload(),
+                "review_main_unlocked": False,
+            },
         )
 
-    club = get_object_or_404(Club, id=club_id)
-    latest = Semester.latest()
-
-    semesters = Semester.objects.filter(year__gte=latest.year - 5).order_by("-number")[
-        :10
-    ]
+    club = get_object_or_404(Club.objects.select_related("category"), id=club_id)
 
     return render(
         request,
@@ -342,24 +422,82 @@ def _handle_club_review_get(request, mode):
             "is_club": True,
             "mode": mode,
             "club": club,
+            "course": None,
             "semesters": semesters,
+            "club_semester_choices": _club_semester_choices_payload(),
+            "review_main_unlocked": True,
         },
     )
 
 
 def _render_review_form_with_errors(request, form, is_club, mode):
     """Re-render the form with validation errors."""
-    context = {"form": form, "is_club": is_club, "mode": mode}
+    context: dict = {"form": form, "is_club": is_club, "mode": mode}
+    base_semesters = recent_semesters()
 
-    if is_club and form.cleaned_data.get("club"):
-        context["club"] = form.cleaned_data["club"]
-    elif form.cleaned_data.get("course"):
-        context["course"] = form.cleaned_data["course"]
-        context["instructor"] = form.cleaned_data.get("instructor")
+    if is_club:
+        club = form.cleaned_data.get("club")
+        if not club:
+            raw = form.data.get("club")
+            club = (
+                Club.objects.filter(pk=raw).select_related("category").first()
+                if raw
+                else None
+            )
+        context["club"] = club
+        context["course"] = None
+        context["instructor"] = None
+        context["semesters"] = base_semesters
+        context["instructors"] = []
+        context["club_semester_choices"] = _club_semester_choices_payload()
+        context["review_main_unlocked"] = bool(form.errors) or bool(
+            form.data.get("club") and form.data.get("semester")
+        )
+        return render(request, "site/pages/review.html", context)
 
-    latest = Semester.latest()
-    context["semesters"] = Semester.objects.filter(year__gte=latest.year - 5).order_by(
-        "-number"
-    )[:10]
+    course = form.cleaned_data.get("course")
+    if not course:
+        raw = form.data.get("course")
+        course = (
+            Course.objects.filter(pk=raw).select_related("subdepartment").first()
+            if raw
+            else None
+        )
+
+    if not course:
+        context["course"] = None
+        context["club"] = None
+        context["instructor"] = None
+        context["semesters"] = base_semesters
+        context["instructors"] = []
+        context["review_main_unlocked"] = bool(form.errors)
+        return render(request, "site/pages/review.html", context)
+
+    context["course"] = course
+    context["club"] = None
+    instructor = form.cleaned_data.get("instructor")
+    if not instructor:
+        iid = form.data.get("instructor")
+        instructor = Instructor.objects.filter(pk=iid).first() if iid else None
+    context["instructor"] = instructor
+
+    context["semesters"] = semesters_for_course(course)
+
+    semester = form.cleaned_data.get("semester")
+    if not semester:
+        sid = form.data.get("semester")
+        semester = Semester.objects.filter(pk=sid).first() if sid else None
+    if semester:
+        context["instructors"] = list(
+            instructors_for_course_semester(course.id, semester.id)
+        )
+    else:
+        context["instructors"] = []
+
+    context["review_main_unlocked"] = bool(form.errors) or bool(
+        form.data.get("course")
+        and form.data.get("semester")
+        and form.data.get("instructor")
+    )
 
     return render(request, "site/pages/review.html", context)

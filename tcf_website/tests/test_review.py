@@ -1,6 +1,8 @@
 # pylint: disable=no-member
 """Tests for Review model."""
 
+import json
+
 from django.contrib.messages import get_messages
 from django.db import IntegrityError
 from django.forms.models import model_to_dict
@@ -143,4 +145,85 @@ class ModelReviewTests(TestCase):
         self.review2.delete()
         self.assertFalse(
             Review.get_sorted_reviews(self.course, self.instructor, self.user1).exists()
+        )
+
+
+def _review_post_data(course, instructor, semester):
+    """Minimal valid POST payload for ReviewForm (course review)."""
+    return {
+        "text": "x" * 100,
+        "course": str(course.pk),
+        "instructor": str(instructor.pk),
+        "semester": str(semester.pk),
+        "instructor_rating": "3",
+        "difficulty": "3",
+        "recommendability": "3",
+        "enjoyability": "3",
+        "amount_reading": "0",
+        "amount_writing": "0",
+        "amount_group": "0",
+        "amount_homework": "0",
+    }
+
+
+class ReviewFormSectionValidationTests(TestCase):
+    """ReviewForm requires a real Section for course/semester/instructor."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_accepts_matching_section(self):
+        """Instructor on a section for that course and term passes clean()."""
+        form = ReviewForm(
+            _review_post_data(self.course, self.instructor, self.semester)
+        )
+        self.assertTrue(form.is_valid())
+
+    def test_rejects_instructor_not_teaching_that_term(self):
+        """Instructor with no section for that course+semester fails clean()."""
+        form = ReviewForm(
+            _review_post_data(self.course, self.instructor2, self.semester)
+        )
+        self.assertFalse(form.is_valid())
+
+
+class ReviewCascadeJsonEndpointsTests(TestCase):
+    """XHR helpers for the unified review writer."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_semesters_anonymous_redirects(self):
+        response = self.client.get(
+            reverse("review_semester_options"),
+            {"course": self.course.pk},
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_semesters_returns_terms_with_sections(self):
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("review_semester_options"),
+            {"course": self.course.pk},
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        ids = {row["id"] for row in data["semesters"]}
+        self.assertIn(self.semester.pk, ids)
+
+    def test_instructors_bad_request_without_params(self):
+        self.client.force_login(self.user1)
+        response = self.client.get(reverse("review_instructor_options"))
+        self.assertEqual(response.status_code, 400)
+
+    def test_instructors_returns_json(self):
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("review_instructor_options"),
+            {"course": self.course.pk, "semester": self.semester.pk},
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertTrue(
+            any(row["last_name"] == "Jefferson" for row in data["instructors"])
         )

@@ -424,14 +424,14 @@ class NewReviewClubSearchTestCase(TCFDataTestCase):
         super().setUp()
         self.client.force_login(self.user1)
 
-    def test_club_review_get_without_club_renders_search(self):
-        """Club mode without ``club`` id shows review search with club autocomplete."""
+    def test_club_review_get_without_club_renders_review_page(self):
+        """Club mode without ``club`` id shows unified review page with club picker."""
         response = self.client.get(
             reverse("new_review"),
             {"mode": "clubs"},
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "site/pages/review_search.html")
+        self.assertTemplateUsed(response, "site/pages/review.html")
         self.assertContains(response, "Search for a club by name")
 
 

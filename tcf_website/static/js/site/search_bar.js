@@ -62,85 +62,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let autocompleteTimeout = null;
 
-    if (searchInput && autocompleteContainer) {
-      if (autocompleteContainer.getAttribute("data-autocomplete-action")) {
-        form.addEventListener("submit", (e) => {
-          e.preventDefault();
-          const firstLink = autocompleteContainer.querySelector(
-            ".autocomplete-item__link",
-          );
-          if (firstLink) {
-            firstLink.click();
-          }
-        });
-      }
-      searchInput.addEventListener("input", (e) => {
-        const query = e.target.value.trim();
-        const mode =
-          form.querySelector('input[name="mode"]')?.value || "courses";
-
-        if (query.length < 2) {
-          autocompleteContainer.style.display = "none";
-          autocompleteContainer.innerHTML = "";
-          return;
-        }
-
-        clearTimeout(autocompleteTimeout);
-        autocompleteTimeout = setTimeout(() => {
-          const url = new URL(form.action, window.location.origin);
-          url.searchParams.set("q", query);
-          url.searchParams.set("mode", mode);
-
-          const action = autocompleteContainer.getAttribute(
-            "data-autocomplete-action",
-          );
-          const target = autocompleteContainer.getAttribute(
-            "data-autocomplete-target",
-          );
-          if (action) url.searchParams.set("autocomplete_action", action);
-          if (target) url.searchParams.set("autocomplete_target", target);
-
-          fetch(url, {
-            headers: {
-              "X-Requested-With": "XMLHttpRequest",
-            },
-          })
-            .then((res) => res.text())
-            .then((html) => {
-              autocompleteContainer.innerHTML = html;
-              autocompleteContainer.style.display = "block";
-            })
-            .catch((err) => {
-              console.error("Autocomplete error:", err);
-            });
-        }, 200);
-      });
-
-      // Hide autocomplete on click outside
-      document.addEventListener("click", (e) => {
-        if (
-          !autocompleteContainer.contains(e.target) &&
-          e.target !== searchInput
-        ) {
-          autocompleteContainer.style.display = "none";
-        }
-      });
-
-      // Select option on enter, or show autocomplete again on focus
-      searchInput.addEventListener("focus", () => {
-        if (
-          searchInput.value.trim().length >= 2 &&
-          autocompleteContainer.innerHTML.trim() !== ""
-        ) {
-          autocompleteContainer.style.display = "block";
-        }
-      });
-
-      addArrowKeyNav(
-        searchInput,
-        autocompleteContainer,
-        ".autocomplete-item__link, .autocomplete-item__title",
-      );
+    if (!form || !searchInput || !autocompleteContainer) {
+      return;
     }
+
+    if (autocompleteContainer.getAttribute("data-autocomplete-action")) {
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const firstLink = autocompleteContainer.querySelector(
+          ".autocomplete-item__link",
+        );
+        if (firstLink) {
+          firstLink.click();
+        }
+      });
+    }
+
+    searchInput.addEventListener("input", (e) => {
+      const query = e.target.value.trim();
+      const mode = form.querySelector('input[name="mode"]')?.value || "courses";
+
+      if (query.length < 2) {
+        autocompleteContainer.style.display = "none";
+        autocompleteContainer.innerHTML = "";
+        return;
+      }
+
+      clearTimeout(autocompleteTimeout);
+      autocompleteTimeout = setTimeout(() => {
+        const url = new URL(form.action, window.location.origin);
+        url.searchParams.set("q", query);
+        url.searchParams.set("mode", mode);
+
+        const action = autocompleteContainer.getAttribute(
+          "data-autocomplete-action",
+        );
+        const target = autocompleteContainer.getAttribute(
+          "data-autocomplete-target",
+        );
+        if (action) url.searchParams.set("autocomplete_action", action);
+        if (target) url.searchParams.set("autocomplete_target", target);
+
+        fetch(url, {
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        })
+          .then((res) => res.text())
+          .then((html) => {
+            autocompleteContainer.innerHTML = html;
+            autocompleteContainer.style.display = "block";
+          })
+          .catch((err) => {
+            console.error("Autocomplete error:", err);
+          });
+      }, 200);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (
+        !autocompleteContainer.contains(e.target) &&
+        e.target !== searchInput
+      ) {
+        autocompleteContainer.style.display = "none";
+      }
+    });
+
+    searchInput.addEventListener("focus", () => {
+      if (
+        searchInput.value.trim().length >= 2 &&
+        autocompleteContainer.innerHTML.trim() !== ""
+      ) {
+        autocompleteContainer.style.display = "block";
+      }
+    });
+
+    addArrowKeyNav(
+      searchInput,
+      autocompleteContainer,
+      ".autocomplete-item__link, .autocomplete-item__title",
+    );
   });
 });

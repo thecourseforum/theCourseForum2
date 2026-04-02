@@ -9,208 +9,118 @@
 
 {% block content %}
 <div class="review-container">
-  
+
   <header class="review-header">
     <h1 class="review-header__title">Write a Review</h1>
     <p class="review-header__subtitle">Share your experience to help other students.</p>
   </header>
 
-  <form id="reviewForm" action="{% url 'new_review' %}" method="POST">
+  {# Search bars use their own <form>; must NOT be nested inside #reviewForm (invalid HTML). #}
+  {% if is_club %}
+  {{ club_semester_choices|json_script:"review-club-semesters-data" }}
+  {% endif %}
+  {% if not is_club %}
+  <section class="review-section" id="review-course-section">
+    <h2 class="review-section__title">
+      <span class="review-section__title-icon">📖</span>
+      <span id="review-course-heading" class="review-entity-heading">{% if course %}{{ course.code }} — {{ course.title }}{% else %}Course{% endif %}</span>
+    </h2>
+    <p class="review-section__hint" id="review-course-hint">{% if course %}Need a different class? Search again below.{% else %}Search and select the course you took.{% endif %}</p>
+    <div id="review-course-picker">
+      {% include "site/components/_search_bar.html" with autocomplete_action="review" search_placeholder="Mnemonic, number, or title…" container_classes="search-bar-container--inline" %}
+    </div>
+  </section>
+  {% endif %}
+  {% if is_club %}
+  <section class="review-section" id="review-club-section">
+    <h2 class="review-section__title">
+      <span class="review-section__title-icon">🛡️</span>
+      <span id="review-club-heading" class="review-entity-heading">{% if club %}{{ club.name }}{% if club.category %} — {{ club.category.name }}{% endif %}{% else %}Club{% endif %}</span>
+    </h2>
+    <p class="review-section__hint" id="review-club-hint">{% if club %}Pick another club? Search again below.{% else %}Search and select the club you want to review.{% endif %}</p>
+    <div id="review-club-picker">
+      {% include "site/components/_search_bar.html" with autocomplete_action="review" search_placeholder="Search for a club by name…" container_classes="search-bar-container--inline" %}
+    </div>
+  </section>
+  {% endif %}
+
+  <form id="reviewForm"
+        action="{% url 'new_review' %}{% if is_club %}?mode=clubs{% endif %}"
+        method="POST"
+        data-review-cascade="1"
+        data-is-club="{% if is_club %}true{% else %}false{% endif %}"
+        data-main-unlocked="{% if review_main_unlocked|default:False %}1{% else %}0{% endif %}"
+        data-semesters-url="{% url 'review_semester_options' %}"
+        data-instructors-url="{% url 'review_instructor_options' %}">
     {% csrf_token %}
 
-    <!-- hidden mode fields -->
     {% if is_club %}
-      <input type="hidden" name="club" value="{{ club.id }}">
+      <input type="hidden" name="club" id="review-club-id" value="{% if club %}{{ club.id }}{% endif %}" {% if not club %}disabled{% endif %}>
     {% else %}
-      <input type="hidden" name="course" value="{{ course.id }}">
+      <input type="hidden" name="course" id="review-course-id" value="{% if course %}{{ course.id }}{% endif %}" {% if not course %}disabled{% endif %}>
     {% endif %}
 
-
-    <!-- Context Info -->
-    <div class="context-info">
-      <div class="context-icon">
-        {% if is_club %}🛡️{% else %}📚{% endif %}
-      </div>
-      <div class="context-details">
-        {% if is_club %}
-          <div class="context-title">{{ club.name }}</div>
-          <div class="context-subtitle">{{ club.category.name }}</div>
-        {% else %}
-          <div class="context-title">{{ course.code }}</div>
-          <div class="context-subtitle">{{ course.title }}</div>
-        {% endif %}
-      </div>
-    </div>
-
-    <!-- Logistics Section -->
-    <section class="review-section">
+    <section class="review-section {% if is_club %}{% if not club %}review-cascade--locked{% endif %}{% else %}{% if not course %}review-cascade--locked{% endif %}{% endif %}" id="review-logistics-section">
       <h2 class="review-section__title">
         <span class="review-section__title-icon">🗓️</span> Logistics
       </h2>
-      
-      <div class="rating-grid">
-        <!-- Semester -->
-        <div class="rating-field">
-          <label class="rating-field__label" for="semester">{% if is_club %}When did you join?{% else %}When did you take this?{% endif %}</label>
-          <select class="instructor-select" id="semester" name="semester" required>
-            {% for sem in semesters %}
-              <option value="{{ sem.id }}">{{ sem.season|title }} {{ sem.year }}</option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <!-- Instructor (if course) -->
-        {% if not is_club %}
-          <div class="rating-field">
-            <label class="rating-field__label" for="instructor">Instructor</label>
-            {% if instructor %}
-              <div class="instructor-select" style="background: var(--bg-muted); cursor: not-allowed; opacity: 0.7;">
-                {{ instructor.full_name }}
-              </div>
-              <input type="hidden" name="instructor" value="{{ instructor.id }}">
-            {% else %}
-              <select class="instructor-select" id="instructor" name="instructor" required>
-                <option value="">Select instructor...</option>
-                {% for instr in instructors %}
-                  <option value="{{ instr.id }}">{{ instr.last_name }}, {{ instr.first_name }}</option>
-                {% endfor %}
-              </select>
-            {% endif %}
-          </div>
-        {% endif %}
-      </div>
+      {% include "site/components/_review_logistics_grid.html" %}
     </section>
 
-    <!-- Content Section -->
-    <section class="review-section">
+    {% with review_unlocked=review_main_unlocked|default:False %}
+    <fieldset id="review-main-fieldset" class="review-main-fieldset" {% if not review_unlocked %}disabled{% endif %}>
+    <section class="review-section {% if not review_unlocked %}review-cascade--locked{% endif %}" id="review-body-section">
       <h2 class="review-section__title">
         <span class="review-section__title-icon">✍️</span> Your Review
       </h2>
-      
+
       <div class="rating-field">
-        <textarea 
-          class="review-textarea" 
-          id="reviewtext" 
-          name="text" 
+        <textarea
+          class="review-textarea"
+          id="reviewtext"
+          name="text"
           rows="6"
-          placeholder="{% if is_club %}What was the club like? How was the workload? Any tips for future members? (Minimum 100 characters){% else %}What was the course like? How was the workload? Any tips for future students? (Minimum 100 characters){% endif %}"
-          required 
-          minlength="100" 
+          placeholder="{% if is_club %}What was the club like? How was the workload? Any tips for future members? (Minimum 200 characters){% else %}What was the course like? How was the workload? Any tips for future students? (Minimum 200 characters){% endif %}"
+          required
+          minlength="200"
           maxlength="5000"
-        >{% if form.text.value %}{{ form.text.value }}{% endif %}</textarea>
-        <span class="word-count" id="word-count">0 words</span>
+        >{% if form and form.text.value %}{{ form.text.value }}{% endif %}</textarea>
+        <span class="word-count" id="word-count">0 characters</span>
       </div>
     </section>
 
-    <!-- Ratings Section -->
-    <section class="review-section">
+    <section class="review-section {% if not review_unlocked %}review-cascade--locked{% endif %}" id="review-ratings-section">
       <h2 class="review-section__title">
         <span class="review-section__title-icon">⭐</span> Ratings
       </h2>
-      
+
       <div class="rating-grid">
-        
-        <!-- Field 1: Instructor/Leadership -->
-        <div class="rating-field">
-            <label class="rating-field__label">
-                {% if is_club %}Leadership{% else %}Instructor Rating{% endif %}
-            </label>
-            <div class="rating-options">
-                {% for i in "12345" %}
-                <label class="rating-option">
-                    <input type="radio" name="instructor_rating" value="{{ i }}" {% if i == "3" %}checked{% endif %}>
-                    <span class="rating-option__label">{{ i }}</span>
-                </label>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Field 2: Ensure -->
-        <div class="rating-field">
-            <label class="rating-field__label">Enjoyability</label>
-            <div class="rating-options">
-                {% for i in "12345" %}
-                <label class="rating-option">
-                    <input type="radio" name="enjoyability" value="{{ i }}" {% if i == "3" %}checked{% endif %}>
-                    <span class="rating-option__label">{{ i }}</span>
-                </label>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Field 3: Recommend -->
-        <div class="rating-field">
-            <label class="rating-field__label">Recommendability</label>
-            <div class="rating-options">
-                {% for i in "12345" %}
-                <label class="rating-option">
-                    <input type="radio" name="recommendability" value="{{ i }}" {% if i == "3" %}checked{% endif %}>
-                    <span class="rating-option__label">{{ i }}</span>
-                </label>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Field 4: Difficulty -->
-        <div class="rating-field">
-            <label class="rating-field__label">
-                {% if is_club %}Commitment{% else %}Difficulty{% endif %}
-            </label>
-            <div class="rating-options">
-                {% for i in "12345" %}
-                <label class="rating-option">
-                    <input type="radio" name="difficulty" value="{{ i }}" {% if i == "3" %}checked{% endif %}>
-                    <span class="rating-option__label">{{ i }}</span>
-                </label>
-                {% endfor %}
-            </div>
-        </div>
-
+        {% include "site/components/_review_rating_group.html" with name="instructor_rating" label=is_club|yesno:"Leadership,Instructor Rating" %}
+        {% include "site/components/_review_rating_group.html" with name="enjoyability" label="Enjoyability" %}
+        {% include "site/components/_review_rating_group.html" with name="recommendability" label="Recommendability" %}
+        {% include "site/components/_review_rating_group.html" with name="difficulty" label=is_club|yesno:"Commitment,Difficulty" %}
       </div>
     </section>
 
-    <!-- Workload Section -->
-    <section class="review-section">
+    <section class="review-section {% if not review_unlocked %}review-cascade--locked{% endif %}" id="review-workload-section">
       <h2 class="review-section__title">
         <span class="review-section__title-icon">⏱️</span> Weekly Hours
       </h2>
-      
+
       <div class="workload-grid">
-        <div class="workload-field">
-            <label>{% if is_club %}Events{% else %}Reading{% endif %}</label>
-            <div class="workload-input-wrapper">
-                <input type="number" class="workload-input" name="amount_reading" value="0" min="0" max="20" step="1">
-                <span class="workload-suffix">hrs</span>
-            </div>
-        </div>
-
-        <div class="workload-field">
-            <label>{% if is_club %}Planning{% else %}Writing{% endif %}</label>
-            <div class="workload-input-wrapper">
-                <input type="number" class="workload-input" name="amount_writing" value="0" min="0" max="20" step="1">
-                <span class="workload-suffix">hrs</span>
-            </div>
-        </div>
-
-        <div class="workload-field">
-            <label>{% if is_club %}Meetings{% else %}Group Work{% endif %}</label>
-            <div class="workload-input-wrapper">
-                <input type="number" class="workload-input" name="amount_group" value="0" min="0" max="20" step="1">
-                <span class="workload-suffix">hrs</span>
-            </div>
-        </div>
-
-        <div class="workload-field">
-            <label>{% if is_club %}Other{% else %}Homework{% endif %}</label>
-            <div class="workload-input-wrapper">
-                <input type="number" class="workload-input" name="amount_homework" value="0" min="0" max="20" step="1">
-                <span class="workload-suffix">hrs</span>
-            </div>
-        </div>
+        {% include "site/components/_review_workload_field.html" with name="amount_reading" label=is_club|yesno:"Events,Reading" %}
+        {% include "site/components/_review_workload_field.html" with name="amount_writing" label=is_club|yesno:"Planning,Writing" %}
+        {% include "site/components/_review_workload_field.html" with name="amount_group" label=is_club|yesno:"Meetings,Group Work" %}
+        {% include "site/components/_review_workload_field.html" with name="amount_homework" label=is_club|yesno:"Other,Homework" %}
       </div>
     </section>
 
-    <!-- Modals Placeholders (Reusing logic) -->
+    <div class="review-form__submit-wrap">
+      <button type="submit" class="btn btn--primary btn--lg" id="submitBtn" {% if not review_unlocked %}disabled{% endif %}>Submit Review</button>
+    </div>
+    </fieldset>
+    {% endwith %}
+
     <div id="duplicate-warning" class="modal" aria-hidden="true">
         <div class="modal__overlay" tabindex="-1" data-modal-close></div>
         <div class="modal__container" role="dialog" aria-modal="true">
@@ -227,41 +137,32 @@
         </div>
     </div>
 
-    <!-- Submit -->
-    <div style="text-align: center;">
-      <button type="submit" class="btn btn--primary btn--lg" id="submitBtn">Submit Review</button>
-    </div>
-
   </form>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script src="{% static 'js/site/review_cascade.js' %}"></script>
 <script>
   const duplicateCheckUrl = "{% url 'check_review_duplicate' %}";
   const zeroHoursCheckUrl = "{% url 'check_zero_hours_per_week' %}";
 
-  // Word count logic
   const textarea = document.getElementById('reviewtext');
   const countDisplay = document.getElementById('word-count');
-  
-  textarea.addEventListener('input', function() {
-    // Count words roughly
-    const text = this.value.trim();
-    const words = text ? text.split(/\s+/).length : 0;
-    countDisplay.textContent = words + ' words';
-    
-    // Simple validation visual
-    if (words < 20) { // arbitrary soft limit for color
-        countDisplay.style.color = 'var(--danger)';
-    } else {
-        countDisplay.style.color = 'var(--fg-muted)';
-    }
-  });
 
-  // Zero Hours Modal Logic (Simple Alert for now, or Custom Modal)
-  // We will replicate the fetch logic from the original template
-  
+  if (textarea && countDisplay) {
+    textarea.addEventListener('input', function() {
+      const text = this.value.trim();
+      const characters = text.length;
+      countDisplay.textContent = characters + ' characters';
+      if (characters < 200) {
+          countDisplay.style.color = 'var(--danger)';
+      } else {
+          countDisplay.style.color = 'var(--fg-muted)';
+      }
+    });
+  }
+
   let zeroHoursWarned = false;
 
   document.getElementById('reviewForm').addEventListener('submit', function(e) {
@@ -269,12 +170,10 @@
     const form = this;
     const formData = new FormData(form);
     const submitBtn = document.getElementById('submitBtn');
-    
-    // Disable button to prevent double submit
+
     submitBtn.disabled = true;
     submitBtn.textContent = 'Checking...';
 
-    // 1. Check Duplicate
     fetch(duplicateCheckUrl, {
         method: 'POST',
         body: formData,
@@ -283,12 +182,10 @@
     .then(r => r.json())
     .then(data => {
         if (data.duplicate) {
-            // Show duplicate modal
-            alert("{% if is_club %}You have already reviewed this club.{% else %}You have already reviewed this course/instructor for this semester.{% endif %}"); // Replace with modal
+            alert("{% if is_club %}You have already reviewed this club.{% else %}You have already reviewed this course/instructor for this semester.{% endif %}");
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit Review';
         } else {
-            // 2. Check Zero Hours
             fetch(zeroHoursCheckUrl, {
                 method: 'POST',
                 body: formData,
@@ -306,7 +203,7 @@
                         submitBtn.textContent = 'Submit Review';
                     }
                 } else {
-                    form.submit(); // Submit for real
+                    form.submit();
                 }
             })
             .catch(err => {
