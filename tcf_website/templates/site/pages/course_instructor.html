@@ -327,7 +327,7 @@
         <span class="review-card__date">{{ review.created|date }}</span>
       </div>
     </article>
-    {% if forloop.counter|divisibleby:5 %}
+    {% if forloop.counter|divisibleby:5 or forloop.last %}
     {% include "site/components/_leaderboard_ad.html" %}
     {% endif %}
     {% endfor %}
