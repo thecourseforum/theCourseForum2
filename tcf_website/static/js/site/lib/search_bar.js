@@ -50,7 +50,7 @@ function addArrowKeyNav(
 window.addArrowKeyNav = addArrowKeyNav;
 
 (function () {
-  var docCloseBound = false;
+  let docCloseBound = false;
 
   function bindDocumentCloseOnce() {
     if (docCloseBound) {
@@ -58,18 +58,20 @@ window.addArrowKeyNav = addArrowKeyNav;
     }
     docCloseBound = true;
     document.addEventListener("click", function (e) {
-      var t = e.target;
-      document.querySelectorAll(".search-bar-container").forEach(function (ctr) {
-        var ac = ctr.querySelector(".autocomplete-dropdown-container");
-        var input = ctr.querySelector(".search-bar__input");
-        if (!ac || !input) {
-          return;
-        }
-        if (ac.contains(t) || t === input) {
-          return;
-        }
-        ac.style.display = "none";
-      });
+      const t = e.target;
+      document
+        .querySelectorAll(".search-bar-container")
+        .forEach(function (ctr) {
+          const ac = ctr.querySelector(".autocomplete-dropdown-container");
+          const input = ctr.querySelector(".search-bar__input");
+          if (!ac || !input) {
+            return;
+          }
+          if (ac.contains(t) || t === input) {
+            return;
+          }
+          ac.style.display = "none";
+        });
     });
   }
 
@@ -80,21 +82,21 @@ window.addArrowKeyNav = addArrowKeyNav;
     container.setAttribute("data-search-bar-init", "1");
     bindDocumentCloseOnce();
 
-    var form = container.querySelector("form");
-    var searchInput = container.querySelector(".search-bar__input");
-    var autocompleteContainer = container.querySelector(
+    const form = container.querySelector("form");
+    const searchInput = container.querySelector(".search-bar__input");
+    const autocompleteContainer = container.querySelector(
       ".autocomplete-dropdown-container",
     );
     if (!form || !searchInput || !autocompleteContainer) {
       return;
     }
 
-    var autocompleteTimeout = null;
+    let autocompleteTimeout = null;
 
     if (autocompleteContainer.getAttribute("data-autocomplete-action")) {
       form.addEventListener("submit", function (e) {
         e.preventDefault();
-        var firstLink = autocompleteContainer.querySelector(
+        const firstLink = autocompleteContainer.querySelector(
           ".autocomplete-item__link",
         );
         if (firstLink) {
@@ -104,9 +106,9 @@ window.addArrowKeyNav = addArrowKeyNav;
     }
 
     searchInput.addEventListener("input", function (e) {
-      var query = e.target.value.trim();
-      var modeInput = form.querySelector('input[name="mode"]');
-      var mode = modeInput ? modeInput.value : "courses";
+      const query = e.target.value.trim();
+      const modeInput = form.querySelector('input[name="mode"]');
+      const mode = modeInput ? modeInput.value : "courses";
 
       if (query.length < 2) {
         autocompleteContainer.style.display = "none";
@@ -116,14 +118,14 @@ window.addArrowKeyNav = addArrowKeyNav;
 
       clearTimeout(autocompleteTimeout);
       autocompleteTimeout = setTimeout(function () {
-        var url = new URL(form.action, window.location.origin);
+        const url = new URL(form.action, window.location.origin);
         url.searchParams.set("q", query);
         url.searchParams.set("mode", mode);
 
-        var action = autocompleteContainer.getAttribute(
+        const action = autocompleteContainer.getAttribute(
           "data-autocomplete-action",
         );
-        var target = autocompleteContainer.getAttribute(
+        const target = autocompleteContainer.getAttribute(
           "data-autocomplete-target",
         );
         if (action) {
@@ -177,8 +179,10 @@ window.addArrowKeyNav = addArrowKeyNav;
    * @param {ParentNode} [root] - default document
    */
   function initSearchBarContainersIn(root) {
-    var scope = root || document;
-    scope.querySelectorAll(".search-bar-container").forEach(initSearchBarContainer);
+    const scope = root || document;
+    scope
+      .querySelectorAll(".search-bar-container")
+      .forEach(initSearchBarContainer);
   }
 
   window.initSearchBarContainersIn = initSearchBarContainersIn;
