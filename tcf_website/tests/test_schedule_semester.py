@@ -39,6 +39,37 @@ class ScheduleSemesterTestCase(TestCase):
         self.assertIn("Fall plan", names)
         self.assertNotIn("Old plan", names)
 
+    def test_explicit_semester_overrides_stale_schedule_id(self):
+        """?semester= must win over ?schedule= when the schedule belongs to another term."""
+        s_current = Schedule.objects.create(
+            name="Current term", user=self.user1, semester=self.semester
+        )
+        s_past = Schedule.objects.create(
+            name="Past term plan", user=self.user1, semester=self.past_semester
+        )
+        response = self.client.get(
+            reverse("schedule"),
+            {
+                "semester": str(self.past_semester.pk),
+                "schedule": str(s_current.pk),
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["active_semester"].pk, self.past_semester.pk)
+        self.assertEqual(response.context["selected_schedule"].pk, s_past.pk)
+
+    def test_schedule_only_query_derives_semester(self):
+        """Links with only ?schedule= still infer the term from that schedule."""
+        s_past = Schedule.objects.create(
+            name="OnlyPast", user=self.user1, semester=self.past_semester
+        )
+        response = self.client.get(
+            reverse("schedule"),
+            {"schedule": str(s_past.pk)},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["active_semester"].pk, self.past_semester.pk)
+
     def test_new_schedule_assigns_posted_semester(self):
         """POST semester creates a schedule in that term."""
         url = reverse("new_schedule")

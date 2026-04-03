@@ -231,3 +231,34 @@ class ReviewCascadeJsonEndpointsTests(TestCase):
         self.assertTrue(
             any(row["last_name"] == "Jefferson" for row in data["instructors"])
         )
+
+
+class ReviewPreflightJsonTests(TestCase):
+    """XHR duplicate / hours checks return JSON on validation failure."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_check_duplicate_xhr_invalid_returns_json_400(self):
+        """Invalid POST with XHR must not redirect with HTML."""
+        self.client.force_login(self.user1)
+        response = self.client.post(
+            reverse("check_review_duplicate"),
+            {"text": "ab"},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content)
+        self.assertFalse(data.get("ok", True))
+        self.assertIn("error", data)
+
+    def test_check_zero_hours_xhr_invalid_returns_json_400(self):
+        self.client.force_login(self.user1)
+        response = self.client.post(
+            reverse("check_zero_hours_per_week"),
+            {"text": "ab"},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content)
+        self.assertFalse(data.get("ok", True))

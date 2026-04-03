@@ -558,7 +558,18 @@ class ScheduleForm(forms.ModelForm):
 
 
 def resolve_builder_semester(request, user) -> Semester | None:
-    """Active term: follow schedule id if present (authoritative), else explicit semester param, else latest."""
+    """Pick builder term: explicit semester wins, then schedule id, else latest.
+
+    The term combo sends ?semester= together with hidden ?schedule=. That schedule id
+    may still point at the previous term until the client syncs; inferring the term
+    from schedule would ignore the user's new semester and show the wrong courses.
+    """
+    raw_sem = request.GET.get("semester") or request.POST.get("semester")
+    if raw_sem:
+        sem = Semester.objects.filter(pk=raw_sem).first()
+        if sem is not None:
+            return sem
+
     raw_sched = request.GET.get("schedule") or request.POST.get("schedule_id")
     if raw_sched:
         try:
@@ -572,9 +583,7 @@ def resolve_builder_semester(request, user) -> Semester | None:
                 return sched.semester
         except (TypeError, ValueError):
             pass
-    raw = request.POST.get("semester") or request.GET.get("semester")
-    if raw:
-        return Semester.objects.filter(pk=raw).first()
+
     return Semester.latest()
 
 

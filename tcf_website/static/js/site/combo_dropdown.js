@@ -88,7 +88,12 @@ document.addEventListener("DOMContentLoaded", () => {
       input.focus();
       suppressShow = false;
       if (combo.hasAttribute("data-submit-on-select")) {
-        combo.closest("form")?.submit();
+        const parentForm = combo.closest("form");
+        if (parentForm && typeof parentForm.requestSubmit === "function") {
+          parentForm.requestSubmit();
+        } else {
+          parentForm?.submit();
+        }
       }
     }
 

@@ -367,63 +367,14 @@
 
 {% block scripts %}
 <script src="{% static 'js/site/review_votes.js' %}"></script>
+<script src="{% static 'js/site/reviews_sort_fetch.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
 <script>
-// Sort dropdown
-const sortSelect = document.getElementById('review-sort');
-const reviewsResults = document.getElementById('reviews-results');
-if (sortSelect) {
-  sortSelect.addEventListener('change', async (e) => {
-    if (!reviewsResults) {
-      return;
-    }
-
-    const previousSort = sortSelect.dataset.lastSort ?? '';
-    const selectedMethod = e.target.value;
-    const url = new URL(window.location.href);
-    url.searchParams.delete('page');
-    if (selectedMethod && selectedMethod !== 'Default') {
-      url.searchParams.set('sort', selectedMethod);
-    } else {
-      url.searchParams.delete('sort');
-    }
-    url.hash = 'reviews';
-
-    sortSelect.disabled = true;
-    try {
-      const response = await fetch(url.pathname + url.search, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        credentials: 'same-origin'
-      });
-      if (!response.ok) {
-        throw new Error('Failed to load sorted reviews.');
-      }
-
-      const html = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const nextResults = doc.getElementById('reviews-results');
-      if (!nextResults) {
-        throw new Error('Missing reviews content.');
-      }
-
-      reviewsResults.innerHTML = nextResults.innerHTML;
-      sortSelect.dataset.lastSort = selectedMethod;
-      history.replaceState({}, '', url.pathname + url.search + '#reviews');
-
-      if (window.reviewVotes && typeof window.reviewVotes.init === 'function') {
-        window.reviewVotes.init();
-      }
-    } catch (error) {
-      sortSelect.value = previousSort;
-      const errorMsg = document.createElement('p');
-      errorMsg.textContent = 'Failed to load reviews. Please try again.';
-      errorMsg.className = 'text-danger text-sm mt-2';
-      sortSelect.closest('.reviews-sort')?.appendChild(errorMsg);
-      setTimeout(() => errorMsg.remove(), 4000);
-    } finally {
-      sortSelect.disabled = false;
-    }
+if (window.TcfReviewsSortFetch) {
+  window.TcfReviewsSortFetch.init({
+    sortSelectId: 'review-sort',
+    resultsId: 'reviews-results',
+    hash: 'reviews',
   });
 }
 

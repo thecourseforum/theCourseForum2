@@ -1,5 +1,5 @@
 {% load custom_tags %}
-<div class="schedule-builder__grid">
+<div class="schedule-builder__grid"{% if active_semester %} data-builder-active-semester="{{ active_semester.pk }}"{% endif %}>
   {% include "site/partials/_schedule_list_sidebar.html" %}
 
   <section class="schedule-detail">

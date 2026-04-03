@@ -1,5 +1,5 @@
 /**
- * Small helpers for GET partial HTML (browse / schedule builder).
+ * DOM helpers for GET partial HTML (browse / schedule builder).
  */
 (function (global) {
   global.TcfPartialHtml = {
@@ -8,6 +8,9 @@
      * @param {{ signal?: AbortSignal, headers?: Record<string, string> }} [opts]
      */
     fetchHtml: function fetchHtml(url, opts) {
+      if (global.TcfHttp && global.TcfHttp.fetchHtml) {
+        return global.TcfHttp.fetchHtml(url, opts);
+      }
       opts = opts || {};
       const headers = Object.assign(
         {
@@ -19,7 +22,7 @@
       return fetch(url, {
         method: "GET",
         credentials: "same-origin",
-        headers: headers,
+        headers,
         signal: opts.signal,
       });
     },

@@ -1,11 +1,13 @@
 /**
- * Schedule builder: partial=grid navigation, compare pick modal, semester combo without full reload.
+ * Schedule builder: partial=grid navigation, compare pick modal, term change via partial (no full reload).
  */
 (function () {
-  var root = document.getElementById("schedule-builder-grid-root");
+  const root = document.getElementById("schedule-builder-grid-root");
   if (!root || !window.TcfScheduleGrid) {
     return;
   }
+
+  const BUILDER_QUERY_KEYS = ["semester", "schedule", "compare", "overlap"];
 
   function scheduleBuilderBaseUrl() {
     return root.dataset.scheduleBaseUrl || "/schedule/";
@@ -15,14 +17,14 @@
    * Current builder query (semester / schedule / compare / overlap) from form + URL fallback.
    */
   function scheduleBuilderQueryUrl() {
-    var u = new URL(scheduleBuilderBaseUrl(), window.location.origin);
-    var form = document.querySelector(".schedule-builder__semester-form");
-    var cur = new URL(window.location.href);
-    var keys = ["semester", "schedule", "compare", "overlap"];
+    const u = new URL(scheduleBuilderBaseUrl(), window.location.origin);
+    const form = document.querySelector(".schedule-builder__semester-form");
+    const cur = new URL(window.location.href);
+    const keys = ["semester", "schedule", "compare", "overlap"];
     keys.forEach(function (k) {
-      var v = null;
+      let v = null;
       if (form) {
-        var inp = form.querySelector('input[name="' + k + '"]');
+        const inp = form.querySelector('input[name="' + k + '"]');
         if (inp && inp.value) {
           v = inp.value;
         }
@@ -42,25 +44,34 @@
   }
 
   function csrfTokenFromCookie() {
-    var m = document.cookie.match(/(^|;\s*)csrftoken=([^;]+)/);
+    if (window.TcfHttp && window.TcfHttp.getCookie) {
+      return window.TcfHttp.getCookie("csrftoken");
+    }
+    const m = document.cookie.match(/(^|;\s*)csrftoken=([^;]+)/);
     return m ? decodeURIComponent(m[2]) : "";
   }
 
   document.addEventListener(
     "submit",
     function (ev) {
-      var form = ev.target;
+      const form = ev.target;
       if (!(form instanceof HTMLFormElement)) {
         return;
       }
       if (form.classList.contains("schedule-builder__semester-form")) {
         ev.preventDefault();
-        var fd = new FormData(form);
-        var u = new URL(scheduleBuilderBaseUrl(), window.location.origin);
-        var semester = fd.get("semester");
-        if (semester) {
-          u.searchParams.set("semester", semester);
-        }
+        const fd = new FormData(form);
+        const actionAttr = form.getAttribute("action");
+        const u = new URL(
+          actionAttr || scheduleBuilderBaseUrl(),
+          window.location.origin,
+        );
+        BUILDER_QUERY_KEYS.forEach(function (key) {
+          const v = fd.get(key);
+          if (v != null && String(v) !== "") {
+            u.searchParams.set(key, String(v));
+          }
+        });
         fetchAndReplaceGrid(u.toString(), u.toString());
         return;
       }
@@ -68,12 +79,12 @@
         return;
       }
       ev.preventDefault();
-      var postAction = form.getAttribute("action");
+      const postAction = form.getAttribute("action");
       if (!postAction) {
         return;
       }
-      var token = csrfTokenFromCookie();
-      var asyncHeaders = {
+      const token = csrfTokenFromCookie();
+      const asyncHeaders = {
         Accept: "application/json",
         "X-Requested-With": "XMLHttpRequest",
       };
@@ -88,12 +99,12 @@
         headers: asyncHeaders,
       })
         .then(function (res) {
-          var ct = res.headers.get("content-type") || "";
+          const ct = res.headers.get("content-type") || "";
           if (ct.indexOf("application/json") === -1) {
             throw new Error("non-json");
           }
           return res.json().then(function (data) {
-            return { res: res, data: data };
+            return { res, data };
           });
         })
         .then(function (out) {
@@ -109,7 +120,7 @@
             fetchAndReplaceGrid(out.data.redirect, out.data.redirect);
             return;
           }
-          var msg =
+          const msg =
             (out.data && out.data.error) || "Something went wrong. Try again.";
           if (!out.data || !out.data.messages || !out.data.messages.length) {
             window.alert(msg);
@@ -125,25 +136,24 @@
   document.addEventListener(
     "click",
     function (ev) {
-      var t = ev.target;
+      const t = ev.target;
       if (!(t instanceof Element)) {
         return;
       }
 
-      var openPick = t.closest("[data-schedule-open-compare-pick]");
+      const openPick = t.closest("[data-schedule-open-compare-pick]");
       if (openPick && root.contains(openPick)) {
         ev.preventDefault();
-        var pickUrl = scheduleBuilderQueryUrl();
+        const pickUrl = scheduleBuilderQueryUrl();
         pickUrl.searchParams.delete("partial");
         pickUrl.searchParams.delete("compare");
         pickUrl.searchParams.delete("overlap");
         pickUrl.searchParams.set("partial", "compare_pick");
-        var bodyEl = document.getElementById("scheduleComparePickModalBody");
+        const bodyEl = document.getElementById("scheduleComparePickModalBody");
         if (!bodyEl || !window.TcfPartialHtml || !window.modal) {
           return;
         }
-        bodyEl.innerHTML =
-          '<p class="text-muted text-sm">Loading…</p>';
+        bodyEl.innerHTML = '<p class="text-muted text-sm">Loading…</p>';
         window.TcfPartialHtml.fetchHtml(pickUrl.toString())
           .then(function (res) {
             if (!res.ok) {
@@ -165,16 +175,16 @@
         return;
       }
 
-      var apply = t.closest("[data-schedule-apply-compare]");
+      const apply = t.closest("[data-schedule-apply-compare]");
       if (apply) {
         ev.preventDefault();
-        var compareId = apply.getAttribute("data-schedule-apply-compare");
+        const compareId = apply.getAttribute("data-schedule-apply-compare");
         if (!compareId) {
           return;
         }
-        var u = scheduleBuilderQueryUrl();
+        const u = scheduleBuilderQueryUrl();
         u.searchParams.delete("partial");
-        var primary = u.searchParams.get("schedule");
+        const primary = u.searchParams.get("schedule");
         if (!primary) {
           return;
         }
@@ -187,7 +197,7 @@
         return;
       }
 
-      var a = t.closest("a[data-schedule-nav]");
+      const a = t.closest("a[data-schedule-nav]");
       if (a && root.contains(a)) {
         ev.preventDefault();
         ev.stopPropagation();
@@ -198,19 +208,19 @@
   );
 
   root.addEventListener("click", function (ev) {
-    var copyBtn = ev.target.closest(".schedule-detail__share-copy");
+    const copyBtn = ev.target.closest(".schedule-detail__share-copy");
     if (!copyBtn || !root.contains(copyBtn)) {
       return;
     }
-    var sroot = copyBtn.closest("[data-schedule-share]");
+    const sroot = copyBtn.closest("[data-schedule-share]");
     if (!sroot) {
       return;
     }
-    var input = sroot.querySelector(".schedule-detail__share-input");
+    const input = sroot.querySelector(".schedule-detail__share-input");
     if (!input) {
       return;
     }
-    var v = input.value;
+    const v = input.value;
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(v).catch(function () {
         input.select();

@@ -111,7 +111,25 @@
     }
     const clubSemEl = document.getElementById("review-club-semesters-data");
     if (clubSemEl && semesterSelect) {
-      const rows = JSON.parse(clubSemEl.textContent);
+      let rows;
+      try {
+        rows = JSON.parse(clubSemEl.textContent);
+      } catch {
+        if (instructorError) {
+          instructorError.textContent =
+            "Could not load club term options. Refresh the page and try again.";
+          instructorError.hidden = false;
+        }
+        return;
+      }
+      if (!Array.isArray(rows)) {
+        if (instructorError) {
+          instructorError.textContent =
+            "Could not load club term options. Refresh the page and try again.";
+          instructorError.hidden = false;
+        }
+        return;
+      }
       semesterSelect.innerHTML = "";
       const ph = document.createElement("option");
       ph.value = "";

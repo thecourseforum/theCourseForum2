@@ -181,54 +181,13 @@
 
 {% block scripts %}
 <script src="{% static 'js/site/review_votes.js' %}"></script>
+<script src="{% static 'js/site/reviews_sort_fetch.js' %}"></script>
 <script>
-const sortSelect = document.getElementById('review-sort');
-const reviewsResults = document.getElementById('reviews-results');
-if (sortSelect) {
-  sortSelect.addEventListener('change', async (e) => {
-    if (!reviewsResults) {
-      return;
-    }
-
-    const selectedMethod = e.target.value;
-    const url = new URL(window.location.href);
-    url.searchParams.delete('page');
-    if (selectedMethod) {
-      url.searchParams.set('sort', selectedMethod);
-    } else {
-      url.searchParams.delete('sort');
-    }
-    url.hash = 'reviews';
-
-    sortSelect.disabled = true;
-    try {
-      const response = await fetch(url.pathname + url.search, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        credentials: 'same-origin'
-      });
-      if (!response.ok) {
-        throw new Error('Failed to load sorted reviews.');
-      }
-
-      const html = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const nextResults = doc.getElementById('reviews-results');
-      if (!nextResults) {
-        throw new Error('Missing reviews content.');
-      }
-
-      reviewsResults.innerHTML = nextResults.innerHTML;
-      history.replaceState({}, '', url.pathname + url.search + '#reviews');
-
-      if (window.reviewVotes && typeof window.reviewVotes.init === 'function') {
-        window.reviewVotes.init();
-      }
-    } catch (error) {
-      window.location.href = url.pathname + url.search + '#reviews';
-    } finally {
-      sortSelect.disabled = false;
-    }
+if (window.TcfReviewsSortFetch) {
+  window.TcfReviewsSortFetch.init({
+    sortSelectId: 'review-sort',
+    resultsId: 'reviews-results',
+    hash: 'reviews',
   });
 }
 </script>

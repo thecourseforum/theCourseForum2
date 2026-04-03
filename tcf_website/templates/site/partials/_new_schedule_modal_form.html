@@ -5,10 +5,9 @@
   data-tcf-json-submit
 >
   {% csrf_token %}
-  <input type="hidden" name="next" value="{{ request.get_full_path }}">
-  {% if active_semester %}
-  <input type="hidden" name="semester" value="{{ active_semester.pk }}">
-  {% endif %}
+  {# semester + next are set on modal open via TcfSchedulePage (live URL + term combo). #}
+  <input type="hidden" name="next" value="">
+  <input type="hidden" name="semester" value="">
   <label class="schedule-add__label" for="tcf-new-schedule-name">Schedule name</label>
   <input
     id="tcf-new-schedule-name"

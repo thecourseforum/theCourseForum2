@@ -146,6 +146,10 @@ class ScheduleShareTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "schedule-builder__grid")
+        self.assertContains(
+            response,
+            f'data-builder-active-semester="{self.semester.pk}"',
+        )
         self.assertNotContains(response, "schedule-builder__title")
 
     def test_grid_partial_includes_compare_ui_when_compare_param(self):
@@ -170,6 +174,28 @@ class ScheduleShareTestCase(TestCase):
         self.assertContains(response, "schedule-builder__grid")
         self.assertContains(response, "Exit compare")
         self.assertNotContains(response, "schedule-builder__title")
+
+    def test_grid_partial_past_semester_preserves_compare(self):
+        """Builder query with another term still renders compare when schedules match that term."""
+        s1 = Schedule.objects.create(
+            name="PastA", user=self.user1, semester=self.past_semester
+        )
+        s2 = Schedule.objects.create(
+            name="PastB", user=self.user1, semester=self.past_semester
+        )
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("schedule"),
+            {
+                "semester": str(self.past_semester.pk),
+                "schedule": str(s1.pk),
+                "compare": str(s2.pk),
+                "partial": "grid",
+            },
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Exit compare")
 
     def test_compare_pick_partial_returns_apply_buttons(self):
         s1 = Schedule.objects.create(

@@ -2,30 +2,30 @@
  * Modal flows for new schedule and add-to-schedule (JSON POST + optional grid refresh).
  */
 (function () {
-  var MODAL_ID = "scheduleFlowModal";
-  var BODY_ID = "scheduleFlowModalBody";
-  var TITLE_ID = "scheduleFlowModalTitle";
+  const MODAL_ID = "scheduleFlowModal";
+  const BODY_ID = "scheduleFlowModalBody";
+  const TITLE_ID = "scheduleFlowModalTitle";
 
   function getModalBody() {
     return document.getElementById(BODY_ID);
   }
 
   function setTitle(text) {
-    var el = document.getElementById(TITLE_ID);
+    const el = document.getElementById(TITLE_ID);
     if (el) {
       el.textContent = text || "Schedule";
     }
   }
 
   function setBodyHtml(html) {
-    var el = getModalBody();
+    const el = getModalBody();
     if (el) {
       el.innerHTML = html;
     }
   }
 
   function clearFormError(form) {
-    var err = form.querySelector("[data-tcf-form-error]");
+    const err = form.querySelector("[data-tcf-form-error]");
     if (err) {
       err.textContent = "";
       err.hidden = true;
@@ -33,7 +33,7 @@
   }
 
   function showFormError(form, message) {
-    var err = form.querySelector("[data-tcf-form-error]");
+    const err = form.querySelector("[data-tcf-form-error]");
     if (err) {
       err.textContent = message;
       err.hidden = false;
@@ -41,7 +41,10 @@
   }
 
   function getCookie(name) {
-    var m = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+    if (window.TcfHttp && window.TcfHttp.getCookie) {
+      return window.TcfHttp.getCookie(name);
+    }
+    const m = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
     return m ? decodeURIComponent(m[2]) : "";
   }
 
@@ -59,7 +62,7 @@
 
   function afterScheduleSuccess(redirect) {
     closeModal();
-    var root = document.getElementById("schedule-builder-grid-root");
+    const root = document.getElementById("schedule-builder-grid-root");
     if (root && window.TcfScheduleGrid) {
       window.TcfScheduleGrid.replaceFromUrl(redirect, redirect);
     } else {
@@ -75,11 +78,11 @@
     form.addEventListener("submit", function (ev) {
       ev.preventDefault();
       clearFormError(form);
-      var action = form.getAttribute("action");
+      const action = form.getAttribute("action");
       if (!action) {
         return;
       }
-      var fd = new FormData(form);
+      const fd = new FormData(form);
       fetch(action, {
         method: "POST",
         body: fd,
@@ -91,17 +94,17 @@
         },
       })
         .then(function (res) {
-          var ct = res.headers.get("content-type") || "";
+          const ct = res.headers.get("content-type") || "";
           if (ct.indexOf("application/json") === -1) {
             return res.text().then(function () {
               return {
-                res: res,
+                res,
                 data: { ok: false, error: "Unexpected response." },
               };
             });
           }
           return res.json().then(function (data) {
-            return { res: res, data: data };
+            return { res, data };
           });
         })
         .then(function (out) {
@@ -117,7 +120,7 @@
             afterScheduleSuccess(out.data.redirect);
             return;
           }
-          var msg =
+          const msg =
             (out.data && out.data.error) ||
             (out.res.ok ? "Something went wrong." : "Request failed.");
           if (out.data && out.data.messages && out.data.messages.length) {
@@ -132,17 +135,55 @@
     });
   }
 
+  function ensureHiddenInput(form, name, value) {
+    let el = form.querySelector('input[type="hidden"][name="' + name + '"]');
+    if (!el) {
+      el = document.createElement("input");
+      el.type = "hidden";
+      el.name = name;
+      const csrf = form.querySelector('input[name="csrfmiddlewaretoken"]');
+      if (csrf && csrf.nextSibling) {
+        form.insertBefore(el, csrf.nextSibling);
+      } else {
+        form.appendChild(el);
+      }
+    }
+    el.value = value;
+  }
+
+  /**
+   * New-schedule modal is cloned from a <template> rendered once on load; hidden
+   * semester/next must match live builder state (term combo + location).
+   */
+  function syncNewScheduleFormFromBuilder(form) {
+    if (!form) {
+      return;
+    }
+    const page = window.TcfSchedulePage;
+    const nextPath =
+      page && page.builderReturnPath
+        ? page.builderReturnPath()
+        : window.location.pathname + window.location.search;
+    const sem =
+      page && page.activeSemesterId ? page.activeSemesterId() || "" : "";
+    ensureHiddenInput(form, "next", nextPath);
+    if (sem) {
+      ensureHiddenInput(form, "semester", sem);
+    }
+  }
+
   function openNewScheduleFromTemplate() {
-    var tpl = document.getElementById("tcf-new-schedule-form-template");
+    const tpl = document.getElementById("tcf-new-schedule-form-template");
     if (!tpl || !window.modal) {
       return;
     }
     setTitle("New schedule");
     setBodyHtml(tpl.innerHTML);
     openModal();
-    var body = getModalBody();
+    const body = getModalBody();
     if (body) {
-      var f = body.querySelector("form[data-tcf-json-submit]");
+      const f = body.querySelector("form[data-tcf-json-submit]");
+      syncNewScheduleFormFromBuilder(f);
       wireJsonForm(f);
     }
   }
@@ -152,7 +193,7 @@
       window.location.assign(url);
       return;
     }
-    var u = new URL(url, window.location.origin);
+    const u = new URL(url, window.location.origin);
     u.searchParams.set("partial", "modal");
     setTitle("Add to schedule");
     setBodyHtml('<p class="schedule-flow-modal__loading">Loading…</p>');
@@ -171,9 +212,9 @@
           return;
         }
         setBodyHtml(html);
-        var body = getModalBody();
+        const body = getModalBody();
         if (body) {
-          var f = body.querySelector("form[data-tcf-json-submit]");
+          const f = body.querySelector("form[data-tcf-json-submit]");
           wireJsonForm(f);
         }
       })
@@ -186,20 +227,20 @@
   document.addEventListener(
     "click",
     function (ev) {
-      var t = ev.target;
+      const t = ev.target;
       if (!(t instanceof Element)) {
         return;
       }
-      var newBtn = t.closest("[data-schedule-flow-new]");
+      const newBtn = t.closest("[data-schedule-flow-new]");
       if (newBtn) {
         ev.preventDefault();
         openNewScheduleFromTemplate();
         return;
       }
-      var addTrigger = t.closest("[data-schedule-flow-add-url]");
+      const addTrigger = t.closest("[data-schedule-flow-add-url]");
       if (addTrigger) {
         ev.preventDefault();
-        var addUrl = addTrigger.getAttribute("data-schedule-flow-add-url");
+        const addUrl = addTrigger.getAttribute("data-schedule-flow-add-url");
         if (addUrl) {
           fetchAddCourseModal(addUrl);
         }

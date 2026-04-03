@@ -88,16 +88,27 @@
 
     resultsRoot.setAttribute("aria-busy", "true");
 
+    function showError(message) {
+      resultsRoot.innerHTML =
+        '<p class="text-danger text-sm p-4" role="alert">' + message + "</p>";
+    }
+
     try {
-      const res = await fetch(fetchUrl.toString(), {
-        method: "GET",
-        credentials: "same-origin",
-        signal: abortCtl.signal,
-        headers: {
-          Accept: "text/html",
-          "X-Requested-With": "XMLHttpRequest",
-        },
-      });
+      const fetchOpts = { signal: abortCtl.signal };
+      let res;
+      if (window.TcfHttp && window.TcfHttp.fetchHtml) {
+        res = await window.TcfHttp.fetchHtml(fetchUrl.toString(), fetchOpts);
+      } else {
+        res = await fetch(fetchUrl.toString(), {
+          method: "GET",
+          credentials: "same-origin",
+          signal: abortCtl.signal,
+          headers: {
+            Accept: "text/html",
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        });
+      }
 
       if (res.status === 204) {
         window.location.assign(baseUrl);
@@ -105,6 +116,7 @@
       }
 
       if (!res.ok) {
+        showError("Search failed. Please try again.");
         return;
       }
 
@@ -120,6 +132,9 @@
     } catch (e) {
       if (e.name !== "AbortError") {
         console.error(e);
+        showError(
+          "Could not load results. Check your connection and try again.",
+        );
       }
     } finally {
       resultsRoot.removeAttribute("aria-busy");

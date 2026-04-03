@@ -8,6 +8,9 @@
   "use strict";
 
   function getCookie(name) {
+    if (window.TcfHttp && typeof window.TcfHttp.getCookie === "function") {
+      return window.TcfHttp.getCookie(name);
+    }
     const cookie = document.cookie
       .split(";")
       .map((part) => part.trim())

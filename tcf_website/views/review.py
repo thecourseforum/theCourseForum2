@@ -91,6 +91,23 @@ class ReviewForm(forms.ModelForm):
         return instance
 
 
+def _review_preflight_wants_json(request) -> bool:
+    return request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+
+def _review_preflight_invalid_form_response(request, form: ReviewForm):
+    if _review_preflight_wants_json(request):
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": "Invalid review data.",
+                "errors": form.errors.get_json_data(),
+            },
+            status=400,
+        )
+    return redirect("new_review")
+
+
 def _vote_response_payload(review: Review, user) -> dict[str, int]:
     """Return vote state payload for frontend updates."""
     agg = review.vote_set.aggregate(
@@ -175,7 +192,7 @@ def check_duplicate(request):
         # User has not reviewed course/club before; proceed with standard form submission
         response = {"duplicate": False}
         return JsonResponse(response)
-    return redirect("new_review")
+    return _review_preflight_invalid_form_response(request, form)
 
 
 @login_required()
@@ -197,7 +214,7 @@ def check_zero_hours_per_week(request):
         # Otherwise, proceed with normal form submission
         response = {"zero": False}
         return JsonResponse(response)
-    return redirect("new_review")
+    return _review_preflight_invalid_form_response(request, form)
 
 
 def _recent_semester_id_set() -> set[int]:

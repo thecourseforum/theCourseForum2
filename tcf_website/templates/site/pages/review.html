@@ -165,61 +165,84 @@
 
   let zeroHoursWarned = false;
 
-  document.getElementById('reviewForm').addEventListener('submit', function(e) {
+  document.getElementById('reviewForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const form = this;
     const formData = new FormData(form);
     const submitBtn = document.getElementById('submitBtn');
 
+    function resetSubmitBtn() {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Review';
+    }
+
     submitBtn.disabled = true;
     submitBtn.textContent = 'Checking...';
 
-    fetch(duplicateCheckUrl, {
+    const xhrHeaders = {
+      'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+      'X-Requested-With': 'XMLHttpRequest',
+    };
+
+    try {
+      const dupRes = await fetch(duplicateCheckUrl, {
         method: 'POST',
         body: formData,
-        headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') }
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.duplicate) {
-            alert("{% if is_club %}You have already reviewed this club.{% else %}You have already reviewed this course/instructor for this semester.{% endif %}");
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Review';
+        headers: xhrHeaders,
+      });
+      let dupData;
+      try {
+        dupData = await dupRes.json();
+      } catch {
+        resetSubmitBtn();
+        alert('An error occurred. Please try again.');
+        return;
+      }
+      if (!dupRes.ok) {
+        alert(dupData.error || 'Could not validate your review. Please check the form.');
+        resetSubmitBtn();
+        return;
+      }
+      if (dupData.duplicate) {
+        alert("{% if is_club %}You have already reviewed this club.{% else %}You have already reviewed this course/instructor for this semester.{% endif %}");
+        resetSubmitBtn();
+        return;
+      }
+
+      const zRes = await fetch(zeroHoursCheckUrl, {
+        method: 'POST',
+        body: formData,
+        headers: xhrHeaders,
+      });
+      let zData;
+      try {
+        zData = await zRes.json();
+      } catch {
+        resetSubmitBtn();
+        alert('An error occurred checking hours. Please try again.');
+        return;
+      }
+      if (!zRes.ok) {
+        alert(zData.error || 'Could not validate your review.');
+        resetSubmitBtn();
+        return;
+      }
+      if (zData.zero && !zeroHoursWarned) {
+        const confirmZero = confirm('You entered 0 total hours per week. Is this correct?');
+        if (confirmZero) {
+          zeroHoursWarned = true;
+          form.submit();
         } else {
-            fetch(zeroHoursCheckUrl, {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') }
-            })
-            .then(r => r.json())
-            .then(zData => {
-                if (zData.zero && !zeroHoursWarned) {
-                    const confirmZero = confirm("You entered 0 total hours per week. Is this correct?");
-                    if (confirmZero) {
-                        zeroHoursWarned = true;
-                        form.submit();
-                    } else {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Submit Review';
-                    }
-                } else {
-                    form.submit();
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("An error occurred checking hours. Please try again.");
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Review';
-            });
+          resetSubmitBtn();
         }
-    })
-    .catch(err => {
-        console.error(err);
-        alert("An error occurred. Please try again.");
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Review';
-    });
+      } else {
+        form.submit();
+      }
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred. Please try again.');
+      resetSubmitBtn();
+    }
   });
 </script>
 {% endblock %}
