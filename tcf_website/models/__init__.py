@@ -19,6 +19,7 @@ from .models import (
     Review,
     ReviewLLMSummary,
     Schedule,
+    ScheduleBookmark,
     ScheduledCourse,
     School,
     Section,

@@ -1680,6 +1680,7 @@ class Schedule(models.Model):
     name = models.CharField(max_length=255)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    share_token = models.UUIDField(null=True, blank=True, unique=True, db_index=True)
 
     def __str__(self):
         return self.name
@@ -1925,6 +1926,31 @@ class Schedule(models.Model):
             instructor__in=ScheduledCourse.objects.values_list("instructor", flat=True),
         ).aggregate(models.Avg("average"))["average__avg"]
         return average_gpa
+
+
+class ScheduleBookmark(models.Model):
+    """Another user's shared schedule saved in the viewer's /schedule sidebar."""
+
+    viewer = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="schedule_bookmarks"
+    )
+    schedule = models.ForeignKey(
+        Schedule, on_delete=models.CASCADE, related_name="viewer_bookmarks"
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["viewer", "schedule"],
+                name="tcf_schedulebookmark_viewer_schedule_uniq",
+            )
+        ]
+        indexes = [
+            models.Index(fields=["viewer", "schedule"]),
+        ]
+
+    def __str__(self):
+        return f"{self.viewer_id} bookmarks {self.schedule_id}"
 
 
 class ScheduledCourse(models.Model):

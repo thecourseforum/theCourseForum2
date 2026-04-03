@@ -1,6 +1,8 @@
 # pylint: disable=no-member
 """Tests for semester-scoped schedules."""
 
+import json
+
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -78,30 +80,27 @@ class ScheduleSemesterTestCase(TestCase):
                 "next": reverse("schedule"),
             },
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("schedule"), response.url)
         self.assertFalse(
             ScheduledCourse.objects.filter(
                 schedule=schedule, section=section_current
             ).exists()
         )
 
-    def test_schedule_add_course_cancel_link_uses_next(self):
-        """Cancel returns to the originating page when next is provided."""
+    def test_schedule_add_course_get_redirects_using_next(self):
+        """Full-page GET to add URL redirects (modal-only flow)."""
         Schedule.objects.create(name="Current", user=self.user1, semester=self.semester)
+        next_url = reverse(
+            "course_instructor", args=[self.course.pk, self.instructor.pk]
+        )
         response = self.client.get(
             reverse("schedule_add_course", args=[self.course.pk]),
-            {
-                "next": reverse(
-                    "course_instructor", args=[self.course.pk, self.instructor.pk]
-                )
-            },
+            {"next": next_url},
         )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            f'href="{reverse("course_instructor", args=[self.course.pk, self.instructor.pk])}"',
-        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, next_url)
 
     def test_course_instructor_page_links_to_schedule_add(self):
         """Instructor page add button uses the same schedule-add entry point."""
@@ -117,8 +116,9 @@ class ScheduleSemesterTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            f'{reverse("schedule_add_course", args=[self.course.pk])}?next=',
+            reverse("schedule_add_course", args=[self.course.pk]),
         )
+        self.assertContains(response, "data-schedule-flow-add-url=")
 
     def test_add_course_allows_multiple_selected_sections(self):
         """Posting multiple selections adds one scheduled row per checked section."""
@@ -204,7 +204,8 @@ class ScheduleSemesterTestCase(TestCase):
             },
         )
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("schedule"), response.url)
         self.assertEqual(
             ScheduledCourse.objects.filter(schedule=schedule).count(),
             1,
@@ -214,3 +215,60 @@ class ScheduleSemesterTestCase(TestCase):
                 schedule=schedule, section=lecture_section
             ).exists()
         )
+
+    def test_schedule_add_modal_partial_returns_markup(self):
+        """XHR GET partial=modal returns add form fragment for the modal."""
+        Schedule.objects.create(name="S", user=self.user1, semester=self.semester)
+        response = self.client.get(
+            reverse("schedule_add_course", args=[self.course.pk]),
+            {"partial": "modal", "next": reverse("schedule")},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "data-tcf-json-submit")
+
+    def test_new_schedule_json_post_returns_redirect(self):
+        """Modal create accepts application/json and returns redirect URL."""
+        response = self.client.post(
+            reverse("new_schedule"),
+            {
+                "name": "JsonNamed",
+                "semester": str(self.semester.pk),
+                "next": reverse("schedule"),
+            },
+            HTTP_ACCEPT="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertTrue(data.get("ok"))
+        self.assertIn("redirect", data)
+        self.assertTrue(
+            Schedule.objects.filter(name="JsonNamed", user=self.user1).exists()
+        )
+
+    def test_add_course_json_post_returns_redirect(self):
+        """Modal add accepts application/json on success."""
+        schedule = Schedule.objects.create(
+            name="S", user=self.user1, semester=self.semester
+        )
+        section = Section.objects.create(
+            course=self.course,
+            semester=self.semester,
+            sis_section_number=201,
+        )
+        section.instructors.set([self.instructor])
+        post_url = reverse("schedule_add_course", args=[self.course.pk])
+        response = self.client.post(
+            post_url,
+            {
+                "schedule_id": str(schedule.pk),
+                "selection": [f"{section.pk}:{self.instructor.pk}"],
+                "semester": str(self.semester.pk),
+                "next": reverse("schedule"),
+            },
+            HTTP_ACCEPT="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertTrue(data.get("ok"))
+        self.assertIn("redirect", data)

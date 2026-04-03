@@ -22,6 +22,7 @@ class ScheduleAdmin(admin.ModelAdmin):
 
 admin.site.register(Schedule, ScheduleAdmin)
 admin.site.register(ScheduledCourse)
+admin.site.register(ScheduleBookmark)
 
 
 class SchoolAdmin(admin.ModelAdmin):

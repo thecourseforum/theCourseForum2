@@ -2,6 +2,8 @@
  * Modal Manager
  * =============
  * Handles modal open/close, backdrop clicks, and keyboard navigation.
+ * Open/close uses a single delegated document listener so dynamically injected
+ * markup (e.g. schedule flow modal body) works without per-element binding.
  */
 
 (function () {
@@ -117,44 +119,47 @@
   }
 
   /**
-   * Initialize modal triggers.
+   * True if target's close element is the active modal's backdrop (sibling) or inside the modal.
    */
+  function isActiveModalCloseTarget(target) {
+    if (!activeModal) return false;
+    const closeEl = target.closest("[data-modal-close]");
+    if (!closeEl) return false;
+    if (activeModal.contains(closeEl)) return true;
+    const backdrop = activeModal.previousElementSibling;
+    return (
+      Boolean(backdrop) &&
+      backdrop.classList.contains(BACKDROP_CLASS) &&
+      closeEl === backdrop
+    );
+  }
+
+  /**
+   * Single delegated click handler (capture) for open and close triggers.
+   */
+  function handleDelegatedModalClick(e) {
+    const openTrig = e.target.closest("[data-modal-open]");
+    if (openTrig) {
+      e.preventDefault();
+      const modalId = openTrig.getAttribute("data-modal-open");
+      if (modalId === LOGIN_MODAL_ID) {
+        const raw = openTrig.getAttribute("data-login-modal-message");
+        setLoginModalMessage(raw && raw.trim() ? raw.trim() : null);
+        openModal(modalId, { skipLoginMessageReset: true });
+      } else {
+        openModal(modalId);
+      }
+      return;
+    }
+
+    if (isActiveModalCloseTarget(e.target)) {
+      e.preventDefault();
+      closeModal();
+    }
+  }
+
   function initModalTriggers() {
-    // Open triggers
-    document.querySelectorAll("[data-modal-open]").forEach((trigger) => {
-      trigger.addEventListener("click", (e) => {
-        e.preventDefault();
-        const modalId = trigger.getAttribute("data-modal-open");
-        if (modalId === LOGIN_MODAL_ID) {
-          const raw = trigger.getAttribute("data-login-modal-message");
-          setLoginModalMessage(raw && raw.trim() ? raw.trim() : null);
-          openModal(modalId, { skipLoginMessageReset: true });
-        } else {
-          openModal(modalId);
-        }
-      });
-    });
-
-    // Close triggers
-    document.querySelectorAll("[data-modal-close]").forEach((trigger) => {
-      trigger.addEventListener("click", (e) => {
-        e.preventDefault();
-        closeModal();
-      });
-    });
-
-    // Backdrop click to close
-    document.querySelectorAll(`.${BACKDROP_CLASS}`).forEach((backdrop) => {
-      backdrop.addEventListener("click", closeModal);
-    });
-
-    // Close button inside modals
-    document.querySelectorAll(".modal__close").forEach((closeBtn) => {
-      closeBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        closeModal();
-      });
-    });
+    document.addEventListener("click", handleDelegatedModalClick, true);
   }
 
   /**

@@ -43,6 +43,8 @@ from .schedule import (
     new_schedule,
     remove_scheduled_course,
     schedule_add_course,
+    schedule_share,
+    schedule_unbookmark,
     view_schedules,
 )
 from .search import search

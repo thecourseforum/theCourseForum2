@@ -1,6 +1,5 @@
-{% if messages %}
-<section class="flash-messages" aria-live="polite">
-  <div class="flash-messages__inner">
+<section class="flash-messages" id="tcf-flash-messages" aria-live="polite"{% if not messages %} hidden{% endif %}>
+  <div class="flash-messages__inner" id="tcf-flash-messages-inner">
     {% for message in messages %}
     <div class="alert {% if 'error' in message.tags %}alert--danger{% elif 'success' in message.tags %}alert--success{% elif 'warning' in message.tags %}alert--warning{% else %}alert--info{% endif %}">
       <div class="alert__content">
@@ -10,4 +9,3 @@
     {% endfor %}
   </div>
 </section>
-{% endif %}

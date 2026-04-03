@@ -1,46 +1,3 @@
-{% extends "site/base.html" %}
-{% load static %}
-
-{% block title %}Add {{ course.code }} to Schedule | theCourseForum{% endblock %}
-
-{% block styles %}
-<link rel="stylesheet" href="{% static 'css/site/pages/schedule.css' %}">
-{% endblock %}
-
-{% block content %}
-<div class="schedule-add">
-  <div class="schedule-add__inner">
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      {% for item in breadcrumbs %}
-        {% if item.2 %}
-          <span class="breadcrumb__current">{{ item.0 }}</span>
-        {% else %}
-          <a href="{{ item.1 }}" class="breadcrumb__link">{{ item.0 }}</a>
-          <span class="breadcrumb__separator">/</span>
-        {% endif %}
-      {% endfor %}
-    </nav>
-
-    <div class="schedule-add__header">
-      <h1 class="schedule-add__title">Add {{ course.code }} to a Schedule</h1>
-      <p class="schedule-add__subtitle">Select a schedule and section(s).</p>
-    </div>
-
-    {% if not schedules %}
-    <section class="schedule-add__empty">
-      <h2>Create a schedule first</h2>
-      <p>You need at least one schedule before adding courses.</p>
-      {% include "site/components/_new_schedule_form.html" with form_class="schedule-add__create-form" %}
-      <a href="{{ schedule_builder_url }}" class="btn btn--ghost btn--sm">Go to Schedule Builder</a>
-    </section>
-    {% else %}
-    <form method="post" class="schedule-add__form">
-      {% csrf_token %}
-      <input type="hidden" name="next" value="{{ next_url|default:default_next_url }}">
-      {% if active_semester %}
-      <input type="hidden" name="semester" value="{{ active_semester.pk }}">
-      {% endif %}
-
       <div class="schedule-add__controls">
         <label class="schedule-add__label" for="schedule_id">Schedule</label>
         <select id="schedule_id" name="schedule_id" class="select" required>
@@ -133,10 +90,9 @@
         <button type="submit" class="btn btn--primary btn--md" {% if not lecture_options and not other_options %}disabled{% endif %}>
           Add to Schedule
         </button>
+        {% if is_modal %}
+        <button type="button" class="btn btn--ghost btn--md" data-modal-close>Cancel</button>
+        {% else %}
         <a href="{{ next_url|default:default_next_url }}" class="btn btn--ghost btn--md">Cancel</a>
+        {% endif %}
       </div>
-    </form>
-    {% endif %}
-  </div>
-</div>
-{% endblock %}

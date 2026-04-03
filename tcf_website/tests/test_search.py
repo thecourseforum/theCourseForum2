@@ -156,3 +156,23 @@ class SearchViewTestCase(TCFDataTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "site/components/_autocomplete_dropdown.html")
+
+    def test_autocomplete_schedule_add_urls_use_client_next_not_search_path(self):
+        """Schedule autocomplete rows encode ``next`` from the ``next`` query param (not ``/search/``)."""
+        next_path = "/schedule/?semester=1&schedule=99"
+        response = self.client.get(
+            reverse("search"),
+            {
+                "q": "Software Testing",
+                "autocomplete_action": "schedule",
+                "autocomplete_target": "42",
+                "next": next_path,
+            },
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        decoded = response.content.decode()
+        self.assertIn("next=", decoded)
+        self.assertIn("schedule=42", decoded)
+        self.assertNotIn("/search/", decoded)
+        self.assertIn("%3Fsemester%3D1", decoded)

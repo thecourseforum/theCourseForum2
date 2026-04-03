@@ -13,7 +13,6 @@ function addArrowKeyNav(
   function isOpen() {
     return !container.hidden && container.style.display !== "none";
   }
-  // Handles arrow keys when focus is on the input itself.
   input.addEventListener("keydown", (e) => {
     if (!isOpen()) return;
     const items = getItems();
@@ -31,7 +30,6 @@ function addArrowKeyNav(
       items[activeIdx > 0 ? activeIdx - 1 : items.length - 1].focus();
     }
   });
-  // Handles arrow keys when focus is inside the container.
   container.addEventListener("keydown", (e) => {
     const items = getItems();
     const activeIdx = items.findIndex(
@@ -45,31 +43,58 @@ function addArrowKeyNav(
       e.preventDefault();
       if (activeIdx > 0) items[activeIdx - 1].focus();
       else if (upLoops) input.focus();
-      // else: no-op — stay at top without returning focus to input (which would reset the filter)
     }
   });
 }
 
 window.addArrowKeyNav = addArrowKeyNav;
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".search-bar-container").forEach((container) => {
-    const form = container.querySelector("form");
-    const searchInput = container.querySelector(".search-bar__input");
-    const autocompleteContainer = container.querySelector(
+(function () {
+  var docCloseBound = false;
+
+  function bindDocumentCloseOnce() {
+    if (docCloseBound) {
+      return;
+    }
+    docCloseBound = true;
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      document.querySelectorAll(".search-bar-container").forEach(function (ctr) {
+        var ac = ctr.querySelector(".autocomplete-dropdown-container");
+        var input = ctr.querySelector(".search-bar__input");
+        if (!ac || !input) {
+          return;
+        }
+        if (ac.contains(t) || t === input) {
+          return;
+        }
+        ac.style.display = "none";
+      });
+    });
+  }
+
+  function initSearchBarContainer(container) {
+    if (container.getAttribute("data-search-bar-init") === "1") {
+      return;
+    }
+    container.setAttribute("data-search-bar-init", "1");
+    bindDocumentCloseOnce();
+
+    var form = container.querySelector("form");
+    var searchInput = container.querySelector(".search-bar__input");
+    var autocompleteContainer = container.querySelector(
       ".autocomplete-dropdown-container",
     );
-
-    let autocompleteTimeout = null;
-
     if (!form || !searchInput || !autocompleteContainer) {
       return;
     }
 
+    var autocompleteTimeout = null;
+
     if (autocompleteContainer.getAttribute("data-autocomplete-action")) {
-      form.addEventListener("submit", (e) => {
+      form.addEventListener("submit", function (e) {
         e.preventDefault();
-        const firstLink = autocompleteContainer.querySelector(
+        var firstLink = autocompleteContainer.querySelector(
           ".autocomplete-item__link",
         );
         if (firstLink) {
@@ -78,9 +103,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    searchInput.addEventListener("input", (e) => {
-      const query = e.target.value.trim();
-      const mode = form.querySelector('input[name="mode"]')?.value || "courses";
+    searchInput.addEventListener("input", function (e) {
+      var query = e.target.value.trim();
+      var modeInput = form.querySelector('input[name="mode"]');
+      var mode = modeInput ? modeInput.value : "courses";
 
       if (query.length < 2) {
         autocompleteContainer.style.display = "none";
@@ -89,46 +115,48 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       clearTimeout(autocompleteTimeout);
-      autocompleteTimeout = setTimeout(() => {
-        const url = new URL(form.action, window.location.origin);
+      autocompleteTimeout = setTimeout(function () {
+        var url = new URL(form.action, window.location.origin);
         url.searchParams.set("q", query);
         url.searchParams.set("mode", mode);
 
-        const action = autocompleteContainer.getAttribute(
+        var action = autocompleteContainer.getAttribute(
           "data-autocomplete-action",
         );
-        const target = autocompleteContainer.getAttribute(
+        var target = autocompleteContainer.getAttribute(
           "data-autocomplete-target",
         );
-        if (action) url.searchParams.set("autocomplete_action", action);
-        if (target) url.searchParams.set("autocomplete_target", target);
+        if (action) {
+          url.searchParams.set("autocomplete_action", action);
+        }
+        if (target) {
+          url.searchParams.set("autocomplete_target", target);
+        }
+
+        url.searchParams.set(
+          "next",
+          window.location.pathname + window.location.search,
+        );
 
         fetch(url, {
           headers: {
             "X-Requested-With": "XMLHttpRequest",
           },
         })
-          .then((res) => res.text())
-          .then((html) => {
+          .then(function (res) {
+            return res.text();
+          })
+          .then(function (html) {
             autocompleteContainer.innerHTML = html;
             autocompleteContainer.style.display = "block";
           })
-          .catch((err) => {
+          .catch(function (err) {
             console.error("Autocomplete error:", err);
           });
       }, 200);
     });
 
-    document.addEventListener("click", (e) => {
-      if (
-        !autocompleteContainer.contains(e.target) &&
-        e.target !== searchInput
-      ) {
-        autocompleteContainer.style.display = "none";
-      }
-    });
-
-    searchInput.addEventListener("focus", () => {
+    searchInput.addEventListener("focus", function () {
       if (
         searchInput.value.trim().length >= 2 &&
         autocompleteContainer.innerHTML.trim() !== ""
@@ -142,5 +170,20 @@ document.addEventListener("DOMContentLoaded", () => {
       autocompleteContainer,
       ".autocomplete-item__link, .autocomplete-item__title",
     );
+  }
+
+  /**
+   * Wire schedule/header search bars inside root (e.g. after schedule grid partial swap).
+   * @param {ParentNode} [root] - default document
+   */
+  function initSearchBarContainersIn(root) {
+    var scope = root || document;
+    scope.querySelectorAll(".search-bar-container").forEach(initSearchBarContainer);
+  }
+
+  window.initSearchBarContainersIn = initSearchBarContainersIn;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    initSearchBarContainersIn(document);
   });
-});
+})();

@@ -1,0 +1,32 @@
+{% load custom_tags %}
+<div class="schedule-detail__compare-col{% if calendar_only %} schedule-detail__compare-col--calendar-only{% endif %}">
+  {% if not calendar_only %}
+  <h3 class="schedule-detail__compare-heading">{{ col_title }}</h3>
+  <div class="schedule-detail__stats schedule-detail__stats--inline">
+    <div>
+      <span>Units</span>
+      <strong>{% if stats.credits %}{{ stats.credits }}{% else %}—{% endif %}</strong>
+    </div>
+    <div>
+      <span>Rating</span>
+      <strong>{% if stats.rating %}{{ stats.rating|floatformat:2 }}{% else %}—{% endif %}</strong>
+    </div>
+    <div>
+      <span>GPA</span>
+      <strong>{% if stats.gpa %}{{ stats.gpa|floatformat:2 }}{% else %}—{% endif %}</strong>
+    </div>
+  </div>
+  <div class="schedule-detail__course-list schedule-detail__course-list--compare">
+    {% for course in courses %}
+    {% include "site/partials/_scheduled_course_card.html" with course=course schedule_owner_id=schedule_owner_id hide_remove=True %}
+    {% empty %}
+    <p class="schedule-detail__empty schedule-detail__empty--compact">No courses in this schedule.</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if calendar %}
+  <div class="schedule-detail__compare-calendar-wrap">
+    {% include "site/components/_weekly_calendar.html" with calendar=calendar %}
+  </div>
+  {% endif %}
+</div>

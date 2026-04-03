@@ -92,11 +92,16 @@
   {% block modals %}
   {% include "site/modals/_login.html" %}
   {% include "site/modals/_adblock.html" %}
+  {% include "site/modals/_schedule_flow_modal.html" %}
   {% endblock %}
   
   <!-- Core JavaScript -->
   <script src="{% static 'js/site/theme.js' %}"></script>
   <script src="{% static 'js/site/modal.js' %}"></script>
+  <script src="{% static 'js/site/flash_messages.js' %}"></script>
+  <script src="{% static 'js/site/partial_html.js' %}"></script>
+  <script src="{% static 'js/site/schedule_grid_refresh.js' %}"></script>
+  <script src="{% static 'js/site/schedule_flow_modal.js' %}"></script>
   <script src="{% static 'js/site/search_bar.js' %}"></script>
   <script src="{% static 'js/site/combo_dropdown.js' %}"></script>
   <script>

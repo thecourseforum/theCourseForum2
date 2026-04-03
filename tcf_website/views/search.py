@@ -9,6 +9,8 @@ from django.db.models import F, FloatField, Value
 from django.db.models.functions import Greatest, Round
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from ..models import Club, Instructor, Subdepartment
 from ..pagination import paginate
@@ -208,11 +210,24 @@ def _serialize_courses(qs) -> list[dict]:
 # --- View helpers --------------------------------------------------------------
 
 
+def _schedule_autocomplete_return_url(request) -> str:
+    """Safe return URL for schedule add links from XHR autocomplete (client sends ``next``)."""
+    raw = (request.GET.get("next") or "").strip()
+    if raw and url_has_allowed_host_and_scheme(
+        url=raw,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return raw
+    return reverse("schedule")
+
+
 def _autocomplete_params(request) -> dict:
     """GET params passed through for schedule/review search bar variants."""
     return {
         "autocomplete_action": request.GET.get("autocomplete_action"),
         "autocomplete_target": request.GET.get("autocomplete_target"),
+        "schedule_return_url": _schedule_autocomplete_return_url(request),
     }
 
 

@@ -20,7 +20,7 @@
       <div class="weekly-calendar__events">
         {% for event in column.events %}
         <a
-          class="weekly-calendar__event weekly-calendar__event--tone-{{ event.tone }}"
+          class="weekly-calendar__event weekly-calendar__event--tone-{{ event.tone }}{% if event.extra_class %} {{ event.extra_class }}{% endif %}"
           href="{{ event.href }}"
           style="top: {{ event.top_pct|floatformat:4 }}%; height: {{ event.height_pct|floatformat:4 }}%;"
         >

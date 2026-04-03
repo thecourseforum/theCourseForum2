@@ -172,6 +172,12 @@
   color: #67e8f9;
 }
 
+.weekly-calendar__event--compare-b {
+  outline: 2px dashed currentColor;
+  outline-offset: -1px;
+  opacity: 0.9;
+}
+
 @media (max-width: 1024px) {
   .weekly-calendar {
     overflow-x: auto;

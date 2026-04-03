@@ -2,6 +2,7 @@
 
 import logging
 import re
+import uuid
 from datetime import datetime, time
 from urllib.parse import urlencode
 
@@ -9,14 +10,17 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from ..models import (
     Course,
     Instructor,
     Schedule,
+    ScheduleBookmark,
     ScheduledCourse,
     Section,
     SectionTime,
@@ -30,6 +34,106 @@ from ..utils import recent_semesters, safe_next_url
 # pylint: disable=consider-using-generator
 
 logger = logging.getLogger(__name__)
+
+
+def _is_schedule_grid_partial_request(request):
+    """True when client requests the schedule builder grid HTML fragment only."""
+    return (
+        request.headers.get("X-Requested-With") == "XMLHttpRequest"
+        and request.GET.get("partial") == "grid"
+    )
+
+
+def _is_schedule_compare_pick_partial_request(request):
+    """XHR fragment: list of schedules to compare with (modal body)."""
+    return (
+        request.headers.get("X-Requested-With") == "XMLHttpRequest"
+        and request.GET.get("partial") == "compare_pick"
+    )
+
+
+def _accepts_schedule_json(request) -> bool:
+    """True when the client expects a JSON body (modal / fetch flows)."""
+    accept = request.headers.get("Accept", "")
+    return "application/json" in accept
+
+
+def _is_schedule_add_modal_get(request) -> bool:
+    return (
+        request.method == "GET"
+        and request.GET.get("partial") == "modal"
+        and request.headers.get("X-Requested-With") == "XMLHttpRequest"
+    )
+
+
+def _schedule_builder_return_url(request) -> str:
+    """Canonical builder URL for form ``next=`` (drops ``partial`` from query)."""
+    q = request.GET.copy()
+    q.pop("partial", None)
+    qs = q.urlencode()
+    path = request.path
+    return f"{path}?{qs}" if qs else path
+
+
+def _schedule_messages_list(request) -> list[dict[str, str]]:
+    """Consume pending Django messages and return JSON-serializable rows for async clients."""
+    return [
+        {"message": str(m.message), "tags": m.tags}
+        for m in messages.get_messages(request)
+    ]
+
+
+def _schedule_json_error_text(msgs: list[dict[str, str]], fallback: str) -> str:
+    last_any = None
+    last_error = None
+    for item in msgs:
+        text = item["message"]
+        tags = item["tags"]
+        last_any = text
+        if "error" in tags:
+            last_error = text
+    return last_error or last_any or fallback
+
+
+def _schedule_json_redirect(request, redirect_to: str):
+    if _accepts_schedule_json(request):
+        payload: dict = {"ok": True, "redirect": redirect_to}
+        msgs = _schedule_messages_list(request)
+        if msgs:
+            payload["messages"] = msgs
+        return JsonResponse(payload)
+    return redirect(redirect_to)
+
+
+def _schedule_json_error(
+    request, message: str, *, fallback_url: str | None = None, status: int = 400
+):
+    if _accepts_schedule_json(request):
+        msgs = _schedule_messages_list(request)
+        if not msgs:
+            msgs = [{"message": message, "tags": "error"}]
+        err = _schedule_json_error_text(msgs, message)
+        return JsonResponse(
+            {"ok": False, "error": err, "messages": msgs},
+            status=status,
+        )
+    messages.error(request, message)
+    dest = fallback_url if fallback_url is not None else reverse("schedule")
+    return redirect(safe_next_url(request, dest))
+
+
+def _schedule_json_fail(request, *, status: int = 400, fallback_message: str) -> JsonResponse:
+    """JSON error after views used ``messages.*`` (consumes message storage)."""
+    msgs = _schedule_messages_list(request)
+    if not msgs:
+        msgs = [{"message": fallback_message, "tags": "error"}]
+    err = _schedule_json_error_text(msgs, fallback_message)
+    return JsonResponse({"ok": False, "error": err, "messages": msgs}, status=status)
+
+
+def _schedule_visible_q(user):
+    """Schedules the user may open on /schedule (owned or bookmarked)."""
+    return Q(user=user) | Q(viewer_bookmarks__viewer=user)
 
 
 def _schedule_page_url(
@@ -202,6 +306,8 @@ def _schedule_course_instructor_name(schedule_course: ScheduledCourse) -> str:
 def _event_payloads_for_course(
     schedule_course: ScheduledCourse,
     meeting_blocks: list[tuple[str, int, int]],
+    *,
+    extra_class: str = "",
 ) -> list[dict]:
     """Build event payloads for one scheduled course."""
     if not meeting_blocks:
@@ -217,6 +323,7 @@ def _event_payloads_for_course(
             "course_instructor",
             args=[section.course_id, schedule_course.instructor_id],
         ),
+        "extra_class": extra_class,
     }
 
     events = []
@@ -237,6 +344,8 @@ def _event_payloads_for_course(
 def _weekly_events(
     schedule_courses: list[ScheduledCourse],
     section_time_map: dict[int, list[SectionTime]],
+    *,
+    extra_class: str = "",
 ) -> list[dict]:
     """Build all calendar events for schedule courses."""
     events: list[dict] = []
@@ -245,7 +354,11 @@ def _weekly_events(
             schedule_course,
             section_time_map,
         )
-        events.extend(_event_payloads_for_course(schedule_course, meeting_blocks))
+        events.extend(
+            _event_payloads_for_course(
+                schedule_course, meeting_blocks, extra_class=extra_class
+            )
+        )
     return events
 
 
@@ -315,6 +428,82 @@ def _build_weekly_calendar(schedule_courses: list[ScheduledCourse]) -> dict:
     }
 
 
+def _build_merged_weekly_calendar(
+    primary_courses: list[ScheduledCourse],
+    secondary_courses: list[ScheduledCourse],
+) -> dict:
+    """Single grid with two schedules; secondary events get a distinct style class."""
+    if not primary_courses and not secondary_courses:
+        return _empty_weekly_calendar()
+
+    section_ids = {c.section_id for c in primary_courses} | {
+        c.section_id for c in secondary_courses
+    }
+    section_time_map = _build_section_time_map(section_ids)
+    events = _weekly_events(primary_courses, section_time_map, extra_class="")
+    events.extend(
+        _weekly_events(
+            secondary_courses,
+            section_time_map,
+            extra_class="weekly-calendar__event--compare-b",
+        )
+    )
+
+    if not events:
+        return _empty_weekly_calendar()
+
+    start_minutes, end_minutes = _calendar_window(events)
+    _apply_event_geometry(events, start_minutes, end_minutes)
+
+    columns = _calendar_columns(events)
+    slot_count = max(1, (end_minutes - start_minutes) // 60)
+    time_labels = [
+        _format_minutes(start_minutes + (hour * 60)) for hour in range(slot_count + 1)
+    ]
+
+    return {
+        "columns": columns,
+        "time_labels": time_labels,
+        "slot_markers": list(range(slot_count)),
+    }
+
+
+def _scheduled_courses_for_calendar(schedule: Schedule) -> list:
+    """Scheduled course rows for lists and calendar (same as Schedule.get_schedule()[0])."""
+    return schedule.get_scheduled_courses()
+
+
+def _resolve_compare_schedule(
+    request,
+    user,
+    selected_schedule: Schedule | None,
+    active_semester: Semester | None,
+) -> Schedule | None:
+    """Load a schedule to compare with from ?compare= pk (any visible schedule)."""
+    if active_semester is None:
+        return None
+
+    semester_id = (
+        selected_schedule.semester_id
+        if selected_schedule is not None
+        else active_semester.pk
+    )
+
+    raw_compare = request.GET.get("compare")
+    if raw_compare is None or raw_compare == "":
+        return None
+    try:
+        pk = int(raw_compare)
+    except (TypeError, ValueError):
+        return None
+    return (
+        Schedule.objects.filter(pk=pk, semester_id=semester_id)
+        .filter(_schedule_visible_q(user))
+        .select_related("user")
+        .first()
+    )
+
+
 def _existing_schedule_blocks(schedule: Schedule) -> list[tuple[str, int, int]]:
     """Return meeting blocks for all existing courses in a schedule."""
     existing_courses = list(
@@ -374,7 +563,8 @@ def resolve_builder_semester(request, user) -> Semester | None:
     if raw_sched:
         try:
             sched = (
-                Schedule.objects.filter(pk=int(raw_sched), user=user)
+                Schedule.objects.filter(pk=int(raw_sched))
+                .filter(_schedule_visible_q(user))
                 .select_related("semester")
                 .first()
             )
@@ -389,12 +579,14 @@ def resolve_builder_semester(request, user) -> Semester | None:
 
 
 def schedules_for_user(user, semester: Semester | None):
-    """Schedules for one user in one term, with courses prefetched."""
+    """Owned and bookmarked schedules for one term, with courses prefetched."""
     if semester is None:
         return Schedule.objects.none()
     return (
-        Schedule.objects.filter(user=user, semester=semester)
+        Schedule.objects.filter(_schedule_visible_q(user), semester=semester)
+        .distinct()
         .order_by("name")
+        .select_related("user")
         .prefetch_related(
             Prefetch(
                 "scheduledcourse_set",
@@ -438,6 +630,43 @@ def schedule_data_helper(request, semester: Semester | None):
 @login_required
 def view_schedules(request):
     """Render schedule builder page."""
+    add_shared = request.GET.get("add_shared")
+    if add_shared and request.method == "GET":
+        try:
+            share_uuid = uuid.UUID(str(add_shared).strip())
+        except (ValueError, TypeError, AttributeError):
+            messages.error(request, "Invalid share link.")
+            return redirect(reverse("schedule"))
+
+        shared = (
+            Schedule.objects.filter(share_token=share_uuid)
+            .select_related("semester")
+            .first()
+        )
+        if shared is None:
+            messages.error(
+                request,
+                "This share link is invalid or sharing was turned off.",
+            )
+            return redirect(reverse("schedule"))
+
+        if shared.user_id == request.user.id:
+            messages.info(request, "This schedule is already yours.")
+            return redirect(
+                f"{reverse('schedule')}?{urlencode({'semester': shared.semester_id, 'schedule': shared.pk})}"
+            )
+
+        ScheduleBookmark.objects.get_or_create(
+            viewer=request.user, schedule=shared
+        )
+        messages.success(
+            request,
+            f'Added "{shared.name}" to your schedules for this term.',
+        )
+        return redirect(
+            f"{reverse('schedule')}?{urlencode({'semester': shared.semester_id, 'schedule': shared.pk})}"
+        )
+
     active_semester = resolve_builder_semester(request, request.user)
     all_semesters = recent_semesters()
     semester_choices = [(sem.pk, str(sem)) for sem in all_semesters]
@@ -457,6 +686,87 @@ def view_schedules(request):
     selected_courses = selected_schedule_data[0] if selected_schedule_data else []
     calendar = _build_weekly_calendar(selected_courses)
 
+    raw_compare_param = request.GET.get("compare")
+    compare_schedule = _resolve_compare_schedule(
+        request, request.user, selected_schedule, active_semester
+    )
+    if (
+        compare_schedule is not None
+        and selected_schedule is not None
+        and compare_schedule.pk == selected_schedule.pk
+    ):
+        compare_schedule = None
+
+    self_compare_skipped = (
+        selected_schedule is not None
+        and raw_compare_param not in (None, "")
+        and str(raw_compare_param) == str(selected_schedule.pk)
+    )
+
+    if (
+        raw_compare_param not in (None, "")
+        and compare_schedule is None
+        and not self_compare_skipped
+    ):
+        messages.warning(
+            request,
+            "That schedule could not be loaded for comparison "
+            "(wrong term or invalid link).",
+        )
+
+    compare_courses: list = []
+    compare_calendar = None
+    merged_calendar = None
+    show_overlap = request.GET.get("overlap") == "1"
+
+    compare_schedule_stats = None
+    if compare_schedule is not None:
+        compare_courses = _scheduled_courses_for_calendar(compare_schedule)
+        compare_data = compare_schedule.get_schedule()
+        compare_schedule_stats = {
+            "credits": compare_data[1] if compare_data else 0,
+            "rating": compare_data[2] if compare_data else 0,
+            "gpa": compare_data[4] if compare_data else 0,
+        }
+        if show_overlap:
+            if selected_schedule is not None and compare_schedule.pk != selected_schedule.pk:
+                merged_calendar = _build_merged_weekly_calendar(
+                    selected_courses, compare_courses
+                )
+        if merged_calendar is None:
+            compare_calendar = _build_weekly_calendar(compare_courses)
+
+    schedule_preserve_params = {}
+    if compare_schedule is not None:
+        if request.GET.get("compare"):
+            schedule_preserve_params["compare"] = request.GET.get("compare")
+        if show_overlap:
+            schedule_preserve_params["overlap"] = "1"
+
+    compare_nav = None
+    if (
+        compare_schedule is not None
+        and selected_schedule is not None
+        and active_semester is not None
+    ):
+        params = {
+            "semester": str(active_semester.pk),
+            "schedule": str(selected_schedule.pk),
+            "compare": str(compare_schedule.pk),
+        }
+        compare_nav = {
+            "split_url": f"{reverse('schedule')}?{urlencode(params)}",
+            "overlap_url": f"{reverse('schedule')}?{urlencode({**params, 'overlap': '1'})}",
+            "clear_url": f"{reverse('schedule')}?{urlencode({'semester': str(active_semester.pk), 'schedule': str(selected_schedule.pk)})}",
+        }
+
+    compare_exit_url = None
+    if selected_schedule is not None and active_semester is not None:
+        compare_exit_url = (
+            f"{reverse('schedule')}?"
+            f"{urlencode({'semester': str(active_semester.pk), 'schedule': str(selected_schedule.pk)})}"
+        )
+
     schedule_context.update(
         {
             "active_semester": active_semester,
@@ -471,8 +781,41 @@ def view_schedules(request):
                 "gpa": (selected_schedule_data[4] if selected_schedule_data else 0),
             },
             "calendar": calendar,
+            "compare_schedule": compare_schedule,
+            "compare_courses": compare_courses,
+            "compare_schedule_stats": compare_schedule_stats,
+            "compare_calendar": compare_calendar,
+            "merged_calendar": merged_calendar,
+            "compare_overlap": show_overlap,
+            "schedule_preserve_params": schedule_preserve_params,
+            "compare_nav": compare_nav,
+            "compare_exit_url": compare_exit_url,
+            "schedule_builder_return_url": _schedule_builder_return_url(request),
         }
     )
+
+    if _is_schedule_compare_pick_partial_request(request):
+        if selected_schedule is None:
+            return render(
+                request,
+                "site/partials/_schedule_compare_pick_modal_body.html",
+                {"schedules": [], "selected_schedule": None},
+            )
+        return render(
+            request,
+            "site/partials/_schedule_compare_pick_modal_body.html",
+            {
+                "schedules": schedules,
+                "selected_schedule": selected_schedule,
+            },
+        )
+
+    if _is_schedule_grid_partial_request(request):
+        return render(
+            request,
+            "site/partials/_schedule_builder_grid.html",
+            schedule_context,
+        )
 
     return render(request, "site/pages/schedule.html", schedule_context)
 
@@ -483,26 +826,36 @@ def new_schedule(request):
     Take the user to the new schedule page.
     """
     if request.method == "POST":
-        # Handle saving the schedule
+        want_json = _accepts_schedule_json(request)
         form = ScheduleForm(request.POST)
         if form.is_valid():
             schedule = form.save(commit=False)
             schedule.user = request.user
             semester = resolve_builder_semester(request, request.user)
             if semester is None:
-                messages.error(request, "No semester data available.")
+                msg = "No semester data available."
+                if want_json:
+                    return _schedule_json_error(request, msg, status=400)
+                messages.error(request, msg)
                 return redirect(safe_next_url(request, reverse("schedule")))
             schedule.semester = semester
             schedule.save()
-            messages.success(request, "Successfully created schedule!")
-            return redirect(
-                safe_next_url(
-                    request,
-                    _schedule_page_url(schedule_id=schedule.pk),
-                )
+            redirect_to = safe_next_url(
+                request,
+                _schedule_page_url(schedule_id=schedule.pk),
             )
-        else:
-            messages.error(request, "Invalid schedule data.")
+            messages.success(request, "Successfully created schedule!")
+            if want_json:
+                return _schedule_json_redirect(request, redirect_to)
+            return redirect(redirect_to)
+        err = "Invalid schedule data."
+        if form.errors:
+            first = next(iter(form.errors.values()))
+            if first:
+                err = first[0]
+        if want_json:
+            return _schedule_json_error(request, err, status=400)
+        messages.error(request, err)
     return redirect(safe_next_url(request, reverse("schedule")))
 
 
@@ -511,47 +864,145 @@ def delete_schedule(request):
     """
     Delete a schedule or multiple schedules.
     """
-    # we use POST since forms don't support the DELETE method
-    if request.method == "POST":
-        # Retrieve IDs from POST data
-        schedule_ids = request.POST.getlist("selected_schedules")
-        schedule_count = len(schedule_ids)
+    redirect_to = safe_next_url(request, reverse("schedule"))
+    if request.method != "POST":
+        return redirect(redirect_to)
 
-        deleted_count, _ = Schedule.objects.filter(
-            id__in=schedule_ids, user=request.user
-        ).delete()
-        if deleted_count == 0:
-            messages.error(request, "No schedules were deleted.")
-        else:
-            messages.success(
+    schedule_ids = request.POST.getlist("selected_schedules")
+    schedule_count = len(schedule_ids)
+
+    deleted_count, _ = Schedule.objects.filter(
+        id__in=schedule_ids, user=request.user
+    ).delete()
+    if deleted_count == 0:
+        messages.error(request, "No schedules were deleted.")
+        if _accepts_schedule_json(request):
+            return _schedule_json_fail(
                 request,
-                f"Successfully deleted {schedule_count} schedules and {deleted_count - schedule_count} courses",
+                status=400,
+                fallback_message="No schedules were deleted.",
             )
-    return redirect(safe_next_url(request, reverse("schedule")))
+        return redirect(redirect_to)
+
+    messages.success(
+        request,
+        f"Successfully deleted {schedule_count} schedules and {deleted_count - schedule_count} courses",
+    )
+    return _schedule_json_redirect(request, redirect_to)
 
 
 @login_required
 def duplicate_schedule(request, schedule_id):
     """
-    Duplicate a schedule given a schedule id in the request.
+    Duplicate a schedule the user can see (owned or bookmarked) into a new owned schedule.
     """
-    schedule = get_object_or_404(Schedule, pk=schedule_id, user=request.user)
-    source_pk = schedule.pk
-    schedule.pk = None  # reset the key so it will be recreated when it's saved
-    old_name = schedule.name
-    schedule.name = "Copy of " + old_name
-    schedule.save()
+    source = (
+        Schedule.objects.filter(pk=schedule_id)
+        .filter(_schedule_visible_q(request.user))
+        .first()
+    )
+    if source is None:
+        raise Http404
 
-    courses = ScheduledCourse.objects.filter(schedule_id=source_pk)
+    source_pk = source.pk
+    old_name = source.name
 
-    for course in courses:
-        # loop through all courses and add them to the new schedule
-        course.pk = None
-        course.schedule = schedule
-        course.save()
+    if source.user_id == request.user.id:
+        source.pk = None
+        source.name = "Copy of " + old_name
+        source.share_token = None
+        source.save()
+        new_schedule = source
+    else:
+        new_schedule = Schedule.objects.create(
+            user=request.user,
+            semester=source.semester,
+            name="Copy of " + old_name,
+            share_token=None,
+        )
+
+    for course in ScheduledCourse.objects.filter(schedule_id=source_pk):
+        ScheduledCourse.objects.create(
+            schedule=new_schedule,
+            section=course.section,
+            instructor=course.instructor,
+            time=course.time,
+            enrolled_units=course.enrolled_units,
+        )
 
     messages.success(request, f"Successfully duplicated {old_name}")
-    return redirect(safe_next_url(request, _schedule_page_url(schedule_id=schedule.pk)))
+    redirect_to = safe_next_url(
+        request, _schedule_page_url(schedule_id=new_schedule.pk)
+    )
+    return _schedule_json_redirect(request, redirect_to)
+
+
+@login_required
+@require_POST
+def schedule_share(request):
+    """Enable, regenerate, or disable the share link for one of the user's schedules."""
+    raw_id = request.POST.get("schedule_id")
+    default_redirect = reverse("schedule")
+    try:
+        sid = int(raw_id)
+    except (TypeError, ValueError):
+        return _schedule_json_error(request, "Invalid schedule.")
+
+    schedule = Schedule.objects.filter(pk=sid, user=request.user).first()
+    if schedule is None:
+        return _schedule_json_error(
+            request, "You do not have permission to change that schedule."
+        )
+
+    action = request.POST.get("action")
+
+    if action == "disable":
+        schedule.share_token = None
+        schedule.save()
+        messages.success(request, "Stopped sharing this schedule.")
+    elif action == "regenerate":
+        schedule.share_token = uuid.uuid4()
+        schedule.save()
+        messages.success(request, "Share link updated.")
+    elif action == "enable":
+        if schedule.share_token is None:
+            schedule.share_token = uuid.uuid4()
+            schedule.save()
+        messages.success(request, "Sharing enabled.")
+    else:
+        return _schedule_json_error(request, "Invalid sharing action.")
+
+    redirect_to = safe_next_url(request, default_redirect)
+    return _schedule_json_redirect(request, redirect_to)
+
+
+@login_required
+@require_POST
+def schedule_unbookmark(request):
+    """Remove a bookmarked shared schedule from the viewer's sidebar (does not delete it)."""
+    raw_id = request.POST.get("schedule_id")
+    redirect_to = safe_next_url(request, reverse("schedule"))
+    try:
+        sid = int(raw_id)
+    except (TypeError, ValueError):
+        return _schedule_json_error(request, "Invalid schedule.")
+
+    deleted, _ = ScheduleBookmark.objects.filter(
+        viewer=request.user, schedule_id=sid
+    ).delete()
+    if deleted:
+        messages.success(request, "Removed shared schedule from your list.")
+    else:
+        messages.error(request, "That schedule was not in your shared list.")
+        if _accepts_schedule_json(request):
+            return _schedule_json_fail(
+                request,
+                status=400,
+                fallback_message="That schedule was not in your shared list.",
+            )
+        return redirect(redirect_to)
+
+    return _schedule_json_redirect(request, redirect_to)
 
 
 @login_required
@@ -601,7 +1052,10 @@ def remove_scheduled_course(request, scheduled_course_id):
     scheduled_course.delete()
     messages.success(request, f"Removed {course_label} from your schedule.")
 
-    return redirect(safe_next_url(request, _schedule_page_url(schedule_id=schedule_id)))
+    redirect_to = safe_next_url(
+        request, _schedule_page_url(schedule_id=schedule_id)
+    )
+    return _schedule_json_redirect(request, redirect_to)
 
 
 # Credits: users pick hours only on this add form; enrolled_units is stored and not edited later.
@@ -870,26 +1324,10 @@ def _handle_schedule_add_post(
     return _schedule_add_success_redirect(request, schedule)
 
 
-def _build_schedule_add_page_context(
-    course: Course,
-    page_state: dict,
-) -> dict:
-    """Build template context for schedule add page."""
-    dept = course.subdepartment.department
-    breadcrumbs = [
-        ("Schedule Builder", page_state["schedule_builder_url"], False),
-        (dept.school.name, reverse("browse"), False),
-        (dept.name, reverse("department", args=[dept.id]), False),
-        (
-            course.code(),
-            reverse("course", args=[course.subdepartment.mnemonic, course.number]),
-            False,
-        ),
-        ("Add to Schedule", None, True),
-    ]
+def _schedule_add_modal_context(course: Course, page_state: dict) -> dict:
+    """Template context for the add-to-schedule modal partial only."""
     return {
         "course": course,
-        "breadcrumbs": breadcrumbs,
         "active_semester": page_state["active_semester"],
         "lecture_options": page_state["lecture_options"],
         "other_options": page_state["other_options"],
@@ -933,7 +1371,21 @@ def schedule_add_course(request, course_id):
         fallback_url = schedule_builder_url
     next_url = safe_next_url(request, fallback_url)
 
+    page_state = {
+        "active_semester": active_semester,
+        "lecture_options": lecture_options,
+        "other_options": other_options,
+        "schedules": schedules,
+        "selected_schedule_id": selected_schedule_id,
+        "selected_options": selected_options,
+        "fallback_course_url": fallback_url,
+        "next_url": next_url,
+        "schedule_builder_url": schedule_builder_url,
+    }
+    page_ctx = _schedule_add_modal_context(course, page_state)
+
     if request.method == "POST":
+        want_json = _accepts_schedule_json(request)
         success_response = _handle_schedule_add_post(
             request,
             course,
@@ -941,23 +1393,35 @@ def schedule_add_course(request, course_id):
             selected_options,
         )
         if success_response is not None:
+            if want_json:
+                loc = success_response.get("Location")
+                redirect_to = loc or "/"
+                return _schedule_json_redirect(request, redirect_to)
             return success_response
+        if want_json:
+            return _schedule_json_fail(
+                request,
+                status=400,
+                fallback_message="Request failed.",
+            )
+        return redirect(safe_next_url(request, next_url))
 
-    return render(
-        request,
-        "site/pages/schedule_add_course.html",
-        _build_schedule_add_page_context(
-            course,
-            {
-                "active_semester": active_semester,
-                "lecture_options": lecture_options,
-                "other_options": other_options,
-                "schedules": schedules,
-                "selected_schedule_id": selected_schedule_id,
-                "selected_options": selected_options,
-                "fallback_course_url": fallback_url,
-                "next_url": next_url,
-                "schedule_builder_url": schedule_builder_url,
-            },
-        ),
+    if _is_schedule_add_modal_get(request):
+        return render(
+            request,
+            "site/partials/_schedule_add_course_modal.html",
+            page_ctx,
+        )
+
+    dest = request.GET.get("next")
+    if dest:
+        return redirect(safe_next_url(request, dest))
+    return redirect(
+        safe_next_url(
+            request,
+            reverse(
+                "course",
+                args=[course.subdepartment.mnemonic, course.number],
+            ),
+        )
     )

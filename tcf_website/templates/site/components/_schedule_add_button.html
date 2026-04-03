@@ -1,11 +1,13 @@
 {% if user.is_authenticated %}
-<a
+{% url 'schedule_add_course' course.id as tcf_sched_add_url %}
+<button
+  type="button"
   class="{{ button_class|default:'btn btn--accent btn--md' }}"
-  href="{% url 'schedule_add_course' course.id %}?next={{ request.get_full_path|urlencode }}"
+  data-schedule-flow-add-url="{{ tcf_sched_add_url }}?next={{ request.get_full_path|urlencode }}"
   {% if button_id %}id="{{ button_id }}"{% endif %}
 >
   Add to Schedule
-</a>
+</button>
 {% else %}
 <a
   href="#"

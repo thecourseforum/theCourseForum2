@@ -15,7 +15,7 @@
         Browse
       </a>
       {% if user.is_authenticated %}
-      <a href="{% url 'schedule' %}" class="header__nav-link {% if request.resolver_match.url_name == 'schedule' or request.resolver_match.url_name == 'schedule_add_course' %}is-active{% endif %}">
+      <a href="{% url 'schedule' %}" class="header__nav-link {% if request.resolver_match.url_name == 'schedule' %}is-active{% endif %}">
         Schedule
       </a>
       <a href="{% mode_url request 'new_review' %}" class="header__nav-link {% if request.resolver_match.url_name == 'new_review' %}is-active{% endif %}">

@@ -109,6 +109,16 @@ urlpatterns = [
         views.duplicate_schedule,
         name="duplicate_schedule",
     ),
+    path(
+        "schedule/share/",
+        views.schedule_share,
+        name="schedule_share",
+    ),
+    path(
+        "schedule/unbookmark/",
+        views.schedule_unbookmark,
+        name="schedule_unbookmark",
+    ),
     # QA URLs
     path("answers/check_duplicate/", views.qa.check_duplicate),
     path("qa/new_question/", views.new_question, name="new_question"),

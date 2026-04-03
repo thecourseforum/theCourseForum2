@@ -276,7 +276,10 @@ class ScheduleFlowRedirectTestCase(TCFDataTestCase):
         )
         self.assertEqual(response.status_code, 302)
         msgs = [m.message for m in get_messages(response.wsgi_request)]
-        self.assertTrue(any("Invalid" in str(m) for m in msgs))
+        self.assertTrue(
+            msgs and any("Invalid" in str(m) or "at most" in str(m).lower() for m in msgs),
+            msgs,
+        )
 
     def test_delete_schedule_get_redirects_using_next(self):
         """DELETE flow uses POST body; bare GET still ends in redirect."""

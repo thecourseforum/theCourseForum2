@@ -31,10 +31,18 @@
       <li class="autocomplete-group-header" role="presentation">Courses <span class="autocomplete-group-header__hint">Tab to select</span></li>
       {% for course in courses %}
       <li class="autocomplete-item" role="option">
-        <a href="{% if autocomplete_action == 'schedule' %}{% url 'schedule_add_course' course_id=course.id %}{% if autocomplete_target %}?schedule={{ autocomplete_target }}{% endif %}{% elif autocomplete_action == 'review' %}{% mode_url request 'new_review' query_course=course.id %}{% else %}{% url 'course' mnemonic=course.mnemonic course_number=course.number %}{% endif %}" class="autocomplete-item__link">
+        {% if autocomplete_action == 'schedule' %}
+        {% url 'schedule_add_course' course_id=course.id as tcf_ac_sched_add %}
+        <a href="{{ tcf_ac_sched_add }}?next={{ schedule_return_url|urlencode }}{% if autocomplete_target %}&amp;schedule={{ autocomplete_target }}{% endif %}" class="autocomplete-item__link" data-schedule-flow-add-url="{{ tcf_ac_sched_add }}?next={{ schedule_return_url|urlencode }}{% if autocomplete_target %}&amp;schedule={{ autocomplete_target }}{% endif %}">
           <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
           <span class="autocomplete-item__title">{{ course.title }}</span>
         </a>
+        {% else %}
+        <a href="{% if autocomplete_action == 'review' %}{% mode_url request 'new_review' query_course=course.id %}{% else %}{% url 'course' mnemonic=course.mnemonic course_number=course.number %}{% endif %}" class="autocomplete-item__link">
+          <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
+          <span class="autocomplete-item__title">{{ course.title }}</span>
+        </a>
+        {% endif %}
       </li>
       {% endfor %}
     {% endif %}
@@ -65,10 +73,18 @@
       <li class="autocomplete-group-header" role="presentation">Courses</li>
       {% for course in courses %}
       <li class="autocomplete-item" role="option">
-        <a href="{% if autocomplete_action == 'schedule' %}{% url 'schedule_add_course' course_id=course.id %}{% if autocomplete_target %}?schedule={{ autocomplete_target }}{% endif %}{% elif autocomplete_action == 'review' %}{% mode_url request 'new_review' query_course=course.id %}{% else %}{% url 'course' mnemonic=course.mnemonic course_number=course.number %}{% endif %}" class="autocomplete-item__link">
+        {% if autocomplete_action == 'schedule' %}
+        {% url 'schedule_add_course' course_id=course.id as tcf_ac_sched_add2 %}
+        <a href="{{ tcf_ac_sched_add2 }}?next={{ schedule_return_url|urlencode }}{% if autocomplete_target %}&amp;schedule={{ autocomplete_target }}{% endif %}" class="autocomplete-item__link" data-schedule-flow-add-url="{{ tcf_ac_sched_add2 }}?next={{ schedule_return_url|urlencode }}{% if autocomplete_target %}&amp;schedule={{ autocomplete_target }}{% endif %}">
           <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
           <span class="autocomplete-item__title">{{ course.title }}</span>
         </a>
+        {% else %}
+        <a href="{% if autocomplete_action == 'review' %}{% mode_url request 'new_review' query_course=course.id %}{% else %}{% url 'course' mnemonic=course.mnemonic course_number=course.number %}{% endif %}" class="autocomplete-item__link">
+          <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
+          <span class="autocomplete-item__title">{{ course.title }}</span>
+        </a>
+        {% endif %}
       </li>
       {% endfor %}
     {% endif %}
