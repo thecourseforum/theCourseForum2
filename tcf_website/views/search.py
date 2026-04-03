@@ -12,7 +12,12 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from ..models import Club, Instructor, Subdepartment
+from ..models import Club, Instructor
+from ..search.course_display import (
+    course_to_row_dict,
+    group_by_club_category,
+    group_by_dept,
+)
 from ..pagination import paginate
 from ..utils import browsable_course_queryset, parse_mode
 
@@ -145,61 +150,6 @@ def decide_order(courses: list[dict], instructors: list[dict]) -> bool:
     courses_avg = mean(course["max_similarity"] for course in courses)
     instructors_avg = mean(instructor["max_similarity"] for instructor in instructors)
     return courses_avg > instructors_avg or not instructors
-
-
-def group_by_dept(courses: list[dict]) -> dict:
-    """Group courses by department mnemonic; one Subdepartment query for labels."""
-    mnemonics = {course["mnemonic"] for course in courses}
-    subdepts = {
-        s.mnemonic: s
-        for s in Subdepartment.objects.filter(mnemonic__in=mnemonics).only(
-            "mnemonic", "name", "department_id"
-        )
-    }
-    grouped: dict = {}
-    for course in courses:
-        mnemonic = course["mnemonic"]
-        if mnemonic not in grouped:
-            subdept = subdepts[mnemonic]
-            grouped[mnemonic] = {
-                "subdept_name": subdept.name,
-                "dept_id": subdept.department_id,
-                "courses": [],
-            }
-        grouped[mnemonic]["courses"].append(course)
-    return grouped
-
-
-def group_by_club_category(clubs: list[dict]) -> dict:
-    """Group clubs by category slug."""
-    grouped: dict = {}
-    for club in clubs:
-        slug = club["category_slug"]
-        if slug not in grouped:
-            grouped[slug] = {
-                "category_name": club["category_name"],
-                "category_slug": slug,
-                "clubs": [],
-            }
-        grouped[slug]["clubs"].append(club)
-    return grouped
-
-
-# --- Serialization -------------------------------------------------------------
-
-
-def course_to_row_dict(course, *, include_similarity: bool = False) -> dict:
-    """Build a course dict for grouping/templates; search adds trigram score when present."""
-    row = {
-        "id": course.id,
-        "title": course.title,
-        "number": course.number,
-        "mnemonic": course.mnemonic,
-        "description": course.description,
-    }
-    if include_similarity:
-        row["max_similarity"] = course.max_similarity
-    return row
 
 
 def _serialize_courses(qs) -> list[dict]:

@@ -142,7 +142,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/site/review_cascade.js' %}"></script>
+<script src="{% static 'js/site/review/review_cascade.js' %}"></script>
 <script>
   const duplicateCheckUrl = "{% url 'check_review_duplicate' %}";
   const zeroHoursCheckUrl = "{% url 'check_zero_hours_per_week' %}";

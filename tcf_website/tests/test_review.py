@@ -10,7 +10,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from ..models import Review, Vote
-from ..views.review import ReviewForm
+from ..review.forms import ReviewForm
 from .test_utils import setup, suppress_request_warnings
 
 
