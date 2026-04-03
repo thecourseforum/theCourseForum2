@@ -1,5 +1,6 @@
 # pylint: disable=unused-wildcard-import,wildcard-import
 """Django settings for AWS production."""
+
 from .base import *
 
 DEBUG = False

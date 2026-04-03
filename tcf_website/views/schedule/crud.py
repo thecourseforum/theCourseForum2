@@ -127,9 +127,7 @@ def duplicate_schedule(request, schedule_id):
         )
 
     messages.success(request, f"Successfully duplicated {old_name}")
-    redirect_to = safe_next_url(
-        request, schedule_page_url(schedule_id=new_schedule.pk)
-    )
+    redirect_to = safe_next_url(request, schedule_page_url(schedule_id=new_schedule.pk))
     return schedule_json_redirect(request, redirect_to)
 
 
@@ -178,7 +176,5 @@ def remove_scheduled_course(request, scheduled_course_id):
     scheduled_course.delete()
     messages.success(request, f"Removed {course_label} from your schedule.")
 
-    redirect_to = safe_next_url(
-        request, schedule_page_url(schedule_id=schedule_id)
-    )
+    redirect_to = safe_next_url(request, schedule_page_url(schedule_id=schedule_id))
     return schedule_json_redirect(request, redirect_to)

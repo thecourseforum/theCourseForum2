@@ -1,5 +1,6 @@
 # pylint: disable=unused-wildcard-import,wildcard-import,duplicate-code
 """Django settings for local development."""
+
 from .base import *
 
 DEBUG = True

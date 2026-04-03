@@ -11,7 +11,6 @@ from ..models import Answer, Question, Schedule, ScheduledCourse, User
 from ..utils import safe_next_url
 from .base import TCFDataTestCase
 
-
 # ---------------------------------------------------------------------------
 # safe_next_url and open-redirect hardening (RequestFactory + Client)
 # ---------------------------------------------------------------------------
@@ -277,7 +276,8 @@ class ScheduleFlowRedirectTestCase(TCFDataTestCase):
         self.assertEqual(response.status_code, 302)
         msgs = [m.message for m in get_messages(response.wsgi_request)]
         self.assertTrue(
-            msgs and any("Invalid" in str(m) or "at most" in str(m).lower() for m in msgs),
+            msgs
+            and any("Invalid" in str(m) or "at most" in str(m).lower() for m in msgs),
             msgs,
         )
 

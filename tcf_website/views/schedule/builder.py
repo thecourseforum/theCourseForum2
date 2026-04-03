@@ -59,9 +59,7 @@ def view_schedules(request):
                 f"{reverse('schedule')}?{urlencode({'semester': shared.semester_id, 'schedule': shared.pk})}"
             )
 
-        ScheduleBookmark.objects.get_or_create(
-            viewer=request.user, schedule=shared
-        )
+        ScheduleBookmark.objects.get_or_create(viewer=request.user, schedule=shared)
         messages.success(
             request,
             f'Added "{shared.name}" to your schedules for this term.',
@@ -132,7 +130,10 @@ def view_schedules(request):
             "gpa": compare_data[4] if compare_data else 0,
         }
         if show_overlap:
-            if selected_schedule is not None and compare_schedule.pk != selected_schedule.pk:
+            if (
+                selected_schedule is not None
+                and compare_schedule.pk != selected_schedule.pk
+            ):
                 merged_calendar = build_merged_weekly_calendar(
                     selected_courses, compare_courses
                 )
