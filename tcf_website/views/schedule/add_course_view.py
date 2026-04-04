@@ -25,7 +25,9 @@ from .json_helpers import (
 
 
 @login_required
-def schedule_add_course(request, course_id):
+def schedule_add_course(  # pylint: disable=too-many-locals,too-many-return-statements
+    request, course_id
+):
     """Add a course to a schedule from the course flow."""
     course = get_object_or_404(Course, id=course_id)
     active_semester = resolve_builder_semester(request, request.user)

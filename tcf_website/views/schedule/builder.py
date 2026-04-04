@@ -28,7 +28,9 @@ from .json_helpers import (
 
 
 @login_required
-def view_schedules(request):
+def view_schedules(  # pylint: disable=too-many-locals,too-many-return-statements,too-many-branches,too-many-statements
+    request,
+):
     """Render schedule builder page."""
     add_shared = request.GET.get("add_shared")
     if add_shared and request.method == "GET":
@@ -52,18 +54,20 @@ def view_schedules(request):
 
         if shared.user_id == request.user.id:
             messages.info(request, "This schedule is already yours.")
-            return redirect(
-                f"{reverse('schedule')}?{urlencode({'semester': shared.semester_id, 'schedule': shared.pk})}"
+            shared_q = urlencode(
+                {"semester": shared.semester_id, "schedule": shared.pk}
             )
+            return redirect(f"{reverse('schedule')}?{shared_q}")
 
         ScheduleBookmark.objects.get_or_create(viewer=request.user, schedule=shared)
         messages.success(
             request,
             f'Added "{shared.name}" to your schedules for this term.',
         )
-        return redirect(
-            f"{reverse('schedule')}?{urlencode({'semester': shared.semester_id, 'schedule': shared.pk})}"
+        bookmark_q = urlencode(
+            {"semester": shared.semester_id, "schedule": shared.pk}
         )
+        return redirect(f"{reverse('schedule')}?{bookmark_q}")
 
     active_semester = resolve_builder_semester(request, request.user)
     all_semesters = recent_semesters()
@@ -155,18 +159,25 @@ def view_schedules(request):
             "schedule": str(selected_schedule.pk),
             "compare": str(compare_schedule.pk),
         }
+        base_schedule_url = reverse("schedule")
+        overlap_params = {**params, "overlap": "1"}
+        clear_params = {
+            "semester": str(active_semester.pk),
+            "schedule": str(selected_schedule.pk),
+        }
         compare_nav = {
-            "split_url": f"{reverse('schedule')}?{urlencode(params)}",
-            "overlap_url": f"{reverse('schedule')}?{urlencode({**params, 'overlap': '1'})}",
-            "clear_url": f"{reverse('schedule')}?{urlencode({'semester': str(active_semester.pk), 'schedule': str(selected_schedule.pk)})}",
+            "split_url": f"{base_schedule_url}?{urlencode(params)}",
+            "overlap_url": f"{base_schedule_url}?{urlencode(overlap_params)}",
+            "clear_url": f"{base_schedule_url}?{urlencode(clear_params)}",
         }
 
     compare_exit_url = None
     if selected_schedule is not None and active_semester is not None:
-        compare_exit_url = (
-            f"{reverse('schedule')}?"
-            f"{urlencode({'semester': str(active_semester.pk), 'schedule': str(selected_schedule.pk)})}"
-        )
+        exit_params = {
+            "semester": str(active_semester.pk),
+            "schedule": str(selected_schedule.pk),
+        }
+        compare_exit_url = f"{reverse('schedule')}?{urlencode(exit_params)}"
 
     schedule_context.update(
         {

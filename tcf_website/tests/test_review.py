@@ -253,6 +253,7 @@ class ReviewPreflightJsonTests(TestCase):
         self.assertIn("error", data)
 
     def test_check_zero_hours_xhr_invalid_returns_json_400(self):
+        """Invalid XHR to zero-hours check returns JSON 400."""
         self.client.force_login(self.user1)
         response = self.client.post(
             reverse("check_zero_hours_per_week"),

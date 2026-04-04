@@ -22,8 +22,9 @@ DAY_TOKEN_MAP = {
     "fr": "FRI",
 }
 DAY_TOKEN_PATTERN = re.compile(r"(mo|tu|we|th|fr)", flags=re.IGNORECASE)
+_MEETING_TIME = r"\d{1,2}:\d{2}\s*[APMapm]{2}"
 MEETING_BLOCK_PATTERN = re.compile(
-    r"(?P<days>[A-Za-z]+)\s+(?P<start>\d{1,2}:\d{2}\s*[APMapm]{2})\s*-\s*(?P<end>\d{1,2}:\d{2}\s*[APMapm]{2})"
+    rf"(?P<days>[A-Za-z]+)\s+(?P<start>{_MEETING_TIME})\s*-\s*(?P<end>{_MEETING_TIME})"
 )
 
 
@@ -36,6 +37,7 @@ def is_lecture_section(section_type: str | None) -> bool:
 
 
 def _clock_to_minutes(raw_clock: str) -> int | None:
+    """Parse ``H:MM AM/PM`` into minutes since midnight, or None."""
     if not raw_clock:
         return None
     try:
@@ -46,10 +48,12 @@ def _clock_to_minutes(raw_clock: str) -> int | None:
 
 
 def _time_to_minutes(value: time) -> int:
+    """Convert a ``datetime.time`` to minutes since midnight."""
     return (value.hour * 60) + value.minute
 
 
 def parse_fallback_meeting_blocks(raw_times: str) -> list[tuple[str, int, int]]:
+    """Parse legacy ``Section`` time strings into day/start/end minute tuples."""
     if not raw_times:
         return []
 
@@ -65,7 +69,12 @@ def parse_fallback_meeting_blocks(raw_times: str) -> list[tuple[str, int, int]]:
 
         start_minutes = _clock_to_minutes(match.group("start"))
         end_minutes = _clock_to_minutes(match.group("end"))
-        if start_minutes is None or end_minutes is None or end_minutes <= start_minutes:
+        invalid = (
+            start_minutes is None
+            or end_minutes is None
+            or end_minutes <= start_minutes
+        )
+        if invalid:
             continue
 
         day_tokens = DAY_TOKEN_PATTERN.findall(match.group("days"))
@@ -94,6 +103,7 @@ def section_time_rows_to_blocks(
 
 
 def _format_minutes(minutes: int) -> str:
+    """Format minutes since midnight as a 12-hour clock label."""
     hour = minutes // 60
     minute = minutes % 60
     suffix = "AM" if hour < 12 else "PM"
@@ -104,6 +114,7 @@ def _format_minutes(minutes: int) -> str:
 
 
 def empty_weekly_calendar() -> dict:
+    """Empty grid structure for templates when there are no events."""
     return {
         "columns": [
             {"code": code, "label": label, "events": []}
@@ -115,6 +126,7 @@ def empty_weekly_calendar() -> dict:
 
 
 def _build_section_time_map(section_ids: set[int]) -> dict[int, list[SectionTime]]:
+    """Map section id to its ``SectionTime`` rows (batched query)."""
     if not section_ids:
         return {}
 
@@ -197,6 +209,7 @@ def _weekly_events(
     *,
     extra_class: str = "",
 ) -> list[dict]:
+    """Flatten scheduled courses into calendar event dicts."""
     events: list[dict] = []
     for schedule_course in schedule_courses:
         meeting_blocks = _meeting_blocks_for_schedule_course(
@@ -247,6 +260,7 @@ def _calendar_columns(events: list[dict]) -> list[dict]:
 
 
 def build_weekly_calendar(schedule_courses: list[ScheduledCourse]) -> dict:
+    """Build column/time-label payload for one schedule's courses."""
     if not schedule_courses:
         return empty_weekly_calendar()
 
@@ -277,6 +291,7 @@ def build_merged_weekly_calendar(
     primary_courses: list[ScheduledCourse],
     secondary_courses: list[ScheduledCourse],
 ) -> dict:
+    """Overlay two course lists in one grid (compare / overlap view)."""
     if not primary_courses and not secondary_courses:
         return empty_weekly_calendar()
 
@@ -318,8 +333,7 @@ def scheduled_courses_for_calendar(schedule):
 
 
 def existing_schedule_blocks(schedule) -> list[tuple[str, int, int]]:
-    from ..models import ScheduledCourse
-
+    """All meeting blocks already on this schedule (for conflict checks)."""
     existing_courses = list(
         ScheduledCourse.objects.filter(schedule=schedule).select_related("section")
     )
@@ -341,6 +355,7 @@ def has_schedule_conflict(
     schedule,
     candidate_blocks: list[tuple[str, int, int]],
 ) -> bool:
+    """True when any candidate block overlaps an existing block on the same day."""
     if not candidate_blocks:
         return False
 

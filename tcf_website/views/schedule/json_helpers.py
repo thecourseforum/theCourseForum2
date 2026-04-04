@@ -31,6 +31,7 @@ def is_schedule_compare_pick_partial_request(request):
 
 
 def is_schedule_add_modal_get(request):
+    """XHR GET that only loads the add-course modal body."""
     return (
         request.method == "GET"
         and request.GET.get("partial") == "modal"
@@ -47,6 +48,7 @@ def schedule_messages_list(request) -> list[dict[str, str]]:
 
 
 def schedule_json_error_text(msgs: list[dict[str, str]], fallback: str) -> str:
+    """Pick the best error string from consumed Django messages."""
     last_any = None
     last_error = None
     for item in msgs:
@@ -59,6 +61,7 @@ def schedule_json_error_text(msgs: list[dict[str, str]], fallback: str) -> str:
 
 
 def schedule_json_redirect(request, redirect_to: str):
+    """JSON redirect payload for async clients, else HTTP redirect."""
     if accepts_schedule_json(request):
         payload: dict = {"ok": True, "redirect": redirect_to}
         msgs = schedule_messages_list(request)
@@ -71,6 +74,7 @@ def schedule_json_redirect(request, redirect_to: str):
 def schedule_json_error(
     request, message: str, *, fallback_url: str | None = None, status: int = 400
 ):
+    """Return JSON error for async clients; otherwise flash and redirect."""
     if accepts_schedule_json(request):
         msgs = schedule_messages_list(request)
         if not msgs:

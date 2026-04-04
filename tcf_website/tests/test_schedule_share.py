@@ -18,6 +18,7 @@ class ScheduleShareTestCase(TestCase):
         self.client = Client()
 
     def test_add_shared_creates_bookmark_and_redirects(self):
+        """``add_shared`` token GET creates a bookmark and redirects."""
         token = uuid.uuid4()
         sched = Schedule.objects.create(
             name="Friend",
@@ -34,6 +35,7 @@ class ScheduleShareTestCase(TestCase):
         )
 
     def test_schedule_share_enable_sets_token(self):
+        """Owner enabling share sets a non-null ``share_token``."""
         sched = Schedule.objects.create(
             name="A", user=self.user1, semester=self.semester, share_token=None
         )
@@ -50,6 +52,7 @@ class ScheduleShareTestCase(TestCase):
         self.assertIsNotNone(sched.share_token)
 
     def test_schedule_share_wrong_user_redirects(self):
+        """Non-owner cannot enable share on someone else's schedule."""
         sched = Schedule.objects.create(
             name="A", user=self.user1, semester=self.semester, share_token=None
         )
@@ -65,6 +68,7 @@ class ScheduleShareTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_compare_own_schedule_same_semester(self):
+        """Compare param loads the second schedule in context."""
         s1 = Schedule.objects.create(
             name="One", user=self.user1, semester=self.semester
         )
@@ -81,6 +85,7 @@ class ScheduleShareTestCase(TestCase):
         self.assertEqual(response.context["compare_schedule"].pk, s2.pk)
 
     def test_compare_bookmarked_schedule(self):
+        """User can compare with a bookmarked friend's schedule."""
         token = uuid.uuid4()
         friend = Schedule.objects.create(
             name="Friend",
@@ -102,6 +107,7 @@ class ScheduleShareTestCase(TestCase):
         self.assertEqual(response.context["compare_schedule"].pk, friend.pk)
 
     def test_compare_invalid_id_shows_message(self):
+        """Bad compare id surfaces a warning message."""
         s1 = Schedule.objects.create(
             name="One", user=self.user1, semester=self.semester
         )
@@ -115,6 +121,7 @@ class ScheduleShareTestCase(TestCase):
         self.assertContains(response, "could not be loaded", status_code=200)
 
     def test_compare_overlap_sets_merged_calendar(self):
+        """``overlap=1`` provides a merged calendar in context."""
         s1 = Schedule.objects.create(
             name="One", user=self.user1, semester=self.semester
         )
@@ -131,6 +138,7 @@ class ScheduleShareTestCase(TestCase):
         self.assertIsNotNone(response.context["merged_calendar"])
 
     def test_grid_partial_returns_only_grid_markup(self):
+        """Grid partial omits full builder chrome."""
         s1 = Schedule.objects.create(
             name="One", user=self.user1, semester=self.semester
         )
@@ -153,6 +161,7 @@ class ScheduleShareTestCase(TestCase):
         self.assertNotContains(response, "schedule-builder__title")
 
     def test_grid_partial_includes_compare_ui_when_compare_param(self):
+        """Grid partial includes compare UI when ``compare`` is set."""
         s1 = Schedule.objects.create(
             name="One", user=self.user1, semester=self.semester
         )
@@ -198,10 +207,11 @@ class ScheduleShareTestCase(TestCase):
         self.assertContains(response, "Exit compare")
 
     def test_compare_pick_partial_returns_apply_buttons(self):
+        """Compare-pick partial lists schedules with apply-compare hooks."""
         s1 = Schedule.objects.create(
             name="One", user=self.user1, semester=self.semester
         )
-        s2 = Schedule.objects.create(
+        Schedule.objects.create(
             name="Two", user=self.user1, semester=self.semester
         )
         self.client.force_login(self.user1)
@@ -219,6 +229,7 @@ class ScheduleShareTestCase(TestCase):
         self.assertContains(response, "Two")
 
     def test_duplicate_schedule_clears_share_token(self):
+        """Duplicated schedule does not inherit the old share token."""
         token = uuid.uuid4()
         sched = Schedule.objects.create(
             name="Orig",

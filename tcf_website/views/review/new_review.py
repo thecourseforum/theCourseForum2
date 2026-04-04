@@ -24,12 +24,6 @@ def new_review(request):
         if form.is_valid():
             instance = form.save(commit=False)
             instance.user = request.user
-            instance.hours_per_week = (
-                instance.amount_reading
-                + instance.amount_writing
-                + instance.amount_group
-                + instance.amount_homework
-            )
             instance.save()
 
             if instance.club:

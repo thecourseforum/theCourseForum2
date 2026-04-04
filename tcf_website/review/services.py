@@ -5,6 +5,7 @@ from ..utils import recent_semesters
 
 
 def recent_semester_id_set() -> set[int]:
+    """Primary keys of semesters in the recent-catalog window."""
     return set(recent_semesters().values_list("pk", flat=True))
 
 

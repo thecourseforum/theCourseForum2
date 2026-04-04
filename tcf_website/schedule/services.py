@@ -16,7 +16,7 @@ def schedule_visible_q(user):
 def schedule_page_url(
     *, semester_id: int | None = None, schedule_id: int | str | None = None
 ) -> str:
-    """Builder URL: prefer ?schedule= (row defines the term); else ?semester= for term-only views."""
+    """Builder URL: ``?schedule=`` when a row sets the term; else ``?semester=``."""
     if schedule_id:
         return f"{reverse('schedule')}?{urlencode({'schedule': schedule_id})}"
     if semester_id is not None:

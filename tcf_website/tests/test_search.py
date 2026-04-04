@@ -160,7 +160,7 @@ class SearchViewTestCase(TCFDataTestCase):
         )
 
     def test_autocomplete_schedule_add_urls_use_client_next_not_search_path(self):
-        """Schedule autocomplete rows encode ``next`` from the ``next`` query param (not ``/search/``)."""
+        """Schedule autocomplete uses client ``next``, not ``/search/``, in links."""
         next_path = "/schedule/?semester=1&schedule=99"
         response = self.client.get(
             reverse("search"),

@@ -82,9 +82,10 @@ def delete_schedule(request):
             )
         return redirect(redirect_to)
 
+    extra_courses = deleted_count - schedule_count
     messages.success(
         request,
-        f"Successfully deleted {schedule_count} schedules and {deleted_count - schedule_count} courses",
+        f"Successfully deleted {schedule_count} schedules and {extra_courses} courses",
     )
     return schedule_json_redirect(request, redirect_to)
 
@@ -108,9 +109,9 @@ def duplicate_schedule(request, schedule_id):
         source.name = "Copy of " + old_name
         source.share_token = None
         source.save()
-        new_schedule = source
+        duplicated_schedule = source
     else:
-        new_schedule = Schedule.objects.create(
+        duplicated_schedule = Schedule.objects.create(
             user=request.user,
             semester=source.semester,
             name="Copy of " + old_name,
@@ -119,7 +120,7 @@ def duplicate_schedule(request, schedule_id):
 
     for course in ScheduledCourse.objects.filter(schedule_id=source_pk):
         ScheduledCourse.objects.create(
-            schedule=new_schedule,
+            schedule=duplicated_schedule,
             section=course.section,
             instructor=course.instructor,
             time=course.time,
@@ -127,7 +128,9 @@ def duplicate_schedule(request, schedule_id):
         )
 
     messages.success(request, f"Successfully duplicated {old_name}")
-    redirect_to = safe_next_url(request, schedule_page_url(schedule_id=new_schedule.pk))
+    redirect_to = safe_next_url(
+        request, schedule_page_url(schedule_id=duplicated_schedule.pk)
+    )
     return schedule_json_redirect(request, redirect_to)
 
 

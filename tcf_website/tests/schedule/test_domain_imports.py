@@ -5,7 +5,10 @@ from django.test import SimpleTestCase
 
 
 class ScheduleDomainImportTests(SimpleTestCase):
+    """Imports for schedule package public API surface."""
+
     def test_schedule_subpackage_imports(self):
+        """``tcf_website.schedule`` exports calendar helpers and forms."""
         from tcf_website.schedule import (  # pylint: disable=import-outside-toplevel
             ScheduleForm,
             build_weekly_calendar,

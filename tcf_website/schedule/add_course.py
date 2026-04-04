@@ -160,10 +160,11 @@ def add_course_to_schedule(
 
     candidate_blocks = candidate_blocks_for_section(section)
     if blocks_conflict(existing_blocks, candidate_blocks):
-        messages.error(
-            request,
-            f"Section {section.sis_section_number} conflicts with another meeting in the selected schedule.",
+        msg = (
+            f"Section {section.sis_section_number} conflicts with another meeting "
+            "in the selected schedule."
         )
+        messages.error(request, msg)
         return False
 
     ScheduledCourse.objects.create(

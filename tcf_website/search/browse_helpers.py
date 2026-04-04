@@ -7,6 +7,7 @@ from .course_display import course_to_row_dict, group_by_dept
 
 
 def is_browse_results_partial_request(request) -> bool:
+    """True for XHR requests that only want the advanced-search results fragment."""
     return (
         request.headers.get("X-Requested-With") == "XMLHttpRequest"
         and request.GET.get("partial") == "results"
