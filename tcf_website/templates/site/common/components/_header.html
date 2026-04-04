@@ -51,6 +51,28 @@
         </a>
       </div>
 
+      <!-- Recently viewed courses -->
+      <div class="dropdown" id="recentCoursesDropdown">
+        <button
+          type="button"
+          class="recent-courses-trigger"
+          data-recent-courses-trigger
+          aria-label="Recently viewed courses"
+          aria-expanded="false"
+          aria-haspopup="true"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </button>
+        <div class="dropdown__menu dropdown__menu--right recent-courses-menu">
+          <div class="dropdown__header">Recent</div>
+          <div class="recent-courses-list" data-recent-courses-list hidden></div>
+          <p class="recent-courses-empty" data-recent-courses-empty>Visit a course page to see it here.</p>
+        </div>
+      </div>
+
       <!-- Theme Toggle -->
       <button class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
         <svg class="theme-toggle__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -135,12 +157,18 @@
 </header>
 
 <script>
-// Close dropdown when clicking outside
+// Close dropdowns when clicking outside
 document.addEventListener('click', function(e) {
-  const dropdown = document.getElementById('userDropdown');
-  if (dropdown && !dropdown.contains(e.target)) {
-    dropdown.classList.remove('is-open');
-  }
+  document.querySelectorAll('.header .dropdown').forEach(function(dd) {
+    if (dd.contains(e.target)) {
+      return;
+    }
+    dd.classList.remove('is-open');
+    var recentTrigger = dd.querySelector('[data-recent-courses-trigger]');
+    if (recentTrigger) {
+      recentTrigger.setAttribute('aria-expanded', 'false');
+    }
+  });
 
   // Close mobile menu when clicking outside
   const header = document.querySelector('.header');

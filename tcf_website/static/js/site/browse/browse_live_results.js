@@ -41,8 +41,7 @@
   }
 
   function resultCountLabel(n) {
-    const singular =
-      form.dataset.browseResultLabelSingular || "course";
+    const singular = form.dataset.browseResultLabelSingular || "course";
     const plural = form.dataset.browseResultLabelPlural || "courses";
     const noun = n === 1 ? singular : plural;
     return `${n} ${noun}`;
