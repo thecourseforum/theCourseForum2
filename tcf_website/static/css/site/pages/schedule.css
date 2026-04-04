@@ -161,7 +161,18 @@
 }
 
 .schedule-compare-pick__lead {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0 0.25em;
   margin: 0 0 var(--space-4);
+}
+
+.schedule-compare-pick__lead-selected {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .schedule-compare-pick-list {
@@ -175,6 +186,22 @@
 
 .schedule-compare-pick-list__item {
   margin: 0;
+  min-width: 0;
+}
+
+/* Long schedule names: ellipsis on inner flex item (text-overflow on .btn alone does not work with inline-flex) */
+.schedule-compare-pick__btn {
+  justify-content: flex-start;
+  max-width: 100%;
+}
+
+.schedule-compare-pick__btn-label {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: start;
 }
 
 .schedule-builder__create-form,
