@@ -51,13 +51,13 @@
         </a>
       </div>
 
-      <!-- Recently viewed courses -->
-      <div class="dropdown" id="recentCoursesDropdown">
+      <!-- Recently viewed (courses or clubs by mode) -->
+      <div class="dropdown" id="recentItemsDropdown">
         <button
           type="button"
-          class="recent-courses-trigger"
-          data-recent-courses-trigger
-          aria-label="Recently viewed courses"
+          class="recent-items-trigger"
+          data-recent-items-trigger
+          aria-label="Recently viewed"
           aria-expanded="false"
           aria-haspopup="true"
         >
@@ -66,10 +66,10 @@
             <polyline points="12 6 12 12 16 14"></polyline>
           </svg>
         </button>
-        <div class="dropdown__menu dropdown__menu--right recent-courses-menu">
+        <div class="dropdown__menu dropdown__menu--right recent-items-menu">
           <div class="dropdown__header">Recent</div>
-          <div class="recent-courses-list" data-recent-courses-list hidden></div>
-          <p class="recent-courses-empty" data-recent-courses-empty>Visit a course page to see it here.</p>
+          <div class="recent-items-list" data-recent-items-list hidden></div>
+          <p class="recent-items-empty" data-recent-items-empty>Visit a course page to see it here.</p>
         </div>
       </div>
 
@@ -164,7 +164,7 @@ document.addEventListener('click', function(e) {
       return;
     }
     dd.classList.remove('is-open');
-    var recentTrigger = dd.querySelector('[data-recent-courses-trigger]');
+    var recentTrigger = dd.querySelector('[data-recent-items-trigger]');
     if (recentTrigger) {
       recentTrigger.setAttribute('aria-expanded', 'false');
     }

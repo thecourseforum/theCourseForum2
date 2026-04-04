@@ -250,9 +250,9 @@
   display: none;
 }
 
-/* ===== RECENT COURSES ===== */
+/* ===== RECENT ITEMS (courses / clubs) ===== */
 
-.recent-courses-trigger {
+.recent-items-trigger {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -273,41 +273,41 @@
     background-color var(--duration-fast) var(--ease-default);
 }
 
-.recent-courses-trigger:hover {
+.recent-items-trigger:hover {
   color: var(--fg);
   background-color: var(--bg-muted);
 }
 
-.recent-courses-trigger svg {
+.recent-items-trigger svg {
   width: 1.25rem;
   height: 1.25rem;
 }
 
-.recent-courses-menu {
+.recent-items-menu {
   min-width: 14rem;
   max-width: min(20rem, calc(100vw - 2rem));
   max-height: 70vh;
   overflow-y: auto;
 }
 
-.recent-courses-list {
+.recent-items-list {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.recent-courses__item {
+.recent-items__row {
   flex-direction: column;
   align-items: flex-start;
   gap: 0.125rem;
 }
 
-.recent-courses__code {
+.recent-items__primary {
   font-weight: var(--font-semibold);
   font-size: var(--text-sm);
 }
 
-.recent-courses__title {
+.recent-items__secondary {
   font-size: var(--text-xs);
   font-weight: var(--font-normal);
   color: var(--fg-muted);
@@ -318,7 +318,7 @@
   overflow: hidden;
 }
 
-.recent-courses-empty {
+.recent-items-empty {
   margin: 0;
   padding: var(--space-2) var(--space-3);
   font-size: var(--text-sm);

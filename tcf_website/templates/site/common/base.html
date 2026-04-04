@@ -60,7 +60,7 @@
   {% block head %}{% endblock %}
 </head>
 
-<body class="min-h-screen flex flex-col" data-user-authenticated="{{ user.is_authenticated|yesno:'true,false' }}">
+<body class="min-h-screen flex flex-col" data-user-authenticated="{{ user.is_authenticated|yesno:'true,false' }}" data-recent-browse-mode="{% if request.resolver_match %}{% if request.GET.mode == 'clubs' or request.resolver_match.url_name == 'club' or request.resolver_match.url_name == 'club_category' %}clubs{% else %}courses{% endif %}{% else %}courses{% endif %}">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54T5TXX"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -97,7 +97,7 @@
   
   <!-- Core JavaScript -->
   <script src="{% static 'js/site/lib/theme.js' %}"></script>
-  <script src="{% static 'js/site/lib/recent_courses.js' %}"></script>
+  <script src="{% static 'js/site/lib/recent_items.js' %}"></script>
   <script src="{% static 'js/site/lib/modal.js' %}"></script>
   <script src="{% static 'js/site/lib/flash_messages.js' %}"></script>
   <script src="{% static 'js/site/lib/tcf_http.js' %}"></script>

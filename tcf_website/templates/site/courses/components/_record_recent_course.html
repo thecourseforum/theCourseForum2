@@ -1,8 +1,0 @@
-{% url 'course' course.subdepartment.mnemonic course.number as course_landing_url %}
-<script>
-  window.tcfRecentCourses.record({
-    href: "{{ course_landing_url|escapejs }}",
-    code: "{{ course.code|escapejs }}",
-    title: "{{ course.title|escapejs }}",
-  });
-</script>
