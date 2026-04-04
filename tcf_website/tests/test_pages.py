@@ -20,6 +20,13 @@ class LandingAndInfoPagesTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["mode"], "clubs")
         self.assertEqual(response.context["mode_noun"], "club")
+        self.assertIsInstance(response.context["landing_spotlight_reviews"], list)
+
+    def test_index_spotlight_reviews_context(self):
+        """Landing page exposes recent reviews list for default course mode."""
+        response = self.client.get(reverse("index"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.context["landing_spotlight_reviews"], list)
 
     def test_about_ok(self):
         """About page renders."""

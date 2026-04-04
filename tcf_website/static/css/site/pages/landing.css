@@ -77,7 +77,7 @@
 /* ===== FEATURES SECTION ===== */
 
 .features {
-  padding: var(--space-8) var(--space-4) var(--space-16);
+  padding: var(--space-8) var(--space-4) var(--space-12);
 }
 
 .features__grid {
@@ -100,7 +100,7 @@
   flex-direction: column;
   align-items: center;
 
-  padding: var(--space-12) var(--space-6);
+  padding: var(--space-10) var(--space-6);
   
   background-color: var(--bg-elevated);
   border: 1px solid var(--border);
@@ -130,7 +130,7 @@
   
   width: 4rem;
   height: 4rem;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
   
   border-radius: var(--radius-xl);
   
@@ -157,4 +157,108 @@
   font-size: var(--text-sm);
   color: var(--fg-muted);
   line-height: var(--leading-relaxed);
+}
+
+
+/* ===== LANDING REVIEWS STRIP ===== */
+
+.landing-reviews {
+  padding: var(--space-2) var(--space-4) var(--space-16);
+}
+
+.landing-reviews__inner {
+  max-width: var(--size-max);
+  margin: 0 auto;
+}
+
+.landing-marquee__viewport {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 6%,
+    black 94%,
+    transparent
+  );
+}
+
+.landing-marquee__track {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: var(--space-3);
+  width: max-content;
+  animation: landing-marquee-scroll 60s linear infinite;
+}
+
+.landing-marquee--slow .landing-marquee__track {
+  animation-duration: 72s;
+}
+
+@keyframes landing-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.landing-marquee__track--reviews {
+  align-items: stretch;
+  gap: var(--space-5);
+}
+
+.landing-review-card {
+  flex: 0 0 auto;
+  width: min(22rem, 92vw);
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  background-color: var(--bg-elevated);
+  box-shadow: var(--shadow-sm);
+  color: var(--fg);
+  text-decoration: none;
+  text-align: left;
+  transition: border-color var(--duration-normal) var(--ease-default),
+    box-shadow var(--duration-normal) var(--ease-default);
+}
+
+.landing-review-card:hover {
+  border-color: var(--fg-subtle);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+  color: var(--fg);
+}
+
+.landing-review-card__text {
+  font-size: var(--text-base);
+  color: var(--fg-muted);
+  line-height: var(--leading-relaxed);
+  margin: 0 0 var(--space-3);
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.landing-review-card__source {
+  font-size: var(--text-sm);
+  color: var(--fg-subtle);
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-marquee__viewport {
+    mask-image: none;
+  }
+
+  .landing-marquee__track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 56rem;
+    margin-inline: auto;
+  }
 }

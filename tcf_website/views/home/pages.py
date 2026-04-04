@@ -6,6 +6,8 @@ from pathlib import Path
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 
+from .landing_spotlight import landing_spotlight_context
+
 _TCF_WEBSITE_ROOT = Path(__file__).resolve().parent.parent.parent
 _ABOUT_DATA_DIR = _TCF_WEBSITE_ROOT / "data" / "about"
 
@@ -26,6 +28,7 @@ def index(request):
             "Search for a club..." if is_club else "Search for a course or professor..."
         ),
     }
+    context.update(landing_spotlight_context(mode))
 
     return render(
         request,
