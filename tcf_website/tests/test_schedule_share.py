@@ -211,9 +211,7 @@ class ScheduleShareTestCase(TestCase):
         s1 = Schedule.objects.create(
             name="One", user=self.user1, semester=self.semester
         )
-        Schedule.objects.create(
-            name="Two", user=self.user1, semester=self.semester
-        )
+        Schedule.objects.create(name="Two", user=self.user1, semester=self.semester)
         self.client.force_login(self.user1)
         response = self.client.get(
             reverse("schedule"),

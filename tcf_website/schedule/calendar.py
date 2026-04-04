@@ -70,9 +70,7 @@ def parse_fallback_meeting_blocks(raw_times: str) -> list[tuple[str, int, int]]:
         start_minutes = _clock_to_minutes(match.group("start"))
         end_minutes = _clock_to_minutes(match.group("end"))
         invalid = (
-            start_minutes is None
-            or end_minutes is None
-            or end_minutes <= start_minutes
+            start_minutes is None or end_minutes is None or end_minutes <= start_minutes
         )
         if invalid:
             continue

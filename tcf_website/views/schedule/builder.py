@@ -64,9 +64,7 @@ def view_schedules(  # pylint: disable=too-many-locals,too-many-return-statement
             request,
             f'Added "{shared.name}" to your schedules for this term.',
         )
-        bookmark_q = urlencode(
-            {"semester": shared.semester_id, "schedule": shared.pk}
-        )
+        bookmark_q = urlencode({"semester": shared.semester_id, "schedule": shared.pk})
         return redirect(f"{reverse('schedule')}?{bookmark_q}")
 
     active_semester = resolve_builder_semester(request, request.user)

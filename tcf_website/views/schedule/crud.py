@@ -2,7 +2,6 @@
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 
@@ -99,7 +98,7 @@ def duplicate_schedule(request, schedule_id):
         .first()
     )
     if source is None:
-        raise Http404
+        return schedule_json_error(request, "Schedule not found.", status=404)
 
     source_pk = source.pk
     old_name = source.name
@@ -166,11 +165,14 @@ def remove_scheduled_course(request, scheduled_course_id):
     if request.method != "POST":
         return redirect(reverse("schedule"))
 
-    scheduled_course = get_object_or_404(
-        ScheduledCourse,
+    scheduled_course = ScheduledCourse.objects.filter(
         id=scheduled_course_id,
         schedule__user=request.user,
-    )
+    ).first()
+    if scheduled_course is None:
+        return schedule_json_error(
+            request, "Course not found in your schedule.", status=404
+        )
     schedule_id = scheduled_course.schedule_id
     course_label = (
         f"{scheduled_course.section.course.subdepartment.mnemonic} "

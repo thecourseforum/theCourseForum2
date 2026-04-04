@@ -3,6 +3,7 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.http import require_POST
 from ...models import Course
 from ...review.forms import ReviewForm
 from ...review.services import (
@@ -31,6 +32,7 @@ def _review_preflight_invalid_form_response(request, form: ReviewForm):
 
 
 @login_required
+@require_POST
 def check_duplicate(request):
     """Check for duplicate reviews when a user submits a review."""
     form = ReviewForm(request.POST)
@@ -42,6 +44,7 @@ def check_duplicate(request):
 
 
 @login_required
+@require_POST
 def check_zero_hours_per_week(request):
     """Check that user hasn't submitted 0 *total* hours/week for a given course/review."""
     form = ReviewForm(request.POST)
