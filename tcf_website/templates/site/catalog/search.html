@@ -96,41 +96,7 @@ Search | theCourseForum
       <p class="search-panel__count">{{ total }} result{{ total|pluralize }}</p>
     </div>
 
-      {% if grouped %}
-    {% for category_slug, category_data in grouped.items %}
-    <section class="search-group">
-      <h3 class="search-group__title">
-        <a href="{% mode_url request 'club_category' category_slug=category_data.category_slug mode='clubs' %}">
-          {{ category_data.category_name }}
-        </a>
-      </h3>
-
-      <div class="search-result-list">
-        {% for club in category_data.clubs %}
-        <article class="search-result-card">
-          <a class="search-result-card__link" href="{% mode_url request 'club' category_slug=category_data.category_slug club_id=club.id mode='clubs' %}">
-            <span class="search-result-card__title">{{ club.name }}</span>
-          </a>
-          <p class="search-result-card__description">
-            {% if club.description %}
-            {{ club.description }}
-            {% else %}
-            No club description available.
-            {% endif %}
-          </p>
-        </article>
-        {% endfor %}
-      </div>
-    </section>
-    {% endfor %}
-
-    {% include "site/common/components/_pagination.html" with paginated_items=page_obj aria_label="Club pagination" %}
-    {% else %}
-    <div class="search-empty">
-      <h3>No clubs matched your search.</h3>
-      <p>Try a broader keyword.</p>
-    </div>
-    {% endif %}
+    {% include "site/catalog/partials/_club_grouped_results.html" with empty_hint="Try a broader keyword." %}
   </section>
   {% else %}
   <section

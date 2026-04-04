@@ -4,42 +4,73 @@ from django.db.models import Prefetch
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from ...forms import AdvancedSearchForm
+from ...forms import AdvancedSearchForm, ClubAdvancedSearchForm
 from ...models import Club, ClubCategory, School
 from ...search.browse_helpers import (
     advanced_search_results_payload,
+    club_advanced_search_results_payload,
     is_browse_results_partial_request,
 )
 from ...utils import parse_mode
 
 
-def browse(request):  # pylint: disable=too-many-locals
-    """View for browse page with advanced course search."""
-    mode, is_club = parse_mode(request)
+def _browse_clubs(request, mode: str):
+    """Clubs browse: category grid and/or filtered results."""
+    club_form = ClubAdvancedSearchForm(request.GET or None)
+    has_search = club_form.is_bound and club_form.has_search_params()
 
-    if is_club:
-        club_categories = (
-            ClubCategory.objects.all()
-            .prefetch_related(
-                Prefetch(
-                    "club_set",
-                    queryset=Club.objects.order_by("name"),
-                    to_attr="clubs",
-                )
-            )
-            .order_by("name")
+    if is_browse_results_partial_request(request):
+        if not has_search:
+            return HttpResponse(status=204)
+        payload = club_advanced_search_results_payload(request, club_form)
+        return render(
+            request,
+            "site/catalog/partials/_browse_club_advanced_results.html",
+            {"request": request, **payload},
         )
 
+    club_categories = (
+        ClubCategory.objects.all()
+        .prefetch_related(
+            Prefetch(
+                "club_set",
+                queryset=Club.objects.order_by("name"),
+                to_attr="clubs",
+            )
+        )
+        .order_by("name")
+    )
+
+    if has_search:
+        payload = club_advanced_search_results_payload(request, club_form)
         return render(
             request,
             "site/catalog/browse.html",
             {
                 "is_club": True,
                 "mode": mode,
+                "club_form": club_form,
+                "has_search": True,
                 "club_categories": club_categories,
+                **payload,
             },
         )
 
+    return render(
+        request,
+        "site/catalog/browse.html",
+        {
+            "is_club": True,
+            "mode": mode,
+            "club_form": club_form if club_form.is_bound else ClubAdvancedSearchForm(),
+            "has_search": False,
+            "club_categories": club_categories,
+        },
+    )
+
+
+def _browse_courses(request, mode: str):
+    """Courses browse: schools grid and/or advanced search results."""
     form = AdvancedSearchForm(request.GET or None)
     has_search = form.is_bound and form.has_search_params()
 
@@ -95,3 +126,11 @@ def browse(request):  # pylint: disable=too-many-locals
             "other_schools": other_schools,
         },
     )
+
+
+def browse(request):
+    """View for browse page with advanced course or club search."""
+    mode, is_club = parse_mode(request)
+    if is_club:
+        return _browse_clubs(request, mode)
+    return _browse_courses(request, mode)

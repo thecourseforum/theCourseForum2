@@ -21,7 +21,11 @@
         </h1>
         <p class="browse-header__description" id="browse-header-description">
           {% if is_club %}
-          Explore student organizations by category.
+            {% if has_search %}
+            {{ total }} club{{ total|pluralize }} found.
+            {% else %}
+            Explore student organizations by category.
+            {% endif %}
           {% elif has_search %}
           {{ total }} course{{ total|pluralize }} found.
           {% else %}
@@ -37,7 +41,14 @@
 <div class="browse-content">
 
   {% if is_club %}
-  <!-- Club Categories Grid -->
+  {% include "site/catalog/components/_club_advanced_search_form.html" %}
+  <div id="browse-advanced-results-root" class="browse-advanced-results-root">
+    {% if has_search %}
+    {% include "site/catalog/partials/_browse_club_advanced_results.html" %}
+    {% endif %}
+  </div>
+  {% if not has_search %}
+  <div id="browse-default-catalog">
   <div class="club-grid">
     {% for category in club_categories %}
     <a href="{% mode_url request 'club_category' category_slug=category.slug mode='clubs' %}" class="club-card">
@@ -48,6 +59,8 @@
     <p class="text-muted">No club categories available.</p>
     {% endfor %}
   </div>
+  </div>
+  {% endif %}
 
   {% else %}
   {% include "site/catalog/components/_advanced_search_form.html" %}

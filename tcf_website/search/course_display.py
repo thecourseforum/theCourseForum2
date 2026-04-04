@@ -40,6 +40,17 @@ def group_by_dept(courses: list[dict]) -> dict:
     return grouped
 
 
+def club_to_row_dict(club) -> dict:
+    """Build a club dict for grouping/templates (matches fetch_clubs / group_by_club_category)."""
+    return {
+        "id": club.id,
+        "name": club.name,
+        "description": club.description,
+        "category_slug": club.category.slug,
+        "category_name": club.category.name,
+    }
+
+
 def group_by_club_category(clubs: list[dict]) -> dict:
     """Group clubs by category slug."""
     grouped: dict = {}

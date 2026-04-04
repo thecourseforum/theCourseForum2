@@ -2,7 +2,7 @@
 
 from django.db.models import Exists, F, OuterRef, Q
 
-from ..models import Section, Semester
+from ..models import Club, Section, Semester
 from ..pagination import SECTION_DAY_CODE_TO_SECTIONTIME_FIELD
 from ..utils import browsable_course_queryset
 
@@ -13,6 +13,21 @@ def execute_advanced_search(filters):
     qs = _apply_course_filters(qs, filters)
     qs = _apply_section_filters(qs, filters)
     return qs.distinct().order_by("subdepartment__mnemonic", "number")
+
+
+def execute_club_advanced_search(filters):
+    """Build club queryset from validated club browse form data."""
+    qs = Club.objects.select_related("category").order_by("category__name", "name")
+    club_q = Q()
+    if category := filters.get("category"):
+        club_q &= Q(category_id=category)
+    if name := (filters.get("club_name") or "").strip():
+        club_q &= Q(name__icontains=name)
+    if filters.get("no_application_required"):
+        club_q &= Q(application_required=False)
+    if club_q:
+        qs = qs.filter(club_q)
+    return qs
 
 
 def _apply_course_filters(qs, filters):

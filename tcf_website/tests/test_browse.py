@@ -4,7 +4,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from ..models import School
+from ..models import Club, ClubCategory, School
 from .test_utils import setup, suppress_request_warnings
 
 
@@ -71,3 +71,43 @@ class CourseViewTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"browse-header", response.content)
+
+
+class ClubBrowseAdvancedTestCase(TestCase):
+    """Club browse filters and live-results partial (mode=clubs)."""
+
+    def setUp(self):
+        category = ClubCategory.objects.create(name="Arts", slug="arts")
+        Club.objects.create(name="Photography Guild", category=category)
+        Club.objects.create(name="Chess Club", category=category)
+
+    def test_club_browse_search_by_name(self):
+        """Filtered club browse returns matching rows."""
+        response = self.client.get(
+            reverse("browse"),
+            {"mode": "clubs", "club_name": "Photo"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context["has_search"])
+        self.assertGreaterEqual(response.context["total"], 1)
+
+    def test_club_browse_partial_results_returns_html(self):
+        """XHR partial=results with club filters returns results fragment."""
+        response = self.client.get(
+            reverse("browse"),
+            {"mode": "clubs", "club_name": "Photo", "partial": "results"},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"data-browse-total", response.content)
+        self.assertIn(b"search-result-card", response.content)
+
+    def test_club_browse_partial_no_search_returns_204(self):
+        """XHR partial=results without club search params returns 204."""
+        response = self.client.get(
+            reverse("browse"),
+            {"mode": "clubs", "partial": "results"},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.content, b"")

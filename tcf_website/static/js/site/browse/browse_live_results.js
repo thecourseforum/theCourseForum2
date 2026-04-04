@@ -14,6 +14,7 @@
     "units_max",
     "min_gpa",
     "component",
+    "club_name",
   ]);
 
   const form = document.querySelector(
@@ -39,8 +40,12 @@
     return Number.isFinite(num) ? num : 0;
   }
 
-  function courseCountLabel(n) {
-    return `${n} course${n === 1 ? "" : "s"}`;
+  function resultCountLabel(n) {
+    const singular =
+      form.dataset.browseResultLabelSingular || "course";
+    const plural = form.dataset.browseResultLabelPlural || "courses";
+    const noun = n === 1 ? singular : plural;
+    return `${n} ${noun}`;
   }
 
   function updateHeader(totalRaw) {
@@ -49,9 +54,9 @@
       titleEl.textContent = "Search Results";
     }
     if (descEl) {
-      descEl.textContent = `${courseCountLabel(n)} found.`;
+      descEl.textContent = `${resultCountLabel(n)} found.`;
     }
-    document.title = `${courseCountLabel(n)} · ${browsePageTitle}`;
+    document.title = `${resultCountLabel(n)} · ${browsePageTitle}`;
   }
 
   function hideCatalog() {
@@ -60,15 +65,27 @@
     }
   }
 
-  function buildParamsForFetch() {
+  /** GET params from the form plus any query keys only present on action (e.g. mode=clubs). */
+  function searchParamsFromFormAndAction() {
     const params = new URLSearchParams(new FormData(form));
+    const actionUrl = new URL(form.action, window.location.origin);
+    actionUrl.searchParams.forEach((value, key) => {
+      if (!params.has(key)) {
+        params.set(key, value);
+      }
+    });
+    return params;
+  }
+
+  function buildParamsForFetch() {
+    const params = searchParamsFromFormAndAction();
     params.delete("page");
     params.set("partial", "results");
     return params;
   }
 
   function buildParamsForHistory() {
-    const params = new URLSearchParams(new FormData(form));
+    const params = searchParamsFromFormAndAction();
     params.delete("page");
     params.delete("partial");
     const qs = params.toString();

@@ -433,6 +433,16 @@
   visibility: hidden;
 }
 
+/* Single checkbox in a grid cell: fill the row below the label and center (match input band). */
+.advanced-search__field--checkbox .advanced-search__checkbox {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 2.25rem;
+}
+
 .advanced-search__checkbox {
   display: flex;
   align-items: center;
