@@ -1,0 +1,74 @@
+{% extends "site/common/base.html" %}
+{% load custom_tags %}
+{% load static %}
+
+{% block title %}Schedule Builder | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/site/pages/schedule.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="schedule-builder">
+  <div class="schedule-builder__inner">
+    <div class="schedule-builder__header">
+      <div>
+        <h1 class="schedule-builder__title">Schedule Builder</h1>
+        <p class="schedule-builder__subtitle">Build and compare schedules with a weekly calendar view.</p>
+        {% if all_semesters %}
+        <form method="get" action="{% url 'schedule' %}" class="schedule-builder__semester-form">
+          <label class="schedule-builder__semester-label" for="schedule-semester-combo">Term</label>
+          {% if selected_schedule %}
+          <input type="hidden" name="schedule" value="{{ selected_schedule.id }}">
+          {% endif %}
+          {% if schedule_preserve_params %}
+            {% for key, value in schedule_preserve_params.items %}
+            <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endfor %}
+          {% endif %}
+          {% include "site/common/components/_combo_dropdown.html" with combo_name="semester" combo_choices=semester_choices combo_selected=semester_combo_selected combo_placeholder="Select term" combo_aria_label="Academic term" combo_input_id="schedule-semester-combo" combo_submit_on_select=1 %}
+        </form>
+        {% endif %}
+      </div>
+
+      <div class="schedule-builder__header-actions">
+        <button type="button" class="btn btn--primary btn--sm schedule-builder__create-btn" data-schedule-flow-new>
+          New schedule
+        </button>
+      </div>
+    </div>
+
+    <div id="schedule-builder-grid-root" data-schedule-base-url="{% url 'schedule' %}" aria-live="polite">
+      {% include "site/schedule/partials/_schedule_builder_grid.html" %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+{{ block.super }}
+<div class="modal-backdrop" id="scheduleComparePickModalBackdrop" data-modal-close aria-label="Close"></div>
+<div class="modal" id="scheduleComparePickModal" role="dialog" aria-labelledby="scheduleComparePickModalTitle" aria-modal="true">
+  <div class="modal__dialog modal__dialog--sm">
+    <div class="modal__header">
+      <h2 class="modal__title" id="scheduleComparePickModalTitle">Compare with…</h2>
+      <button type="button" class="modal__close" data-modal-close aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="modal__body" id="scheduleComparePickModalBody">
+      <p class="text-muted text-sm">Loading…</p>
+    </div>
+  </div>
+</div>
+<template id="tcf-new-schedule-form-template">
+  {% include "site/schedule/partials/_new_schedule_modal_form.html" %}
+</template>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/site/schedule/schedule_builder.js' %}"></script>
+{% endblock %}

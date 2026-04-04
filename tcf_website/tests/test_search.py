@@ -7,7 +7,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from tcf_website.models import Club, ClubCategory
-from tcf_website.views.search import (
+from tcf_website.views.catalog.search import (
     course_to_row_dict,
     decide_order,
     group_by_club_category,
@@ -155,7 +155,9 @@ class SearchViewTestCase(TCFDataTestCase):
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "site/components/_autocomplete_dropdown.html")
+        self.assertTemplateUsed(
+            response, "site/common/components/_autocomplete_dropdown.html"
+        )
 
     def test_autocomplete_schedule_add_urls_use_client_next_not_search_path(self):
         """Schedule autocomplete rows encode ``next`` from the ``next`` query param (not ``/search/``)."""

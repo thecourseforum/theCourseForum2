@@ -1,7 +1,6 @@
 """Custom authentication backend for AWS Cognito."""
 
 import json
-import logging
 import time
 from urllib.request import urlopen
 
@@ -12,7 +11,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
-logger = logging.getLogger(__name__)
 
 
 class CognitoBackend:

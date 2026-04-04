@@ -1,0 +1,248 @@
+{% extends "site/common/base.html" %}
+{% load static %}
+
+{% block title %}Write a Review | theCourseForum{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/site/pages/review.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="review-container">
+
+  <header class="review-header">
+    <h1 class="review-header__title">Write a Review</h1>
+    <p class="review-header__subtitle">Share your experience to help other students.</p>
+  </header>
+
+  {# Search bars use their own <form>; must NOT be nested inside #reviewForm (invalid HTML). #}
+  {% if is_club %}
+  {{ club_semester_choices|json_script:"review-club-semesters-data" }}
+  {% endif %}
+  {% if not is_club %}
+  <section class="review-section" id="review-course-section">
+    <h2 class="review-section__title">
+      <span class="review-section__title-icon">📖</span>
+      <span id="review-course-heading" class="review-entity-heading">{% if course %}{{ course.code }} — {{ course.title }}{% else %}Course{% endif %}</span>
+    </h2>
+    <p class="review-section__hint" id="review-course-hint">{% if course %}Need a different class? Search again below.{% else %}Search and select the course you took.{% endif %}</p>
+    <div id="review-course-picker">
+      {% include "site/common/components/_search_bar.html" with autocomplete_action="review" search_placeholder="Mnemonic, number, or title…" container_classes="search-bar-container--inline" %}
+    </div>
+  </section>
+  {% endif %}
+  {% if is_club %}
+  <section class="review-section" id="review-club-section">
+    <h2 class="review-section__title">
+      <span class="review-section__title-icon">🛡️</span>
+      <span id="review-club-heading" class="review-entity-heading">{% if club %}{{ club.name }}{% if club.category %} — {{ club.category.name }}{% endif %}{% else %}Club{% endif %}</span>
+    </h2>
+    <p class="review-section__hint" id="review-club-hint">{% if club %}Pick another club? Search again below.{% else %}Search and select the club you want to review.{% endif %}</p>
+    <div id="review-club-picker">
+      {% include "site/common/components/_search_bar.html" with autocomplete_action="review" search_placeholder="Search for a club by name…" container_classes="search-bar-container--inline" %}
+    </div>
+  </section>
+  {% endif %}
+
+  <form id="reviewForm"
+        action="{% url 'new_review' %}{% if is_club %}?mode=clubs{% endif %}"
+        method="POST"
+        data-review-cascade="1"
+        data-is-club="{% if is_club %}true{% else %}false{% endif %}"
+        data-main-unlocked="{% if review_main_unlocked|default:False %}1{% else %}0{% endif %}"
+        data-semesters-url="{% url 'review_semester_options' %}"
+        data-instructors-url="{% url 'review_instructor_options' %}">
+    {% csrf_token %}
+
+    {% if is_club %}
+      <input type="hidden" name="club" id="review-club-id" value="{% if club %}{{ club.id }}{% endif %}" {% if not club %}disabled{% endif %}>
+    {% else %}
+      <input type="hidden" name="course" id="review-course-id" value="{% if course %}{{ course.id }}{% endif %}" {% if not course %}disabled{% endif %}>
+    {% endif %}
+
+    <section class="review-section {% if is_club %}{% if not club %}review-cascade--locked{% endif %}{% else %}{% if not course %}review-cascade--locked{% endif %}{% endif %}" id="review-logistics-section">
+      <h2 class="review-section__title">
+        <span class="review-section__title-icon">🗓️</span> Logistics
+      </h2>
+      {% include "site/review/components/_review_logistics_grid.html" %}
+    </section>
+
+    {% with review_unlocked=review_main_unlocked|default:False %}
+    <fieldset id="review-main-fieldset" class="review-main-fieldset" {% if not review_unlocked %}disabled{% endif %}>
+    <section class="review-section {% if not review_unlocked %}review-cascade--locked{% endif %}" id="review-body-section">
+      <h2 class="review-section__title">
+        <span class="review-section__title-icon">✍️</span> Your Review
+      </h2>
+
+      <div class="rating-field">
+        <textarea
+          class="review-textarea"
+          id="reviewtext"
+          name="text"
+          rows="6"
+          placeholder="{% if is_club %}What was the club like? How was the workload? Any tips for future members? (Minimum 200 characters){% else %}What was the course like? How was the workload? Any tips for future students? (Minimum 200 characters){% endif %}"
+          required
+          minlength="200"
+          maxlength="5000"
+        >{% if form and form.text.value %}{{ form.text.value }}{% endif %}</textarea>
+        <span class="word-count" id="word-count">0 characters</span>
+      </div>
+    </section>
+
+    <section class="review-section {% if not review_unlocked %}review-cascade--locked{% endif %}" id="review-ratings-section">
+      <h2 class="review-section__title">
+        <span class="review-section__title-icon">⭐</span> Ratings
+      </h2>
+
+      <div class="rating-grid">
+        {% include "site/review/components/_review_rating_group.html" with name="instructor_rating" label=is_club|yesno:"Leadership,Instructor Rating" %}
+        {% include "site/review/components/_review_rating_group.html" with name="enjoyability" label="Enjoyability" %}
+        {% include "site/review/components/_review_rating_group.html" with name="recommendability" label="Recommendability" %}
+        {% include "site/review/components/_review_rating_group.html" with name="difficulty" label=is_club|yesno:"Commitment,Difficulty" %}
+      </div>
+    </section>
+
+    <section class="review-section {% if not review_unlocked %}review-cascade--locked{% endif %}" id="review-workload-section">
+      <h2 class="review-section__title">
+        <span class="review-section__title-icon">⏱️</span> Weekly Hours
+      </h2>
+
+      <div class="workload-grid">
+        {% include "site/review/components/_review_workload_field.html" with name="amount_reading" label=is_club|yesno:"Events,Reading" %}
+        {% include "site/review/components/_review_workload_field.html" with name="amount_writing" label=is_club|yesno:"Planning,Writing" %}
+        {% include "site/review/components/_review_workload_field.html" with name="amount_group" label=is_club|yesno:"Meetings,Group Work" %}
+        {% include "site/review/components/_review_workload_field.html" with name="amount_homework" label=is_club|yesno:"Other,Homework" %}
+      </div>
+    </section>
+
+    <div class="review-form__submit-wrap">
+      <button type="submit" class="btn btn--primary btn--lg" id="submitBtn" {% if not review_unlocked %}disabled{% endif %}>Submit Review</button>
+    </div>
+    </fieldset>
+    {% endwith %}
+
+    <div id="duplicate-warning" class="modal" aria-hidden="true">
+        <div class="modal__overlay" tabindex="-1" data-modal-close></div>
+        <div class="modal__container" role="dialog" aria-modal="true">
+          <header class="modal__header">
+            <h2 class="modal__title">Duplicate Review</h2>
+            <button class="modal__close" aria-label="Close modal" data-modal-close></button>
+          </header>
+          <div class="modal__content">
+            <p>{% if is_club %}You have already reviewed this club.{% else %}You have already reviewed this course/instructor for this semester.{% endif %}</p>
+          </div>
+          <footer class="modal__footer">
+            <button class="btn btn--primary" data-modal-close>Okay</button>
+          </footer>
+        </div>
+    </div>
+
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/site/review/review_cascade.js' %}"></script>
+<script>
+  const duplicateCheckUrl = "{% url 'check_review_duplicate' %}";
+  const zeroHoursCheckUrl = "{% url 'check_zero_hours_per_week' %}";
+
+  const textarea = document.getElementById('reviewtext');
+  const countDisplay = document.getElementById('word-count');
+
+  if (textarea && countDisplay) {
+    textarea.addEventListener('input', function() {
+      const text = this.value.trim();
+      const characters = text.length;
+      countDisplay.textContent = characters + ' characters';
+      if (characters < 200) {
+          countDisplay.style.color = 'var(--danger)';
+      } else {
+          countDisplay.style.color = 'var(--fg-muted)';
+      }
+    });
+  }
+
+  let zeroHoursWarned = false;
+
+  document.getElementById('reviewForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const form = this;
+    const formData = new FormData(form);
+    const submitBtn = document.getElementById('submitBtn');
+
+    function resetSubmitBtn() {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Review';
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Checking...';
+
+    const xhrHeaders = {
+      'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+      'X-Requested-With': 'XMLHttpRequest',
+    };
+
+    try {
+      const dupRes = await fetch(duplicateCheckUrl, {
+        method: 'POST',
+        body: formData,
+        headers: xhrHeaders,
+      });
+      let dupData;
+      try {
+        dupData = await dupRes.json();
+      } catch {
+        resetSubmitBtn();
+        alert('An error occurred. Please try again.');
+        return;
+      }
+      if (!dupRes.ok) {
+        alert(dupData.error || 'Could not validate your review. Please check the form.');
+        resetSubmitBtn();
+        return;
+      }
+      if (dupData.duplicate) {
+        alert("{% if is_club %}You have already reviewed this club.{% else %}You have already reviewed this course/instructor for this semester.{% endif %}");
+        resetSubmitBtn();
+        return;
+      }
+
+      const zRes = await fetch(zeroHoursCheckUrl, {
+        method: 'POST',
+        body: formData,
+        headers: xhrHeaders,
+      });
+      let zData;
+      try {
+        zData = await zRes.json();
+      } catch {
+        resetSubmitBtn();
+        alert('An error occurred checking hours. Please try again.');
+        return;
+      }
+      if (!zRes.ok) {
+        alert(zData.error || 'Could not validate your review.');
+        resetSubmitBtn();
+        return;
+      }
+      if (zData.zero && !zeroHoursWarned) {
+        const confirmZero = confirm('You entered 0 total hours per week. Is this correct?');
+        if (confirmZero) {
+          zeroHoursWarned = true;
+          form.submit();
+        } else {
+          resetSubmitBtn();
+        }
+      } else {
+        form.submit();
+      }
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred. Please try again.');
+      resetSubmitBtn();
+    }
+  });
+</script>
+{% endblock %}

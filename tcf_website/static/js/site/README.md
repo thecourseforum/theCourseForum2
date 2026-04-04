@@ -11,7 +11,7 @@ Scripts live under feature folders plus `lib/` for shared utilities. Paths are r
 | `review/` | `review_votes.js`, `review_cascade.js`, `reviews_sort_fetch.js` |
 | `browse/` | `browse_live_results.js` |
 
-## Global load order (from `base.html`)
+## Global load order (from `templates/site/common/base.html`)
 
 The builder and search UI depend on this order:
 
@@ -25,7 +25,7 @@ The builder and search UI depend on this order:
 8. `lib/search_bar.js`
 9. `lib/combo_dropdown.js`
 
-**Schedule page** additionally loads `schedule/schedule_builder.js` after the base stack (see `pages/schedule.html`).
+**Schedule page** additionally loads `schedule/schedule_builder.js` after the base stack (see `templates/site/schedule/schedule.html`).
 
 **Review** pages load `review/*.js` as needed on top of the base stack; `review_cascade.js` uses XHR endpoints for semester/instructor options.
 

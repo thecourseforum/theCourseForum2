@@ -434,7 +434,7 @@ class NewReviewClubSearchTestCase(TCFDataTestCase):
             {"mode": "clubs"},
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "site/pages/review.html")
+        self.assertTemplateUsed(response, "site/review/review.html")
         self.assertContains(response, "Search for a club by name")
 
 

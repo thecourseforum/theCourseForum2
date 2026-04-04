@@ -1,0 +1,129 @@
+{% load custom_tags %}
+<div class="schedule-builder__grid"{% if active_semester %} data-builder-active-semester="{{ active_semester.pk }}"{% endif %}>
+  {% include "site/schedule/partials/_schedule_list_sidebar.html" %}
+
+  <section class="schedule-detail">
+    {% if selected_schedule %}
+    <div class="schedule-detail__header">
+      <h2 class="sr-only">
+        {{ selected_schedule.name }}
+        {% if selected_schedule.user_id != request.user.id %}
+        — Shared schedule{% if selected_schedule.user.first_name %} by {{ selected_schedule.user.first_name }}{% endif %}
+        {% endif %}
+      </h2>
+
+      <div class="schedule-detail__header-row schedule-detail__header-row--split">
+        <div class="schedule-detail__header-primary">
+          <div class="schedule-detail__header-search schedule-detail__header-search-slot {% if compare_schedule or selected_schedule.user_id != request.user.id %}schedule-detail__header-search--placeholder{% endif %}">
+            {% if not compare_schedule and selected_schedule.user_id == request.user.id %}
+            {% include "site/common/components/_search_bar.html" with autocomplete_action="schedule" autocomplete_target=selected_schedule.id search_placeholder="Search for a course to add..." container_classes="search-bar-container--inline" %}
+            {% endif %}
+          </div>
+          {% if schedules|length > 1 %}
+            {% if compare_schedule %}
+            <a href="{{ compare_exit_url }}" class="btn btn--danger btn--sm schedule-detail__compare-slot schedule-builder__action-btn" data-schedule-nav>Exit compare</a>
+            {% else %}
+            <a href="#" class="btn btn--accent btn--sm schedule-detail__compare-slot schedule-builder__action-btn" data-schedule-open-compare-pick role="button">Compare schedules</a>
+            {% endif %}
+          {% endif %}
+        </div>
+        <div class="schedule-detail__header-utilities schedule-detail__header-utilities--cluster">
+          {% if selected_schedule.user_id == request.user.id %}
+          <div class="schedule-detail__share schedule-detail__share--compact schedule-detail__share--header" data-schedule-share>
+            {% if selected_schedule.share_token %}
+            <div class="schedule-detail__share-compact-row">
+              <input type="text" readonly class="input input--sm schedule-detail__share-input" value="{{ request.scheme }}://{{ request.get_host }}{% url 'schedule' %}?add_shared={{ selected_schedule.share_token }}" aria-label="Share link">
+              <button type="button" class="btn btn--secondary btn--sm schedule-detail__share-copy schedule-builder__action-btn">Copy</button>
+              <form method="post" action="{% url 'schedule_share' %}" class="schedule-detail__share-inline-form" data-schedule-async>
+                {% csrf_token %}
+                <input type="hidden" name="schedule_id" value="{{ selected_schedule.id }}">
+                <input type="hidden" name="action" value="disable">
+                <input type="hidden" name="next" value="{{ schedule_builder_return_url }}">
+                <button type="submit" class="btn btn--ghost btn--sm schedule-builder__action-btn schedule-builder__btn-danger">Stop</button>
+              </form>
+            </div>
+            {% else %}
+            <form method="post" action="{% url 'schedule_share' %}" class="schedule-detail__share-enable schedule-detail__share-enable--inline" data-schedule-async>
+              {% csrf_token %}
+              <input type="hidden" name="schedule_id" value="{{ selected_schedule.id }}">
+              <input type="hidden" name="action" value="enable">
+              <input type="hidden" name="next" value="{{ schedule_builder_return_url }}">
+              <button type="submit" class="btn btn--secondary btn--sm schedule-builder__action-btn">Share</button>
+            </form>
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if compare_schedule %}
+      {% if compare_overlap and merged_calendar %}
+      <div class="schedule-detail__overlap-columns">
+        {% include "site/schedule/partials/_schedule_compare_column.html" with col_title=selected_schedule.name stats=selected_schedule_stats courses=selected_courses schedule_owner_id=selected_schedule.user_id schedule_builder_return_url=schedule_builder_return_url request=request only %}
+        {% include "site/schedule/partials/_schedule_compare_column.html" with col_title=compare_schedule.name stats=compare_schedule_stats courses=compare_courses schedule_owner_id=compare_schedule.user_id schedule_builder_return_url=schedule_builder_return_url request=request only %}
+      </div>
+      <div class="schedule-detail__calendar">
+        <div class="schedule-detail__calendar-heading">
+          <h2 class="schedule-detail__section-title schedule-detail__section-title--calendar">Weekly calendar</h2>
+          {% if compare_nav %}
+          <a href="{{ compare_nav.split_url }}" class="btn btn--secondary btn--sm schedule-builder__action-btn" data-schedule-nav>Side-by-side</a>
+          {% endif %}
+        </div>
+        {% include "site/schedule/components/_weekly_calendar.html" with calendar=merged_calendar %}
+      </div>
+      {% elif compare_calendar %}
+      <div class="schedule-detail__overlap-columns">
+        {% include "site/schedule/partials/_schedule_compare_column.html" with col_title=selected_schedule.name stats=selected_schedule_stats courses=selected_courses schedule_owner_id=selected_schedule.user_id schedule_builder_return_url=schedule_builder_return_url request=request only %}
+        {% include "site/schedule/partials/_schedule_compare_column.html" with col_title=compare_schedule.name stats=compare_schedule_stats courses=compare_courses schedule_owner_id=compare_schedule.user_id schedule_builder_return_url=schedule_builder_return_url request=request only %}
+      </div>
+      <div class="schedule-detail__calendar">
+        <div class="schedule-detail__calendar-heading">
+          <h2 class="schedule-detail__section-title schedule-detail__section-title--calendar">Weekly calendar</h2>
+          {% if compare_nav %}
+          <a href="{{ compare_nav.overlap_url }}" class="btn btn--secondary btn--sm schedule-builder__action-btn" data-schedule-nav>Overlapped</a>
+          {% endif %}
+        </div>
+        <div class="schedule-detail__compare-grid schedule-detail__compare-grid--stacked">
+          {% include "site/schedule/partials/_schedule_compare_column.html" with calendar_only=True calendar=calendar schedule_owner_id=selected_schedule.user_id schedule_builder_return_url=schedule_builder_return_url request=request only %}
+          {% include "site/schedule/partials/_schedule_compare_column.html" with calendar_only=True calendar=compare_calendar schedule_owner_id=compare_schedule.user_id schedule_builder_return_url=schedule_builder_return_url request=request only %}
+        </div>
+      </div>
+      {% endif %}
+    {% else %}
+    <div class="schedule-detail__stats">
+      <div>
+        <span>Units</span>
+        <strong>{% if selected_schedule_stats.credits %}{{ selected_schedule_stats.credits }}{% else %}—{% endif %}</strong>
+      </div>
+      <div>
+        <span>Rating</span>
+        <strong>{% if selected_schedule_stats.rating %}{{ selected_schedule_stats.rating|floatformat:2 }}{% else %}—{% endif %}</strong>
+      </div>
+      <div>
+        <span>GPA</span>
+        <strong>{% if selected_schedule_stats.gpa %}{{ selected_schedule_stats.gpa|floatformat:2 }}{% else %}—{% endif %}</strong>
+      </div>
+    </div>
+
+    <div class="schedule-detail__course-list">
+      {% for course in selected_courses %}
+      {% include "site/schedule/partials/_scheduled_course_card.html" with course=course schedule_owner_id=selected_schedule.user_id %}
+      {% empty %}
+      <p class="schedule-detail__empty">This schedule has no courses yet.</p>
+      {% endfor %}
+    </div>
+
+    <div class="schedule-detail__calendar">
+      <h2 class="schedule-detail__section-title schedule-detail__section-title--calendar">Weekly calendar</h2>
+      {% include "site/schedule/components/_weekly_calendar.html" with calendar=calendar %}
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="schedule-detail__empty-state">
+      <h2>Create your first schedule</h2>
+      <p>Use the field above to create a schedule for this term, then add courses from any course page.</p>
+    </div>
+    {% endif %}
+  </section>
+</div>

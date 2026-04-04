@@ -1,6 +1,5 @@
 """Schedule builder main page."""
 
-import logging
 import uuid
 from urllib.parse import urlencode
 
@@ -26,8 +25,6 @@ from .json_helpers import (
     is_schedule_compare_pick_partial_request,
     is_schedule_grid_partial_request,
 )
-
-logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -202,12 +199,12 @@ def view_schedules(request):
         if selected_schedule is None:
             return render(
                 request,
-                "site/partials/_schedule_compare_pick_modal_body.html",
+                "site/schedule/partials/_schedule_compare_pick_modal_body.html",
                 {"schedules": [], "selected_schedule": None},
             )
         return render(
             request,
-            "site/partials/_schedule_compare_pick_modal_body.html",
+            "site/schedule/partials/_schedule_compare_pick_modal_body.html",
             {
                 "schedules": schedules,
                 "selected_schedule": selected_schedule,
@@ -217,8 +214,8 @@ def view_schedules(request):
     if is_schedule_grid_partial_request(request):
         return render(
             request,
-            "site/partials/_schedule_builder_grid.html",
+            "site/schedule/partials/_schedule_builder_grid.html",
             schedule_context,
         )
 
-    return render(request, "site/pages/schedule.html", schedule_context)
+    return render(request, "site/schedule/schedule.html", schedule_context)

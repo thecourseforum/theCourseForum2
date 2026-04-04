@@ -89,7 +89,7 @@ def schedule_add_course(request, course_id):
     if is_schedule_add_modal_get(request):
         return render(
             request,
-            "site/partials/_schedule_add_course_modal.html",
+            "site/schedule/partials/_schedule_add_course_modal.html",
             page_ctx,
         )
 

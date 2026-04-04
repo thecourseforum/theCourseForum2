@@ -67,7 +67,7 @@ def _handle_course_review_get(request, mode):
     if not course_id:
         return render(
             request,
-            "site/pages/review.html",
+            "site/review/review.html",
             {
                 "is_club": False,
                 "mode": mode,
@@ -99,7 +99,7 @@ def _handle_course_review_get(request, mode):
 
     return render(
         request,
-        "site/pages/review.html",
+        "site/review/review.html",
         {
             "is_club": False,
             "mode": mode,
@@ -123,7 +123,7 @@ def _handle_club_review_get(request, mode):
     if not club_id:
         return render(
             request,
-            "site/pages/review.html",
+            "site/review/review.html",
             {
                 "is_club": True,
                 "mode": mode,
@@ -139,7 +139,7 @@ def _handle_club_review_get(request, mode):
 
     return render(
         request,
-        "site/pages/review.html",
+        "site/review/review.html",
         {
             "is_club": True,
             "mode": mode,
@@ -175,7 +175,7 @@ def _render_review_form_with_errors(request, form, is_club, mode):
         context["review_main_unlocked"] = bool(form.errors) or bool(
             form.data.get("club") and form.data.get("semester")
         )
-        return render(request, "site/pages/review.html", context)
+        return render(request, "site/review/review.html", context)
 
     course = form.cleaned_data.get("course")
     if not course:
@@ -193,7 +193,7 @@ def _render_review_form_with_errors(request, form, is_club, mode):
         context["semesters"] = base_semesters
         context["instructors"] = []
         context["review_main_unlocked"] = bool(form.errors)
-        return render(request, "site/pages/review.html", context)
+        return render(request, "site/review/review.html", context)
 
     context["course"] = course
     context["club"] = None
@@ -222,4 +222,4 @@ def _render_review_form_with_errors(request, form, is_club, mode):
         and form.data.get("instructor")
     )
 
-    return render(request, "site/pages/review.html", context)
+    return render(request, "site/review/review.html", context)
