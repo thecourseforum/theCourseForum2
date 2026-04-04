@@ -27,14 +27,11 @@
             {% endfor %}
           {% endif %}
           {% include "site/common/components/_combo_dropdown.html" with combo_name="semester" combo_choices=semester_choices combo_selected=semester_combo_selected combo_placeholder="Select term" combo_aria_label="Academic term" combo_input_id="schedule-semester-combo" combo_submit_on_select=1 %}
+          <button type="button" class="btn btn--primary btn--sm schedule-builder__create-btn" data-schedule-flow-new>
+            New schedule
+          </button>
         </form>
         {% endif %}
-      </div>
-
-      <div class="schedule-builder__header-actions">
-        <button type="button" class="btn btn--primary btn--sm schedule-builder__create-btn" data-schedule-flow-new>
-          New schedule
-        </button>
       </div>
     </div>
 

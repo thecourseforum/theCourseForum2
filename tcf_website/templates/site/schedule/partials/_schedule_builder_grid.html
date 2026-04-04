@@ -19,6 +19,8 @@
             {% include "site/common/components/_search_bar.html" with autocomplete_action="schedule" autocomplete_target=selected_schedule.id search_placeholder="Search for a course to add..." container_classes="search-bar-container--inline" %}
             {% endif %}
           </div>
+        </div>
+        <div class="schedule-detail__header-utilities">
           {% if schedules|length > 1 %}
             {% if compare_schedule %}
             <a href="{{ compare_exit_url }}" class="btn btn--danger btn--sm schedule-detail__compare-slot schedule-builder__action-btn" data-schedule-nav>Exit compare</a>
@@ -26,8 +28,6 @@
             <a href="#" class="btn btn--accent btn--sm schedule-detail__compare-slot schedule-builder__action-btn" data-schedule-open-compare-pick role="button">Compare schedules</a>
             {% endif %}
           {% endif %}
-        </div>
-        <div class="schedule-detail__header-utilities schedule-detail__header-utilities--cluster">
           {% if selected_schedule.user_id == request.user.id %}
           <div class="schedule-detail__share schedule-detail__share--compact schedule-detail__share--header" data-schedule-share>
             {% if selected_schedule.share_token %}
