@@ -17,10 +17,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DatabaseError
 from django.db.models import Count, Exists, F, OuterRef
-from requests.adapters import HTTPAdapter
 from tqdm import tqdm
-from urllib3.util.retry import Retry
 
+from tcf_website.management.http import requests_session_with_pool_and_retries
 from tcf_website.models import Course, Instructor, Review, ReviewLLMSummary, Semester
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -33,36 +32,30 @@ REQUESTS_PER_MINUTE = 20
 MIN_REQUEST_INTERVAL = 60.0 / REQUESTS_PER_MINUTE
 WORKERS = 20
 
-_RATE_LOCK = threading.Lock()
-_NEXT_SLOT_MONO = 0.0
 
+class _OpenRouterRateLimiter:
+    """Serializes start times so OpenRouter requests stay under the per-minute cap."""
 
-def _wait_openrouter_slot():
-    """Next OpenRouter request may start (global across worker threads)."""
-    global _NEXT_SLOT_MONO
-    with _RATE_LOCK:
-        now = time.monotonic()
-        if now < _NEXT_SLOT_MONO:
-            time.sleep(_NEXT_SLOT_MONO - now)
+    _lock = threading.Lock()
+    _next_slot_mono = 0.0
+
+    @classmethod
+    def wait_slot(cls):
+        with cls._lock:
             now = time.monotonic()
-        _NEXT_SLOT_MONO = now + MIN_REQUEST_INTERVAL
+            if now < cls._next_slot_mono:
+                time.sleep(cls._next_slot_mono - now)
+                now = time.monotonic()
+            cls._next_slot_mono = now + MIN_REQUEST_INTERVAL
 
 
 def create_session():
     """Shared pool and retries for transient 5xx."""
-    session = requests.Session()
-    adapter = HTTPAdapter(
-        pool_connections=WORKERS,
-        pool_maxsize=WORKERS,
-        max_retries=Retry(
-            total=4,
-            backoff_factor=1,
-            status_forcelist=[500, 502, 503, 504],
-            allowed_methods=frozenset(["POST"]),
-        ),
+    return requests_session_with_pool_and_retries(
+        workers=WORKERS,
+        status_forcelist=[500, 502, 503, 504],
+        allowed_methods=frozenset(["POST"]),
     )
-    session.mount("https://", adapter)
-    return session
 
 
 def _resolve_semester(raw):
@@ -117,6 +110,26 @@ def _build_messages(course, instructor, reviews):
     ]
 
 
+def _summary_text_from_openrouter_response(response):
+    """Parse chat completion body; return stripped summary text or None."""
+    response.raise_for_status()
+    body = response.json()
+    choices = body.get("choices")
+    if not isinstance(choices, list) or not choices:
+        return None
+    choice0 = choices[0]
+    if not isinstance(choice0, dict):
+        return None
+    message = choice0.get("message")
+    if not isinstance(message, dict):
+        return None
+    raw_content = message.get("content")
+    if not isinstance(raw_content, str):
+        return None
+    text = raw_content.strip()
+    return text or None
+
+
 def summarize_one(session, row, model_id, dry_run):
     """Summarize one pair. Returns (kind, message) or None on failure. Never raises."""
     try:
@@ -138,7 +151,7 @@ def summarize_one(session, row, model_id, dry_run):
         )
         messages = _build_messages(course, instructor, reviews)
 
-        _wait_openrouter_slot()
+        _OpenRouterRateLimiter.wait_slot()
         response = session.post(
             OPENROUTER_URL,
             headers={
@@ -148,21 +161,7 @@ def summarize_one(session, row, model_id, dry_run):
             json={"model": model_id, "messages": messages},
             timeout=TIMEOUT,
         )
-        response.raise_for_status()
-        body = response.json()
-        choices = body.get("choices")
-        if not isinstance(choices, list) or not choices:
-            return None
-        choice0 = choices[0]
-        if not isinstance(choice0, dict):
-            return None
-        message = choice0.get("message")
-        if not isinstance(message, dict):
-            return None
-        raw_content = message.get("content")
-        if not isinstance(raw_content, str):
-            return None
-        summary_text = raw_content.strip()
+        summary_text = _summary_text_from_openrouter_response(response)
         if not summary_text:
             return None
 
@@ -194,6 +193,8 @@ def summarize_one(session, row, model_id, dry_run):
 
 
 class Command(BaseCommand):
+    """Management command: OpenRouter-backed LLM summaries per course–instructor pair."""
+
     help = "Generate AI review summaries via OpenRouter."
 
     def add_arguments(self, parser):
@@ -223,6 +224,40 @@ class Command(BaseCommand):
             help="Print what would be processed without calling the API",
         )
 
+    def _run_summaries_parallel(self, pairs, model_id, dry_run):
+        session = create_session()
+
+        def _summarize(row):
+            return summarize_one(session, row, model_id, dry_run)
+
+        with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+            return list(
+                tqdm(
+                    pool.map(_summarize, pairs),
+                    total=len(pairs),
+                    desc="Summaries",
+                )
+            )
+
+    def _report_pair_results(self, pairs, results):
+        error_count = 0
+        for row, result in zip(pairs, results):
+            if result is None:
+                error_count += 1
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"course_id={row['course_id']} "
+                        f"instructor_id={row['instructor_id']}: failed"
+                    )
+                )
+                continue
+            kind, msg = result
+            if kind == "dry_run":
+                self.stdout.write(self.style.WARNING(msg))
+            else:
+                self.stdout.write(self.style.SUCCESS(msg))
+        return error_count
+
     def handle(self, *args, **options):
         start = time.time()
 
@@ -241,39 +276,8 @@ class Command(BaseCommand):
 
         self.stdout.write(f"Processing {len(pairs)} pair(s)...")
 
-        session = create_session()
-        model_id_kw = model_id
-        dry_run_kw = options["dry_run"]
-
-        def _summarize(row):
-            return summarize_one(session, row, model_id_kw, dry_run_kw)
-
-        # ── Call OpenRouter concurrently (starts are globally rate-limited) ──
-        with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-            results = list(
-                tqdm(
-                    pool.map(_summarize, pairs),
-                    total=len(pairs),
-                    desc="Summaries",
-                )
-            )
-
-        error_count = 0
-        for row, result in zip(pairs, results):
-            if result is None:
-                error_count += 1
-                self.stdout.write(
-                    self.style.ERROR(
-                        f"course_id={row['course_id']} "
-                        f"instructor_id={row['instructor_id']}: failed"
-                    )
-                )
-                continue
-            kind, msg = result
-            if kind == "dry_run":
-                self.stdout.write(self.style.WARNING(msg))
-            else:
-                self.stdout.write(self.style.SUCCESS(msg))
+        results = self._run_summaries_parallel(pairs, model_id, options["dry_run"])
+        error_count = self._report_pair_results(pairs, results)
 
         elapsed = time.time() - start
         ok = len(pairs) - error_count

@@ -11,10 +11,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 import requests
 from django.core.management.base import BaseCommand
-from requests.adapters import HTTPAdapter
 from tqdm import tqdm
-from urllib3.util.retry import Retry
 
+from tcf_website.management.http import requests_session_with_pool_and_retries
 from tcf_website.models import Section, Semester
 
 API_URL = (
@@ -33,18 +32,10 @@ ENROLLMENT_FIELDS = [
 
 def create_session():
     """Single retry layer with exponential backoff (1s, 2s, 4s, 8s)."""
-    session = requests.Session()
-    adapter = HTTPAdapter(
-        pool_connections=WORKERS,
-        pool_maxsize=WORKERS,
-        max_retries=Retry(
-            total=4,
-            backoff_factor=1,
-            status_forcelist=[429, 500, 502, 503, 504],
-        ),
+    return requests_session_with_pool_and_retries(
+        workers=WORKERS,
+        status_forcelist=[429, 500, 502, 503, 504],
     )
-    session.mount("https://", adapter)
-    return session
 
 
 def fetch_one(session, term, section):
@@ -84,6 +75,8 @@ def fetch_one(session, term, section):
 
 
 class Command(BaseCommand):
+    """Management command: bulk-fetch SIS enrollment for all sections in a semester."""
+
     help = "Fetch current enrollment data for all sections in a semester"
 
     def add_arguments(self, parser):
