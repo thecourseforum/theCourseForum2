@@ -41,9 +41,6 @@
         <span class="course-instructor-title__code">{{ course.code }}</span>
         <span class="course-instructor-title__name">{{ course.title }}</span>
       </div>
-      {% if show_schedule_add %}
-      {% include "site/courses/components/_schedule_add_button.html" with course=course button_id="addToScheduleBtn" %}
-      {% endif %}
     </div>
     
     <!-- Instructor Row -->
@@ -58,9 +55,14 @@
         </a>
       </div>
 
-      <span class="semester-badge">
-        Last taught: {{ semester_last_taught }}
-      </span>
+      <div class="instructor-row__meta">
+        <span class="semester-badge">
+          Last taught: {{ semester_last_taught }}
+        </span>
+        {% if show_schedule_add %}
+        {% include "site/courses/components/_schedule_add_button.html" with course=course button_id="addToScheduleBtn" %}
+        {% endif %}
+      </div>
     </div>
   </div>
 </div>
@@ -76,6 +78,10 @@
         <div class="stats-card">
           <span class="stats-card__value stats-card__value--muted" id="avg-rating-big">—</span>
           <span class="stats-card__label">☆ <span id="avg-rating-count">{{ num_ratings }}</span> Rating{{ num_ratings|pluralize }}</span>
+        </div>
+        <div class="stats-card">
+          <span class="stats-card__value stats-card__value--muted" id="avg-gpa-big">—</span>
+          <span class="stats-card__label">Average GPA</span>
         </div>
         <div class="stats-card">
           <span class="stats-card__value stats-card__value--muted" id="avg-hours-big">—</span>
@@ -215,7 +221,7 @@
   <div class="ai-summary">
     <div class="ai-summary__header">
       <span class="ai-summary__label">Review Summary</span>
-      <span class="ai-summary__meta">Last updated: {{ review_summary.updated_at|date:"F d, Y" }}</span>
+      <span class="ai-summary__meta">Updated {{ review_summary.updated_at|date:"F d, Y" }}</span>
     </div>
     <p class="ai-summary__text">{{ review_summary.summary_text }}</p>
   </div>
@@ -392,6 +398,17 @@ if (data) {
     gradeSampleSize.textContent = Number.isFinite(data.total_enrolled)
       ? data.total_enrolled
       : '—';
+  }
+
+  const avgGpaBig = document.getElementById('avg-gpa-big');
+  if (avgGpaBig) {
+    if (Number.isFinite(data.average_gpa)) {
+      avgGpaBig.textContent = data.average_gpa.toFixed(2);
+      avgGpaBig.classList.remove('stats-card__value--muted');
+    } else {
+      avgGpaBig.textContent = '—';
+      avgGpaBig.classList.add('stats-card__value--muted');
+    }
   }
 
   // Big summary numbers

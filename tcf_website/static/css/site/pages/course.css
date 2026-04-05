@@ -29,14 +29,13 @@
   }
 }
 
-
 /* ===== COURSE TITLE SECTION ===== */
 
 .course-title {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  
+
   margin-top: var(--space-4);
 }
 
@@ -75,13 +74,12 @@
   flex-shrink: 0;
 }
 
-
 /* ===== COURSE DESCRIPTION ===== */
 
 .course-description {
   margin-top: var(--space-6);
   padding: var(--space-5);
-  
+
   background-color: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
@@ -125,7 +123,6 @@
   line-height: var(--leading-relaxed);
 }
 
-
 /* ===== CONTENT AREA ===== */
 
 .course-content {
@@ -146,7 +143,6 @@
   }
 }
 
-
 /* ===== INSTRUCTORS HEADER ===== */
 
 .instructors-header {
@@ -155,7 +151,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--space-3);
-  
+
   margin-bottom: var(--space-6);
 }
 
@@ -168,7 +164,6 @@
   font-size: var(--text-sm);
   color: var(--fg-muted);
 }
-
 
 /* ===== RECENCY TOGGLE ===== */
 
@@ -186,8 +181,9 @@
   color: var(--fg-muted);
   border-radius: var(--radius-md);
   text-decoration: none;
-  transition: color var(--duration-fast) var(--ease-default),
-              background-color var(--duration-fast) var(--ease-default);
+  transition:
+    color var(--duration-fast) var(--ease-default),
+    background-color var(--duration-fast) var(--ease-default);
 }
 
 .recency-toggle__option:hover {
@@ -201,7 +197,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-
 /* ===== INSTRUCTOR LIST ===== */
 
 .instructor-list {
@@ -210,24 +205,24 @@
   gap: var(--space-4);
 }
 
-
 /* ===== INSTRUCTOR CARD ===== */
 
 .instructor-card {
   display: flex;
   flex-direction: column;
-  
+
   padding: var(--space-5);
-  
+
   background-color: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  
+
   text-decoration: none;
   color: var(--fg);
-  
-  transition: border-color var(--duration-fast) var(--ease-default),
-              box-shadow var(--duration-fast) var(--ease-default);
+
+  transition:
+    border-color var(--duration-fast) var(--ease-default),
+    box-shadow var(--duration-fast) var(--ease-default);
 }
 
 .instructor-card:hover {
@@ -270,7 +265,7 @@
 .instructor-card__ratings {
   display: flex;
   gap: var(--space-3);
-  
+
   margin-top: var(--space-4);
   padding-top: var(--space-4);
   border-top: 1px solid var(--border);
@@ -286,25 +281,24 @@
   }
 }
 
-
 /* ===== SECTION TIMES ===== */
 
 .section-times {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  
+
   margin-top: var(--space-2);
 }
 
 .section-time {
   display: inline-flex;
   align-items: center;
-  
+
   padding: var(--space-1) var(--space-2);
-  
+
   font-size: var(--text-xs);
-  
+
   background-color: var(--bg-muted);
   border-radius: var(--radius-md);
   white-space: nowrap;

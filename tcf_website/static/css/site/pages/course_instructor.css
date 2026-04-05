@@ -37,6 +37,12 @@
   margin-top: var(--space-6);
 }
 
+@media (max-width: 767px) {
+  .instructor-row {
+    align-items: flex-start;
+  }
+}
+
 @media (min-width: 768px) {
   .course-instructor-title {
     flex-direction: row;
@@ -93,6 +99,13 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
+}
+
+.instructor-row__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .instructor-link {
@@ -174,9 +187,23 @@
 
 .stats-summary {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-4);
   margin-bottom: var(--space-4);
+}
+
+@media (max-width: 399px) {
+  .stats-summary {
+    gap: var(--space-2);
+  }
+
+  .stats-summary .stats-card {
+    padding: var(--space-4) var(--space-2);
+  }
+
+  .stats-summary .stats-card__value {
+    font-size: var(--text-3xl);
+  }
 }
 
 .stats-card {
