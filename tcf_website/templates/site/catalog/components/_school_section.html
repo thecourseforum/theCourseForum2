@@ -1,0 +1,31 @@
+{# School Section Component #}
+<div class="school-section">
+  <div class="school-header {% if expanded %}is-open{% endif %}" id="school-{{ school.id }}">
+    <div class="school-header__info">
+      <div class="school-header__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+          <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 class="school-header__title">{{ school.name }}</h3>
+        <span class="school-header__count">{{ school.department_set.count }} department{{ school.department_set.count|pluralize }}</span>
+      </div>
+    </div>
+    <svg class="school-header__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </div>
+  
+  <div class="departments-grid {% if expanded %}is-open{% endif %}">
+    {% for dept in school.department_set.all|dictsort:"name" %}
+    <a href="{% url 'department' dept_id=dept.pk %}" class="department-card">
+      <span class="department-card__name">{{ dept.name }}</span>
+      <svg class="department-card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"></path>
+      </svg>
+    </a>
+    {% endfor %}
+  </div>
+</div>

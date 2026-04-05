@@ -1,0 +1,21 @@
+{% if user.is_authenticated %}
+{% url 'schedule_add_course' course.id as tcf_sched_add_url %}
+<button
+  type="button"
+  class="{{ button_class|default:'btn btn--accent btn--md' }}"
+  data-schedule-flow-add-url="{{ tcf_sched_add_url }}?next={{ request.get_full_path|urlencode }}"
+  {% if button_id %}id="{{ button_id }}"{% endif %}
+>
+  Add to Schedule
+</button>
+{% else %}
+<a
+  href="#"
+  class="{{ button_class|default:'btn btn--accent btn--md' }}"
+  {% if button_id %}id="{{ button_id }}"{% endif %}
+  data-modal-open="loginModal"
+  data-login-modal-message="Sign in to add courses."
+>
+  Add to Schedule
+</a>
+{% endif %}

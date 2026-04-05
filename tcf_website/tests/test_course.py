@@ -26,7 +26,7 @@ class CourseTestCase(TestCase):
         """Test for is_recent()."""
         self.assertTrue(self.course.is_recent())
 
-        Semester.objects.create(year=2021, season="JANUARY", number=1211)
+        Semester.objects.create(year=2026, season="JANUARY", number=1261)
 
         self.assertFalse(self.course.is_recent())
 

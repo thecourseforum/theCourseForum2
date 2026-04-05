@@ -1,0 +1,32 @@
+{% load custom_tags %}
+<form method="get" action="{% mode_url request 'browse' %}" class="advanced-search"
+      data-browse-live-results="1"
+      data-browse-base-url="{% mode_url request 'browse' %}"
+      data-browse-result-label-singular="club"
+      data-browse-result-label-plural="clubs">
+
+  <div class="advanced-search__grid">
+    <div class="advanced-search__field">
+      <label>Category</label>
+      {% include "site/common/components/_combo_dropdown.html" with combo_name="category" combo_choices=club_form.category.field.choices combo_selected=club_form.category.value combo_aria_label="Category" %}
+    </div>
+
+    <div class="advanced-search__field">
+      <label for="id_club_name">Club name</label>
+      <input type="text" name="club_name" id="id_club_name" value="{{ club_form.club_name.value|default:'' }}" placeholder="Search by name">
+    </div>
+
+    <div class="advanced-search__field advanced-search__field--checkbox">
+      <label>&nbsp;</label>
+      <label class="advanced-search__checkbox">
+        <input type="checkbox" name="no_application_required" {% if club_form.no_application_required.value %}checked{% endif %}>
+        <span>No application required</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="advanced-search__actions">
+    <button type="submit" class="btn btn--primary btn--md">Search clubs</button>
+    <a href="{% mode_url request 'browse' %}" class="btn btn--ghost btn--md">Clear</a>
+  </div>
+</form>

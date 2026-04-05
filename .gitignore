@@ -28,6 +28,8 @@ db/*.dump
 !.vscode/extensions.json
 # Code coverage
 .coverage
+.coveragerc
+htmlcov/
 # ESLint cache
 .eslintcache
 .nvim.lua
@@ -36,3 +38,8 @@ venv
 .venv
 # AWS key.pem
 key/
+# Nix
+.direnv
+.envrc
+# Claude
+CLAUDE.md

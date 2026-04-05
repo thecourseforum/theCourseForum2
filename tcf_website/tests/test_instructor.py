@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from ..models import Section
-from ..views.browse import safe_round
+from ..utils import safe_round
 from .test_utils import setup
 
 

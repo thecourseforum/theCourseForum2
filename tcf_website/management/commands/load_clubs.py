@@ -11,7 +11,6 @@ from tqdm import tqdm
 
 from tcf_website.models import Club, ClubCategory
 
-
 # ── fine-grained → broad buckets ────────────────────────────────────────────
 SQUASH_MAP = {
     # Greek Life

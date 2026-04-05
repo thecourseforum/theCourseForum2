@@ -2,6 +2,7 @@
 """
 Loads grade data from CSV files into database
 """
+
 import os
 import re
 

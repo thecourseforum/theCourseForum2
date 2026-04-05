@@ -1,6 +1,6 @@
 # tCF Developer Info
 
-Ensure your system has [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [Docker](https://docs.docker.com/install/) installed.
+Ensure your system has [Git](https://git-scm.com/book/en/Getting-Started-Installing-Git) and [Docker](https://docs.docker.com/install/) installed.
 
 ## Setup
 

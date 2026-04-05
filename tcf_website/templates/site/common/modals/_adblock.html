@@ -1,0 +1,26 @@
+{% load static %}
+<div
+  class="adblock-gate"
+  id="adblockGate"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="adblockGateTitle"
+  aria-describedby="adblockGateDescription"
+>
+  <div class="adblock-gate__backdrop"></div>
+  <div class="adblock-gate__dialog">
+    <img
+      src="{% static 'base/img/new_logo.svg' %}"
+      alt="theCourseForum"
+      class="adblock-gate__logo"
+      loading="lazy"
+    >
+    <h2 class="adblock-gate__title" id="adblockGateTitle">Ad Blocker Detected</h2>
+    <p class="adblock-gate__description" id="adblockGateDescription">
+      We rely on ads to keep our servers running. Please disable your ad blocker to continue using theCourseForum.
+    </p>
+    <button type="button" class="btn btn--primary btn--md" onclick="window.location.reload()">
+      I've Disabled It
+    </button>
+  </div>
+</div>
