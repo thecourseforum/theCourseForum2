@@ -6,12 +6,12 @@
 from .auth import login, logout
 from .browse import (
     browse,
+    club_category,
     course_instructor,
     course_view,
     course_view_legacy,
     department,
     instructor_view,
-    club_category,
 )
 from .index import AboutView, index, privacy, terms
 from .profile import DeleteProfile, profile, reviews
@@ -39,4 +39,4 @@ from .schedule import (
     view_schedules,
     view_select_schedules_modal,
 )
-from .search import search
+from .search import search, autocomplete
