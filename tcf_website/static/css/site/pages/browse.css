@@ -476,11 +476,11 @@
   gap: var(--space-3);
 }
 
-/* Days & times: desktop side-by-side; mobile stacked in max-width block below */
+/* Days & times combined row */
 .advanced-search__days-times {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-4);
 }
 
@@ -495,14 +495,8 @@
   flex-shrink: 0;
 }
 
-.advanced-search__times .advanced-search__field {
-  min-width: 0;
-}
-
 .advanced-search__times .advanced-search__field input {
   width: 8rem;
-  max-width: 100%;
-  min-width: 0;
 }
 
 @media (max-width: 767px) {
@@ -510,58 +504,26 @@
     grid-template-columns: 1fr;
   }
 
-  /* Fieldsets + native time inputs have large min-widths; constrain to avoid overflow */
-  .advanced-search {
-    min-width: 0;
-    max-width: 100%;
-  }
-
   .advanced-search__fieldset {
     min-width: 0;
-    max-width: 100%;
   }
 
-  /* One checkbox per row (discipline + days) */
   .advanced-search__days {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-2);
+    flex-direction: column;
+    flex-wrap: nowrap;
   }
 
   .advanced-search__days-times {
     flex-direction: column;
     align-items: stretch;
-    flex-wrap: nowrap;
-    gap: var(--space-3);
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
   }
 
-  .advanced-search__days-times .advanced-search__days {
-    flex: none;
-    min-width: 0;
-    width: 100%;
-  }
-
-  /* Stack Start / End — two <input type="time"> in a row overflows on phones */
   .advanced-search__times {
     flex-direction: column;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    gap: var(--space-3);
-  }
-
-  .advanced-search__times .advanced-search__field {
-    width: 100%;
-    min-width: 0;
   }
 
   .advanced-search__times .advanced-search__field input {
     width: 100%;
-    max-width: 100%;
-    min-width: 0;
   }
 }
 
