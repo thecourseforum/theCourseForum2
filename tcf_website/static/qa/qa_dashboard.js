@@ -169,7 +169,63 @@ function initNewPostModal() {
     const courseSearchInput = document.getElementById('courseSearch');
     const courseIdInput = document.getElementById('courseId');
     const courseResults = document.getElementById('courseResults');
-    const instructorSelect = document.getElementById('instructorSelect');
+    const instructorSearchInput = document.getElementById('instructorSearch');
+    const instructorIdInput = document.getElementById('instructorId');
+    const instructorResults = document.getElementById('instructorResults');
+    let instructorOptions = [];
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function resetInstructorSearch() {
+        instructorOptions = [];
+        if (instructorIdInput) instructorIdInput.value = '';
+        if (instructorSearchInput) {
+            instructorSearchInput.value = '';
+            instructorSearchInput.disabled = true;
+            instructorSearchInput.placeholder = 'Select a course first...';
+        }
+        if (instructorResults) {
+            instructorResults.classList.remove('show');
+            instructorResults.innerHTML = '';
+        }
+    }
+
+    function renderInstructorResults(query = '') {
+        if (!instructorResults || !instructorSearchInput) return;
+
+        const normalizedQuery = query.trim().toLowerCase();
+        const filteredOptions = instructorOptions.filter(instructor =>
+            instructor.name.toLowerCase().includes(normalizedQuery)
+        );
+
+        if (filteredOptions.length === 0) {
+            instructorResults.innerHTML = '<div class="course-result-item text-muted">No instructors found</div>';
+            instructorResults.classList.add('show');
+            return;
+        }
+
+        instructorResults.innerHTML = filteredOptions.map(instructor =>
+            `<div class="course-result-item" data-id="${instructor.id}" data-name="${escapeHtml(instructor.name)}">
+                <div class="course-result-code">${escapeHtml(instructor.name)}</div>
+            </div>`
+        ).join('');
+        instructorResults.classList.add('show');
+
+        instructorResults.querySelectorAll('.course-result-item').forEach(item => {
+            item.addEventListener('click', function () {
+                if (instructorIdInput) instructorIdInput.value = this.dataset.id;
+                instructorSearchInput.value = this.dataset.name;
+                instructorResults.classList.remove('show');
+            });
+        });
+    }
 
     function openModal() {
         modal.style.display = 'flex';
@@ -182,10 +238,7 @@ function initNewPostModal() {
         if (form) form.reset();
         if (courseIdInput) courseIdInput.value = '';
         if (courseResults) courseResults.classList.remove('show');
-        if (instructorSelect) {
-            instructorSelect.innerHTML = '<option value="">Select a course first...</option>';
-            instructorSelect.disabled = true;
-        }
+        resetInstructorSearch();
     }
 
     if (openBtn) openBtn.addEventListener('click', openModal);
@@ -197,6 +250,8 @@ function initNewPostModal() {
     if (courseSearchInput) {
         let searchTimeout;
         courseSearchInput.addEventListener('input', function () {
+            if (courseIdInput) courseIdInput.value = '';
+            resetInstructorSearch();
             clearTimeout(searchTimeout);
             const q = this.value.trim();
             if (q.length < 2) {
@@ -221,6 +276,7 @@ function initNewPostModal() {
                                     courseIdInput.value = this.dataset.id;
                                     courseSearchInput.value = this.dataset.code;
                                     courseResults.classList.remove('show');
+                                    resetInstructorSearch();
                                     loadInstructors(this.dataset.id);
                                 });
                             });
@@ -235,8 +291,7 @@ function initNewPostModal() {
         courseSearchInput.addEventListener('keydown', function (e) {
             if (e.key === 'Backspace' && courseIdInput.value) {
                 courseIdInput.value = '';
-                instructorSelect.innerHTML = '<option value="">Select a course first...</option>';
-                instructorSelect.disabled = true;
+                resetInstructorSearch();
             }
         });
 
@@ -247,28 +302,57 @@ function initNewPostModal() {
         });
     }
 
+    if (instructorSearchInput && instructorResults) {
+        instructorSearchInput.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (!this.disabled) {
+                renderInstructorResults(this.value);
+            }
+        });
+
+        instructorSearchInput.addEventListener('input', function () {
+            if (instructorIdInput) instructorIdInput.value = '';
+            if (this.disabled) return;
+            renderInstructorResults(this.value);
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!instructorSearchInput.contains(e.target) && !instructorResults.contains(e.target)) {
+                instructorResults.classList.remove('show');
+            }
+        });
+    }
+
     function loadInstructors(courseId) {
-        if (!instructorSelect) return;
-        instructorSelect.disabled = true;
-        instructorSelect.innerHTML = '<option value="">Loading...</option>';
+        if (!instructorSearchInput || !instructorResults) return;
+        instructorSearchInput.disabled = true;
+        instructorSearchInput.placeholder = 'Loading instructors...';
+        instructorSearchInput.value = '';
+        instructorResults.classList.remove('show');
+        instructorResults.innerHTML = '<div class="course-result-item text-muted">Loading instructors...</div>';
+        instructorResults.classList.add('show');
 
         fetch(`${QA_URLS.getInstructors}${courseId}/instructors/`)
             .then(r => r.json())
             .then(data => {
-                if (data.instructors && data.instructors.length > 0) {
-                    instructorSelect.innerHTML =
-                        '<option value="">No instructor</option>' +
-                        data.instructors.map(i =>
-                            `<option value="${i.id}">${i.name}</option>`
-                        ).join('');
-                    instructorSelect.disabled = false;
+                instructorOptions = data.instructors || [];
+                instructorSearchInput.disabled = false;
+                instructorSearchInput.placeholder = instructorOptions.length > 0 ? 'Search instructors...' : 'No instructors found';
+                instructorSearchInput.focus();
+
+                if (instructorOptions.length > 0) {
+                    renderInstructorResults('');
                 } else {
-                    instructorSelect.innerHTML = '<option value="">No instructor</option>';
-                    instructorSelect.disabled = false;
+                    instructorResults.innerHTML = '<div class="course-result-item text-muted">No instructors found</div>';
+                    instructorResults.classList.add('show');
                 }
             })
             .catch(() => {
-                instructorSelect.innerHTML = '<option value="">Error loading instructors</option>';
+                instructorOptions = [];
+                instructorSearchInput.disabled = false;
+                instructorSearchInput.placeholder = 'Error loading instructors';
+                instructorResults.innerHTML = '<div class="course-result-item text-muted">Error loading instructors</div>';
+                instructorResults.classList.add('show');
             });
     }
 }

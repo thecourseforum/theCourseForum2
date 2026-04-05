@@ -293,16 +293,18 @@
   margin-bottom: 0.25rem;
 }
 
-.instructor-card-name {
+.question-instructor-card .instructor-card-name,
+.question-instructor-card .instructor-card-name:visited,
+.question-instructor-card .instructor-card-name:hover,
+.question-instructor-card .instructor-card-name:active {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--main-color);
-  text-decoration: underline;
+  text-decoration: none !important;
 }
 
-.instructor-card-name:hover {
+.question-instructor-card .instructor-card-name:hover {
   color: var(--accent-color);
-  text-decoration: underline;
 }
 
 

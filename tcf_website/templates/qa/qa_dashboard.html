@@ -112,10 +112,15 @@
                     <div id="courseResults" class="course-search-results"></div>
                 </div>
                 <div class="form-group">
-                    <label for="instructorSelect">Instructor</label>
-                    <select id="instructorSelect" name="instructor" class="form-control" disabled>
-                        <option value="">Select a course first...</option>
-                    </select>
+                    <label for="instructorSearch">Instructor</label>
+                    <input type="text"
+                           id="instructorSearch"
+                           class="form-control"
+                           placeholder="Select a course first..."
+                           autocomplete="off"
+                           disabled>
+                    <input type="hidden" id="instructorId" name="instructor">
+                    <div id="instructorResults" class="course-search-results"></div>
                 </div>
                 <div class="form-group">
                     <label for="postText">Question <span class="required">*</span></label>

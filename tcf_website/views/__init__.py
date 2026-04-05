@@ -41,7 +41,6 @@ from .qa import (
     new_answer,
     new_question,
     qa_dashboard,
-    qa_dashboard_hard,
     question_detail,
     search_courses_qa,
     upvote_answer,

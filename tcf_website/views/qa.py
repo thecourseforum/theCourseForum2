@@ -239,14 +239,6 @@ def get_instructors_for_course(request, course_id):
             ]
         }
     )
-
-
-@login_required
-def qa_dashboard_hard(request):
-    """Hardedcoded Q&A Dashboard"""
-    return render(request, "qa/qa_dashboard_hard.html")
-
-
 class QuestionForm(forms.ModelForm):
     """Form for question creation"""
 

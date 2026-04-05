@@ -98,7 +98,6 @@ urlpatterns = [
     path("schedule/add_course/", views.schedule_add_course, name="schedule_add_course"),
     # QA URLs
     path("qa/", views.qa_dashboard, name="qa"),
-    path("qaTest/", views.qa_dashboard_hard, name="qaTest"),
     path("forum/", views.forum.forum_dashboard, name="forum_dashboard"),
     path("qa/create/", views.qa.create_question, name="create_question"),
     path(
