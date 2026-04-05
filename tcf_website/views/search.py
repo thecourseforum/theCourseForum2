@@ -7,6 +7,7 @@ from typing import Iterable
 
 from django.contrib.postgres.search import TrigramSimilarity
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import connection
 from django.db.models import F, FloatField, Q, Value
 from django.db.models.functions import Greatest, Round
 from django.shortcuts import render
@@ -370,16 +371,30 @@ def autocomplete(request):
         clubs = fetch_clubs(query, limit=5)
         return Response({"clubs": ClubAutocompleteSerializer(clubs, many=True).data})
 
-    with ThreadPoolExecutor(max_workers=2) as executor:
-        # wrap results in a list to avoid lazy eval, parallelizing requests
-        instructors_future = executor.submit(
-            lambda: list(get_instructor_results(query, limit=5))
-        )
-        courses_future = executor.submit(
-            lambda: list(fetch_courses(query, filters={}, limit=5))
-        )
-        instructors = instructors_future.result()
-        courses = courses_future.result()
+    if connection.in_atomic_block:
+        instructors = list(get_instructor_results(query, limit=5))
+        courses = list(fetch_courses(query, filters={}, limit=5))
+
+        if not courses:
+            courses = list(
+                Course.objects.select_related("subdepartment")
+                .filter(
+                    Q(title__icontains=query)
+                    | Q(combined_mnemonic_number__icontains=query)
+                )
+                .order_by("title")[:5]
+            )
+    else:
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            # wrap results in a list to avoid lazy eval, parallelizing requests
+            instructors_future = executor.submit(
+                lambda: list(get_instructor_results(query, limit=5))
+            )
+            courses_future = executor.submit(
+                lambda: list(fetch_courses(query, filters={}, limit=5))
+            )
+            instructors = instructors_future.result()
+            courses = courses_future.result()
 
     return Response(
         {

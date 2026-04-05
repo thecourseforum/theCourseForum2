@@ -13,7 +13,6 @@ class AutocompleteAPITestCase(TestCase):
         response = self.client.get(reverse("autocomplete"), {"q": "software"})
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        print("\nDEBUG courses:", data.get("courses"))
         self.assertIn("courses", data)
         self.assertTrue(any("Software" in c["title"] for c in data["courses"]))
 
