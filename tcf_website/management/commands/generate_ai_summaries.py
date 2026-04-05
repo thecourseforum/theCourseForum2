@@ -32,21 +32,21 @@ REQUESTS_PER_MINUTE = 20
 MIN_REQUEST_INTERVAL = 60.0 / REQUESTS_PER_MINUTE
 WORKERS = 20
 
+_OPENROUTER_LOCK = threading.Lock()
+_OPENROUTER_NEXT_SLOT_MONO = [
+    0.0
+]  # next allowed start (list: update without ``global``)
 
-class _OpenRouterRateLimiter:
-    """Serializes start times so OpenRouter requests stay under the per-minute cap."""
 
-    _lock = threading.Lock()
-    _next_slot_mono = 0.0
-
-    @classmethod
-    def wait_slot(cls):
-        with cls._lock:
+def _wait_openrouter_slot():
+    """Block until this thread may start a request (shared across worker threads)."""
+    with _OPENROUTER_LOCK:
+        now = time.monotonic()
+        nxt = _OPENROUTER_NEXT_SLOT_MONO[0]
+        if now < nxt:
+            time.sleep(nxt - now)
             now = time.monotonic()
-            if now < cls._next_slot_mono:
-                time.sleep(cls._next_slot_mono - now)
-                now = time.monotonic()
-            cls._next_slot_mono = now + MIN_REQUEST_INTERVAL
+        _OPENROUTER_NEXT_SLOT_MONO[0] = now + MIN_REQUEST_INTERVAL
 
 
 def create_session():
@@ -151,7 +151,7 @@ def summarize_one(session, row, model_id, dry_run):
         )
         messages = _build_messages(course, instructor, reviews)
 
-        _OpenRouterRateLimiter.wait_slot()
+        _wait_openrouter_slot()
         response = session.post(
             OPENROUTER_URL,
             headers={
