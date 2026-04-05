@@ -171,6 +171,13 @@
   }
 }
 
+@media (max-width: 479px) {
+  .mode-toggle,
+  #recentItemsDropdown {
+    display: none;
+  }
+}
+
 /* ===== MODE TOGGLE ===== */
 
 .mode-toggle {

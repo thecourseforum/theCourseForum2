@@ -397,6 +397,13 @@
   width: 88px;
 }
 
+@media (max-width: 767px) {
+  .ratings-panel__divider,
+  .rating-row--compact {
+    display: none;
+  }
+}
+
 /* ===== SECTIONS PANEL ===== */
 
 .sections-panel {
