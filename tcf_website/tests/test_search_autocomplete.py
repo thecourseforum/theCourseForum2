@@ -5,6 +5,8 @@ from .test_utils import setup
 
 
 class AutocompleteAPITestCase(TestCase):
+    """Test cases for the autocomplete API endpoint."""
+
     def setUp(self):
         setup(self)
 
@@ -22,7 +24,8 @@ class AutocompleteAPITestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertIn("instructors", data)
-        self.assertTrue(any("Jefferson" in i["full_name"] for i in data["instructors"]))
+        instructor_names = [i["full_name"] for i in data["instructors"]]
+        self.assertTrue(any("Jefferson" in name for name in instructor_names))
 
     def test_autocomplete_clubs(self):
         # Should return clubs in club mode, expected to be empty since there aren't clubs in the test database
