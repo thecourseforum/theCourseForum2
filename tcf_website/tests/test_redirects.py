@@ -232,20 +232,21 @@ class ScheduleFlowRedirectTestCase(TCFDataTestCase):
         )
         self.assertRedirects(response, target, fetch_redirect_response=False)
 
-    def test_post_new_schedule_success_redirects_to_safe_next(self):
-        """Valid create uses ``next`` when it stays on-site."""
-        fall = reverse("browse")
+    def test_post_new_schedule_success_redirects_to_new_schedule(self):
+        """Valid create always redirects to the newly created schedule, ignoring ``next``."""
         response = self.client.post(
             reverse("new_schedule"),
             {
                 "name": "Redirect test plan",
                 "semester": str(self.semester.pk),
-                "next": fall,
+                "next": reverse("browse"),  # should be ignored
             },
         )
-        self.assertRedirects(response, fall, fetch_redirect_response=False)
-        self.assertTrue(
-            Schedule.objects.filter(name="Redirect test plan", user=self.user1).exists()
+        created = Schedule.objects.get(name="Redirect test plan", user=self.user1)
+        self.assertRedirects(
+            response,
+            f"{reverse('schedule')}?schedule={created.pk}",
+            fetch_redirect_response=False,
         )
 
     def test_post_new_schedule_rejects_offsite_next(self):
@@ -299,8 +300,8 @@ class ScheduleFlowRedirectTestCase(TCFDataTestCase):
         )
         self.assertTrue(Schedule.objects.filter(pk=sched.pk).exists())
 
-    def test_duplicate_schedule_respects_next(self):
-        """Duplicate uses ``safe_next_url`` for the follow-up redirect."""
+    def test_duplicate_schedule_redirects_to_new_copy(self):
+        """Duplicate always redirects to the newly created copy, ignoring ``next``."""
         sched = Schedule.objects.create(
             name="Original",
             user=self.user1,
@@ -308,12 +309,11 @@ class ScheduleFlowRedirectTestCase(TCFDataTestCase):
         )
         response = self.client.get(
             reverse("duplicate_schedule", args=[sched.pk]),
-            {"next": reverse("browse")},
+            {"next": reverse("browse")},  # should be ignored
         )
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse("browse"))
-        copies = Schedule.objects.filter(user=self.user1, name__startswith="Copy of")
-        self.assertEqual(copies.count(), 1)
+        copy = Schedule.objects.get(user=self.user1, name__startswith="Copy of")
+        self.assertIn(str(copy.pk), response.url)
 
     def test_edit_schedule_non_post_redirects_to_schedule(self):
         """GET edit_schedule is rejected and bounced to the builder."""

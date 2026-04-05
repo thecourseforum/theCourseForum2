@@ -82,6 +82,10 @@
       if (!action) {
         return;
       }
+      const submitBtn = form.querySelector('[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+      }
       const fd = new FormData(form);
       fetch(action, {
         method: "POST",
@@ -120,6 +124,9 @@
             afterScheduleSuccess(out.data.redirect);
             return;
           }
+          if (submitBtn) {
+            submitBtn.disabled = false;
+          }
           const msg =
             (out.data && out.data.error) ||
             (out.res.ok ? "Something went wrong." : "Request failed.");
@@ -130,6 +137,9 @@
           }
         })
         .catch(function () {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+          }
           showFormError(form, "Network error.");
         });
     });
@@ -160,13 +170,8 @@
       return;
     }
     const page = window.TcfSchedulePage;
-    const nextPath =
-      page && page.builderReturnPath
-        ? page.builderReturnPath()
-        : window.location.pathname + window.location.search;
     const sem =
       page && page.activeSemesterId ? page.activeSemesterId() || "" : "";
-    ensureHiddenInput(form, "next", nextPath);
     if (sem) {
       ensureHiddenInput(form, "semester", sem);
     }

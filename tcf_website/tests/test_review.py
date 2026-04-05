@@ -151,7 +151,7 @@ class ModelReviewTests(TestCase):
 def _review_post_data(course, instructor, semester):
     """Minimal valid POST payload for ReviewForm (course review)."""
     return {
-        "text": "x" * 100,
+        "text": "x" * 200,
         "course": str(course.pk),
         "instructor": str(instructor.pk),
         "semester": str(semester.pk),

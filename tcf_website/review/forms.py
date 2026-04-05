@@ -9,6 +9,8 @@ from ..models import Review, Section
 class ReviewForm(forms.ModelForm):
     """Form for review creation in the backend, not for rendering HTML."""
 
+    text = forms.CharField(min_length=200, max_length=5000)
+
     class Meta:
         model = Review
         fields = [

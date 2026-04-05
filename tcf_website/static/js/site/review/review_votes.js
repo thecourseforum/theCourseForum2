@@ -81,9 +81,15 @@
       upvoteButton?.classList.toggle("is-active", payload.user_vote > 0);
       downvoteButton?.classList.toggle("is-active", payload.user_vote < 0);
     } catch (error) {
-      // Keep this intentionally quiet to avoid noisy UI errors.
       // eslint-disable-next-line no-console
       console.error(error);
+      const errEl = document.createElement("span");
+      errEl.className = "vote-error";
+      errEl.textContent = "Vote failed. Try again.";
+      voteContainer.appendChild(errEl);
+      setTimeout(function () {
+        errEl.remove();
+      }, 3000);
     } finally {
       buttons.forEach((item) => {
         item.disabled = false;

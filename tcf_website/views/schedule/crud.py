@@ -39,10 +39,7 @@ def new_schedule(request):
                 return redirect(safe_next_url(request, reverse("schedule")))
             schedule.semester = semester
             schedule.save()
-            redirect_to = safe_next_url(
-                request,
-                schedule_page_url(schedule_id=schedule.pk),
-            )
+            redirect_to = schedule_page_url(schedule_id=schedule.pk)
             messages.success(request, "Successfully created schedule!")
             if want_json:
                 return schedule_json_redirect(request, redirect_to)
@@ -81,11 +78,8 @@ def delete_schedule(request):
             )
         return redirect(redirect_to)
 
-    extra_courses = deleted_count - schedule_count
-    messages.success(
-        request,
-        f"Successfully deleted {schedule_count} schedules and {extra_courses} courses",
-    )
+    s = "" if schedule_count == 1 else "s"
+    messages.success(request, f"Successfully deleted {schedule_count} schedule{s}.")
     return schedule_json_redirect(request, redirect_to)
 
 
@@ -127,10 +121,9 @@ def duplicate_schedule(request, schedule_id):
         )
 
     messages.success(request, f"Successfully duplicated {old_name}")
-    redirect_to = safe_next_url(
+    return schedule_json_redirect(
         request, schedule_page_url(schedule_id=duplicated_schedule.pk)
     )
-    return schedule_json_redirect(request, redirect_to)
 
 
 @login_required
@@ -140,9 +133,11 @@ def edit_schedule(request):
         messages.error(request, f"Invalid request method: {request.method}")
         return redirect(safe_next_url(request, reverse("schedule")))
 
-    schedule = get_object_or_404(
-        Schedule, pk=request.POST["schedule_id"], user=request.user
-    )
+    schedule_id = request.POST.get("schedule_id")
+    if not schedule_id:
+        messages.error(request, "Invalid request: missing schedule ID.")
+        return redirect(safe_next_url(request, reverse("schedule")))
+    schedule = get_object_or_404(Schedule, pk=schedule_id, user=request.user)
     updated_name = request.POST.get("schedule_name", "").strip()
     if updated_name and schedule.name != updated_name:
         schedule.name = updated_name

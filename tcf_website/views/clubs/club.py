@@ -19,9 +19,10 @@ def _get_paginated_club_reviews(club: Club, user, page_number=1, method=""):
         hidden=False,
     ).exclude(text="")
 
+    reviews = reviews.annotate(sum_votes=Coalesce(Sum("vote__value"), Value(0)))
+
     if user.is_authenticated:
         reviews = reviews.annotate(
-            sum_votes=Coalesce(Sum("vote__value"), Value(0)),
             user_vote=Coalesce(
                 Sum("vote__value", filter=Q(vote__user=user)),
                 Value(0),
