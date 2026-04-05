@@ -1,0 +1,93 @@
+{% load custom_tags %}
+{% if is_club %}
+{% if not clubs %}
+<ul class="autocomplete-list" role="listbox">
+  <li class="autocomplete-item autocomplete-item--empty" role="option" aria-disabled="true">
+    <span class="autocomplete-item__title">No results found.</span>
+  </li>
+</ul>
+{% else %}
+<ul class="autocomplete-list" role="listbox">
+  <li class="autocomplete-group-header" role="presentation">Clubs <span class="autocomplete-group-header__hint">Tab to select</span></li>
+  {% for club in clubs %}
+  <li class="autocomplete-item" role="option">
+    <a href="{% if autocomplete_action == 'review' %}{% mode_url request 'new_review' mode='clubs' query_club=club.id %}{% else %}{% mode_url request 'club' category_slug=club.category_slug club_id=club.id mode='clubs' %}{% endif %}" class="autocomplete-item__link">
+      <span class="autocomplete-item__title">{{ club.name }}</span>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% elif not courses and not instructors %}
+<ul class="autocomplete-list" role="listbox">
+  <li class="autocomplete-item autocomplete-item--empty" role="option" aria-disabled="true">
+    <span class="autocomplete-item__title">No results found.</span>
+  </li>
+</ul>
+{% else %}
+<ul class="autocomplete-list" role="listbox">
+  {% if courses_first %}
+    {% if courses %}
+      <li class="autocomplete-group-header" role="presentation">Courses <span class="autocomplete-group-header__hint">Tab to select</span></li>
+      {% for course in courses %}
+      <li class="autocomplete-item" role="option">
+        {% if autocomplete_action == 'schedule' %}
+        {% url 'schedule_add_course' course_id=course.id as tcf_ac_sched_add %}
+        <a href="{{ tcf_ac_sched_add }}?next={{ schedule_return_url|urlencode }}{% if autocomplete_target %}&amp;schedule={{ autocomplete_target }}{% endif %}" class="autocomplete-item__link" data-schedule-flow-add-url="{{ tcf_ac_sched_add }}?next={{ schedule_return_url|urlencode }}{% if autocomplete_target %}&amp;schedule={{ autocomplete_target }}{% endif %}">
+          <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
+          <span class="autocomplete-item__title">{{ course.title }}</span>
+        </a>
+        {% else %}
+        <a href="{% if autocomplete_action == 'review' %}{% mode_url request 'new_review' query_course=course.id %}{% else %}{% url 'course' mnemonic=course.mnemonic course_number=course.number %}{% endif %}" class="autocomplete-item__link">
+          <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
+          <span class="autocomplete-item__title">{{ course.title }}</span>
+        </a>
+        {% endif %}
+      </li>
+      {% endfor %}
+    {% endif %}
+
+    {% if instructors and not autocomplete_action %}
+      <li class="autocomplete-group-header" role="presentation">Instructors</li>
+      {% for instructor in instructors %}
+      <li class="autocomplete-item" role="option">
+        <a href="{% url 'instructor' instructor_id=instructor.id %}" class="autocomplete-item__link">
+          <span class="autocomplete-item__title">{{ instructor.first_name }} {{ instructor.last_name }}</span>
+        </a>
+      </li>
+      {% endfor %}
+    {% endif %}
+  {% else %}
+    {% if instructors and not autocomplete_action %}
+      <li class="autocomplete-group-header" role="presentation">Instructors <span class="autocomplete-group-header__hint">Tab to select</span></li>
+      {% for instructor in instructors %}
+      <li class="autocomplete-item" role="option">
+        <a href="{% url 'instructor' instructor_id=instructor.id %}" class="autocomplete-item__link">
+          <span class="autocomplete-item__title">{{ instructor.first_name }} {{ instructor.last_name }}</span>
+        </a>
+      </li>
+      {% endfor %}
+    {% endif %}
+
+    {% if courses %}
+      <li class="autocomplete-group-header" role="presentation">Courses</li>
+      {% for course in courses %}
+      <li class="autocomplete-item" role="option">
+        {% if autocomplete_action == 'schedule' %}
+        {% url 'schedule_add_course' course_id=course.id as tcf_ac_sched_add2 %}
+        <a href="{{ tcf_ac_sched_add2 }}?next={{ schedule_return_url|urlencode }}{% if autocomplete_target %}&amp;schedule={{ autocomplete_target }}{% endif %}" class="autocomplete-item__link" data-schedule-flow-add-url="{{ tcf_ac_sched_add2 }}?next={{ schedule_return_url|urlencode }}{% if autocomplete_target %}&amp;schedule={{ autocomplete_target }}{% endif %}">
+          <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
+          <span class="autocomplete-item__title">{{ course.title }}</span>
+        </a>
+        {% else %}
+        <a href="{% if autocomplete_action == 'review' %}{% mode_url request 'new_review' query_course=course.id %}{% else %}{% url 'course' mnemonic=course.mnemonic course_number=course.number %}{% endif %}" class="autocomplete-item__link">
+          <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
+          <span class="autocomplete-item__title">{{ course.title }}</span>
+        </a>
+        {% endif %}
+      </li>
+      {% endfor %}
+    {% endif %}
+  {% endif %}
+</ul>
+{% endif %}

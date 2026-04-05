@@ -1,5 +1,6 @@
 # pylint: disable=fixme
 """Base Django settings for tcf_core project."""
+
 import os
 
 import environ
@@ -19,6 +20,8 @@ environ.Env.read_env(env_file)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env.str("SECRET_KEY")
+
+OPENROUTER_API_KEY = env.str("OPENROUTER_API_KEY", default="")
 
 ALLOWED_HOSTS = []
 
@@ -74,7 +77,6 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "tcf_core.context_processors.base",
-                "tcf_core.context_processors.searchbar_context",
             ],
         },
     },

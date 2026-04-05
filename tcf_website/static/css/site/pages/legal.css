@@ -1,0 +1,61 @@
+/*
+ * Legal Pages (Terms / Privacy)
+ * =============================
+ */
+
+.legal-page {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-16);
+}
+
+@media (min-width: 640px) {
+  .legal-page {
+    padding: var(--space-8) var(--space-6) var(--space-16);
+  }
+}
+
+@media (min-width: 1024px) {
+  .legal-page {
+    padding: var(--space-8) var(--space-8) var(--space-16);
+  }
+}
+
+.legal-card {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+}
+
+.legal-card h1 {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-semibold);
+  margin-bottom: var(--space-2);
+}
+
+.legal-card h6 {
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+  margin-bottom: var(--space-5);
+}
+
+.legal-card h4 {
+  font-size: var(--text-lg);
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+.legal-card p,
+.legal-card li {
+  color: var(--fg-muted);
+  line-height: var(--leading-relaxed);
+}
+
+.legal-card a {
+  color: var(--primary);
+}
+
+.legal-card ul {
+  margin: var(--space-2) 0;
+  padding-left: var(--space-6);
+}

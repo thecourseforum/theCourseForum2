@@ -1,5 +1,6 @@
 # pylint: disable=unused-wildcard-import,wildcard-import,duplicate-code
 """Django settings for CI (GitHub Actions)."""
+
 from .base import *
 
 # CI should mirror production: DEBUG=False catches issues early

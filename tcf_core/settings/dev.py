@@ -1,10 +1,11 @@
 # pylint: disable=unused-wildcard-import,wildcard-import,duplicate-code
 """Django settings for local development."""
+
 from .base import *
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".grok.io"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".grok.io", ".lhr.life"]
 
 # Local PostgreSQL database (defaults for empty .env / Docker)
 def _dev_db_port():

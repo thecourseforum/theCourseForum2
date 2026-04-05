@@ -1,0 +1,305 @@
+# pylint: disable=no-member
+"""Tests for semester-scoped schedules."""
+
+import json
+
+from django.test import Client, TestCase
+from django.urls import reverse
+
+from ..models import CourseInstructorGrade, Schedule, ScheduledCourse, Section
+from .test_utils import setup
+
+
+class ScheduleSemesterTestCase(TestCase):
+    """Schedule builder filtered by term."""
+
+    def setUp(self):
+        setup(self)
+        self.client = Client()
+        self.client.force_login(self.user1)
+
+    def test_view_schedules_filters_by_semester_query(self):
+        """?semester= shows only schedules for that term."""
+        Schedule.objects.create(
+            name="Fall plan", user=self.user1, semester=self.semester
+        )
+        Schedule.objects.create(
+            name="Old plan", user=self.user1, semester=self.past_semester
+        )
+
+        url = reverse("schedule")
+        response = self.client.get(url, {"semester": self.past_semester.pk})
+        self.assertEqual(response.status_code, 200)
+        schedules = list(response.context["schedules"])
+        self.assertEqual(len(schedules), 1)
+        self.assertEqual(schedules[0].name, "Old plan")
+
+        response_latest = self.client.get(url, {"semester": self.semester.pk})
+        names = [s.name for s in response_latest.context["schedules"]]
+        self.assertIn("Fall plan", names)
+        self.assertNotIn("Old plan", names)
+
+    def test_explicit_semester_overrides_stale_schedule_id(self):
+        """?semester= must win over ?schedule= when the schedule belongs to another term."""
+        s_current = Schedule.objects.create(
+            name="Current term", user=self.user1, semester=self.semester
+        )
+        s_past = Schedule.objects.create(
+            name="Past term plan", user=self.user1, semester=self.past_semester
+        )
+        response = self.client.get(
+            reverse("schedule"),
+            {
+                "semester": str(self.past_semester.pk),
+                "schedule": str(s_current.pk),
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["active_semester"].pk, self.past_semester.pk)
+        self.assertEqual(response.context["selected_schedule"].pk, s_past.pk)
+
+    def test_schedule_only_query_derives_semester(self):
+        """Links with only ?schedule= still infer the term from that schedule."""
+        s_past = Schedule.objects.create(
+            name="OnlyPast", user=self.user1, semester=self.past_semester
+        )
+        response = self.client.get(
+            reverse("schedule"),
+            {"schedule": str(s_past.pk)},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["active_semester"].pk, self.past_semester.pk)
+
+    def test_new_schedule_assigns_posted_semester(self):
+        """POST semester creates a schedule in that term."""
+        url = reverse("new_schedule")
+        self.client.post(
+            url,
+            {
+                "name": "Spring draft",
+                "semester": str(self.past_semester.pk),
+                "next": reverse("schedule"),
+            },
+        )
+        created = Schedule.objects.get(name="Spring draft", user=self.user1)
+        self.assertEqual(created.semester_id, self.past_semester.pk)
+
+    def test_add_course_rejects_cross_semester_section(self):
+        """Section from another term does not match the selected schedule."""
+        schedule = Schedule.objects.create(
+            name="Past", user=self.user1, semester=self.past_semester
+        )
+        Section.objects.create(
+            course=self.course,
+            semester=self.past_semester,
+            sis_section_number=999,
+        )
+        section_current = Section.objects.create(
+            course=self.course,
+            semester=self.semester,
+            sis_section_number=888,
+        )
+        section_current.instructors.set([self.instructor])
+
+        post_url = reverse("schedule_add_course", args=[self.course.pk])
+        response = self.client.post(
+            post_url,
+            {
+                "schedule_id": str(schedule.pk),
+                "selection": f"{section_current.pk}:{self.instructor.pk}",
+                "semester": str(self.past_semester.pk),
+                "next": reverse("schedule"),
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("schedule"), response.url)
+        self.assertFalse(
+            ScheduledCourse.objects.filter(
+                schedule=schedule, section=section_current
+            ).exists()
+        )
+
+    def test_schedule_add_course_get_redirects_using_next(self):
+        """Full-page GET to add URL redirects (modal-only flow)."""
+        Schedule.objects.create(name="Current", user=self.user1, semester=self.semester)
+        next_url = reverse(
+            "course_instructor", args=[self.course.pk, self.instructor.pk]
+        )
+        response = self.client.get(
+            reverse("schedule_add_course", args=[self.course.pk]),
+            {"next": next_url},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, next_url)
+
+    def test_course_instructor_page_links_to_schedule_add(self):
+        """Instructor page add button uses the same schedule-add entry point."""
+        CourseInstructorGrade.objects.filter(
+            course=self.course,
+            instructor=self.instructor,
+        ).exclude(pk=self.instructor_grade.pk).delete()
+
+        response = self.client.get(
+            reverse("course_instructor", args=[self.course.pk, self.instructor.pk])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            reverse("schedule_add_course", args=[self.course.pk]),
+        )
+        self.assertContains(response, "data-schedule-flow-add-url=")
+
+    def test_add_course_allows_multiple_selected_sections(self):
+        """Posting multiple selections adds one scheduled row per checked section."""
+        schedule = Schedule.objects.create(
+            name="Current", user=self.user1, semester=self.semester
+        )
+        lecture_section = Section.objects.create(
+            course=self.course,
+            semester=self.semester,
+            sis_section_number=101,
+        )
+        discussion_section = Section.objects.create(
+            course=self.course,
+            semester=self.semester,
+            sis_section_number=102,
+            section_type="LAB",
+        )
+        lecture_section.instructors.set([self.instructor])
+        discussion_section.instructors.set([self.instructor])
+
+        post_url = reverse("schedule_add_course", args=[self.course.pk])
+        response = self.client.post(
+            post_url,
+            {
+                "schedule_id": str(schedule.pk),
+                "selection": [
+                    f"{lecture_section.pk}:{self.instructor.pk}",
+                    f"{discussion_section.pk}:{self.instructor.pk}",
+                ],
+                "semester": str(self.semester.pk),
+                "next": reverse("schedule"),
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            ScheduledCourse.objects.filter(schedule=schedule).count(),
+            2,
+        )
+
+    def test_add_course_does_not_partially_add_multiple_selected_sections(self):
+        """If one selected section fails, none of the new selections are added."""
+        schedule = Schedule.objects.create(
+            name="Current", user=self.user1, semester=self.semester
+        )
+        existing_section = Section.objects.create(
+            course=self.course,
+            semester=self.semester,
+            sis_section_number=100,
+        )
+        lecture_section = Section.objects.create(
+            course=self.course,
+            semester=self.semester,
+            sis_section_number=101,
+        )
+        discussion_section = Section.objects.create(
+            course=self.course,
+            semester=self.semester,
+            sis_section_number=102,
+            section_type="LAB",
+        )
+        existing_section.instructors.set([self.instructor])
+        lecture_section.instructors.set([self.instructor])
+        discussion_section.instructors.set([self.instructor])
+        ScheduledCourse.objects.create(
+            schedule=schedule,
+            section=existing_section,
+            instructor=self.instructor,
+            enrolled_units=3,
+        )
+
+        post_url = reverse("schedule_add_course", args=[self.course.pk])
+        response = self.client.post(
+            post_url,
+            {
+                "schedule_id": str(schedule.pk),
+                "selection": [
+                    f"{lecture_section.pk}:{self.instructor.pk}",
+                    f"{existing_section.pk}:{self.instructor.pk}",
+                ],
+                "semester": str(self.semester.pk),
+                "next": reverse("schedule"),
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("schedule"), response.url)
+        self.assertEqual(
+            ScheduledCourse.objects.filter(schedule=schedule).count(),
+            1,
+        )
+        self.assertFalse(
+            ScheduledCourse.objects.filter(
+                schedule=schedule, section=lecture_section
+            ).exists()
+        )
+
+    def test_schedule_add_modal_partial_returns_markup(self):
+        """XHR GET partial=modal returns add form fragment for the modal."""
+        Schedule.objects.create(name="S", user=self.user1, semester=self.semester)
+        response = self.client.get(
+            reverse("schedule_add_course", args=[self.course.pk]),
+            {"partial": "modal", "next": reverse("schedule")},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "data-tcf-json-submit")
+
+    def test_new_schedule_json_post_returns_redirect(self):
+        """Modal create accepts application/json and returns redirect URL."""
+        response = self.client.post(
+            reverse("new_schedule"),
+            {
+                "name": "JsonNamed",
+                "semester": str(self.semester.pk),
+                "next": reverse("schedule"),
+            },
+            HTTP_ACCEPT="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertTrue(data.get("ok"))
+        self.assertIn("redirect", data)
+        self.assertTrue(
+            Schedule.objects.filter(name="JsonNamed", user=self.user1).exists()
+        )
+
+    def test_add_course_json_post_returns_redirect(self):
+        """Modal add accepts application/json on success."""
+        schedule = Schedule.objects.create(
+            name="S", user=self.user1, semester=self.semester
+        )
+        section = Section.objects.create(
+            course=self.course,
+            semester=self.semester,
+            sis_section_number=201,
+        )
+        section.instructors.set([self.instructor])
+        post_url = reverse("schedule_add_course", args=[self.course.pk])
+        response = self.client.post(
+            post_url,
+            {
+                "schedule_id": str(schedule.pk),
+                "selection": [f"{section.pk}:{self.instructor.pk}"],
+                "semester": str(self.semester.pk),
+                "next": reverse("schedule"),
+            },
+            HTTP_ACCEPT="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertTrue(data.get("ok"))
+        self.assertIn("redirect", data)

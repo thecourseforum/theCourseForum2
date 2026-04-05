@@ -12,8 +12,17 @@ admin.site.register(Review)
 admin.site.register(Vote)
 admin.site.register(Question)
 admin.site.register(Answer)
-admin.site.register(Schedule)
+
+
+class ScheduleAdmin(admin.ModelAdmin):
+    list_display = ["name", "user", "semester"]
+    list_filter = ["semester"]
+    search_fields = ["name", "user__username"]
+
+
+admin.site.register(Schedule, ScheduleAdmin)
 admin.site.register(ScheduledCourse)
+admin.site.register(ScheduleBookmark)
 
 
 class SchoolAdmin(admin.ModelAdmin):
@@ -138,3 +147,4 @@ admin.site.register(CourseInstructorGrade, CourseInstructorGradeAdmin)
 admin.site.register(SectionTime, SectionTimeAdmin)
 admin.site.register(Club, ClubAdmin)
 admin.site.register(ClubCategory, ClubCategoryAdmin)
+admin.site.register(ReviewLLMSummary)

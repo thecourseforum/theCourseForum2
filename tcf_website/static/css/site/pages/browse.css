@@ -1,0 +1,584 @@
+/*
+ * Browse Page Styles
+ * ==================
+ */
+
+/* ===== PAGE HEADER ===== */
+
+.browse-header {
+  padding: var(--space-8) 0 var(--space-6);
+}
+
+.browse-header__inner {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .browse-header__inner {
+    padding: 0 var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .browse-header__inner {
+    padding: 0 var(--space-8);
+  }
+}
+
+.browse-header__title {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-normal);
+  margin-bottom: var(--space-2);
+}
+
+.browse-header__description {
+  font-size: var(--text-lg);
+  color: var(--fg-muted);
+  max-width: 48rem;
+}
+
+
+/* ===== MODE TOGGLE ===== */
+
+.mode-toggle {
+  display: inline-flex;
+  padding: var(--space-1);
+  
+  background-color: var(--bg-muted);
+  border-radius: var(--radius-lg);
+}
+
+.mode-toggle__option {
+  padding: var(--space-2) var(--space-4);
+  
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--fg-muted);
+  
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-default),
+              background-color var(--duration-fast) var(--ease-default);
+}
+
+.mode-toggle__option:hover {
+  color: var(--fg);
+}
+
+.mode-toggle__option.is-active {
+  color: var(--accent-fg);
+  background-color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+
+
+/* ===== SCHOOLS CONTAINER ===== */
+
+.browse-content {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4) var(--space-16);
+}
+
+@media (min-width: 640px) {
+  .browse-content {
+    padding: 0 var(--space-6) var(--space-16);
+  }
+}
+
+@media (min-width: 1024px) {
+  .browse-content {
+    padding: 0 var(--space-8) var(--space-16);
+  }
+}
+
+
+/* ===== SCHOOL SECTION ===== */
+
+.school-section {
+  margin-bottom: var(--space-8);
+}
+
+.school-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+
+  padding: var(--space-3) var(--space-5);
+
+  background-color: var(--bg-elevated);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-default);
+}
+
+.school-header:hover {
+  border-color: var(--fg-subtle);
+}
+
+.school-header.is-open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+
+.school-header__info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.school-header__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 2.5rem;
+  height: 2.5rem;
+
+  background-color: var(--color-primary-100);
+  color: var(--primary);
+
+  border-radius: var(--radius-lg);
+}
+
+[data-theme="dark"] .school-header__icon {
+  background-color: var(--bg-muted);
+  color: var(--color-primary-400);
+}
+
+.school-header__icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.school-header__title {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--fg);
+}
+
+.school-header__count {
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+}
+
+.school-header__chevron {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--fg-muted);
+  transition: transform var(--duration-normal) var(--ease-default);
+}
+
+.school-header.is-open .school-header__chevron {
+  transform: rotate(180deg);
+}
+
+
+/* ===== DEPARTMENTS GRID ===== */
+
+.departments-grid {
+  display: none;
+  
+  padding: var(--space-4);
+  
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-bottom-left-radius: var(--radius-xl);
+  border-bottom-right-radius: var(--radius-xl);
+}
+
+.departments-grid.is-open {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+}
+
+@media (min-width: 640px) {
+  .departments-grid.is-open {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .departments-grid.is-open {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .departments-grid.is-open {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+
+/* ===== DEPARTMENT CARD ===== */
+
+.department-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  
+  padding: var(--space-3) var(--space-4);
+  
+  text-decoration: none;
+  color: var(--fg);
+  
+  border-radius: var(--radius-lg);
+  
+  transition: background-color var(--duration-fast) var(--ease-default);
+}
+
+.department-card:hover {
+  background-color: var(--bg-muted);
+  text-decoration: none;
+}
+
+.department-card__name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  flex: 1;
+}
+
+.department-card__arrow {
+  width: 1rem;
+  height: 1rem;
+  color: var(--fg-subtle);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-default),
+              transform var(--duration-fast) var(--ease-default);
+}
+
+.department-card:hover .department-card__arrow {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+
+/* ===== CLUB CATEGORIES ===== */
+
+.club-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .club-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .club-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.club-card {
+  display: flex;
+  flex-direction: column;
+  
+  padding: var(--space-6);
+  
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  
+  text-decoration: none;
+  color: var(--fg);
+  
+  transition: border-color var(--duration-fast) var(--ease-default),
+              box-shadow var(--duration-fast) var(--ease-default),
+              transform var(--duration-fast) var(--ease-default);
+}
+
+.club-card:hover {
+  border-color: var(--fg-subtle);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.club-card__title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  margin-bottom: var(--space-2);
+}
+
+.club-card__count {
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+}
+
+
+/* ===== ADVANCED SEARCH FORM ===== */
+
+.advanced-search {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.advanced-search__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+@media (max-width: 767px) {
+  .advanced-search__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .advanced-search__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.advanced-search__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* Span 2 columns in the 3-col grid */
+.advanced-search__field--span2 {
+  grid-column: span 2;
+}
+
+@media (max-width: 1023px) {
+  .advanced-search__field--span2 {
+    grid-column: span 1;
+  }
+}
+
+.advanced-search__field label:not(.advanced-search__checkbox) {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.advanced-search__field input:not([type="checkbox"]),
+.advanced-search__field select {
+  width: 100%;
+  height: 2.25rem;
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--fg);
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--duration-fast) var(--ease-default);
+}
+
+.advanced-search__field input:not([type="checkbox"]):focus,
+.advanced-search__field select:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary-100);
+}
+
+.advanced-search__range {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.advanced-search__range input {
+  flex: 1;
+  min-width: 0;
+  height: 2.25rem;
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--fg);
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--duration-fast) var(--ease-default);
+}
+
+.advanced-search__range input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary-100);
+}
+
+.advanced-search__range-sep {
+  color: var(--fg-muted);
+  font-size: var(--text-sm);
+}
+
+/* Checkbox field (aligned to input row in grid) */
+.advanced-search__field--checkbox label:first-child {
+  visibility: hidden;
+}
+
+/* Single checkbox in a grid cell: fill the row below the label and center (match input band). */
+.advanced-search__field--checkbox .advanced-search__checkbox {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 2.25rem;
+}
+
+.advanced-search__checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--fg);
+}
+
+/* Divider between basic and advanced fields */
+.advanced-search__divider {
+  border-top: 1px solid var(--border);
+  margin-bottom: var(--space-4);
+}
+
+/* Fieldset (disciplines, days & times) */
+.advanced-search__fieldset {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.advanced-search__fieldset legend {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  padding: 0 var(--space-2);
+}
+
+/* Inline checkbox lists (disciplines, days) */
+.advanced-search__days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Days & times combined row */
+.advanced-search__days-times {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.advanced-search__days-times .advanced-search__days {
+  flex: 1;
+  min-width: 0;
+}
+
+.advanced-search__times {
+  display: flex;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.advanced-search__times .advanced-search__field input {
+  width: 8rem;
+}
+
+/* Advanced collapsible section */
+.advanced-search__advanced {
+  margin-bottom: var(--space-2);
+}
+
+.advanced-search__advanced > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--accent);
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: var(--space-4);
+  list-style: none;
+}
+
+.advanced-search__advanced > summary::-webkit-details-marker { display: none; }
+
+.advanced-search__advanced > summary::after {
+  content: '▾';
+  font-size: var(--text-xs);
+  transition: transform var(--duration-fast) var(--ease-default);
+}
+
+.advanced-search__advanced[open] > summary::after {
+  transform: rotate(180deg);
+}
+
+/* Actions */
+.advanced-search__actions {
+  display: flex;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+/* Separator between form and department list */
+.browse-separator {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0 0 var(--space-8);
+}
+
+/* Search empty state */
+.search-empty {
+  text-align: center;
+  padding: var(--space-12) var(--space-4);
+  color: var(--fg-muted);
+}
+
+.search-empty h3 {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-2);
+}
+
+/* Live advanced search (XHR partial) */
+.browse-advanced-results-root[aria-busy="true"] {
+  position: relative;
+  min-height: 10rem;
+  opacity: 0.65;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-default);
+}
+
+.browse-advanced-results-root[aria-busy="true"]::after {
+  content: "Updating results…";
+  position: absolute;
+  top: var(--space-2);
+  left: 0;
+  right: 0;
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+  text-align: center;
+  pointer-events: none;
+}

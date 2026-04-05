@@ -1,0 +1,64 @@
+/* Searchable select (combo): shared by browse advanced search, schedule term, etc. */
+
+.combo {
+  position: relative;
+}
+
+.combo::after {
+  content: '▾';
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+  pointer-events: none;
+}
+
+.combo__input {
+  width: 100%;
+  height: 2.25rem;
+  padding: 0 var(--space-7) 0 var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--fg);
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--duration-fast) var(--ease-default);
+  cursor: pointer;
+}
+
+.combo__input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary-100);
+}
+
+.combo__list {
+  position: absolute;
+  z-index: 200;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  right: 0;
+  max-height: 12rem;
+  overflow-y: auto;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  list-style: none;
+  padding: var(--space-1) 0;
+  margin: 0;
+}
+
+.combo__option {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--fg);
+  cursor: pointer;
+}
+
+.combo__option:hover,
+.combo__option.is-active {
+  background-color: var(--bg-muted);
+}

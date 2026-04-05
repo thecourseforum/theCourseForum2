@@ -1,0 +1,25 @@
+{% if not schedules %}
+<section class="schedule-add__empty schedule-flow-modal__empty">
+  <h2>Create a schedule first</h2>
+  <p class="schedule-flow-modal__empty-actions">
+    <button type="button" class="btn btn--primary btn--sm" data-schedule-flow-new>New schedule</button>
+    <a href="{{ schedule_builder_url }}" class="btn btn--ghost btn--sm">Open Schedule Builder</a>
+  </p>
+</section>
+{% else %}
+<form
+  method="post"
+  action="{% url 'schedule_add_course' course.id %}"
+  class="schedule-add__form schedule-flow-modal__form"
+  data-tcf-json-submit
+>
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ next_url|default:default_next_url }}">
+  {% if active_semester %}
+  <input type="hidden" name="semester" value="{{ active_semester.pk }}">
+  {% endif %}
+  <p class="schedule-flow-modal__course-label">{{ course.mnemonic }} {{ course.number }}</p>
+  {% include "site/schedule/partials/_schedule_add_course_form_fields.html" with is_modal=True %}
+  <p class="schedule-flow-modal__error" data-tcf-form-error hidden role="alert"></p>
+</form>
+{% endif %}
