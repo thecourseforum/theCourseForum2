@@ -112,15 +112,14 @@
           });
         })
         .then(function (out) {
-          if (
-            window.TcfFlashMessages &&
-            out.data &&
-            out.data.messages &&
-            out.data.messages.length
-          ) {
-            window.TcfFlashMessages.showFromJson(out.data.messages);
-          }
           if (out.res.ok && out.data && out.data.ok && out.data.redirect) {
+            if (
+              window.TcfFlashMessages &&
+              out.data.messages &&
+              out.data.messages.length
+            ) {
+              window.TcfFlashMessages.showFromJson(out.data.messages);
+            }
             afterScheduleSuccess(out.data.redirect);
             return;
           }
@@ -130,11 +129,8 @@
           const msg =
             (out.data && out.data.error) ||
             (out.res.ok ? "Something went wrong." : "Request failed.");
-          if (out.data && out.data.messages && out.data.messages.length) {
-            clearFormError(form);
-          } else {
-            showFormError(form, msg);
-          }
+          /* Flash strip sits under the modal backdrop; keep failures in-modal. */
+          showFormError(form, msg);
         })
         .catch(function () {
           if (submitBtn) {

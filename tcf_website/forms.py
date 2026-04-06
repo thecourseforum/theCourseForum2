@@ -40,11 +40,11 @@ class AdvancedSearchForm(forms.Form):
         required=False,
         label="Days of Week",
         choices=[
-            ("MON", "Mon"),
-            ("TUE", "Tue"),
-            ("WED", "Wed"),
-            ("THU", "Thu"),
-            ("FRI", "Fri"),
+            ("MON", "M"),
+            ("TUE", "T"),
+            ("WED", "W"),
+            ("THU", "Th"),
+            ("FRI", "F"),
         ],
         widget=forms.CheckboxSelectMultiple,
     )

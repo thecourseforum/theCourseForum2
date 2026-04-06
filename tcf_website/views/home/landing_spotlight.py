@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.urls import reverse
 
 from ...models import Review
-from ...utils import browsable_course_queryset, with_mode
+from ...utils import min_catalog_semester_year, with_mode
 
 _RECENT_REVIEWS_LIMIT = 10
 _SNIPPET_WIDTH = 120
@@ -28,11 +28,11 @@ def _snippet(text: str) -> str:
 
 
 def _recent_course_review_rows(mode: str) -> list[dict]:
-    browsable = browsable_course_queryset()
     qs = (
         Review.objects.filter(
             _visible_review_q(),
-            course__in=browsable,
+            Q(course__number__isnull=True) | Q(course__number__range=(1000, 9999)),
+            course__semester_last_taught__year__gte=min_catalog_semester_year(),
             instructor__isnull=False,
             club__isnull=True,
         )
