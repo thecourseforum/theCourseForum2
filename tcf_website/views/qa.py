@@ -23,6 +23,7 @@ from ..models import Answer, Course, Instructor, Question, Semester
 def qa_dashboard(request):
     """Q&A Dashboard view."""
     search_query = request.GET.get("q", "").strip()
+    department_filter = request.GET.get("department", "").strip()
     course_filter = request.GET.get("course", "")
     selected_question_id = request.GET.get("question", None)
     try:
@@ -64,6 +65,11 @@ def qa_dashboard(request):
             | Q(course__number__icontains=search_query)
         )
 
+    if department_filter:
+        questions = questions.filter(
+            course__subdepartment__department_id=department_filter
+        )
+
     if course_filter:
         questions = questions.filter(course_id=course_filter)
 
@@ -93,14 +99,39 @@ def qa_dashboard(request):
     # Courses that have at least one question (for filter dropdown)
     courses_with_questions = (
         Course.objects.filter(question__isnull=False)
-        .select_related("subdepartment")
+        .select_related("subdepartment", "subdepartment__department")
         .distinct()
-        .order_by("subdepartment__mnemonic", "number")
+        .order_by(
+            "subdepartment__department__name",
+            "subdepartment__mnemonic",
+            "number",
+        )
     )
 
+    # Get unique departments represented in courses_with_questions.
+    departments_by_id = {}
+    for course in courses_with_questions:
+        dept = course.subdepartment.department
+        if dept.id not in departments_by_id:
+            departments_by_id[dept.id] = {
+                "id": dept.id,
+                "name": dept.name,
+            }
+
+    # Sort departments by name
+    departments_list = sorted(departments_by_id.values(), key=lambda x: x["name"])
+
     selected_course_obj = None
+    selected_department = None
     if course_filter:
         selected_course_obj = courses_with_questions.filter(pk=course_filter).first()
+        if selected_course_obj:
+            selected_department = selected_course_obj.subdepartment.department.id
+    elif department_filter:
+        try:
+            selected_department = int(department_filter)
+        except (TypeError, ValueError):
+            selected_department = None
 
     semesters = Semester.objects.order_by("-number")[:20]
 
@@ -109,9 +140,11 @@ def qa_dashboard(request):
         "selected_question": selected_question,
         "answers": answers,
         "courses_with_questions": courses_with_questions,
+        "departments_list": departments_list,
         "search_query": search_query,
         "selected_course": course_filter,
         "selected_course_obj": selected_course_obj,
+        "selected_department": selected_department,
         "semesters": semesters,
         "answer_count": answer_count,
     }

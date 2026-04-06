@@ -34,34 +34,83 @@
 
         <!-- Course Filter -->
         <div class="qa-filters">
-            <div class="dropdown">
-                <button class="filter-btn dropdown-toggle {% if selected_course %}filter-active{% endif %}" type="button" id="courseDropdown" data-toggle="dropdown">
-                    <i class="fa fa-list"></i>
-                    {% if selected_course_obj %}
-                        {{ selected_course_obj.subdepartment.mnemonic }} {{ selected_course_obj.number }}
-                    {% else %}
-                        All Courses
-                    {% endif %}
-                </button>
-                <div class="dropdown-menu" aria-labelledby="courseDropdown">
-                    <div class="dropdown-search-wrapper">
-                        <input type="text"
-                               class="dropdown-search-input"
-                               id="courseFilterSearch"
-                               placeholder="Search courses..."
-                               autocomplete="off">
+            <div class="filter-row">
+                <!-- Department Dropdown -->
+                <div class="dropdown" id="departmentDropdownContainer">
+                    <button class="filter-btn dropdown-toggle {% if selected_department %}filter-active{% endif %}" type="button" id="departmentDropdown" data-toggle="dropdown">
+                        <i class="fa fa-list"></i>
+                        <span id="departmentLabel">
+                            {% if selected_department %}
+                                {% for dept in departments_list %}
+                                    {% if dept.id == selected_department %}
+                                        {{ dept.name }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                All Departments
+                            {% endif %}
+                        </span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="departmentDropdown">
+                        <div class="dropdown-search-wrapper">
+                            <input type="text"
+                                   class="dropdown-search-input"
+                                   id="departmentFilterSearch"
+                                   placeholder="Search departments..."
+                                   autocomplete="off">
+                        </div>
+                        <div class="dropdown-items-list" id="departmentFilterList">
+                            <a class="dropdown-item {% if not selected_department %}active{% endif %}"
+                               data-department-id=""
+                               href="{% url 'qa' %}{% if search_query %}?q={{ search_query }}{% endif %}">
+                                All Departments
+                            </a>
+                            {% for dept in departments_list %}
+                            <a class="dropdown-item {% if selected_department == dept.id %}active{% endif %}"
+                               data-department-id="{{ dept.id }}"
+                               href="#">
+                                {{ dept.name }}
+                            </a>
+                            {% endfor %}
+                        </div>
                     </div>
-                    <div class="dropdown-items-list" id="courseFilterList">
-                        <a class="dropdown-item {% if not selected_course %}active{% endif %}"
-                           href="{% url 'qa' %}{% if search_query %}?q={{ search_query }}{% endif %}">
-                            All Courses
-                        </a>
-                        {% for course in courses_with_questions %}
-                        <a class="dropdown-item {% if selected_course == course.id|stringformat:'s' %}active{% endif %}"
-                           href="{% url 'qa' %}?course={{ course.id }}{% if search_query %}&q={{ search_query }}{% endif %}">
-                            {{ course.subdepartment.mnemonic }} {{ course.number }}
-                        </a>
-                        {% endfor %}
+                </div>
+
+                <!-- Course Dropdown (shows when department is selected) -->
+                <div class="dropdown" id="courseDropdownContainer" style="display: none;">
+                    <button class="filter-btn dropdown-toggle {% if selected_course %}filter-active{% endif %}" type="button" id="courseDropdown" data-toggle="dropdown">
+                        <i class="fa fa-list"></i>
+                        <span id="courseLabel">
+                            {% if selected_course_obj %}
+                                {{ selected_course_obj.subdepartment.mnemonic }} {{ selected_course_obj.number }}
+                            {% else %}
+                                All Courses
+                            {% endif %}
+                        </span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="courseDropdown">
+                        <div class="dropdown-search-wrapper">
+                            <input type="text"
+                                   class="dropdown-search-input"
+                                   id="courseFilterSearch"
+                                   placeholder="Search courses..."
+                                   autocomplete="off">
+                        </div>
+                        <div class="dropdown-items-list" id="courseFilterList">
+                            <a class="dropdown-item {% if not selected_course %}active{% endif %}"
+                               data-course-id=""
+                               href="{% url 'qa' %}{% if search_query %}?q={{ search_query }}{% endif %}">
+                                All Courses
+                            </a>
+                            {% for course in courses_with_questions %}
+                            <a class="dropdown-item {% if selected_course == course.id|stringformat:'s' %}active{% endif %}"
+                               data-course-id="{{ course.id }}"
+                               data-department-id="{{ course.subdepartment.department.id }}"
+                               href="{% url 'qa' %}?course={{ course.id }}{% if search_query %}&q={{ search_query }}{% endif %}">
+                                {{ course.subdepartment.mnemonic }} {{ course.number }}
+                            </a>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>

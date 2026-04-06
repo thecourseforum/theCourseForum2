@@ -59,6 +59,36 @@ function loadQuestionDetail(questionId) {
         });
 }
 
+function refreshDashboard(url) {
+    fetch(url.toString(), {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    })
+        .then(r => r.json())
+        .then(data => {
+            const postsList = document.getElementById('postsList');
+            const contentArea = document.getElementById('questionContent');
+
+            if (postsList) postsList.innerHTML = data.posts_html;
+            if (contentArea) contentArea.innerHTML = data.detail_html;
+
+            initQuestionSelection();
+            initVoting();
+            initAnswerForm();
+            initQuestionActions();
+            initAnswerActions();
+            initReplyForms();
+
+            if (data.selected_question_id) {
+                url.searchParams.set('question', data.selected_question_id);
+            }
+
+            window.history.pushState({}, '', url);
+        })
+        .catch(() => {
+            window.location.href = url.toString();
+        });
+}
+
 // ─── Search ───────────────────────────────────────────────────────────────────
 
 function initSearch() {
@@ -72,6 +102,7 @@ function initSearch() {
         if (q) url.searchParams.set('q', q);
         else url.searchParams.delete('q');
         url.searchParams.delete('question');
+<<<<<<< Updated upstream
 
         fetch(url.toString(), {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
@@ -101,6 +132,9 @@ function initSearch() {
             .catch(() => {
                 window.location.href = url.toString();
             });
+=======
+        refreshDashboard(url);
+>>>>>>> Stashed changes
     }
 
     input.addEventListener('input', function () {
@@ -122,41 +156,233 @@ function initSearch() {
 // ─── Course Filter ────────────────────────────────────────────────────────────
 
 function initCourseFilter() {
-    const searchInput = document.getElementById('courseFilterSearch');
-    const itemsList = document.getElementById('courseFilterList');
-    if (!searchInput || !itemsList) return;
+    const departmentSearchInput = document.getElementById('departmentFilterSearch');
+    const departmentItemsList = document.getElementById('departmentFilterList');
+    const courseDropdownContainer = document.getElementById('courseDropdownContainer');
+    const courseSearchInput = document.getElementById('courseFilterSearch');
+    const courseItemsList = document.getElementById('courseFilterList');
+    const departmentLabel = document.getElementById('departmentLabel');
+    const courseLabel = document.getElementById('courseLabel');
+    const departmentDropdownBtn = document.getElementById('departmentDropdown');
+    const courseDropdownBtn = document.getElementById('courseDropdown');
 
-    const dropdown = searchInput.closest('.dropdown');
+    if (!departmentSearchInput || !departmentItemsList || !courseDropdownContainer || !courseSearchInput || !courseItemsList) return;
 
-    // Auto-focus search input when dropdown opens
-    if (dropdown) {
-        $(dropdown).on('shown.bs.dropdown', function () {
-            searchInput.value = '';
-            searchInput.focus();
-            // Reset visibility
-            itemsList.querySelectorAll('.dropdown-item').forEach(item => {
+    // Get currently selected department from the page
+    let selectedDepartmentId = '';
+    const activeDeptItem = departmentItemsList.querySelector('.dropdown-item.active');
+    if (activeDeptItem && activeDeptItem.dataset.departmentId) {
+        selectedDepartmentId = activeDeptItem.dataset.departmentId;
+    }
+
+    let selectedCourseId = '';
+    const activeCourseItem = courseItemsList.querySelector('.dropdown-item.active');
+    if (activeCourseItem && activeCourseItem.dataset.courseId) {
+        selectedCourseId = activeCourseItem.dataset.courseId;
+    }
+
+    // Show course dropdown if a department is selected
+    if (selectedDepartmentId) {
+        setCourseDropdownVisible(true);
+        filterCoursesByDepartment(selectedDepartmentId);
+    } else {
+        setCourseDropdownVisible(false);
+    }
+
+    updateFilterButtonStates();
+
+    // ─── Department Dropdown Handling ───
+    if (departmentDropdownBtn) {
+        $(departmentDropdownBtn).closest('.dropdown').on('shown.bs.dropdown', function () {
+            departmentSearchInput.value = '';
+            departmentSearchInput.focus();
+            departmentItemsList.querySelectorAll('.dropdown-item').forEach(item => {
                 item.classList.remove('d-none');
             });
         });
     }
 
-    // Prevent dropdown from closing when clicking/typing in the search input
-    searchInput.addEventListener('click', function (e) {
+    departmentSearchInput.addEventListener('click', function (e) {
         e.stopPropagation();
     });
 
-    // Filter items as user types
-    searchInput.addEventListener('input', function () {
+    departmentSearchInput.addEventListener('input', function () {
         const query = this.value.trim().toLowerCase();
-        itemsList.querySelectorAll('.dropdown-item').forEach(item => {
+        departmentItemsList.querySelectorAll('.dropdown-item').forEach(item => {
             const text = item.textContent.trim().toLowerCase();
-            if (!query || text === 'all courses' || text.includes(query)) {
+            if (!query || text === 'all departments' || text.includes(query)) {
                 item.classList.remove('d-none');
             } else {
                 item.classList.add('d-none');
             }
         });
     });
+
+    departmentItemsList.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', function (e) {
+            const deptId = this.dataset.departmentId;
+            const deptText = this.textContent.trim();
+
+            // Update department label
+            if (departmentLabel) {
+                departmentLabel.textContent = deptText === 'All Departments' ? 'All Departments' : deptText;
+            }
+
+            // Update active state
+            departmentItemsList.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+
+            // Reset course dropdown and show/hide based on selection
+            if (!deptId) {
+                selectedDepartmentId = '';
+                selectedCourseId = '';
+                // All Departments selected
+                setCourseDropdownVisible(false);
+                if (courseLabel) courseLabel.textContent = 'All Courses';
+                const url = new URL(window.location);
+                url.searchParams.delete('department');
+                url.searchParams.delete('course');
+                url.searchParams.delete('question');
+                updateFilterButtonStates();
+                refreshDashboard(url);
+            } else {
+                selectedDepartmentId = deptId;
+                selectedCourseId = '';
+                // Specific department selected - show course dropdown
+                setCourseDropdownVisible(true);
+                if (courseLabel) courseLabel.textContent = 'All Courses';
+
+                // Filter and show courses for this department
+                filterCoursesByDepartment(deptId);
+
+                const url = new URL(window.location);
+                url.searchParams.set('department', deptId);
+                url.searchParams.delete('course');
+                url.searchParams.delete('question');
+                updateFilterButtonStates();
+                refreshDashboard(url);
+            }
+
+            e.preventDefault();
+        });
+    });
+
+    // ─── Course Dropdown Handling ───
+    if (courseDropdownBtn) {
+        $(courseDropdownBtn).closest('.dropdown').on('shown.bs.dropdown', function () {
+            courseSearchInput.value = '';
+            courseSearchInput.focus();
+
+            // Reapply current department filter whenever the menu opens.
+            filterCoursesByDepartment(selectedDepartmentId);
+        });
+    }
+
+    courseSearchInput.addEventListener('click', function (e) {
+        e.stopPropagation();
+    });
+
+    courseSearchInput.addEventListener('input', function () {
+        const query = this.value.trim().toLowerCase();
+        filterCoursesByDepartment(selectedDepartmentId, query);
+    });
+
+    courseItemsList.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', function (e) {
+            const courseId = this.dataset.courseId;
+            const courseText = this.textContent.trim();
+
+            // Update course label
+            if (courseLabel) {
+                courseLabel.textContent = courseText === 'All Courses' ? 'All Courses' : courseText;
+            }
+
+            // Navigate to the selected course
+            if (courseId) {
+                selectedCourseId = courseId;
+                const url = new URL(window.location);
+                if (selectedDepartmentId) {
+                    url.searchParams.set('department', selectedDepartmentId);
+                }
+                url.searchParams.set('course', courseId);
+                url.searchParams.delete('question');
+                updateFilterButtonStates();
+                refreshDashboard(url);
+            } else {
+                selectedCourseId = '';
+                // All Courses selected
+                const activeDeptItem = departmentItemsList.querySelector('.dropdown-item.active');
+                const deptId = activeDeptItem ? activeDeptItem.dataset.departmentId : '';
+                if (deptId) {
+                    // Stay in the department but show all courses
+                    const url = new URL(window.location);
+                    url.searchParams.set('department', deptId);
+                    url.searchParams.delete('course');
+                    url.searchParams.delete('question');
+                    updateFilterButtonStates();
+                    refreshDashboard(url);
+                } else {
+                    // Shouldn't happen, but go back to all
+                    const url = new URL(window.location);
+                    url.searchParams.delete('department');
+                    url.searchParams.delete('course');
+                    url.searchParams.delete('question');
+                    updateFilterButtonStates();
+                    refreshDashboard(url);
+                }
+            }
+
+            e.preventDefault();
+        });
+    });
+
+    function filterCoursesByDepartment(departmentId, searchQuery = '') {
+        const normalizedQuery = searchQuery.trim().toLowerCase();
+        courseItemsList.querySelectorAll('.dropdown-item').forEach(item => {
+            if (!item.dataset.courseId) {
+                // "All Courses" option
+                item.classList.remove('d-none');
+            } else {
+                const sameDepartment = !departmentId || item.dataset.departmentId === departmentId;
+                const text = item.textContent.trim().toLowerCase();
+                const matchesQuery = !normalizedQuery || text.includes(normalizedQuery);
+
+                if (sameDepartment && matchesQuery) {
+                    item.classList.remove('d-none');
+                } else {
+                    item.classList.add('d-none');
+                }
+            }
+        });
+        if (!searchQuery) {
+            courseSearchInput.value = '';
+        }
+    }
+
+    function setCourseDropdownVisible(isVisible) {
+        if (isVisible) {
+            courseDropdownContainer.style.display = 'block';
+            requestAnimationFrame(() => {
+                courseDropdownContainer.classList.add('is-visible');
+            });
+        } else {
+            courseDropdownContainer.classList.remove('is-visible');
+            window.setTimeout(() => {
+                if (!courseDropdownContainer.classList.contains('is-visible')) {
+                    courseDropdownContainer.style.display = 'none';
+                }
+            }, 200);
+        }
+    }
+
+    function updateFilterButtonStates() {
+        if (departmentDropdownBtn) {
+            departmentDropdownBtn.classList.toggle('filter-active', Boolean(selectedDepartmentId));
+        }
+        if (courseDropdownBtn) {
+            courseDropdownBtn.classList.toggle('filter-active', Boolean(selectedCourseId));
+        }
+    }
 }
 
 // ─── New Post Modal ───────────────────────────────────────────────────────────

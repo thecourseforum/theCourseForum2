@@ -76,11 +76,12 @@
 
 /* Filters Section */
 .qa-filters {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.25rem 0.5rem 1rem;
   background: #ffffff;
   border-bottom: 1px solid #dee2e6;
   display: flex;
-  gap: 0.5rem;
+  gap: 0;
+  box-sizing: border-box;
 }
 
 .filter-btn {
@@ -107,6 +108,63 @@
 
 .filter-btn i {
   margin-right: 0.25rem;
+}
+
+.filter-row {
+  display: flex;
+  gap: 0;
+  width: auto;
+  max-width: 100%;
+  align-items: center;
+  padding-right: 0.15rem;
+}
+
+.filter-row .dropdown {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+#departmentDropdownContainer .filter-btn {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  width: 180px;
+}
+
+#departmentDropdownContainer .filter-btn span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+#courseDropdownContainer {
+  flex: 0 0 auto;
+  min-width: 0;
+  margin-left: -2px;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#courseDropdownContainer .filter-btn {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+#courseDropdownContainer .filter-btn span {
+  max-width: 18ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#courseDropdownContainer.is-visible {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 /* Dropdown search input */
@@ -465,8 +523,7 @@
 
 .main-question .post-actions {
   padding: 1rem 0;
-  border-top: 1px solid #dee2e6;
-  margin-top: 1.5rem;
+  margin-top: 0.25rem;
 }
 
 .main-question .action-btn {
