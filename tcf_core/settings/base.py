@@ -4,8 +4,10 @@
 import os
 
 import environ
+import sentry_sdk
 from django.contrib.messages import constants as messages
 from django.urls import reverse_lazy
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -159,6 +161,51 @@ LOGGING = {
         },
     },
 }
+
+# Sentry error tracking and performance monitoring
+SENTRY_DSN = env.str("SENTRY_DSN", default=None)
+SENTRY_TRACES_SAMPLE_RATE = env.float("SENTRY_TRACES_SAMPLE_RATE", default=1.0)
+SENTRY_PROFILES_SAMPLE_RATE = env.float("SENTRY_PROFILES_SAMPLE_RATE", default=1.0)
+
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        # Add data like request headers and IP for users
+        send_default_pii=True,
+        # Only send ERROR and above to Sentry (CloudWatch handles INFO/DEBUG)
+        enable_logs=True,
+        event_level="error",  # Only ERROR, CRITICAL go to Sentry as events
+        # Sample performance traces (1.0 = 100%, adjustable via env var)
+        traces_sample_rate=SENTRY_TRACES_SAMPLE_RATE,
+        # Sample profiling (1.0 = 100%, adjustable via env var)
+        profiles_sample_rate=SENTRY_PROFILES_SAMPLE_RATE,
+        # Ignore common noise
+        ignore_errors=[
+            KeyboardInterrupt,
+            # Add other exceptions to ignore if needed
+        ],
+        before_send=_sentry_before_send,
+    )
+
+
+def _sentry_before_send(event, hint):
+    """Filter out noise before sending to Sentry."""
+    # Ignore 404 errors
+    if event.get("logger") == "django.request":
+        if "exception" in event:
+            exc_type = event["exception"]["values"][0].get("type")
+            if exc_type == "Http404":
+                return None
+
+    # Add request_id from context
+    from tcf_core.request_logging import request_context
+    context = request_context.get()
+    if context:
+        event.setdefault("tags", {})
+        event["tags"]["request_id"] = context.get("request_id")
+
+    return event
 
 # Django Rest Framework Settings
 REST_FRAMEWORK = {
