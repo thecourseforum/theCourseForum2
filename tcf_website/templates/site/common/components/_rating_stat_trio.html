@@ -1,0 +1,22 @@
+{# Shared rating-stat trio: pass rating, difficulty, gpa as template variables. #}
+{# Usage: {% include "site/common/components/_rating_stat_trio.html" with rating=X difficulty=Y gpa=Z %} #}
+<div class="rating-stat">
+  <div class="rating-stat__value {% if rating and rating >= 4 %}rating-stat__value--success{% elif rating and rating >= 3 %}rating-stat__value--warning{% elif rating %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
+    {% if rating %}{{ rating|floatformat:1 }}{% else %}—{% endif %}
+  </div>
+  <div class="rating-stat__label">Rating</div>
+</div>
+
+<div class="rating-stat">
+  <div class="rating-stat__value {% if difficulty and difficulty <= 2.5 %}rating-stat__value--success{% elif difficulty and difficulty <= 3.5 %}rating-stat__value--warning{% elif difficulty %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
+    {% if difficulty %}{{ difficulty|floatformat:1 }}{% else %}—{% endif %}
+  </div>
+  <div class="rating-stat__label">Difficulty</div>
+</div>
+
+<div class="rating-stat">
+  <div class="rating-stat__value {% if gpa and gpa >= 3.7 %}rating-stat__value--success{% elif gpa and gpa >= 3.4 %}rating-stat__value--warning{% elif gpa %}rating-stat__value--danger{% else %}rating-stat__value--muted{% endif %}">
+    {% if gpa %}{{ gpa|floatformat:2 }}{% else %}—{% endif %}
+  </div>
+  <div class="rating-stat__label">GPA</div>
+</div>

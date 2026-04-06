@@ -50,7 +50,7 @@ class CourseViewTestCase(TestCase):
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"search-result-card", response.content)
+        self.assertIn(b"course-card", response.content)
         self.assertIn(b"data-browse-total", response.content)
 
     def test_browse_partial_no_search_returns_204(self):

@@ -19,6 +19,16 @@ class AdvancedSearchForm(forms.Form):
         required=False, label="Min GPA", min_value=0, max_value=4
     )
     open_sections = forms.BooleanField(required=False, label="Open sections only")
+    sort = forms.ChoiceField(
+        required=False,
+        label="Sort by",
+        choices=[
+            ("", "Course # (A–Z)"),
+            ("rating_desc", "Rating (High–Low)"),
+            ("gpa_desc", "GPA (High–Low)"),
+            ("difficulty_asc", "Difficulty (Low–High)"),
+        ],
+    )
 
     # Advanced fields
     discipline = forms.MultipleChoiceField(required=False, label="Discipline")
@@ -70,6 +80,7 @@ class AdvancedSearchForm(forms.Form):
         (
             "component",
             "instructor",
+            "sort",
             "units_min",
             "units_max",
             "days",
@@ -86,7 +97,9 @@ class AdvancedSearchForm(forms.Form):
         if not self.is_valid():
             return False
         return any(
-            v for k, v in self.cleaned_data.items() if v and v != [] and k != "page"
+            v
+            for k, v in self.cleaned_data.items()
+            if v and v != [] and k not in ("page", "sort")
         )
 
     def has_advanced_params(self):

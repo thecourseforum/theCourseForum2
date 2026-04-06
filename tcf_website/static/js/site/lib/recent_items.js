@@ -10,7 +10,7 @@
     club: { storageKey: "tcf_recent_clubs", pathPrefix: "/club/" },
   };
 
-  const MAX_ENTRIES = 10;
+  const MAX_ENTRIES = 5;
   const CHANGE_EVENT = "tcfRecentItemsChange";
 
   function isSafeHref(href, pathPrefix) {

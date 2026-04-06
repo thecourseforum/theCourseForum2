@@ -41,9 +41,6 @@ def instructor_view(request, instructor_id):
 
     grouped_courses: dict[str, list[dict[str, Any]]] = {}
     for course in courses:
-        course["avg_rating"] = safe_round(course["avg_rating"])
-        course["avg_difficulty"] = safe_round(course["avg_difficulty"])
-        course["avg_gpa"] = safe_round(course["avg_gpa"])
         sem_num = course.pop("latest_semester_number", None)
         if sem_num and sem_num in semester_info:
             season, year = semester_info[sem_num]

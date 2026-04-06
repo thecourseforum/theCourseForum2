@@ -2,7 +2,7 @@
 
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from django.db.models import F, Q, QuerySet
+from django.db.models import Avg, ExpressionWrapper, F, FloatField, Q, QuerySet
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 
@@ -18,12 +18,24 @@ def _min_catalog_semester_year() -> int:
 
 
 def browsable_course_queryset():
-    """Visible catalog courses: subdepartment join, mnemonic, number range, recency."""
-
+    """Visible catalog courses with stats annotated for display in cards."""
+    # pylint: disable=duplicate-code
     return (
-        Course.objects.select_related("subdepartment")
-        .only("title", "number", "subdepartment__mnemonic", "description")
-        .annotate(mnemonic=F("subdepartment__mnemonic"))
+        Course.objects.select_related("subdepartment", "semester_last_taught")
+        .annotate(
+            mnemonic=F("subdepartment__mnemonic"),
+            average_rating=ExpressionWrapper(
+                (
+                    Avg("review__instructor_rating")
+                    + Avg("review__enjoyability")
+                    + Avg("review__recommendability")
+                )
+                / 3,
+                output_field=FloatField(),
+            ),
+            average_difficulty=Avg("review__difficulty"),
+            average_gpa=Avg("coursegrade__average"),
+        )
         .filter(Q(number__isnull=True) | Q(number__range=(1000, 9999)))
         .filter(semester_last_taught__year__gte=_min_catalog_semester_year())
     )
@@ -80,10 +92,10 @@ def with_mode(url: str, mode: str | None) -> str:
 
 
 def safe_round(num):
-    """Reduce repetition for null-checked rounding; returns an em dash when value is missing."""
+    """Round num to 2 decimal places; returns None when value is missing."""
     if num is not None:
         return round(num, 2)
-    return "\u2014"
+    return None
 
 
 def safe_next_url(request, default_url: str) -> str:
