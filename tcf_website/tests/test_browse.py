@@ -34,6 +34,14 @@ class CourseViewTestCase(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
+    def test_department_url_encoded_course_recency(self):
+        """Department view should handle URL-encoded course_recency (Fall+2021)."""
+        # URL with + (URL-encoded space) should work without errors
+        url = f"/department/{self.department.id}/Fall+2021/"
+        response = self.client.get(url)
+        # Should not raise ValueError, should return 200 or 404 depending on semester existence
+        self.assertIn(response.status_code, [200, 404])
+
     def test_browse_default_view_requires_featured_schools(self):
         """Default browse template expects CLAS and SEAS rows in the database."""
         School.objects.create(name="College of Arts & Sciences")

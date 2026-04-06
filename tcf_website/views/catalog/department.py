@@ -1,5 +1,7 @@
 """Department listing view."""
 
+from urllib.parse import unquote_plus
+
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
@@ -14,6 +16,9 @@ def department(request, dept_id: int, course_recency=None):
 
     if not course_recency:
         course_recency = str(Semester.latest())
+    else:
+        # Decode URL-encoded spaces (e.g., Fall+2021 -> Fall 2021)
+        course_recency = unquote_plus(course_recency)
 
     breadcrumbs = [
         (dept.school.name, reverse("browse"), False),
