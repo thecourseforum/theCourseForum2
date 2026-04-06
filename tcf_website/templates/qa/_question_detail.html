@@ -5,19 +5,30 @@
     <div class="post-info">
         {% if question.course %}
         <h3>
-            <a href="{% url 'course' mnemonic=question.course.subdepartment.mnemonic course_number=question.course.number %}">
+            <a class="course-link"
+               href="{% url 'course' mnemonic=question.course.subdepartment.mnemonic course_number=question.course.number %}"
+               tabindex="0"
+               data-toggle="tooltip"
+               data-placement="bottom"
+               title="View course page">
                 {{ question.course.subdepartment.mnemonic }} {{ question.course.number }}
             </a>
         </h3>
         {% endif %}
         <div class="instructor">
-            <h6>
-                {% if question.instructor %}
-                <a href="{%url 'course_instructor' course_id=question.course.id instructor_id=question.instructor.id %}" target="_blank">
-                    {{ question.instructor.first_name }} {{ question.instructor.last_name }}
-                </a>
-                {% endif %}
-            </h6>
+            {% if question.instructor %}
+            <a class="instructor-profile"
+               href="{% url 'instructor' instructor_id=question.instructor.id %}">
+                <h6 class="m-0 text-tcf-indigo qa-instructor-link"
+                    tabindex="0"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="View instructor profile">
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                    <span class="instructor-select">{{ question.instructor.last_name }}, {{ question.instructor.first_name }}</span>
+                </h6>
+            </a>
+            {% endif %}
         </div>
     </div>
 </div>

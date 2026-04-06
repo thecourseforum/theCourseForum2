@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initQuestionActions();
     initAnswerActions();
     initReplyForms();
+    initTooltips();
 });
 
 // ─── Question Selection ───────────────────────────────────────────────────────
@@ -50,6 +51,7 @@ function loadQuestionDetail(questionId) {
             initQuestionActions();
             initAnswerActions();
             initReplyForms();
+            initTooltips();
         })
         .catch(() => {
             contentArea.classList.remove('loading');
@@ -88,6 +90,7 @@ function initSearch() {
                 initQuestionActions();
                 initAnswerActions();
                 initReplyForms();
+                initTooltips();
 
                 if (data.selected_question_id) {
                     url.searchParams.set('question', data.selected_question_id);
@@ -561,6 +564,11 @@ function incrementAnswerCount() {
     if (!match) return;
 
     counter.textContent = `(${parseInt(match[0], 10) + 1})`;
+}
+
+function initTooltips() {
+    if (typeof $ !== 'function') return;
+    $('[data-toggle="tooltip"]').tooltip();
 }
 
 // ─── Question Actions (Edit / Delete) ────────────────────────────────────────

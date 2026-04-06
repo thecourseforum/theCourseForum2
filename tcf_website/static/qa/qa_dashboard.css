@@ -256,6 +256,47 @@
   margin: 0;
 }
 
+.post-info h3 {
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+.post-info .course-link {
+  color: black;
+  text-decoration: none;
+}
+
+.post-info .course-link:hover {
+  color: var(--accent-color);
+}
+
+.post-info .instructor-profile {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.post-info .instructor h6 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.post-info .qa-instructor-link {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.post-info .instructor-select {
+  font-size: inherit;
+  line-height: 1.1;
+  color: var(--main-color)
+}
+
+.post-info .instructor-select:hover {
+  color: var(--main-color)
+}
+
 .post-info i {
   color: #6c757d;
 }
