@@ -12,7 +12,7 @@ from .models import Course, Semester
 _CATALOG_YEAR_WINDOW = 5
 
 
-def _min_catalog_semester_year() -> int:
+def min_catalog_semester_year() -> int:
     """First calendar year (inclusive) to show in the course catalog."""
     return timezone.now().year - _CATALOG_YEAR_WINDOW
 
@@ -37,13 +37,13 @@ def browsable_course_queryset():
             average_gpa=Avg("coursegrade__average"),
         )
         .filter(Q(number__isnull=True) | Q(number__range=(1000, 9999)))
-        .filter(semester_last_taught__year__gte=_min_catalog_semester_year())
+        .filter(semester_last_taught__year__gte=min_catalog_semester_year())
     )
 
 
 def recent_semesters() -> QuerySet:
     """Semesters in the catalog year window, newest SIS number first."""
-    return Semester.objects.filter(year__gte=_min_catalog_semester_year()).order_by(
+    return Semester.objects.filter(year__gte=min_catalog_semester_year()).order_by(
         "-number"
     )
 
