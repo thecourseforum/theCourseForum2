@@ -10,6 +10,15 @@
             </a>
         </h3>
         {% endif %}
+        <div class="instructor">
+            <h6>
+                {% if question.instructor %}
+                <a href="{%url 'course_instructor' course_id=question.course.id instructor_id=question.instructor.id %}" target="_blank">
+                    {{ question.instructor.first_name }} {{ question.instructor.last_name }}
+                </a>
+                {% endif %}
+            </h6>
+        </div>
     </div>
 </div>
 
@@ -26,16 +35,7 @@
                     </span>
                 </div>
             </div>
-            {% if question.instructor %}
-            <div class="question-instructor-card">
-                <div class="instructor-card-label">Instructor:</div>
-                <a class="instructor-card-name" href="{% url 'course_instructor' course_id=question.course.id instructor_id=question.instructor.id %}" target="_blank">
-                    {{ question.instructor.first_name }} {{ question.instructor.last_name }}
-                </a>
-            </div>
-            {% endif %}
         </div>
-
         <div class="post-body">
             <p>{{ question.text|linebreaks }}</p>
         </div>
