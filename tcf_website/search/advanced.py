@@ -148,7 +148,6 @@ def _section_filters_query(filters):
     if units_q is not None:
         section_q &= units_q
 
-
     return section_q, False
 
 

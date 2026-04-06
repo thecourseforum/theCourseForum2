@@ -19,6 +19,7 @@ def _min_catalog_semester_year() -> int:
 
 def browsable_course_queryset():
     """Visible catalog courses with stats annotated for display in cards."""
+    # pylint: disable=duplicate-code
     return (
         Course.objects.select_related("subdepartment", "semester_last_taught")
         .annotate(
