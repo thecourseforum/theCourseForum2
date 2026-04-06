@@ -345,6 +345,37 @@
   .advanced-search__grid {
     grid-template-columns: 1fr;
   }
+
+  .advanced-search__grid > * {
+    min-width: 0;
+  }
+
+  /* Stack days and times: side-by-side flex + non-shrinking time picks caused overlap */
+  .advanced-search__days-times {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .advanced-search__days-times .advanced-search__days {
+    flex: none;
+    min-width: 0;
+  }
+
+  .advanced-search__times {
+    flex-shrink: 1;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .advanced-search__times .advanced-search__field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .advanced-search__times .advanced-search__field input {
+    width: 100%;
+  }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
