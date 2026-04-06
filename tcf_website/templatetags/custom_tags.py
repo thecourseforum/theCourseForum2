@@ -5,7 +5,6 @@ from urllib.parse import urlencode
 from django import template
 from django.urls import reverse
 
-from ..stat_display import stat_display_value
 from ..utils import update_query_params, with_mode
 
 register = template.Library()
@@ -21,12 +20,6 @@ def get_item(dictionary, key):
 def remove_email(value):
     """Remove instructor email suffix from display strings."""
     return str(value).split("(", maxsplit=1)[0]
-
-
-@register.filter
-def stat_display(value, kind):
-    """Normalize a stat for display: missing or sentinel values become None."""
-    return stat_display_value(kind, value)
 
 
 def _split_csv_keys(raw_keys):
