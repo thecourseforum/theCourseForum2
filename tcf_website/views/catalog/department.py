@@ -1,5 +1,6 @@
 """Department listing view."""
 
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
@@ -21,11 +22,20 @@ def department(request, dept_id: int, course_recency=None):
     ]
 
     latest_semester = Semester.latest()
-    last_five_years = get_object_or_404(Semester, number=latest_semester.number - 50)
-    season, year = course_recency.upper().split()
-    active_semester = Semester.objects.filter(year=year, season=season).first()
+    last_five_years = (
+        Semester.objects.filter(number=latest_semester.number - 50).first()
+        or latest_semester
+    )
 
-    num_of_years = latest_semester.year - int(year)
+    parts = course_recency.upper().split()
+    if len(parts) != 2:
+        raise Http404
+    season, year = parts
+    active_semester = Semester.objects.filter(year=year, season=season).first()
+    if not active_semester:
+        raise Http404
+
+    num_of_years = latest_semester.year - active_semester.year
     courses = list(dept.fetch_recent_courses(num_of_years))
 
     return render(
