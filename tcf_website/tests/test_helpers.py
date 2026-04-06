@@ -44,9 +44,9 @@ class SafeRoundTestCase(TestCase):
         """Numeric values round to two decimals."""
         self.assertEqual(safe_round(3.14159), 3.14)
 
-    def test_none_returns_em_dash(self):
-        """Missing stats render as an em dash."""
-        self.assertEqual(safe_round(None), "\u2014")
+    def test_none_returns_none(self):
+        """Missing stats return None so templates handle display via {% else %}—{% endif %}."""
+        self.assertIsNone(safe_round(None))
 
 
 class SafeNextUrlTestCase(TestCase):

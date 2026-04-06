@@ -74,14 +74,32 @@ class Department(models.Model):
 
     # Fetches all courses in a department within the past `num_of_years' years
     def fetch_recent_courses(self, num_of_years: int = 5):
-        """Return courses within last 'num_of_years' years."""
+        """Return courses within last 'num_of_years' years with stats annotated."""
         latest_semester = Semester.latest()
         # to get the same season from n years earlier, subtract 10*n from semester number
-        return Course.objects.filter(
-            subdepartment__department=self,
-            semester_last_taught__number__gte=latest_semester.number
-            - (10 * num_of_years),
-        ).order_by("number", "subdepartment__name")
+        return (
+            Course.objects.filter(
+                subdepartment__department=self,
+                semester_last_taught__number__gte=latest_semester.number
+                - (10 * num_of_years),
+            )
+            .select_related("subdepartment", "semester_last_taught")
+            .annotate(
+                mnemonic=F("subdepartment__mnemonic"),
+                average_rating=ExpressionWrapper(
+                    (
+                        Avg("review__instructor_rating")
+                        + Avg("review__enjoyability")
+                        + Avg("review__recommendability")
+                    )
+                    / 3,
+                    output_field=FloatField(),
+                ),
+                average_difficulty=Avg("review__difficulty"),
+                average_gpa=Avg("coursegrade__average"),
+            )
+            .order_by("number", "subdepartment__name")
+        )
 
     def sort_courses_by_key(
         self, annotation, num_of_years: int = 5, reverse: bool = False
@@ -450,6 +468,7 @@ class Instructor(models.Model):
             .filter(taught_by=True)
             .annotate(
                 subdepartment_name=F("subdepartment__name"),
+                mnemonic=F("subdepartment__mnemonic"),
                 name=Concat(
                     F("subdepartment__mnemonic"),
                     Value(" "),
@@ -480,7 +499,10 @@ class Instructor(models.Model):
             )
             .values(
                 "id",
+                "number",
+                "title",
                 "subdepartment_name",
+                "mnemonic",
                 "name",
                 "avg_rating",
                 "avg_difficulty",

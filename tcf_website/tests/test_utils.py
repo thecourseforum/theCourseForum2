@@ -19,7 +19,7 @@ def setup(obj):
     obj.subdepartment = Subdepartment.objects.create(
         name="Computer Science", mnemonic="CS", department=obj.department
     )
-    # Years must fall in browsable window (see utils._min_catalog_semester_year).
+    # Years must fall in browsable window (see utils.min_catalog_semester_year).
     obj.semester = Semester.objects.create(year=2025, season="FALL", number=1258)
     obj.past_semester = Semester.objects.create(year=2022, season="FALL", number=1228)
     obj.incomplete_semester = Semester.objects.create(year=2023, season="", number=1238)

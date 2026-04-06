@@ -6,13 +6,25 @@ from ..models import Club, Section, Semester
 from ..pagination import SECTION_DAY_CODE_TO_SECTIONTIME_FIELD
 from ..utils import browsable_course_queryset
 
+_SORT_MAP = {
+    "rating_desc": F("average_rating").desc(nulls_last=True),
+    "gpa_desc": F("average_gpa").desc(nulls_last=True),
+    "difficulty_asc": F("average_difficulty").asc(nulls_last=True),
+}
+
+_DEFAULT_ORDER = ("subdepartment__mnemonic", "number")
+
 
 def execute_advanced_search(filters):
     """Build and execute advanced search queryset from validated form data."""
     qs = browsable_course_queryset()
     qs = _apply_course_filters(qs, filters)
     qs = _apply_section_filters(qs, filters)
-    return qs.distinct().order_by("subdepartment__mnemonic", "number")
+    sort_expr = _SORT_MAP.get(filters.get("sort") or "")
+    if sort_expr is not None:
+        # Primary sort by chosen field; tiebreak by dept/number for stable grouping.
+        return qs.order_by(sort_expr, *_DEFAULT_ORDER)
+    return qs.order_by(*_DEFAULT_ORDER)
 
 
 def execute_club_advanced_search(filters):
@@ -52,6 +64,9 @@ def _apply_course_filters(qs, filters):
     if discipline := filters.get("discipline"):
         course_q &= Q(disciplines__name__in=discipline)
 
+    if min_gpa := filters.get("min_gpa"):
+        course_q &= Q(coursegrade__average__gte=min_gpa)
+
     if course_q:
         qs = qs.filter(course_q)
 
@@ -82,10 +97,10 @@ def _units_section_filter(filters):
     if lo is not None and hi is not None and lo > hi:
         return True, None
     if lo is not None and hi is not None:
-        return False, Q(section__units_max__gte=lo) & Q(section__units_min__lte=hi)
+        return False, Q(units_max__gte=lo) & Q(units_min__lte=hi)
     if lo is not None:
-        return False, Q(section__units_max__gte=lo)
-    return False, Q(section__units_min__lte=hi)
+        return False, Q(units_max__gte=lo)
+    return False, Q(units_min__lte=hi)
 
 
 def _days_section_q(day_codes):
@@ -98,37 +113,35 @@ def _days_section_q(day_codes):
         field = SECTION_DAY_CODE_TO_SECTIONTIME_FIELD.get(code)
         if field:
             matched = True
-            day_q |= Q(**{f"section__sectiontime__{field}": True})
+            day_q |= Q(**{f"sectiontime__{field}": True})
     return day_q if matched else None
 
 
 def _section_filters_query(filters):
-    """Build combined section Q; returns (query, units_impossible)."""
+    """Build combined section Q relative to the Section model; returns (query, units_impossible).
+
+    All conditions are expressed relative to Section so the caller can wrap them
+    in a single EXISTS subquery — avoiding JOIN-based row duplication on Course.
+    """
     section_q = Q()
 
     if semester := filters.get("semester"):
-        section_q &= Q(section__semester_id=semester)
+        section_q &= Q(semester_id=semester)
 
     if component := filters.get("component"):
-        section_q &= Q(section__section_type__icontains=component)
+        section_q &= Q(section_type__icontains=component)
 
     if instructor := filters.get("instructor"):
-        section_q &= Q(section__instructors__full_name__icontains=instructor)
-
-    if min_gpa := filters.get("min_gpa"):
-        section_q &= Q(
-            section__instructors__courseinstructorgrade__course_id=F("id"),
-            section__instructors__courseinstructorgrade__average__gte=min_gpa,
-        )
+        section_q &= Q(instructors__full_name__icontains=instructor)
 
     if day_q := _days_section_q(filters.get("days", [])):
         section_q &= day_q
 
     if start_time := filters.get("start_time"):
-        section_q &= Q(section__sectiontime__start_time__gte=start_time)
+        section_q &= Q(sectiontime__start_time__gte=start_time)
 
     if end_time := filters.get("end_time"):
-        section_q &= Q(section__sectiontime__end_time__lte=end_time)
+        section_q &= Q(sectiontime__end_time__lte=end_time)
 
     empty, units_q = _units_section_filter(filters)
     if empty:
@@ -140,20 +153,25 @@ def _section_filters_query(filters):
 
 
 def _apply_section_filters(qs, filters):
-    """Apply section-level filters in one Q so joins refer to the same Section row."""
+    """Apply section-level filters via EXISTS subqueries to avoid row duplication."""
     section_q, units_impossible = _section_filters_query(filters)
     if units_impossible:
         return qs.none()
 
     if section_q:
-        qs = qs.filter(section_q)
+        qs = qs.filter(
+            Exists(Section.objects.filter(Q(course=OuterRef("pk")) & section_q))
+        )
 
     if filters.get("open_sections"):
-        open_sec = Section.objects.filter(
-            course=OuterRef("pk"),
-            semester=Semester.latest(),
-            enrollment_taken__lt=F("enrollment_limit"),
+        qs = qs.filter(
+            Exists(
+                Section.objects.filter(
+                    course=OuterRef("pk"),
+                    semester=Semester.latest(),
+                    enrollment_taken__lt=F("enrollment_limit"),
+                )
+            )
         )
-        qs = qs.filter(Exists(open_sec))
 
     return qs

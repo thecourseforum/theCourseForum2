@@ -73,9 +73,8 @@ def _pair_aggregate_chart_data(course, instructor, course_id, instructor_id):
         amount_group=Avg("amount_group"),
         amount_homework=Avg("amount_homework"),
     )
-    for key, value in data.items():
-        if value is not None:
-            data[key] = round(value, 2)
+    # Pass raw floats to JS; each display call (toFixed) rounds to the needed precision.
+    # Pre-rounding here would cause double-rounding divergence from Django's floatformat.
 
     try:
         grades_data = CourseInstructorGrade.objects.get(
