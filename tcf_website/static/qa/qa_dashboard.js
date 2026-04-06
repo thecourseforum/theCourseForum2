@@ -102,39 +102,7 @@ function initSearch() {
         if (q) url.searchParams.set('q', q);
         else url.searchParams.delete('q');
         url.searchParams.delete('question');
-<<<<<<< Updated upstream
-
-        fetch(url.toString(), {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        })
-            .then(r => r.json())
-            .then(data => {
-                const postsList = document.getElementById('postsList');
-                const contentArea = document.getElementById('questionContent');
-
-                if (postsList) postsList.innerHTML = data.posts_html;
-                if (contentArea) contentArea.innerHTML = data.detail_html;
-
-                initQuestionSelection();
-                initVoting();
-                initAnswerForm();
-                initQuestionActions();
-                initAnswerActions();
-                initReplyForms();
-                initTooltips();
-
-                if (data.selected_question_id) {
-                    url.searchParams.set('question', data.selected_question_id);
-                }
-
-                window.history.pushState({}, '', url);
-            })
-            .catch(() => {
-                window.location.href = url.toString();
-            });
-=======
         refreshDashboard(url);
->>>>>>> Stashed changes
     }
 
     input.addEventListener('input', function () {
