@@ -22,11 +22,20 @@ AWS_S3_CUSTOM_DOMAIN = env.str(
     "AWS_S3_CUSTOM_DOMAIN", default=f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 )
 AWS_DEFAULT_ACL = None
-AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 
 STORAGES = {
-    "default": {"BACKEND": "storages.backends.s3.S3Storage", "OPTIONS": {}},
-    "staticfiles": {"BACKEND": "storages.backends.s3.S3Storage"},
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "object_parameters": {"CacheControl": "max-age=86400"}
+        }
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3ManifestStaticStorage",
+        "OPTIONS": {
+            "object_parameters": {"CacheControl": "public, max-age=31536000, immutable"}
+        }
+    },
 }
 
 # AWS RDS PostgreSQL
