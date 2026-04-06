@@ -567,7 +567,6 @@
   position: relative;
   min-height: 10rem;
   opacity: 0.65;
-  pointer-events: none;
   transition: opacity var(--duration-fast) var(--ease-default);
 }
 

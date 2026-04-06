@@ -452,10 +452,8 @@ if (data) {
   ];
   
   ratings.forEach(({ key, bar, num }) => {
+    if (data[key] === null || data[key] === undefined) return;
     const value = Number(data[key]);
-    if (!Number.isFinite(value)) {
-      return;
-    }
 
     const barEl = document.querySelector(bar);
     const numEl = document.querySelector(num);
@@ -477,10 +475,8 @@ if (data) {
   const totalHours = Number(data.hours);
 
   workloadRows.forEach(({ key, bar, num }) => {
+    if (data[key] === null || data[key] === undefined) return;
     const value = Number(data[key]);
-    if (!Number.isFinite(value)) {
-      return;
-    }
 
     const barEl = document.querySelector(bar);
     const numEl = document.querySelector(num);
