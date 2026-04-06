@@ -46,7 +46,7 @@
   <details class="advanced-search__advanced"{% if form.has_advanced_params %} open{% endif %}>
     <summary>Advanced</summary>
 
-    <!-- Row 3: Level, Component, Instructor -->
+    <!-- Row 3: Component, Instructor, Sort By -->
     <div class="advanced-search__grid">
       <div class="advanced-search__field">
         <label for="id_component">Component</label>
@@ -56,6 +56,11 @@
       <div class="advanced-search__field">
         <label for="id_instructor">Instructor</label>
         <input type="text" name="instructor" id="id_instructor" value="{{ form.instructor.value|default:'' }}" placeholder="Instructor name">
+      </div>
+
+      <div class="advanced-search__field">
+        <label>Sort By</label>
+        {% include "site/common/components/_combo_dropdown.html" with combo_name="sort" combo_choices=form.sort.field.choices combo_selected=form.sort.value combo_aria_label="Sort by" %}
       </div>
     </div>
 

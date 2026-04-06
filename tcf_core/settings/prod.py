@@ -26,15 +26,13 @@ AWS_DEFAULT_ACL = None
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3.S3Storage",
-        "OPTIONS": {
-            "object_parameters": {"CacheControl": "max-age=86400"}
-        }
+        "OPTIONS": {"object_parameters": {"CacheControl": "max-age=86400"}},
     },
     "staticfiles": {
         "BACKEND": "storages.backends.s3.S3ManifestStaticStorage",
         "OPTIONS": {
             "object_parameters": {"CacheControl": "public, max-age=31536000, immutable"}
-        }
+        },
     },
 }
 

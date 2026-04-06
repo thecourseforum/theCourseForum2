@@ -7,7 +7,7 @@ from ...models import Department, Semester
 
 
 def department(request, dept_id: int, course_recency=None):
-    """View for department page - Modern design."""
+    """View for department page."""
     dept = get_object_or_404(
         Department.objects.prefetch_related("subdepartment_set"), pk=dept_id
     )
@@ -25,13 +25,8 @@ def department(request, dept_id: int, course_recency=None):
     season, year = course_recency.upper().split()
     active_semester = Semester.objects.filter(year=year, season=season).first()
 
-    sortby = request.GET.get("sortby", "course_id")
-    order = request.GET.get("order", "asc")
-    page = request.GET.get("page", 1)
-
-    paginated_courses = dept.get_paginated_department_courses(
-        sortby, latest_semester.year - int(year), order, page
-    )
+    num_of_years = latest_semester.year - int(year)
+    courses = list(dept.fetch_recent_courses(num_of_years))
 
     return render(
         request,
@@ -40,10 +35,8 @@ def department(request, dept_id: int, course_recency=None):
             "dept_id": dept_id,
             "latest_semester": str(latest_semester),
             "breadcrumbs": breadcrumbs,
-            "paginated_courses": paginated_courses,
+            "courses": courses,
             "active_course_recency": str(active_semester),
-            "sortby": sortby,
-            "order": order,
             "last_five_years": str(last_five_years),
         },
     )

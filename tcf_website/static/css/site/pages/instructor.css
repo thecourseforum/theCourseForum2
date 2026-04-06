@@ -95,52 +95,6 @@
 }
 
 
-/* ===== STATS CARD ===== */
-
-.stats-card {
-  display: flex;
-  gap: var(--space-6);
-  
-  padding: var(--space-5);
-  
-  background-color: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-}
-
-.stats-card__item {
-  text-align: center;
-}
-
-.stats-card__value {
-  font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
-}
-
-.stats-card__value--success {
-  color: var(--success);
-}
-
-.stats-card__value--warning {
-  color: var(--warning);
-}
-
-.stats-card__value--danger {
-  color: var(--danger);
-}
-
-.stats-card__value--muted {
-  color: var(--fg-muted);
-}
-
-.stats-card__label {
-  font-size: var(--text-xs);
-  color: var(--fg-muted);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-wide);
-}
-
-
 /* ===== CONTENT AREA ===== */
 
 .instructor-content {

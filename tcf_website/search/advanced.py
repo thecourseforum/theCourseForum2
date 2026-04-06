@@ -6,13 +6,25 @@ from ..models import Club, Section, Semester
 from ..pagination import SECTION_DAY_CODE_TO_SECTIONTIME_FIELD
 from ..utils import browsable_course_queryset
 
+_SORT_MAP = {
+    "rating_desc": F("average_rating").desc(nulls_last=True),
+    "gpa_desc": F("average_gpa").desc(nulls_last=True),
+    "difficulty_asc": F("average_difficulty").asc(nulls_last=True),
+}
+
+_DEFAULT_ORDER = ("subdepartment__mnemonic", "number")
+
 
 def execute_advanced_search(filters):
     """Build and execute advanced search queryset from validated form data."""
     qs = browsable_course_queryset()
     qs = _apply_course_filters(qs, filters)
     qs = _apply_section_filters(qs, filters)
-    return qs.distinct().order_by("subdepartment__mnemonic", "number")
+    sort_expr = _SORT_MAP.get(filters.get("sort") or "")
+    if sort_expr is not None:
+        # Primary sort by chosen field; tiebreak by dept/number for stable grouping.
+        return qs.distinct().order_by(sort_expr, *_DEFAULT_ORDER)
+    return qs.distinct().order_by(*_DEFAULT_ORDER)
 
 
 def execute_club_advanced_search(filters):
@@ -115,12 +127,6 @@ def _section_filters_query(filters):
     if instructor := filters.get("instructor"):
         section_q &= Q(section__instructors__full_name__icontains=instructor)
 
-    if min_gpa := filters.get("min_gpa"):
-        section_q &= Q(
-            section__instructors__courseinstructorgrade__course_id=F("id"),
-            section__instructors__courseinstructorgrade__average__gte=min_gpa,
-        )
-
     if day_q := _days_section_q(filters.get("days", [])):
         section_q &= day_q
 
@@ -130,11 +136,18 @@ def _section_filters_query(filters):
     if end_time := filters.get("end_time"):
         section_q &= Q(section__sectiontime__end_time__lte=end_time)
 
+    if min_gpa := filters.get("min_gpa"):
+        section_q &= Q(
+            section__instructors__courseinstructorgrade__course_id=F("id"),
+            section__instructors__courseinstructorgrade__average__gte=min_gpa,
+        )
+
     empty, units_q = _units_section_filter(filters)
     if empty:
         return None, True
     if units_q is not None:
         section_q &= units_q
+
 
     return section_q, False
 
