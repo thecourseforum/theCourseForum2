@@ -8,21 +8,9 @@
         {{ dept }} / {{ dept_data.subdept_name }}
       </a>
     </h3>
-    <div class="search-result-list">
+    <div class="course-list">
       {% for c in dept_data.courses %}
-      <article class="search-result-card">
-        <a class="search-result-card__link" href="{% url 'course' mnemonic=c.mnemonic course_number=c.number %}">
-          <span class="search-result-card__code">{{ c.mnemonic }} {{ c.number }}</span>
-          <span class="search-result-card__title">{{ c.title }}</span>
-        </a>
-        <p class="search-result-card__description">
-          {% if c.description %}
-          {{ c.description }}
-          {% else %}
-          No course description available.
-          {% endif %}
-        </p>
-      </article>
+      {% include "site/catalog/components/_course_card.html" with course=c %}
       {% endfor %}
     </div>
   </section>

@@ -112,6 +112,10 @@ class CourseToRowDictTestCase(TestCase):
             number=1000,
             mnemonic="CS",
             description="Desc",
+            average_rating=3.5,
+            average_difficulty=2.0,
+            average_gpa=3.7,
+            semester_last_taught="Fall 2025",
             max_similarity=0.42,
         )
         without = course_to_row_dict(course, include_similarity=False)

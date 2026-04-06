@@ -11,6 +11,10 @@ def course_to_row_dict(course, *, include_similarity: bool = False) -> dict:
         "number": course.number,
         "mnemonic": course.mnemonic,
         "description": course.description,
+        "average_rating": course.average_rating,
+        "average_difficulty": course.average_difficulty,
+        "average_gpa": course.average_gpa,
+        "semester_last_taught": str(course.semester_last_taught),
     }
     if include_similarity:
         row["max_similarity"] = course.max_similarity

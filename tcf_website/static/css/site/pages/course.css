@@ -281,6 +281,16 @@
   }
 }
 
+.instructor-card__ratings .rating-stat {
+  padding: var(--space-2) var(--space-3);
+  min-width: 5.5rem;
+}
+
+.instructor-card__ratings .rating-stat__value {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+}
+
 /* ===== SECTION TIMES ===== */
 
 .section-times {

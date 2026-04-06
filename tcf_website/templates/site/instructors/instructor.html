@@ -83,33 +83,11 @@
   <section class="courses-section">
     <h2 class="courses-section__title">{{ subdepartment_name }}</h2>
     
-    {% for course in subdepartment_courses %}
-    <a href="{% url 'course_instructor' course_id=course.id instructor_id=instructor.id %}" class="course-taught">
-      <span class="course-taught__name">{{ course.name }}</span>
-      
-      <div class="course-taught__stats">
-        <div class="course-taught__stat">
-          <div class="course-taught__stat-value">{% if course.avg_rating %}{{ course.avg_rating|floatformat:1 }}{% else %}—{% endif %}</div>
-          <div class="course-taught__stat-label">Rating</div>
-        </div>
-
-        <div class="course-taught__stat">
-          <div class="course-taught__stat-value">{% if course.avg_difficulty %}{{ course.avg_difficulty|floatformat:1 }}{% else %}—{% endif %}</div>
-          <div class="course-taught__stat-label">Difficulty</div>
-        </div>
-
-        <div class="course-taught__stat">
-          <div class="course-taught__stat-value">{% if course.avg_gpa %}{{ course.avg_gpa|floatformat:2 }}{% else %}—{% endif %}</div>
-          <div class="course-taught__stat-label">GPA</div>
-        </div>
-        
-        <div class="course-taught__stat">
-          <div class="course-taught__stat-value">{{ course.last_taught }}</div>
-          <div class="course-taught__stat-label">Last Taught</div>
-        </div>
-      </div>
-    </a>
-    {% endfor %}
+    <div class="course-list">
+      {% for course in subdepartment_courses %}
+      {% include "site/courses/components/_course_taught_card.html" with course=course %}
+      {% endfor %}
+    </div>
   </section>
   {% endfor %}
   {% else %}
