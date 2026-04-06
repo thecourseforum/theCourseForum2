@@ -532,6 +532,7 @@ function initAnswerForm() {
                     headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 })
                 .then(() => {
+                    incrementAnswerCount();
                     // Reload the current question detail
                     const url = new URL(window.location);
                     const questionId = url.searchParams.get('question');
@@ -550,6 +551,16 @@ function initAnswerForm() {
         })
         .catch(err => console.error('Duplicate check error:', err));
     });
+}
+
+function incrementAnswerCount() {
+    const counter = document.querySelector('.response-count');
+    if (!counter) return;
+
+    const match = counter.textContent.match(/\d+/);
+    if (!match) return;
+
+    counter.textContent = `(${parseInt(match[0], 10) + 1})`;
 }
 
 // ─── Question Actions (Edit / Delete) ────────────────────────────────────────

@@ -1,6 +1,7 @@
 # pylint: disable=missing-class-docstring, wildcard-import, fixme, too-many-lines
 """TCF Database models."""
 
+from collections import defaultdict
 from decimal import Decimal
 
 from django.conf import settings
@@ -1548,11 +1549,10 @@ class Answer(models.Model):
     @staticmethod
     def display_activity(question_id, user):
         """Prepare answers and replies for question detail page."""
-        # Get only top-level answers (those without a parent)
-        answer = (
-            Answer.objects.filter(question=question_id, parent_answer__isnull=True)
+        answers = (
+            Answer.objects.filter(question=question_id)
             .exclude(text="")
-            .prefetch_related('replies', 'replies__user', 'replies__semester')
+            .select_related("user", "semester", "parent_answer")
             .annotate(
                 sum_a_votes=models.functions.Coalesce(
                     models.Sum("voteanswer__value"), models.Value(0)
@@ -1560,7 +1560,7 @@ class Answer(models.Model):
             )
         )
         if user.is_authenticated:
-            answer = answer.annotate(
+            answers = answers.annotate(
                 user_a_vote=models.functions.Coalesce(
                     models.Sum(
                         "voteanswer__value",
@@ -1570,27 +1570,28 @@ class Answer(models.Model):
                 ),
             )
 
-        # Annotate replies with vote counts
-        answers_list = list(answer.order_by("-created"))
-        for ans in answers_list:
-            replies = ans.replies.annotate(
-                sum_a_votes=models.functions.Coalesce(
-                    models.Sum("voteanswer__value"), models.Value(0)
-                ),
-            )
-            if user.is_authenticated:
-                replies = replies.annotate(
-                    user_a_vote=models.functions.Coalesce(
-                        models.Sum(
-                            "voteanswer__value",
-                            filter=models.Q(voteanswer__user=user),
-                        ),
-                        models.Value(0),
-                    ),
-                )
-            ans.replies_list = list(replies.order_by("created"))
+        answers_list = list(answers.order_by("created"))
+        children_by_parent = defaultdict(list)
+        root_answers = []
 
-        return answers_list
+        for answer in answers_list:
+            answer.nested_replies = []
+            if answer.parent_answer_id is None:
+                root_answers.append(answer)
+            else:
+                children_by_parent[answer.parent_answer_id].append(answer)
+
+        def attach_children(answer, depth):
+            answer.depth = depth
+            answer.render_depth = min(depth, 3)
+            answer.nested_replies = children_by_parent.get(answer.id, [])
+            for child in answer.nested_replies:
+                attach_children(child, depth + 1)
+
+        for answer in root_answers:
+            attach_children(answer, 0)
+
+        return sorted(root_answers, key=lambda answer: answer.created, reverse=True)
 
     class Meta:
         constraints = [

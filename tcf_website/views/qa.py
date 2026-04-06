@@ -72,6 +72,7 @@ def qa_dashboard(request):
     # Determine selected question
     selected_question = None
     answers = []
+    answer_count = 0
     if selected_question_id:
         try:
             selected_question = questions.get(id=selected_question_id)
@@ -84,6 +85,9 @@ def qa_dashboard(request):
         answers = Answer.display_activity(
             question_id=selected_question.id,
             user=request.user,
+        )
+        answer_count = (
+            Answer.objects.filter(question=selected_question).exclude(text="").count()
         )
 
     # Courses that have at least one question (for filter dropdown)
@@ -109,6 +113,7 @@ def qa_dashboard(request):
         "selected_course": course_filter,
         "selected_course_obj": selected_course_obj,
         "semesters": semesters,
+        "answer_count": answer_count,
     }
 
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
@@ -170,6 +175,7 @@ def question_detail(request, question_id):
     question = get_object_or_404(qs, pk=question_id)
 
     answers = Answer.display_activity(question_id=question.id, user=request.user)
+    answer_count = Answer.objects.filter(question=question).exclude(text="").count()
     semesters = Semester.objects.order_by("-number")[
         :20
     ]  # for the answer form in _question_detail.html
@@ -180,6 +186,7 @@ def question_detail(request, question_id):
         {
             "question": question,
             "answers": answers,
+            "answer_count": answer_count,
             "semesters": semesters,
         },
     )

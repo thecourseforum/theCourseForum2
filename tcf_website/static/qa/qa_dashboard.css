@@ -309,6 +309,11 @@
   gap: 0;
   margin-bottom: 2rem;
   position: relative;
+  min-width: 0;
+}
+
+.thread-post.is-reply {
+  margin-bottom: 1rem;
 }
 
 .post-main {
@@ -497,30 +502,25 @@
   font-size: 1rem;
 }
 
-/* Reply Indentation */
-.reply-indent {
-  margin-left: 0;
-}
-
-.reply-indent-2 {
-  margin-left: 0;
-}
-
-.reply-line {
-  position: absolute;
-  left: -1rem;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: #dee2e6;
-}
-
 /* Replies Container */
 .replies-container {
   margin-top: 1rem;
-  margin-left: 2rem;
+  margin-left: 1.25rem;
   padding-left: 1rem;
   border-left: 2px solid #e9ecef;
+}
+
+.replies-container.thread-depth-1 {
+  margin-left: 2rem;
+}
+
+.replies-container.thread-depth-2,
+.replies-container.thread-depth-3 {
+  margin-left: 1.5rem;
+}
+
+.replies-container.thread-depth-0 {
+  margin-left: 0;
 }
 
 .replies-container .thread-post {
@@ -552,9 +552,22 @@
 /* Reply Form Container */
 .reply-form-container {
   margin-top: 1rem;
-  margin-left: 2rem;
+  margin-left: 1.25rem;
   padding-left: 1rem;
   border-left: 2px solid var(--main-color);
+}
+
+.reply-form-container.thread-depth-0 {
+  margin-left: 0;
+}
+
+.reply-form-container.thread-depth-1 {
+  margin-left: 2rem;
+}
+
+.reply-form-container.thread-depth-2,
+.reply-form-container.thread-depth-3 {
+  margin-left: 1.5rem;
 }
 
 .reply-form-container .reply-textarea {

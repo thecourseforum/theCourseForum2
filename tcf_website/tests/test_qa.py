@@ -165,6 +165,51 @@ class QuestionDetailTests(TestCase):
         )
         self.assertContains(response, "Review lecture notes daily.")
 
+    def test_question_detail_renders_nested_replies_with_capped_indent(self):
+        """Nested replies render recursively and stop increasing indent after level 3."""
+        reply_1 = Answer.objects.create(
+            text="First reply",
+            question=self.question,
+            user=self.user1,
+            semester=self.semester,
+            parent_answer=self.answer,
+        )
+        reply_2 = Answer.objects.create(
+            text="Second reply",
+            question=self.question,
+            user=self.user2,
+            semester=self.semester,
+            parent_answer=reply_1,
+        )
+        reply_3 = Answer.objects.create(
+            text="Third reply",
+            question=self.question,
+            user=self.user1,
+            semester=self.semester,
+            parent_answer=reply_2,
+        )
+        Answer.objects.create(
+            text="Fourth reply",
+            question=self.question,
+            user=self.user2,
+            semester=self.semester,
+            parent_answer=reply_3,
+        )
+
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("qa_question_detail", args=[self.question.id])
+        )
+
+        self.assertContains(response, "First reply")
+        self.assertContains(response, "Second reply")
+        self.assertContains(response, "Third reply")
+        self.assertContains(response, "Fourth reply")
+        self.assertContains(response, 'class="response-count">(5)</span>', html=True)
+        self.assertContains(response, 'data-depth="4"', html=False)
+        self.assertContains(response, "thread-depth-3")
+        self.assertNotContains(response, "thread-depth-4")
+
     @suppress_request_warnings
     def test_question_detail_404_for_nonexistent(self):
         """Returns 404 for a nonexistent question ID."""
