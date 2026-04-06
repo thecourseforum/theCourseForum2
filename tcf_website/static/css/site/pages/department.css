@@ -281,21 +281,6 @@
   font-weight: var(--font-bold);
 }
 
-.rating-stat__value--success {
-  color: var(--success);
-}
-
-.rating-stat__value--warning {
-  color: var(--warning);
-}
-
-.rating-stat__value--danger {
-  color: var(--danger);
-}
-
-.rating-stat__value--muted {
-  color: var(--fg-muted);
-}
 
 .rating-stat__label {
   font-size: var(--text-xs);

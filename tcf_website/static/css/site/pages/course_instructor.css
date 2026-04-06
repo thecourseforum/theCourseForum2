@@ -224,6 +224,7 @@
   font-weight: var(--font-bold);
   line-height: 1;
   color: var(--primary);
+  font-variant-numeric: tabular-nums;
 }
 
 .stats-card__value--muted {
@@ -342,6 +343,18 @@
 
 .rating-row__value--muted {
   color: var(--fg-muted);
+}
+
+.rating-row__value--success {
+  color: var(--success);
+}
+
+.rating-row__value--warning {
+  color: var(--warning);
+}
+
+.rating-row__value--danger {
+  color: var(--danger);
 }
 
 .ratings-panel__divider {
