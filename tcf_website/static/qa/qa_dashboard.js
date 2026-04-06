@@ -77,6 +77,7 @@ function refreshDashboard(url) {
             initQuestionActions();
             initAnswerActions();
             initReplyForms();
+            initTooltips();
 
             if (data.selected_question_id) {
                 url.searchParams.set('question', data.selected_question_id);
