@@ -13,6 +13,7 @@ from django.db.models import (
     Exists,
     ExpressionWrapper,
     F,
+    FilteredRelation,
     FloatField,
     IntegerField,
     OuterRef,
@@ -87,7 +88,8 @@ class Department(models.Model):
         else:
             qs_filter = {
                 "subdepartment__department": self,
-                "semester_last_taught__year__gte": timezone.now().year - CATALOG_YEAR_WINDOW,
+                "semester_last_taught__year__gte": timezone.now().year
+                - CATALOG_YEAR_WINDOW,
             }
         return (
             Course.with_stats()
@@ -743,40 +745,58 @@ class Course(models.Model):
 
     @classmethod
     def with_stats(cls):
-        """Base queryset annotated with display stats (rating, difficulty, GPA, mnemonic)."""
+        """Base queryset annotated with display stats (rating, difficulty, GPA, mnemonic).
+
+        Uses a subquery for GPA to avoid a cartesian product between the review
+        and coursegrade tables (which would cause review rows to be multiplied
+        by the number of grade buckets before GROUP BY reduces them).
+        """
+        avg_gpa_sq = Subquery(
+            CourseGrade.objects.filter(course=OuterRef("pk"))
+            .values("course")
+            .annotate(v=Avg("average"))
+            .values("v")
+        )
         return cls.objects.select_related(
             "subdepartment", "semester_last_taught"
         ).annotate(
             mnemonic=F("subdepartment__mnemonic"),
-            average_rating=ExpressionWrapper(
+            average_rating=Avg(
                 (
-                    Avg("review__instructor_rating")
-                    + Avg("review__enjoyability")
-                    + Avg("review__recommendability")
+                    F("review__instructor_rating")
+                    + F("review__enjoyability")
+                    + F("review__recommendability")
                 )
-                / 3,
+                / Value(3.0),
                 output_field=FloatField(),
             ),
             average_difficulty=Avg("review__difficulty"),
-            average_gpa=Avg("coursegrade__average"),
+            average_gpa=avg_gpa_sq,
         )
 
     def get_instructors_and_data(self, latest_semester, latest_only=True):
         """Annotate instructors with ratings, difficulty, GPA, and semester last taught.
 
+        Uses FilteredRelation so the course condition moves into the JOIN ON clause
+        rather than a FILTER aggregate clause.  This lets PostgreSQL use the
+        (instructor_id, course_id) compound indexes on review and
+        courseinstructorgrade directly, and eliminates the cartesian product
+        between unrelated review and grade rows before GROUP BY.
+
         Args:
             latest_semester: The most recent semester
             latest_only: True → current semester only; False → last 5 years
         """
-        review_q = Q(review__course=self)
-        grade_q = Q(courseinstructorgrade__course=self)
-
         if latest_only:
-            base_filter = {"section__course": self, "section__semester": latest_semester}
+            base_filter = {
+                "section__course": self,
+                "section__semester": latest_semester,
+            }
         else:
             base_filter = {
                 "section__course": self,
-                "section__semester__year__gte": timezone.now().year - CATALOG_YEAR_WINDOW,
+                "section__semester__year__gte": timezone.now().year
+                - CATALOG_YEAR_WINDOW,
             }
 
         semester_last_taught = (
@@ -793,17 +813,25 @@ class Course(models.Model):
             Instructor.objects.filter(hidden=False, **base_filter)
             .distinct()
             .annotate(
+                course_reviews=FilteredRelation(
+                    "review", condition=Q(review__course=self)
+                ),
+                course_grades=FilteredRelation(
+                    "courseinstructorgrade",
+                    condition=Q(courseinstructorgrade__course=self),
+                ),
+            )
+            .annotate(
                 rating=Avg(
                     (
-                        F("review__instructor_rating")
-                        + F("review__enjoyability")
-                        + F("review__recommendability")
+                        F("course_reviews__instructor_rating")
+                        + F("course_reviews__enjoyability")
+                        + F("course_reviews__recommendability")
                     )
-                    / Value(3.0),
-                    filter=review_q,
+                    / Value(3.0)
                 ),
-                gpa=Avg("courseinstructorgrade__average", filter=grade_q),
-                difficulty=Avg("review__difficulty", filter=review_q),
+                gpa=Avg("course_grades__average"),
+                difficulty=Avg("course_reviews__difficulty"),
                 semester_last_taught=semester_last_taught,
             )
         )
