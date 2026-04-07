@@ -524,9 +524,9 @@ if (data) {
         const r = (arc.innerRadius + arc.outerRadius) / 2;
         const x = arc.x + Math.cos(midAngle) * r;
         const y = arc.y + Math.sin(midAngle) * r;
-        // Use white text on dark slices (red/orange), dark on light slices
-        const darkSlices = [8, 9]; // C-, DFW indices
-        ctx2.fillStyle = darkSlices.includes(i) ? '#fff' : '#000';
+        // Use white text on dark slices, dark text on light slices
+        const darkSlices = [0, 1, 8, 9]; // deep blue (A+, A) and deep orange (C-, DFW)
+        ctx2.fillStyle = darkSlices.includes(i) ? '#fff' : '#1c1917';
         ctx2.fillText(gradeLabels[i], x, y);
       });
       ctx2.restore();
@@ -534,10 +534,11 @@ if (data) {
   };
 
   const gradeColors = [
-    '#22c55e', '#4ade80', '#86efac',
-    '#facc15', '#fde047', '#fef08a',
-    '#fb923c', '#fdba74',
-    '#f87171', '#ef4444'
+    '#1d4ed8', '#3b82f6', '#60a5fa',  // A+, A, A-  (deep → light blue)
+    '#93c5fd',                          // B+          (lightest blue)
+    '#fed7aa', '#fdba74',               // B, B-       (light → medium orange)
+    '#fb923c', '#f97316',               // C+, C       (vivid orange)
+    '#ea580c', '#9a3412'                // C-, DFW     (dark orange → rust)
   ];
 
   function buildChartConfig(type) {
