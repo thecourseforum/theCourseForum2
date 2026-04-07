@@ -3,14 +3,12 @@
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
 from django.core.paginator import Page
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import (
     Avg,
-    Case,
     CharField,
     Exists,
     ExpressionWrapper,
@@ -23,14 +21,17 @@ from django.db.models import (
     Subquery,
     Sum,
     Value,
-    When,
     fields,
 )
 from django.db.models.functions import Abs, Coalesce, Concat, Round
+from django.utils import timezone
 
 from tcf_website.pagination import SECTION_DAY_CODE_TO_SECTIONTIME_FIELD, paginate
 
 # pylint: disable=line-too-long
+
+# Rolling window shared across catalog browse, search, and department pages.
+CATALOG_YEAR_WINDOW = 5
 
 
 class School(models.Model):
@@ -72,55 +73,48 @@ class Department(models.Model):
     def __str__(self):
         return self.name
 
-    # Fetches all courses in a department within the past `num_of_years' years
-    def fetch_recent_courses(self, num_of_years: int = 5):
-        """Return courses within last 'num_of_years' years with stats annotated."""
-        latest_semester = Semester.latest()
-        # to get the same season from n years earlier, subtract 10*n from semester number
+    def fetch_recent_courses(self, latest_only: bool = True):
+        """Return department courses with stats annotated.
+
+        latest_only=True  → current semester only
+        latest_only=False → last 5 years (catalog window)
+        """
+        if latest_only:
+            qs_filter = {
+                "subdepartment__department": self,
+                "semester_last_taught": Semester.latest(),
+            }
+        else:
+            qs_filter = {
+                "subdepartment__department": self,
+                "semester_last_taught__year__gte": timezone.now().year - CATALOG_YEAR_WINDOW,
+            }
         return (
-            Course.objects.filter(
-                subdepartment__department=self,
-                semester_last_taught__number__gte=latest_semester.number
-                - (10 * num_of_years),
-            )
-            .select_related("subdepartment", "semester_last_taught")
-            .annotate(
-                mnemonic=F("subdepartment__mnemonic"),
-                average_rating=ExpressionWrapper(
-                    (
-                        Avg("review__instructor_rating")
-                        + Avg("review__enjoyability")
-                        + Avg("review__recommendability")
-                    )
-                    / 3,
-                    output_field=FloatField(),
-                ),
-                average_difficulty=Avg("review__difficulty"),
-                average_gpa=Avg("coursegrade__average"),
-            )
+            Course.with_stats()
+            .filter(**qs_filter)
             .order_by("number", "subdepartment__name")
         )
 
     def sort_courses_by_key(
-        self, annotation, num_of_years: int = 5, reverse: bool = False
+        self, annotation, reverse: bool = False, latest_only: bool = True
     ):
         """Sort recent courses by key `annotation`"""
-        courses = self.fetch_recent_courses(num_of_years)
         sort_order = ("-" if reverse else "") + "sort_value"
-        return courses.annotate(sort_value=Round(annotation, 10)).order_by(
-            sort_order, "number", "subdepartment__name"
+        return (
+            self.fetch_recent_courses(latest_only)
+            .annotate(sort_value=Round(annotation, 10))
+            .order_by(sort_order, "number", "subdepartment__name")
         )
 
-    def sort_courses(self, sort_type: str, num_of_years: int = 5, order: str = "asc"):
-        """Sort courses according by `sort_type`"""
+    def sort_courses(
+        self, sort_type: str, order: str = "asc", latest_only: bool = True
+    ):
+        """Sort courses by `sort_type`"""
         reverse = order != "asc"
         match sort_type:
             case "course_id":
-                if reverse:
-                    return self.fetch_recent_courses(num_of_years)[::-1]
-                return self.fetch_recent_courses(num_of_years)
-            # setting annotation
-            # courses with no reviews put at bottom using Value()
+                qs = self.fetch_recent_courses(latest_only)
+                return qs[::-1] if reverse else qs
             case "rating":
                 annotation = Coalesce(
                     (
@@ -145,13 +139,13 @@ class Department(models.Model):
                     output_field=FloatField(),
                 )
 
-        return self.sort_courses_by_key(annotation, num_of_years, reverse)
+        return self.sort_courses_by_key(annotation, reverse, latest_only)
 
     def get_paginated_department_courses(
-        self, sort_type: str, num_of_years: int, order: str, page_number=1
+        self, sort_type: str, order: str, page_number=1, latest_only: bool = True
     ) -> "Page[Course]":
         """Generate sorted, paginated courses"""
-        return paginate(self.sort_courses(sort_type, num_of_years, order), page_number)
+        return paginate(self.sort_courses(sort_type, order, latest_only), page_number)
 
     class Meta:
         indexes = [
@@ -442,19 +436,28 @@ class Instructor(models.Model):
         self.full_name = f"{self.first_name} {self.last_name}".strip()
         super().save(*args, **kwargs)
 
-    def get_course_summaries(self):
-        """
-        Return a summary of courses taught by this instructor.
+    def get_course_summaries(self, latest_only: bool = True):
+        """Return a summary of courses taught by this instructor.
+
+        latest_only=True  → current semester only
+        latest_only=False → last 5 years (catalog window)
         """
         latest_semester = Semester.latest()
 
-        taught_by_exists = Exists(
-            Section.objects.filter(course=OuterRef("pk"), instructors=self)
-        )
+        if latest_only:
+            section_scope = Section.objects.filter(
+                course=OuterRef("pk"), instructors=self, semester=latest_semester
+            )
+        else:
+            section_scope = Section.objects.filter(
+                course=OuterRef("pk"),
+                instructors=self,
+                semester__year__gte=timezone.now().year - CATALOG_YEAR_WINDOW,
+            )
+
+        taught_by_exists = Exists(section_scope)
         latest_semester_number_sq = Subquery(
-            Section.objects.filter(course=OuterRef("pk"), instructors=self)
-            .order_by("-semester__number")
-            .values("semester__number")[:1]
+            section_scope.order_by("-semester__number").values("semester__number")[:1]
         )
         is_current_exists = Exists(
             Section.objects.filter(
@@ -738,129 +741,81 @@ class Course(models.Model):
         """Compute total number of course reviews."""
         return self.review_set.count()
 
-    def get_instructors_and_data(self, latest_semester, reverse, recent=False):
-        """Annotate instructors with relevant data including ratings, difficulty, GPA, etc.
-
-        Args:
-            latest_semester: The most recent semester
-            reverse: Whether to reverse sort (used for historical view)
-            recent: If True, only include instructors teaching in latest_semester
-        """
-        # Set default values based on whether we're using the optimized path or historical path
-        default_value = 0 if recent else (-1 if not reverse else 1e9)
-
-        # Build the base query
-        base_query = Instructor.objects.filter(hidden=False)
-
-        # Apply filter based on whether we want recent or historical instructors
-        if recent:
-            base_query = base_query.filter(
-                section__course=self,
-                section__semester=latest_semester,
-            )
-        else:
-            base_query = base_query.filter(section__course=self)
-
-        instructors = base_query.distinct().annotate(
-            instructor_rating=Coalesce(
-                Avg("review__instructor_rating", filter=Q(review__course=self)),
-                Value(default_value / 3),  # Divide by 3 for average
-                output_field=FloatField(),
-            ),
-            enjoyability=Coalesce(
-                Avg("review__enjoyability", filter=Q(review__course=self)),
-                Value(default_value / 3),
-                output_field=FloatField(),
-            ),
-            recommendability=Coalesce(
-                Avg("review__recommendability", filter=Q(review__course=self)),
-                Value(default_value / 3),
-                output_field=FloatField(),
-            ),
-            # Now calculate the combined rating
-            rating=ExpressionWrapper(
-                (F("instructor_rating") + F("enjoyability") + F("recommendability"))
+    @classmethod
+    def with_stats(cls):
+        """Base queryset annotated with display stats (rating, difficulty, GPA, mnemonic)."""
+        return cls.objects.select_related(
+            "subdepartment", "semester_last_taught"
+        ).annotate(
+            mnemonic=F("subdepartment__mnemonic"),
+            average_rating=ExpressionWrapper(
+                (
+                    Avg("review__instructor_rating")
+                    + Avg("review__enjoyability")
+                    + Avg("review__recommendability")
+                )
                 / 3,
                 output_field=FloatField(),
             ),
-            gpa=Coalesce(
-                Avg(
-                    "courseinstructorgrade__average",
-                    filter=Q(courseinstructorgrade__course=self),
-                ),
-                Value(default_value),
-                output_field=FloatField(),
-            ),
-            difficulty=Coalesce(
-                Avg("review__difficulty", filter=Q(review__course=self)),
-                Value(default_value),
-                output_field=FloatField(),
-            ),
+            average_difficulty=Avg("review__difficulty"),
+            average_gpa=Avg("coursegrade__average"),
         )
 
-        # Add section times, section numbers, and semester last taught
-        if recent:
-            # For recent instructors, use simpler annotation for current semester only
-            instructors = instructors.annotate(
-                section_times=ArrayAgg(
-                    "section__section_times",
-                    filter=Q(section__semester=latest_semester, section__course=self),
-                    distinct=True,
-                ),
-                section_nums=ArrayAgg(
-                    "section__sis_section_number",
-                    filter=Q(section__semester=latest_semester, section__course=self),
-                    distinct=True,
-                ),
-                semester_last_taught=Value(
-                    latest_semester.pk, output_field=IntegerField()
-                ),
-            )
+    def get_instructors_and_data(self, latest_semester, latest_only=True):
+        """Annotate instructors with ratings, difficulty, GPA, and semester last taught.
+
+        Args:
+            latest_semester: The most recent semester
+            latest_only: True → current semester only; False → last 5 years
+        """
+        review_q = Q(review__course=self)
+        grade_q = Q(courseinstructorgrade__course=self)
+
+        if latest_only:
+            base_filter = {"section__course": self, "section__semester": latest_semester}
         else:
-            # For historical, get last semester taught from subquery
-            semester_last_taught_subquery = Subquery(
+            base_filter = {
+                "section__course": self,
+                "section__semester__year__gte": timezone.now().year - CATALOG_YEAR_WINDOW,
+            }
+
+        semester_last_taught = (
+            Value(latest_semester.pk, output_field=IntegerField())
+            if latest_only
+            else Subquery(
                 Section.objects.filter(course=self, instructors=OuterRef("pk"))
                 .order_by("-semester__number")
                 .values("semester__id")[:1]
             )
+        )
 
-            instructors = instructors.annotate(
-                semester_last_taught=semester_last_taught_subquery,
-                section_times=ArrayAgg(
-                    Case(
-                        When(
-                            section__semester=latest_semester,
-                            then="section__section_times",
-                        ),
-                        output_field=CharField(),
-                    ),
-                    filter=Q(section__course=self),
-                    distinct=True,
+        return (
+            Instructor.objects.filter(hidden=False, **base_filter)
+            .distinct()
+            .annotate(
+                rating=Avg(
+                    (
+                        F("review__instructor_rating")
+                        + F("review__enjoyability")
+                        + F("review__recommendability")
+                    )
+                    / Value(3.0),
+                    filter=review_q,
                 ),
-                section_nums=ArrayAgg(
-                    Case(
-                        When(
-                            section__semester=latest_semester,
-                            then="section__sis_section_number",
-                        ),
-                        output_field=CharField(),
-                    ),
-                    filter=Q(section__course=self),
-                    distinct=True,
-                ),
+                gpa=Avg("courseinstructorgrade__average", filter=grade_q),
+                difficulty=Avg("review__difficulty", filter=review_q),
+                semester_last_taught=semester_last_taught,
             )
-
-        return instructors
+        )
 
     def sort_instructors_by_key(
         self,
         latest_semester: Semester,
-        recent: bool,
+        latest_only: bool,
         order: str,
         sortby: str,
     ):
-        """Sort instructors by `sortby`"""
-        # Map sort field names
+        """Sort instructors by `sortby`, NULLs always last."""
         sort_field_map = {
             "gpa": "gpa",
             "rating": "rating",
@@ -868,18 +823,14 @@ class Course(models.Model):
             "last_taught": "semester_last_taught",
         }
         sort_field = sort_field_map.get(sortby, "semester_last_taught")
-
-        # Determine sort order
-        reverse = order != "desc"
-        order_prefix = "" if reverse else "-"
-
-        # Get annotated instructors
-        instructors = self.get_instructors_and_data(latest_semester, reverse, recent)
-
-        # Apply sort
-        instructors = instructors.order_by(f"{order_prefix}{sort_field}")
-
-        return instructors
+        order_expr = (
+            F(sort_field).desc(nulls_last=True)
+            if order == "desc"
+            else F(sort_field).asc(nulls_last=True)
+        )
+        return self.get_instructors_and_data(latest_semester, latest_only).order_by(
+            order_expr
+        )
 
     @classmethod
     def filter_by_time(cls, days=None, start_time=None, end_time=None):

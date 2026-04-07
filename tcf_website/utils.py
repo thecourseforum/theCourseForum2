@@ -2,40 +2,22 @@
 
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from django.db.models import Avg, ExpressionWrapper, F, FloatField, Q, QuerySet
+from django.db.models import Q, QuerySet
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .models import Course, Semester
-
-# Rolling window for catalog browse/search and term pickers (calendar years).
-_CATALOG_YEAR_WINDOW = 5
+from .models import CATALOG_YEAR_WINDOW, Course, Semester
 
 
 def min_catalog_semester_year() -> int:
-    """First calendar year (inclusive) to show in the course catalog."""
-    return timezone.now().year - _CATALOG_YEAR_WINDOW
+    """First calendar year (inclusive) shown in the course catalog."""
+    return timezone.now().year - CATALOG_YEAR_WINDOW
 
 
 def browsable_course_queryset():
     """Visible catalog courses with stats annotated for display in cards."""
-    # pylint: disable=duplicate-code
     return (
-        Course.objects.select_related("subdepartment", "semester_last_taught")
-        .annotate(
-            mnemonic=F("subdepartment__mnemonic"),
-            average_rating=ExpressionWrapper(
-                (
-                    Avg("review__instructor_rating")
-                    + Avg("review__enjoyability")
-                    + Avg("review__recommendability")
-                )
-                / 3,
-                output_field=FloatField(),
-            ),
-            average_difficulty=Avg("review__difficulty"),
-            average_gpa=Avg("coursegrade__average"),
-        )
+        Course.with_stats()
         .filter(Q(number__isnull=True) | Q(number__range=(1000, 9999)))
         .filter(semester_last_taught__year__gte=min_catalog_semester_year())
     )

@@ -1,52 +1,37 @@
 """Department listing view."""
 
-from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
-from ...models import Department, Semester
+from ...models import Department
+from ...pagination import paginate
+
+_PAGE_SIZE = 20
 
 
-def department(request, dept_id: int, course_recency=None):
+def department(request, dept_id: int):
     """View for department page."""
     dept = get_object_or_404(
         Department.objects.prefetch_related("subdepartment_set"), pk=dept_id
     )
 
-    if not course_recency:
-        course_recency = str(Semester.latest())
-
-    breadcrumbs = [
-        (dept.school.name, reverse("browse"), False),
-        (dept.name, None, True),
-    ]
-
-    latest_semester = Semester.latest()
-    last_five_years = (
-        Semester.objects.filter(number=latest_semester.number - 50).first()
-        or latest_semester
+    latest_only = request.GET.get("latest", "true") != "false"
+    page_obj = paginate(
+        dept.fetch_recent_courses(latest_only=latest_only),
+        request.GET.get("page", 1),
+        per_page=_PAGE_SIZE,
     )
-
-    parts = course_recency.upper().split()
-    if len(parts) != 2:
-        raise Http404
-    season, year = parts
-    active_semester = Semester.objects.filter(year=year, season=season).first()
-    if not active_semester:
-        raise Http404
-
-    num_of_years = latest_semester.year - active_semester.year
-    courses = list(dept.fetch_recent_courses(num_of_years))
 
     return render(
         request,
         "site/catalog/department.html",
         {
             "dept_id": dept_id,
-            "latest_semester": str(latest_semester),
-            "breadcrumbs": breadcrumbs,
-            "courses": courses,
-            "active_course_recency": str(active_semester),
-            "last_five_years": str(last_five_years),
+            "breadcrumbs": [
+                (dept.school.name, reverse("browse"), False),
+                (dept.name, None, True),
+            ],
+            "page_obj": page_obj,
+            "latest_only": latest_only,
         },
     )

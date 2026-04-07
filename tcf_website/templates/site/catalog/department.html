@@ -9,10 +9,9 @@
 
 {% block content %}
 
-<!-- Header with Breadcrumb and Toolbar -->
+<!-- Header with Breadcrumb -->
 <div class="department-header">
   <div class="department-header__inner">
-    <!-- Breadcrumb -->
     <nav class="breadcrumb" aria-label="Breadcrumb">
       {% for item in breadcrumbs %}
         {% if item.2 %}
@@ -24,22 +23,10 @@
       {% endfor %}
     </nav>
 
-    <!-- Toolbar -->
     <div class="department-toolbar">
       <h1 class="department-toolbar__title">{{ breadcrumbs.1.0 }}</h1>
-
       <div class="department-toolbar__filters">
-        <!-- Recency Toggle -->
-        <div class="recency-toggle">
-          <a href="{% url 'department' dept_id=dept_id %}"
-             class="recency-toggle__option {% if active_course_recency == latest_semester %}is-active{% endif %}">
-            Current Semester
-          </a>
-          <a href="{% url 'department_course_recency' dept_id=dept_id course_recency=last_five_years %}"
-             class="recency-toggle__option {% if active_course_recency == last_five_years %}is-active{% endif %}">
-            Last 5 Years
-          </a>
-        </div>
+        {% include "site/common/components/_recency_toggle.html" %}
       </div>
     </div>
   </div>
@@ -47,32 +34,24 @@
 
 <!-- Course List -->
 <div class="department-content">
-  {% if not courses %}
-  <!-- Empty State -->
+  {% if not page_obj %}
   <div class="empty-state">
-    <h2 class="empty-state__title">
-      {% if active_course_recency == latest_semester %}
-        No courses this semester
-      {% else %}
-        No courses found
-      {% endif %}
-    </h2>
+    <h2 class="empty-state__title">No courses found</h2>
     <p class="empty-state__description">
-      {% if active_course_recency == latest_semester %}
-        It appears no courses are being taught this semester. Try viewing courses from the last 5 years.
+      {% if request.GET.latest != 'false' %}
+        No courses are being offered this semester. Try viewing the last 5 years.
       {% else %}
         Consider selecting a different department.
       {% endif %}
     </p>
   </div>
   {% else %}
-
   <div class="course-list">
-    {% for course in courses %}
+    {% for course in page_obj %}
     {% include "site/catalog/components/_course_card.html" with course=course %}
     {% endfor %}
   </div>
-
+  {% include "site/common/components/_pagination.html" with paginated_items=page_obj aria_label="Department courses pagination" %}
   {% endif %}
 </div>
 

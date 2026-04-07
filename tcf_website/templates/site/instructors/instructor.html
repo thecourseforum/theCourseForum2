@@ -26,8 +26,9 @@
       <span class="breadcrumb__current">{{ instructor.full_name }}</span>
     </nav>
     
-    <!-- Profile -->
-    <div class="instructor-profile">
+    <!-- Profile + Recency Toggle -->
+    <div class="department-toolbar">
+      <div class="instructor-profile">
       <div class="instructor-profile__info">
         <h1 class="instructor-profile__name">{{ instructor.full_name }}</h1>
         
@@ -71,16 +72,19 @@
         </div>
       </div>
     </div>
+      <div class="department-toolbar__filters">
+        {% include "site/common/components/_recency_toggle.html" %}
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- Courses Taught -->
 <div class="instructor-content">
-  {% if courses %}
-  {% for subdepartment_name, subdepartment_courses in courses.items %}
+  {% if grouped_courses %}
+  {% for subdepartment_name, subdepartment_courses in grouped_courses.items %}
   <section class="courses-section">
     <h2 class="courses-section__title">{{ subdepartment_name }}</h2>
-    
     <div class="course-list">
       {% for course in subdepartment_courses %}
       {% include "site/courses/components/_course_taught_card.html" with course=course %}
@@ -88,8 +92,8 @@
     </div>
   </section>
   {% endfor %}
+  {% include "site/common/components/_pagination.html" with paginated_items=page_obj aria_label="Instructor courses pagination" %}
   {% else %}
-  <!-- Empty State -->
   <div class="empty-state">
     <h2 class="empty-state__title">No courses found</h2>
     <p class="empty-state__description">

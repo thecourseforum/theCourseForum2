@@ -273,9 +273,3 @@
   margin-top: var(--space-2);
   color: var(--fg-muted);
 }
-
-.search-pagination {
-  margin-top: var(--space-5);
-  justify-content: center;
-  flex-wrap: wrap;
-}
