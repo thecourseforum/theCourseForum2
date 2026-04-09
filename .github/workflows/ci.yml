@@ -108,7 +108,7 @@ jobs:
       - name: Get code coverage
         id: coverage
         run: |
-          echo "percentage=$(uv run coverage report | grep -o '[0-9]\+%' | tail -1)" >> $GITHUB_OUTPUT
+          echo "percentage=$(uv run coverage report | grep -o '[0-9]\+%' | tail -1)" >> "$GITHUB_OUTPUT"
 
   eslint:
     runs-on: ubuntu-latest
