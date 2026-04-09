@@ -1373,7 +1373,7 @@ class Review(models.Model):
     ) -> "Page[Review]":
         """Generate sorted, paginated reviews"""
         reviews = Review.get_sorted_reviews(course_id, instructor_id, user, method)
-        return Review.paginate(reviews, page_number)
+        return Review.paginate(reviews, page_number) 
 
     def __str__(self):
         return f"Review by {self.user} for {self.course} taught by {self.instructor}"

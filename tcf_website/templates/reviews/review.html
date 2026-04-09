@@ -57,8 +57,7 @@
                         <!-- Display reviewer's semester and updated date of review if on review page -->
                         <div class="review-header">
                             <div class="d-flex justify-content-between">
-                                <h6 class="font-weight-bold text-tcf-orange">{{ review.user.nickname|default:"anonymous"
-                                    }} • {{ review.semester }}</h6>
+                                <h6 class="font-weight-bold text-tcf-orange">{{ review.user.nickname }} • {{ review.semester }}</h6>
                                 <h6 id="date" class="text-muted">Updated {{ review.created|date:"n/d/y" }}</h6>
                             </div>
                         </div>
