@@ -1,23 +1,40 @@
 {% load custom_tags %}
 <article class="scheduled-course-card">
-  <div class="scheduled-course-card__info">
-    <h3 class="scheduled-course-card__title">{{ course.title }}</h3>
-    <p class="scheduled-course-card__meta">
-      {{ course.instructor|remove_email }} • Section {{ course.section.sis_section_number }}
-    </p>
-    <p class="scheduled-course-card__time">{{ course.time|default:course.section.section_times|default:"No time listed" }}</p>
-  </div>
-
-  <div class="scheduled-course-card__stats">
-    <span>GPA: {% if course.gpa %}{{ course.gpa|floatformat:2 }}{% else %}—{% endif %}</span>
-    <span>Rating: {% if course.total_rating %}{{ course.total_rating|floatformat:2 }}{% else %}—{% endif %}</span>
-  </div>
-
-  {% if schedule_owner_id == request.user.id and not hide_remove %}
-  <form method="post" action="{% url 'remove_scheduled_course' course.id %}" data-schedule-async>
-    {% csrf_token %}
-    <input type="hidden" name="next" value="{{ schedule_builder_return_url }}">
-    <button type="submit" class="btn btn--ghost btn--sm schedule-builder__action-btn schedule-builder__btn-danger">Remove</button>
-  </form>
-  {% endif %}
+    <div class="scheduled-course-card__info">
+        <h3 class="scheduled-course-card__title">{{ course.title }}</h3>
+        <p class="scheduled-course-card__meta">
+            {{ course.instructor|remove_email }} • Section {{ course.section.sis_section_number }}
+        </p>
+        <p class="scheduled-course-card__time">
+            {{ course.time|default:course.section.section_times|default:"No time listed" }}
+        </p>
+    </div>
+    <div class="scheduled-course-card__stats">
+        <span>GPA:
+            {% if course.gpa %}
+                {{ course.gpa|floatformat:2 }}
+            {% else %}
+                —
+            {% endif %}
+        </span>
+        <span>Rating:
+            {% if course.total_rating %}
+                {{ course.total_rating|floatformat:2 }}
+            {% else %}
+                —
+            {% endif %}
+        </span>
+    </div>
+    {% if schedule_owner_id == request.user.id and not hide_remove %}
+        <form method="post"
+              action="{% url 'remove_scheduled_course' course.id %}"
+              data-schedule-async>
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ schedule_builder_return_url }}">
+            <button type="submit"
+                    class="btn btn--ghost btn--sm schedule-builder__action-btn schedule-builder__btn-danger">
+                Remove
+            </button>
+        </form>
+    {% endif %}
 </article>

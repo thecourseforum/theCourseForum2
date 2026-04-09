@@ -249,10 +249,15 @@
 }
 
 .rating-row__fill {
+  width: 0%;
   height: 100%;
   border-radius: var(--radius-full);
 
   transition: width var(--duration-normal) var(--ease-default);
+}
+
+.rating-row__bar--spacer {
+  visibility: hidden;
 }
 
 .rating-row__fill--success {
@@ -490,29 +495,30 @@
 
 .enrollment-stat__bar {
   width: 60px;
+  line-height: 0;
+}
+
+.enrollment-stat__svg {
+  display: block;
+  width: 60px;
   height: 6px;
-
-  background-color: var(--bg-muted);
-  border-radius: var(--radius-full);
-
-  overflow: hidden;
-}
-
-.enrollment-stat__fill {
-  height: 100%;
   border-radius: var(--radius-full);
 }
 
-.enrollment-stat__fill--success {
-  background-color: var(--success);
+.enrollment-stat__svg-track {
+  fill: var(--bg-muted);
 }
 
-.enrollment-stat__fill--danger {
-  background-color: var(--danger);
+.enrollment-stat__svg-fill--success {
+  fill: var(--success);
 }
 
-.enrollment-stat__fill--warning {
-  background-color: var(--warning);
+.enrollment-stat__svg-fill--danger {
+  fill: var(--danger);
+}
+
+.enrollment-stat__svg-fill--warning {
+  fill: var(--warning);
 }
 
 /* ===== AI SUMMARY ===== */

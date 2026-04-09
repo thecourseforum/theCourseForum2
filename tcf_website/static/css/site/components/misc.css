@@ -356,10 +356,26 @@ span.pagination__item {
 }
 
 .leaderboard-ad__slot {
+  display: block;
+  height: 90px;
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   background-color: var(--bg-elevated);
   overflow: hidden;
+}
+
+/* Google Tag Manager noscript iframe */
+.gtm-noscript-iframe {
+  display: none;
+  visibility: hidden;
+}
+
+.tcf-http404 {
+  text-align: center;
+}
+
+.tcf-http404__heading {
+  margin-top: 1rem;
 }
 
 

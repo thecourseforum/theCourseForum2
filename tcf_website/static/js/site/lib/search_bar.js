@@ -11,7 +11,7 @@ function addArrowKeyNav(
     return Array.from(container.querySelectorAll(itemSelector));
   }
   function isOpen() {
-    return !container.hidden && container.style.display !== "none";
+    return !container.hidden;
   }
   input.addEventListener("keydown", (e) => {
     if (!isOpen()) return;
@@ -70,7 +70,7 @@ window.addArrowKeyNav = addArrowKeyNav;
           if (ac.contains(t) || t === input) {
             return;
           }
-          ac.style.display = "none";
+          ac.hidden = true;
         });
     });
   }
@@ -111,7 +111,7 @@ window.addArrowKeyNav = addArrowKeyNav;
       const mode = modeInput ? modeInput.value : "courses";
 
       if (query.length < 2) {
-        autocompleteContainer.style.display = "none";
+        autocompleteContainer.hidden = true;
         autocompleteContainer.innerHTML = "";
         return;
       }
@@ -150,7 +150,7 @@ window.addArrowKeyNav = addArrowKeyNav;
           })
           .then(function (html) {
             autocompleteContainer.innerHTML = html;
-            autocompleteContainer.style.display = "block";
+            autocompleteContainer.hidden = false;
           })
           .catch(function (err) {
             console.error("Autocomplete error:", err);
@@ -163,7 +163,7 @@ window.addArrowKeyNav = addArrowKeyNav;
         searchInput.value.trim().length >= 2 &&
         autocompleteContainer.innerHTML.trim() !== ""
       ) {
-        autocompleteContainer.style.display = "block";
+        autocompleteContainer.hidden = false;
       }
     });
 

@@ -1,389 +1,398 @@
 {% extends "site/common/base.html" %}
 {% load static %}
 {% load custom_tags %}
-
-{% block title %}{{ course.code }} | {{ instructor.full_name }} | theCourseForum{% endblock %}
-
+{% block title %}
+    {{ course.code }} | {{ instructor.full_name }} | theCourseForum
+{% endblock title %}
 {% block page_metadata %}
-{% if course_code %}<meta name="course-code" content="{{ course_code }}">{% endif %}
-{% if course_title %}<meta name="course-title" content="{{ course_title }}">{% endif %}
-{% if instructor_fullname %}<meta name="instructor-name" content="{{ instructor_fullname }}">{% endif %}
-{% if not is_current_semester %}
-<meta name="robots" content="noindex">
-{% endif %}
-{% endblock %}
-
+    {% if course_code %}<meta name="course-code" content="{{ course_code }}">{% endif %}
+    {% if course_title %}<meta name="course-title" content="{{ course_title }}">{% endif %}
+    {% if instructor_fullname %}<meta name="instructor-name" content="{{ instructor_fullname }}">{% endif %}
+    {% if not is_current_semester %}<meta name="robots" content="noindex">{% endif %}
+{% endblock page_metadata %}
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/site/pages/course_instructor.css' %}">
-<link rel="stylesheet" href="{% static 'css/site/pages/course_instructor_grades.css' %}">
-{% endblock %}
-
+    <link rel="stylesheet"
+          href="{% static 'css/site/pages/course_instructor.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'css/site/pages/course_instructor_grades.css' %}">
+{% endblock styles %}
 {% block content %}
-
-<!-- Header -->
-<div class="course-instructor-header">
-  <div class="course-instructor-header__inner">
-    <!-- Breadcrumb -->
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      {% for crumb in breadcrumbs %}
-      {% if crumb.2 %}
-      <span class="breadcrumb__current">{{ crumb.0 }}</span>
-      {% else %}
-      <a href="{{ crumb.1 }}" class="breadcrumb__link">{{ crumb.0 }}</a>
-      <span class="breadcrumb__separator">/</span>
-      {% endif %}
-      {% endfor %}
-    </nav>
-    
-    <!-- Title -->
-    <div class="course-instructor-title">
-      <div class="course-instructor-title__content">
-        <span class="course-instructor-title__code">{{ course.code }}</span>
-        <span class="course-instructor-title__name">{{ course.title }}</span>
-      </div>
+    <!-- Header -->
+    <div class="course-instructor-header">
+        <div class="course-instructor-header__inner">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                {% for crumb in breadcrumbs %}
+                    {% if crumb.2 %}
+                        <span class="breadcrumb__current">{{ crumb.0 }}</span>
+                    {% else %}
+                        <a href="{{ crumb.1 }}" class="breadcrumb__link">{{ crumb.0 }}</a>
+                        <span class="breadcrumb__separator">/</span>
+                    {% endif %}
+                {% endfor %}
+            </nav>
+            <!-- Title -->
+            <div class="course-instructor-title">
+                <div class="course-instructor-title__content">
+                    <span class="course-instructor-title__code">{{ course.code }}</span>
+                    <span class="course-instructor-title__name">{{ course.title }}</span>
+                </div>
+            </div>
+            <!-- Instructor Row -->
+            <div class="instructor-row">
+                <div class="instructor-row__left">
+                    <a href="{% url 'instructor' instructor.id %}" class="instructor-link">
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v 2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        {{ instructor.full_name }}
+                    </a>
+                </div>
+                <div class="instructor-row__meta">
+                    <span class="semester-badge">Last taught: {{ semester_last_taught }}</span>
+                    {% if show_schedule_add %}
+                        {% include "site/courses/components/_schedule_add_button.html" with course=course button_id="addToScheduleBtn" %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <!-- Instructor Row -->
-    <div class="instructor-row">
-      <div class="instructor-row__left">
-        <a href="{% url 'instructor' instructor.id %}" class="instructor-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v 2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-          {{ instructor.full_name }}
-        </a>
-      </div>
-
-      <div class="instructor-row__meta">
-        <span class="semester-badge">
-          Last taught: {{ semester_last_taught }}
-        </span>
-        {% if show_schedule_add %}
-        {% include "site/courses/components/_schedule_add_button.html" with course=course button_id="addToScheduleBtn" %}
+    <!-- Content -->
+    <div class="course-instructor-content">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <!-- Left Column: Ratings + Hours -->
+            <div class="stats-left">
+                <!-- Big Numbers Row -->
+                <div class="stats-summary">
+                    <div class="stats-card">
+                        <span class="stats-card__value stats-card__value--muted"
+                              id="avg-rating-big">—</span>
+                        <span class="stats-card__label">☆ Rating</span>
+                    </div>
+                    <div class="stats-card">
+                        <span class="stats-card__value stats-card__value--muted"
+                              id="avg-difficulty-big">—</span>
+                        <span class="stats-card__label">Difficulty</span>
+                    </div>
+                    <div class="stats-card">
+                        <span class="stats-card__value stats-card__value--muted" id="avg-gpa-big">—</span>
+                        <span class="stats-card__label">GPA</span>
+                    </div>
+                </div>
+                <!-- Ratings Panel -->
+                <div class="ratings-panel">
+                    <div id="ratings-container">
+                        <div class="rating-row">
+                            <span class="rating-row__label">Instructor</span>
+                            <div class="rating-row__bar">
+                                <div class="rating-row__fill rating-row__fill--success instructor-bar"></div>
+                            </div>
+                            <span class="rating-row__value rating-row__value--muted instructor-num">—</span>
+                        </div>
+                        <div class="rating-row">
+                            <span class="rating-row__label">Enjoyability</span>
+                            <div class="rating-row__bar">
+                                <div class="rating-row__fill rating-row__fill--success fun-bar"></div>
+                            </div>
+                            <span class="rating-row__value rating-row__value--muted fun-num">—</span>
+                        </div>
+                        <div class="rating-row">
+                            <span class="rating-row__label">Difficulty</span>
+                            <div class="rating-row__bar">
+                                <div class="rating-row__fill rating-row__fill--warning difficulty-bar"></div>
+                            </div>
+                            <span class="rating-row__value rating-row__value--muted difficulty-num">—</span>
+                        </div>
+                        <div class="rating-row">
+                            <span class="rating-row__label">Recommend</span>
+                            <div class="rating-row__bar">
+                                <div class="rating-row__fill rating-row__fill--success recommend-bar"></div>
+                            </div>
+                            <span class="rating-row__value rating-row__value--muted recommend-num">—</span>
+                        </div>
+                        <div class="ratings-panel__divider"></div>
+                        <div class="rating-row rating-row--compact">
+                            <span class="rating-row__label">Reading</span>
+                            <div class="rating-row__bar">
+                                <div class="rating-row__fill rating-row__fill--warning reading-bar"></div>
+                            </div>
+                            <span class="rating-row__value rating-row__value--muted reading-num">—</span>
+                        </div>
+                        <div class="rating-row rating-row--compact">
+                            <span class="rating-row__label">Writing</span>
+                            <div class="rating-row__bar">
+                                <div class="rating-row__fill rating-row__fill--warning writing-bar"></div>
+                            </div>
+                            <span class="rating-row__value rating-row__value--muted writing-num">—</span>
+                        </div>
+                        <div class="rating-row rating-row--compact">
+                            <span class="rating-row__label">Groupwork</span>
+                            <div class="rating-row__bar">
+                                <div class="rating-row__fill rating-row__fill--warning group-bar"></div>
+                            </div>
+                            <span class="rating-row__value rating-row__value--muted group-num">—</span>
+                        </div>
+                        <div class="rating-row rating-row--compact">
+                            <span class="rating-row__label">Other</span>
+                            <div class="rating-row__bar">
+                                <div class="rating-row__fill rating-row__fill--warning homework-bar"></div>
+                            </div>
+                            <span class="rating-row__value rating-row__value--muted homework-num">—</span>
+                        </div>
+                        <div class="ratings-panel__divider"></div>
+                        <div class="rating-row rating-row--compact">
+                            <span class="rating-row__label">Total Hours</span>
+                            <div class="rating-row__bar rating-row__bar--spacer"></div>
+                            <span class="rating-row__value rating-row__value--muted total-hours-num">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column: Grade Distribution -->
+            <div class="grades-panel">
+                <div class="grades-panel__header">
+                    <h2 class="grades-panel__title">Grade Distribution</h2>
+                    <div class="grades-panel__toggle">
+                        <button id="toggle-chart-type" class="btn-sm btn-outline">Bar</button>
+                    </div>
+                </div>
+                <div class="grades-panel__chart-container">
+                    <canvas id="gradesChart"></canvas>
+                    <div id="grades-empty" class="grades-panel__empty">
+                        <svg class="grades-panel__empty-icon"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M8 15h8"></path>
+                            <path d="M9 9h.01"></path>
+                            <path d="M15 9h.01"></path>
+                        </svg>
+                        <p>No grade data available</p>
+                    </div>
+                </div>
+                <div class="grades-panel__summary">
+                    <div class="grades-metric">
+                        <span class="grades-metric__label">Average GPA</span>
+                        <span class="grades-metric__value" id="average-gpa-value">—</span>
+                    </div>
+                    <div class="grades-metric">
+                        <span class="grades-metric__label">Students Measured</span>
+                        <span class="grades-metric__value" id="grade-sample-size">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Sections Panel (separate row) -->
+        {% if display_times and sections_count %}
+            <div class="sections-panel">
+                <div class="sections-panel__header">
+                    <h2 class="sections-panel__title">Sections</h2>
+                    <span class="sections-panel__count">{{ sections_count }}</span>
+                </div>
+                <div class="sections-panel__list sections-panel__list--horizontal">
+                    {% if lecture_sections %}
+                        <div class="sections-panel__group">
+                            <h3 class="sections-panel__group-title">Lecture ({{ lecture_sections|length }})</h3>
+                            {% for section in lecture_sections %}
+                                {% include "site/courses/components/_section_card.html" with section=section sem_code=sem_code %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if other_sections %}
+                        <div class="sections-panel__group">
+                            <h3 class="sections-panel__group-title">Other Sections ({{ other_sections|length }})</h3>
+                            {% for section in other_sections %}
+                                {% include "site/courses/components/_section_card.html" with section=section sem_code=sem_code %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         {% endif %}
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Content -->
-<div class="course-instructor-content">
-  <!-- Stats Grid -->
-  <div class="stats-grid">
-    <!-- Left Column: Ratings + Hours -->
-    <div class="stats-left">
-      <!-- Big Numbers Row -->
-      <div class="stats-summary">
-        <div class="stats-card">
-          <span class="stats-card__value stats-card__value--muted" id="avg-rating-big">—</span>
-          <span class="stats-card__label">☆ Rating</span>
-        </div>
-        <div class="stats-card">
-          <span class="stats-card__value stats-card__value--muted" id="avg-difficulty-big">—</span>
-          <span class="stats-card__label">Difficulty</span>
-        </div>
-        <div class="stats-card">
-          <span class="stats-card__value stats-card__value--muted" id="avg-gpa-big">—</span>
-          <span class="stats-card__label">GPA</span>
-        </div>
-      </div>
-
-      <!-- Ratings Panel -->
-      <div class="ratings-panel">
-        <div id="ratings-container">
-          <div class="rating-row">
-            <span class="rating-row__label">Instructor</span>
-            <div class="rating-row__bar">
-              <div class="rating-row__fill rating-row__fill--success instructor-bar" style="width: 0%"></div>
+        {% if review_summary %}
+            <div class="ai-summary">
+                <div class="ai-summary__header">
+                    <span class="ai-summary__label">Review Summary</span>
+                    <span class="ai-summary__meta">Updated {{ review_summary.updated_at|date:"F d, Y" }}</span>
+                </div>
+                <p class="ai-summary__text">{{ review_summary.summary_text }}</p>
             </div>
-            <span class="rating-row__value rating-row__value--muted instructor-num">—</span>
-          </div>
-          <div class="rating-row">
-            <span class="rating-row__label">Enjoyability</span>
-            <div class="rating-row__bar">
-              <div class="rating-row__fill rating-row__fill--success fun-bar" style="width: 0%"></div>
-            </div>
-            <span class="rating-row__value rating-row__value--muted fun-num">—</span>
-          </div>
-          <div class="rating-row">
-            <span class="rating-row__label">Difficulty</span>
-            <div class="rating-row__bar">
-              <div class="rating-row__fill rating-row__fill--warning difficulty-bar" style="width: 0%"></div>
-            </div>
-            <span class="rating-row__value rating-row__value--muted difficulty-num">—</span>
-          </div>
-          <div class="rating-row">
-            <span class="rating-row__label">Recommend</span>
-            <div class="rating-row__bar">
-              <div class="rating-row__fill rating-row__fill--success recommend-bar" style="width: 0%"></div>
-            </div>
-            <span class="rating-row__value rating-row__value--muted recommend-num">—</span>
-          </div>
-
-          <div class="ratings-panel__divider"></div>
-
-          <div class="rating-row rating-row--compact">
-            <span class="rating-row__label">Reading</span>
-            <div class="rating-row__bar">
-              <div class="rating-row__fill rating-row__fill--warning reading-bar" style="width: 0%"></div>
-            </div>
-            <span class="rating-row__value rating-row__value--muted reading-num">—</span>
-          </div>
-          <div class="rating-row rating-row--compact">
-            <span class="rating-row__label">Writing</span>
-            <div class="rating-row__bar">
-              <div class="rating-row__fill rating-row__fill--warning writing-bar" style="width: 0%"></div>
-            </div>
-            <span class="rating-row__value rating-row__value--muted writing-num">—</span>
-          </div>
-          <div class="rating-row rating-row--compact">
-            <span class="rating-row__label">Groupwork</span>
-            <div class="rating-row__bar">
-              <div class="rating-row__fill rating-row__fill--warning group-bar" style="width: 0%"></div>
-            </div>
-            <span class="rating-row__value rating-row__value--muted group-num">—</span>
-          </div>
-          <div class="rating-row rating-row--compact">
-            <span class="rating-row__label">Other</span>
-            <div class="rating-row__bar">
-              <div class="rating-row__fill rating-row__fill--warning homework-bar" style="width: 0%"></div>
-            </div>
-            <span class="rating-row__value rating-row__value--muted homework-num">—</span>
-          </div>
-
-          <div class="ratings-panel__divider"></div>
-
-          <div class="rating-row rating-row--compact">
-            <span class="rating-row__label">Total Hours</span>
-            <div class="rating-row__bar" style="visibility: hidden"></div>
-            <span class="rating-row__value rating-row__value--muted total-hours-num">—</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right Column: Grade Distribution -->
-    <div class="grades-panel">
-      <div class="grades-panel__header">
-        <h2 class="grades-panel__title">Grade Distribution</h2>
-        <div class="grades-panel__toggle">
-          <button id="toggle-chart-type" class="btn-sm btn-outline">Bar</button>
-        </div>
-      </div>
-      <div class="grades-panel__chart-container">
-        <canvas id="gradesChart"></canvas>
-        <div id="grades-empty" class="grades-panel__empty" style="display: none;">
-          <svg class="grades-panel__empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M8 15h8"></path>
-            <path d="M9 9h.01"></path>
-            <path d="M15 9h.01"></path>
-          </svg>
-          <p>No grade data available</p>
-        </div>
-      </div>
-      <div class="grades-panel__summary">
-        <div class="grades-metric">
-          <span class="grades-metric__label">Average GPA</span>
-          <span class="grades-metric__value" id="average-gpa-value">—</span>
-        </div>
-        <div class="grades-metric">
-          <span class="grades-metric__label">Students Measured</span>
-          <span class="grades-metric__value" id="grade-sample-size">—</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Sections Panel (separate row) -->
-  {% if display_times and sections_count %}
-  <div class="sections-panel">
-    <div class="sections-panel__header">
-      <h2 class="sections-panel__title">Sections</h2>
-      <span class="sections-panel__count">{{ sections_count }}</span>
-    </div>
-    <div class="sections-panel__list sections-panel__list--horizontal">
-      {% if lecture_sections %}
-      <div class="sections-panel__group">
-        <h3 class="sections-panel__group-title">Lecture ({{ lecture_sections|length }})</h3>
-        {% for section in lecture_sections %}
-        {% include "site/courses/components/_section_card.html" with section=section sem_code=sem_code %}
-        {% endfor %}
-      </div>
-      {% endif %}
-
-      {% if other_sections %}
-      <div class="sections-panel__group">
-        <h3 class="sections-panel__group-title">Other Sections ({{ other_sections|length }})</h3>
-        {% for section in other_sections %}
-        {% include "site/courses/components/_section_card.html" with section=section sem_code=sem_code %}
-        {% endfor %}
-      </div>
-      {% endif %}
-    </div>
-  </div>
-  {% endif %}
-  
-  {% if review_summary %}
-  <div class="ai-summary">
-    <div class="ai-summary__header">
-      <span class="ai-summary__label">Review Summary</span>
-      <span class="ai-summary__meta">Updated {{ review_summary.updated_at|date:"F d, Y" }}</span>
-    </div>
-    <p class="ai-summary__text">{{ review_summary.summary_text }}</p>
-  </div>
-  {% endif %}
-
-  <section class="reviews-section" id="reviews">
-    <div class="reviews-header">
-      <h2 class="reviews-header__title">{{ num_reviews }} Review{{ num_reviews|pluralize }}</h2>
-
-      <div class="reviews-header__actions">
-        {% if user.is_authenticated %}
-        <a href="{% mode_url request 'new_review' query_course=course.id query_instructor=instructor.id %}" class="btn btn--primary btn--md add-review-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          Add Review
-        </a>
-        {% else %}
-        <a href="#" class="btn btn--primary btn--md add-review-btn" data-action="login">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          Add Review
-        </a>
         {% endif %}
-
-        {% if paginated_reviews and num_reviews > 0 %}
-        <select class="select reviews-sort-select" id="review-sort" aria-label="Sort reviews">
-          <option value="">Sort by...</option>
-          <option value="Most Helpful" {% if sort_method == "Most Helpful" %}selected{% endif %}>Most Helpful</option>
-          <option value="Most Recent" {% if sort_method == "Most Recent" %}selected{% endif %}>Most Recent</option>
-          <option value="Highest Rating" {% if sort_method == "Highest Rating" %}selected{% endif %}>Highest Rating</option>
-          <option value="Lowest Rating" {% if sort_method == "Lowest Rating" %}selected{% endif %}>Lowest Rating</option>
-        </select>
-        {% endif %}
-      </div>
+        <section class="reviews-section" id="reviews">
+            <div class="reviews-header">
+                <h2 class="reviews-header__title">{{ num_reviews }} Review{{ num_reviews|pluralize }}</h2>
+                <div class="reviews-header__actions">
+                    {% if user.is_authenticated %}
+                        <a href="{% mode_url request 'new_review' query_course=course.id query_instructor=instructor.id %}"
+                           class="btn btn--primary btn--md add-review-btn">
+                            <svg viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Add Review
+                        </a>
+                    {% else %}
+                        <a href="#"
+                           class="btn btn--primary btn--md add-review-btn"
+                           data-action="login">
+                            <svg viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Add Review
+                        </a>
+                    {% endif %}
+                    {% if paginated_reviews and num_reviews > 0 %}
+                        <select class="select reviews-sort-select"
+                                id="review-sort"
+                                aria-label="Sort reviews">
+                            <option value="">Sort by...</option>
+                            <option value="Most Helpful"
+                                    {% if sort_method == "Most Helpful" %}selected{% endif %}>Most Helpful</option>
+                            <option value="Most Recent"
+                                    {% if sort_method == "Most Recent" %}selected{% endif %}>Most Recent</option>
+                            <option value="Highest Rating"
+                                    {% if sort_method == "Highest Rating" %}selected{% endif %}>Highest Rating</option>
+                            <option value="Lowest Rating"
+                                    {% if sort_method == "Lowest Rating" %}selected{% endif %}>Lowest Rating</option>
+                        </select>
+                    {% endif %}
+                </div>
+            </div>
+            <div id="reviews-results">
+                {% if paginated_reviews and num_reviews > 0 %}
+                    {% for review in paginated_reviews %}
+                        <article class="review-card">
+                            <div class="review-card__header">
+                                <div class="review-card__meta">
+                                    <span class="review-card__semester">{{ review.semester }}</span>
+                                    {% if review.grade %}<span>Grade: {{ review.grade }}</span>{% endif %}
+                                </div>
+                                <div class="review-card__ratings">
+                                    <div class="review-rating">
+                                        <div class="review-rating__value">{{ review.average|floatformat:1 }}</div>
+                                        <div class="review-rating__label">Average</div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if review.text %}<p class="review-card__text">{{ review.text|linebreaksbr }}</p>{% endif %}
+                            <div class="review-card__category-grid">
+                                <div class="review-category">
+                                    <span class="review-category__label">Instructor</span>
+                                    <span class="review-category__value">{{ review.instructor_rating|floatformat:1 }}</span>
+                                </div>
+                                <div class="review-category">
+                                    <span class="review-category__label">Enjoyability</span>
+                                    <span class="review-category__value">{{ review.enjoyability|floatformat:1 }}</span>
+                                </div>
+                                <div class="review-category">
+                                    <span class="review-category__label">Recommend</span>
+                                    <span class="review-category__value">{{ review.recommendability|floatformat:1 }}</span>
+                                </div>
+                                <div class="review-category">
+                                    <span class="review-category__label">Difficulty</span>
+                                    <span class="review-category__value">{{ review.difficulty|floatformat:1 }}</span>
+                                </div>
+                                <div class="review-category">
+                                    <span class="review-category__label">Hours/Week</span>
+                                    <span class="review-category__value">{{ review.hours_per_week|floatformat:1 }}</span>
+                                </div>
+                            </div>
+                            <div class="review-card__footer">
+                                <div class="review-card__votes">
+                                    <button class="vote-btn {% if review.user_vote > 0 %}is-active{% endif %}"
+                                            type="button"
+                                            data-action="upvote"
+                                            data-review="{{ review.id }}">
+                                        <svg viewBox="0 0 24 24"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             stroke-width="2">
+                                            <path d="m5 15 7-7 7 7" />
+                                        </svg>
+                                        <span>{{ review.sum_votes|default:0 }}</span>
+                                    </button>
+                                    <button class="vote-btn {% if review.user_vote < 0 %}is-active{% endif %}"
+                                            type="button"
+                                            data-action="downvote"
+                                            data-review="{{ review.id }}">
+                                        <svg viewBox="0 0 24 24"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             stroke-width="2">
+                                            <path d="m19 9-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <span class="review-card__date">{{ review.created|date }}</span>
+                            </div>
+                        </article>
+                        {% if forloop.revcounter0|divisibleby:5 %}
+                            {% include "site/common/components/_leaderboard_ad.html" %}
+                        {% endif %}
+                    {% endfor %}
+                    {% include "site/common/components/_pagination.html" with paginated_items=paginated_reviews anchor="reviews" aria_label="Reviews pagination" %}
+                {% else %}
+                    <div class="reviews-empty">
+                        <svg class="reviews-empty__icon"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <h3 class="reviews-empty__title">No reviews yet</h3>
+                        <p class="reviews-empty__text">Be the first to share your experience with this course!</p>
+                        {% if user.is_authenticated %}
+                            <a href="{% mode_url request 'new_review' query_course=course.id query_instructor=instructor.id %}"
+                               class="btn btn--primary btn--md add-review-btn">
+                                <svg viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Add Review
+                            </a>
+                        {% else %}
+                            <a href="#"
+                               class="btn btn--primary btn--md add-review-btn"
+                               data-action="login">
+                                <svg viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Sign in to Add Review
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </section>
     </div>
-
-    <div id="reviews-results">
-    {% if paginated_reviews and num_reviews > 0 %}
-    {% for review in paginated_reviews %}
-    <article class="review-card">
-      <div class="review-card__header">
-        <div class="review-card__meta">
-          <span class="review-card__semester">{{ review.semester }}</span>
-          {% if review.grade %}
-          <span>Grade: {{ review.grade }}</span>
-          {% endif %}
-        </div>
-
-        <div class="review-card__ratings">
-          <div class="review-rating">
-            <div class="review-rating__value">{{ review.average|floatformat:1 }}</div>
-            <div class="review-rating__label">Average</div>
-          </div>
-        </div>
-      </div>
-
-      {% if review.text %}
-      <p class="review-card__text">{{ review.text|linebreaksbr }}</p>
-      {% endif %}
-
-      <div class="review-card__category-grid">
-        <div class="review-category">
-          <span class="review-category__label">Instructor</span>
-          <span class="review-category__value">{{ review.instructor_rating|floatformat:1 }}</span>
-        </div>
-        <div class="review-category">
-          <span class="review-category__label">Enjoyability</span>
-          <span class="review-category__value">{{ review.enjoyability|floatformat:1 }}</span>
-        </div>
-        <div class="review-category">
-          <span class="review-category__label">Recommend</span>
-          <span class="review-category__value">{{ review.recommendability|floatformat:1 }}</span>
-        </div>
-        <div class="review-category">
-          <span class="review-category__label">Difficulty</span>
-          <span class="review-category__value">{{ review.difficulty|floatformat:1 }}</span>
-        </div>
-        <div class="review-category">
-          <span class="review-category__label">Hours/Week</span>
-          <span class="review-category__value">{{ review.hours_per_week|floatformat:1 }}</span>
-        </div>
-      </div>
-
-      <div class="review-card__footer">
-        <div class="review-card__votes">
-          <button class="vote-btn {% if review.user_vote > 0 %}is-active{% endif %}"
-                  type="button"
-                  data-action="upvote"
-                  data-review="{{ review.id }}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="m5 15 7-7 7 7"/>
-            </svg>
-            <span>{{ review.sum_votes|default:0 }}</span>
-          </button>
-          <button class="vote-btn {% if review.user_vote < 0 %}is-active{% endif %}"
-                  type="button"
-                  data-action="downvote"
-                  data-review="{{ review.id }}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="m19 9-7 7-7-7"/>
-            </svg>
-          </button>
-        </div>
-
-        <span class="review-card__date">{{ review.created|date }}</span>
-      </div>
-    </article>
-    {% if forloop.revcounter0|divisibleby:5 %}
-    {% include "site/common/components/_leaderboard_ad.html" %}
-    {% endif %}
-    {% endfor %}
-
-    {% include "site/common/components/_pagination.html" with paginated_items=paginated_reviews anchor="reviews" aria_label="Reviews pagination" %}
-    {% else %}
-    <div class="reviews-empty">
-      <svg class="reviews-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-      </svg>
-      <h3 class="reviews-empty__title">No reviews yet</h3>
-      <p class="reviews-empty__text">Be the first to share your experience with this course!</p>
-      {% if user.is_authenticated %}
-      <a href="{% mode_url request 'new_review' query_course=course.id query_instructor=instructor.id %}" class="btn btn--primary btn--md add-review-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        Add Review
-      </a>
-      {% else %}
-      <a href="#" class="btn btn--primary btn--md add-review-btn" data-action="login">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        Sign in to Add Review
-      </a>
-      {% endif %}
-    </div>
-    {% endif %}
-    </div>
-  </section>
-</div>
-
-{% endblock %}
-
+{% endblock content %}
 {% block scripts %}
-<script src="{% static 'js/site/review/review_votes.js' %}"></script>
-<script src="{% static 'js/site/review/reviews_sort_fetch.js' %}"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
-<script>
+    <script src="{% static 'js/site/review/review_votes.js' %}"></script>
+    <script src="{% static 'js/site/review/reviews_sort_fetch.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
+    <script>
 if (window.TcfReviewsSortFetch) {
   window.TcfReviewsSortFetch.init({
     sortSelectId: 'review-sort',
@@ -589,11 +598,11 @@ if (data) {
   } else {
     document.getElementById('gradesChart').style.display = 'none';
     document.querySelector('.grades-panel__chart-container').style.height = 'auto';
-    document.getElementById('grades-empty').style.display = 'flex';
+    document.getElementById('grades-empty').classList.add('grades-panel__empty--visible');
     const toggle = document.querySelector('.grades-panel__toggle');
     if (toggle) toggle.style.display = 'none';
   }
 }
-</script>
-{% include "site/common/components/_record_recent_browse.html" with recent_kind="course" %}
-{% endblock %}
+    </script>
+    {% include "site/common/components/_record_recent_browse.html" with recent_kind="course" %}
+{% endblock scripts %}

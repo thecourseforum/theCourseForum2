@@ -1,106 +1,106 @@
 {% extends "site/common/base.html" %}
 {% load static %}
 {% load custom_tags %}
-
-{% block title %}{{ instructor.full_name }} | theCourseForum{% endblock %}
-
+{% block title %}
+    {{ instructor.full_name }} | theCourseForum
+{% endblock title %}
 {% block page_metadata %}
-{% if not is_teaching_current_semester %}
-<meta name="robots" content="noindex">
-{% endif %}
-{% endblock %}
-
+    {% if not is_teaching_current_semester %}<meta name="robots" content="noindex">{% endif %}
+{% endblock page_metadata %}
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/site/pages/instructor.css' %}">
-{% endblock %}
-
+    <link rel="stylesheet" href="{% static 'css/site/pages/instructor.css' %}">
+{% endblock styles %}
 {% block content %}
-
-<!-- Header -->
-<div class="instructor-header">
-  <div class="instructor-header__inner">
-    <!-- Breadcrumb -->
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="{% mode_url request 'browse' %}" class="breadcrumb__link">Browse</a>
-      <span class="breadcrumb__separator">/</span>
-      <span class="breadcrumb__current">{{ instructor.full_name }}</span>
-    </nav>
-    
-    <!-- Profile + Recency Toggle -->
-    <div class="department-toolbar">
-      <div class="instructor-profile">
-      <div class="instructor-profile__info">
-        <h1 class="instructor-profile__name">{{ instructor.full_name }}</h1>
-        
-        {% if instructor.email %}
-        <p class="instructor-profile__email">
-          <a href="mailto:{{ instructor.email }}">{{ instructor.email }}</a>
-        </p>
+    <!-- Header -->
+    <div class="instructor-header">
+        <div class="instructor-header__inner">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="{% mode_url request 'browse' %}" class="breadcrumb__link">Browse</a>
+                <span class="breadcrumb__separator">/</span>
+                <span class="breadcrumb__current">{{ instructor.full_name }}</span>
+            </nav>
+            <!-- Profile + Recency Toggle -->
+            <div class="department-toolbar">
+                <div class="instructor-profile">
+                    <div class="instructor-profile__info">
+                        <h1 class="instructor-profile__name">{{ instructor.full_name }}</h1>
+                        {% if instructor.email %}
+                            <p class="instructor-profile__email">
+                                <a href="mailto:{{ instructor.email }}">{{ instructor.email }}</a>
+                            </p>
+                        {% endif %}
+                        {% if not is_teaching_current_semester %}
+                            <div class="not-teaching-alert">
+                                <svg viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                <span>Not currently teaching UVA courses</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <!-- Stats Summary -->
+                    <div class="stats-summary">
+                        <div class="stats-card">
+                            <div class="stats-card__value {% if avg_rating >= 4 %}stats-card__value--success{% elif avg_rating >= 3 %}stats-card__value--warning{% elif avg_rating %}stats-card__value--danger{% else %}stats-card__value--muted{% endif %}">
+                                {% if avg_rating %}
+                                    {{ avg_rating }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </div>
+                            <div class="stats-card__label">Rating</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-card__value {% if avg_difficulty and avg_difficulty <= 2.5 %}stats-card__value--success{% elif avg_difficulty and avg_difficulty <= 3.5 %}stats-card__value--warning{% elif avg_difficulty %}stats-card__value--danger{% else %}stats-card__value--muted{% endif %}">
+                                {% if avg_difficulty %}
+                                    {{ avg_difficulty }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </div>
+                            <div class="stats-card__label">Difficulty</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-card__value {% if avg_gpa >= 3.7 %}stats-card__value--success{% elif avg_gpa >= 3.4 %}stats-card__value--warning{% elif avg_gpa %}stats-card__value--danger{% else %}stats-card__value--muted{% endif %}">
+                                {% if avg_gpa %}
+                                    {{ avg_gpa }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </div>
+                            <div class="stats-card__label">GPA</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="department-toolbar__filters">{% include "site/common/components/_recency_toggle.html" %}</div>
+            </div>
+        </div>
+    </div>
+    <!-- Courses Taught -->
+    <div class="instructor-content">
+        {% if grouped_courses %}
+            {% for subdepartment_name, subdepartment_courses in grouped_courses.items %}
+                <section class="courses-section">
+                    <h2 class="courses-section__title">{{ subdepartment_name }}</h2>
+                    <div class="course-list">
+                        {% for course in subdepartment_courses %}
+                            {% include "site/courses/components/_course_taught_card.html" with course=course %}
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endfor %}
+            {% include "site/common/components/_pagination.html" with paginated_items=page_obj aria_label="Instructor courses pagination" %}
+        {% else %}
+            <div class="empty-state">
+                <h2 class="empty-state__title">No courses found</h2>
+                <p class="empty-state__description">This instructor hasn't taught any courses recently.</p>
+            </div>
         {% endif %}
-        
-        {% if not is_teaching_current_semester %}
-        <div class="not-teaching-alert">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-          <span>Not currently teaching UVA courses</span>
-        </div>
-        {% endif %}
-      </div>
-      
-      <!-- Stats Summary -->
-      <div class="stats-summary">
-        <div class="stats-card">
-          <div class="stats-card__value {% if avg_rating >= 4 %}stats-card__value--success{% elif avg_rating >= 3 %}stats-card__value--warning{% elif avg_rating %}stats-card__value--danger{% else %}stats-card__value--muted{% endif %}">
-            {% if avg_rating %}{{ avg_rating }}{% else %}—{% endif %}
-          </div>
-          <div class="stats-card__label">Rating</div>
-        </div>
-        <div class="stats-card">
-          <div class="stats-card__value {% if avg_difficulty and avg_difficulty <= 2.5 %}stats-card__value--success{% elif avg_difficulty and avg_difficulty <= 3.5 %}stats-card__value--warning{% elif avg_difficulty %}stats-card__value--danger{% else %}stats-card__value--muted{% endif %}">
-            {% if avg_difficulty %}{{ avg_difficulty }}{% else %}—{% endif %}
-          </div>
-          <div class="stats-card__label">Difficulty</div>
-        </div>
-        <div class="stats-card">
-          <div class="stats-card__value {% if avg_gpa >= 3.7 %}stats-card__value--success{% elif avg_gpa >= 3.4 %}stats-card__value--warning{% elif avg_gpa %}stats-card__value--danger{% else %}stats-card__value--muted{% endif %}">
-            {% if avg_gpa %}{{ avg_gpa }}{% else %}—{% endif %}
-          </div>
-          <div class="stats-card__label">GPA</div>
-        </div>
-      </div>
     </div>
-      <div class="department-toolbar__filters">
-        {% include "site/common/components/_recency_toggle.html" %}
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Courses Taught -->
-<div class="instructor-content">
-  {% if grouped_courses %}
-  {% for subdepartment_name, subdepartment_courses in grouped_courses.items %}
-  <section class="courses-section">
-    <h2 class="courses-section__title">{{ subdepartment_name }}</h2>
-    <div class="course-list">
-      {% for course in subdepartment_courses %}
-      {% include "site/courses/components/_course_taught_card.html" with course=course %}
-      {% endfor %}
-    </div>
-  </section>
-  {% endfor %}
-  {% include "site/common/components/_pagination.html" with paginated_items=page_obj aria_label="Instructor courses pagination" %}
-  {% else %}
-  <div class="empty-state">
-    <h2 class="empty-state__title">No courses found</h2>
-    <p class="empty-state__description">
-      This instructor hasn't taught any courses recently.
-    </p>
-  </div>
-  {% endif %}
-</div>
-
-{% endblock %}
+{% endblock content %}

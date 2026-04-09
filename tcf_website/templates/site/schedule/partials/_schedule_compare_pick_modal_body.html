@@ -1,16 +1,27 @@
 {% if not selected_schedule %}
-<p class="text-muted text-sm">Select a schedule from the list first.</p>
+    <p class="text-muted text-sm">Select a schedule from the list first.</p>
 {% elif schedules|length < 2 %}
-<p class="text-muted text-sm">Create or bookmark another schedule for this term to compare.</p>
+    <p class="text-muted text-sm">Create or bookmark another schedule for this term to compare.</p>
 {% else %}
-<p class="text-muted text-sm schedule-compare-pick__lead" id="scheduleComparePickModalDescription"><span>Compare</span> <strong class="schedule-compare-pick__lead-selected" title="{{ selected_schedule.name }}">{{ selected_schedule.name }}</strong> <span>with:</span></p>
-<ul class="schedule-compare-pick-list" role="list" aria-describedby="scheduleComparePickModalDescription">
-  {% for s in schedules %}
-    {% if s.id != selected_schedule.id %}
-    <li class="schedule-compare-pick-list__item">
-      <button type="button" class="btn btn--secondary btn--sm btn--full schedule-compare-pick__btn" data-schedule-apply-compare="{{ s.id }}" title="{{ s.name }}"><span class="schedule-compare-pick__btn-label">{{ s.name }}</span></button>
-    </li>
-    {% endif %}
-  {% endfor %}
-</ul>
+    <p class="text-muted text-sm schedule-compare-pick__lead"
+       id="scheduleComparePickModalDescription">
+        <span>Compare</span> <strong class="schedule-compare-pick__lead-selected"
+         title="{{ selected_schedule.name }}">{{ selected_schedule.name }}</strong> <span>with:</span>
+    </p>
+    <ul class="schedule-compare-pick-list"
+        role="list"
+        aria-describedby="scheduleComparePickModalDescription">
+        {% for s in schedules %}
+            {% if s.id != selected_schedule.id %}
+                <li class="schedule-compare-pick-list__item">
+                    <button type="button"
+                            class="btn btn--secondary btn--sm btn--full schedule-compare-pick__btn"
+                            data-schedule-apply-compare="{{ s.id }}"
+                            title="{{ s.name }}">
+                        <span class="schedule-compare-pick__btn-label">{{ s.name }}</span>
+                    </button>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
 {% endif %}

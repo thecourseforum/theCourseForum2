@@ -1,21 +1,18 @@
 {% extends "site/common/base.html" %}
-
 {% load static %}
-
-{% block title %}404 | theCourseForum{% endblock %}
-
+{% block title %}
+    404 | theCourseForum
+{% endblock title %}
 {% block content %}
-<div class="container py-16" style="text-align:center;">
-  <img
-    src="{% static 'base/img/new_logo.svg' %}"
-    alt="theCourseForum logo"
-    width="120"
-    height="120"
-  />
-  <h1 style="margin-top:1rem;">Oops!</h1>
-  <p>
-    Looks like this page doesn't exist.
-    Go back <a href="{% url 'index' %}">home</a>.
-  </p>
-</div>
-{% endblock %}
+    <div class="container py-16 tcf-http404">
+        <img src="{% static 'base/img/new_logo.svg' %}"
+             alt="theCourseForum logo"
+             width="120"
+             height="120" />
+        <h1 class="tcf-http404__heading">Oops!</h1>
+        <p>
+            Looks like this page doesn't exist.
+            Go back <a href="{% url 'index' %}">home</a>.
+        </p>
+    </div>
+{% endblock content %}

@@ -59,19 +59,19 @@ The application stack is listed below. These technologies were chosen because th
 - Bootstrap 4
 - Javascript (jQuery)
 
-## CI checks locally
 
-With `docker compose up` running:
+## Enter docker container
 
 ```bash
 docker exec -it tcf_django /bin/bash
 ```
 
-Then from `/app`:
+## CI checks locally
 
 ```bash
 ruff check .
 ruff format --check .
+djlint tcf_website/templates --check --lint
 ty check
 npm ci && npx eslint -c .config/.eslintrc.yml tcf_website/static/
 python manage.py migrate

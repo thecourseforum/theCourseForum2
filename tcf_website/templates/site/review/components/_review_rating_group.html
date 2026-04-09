@@ -1,11 +1,14 @@
 <div class="rating-field">
-  <label class="rating-field__label">{{ label }}</label>
-  <div class="rating-options">
-    {% for i in "12345" %}
-    <label class="rating-option">
-      <input type="radio" name="{{ name }}" value="{{ i }}" {% if i == "3" %}checked{% endif %}>
-      <span class="rating-option__label">{{ i }}</span>
-    </label>
-    {% endfor %}
-  </div>
+    <label class="rating-field__label">{{ label }}</label>
+    <div class="rating-options">
+        {% for i in "12345" %}
+            <label class="rating-option">
+                <input type="radio"
+                       name="{{ name }}"
+                       value="{{ i }}"
+                       {% if i == "3" %}checked{% endif %}>
+                <span class="rating-option__label">{{ i }}</span>
+            </label>
+        {% endfor %}
+    </div>
 </div>
