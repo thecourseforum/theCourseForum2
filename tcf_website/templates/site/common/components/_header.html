@@ -28,6 +28,9 @@
       <a href="#" class="header__nav-link" data-modal-open="loginModal" data-login-modal-message="Sign in to review.">
         Review
       </a>
+      <a href="{% url 'calendar_overview' %}" class="header__nav-link {% if request.resolver_match.url_name == 'calendar_overview' %}is-active{% endif %}">
+      Calendar
+      </a>
       {% endif %}
       <a href="{% url 'about' %}" class="header__nav-link {% if request.resolver_match.url_name == 'about' %}is-active{% endif %}">
         About

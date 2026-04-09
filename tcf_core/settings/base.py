@@ -184,3 +184,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Toxicity threshold for filtering reviews
 TOXICITY_THRESHOLD = 74
+
+# Presence / Calendar feature
+PRESENCE_SUBDOMAIN = env.str("PRESENCE_SUBDOMAIN", default="virginia")
+PRESENCE_TIMEOUT_SECONDS = env.int("PRESENCE_TIMEOUT_SECONDS", default=8)
+PRESENCE_CACHE_SECONDS = env.int("PRESENCE_CACHE_SECONDS", default=300)

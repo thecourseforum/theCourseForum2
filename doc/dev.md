@@ -38,6 +38,17 @@ docker compose up
 
 8. Ensure the website is up, running, and functional at `localhost:8000`.
 
+## Loading full data
+
+- **Club calendar events** – Loaded live from the Presence API (`api.presence.io/virginia/v1/events`). No extra steps; if you see no events, check that your network allows outbound requests to that URL.
+- **Course browse (departments & courses)** – Requires the full database dump:
+  1. Download the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) from Google Drive.
+  2. Save it as `db/latest.dump` in the project root.
+  3. Run `./scripts/reset-db.sh` (this restores the dump into the local Postgres container).
+  4. Start the app again: `docker compose up`.
+
+  Without the dump, the browse page shows only the two school names and no departments. After loading the dump, you get full departments and courses.
+
 ### VSCode Setup
 
 When you open the project, VSCode may prompt you to install the recommended extensions for this project. Click yes and ensure that they are in your extension library. A list of the necessary libraries can be found [here](.././.vscode/extensions.json).

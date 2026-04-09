@@ -5,6 +5,7 @@ from .auth import login, logout
 from .catalog import browse, department, search
 from .clubs import club_category, club_view
 from .courses import course_instructor, course_view
+from .calendar import calendar_overview, event_detail
 from .home import AboutView, index, privacy, terms
 from .instructors import instructor_view
 from .qa import (
