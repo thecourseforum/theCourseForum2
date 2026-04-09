@@ -5,6 +5,7 @@
 # See
 # https://docs.djangoproject.com/en/3.0/topics/db/models/#organizing-models-in-a-package
 
+from .models import CATALOG_YEAR_WINDOW
 from .models import (
     Answer,
     Course,

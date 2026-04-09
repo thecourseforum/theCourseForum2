@@ -106,6 +106,8 @@
 /* ===== INDIVIDUAL STAT ===== */
 
 .rating-stat {
+  flex: 1;
+  min-width: 0;
   text-align: center;
 }
 
@@ -133,10 +135,27 @@
   font-size: var(--text-xl);
   font-weight: var(--font-semibold);
   color: var(--fg);
+  font-variant-numeric: tabular-nums;
 }
 
 .rating-stat__value--empty {
   color: var(--fg-subtle);
+}
+
+.rating-stat__value--success {
+  color: var(--success);
+}
+
+.rating-stat__value--warning {
+  color: var(--warning);
+}
+
+.rating-stat__value--danger {
+  color: var(--danger);
+}
+
+.rating-stat__value--muted {
+  color: var(--fg-muted);
 }
 
 

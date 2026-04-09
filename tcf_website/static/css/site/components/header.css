@@ -60,6 +60,7 @@
 
   .header__inner {
     flex-wrap: wrap;
+    gap: var(--space-2);
     row-gap: var(--space-2);
   }
 
@@ -164,6 +165,19 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 767px) {
+  .header__actions {
+    gap: var(--space-1);
+  }
+}
+
+@media (max-width: 479px) {
+  .mode-toggle,
+  #recentItemsDropdown {
+    display: none;
+  }
+}
+
 /* ===== MODE TOGGLE ===== */
 
 .mode-toggle {
@@ -200,6 +214,12 @@
   color: var(--accent-fg);
   box-shadow: var(--shadow-sm);
   font-weight: var(--font-semibold);
+}
+
+@media (max-width: 767px) {
+  .mode-toggle__item {
+    padding: var(--space-1) var(--space-2);
+  }
 }
 
 /* ===== THEME TOGGLE ===== */

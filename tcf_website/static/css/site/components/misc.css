@@ -120,6 +120,12 @@ span.pagination__item {
   color: var(--fg-muted);
 }
 
+.search-pagination {
+  margin-top: var(--space-5);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 
 /*
  * Badge Component

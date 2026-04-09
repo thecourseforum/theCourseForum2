@@ -56,7 +56,7 @@ def build_section_times_maps_by_instructor(
     return all_times_by_instructor, lecture_times_by_instructor
 
 
-def course_view(request, mnemonic: str, course_number: int, instructor_recency=None):
+def course_view(request, mnemonic: str, course_number: int):
     """Course view."""
     if mnemonic != mnemonic.upper():
         return redirect(
@@ -70,25 +70,13 @@ def course_view(request, mnemonic: str, course_number: int, instructor_recency=N
     )
 
     latest_semester = Semester.latest()
-    show_all = request.GET.get("show") == "all"
-    if not instructor_recency:
-        instructor_recency = str(latest_semester)
-    recent = not show_all and str(latest_semester) == instructor_recency
-
+    latest_only = request.GET.get("latest", "true") != "false"
     sortby = request.GET.get("sortby", "last_taught")
     order = request.GET.get("order", "desc")
 
-    instructors = course.sort_instructors_by_key(latest_semester, recent, order, sortby)
-
-    for instructor in instructors:
-        if hasattr(instructor, "section_times") and instructor.section_times:
-            instructor.section_times = [
-                s for s in instructor.section_times if s is not None
-            ]
-        if hasattr(instructor, "section_nums") and instructor.section_nums:
-            instructor.section_nums = [
-                s for s in instructor.section_nums if s is not None
-            ]
+    instructors = list(
+        course.sort_instructors_by_key(latest_semester, latest_only, order, sortby)
+    )
 
     all_times_by_instructor, lecture_times_by_instructor = (
         build_section_times_maps_by_instructor(course.id, latest_semester)
@@ -104,23 +92,19 @@ def course_view(request, mnemonic: str, course_number: int, instructor_recency=N
 
     dept = course.subdepartment.department
 
-    breadcrumbs = [
-        (dept.school.name, reverse("browse"), False),
-        (dept.name, reverse("department", args=[dept.pk]), False),
-        (course.code, None, True),
-    ]
-
     return render(
         request,
         "site/courses/course.html",
         {
             "course": course,
             "instructors": instructors,
-            "latest_semester": str(latest_semester),
-            "breadcrumbs": breadcrumbs,
+            "breadcrumbs": [
+                (dept.school.name, reverse("browse"), False),
+                (dept.name, reverse("department", args=[dept.pk]), False),
+                (course.code, None, True),
+            ],
             "sortby": sortby,
             "order": order,
-            "active_instructor_recency": "all_time" if show_all else instructor_recency,
             "course_code": course.code(),
             "course_title": course.title,
             "all_section_times_by_instructor": all_times_by_instructor,

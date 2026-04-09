@@ -2,36 +2,30 @@
 
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from django.db.models import F, Q, QuerySet
+from django.db.models import Q, QuerySet
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .models import Course, Semester
-
-# Rolling window for catalog browse/search and term pickers (calendar years).
-_CATALOG_YEAR_WINDOW = 5
+from .models import CATALOG_YEAR_WINDOW, Course, Semester
 
 
-def _min_catalog_semester_year() -> int:
-    """First calendar year (inclusive) to show in the course catalog."""
-    return timezone.now().year - _CATALOG_YEAR_WINDOW
+def min_catalog_semester_year() -> int:
+    """First calendar year (inclusive) shown in the course catalog."""
+    return timezone.now().year - CATALOG_YEAR_WINDOW
 
 
 def browsable_course_queryset():
-    """Visible catalog courses: subdepartment join, mnemonic, number range, recency."""
-
+    """Visible catalog courses with stats annotated for display in cards."""
     return (
-        Course.objects.select_related("subdepartment")
-        .only("title", "number", "subdepartment__mnemonic", "description")
-        .annotate(mnemonic=F("subdepartment__mnemonic"))
+        Course.with_stats()
         .filter(Q(number__isnull=True) | Q(number__range=(1000, 9999)))
-        .filter(semester_last_taught__year__gte=_min_catalog_semester_year())
+        .filter(semester_last_taught__year__gte=min_catalog_semester_year())
     )
 
 
 def recent_semesters() -> QuerySet:
     """Semesters in the catalog year window, newest SIS number first."""
-    return Semester.objects.filter(year__gte=_min_catalog_semester_year()).order_by(
+    return Semester.objects.filter(year__gte=min_catalog_semester_year()).order_by(
         "-number"
     )
 
@@ -80,10 +74,10 @@ def with_mode(url: str, mode: str | None) -> str:
 
 
 def safe_round(num):
-    """Reduce repetition for null-checked rounding; returns an em dash when value is missing."""
+    """Round num to 2 decimal places; returns None when value is missing."""
     if num is not None:
         return round(num, 2)
-    return "\u2014"
+    return None
 
 
 def safe_next_url(request, default_url: str) -> str:

@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: center;
   
-  padding: var(--space-16) var(--space-4) var(--space-8);
+  padding: var(--space-24) var(--space-4) var(--space-8);
   
   text-align: center;
   
@@ -29,7 +29,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-4);
+  gap: var(--space-6);
   margin-bottom: var(--space-6);
 }
 
@@ -65,6 +65,20 @@
 @media (min-width: 768px) {
   .hero__tagline {
     font-size: var(--text-xl);
+  }
+}
+
+@media (max-width: 479px) {
+  .hero__logo {
+    width: clamp(56px, 14vw, 80px);
+  }
+
+  .hero__title {
+    font-size: var(--text-3xl);
+  }
+
+  .hero__tagline {
+    font-size: var(--text-sm);
   }
 }
 

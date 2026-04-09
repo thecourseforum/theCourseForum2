@@ -1,11 +1,11 @@
-{# Course Card Component #}
-<a href="{% url 'course' course.mnemonic course.number %}" class="course-card">
+{# Course Taught Card — instructor profile page, links to the instructor-specific course page #}
+<a href="{% url 'course_instructor' course_id=course.id instructor_id=instructor.id %}" class="course-card">
   <div class="course-card__main">
     <div class="course-card__header">
       <span class="course-card__code">{{ course.mnemonic }} {{ course.number }}</span>
       <span class="course-card__title">{{ course.title }}</span>
     </div>
-    
+
     <div class="course-card__meta">
       <span class="course-card__stat">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -14,16 +14,12 @@
           <line x1="8" y1="2" x2="8" y2="6"></line>
           <line x1="3" y1="10" x2="21" y2="10"></line>
         </svg>
-        {{ course.semester_last_taught|default:"—" }}
+        {{ course.last_taught }}
       </span>
     </div>
-    
-    {% if course.description %}
-    <p class="text-sm text-muted mt-2 line-clamp-2">{{ course.description|truncatewords:30 }}</p>
-    {% endif %}
   </div>
-  
+
   <div class="course-card__ratings">
-    {% include "site/common/components/_rating_stat_trio.html" with rating=course.average_rating difficulty=course.average_difficulty gpa=course.average_gpa %}
+    {% include "site/common/components/_rating_stat_trio.html" with rating=course.avg_rating difficulty=course.avg_difficulty gpa=course.avg_gpa %}
   </div>
 </a>

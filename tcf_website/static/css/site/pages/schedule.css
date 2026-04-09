@@ -81,6 +81,22 @@
   min-width: 10rem;
 }
 
+@media (max-width: 639px) {
+  .schedule-builder__semester-form {
+    flex-wrap: nowrap;
+  }
+
+  .schedule-builder__semester-form .combo {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .schedule-builder__create-btn {
+    margin-left: 0;
+    flex-shrink: 0;
+  }
+}
+
 .schedule-detail__header-row--split {
   align-items: center;
   justify-content: space-between;

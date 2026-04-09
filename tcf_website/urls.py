@@ -23,11 +23,6 @@ urlpatterns = [
     path("browse/", views.browse, name="browse"),
     path("department/<int:dept_id>/", views.department, name="department"),
     path(
-        "department/<int:dept_id>/<str:course_recency>/",
-        views.department,
-        name="department_course_recency",
-    ),
-    path(
         "course/<int:course_id>/<int:instructor_id>/",
         views.course_instructor,
         name="course_instructor",
@@ -41,11 +36,6 @@ urlpatterns = [
         "course/<str:mnemonic>/<int:course_number>/",
         views.course_view,
         name="course",
-    ),
-    path(
-        "course/<str:mnemonic>/<int:course_number>/<str:instructor_recency>",
-        views.course_view,
-        name="course_recency",
     ),
     path(
         "course/<int:course_id>/add-to-schedule/",
@@ -119,30 +109,6 @@ urlpatterns = [
         views.schedule_unbookmark,
         name="schedule_unbookmark",
     ),
-    # QA URLs
-    path("answers/check_duplicate/", views.qa.check_duplicate),
-    path("qa/new_question/", views.new_question, name="new_question"),
-    path("qa/new_answer/", views.new_answer, name="new_answer"),
-    path("questions/<int:question_id>/upvote/", views.upvote_question),
-    path("questions/<int:question_id>/downvote/", views.downvote_question),
-    path(
-        "questions/<int:pk>/delete/",
-        views.DeleteQuestion.as_view(),
-        name="delete_question",
-    ),
-    path(
-        "questions/<int:question_id>/edit/",
-        views.edit_question,
-        name="edit_question",
-    ),
-    path("answers/<int:answer_id>/upvote/", views.upvote_answer),
-    path("answers/<int:answer_id>/downvote/", views.downvote_answer),
-    path(
-        "answers/<int:pk>/delete/",
-        views.DeleteAnswer.as_view(),
-        name="delete_answer",
-    ),
-    path("answers/<int:answer_id>/edit/", views.edit_answer, name="edit_answer"),
     # AUTH URLS
     path("login/", views.auth.login, name="login"),
     path("cognito-callback/", views.auth.cognito_callback, name="cognito_callback"),

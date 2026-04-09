@@ -41,9 +41,6 @@
         <span class="course-instructor-title__code">{{ course.code }}</span>
         <span class="course-instructor-title__name">{{ course.title }}</span>
       </div>
-      {% if show_schedule_add %}
-      {% include "site/courses/components/_schedule_add_button.html" with course=course button_id="addToScheduleBtn" %}
-      {% endif %}
     </div>
     
     <!-- Instructor Row -->
@@ -58,9 +55,14 @@
         </a>
       </div>
 
-      <span class="semester-badge">
-        Last taught: {{ semester_last_taught }}
-      </span>
+      <div class="instructor-row__meta">
+        <span class="semester-badge">
+          Last taught: {{ semester_last_taught }}
+        </span>
+        {% if show_schedule_add %}
+        {% include "site/courses/components/_schedule_add_button.html" with course=course button_id="addToScheduleBtn" %}
+        {% endif %}
+      </div>
     </div>
   </div>
 </div>
@@ -75,11 +77,15 @@
       <div class="stats-summary">
         <div class="stats-card">
           <span class="stats-card__value stats-card__value--muted" id="avg-rating-big">—</span>
-          <span class="stats-card__label">☆ <span id="avg-rating-count">{{ num_ratings }}</span> Rating{{ num_ratings|pluralize }}</span>
+          <span class="stats-card__label">☆ Rating</span>
         </div>
         <div class="stats-card">
-          <span class="stats-card__value stats-card__value--muted" id="avg-hours-big">—</span>
-          <span class="stats-card__label">⏱ Hours/Week</span>
+          <span class="stats-card__value stats-card__value--muted" id="avg-difficulty-big">—</span>
+          <span class="stats-card__label">Difficulty</span>
+        </div>
+        <div class="stats-card">
+          <span class="stats-card__value stats-card__value--muted" id="avg-gpa-big">—</span>
+          <span class="stats-card__label">GPA</span>
         </div>
       </div>
 
@@ -144,6 +150,14 @@
               <div class="rating-row__fill rating-row__fill--warning homework-bar" style="width: 0%"></div>
             </div>
             <span class="rating-row__value rating-row__value--muted homework-num">—</span>
+          </div>
+
+          <div class="ratings-panel__divider"></div>
+
+          <div class="rating-row rating-row--compact">
+            <span class="rating-row__label">Total Hours</span>
+            <div class="rating-row__bar" style="visibility: hidden"></div>
+            <span class="rating-row__value rating-row__value--muted total-hours-num">—</span>
           </div>
         </div>
       </div>
@@ -215,7 +229,7 @@
   <div class="ai-summary">
     <div class="ai-summary__header">
       <span class="ai-summary__label">Review Summary</span>
-      <span class="ai-summary__meta">Last updated: {{ review_summary.updated_at|date:"F d, Y" }}</span>
+      <span class="ai-summary__meta">Updated {{ review_summary.updated_at|date:"F d, Y" }}</span>
     </div>
     <p class="ai-summary__text">{{ review_summary.summary_text }}</p>
   </div>
@@ -384,7 +398,7 @@ if (data) {
   const averageGpaValue = document.getElementById('average-gpa-value');
   const gradeSampleSize = document.getElementById('grade-sample-size');
   if (averageGpaValue) {
-    averageGpaValue.textContent = Number.isFinite(data.average_gpa)
+    averageGpaValue.textContent = (data.average_gpa !== null && data.average_gpa !== undefined)
       ? data.average_gpa.toFixed(2)
       : '—';
   }
@@ -394,26 +408,39 @@ if (data) {
       : '—';
   }
 
+  const avgGpaBig = document.getElementById('avg-gpa-big');
+  if (avgGpaBig) {
+    if (data.average_gpa !== null && data.average_gpa !== undefined) {
+      const gpa = Number(data.average_gpa);
+      avgGpaBig.textContent = gpa.toFixed(2);
+      avgGpaBig.classList.remove('stats-card__value--muted');
+      if (gpa >= 3.7) avgGpaBig.classList.add('stats-card__value--success');
+      else if (gpa >= 3.4) avgGpaBig.classList.add('stats-card__value--warning');
+      else avgGpaBig.classList.add('stats-card__value--danger');
+    }
+  }
+
   // Big summary numbers
-  function colorForRating(val) {
-    if (val >= 3.5) return 'stats-card__value--success';
-    if (val >= 2.5) return 'stats-card__value--warning';
-    return 'stats-card__value--danger';
+  if (data.instructor !== null && data.instructor !== undefined) {
+    const avgRating = (Number(data.instructor) + Number(data.enjoyability) + Number(data.recommendability)) / 3;
+    const avgRatingEl = document.getElementById('avg-rating-big');
+    if (avgRatingEl) {
+      avgRatingEl.textContent = avgRating.toFixed(2);
+      avgRatingEl.classList.remove('stats-card__value--muted');
+      if (avgRating >= 4) avgRatingEl.classList.add('stats-card__value--success');
+      else if (avgRating >= 3) avgRatingEl.classList.add('stats-card__value--warning');
+      else avgRatingEl.classList.add('stats-card__value--danger');
+    }
   }
 
-  const avgRating = (Number(data.instructor) + Number(data.enjoyability) + Number(data.difficulty) + Number(data.recommendability)) / 4;
-  const avgRatingEl = document.getElementById('avg-rating-big');
-  if (avgRatingEl && Number.isFinite(avgRating)) {
-    avgRatingEl.textContent = avgRating.toFixed(2);
-    avgRatingEl.classList.remove('stats-card__value--muted');
-    avgRatingEl.classList.add(colorForRating(avgRating));
-  }
-
-  const totalHoursVal = Number(data.hours);
-  const avgHoursEl = document.getElementById('avg-hours-big');
-  if (avgHoursEl && Number.isFinite(totalHoursVal)) {
-    avgHoursEl.textContent = totalHoursVal.toFixed(1);
-    avgHoursEl.classList.remove('stats-card__value--muted');
+  const avgDifficultyEl = document.getElementById('avg-difficulty-big');
+  if (avgDifficultyEl && data.difficulty !== null && data.difficulty !== undefined) {
+    const d = Number(data.difficulty);
+    avgDifficultyEl.textContent = d.toFixed(1);
+    avgDifficultyEl.classList.remove('stats-card__value--muted');
+    if (d <= 2.5) avgDifficultyEl.classList.add('stats-card__value--success');
+    else if (d <= 3.5) avgDifficultyEl.classList.add('stats-card__value--warning');
+    else avgDifficultyEl.classList.add('stats-card__value--danger');
   }
 
   // Ratings Bars
@@ -425,10 +452,8 @@ if (data) {
   ];
   
   ratings.forEach(({ key, bar, num }) => {
+    if (data[key] === null || data[key] === undefined) return;
     const value = Number(data[key]);
-    if (!Number.isFinite(value)) {
-      return;
-    }
 
     const barEl = document.querySelector(bar);
     const numEl = document.querySelector(num);
@@ -450,10 +475,8 @@ if (data) {
   const totalHours = Number(data.hours);
 
   workloadRows.forEach(({ key, bar, num }) => {
+    if (data[key] === null || data[key] === undefined) return;
     const value = Number(data[key]);
-    if (!Number.isFinite(value)) {
-      return;
-    }
 
     const barEl = document.querySelector(bar);
     const numEl = document.querySelector(num);
@@ -467,6 +490,16 @@ if (data) {
     numEl.textContent = value.toFixed(1);
     numEl.classList.remove('rating-row__value--muted');
   });
+
+  const totalHoursNumEl = document.querySelector('.total-hours-num');
+  if (totalHoursNumEl && data.hours !== null && data.hours !== undefined) {
+    const h = Number(data.hours);
+    totalHoursNumEl.textContent = h.toFixed(1);
+    totalHoursNumEl.classList.remove('rating-row__value--muted');
+    if (h <= 3) totalHoursNumEl.classList.add('rating-row__value--success');
+    else if (h <= 5) totalHoursNumEl.classList.add('rating-row__value--warning');
+    else totalHoursNumEl.classList.add('rating-row__value--danger');
+  }
 
   // Grades Chart
   const gradeKeys = ['a_plus', 'a', 'a_minus', 'b_plus', 'b', 'b_minus', 'c_plus', 'c', 'c_minus', 'dfw'];
@@ -491,9 +524,9 @@ if (data) {
         const r = (arc.innerRadius + arc.outerRadius) / 2;
         const x = arc.x + Math.cos(midAngle) * r;
         const y = arc.y + Math.sin(midAngle) * r;
-        // Use white text on dark slices (red/orange), dark on light slices
-        const darkSlices = [8, 9]; // C-, DFW indices
-        ctx2.fillStyle = darkSlices.includes(i) ? '#fff' : '#000';
+        // Use white text on dark slices, dark text on light slices
+        const darkSlices = [0, 1, 8, 9]; // deep blue (A+, A) and deep orange (C-, DFW)
+        ctx2.fillStyle = darkSlices.includes(i) ? '#fff' : '#1c1917';
         ctx2.fillText(gradeLabels[i], x, y);
       });
       ctx2.restore();
@@ -501,10 +534,11 @@ if (data) {
   };
 
   const gradeColors = [
-    '#22c55e', '#4ade80', '#86efac',
-    '#facc15', '#fde047', '#fef08a',
-    '#fb923c', '#fdba74',
-    '#f87171', '#ef4444'
+    '#1d4ed8', '#3b82f6', '#60a5fa',  // A+, A, A-  (deep → light blue)
+    '#93c5fd',                          // B+          (lightest blue)
+    '#fed7aa', '#fdba74',               // B, B-       (light → medium orange)
+    '#fb923c', '#f97316',               // C+, C       (vivid orange)
+    '#ea580c', '#9a3412'                // C-, DFW     (dark orange → rust)
   ];
 
   function buildChartConfig(type) {
