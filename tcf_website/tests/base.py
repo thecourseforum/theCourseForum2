@@ -1,4 +1,3 @@
-# pylint: disable=duplicate-code
 """Reusable test base classes."""
 
 from django.test import TestCase

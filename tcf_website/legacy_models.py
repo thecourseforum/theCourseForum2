@@ -1,4 +1,4 @@
-# pylint: skip-file
+# ruff: noqa
 """
 Legacy models from tCF 1.0.
 

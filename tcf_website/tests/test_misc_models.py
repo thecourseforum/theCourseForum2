@@ -1,4 +1,3 @@
-# pylint: disable=no-member
 """Tests for Misc. models that do not have many methods."""
 
 from django.test import TestCase

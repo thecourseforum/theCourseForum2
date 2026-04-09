@@ -16,8 +16,8 @@ from .services import (
     schedule_builder_return_url,
     schedule_data_helper,
     schedule_page_url,
-    schedules_for_user,
     schedule_visible_q,
+    schedules_for_user,
 )
 
 __all__ = [

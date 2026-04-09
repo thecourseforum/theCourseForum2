@@ -1,4 +1,3 @@
-# pylint: disable=no-member
 """Redirects, ``next`` / ``state`` URLs, Referer fallbacks, and login gates."""
 
 from unittest.mock import MagicMock, patch

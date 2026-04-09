@@ -9,7 +9,7 @@ class ScheduleDomainImportTests(SimpleTestCase):
 
     def test_schedule_subpackage_imports(self):
         """``tcf_website.schedule`` exports calendar helpers and forms."""
-        from tcf_website.schedule import (  # pylint: disable=import-outside-toplevel
+        from tcf_website.schedule import (
             ScheduleForm,
             build_weekly_calendar,
             resolve_builder_semester,

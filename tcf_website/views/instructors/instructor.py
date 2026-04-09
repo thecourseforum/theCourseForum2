@@ -1,7 +1,5 @@
 """Instructor profile view."""
 
-# pylint: disable=too-many-locals
-
 from typing import Any
 
 from django.db.models import Avg

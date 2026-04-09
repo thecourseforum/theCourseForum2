@@ -241,7 +241,7 @@ class Command(BaseCommand):
 
     def _report_pair_results(self, pairs, results):
         error_count = 0
-        for row, result in zip(pairs, results):
+        for row, result in zip(pairs, results, strict=True):
             if result is None:
                 error_count += 1
                 self.stdout.write(

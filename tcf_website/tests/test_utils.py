@@ -1,6 +1,3 @@
-# pylint: disable=wildcard-import
-# pylint: disable=unused-wildcard-import
-# pylint: disable=duplicate-code
 """Common testing utilities."""
 
 import logging

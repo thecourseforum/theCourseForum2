@@ -1,4 +1,3 @@
-# pylint: disable=no-member
 """Tests for semester-scoped schedules."""
 
 import json

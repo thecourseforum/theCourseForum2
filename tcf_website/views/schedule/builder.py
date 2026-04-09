@@ -28,7 +28,7 @@ from .json_helpers import (
 
 
 @login_required
-def view_schedules(  # pylint: disable=too-many-locals,too-many-return-statements,too-many-branches,too-many-statements
+def view_schedules(
     request,
 ):
     """Render schedule builder page."""

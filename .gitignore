@@ -36,6 +36,8 @@ htmlcov/
 # Virtual Environments
 venv
 .venv
+# Ruff
+.ruff_cache/
 # AWS key.pem
 key/
 # Nix

@@ -58,3 +58,24 @@ The application stack is listed below. These technologies were chosen because th
 - PostgreSQL
 - Bootstrap 4
 - Javascript (jQuery)
+
+## CI checks locally
+
+With `docker compose up` running:
+
+```bash
+docker exec -it tcf_django /bin/bash
+```
+
+Then from `/app`:
+
+```bash
+ruff check .
+ruff format --check .
+ty check
+npm ci && npx eslint -c .config/.eslintrc.yml tcf_website/static/
+python manage.py migrate
+coverage run manage.py test
+```
+
+GitHub Actions sets `GITHUB_ACTIONS=true` so the same module runs with `DEBUG=False` and without the debug toolbar; see [`.github/workflows/ci.yml`](../.github/workflows/ci.yml).

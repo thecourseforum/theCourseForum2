@@ -2,7 +2,7 @@
 
 import re
 import statistics
-from typing import Iterable
+from collections.abc import Iterable
 
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models import F, FloatField, Value

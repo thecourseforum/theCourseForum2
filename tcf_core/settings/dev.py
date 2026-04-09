@@ -1,13 +1,12 @@
-# pylint: disable=unused-wildcard-import,wildcard-import,duplicate-code
-"""Django settings for local development."""
+"""Django settings for local development and CI.
+
+GitHub Actions sets GITHUB_ACTIONS=true on the runner; local shells do not.
+"""
 
 from .base import *
 
-DEBUG = True
+_ci = os.environ.get("GITHUB_ACTIONS") == "true"
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".grok.io", ".lhr.life"]
-
-# Local PostgreSQL database
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -19,15 +18,18 @@ DATABASES = {
     }
 }
 
-# Local static files
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".grok.io", ".lhr.life"]
 
-# Django Debug Toolbar
-INSTALLED_APPS = INSTALLED_APPS + ["debug_toolbar"]
-MIDDLEWARE = (
-    MIDDLEWARE[:2]
-    + ["debug_toolbar.middleware.DebugToolbarMiddleware"]
-    + MIDDLEWARE[2:]
-)
-DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda r: True}
+
+DEBUG = not _ci
+
+if not _ci:
+    INSTALLED_APPS = INSTALLED_APPS + ["debug_toolbar"]
+    MIDDLEWARE = (
+        MIDDLEWARE[:2]
+        + ["debug_toolbar.middleware.DebugToolbarMiddleware"]
+        + MIDDLEWARE[2:]
+    )
+    DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda r: True}

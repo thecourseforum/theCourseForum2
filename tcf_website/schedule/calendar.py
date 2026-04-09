@@ -79,6 +79,7 @@ def parse_fallback_meeting_blocks(raw_times: str) -> list[tuple[str, int, int]]:
         for token in day_tokens:
             day_code = DAY_TOKEN_MAP.get(token.lower())
             if day_code:
+                assert start_minutes is not None and end_minutes is not None
                 parsed_blocks.append((day_code, start_minutes, end_minutes))
 
     return parsed_blocks

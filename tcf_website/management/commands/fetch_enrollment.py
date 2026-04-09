@@ -114,7 +114,9 @@ class Command(BaseCommand):
             )
 
         updated = [s for s in results if s is not None]
-        failed_sections = [s for s, r in zip(sections, results) if r is None]
+        failed_sections = [
+            s for s, r in zip(sections, results, strict=True) if r is None
+        ]
 
         # ── Retry failures once ──
         if failed_sections:

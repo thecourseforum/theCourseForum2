@@ -1,7 +1,5 @@
 """Tests for enrollment data updates."""
 
-# pylint: disable=duplicate-code
-
 from unittest.mock import MagicMock
 
 from django.test import TestCase
@@ -26,7 +24,6 @@ class TestEnrollment(TestCase):
     def setUp(self):
         """Set up test data."""
         setup(self)
-        # pylint: disable=no-member
         self.section = self.section_course
         # Set initial enrollment data on section
         self.section.enrollment_taken = 10

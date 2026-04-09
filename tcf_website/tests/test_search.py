@@ -1,4 +1,3 @@
-# pylint: disable=no-member
 """Tests for search views and pure helpers."""
 
 from types import SimpleNamespace

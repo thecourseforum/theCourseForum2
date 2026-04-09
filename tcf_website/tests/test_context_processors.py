@@ -1,4 +1,3 @@
-# pylint: disable=no-member
 """Tests for template context processors."""
 
 from django.conf import settings

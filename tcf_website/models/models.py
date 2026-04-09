@@ -1,5 +1,6 @@
-# pylint: disable=missing-class-docstring, wildcard-import, fixme, too-many-lines
 """TCF Database models."""
+
+from typing import Any
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -28,8 +29,6 @@ from django.db.models.functions import Abs, Coalesce, Concat, Round
 from django.utils import timezone
 
 from tcf_website.pagination import SECTION_DAY_CODE_TO_SECTIONTIME_FIELD, paginate
-
-# pylint: disable=line-too-long
 
 # Rolling window shared across catalog browse, search, and department pages.
 CATALOG_YEAR_WINDOW = 5
@@ -1700,11 +1699,9 @@ class Schedule(models.Model):
         total_course_credits = 0
         courses = self.get_scheduled_courses()
 
-        ret = [
-            0
-        ] * 5  # intialize return array for the schedule, which will have 5 fields
+        # Heterogeneous aggregate: courses, units, ratings, difficulty, GPA.
+        ret: list[Any] = [0] * 5
         ret[0] = courses  # list of courses in the schedule
-        # pylint: disable=not-an-iterable
         ret[1] = sum(c.enrolled_units for c in ret[0])
         ret[2] = (
             self.average_rating_for_schedule()
@@ -1805,8 +1802,8 @@ class Schedule(models.Model):
                 scheduled_course.section.course
             )
             # Store the GPA in an attribute of the ScheduledCourse instance
-            setattr(scheduled_course, "gpa", gpa)
-            setattr(scheduled_course, "credits", scheduled_course.enrolled_units)
+            scheduled_course.gpa = gpa
+            scheduled_course.credits = scheduled_course.enrolled_units
 
         return scheduled_courses
 

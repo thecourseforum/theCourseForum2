@@ -1,7 +1,5 @@
 """Course page view and section-time helpers used on that page."""
 
-# pylint: disable=too-many-locals
-
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 

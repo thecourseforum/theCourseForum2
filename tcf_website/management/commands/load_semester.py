@@ -4,11 +4,21 @@ import re
 from datetime import datetime
 
 import pandas as pd
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from django.core.management.base import BaseCommand, CommandError
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
-from tcf_website.models import *
+from tcf_website.models import (
+    Course,
+    Department,
+    Discipline,
+    Instructor,
+    School,
+    Section,
+    SectionTime,
+    Semester,
+    Subdepartment,
+)
 
 
 class Command(BaseCommand):
@@ -80,7 +90,7 @@ class Command(BaseCommand):
         Section.objects.filter(semester=semester).delete()
         print(f"Loading new data for {semester}...")
 
-        for index, row in tqdm(df.iterrows(), total=df.shape[0]):
+        for _, row in tqdm(df.iterrows(), total=df.shape[0]):
             # print(row)
             self.load_section_row(semester, row)
             # break
@@ -111,7 +121,6 @@ class Command(BaseCommand):
             # strip out non-numeric characters.
             # may NOT be missing
             course_number = re.sub("[^0-9]", "", str(row["Number"]))
-            section_number = row["Section"]  # may NOT be missing
 
             units = row["Units"]  # may be empty/nan
             units_min, units_max = self.parse_section_catalog_units(units)
@@ -145,7 +154,7 @@ class Command(BaseCommand):
             title, description, disciplines, semester, sd, course_number
         )
         instructors = self.load_instructors(instructor_names)
-        section = self.load_section(
+        self.load_section(
             sis_number,
             instructors,
             semester,

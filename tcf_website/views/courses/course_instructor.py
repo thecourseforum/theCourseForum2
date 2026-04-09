@@ -144,9 +144,7 @@ def _course_instructor_breadcrumbs(course, instructor):
     ]
 
 
-def course_instructor(
-    request, course_id, instructor_id, method="Default"
-):  # pylint: disable=too-many-locals
+def course_instructor(request, course_id, instructor_id, method="Default"):
     """Course-instructor view."""
     section_last_taught, course, instructor = _fetch_pair_section_anchor(
         course_id, instructor_id

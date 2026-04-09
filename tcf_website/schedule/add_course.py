@@ -225,6 +225,8 @@ def resolve_schedule_add_post(
             err = "The selected instructor does not teach that section."
 
     if not err:
+        assert section is not None and instructor is not None
+        assert section_id is not None and instructor_id is not None
         enrolled_units, credit_err = enrolled_units_from_schedule_add_post(
             request, section, section_id, instructor_id
         )

@@ -1,4 +1,3 @@
-# pylint: disable=no-member
 """Tests for schedule sharing (bookmarks on /schedule) and comparison."""
 
 import uuid
