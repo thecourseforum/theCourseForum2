@@ -32,14 +32,11 @@ def is_duplicate_review_for_user(user, instance) -> bool:
     if instance.club:
         return user.review_set.filter(club=instance.club).exists()
 
-    if user.review_set.filter(
-        course=instance.course, semester=instance.semester
-    ).exists():
-        return True
-
-    if user.review_set.filter(
-        course=instance.course, instructor=instance.instructor
-    ).exists():
-        return True
-
-    return False
+    return (
+        user.review_set.filter(
+            course=instance.course, semester=instance.semester
+        ).exists()
+        or user.review_set.filter(
+            course=instance.course, instructor=instance.instructor
+        ).exists()
+    )

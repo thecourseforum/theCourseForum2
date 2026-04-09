@@ -1,58 +1,51 @@
 {% extends "site/common/base.html" %}
 {% load static %}
-
-{% block title %}{{ breadcrumbs.1.0 }} | theCourseForum{% endblock %}
-
+{% block title %}
+    {{ breadcrumbs.1.0 }} | theCourseForum
+{% endblock title %}
 {% block styles %}
-<link rel="stylesheet" href="{% static 'css/site/pages/department.css' %}">
-{% endblock %}
-
+    <link rel="stylesheet" href="{% static 'css/site/pages/department.css' %}">
+{% endblock styles %}
 {% block content %}
-
-<!-- Header with Breadcrumb -->
-<div class="department-header">
-  <div class="department-header__inner">
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      {% for item in breadcrumbs %}
-        {% if item.2 %}
-          <span class="breadcrumb__current">{{ item.0 }}</span>
-        {% else %}
-          <a href="{{ item.1 }}" class="breadcrumb__link">{{ item.0 }}</a>
-          <span class="breadcrumb__separator">/</span>
-        {% endif %}
-      {% endfor %}
-    </nav>
-
-    <div class="department-toolbar">
-      <h1 class="department-toolbar__title">{{ breadcrumbs.1.0 }}</h1>
-      <div class="department-toolbar__filters">
-        {% include "site/common/components/_recency_toggle.html" %}
-      </div>
+    <!-- Header with Breadcrumb -->
+    <div class="department-header">
+        <div class="department-header__inner">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                {% for item in breadcrumbs %}
+                    {% if item.2 %}
+                        <span class="breadcrumb__current">{{ item.0 }}</span>
+                    {% else %}
+                        <a href="{{ item.1 }}" class="breadcrumb__link">{{ item.0 }}</a>
+                        <span class="breadcrumb__separator">/</span>
+                    {% endif %}
+                {% endfor %}
+            </nav>
+            <div class="department-toolbar">
+                <h1 class="department-toolbar__title">{{ breadcrumbs.1.0 }}</h1>
+                <div class="department-toolbar__filters">{% include "site/common/components/_recency_toggle.html" %}</div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-
-<!-- Course List -->
-<div class="department-content">
-  {% if not page_obj %}
-  <div class="empty-state">
-    <h2 class="empty-state__title">No courses found</h2>
-    <p class="empty-state__description">
-      {% if request.GET.latest != 'false' %}
-        No courses are being offered this semester. Try viewing the last 5 years.
-      {% else %}
-        Consider selecting a different department.
-      {% endif %}
-    </p>
-  </div>
-  {% else %}
-  <div class="course-list">
-    {% for course in page_obj %}
-    {% include "site/catalog/components/_course_card.html" with course=course %}
-    {% endfor %}
-  </div>
-  {% include "site/common/components/_pagination.html" with paginated_items=page_obj aria_label="Department courses pagination" %}
-  {% endif %}
-</div>
-
-{% endblock %}
+    <!-- Course List -->
+    <div class="department-content">
+        {% if not page_obj %}
+            <div class="empty-state">
+                <h2 class="empty-state__title">No courses found</h2>
+                <p class="empty-state__description">
+                    {% if request.GET.latest != 'false' %}
+                        No courses are being offered this semester. Try viewing the last 5 years.
+                    {% else %}
+                        Consider selecting a different department.
+                    {% endif %}
+                </p>
+            </div>
+        {% else %}
+            <div class="course-list">
+                {% for course in page_obj %}
+                    {% include "site/catalog/components/_course_card.html" with course=course %}
+                {% endfor %}
+            </div>
+            {% include "site/common/components/_pagination.html" with paginated_items=page_obj aria_label="Department courses pagination" %}
+        {% endif %}
+    </div>
+{% endblock content %}

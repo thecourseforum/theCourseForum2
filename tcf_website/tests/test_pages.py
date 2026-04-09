@@ -1,4 +1,3 @@
-# pylint: disable=no-member
 """Smoke tests for top-level and static-ish pages."""
 
 from django.test import TestCase

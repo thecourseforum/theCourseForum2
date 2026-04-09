@@ -1,4 +1,3 @@
-# pylint: disable=no-member, line-too-long
 """Tests for Department model."""
 
 from random import randint, sample, uniform

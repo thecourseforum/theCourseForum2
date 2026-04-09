@@ -1,4 +1,3 @@
-# pylint: disable=no-member
 """Tests for browse views."""
 
 from django.test import TestCase

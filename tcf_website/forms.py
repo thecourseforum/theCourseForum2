@@ -133,6 +133,4 @@ class ClubAdvancedSearchForm(forms.Form):
             return True
         if (data.get("club_name") or "").strip():
             return True
-        if data.get("no_application_required"):
-            return True
-        return False
+        return bool(data.get("no_application_required"))

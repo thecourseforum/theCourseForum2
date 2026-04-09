@@ -91,6 +91,11 @@
   color: var(--color-white);
 }
 
+.search-bar__submit-icon {
+  width: 16px;
+  height: 16px;
+}
+
 
 /* Responsive adjustment */
 @media (max-width: 767px) {

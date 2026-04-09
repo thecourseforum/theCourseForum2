@@ -38,7 +38,7 @@ class DeleteQuestion(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView
             },
         )
 
-    def get_object(self):  # pylint: disable=arguments-differ
+    def get_object(self):
         """Override DeleteView's function to validate question belonging to user."""
         obj = super().get_object()
         if obj.user != self.request.user:
@@ -140,7 +140,7 @@ class DeleteAnswer(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
             },
         )
 
-    def get_object(self):  # pylint: disable=arguments-differ
+    def get_object(self):
         """Override DeleteView's function to validate answer belonging to user."""
         obj = super().get_object()
         if obj.user != self.request.user:

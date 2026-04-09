@@ -1,4 +1,3 @@
-# pylint: disable=fixme,invalid-name
 """
 Loads grade data from CSV files into database
 """
@@ -34,7 +33,9 @@ def _average_from_breakdown(counts, total_enrolled):
     """
     if not total_enrolled:
         return None
-    return sum(c * w for c, w in zip(counts, _GRADE_WEIGHTS)) / total_enrolled
+    return (
+        sum(c * w for c, w in zip(counts, _GRADE_WEIGHTS, strict=True)) / total_enrolled
+    )
 
 
 class Command(BaseCommand):
@@ -215,7 +216,7 @@ class Command(BaseCommand):
         try:
             number = int(re.sub("[^0-9]", "", str(row["Catalog Number"])))
 
-            semester_grades = [
+            semester_grades: list[int | float] = [
                 int(x)
                 for x in [
                     row["A+"],

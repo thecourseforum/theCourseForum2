@@ -55,7 +55,7 @@ def profile(request):
             form.save()
             messages.success(request, "Your profile was updated successfully!")
         else:
-            messages.error(request, form.errors)
+            messages.error(request, form.errors.as_text())
         return HttpResponseRedirect("/profile")
 
     form = ProfileForm(label_suffix="", instance=request.user)
@@ -88,7 +88,7 @@ class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView)
         logout(self.request)
         return super().form_valid(form)
 
-    def get_object(self):  # pylint: disable=arguments-differ
+    def get_object(self):
         """Override DeleteView's function to validate profile belonging to user."""
         obj = super().get_object()
         if obj != self.request.user:

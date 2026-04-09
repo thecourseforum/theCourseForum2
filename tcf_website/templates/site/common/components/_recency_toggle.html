@@ -1,11 +1,9 @@
 {% load custom_tags %}
 <div class="recency-toggle">
-  <a href="?{% querystring request latest='true' %}"
-     class="recency-toggle__option {% if request.GET.latest != 'false' %}is-active{% endif %}">
-    {{ LATEST_SEMESTER }}
-  </a>
-  <a href="?{% querystring request latest='false' %}"
-     class="recency-toggle__option {% if request.GET.latest == 'false' %}is-active{% endif %}">
-    Last 5 Years
-  </a>
+    <a href="?{% querystring request latest='true' %}"
+       class="recency-toggle__option {% if request.GET.latest != 'false' %}is-active{% endif %}">
+        {{ LATEST_SEMESTER }}
+    </a>
+    <a href="?{% querystring request latest='false' %}"
+       class="recency-toggle__option {% if request.GET.latest == 'false' %}is-active{% endif %}">Last 5 Years</a>
 </div>

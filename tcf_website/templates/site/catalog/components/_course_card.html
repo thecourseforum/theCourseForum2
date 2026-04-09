@@ -1,29 +1,30 @@
 {# Course Card Component #}
-<a href="{% url 'course' course.mnemonic course.number %}" class="course-card">
-  <div class="course-card__main">
-    <div class="course-card__header">
-      <span class="course-card__code">{{ course.mnemonic }} {{ course.number }}</span>
-      <span class="course-card__title">{{ course.title }}</span>
+<a href="{% url 'course' course.mnemonic course.number %}"
+   class="course-card">
+    <div class="course-card__main">
+        <div class="course-card__header">
+            <span class="course-card__code">{{ course.mnemonic }} {{ course.number }}</span>
+            <span class="course-card__title">{{ course.title }}</span>
+        </div>
+        <div class="course-card__meta">
+            <span class="course-card__stat">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                {{ course.semester_last_taught|default:"—" }}
+            </span>
+        </div>
+        {% if course.description %}
+            <p class="text-sm text-muted mt-2 line-clamp-2">{{ course.description|truncatewords:30 }}</p>
+        {% endif %}
     </div>
-    
-    <div class="course-card__meta">
-      <span class="course-card__stat">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
-        </svg>
-        {{ course.semester_last_taught|default:"—" }}
-      </span>
+    <div class="course-card__ratings">
+        {% include "site/common/components/_rating_stat_trio.html" with rating=course.average_rating difficulty=course.average_difficulty gpa=course.average_gpa %}
     </div>
-    
-    {% if course.description %}
-    <p class="text-sm text-muted mt-2 line-clamp-2">{{ course.description|truncatewords:30 }}</p>
-    {% endif %}
-  </div>
-  
-  <div class="course-card__ratings">
-    {% include "site/common/components/_rating_stat_trio.html" with rating=course.average_rating difficulty=course.average_difficulty gpa=course.average_gpa %}
-  </div>
 </a>

@@ -1,20 +1,20 @@
 {% if items %}
-<div class="landing-marquee landing-marquee--reviews landing-marquee--{{ modifier }}">
-  <div class="landing-marquee__viewport" role="presentation">
-    <div class="landing-marquee__track landing-marquee__track--reviews">
-      {% for item in items %}
-      <a href="{{ item.href }}" class="landing-review-card">
-        <p class="landing-review-card__text">“{{ item.text }}”</p>
-        <p class="landing-review-card__source">{{ item.source }}</p>
-      </a>
-      {% endfor %}
-      {% for item in items %}
-      <a href="{{ item.href }}" class="landing-review-card">
-        <p class="landing-review-card__text">“{{ item.text }}”</p>
-        <p class="landing-review-card__source">{{ item.source }}</p>
-      </a>
-      {% endfor %}
+    <div class="landing-marquee landing-marquee--reviews landing-marquee--{{ modifier }}">
+        <div class="landing-marquee__viewport" role="presentation">
+            <div class="landing-marquee__track landing-marquee__track--reviews">
+                {% for item in items %}
+                    <a href="{{ item.href }}" class="landing-review-card">
+                        <p class="landing-review-card__text">“{{ item.text }}”</p>
+                        <p class="landing-review-card__source">{{ item.source }}</p>
+                    </a>
+                {% endfor %}
+                {% for item in items %}
+                    <a href="{{ item.href }}" class="landing-review-card">
+                        <p class="landing-review-card__text">“{{ item.text }}”</p>
+                        <p class="landing-review-card__source">{{ item.source }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 {% endif %}

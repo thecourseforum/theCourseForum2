@@ -124,7 +124,7 @@ class Command(BaseCommand):
         categories = {}
 
         # Process clubs
-        with open(csv_file, "r", encoding="utf-8") as f:
+        with open(csv_file, encoding="utf-8") as f:
             reader = csv.reader(f)
             # Skip header row
             next(reader)

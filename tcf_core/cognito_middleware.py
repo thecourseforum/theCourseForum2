@@ -1,7 +1,7 @@
 """Middleware for handling Cognito authentication"""
 
 
-class CognitoAuthMiddleware:  # pylint: disable=too-few-public-methods
+class CognitoAuthMiddleware:
     """
     Middleware that processes Cognito tokens in HTTP requests
 

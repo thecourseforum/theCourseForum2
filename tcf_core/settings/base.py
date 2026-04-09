@@ -1,4 +1,3 @@
-# pylint: disable=fixme
 """Base Django settings for tcf_core project."""
 
 import os

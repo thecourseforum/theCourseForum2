@@ -59,3 +59,7 @@
   margin: var(--space-2) 0;
   padding-left: var(--space-6);
 }
+
+.legal-card ul.tcf-legal-list {
+  list-style-type: disc;
+}

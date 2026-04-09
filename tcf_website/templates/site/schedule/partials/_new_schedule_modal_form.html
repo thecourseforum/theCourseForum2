@@ -1,26 +1,25 @@
-<form
-  method="post"
-  action="{% url 'new_schedule' %}"
-  class="schedule-flow-modal__new-form"
-  data-tcf-json-submit
->
-  {% csrf_token %}
-  {# semester is set on modal open via TcfSchedulePage (live term combo). #}
-  <input type="hidden" name="semester" value="">
-  <label class="schedule-add__label" for="tcf-new-schedule-name">Schedule name</label>
-  <input
-    id="tcf-new-schedule-name"
-    type="text"
-    name="name"
-    maxlength="100"
-    required
-    class="input"
-    placeholder="e.g. Fall primary"
-    aria-label="New schedule name"
-  >
-  <div class="schedule-add__actions schedule-flow-modal__new-actions">
-    <button type="submit" class="btn btn--primary btn--sm">Create</button>
-    <button type="button" class="btn btn--ghost btn--sm" data-modal-close>Cancel</button>
-  </div>
-  <p class="schedule-flow-modal__error" data-tcf-form-error hidden role="alert"></p>
+<form method="post"
+      action="{% url 'new_schedule' %}"
+      class="schedule-flow-modal__new-form"
+      data-tcf-json-submit>
+    {% csrf_token %}
+    {# semester is set on modal open via TcfSchedulePage (live term combo). #}
+    <input type="hidden" name="semester" value="">
+    <label class="schedule-add__label" for="tcf-new-schedule-name">Schedule name</label>
+    <input id="tcf-new-schedule-name"
+           type="text"
+           name="name"
+           maxlength="100"
+           required
+           class="input"
+           placeholder="e.g. Fall primary"
+           aria-label="New schedule name">
+    <div class="schedule-add__actions schedule-flow-modal__new-actions">
+        <button type="submit" class="btn btn--primary btn--sm">Create</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-modal-close>Cancel</button>
+    </div>
+    <p class="schedule-flow-modal__error"
+       data-tcf-form-error
+       hidden
+       role="alert"></p>
 </form>

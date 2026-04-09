@@ -20,7 +20,7 @@ class DeleteReview(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
         """Use caller-provided next URL when safe, otherwise default."""
         return safe_next_url(self.request, str(self.success_url))
 
-    def get_object(self):  # pylint: disable=arguments-differ
+    def get_object(self):
         """Override DeleteView's function to validate review belonging to user."""
         obj = super().get_object()
         if obj.user != self.request.user:

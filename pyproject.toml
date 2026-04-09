@@ -1,0 +1,85 @@
+[project]
+name = "thecourseforum"
+version = "2.0.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "Django>=4.2.8,<5",
+    "backoff>=2.2.1,<3",
+    "boto3>=1.37.4,<2",
+    "django-cachalot>=2.6.1,<3",
+    "django-environ>=0.11.2,<0.12",
+    "django-filter>=23.5,<24",
+    "django-storages>=1.14.5,<2",
+    "djangorestframework>=3.14.0,<3.15",
+    "gunicorn>=21.2.0,<23",
+    "numpy>=1.26.2,<2",
+    "pandas>=2.1.4,<3",
+    "psycopg[binary]>=3.2.12",
+    "python-jose>=3.4.0,<4",
+    "requests>=2.31.0,<3",
+    "tqdm>=4.66.1,<5",
+]
+
+[dependency-groups]
+dev = [
+    "coverage[toml]>=7.3.3",
+    "django-debug-toolbar>=4.4.0,<5",
+    "django-stubs>=4.2.7,<5",
+    "djangorestframework-stubs>=3.14.0,<4",
+    "djlint>=1.36.0,<2",
+    "ruff>=0.9.0",
+    "ty>=0.0.27",
+    "types-requests>=2.31.0",
+    "types-tqdm>=4.66.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+extend-exclude = ["**/migrations"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "W", "UP", "B", "SIM", "DJ"]
+ignore = ["DJ001", "DJ008", "DJ012", "SIM102", "SIM108", "SIM114"]
+
+[tool.ruff.lint.per-file-ignores]
+"tcf_core/settings/*.py" = ["F403", "F405"]
+"tcf_website/admin.py" = ["F403", "F405"]
+"tcf_website/legacy_models.py" = ["F403", "F405"]
+"tcf_website/models/__init__.py" = ["F401"]
+"tcf_website/models/models.py" = ["F403", "F405"]
+"tcf_website/tests/test_utils.py" = ["F403", "F405"]
+"tcf_website/views/__init__.py" = ["F401"]
+
+[tool.ty.rules]
+# Django/ORM noise until ty + django-stubs catch up; re-enable as tooling improves.
+unresolved-attribute = "ignore"
+possibly-missing-submodule = "ignore"
+no-matching-overload = "ignore"
+invalid-argument-type = "ignore"
+invalid-method-override = "ignore"
+
+[tool.ty.environment]
+python-version = "3.12"
+
+[tool.ty.src]
+include = ["tcf_core", "tcf_website", "manage.py"]
+exclude = ["**/migrations", "tcf_website/legacy_models.py"]
+
+[tool.djlint]
+profile = "django"
+indent = 4
+max_line_length = 120
+
+[tool.django-stubs]
+django_settings_module = "tcf_core.settings.dev"
+
+[tool.coverage.run]
+source = ["tcf_core", "tcf_website"]
+omit = ["*/migrations/*", "*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]

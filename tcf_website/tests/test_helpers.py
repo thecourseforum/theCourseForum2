@@ -1,4 +1,3 @@
-# pylint: disable=no-member
 """Tests for shared URL and mode helpers."""
 
 from html import unescape

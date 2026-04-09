@@ -48,7 +48,7 @@ def new_schedule(request):
         if form.errors:
             first = next(iter(form.errors.values()))
             if first:
-                err = first[0]
+                err = str(first[0])
         if want_json:
             return schedule_json_error(request, err, status=400)
         messages.error(request, err)
@@ -97,7 +97,7 @@ def duplicate_schedule(request, schedule_id):
     source_pk = source.pk
     old_name = source.name
 
-    if source.user_id == request.user.id:
+    if source.user.pk == request.user.pk:
         source.pk = None
         source.name = "Copy of " + old_name
         source.share_token = None
@@ -168,7 +168,7 @@ def remove_scheduled_course(request, scheduled_course_id):
         return schedule_json_error(
             request, "Course not found in your schedule.", status=404
         )
-    schedule_id = scheduled_course.schedule_id
+    schedule_id = scheduled_course.schedule.pk
     course_label = (
         f"{scheduled_course.section.course.subdepartment.mnemonic} "
         f"{scheduled_course.section.course.number}"

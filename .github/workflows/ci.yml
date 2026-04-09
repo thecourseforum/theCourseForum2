@@ -9,8 +9,8 @@ on:
     branches: [dev, master]
 
 env:
-  PYTHON_TARGET: 3.11
-  DJANGO_SETTINGS_MODULE: tcf_core.settings.ci
+  PYTHON_TARGET: "3.12"
+  DJANGO_SETTINGS_MODULE: tcf_core.settings.dev
   SECRET_KEY: ci-secret-key-not-for-production
   # CI database (GitHub Actions postgres service)
   DB_NAME: tcf_db
@@ -20,27 +20,59 @@ env:
   DB_PORT: 5432
 
 jobs:
-  pylint:
+  ruff:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ env.PYTHON_TARGET }}
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ env.PYTHON_TARGET }}
-          cache: 'pip'
-          cache-dependency-path: 'requirements/*.txt'
+          enable-cache: true
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements/ci.txt
+        run: uv sync --frozen --group dev --no-install-project
 
-      - name: Run pylint
-        run: |
-          export PYTHONPATH="$(pwd)"
-          pylint --django-settings-module=${{ env.DJANGO_SETTINGS_MODULE }} --jobs=0 --load-plugins pylint_django tcf_website tcf_core
+      - name: Ruff check
+        run: uv run ruff check .
+
+      - name: Ruff format
+        run: uv run ruff format --check .
+
+  djlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ env.PYTHON_TARGET }}
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen --group dev --no-install-project
+
+      - name: djLint templates
+        run: uv run djlint tcf_website/templates --check --lint
+
+  ty:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ env.PYTHON_TARGET }}
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen --group dev --no-install-project
+
+      - name: Run ty
+        run: uv run ty check
 
   django:
     runs-on: ubuntu-latest
@@ -59,27 +91,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ env.PYTHON_TARGET }}
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ env.PYTHON_TARGET }}
-          cache: 'pip'
-          cache-dependency-path: 'requirements/*.txt'
+          enable-cache: true
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements/ci.txt
+        run: uv sync --frozen --group dev --no-install-project
 
       - name: Migrations & Tests
         run: |
-          python manage.py migrate
-          coverage run manage.py test
+          uv run python manage.py migrate
+          uv run coverage run manage.py test
 
       - name: Get code coverage
         id: coverage
         run: |
-          echo "percentage=$(coverage report | grep -o '[0-9]\+%' | tail -1)" >> $GITHUB_OUTPUT
+          echo "percentage=$(uv run coverage report | grep -o '[0-9]\+%' | tail -1)" >> "$GITHUB_OUTPUT"
 
   eslint:
     runs-on: ubuntu-latest
@@ -90,7 +119,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install npm packages
         run: npm ci
