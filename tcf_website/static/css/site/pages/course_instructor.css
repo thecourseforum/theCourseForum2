@@ -252,7 +252,6 @@
   width: 0%;
   height: 100%;
   border-radius: var(--radius-full);
-
   transition: width var(--duration-normal) var(--ease-default);
 }
 
