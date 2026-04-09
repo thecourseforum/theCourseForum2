@@ -1,4 +1,4 @@
-{% extends "base/base.html" %}
+{% extends "site/common/base.html" %}
 {% load static %}
 {% load custom_tags %}
 
@@ -57,7 +57,7 @@
     {% for tag in unique_tags %}
       <div class="form-check">
           <input class="form-check-input tag-checkbox" type="checkbox" id="tag-{{ forloop.counter }}" value="{{ tag }}" checked>
-          <label class="form-check-label badge {{ tag|tag_color }} text-white" for="tag-{{ forloop.counter }}">
+          <label class="form-check-label badge text-white" for="tag-{{ forloop.counter }}">
               {{ tag }}
               </label>
             </div>
@@ -96,7 +96,7 @@
                               {% if ev.tags and ev.tags|length > 0 %}
                                 <div class="mb-2">
                                   {% for t in ev.tags|slice:":3" %}
-                                    <span class="badge {{ t|tag_color }} text-white me-1">{{ t }}</span>
+                                    <span class="badge text-white me-1">{{ t }}</span>
                                   {% endfor %}
                                 </div>
                               {% endif %}
@@ -144,7 +144,7 @@
                         {% if ev.tags and ev.tags|length > 0 %}
                           <div class="mb-2">
                             {% for t in ev.tags|slice:":3" %}
-                              <span class="badge {{ t|tag_color }} text-white me-1">{{ t }}</span>
+                              <span class="badge text-white me-1">{{ t }}</span>
                             {% endfor %}
                           </div>
                         {% endif %}
