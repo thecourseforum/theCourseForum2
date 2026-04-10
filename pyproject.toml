@@ -16,6 +16,7 @@ dependencies = [
     "pandas>=2.1.4,<3",
     "psycopg[binary]>=3.2.12",
     "python-jose>=3.4.0,<4",
+    "redis>=7.4.0",
     "requests>=2.31.0,<3",
     "tqdm>=4.66.1,<5",
 ]
