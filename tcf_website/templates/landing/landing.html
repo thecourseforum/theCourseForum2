@@ -149,6 +149,76 @@
         </div>
     </section>
 
+    <!-- Popular Courses and Professors -->
+    <section class="trending-analytics container px-5 pb-5">
+    <div class="row px-md-4">
+        
+        <div class="col-lg-6 mb-4">
+            <div class="card mx-sm-3 h-100 shadow-sm border-0 bg-white">
+                <div class="card-body p-4 text-left">
+                    <h4 class="card-title text-tcf-indigo border-bottom pb-3 mb-3">
+                        <i class="icon-fire text-tcf-orange mr-2"></i>Trending Courses
+                    </h4>
+                    <ul class="list-unstyled mb-0">
+                        {% for course in trending_courses %}
+                            <li class="mb-3 d-flex align-items-center">
+                                <div>
+                                    <strong class="text-dark">{{ course.mnemonic }} {{ course.number }}</strong> 
+                                    <span class="font-weight-light text-muted ml-1">- {{ course.title }}</span>
+                                </div>
+                                
+                                {% if forloop.counter == 1 %}
+                                    <span class="badge badge-pill ml-auto" style="background-color: #f6921e; color: white;">#1</span>
+                                {% elif forloop.counter == 2 %}
+                                    <span class="badge badge-pill ml-auto" style="background-color: #f6921e; color: white; opacity: 0.75;">#2</span>
+                                {% elif forloop.counter == 3 %}
+                                    <span class="badge badge-pill ml-auto" style="background-color: #f6921e; color: white; opacity: 0.5;">#3</span>
+                                {% endif %}
+                            </li>
+                        {% empty %}
+                            <li class="mb-3 text-muted">
+                                <em>Trending data currently calculating...</em>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card mx-sm-3 h-100 shadow-sm border-0 bg-white">
+                <div class="card-body p-4 text-left">
+                    <h4 class="card-title text-tcf-indigo border-bottom pb-3 mb-3">
+                        <i class="icon-graph text-tcf-orange mr-2"></i>Trending Professors
+                    </h4>
+                    <ul class="list-unstyled mb-0">
+                        {% for prof in trending_instructors %}
+                            <li class="mb-3 d-flex align-items-center">
+                                <div>
+                                    <strong class="text-dark">{{ prof.first_name }} {{ prof.last_name }}</strong> 
+                                    <span class="font-weight-light text-muted d-block small mt-1">Computer Science</span>
+                                </div>
+                                
+                                {% if forloop.counter == 1 %}
+                                    <span class="badge badge-pill ml-auto" style="background-color: #f6921e; color: white;">#1</span>
+                                {% elif forloop.counter == 2 %}
+                                    <span class="badge badge-pill ml-auto" style="background-color: #f6921e; color: white; opacity: 0.75;">#2</span>
+                                {% elif forloop.counter == 3 %}
+                                    <span class="badge badge-pill ml-auto" style="background-color: #f6921e; color: white; opacity: 0.5;">#3</span>
+                                {% endif %}
+                            </li>
+                        {% empty %}
+                            <li class="mb-3 text-muted">
+                                <em>Trending data currently calculating...</em>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
 
     <!-- About Team -->
     <section class="about-team py-5 my-5">
