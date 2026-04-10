@@ -8,8 +8,8 @@ ALLOWED_HOSTS = [
     "*",
     "thecourseforum.com",
     "thecourseforumtest.com",
-    "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
-    "d1gr9vmyo0mkxv.cloudfront.net",
+    env.str("AWS_ELB_URL"),
+    env.str("AWS_CLOUDFRONT_URL"),
 ]
 
 # AWS S3 for static files
@@ -45,6 +45,14 @@ DATABASES = {
         "HOST": env.str("AWS_RDS_HOST"),
         "PORT": env.int("AWS_RDS_PORT"),
         "OPTIONS": {"sslmode": "require"},
+        "CONN_MAX_AGE": 60,
+    }
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": env.str("AWS_REDIS_URL"),
     }
 }
 
