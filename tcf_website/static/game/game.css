@@ -11,12 +11,19 @@
 
 .info-display {
     background-color: var(--shaded-color);
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
 }
 
 /*overwrite form-control gray background*/
 #course-input { 
     background-color: white;
 }
+
+
 
 /*need it to be like 2 cols
 
