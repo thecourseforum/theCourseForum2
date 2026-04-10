@@ -42,7 +42,8 @@ resource "aws_iam_role_policy" "ecs_task_execution_secrets" {
         Resource = [
           aws_secretsmanager_secret.django_secret_key.arn,
           aws_secretsmanager_secret.db_credentials.arn,
-          aws_secretsmanager_secret.cognito_credentials.arn
+          aws_secretsmanager_secret.cognito_credentials.arn,
+          aws_secretsmanager_secret.redis_url.arn
         ]
       }
     ]
