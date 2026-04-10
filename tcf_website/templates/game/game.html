@@ -73,28 +73,29 @@
 <script>
     var guessIndex = 1
 
+    function tileClass(val) {
+        if (val === "correct") return "tile-correct";
+        if (val === "partial") return "tile-partial";
+        if (val === "higher") return "tile-incorrect tile-higher";
+        if (val === "lower") return "tile-incorrect tile-lower";
+        return "tile-incorrect";
+    }
+
     function updateRow(guess, feedback) {
         var row = document.getElementById(`guess-${guessIndex}`);
         row.innerHTML = `
         <div class="guess-values">
-            <span>${guess.dept}</span>
-            <span>${guess.number}</span>
-            <span>${guess.rating ?? "N/A"}</span>
-            <span>${guess.difficulty ?? "N/A"}</span>
-            <span>${guess.gpa ?? "N/A"}</span>
+            <span class="${tileClass(feedback.dept)}">${guess.dept}</span>
+            <span class="${tileClass(feedback.number)}">${guess.number}</span>
+            <span class="${tileClass(feedback.rating)}">${guess.rating ?? "N/A"}</span>
+            <span class="${tileClass(feedback.difficulty)}">${guess.difficulty ?? "N/A"}</span>
+            <span class="${tileClass(feedback.gpa)}">${guess.gpa ?? "N/A"}</span>
         </div>
-        <div class="guess-feedback">
-            <span>${feedback.dept}</span>
-            <span>${feedback.number}</span>
-            <span>${feedback.rating}</span>
-            <span>${feedback.difficulty}</span>
-            <span>${feedback.gpa}</span>
-        </div>
-        `  
+        `
     }
 
     document.getElementById("game-form").addEventListener("submit", function(e) {
-        e.preventDefault() //prevent page refresh
+        e.preventDefault()
         var form = this
         var formData = new FormData(form)
 
@@ -105,16 +106,14 @@
                 'X-CSRFToken': formData.get('csrfmiddlewaretoken')
             }
         })
-        .then(r => r.json()) //turn into JSON
-        .then(response => { //pass JSON parsed data into function
+        .then(r => r.json())
+        .then(response => {
             if (guessIndex === 1) {
-                console.log(response.review_info) //for testing
-                //console.log(response.guess)
+                console.log(response.review_info)
             }
             updateRow(response.guess, response.feedback)
-            guessIndex ++;
+            guessIndex++
         })
-        /*any responsive UI for invalid guesses also implemented here (ex new_review.html)*/
     })
 </script>
 {% endblock %}
