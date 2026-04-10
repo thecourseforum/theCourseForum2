@@ -81,11 +81,19 @@
   border-bottom: 12px solid transparent;
   border-right: 12px solid #FFFFFF;
   z-index: 2;
-  filter: drop-shadow(-1px 0px 0.5px rgba(0,0,0,0.1));
 }
-/* Shadow to hide the gray border triangle completely */
+/* Triangle border to match card border */
 .review-wrapper .card::after {
-  display: none;
+  content: '';
+  position: absolute;
+  left: -13px;
+  top: 19px;
+  width: 0;
+  height: 0;
+  border-top: 13px solid transparent;
+  border-bottom: 13px solid transparent;
+  border-right: 13px solid #ddd;
+  z-index: 1;
 }
 /* White rectangle mask */
 .triangle-mask {
