@@ -5,7 +5,7 @@
 Fetch grade data from [IRA Grade Data Distribution](https://ira.virginia.edu/university-data-home/grade-distribution-last-5-years?check_logged_in=1)
 
 ### Requirements
-- `fetch_grades.py` (available in Google Drive) must be in *root* of repository
+- `fetch_grades.py` (available in Google Drive `Engineering` folder) must be in *root* of repository
 - Semester data csv for semester must be in `tcf_website/management/commands/semester_data/csv`
 
 ```console
