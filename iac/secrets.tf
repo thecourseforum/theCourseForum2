@@ -5,6 +5,12 @@ resource "random_password" "django_secret_key" {
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
+# Valkey auth token for in-transit TLS + AUTH
+resource "random_password" "redis_auth_token" {
+  length  = 32
+  special = false
+}
+
 # Django Secret Key in Secrets Manager
 resource "aws_secretsmanager_secret" "django_secret_key" {
   name_prefix = "${local.name_prefix}/django-secret-key-"
@@ -60,4 +66,34 @@ resource "aws_secretsmanager_secret_version" "cognito_credentials" {
     domain            = "https://${aws_cognito_user_pool_domain.main.domain}.auth.${var.aws_region}.amazoncognito.com"
     region            = var.aws_region
   })
+}
+
+# Redis auth token in Secrets Manager
+resource "aws_secretsmanager_secret" "redis_auth_token" {
+  name_prefix = "${local.name_prefix}/redis-auth-token-"
+  description = "Valkey auth token for ${local.name_prefix}"
+
+  tags = {
+    Name = "${local.name_prefix}-redis-auth-token"
+  }
+}
+
+resource "aws_secretsmanager_secret_version" "redis_auth_token" {
+  secret_id     = aws_secretsmanager_secret.redis_auth_token.id
+  secret_string = random_password.redis_auth_token.result
+}
+
+# Redis URL in Secrets Manager
+resource "aws_secretsmanager_secret" "redis_url" {
+  name_prefix = "${local.name_prefix}/redis-url-"
+  description = "Redis connection URL for ElastiCache Valkey"
+
+  tags = {
+    Name = "${local.name_prefix}-redis-url"
+  }
+}
+
+resource "aws_secretsmanager_secret_version" "redis_url" {
+  secret_id     = aws_secretsmanager_secret.redis_url.id
+  secret_string = "rediss://:${random_password.redis_auth_token.result}@${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${aws_elasticache_replication_group.valkey.port}"
 }

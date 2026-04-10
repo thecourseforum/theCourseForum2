@@ -114,6 +114,10 @@ container_definitions = jsonencode([
         {
           name      = "COGNITO_REGION_NAME"
           valueFrom = "${aws_secretsmanager_secret.cognito_credentials.arn}:region::"
+        },
+        {
+          name      = "AWS_REDIS_URL"
+          valueFrom = aws_secretsmanager_secret.redis_url.arn
         }
       ]
 
@@ -132,6 +136,8 @@ container_definitions = jsonencode([
     aws_secretsmanager_secret_version.django_secret_key,
     aws_secretsmanager_secret_version.db_credentials,
     aws_secretsmanager_secret_version.cognito_credentials,
+    aws_secretsmanager_secret_version.redis_auth_token,
+    aws_secretsmanager_secret_version.redis_url,
     aws_iam_role_policy.ecs_task_execution_secrets,
     aws_iam_role_policy_attachment.ecs_task_execution
   ]

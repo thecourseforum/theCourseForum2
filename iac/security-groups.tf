@@ -70,3 +70,22 @@ resource "aws_security_group" "rds" {
     Name = "${local.name_prefix}-rds-sg"
   }
 }
+
+# ElastiCache Security Group
+resource "aws_security_group" "elasticache" {
+  name        = "${local.name_prefix}-elasticache-sg"
+  description = "Security group for ElastiCache Valkey"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description     = "Redis from ECS tasks"
+    from_port       = 6379
+    to_port         = 6379
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ecs_tasks.id]
+  }
+
+  tags = {
+    Name = "${local.name_prefix}-elasticache-sg"
+  }
+}

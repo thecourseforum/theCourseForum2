@@ -86,3 +86,20 @@ output "cognito_credentials_secret_arn" {
   value       = aws_secretsmanager_secret.cognito_credentials.arn
   sensitive   = true
 }
+
+output "elasticache_endpoint" {
+  description = "ElastiCache Valkey primary endpoint"
+  value       = aws_elasticache_replication_group.valkey.primary_endpoint_address
+  sensitive   = true
+}
+
+output "elasticache_port" {
+  description = "ElastiCache Valkey port"
+  value       = aws_elasticache_replication_group.valkey.port
+}
+
+output "redis_url" {
+  description = "Redis connection URL"
+  value       = "rediss://:${random_password.redis_auth_token.result}@${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${aws_elasticache_replication_group.valkey.port}"
+  sensitive   = true
+}
