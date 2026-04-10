@@ -1,19 +1,22 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'reviews/review.css' %}" />
 
-<div id="review{{review.id}}" class="review mb-2">
+<div id="review{{review.id}}" class="review mb-2 {% if profile %}profile-review{% endif %}">
     <!-- DIV to contain entire review card with picture -->
 
-    <div class="pl-5 ml-5 review-wrapper">
+    <div class="{% if not profile %}pl-5 ml-5 {% endif %}review-wrapper">
 
+        {% if not profile %}
         <div class="review-pfp">
             <!-- Profile Picture Container -->
             <img src="{% static 'profile/profilepictures/' %}{{ review.user.selected_pfp }}" alt="profile-img">
         </div>
-
+        {% endif %}
         <!-- Original review (not including pfp/speech bubble)-->
         <div class="card"> <!-- White review background --->
+            {% if not profile %}
             <div class="triangle-mask"></div>
+            {% endif %}
             <div class="card-body text-left">
                 <div class="row">
                     <!-- Review Main Content -->

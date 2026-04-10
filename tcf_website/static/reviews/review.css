@@ -97,3 +97,10 @@
   background-color: #FFFFFF;
   z-index: 3;
 }
+/* Hide triangle on profile page */
+.profile-review .card::before,
+.profile-review .card::after,
+.profile-review .triangle-mask {
+  display: none !important;
+  content: none !important;
+}
