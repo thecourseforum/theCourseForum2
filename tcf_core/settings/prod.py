@@ -45,16 +45,27 @@ DATABASES = {
         "HOST": env.str("AWS_RDS_HOST"),
         "PORT": env.int("AWS_RDS_PORT"),
         "OPTIONS": {"sslmode": "require"},
-        "CONN_MAX_AGE": 60,
+        "CONN_MAX_AGE": 60,  # Remove if using RDS proxy
     }
 }
 
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": env.str("AWS_REDIS_URL"),
+        "LOCATION": env.str("AWS_REDIS_URL"),  # redis://instance-endpoint:6379
+        "KEY_PREFIX": "tcf:prod",
+        "OPTIONS": {
+            "socket_connect_timeout": 5,
+            "socket_timeout": 5,
+            "retry_on_timeout": True,
+        },
     }
 }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+SESSION_CACHE_ALIAS = "default"
+
+CACHALOT_TIMEOUT = 60 * 60 * 24 * 7  # 1 week
 
 # Security
 CSRF_TRUSTED_ORIGINS = [

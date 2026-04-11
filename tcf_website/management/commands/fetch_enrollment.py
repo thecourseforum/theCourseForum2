@@ -10,6 +10,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 import requests
+from cachalot.api import invalidate
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
@@ -133,6 +134,7 @@ class Command(BaseCommand):
 
         # ── Single bulk DB write ──
         Section.objects.bulk_update(updated, ENROLLMENT_FIELDS, batch_size=500)
+        invalidate(Section)
 
         elapsed = time.time() - start
         self.stdout.write(

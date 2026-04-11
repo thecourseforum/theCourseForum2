@@ -7,6 +7,7 @@ import re
 
 import numpy as np
 import pandas as pd
+from cachalot.api import invalidate
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
@@ -306,6 +307,7 @@ class Command(BaseCommand):
 
         # bulk_create is much more efficient than creating them separately
         CourseGrade.objects.bulk_create(unsaved_cg_instances)
+        invalidate(CourseGrade)
         if self.verbosity > 0:
             print("Done creating CourseGrade instances")
             print("Step 3: Bulk-create CourseInstructorGrade instances")
@@ -321,6 +323,7 @@ class Command(BaseCommand):
             )
             unsaved_cig_instances.append(unsaved_cig_instance)
         CourseInstructorGrade.objects.bulk_create(unsaved_cig_instances)
+        invalidate(CourseInstructorGrade)
         if self.verbosity > 0:
             print("Done creating CourseInstructorGrade instances")
 
