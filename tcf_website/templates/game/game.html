@@ -95,8 +95,10 @@
 {% endblock %}
 
 {% block js %}
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 <script>
     var guessIndex = 1
+    var confettiFired = false
 
     function tileClass(val) {
         if (val === "correct") return "tile-correct";
@@ -147,6 +149,33 @@
         overlay.classList.add("show");
     }
 
+    function fireConfetti() {
+        if (confettiFired || typeof confetti !== "function") {
+            return;
+        }
+        confettiFired = true;
+        confetti({
+            particleCount: 140,
+            spread: 70,
+            origin: { y: 1 }
+        });
+    }
+
+    function isPerfectGuess(feedback) {
+        if (!feedback) {
+            return false;
+        }
+        return [
+            feedback.mnemonic,
+            feedback.number,
+            feedback.rating,
+            feedback.difficulty,
+            feedback.gpa,
+        ].every(function(value) {
+            return value === "correct";
+        });
+    }
+
     document.getElementById("game-overlay").addEventListener("click", function(e) {
         if (e.target === this) {
             this.classList.remove("show");
@@ -176,6 +205,10 @@
                 console.log(response.review_info)
             }
             updateRow(response.guess, response.feedback)
+            if (isPerfectGuess(response.feedback)) {
+                fireConfetti();
+                lockGame();
+            }
             if (guessIndex === 10 && response.feedback && response.feedback.mnemonic !== "correct") {
                 showNoMoreGuessesOverlay();
                 lockGame();
