@@ -5,8 +5,8 @@ import datetime
 from django import forms
 from django.core.cache import cache
 from django.core.validators import MaxValueValidator
-from django.shortcuts import render
 from django.http import JsonResponse
+from django.shortcuts import render
 
 from ..models import Club, Course, Instructor, Review, Semester
 
@@ -30,17 +30,21 @@ class GameForm(forms.Form):
 
 cache_timeout = 60 * 60 * 24  # 24 hours
 
-'''Fetches/retrieves cached daily review, refreshes at midnight'''
-def get_daily_review(): 
+"""Fetches/retrieves cached daily review, refreshes at midnight"""
+
+
+def get_daily_review():
     now = datetime.datetime.now()
     date = now.strftime("%Y-%m-%d")
     cache_key = f"daily_review_{date}"  # cache key has current date
     review = cache.get(cache_key)
     if not review:
         # if the date has changed (12:00 am) then get the new review and reset cache timer
-        review = (Review.objects.filter(text__gt="").order_by("?").first()) # reviews w text only, change later for performance
+        review = (
+            Review.objects.filter(text__gt="").order_by("?").first()
+        )  # reviews w text only, change later for performance
         cache.set(cache_key, review, cache_timeout)
-    review = (Review.objects.filter(text__gt="").order_by("?").first())
+    review = Review.objects.filter(text__gt="").order_by("?").first()
     return review
 
 
@@ -60,15 +64,19 @@ def get_daily_review():
 #     print(msg)
 #     return msg
 
-'''Extract stats of correct review'''
+"""Extract stats of correct review"""
+
+
 def safe_round(value, digits=2):
     return round(value, digits) if value is not None else None
-    
+
+
 def get_course_info(course):
     return {
         "title": course.title,
-        "mnemonic": course.subdepartment.mnemonic, 
+        "mnemonic": course.subdepartment.mnemonic,
         "number": course.number,
+        "school": course.subdepartment.department.school_id,
         "rating": safe_round(course.average_rating(), 2),
         "difficulty": safe_round(course.average_difficulty(), 2),
         "gpa": safe_round(course.average_gpa(), 2),
@@ -83,36 +91,55 @@ def _extract_course_code(course_text: str) -> str:
     """Return the course code portion from inputs like 'CS 1110 — Intro'."""
     return course_text.split("—", 1)[0].strip()
 
-'''Returns dict with correct/incorrect or directional hints for numeric fields'''
+
+"""Returns dict with correct/incorrect or directional hints for numeric fields"""
+
+
 def compare_guess(review_info, guess_info):
     if guess_info is None:
         return None
-    
+
     feedback = {}
 
-    feedback["mnemonic"] = "correct" if guess_info["mnemonic"] == review_info["mnemonic"] else "incorrect"
+    if guess_info.get("mnemonic") == review_info.get("mnemonic"):
+        feedback["mnemonic"] = "correct"
+    elif guess_info.get("school") and review_info.get("school"):
+        feedback["mnemonic"] = (
+            "partial"
+            if guess_info["school"] == review_info["school"]
+            else "incorrect"
+        )
+    else:
+        feedback["mnemonic"] = "incorrect"
     for field in ["number", "rating", "difficulty", "gpa"]:
         g = guess_info[field] if guess_info[field] == None else float(guess_info[field])
-        r = review_info[field] if review_info[field] == None else float(review_info[field])
-        if g is None or r is None:  
-            feedback[field] = "N/A" 
+        r = (
+            review_info[field]
+            if review_info[field] == None
+            else float(review_info[field])
+        )
+        if g is None or r is None:
+            feedback[field] = "N/A"
         elif g == r:
             feedback[field] = "correct"
         elif g < r:
-            feedback[field] = "higher" #as in guess needs to be higher
+            feedback[field] = "higher"  # as in guess needs to be higher
         else:
             feedback[field] = "lower"
-    
+
     return feedback
 
-'''Handles HTTPRequests for game'''
+
+"""Handles HTTPRequests for game"""
+
+
 def game(request):
     courses = Course.objects.all().order_by("subdepartment__mnemonic", "number")
-    #review = get_daily_review() 
+    # review = get_daily_review()
 
     if request.method == "GET":
-        #for testing - can get new review per session (cookies cleared)
-        review = (Review.objects.filter(text__gt="").order_by("?").first()) 
+        # for testing - can get new review per session (cookies cleared)
+        review = Review.objects.filter(text__gt="").order_by("?").first()
         request.session["review_id"] = review.id
         form = GameForm()
         return render(
@@ -142,7 +169,7 @@ def game(request):
                 else:
                     raise Course.DoesNotExist
                 guess_info = get_course_info(guess_course)
-                review_info = get_course_info(review.course) 
+                review_info = get_course_info(review.course)
 
             except Course.DoesNotExist:
                 guess_course = Course.objects.filter(
@@ -156,8 +183,10 @@ def game(request):
 
             feedback = compare_guess(review_info, guess_info)
 
-        return JsonResponse({
-            "feedback": feedback,
-            "guess": guess_info,
-            "review_info": review_info #for testing 
-        })
+        return JsonResponse(
+            {
+                "feedback": feedback,
+                "guess": guess_info,
+                "review_info": review_info,  # for testing
+            }
+        )
