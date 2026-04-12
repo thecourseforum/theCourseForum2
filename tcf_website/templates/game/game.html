@@ -34,18 +34,21 @@
                 </div>
             </div>
         </div>
-        <div class="guess-wrapper">
+        <div class="guess-wrapper position-relative">
             <form id="game-form" class="input-group flex-grow-1" method="post">
                 {% csrf_token %}
-                <input
-                    type="text"
-                    class="form-control border border-right-0"
-                    placeholder="Type course name... (e.g. CS 1110)"
-                    name="course"
-                    id="course-input"
-                    list="course-list"
-                    value="{{ form.course.value|default_if_none:'' }}"
-                />
+                <div class="autocomplete-input-wrapper flex-grow-1">
+                    <input
+                        type="text"
+                        class="form-control border border-right-0"
+                        placeholder="Type course name... (e.g. CS 1110)"
+                        name="course"
+                        id="course-input"
+                        value="{{ form.course.value|default_if_none:'' }}"
+                        autocomplete="off"
+                    />
+                    <div id="course-autocomplete" class="course-autocomplete"></div>
+                </div>
 
                 <datalist id="course-list">
                     {% for c in courses %}
@@ -99,6 +102,15 @@
 <script>
     var guessIndex = 1
     var confettiFired = false
+    var courseOptions = Array.from(
+        document.querySelectorAll("#course-list option")
+    ).map(function(option) {
+        return option.value;
+    });
+    var currentSuggestion = "";
+    var maxAutocompleteResults = 6;
+    var activeDropdownIndex = -1;
+    var typedValue = "";
 
     function tileClass(val) {
         if (val === "correct") return "tile-correct";
@@ -149,6 +161,96 @@
         overlay.classList.add("show");
     }
 
+    function normalizeCourseText(value) {
+        return value.toLowerCase().replace(/\s+/g, "");
+    }
+
+    function findCourseMatches(inputValue) {
+        var normalized = normalizeCourseText(inputValue);
+        return courseOptions.filter(function(option) {
+            return normalizeCourseText(option).startsWith(normalized);
+        });
+    }
+
+    function isExactCourseMatch(inputValue) {
+        var normalized = normalizeCourseText(inputValue.trim());
+        return courseOptions.some(function(option) {
+            return normalizeCourseText(option) === normalized;
+        });
+    }
+
+    function renderAutocompleteList(matches) {
+        var dropdown = document.getElementById("course-autocomplete");
+        if (!dropdown) {
+            return;
+        }
+        dropdown.innerHTML = "";
+        if (!matches.length) {
+            dropdown.classList.remove("active");
+            activeDropdownIndex = -1;
+            return;
+        }
+        matches.forEach(function(match, index) {
+            var item = document.createElement("div");
+            item.classList.add("course-autocomplete-item");
+            if (index === 0) {
+                item.classList.add("active");
+            }
+            item.textContent = match;
+            item.dataset.value = match;
+            item.addEventListener("mousedown", function(e) {
+                e.preventDefault();
+                selectAutocompleteValue(match);
+            });
+            dropdown.appendChild(item);
+        });
+        dropdown.classList.add("active");
+        activeDropdownIndex = 0;
+    }
+
+    function updateAutocomplete() {
+        if (gameLocked) {
+            return;
+        }
+        var courseInput = document.getElementById("course-input");
+        if (!courseInput) {
+            return;
+        }
+        typedValue = courseInput.value;
+        if (!typedValue) {
+            currentSuggestion = "";
+            renderAutocompleteList([]);
+            return;
+        }
+        var matches = findCourseMatches(typedValue).slice(0, maxAutocompleteResults);
+        renderAutocompleteList(matches);
+        currentSuggestion = matches.length ? matches[0] : "";
+    }
+
+    function selectAutocompleteValue(value) {
+        var courseInput = document.getElementById("course-input");
+        if (!courseInput) {
+            return;
+        }
+        courseInput.value = value;
+        typedValue = value;
+        acceptInlineAutocomplete();
+        renderAutocompleteList([]);
+    }
+
+    function acceptInlineAutocomplete() {
+        var courseInput = document.getElementById("course-input");
+        if (!courseInput) {
+            return;
+        }
+        if (currentSuggestion) {
+            courseInput.value = currentSuggestion;
+        }
+        typedValue = courseInput.value;
+        courseInput.setSelectionRange(courseInput.value.length, courseInput.value.length);
+        currentSuggestion = "";
+    }
+
     function fireConfetti() {
         if (confettiFired || typeof confetti !== "function") {
             return;
@@ -182,10 +284,39 @@
         }
     });
 
+    document.getElementById("course-input").addEventListener("input", function() {
+        updateAutocomplete();
+    });
+
+    document.getElementById("course-input").addEventListener("keydown", function(e) {
+        if (e.key === "Tab" && currentSuggestion) {
+            e.preventDefault();
+            acceptInlineAutocomplete();
+            renderAutocompleteList([]);
+            return;
+        }
+    });
+
+    document.addEventListener("click", function(e) {
+        var dropdown = document.getElementById("course-autocomplete");
+        var wrapper = document.querySelector(".guess-wrapper");
+        if (!dropdown || !wrapper) {
+            return;
+        }
+        if (!wrapper.contains(e.target)) {
+            renderAutocompleteList([]);
+        }
+    });
+
     document.getElementById("game-form").addEventListener("submit", function(e) {
         e.preventDefault()
 
         if (guessIndex > 10 || gameLocked) {
+            return;
+        }
+
+        var courseInput = document.getElementById("course-input");
+        if (!courseInput || !isExactCourseMatch(courseInput.value)) {
             return;
         }
 

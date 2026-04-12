@@ -105,9 +105,7 @@ def compare_guess(review_info, guess_info):
         feedback["mnemonic"] = "correct"
     elif guess_info.get("school") and review_info.get("school"):
         feedback["mnemonic"] = (
-            "partial"
-            if guess_info["school"] == review_info["school"]
-            else "incorrect"
+            "partial" if guess_info["school"] == review_info["school"] else "incorrect"
         )
     else:
         feedback["mnemonic"] = "incorrect"
@@ -135,11 +133,22 @@ def compare_guess(review_info, guess_info):
 
 def game(request):
     courses = Course.objects.all().order_by("subdepartment__mnemonic", "number")
+    min_word_count = 20  # to reduce the number of impossible guesses
     # review = get_daily_review()
 
     if request.method == "GET":
         # for testing - can get new review per session (cookies cleared)
-        review = Review.objects.filter(text__gt="").order_by("?").first()
+        review = (
+            Review.objects.filter(text__gt="")
+            .extra(
+                where=[
+                    "array_length(regexp_split_to_array(trim(text), '\\s+'), 1) >= %s"
+                ],
+                params=[min_word_count],
+            )
+            .order_by("?")
+            .first()
+        )
         request.session["review_id"] = review.id
         form = GameForm()
         return render(

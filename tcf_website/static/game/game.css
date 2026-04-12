@@ -90,6 +90,44 @@
 .guess-wrapper {
     display: flex;
     gap: 8px;
+    width: 100%;
+}
+
+.autocomplete-input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+
+.course-autocomplete {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+    z-index: 20;
+    max-height: 220px;
+    overflow-y: auto;
+    display: none;
+}
+
+.course-autocomplete.active {
+    display: block;
+}
+
+.course-autocomplete-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+.course-autocomplete-item:hover,
+.course-autocomplete-item.active {
+    background: #f3f5f7;
 }
 
 #course-input {
@@ -98,6 +136,8 @@
     border: 1px solid #ccc;
     padding: 8px 12px;
     font-size: 0.95rem;
+    position: relative;
+    z-index: 2;
 }
 
 .guess-wrapper button:focus {
