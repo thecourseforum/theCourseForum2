@@ -12,6 +12,7 @@
 {% block content %}
 <!-- might need to wrap everything in a container -->
 <div class="container-fluid mx-auto">
+<canvas id="confetti-canvas" class="confetti-canvas"></canvas>
 <div class="top-half row">
     <div class="persistent-display col-4">
         <div class="info-display">
@@ -69,6 +70,12 @@
             <div class="game-overlay-content">
                 <h2>No more guesses!</h2>
                 <p>Come back tomorrow for a new review.</p>
+            </div>
+        </div>
+        <div id="game-win-overlay" class="game-overlay" role="status" aria-live="polite">
+            <div class="game-overlay-content">
+                <h2>You got it!</h2>
+                <p>Great job—see you tomorrow!</p>
             </div>
         </div>
         {% include "reviews/review.html" with course_id=review.course instructor_id=review.instructor %}
@@ -157,6 +164,12 @@
 
     function showNoMoreGuessesOverlay() {
         var overlay = document.getElementById("game-overlay");
+        if (!overlay) return;
+        overlay.classList.add("show");
+    }
+
+    function showWinOverlay() {
+        var overlay = document.getElementById("game-win-overlay");
         if (!overlay) return;
         overlay.classList.add("show");
     }
@@ -279,9 +292,14 @@
             return;
         }
         confettiFired = true;
-        confetti({
-            particleCount: 140,
-            spread: 70,
+        var confettiCanvas = document.getElementById("confetti-canvas");
+        var confettiInstance = confettiCanvas ? confetti.create(confettiCanvas, {
+            resize: true,
+            useWorker: true,
+        }) : confetti;
+        confettiInstance({
+            particleCount: 360,
+            spread: 140,
             origin: { y: 1 }
         });
     }
@@ -302,6 +320,12 @@
     }
 
     document.getElementById("game-overlay").addEventListener("click", function(e) {
+        if (e.target === this) {
+            this.classList.remove("show");
+        }
+    });
+
+    document.getElementById("game-win-overlay").addEventListener("click", function(e) {
         if (e.target === this) {
             this.classList.remove("show");
         }
@@ -368,6 +392,7 @@
             if (isPerfectGuess(response.feedback)) {
                 fireConfetti();
                 lockGame();
+                showWinOverlay();
             }
             if (guessIndex === 10 && response.feedback && response.feedback.mnemonic !== "correct") {
                 showNoMoreGuessesOverlay();
