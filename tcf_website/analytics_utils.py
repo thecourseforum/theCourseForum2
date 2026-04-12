@@ -80,12 +80,16 @@ def _fire_and_forget(entity_type: str, entity_id: int) -> None:
         finally:
             with _pending_lock:
                 _pending -= 1
+
     try:
         _EXECUTOR.submit(task_wrapper)
     except Exception as e:
         with _pending_lock:
             _pending -= 1
-        logger.error(f"Failed to submit analytics task for {entity_type}:{entity_id}: {e}")
+        logger.error(
+            f"Failed to submit analytics task for {entity_type}:{entity_id}: {e}"
+        )
+
 
 def record_course_view(course_id: int) -> None:
     _fire_and_forget("course", course_id)
