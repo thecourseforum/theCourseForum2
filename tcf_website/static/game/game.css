@@ -16,6 +16,16 @@
     flex: 1;
 }
 
+/* review backdrop */
+/*.review-backdrop {
+    padding: 20px 30px;
+    height: 12rem;
+    display: block;
+    background-color: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+} */
+
 /* info panel */
 .info-display {
     background-color: var(--shaded-color, #f0f0f0);
@@ -51,17 +61,6 @@
     font-size: 0.95rem;
 }
 
-
-/* review backdrop  */
-.review-backdrop {
-    padding: 20px 30px;
-    height: 12rem;
-    display: block;
-    background-color: #ffffff;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-}
-
 /* guesses  */
 #guesses {
     /* padding: 20px 24px; */
@@ -80,32 +79,42 @@
     display: flex;
     align-items: center;
     width: 100%;
-    margin-bottom: 0.5rem;
-    /* gap: 8px;
+    /* margin-bottom: 0.5rem;  unecessary w margins on guess-value */
+    /* gap: 8px; 
     min-height: 64px;
     margin-bottom: 10px;
-    padding: 6px 0; */
+    padding: 6px 0;  */
 }
 
-.guess-row:empty {
-    background: none;
-    border: 1.5px dashed #ccc;
-    border-radius: 8px;
-    padding: 0;
+.feedback-labels span {
+    flex: 1;
+    max-width: 10%;
+    text-align: center;
+    font-size: 0,8rem;
+    font-weight: 600;
+    color: var(--dark-color);
     display: flex;
     align-items: center;
-    gap: 8px;
-    min-height: 64px;
-    margin-bottom: 10px;
-    padding: 6px 0;
+    justify-content: center;
+    overflow: visible;
 }
 
-.guess-values {
+.feedback-labels, .guess-values {
     display: flex;
     gap: 2%;
     width: 100%;
     justify-content: center;
-    margin: 3%;
+    margin: 1%;
+}
+
+.feedback-labels span i {
+    color: var(--dark-color);
+    margin-right: 7%;
+}
+
+.fa-chart-bar {
+    transform: rotate(90deg) scaleX(-1); 
+    display: inline-block;
 }
 
 .guess-values div {
@@ -124,11 +133,11 @@
 }
 
 .tile-correct {
-    background-color: #2ecc40 !important; 
+    background-color: #3a9e5f !important; 
 }
 
 .tile-partial {
-    background-color: #f5a623 !important; 
+    background-color: #d48f2a !important; 
 }
 
 .tile-incorrect {
@@ -204,9 +213,3 @@
     border-top: 12px solid white;
     margin-top: 6px;
 }
-
-/*need it to be like 2 cols
-
-information      review-display (like 60%)
-guess-section    review-display (like 60%)
-*/

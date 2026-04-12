@@ -49,21 +49,20 @@
     </div>
 </div>
 <div>
+    <div class="guess-row">
+        <div class="feedback-labels">
+            <span> Dept.</span>
+            <span> Course Num.</span>
+            <span><i class="fa fa-star fa-fw"></i> Rating </span>
+            <span><i class="fa fa-dumbbell fa-fw"></i> Difficulty </span>
+            <span><i class="fa fa-chart-bar"></i> GPA </span>
+        </div>
+    </div>
     <div id="guesses">
         <!-- <p>GUESSES</p>
         <p>Your guess: mnemonic | number | avg rating | avg difficulty | avg gpa</p>
         <p>Feedback: incorrect/correct, lower/higher = the answer's corresponding value is lower/higher than your guess</p>
         <p>N/A = course you guessed doesn't have this value </p> -->
-        <div id="guess-1" class="guess-row"></div>
-        <div id="guess-2" class="guess-row"></div>
-        <div id="guess-3" class="guess-row"></div>
-        <div id="guess-4" class="guess-row"></div>
-        <div id="guess-5" class="guess-row"></div>
-        <div id="guess-6" class="guess-row"></div>
-        <div id="guess-7" class="guess-row"></div>
-        <div id="guess-8" class="guess-row"></div>
-        <div id="guess-9" class="guess-row"></div>
-        <div id="guess-10" class="guess-row"></div> 
 
     </div>
 </div>
@@ -84,7 +83,9 @@
     }
 
     function updateRow(guess, feedback) {
-        var row = document.getElementById(`guess-${guessIndex}`);
+        var row = document.createElement("div");
+        row.id = `guess-${guessIndex}`;
+        row.classList.add("guess-row");
         row.innerHTML = `
         <div class="guess-values">
             <div class="${tileClass(feedback.dept)}">${guess.dept}</div>
@@ -94,10 +95,19 @@
             <div class="${tileClass(feedback.gpa)}">${guess.gpa ?? "N/A"}</div>
         </div>
         `
+
+        var guesses = document.getElementById('guesses');
+        guesses.prepend(row); //add guess row to top of guesses 
     }
 
     document.getElementById("game-form").addEventListener("submit", function(e) {
         e.preventDefault()
+
+        if (guessIndex > 10) {
+            //need end of game message here
+            return;
+        }
+
         var form = this
         var formData = new FormData(form)
 
