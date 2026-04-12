@@ -1,9 +1,8 @@
 import atexit
 import logging
 import threading
-import time
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import boto3
 import environ
@@ -15,13 +14,15 @@ env = environ.Env()
 # Configuration
 _MAX_BACKLOG = 100
 _MAX_WORKERS = 5
-_TTL_DAYS = env.int("ANALYTICS_TTL_DAYS", default=7)
+_TTL_DAYS = max(1, env.int("ANALYTICS_TTL_DAYS", default=7))  # Minimum 1 day TTL
 _BOTO_CONFIG = Config(connect_timeout=2, read_timeout=3, retries={"max_attempts": 1})
 
 # State Management
 _pending = 0
 _pending_lock = threading.Lock()
-_EXECUTOR = ThreadPoolExecutor(max_workers=_MAX_WORKERS, thread_name_prefix="analytics-worker-")
+_EXECUTOR = ThreadPoolExecutor(
+    max_workers=_MAX_WORKERS, thread_name_prefix="analytics-worker-"
+)
 
 # Global Session (Thread-safe)
 _SESSION = None
@@ -40,14 +41,16 @@ try:
 except Exception as e:
     logger.error(f"Analytics initialization failed: {e}")
 
+
 def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
     """Worker function: Creates per-thread resource from global session."""
-    if not _SESSION: return
+    if not _SESSION:
+        return
     try:
         table_name = env("DYNAMODB_TABLE_NAME", default="trending_analytics")
         table = _SESSION.resource("dynamodb", config=_BOTO_CONFIG).Table(table_name)
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         pk = f"{entity_type}:{entity_id}"
         sk = now.date().isoformat()
         ttl = int(now.timestamp()) + (_TTL_DAYS * 24 * 60 * 60)
@@ -60,11 +63,14 @@ def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
     except Exception as e:
         logger.warning(f"DynamoDB update failed for {entity_type}:{entity_id}: {e}")
 
+
 def _fire_and_forget(entity_type: str, entity_id: int) -> None:
-    if not _ANALYTICS_ENABLED: return
+    if not _ANALYTICS_ENABLED:
+        return
     global _pending
     with _pending_lock:
-        if _pending >= _MAX_BACKLOG: return
+        if _pending >= _MAX_BACKLOG:
+            return
         _pending += 1
 
     def task_wrapper():
@@ -74,13 +80,20 @@ def _fire_and_forget(entity_type: str, entity_id: int) -> None:
         finally:
             with _pending_lock:
                 _pending -= 1
-    _EXECUTOR.submit(task_wrapper)
+    try:
+        _EXECUTOR.submit(task_wrapper)
+    except Exception as e:
+        with _pending_lock:
+            _pending -= 1
+        logger.error(f"Failed to submit analytics task for {entity_type}:{entity_id}: {e}")
 
 def record_course_view(course_id: int) -> None:
     _fire_and_forget("course", course_id)
 
+
 def record_instructor_view(instructor_id: int) -> None:
     _fire_and_forget("instructor", instructor_id)
+
 
 @atexit.register
 def _shutdown_executor():
