@@ -28,6 +28,7 @@ table_name = env("DYNAMODB_TABLE_NAME", default="trending_analytics")
 _TCF_WEBSITE_ROOT = Path(__file__).resolve().parent.parent.parent
 _ABOUT_DATA_DIR = _TCF_WEBSITE_ROOT / "data" / "about"
 
+
 def get_dynamodb_table():
     """Generates a thread-safe DynamoDB table instance per request."""
     if not (access_key and secret_key):
@@ -43,29 +44,42 @@ def get_dynamodb_table():
         logger.error(f"Failed to initialize DynamoDB thread-safe resource: {e}")
         return None
 
+
 def scan_table_paginated(filter_prefix):
     """Safely scan DynamoDB with pagination and TTL filtering."""
     # 1. Initialize the table locally (Thread-safe)
-    table = get_dynamodb_table() 
-    if table is None: 
+    table = get_dynamodb_table()
+    if table is None:
         return []
-    
+
     current_time, items = int(time.time()), []
 
     try:
         # 2. Use 'table' instead of '_TABLE'
         response = table.scan(FilterExpression=Attr("pk").begins_with(filter_prefix))
-        
-        items.extend([i for i in response.get("Items", []) if int(i.get("expires_at", 0)) > current_time])
-        
+
+        items.extend(
+            [
+                i
+                for i in response.get("Items", [])
+                if int(i.get("expires_at", 0)) > current_time
+            ]
+        )
+
         while "LastEvaluatedKey" in response:
             # 3. Use 'table' here as well
             response = table.scan(
                 FilterExpression=Attr("pk").begins_with(filter_prefix),
                 ExclusiveStartKey=response["LastEvaluatedKey"],
             )
-            items.extend([i for i in response.get("Items", []) if int(i.get("expires_at", 0)) > current_time])
-        
+            items.extend(
+                [
+                    i
+                    for i in response.get("Items", [])
+                    if int(i.get("expires_at", 0)) > current_time
+                ]
+            )
+
         return items
     except Exception as e:
         logger.error(f"Error scanning DynamoDB for prefix {filter_prefix}: {e}")
@@ -154,7 +168,6 @@ def index(request):
     trending_courses = get_trending_courses()
     trending_instructors = get_trending_instructors()
 
-
     context = {
         "executive_team": team_info["executive_team"],
         "mode": mode,
@@ -172,6 +185,7 @@ def index(request):
         "site/home/landing.html",
         context,
     )
+
 
 def privacy(request):
     """Privacy view."""

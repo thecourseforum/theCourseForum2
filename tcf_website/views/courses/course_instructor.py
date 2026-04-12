@@ -11,8 +11,7 @@ from django.urls import reverse
 
 from tcf_website.analytics_utils import record_instructor_view
 
-from ...models import (CourseInstructorGrade, Review, ReviewLLMSummary,
-                       Section, Semester)
+from ...models import CourseInstructorGrade, Review, ReviewLLMSummary, Section, Semester
 from .course import is_lecture_section
 
 _GRADE_BREAKDOWN_FIELDS = (

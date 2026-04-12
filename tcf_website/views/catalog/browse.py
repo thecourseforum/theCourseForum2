@@ -6,9 +6,11 @@ from django.shortcuts import render
 
 from ...forms import AdvancedSearchForm, ClubAdvancedSearchForm
 from ...models import Club, ClubCategory, School
-from ...search.browse_helpers import (advanced_search_results_payload,
-                                      club_advanced_search_results_payload,
-                                      is_browse_results_partial_request)
+from ...search.browse_helpers import (
+    advanced_search_results_payload,
+    club_advanced_search_results_payload,
+    is_browse_results_partial_request,
+)
 from ...utils import parse_mode
 from ..home.pages import get_trending_courses, get_trending_instructors
 
@@ -123,7 +125,7 @@ def _browse_courses(request, mode: str):
             "CLAS": clas,
             "SEAS": seas,
             "other_schools": other_schools,
-            "trending_courses": get_trending_courses(),  
+            "trending_courses": get_trending_courses(),
             "trending_instructors": get_trending_instructors(),
         },
     )
