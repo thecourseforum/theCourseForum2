@@ -359,6 +359,12 @@
                 console.log(response.review_info)
             }
             updateRow(response.guess, response.feedback)
+            if (courseInput) {
+                courseInput.value = "";
+            }
+            typedValue = "";
+            currentSuggestion = "";
+            renderAutocompleteList([]);
             if (isPerfectGuess(response.feedback)) {
                 fireConfetti();
                 lockGame();
