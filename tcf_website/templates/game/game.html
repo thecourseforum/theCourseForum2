@@ -46,7 +46,7 @@
 
                 <datalist id="course-list">
                     {% for c in courses %}
-                        <option value="{{ c.combined_mnemonic_number }}"></option>
+                        <option value="{{ c.combined_mnemonic_number }} — {{ c.title }}"></option>
                     {% endfor %}
                 </datalist>
 

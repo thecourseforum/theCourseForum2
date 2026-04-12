@@ -74,6 +74,15 @@ def get_course_info(course):
         "gpa": safe_round(course.average_gpa(), 2),
     }
 
+
+def _normalize_course_input(course_text: str) -> str:
+    return course_text.strip().upper()
+
+
+def _extract_course_code(course_text: str) -> str:
+    """Return the course code portion from inputs like 'CS 1110 — Intro'."""
+    return course_text.split("—", 1)[0].strip()
+
 '''Returns dict with correct/incorrect or directional hints for numeric fields'''
 def compare_guess(review_info, guess_info):
     if guess_info is None:
@@ -120,16 +129,30 @@ def game(request):
         review_info = None
 
         if form.is_valid():
-            course_text = form.cleaned_data["course"].upper()
+            raw_course_text = form.cleaned_data["course"]
+            course_text = _normalize_course_input(raw_course_text)
+            course_code = _extract_course_code(course_text)
 
             # looking up course information
             try:
-                guess_course = Course.objects.get(combined_mnemonic_number=course_text)
+                if course_code:
+                    guess_course = Course.objects.get(
+                        combined_mnemonic_number=course_code
+                    )
+                else:
+                    raise Course.DoesNotExist
                 guess_info = get_course_info(guess_course)
                 review_info = get_course_info(review.course) 
 
             except Course.DoesNotExist:
-                guess_info = None
+                guess_course = Course.objects.filter(
+                    title__icontains=course_text
+                ).first()
+                if guess_course:
+                    guess_info = get_course_info(guess_course)
+                    review_info = get_course_info(review.course)
+                else:
+                    guess_info = None
 
             feedback = compare_guess(review_info, guess_info)
 
