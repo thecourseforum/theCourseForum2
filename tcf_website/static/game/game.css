@@ -34,17 +34,22 @@
     text-align: left;
 }
 
-.info-header {
-    font-size: 1.4rem;
+.info-display h1 {
     font-weight: 700;
     color: var(--main-color);
-    margin: 0 0 6px;
 }
 
-.info-text {
-    font-size: 1rem;
-    color: #555;
-    margin: 0;
+.info-display h4 {
+    color: var(--dark-color);
+    display: flex;
+    margin-left: 0;
+    align-items: center;
+}
+
+.fa-question-circle {
+    filter:invert(0.5);
+    margin-left: 0.5rem;
+    font-size: 2rem;
 }
 
 /* search input */
@@ -103,10 +108,10 @@
 .guess-row .rating-card-link {
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
     flex: 1;
-    text-align: center;
+    text-align: left;
+    padding-left: 1%;   
     overflow: hidden;
     max-width: 20%;
 }
@@ -116,7 +121,7 @@
     flex: 1;
     max-width: 10%;
     text-align: center;
-    font-size: 0,8rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--dark-color);
     display: flex;

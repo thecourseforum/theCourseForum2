@@ -11,12 +11,25 @@
 
 {% block content %}
 <!-- might need to wrap everything in a container -->
-<div class="container-fluid">
+<div class="container-fluid mx-auto">
 <div class="top-half row">
     <div class="persistent-display col-4">
         <div class="info-display">
-            <h1 class="info-header">Guess today's course!</h1>
-            <h3 class="info-text">Enter a course to begin</h3>
+            <h1>Guess today's course!</h1>
+            <h4>Enter a course to begin. 
+                <a type="button" data-toggle="modal" data-target="#directionsModal" >
+                    <i class="fa fa-question-circle"></i>
+                </a>
+            </h4>
+        </div>
+        <div class="modal fade" id="directionsModal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p> instructions here</p>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="guess-wrapper">
             <form id="game-form" class="input-group flex-grow-1" method="post">

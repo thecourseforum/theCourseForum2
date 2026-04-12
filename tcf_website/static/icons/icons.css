@@ -329,6 +329,13 @@
   background-position: center;
 }
 
+.fa-question-circle {
+  background-image: url("../icons/img/fa-question-circle.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
 .invert-to-light {
   filter: invert(1);
 }
