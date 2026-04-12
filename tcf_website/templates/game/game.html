@@ -62,6 +62,12 @@
         </div>
     </div>
     <div class="review-container col-8">
+        <div id="game-overlay" class="game-overlay" role="status" aria-live="polite">
+            <div class="game-overlay-content">
+                <h2>No more guesses!</h2>
+                <p>Come back tomorrow for a new review.</p>
+            </div>
+        </div>
         {% include "reviews/review.html" with course_id=review.course instructor_id=review.instructor %}
     </div>
 </div>
@@ -125,11 +131,32 @@
         guesses.prepend(row); //add guess row to top of guesses 
     }
 
+    var gameLocked = false;
+
+    function lockGame() {
+        var input = document.getElementById("course-input");
+        var submitButton = document.querySelector("#game-form button[type='submit']");
+        if (input) input.disabled = true;
+        if (submitButton) submitButton.disabled = true;
+        gameLocked = true;
+    }
+
+    function showNoMoreGuessesOverlay() {
+        var overlay = document.getElementById("game-overlay");
+        if (!overlay) return;
+        overlay.classList.add("show");
+    }
+
+    document.getElementById("game-overlay").addEventListener("click", function(e) {
+        if (e.target === this) {
+            this.classList.remove("show");
+        }
+    });
+
     document.getElementById("game-form").addEventListener("submit", function(e) {
         e.preventDefault()
 
-        if (guessIndex > 10) {
-            //need end of game message here
+        if (guessIndex > 10 || gameLocked) {
             return;
         }
 
@@ -149,6 +176,10 @@
                 console.log(response.review_info)
             }
             updateRow(response.guess, response.feedback)
+            if (guessIndex === 10 && response.feedback && response.feedback.mnemonic !== "correct") {
+                showNoMoreGuessesOverlay();
+                lockGame();
+            }
             guessIndex++
         })
     })
