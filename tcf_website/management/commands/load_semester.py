@@ -1,13 +1,24 @@
+import math
 import os
 import re
 from datetime import datetime
 
 import pandas as pd
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from django.core.management.base import BaseCommand, CommandError
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
-from tcf_website.models import *
+from tcf_website.models import (
+    Course,
+    Department,
+    Discipline,
+    Instructor,
+    School,
+    Section,
+    SectionTime,
+    Semester,
+    Subdepartment,
+)
 
 
 class Command(BaseCommand):
@@ -79,7 +90,7 @@ class Command(BaseCommand):
         Section.objects.filter(semester=semester).delete()
         print(f"Loading new data for {semester}...")
 
-        for index, row in tqdm(df.iterrows(), total=df.shape[0]):
+        for _, row in tqdm(df.iterrows(), total=df.shape[0]):
             # print(row)
             self.load_section_row(semester, row)
             # break
@@ -110,9 +121,9 @@ class Command(BaseCommand):
             # strip out non-numeric characters.
             # may NOT be missing
             course_number = re.sub("[^0-9]", "", str(row["Number"]))
-            section_number = row["Section"]  # may NOT be missing
 
             units = row["Units"]  # may be empty/nan
+            units_min, units_max = self.parse_section_catalog_units(units)
             title = row["Title"]  # may be empty/nan
             topic = row["Topic"]  # may be empty/nan
             description = row["Description"]  # may be empty/nan
@@ -143,13 +154,15 @@ class Command(BaseCommand):
             title, description, disciplines, semester, sd, course_number
         )
         instructors = self.load_instructors(instructor_names)
-        section = self.load_section(
+        self.load_section(
             sis_number,
             instructors,
             semester,
             course,
             topic,
             units,
+            units_min,
+            units_max,
             section_type,
             section_times,
             cost,
@@ -263,6 +276,51 @@ class Command(BaseCommand):
                 instructors.add(instructor)
         return instructors
 
+    def parse_section_catalog_units(self, raw):
+        """Whole credits (min, max) from CSV Units; (0, 0) if missing or unparseable."""
+        if raw is None or (isinstance(raw, float) and math.isnan(raw)):
+            return 0, 0
+        try:
+            if pd.isna(raw):
+                return 0, 0
+        except (TypeError, ValueError):
+            pass
+        s = str(raw).strip()
+        if not s or s.lower() == "nan":
+            return 0, 0
+        for ch in ("\u2013", "\u2014", "\u2212"):
+            s = s.replace(ch, "-")
+
+        parts = re.split(r"\s*-\s*", s, maxsplit=1)
+        if len(parts) == 2:
+            try:
+                lo = int(round(float(parts[0].strip())))
+                hi = int(round(float(parts[1].strip())))
+                return min(lo, hi), max(lo, hi)
+            except ValueError:
+                pass
+        try:
+            n = int(round(float(s)))
+            return n, n
+        except ValueError:
+            pass
+
+        nums = re.findall(r"\d+\.?\d*|\.\d+", s)
+        if len(nums) >= 2:
+            try:
+                lo = int(round(float(nums[0])))
+                hi = int(round(float(nums[1])))
+                return min(lo, hi), max(lo, hi)
+            except ValueError:
+                pass
+        if len(nums) == 1:
+            try:
+                n = int(round(float(nums[0])))
+                return n, n
+            except ValueError:
+                pass
+        return 0, 0
+
     def load_section(
         self,
         sis_section_number,
@@ -271,6 +329,8 @@ class Command(BaseCommand):
         course,
         topic,
         units,
+        units_min,
+        units_max,
         section_type,
         section_times,
         cost,
@@ -288,7 +348,16 @@ class Command(BaseCommand):
             "sis_section_number",
             "semester",
         }
-        fields = {"course", "topic", "units", "section_type", "section_times", "cost"}
+        fields = {
+            "course",
+            "topic",
+            "units",
+            "units_min",
+            "units_max",
+            "section_type",
+            "section_times",
+            "cost",
+        }
 
         for key, value in locals().items():
             if key in unique_fields and not pd.isnull(value):

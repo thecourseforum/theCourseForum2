@@ -66,7 +66,6 @@ class LoadGradesTestCase(TestCase):
 
     def test_matching_data(self):
         """Make sure both instances match each other"""
-        # pylint: disable=duplicate-code
         for field in [
             "a_plus",
             "a",

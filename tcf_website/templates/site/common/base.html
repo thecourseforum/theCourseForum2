@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description"
+              content="{% block meta_description %}Course reviews, ratings, and schedule tools for UVA students.{% endblock meta_description %}">
+        <meta name="keywords"
+              content="{% block meta_keywords %}UVA, courses, reviews, theCourseForum{% endblock meta_keywords %}">
+        <title>
+            {% block title %}
+                theCourseForum
+            {% endblock title %}
+        </title>
+        <!-- Favicon -->
+        <link rel="icon"
+              type="image/svg+xml"
+              href="{% static 'base/img/new_logo.svg' %}"
+              sizes="any">
+        <!-- Open Graph Protocol -->
+        <meta property="og:title"
+              content="{% block og_title %}theCourseForum{% endblock og_title %}">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://www.thecourseforum.com">
+        <meta property="og:image"
+              content="{% static 'base/img/logo-orange-small.png' %}">
+        <meta property="og:description"
+              content="{% block og_description %}Explore course reviews, ratings, and insights to help you make informed decisions at UVA.{% endblock og_description %}">
+        <meta property="og:site_name" content="theCourseForum">
+        <meta property="og:locale" content="en_US">
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="theCourseForum">
+        <meta name="twitter:description"
+              content="Explore course reviews, ratings, and insights to help you make informed decisions at UVA.">
+        <meta name="twitter:image"
+              content="{% static 'base/img/logo-orange-small.png' %}">
+        <meta name="twitter:site" content="@theCourseForum">
+        <!-- Preconnect to external resources -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <!-- Google Fonts: Inter -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+              rel="stylesheet">
+        <!-- Theme initialization (prevent flash) -->
+        <script>
+    (function() {
+      const saved = localStorage.getItem('theme');
+      const theme = saved || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+        </script>
+        <!-- Main CSS -->
+        <link rel="stylesheet" href="{% static 'css/site/main.css' %}">
+        <!-- Page-specific styles -->
+        {% block styles %}
+        {% endblock styles %}
+        {% block page_metadata %}
+        {% endblock page_metadata %}
+        <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-54T5TXX');
+        </script>
+        {% block head %}
+        {% endblock head %}
+    </head>
+    <body class="min-h-screen flex flex-col"
+          data-user-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"
+          data-recent-browse-mode="{% if request.resolver_match %}{% if request.GET.mode == 'clubs' or request.resolver_match.url_name == 'club' or request.resolver_match.url_name == 'club_category' %}clubs{% else %}courses{% endif %}{% else %}courses{% endif %}">
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54T5TXX"
+        height="0"
+        width="0"
+        class="gtm-noscript-iframe"
+        title="Google Tag Manager"></iframe></noscript>
+        <!-- Skip to main content (accessibility) -->
+        <a href="#main-content" class="sr-only">Skip to main content</a>
+        <!-- Header -->
+        {% block header %}
+            {% include "site/common/components/_header.html" %}
+        {% endblock header %}
+        {% include "site/common/components/_messages.html" %}
+        {% if request.resolver_match and request.resolver_match.url_name != "index" %}
+            {% include "site/common/components/_leaderboard_ad.html" %}
+        {% endif %}
+        <!-- Main Content -->
+        <main id="main-content" class="flex-1">
+            {% block content %}
+            {% endblock content %}
+        </main>
+        <!-- Footer -->
+        {% block footer %}
+            {% include "site/common/components/_footer.html" %}
+        {% endblock footer %}
+        <!-- Modals -->
+        {% block modals %}
+            {% include "site/common/modals/_login.html" %}
+            {% include "site/common/modals/_adblock.html" %}
+            {% include "site/schedule/modals/_schedule_flow_modal.html" %}
+        {% endblock modals %}
+        <!-- Core JavaScript -->
+        <script src="{% static 'js/site/lib/theme.js' %}"></script>
+        <script src="{% static 'js/site/lib/recent_items.js' %}"></script>
+        <script src="{% static 'js/site/lib/modal.js' %}"></script>
+        <script src="{% static 'js/site/lib/flash_messages.js' %}"></script>
+        <script src="{% static 'js/site/lib/tcf_http.js' %}"></script>
+        <script src="{% static 'js/site/lib/partial_html.js' %}"></script>
+        <script src="{% static 'js/site/schedule/schedule_grid_refresh.js' %}"></script>
+        <script src="{% static 'js/site/schedule/schedule_flow_modal.js' %}"></script>
+        <script src="{% static 'js/site/lib/search_bar.js' %}"></script>
+        <script src="{% static 'js/site/lib/combo_dropdown.js' %}"></script>
+        <script>
+    function showAdblockGate() {
+      window.modal.open("adblockGate");
+    }
+        </script>
+        <script async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1816162577232603"
+                crossorigin="anonymous"
+                onerror="showAdblockGate();"></script>
+        <!-- Page-specific scripts -->
+        {% block scripts %}
+        {% endblock scripts %}
+    </body>
+</html>

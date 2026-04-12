@@ -1,5 +1,6 @@
-# pylint: disable=no-member
 """Tests for Review model."""
+
+import json
 
 from django.contrib.messages import get_messages
 from django.db import IntegrityError
@@ -8,7 +9,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from ..models import Review, Vote
-from ..views.review import ReviewForm
+from ..review.forms import ReviewForm
 from .test_utils import setup, suppress_request_warnings
 
 
@@ -144,3 +145,120 @@ class ModelReviewTests(TestCase):
         self.assertFalse(
             Review.get_sorted_reviews(self.course, self.instructor, self.user1).exists()
         )
+
+
+def _review_post_data(course, instructor, semester):
+    """Minimal valid POST payload for ReviewForm (course review)."""
+    return {
+        "text": "x" * 200,
+        "course": str(course.pk),
+        "instructor": str(instructor.pk),
+        "semester": str(semester.pk),
+        "instructor_rating": "3",
+        "difficulty": "3",
+        "recommendability": "3",
+        "enjoyability": "3",
+        "amount_reading": "0",
+        "amount_writing": "0",
+        "amount_group": "0",
+        "amount_homework": "0",
+    }
+
+
+class ReviewFormSectionValidationTests(TestCase):
+    """ReviewForm requires a real Section for course/semester/instructor."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_accepts_matching_section(self):
+        """Instructor on a section for that course and term passes clean()."""
+        form = ReviewForm(
+            _review_post_data(self.course, self.instructor, self.semester)
+        )
+        self.assertTrue(form.is_valid())
+
+    def test_rejects_instructor_not_teaching_that_term(self):
+        """Instructor with no section for that course+semester fails clean()."""
+        form = ReviewForm(
+            _review_post_data(self.course, self.instructor2, self.semester)
+        )
+        self.assertFalse(form.is_valid())
+
+
+class ReviewCascadeJsonEndpointsTests(TestCase):
+    """XHR helpers for the unified review writer."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_semesters_anonymous_redirects(self):
+        """Anonymous requests redirect to login."""
+        response = self.client.get(
+            reverse("review_semester_options"),
+            {"course": self.course.pk},
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_semesters_returns_terms_with_sections(self):
+        """Semester options only include terms with matching sections."""
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("review_semester_options"),
+            {"course": self.course.pk},
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        ids = {row["id"] for row in data["semesters"]}
+        self.assertIn(self.semester.pk, ids)
+
+    def test_instructors_bad_request_without_params(self):
+        """Missing query params yields 400 instead of silent fallback."""
+        self.client.force_login(self.user1)
+        response = self.client.get(reverse("review_instructor_options"))
+        self.assertEqual(response.status_code, 400)
+
+    def test_instructors_returns_json(self):
+        """Instructor options returns JSON including expected instructors."""
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("review_instructor_options"),
+            {"course": self.course.pk, "semester": self.semester.pk},
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertTrue(
+            any(row["last_name"] == "Jefferson" for row in data["instructors"])
+        )
+
+
+class ReviewPreflightJsonTests(TestCase):
+    """XHR duplicate / hours checks return JSON on validation failure."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_check_duplicate_xhr_invalid_returns_json_400(self):
+        """Invalid POST with XHR must not redirect with HTML."""
+        self.client.force_login(self.user1)
+        response = self.client.post(
+            reverse("check_review_duplicate"),
+            {"text": "ab"},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content)
+        self.assertFalse(data.get("ok", True))
+        self.assertIn("error", data)
+
+    def test_check_zero_hours_xhr_invalid_returns_json_400(self):
+        """Invalid XHR to zero-hours check returns JSON 400."""
+        self.client.force_login(self.user1)
+        response = self.client.post(
+            reverse("check_zero_hours_per_week"),
+            {"text": "ab"},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content)
+        self.assertFalse(data.get("ok", True))
