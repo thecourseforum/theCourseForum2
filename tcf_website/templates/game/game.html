@@ -165,11 +165,34 @@
         return value.toLowerCase().replace(/\s+/g, "");
     }
 
+    function splitCourseOption(optionValue) {
+        var parts = optionValue.split("—");
+        return {
+            code: parts[0] ? parts[0].trim() : optionValue.trim(),
+            title: parts[1] ? parts[1].trim() : "",
+        };
+    }
+
     function findCourseMatches(inputValue) {
-        var normalized = normalizeCourseText(inputValue);
-        return courseOptions.filter(function(option) {
-            return normalizeCourseText(option).startsWith(normalized);
+        var normalizedInput = normalizeCourseText(inputValue);
+        var codeMatches = [];
+        var titleMatches = [];
+
+        courseOptions.forEach(function(option) {
+            var optionParts = splitCourseOption(option);
+            var normalizedCode = normalizeCourseText(optionParts.code);
+            var normalizedTitle = normalizeCourseText(optionParts.title);
+
+            if (normalizedCode.startsWith(normalizedInput)) {
+                codeMatches.push(option);
+                return;
+            }
+            if (normalizedTitle && normalizedTitle.includes(normalizedInput)) {
+                titleMatches.push(option);
+            }
         });
+
+        return codeMatches.concat(titleMatches);
     }
 
     function isExactCourseMatch(inputValue) {
