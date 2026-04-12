@@ -38,6 +38,7 @@
 
 {% block content %}
 <div class="department container">
+<div style="display:none;">DEBUG: {{ upcoming_groups.items.0.1.0.keys }}</div>
 <div class="container-lg mb-4">
 <div class="d-flex align-items-center justify-content-between mb-3">
 <h2 class="mb-0" style="white-space: nowrap;">Club Calendar</h2>
@@ -210,40 +211,104 @@
 </div>
 
 {% block js %}
-
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 <script>
-$(document).on('click', '.dropdown-menu', function (e) {
-  e.stopPropagation();
+/**
+ * 1. DATA PREPARATION
+ * We use 'var' or just a direct assignment to avoid 'already declared' 
+ * errors if the script block re-runs.
+ */
+var calendarEvents = [
+    /* Upcoming Events */
+    {% for date_key, items in upcoming_groups.items %}
+        {% for ev in items %}
+        {
+            title: "{{ ev.name|escapejs }}",
+            // Slice the first 10 characters of the start_utc string (YYYY-MM-DD)
+            start: "{{ ev.start_utc|slice:':10' }}", 
+            url: "{% url 'event_detail' event_uri=ev.uri %}",
+            extendedProps: {
+                tags: "{{ ev.tags|join:','|escapejs }}"
+            }
+        }{% if not forloop.last or not forloop.parentloop.last %},{% endif %}
+        {% endfor %}
+    {% endfor %}
+];
+
+/**
+ * 2. DROPDOWN FIX (Vanilla JS version of the jQuery code)
+ * This prevents the filter dropdown from closing when you click checkboxes.
+ */
+document.addEventListener('click', function (e) {
+    const dropdownMenu = e.target.closest('.dropdown-menu');
+    if (dropdownMenu) {
+        e.stopPropagation();
+    }
 });
 
+/**
+ * 3. MAIN LOGIC
+ */
 document.addEventListener('DOMContentLoaded', function() {
+    // Select Elements
     const tagCheckboxes = document.querySelectorAll('.tag-checkbox');
     const selectAllBtn = document.getElementById('select-all-tags');
     const clearAllBtn = document.getElementById('clear-all-tags');
     const eventCards = document.querySelectorAll('.card.rating-card');
+    const listView = document.getElementById('list-view-container');
+    const calendarView = document.getElementById('calendar-view-container');
+    const listBtn = document.getElementById('show-list-view');
+    const calendarBtn = document.getElementById('show-calendar-view');
+    const calendarEl = document.getElementById('calendar');
 
+    // Initialize Calendar
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    height: 'auto',
+    events: calendarEvents, // The variable from above
+    displayEventTime: false, // Hides "12a" or "mid" to keep it clean
+    dayMaxEvents: true,     // Adds "+2 more" if a day is crowded
+    eventOrder: "title",    // Sorts them alphabetically
+    headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth'
+    },
+    // This ensures that even if you haven't clicked the tab yet, 
+    // the events are ready in memory.
+    eventSourceSuccess: function(content, xhr) {
+        console.log("Events successfully loaded:", content.length);
+        return content;
+    }
+});
+
+    // Helper functions
     function getSelectedTags() {
         const selected = [];
-        tagCheckboxes.forEach(cb => {
-            if (cb.checked) selected.push(cb.value);
-        });
+        tagCheckboxes.forEach(cb => { if (cb.checked) selected.push(cb.value); });
         return selected;
     }
 
     function filterEvents() {
         const selectedTags = getSelectedTags();
+        
+        // Filter List Cards
         eventCards.forEach(card => {
             const cardTags = card.dataset.tags ? card.dataset.tags.split(',').map(t => t.trim()) : [];
             const hasSelectedTag = selectedTags.some(tag => cardTags.includes(tag));
             card.style.display = hasSelectedTag ? '' : 'none';
         });
+
+        // Filter Calendar Events
+        calendar.getEvents().forEach(event => {
+            const eventTags = event.extendedProps.tags ? event.extendedProps.tags.split(',') : [];
+            const isVisible = selectedTags.some(tag => eventTags.includes(tag));
+            event.setProp('display', isVisible ? 'auto' : 'none');
+        });
     }
 
-    // Event listeners
-    tagCheckboxes.forEach(cb => {
-        cb.addEventListener('change', filterEvents);
-    });
+    // Set up listeners
+    tagCheckboxes.forEach(cb => cb.addEventListener('change', filterEvents));
 
     if (selectAllBtn) {
         selectAllBtn.addEventListener('click', function() {
@@ -259,36 +324,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Initial filter
-    filterEvents();
-
-    const listView = document.getElementById('list-view-container');
-    const calendarView = document.getElementById('calendar-view-container');
-    const listBtn = document.getElementById('show-list-view');
-    const calendarBtn = document.getElementById('show-calendar-view');
-
-    const calendarEl = document.getElementById('calendar');
-
-    // Initialize the calendar (but don't render yet if hidden)
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek'
-        },
-        themeSystem: 'bootstrap5' // Works well since you are using Bootstrap
-    });
-
-    // Only run if these buttons actually exist on the page
+    // View Switching logic
     if (listBtn && calendarBtn) {
         calendarBtn.addEventListener('click', function() {
             listView.style.display = 'none';
             calendarView.style.display = 'block';
-
-            calendar.render();
+            calendar.render(); // Essential for size calculation
             
-            // Switch button active states
             calendarBtn.classList.replace('btn-outline-primary', 'btn-primary');
             listBtn.classList.replace('btn-primary', 'btn-outline-primary');
         });
@@ -297,11 +339,13 @@ document.addEventListener('DOMContentLoaded', function() {
             calendarView.style.display = 'none';
             listView.style.display = 'block';
             
-            // Switch button active states
             listBtn.classList.replace('btn-outline-primary', 'btn-primary');
             calendarBtn.classList.replace('btn-primary', 'btn-outline-primary');
         });
     }
+
+    // Run initial filter to sync both views
+    filterEvents();
 });
 </script>
 {% endblock %}
