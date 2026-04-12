@@ -64,14 +64,14 @@ def get_daily_review():
 def safe_round(value, digits=2):
     return round(value, digits) if value is not None else None
     
-def get_course_info(course_obj):
-    course_id = course_obj.combined_mnemonic_number.split()
+def get_course_info(course):
     return {
-        "dept": course_id[0],
-        "number": course_id[1],
-        "rating": safe_round(course_obj.average_rating(), 2),
-        "difficulty": safe_round(course_obj.average_difficulty(), 2),
-        "gpa": safe_round(course_obj.average_gpa(), 2),
+        "title": course.title,
+        "mnemonic": course.subdepartment.mnemonic, 
+        "number": course.number,
+        "rating": safe_round(course.average_rating(), 2),
+        "difficulty": safe_round(course.average_difficulty(), 2),
+        "gpa": safe_round(course.average_gpa(), 2),
     }
 
 '''Returns dict with correct/incorrect or directional hints for numeric fields'''
@@ -81,7 +81,7 @@ def compare_guess(review_info, guess_info):
     
     feedback = {}
 
-    feedback["dept"] = "correct" if guess_info["dept"] == review_info["dept"] else "incorrect"
+    feedback["mnemonic"] = "correct" if guess_info["mnemonic"] == review_info["mnemonic"] else "incorrect"
     for field in ["number", "rating", "difficulty", "gpa"]:
         g = guess_info[field] if guess_info[field] == None else float(guess_info[field])
         r = review_info[field] if review_info[field] == None else float(review_info[field])

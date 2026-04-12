@@ -6,6 +6,7 @@
 {% block styles %}
 <link rel="stylesheet" href="{% static 'game/game.css' %}" />
 <link rel="stylesheet" href="{% static 'reviews/review_stats.css' %}" />
+<link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -51,6 +52,7 @@
 <div>
     <div class="guess-row">
         <div class="feedback-labels">
+            <span class="course-label">Your guess:</span>
             <span> Dept.</span>
             <span> Course Num.</span>
             <span><i class="fa fa-star fa-fw"></i> Rating </span>
@@ -88,7 +90,14 @@
         row.classList.add("guess-row");
         row.innerHTML = `
         <div class="guess-values">
-            <div class="${tileClass(feedback.dept)}">${guess.dept}</div>
+            <a
+                class="rating-card-link"
+                href="/course/${guess.mnemonic}/${guess.number}/All"
+            >
+                    <h3 id="title">${guess.mnemonic} ${guess.number}</h3>
+                    <h5>${guess.title}</h5>
+            </a>
+            <div class="${tileClass(feedback.mnemonic)}">${guess.mnemonic}</div>
             <div class="${tileClass(feedback.number)}">${guess.number}</div>
             <div class="${tileClass(feedback.rating)}">${guess.rating ?? "N/A"}</div>
             <div class="${tileClass(feedback.difficulty)}">${guess.difficulty ?? "N/A"}</div>
