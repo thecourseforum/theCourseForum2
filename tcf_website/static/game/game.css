@@ -51,59 +51,6 @@
     font-size: 0.95rem;
 }
 
-/* review backdrop  */
-.top-half {
-    display: flex;
-    gap: 24px;
-    padding: 24px;
-    align-items: flex-start;
-}
-
-.persistent-display {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    min-width: 260px;
-}
-
-.review-container {
-    flex: 1;
-}
-
-/* info panel */
-.info-display {
-    background-color: var(--shaded-color, #f0f0f0);
-    border-radius: 10px;
-    padding: 20px 24px;
-    text-align: left;
-}
-
-.info-header {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #1a1a2e;
-    margin: 0 0 6px;
-}
-
-.info-text {
-    font-size: 1rem;
-    color: #555;
-    margin: 0;
-}
-
-/* search input */
-.guess-wrapper {
-    display: flex;
-    gap: 8px;
-}
-
-#course-input {
-    background-color: white;
-    border-radius: 6px 0 0 6px;
-    border: 1px solid #ccc;
-    padding: 8px 12px;
-    font-size: 0.95rem;
-}
 
 /* review backdrop  */
 .review-backdrop {
@@ -117,7 +64,8 @@
 
 /* guesses  */
 #guesses {
-    padding: 20px 24px;
+    /* padding: 20px 24px; */
+    width: 100%;
 }
 
 #guesses > p {
@@ -128,24 +76,15 @@
     border: 1px solid #e0e0e0;
 }
 
-/* guesses  */
-#guesses {
-    padding: 20px 24px;
-}
-
-#guesses > p {
-    font-size: 0.8rem;
-    color: #666;
-    margin: 2px 0;
-}
-
 .guess-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    /* gap: 8px;
     min-height: 64px;
     margin-bottom: 10px;
-    padding: 6px 0;
+    padding: 6px 0; */
 }
 
 .guess-row:empty {
@@ -161,36 +100,27 @@
     padding: 6px 0;
 }
 
-.guess-row:empty {
-    background: none;
-    border: 1.5px dashed #ccc;
-    border-radius: 8px;
-    padding: 0;
-}
-
-.guess-values,
-.guess-feedback {
+.guess-values {
     display: flex;
-    gap: 8px;
+    gap: 2%;
+    width: 100%;
+    justify-content: center;
+    margin: 3%;
 }
 
-.guess-values span,
-.guess-feedback span {
+.guess-values div {
+    flex: 1;
+    max-width: 10%;
+    aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 80px;
-    height: 64px;
-    border-radius: 8px;
+    border-radius: 0.4em;
+    /* background-color: #1a1a6e;  use main color instead*/
     font-size: 1rem;
     font-weight: 700;
     color: white;
     text-align: center;
-}
-
-.guess-values span {
-    background-color: #1a1a6e; 
-    color: white;
 }
 
 .tile-correct {
