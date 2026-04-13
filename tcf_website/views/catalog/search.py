@@ -5,14 +5,14 @@ import statistics
 from collections.abc import Iterable
 
 from django.contrib.postgres.search import TrigramSimilarity
-from django.db.models import F, FloatField, Value
-from django.db.models.functions import Greatest, Round
+from django.db.models import Count, F, FloatField, Value
+from django.db.models.functions import Greatest, Least, Round
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from ...models import Club, Instructor
+from ...models import Club, Instructor, Semester
 from ...pagination import paginate
 from ...search.course_display import (
     course_to_row_dict,
@@ -27,6 +27,10 @@ _MNEMONIC_PATTERN = re.compile(r"^([A-Za-z]{1,4})(\d{4})$")
 
 _SIMILARITY_THRESHOLD = 0.15
 _INSTRUCTOR_SIMILARITY_THRESHOLD = 0.5
+
+_SIMILARITY_WEIGHT = 0.6
+_RECENCY_WEIGHT = 0.20
+_REVIEW_POPULARITY_WEIGHT = 0.20
 
 _AUTOCOMPLETE_TEMPLATE = "site/common/components/_autocomplete_dropdown.html"
 _SEARCH_RESULTS_TEMPLATE = "site/catalog/search.html"
@@ -46,8 +50,10 @@ def normalize_search_query(raw: str) -> str:
 
 
 def fetch_courses(query: str):
-    """Course queryset ordered by similarity to the search string."""
+    """Course queryset ordered by weighted blend of similarity, popularity, and recency."""
+    latest_sem_number = float(Semester.latest().number)
     search_query = normalize_search_query(query)
+
     return (
         browsable_course_queryset()
         .annotate(
@@ -55,14 +61,40 @@ def fetch_courses(query: str):
                 "combined_mnemonic_number", search_query
             ),
             title_similarity=TrigramSimilarity("title", search_query),
+            review_count=Count("review", distinct=True),
         )
+        # result scores (each in range [0, 1])
         .annotate(
             max_similarity=Round(
                 Greatest(F("mnemonic_similarity"), F("title_similarity")), 2
-            )
+            ),
+            review_popularity=Least(
+                F("review_count")
+                / Value(50.0),  # anything with 50 reviews or more has max score
+                Value(1.0),
+                output_field=FloatField(),
+            ),
+            recency_score=Greatest(
+                Value(0.0),
+                Value(1.0)
+                - (Value(latest_sem_number) - F("semester_last_taught__number"))
+                / Value(
+                    50.0
+                ),  # anything last taught 5 years ago or later has a score of 0
+                output_field=FloatField(),
+            ),
+        )
+        # weighted composite
+        .annotate(
+            weighted_score=Round(
+                Value(_SIMILARITY_WEIGHT) * F("max_similarity")
+                + Value(_REVIEW_POPULARITY_WEIGHT) * F("review_popularity")
+                + Value(_RECENCY_WEIGHT) * F("recency_score"),
+                2,
+            ),
         )
         .filter(max_similarity__gte=_SIMILARITY_THRESHOLD)
-        .order_by("-max_similarity")
+        .order_by("-weighted_score")
     )
 
 
