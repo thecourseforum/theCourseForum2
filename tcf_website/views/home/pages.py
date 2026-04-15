@@ -6,13 +6,13 @@ import time
 from collections import defaultdict
 from pathlib import Path
 
-import boto3
 import environ
 from boto3.dynamodb.conditions import Attr
 from django.core.cache import cache
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 
+from tcf_website.analytics_utils import get_table
 from tcf_website.models import Course, Instructor
 
 from .landing_spotlight import landing_spotlight_context
@@ -21,34 +21,14 @@ logger = logging.getLogger(__name__)
 # Initialize environ
 env = environ.Env()
 
-access_key = env("AWS_ANALYTICS_ACCESS_KEY_ID", default=None)
-secret_key = env("AWS_ANALYTICS_SECRET_ACCESS_KEY", default=None)
-table_name = env("DYNAMODB_TABLE_NAME", default="trending_analytics")
-
 _TCF_WEBSITE_ROOT = Path(__file__).resolve().parent.parent.parent
 _ABOUT_DATA_DIR = _TCF_WEBSITE_ROOT / "data" / "about"
-
-
-def get_dynamodb_table():
-    """Generates a thread-safe DynamoDB table instance per request."""
-    if not (access_key and secret_key):
-        return None
-    try:
-        session = boto3.Session(
-            aws_access_key_id=access_key,
-            aws_secret_access_key=secret_key,
-            region_name=env("AWS_REGION", default="us-east-1"),
-        )
-        return session.resource("dynamodb").Table(table_name)
-    except Exception as e:
-        logger.error(f"Failed to initialize DynamoDB thread-safe resource: {e}")
-        return None
 
 
 def scan_table_paginated(filter_prefix):
     """Safely scan DynamoDB with pagination and TTL filtering."""
     # 1. Initialize the table locally (Thread-safe)
-    table = get_dynamodb_table()
+    table = get_table()
     if table is None:
         return []
 
@@ -60,9 +40,7 @@ def scan_table_paginated(filter_prefix):
 
         items.extend(
             [
-                i
-                for i in response.get("Items", [])
-                if int(i.get("expires_at", 0)) > current_time
+                i for i in response.get("Items", []) if int(i.get("expires_at", 0)) > current_time
             ]
         )
 
@@ -74,9 +52,7 @@ def scan_table_paginated(filter_prefix):
             )
             items.extend(
                 [
-                    i
-                    for i in response.get("Items", [])
-                    if int(i.get("expires_at", 0)) > current_time
+                    i for i in response.get("Items", []) if int(i.get("expires_at", 0)) > current_time
                 ]
             )
 

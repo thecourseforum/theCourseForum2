@@ -16,7 +16,7 @@ _MAX_BACKLOG = 100
 _MAX_WORKERS = 5
 _TTL_DAYS = max(1, env.int("ANALYTICS_TTL_DAYS", default=7))  # Minimum 1 day TTL
 _BOTO_CONFIG = Config(connect_timeout=2, read_timeout=3, retries={"max_attempts": 1})
-
+    
 # State Management
 _pending = 0
 _pending_lock = threading.Lock()
@@ -41,15 +41,21 @@ try:
 except Exception as e:
     logger.error(f"Analytics initialization failed: {e}")
 
+def get_table():
+    """Returns a DynamoDB Table resource, or None if analytics is disabled."""
+    if not _SESSION:
+        return None
+    return _SESSION.resource("dynamodb", config=_BOTO_CONFIG).Table(
+        env("DYNAMODB_TABLE_NAME", default="trending_analytics")
+    )
 
 def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
     """Worker function: Creates per-thread resource from global session."""
     if not _SESSION:
         return
+    
+    table = get_table()
     try:
-        table_name = env("DYNAMODB_TABLE_NAME", default="trending_analytics")
-        table = _SESSION.resource("dynamodb", config=_BOTO_CONFIG).Table(table_name)
-
         now = datetime.now(UTC)
         pk = f"{entity_type}:{entity_id}"
         sk = now.date().isoformat()
@@ -57,7 +63,7 @@ def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
 
         table.update_item(
             Key={"pk": pk, "sk": sk},
-            UpdateExpression="ADD view_count :inc SET expires_at = :ttl",
+            UpdateExpression="ADD view_count :inc SET expires_at = if_not_exists(expires_at, :ttl)",
             ExpressionAttributeValues={":inc": 1, ":ttl": ttl},
         )
     except Exception as e:
