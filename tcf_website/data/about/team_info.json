@@ -106,13 +106,6 @@
       "github": "ayanrasulova"
     },
     {
-      "name": "Yilin Wang",
-      "role": "Developer",
-      "class": "2027",
-      "img_filename": "ENG_Yilin_Wang.jpg",
-      "github": "yilinw762"
-    },
-    {
       "name": "Himesh Ahuja",
       "role": "Developer",
       "class": "2029",
@@ -238,12 +231,6 @@
       "role": "Marketing",
       "class": "2028",
       "img_filename": "DM_Tiffany_Park.jpg"
-    },
-    {
-      "name": "Dylan Klein",
-      "role": "Marketing",
-      "class": "2029",
-      "img_filename": "DM_Dylan_Klein.jpg"
     }
   ]
 }
