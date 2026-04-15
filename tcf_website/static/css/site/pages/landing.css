@@ -173,6 +173,129 @@
   line-height: var(--leading-relaxed);
 }
 
+/* ===== TRENDING SECTION ===== */
+.trending {
+  padding: var(--space-8) var(--space-4) var(--space-12);
+  background-color: var(--bg);
+}
+
+.trending__grid {
+  display: grid;
+  gap: var(--space-8);
+  max-width: var(--size-max);
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .trending__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.trending__title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  margin-bottom: var(--space-6);
+  color: var(--fg);
+}
+
+.trending__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.trending-card {
+  display: block;
+  height: 5rem;
+
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  text-decoration: none;
+  color: var(--fg);
+  overflow: hidden;
+  
+  /* Explicit transitions for performance */
+  transition: transform var(--duration-normal) var(--ease-default),
+              box-shadow var(--duration-normal) var(--ease-default),
+              border-color var(--duration-normal) var(--ease-default);
+}
+
+/* Tactile Feedback (Active State) */
+.trending-card:active {
+  transform: scale(0.985);
+  background-color: var(--bg-muted);
+}
+
+.trending-card:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.trending-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-0.125rem);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+}
+
+.trending-card__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-6);
+  gap: var(--space-4);
+}
+
+.trending-card__content {
+  flex: 1;
+  min-width: 0; 
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.trending-card__rank {
+  font-weight: var(--font-bold);
+  color: var(--fg-subtle);
+  font-size: var(--text-base);
+  min-width: 1.5rem; /* Prevents layout jump between #1 and #10 */
+  flex-shrink: 0;
+}
+
+.trending-card__name {
+  font-weight: var(--font-semibold);
+  color: var(--primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trending-card__badge {
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  /* Use design system variable with manual red as fallback */
+  color: var(--color-error-600, #b91c1c); 
+  background-color: rgba(239, 68, 68, 0.1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.trending-card--empty {
+  min-height: 4.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.125rem dashed var(--border);
+  border-radius: var(--radius-xl);
+  color: var(--fg-subtle);
+  font-style: italic;
+  font-size: var(--text-sm);
+}
 
 /* ===== LANDING REVIEWS STRIP ===== */
 
