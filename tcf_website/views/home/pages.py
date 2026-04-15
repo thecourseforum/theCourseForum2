@@ -7,7 +7,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import environ
-from boto3.dynamodb.conditions import Attr
+from boto3.dynamodb.conditions import Attr, Key
 from django.core.cache import cache
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
@@ -25,44 +25,72 @@ _TCF_WEBSITE_ROOT = Path(__file__).resolve().parent.parent.parent
 _ABOUT_DATA_DIR = _TCF_WEBSITE_ROOT / "data" / "about"
 
 
-def scan_table_paginated(filter_prefix):
-    """Safely scan DynamoDB with pagination and TTL filtering."""
-    # 1. Initialize the table locally (Thread-safe)
+def get_top_trending_ids(entity_type: str, count: int = 5) -> list[int]:
+    """
+    Query DynamoDB GSI to retrieve the most viewed entities
+    Given a entity type (course or instructor) to query & the number of views
+    Return the list we will display
+    """
+    # Initialize the table locally (Thread-safe)
     table = get_table()
-    if table is None:
+    if not table:
         return []
 
-    current_time, items = int(time.time()), []
+    current_time = int(time.time())
+    unique_ids = []  # To track unique entity IDs and prevent duplicates
+    seen = set()  # Track seen entity_ids to avoid duplicates
+    exclusive_start_key = None
+
+    # To prevent infinite loops if the database is filled with bad data
+    pages = 0
+    max_pages = 10
 
     try:
-        # 2. Use 'table' instead of '_TABLE'
-        response = table.scan(FilterExpression=Attr("pk").begins_with(filter_prefix))
+        while len(unique_ids) < count and pages < max_pages:
+            pages += 1
+            query_kwargs = {
+                "IndexName": "EntityIndex",
+                "KeyConditionExpression": Key("entity_type").eq(entity_type),
+                "FilterExpression": Attr("expires_at").gt(current_time),
+                "ProjectionExpression": "pk, expires_at",
+                "ScanIndexForward": False,  # Sort by highest viewed first
+                "Limit": 20,  
+            }
+            if exclusive_start_key:
+                query_kwargs["ExclusiveStartKey"] = exclusive_start_key
+            
+            response = table.query(**query_kwargs)
+            items = response.get("Items", [])
 
-        items.extend(
-            [
-                i
-                for i in response.get("Items", [])
-                if int(i.get("expires_at", 0)) > current_time
-            ]
-        )
+            #if empty early exit
+            if not items:
+                break
 
-        while "LastEvaluatedKey" in response:
-            # 3. Use 'table' here as well
-            response = table.scan(
-                FilterExpression=Attr("pk").begins_with(filter_prefix),
-                ExclusiveStartKey=response["LastEvaluatedKey"],
-            )
-            items.extend(
-                [
-                    i
-                    for i in response.get("Items", [])
-                    if int(i.get("expires_at", 0)) > current_time
-                ]
-            )
+            for item in items:
+                pk = item.get("pk", "")
+                if ":" not in pk:
+                    continue  # Skip malformed PKs
+                try:
+                    _, entity_id_str = pk.split(":", 1)
+                    entity_id = int(entity_id_str)
+                except ValueError as e:
+                    logger.warning(f"Malformed pk in trending data '{pk}': {e}")
+                    continue
 
-        return items
+                if entity_id not in seen:
+                    unique_ids.append(entity_id)
+                    seen.add(entity_id)
+                if len(unique_ids) >= count:
+                    break
+            
+            exclusive_start_key = response.get("LastEvaluatedKey")
+            if not exclusive_start_key:
+                break  # No more data to paginate through
+        
+        logger.debug(f"Retrieved {len(unique_ids)} trending IDs for {entity_type} in {pages} pages.")
+        return unique_ids
     except Exception as e:
-        logger.error(f"Error scanning DynamoDB for prefix {filter_prefix}: {e}")
+        logger.error(f"GSI query failed for {entity_type}: {e}", exc_info=True)
         return []
 
 
@@ -72,23 +100,11 @@ def get_trending_courses():
     if cached is not None:
         return cached
 
-    items = scan_table_paginated("course:")
-    if not items:
-        return []
-
-    # Use a dictionary to sum up views by ID (pk) across all days
-    totals = defaultdict(int)
-    for item in items:
-        totals[item["pk"]] += int(item.get("view_count", 0))
-
-    # Sort the summed totals and pick the top 5 unique course IDs
-    top_pks = sorted(totals.keys(), key=lambda k: totals[k], reverse=True)[:5]
-    course_ids = [int(pk.split(":")[1]) for pk in top_pks]
-
+    course_ids = get_top_trending_ids("course")
     if not course_ids:
         return []
 
-    # Exclude missing numbers to prevent frontend 500 erorrs
+    # Source of truth lookup
     courses = list(
         Course.objects.filter(id__in=course_ids)
         .exclude(subdepartment__mnemonic="")
@@ -96,6 +112,7 @@ def get_trending_courses():
     )
     # preserve ranking order
     courses.sort(key=lambda c: course_ids.index(c.id))
+
     # set 24 hour cache
     cache.set("trending_courses", courses, timeout=24 * 60 * 60)
     return courses
@@ -107,30 +124,17 @@ def get_trending_instructors():
     if cached is not None:
         return cached
 
-    items = scan_table_paginated("instructor:")
-    if not items:
-        return []
-
-    # FIX: Aggregate views across the TTL window so one instructor doesn't take 5 spots
-    totals = defaultdict(int)
-    for item in items:
-        totals[item["pk"]] += int(item.get("view_count", 0))
-
-    # Sort the summed totals
-    top_pks = sorted(totals.keys(), key=lambda k: totals[k], reverse=True)[:5]
-    instructor_ids = [int(pk.split(":")[1]) for pk in top_pks]
-
+    instructor_ids = get_top_trending_ids("instructor")
     if not instructor_ids:
         return []
 
-    # Exclude missing names to prevent frontend 500 errors
-    instructors = list(
-        Instructor.objects.filter(id__in=instructor_ids)
-        .exclude(first_name="")
-        .exclude(last_name="")
-    )
+    instructors = list(Instructor.objects.filter(id__in=instructor_ids)
+                    .exclude(first_name="")
+                    .exclude(last_name=""))
+    
     # preserve ranking order
     instructors.sort(key=lambda i: instructor_ids.index(i.id))
+
     # set 24 hour cache
     cache.set("trending_instructors", instructors, timeout=24 * 60 * 60)
     return instructors

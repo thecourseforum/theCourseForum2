@@ -65,8 +65,8 @@ def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
 
         table.update_item(
             Key={"pk": pk, "sk": sk},
-            UpdateExpression="ADD view_count :inc SET expires_at = if_not_exists(expires_at, :ttl)",
-            ExpressionAttributeValues={":inc": 1, ":ttl": ttl},
+            UpdateExpression="ADD view_count :inc SET expires_at = if_not_exists(expires_at, :ttl), entity_type = :et",
+            ExpressionAttributeValues={":inc": 1, ":ttl": ttl, ":et": entity_type},
         )
     except Exception as e:
         logger.warning(f"DynamoDB update failed for {entity_type}:{entity_id}: {e}")
