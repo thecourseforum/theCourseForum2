@@ -16,7 +16,7 @@ _MAX_BACKLOG = 100
 _MAX_WORKERS = 5
 _TTL_DAYS = max(1, env.int("ANALYTICS_TTL_DAYS", default=7))  # Minimum 1 day TTL
 _BOTO_CONFIG = Config(connect_timeout=2, read_timeout=3, retries={"max_attempts": 1})
-    
+
 # State Management
 _pending = 0
 _pending_lock = threading.Lock()
@@ -41,6 +41,7 @@ try:
 except Exception as e:
     logger.error(f"Analytics initialization failed: {e}")
 
+
 def get_table():
     """Returns a DynamoDB Table resource, or None if analytics is disabled."""
     if not _SESSION:
@@ -49,11 +50,12 @@ def get_table():
         env("DYNAMODB_TABLE_NAME", default="trending_analytics")
     )
 
+
 def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
     """Worker function: Creates per-thread resource from global session."""
     if not _SESSION:
         return
-    
+
     table = get_table()
     try:
         now = datetime.now(UTC)

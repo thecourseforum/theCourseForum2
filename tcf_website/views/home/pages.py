@@ -40,7 +40,9 @@ def scan_table_paginated(filter_prefix):
 
         items.extend(
             [
-                i for i in response.get("Items", []) if int(i.get("expires_at", 0)) > current_time
+                i
+                for i in response.get("Items", [])
+                if int(i.get("expires_at", 0)) > current_time
             ]
         )
 
@@ -52,7 +54,9 @@ def scan_table_paginated(filter_prefix):
             )
             items.extend(
                 [
-                    i for i in response.get("Items", []) if int(i.get("expires_at", 0)) > current_time
+                    i
+                    for i in response.get("Items", [])
+                    if int(i.get("expires_at", 0)) > current_time
                 ]
             )
 
