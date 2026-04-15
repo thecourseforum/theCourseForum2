@@ -3,7 +3,6 @@
 import json
 import logging
 import time
-from collections import defaultdict
 from pathlib import Path
 
 import environ
@@ -54,15 +53,15 @@ def get_top_trending_ids(entity_type: str, count: int = 5) -> list[int]:
                 "FilterExpression": Attr("expires_at").gt(current_time),
                 "ProjectionExpression": "pk, expires_at",
                 "ScanIndexForward": False,  # Sort by highest viewed first
-                "Limit": 20,  
+                "Limit": 20,
             }
             if exclusive_start_key:
                 query_kwargs["ExclusiveStartKey"] = exclusive_start_key
-            
+
             response = table.query(**query_kwargs)
             items = response.get("Items", [])
 
-            #if empty early exit
+            # if empty early exit
             if not items:
                 break
 
@@ -82,12 +81,14 @@ def get_top_trending_ids(entity_type: str, count: int = 5) -> list[int]:
                     seen.add(entity_id)
                 if len(unique_ids) >= count:
                     break
-            
+
             exclusive_start_key = response.get("LastEvaluatedKey")
             if not exclusive_start_key:
                 break  # No more data to paginate through
-        
-        logger.debug(f"Retrieved {len(unique_ids)} trending IDs for {entity_type} in {pages} pages.")
+
+        logger.debug(
+            f"Retrieved {len(unique_ids)} trending IDs for {entity_type} in {pages} pages."
+        )
         return unique_ids
     except Exception as e:
         logger.error(f"GSI query failed for {entity_type}: {e}", exc_info=True)
@@ -128,10 +129,12 @@ def get_trending_instructors():
     if not instructor_ids:
         return []
 
-    instructors = list(Instructor.objects.filter(id__in=instructor_ids)
-                    .exclude(first_name="")
-                    .exclude(last_name=""))
-    
+    instructors = list(
+        Instructor.objects.filter(id__in=instructor_ids)
+        .exclude(first_name="")
+        .exclude(last_name="")
+    )
+
     # preserve ranking order
     instructors.sort(key=lambda i: instructor_ids.index(i.id))
 
