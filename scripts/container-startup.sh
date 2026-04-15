@@ -1,20 +1,12 @@
 #!/bin/bash
 set -e
 
-echo 'container running'
+echo "Starting Django Server with Gunicorn..."
 
-python manage.py migrate
-echo 'migrate ran'
-
-python manage.py collectstatic --noinput
-echo 'collectstatic ran'
-
-python manage.py invalidate_cachalot tcf_website
-
-python manage.py clearsessions
-
-# Add custom commands here
-
-
-echo 'Starting Django Server...'
-exec gunicorn tcf_core.wsgi:application --bind 0.0.0.0:80 --log-level "info" --timeout 120
+# Optimize workers and threads for your container's CPU allocation
+exec gunicorn tcf_core.wsgi:application \
+    --bind 0.0.0.0:80 \
+    --workers 3 \
+    --threads 2 \
+    --log-level "info" \
+    --timeout 120

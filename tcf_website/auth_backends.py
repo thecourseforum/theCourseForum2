@@ -7,11 +7,12 @@ from urllib.request import urlopen
 
 import jose.jwk
 import jose.jwt
-from jose.exceptions import JWKError
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from jose.exceptions import JWKError
 
 User = get_user_model()
+
 logger = logging.getLogger(__name__)
 
 

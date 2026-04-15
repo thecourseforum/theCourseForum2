@@ -1,4 +1,3 @@
-# pylint: disable=no-member
 """Tests for Course model."""
 
 from django.test import TestCase
@@ -26,7 +25,7 @@ class CourseTestCase(TestCase):
         """Test for is_recent()."""
         self.assertTrue(self.course.is_recent())
 
-        Semester.objects.create(year=2021, season="JANUARY", number=1211)
+        Semester.objects.create(year=2026, season="JANUARY", number=1261)
 
         self.assertFalse(self.course.is_recent())
 
@@ -62,6 +61,6 @@ class CourseTestCase(TestCase):
             "https://evals.itc.virginia.edu/"
             + "course-selectionguide/pages/SGMain.jsp?cmp=CS,1420"
         )
-        # need to break into 2 lines because otherwise pylint gets mad
+        # split across lines for readability (line length)
         # this link doesn't actually work because CS 420 is not a real class
         self.assertEqual(eval_link, self.course.eval_link())

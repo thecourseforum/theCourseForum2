@@ -23,8 +23,8 @@ import backoff
 # example call url
 # -https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassDetails?institution=UVA01&term=1242&class_nbr=16634&
 import requests
-from tqdm import tqdm
 from django.core.management.base import BaseCommand
+from tqdm import tqdm
 
 # url to find all courses in department for a semester to update semester Replace 1228 with the appropriate term.
 # The formula is "1" + [2 digit year] + [2 for Spring, 8 for Fall]. So, 1228 is Fall 2022.
@@ -138,6 +138,30 @@ def compile_course_data(course_number, sem_code):
             break
         meetings[index] = meeting
 
+    m0, m1, m2, m3 = meetings[0], meetings[1], meetings[2], meetings[3]
+
+    def _meeting_instructors(m):
+        if not m:
+            return ""
+        return ", ".join(
+            inst["name"] for inst in m["instructors"] if inst["name"] != "-"
+        )
+
+    def _meeting_days(m) -> str:
+        if not m:
+            return ""
+        meets = m["meets"]
+        return (meets if meets != "-" else "TBA").lower()
+
+    def _meeting_room(m) -> str:
+        if not m:
+            return ""
+        room = m["room"]
+        return room if room != "-" else "TBA"
+
+    def _meeting_dates(m) -> str:
+        return m["date_range"] if m else ""
+
     class_availability = data["section_info"]["class_availability"]
 
     course_dictionary = {
@@ -151,56 +175,22 @@ def compile_course_data(course_number, sem_code):
             "LAB": "Laboratory",
         }.get(class_details["component"], class_details["component"]),
         "Units": class_details["units"][0 : class_details["units"].find("units") - 1],
-        "Instructor1": (
-            ", ".join(
-                instructor["name"]
-                for instructor in meetings.get(0)["instructors"]
-                if instructor["name"] != "-"
-            )
-            if meetings.get(0)
-            else ""
-        ),
-        "Days1": (
-            meetings.get(0)["meets"] if meetings.get(0)["meets"] != "-" else "TBA"
-        ).lower(),
-        "Room1": (meetings.get(0)["room"] if meetings.get(0)["room"] != "-" else "TBA"),
-        "MeetingDates1": (meetings.get(0)["date_range"] if meetings.get(0) else ""),
-        "Instructor2": (
-            ", ".join(
-                instructor["name"]
-                for instructor in meetings.get(1)["instructors"]
-                if instructor["name"] != "-"
-            )
-            if meetings.get(1)
-            else ""
-        ),
-        "Days2": (meetings.get(1)["meets"] if meetings.get(1) else "").lower(),
-        "Room2": meetings.get(1)["room"] if meetings.get(1) else "",
-        "MeetingDates2": (meetings.get(1)["date_range"] if meetings.get(1) else ""),
-        "Instructor3": (
-            ", ".join(
-                instructor["name"]
-                for instructor in meetings.get(2)["instructors"]
-                if instructor["name"] != "-"
-            )
-            if meetings.get(2)
-            else ""
-        ),
-        "Days3": (meetings.get(2)["meets"] if meetings.get(2) else "").lower(),
-        "Room3": meetings.get(2)["room"] if meetings.get(2) else "",
-        "MeetingDates3": (meetings.get(2)["date_range"] if meetings.get(2) else ""),
-        "Instructor4": (
-            ", ".join(
-                instructor["name"]
-                for instructor in meetings.get(3)["instructors"]
-                if instructor["name"] != "-"
-            )
-            if meetings.get(3)
-            else ""
-        ),
-        "Days4": (meetings.get(3)["meets"] if meetings.get(3) else "").lower(),
-        "Room4": meetings.get(3)["room"] if meetings.get(3) else "",
-        "MeetingDates4": (meetings.get(3)["date_range"] if meetings.get(3) else ""),
+        "Instructor1": _meeting_instructors(m0),
+        "Days1": _meeting_days(m0),
+        "Room1": _meeting_room(m0),
+        "MeetingDates1": _meeting_dates(m0),
+        "Instructor2": _meeting_instructors(m1),
+        "Days2": _meeting_days(m1),
+        "Room2": m1["room"] if m1 else "",
+        "MeetingDates2": _meeting_dates(m1),
+        "Instructor3": _meeting_instructors(m2),
+        "Days3": _meeting_days(m2),
+        "Room3": m2["room"] if m2 else "",
+        "MeetingDates3": _meeting_dates(m2),
+        "Instructor4": _meeting_instructors(m3),
+        "Days4": _meeting_days(m3),
+        "Room4": m3["room"] if m3 else "",
+        "MeetingDates4": _meeting_dates(m3),
         "Title": class_details["course_title"],
         "Topic": class_details["topic"],
         "Status": class_details["status"],
@@ -239,11 +229,10 @@ COURSE_DATA_DIR = "tcf_website/management/commands/semester_data/csv/"
 
 # test SIS data against Lous List data
 def compare_csv_files(lous_list_file_path, sis_file_path):
-    with open(sis_file_path, "r") as sis_file:
+    with open(sis_file_path) as sis_file:
         sis_reader = csv.reader(sis_file)
         with open(
             lous_list_file_path,
-            "r",
         ) as lous_file:
             local_reader = csv.reader(lous_file)
             sis_dict = {}
@@ -252,7 +241,7 @@ def compare_csv_files(lous_list_file_path, sis_file_path):
             local_dict = {}
             for local_row in local_reader:
                 local_dict[local_row[0]] = local_row
-            for key in sis_dict.keys():
+            for key in sis_dict:
                 if key in local_dict:
                     if sis_dict[key] != local_dict[key]:
                         for i in range(len(sis_dict[key])):
@@ -264,7 +253,7 @@ def compare_csv_files(lous_list_file_path, sis_file_path):
                                 print("")
                 else:
                     print(f"Course {key} not in Lou's List\n")
-            for key in local_dict.keys():
+            for key in local_dict:
                 if key not in sis_dict:
                     print(f"Course {key} not in SIS\n")
 

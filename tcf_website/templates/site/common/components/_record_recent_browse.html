@@ -1,0 +1,19 @@
+{% if recent_kind == "course" %}
+    {% url 'course' course.subdepartment.mnemonic course.number as recent_href %}
+    <script>
+  window.tcfRecentItems.recordCourse({
+    href: "{{ recent_href|escapejs }}",
+    code: "{{ course.code|escapejs }}",
+    title: "{{ course.title|escapejs }}",
+  });
+    </script>
+{% elif recent_kind == "club" %}
+    {% url 'club' club.category.slug club.id as recent_href %}
+    <script>
+  window.tcfRecentItems.recordClub({
+    href: "{{ recent_href|escapejs }}",
+    code: "{{ club.name|escapejs }}",
+    title: "{{ club.category.name|escapejs }}",
+  });
+    </script>
+{% endif %}

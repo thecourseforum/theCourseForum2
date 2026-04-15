@@ -1,5 +1,3 @@
-# pylint: disable=no-member
-
 """Tests for Semester model."""
 
 from django.test import TestCase
@@ -45,8 +43,12 @@ class SemesterTestCase(TestCase):
 
     def test_repr(self):
         """Test for __repr__ method"""
-        self.assertEqual(repr(self.semester), "2020 Fall (1208)")
+        self.assertEqual(repr(self.semester), "2025 Fall (1258)")
 
     def test_repr_missing_info(self):
         """Test for __repr__ method when information is missing"""
-        self.assertEqual(repr(self.incomplete_semester), "2019  (1198)")
+        self.assertEqual(repr(self.incomplete_semester), "2023  (1238)")
+
+    def test_latest_returns_highest_semester_number(self):
+        """``latest()`` picks the term with the greatest SIS number."""
+        self.assertEqual(Semester.latest().pk, self.semester.pk)

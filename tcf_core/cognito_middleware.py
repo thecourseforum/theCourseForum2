@@ -1,11 +1,7 @@
 """Middleware for handling Cognito authentication"""
 
-import logging
 
-logger = logging.getLogger(__name__)
-
-
-class CognitoAuthMiddleware:  # pylint: disable=too-few-public-methods
+class CognitoAuthMiddleware:
     """
     Middleware that processes Cognito tokens in HTTP requests
 

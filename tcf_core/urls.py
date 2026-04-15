@@ -24,6 +24,6 @@ urlpatterns = [
 ]
 
 if "debug_toolbar" in settings.INSTALLED_APPS:
-    import debug_toolbar  # pylint: disable=import-error
+    import debug_toolbar
 
     urlpatterns.insert(0, path("__debug__/", include(debug_toolbar.urls)))

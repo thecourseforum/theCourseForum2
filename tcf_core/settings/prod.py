@@ -1,5 +1,5 @@
-# pylint: disable=unused-wildcard-import,wildcard-import
 """Django settings for AWS production."""
+
 from .base import *
 
 DEBUG = False
@@ -8,8 +8,8 @@ ALLOWED_HOSTS = [
     "*",
     "thecourseforum.com",
     "thecourseforumtest.com",
-    "tcf-load-balancer-1374896025.us-east-1.elb.amazonaws.com",
-    "d1gr9vmyo0mkxv.cloudfront.net",
+    env.str("AWS_ELB_URL"),
+    env.str("AWS_CLOUDFRONT_URL"),
 ]
 
 # AWS S3 for static files
@@ -21,11 +21,18 @@ AWS_S3_CUSTOM_DOMAIN = env.str(
     "AWS_S3_CUSTOM_DOMAIN", default=f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 )
 AWS_DEFAULT_ACL = None
-AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 
 STORAGES = {
-    "default": {"BACKEND": "storages.backends.s3.S3Storage", "OPTIONS": {}},
-    "staticfiles": {"BACKEND": "storages.backends.s3.S3Storage"},
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {"object_parameters": {"CacheControl": "max-age=86400"}},
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3ManifestStaticStorage",
+        "OPTIONS": {
+            "object_parameters": {"CacheControl": "public, max-age=31536000, immutable"}
+        },
+    },
 }
 
 # AWS RDS PostgreSQL
@@ -38,8 +45,27 @@ DATABASES = {
         "HOST": env.str("AWS_RDS_HOST"),
         "PORT": env.int("AWS_RDS_PORT"),
         "OPTIONS": {"sslmode": "require"},
+        "CONN_MAX_AGE": 60,  # Remove if using RDS proxy
     }
 }
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": env.str("AWS_REDIS_URL"),  # redis://instance-endpoint:6379
+        "KEY_PREFIX": "tcf:prod",
+        "OPTIONS": {
+            "socket_connect_timeout": 5,
+            "socket_timeout": 5,
+            "retry_on_timeout": True,
+        },
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+SESSION_CACHE_ALIAS = "default"
+
+CACHALOT_TIMEOUT = 60 * 60 * 24 * 7  # 1 week
 
 # Security
 CSRF_TRUSTED_ORIGINS = [

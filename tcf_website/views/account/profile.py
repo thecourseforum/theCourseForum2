@@ -1,0 +1,100 @@
+"""Views for user profile."""
+
+from django import forms
+from django.contrib import messages
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.core.exceptions import PermissionDenied
+from django.db.models import Avg, Count, Q
+from django.forms import ModelForm
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.views import generic
+
+from ...models import Review, User
+from ...pagination import paginate
+from ...utils import safe_next_url, safe_round
+
+
+def _review_stats_for_user(user):
+    """Build review stats for a given user."""
+    stats = Review.objects.filter(user=user).aggregate(
+        total_review_upvotes=Count("vote", filter=Q(vote__value=1)),
+        total_reviews_written=Count("id"),
+        average_review_rating=(
+            Avg("instructor_rating") + Avg("enjoyability") + Avg("recommendability")
+        )
+        / 3,
+    )
+    return {key: safe_round(value) for key, value in stats.items()}
+
+
+class ProfileForm(ModelForm):
+    """Form for profile page."""
+
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "graduation_year"]
+        widgets = {
+            "first_name": forms.TextInput(attrs={"class": "form-group__input"}),
+            "last_name": forms.TextInput(attrs={"class": "form-group__input"}),
+            "graduation_year": forms.NumberInput(attrs={"class": "form-group__input"}),
+        }
+
+
+@login_required
+def profile(request):
+    """User profile view."""
+    if request.method == "POST":
+        form = ProfileForm(request.POST, label_suffix="", instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your profile was updated successfully!")
+        else:
+            messages.error(request, form.errors.as_text())
+        return HttpResponseRedirect("/profile")
+
+    form = ProfileForm(label_suffix="", instance=request.user)
+    return render(request, "site/account/profile.html", {"form": form})
+
+
+@login_required
+def reviews(request):
+    """User reviews view."""
+    page_number = request.GET.get("page", 1)
+    paginated_reviews = paginate(request.user.reviews(), page_number)
+
+    context = _review_stats_for_user(request.user)
+    context["paginated_reviews"] = paginated_reviews
+    return render(request, "site/account/reviews.html", context=context)
+
+
+class DeleteProfile(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
+    """User deletion view."""
+
+    model = User
+    success_url = reverse_lazy("browse")
+
+    def get_success_url(self):
+        """Use caller-provided next URL when safe, otherwise pick default."""
+        return safe_next_url(self.request, str(self.success_url))
+
+    def form_valid(self, form):
+        """Override DeleteView's function to just call logout before deleting"""
+        logout(self.request)
+        return super().form_valid(form)
+
+    def get_object(self):
+        """Override DeleteView's function to validate profile belonging to user."""
+        obj = super().get_object()
+        if obj != self.request.user:
+            raise PermissionDenied("You are not allowed to delete this account!")
+        return obj
+
+    def get_success_message(self, cleaned_data) -> str:
+        """Overrides SuccessMessageMixin's get_success_message method."""
+        return "Successfully deleted your account!"

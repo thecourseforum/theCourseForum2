@@ -1,20 +1,12 @@
 """Application views."""
 
-# See
-# https://docs.djangoproject.com/en/3.0/topics/db/models/#organizing-models-in-a-package
-
+from .account import DeleteProfile, profile, reviews
 from .auth import login, logout
-from .browse import (
-    browse,
-    course_instructor,
-    course_view,
-    course_view_legacy,
-    department,
-    instructor_view,
-    club_category,
-)
-from .index import AboutView, index, privacy, terms
-from .profile import DeleteProfile, profile, reviews
+from .catalog import browse, department, search
+from .clubs import club_category, club_view
+from .courses import course_instructor, course_view
+from .home import AboutView, index, privacy, terms
+from .instructors import instructor_view
 from .qa import (
     DeleteAnswer,
     DeleteQuestion,
@@ -27,16 +19,21 @@ from .qa import (
     upvote_answer,
     upvote_question,
 )
-from .review import DeleteReview, downvote, new_review, upvote
+from .review import (
+    DeleteReview,
+    downvote,
+    new_review,
+    upvote,
+    vote_review,
+)
 from .schedule import (
     delete_schedule,
     duplicate_schedule,
     edit_schedule,
-    modal_load_editor,
-    modal_load_sections,
     new_schedule,
+    remove_scheduled_course,
     schedule_add_course,
+    schedule_share,
+    schedule_unbookmark,
     view_schedules,
-    view_select_schedules_modal,
 )
-from .search import search

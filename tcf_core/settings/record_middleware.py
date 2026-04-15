@@ -1,7 +1,7 @@
 """Middleware for recording cookie information."""
 
 
-class RecordMiddleware:  # pylint: disable=too-few-public-methods
+class RecordMiddleware:
     """
     Previously recorded course section info into cookies.
     Now does nothing as this functionality has been moved to client-side
