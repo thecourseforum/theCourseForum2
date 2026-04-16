@@ -105,7 +105,7 @@ def compare_guess(review_info, guess_info):
         feedback["mnemonic"] = "correct"
     elif guess_info.get("school") and review_info.get("school"):
         feedback["mnemonic"] = (
-            "partial" if guess_info["school"] == review_info["school"] else "incorrect"
+            "partial" if guess_info["school"] == review_info["school"] else "far"
         )
     else:
         feedback["mnemonic"] = "incorrect"
