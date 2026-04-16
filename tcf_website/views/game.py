@@ -109,7 +109,24 @@ def compare_guess(review_info, guess_info):
         )
     else:
         feedback["mnemonic"] = "incorrect"
-    for field in ["number", "rating", "difficulty", "gpa"]:
+
+    # course number with ranges
+    if guess_info.get("number") is None or review_info.get("number") is None:
+        feedback["number"] = "N/A"
+    else:
+        g = float(guess_info["number"])
+        r = float(review_info["number"])
+        diff = abs(g - r)
+        if diff == 0:
+            feedback["number"] = "correct"
+        elif diff <= 100:
+            feedback["number"] = "close"
+        elif diff <= 1000:
+            feedback["number"] = "medium"
+        else:
+            feedback["number"] = "far"
+
+    for field in ["rating", "difficulty", "gpa"]:
         g = guess_info[field] if guess_info[field] == None else float(guess_info[field])
         r = (
             review_info[field]

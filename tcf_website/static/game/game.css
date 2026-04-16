@@ -258,6 +258,18 @@
     background-color: #999 !important; 
 }
 
+.tile-close {
+    background-color: #f1c40f !important; 
+}
+
+.tile-medium {
+    background-color: #d48f2a !important; 
+}
+
+.tile-far {
+    background-color: #e74c3c !important; 
+}
+
 .tile-higher::after {
     content: " ↑";
 }

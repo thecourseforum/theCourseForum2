@@ -29,6 +29,8 @@
                     <div class="modal-body">
                         <p>
                         Read the review and try to guess the course! Type a course code (e.g., “CS 1110”) or a course name, then submit your guess. After each guess, the tiles will tell you how close you are: green means correct, gray means incorrect, and arrows show whether the real value is higher or lower than your guess. You have up to 10 guesses—see if you can get it in as few as possible!
+
+                        For the course number, yellow means you're within 100 numbers, orange means you're within 1000 numbers, and red means you're more than 1000 numbers away. Arrows are used to indicate whether rating, difficulty, or GPA guesses are lower or higher. Good luck!
                         </p>
 
                     </div>
@@ -122,6 +124,9 @@
     function tileClass(val) {
         if (val === "correct") return "tile-correct";
         if (val === "partial") return "tile-partial";
+        if (val === "close") return "tile-close";
+        if (val === "medium") return "tile-medium";
+        if (val === "far") return "tile-far";
         if (val === "higher") return "tile-incorrect tile-higher";
         if (val === "lower") return "tile-incorrect tile-lower";
         return "tile-incorrect";
