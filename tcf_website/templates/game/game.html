@@ -100,7 +100,16 @@
         <p>Your guess: mnemonic | number | avg rating | avg difficulty | avg gpa</p>
         <p>Feedback: incorrect/correct, lower/higher = the answer's corresponding value is lower/higher than your guess</p>
         <p>N/A = course you guessed doesn't have this value </p> -->
-
+        <div class="guess-row placeholder">
+            <div class="guess-values">
+                <div class="course-placeholder"></div>
+                <div class="tile-placeholder"></div>
+                <div class="tile-placeholder"></div>
+                <div class="tile-placeholder"></div>
+                <div class="tile-placeholder"></div>
+                <div class="tile-placeholder"></div>
+            </div>
+        </div>
     </div>
 </div>
 </div>
@@ -134,6 +143,11 @@
     }
 
     function updateRow(guess, feedback) {
+        if (guessIndex === 1) {
+            var placeholder = document.querySelector('.guess-row.placeholder');
+            if (placeholder) placeholder.remove();
+            // removes placeholder row when there is a guess
+        }
         var row = document.createElement("div");
         row.id = `guess-${guessIndex}`;
         row.classList.add("guess-row");

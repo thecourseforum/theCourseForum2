@@ -270,6 +270,24 @@
     background-color: #e74c3c !important; 
 }
 
+.tile-placeholder {
+    background-color: var(--shaded-color, #f0f0f0) !important;
+}
+
+.course-placeholder {
+    background-color: var(--shaded-color, #f0f0f0);
+    border-radius: 0.4em;
+    flex: 1;
+    text-align: left;
+    padding-left: 1%;
+    overflow: hidden;
+    max-width: 20%;
+    min-height: 64px; /* approximate height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .tile-higher::after {
     content: " ↑";
 }
