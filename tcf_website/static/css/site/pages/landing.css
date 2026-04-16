@@ -208,7 +208,6 @@
 .trending-card {
   display: block;
   height: 5rem;
-
   background-color: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);

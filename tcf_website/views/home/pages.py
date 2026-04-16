@@ -132,9 +132,8 @@ def get_trending_instructors():
         return []
 
     instructors = list(
-        Instructor.objects.filter(id__in=instructor_ids)
-        .exclude(first_name="")
-        .exclude(last_name="")
+        Instructor.objects.filter(id__in=instructor_ids, hidden=False)
+        .exclude(full_name="")
     )
 
     # preserve ranking order

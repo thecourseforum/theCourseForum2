@@ -31,21 +31,26 @@ _ANALYTICS_ENABLED = False
 try:
     access_key = env("AWS_ANALYTICS_ACCESS_KEY_ID", default=None)
     secret_key = env("AWS_ANALYTICS_SECRET_ACCESS_KEY", default=None)
+    session_kwargs = {"region_name": env("AWS_REGION", default="us-east-1")}
     if access_key and secret_key:
-        _SESSION = boto3.Session(
-            aws_access_key_id=access_key,
-            aws_secret_access_key=secret_key,
-            region_name=env("AWS_REGION", default="us-east-1"),
+        session_kwargs.update(
+            {
+                "aws_access_key_id": access_key,
+                "aws_secret_access_key": secret_key,
+            }
         )
-        _ANALYTICS_ENABLED = True
+    _SESSION = boto3.Session(**session_kwargs)
+    _ANALYTICS_ENABLED = True
 except Exception as e:
     logger.error(f"Analytics initialization failed: {e}")
 
 
 def get_table():
     """Returns a DynamoDB Table resource, or None if analytics is disabled."""
-    if not _SESSION:
+    # OLD: if not _SESSION:
+    if not _ANALYTICS_ENABLED:
         return None
+        
     return _SESSION.resource("dynamodb", config=_BOTO_CONFIG).Table(
         env("DYNAMODB_TABLE_NAME", default="trending_analytics")
     )
