@@ -108,9 +108,11 @@ def get_trending_courses():
     # Source of truth lookup
     courses = list(
         Course.objects.filter(id__in=course_ids)
+        .select_related("subdepartment")
         .exclude(subdepartment__mnemonic="")
         .exclude(number__isnull=True)
     )
+    
     # preserve ranking order
     courses.sort(key=lambda c: course_ids.index(c.id))
 
