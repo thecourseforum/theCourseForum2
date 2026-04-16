@@ -119,7 +119,7 @@ def compare_guess(review_info, guess_info):
         diff = abs(g - r)
         if diff == 0:
             feedback["number"] = "correct"
-        elif diff <= 100:
+        elif diff <= 500:
             feedback["number"] = "close"
         elif diff <= 1000:
             feedback["number"] = "medium"
