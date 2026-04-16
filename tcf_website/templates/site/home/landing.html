@@ -103,9 +103,9 @@
                         <a href="{% url 'course' course.subdepartment.mnemonic course.number %}" class="trending-card">                            <div class="trending-card__inner">
                                 <div class="trending-card__content">
                                     <span class="trending-card__rank">#{{ forloop.counter }}</span>
-                                    <div style="display: flex; flex-direction: column; justify-content: center;">
-                                        <span class="trending-card__name" style="line-height: 1.2;">{{ course.combined_mnemonic_number }}</span>
-                                        <span style="font-size: 0.85em; opacity: 0.7; margin-top: 2px;">{{ course.title }}</span>
+                                    <div class="trending-card__data">
+                                        <span class="trending-card__name trending-card__name--compact">{{ course.combined_mnemonic_number }}</span>
+                                        <span class="trending-card__title">{{ course.title }}</span>
                                     </div>
                                 </div>
                                 <span class="trending-card__badge">🔥</span>

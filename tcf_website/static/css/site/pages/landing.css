@@ -275,7 +275,6 @@
 .trending-card__badge {
   font-size: var(--text-xs);
   font-weight: var(--font-bold);
-  text-transform: uppercase;
   /* Use design system variable with manual red as fallback */
   color: var(--color-error-600, #b91c1c); 
   background-color: rgba(239, 68, 68, 0.1);
@@ -295,6 +294,29 @@
   color: var(--fg-subtle);
   font-style: italic;
   font-size: var(--text-sm);
+}
+
+.trending-card__data {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.trending-card__name--compact {
+  display: block;
+  line-height: 1.2;
+}
+
+.trending-card__title {
+  display: block; /* Ensures it sits on its own line */
+  font-size: var(--text-xs);
+  opacity: 0.7;
+  margin-top: var(--space-1);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ===== LANDING REVIEWS STRIP ===== */

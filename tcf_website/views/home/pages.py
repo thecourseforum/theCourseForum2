@@ -112,7 +112,7 @@ def get_trending_courses():
         .exclude(subdepartment__mnemonic="")
         .exclude(number__isnull=True)
     )
-    
+
     # preserve ranking order
     courses.sort(key=lambda c: course_ids.index(c.id))
 
