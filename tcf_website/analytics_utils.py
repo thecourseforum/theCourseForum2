@@ -50,7 +50,7 @@ def get_table():
     # OLD: if not _SESSION:
     if not _ANALYTICS_ENABLED:
         return None
-        
+
     return _SESSION.resource("dynamodb", config=_BOTO_CONFIG).Table(
         env("DYNAMODB_TABLE_NAME", default="trending_analytics")
     )
