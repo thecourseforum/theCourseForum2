@@ -95,12 +95,13 @@
     <!-- Trending Section -->
     <section class="trending" aria-labelledby="trending-heading">
         <div class="trending__grid">
-            
             <article class="trending__column">
                 <h2 id="trending-courses-heading" class="trending__title">🔥 Trending Courses</h2>
                 <div class="trending__stack">
                     {% for course in trending_courses %}
-                        <a href="{% url 'course' course.subdepartment.mnemonic course.number %}" class="trending-card">                            <div class="trending-card__inner">
+                        <a href="{% url 'course' course.subdepartment.mnemonic course.number %}"
+                           class="trending-card">
+                            <div class="trending-card__inner">
                                 <div class="trending-card__content">
                                     <span class="trending-card__rank">#{{ forloop.counter }}</span>
                                     <div class="trending-card__data">
@@ -116,7 +117,6 @@
                     {% endfor %}
                 </div>
             </article>
-
             <article class="trending__column">
                 <h2 id="trending-instructors-heading" class="trending__title">🔥 Trending Instructors</h2>
                 <div class="trending__stack">
@@ -135,7 +135,6 @@
                     {% endfor %}
                 </div>
             </article>
-
         </div>
     </section>
     {% include "site/home/partials/_landing_spotlight.html" %}
