@@ -131,6 +131,10 @@
         document.querySelectorAll("#course-list option")
     ).map(function(option) {
         return option.value;
+    }).filter(function(optionValue) {
+        var optionParts = optionValue.split("—");
+        var codePart = optionParts[0] ? optionParts[0].trim() : "";
+        return /\b\d{4}\b/.test(codePart);
     });
     var currentSuggestion = "";
     var maxAutocompleteResults = 6;
@@ -294,6 +298,7 @@
         if (!courseInput) {
             return;
         }
+        currentSuggestion = value;
         courseInput.value = value;
         typedValue = value;
         acceptInlineAutocomplete();
