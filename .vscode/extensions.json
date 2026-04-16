@@ -1,9 +1,0 @@
-{
-  "recommendations": [
-    "ms-python.python",
-    "charliermarsh.ruff",
-    "astral-sh.ty",
-    "dbaeumer.vscode-eslint",
-    "monosans.djlint"
-  ]
-}
