@@ -274,6 +274,34 @@
         activeDropdownIndex = 0;
     }
 
+    function getAutocompleteItems() {
+        return Array.from(document.querySelectorAll("#course-autocomplete .course-autocomplete-item"));
+    }
+
+    function setActiveDropdownItem(index) {
+        var items = getAutocompleteItems();
+        if (!items.length) {
+            activeDropdownIndex = -1;
+            currentSuggestion = "";
+            return;
+        }
+
+        if (index < 0) {
+            index = items.length - 1;
+        }
+        if (index >= items.length) {
+            index = 0;
+        }
+
+        items.forEach(function(item, itemIndex) {
+            item.classList.toggle("active", itemIndex === index);
+        });
+
+        activeDropdownIndex = index;
+        currentSuggestion = items[index].dataset.value;
+        items[index].scrollIntoView({ block: "nearest" });
+    }
+
     function updateAutocomplete() {
         if (gameLocked) {
             return;
@@ -367,6 +395,24 @@
     });
 
     document.getElementById("course-input").addEventListener("keydown", function(e) {
+        if (e.key === "ArrowDown") {
+            var items = getAutocompleteItems();
+            if (items.length) {
+                e.preventDefault();
+                setActiveDropdownItem(activeDropdownIndex + 1);
+            }
+            return;
+        }
+
+        if (e.key === "ArrowUp") {
+            var items = getAutocompleteItems();
+            if (items.length) {
+                e.preventDefault();
+                setActiveDropdownItem(activeDropdownIndex - 1);
+            }
+            return;
+        }
+
         if (e.key === "Tab" && currentSuggestion) {
             e.preventDefault();
             acceptInlineAutocomplete();
