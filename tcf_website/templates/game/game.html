@@ -171,8 +171,10 @@
                     class="rating-card-link"
                     href="/course/${guess.mnemonic}/${guess.number}/All"
                 >
+                    <div class="text-center text-lg-left">
                         <h3 id="title">${guess.mnemonic} ${guess.number}</h3>
                         <h5>${guess.title}</h5>
+                    </div>
                 </a>
                 <div class="${tileClass(feedback.mnemonic)}">${guess.mnemonic}</div>
                 <div class="${tileClass(feedback.number)}">${guess.number}</div>
@@ -184,10 +186,10 @@
         }
 
         return `
-        <div class="first-reveal-values">
+        <div class="guess-values reveal-values first-reveal-values">
             ${buildRevealCard(
                 '<div class="first-reveal-course-front"></div>',
-                `<a class="first-reveal-course-back" href="/course/${guess.mnemonic}/${guess.number}/All"><h3>${guess.mnemonic} ${guess.number}</h3><h5>${guess.title}</h5></a>`,
+                `<a class="first-reveal-course-back rating-card-link" href="/course/${guess.mnemonic}/${guess.number}/All"><div class="text-center text-lg-left"><h3 id="title">${guess.mnemonic} ${guess.number}</h3><h5>${guess.title}</h5></div></a>`,
                 'flip-card-course'
             )}
             ${buildRevealCard('<div class="first-reveal-tile-front"></div>', `<div class="first-reveal-tile-back ${tileClass(feedback.mnemonic)}">${guess.mnemonic}</div>`)}
@@ -199,8 +201,31 @@
         `;
     }
 
-    function animateFirstGuessReveal(row) {
+    function animateFirstGuessReveal(row, guess, feedback) {
         var revealTargets = row.querySelectorAll(".flip-card");
+        var lastRevealTarget = revealTargets[revealTargets.length - 1];
+        var rowReplaced = false;
+
+        function replaceWithDefaultRow() {
+            if (rowReplaced) {
+                return;
+            }
+            rowReplaced = true;
+            row.classList.remove("reveal-row");
+            row.innerHTML = buildGuessValuesMarkup(guess, feedback, false);
+        }
+
+        if (lastRevealTarget) {
+            var lastInner = lastRevealTarget.querySelector(".flip-card-inner");
+            if (lastInner) {
+                lastInner.addEventListener("transitionend", function(event) {
+                    if (event.propertyName === "transform") {
+                        replaceWithDefaultRow();
+                    }
+                }, { once: true });
+            }
+        }
+
         requestAnimationFrame(function() {
             revealTargets.forEach(function(target, index) {
                 var inner = target.querySelector(".flip-card-inner");
@@ -210,6 +235,8 @@
                 target.classList.add("reveal-tile");
             });
         });
+
+        window.setTimeout(replaceWithDefaultRow, 4000);
     }
 
     function updateRow(guess, feedback) {
@@ -221,7 +248,7 @@
                 placeholder.classList.remove("placeholder");
                 placeholder.classList.add("reveal-row");
                 placeholder.innerHTML = buildGuessValuesMarkup(guess, feedback, true);
-                animateFirstGuessReveal(placeholder);
+                animateFirstGuessReveal(placeholder, guess, feedback);
                 return;
             }
         }
