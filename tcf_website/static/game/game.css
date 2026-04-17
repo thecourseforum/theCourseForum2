@@ -256,14 +256,6 @@
     background-color: #3a9e5f !important; 
 }
 
-.tile-partial {
-    background-color: #d48f2a !important; 
-}
-
-.tile-incorrect {
-    background-color: #999 !important; 
-}
-
 .tile-close {
     background-color: #f1c40f !important; 
 }
@@ -272,8 +264,8 @@
     background-color: #d48f2a !important; 
 }
 
-.tile-far {
-    background-color: #e74c3c !important; 
+.tile-incorrect {
+    background-color: #999 !important; 
 }
 
 .tile-placeholder {
@@ -488,7 +480,6 @@
 .flip-card .tile-partial,
 .flip-card .tile-close,
 .flip-card .tile-medium,
-.flip-card .tile-far,
 .flip-card .tile-incorrect {
     width: 100%;
     max-width: none;

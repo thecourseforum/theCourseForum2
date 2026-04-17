@@ -102,10 +102,6 @@
         </div>
     </div>
     <div id="guesses">
-        <!-- <p>GUESSES</p>
-        <p>Your guess: mnemonic | number | avg rating | avg difficulty | avg gpa</p>
-        <p>Feedback: incorrect/correct, lower/higher = the answer's corresponding value is lower/higher than your guess</p>
-        <p>N/A = course you guessed doesn't have this value </p> -->
         <div class="guess-row placeholder">
             <div class="guess-values">
                 <div class="course-placeholder"></div>
@@ -142,14 +138,20 @@
     var typedValue = "";
 
     function tileClass(val) {
-        if (val === "correct") return "tile-correct";
-        if (val === "partial") return "tile-partial";
-        if (val === "close") return "tile-close";
-        if (val === "medium") return "tile-medium";
-        if (val === "far") return "tile-far";
-        if (val === "higher") return "tile-incorrect tile-higher";
-        if (val === "lower") return "tile-incorrect tile-lower";
-        return "tile-incorrect";
+        switch (val) {
+            case "correct": 
+                return "tile-correct";
+            case "close": 
+                return "tile-close";
+            case "medium": 
+                return "tile-medium";
+            case "higher":
+                return "tile-incorrect tile-higher";
+            case "lower":
+                return "tile-incorrect tile-lower";
+            default:
+                return "tile-incorrect";
+        }
     }
 
     function buildRevealCard(frontContent, backContent, extraClasses) {
@@ -441,21 +443,6 @@
         });
     }
 
-    function isPerfectGuess(feedback) {
-        if (!feedback) {
-            return false;
-        }
-        return [
-            feedback.mnemonic,
-            feedback.number,
-            feedback.rating,
-            feedback.difficulty,
-            feedback.gpa,
-        ].every(function(value) {
-            return value === "correct";
-        });
-    }
-
     document.getElementById("game-overlay").addEventListener("click", function(e) {
         if (e.target === this) {
             this.classList.remove("show");
@@ -544,12 +531,12 @@
             typedValue = "";
             currentSuggestion = "";
             renderAutocompleteList([]);
-            if (isPerfectGuess(response.feedback)) {
+            if (Object.values(response.feedback).every(v => v === "correct")) {
                 fireConfetti();
                 lockGame();
                 showWinOverlay();
             }
-            if (guessIndex === 10 && response.feedback && response.feedback.mnemonic !== "correct") {
+            if (guessIndex === 10 && !Object.values(response.feedback).every(v => v === "correct")) {
                 showNoMoreGuessesOverlay();
                 lockGame();
             }

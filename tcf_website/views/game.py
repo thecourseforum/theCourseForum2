@@ -32,7 +32,6 @@ cache_timeout = 60 * 60 * 24  # 24 hours
 
 """Fetches/retrieves cached daily review, refreshes at midnight"""
 
-
 def get_daily_review():
     now = datetime.datetime.now()
     date = now.strftime("%Y-%m-%d")
@@ -48,28 +47,10 @@ def get_daily_review():
     return review
 
 
-# def print_guess_info(dept, number, rating, difficulty, gpa):
-#     parts = []
-#     if dept is not None and number is not None:
-#         parts.append(f"{dept} {number}")
-#     else:
-#         parts.append("unknown course")
-
-#     # other course stats
-#     parts.append(f"rating={rating if rating is not None else 'N/A'}")
-#     parts.append(f"difficulty={difficulty if difficulty is not None else 'N/A'}")
-#     parts.append(f"gpa={gpa if gpa is not None else 'N/A'}")
-#     msg = "Guess info - " + ", ".join(parts)
-
-#     print(msg)
-#     return msg
-
 """Extract stats of correct review"""
-
 
 def safe_round(value, digits=2):
     return round(value, digits) if value is not None else None
-
 
 def get_course_info(course):
     return {
@@ -86,14 +67,12 @@ def get_course_info(course):
 def _normalize_course_input(course_text: str) -> str:
     return course_text.strip().upper()
 
-
+"""Return the course code portion from inputs like 'CS 1110 — Intro'."""
 def _extract_course_code(course_text: str) -> str:
-    """Return the course code portion from inputs like 'CS 1110 — Intro'."""
     return course_text.split("—", 1)[0].strip()
 
 
 """Returns dict with correct/incorrect or directional hints for numeric fields"""
-
 
 def compare_guess(review_info, guess_info):
     if guess_info is None:
@@ -103,10 +82,8 @@ def compare_guess(review_info, guess_info):
 
     if guess_info.get("mnemonic") == review_info.get("mnemonic"):
         feedback["mnemonic"] = "correct"
-    elif guess_info.get("school") and review_info.get("school"):
-        feedback["mnemonic"] = (
-            "close" if guess_info["school"] == review_info["school"] else "far"
-        )
+    elif guess_info.get("school") and review_info.get("school") and (guess_info["school"] == review_info["school"]):
+        feedback["mnemonic"] = ("close")
     else:
         feedback["mnemonic"] = "incorrect"
 
@@ -124,7 +101,7 @@ def compare_guess(review_info, guess_info):
         elif diff <= 1000:
             feedback["number"] = "medium"
         else:
-            feedback["number"] = "far"
+            feedback["number"] = "incorrect"
 
     for field in ["rating", "difficulty", "gpa"]:
         g = guess_info[field] if guess_info[field] == None else float(guess_info[field])
