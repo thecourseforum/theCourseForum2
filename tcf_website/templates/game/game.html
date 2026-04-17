@@ -152,33 +152,84 @@
         return "tile-incorrect";
     }
 
+    function buildRevealCard(frontContent, backContent, extraClasses) {
+        return `
+        <div class="flip-card ${extraClasses || ""}">
+            <div class="flip-card-inner">
+                <div class="flip-card-face flip-card-front">${frontContent}</div>
+                <div class="flip-card-face flip-card-back">${backContent}</div>
+            </div>
+        </div>
+        `;
+    }
+
+    function buildGuessValuesMarkup(guess, feedback, isReveal) {
+        if (!isReveal) {
+            return `
+            <div class="guess-values">
+                <a
+                    class="rating-card-link"
+                    href="/course/${guess.mnemonic}/${guess.number}/All"
+                >
+                        <h3 id="title">${guess.mnemonic} ${guess.number}</h3>
+                        <h5>${guess.title}</h5>
+                </a>
+                <div class="${tileClass(feedback.mnemonic)}">${guess.mnemonic}</div>
+                <div class="${tileClass(feedback.number)}">${guess.number}</div>
+                <div class="${tileClass(feedback.rating)}">${guess.rating ?? "N/A"}</div>
+                <div class="${tileClass(feedback.difficulty)}">${guess.difficulty ?? "N/A"}</div>
+                <div class="${tileClass(feedback.gpa)}">${guess.gpa ?? "N/A"}</div>
+            </div>
+            `;
+        }
+
+        return `
+        <div class="first-reveal-values">
+            ${buildRevealCard(
+                '<div class="first-reveal-course-front"></div>',
+                `<a class="first-reveal-course-back" href="/course/${guess.mnemonic}/${guess.number}/All"><h3>${guess.mnemonic} ${guess.number}</h3><h5>${guess.title}</h5></a>`,
+                'flip-card-course'
+            )}
+            ${buildRevealCard('<div class="first-reveal-tile-front"></div>', `<div class="first-reveal-tile-back ${tileClass(feedback.mnemonic)}">${guess.mnemonic}</div>`)}
+            ${buildRevealCard('<div class="first-reveal-tile-front"></div>', `<div class="first-reveal-tile-back ${tileClass(feedback.number)}">${guess.number}</div>`)}
+            ${buildRevealCard('<div class="first-reveal-tile-front"></div>', `<div class="first-reveal-tile-back ${tileClass(feedback.rating)}">${guess.rating ?? "N/A"}</div>`)}
+            ${buildRevealCard('<div class="first-reveal-tile-front"></div>', `<div class="first-reveal-tile-back ${tileClass(feedback.difficulty)}">${guess.difficulty ?? "N/A"}</div>`)}
+            ${buildRevealCard('<div class="first-reveal-tile-front"></div>', `<div class="first-reveal-tile-back ${tileClass(feedback.gpa)}">${guess.gpa ?? "N/A"}</div>`)}
+        </div>
+        `;
+    }
+
+    function animateFirstGuessReveal(row) {
+        var revealTargets = row.querySelectorAll(".flip-card");
+        requestAnimationFrame(function() {
+            revealTargets.forEach(function(target, index) {
+                var inner = target.querySelector(".flip-card-inner");
+                if (inner) {
+                    inner.style.transitionDelay = `${index * 350}ms`;
+                }
+                target.classList.add("reveal-tile");
+            });
+        });
+    }
+
     function updateRow(guess, feedback) {
+        var guesses = document.getElementById('guesses');
         if (guessIndex === 1) {
             var placeholder = document.querySelector('.guess-row.placeholder');
-            if (placeholder) placeholder.remove();
-            // removes placeholder row when there is a guess
+            if (placeholder) {
+                placeholder.id = `guess-${guessIndex}`;
+                placeholder.classList.remove("placeholder");
+                placeholder.classList.add("reveal-row");
+                placeholder.innerHTML = buildGuessValuesMarkup(guess, feedback, true);
+                animateFirstGuessReveal(placeholder);
+                return;
+            }
         }
+
         var row = document.createElement("div");
         row.id = `guess-${guessIndex}`;
         row.classList.add("guess-row");
-        row.innerHTML = `
-        <div class="guess-values">
-            <a
-                class="rating-card-link"
-                href="/course/${guess.mnemonic}/${guess.number}/All"
-            >
-                    <h3 id="title">${guess.mnemonic} ${guess.number}</h3>
-                    <h5>${guess.title}</h5>
-            </a>
-            <div class="${tileClass(feedback.mnemonic)}">${guess.mnemonic}</div>
-            <div class="${tileClass(feedback.number)}">${guess.number}</div>
-            <div class="${tileClass(feedback.rating)}">${guess.rating ?? "N/A"}</div>
-            <div class="${tileClass(feedback.difficulty)}">${guess.difficulty ?? "N/A"}</div>
-            <div class="${tileClass(feedback.gpa)}">${guess.gpa ?? "N/A"}</div>
-        </div>
-        `
-
-        var guesses = document.getElementById('guesses');
+        row.innerHTML = buildGuessValuesMarkup(guess, feedback, false);
         guesses.prepend(row); //add guess row to top of guesses 
     }
 

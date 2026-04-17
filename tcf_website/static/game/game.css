@@ -231,7 +231,7 @@
     display: inline-block;
 }
 
-.guess-values div {
+.guess-values > div {
     flex: 1;
     max-width: 10%;
     aspect-ratio: 1;
@@ -293,6 +293,185 @@
 
 .guess-row.placeholder .course-placeholder {
     aspect-ratio: auto;
+}
+
+.reveal-values {
+    perspective: 1200px;
+    display: grid;
+    grid-template-columns: 20% repeat(5, 10%);
+    column-gap: 2%;
+    width: 100%;
+    justify-content: center;
+    align-items: stretch;
+    margin: 1%;
+}
+
+.first-reveal-values {
+    perspective: 1200px;
+    display: grid;
+    grid-template-columns: 20% repeat(5, 10%);
+    column-gap: 2%;
+    width: 100%;
+    justify-content: center;
+    align-items: stretch;
+    margin: 1%;
+}
+
+.flip-card {
+    width: 100%;
+    max-width: none;
+    aspect-ratio: 1;
+    position: relative;
+    perspective: 1200px;
+    overflow: hidden;
+}
+
+.flip-card-course {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    aspect-ratio: auto;
+}
+
+.first-reveal-values .flip-card-course {
+    min-height: 64px;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.flip-card-face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 0.4em;
+    overflow: hidden;
+}
+
+.flip-card-front {
+    transform: rotateX(0deg) translateZ(4px);
+    background-color: var(--shaded-color, #f0f0f0);
+}
+
+.flip-card-back {
+    transform: rotateX(180deg) translateZ(4px);
+}
+
+.reveal-tile .flip-card-inner {
+    transform: rotateX(180deg);
+}
+
+.flip-card-course .course-placeholder,
+.flip-card-course .rating-card-link,
+.flip-card-course .flip-card-face {
+    width: 100%;
+    max-width: none;
+}
+
+.first-reveal-course-front {
+    width: 100%;
+    height: 100%;
+    background: var(--shaded-color, #f0f0f0);
+    border-radius: 0.4em;
+}
+
+.first-reveal-course-back {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0.5rem 0.75rem;
+    box-sizing: border-box;
+    text-align: left;
+    color: inherit;
+    text-decoration: none;
+    background: var(--secondary-color);
+    color: white;
+}
+
+.first-reveal-course-back h3,
+.first-reveal-course-back h5 {
+    margin: 0;
+}
+
+.first-reveal-course-back h5 {
+    font-weight: 500;
+}
+
+.first-reveal-tile-front {
+    width: 100%;
+    height: 100%;
+    background: var(--shaded-color, #f0f0f0);
+    border-radius: 0.4em;
+}
+
+.first-reveal-tile-back {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.4em;
+    box-sizing: border-box;
+}
+
+.reveal-row .flip-card-face > div,
+.reveal-row .flip-card-face > a {
+    flex: none !important;
+    max-width: none !important;
+    min-width: 0;
+}
+
+.flip-card-course .flip-card-front,
+.flip-card-course .flip-card-back {
+    min-height: 64px;
+}
+
+.flip-card:not(.flip-card-course) .flip-card-front,
+.flip-card:not(.flip-card-course) .flip-card-back {
+    min-height: 64px;
+}
+
+.flip-card .tile-placeholder,
+.flip-card .tile-correct,
+.flip-card .tile-partial,
+.flip-card .tile-close,
+.flip-card .tile-medium,
+.flip-card .tile-far,
+.flip-card .tile-incorrect {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+}
+
+.flip-card-course .rating-card-link {
+    padding-left: 1%;
+}
+
+.flip-card-front .course-placeholder,
+.flip-card-front .tile-placeholder,
+.flip-card-back .rating-card-link,
+.flip-card-back > div {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.reveal-row {
+    align-items: stretch;
 }
 
 .tile-higher::after {
