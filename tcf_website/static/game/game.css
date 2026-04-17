@@ -276,16 +276,23 @@
 
 .course-placeholder {
     background-color: var(--shaded-color, #f0f0f0);
-    border-radius: 0.4em;
     flex: 1;
-    text-align: left;
-    padding-left: 1%;
-    overflow: hidden;
     max-width: 20%;
-    min-height: 64px; /* approximate height */
+    min-width: 20%;
+    min-height: 0;
+    height: auto;
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-self: stretch;
+    border-radius: 0.4em;
+}
+
+.guess-row.placeholder .course-placeholder {
+    aspect-ratio: auto;
 }
 
 .tile-higher::after {
