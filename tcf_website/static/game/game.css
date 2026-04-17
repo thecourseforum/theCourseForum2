@@ -199,6 +199,10 @@
     max-width: 20%;
 }
 
+.guess-row .rating-card-link:hover {
+    color: white;
+}
+
 
 .feedback-labels span {
     flex: 1;
@@ -398,6 +402,13 @@
     text-decoration: none;
     background: var(--secondary-color);
     color: white;
+    padding-top: 0.35rem;
+    padding-bottom: 0.65rem;
+}
+
+.first-reveal-course-back:hover {
+    background: var(--main-color);
+    color: white;
 }
 
 .first-reveal-course-back h3,
@@ -424,6 +435,7 @@
     justify-content: center;
     border-radius: 0.4em;
     box-sizing: border-box;
+    color: white;
 }
 
 .reveal-row .flip-card-face > div,
