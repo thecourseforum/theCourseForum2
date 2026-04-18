@@ -224,6 +224,10 @@ def new_schedule(request):
                 messages.error(request, "There was an error")
                 return render(request, "schedule/user_schedules.html", {"form": form})
             schedule.save()
+
+            # Add 2 points for creating a schedule
+            request.user.karma = min(5000, max(0, (request.user.karma or 0) + 2))
+            request.user.save()
             messages.success(request, "Successfully created schedule!")
     else:
         # if schedule isn't getting saved, then don't do anything
@@ -250,6 +254,12 @@ def delete_schedule(request):
         if deleted_count == 0:
             messages.error(request, "No schedules were deleted.")
         else:
+            # Deduct 2 points per schedule deleted
+            points_to_remove = schedule_count * 2
+            request.user.karma = min(
+                5000, max(0, (request.user.karma or 0) - points_to_remove)
+            )
+            request.user.save()
             messages.success(
                 request,
                 f"Successfully deleted {schedule_count} schedules and {deleted_count - schedule_count} courses",
@@ -275,6 +285,10 @@ def duplicate_schedule(request, schedule_id):
         course.pk = None
         course.schedule = schedule
         course.save()
+
+    # Add 2 points for creating a schedule copy
+    request.user.karma = min(5000, max(0, (request.user.karma or 0) + 2))
+    request.user.save()
 
     messages.success(request, f"Successfully duplicated {old_name}")
     return redirect("schedule")

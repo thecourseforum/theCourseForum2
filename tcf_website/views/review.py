@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from ..models import Review, ClubCategory, Club
+from ..models import Club, ClubCategory, Review, Vote
 
 # pylint: disable=fixme,unused-argument
 # Disable pylint errors on TODO messages, such as below
@@ -85,7 +85,29 @@ def upvote(request, review_id):
     """Upvote a view."""
     if request.method == "POST":
         review = Review.objects.get(pk=review_id)
+        existing_vote = Vote.objects.filter(user=request.user, review=review).first()
+
         review.upvote(request.user)
+
+        # Based on Stack Overflow rules: +10 points for receiving an upvote
+        author = review.user
+        if request.user != author:
+            points_to_add = 0
+            if existing_vote:
+                if existing_vote.value == -1:
+                    # Switched from downvote to upvote: +2 (revert penalty) + 10 (upvote) = +12
+                    points_to_add = 12
+                elif existing_vote.value == 1:
+                    # Removed upvote: -10
+                    points_to_add = -10
+            else:
+                # New upvote: +10
+                points_to_add = 10
+
+            if points_to_add != 0:
+                author.karma = min(5000, max(0, (author.karma or 0) + points_to_add))
+                author.save()
+
         return JsonResponse({"ok": True})
     return JsonResponse({"ok": False})
 
@@ -95,7 +117,29 @@ def downvote(request, review_id):
     """Downvote a view."""
     if request.method == "POST":
         review = Review.objects.get(pk=review_id)
+        existing_vote = Vote.objects.filter(user=request.user, review=review).first()
+
         review.downvote(request.user)
+
+        # Based on Stack Overflow rules: -2 points for receiving a downvote
+        author = review.user
+        if request.user != author:
+            points_to_add = 0
+            if existing_vote:
+                if existing_vote.value == 1:
+                    # Switched from upvote to downvote: -10 (revert upvote) - 2 (penalty) = -12
+                    points_to_add = -12
+                elif existing_vote.value == -1:
+                    # Removed downvote: +2
+                    points_to_add = 2
+            else:
+                # New downvote: -2
+                points_to_add = -2
+
+            if points_to_add != 0:
+                author.karma = min(5000, max(0, (author.karma or 0) + points_to_add))
+                author.save()
+
         return JsonResponse({"ok": True})
     return JsonResponse({"ok": False})
 
@@ -119,6 +163,10 @@ def new_review(request):
             )
 
             instance.save()
+
+            # Add 10 points for writing a review (Standard for review platforms)
+            request.user.karma = min(5000, max(0, (request.user.karma or 0) + 10))
+            request.user.save()
 
             # Determine redirect URL with appropriate mode
             redirect_url = "profile"
@@ -245,6 +293,13 @@ class DeleteReview(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
         if obj.user != self.request.user:
             raise PermissionDenied("You are not allowed to delete this review!")
         return obj
+
+    def delete(self, request, *args, **kwargs):
+        """Override delete to deduct points given for writing the review."""
+        # Revert the +10 points from writing a review
+        request.user.karma = min(5000, max(0, (request.user.karma or 0) - 10))
+        request.user.save()
+        return super().delete(request, *args, **kwargs)
 
     def get_success_message(self, cleaned_data) -> str:
         """Overrides SuccessMessageMixin's get_success_message method."""

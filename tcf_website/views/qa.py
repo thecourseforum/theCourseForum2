@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 
-from ..models import Answer, Question
+from ..models import Answer, Question, VoteAnswer, VoteQuestion
 
 
 class QuestionForm(forms.ModelForm):
@@ -46,6 +46,13 @@ class DeleteQuestion(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView
             raise PermissionDenied("You are not allowed to delete this question!")
         return obj
 
+    def delete(self, request, *args, **kwargs):
+        """Override delete to deduct points given for writing the question."""
+        # Revert the +5 points from writing a question
+        request.user.karma = min(5000, max(0, (request.user.karma or 0) - 5))
+        request.user.save()
+        return super().delete(request, *args, **kwargs)
+
     def get_success_message(self, cleaned_data) -> str:
         """Overrides SuccessMessageMixin's get_success_message method."""
         # get the course this review is about
@@ -68,6 +75,10 @@ def new_question(request):
             instance.user = request.user
 
             instance.save()
+
+            # Add 5 points for asking a question
+            request.user.karma = min(5000, max(0, (request.user.karma or 0) + 5))
+            request.user.save()
 
             messages.success(
                 request, f"Successfully added a question for {instance.course}!"
@@ -106,7 +117,27 @@ def upvote_question(request, question_id):
     """Upvote a view."""
     if request.method == "POST":
         question = Question.objects.get(pk=question_id)
+        existing_vote = VoteQuestion.objects.filter(
+            user=request.user, question=question
+        ).first()
+
         question.upvote(request.user)
+
+        author = question.user
+        if request.user != author:
+            points_to_add = 0
+            if existing_vote:
+                if existing_vote.value == -1:
+                    points_to_add = 7  # Revert -2 and add +5
+                elif existing_vote.value == 1:
+                    points_to_add = -5  # Removed upvote
+            else:
+                points_to_add = 5
+
+            if points_to_add != 0:
+                author.karma = min(5000, max(0, (author.karma or 0) + points_to_add))
+                author.save()
+
         return JsonResponse({"ok": True})
     return JsonResponse({"ok": False})
 
@@ -116,7 +147,27 @@ def downvote_question(request, question_id):
     """Downvote a view."""
     if request.method == "POST":
         question = Question.objects.get(pk=question_id)
+        existing_vote = VoteQuestion.objects.filter(
+            user=request.user, question=question
+        ).first()
+
         question.downvote(request.user)
+
+        author = question.user
+        if request.user != author:
+            points_to_add = 0
+            if existing_vote:
+                if existing_vote.value == 1:
+                    points_to_add = -7  # Revert +5 and add -2
+                elif existing_vote.value == -1:
+                    points_to_add = 2  # Removed downvote
+            else:
+                points_to_add = -2
+
+            if points_to_add != 0:
+                author.karma = min(5000, max(0, (author.karma or 0) + points_to_add))
+                author.save()
+
         return JsonResponse({"ok": True})
     return JsonResponse({"ok": False})
 
@@ -151,6 +202,13 @@ class DeleteAnswer(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
             raise PermissionDenied("You are not allowed to delete this answer!")
         return obj
 
+    def delete(self, request, *args, **kwargs):
+        """Override delete to deduct points given for writing the answer."""
+        # Revert the +10 points from writing an answer
+        request.user.karma = min(5000, max(0, (request.user.karma or 0) - 10))
+        request.user.save()
+        return super().delete(request, *args, **kwargs)
+
     def get_success_message(self, cleaned_data) -> str:
         """Overrides SuccessMessageMixin's get_success_message method."""
         # get the course this review is about
@@ -174,6 +232,10 @@ def new_answer(request):
             instance.user = request.user
 
             instance.save()
+
+            # Add 10 points for writing an answer
+            request.user.karma = min(5000, max(0, (request.user.karma or 0) + 10))
+            request.user.save()
 
             messages.success(request, "Successfully added an answer!")
             return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
@@ -237,7 +299,27 @@ def upvote_answer(request, answer_id):
     """Upvote a view."""
     if request.method == "POST":
         answer = Answer.objects.get(pk=answer_id)
+        existing_vote = VoteAnswer.objects.filter(
+            user=request.user, answer=answer
+        ).first()
+
         answer.upvote(request.user)
+
+        author = answer.user
+        if request.user != author:
+            points_to_add = 0
+            if existing_vote:
+                if existing_vote.value == -1:
+                    points_to_add = 12  # Revert -2 and add +10
+                elif existing_vote.value == 1:
+                    points_to_add = -10  # Removed upvote
+            else:
+                points_to_add = 10
+
+            if points_to_add != 0:
+                author.karma = min(5000, max(0, (author.karma or 0) + points_to_add))
+                author.save()
+
         return JsonResponse({"ok": True})
     return JsonResponse({"ok": False})
 
@@ -247,6 +329,26 @@ def downvote_answer(request, answer_id):
     """Downvote a view."""
     if request.method == "POST":
         answer = Answer.objects.get(pk=answer_id)
+        existing_vote = VoteAnswer.objects.filter(
+            user=request.user, answer=answer
+        ).first()
+
         answer.downvote(request.user)
+
+        author = answer.user
+        if request.user != author:
+            points_to_add = 0
+            if existing_vote:
+                if existing_vote.value == 1:
+                    points_to_add = -12  # Revert +10 and add -2
+                elif existing_vote.value == -1:
+                    points_to_add = 2  # Removed downvote
+            else:
+                points_to_add = -2
+
+            if points_to_add != 0:
+                author.karma = min(5000, max(0, (author.karma or 0) + points_to_add))
+                author.save()
+
         return JsonResponse({"ok": True})
     return JsonResponse({"ok": False})
