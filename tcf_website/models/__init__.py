@@ -7,9 +7,9 @@
 
 from .models import (
     Answer,
-    Course,
     Club,
     ClubCategory,
+    Course,
     CourseGrade,
     CourseInstructorGrade,
     Department,
@@ -26,4 +26,6 @@ from .models import (
     Subdepartment,
     User,
     Vote,
+    VoteAnswer,
+    VoteQuestion,
 )
