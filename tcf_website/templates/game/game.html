@@ -188,22 +188,22 @@
         }
 
         return `
-        <div class="guess-values reveal-values first-reveal-values">
+        <div class="guess-values reveal-values animated-reveal-values">
             ${buildRevealCard(
-                '<div class="first-reveal-course-front"></div>',
-                `<a class="first-reveal-course-back rating-card-link" href="/course/${guess.mnemonic}/${guess.number}/All"><div class="text-center text-lg-left"><h3 id="title">${guess.mnemonic} ${guess.number}</h3><h5>${guess.title}</h5></div></a>`,
+                '<div class="animated-reveal-course-front"></div>',
+                `<a class="animated-reveal-course-back rating-card-link" href="/course/${guess.mnemonic}/${guess.number}/All"><div class="text-center text-lg-left"><h3 id="title">${guess.mnemonic} ${guess.number}</h3><h5>${guess.title}</h5></div></a>`,
                 'flip-card-course'
             )}
-            ${buildRevealCard('<div class="first-reveal-tile-front"></div>', `<div class="first-reveal-tile-back ${tileClass(feedback.mnemonic)}">${guess.mnemonic}</div>`)}
-            ${buildRevealCard('<div class="first-reveal-tile-front"></div>', `<div class="first-reveal-tile-back ${tileClass(feedback.number)}">${guess.number}</div>`)}
-            ${buildRevealCard('<div class="first-reveal-tile-front"></div>', `<div class="first-reveal-tile-back ${tileClass(feedback.rating)}">${guess.rating ?? "N/A"}</div>`)}
-            ${buildRevealCard('<div class="first-reveal-tile-front"></div>', `<div class="first-reveal-tile-back ${tileClass(feedback.difficulty)}">${guess.difficulty ?? "N/A"}</div>`)}
-            ${buildRevealCard('<div class="first-reveal-tile-front"></div>', `<div class="first-reveal-tile-back ${tileClass(feedback.gpa)}">${guess.gpa ?? "N/A"}</div>`)}
+            ${buildRevealCard('<div class="animated-reveal-tile-front"></div>', `<div class="animated-reveal-tile-back ${tileClass(feedback.mnemonic)}">${guess.mnemonic}</div>`)}
+            ${buildRevealCard('<div class="animated-reveal-tile-front"></div>', `<div class="animated-reveal-tile-back ${tileClass(feedback.number)}">${guess.number}</div>`)}
+            ${buildRevealCard('<div class="animated-reveal-tile-front"></div>', `<div class="animated-reveal-tile-back ${tileClass(feedback.rating)}">${guess.rating ?? "N/A"}</div>`)}
+            ${buildRevealCard('<div class="animated-reveal-tile-front"></div>', `<div class="animated-reveal-tile-back ${tileClass(feedback.difficulty)}">${guess.difficulty ?? "N/A"}</div>`)}
+            ${buildRevealCard('<div class="animated-reveal-tile-front"></div>', `<div class="animated-reveal-tile-back ${tileClass(feedback.gpa)}">${guess.gpa ?? "N/A"}</div>`)}
         </div>
         `;
     }
 
-    function animateFirstGuessReveal(row, guess, feedback) {
+    function animateGuessReveal(row, guess, feedback) {
         var revealTargets = row.querySelectorAll(".flip-card");
         var lastRevealTarget = revealTargets[revealTargets.length - 1];
         var rowReplaced = false;
@@ -250,7 +250,7 @@
                 placeholder.classList.remove("placeholder");
                 placeholder.classList.add("reveal-row");
                 placeholder.innerHTML = buildGuessValuesMarkup(guess, feedback, true);
-                animateFirstGuessReveal(placeholder, guess, feedback);
+                animateGuessReveal(placeholder, guess, feedback);
                 return;
             }
         }
@@ -258,8 +258,10 @@
         var row = document.createElement("div");
         row.id = `guess-${guessIndex}`;
         row.classList.add("guess-row");
-        row.innerHTML = buildGuessValuesMarkup(guess, feedback, false);
+        row.classList.add("reveal-row");
+        row.innerHTML = buildGuessValuesMarkup(guess, feedback, true);
         guesses.prepend(row); //add guess row to top of guesses 
+        animateGuessReveal(row, guess, feedback);
     }
 
     var gameLocked = false;

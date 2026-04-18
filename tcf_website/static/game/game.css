@@ -294,7 +294,7 @@
 }
 
 .reveal-values,
-.first-reveal-values {
+.animated-reveal-values {
     perspective: 1200px;
     align-items: stretch;
 }
@@ -323,7 +323,7 @@
     height: auto;
 }
 
-.first-reveal-values .flip-card.flip-card-course {
+.animated-reveal-values .flip-card.flip-card-course {
     flex: 1 1 20%;
     width: auto;
     max-width: 20%;
@@ -332,13 +332,13 @@
     align-self: stretch;
 }
 
-.first-reveal-values .flip-card.flip-card-course .flip-card-inner,
-.first-reveal-values .flip-card.flip-card-course .flip-card-front,
-.first-reveal-values .flip-card.flip-card-course .flip-card-back {
+.animated-reveal-values .flip-card.flip-card-course .flip-card-inner,
+.animated-reveal-values .flip-card.flip-card-course .flip-card-front,
+.animated-reveal-values .flip-card.flip-card-course .flip-card-back {
     height: 100%;
 }
 
-.first-reveal-values .flip-card-course,
+.animated-reveal-values .flip-card-course,
 .reveal-values .flip-card-course {
     min-height: 64px;
     align-self: stretch;
@@ -384,7 +384,7 @@
     max-width: none;
 }
 
-.first-reveal-course-front {
+.animated-reveal-course-front {
     width: 100%;
     height: 100%;
     display: flex;
@@ -400,7 +400,7 @@
     border-radius: 0.4em;
 }
 
-.first-reveal-course-back {
+.animated-reveal-course-back {
     width: 100%;
     height: 100%;
     display: flex;
@@ -415,37 +415,37 @@
     max-width: none;
 }
 
-.first-reveal-course-back:hover {
+.animated-reveal-course-back:hover {
     background: var(--main-color);
     color: white;
 }
 
 .guess-row .rating-card-link h3,
 .guess-row .rating-card-link h5,
-.first-reveal-course-back h3,
-.first-reveal-course-back h5 {
+.animated-reveal-course-back h3,
+.animated-reveal-course-back h5 {
     margin: 0;
 }
 
 .guess-row .rating-card-link h3,
-.first-reveal-course-back h3 {
+.animated-reveal-course-back h3 {
     line-height: 1.2;
 }
 
 .guess-row .rating-card-link h5,
-.first-reveal-course-back h5 {
+.animated-reveal-course-back h5 {
     font-weight: 500;
     line-height: 1.2;
 }
 
-.first-reveal-tile-front {
+.animated-reveal-tile-front {
     width: 100%;
     height: 100%;
     background: var(--shaded-color, #f0f0f0);
     border-radius: 0.4em;
 }
 
-.first-reveal-tile-back {
+.animated-reveal-tile-back {
     width: 100%;
     height: 100%;
     display: flex;
