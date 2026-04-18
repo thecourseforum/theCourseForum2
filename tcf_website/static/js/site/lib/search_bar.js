@@ -150,6 +150,11 @@ window.addArrowKeyNav = addArrowKeyNav;
           })
           .then(function (html) {
             autocompleteContainer.innerHTML = html;
+            autocompleteContainer
+              .querySelectorAll(".autocomplete-item__link")
+              .forEach(function (link) {
+                link.setAttribute("tabindex", "-1");
+              });
             autocompleteContainer.hidden = false;
           })
           .catch(function (err) {
@@ -170,7 +175,8 @@ window.addArrowKeyNav = addArrowKeyNav;
     addArrowKeyNav(
       searchInput,
       autocompleteContainer,
-      ".autocomplete-item__link, .autocomplete-item__title",
+      ".autocomplete-item__link",
+      { upLoops: true, downLoops: true },
     );
   }
 
