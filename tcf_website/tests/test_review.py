@@ -1,7 +1,6 @@
-# pylint: disable=no-member
 """Tests for Review model."""
 
-from urllib.parse import urlencode
+import json
 
 from django.contrib.messages import get_messages
 from django.db import IntegrityError
@@ -10,85 +9,18 @@ from django.test import TestCase
 from django.urls import reverse
 
 from ..models import Review, Vote
-from ..views.review import ReviewForm
+from ..review.forms import ReviewForm
 from .test_utils import setup, suppress_request_warnings
 
 
-class EditReviewTests(TestCase):
-    """Tests for the `edit_review` view."""
+class ReviewFormTests(TestCase):
+    """Tests for the ReviewForm."""
 
     def setUp(self):
         setup(self)
-        self.valid_data_with_different_text = urlencode(
-            {
-                "text": "new text",
-                "course": self.review1.course.id,
-                "instructor": self.review1.instructor.id,
-                "semester": self.review1.semester.id,
-                "instructor_rating": self.review1.instructor_rating,
-                "difficulty": self.review1.difficulty,
-                "recommendability": self.review1.recommendability,
-                "enjoyability": self.review1.enjoyability,
-                "amount_reading": self.review1.amount_reading,
-                "amount_writing": self.review1.amount_writing,
-                "amount_group": self.review1.amount_group,
-                "amount_homework": self.review1.amount_homework,
-            }
-        )
-
-    @suppress_request_warnings
-    def test_nonexistent_review_id(self):
-        """Test if a 404 error is returned for a nonexistent review ID."""
-        self.client.force_login(self.review1.user)
-        response = self.client.post(
-            reverse("edit_review", args=[0]),  # nonexistent review id: 0
-            self.valid_data_with_different_text,
-            content_type="application/x-www-form-urlencoded",
-        )
-        self.assertEqual(response.status_code, 404)
-
-    @suppress_request_warnings
-    def test_different_user(self):
-        """Test if a user can edit someone else's review."""
-        self.client.force_login(self.user2)  # self.user2 != self.review1.user
-        response = self.client.post(
-            reverse("edit_review", args=[self.review1.id]),
-            self.valid_data_with_different_text,
-            content_type="application/x-www-form-urlencoded",
-        )
-        self.assertEqual(response.status_code, 403)
-
-    def test_update_text(self):
-        """Test if review text is updated."""
-        self.client.force_login(self.review1.user)
-        response = self.client.post(
-            reverse("edit_review", args=[self.review1.id]),
-            self.valid_data_with_different_text,  # data with updated text
-            content_type="application/x-www-form-urlencoded",
-        )
-        self.assertRedirects(response, reverse("reviews"))
-        self.review1.refresh_from_db()
-        self.assertEqual(self.review1.text, "new text")
-        messages = [m.message for m in get_messages(response.wsgi_request)]
-        self.assertEqual(
-            str(messages[0]),
-            "Successfully updated your review for CS 1420 | Software Testing!",
-        )
-
-    def test_message_for_invalid_form(self):
-        """Test if a message is shown when invalid form data is submitted."""
-        self.client.force_login(self.review1.user)
-        data_with_invalid_difficulty = urlencode({"difficulty": -1})
-        response = self.client.post(
-            reverse("edit_review", args=[self.review1.id]),
-            data_with_invalid_difficulty,  # invalid form data
-            content_type="application/x-www-form-urlencoded",
-        )
-        messages = [m.message for m in get_messages(response.wsgi_request)]
-        self.assertIn("difficulty", str(messages[0]))
 
     def test_reviewform_recalculates_hours_per_week_on_save(self):
-        """Test if a message is shown when invalid form data is submitted."""
+        """Test if hours_per_week is recalculated on save."""
         review1: dict = model_to_dict(self.review1)
         review1["amount_reading"] = self.review1.amount_reading - 1
         previous_sum: int = self.review1.hours_per_week
@@ -213,3 +145,120 @@ class ModelReviewTests(TestCase):
         self.assertFalse(
             Review.get_sorted_reviews(self.course, self.instructor, self.user1).exists()
         )
+
+
+def _review_post_data(course, instructor, semester):
+    """Minimal valid POST payload for ReviewForm (course review)."""
+    return {
+        "text": "x" * 200,
+        "course": str(course.pk),
+        "instructor": str(instructor.pk),
+        "semester": str(semester.pk),
+        "instructor_rating": "3",
+        "difficulty": "3",
+        "recommendability": "3",
+        "enjoyability": "3",
+        "amount_reading": "0",
+        "amount_writing": "0",
+        "amount_group": "0",
+        "amount_homework": "0",
+    }
+
+
+class ReviewFormSectionValidationTests(TestCase):
+    """ReviewForm requires a real Section for course/semester/instructor."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_accepts_matching_section(self):
+        """Instructor on a section for that course and term passes clean()."""
+        form = ReviewForm(
+            _review_post_data(self.course, self.instructor, self.semester)
+        )
+        self.assertTrue(form.is_valid())
+
+    def test_rejects_instructor_not_teaching_that_term(self):
+        """Instructor with no section for that course+semester fails clean()."""
+        form = ReviewForm(
+            _review_post_data(self.course, self.instructor2, self.semester)
+        )
+        self.assertFalse(form.is_valid())
+
+
+class ReviewCascadeJsonEndpointsTests(TestCase):
+    """XHR helpers for the unified review writer."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_semesters_anonymous_redirects(self):
+        """Anonymous requests redirect to login."""
+        response = self.client.get(
+            reverse("review_semester_options"),
+            {"course": self.course.pk},
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_semesters_returns_terms_with_sections(self):
+        """Semester options only include terms with matching sections."""
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("review_semester_options"),
+            {"course": self.course.pk},
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        ids = {row["id"] for row in data["semesters"]}
+        self.assertIn(self.semester.pk, ids)
+
+    def test_instructors_bad_request_without_params(self):
+        """Missing query params yields 400 instead of silent fallback."""
+        self.client.force_login(self.user1)
+        response = self.client.get(reverse("review_instructor_options"))
+        self.assertEqual(response.status_code, 400)
+
+    def test_instructors_returns_json(self):
+        """Instructor options returns JSON including expected instructors."""
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("review_instructor_options"),
+            {"course": self.course.pk, "semester": self.semester.pk},
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertTrue(
+            any(row["last_name"] == "Jefferson" for row in data["instructors"])
+        )
+
+
+class ReviewPreflightJsonTests(TestCase):
+    """XHR duplicate / hours checks return JSON on validation failure."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_check_duplicate_xhr_invalid_returns_json_400(self):
+        """Invalid POST with XHR must not redirect with HTML."""
+        self.client.force_login(self.user1)
+        response = self.client.post(
+            reverse("check_review_duplicate"),
+            {"text": "ab"},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content)
+        self.assertFalse(data.get("ok", True))
+        self.assertIn("error", data)
+
+    def test_check_zero_hours_xhr_invalid_returns_json_400(self):
+        """Invalid XHR to zero-hours check returns JSON 400."""
+        self.client.force_login(self.user1)
+        response = self.client.post(
+            reverse("check_zero_hours_per_week"),
+            {"text": "ab"},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content)
+        self.assertFalse(data.get("ok", True))

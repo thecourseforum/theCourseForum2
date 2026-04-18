@@ -1,8 +1,0 @@
-/* 
-    We can use the Django messages framework to notify the user
-    whenever something important happens. For example, successfully logging out!
-    This css is used to format and animate any new Django messages that are
-    triggered in the application.
-
-    https://docs.djangoproject.com/en/3.0/ref/contrib/messages/
-*/

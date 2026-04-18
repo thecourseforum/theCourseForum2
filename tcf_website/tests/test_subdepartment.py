@@ -1,4 +1,3 @@
-# pylint: disable=no-member
 """Tests for Course model."""
 
 from django.test import TestCase

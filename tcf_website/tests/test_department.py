@@ -1,4 +1,3 @@
-# pylint: disable=no-member, line-too-long
 """Tests for Department model."""
 
 from random import randint, sample, uniform
@@ -6,6 +5,7 @@ from random import randint, sample, uniform
 from django.test import TestCase
 
 from ..models import Course, CourseGrade, Review, Semester
+from ..utils import min_catalog_semester_year
 from .test_utils import create_new_semester, setup
 
 
@@ -52,56 +52,60 @@ class DepartmentTestCase(TestCase):
                     amount_homework=randint(1, 5),
                 )
 
-    def get_expected_courses(self, num_of_years: int = 5):
+    def get_expected_courses(self, latest_only=True):
         """Helper method for fetching course objects in Department"""
-        expected_courses = [
+        if latest_only:
+            current = Semester.latest()
+            return [
+                course
+                for course in self.courses
+                if course.semester_last_taught == current
+            ]
+        cutoff_year = min_catalog_semester_year()
+        return [
             course
             for course in self.courses
-            if course.semester_last_taught.number
-            >= self.latest_semester.number - (10 * num_of_years)
+            if course.semester_last_taught.year >= cutoff_year
         ]
-
-        return expected_courses
 
     def test_department_name(self):
         """Test Department model __str__ method"""
         self.assertEqual(str(self.department), "Computer Science")
 
-    def test_fetch_recent_courses_last_five(self):
-        """Test Department fetch recent courses function"""
-        recent_courses = self.department.fetch_recent_courses()
-        self.latest_semester = Semester.latest()
-        expected_courses = self.get_expected_courses()
-        self.assertEqual(set(recent_courses), set(expected_courses))
+    def test_fetch_recent_courses_latest(self):
+        """Test Department fetch_recent_courses with latest_only=True (default)"""
+        self.assertEqual(
+            set(self.department.fetch_recent_courses()),
+            set(self.get_expected_courses(latest_only=True)),
+        )
 
-    def test_fetch_recent_courses_current_semester(self):
-        """Test Department fetch recent courses function"""
-        recent_courses = self.department.fetch_recent_courses(0)
-        self.latest_semester = Semester.latest()
-        expected_courses = self.get_expected_courses(0)
-        self.assertEqual(set(recent_courses), set(expected_courses))
+    def test_fetch_recent_courses_five_years(self):
+        """Test Department fetch_recent_courses with latest_only=False (5-year window)"""
+        self.assertEqual(
+            set(self.department.fetch_recent_courses(latest_only=False)),
+            set(self.get_expected_courses(latest_only=False)),
+        )
 
     def test_sort_courses_course_id_asc(self):
         """Test Department sort courses function using `Course ID` as the sort key (ascending)"""
-        recent_courses = self.department.sort_courses("course_id")
-        self.latest_semester = Semester.latest()
-        expected_courses = self.get_expected_courses()
+        recent_courses = self.department.sort_courses("course_id", latest_only=False)
+        expected_courses = self.get_expected_courses(latest_only=False)
         expected_courses.sort(key=lambda x: x.number)
         self.assertEqual(list(recent_courses), expected_courses)
 
     def test_sort_courses_course_id_desc(self):
         """Test Department sort courses function using `Course` as the sort key (descending)"""
-        recent_courses = self.department.sort_courses("course_id", 5, "desc")
-        self.latest_semester = Semester.latest()
-        expected_courses = self.get_expected_courses()
+        recent_courses = self.department.sort_courses(
+            "course_id", "desc", latest_only=False
+        )
+        expected_courses = self.get_expected_courses(latest_only=False)
         expected_courses.sort(key=lambda x: -x.number)
         self.assertEqual(list(recent_courses), expected_courses)
 
     def test_sort_courses_gpa_asc(self):
         """Test Department sort courses function using 'gpa' as the sort key (ascending)"""
-        self.latest_semester = Semester.latest()
-        recent_courses = self.department.sort_courses("gpa")
-        expected_courses = self.get_expected_courses()
+        recent_courses = self.department.sort_courses("gpa", latest_only=False)
+        expected_courses = self.get_expected_courses(latest_only=False)
         expected_courses.sort(
             key=lambda x: (
                 round(x.average_gpa(), 10),
@@ -113,9 +117,8 @@ class DepartmentTestCase(TestCase):
 
     def test_sort_courses_gpa_desc(self):
         """Test Department sort courses function using 'gpa' as the sort key (descending)"""
-        self.latest_semester = Semester.latest()
-        recent_courses = self.department.sort_courses("gpa", 5, "desc")
-        expected_courses = self.get_expected_courses()
+        recent_courses = self.department.sort_courses("gpa", "desc", latest_only=False)
+        expected_courses = self.get_expected_courses(latest_only=False)
         expected_courses.sort(
             key=lambda x: (
                 -round(x.average_gpa(), 10),
@@ -127,9 +130,8 @@ class DepartmentTestCase(TestCase):
 
     def test_sort_courses_rating_asc(self):
         """Test Department sort courses function using 'rating' as the sort key (ascending)"""
-        self.latest_semester = Semester.latest()
-        recent_courses = self.department.sort_courses("rating")
-        expected_courses = self.get_expected_courses()
+        recent_courses = self.department.sort_courses("rating", latest_only=False)
+        expected_courses = self.get_expected_courses(latest_only=False)
         expected_courses.sort(
             key=lambda x: (
                 round(x.average_rating(), 10),
@@ -141,9 +143,10 @@ class DepartmentTestCase(TestCase):
 
     def test_sort_courses_rating_desc(self):
         """Test Department sort courses function using 'rating' as the sort key (descending)"""
-        self.latest_semester = Semester.latest()
-        recent_courses = self.department.sort_courses("rating", 5, "desc")
-        expected_courses = self.get_expected_courses()
+        recent_courses = self.department.sort_courses(
+            "rating", "desc", latest_only=False
+        )
+        expected_courses = self.get_expected_courses(latest_only=False)
         expected_courses.sort(
             key=lambda x: (
                 -round(x.average_rating(), 10),
@@ -155,9 +158,8 @@ class DepartmentTestCase(TestCase):
 
     def test_sort_courses_difficulty_asc(self):
         """Test Department sort courses function using 'difficulty' as the sort key (ascending)"""
-        self.latest_semester = Semester.latest()
-        recent_courses = self.department.sort_courses("difficulty")
-        expected_courses = self.get_expected_courses()
+        recent_courses = self.department.sort_courses("difficulty", latest_only=False)
+        expected_courses = self.get_expected_courses(latest_only=False)
         expected_courses.sort(
             key=lambda x: (
                 round(x.average_difficulty(), 10),
@@ -169,9 +171,10 @@ class DepartmentTestCase(TestCase):
 
     def test_sort_courses_difficulty_desc(self):
         """Test Department sort courses function using 'difficulty' as the sort key (descending)"""
-        self.latest_semester = Semester.latest()
-        recent_courses = self.department.sort_courses("difficulty", 5, "desc")
-        expected_courses = self.get_expected_courses()
+        recent_courses = self.department.sort_courses(
+            "difficulty", "desc", latest_only=False
+        )
+        expected_courses = self.get_expected_courses(latest_only=False)
         expected_courses.sort(
             key=lambda x: (
                 -round(x.average_difficulty(), 10),

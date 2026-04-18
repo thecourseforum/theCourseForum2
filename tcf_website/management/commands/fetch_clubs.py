@@ -11,10 +11,11 @@ docker exec -it tcf_django python manage.py fetch_clubs
 import csv
 import os
 import re
+
 import backoff
 import requests
-from tqdm import tqdm
 from django.core.management.base import BaseCommand
+from tqdm import tqdm
 
 BASE_URL = "https://api.presence.io/virginia/v1/organizations"
 session = requests.session()

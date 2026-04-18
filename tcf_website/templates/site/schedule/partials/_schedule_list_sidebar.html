@@ -1,0 +1,108 @@
+{% load custom_tags %}
+<aside class="schedule-list">
+    <h2 class="schedule-list__title">Schedules</h2>
+    {% if schedules %}
+        <div class="schedule-list__items">
+            {% for schedule in schedules %}
+                <article class="schedule-list-card {% if selected_schedule and selected_schedule.id == schedule.id %}is-active{% endif %}">
+                    <a class="schedule-list-card__select"
+                       href="{% url 'schedule' %}?{% if active_semester %}semester={{ active_semester.pk }}&{% endif %}schedule={{ schedule.id }}"
+                       data-schedule-nav
+                       aria-label="Open schedule {{ schedule.name }}"></a>
+                    <div class="schedule-list-card__body">
+                        <div class="schedule-list-card__header">
+                            <div class="schedule-list-card__title">
+                                <span class="schedule-list-card__name">{{ schedule.name }}</span>
+                            </div>
+                            {% if schedule.user_id != request.user.id %}
+                                <div class="schedule-list-card__header-end">
+                                    <span class="schedule-badge schedule-badge--shared">Shared</span>
+                                    {% if schedule.user.first_name %}
+                                        <span class="schedule-list-card__owner-id">{{ schedule.user.first_name }}</span>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="schedule-list-card__metrics">
+                            <div>
+                                <span class="schedule-list-card__metric-label">Units</span>
+                                <span class="schedule-list-card__metric-value">
+                                    {% with units=credits|get_item:schedule.id %}
+                                        {% if units %}
+                                            {{ units }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    {% endwith %}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="schedule-list-card__metric-label">Rating</span>
+                                <span class="schedule-list-card__metric-value">
+                                    {% with rating_value=ratings|get_item:schedule.id %}
+                                        {% if rating_value %}
+                                            {{ rating_value|floatformat:2 }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    {% endwith %}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="schedule-list-card__metric-label">GPA</span>
+                                <span class="schedule-list-card__metric-value">
+                                    {% with gpa_value=schedules_gpa|get_item:schedule.id %}
+                                        {% if gpa_value %}
+                                            {{ gpa_value|floatformat:2 }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    {% endwith %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% if not compare_schedule %}
+                        <div class="schedule-list-card__actions">
+                            <form method="post"
+                                  action="{% url 'duplicate_schedule' schedule.id %}"
+                                  data-schedule-async>
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ schedule_builder_return_url }}">
+                                <button type="submit"
+                                        class="btn btn--ghost btn--sm schedule-builder__action-btn">Duplicate</button>
+                            </form>
+                            {% if schedule.user_id == request.user.id %}
+                                <form method="post"
+                                      action="{% url 'delete_schedule' %}"
+                                      data-schedule-async>
+                                    {% csrf_token %}
+                                    <input type="hidden" name="selected_schedules" value="{{ schedule.id }}">
+                                    <input type="hidden" name="next" value="{{ schedule_builder_return_url }}">
+                                    <button type="submit"
+                                            class="btn btn--ghost btn--sm schedule-builder__action-btn schedule-builder__btn-danger">
+                                        Delete
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form method="post"
+                                      action="{% url 'schedule_unbookmark' %}"
+                                      data-schedule-async>
+                                    {% csrf_token %}
+                                    <input type="hidden" name="schedule_id" value="{{ schedule.id }}">
+                                    <input type="hidden" name="next" value="{{ schedule_builder_return_url }}">
+                                    <button type="submit"
+                                            class="btn btn--ghost btn--sm schedule-builder__action-btn schedule-builder__btn-danger">
+                                        Delete
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="schedule-list__empty">You do not have any schedules for this term yet.</p>
+    {% endif %}
+</aside>
