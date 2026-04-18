@@ -1,3 +1,4 @@
+
 #!/bin/bash
 #
 # This script resets the local database by destroying the container and volume,
