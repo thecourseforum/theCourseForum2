@@ -7,6 +7,135 @@
 <link rel="stylesheet" href="{% static 'game/game.css' %}" />
 <link rel="stylesheet" href="{% static 'reviews/review_stats.css' %}" />
 <link rel="stylesheet" href="{% static 'common/rating_card.css' %}" />
+<style>
+    #game-color-key-inline {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        width: 100% !important;
+        padding: 12px 14px !important;
+        background: #ffffff !important;
+        border: 1px solid #d9d9d9 !important;
+        border-radius: 8px !important;
+    }
+
+    #game-color-key-inline .game-color-key-header {
+        text-align: center !important;
+        font-size: 0.78rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.04em !important;
+        color: #8b8b8b !important;
+    }
+
+    #game-color-key-inline .game-color-key-items {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+        flex-wrap: nowrap !important;
+    }
+
+    #game-color-key-inline .game-color-key-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 8px !important;
+        text-align: center !important;
+    }
+
+    #game-color-key-inline .game-color-key-label {
+        display: block !important;
+        margin: 0 !important;
+        font-size: 0.52rem !important;
+        line-height: 1.1 !important;
+        font-weight: 800 !important;
+        color: #747474 !important;
+        text-transform: uppercase !important;
+        max-width: 60px !important;
+    }
+
+    #game-color-key-inline .game-color-key-item-wide .game-color-key-label {
+        max-width: 74px !important;
+    }
+
+    #game-color-key-inline .game-color-key-tile {
+        width: 30px !important;
+        height: 30px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 4px !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        color: #ffffff !important;
+        font-size: 0.82rem !important;
+        font-weight: 700 !important;
+    }
+
+    #game-color-key-inline .game-color-key-arrow {
+        font-family: Arial, Helvetica, sans-serif !important;
+        line-height: 1 !important;
+        display: inline-block !important;
+    }
+
+    @media (max-width: 1200px) {
+        #game-color-key-inline {
+            padding: 10px 10px !important;
+        }
+
+        #game-color-key-inline .game-color-key-items {
+            gap: 6px !important;
+        }
+
+        #game-color-key-inline .game-color-key-header {
+            font-size: 0.68rem !important;
+        }
+
+        #game-color-key-inline .game-color-key-label {
+            font-size: 0.46rem !important;
+            max-width: 52px !important;
+        }
+
+        #game-color-key-inline .game-color-key-item-wide .game-color-key-label {
+            max-width: 64px !important;
+        }
+
+        #game-color-key-inline .game-color-key-tile {
+            width: 26px !important;
+            height: 26px !important;
+            font-size: 0.72rem !important;
+        }
+    }
+
+    @media (max-width: 992px) {
+        #game-color-key-inline {
+            padding: 8px 8px !important;
+        }
+
+        #game-color-key-inline .game-color-key-items {
+            gap: 4px !important;
+        }
+
+        #game-color-key-inline .game-color-key-header {
+            font-size: 0.6rem !important;
+            letter-spacing: 0.02em !important;
+        }
+
+        #game-color-key-inline .game-color-key-label {
+            font-size: 0.4rem !important;
+            max-width: 46px !important;
+        }
+
+        #game-color-key-inline .game-color-key-item-wide .game-color-key-label {
+            max-width: 56px !important;
+        }
+
+        #game-color-key-inline .game-color-key-tile {
+            width: 22px !important;
+            height: 22px !important;
+            font-size: 0.62rem !important;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -41,6 +170,35 @@
                         </p>
 
                     </div>
+                </div>
+            </div>
+        </div>
+        <div id="game-color-key-inline" class="game-color-key" aria-label="Course guessing color key">
+            <div class="game-color-key-header">COLOR INDICATORS</div>
+            <div class="game-color-key-items">
+                <div class="game-color-key-item">
+                    <div class="game-color-key-tile tile-correct" aria-hidden="true"></div>
+                    <span class="game-color-key-label">CORRECT</span>
+                </div>
+                <div class="game-color-key-item">
+                    <div class="game-color-key-tile tile-incorrect" aria-hidden="true"></div>
+                    <span class="game-color-key-label">INCORRECT</span>
+                </div>
+                <div class="game-color-key-item game-color-key-item-wide">
+                    <div class="game-color-key-tile tile-medium" aria-hidden="true"></div>
+                    <span class="game-color-key-label">WITHIN 1000</span>
+                </div>
+                <div class="game-color-key-item game-color-key-item-wide">
+                    <div class="game-color-key-tile tile-close" aria-hidden="true"></div>
+                    <span class="game-color-key-label">WITHIN 500</span>
+                </div>
+                <div class="game-color-key-item">
+                    <div class="game-color-key-tile tile-incorrect" aria-hidden="true"><span class="game-color-key-arrow">&uarr;</span></div>
+                    <span class="game-color-key-label">HIGHER</span>
+                </div>
+                <div class="game-color-key-item">
+                    <div class="game-color-key-tile tile-incorrect" aria-hidden="true"><span class="game-color-key-arrow">&darr;</span></div>
+                    <span class="game-color-key-label">LOWER</span>
                 </div>
             </div>
         </div>
