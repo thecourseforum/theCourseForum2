@@ -5,7 +5,6 @@ import logging
 import time
 from pathlib import Path
 
-import environ
 from boto3.dynamodb.conditions import Attr, Key
 from django.core.cache import cache
 from django.shortcuts import render
@@ -17,8 +16,6 @@ from tcf_website.models import Course, Instructor
 from .landing_spotlight import landing_spotlight_context
 
 logger = logging.getLogger(__name__)
-# Initialize environ
-env = environ.Env()
 
 _TCF_WEBSITE_ROOT = Path(__file__).resolve().parent.parent.parent
 _ABOUT_DATA_DIR = _TCF_WEBSITE_ROOT / "data" / "about"

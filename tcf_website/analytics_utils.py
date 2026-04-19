@@ -47,7 +47,6 @@ except Exception as e:
 
 def get_table():
     """Returns a DynamoDB Table resource, or None if analytics is disabled."""
-    # OLD: if not _SESSION:
     if not _ANALYTICS_ENABLED:
         return None
 
@@ -58,10 +57,10 @@ def get_table():
 
 def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
     """Worker function: Creates per-thread resource from global session."""
-    if not _SESSION:
-        return
 
     table = get_table()
+    if not table:
+        return  # Analytics is disabled
     try:
         now = datetime.now(UTC)
         pk = f"{entity_type}:{entity_id}"
@@ -70,7 +69,7 @@ def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
 
         table.update_item(
             Key={"pk": pk, "sk": sk},
-            UpdateExpression="ADD view_count :inc SET expires_at = if_not_exists(expires_at, :ttl), entity_type = :et",
+            UpdateExpression="ADD view_count :inc SET expires_at = if_not_exists(expires_at, :ttl), entity_type = if_not_exists(entity_type, :et)",
             ExpressionAttributeValues={":inc": 1, ":ttl": ttl, ":et": entity_type},
         )
     except Exception as e:
