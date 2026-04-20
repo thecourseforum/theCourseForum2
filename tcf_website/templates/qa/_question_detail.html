@@ -14,6 +14,17 @@
                 {{ question.course.subdepartment.mnemonic }} {{ question.course.number }}
             </a>
         </h3>
+        {% elif question.department %}
+        <h3>
+            <a class="course-link"
+               href="{% url 'department' dept_id=question.department.id %}"
+               tabindex="0"
+               data-toggle="tooltip"
+               data-placement="bottom"
+               title="View department page">
+                {{ question.department.name }}
+            </a>
+        </h3>
         {% endif %}
         <div class="instructor">
             {% if question.instructor %}
@@ -68,7 +79,8 @@
                     data-question-id="{{ question.id }}"
                     data-title="{{ question.title }}"
                     data-text="{{ question.text }}"
-                    data-course="{{ question.course_id }}"
+                    data-course="{{ question.course_id|default_if_none:'' }}"
+                    data-department="{{ question.department_id|default_if_none:'' }}"
                     data-instructor="{{ question.instructor_id|default_if_none:'' }}">
                 <i class="fa fa-pencil"></i> Edit
             </button>
@@ -113,7 +125,13 @@
             <div class="reply-input-wrapper">
                 <div class="reply-form-row mb-2">
                     <select name="semester" class="form-control semester-select" required>
-                        <option value="">Select semester you took this course...</option>
+                        <option value="">
+                            {% if question.course %}
+                            Select semester you took this course...
+                            {% else %}
+                            Select semester...
+                            {% endif %}
+                        </option>
                         {% for semester in semesters %}
                         <option value="{{ semester.id }}">{{ semester }}</option>
                         {% endfor %}

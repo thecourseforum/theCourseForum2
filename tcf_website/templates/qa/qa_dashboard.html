@@ -83,8 +83,10 @@
                         <span id="courseLabel">
                             {% if selected_course_obj %}
                                 {{ selected_course_obj.subdepartment.mnemonic }} {{ selected_course_obj.number }}
+                            {% elif selected_scope == 'department_broad' %}
+                                Department
                             {% else %}
-                                All Courses
+                                All Posts
                             {% endif %}
                         </span>
                     </button>
@@ -97,14 +99,22 @@
                                    autocomplete="off">
                         </div>
                         <div class="dropdown-items-list" id="courseFilterList">
-                            <a class="dropdown-item {% if not selected_course %}active{% endif %}"
+                            <a class="dropdown-item {% if not selected_course and selected_scope != 'department_broad' %}active{% endif %}"
                                data-course-id=""
+                               data-scope=""
                                href="{% url 'qa' %}{% if search_query %}?q={{ search_query }}{% endif %}">
-                                All Courses
+                                All Posts
+                            </a>
+                            <a class="dropdown-item {% if selected_scope == 'department_broad' %}active{% endif %}"
+                               data-course-id=""
+                               data-scope="department_broad"
+                               href="#">
+                                Department
                             </a>
                             {% for course in courses_with_questions %}
                             <a class="dropdown-item {% if selected_course == course.id|stringformat:'s' %}active{% endif %}"
                                data-course-id="{{ course.id }}"
+                               data-scope=""
                                data-department-id="{{ course.subdepartment.department.id }}"
                                href="{% url 'qa' %}?course={{ course.id }}{% if search_query %}&q={{ search_query }}{% endif %}">
                                 {{ course.subdepartment.mnemonic }} {{ course.number }}
@@ -151,13 +161,14 @@
                            maxlength="200">
                 </div>
                 <div class="form-group">
-                    <label for="courseSearch">Course <span class="required">*</span></label>
+                    <label for="courseSearch">Course or Department <span class="required">*</span></label>
                     <input type="text"
                            id="courseSearch"
                            class="form-control"
-                           placeholder="Search for a course (e.g. CS 2100)..."
+                           placeholder="Search for a course or department..."
                            autocomplete="off">
                     <input type="hidden" id="courseId" name="course">
+                    <input type="hidden" id="departmentId" name="department">
                     <div id="courseResults" class="course-search-results"></div>
                 </div>
                 <div class="form-group">
@@ -209,8 +220,9 @@
                     <label for="editText">Question</label>
                     <textarea id="editText" name="text" class="form-control" rows="4" required></textarea>
                 </div>
-                <!-- course and instructor are required by form but shouldn't change on edit -->
+                <!-- Keep target metadata stable when editing title/body only. -->
                 <input type="hidden" id="editCourse" name="course">
+                <input type="hidden" id="editDepartment" name="department">
                 <input type="hidden" id="editInstructor" name="instructor">
             </div>
             <div class="modal-footer">

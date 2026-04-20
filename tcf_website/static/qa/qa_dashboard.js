@@ -145,9 +145,13 @@ function initCourseFilter() {
     }
 
     let selectedCourseId = '';
+    let selectedScope = '';
     const activeCourseItem = courseItemsList.querySelector('.dropdown-item.active');
     if (activeCourseItem && activeCourseItem.dataset.courseId) {
         selectedCourseId = activeCourseItem.dataset.courseId;
+    }
+    if (activeCourseItem && activeCourseItem.dataset.scope) {
+        selectedScope = activeCourseItem.dataset.scope;
     }
 
     // Show course dropdown if a department is selected
@@ -205,21 +209,24 @@ function initCourseFilter() {
             if (!deptId) {
                 selectedDepartmentId = '';
                 selectedCourseId = '';
+                selectedScope = '';
                 // All Departments selected
                 setCourseDropdownVisible(false);
-                if (courseLabel) courseLabel.textContent = 'All Courses';
+                if (courseLabel) courseLabel.textContent = 'All Posts';
                 const url = new URL(window.location);
                 url.searchParams.delete('department');
                 url.searchParams.delete('course');
+                url.searchParams.delete('scope');
                 url.searchParams.delete('question');
                 updateFilterButtonStates();
                 refreshDashboard(url);
             } else {
                 selectedDepartmentId = deptId;
                 selectedCourseId = '';
+                selectedScope = '';
                 // Specific department selected - show course dropdown
                 setCourseDropdownVisible(true);
-                if (courseLabel) courseLabel.textContent = 'All Courses';
+                if (courseLabel) courseLabel.textContent = 'All Posts';
 
                 // Filter and show courses for this department
                 filterCoursesByDepartment(deptId);
@@ -227,6 +234,7 @@ function initCourseFilter() {
                 const url = new URL(window.location);
                 url.searchParams.set('department', deptId);
                 url.searchParams.delete('course');
+                url.searchParams.delete('scope');
                 url.searchParams.delete('question');
                 updateFilterButtonStates();
                 refreshDashboard(url);
@@ -259,27 +267,43 @@ function initCourseFilter() {
     courseItemsList.querySelectorAll('.dropdown-item').forEach(item => {
         item.addEventListener('click', function (e) {
             const courseId = this.dataset.courseId;
+            const scope = this.dataset.scope || '';
             const courseText = this.textContent.trim();
 
             // Update course label
             if (courseLabel) {
-                courseLabel.textContent = courseText === 'All Courses' ? 'All Courses' : courseText;
+                courseLabel.textContent = courseText === 'All Posts' ? 'All Posts' : courseText;
             }
 
             // Navigate to the selected course
             if (courseId) {
                 selectedCourseId = courseId;
+                selectedScope = '';
                 const url = new URL(window.location);
                 if (selectedDepartmentId) {
                     url.searchParams.set('department', selectedDepartmentId);
                 }
                 url.searchParams.set('course', courseId);
+                url.searchParams.delete('scope');
+                url.searchParams.delete('question');
+                updateFilterButtonStates();
+                refreshDashboard(url);
+            } else if (scope === 'department_broad') {
+                selectedCourseId = '';
+                selectedScope = 'department_broad';
+                const url = new URL(window.location);
+                if (selectedDepartmentId) {
+                    url.searchParams.set('department', selectedDepartmentId);
+                }
+                url.searchParams.delete('course');
+                url.searchParams.set('scope', 'department_broad');
                 url.searchParams.delete('question');
                 updateFilterButtonStates();
                 refreshDashboard(url);
             } else {
                 selectedCourseId = '';
-                // All Courses selected
+                selectedScope = '';
+                // All Posts selected
                 const activeDeptItem = departmentItemsList.querySelector('.dropdown-item.active');
                 const deptId = activeDeptItem ? activeDeptItem.dataset.departmentId : '';
                 if (deptId) {
@@ -287,6 +311,7 @@ function initCourseFilter() {
                     const url = new URL(window.location);
                     url.searchParams.set('department', deptId);
                     url.searchParams.delete('course');
+                    url.searchParams.delete('scope');
                     url.searchParams.delete('question');
                     updateFilterButtonStates();
                     refreshDashboard(url);
@@ -295,6 +320,7 @@ function initCourseFilter() {
                     const url = new URL(window.location);
                     url.searchParams.delete('department');
                     url.searchParams.delete('course');
+                    url.searchParams.delete('scope');
                     url.searchParams.delete('question');
                     updateFilterButtonStates();
                     refreshDashboard(url);
@@ -349,7 +375,10 @@ function initCourseFilter() {
             departmentDropdownBtn.classList.toggle('filter-active', Boolean(selectedDepartmentId));
         }
         if (courseDropdownBtn) {
-            courseDropdownBtn.classList.toggle('filter-active', Boolean(selectedCourseId));
+            courseDropdownBtn.classList.toggle(
+                'filter-active',
+                Boolean(selectedCourseId || selectedScope)
+            );
         }
     }
 }
@@ -366,11 +395,14 @@ function initNewPostModal() {
     const form = document.getElementById('newPostForm');
     const courseSearchInput = document.getElementById('courseSearch');
     const courseIdInput = document.getElementById('courseId');
+    const departmentIdInput = document.getElementById('departmentId');
     const courseResults = document.getElementById('courseResults');
     const instructorSearchInput = document.getElementById('instructorSearch');
     const instructorIdInput = document.getElementById('instructorId');
     const instructorResults = document.getElementById('instructorResults');
     let instructorOptions = [];
+    let selectedTargetType = 'none';
+    let instructorRequestToken = 0;
 
     function escapeHtml(value) {
         return String(value)
@@ -388,6 +420,22 @@ function initNewPostModal() {
             instructorSearchInput.value = '';
             instructorSearchInput.disabled = true;
             instructorSearchInput.placeholder = 'Select a course first...';
+        }
+        if (instructorResults) {
+            instructorResults.classList.remove('show');
+            instructorResults.innerHTML = '';
+        }
+    }
+
+    function setDepartmentMode() {
+        selectedTargetType = 'department';
+        // Invalidate any in-flight instructor request from previous course selection.
+        instructorRequestToken += 1;
+        if (instructorIdInput) instructorIdInput.value = '';
+        if (instructorSearchInput) {
+            instructorSearchInput.value = '';
+            instructorSearchInput.disabled = true;
+            instructorSearchInput.placeholder = 'Instructor not required for department posts';
         }
         if (instructorResults) {
             instructorResults.classList.remove('show');
@@ -435,6 +483,9 @@ function initNewPostModal() {
         document.body.style.overflow = '';
         if (form) form.reset();
         if (courseIdInput) courseIdInput.value = '';
+        if (departmentIdInput) departmentIdInput.value = '';
+        selectedTargetType = 'none';
+        instructorRequestToken += 1;
         if (courseResults) courseResults.classList.remove('show');
         resetInstructorSearch();
     }
@@ -449,6 +500,9 @@ function initNewPostModal() {
         let searchTimeout;
         courseSearchInput.addEventListener('input', function () {
             if (courseIdInput) courseIdInput.value = '';
+            if (departmentIdInput) departmentIdInput.value = '';
+            selectedTargetType = 'none';
+            instructorRequestToken += 1;
             resetInstructorSearch();
             clearTimeout(searchTimeout);
             const q = this.value.trim();
@@ -462,7 +516,7 @@ function initNewPostModal() {
                     .then(data => {
                         if (data.results && data.results.length > 0) {
                             courseResults.innerHTML = data.results.map(c =>
-                                `<div class="course-result-item" data-id="${c.id}" data-code="${c.code}">
+                                `<div class="course-result-item" data-id="${c.id}" data-code="${c.code}" data-type="${c.type}">
                                     <div class="course-result-code">${c.code}</div>
                                     <div class="course-result-title">${c.title}</div>
                                 </div>`
@@ -471,11 +525,20 @@ function initNewPostModal() {
 
                             courseResults.querySelectorAll('.course-result-item').forEach(item => {
                                 item.addEventListener('click', function () {
-                                    courseIdInput.value = this.dataset.id;
                                     courseSearchInput.value = this.dataset.code;
                                     courseResults.classList.remove('show');
-                                    resetInstructorSearch();
-                                    loadInstructors(this.dataset.id);
+                                    if (this.dataset.type === 'course') {
+                                        selectedTargetType = 'course';
+                                        courseIdInput.value = this.dataset.id;
+                                        if (departmentIdInput) departmentIdInput.value = '';
+                                        resetInstructorSearch();
+                                        const requestToken = ++instructorRequestToken;
+                                        loadInstructors(this.dataset.id, requestToken);
+                                    } else {
+                                        if (courseIdInput) courseIdInput.value = '';
+                                        if (departmentIdInput) departmentIdInput.value = this.dataset.id;
+                                        setDepartmentMode();
+                                    }
                                 });
                             });
                         } else {
@@ -489,6 +552,14 @@ function initNewPostModal() {
         courseSearchInput.addEventListener('keydown', function (e) {
             if (e.key === 'Backspace' && courseIdInput.value) {
                 courseIdInput.value = '';
+                selectedTargetType = 'none';
+                instructorRequestToken += 1;
+                resetInstructorSearch();
+            }
+            if (e.key === 'Backspace' && departmentIdInput && departmentIdInput.value) {
+                departmentIdInput.value = '';
+                selectedTargetType = 'none';
+                instructorRequestToken += 1;
                 resetInstructorSearch();
             }
         });
@@ -521,7 +592,7 @@ function initNewPostModal() {
         });
     }
 
-    function loadInstructors(courseId) {
+    function loadInstructors(courseId, requestToken) {
         if (!instructorSearchInput || !instructorResults) return;
         instructorSearchInput.disabled = true;
         instructorSearchInput.placeholder = 'Loading instructors...';
@@ -533,6 +604,9 @@ function initNewPostModal() {
         fetch(`${QA_URLS.getInstructors}${courseId}/instructors/`)
             .then(r => r.json())
             .then(data => {
+                if (requestToken !== instructorRequestToken || selectedTargetType !== 'course') {
+                    return;
+                }
                 instructorOptions = data.instructors || [];
                 instructorSearchInput.disabled = false;
                 instructorSearchInput.placeholder = instructorOptions.length > 0 ? 'Search instructors...' : 'No instructors found';
@@ -546,12 +620,39 @@ function initNewPostModal() {
                 }
             })
             .catch(() => {
+                if (requestToken !== instructorRequestToken || selectedTargetType !== 'course') {
+                    return;
+                }
                 instructorOptions = [];
                 instructorSearchInput.disabled = false;
                 instructorSearchInput.placeholder = 'Error loading instructors';
                 instructorResults.innerHTML = '<div class="course-result-item text-muted">Error loading instructors</div>';
                 instructorResults.classList.add('show');
             });
+    }
+
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            const hasCourse = courseIdInput && courseIdInput.value;
+            const hasDepartment = departmentIdInput && departmentIdInput.value;
+
+            if (!hasCourse && !hasDepartment) {
+                e.preventDefault();
+                courseSearchInput.focus();
+                courseSearchInput.setCustomValidity('Please select a course or a department.');
+                courseSearchInput.reportValidity();
+                return;
+            }
+
+            courseSearchInput.setCustomValidity('');
+
+            if (hasDepartment && instructorIdInput) {
+                instructorIdInput.value = '';
+            }
+            if (hasDepartment && courseIdInput) {
+                courseIdInput.value = '';
+            }
+        });
     }
 }
 
@@ -780,6 +881,7 @@ function initQuestionActions() {
             document.getElementById('editTitle').value = this.dataset.title || '';
             document.getElementById('editText').value = this.dataset.text || '';
             document.getElementById('editCourse').value = this.dataset.course || '';
+            document.getElementById('editDepartment').value = this.dataset.department || '';
             document.getElementById('editInstructor').value = this.dataset.instructor || '';
             document.getElementById('editQuestionForm').action = `${QA_URLS.editQuestion}${qId}/edit/`;
 

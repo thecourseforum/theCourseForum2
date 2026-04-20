@@ -3,7 +3,13 @@
      data-question-id="{{ question.id }}">
     <div class="post-header">
         <span class="post-tag">
+            {% if question.course %}
             {{ question.course.subdepartment.mnemonic }} {{ question.course.number }}
+            {% elif question.department %}
+            {{ question.department.name }}
+            {% else %}
+            General
+            {% endif %}
         </span>
         <span class="post-date">{{ question.created|date:"n/j/y" }}</span>
     </div>

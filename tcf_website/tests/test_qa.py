@@ -59,6 +59,41 @@ class CreateQuestionTests(TestCase):
         )
         self.assertRedirects(response, reverse("qa"), fetch_redirect_response=False)
 
+    def test_create_department_question_without_instructor(self):
+        """Valid POST can create a department-targeted question without instructor."""
+        self.client.force_login(self.user1)
+        self.client.post(
+            reverse("create_question"),
+            {
+                "title": "Department elective advice",
+                "text": "What are good upper-level electives?",
+                "department": self.department.id,
+            },
+        )
+        q = Question.objects.get(user=self.user1, title="Department elective advice")
+        self.assertEqual(q.department, self.department)
+        self.assertIsNone(q.course)
+        self.assertIsNone(q.instructor)
+
+    def test_department_question_ignores_stale_course_and_instructor(self):
+        """Department selection should win if stale course/instructor IDs are also posted."""
+        self.client.force_login(self.user1)
+        self.client.post(
+            reverse("create_question"),
+            {
+                "title": "Department-only target",
+                "text": "This should not save to a course.",
+                "department": self.department.id,
+                "course": self.course.id,
+                "instructor": self.instructor.id,
+            },
+        )
+
+        q = Question.objects.get(user=self.user1, title="Department-only target")
+        self.assertEqual(q.department, self.department)
+        self.assertIsNone(q.course)
+        self.assertIsNone(q.instructor)
+
 
 class QaDashboardTests(TestCase):
     """Tests for the qa_dashboard view."""
@@ -77,6 +112,12 @@ class QaDashboardTests(TestCase):
             text="How many exams?",
             course=self.course2,
             instructor=self.instructor,
+            user=self.user2,
+        )
+        self.department_question = Question.objects.create(
+            title="Department recommendations",
+            text="Any broad CS recommendations?",
+            department=self.department,
             user=self.user2,
         )
         self.client.force_login(self.user1)
@@ -102,6 +143,24 @@ class QaDashboardTests(TestCase):
         """?course= param filters questions by course."""
         response = self.client.get(reverse("qa") + f"?course={self.course.id}")
         self.assertIn(self.question1, response.context["questions"])
+        self.assertNotIn(self.question2, response.context["questions"])
+        self.assertNotIn(self.department_question, response.context["questions"])
+
+    def test_dashboard_department_filter_includes_department_and_course_posts(self):
+        """?department= includes both department-broad and course-targeted questions."""
+        response = self.client.get(reverse("qa") + f"?department={self.department.id}")
+        self.assertIn(self.question1, response.context["questions"])
+        self.assertIn(self.question2, response.context["questions"])
+        self.assertIn(self.department_question, response.context["questions"])
+
+    def test_dashboard_department_broad_scope_filter(self):
+        """?scope=department_broad limits to department-targeted posts only."""
+        response = self.client.get(
+            reverse("qa")
+            + f"?department={self.department.id}&scope=department_broad"
+        )
+        self.assertIn(self.department_question, response.context["questions"])
+        self.assertNotIn(self.question1, response.context["questions"])
         self.assertNotIn(self.question2, response.context["questions"])
 
     def test_dashboard_selected_question(self):
@@ -240,6 +299,16 @@ class SearchCoursesQaTests(TestCase):
         data = response.json()
         self.assertIn("results", data)
         self.assertIsInstance(data["results"], list)
+
+    def test_search_returns_department_results(self):
+        """Search endpoint includes department matches in the same result set."""
+        self.client.force_login(self.user1)
+        response = self.client.get(reverse("qa_search_courses") + "?q=Computer")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(
+            any(item.get("type") == "department" for item in data["results"])
+        )
 
 
 class GetInstructorsForCourseTests(TestCase):

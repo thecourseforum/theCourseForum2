@@ -17,7 +17,16 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views import generic
 
-from ..models import Answer, Course, Instructor, Question, Semester
+from ..models import Answer, Course, Department, Instructor, Question, Semester
+
+
+def _question_target_label(question):
+    """Return user-facing label for what a question is about."""
+    if question.course:
+        return str(question.course)
+    if question.department:
+        return question.department.name
+    return "selected topic"
 
 
 def qa_dashboard(request):
@@ -25,6 +34,7 @@ def qa_dashboard(request):
     search_query = request.GET.get("q", "").strip()
     department_filter = request.GET.get("department", "").strip()
     course_filter = request.GET.get("course", "")
+    scope_filter = request.GET.get("scope", "").strip()
     selected_question_id = request.GET.get("question", None)
     try:
         selected_question_id = (
@@ -36,7 +46,12 @@ def qa_dashboard(request):
     # Base queryset annotated with vote totals
     questions = (
         Question.objects.select_related(
-            "course", "course__subdepartment", "instructor", "user"
+            "course",
+            "course__subdepartment",
+            "course__subdepartment__department",
+            "department",
+            "instructor",
+            "user",
         )
         .exclude(text="")
         .annotate(
@@ -61,17 +76,21 @@ def qa_dashboard(request):
         questions = questions.filter(
             Q(title__icontains=search_query)
             | Q(text__icontains=search_query)
+            | Q(department__name__icontains=search_query)
             | Q(course__subdepartment__mnemonic__icontains=search_query)
             | Q(course__number__icontains=search_query)
         )
 
     if department_filter:
         questions = questions.filter(
-            course__subdepartment__department_id=department_filter
+            Q(department_id=department_filter)
+            | Q(course__subdepartment__department_id=department_filter)
         )
 
     if course_filter:
         questions = questions.filter(course_id=course_filter)
+    elif department_filter and scope_filter == "department_broad":
+        questions = questions.filter(department_id=department_filter, course__isnull=True)
 
     questions = questions.order_by("-created")
 
@@ -96,9 +115,9 @@ def qa_dashboard(request):
             Answer.objects.filter(question=selected_question).exclude(text="").count()
         )
 
-    # Courses that have at least one question (for filter dropdown)
+    # Courses that have at least one course-targeted question (for filter dropdown)
     courses_with_questions = (
-        Course.objects.filter(question__isnull=False)
+        Course.objects.filter(question__isnull=False, question__course__isnull=False)
         .select_related("subdepartment", "subdepartment__department")
         .distinct()
         .order_by(
@@ -108,21 +127,19 @@ def qa_dashboard(request):
         )
     )
 
-    # Get unique departments represented in courses_with_questions.
-    departments_by_id = {}
-    for course in courses_with_questions:
-        dept = course.subdepartment.department
-        if dept.id not in departments_by_id:
-            departments_by_id[dept.id] = {
-                "id": dept.id,
-                "name": dept.name,
-            }
-
-    # Sort departments by name
-    departments_list = sorted(departments_by_id.values(), key=lambda x: x["name"])
+    # Departments represented in either course-targeted or department-targeted questions.
+    departments_list = list(
+        Department.objects.filter(
+            Q(question__isnull=False) | Q(subdepartment__course__question__isnull=False)
+        )
+        .distinct()
+        .order_by("name")
+        .values("id", "name")
+    )
 
     selected_course_obj = None
     selected_department = None
+    selected_scope = "department_broad" if scope_filter == "department_broad" else ""
     if course_filter:
         selected_course_obj = courses_with_questions.filter(pk=course_filter).first()
         if selected_course_obj:
@@ -145,6 +162,7 @@ def qa_dashboard(request):
         "selected_course": course_filter,
         "selected_course_obj": selected_course_obj,
         "selected_department": selected_department,
+        "selected_scope": selected_scope,
         "semesters": semesters,
         "answer_count": answer_count,
     }
@@ -189,7 +207,12 @@ def create_question(request):
 def question_detail(request, question_id):
     """AJAX endpoint: returns rendered HTML partial for a question + its answers."""
     qs = Question.objects.select_related(
-        "course", "course__subdepartment", "instructor", "user"
+        "course",
+        "course__subdepartment",
+        "course__subdepartment__department",
+        "department",
+        "instructor",
+        "user",
     ).annotate(
         sum_q_votes=models.functions.Coalesce(
             models.Sum("votequestion__value"), models.Value(0)
@@ -226,7 +249,7 @@ def question_detail(request, question_id):
 
 
 def search_courses_qa(request):
-    """API: search courses by mnemonic/number for the New Post modal."""
+    """API: search courses and departments for the New Post modal."""
     query = request.GET.get("q", "").strip()
     if len(query) < 2:
         return JsonResponse({"results": []})
@@ -252,14 +275,29 @@ def search_courses_qa(request):
             .order_by("-similarity")[:10]
         )
 
+    departments = (
+        Department.objects.filter(name__icontains=query)
+        .order_by("name")[:10]
+    )
+
     results = [
         {
             "id": course.id,
+            "type": "course",
             "code": f"{course.subdepartment.mnemonic} {course.number}",
             "title": course.title,
         }
         for course in courses
     ]
+    results.extend(
+        {
+            "id": department.id,
+            "type": "department",
+            "code": department.name,
+            "title": "Department",
+        }
+        for department in departments
+    )
     return JsonResponse({"results": results})
 
 
@@ -279,12 +317,34 @@ def get_instructors_for_course(request, course_id):
             ]
         }
     )
+
+
 class QuestionForm(forms.ModelForm):
     """Form for question creation"""
 
+    def clean(self):
+        cleaned_data = super().clean()
+        course = cleaned_data.get("course")
+        department = cleaned_data.get("department")
+        instructor = cleaned_data.get("instructor")
+
+        if not course and not department:
+            raise forms.ValidationError("Please select a course or a department.")
+
+        if department:
+            # Department target takes precedence and clears course/instructor noise.
+            cleaned_data["course"] = None
+            cleaned_data["instructor"] = None
+        elif instructor and not course:
+            raise forms.ValidationError(
+                "Instructor can only be selected for course questions."
+            )
+
+        return cleaned_data
+
     class Meta:
         model = Question
-        fields = ["title", "text", "course", "instructor"]
+        fields = ["title", "text", "course", "department", "instructor"]
 
 
 class DeleteQuestion(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
@@ -305,12 +365,7 @@ class DeleteQuestion(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView
 
     def get_success_message(self, cleaned_data) -> str:
         """Overrides SuccessMessageMixin's get_success_message method."""
-        # get the course this review is about
-        course = self.object.course
-        instructor = self.object.instructor
-
-        # return success message
-        return f"Successfully deleted your question for {str(course)} and {str(instructor)}!"
+        return f"Successfully deleted your question for {_question_target_label(self.object)}!"
 
 
 @login_required
@@ -327,7 +382,8 @@ def new_question(request):
             instance.save()
 
             messages.success(
-                request, f"Successfully added a question for {instance.course}!"
+                request,
+                f"Successfully added a question for {_question_target_label(instance)}!",
             )
             return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
         return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
@@ -347,7 +403,7 @@ def edit_question(request, question_id):
             form.save()
             messages.success(
                 request,
-                f"Successfully updated your question for {form.instance.course}!",
+                f"Successfully updated your question for {_question_target_label(form.instance)}!",
             )
             question.created = datetime.datetime.now()
             question.save()

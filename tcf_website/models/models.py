@@ -1423,12 +1423,17 @@ class Vote(models.Model):
 class Question(models.Model):
     """Question model.
     Belongs to a User.
-    Has a course and instructor.
+    Has either a course or department target, and an optional instructor.
     """
 
     title = models.CharField(max_length=200, blank=True)
     text = models.TextField()
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, null=True, blank=True, default=None
+    )
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, null=True, blank=True, default=None
+    )
     instructor = models.ForeignKey(
         Instructor, on_delete=models.CASCADE, null=True, blank=True, default=None
     )
@@ -1436,7 +1441,11 @@ class Question(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Question for {self.course}"
+        if self.course:
+            return f"Question for {self.course}"
+        if self.department:
+            return f"Question for {self.department.name}"
+        return "Question"
 
     def count_votes(self):
         """Sum votes for review."""
