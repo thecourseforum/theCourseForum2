@@ -80,7 +80,10 @@ def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
             ExpressionAttributeValues={":inc": 1, ":ttl": ttl, ":et": entity_type},
         )
     except Exception as e:
-        logger.error(f"Failed to send analytics data for {entity_type}:{entity_id}: {e}", exc_info=True)
+        logger.error(
+            f"Failed to send analytics data for {entity_type}:{entity_id}: {e}",
+            exc_info=True,
+        )
         return
 
 

@@ -149,16 +149,20 @@ def index(request):
     trending_courses = get_trending_courses()
     trending_instructors = get_trending_instructors()
 
-    context.update({
-        "executive_team": team_info["executive_team"],
-        "mode": mode,
-        "mode_noun": "club" if is_club else "course",
-        "search_placeholder": (
-            "Search for a club..." if is_club else "Search for a course or professor..."
-        ),
-        "trending_courses": trending_courses,
-        "trending_instructors": trending_instructors,
-    })
+    context.update(
+        {
+            "executive_team": team_info["executive_team"],
+            "mode": mode,
+            "mode_noun": "club" if is_club else "course",
+            "search_placeholder": (
+                "Search for a club..."
+                if is_club
+                else "Search for a course or professor..."
+            ),
+            "trending_courses": trending_courses,
+            "trending_instructors": trending_instructors,
+        }
+    )
 
     return render(
         request,
