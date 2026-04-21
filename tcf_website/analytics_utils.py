@@ -27,19 +27,23 @@ _EXECUTOR = ThreadPoolExecutor(
 _TABLE_NAME = None
 _SESSION = None
 _TTL_DAYS = 7
-_ANALYTICS_ENABLED = env.bool("ANALYTICS_ENABLED", default=False) # THIS IS THE MAGIC KEY
+_ANALYTICS_ENABLED = env.bool(
+    "ANALYTICS_ENABLED", default=False
+)  # THIS IS THE MAGIC KEY
 
 if _ANALYTICS_ENABLED:
     try:
-        _TTL_DAYS = max(1, env.int("ANALYTICS_TTL_DAYS", default=7))  # Minimum 1 day TTL
-        _TABLE_NAME = env("DYNAMODB_TABLE_NAME", default="trending_analytics")  
+        _TTL_DAYS = max(
+            1, env.int("ANALYTICS_TTL_DAYS", default=7)
+        )  # Minimum 1 day TTL
+        _TABLE_NAME = env("DYNAMODB_TABLE_NAME", default="trending_analytics")
         access_key = env("AWS_ANALYTICS_ACCESS_KEY_ID", default=None)
         secret_key = env("AWS_ANALYTICS_SECRET_ACCESS_KEY", default=None)
         session_kwargs = {"region_name": env("AWS_REGION", default="us-east-1")}
         if access_key and secret_key:
             session_kwargs.update(
                 {
-                  "aws_access_key_id": access_key,
+                    "aws_access_key_id": access_key,
                     "aws_secret_access_key": secret_key,
                 }
             )
@@ -54,9 +58,7 @@ def get_table():
     if not _ANALYTICS_ENABLED:
         return None
 
-    return _SESSION.resource("dynamodb", config=_BOTO_CONFIG).Table(
-        _TABLE_NAME
-    )
+    return _SESSION.resource("dynamodb", config=_BOTO_CONFIG).Table(_TABLE_NAME)
 
 
 def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
