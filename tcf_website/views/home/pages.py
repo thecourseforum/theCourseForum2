@@ -142,11 +142,14 @@ def index(request):
     mode = request.GET.get("mode", "courses")
     is_club = mode == "clubs"
 
+    # Start with spotlight context
+    context = landing_spotlight_context(mode)
+
     # Put stats onto dashboard & add to response
     trending_courses = get_trending_courses()
     trending_instructors = get_trending_instructors()
 
-    context = {
+    context.update({
         "executive_team": team_info["executive_team"],
         "mode": mode,
         "mode_noun": "club" if is_club else "course",
@@ -155,8 +158,7 @@ def index(request):
         ),
         "trending_courses": trending_courses,
         "trending_instructors": trending_instructors,
-    }
-    context.update(landing_spotlight_context(mode))
+    })
 
     return render(
         request,

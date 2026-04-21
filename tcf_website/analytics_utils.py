@@ -66,7 +66,8 @@ def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
 
     table = get_table()
     if not table:
-        return  # Analytics is disabled
+        logger.warning("Attempted to send analytics data, but analytics is disabled.")
+        return
     try:
         now = datetime.now(UTC)
         pk = f"{entity_type}:{entity_id}"
@@ -79,7 +80,8 @@ def _send_to_dynamo(entity_type: str, entity_id: int) -> None:
             ExpressionAttributeValues={":inc": 1, ":ttl": ttl, ":et": entity_type},
         )
     except Exception as e:
-        logger.warning(f"DynamoDB update failed for {entity_type}:{entity_id}: {e}")
+        logger.error(f"Failed to send analytics data for {entity_type}:{entity_id}: {e}", exc_info=True)
+        return
 
 
 def _fire_and_forget(entity_type: str, entity_id: int) -> None:
