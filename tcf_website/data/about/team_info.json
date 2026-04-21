@@ -43,10 +43,10 @@
       "img_filename": "DM_Akeeb_Kalam.jpeg"
     },
     {
-      "name": "Ishan Ajwani",
+      "name": "Aleena Patel",
       "role": "Treasurer",
       "class": "2029",
-      "img_filename": "ENG_Ishan_Ajwani.jpg"
+      "img_filename": "DM_Aleena_Patel.jpeg"
     },
     {
       "name": "Tiffany Park",
@@ -231,6 +231,12 @@
       "role": "Marketing",
       "class": "2028",
       "img_filename": "DM_Tiffany_Park.jpg"
+    },
+    {
+      "name": "Aleena Patel",
+      "role": "Treasurer",
+      "class": "2029",
+      "img_filename": "DM_Aleena_Patel.jpeg"
     }
   ]
 }
