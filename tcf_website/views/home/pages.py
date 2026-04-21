@@ -27,29 +27,25 @@ def get_top_trending_ids(entity_type: str, count: int = 5) -> list[int]:
     Given a entity type (course or instructor) to query & the number of views
     Return the list we will display
     """
-    # Initialize the table locally (Thread-safe)
     table = get_table()
     if not table:
         return []
 
     current_time = int(time.time())
-    unique_ids = []  # To track unique entity IDs and prevent duplicates
-    seen = set()  # Track seen entity_ids to avoid duplicates
+    scores_by_id: dict[int, int] = {}
     exclusive_start_key = None
-
-    # To prevent infinite loops if the database is filled with bad data
     pages = 0
     max_pages = 10
 
     try:
-        while len(unique_ids) < count and pages < max_pages:
+        while pages < max_pages:
             pages += 1
             query_kwargs = {
                 "IndexName": "EntityIndex",
                 "KeyConditionExpression": Key("entity_type").eq(entity_type),
                 "FilterExpression": Attr("expires_at").gt(current_time),
-                "ProjectionExpression": "pk, expires_at",
-                "ScanIndexForward": False,  # Sort by highest viewed first
+                "ProjectionExpression": "pk, expires_at, view_count",
+                "ScanIndexForward": False,
                 "Limit": 20,
             }
             if exclusive_start_key:
@@ -58,17 +54,10 @@ def get_top_trending_ids(entity_type: str, count: int = 5) -> list[int]:
             response = table.query(**query_kwargs)
             items = response.get("Items", [])
 
-            # if empty early exit
-            if not items:
-                exclusive_start_key = response.get("LastEvaluatedKey")
-                if not exclusive_start_key:
-                    break
-                continue
-
             for item in items:
                 pk = item.get("pk", "")
                 if ":" not in pk:
-                    continue  # Skip malformed PKs
+                    continue
                 try:
                     _, entity_id_str = pk.split(":", 1)
                     entity_id = int(entity_id_str)
@@ -76,20 +65,18 @@ def get_top_trending_ids(entity_type: str, count: int = 5) -> list[int]:
                     logger.warning(f"Malformed pk in trending data '{pk}': {e}")
                     continue
 
-                if entity_id not in seen:
-                    unique_ids.append(entity_id)
-                    seen.add(entity_id)
-                if len(unique_ids) >= count:
-                    break
+                scores_by_id[entity_id] = scores_by_id.get(entity_id, 0) + int(
+                    item.get("view_count", 0)
+                )
 
             exclusive_start_key = response.get("LastEvaluatedKey")
             if not exclusive_start_key:
-                break  # No more data to paginate through
+                break
 
         logger.debug(
-            f"Retrieved {len(unique_ids)} trending IDs for {entity_type} in {pages} pages."
+            f"Retrieved {len(scores_by_id)} trending IDs for {entity_type} in {pages} pages."
         )
-        return unique_ids
+        return sorted(scores_by_id, key=scores_by_id.get, reverse=True)[:count]
     except Exception as e:
         logger.error(f"GSI query failed for {entity_type}: {e}", exc_info=True)
         return []
