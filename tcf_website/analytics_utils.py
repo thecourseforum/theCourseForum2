@@ -14,7 +14,6 @@ env = environ.Env()
 # Configuration
 _MAX_BACKLOG = 100
 _MAX_WORKERS = 5
-_TTL_DAYS = max(1, env.int("ANALYTICS_TTL_DAYS", default=7))  # Minimum 1 day TTL
 _BOTO_CONFIG = Config(connect_timeout=2, read_timeout=3, retries={"max_attempts": 1})
 
 # State Management
@@ -25,24 +24,29 @@ _EXECUTOR = ThreadPoolExecutor(
 )
 
 # Global Session (Thread-safe)
+_TABLE_NAME = None
 _SESSION = None
-_ANALYTICS_ENABLED = False
+_TTL_DAYS = 7
+_ANALYTICS_ENABLED = env.bool("ANALYTICS_ENABLED", default=False) # THIS IS THE MAGIC KEY
 
-try:
-    access_key = env("AWS_ANALYTICS_ACCESS_KEY_ID", default=None)
-    secret_key = env("AWS_ANALYTICS_SECRET_ACCESS_KEY", default=None)
-    session_kwargs = {"region_name": env("AWS_REGION", default="us-east-1")}
-    if access_key and secret_key:
-        session_kwargs.update(
-            {
-                "aws_access_key_id": access_key,
-                "aws_secret_access_key": secret_key,
-            }
-        )
-    _SESSION = boto3.Session(**session_kwargs)
-    _ANALYTICS_ENABLED = True
-except Exception as e:
-    logger.error(f"Analytics initialization failed: {e}")
+if _ANALYTICS_ENABLED:
+    try:
+        _TTL_DAYS = max(1, env.int("ANALYTICS_TTL_DAYS", default=7))  # Minimum 1 day TTL
+        _TABLE_NAME = env("DYNAMODB_TABLE_NAME", default="trending_analytics")  
+        access_key = env("AWS_ANALYTICS_ACCESS_KEY_ID", default=None)
+        secret_key = env("AWS_ANALYTICS_SECRET_ACCESS_KEY", default=None)
+        session_kwargs = {"region_name": env("AWS_REGION", default="us-east-1")}
+        if access_key and secret_key:
+            session_kwargs.update(
+                {
+                  "aws_access_key_id": access_key,
+                    "aws_secret_access_key": secret_key,
+                }
+            )
+        _SESSION = boto3.Session(**session_kwargs)
+        _ANALYTICS_ENABLED = True
+    except Exception as e:
+        logger.error(f"Analytics initialization failed: {e}")
 
 
 def get_table():
@@ -51,7 +55,7 @@ def get_table():
         return None
 
     return _SESSION.resource("dynamodb", config=_BOTO_CONFIG).Table(
-        env("DYNAMODB_TABLE_NAME", default="trending_analytics")
+        _TABLE_NAME
     )
 
 

@@ -60,7 +60,10 @@ def get_top_trending_ids(entity_type: str, count: int = 5) -> list[int]:
 
             # if empty early exit
             if not items:
-                break
+                exclusive_start_key = response.get("LastEvaluatedKey")
+                if not exclusive_start_key:
+                    break
+                continue
 
             for item in items:
                 pk = item.get("pk", "")
@@ -100,6 +103,7 @@ def get_trending_courses():
 
     course_ids = get_top_trending_ids("course")
     if not course_ids:
+        cache.set("trending_courses", [], timeout=5 * 60)  # 5 min cache for empty
         return []
 
     # Source of truth lookup
@@ -126,6 +130,7 @@ def get_trending_instructors():
 
     instructor_ids = get_top_trending_ids("instructor")
     if not instructor_ids:
+        cache.set("trending_instructors", [], timeout=5 * 60)  # 5 min cache for empty
         return []
 
     instructors = list(

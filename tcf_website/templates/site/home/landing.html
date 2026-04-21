@@ -109,7 +109,7 @@
                                         <span class="trending-card__title">{{ course.title }}</span>
                                     </div>
                                 </div>
-                                <span class="trending-card__badge">🔥</span>
+                                <span class="trending-card__badge" aria-hidden="true">🔥</span>
                             </div>
                         </a>
                     {% empty %}
@@ -127,7 +127,7 @@
                                     <span class="trending-card__rank">#{{ forloop.counter }}</span>
                                     <span class="trending-card__name">{{ instructor.full_name }}</span>
                                 </div>
-                                <span class="trending-card__badge">🔥</span>
+                                <span class="trending-card__badge" aria-hidden="true">🔥</span>
                             </div>
                         </a>
                     {% empty %}
