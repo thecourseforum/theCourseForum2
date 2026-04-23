@@ -43,10 +43,10 @@
       "img_filename": "DM_Akeeb_Kalam.jpeg"
     },
     {
-      "name": "Ishan Ajwani",
+      "name": "Aleena Patel",
       "role": "Treasurer",
       "class": "2029",
-      "img_filename": "ENG_Ishan_Ajwani.jpg"
+      "img_filename": "DM_Aleena_Patel.jpeg"
     },
     {
       "name": "Tiffany Park",
@@ -104,13 +104,6 @@
       "class": "2027",
       "img_filename": "ENG_Ayan_Rasulova.jpg",
       "github": "ayanrasulova"
-    },
-    {
-      "name": "Yilin Wang",
-      "role": "Developer",
-      "class": "2027",
-      "img_filename": "ENG_Yilin_Wang.jpg",
-      "github": "yilinw762"
     },
     {
       "name": "Himesh Ahuja",
@@ -240,10 +233,10 @@
       "img_filename": "DM_Tiffany_Park.jpg"
     },
     {
-      "name": "Dylan Klein",
-      "role": "Marketing",
+      "name": "Aleena Patel",
+      "role": "Treasurer",
       "class": "2029",
-      "img_filename": "DM_Dylan_Klein.jpg"
+      "img_filename": "DM_Aleena_Patel.jpeg"
     }
   ]
 }

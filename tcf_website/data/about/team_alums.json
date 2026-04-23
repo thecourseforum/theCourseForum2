@@ -22,19 +22,7 @@
           "role": "Developer",
           "img_filename": "ENG_Yu_Cao.jpg",
           "github": "YuDavidCao"
-        },
-        {
-          "name": "Adrian Villanueva",
-          "role": "Developer",
-          "img_filename": "ENG_Adrian_Villanueva.jpg",
-          "github": "Adrian-E-V"
-        },
-        {
-          "name": "Brian Tran",
-          "role": "Developer",
-          "img_filename": "ENG_Brian_Tran.jpg",
-          "github": "brianlogic"
-      }
+        }
       ]
     },
     {
@@ -58,15 +46,15 @@
           "github": "namaikureishi"
         },
         {
-          "name": "Arthur Wu",
-          "role": "Developer",
-                    "img_filename": "ENG_Arthur_Wu.jpg",
-          "github": "arthurwu1227"
-        },
-        {
           "name": "Carissa Chen",
           "role": "Marketing",
                     "img_filename": "DM_Carissa_Chen.jpg"
+        },
+        {
+          "name": "Yilin Wang",
+          "role": "Developer",
+          "img_filename": "ENG_Yilin_Wang.jpg",
+          "github": "yilinw762"
         }
       ]
     },
@@ -429,7 +417,7 @@
         {
           "name": "Jeremy Tran",
           "role": "Marketing",
-                    "img_filename": "jtran.jpeg"
+                    "img_filename": "blank.jpeg"
         },
         {
           "name": "Zina Lahham",
