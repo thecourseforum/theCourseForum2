@@ -13,26 +13,12 @@ from .browse import (
     department,
     instructor_view,
 )
-from .forum import (
-    create_post,
-    create_response,
-    delete_post,
-    delete_response,
-    edit_post,
-    edit_response,
-    forum_dashboard,
-    forum_post_detail,
-    get_categories,
-    search_courses,
-    vote_post,
-    vote_response,
-)
 from .index import AboutView, index, privacy, terms
 from .profile import DeleteProfile, profile, reviews
 from .qa import (
-    create_question,
     DeleteAnswer,
     DeleteQuestion,
+    create_question,
     downvote_answer,
     downvote_question,
     edit_answer,

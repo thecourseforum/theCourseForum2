@@ -98,7 +98,6 @@ urlpatterns = [
     path("schedule/add_course/", views.schedule_add_course, name="schedule_add_course"),
     # QA URLs
     path("qa/", views.qa_dashboard, name="qa"),
-    path("forum/", views.forum.forum_dashboard, name="forum_dashboard"),
     path("qa/create/", views.qa.create_question, name="create_question"),
     path(
         "qa/question/<int:question_id>/",
@@ -114,55 +113,6 @@ urlpatterns = [
         "qa/api/courses/<int:course_id>/instructors/",
         views.get_instructors_for_course,
         name="qa_get_instructors",
-    ),
-    # Post detail (AJAX)
-    path(
-        "forum/post/<int:post_id>/",
-        views.forum.forum_post_detail,
-        name="forum_post_detail",
-    ),
-    # Post CRUD
-    path("forum/post/create/", views.forum.create_post, name="forum_create_post"),
-    path(
-        "forum/post/<int:post_id>/edit/", views.forum.edit_post, name="forum_edit_post"
-    ),
-    path(
-        "forum/post/<int:post_id>/delete/",
-        views.forum.delete_post,
-        name="forum_delete_post",
-    ),
-    path(
-        "forum/post/<int:post_id>/vote/", views.forum.vote_post, name="forum_vote_post"
-    ),
-    # Response CRUD
-    path(
-        "forum/post/<int:post_id>/response/",
-        views.forum.create_response,
-        name="forum_create_response",
-    ),
-    path(
-        "forum/response/<int:response_id>/edit/",
-        views.forum.edit_response,
-        name="forum_edit_response",
-    ),
-    path(
-        "forum/response/<int:response_id>/delete/",
-        views.forum.delete_response,
-        name="forum_delete_response",
-    ),
-    path(
-        "forum/response/<int:response_id>/vote/",
-        views.forum.vote_response,
-        name="forum_vote_response",
-    ),
-    # API endpoints
-    path(
-        "forum/api/courses/search/",
-        views.forum.search_courses,
-        name="forum_search_courses",
-    ),
-    path(
-        "forum/api/categories/", views.forum.get_categories, name="forum_get_categories"
     ),
     path("answers/check_duplicate/", views.qa.check_duplicate),
     path("qa/new_question/", views.new_question, name="new_question"),
