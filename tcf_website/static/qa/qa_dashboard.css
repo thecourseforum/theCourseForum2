@@ -122,6 +122,8 @@
 .filter-row .dropdown {
   flex: 0 0 auto;
   min-width: 0;
+  position: relative;
+  z-index: 20;
 }
 
 #departmentDropdownContainer .filter-btn {
@@ -1018,6 +1020,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 0.25rem 0;
     background: #ffffff;
+    z-index: 30;
 }
 
 .qa-container .dropdown-item {
