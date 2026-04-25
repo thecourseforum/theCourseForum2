@@ -1429,13 +1429,13 @@ class Question(models.Model):
     title = models.CharField(max_length=200, blank=True)
     text = models.TextField()
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, null=True, blank=True, default=None
+        Course, on_delete=models.SET_NULL, null=True, blank=True, default=None
     )
     department = models.ForeignKey(
-        Department, on_delete=models.CASCADE, null=True, blank=True, default=None
+        Department, on_delete=models.SET_NULL, null=True, blank=True, default=None
     )
     instructor = models.ForeignKey(
-        Instructor, on_delete=models.CASCADE, null=True, blank=True, default=None
+        Instructor, on_delete=models.SET_NULL, null=True, blank=True, default=None
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
@@ -1562,7 +1562,6 @@ class Answer(models.Model):
         """Prepare answers and replies for question detail page."""
         answers = (
             Answer.objects.filter(question=question_id)
-            .exclude(text="")
             .select_related("user", "semester", "parent_answer")
             .annotate(
                 sum_a_votes=models.functions.Coalesce(
@@ -1587,6 +1586,7 @@ class Answer(models.Model):
 
         for answer in answers_list:
             answer.nested_replies = []
+            answer.is_deleted_placeholder = answer.text == ""
             if answer.parent_answer_id is None:
                 root_answers.append(answer)
             else:
@@ -1595,14 +1595,20 @@ class Answer(models.Model):
         def attach_children(answer, depth):
             answer.depth = depth
             answer.render_depth = min(depth, 3)
-            answer.nested_replies = children_by_parent.get(answer.id, [])
-            for child in answer.nested_replies:
-                attach_children(child, depth + 1)
+            children = children_by_parent.get(answer.id, [])
+            visible_children = []
+            for child in children:
+                if attach_children(child, depth + 1):
+                    visible_children.append(child)
+            answer.nested_replies = visible_children
+            return bool(answer.text) or bool(answer.nested_replies)
 
+        visible_roots = []
         for answer in root_answers:
-            attach_children(answer, 0)
+            if attach_children(answer, 0):
+                visible_roots.append(answer)
 
-        return sorted(root_answers, key=lambda answer: answer.created, reverse=True)
+        return sorted(visible_roots, key=lambda answer: answer.created, reverse=True)
 
     class Meta:
         constraints = [

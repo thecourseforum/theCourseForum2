@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 default=None,
                 null=True,
-                on_delete=django.db.models.deletion.CASCADE,
+                on_delete=django.db.models.deletion.SET_NULL,
                 to="tcf_website.instructor",
             ),
         ),

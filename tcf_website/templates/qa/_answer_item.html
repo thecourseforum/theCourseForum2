@@ -25,7 +25,13 @@
             {% endif %}
         </div>
         <div class="post-body">
-            <p>{{ answer.text|linebreaks }}</p>
+            <p>
+                {% if answer.is_deleted_placeholder %}
+                <em>[deleted]</em>
+                {% else %}
+                {{ answer.text|linebreaks }}
+                {% endif %}
+            </p>
         </div>
         <div class="post-actions">
             {% if user.is_authenticated %}
