@@ -985,12 +985,7 @@
     padding: 2rem;
 }
 
-.vote-btn.voted .fa-thumbs-up {
-    background-image: url("../icons/img/fa-thumbs-up-solid.svg");
-    filter: brightness(0) saturate(100%) invert(51%) sepia(98%) saturate(1828%) hue-rotate(0deg) brightness(102%) contrast(103%);
-    transform: scale(1.2);
-}
-
+.vote-btn.voted .fa-thumbs-up,
 .post-stats.voted .fa-thumbs-up {
   background-image: url("../icons/img/fa-thumbs-up-solid.svg");
   filter: brightness(0) saturate(100%) invert(51%) sepia(98%) saturate(1828%) hue-rotate(0deg) brightness(102%) contrast(103%);

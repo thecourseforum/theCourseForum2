@@ -18,6 +18,14 @@ document.addEventListener('DOMContentLoaded', function () {
     initTooltips();
 });
 
+function qaUrl(template, id) {
+    return template.replace('__ID__', String(id));
+}
+
+function showRequestError(message) {
+    window.alert(message);
+}
+
 // ─── Question Selection ───────────────────────────────────────────────────────
 
 function initQuestionSelection() {
@@ -40,7 +48,7 @@ function loadQuestionDetail(questionId) {
     const contentArea = document.getElementById('questionContent');
     contentArea.classList.add('loading');
 
-    fetch(`${QA_URLS.questionDetail}${questionId}/`)
+    fetch(qaUrl(QA_URLS.questionDetail, questionId))
         .then(r => r.text())
         .then(html => {
             contentArea.innerHTML = html;
@@ -515,12 +523,16 @@ function initNewPostModal() {
                     .then(r => r.json())
                     .then(data => {
                         if (data.results && data.results.length > 0) {
-                            courseResults.innerHTML = data.results.map(c =>
-                                `<div class="course-result-item" data-id="${c.id}" data-code="${c.code}" data-type="${c.type}">
-                                    <div class="course-result-code">${c.code}</div>
-                                    <div class="course-result-title">${c.title}</div>
+                            courseResults.innerHTML = data.results.map(c => {
+                                const id = escapeHtml(c.id);
+                                const code = escapeHtml(c.code);
+                                const type = escapeHtml(c.type);
+                                const title = escapeHtml(c.title);
+                                return `<div class="course-result-item" data-id="${id}" data-code="${code}" data-type="${type}">
+                                    <div class="course-result-code">${code}</div>
+                                    <div class="course-result-title">${title}</div>
                                 </div>`
-                            ).join('');
+                            }).join('');
                             courseResults.classList.add('show');
 
                             courseResults.querySelectorAll('.course-result-item').forEach(item => {
@@ -601,7 +613,7 @@ function initNewPostModal() {
         instructorResults.innerHTML = '<div class="course-result-item text-muted">Loading instructors...</div>';
         instructorResults.classList.add('show');
 
-        fetch(`${QA_URLS.getInstructors}${courseId}/instructors/`)
+        fetch(qaUrl(QA_URLS.getInstructors, courseId))
             .then(r => r.json())
             .then(data => {
                 if (requestToken !== instructorRequestToken || selectedTargetType !== 'course') {
@@ -669,7 +681,7 @@ function initDeleteQuestionModal() {
 
             const deleteData = new FormData();
             deleteData.append('csrfmiddlewaretoken', CSRF_TOKEN);
-            fetch(`/questions/${questionIdToDelete}/delete/`, {
+            fetch(qaUrl(QA_URLS.deleteQuestion, questionIdToDelete), {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': CSRF_TOKEN,
@@ -677,13 +689,17 @@ function initDeleteQuestionModal() {
                 },
                 body: deleteData,
             })
+            .then(r => {
+                if (!r.ok) throw new Error(r.status);
+                return r;
+            })
             .then(() => {
                 $('#deleteQuestionModal').modal('hide');
                 window.location.href = QA_URLS.dashboard;
             })
             .catch(err => {
                 console.error('Delete question error:', err);
-                $('#deleteQuestionModal').modal('hide');
+                showRequestError('Unable to delete the question right now. Please try again.');
             });
         });
     }
@@ -707,13 +723,17 @@ function initDeleteAnswerModal() {
 
             const deleteData = new FormData();
             deleteData.append('csrfmiddlewaretoken', CSRF_TOKEN);
-            fetch(`/answers/${answerIdToDelete}/delete/`, {
+            fetch(qaUrl(QA_URLS.deleteAnswer, answerIdToDelete), {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': CSRF_TOKEN,
                     'X-Requested-With': 'XMLHttpRequest',
                 },
                 body: deleteData,
+            })
+            .then(r => {
+                if (!r.ok) throw new Error(r.status);
+                return r;
             })
             .then(() => {
                 $('#deleteAnswerModal').modal('hide');
@@ -725,7 +745,7 @@ function initDeleteAnswerModal() {
             })
             .catch(err => {
                 console.error('Delete answer error:', err);
-                $('#deleteAnswerModal').modal('hide');
+                showRequestError('Unable to delete the answer right now. Please try again.');
             });
         });
     }
@@ -740,11 +760,10 @@ function openDeleteAnswerModal(aId) {
 
 function initVoting() {
     document.querySelectorAll('.vote-btn').forEach(btn => {
-        // Remove duplicate listeners by cloning
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
+        if (btn.dataset.votingBound === 'true') return;
+        btn.dataset.votingBound = 'true';
 
-        newBtn.addEventListener('click', function () {
+        btn.addEventListener('click', function () {
             if (!IS_AUTHENTICATED) {
                 window.location.href = '/login/';
                 return;
@@ -754,8 +773,8 @@ function initVoting() {
             const id = this.dataset.id;
 
             const url = type === 'question'
-                ? `/questions/${id}/upvote/`
-                : `/answers/${id}/upvote/`;
+                ? qaUrl(QA_URLS.upvoteQuestion, id)
+                : qaUrl(QA_URLS.upvoteAnswer, id);
                 
             const counterId = type === 'question'
                 ? `question-vote-count-${id}`
@@ -765,14 +784,19 @@ function initVoting() {
                 method: 'POST',
                 headers: { 'X-CSRFToken': CSRF_TOKEN },
             })
-            .then(r => r.json())
+            .then(r => {
+                if (!r.ok) throw new Error(r.status);
+                return r.json();
+            })
             .then(data => {
                 if (data.ok) {
                     const container = this.closest('.post-actions');
-                    const upBtn = container.querySelector('[data-action="up"]');
+                    const upBtn = container
+                        ? container.querySelector('[data-action="up"]')
+                        : this;
                     const counterEl = document.getElementById(counterId);
 
-                    upBtn.classList.toggle('voted', data.user_vote === 1);
+                    if (upBtn) upBtn.classList.toggle('voted', data.user_vote === 1);
                     if (counterEl) counterEl.textContent = data.votes;
 
                     // Keep sidebar list in sync for question votes
@@ -786,7 +810,10 @@ function initVoting() {
                     }
                 }
             })
-            .catch(err => console.error('Vote error:', err));
+            .catch(err => {
+                console.error('Vote error:', err);
+                showRequestError('Unable to record your vote right now. Please try again.');
+            });
         });
     });
 }
@@ -815,7 +842,10 @@ function initAnswerForm() {
             body: formData,
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
         })
-        .then(r => r.json())
+        .then(r => {
+            if (!r.ok) throw new Error(r.status);
+            return r.json();
+        })
         .then(data => {
             if (data.duplicate) {
                 if (warning) warning.style.display = 'inline';
@@ -830,6 +860,10 @@ function initAnswerForm() {
                     body: formData,
                     headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 })
+                .then(r => {
+                    if (!r.ok) throw new Error(r.status);
+                    return r;
+                })
                 .then(() => {
                     incrementAnswerCount();
                     // Reload the current question detail
@@ -839,7 +873,10 @@ function initAnswerForm() {
                     const qId = questionId || (activeItem && activeItem.dataset.questionId);
                     if (qId) loadQuestionDetail(qId);
                 })
-                .catch(err => console.error('Answer submit error:', err))
+                .catch(err => {
+                    console.error('Answer submit error:', err);
+                    showRequestError('Unable to post your answer right now. Please try again.');
+                })
                 .finally(() => {
                     if (submitBtn) {
                         submitBtn.disabled = false;
@@ -848,7 +885,10 @@ function initAnswerForm() {
                 });
             }
         })
-        .catch(err => console.error('Duplicate check error:', err));
+        .catch(err => {
+            console.error('Duplicate check error:', err);
+            showRequestError('Unable to validate your answer right now. Please try again.');
+        });
     });
 }
 
@@ -873,6 +913,8 @@ function initQuestionActions() {
     const editModal = document.getElementById('editQuestionModal');
 
     document.querySelectorAll('.edit-question-btn').forEach(btn => {
+        if (btn.dataset.questionActionBound === 'true') return;
+        btn.dataset.questionActionBound = 'true';
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             if (!editModal) return;
@@ -883,7 +925,7 @@ function initQuestionActions() {
             document.getElementById('editCourse').value = this.dataset.course || '';
             document.getElementById('editDepartment').value = this.dataset.department || '';
             document.getElementById('editInstructor').value = this.dataset.instructor || '';
-            document.getElementById('editQuestionForm').action = `${QA_URLS.editQuestion}${qId}/edit/`;
+            document.getElementById('editQuestionForm').action = qaUrl(QA_URLS.editQuestion, qId);
 
             editModal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -898,12 +940,23 @@ function initQuestionActions() {
             document.body.style.overflow = '';
         }
     }
-    if (closeEditBtn) closeEditBtn.addEventListener('click', closeEditModal);
-    if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditModal);
-    if (editModal) editModal.addEventListener('click', e => { if (e.target === editModal) closeEditModal(); });
+    if (closeEditBtn && closeEditBtn.dataset.modalBound !== 'true') {
+        closeEditBtn.dataset.modalBound = 'true';
+        closeEditBtn.addEventListener('click', closeEditModal);
+    }
+    if (cancelEditBtn && cancelEditBtn.dataset.modalBound !== 'true') {
+        cancelEditBtn.dataset.modalBound = 'true';
+        cancelEditBtn.addEventListener('click', closeEditModal);
+    }
+    if (editModal && editModal.dataset.modalBound !== 'true') {
+        editModal.dataset.modalBound = 'true';
+        editModal.addEventListener('click', e => { if (e.target === editModal) closeEditModal(); });
+    }
 
     // Delete question button handler
     document.querySelectorAll('.delete-question-btn').forEach(btn => {
+        if (btn.dataset.deleteQuestionBound === 'true') return;
+        btn.dataset.deleteQuestionBound = 'true';
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             const qId = this.dataset.questionId;
@@ -918,6 +971,8 @@ function initAnswerActions() {
     const editAnswerModal = document.getElementById('editAnswerModal');
 
     document.querySelectorAll('.edit-answer-btn').forEach(btn => {
+        if (btn.dataset.answerActionBound === 'true') return;
+        btn.dataset.answerActionBound = 'true';
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             if (!editAnswerModal) return;
@@ -929,7 +984,7 @@ function initAnswerActions() {
             const mainForm = document.getElementById('mainAnswerForm');
             const questionId = mainForm ? mainForm.querySelector('[name="question"]').value : '';
             document.getElementById('editAnswerQuestion').value = questionId;
-            document.getElementById('editAnswerForm').action = `${QA_URLS.editAnswer}${answerId}/edit/`;
+            document.getElementById('editAnswerForm').action = qaUrl(QA_URLS.editAnswer, answerId);
 
             editAnswerModal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -944,13 +999,24 @@ function initAnswerActions() {
     }
     const closeBtn = document.getElementById('closeEditAnswerModal');
     const cancelBtn = document.getElementById('cancelEditAnswerModal');
-    if (closeBtn) closeBtn.addEventListener('click', closeEditAnswerModal);
-    if (cancelBtn) cancelBtn.addEventListener('click', closeEditAnswerModal);
-    if (editAnswerModal) editAnswerModal.addEventListener('click', e => {
-        if (e.target === editAnswerModal) closeEditAnswerModal();
-    });
+    if (closeBtn && closeBtn.dataset.modalBound !== 'true') {
+        closeBtn.dataset.modalBound = 'true';
+        closeBtn.addEventListener('click', closeEditAnswerModal);
+    }
+    if (cancelBtn && cancelBtn.dataset.modalBound !== 'true') {
+        cancelBtn.dataset.modalBound = 'true';
+        cancelBtn.addEventListener('click', closeEditAnswerModal);
+    }
+    if (editAnswerModal && editAnswerModal.dataset.modalBound !== 'true') {
+        editAnswerModal.dataset.modalBound = 'true';
+        editAnswerModal.addEventListener('click', e => {
+            if (e.target === editAnswerModal) closeEditAnswerModal();
+        });
+    }
 
     document.querySelectorAll('.delete-answer-btn').forEach(btn => {
+        if (btn.dataset.deleteAnswerBound === 'true') return;
+        btn.dataset.deleteAnswerBound = 'true';
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             const answerId = this.dataset.answerId;

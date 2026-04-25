@@ -118,7 +118,11 @@ urlpatterns = [
     path("qa/new_question/", views.new_question, name="new_question"),
     path("qa/new_answer/", views.new_answer, name="new_answer"),
     path("qa/new_reply/", views.qa.new_reply, name="new_reply"),
-    path("questions/<int:question_id>/upvote/", views.upvote_question),
+    path(
+        "questions/<int:question_id>/upvote/",
+        views.upvote_question,
+        name="qa_upvote_question",
+    ),
     path("questions/<int:question_id>/downvote/", views.downvote_question),
     path(
         "questions/<int:pk>/delete/",
@@ -130,7 +134,11 @@ urlpatterns = [
         views.edit_question,
         name="edit_question",
     ),
-    path("answers/<int:answer_id>/upvote/", views.upvote_answer),
+    path(
+        "answers/<int:answer_id>/upvote/",
+        views.upvote_answer,
+        name="qa_upvote_answer",
+    ),
     path("answers/<int:answer_id>/downvote/", views.downvote_answer),
     path(
         "answers/<int:pk>/delete/",

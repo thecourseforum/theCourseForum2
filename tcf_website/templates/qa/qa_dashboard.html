@@ -314,19 +314,23 @@
 {% block js %}
 <script>
     const QA_URLS = {
-        questionDetail: '{% url "qa_question_detail" question_id=0 %}'.replace('/0/', '/'),
+        questionDetail: '{% url "qa_question_detail" question_id=999999 %}'.replace('999999', '__ID__'),
         createQuestion: '{% url "create_question" %}',
         searchCourses: '{% url "qa_search_courses" %}',
-        getInstructors: '{% url "qa_get_instructors" course_id=0 %}'.replace('/0/instructors/', '/'),
-        editQuestion: '{% url "edit_question" question_id=0 %}'.replace('0/edit/', ''),
-        editAnswer: '{% url "edit_answer" answer_id=0 %}'.replace('0/edit/', ''),
+        getInstructors: '{% url "qa_get_instructors" course_id=999999 %}'.replace('999999', '__ID__'),
+        editQuestion: '{% url "edit_question" question_id=999999 %}'.replace('999999', '__ID__'),
+        editAnswer: '{% url "edit_answer" answer_id=999999 %}'.replace('999999', '__ID__'),
+        deleteQuestion: '{% url "delete_question" pk=999999 %}'.replace('999999', '__ID__'),
+        deleteAnswer: '{% url "delete_answer" pk=999999 %}'.replace('999999', '__ID__'),
+        upvoteQuestion: '{% url "qa_upvote_question" question_id=999999 %}'.replace('999999', '__ID__'),
+        upvoteAnswer: '{% url "qa_upvote_answer" answer_id=999999 %}'.replace('999999', '__ID__'),
         dashboard: '{% url "qa" %}',
     };
     const IS_AUTHENTICATED = {{ user.is_authenticated|yesno:"true,false" }};
     const CSRF_TOKEN = '{{ csrf_token }}';
     const SEMESTERS = [
         {% for semester in semesters %}
-        {"id": {{ semester.id }}, "label": "{{ semester }}"}{% if not forloop.last %},{% endif %}
+        {"id": {{ semester.id }}, "label": "{{ semester|escapejs }}"}{% if not forloop.last %},{% endif %}
         {% endfor %}
     ];
 </script>

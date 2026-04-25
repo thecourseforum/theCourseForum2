@@ -1,6 +1,6 @@
 """View for question and answer creation."""
 
-import datetime
+import logging
 
 from django import forms
 from django.contrib import messages
@@ -15,9 +15,12 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views import generic
 
 from ..models import Answer, Course, Department, Instructor, Question, Semester
+
+logger = logging.getLogger(__name__)
 
 
 def _question_target_label(question):
@@ -90,7 +93,9 @@ def qa_dashboard(request):
     if course_filter:
         questions = questions.filter(course_id=course_filter)
     elif department_filter and scope_filter == "department_broad":
-        questions = questions.filter(department_id=department_filter, course__isnull=True)
+        questions = questions.filter(
+            department_id=department_filter, course__isnull=True
+        )
 
     questions = questions.order_by("-created")
 
@@ -98,11 +103,16 @@ def qa_dashboard(request):
     selected_question = None
     answers = []
     answer_count = 0
+    invalid_selected_question = False
     if selected_question_id:
         try:
             selected_question = questions.get(id=selected_question_id)
         except Question.DoesNotExist:
-            pass
+            invalid_selected_question = True
+            logger.warning(
+                "Requested qa question %s was not found in filtered queryset.",
+                selected_question_id,
+            )
     if selected_question is None:
         selected_question = questions.first()
 
@@ -117,7 +127,7 @@ def qa_dashboard(request):
 
     # Courses that have at least one course-targeted question (for filter dropdown)
     courses_with_questions = (
-        Course.objects.filter(question__isnull=False, question__course__isnull=False)
+        Course.objects.filter(question__isnull=False)
         .select_related("subdepartment", "subdepartment__department")
         .distinct()
         .order_by(
@@ -165,6 +175,7 @@ def qa_dashboard(request):
         "selected_scope": selected_scope,
         "semesters": semesters,
         "answer_count": answer_count,
+        "invalid_selected_question": invalid_selected_question,
     }
 
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
@@ -185,6 +196,7 @@ def qa_dashboard(request):
                 "selected_question_id": (
                     selected_question.id if selected_question else None
                 ),
+                "invalid_selected_question": invalid_selected_question,
             }
         )
 
@@ -200,6 +212,12 @@ def create_question(request):
             instance = form.save(commit=False)
             instance.user = request.user
             instance.save()
+            messages.success(
+                request,
+                f"Successfully added a question for {_question_target_label(instance)}!",
+            )
+        else:
+            messages.error(request, form.errors)
         return redirect("qa")
     return redirect("qa")
 
@@ -254,8 +272,8 @@ def search_courses_qa(request):
     if len(query) < 2:
         return JsonResponse({"results": []})
 
-    # Shows recent courses
-    recent_courses = Course.objects.filter(semester_last_taught__year__gte=2022)
+    cutoff_year = timezone.now().year - 3
+    recent_courses = Course.objects.filter(semester_last_taught__year__gte=cutoff_year)
 
     # Check for exact match
     courses = (
@@ -275,10 +293,7 @@ def search_courses_qa(request):
             .order_by("-similarity")[:10]
         )
 
-    departments = (
-        Department.objects.filter(name__icontains=query)
-        .order_by("name")[:10]
-    )
+    departments = Department.objects.filter(name__icontains=query).order_by("name")[:10]
 
     results = [
         {
@@ -405,7 +420,7 @@ def edit_question(request, question_id):
                 request,
                 f"Successfully updated your question for {_question_target_label(form.instance)}!",
             )
-            question.created = datetime.datetime.now()
+            question.created = timezone.now()
             question.save()
             return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
         messages.error(request, form.errors)
@@ -418,7 +433,7 @@ def edit_question(request, question_id):
 def upvote_question(request, question_id):
     """Upvote a question."""
     if request.method == "POST":
-        question = Question.objects.get(pk=question_id)
+        question = get_object_or_404(Question, pk=question_id)
         question.upvote(request.user)
         net = (
             question.votequestion_set.aggregate(total=models.Sum("value"))["total"] or 0
@@ -433,7 +448,7 @@ def upvote_question(request, question_id):
 def downvote_question(request, question_id):
     """Downvote a question."""
     if request.method == "POST":
-        question = Question.objects.get(pk=question_id)
+        question = get_object_or_404(Question, pk=question_id)
         question.downvote(request.user)
         net = (
             question.votequestion_set.aggregate(total=models.Sum("value"))["total"] or 0
@@ -454,6 +469,23 @@ class AnswerForm(forms.ModelForm):
 
 class ReplyForm(forms.ModelForm):
     """Form for reply creation (reply to an answer)"""
+
+    def clean(self):
+        cleaned_data = super().clean()
+        question = cleaned_data.get("question")
+        parent_answer = cleaned_data.get("parent_answer")
+
+        if (
+            question is not None
+            and parent_answer is not None
+            and parent_answer.question_id != question.id
+        ):
+            self.add_error(
+                "parent_answer",
+                "That reply target does not belong to the selected question.",
+            )
+
+        return cleaned_data
 
     class Meta:
         model = Answer
@@ -520,7 +552,7 @@ def edit_answer(request, answer_id):
                 request,
                 f"Successfully updated your answer for {form.instance.question}!",
             )
-            answer.created = datetime.datetime.now()
+            answer.created = timezone.now()
             answer.save()
             return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
         messages.error(request, form.errors)
@@ -577,7 +609,7 @@ def check_duplicate(request):
 def upvote_answer(request, answer_id):
     """Upvote an answer."""
     if request.method == "POST":
-        answer = Answer.objects.get(pk=answer_id)
+        answer = get_object_or_404(Answer, pk=answer_id)
         answer.upvote(request.user)
         net = answer.voteanswer_set.aggregate(total=models.Sum("value"))["total"] or 0
         vote_obj = answer.voteanswer_set.filter(user=request.user).first()
@@ -590,15 +622,10 @@ def upvote_answer(request, answer_id):
 def downvote_answer(request, answer_id):
     """Downvote an answer."""
     if request.method == "POST":
-        answer = Answer.objects.get(pk=answer_id)
+        answer = get_object_or_404(Answer, pk=answer_id)
         answer.downvote(request.user)
         net = answer.voteanswer_set.aggregate(total=models.Sum("value"))["total"] or 0
         vote_obj = answer.voteanswer_set.filter(user=request.user).first()
         user_vote = vote_obj.value if vote_obj else 0
         return JsonResponse({"ok": True, "votes": net, "user_vote": user_vote})
-    return JsonResponse({"ok": False})
-    return JsonResponse({"ok": False})
-    return JsonResponse({"ok": False})
-    return JsonResponse({"ok": False})
-    return JsonResponse({"ok": False})
     return JsonResponse({"ok": False})

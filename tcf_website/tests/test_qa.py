@@ -31,7 +31,7 @@ class CreateQuestionTests(TestCase):
     def test_create_question_creates_record(self):
         """Valid POST creates a Question with correct fields."""
         self.client.force_login(self.user1)
-        self.client.post(
+        response = self.client.post(
             reverse("create_question"),
             {
                 "title": "What is the workload?",
@@ -40,6 +40,7 @@ class CreateQuestionTests(TestCase):
                 "instructor": self.instructor.id,
             },
         )
+        self.assertRedirects(response, reverse("qa"), fetch_redirect_response=False)
         q = Question.objects.get(user=self.user1)
         self.assertEqual(q.title, "What is the workload?")
         self.assertEqual(q.text, "How many hours per week?")
