@@ -12,6 +12,7 @@ from ...search.browse_helpers import (
     is_browse_results_partial_request,
 )
 from ...utils import parse_mode
+from ..home.pages import get_trending_courses, get_trending_instructors
 
 
 def _browse_clubs(request, mode: str):
@@ -124,6 +125,8 @@ def _browse_courses(request, mode: str):
             "CLAS": clas,
             "SEAS": seas,
             "other_schools": other_schools,
+            "trending_courses": get_trending_courses(),
+            "trending_instructors": get_trending_instructors(),
         },
     )
 

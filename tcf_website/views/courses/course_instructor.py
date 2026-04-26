@@ -9,6 +9,8 @@ from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
 
+from tcf_website.analytics_utils import record_instructor_view
+
 from ...models import CourseInstructorGrade, Review, ReviewLLMSummary, Section, Semester
 from .course import is_lecture_section
 
@@ -171,6 +173,9 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         )
     else:
         lecture_sections, other_sections = [], []
+
+    if request.method == "GET":
+        record_instructor_view(instructor.id)
 
     return render(
         request,
