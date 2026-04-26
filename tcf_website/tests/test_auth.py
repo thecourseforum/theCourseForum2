@@ -17,7 +17,7 @@ class ForgotPasswordViewTests(TestCase):
         self.url = reverse("forgot_password")
         self.user = User.objects.create_user(
             username="testuser",
-            email="testuser@virginia.edu",
+            email="TestUser@virginia.edu",  # mixed-case to verify iexact lookup
             password="testpassword",
             computing_id="testuser",
         )
@@ -48,6 +48,18 @@ class ForgotPasswordViewTests(TestCase):
         mock_client = MagicMock()
         mock_boto_client.return_value = mock_client
 
+        response = self.client.post(self.url, {"email": "testuser@virginia.edu"})
+
+        mock_client.forgot_password.assert_called_once()
+        self.assertRedirects(response, reverse("login"))
+
+    @patch("tcf_website.views.auth.boto3.client")
+    def test_post_mixed_case_email_still_matches(self, mock_boto_client):
+        """Email stored with mixed case is matched case-insensitively."""
+        mock_client = MagicMock()
+        mock_boto_client.return_value = mock_client
+
+        # Stored as TestUser@virginia.edu, submitted lowercase
         response = self.client.post(self.url, {"email": "testuser@virginia.edu"})
 
         mock_client.forgot_password.assert_called_once()

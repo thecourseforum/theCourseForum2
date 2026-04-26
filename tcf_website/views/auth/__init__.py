@@ -157,7 +157,8 @@ def forgot_password(request):
         messages.error(request, "Please enter your email address.")
         return render(request, "site/auth/forgot_password.html")
 
-    if not User.objects.filter(email=email).exists():
+    # Use iexact so mixed-case emails stored from Cognito claims are matched.
+    if not User.objects.filter(email__iexact=email).exists():
         messages.error(
             request,
             "No account is associated with that email address. "
