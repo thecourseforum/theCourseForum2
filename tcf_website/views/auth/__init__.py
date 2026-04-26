@@ -1,23 +1,37 @@
 """Auth related views."""
 
+import hashlib
+import hmac
 import json
 import logging
 import urllib.parse
 from base64 import b64encode
 
+import boto3
 import requests
+from botocore.exceptions import ClientError
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate
+from django.contrib.auth import get_user_model
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
+
+
+def _cognito_secret_hash(username: str) -> str:
+    """Compute SecretHash for Cognito API calls when the app client has a secret."""
+    message = username + settings.COGNITO_APP_CLIENT_ID
+    secret = settings.COGNITO_APP_CLIENT_SECRET.encode("utf-8")
+    digest = hmac.new(secret, msg=message.encode("utf-8"), digestmod=hashlib.sha256).digest()
+    return b64encode(digest).decode()
 
 
 def login(request):
@@ -123,3 +137,58 @@ def logout(request):
     )
 
     return HttpResponseRedirect(cognito_logout_url)
+
+
+def forgot_password(request):
+    """Show a form to request a password reset.
+
+    Validates that the email belongs to a known account before forwarding the
+    request to Cognito, so users receive clear feedback rather than silence.
+    """
+    if request.user.is_authenticated:
+        return redirect("browse")
+
+    if request.method != "POST":
+        return render(request, "site/auth/forgot_password.html")
+
+    email = request.POST.get("email", "").strip().lower()
+
+    if not email:
+        messages.error(request, "Please enter your email address.")
+        return render(request, "site/auth/forgot_password.html")
+
+    if not User.objects.filter(email=email).exists():
+        messages.error(
+            request,
+            "No account is associated with that email address. "
+            "Sign in with your UVA email to create an account.",
+        )
+        return render(request, "site/auth/forgot_password.html", {"email": email})
+
+    try:
+        cognito = boto3.client("cognito-idp", region_name=settings.COGNITO_REGION_NAME)
+        kwargs: dict = {
+            "ClientId": settings.COGNITO_APP_CLIENT_ID,
+            "Username": email,
+        }
+        if settings.COGNITO_APP_CLIENT_SECRET:
+            kwargs["SecretHash"] = _cognito_secret_hash(email)
+        cognito.forgot_password(**kwargs)
+    except ClientError as exc:
+        code = exc.response["Error"]["Code"]
+        if code == "UserNotFoundException":
+            messages.error(
+                request,
+                "No account is associated with that email address. "
+                "Sign in with your UVA email to create an account.",
+            )
+        else:
+            logger.exception("Cognito forgot_password error: %s", exc)
+            messages.error(request, "Something went wrong. Please try again later.")
+        return render(request, "site/auth/forgot_password.html", {"email": email})
+
+    messages.success(
+        request,
+        "A password reset link has been sent to your email address. Please check your inbox.",
+    )
+    return redirect("login")

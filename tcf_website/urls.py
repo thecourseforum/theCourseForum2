@@ -108,8 +108,9 @@ urlpatterns = [
         views.schedule_unbookmark,
         name="schedule_unbookmark",
     ),
-    # AUTH URLS
+    # AUTH URLs
     path("login/", views.auth.login, name="login"),
     path("cognito-callback/", views.auth.cognito_callback, name="cognito_callback"),
     path("logout/", views.auth.logout, name="logout"),
+    path("forgot-password/", views.auth.forgot_password, name="forgot_password"),
 ]
