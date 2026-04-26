@@ -225,8 +225,6 @@ def new_answer(request):
     if request.method == "POST":
         form = AnswerForm(request.POST)
 
-        print(form)
-
         if form.is_valid():
             instance = form.save(commit=False)
             instance.user = request.user
