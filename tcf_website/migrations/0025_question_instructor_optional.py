@@ -1,13 +1,13 @@
 # Generated manually
 
-from django.db import migrations, models
 import django.db.models.deletion
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("tcf_website", "0024_forumcategory_forumpost_forumresponse_question_title_and_more"),
+        ("tcf_website", "0024_question_title"),
     ]
 
     operations = [
