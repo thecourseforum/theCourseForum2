@@ -46,7 +46,6 @@ def qa_dashboard(request):
             "instructor",
             "user",
         )
-        .exclude(text="")
         .annotate(
             sum_q_votes=models.functions.Coalesce(
                 models.Sum("votequestion__value"), models.Value(0)
@@ -364,6 +363,13 @@ class DeleteQuestion(LoginRequiredMixin, generic.DeleteView):
             raise PermissionDenied("You are not allowed to delete this question!")
         return obj
 
+    def form_valid(self, form):
+        """Soft-delete questions so answers and replies remain visible."""
+        self.object = self.get_object()
+        self.object.soft_delete()
+        return HttpResponseRedirect(self.get_success_url())
+
+
 @login_required
 def new_question(request):
     """Question creation view."""
@@ -388,6 +394,8 @@ def edit_question(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     if question.user != request.user:
         raise PermissionDenied("You are not allowed to edit this question!")
+    if question.is_deleted:
+        raise PermissionDenied("You cannot edit a deleted question!")
 
     if request.method == "POST":
         form = QuestionForm(request.POST, instance=question)
@@ -481,6 +489,13 @@ class DeleteAnswer(LoginRequiredMixin, generic.DeleteView):
             raise PermissionDenied("You are not allowed to delete this answer!")
         return obj
 
+    def form_valid(self, form):
+        """Soft-delete answers so nested replies remain visible."""
+        self.object = self.get_object()
+        self.object.soft_delete()
+        return HttpResponseRedirect(self.get_success_url())
+
+
 @login_required
 def new_answer(request):
     """Answer creation view."""
@@ -506,6 +521,8 @@ def edit_answer(request, answer_id):
     answer = get_object_or_404(Answer, pk=answer_id)
     if answer.user != request.user:
         raise PermissionDenied("You are not allowed to edit this answer!")
+    if answer.is_deleted:
+        raise PermissionDenied("You cannot edit a deleted answer!")
 
     if request.method == "POST":
         form = AnswerForm(request.POST, instance=answer)
@@ -534,33 +551,6 @@ def new_reply(request):
         messages.error(request, "Invalid Form")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
     return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
-
-
-@login_required()
-def check_duplicate(request):
-    """Check for duplicate answers on qa page when user
-    submits an answer for the same question.
-    Used for an Ajax request in new_review.html"""
-
-    form = AnswerForm(request.POST)
-    if form.is_valid():
-        instance = form.save(commit=False)
-
-        # First check if user has answered the question already
-        answers_on_same_class = request.user.answer_set.filter(
-            question=instance.question
-        )
-
-        # An answer already exists so it's a duplicate
-        if answers_on_same_class.exists():
-            response = {"duplicate": True}
-            return JsonResponse(response)
-
-        # User has not answered this question;
-        # proceed with standard form submission
-        response = {"duplicate": False}
-        return JsonResponse(response)
-    return redirect("new_answer")
 
 
 @login_required

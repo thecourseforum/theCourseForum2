@@ -13,9 +13,19 @@
         </span>
         <span class="post-date">{{ question.created|date:"n/j/y" }}</span>
     </div>
-    <div class="post-title">{{ question.title|default:question.text|truncatechars:60 }}</div>
+    <div class="post-title">
+        {% if question.is_deleted %}
+        <em>[deleted]</em>
+        {% else %}
+        {{ question.title|default:question.text|truncatechars:60 }}
+        {% endif %}
+    </div>
     <div class="post-preview">
+        {% if question.is_deleted %}
+        <em>[deleted]</em>
+        {% else %}
         {{ question.text|truncatechars:80 }}
+        {% endif %}
     </div>
     <div class="post-footer">
         <span class="post-stats {% if question.user_q_vote == 1 %}voted{% endif %}" id="sidebar-vote-count-{{ question.id }}">

@@ -50,7 +50,13 @@
     <div class="main-question">
         <div class="question-header-wrapper">
             <div class="question-header-content">
-                <h2 class="post-content-title">{{ question.title|default:"(No title)" }}</h2>
+                <h2 class="post-content-title">
+                    {% if question.is_deleted %}
+                    <em>[deleted]</em>
+                    {% else %}
+                    {{ question.title|default:"(No title)" }}
+                    {% endif %}
+                </h2>
                 <div class="post-meta">
                     <span class="post-timestamp" style="display: inline-flex; align-items: center; gap: 0.25rem;">
                         <i class="fa fa-clock"></i> {{ question.created|timesince }} ago
@@ -59,12 +65,20 @@
             </div>
         </div>
         <div class="post-body">
+            {% if question.is_deleted %}
+            <p><em>[deleted]</em></p>
+            {% else %}
             <p>{{ question.text|linebreaks }}</p>
+            {% endif %}
         </div>
 
         <!-- Question Vote Actions -->
         <div class="post-actions">
-            {% if user.is_authenticated %}
+            {% if question.is_deleted %}
+            <span class="vote-display">
+                <i class="fa fa-thumbs-up"></i> {{ question.sum_q_votes|default:0 }}
+            </span>
+            {% elif user.is_authenticated %}
             <button class="action-btn vote-btn {% if question.user_q_vote == 1 %}voted{% endif %}"
                     data-type="question"
                     data-id="{{ question.id }}"
@@ -137,9 +151,6 @@
                           placeholder="Write your answer..."
                           required></textarea>
                 <div class="d-flex align-items-center mt-2">
-                    <span id="duplicate-answer-warning" class="text-danger mr-3" style="display:none;">
-                        You have already answered this question.
-                    </span>
                     <button type="submit" class="btn-submit-reply ml-auto">Post Answer</button>
                 </div>
             </div>

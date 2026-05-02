@@ -9,7 +9,7 @@
                 {% endif %}
                 <span class="post-time">{{ answer.created|timesince }} ago</span>
             </div>
-            {% if user.is_authenticated and user == answer.user %}
+            {% if user.is_authenticated and user == answer.user and not answer.is_deleted_placeholder %}
             <div class="answer-header-actions">
                 <button class="action-btn-sm edit-answer-btn"
                         title="Edit"
@@ -36,7 +36,16 @@
             </p>
         </div>
         <div class="post-actions">
+            {% if answer.is_deleted_placeholder %}
+            <span class="vote-display">
+                <i class="fa fa-thumbs-up"></i> {{ answer.sum_a_votes|default:0 }}
+            </span>
             {% if user.is_authenticated %}
+            <button class="action-btn reply-btn" data-answer-id="{{ answer.id }}">
+                <i class="fa fa-reply"></i> Reply
+            </button>
+            {% endif %}
+            {% elif user.is_authenticated %}
             <button class="action-btn vote-btn {% if answer.user_a_vote == 1 %}voted{% endif %}"
                     data-type="answer"
                     data-id="{{ answer.id }}"

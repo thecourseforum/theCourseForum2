@@ -830,64 +830,41 @@ function initAnswerForm() {
     newForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        const warning = document.getElementById('duplicate-answer-warning');
-        if (warning) warning.style.display = 'none';
-
         const formData = new FormData(newForm);
         const submitBtn = newForm.querySelector('.btn-submit-reply');
 
-        // Check for duplicates first
-        fetch('/answers/check_duplicate/', {
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Posting...';
+        }
+
+        fetch(newForm.action, {
             method: 'POST',
             body: formData,
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
         })
         .then(r => {
             if (!r.ok) throw new Error(r.status);
-            return r.json();
+            return r;
         })
-        .then(data => {
-            if (data.duplicate) {
-                if (warning) warning.style.display = 'inline';
-            } else {
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Posting...';
-                }
-
-                fetch(newForm.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                })
-                .then(r => {
-                    if (!r.ok) throw new Error(r.status);
-                    return r;
-                })
-                .then(() => {
-                    incrementAnswerCount();
-                    // Reload the current question detail
-                    const url = new URL(window.location);
-                    const questionId = url.searchParams.get('question');
-                    const activeItem = document.querySelector('.post-item.active');
-                    const qId = questionId || (activeItem && activeItem.dataset.questionId);
-                    if (qId) loadQuestionDetail(qId);
-                })
-                .catch(err => {
-                    console.error('Answer submit error:', err);
-                    showRequestError('Unable to post your answer right now. Please try again.');
-                })
-                .finally(() => {
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Post Answer';
-                    }
-                });
-            }
+        .then(() => {
+            incrementAnswerCount();
+            // Reload the current question detail
+            const url = new URL(window.location);
+            const questionId = url.searchParams.get('question');
+            const activeItem = document.querySelector('.post-item.active');
+            const qId = questionId || (activeItem && activeItem.dataset.questionId);
+            if (qId) loadQuestionDetail(qId);
         })
         .catch(err => {
-            console.error('Duplicate check error:', err);
-            showRequestError('Unable to validate your answer right now. Please try again.');
+            console.error('Answer submit error:', err);
+            showRequestError('Unable to post your answer right now. Please try again.');
+        })
+        .finally(() => {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Post Answer';
+            }
         });
     });
 }

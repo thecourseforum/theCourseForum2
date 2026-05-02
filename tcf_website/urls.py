@@ -114,7 +114,6 @@ urlpatterns = [
         views.get_instructors_for_course,
         name="qa_get_instructors",
     ),
-    path("answers/check_duplicate/", views.qa.check_duplicate),
     path("qa/new_question/", views.new_question, name="new_question"),
     path("qa/new_answer/", views.new_answer, name="new_answer"),
     path("qa/new_reply/", views.qa.new_reply, name="new_reply"),

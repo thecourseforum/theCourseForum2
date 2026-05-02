@@ -1440,6 +1440,17 @@ class Question(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def is_deleted(self):
+        """Return whether this question has been soft-deleted."""
+        return self.text == ""
+
+    def soft_delete(self):
+        """Clear user-authored content while preserving replies."""
+        self.title = ""
+        self.text = ""
+        self.save(update_fields=["title", "text"])
+
     def __str__(self):
         if self.course:
             return f"Question for {self.course}"
@@ -1485,7 +1496,6 @@ class Question(models.Model):
         """Prepare review list for course-instructor page."""
         question = (
             Question.objects.filter(instructor=instructor_id, course=course_id)
-            .exclude(text="")
             .annotate(
                 sum_q_votes=models.functions.Coalesce(
                     models.Sum("votequestion__value"), models.Value(0)
@@ -1522,6 +1532,16 @@ class Answer(models.Model):
     parent_answer = models.ForeignKey(
         "self", null=True, blank=True, on_delete=models.CASCADE, related_name="replies"
     )
+
+    @property
+    def is_deleted(self):
+        """Return whether this answer has been soft-deleted."""
+        return self.text == ""
+
+    def soft_delete(self):
+        """Clear user-authored content while preserving nested replies."""
+        self.text = ""
+        self.save(update_fields=["text"])
 
     def __str__(self):
         return f"Answer for {self.question}"
@@ -1588,7 +1608,7 @@ class Answer(models.Model):
 
         for answer in answers_list:
             answer.nested_replies = []
-            answer.is_deleted_placeholder = answer.text == ""
+            answer.is_deleted_placeholder = answer.is_deleted
             if answer.parent_answer_id is None:
                 root_answers.append(answer)
             else:
@@ -1611,15 +1631,6 @@ class Answer(models.Model):
                 visible_roots.append(answer)
 
         return sorted(visible_roots, key=lambda answer: answer.created, reverse=True)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "question"],
-                condition=models.Q(parent_answer__isnull=True),
-                name="unique answer per user and question",
-            )
-        ]
 
 
 class VoteQuestion(models.Model):

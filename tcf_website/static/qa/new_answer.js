@@ -44,37 +44,15 @@ jQuery(function ($) {
   ids.forEach((item) => populateDropdown(item));
 });
 
-// Below checks whether the user has already answered the question
 $(document).ready(function () {
-  $("#duplicate-answer").hide();
-
   $(document).on("click", "#answerQuestionBtn", function () {
     const questionId = $(this).data("id");
     $("#answerForm #questionInput").val(questionId);
   });
 
-  // Stop normal submit to check for duplicate answer with ajax request
   $("#answerForm").submit(function (e) {
-    e.preventDefault();
-
-    $.ajax({
-      type: "POST",
-      url: "/answers/check_duplicate/",
-      data: $("#answerForm").serialize(),
-      async: false,
-      success: function (check) {
-        if (check.duplicate) {
-          // Display error message for warning
-          $("#duplicate-answer").show();
-        } else {
-          // Timeout button for 3 seconds so user can't spam button while form is submitting
-          $("#submitBtn").prop("disabled", true);
-          setTimeout(enableButton, 3000);
-          // Not a duplicate answer so proceed with normal form submission for new answer
-          document.getElementById("answerForm").submit();
-        }
-      },
-    });
+    $("#submitBtn").prop("disabled", true);
+    setTimeout(enableButton, 3000);
   });
 });
 

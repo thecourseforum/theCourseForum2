@@ -257,6 +257,34 @@ class QuestionDetailTests(TestCase):
         answer = Answer.objects.get(text="I have not taken it yet.")
         self.assertIsNone(answer.semester)
 
+    def test_user_can_create_multiple_answers_for_same_question(self):
+        """A user may post more than one top-level answer to one question."""
+        self.client.force_login(self.user1)
+
+        first_response = self.client.post(
+            reverse("new_answer"),
+            {
+                "text": "First answer.",
+                "question": self.question.id,
+                "semester": self.semester.id,
+            },
+        )
+        second_response = self.client.post(
+            reverse("new_answer"),
+            {
+                "text": "Second answer.",
+                "question": self.question.id,
+                "semester": self.semester.id,
+            },
+        )
+
+        self.assertEqual(first_response.status_code, 302)
+        self.assertEqual(second_response.status_code, 302)
+        self.assertEqual(
+            Answer.objects.filter(question=self.question, user=self.user1).count(),
+            2,
+        )
+
     def test_new_reply_accepts_blank_semester(self):
         """Blank semester stores a null semester on a reply."""
         self.client.force_login(self.user1)
@@ -320,6 +348,60 @@ class QuestionDetailTests(TestCase):
         self.assertContains(response, 'data-depth="4"', html=False)
         self.assertContains(response, "thread-depth-3")
         self.assertNotContains(response, "thread-depth-4")
+
+    def test_delete_answer_soft_deletes_and_keeps_replies(self):
+        """Deleting an answer leaves a placeholder and preserves nested replies."""
+        reply = Answer.objects.create(
+            text="Nested reply stays.",
+            question=self.question,
+            user=self.user1,
+            semester=self.semester,
+            parent_answer=self.answer,
+        )
+        self.client.force_login(self.user2)
+
+        response = self.client.post(reverse("delete_answer", args=[self.answer.id]))
+
+        self.assertRedirects(response, reverse("qa"), fetch_redirect_response=False)
+        self.answer.refresh_from_db()
+        self.assertEqual(self.answer.text, "")
+        self.assertTrue(Answer.objects.filter(pk=reply.pk).exists())
+
+        detail_response = self.client.get(
+            reverse("qa_question_detail", args=[self.question.id])
+        )
+        self.assertContains(detail_response, "[deleted]")
+        self.assertContains(detail_response, "Nested reply stays.")
+
+    def test_delete_question_soft_deletes_and_keeps_answers(self):
+        """Deleting a question leaves a placeholder and preserves answers."""
+        self.client.force_login(self.user1)
+
+        response = self.client.post(reverse("delete_question", args=[self.question.id]))
+
+        self.assertRedirects(response, reverse("qa"), fetch_redirect_response=False)
+        self.question.refresh_from_db()
+        self.assertEqual(self.question.title, "")
+        self.assertEqual(self.question.text, "")
+        self.assertTrue(Answer.objects.filter(pk=self.answer.pk).exists())
+
+        detail_response = self.client.get(
+            reverse("qa_question_detail", args=[self.question.id])
+        )
+        self.assertContains(detail_response, "[deleted]")
+        self.assertContains(detail_response, "Review lecture notes daily.")
+
+    def test_dashboard_still_lists_soft_deleted_questions(self):
+        """Soft-deleted questions remain selectable so their answers stay reachable."""
+        self.question.soft_delete()
+        self.client.force_login(self.user1)
+
+        response = self.client.get(reverse("qa") + f"?question={self.question.id}")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.question, response.context["questions"])
+        self.assertEqual(response.context["selected_question"].id, self.question.id)
+        self.assertContains(response, "[deleted]")
 
     @suppress_request_warnings
     def test_question_detail_404_for_nonexistent(self):

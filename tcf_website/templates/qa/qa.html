@@ -104,12 +104,18 @@
                                             </div>
                                             <div class="question-content mb-2">
                                                 <div class="question-text-body" id="questionText{{question.id}}">
-                                                    <div class="question-text-full text-break">{{ question.text|linebreaks }}</div>
+                                                    <div class="question-text-full text-break">
+                                                        {% if question.is_deleted %}
+                                                        <em>[deleted]</em>
+                                                        {% else %}
+                                                        {{ question.text|linebreaks }}
+                                                        {% endif %}
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="question-footer mt-3">
                                                 <div class="d-flex justify-content-end">
-                                                {% if question.user == user %}
+                                                {% if question.user == user and not question.is_deleted %}
                                                     <div class="question-actions d-inline-flex">
                                                         <a data-toggle="modal" class="question-edit h5 px-2 text-tcf-blue" type="button" 
                                                             data-target="#edit-question-modal{{question.id}}" id="edit-question-button{{question_id}}">
@@ -183,7 +189,13 @@
                                                             </div>
                                                         </div>
                                                         <div class="answer-content">
-                                                            <p>{{ answer.text }}</p>
+                                                            <p>
+                                                                {% if answer.is_deleted %}
+                                                                <em>[deleted]</em>
+                                                                {% else %}
+                                                                {{ answer.text }}
+                                                                {% endif %}
+                                                            </p>
                                                         </div>
                                                         <div class="d-flex answer-footer justify-content-between">
                                                             <div
@@ -206,7 +218,7 @@
                                                                     <span class="downvoteCount">{{ answer.count_votes.downvotes }}</span>
                                                                 </div>
                                                             </div>
-                                                            {% if answer.user == user %}
+                                                            {% if answer.user == user and not answer.is_deleted %}
                                                                 <div class="answer-actions d-inline-flex">
                                                                     <a data-toggle="modal" type="button" class="answer-edit h5 px-2 text-tcf-blue" data-target="#edit-answer-modal{{answer.id}}" id="edit-answer-button{{answer_id}}">
                                                                         <i class="fas fa-pencil-alt"></i>
@@ -327,10 +339,6 @@
                 </div>
                 <div class="modal-body">
                     <div class="col mb-3">
-                        <div class="alert alert-danger" id="duplicate-answer" style="display:none">
-                            <p id="duplicate-answer">It looks like you've already submitted a answer for this question!
-                                If you'd like, you may edit your original response.</p>
-                        </div>
                         <form method="POST" action="{% url 'new_answer' %}" id="answerForm">
                             {% csrf_token %}
                             <fieldset>
