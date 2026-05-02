@@ -248,6 +248,7 @@
                 <div class="form-group">
                     <label for="editAnswerSemester">Semester</label>
                     <select id="editAnswerSemester" name="semester" class="form-control">
+                        <option value="">Not Taken</option>
                         {% for semester in semesters %}
                         <option value="{{ semester.id }}">{{ semester }}</option>
                         {% endfor %}
@@ -314,16 +315,16 @@
 {% block js %}
 <script>
     const QA_URLS = {
-        questionDetail: '{% url "qa_question_detail" question_id=999999 %}'.replace('999999', '__ID__'),
+        questionDetail: '{% url "qa_question_detail" question_id=0 %}'.replace('/0/', '/__ID__/'),
         createQuestion: '{% url "create_question" %}',
         searchCourses: '{% url "qa_search_courses" %}',
-        getInstructors: '{% url "qa_get_instructors" course_id=999999 %}'.replace('999999', '__ID__'),
-        editQuestion: '{% url "edit_question" question_id=999999 %}'.replace('999999', '__ID__'),
-        editAnswer: '{% url "edit_answer" answer_id=999999 %}'.replace('999999', '__ID__'),
-        deleteQuestion: '{% url "delete_question" pk=999999 %}'.replace('999999', '__ID__'),
-        deleteAnswer: '{% url "delete_answer" pk=999999 %}'.replace('999999', '__ID__'),
-        upvoteQuestion: '{% url "qa_upvote_question" question_id=999999 %}'.replace('999999', '__ID__'),
-        upvoteAnswer: '{% url "qa_upvote_answer" answer_id=999999 %}'.replace('999999', '__ID__'),
+        getInstructors: '{% url "qa_get_instructors" course_id=0 %}'.replace('/0/instructors/', '/__ID__/instructors/'),
+        editQuestion: '{% url "edit_question" question_id=0 %}'.replace('/0/edit/', '/__ID__/edit/'),
+        editAnswer: '{% url "edit_answer" answer_id=0 %}'.replace('/0/edit/', '/__ID__/edit/'),
+        deleteQuestion: '{% url "delete_question" pk=0 %}'.replace('/0/delete/', '/__ID__/delete/'),
+        deleteAnswer: '{% url "delete_answer" pk=0 %}'.replace('/0/delete/', '/__ID__/delete/'),
+        upvoteQuestion: '{% url "qa_upvote_question" question_id=0 %}'.replace('/0/upvote/', '/__ID__/upvote/'),
+        upvoteAnswer: '{% url "qa_upvote_answer" answer_id=0 %}'.replace('/0/upvote/', '/__ID__/upvote/'),
         dashboard: '{% url "qa" %}',
     };
     const IS_AUTHENTICATED = {{ user.is_authenticated|yesno:"true,false" }};

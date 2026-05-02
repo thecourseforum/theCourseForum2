@@ -225,6 +225,57 @@ class QuestionDetailTests(TestCase):
         )
         self.assertContains(response, "Review lecture notes daily.")
 
+    def test_question_detail_labels_answer_without_semester(self):
+        """Answers without a semester render as not taken yet."""
+        Answer.objects.create(
+            text="I am planning to take it next term.",
+            question=self.question,
+            user=self.user1,
+            semester=None,
+        )
+
+        response = self.client.get(
+            reverse("qa_question_detail", args=[self.question.id])
+        )
+
+        self.assertContains(response, "Not Taken")
+
+    def test_new_answer_accepts_blank_semester(self):
+        """Blank semester stores a null semester on the answer."""
+        self.client.force_login(self.user1)
+
+        response = self.client.post(
+            reverse("new_answer"),
+            {
+                "text": "I have not taken it yet.",
+                "question": self.question.id,
+                "semester": "",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        answer = Answer.objects.get(text="I have not taken it yet.")
+        self.assertIsNone(answer.semester)
+
+    def test_new_reply_accepts_blank_semester(self):
+        """Blank semester stores a null semester on a reply."""
+        self.client.force_login(self.user1)
+
+        response = self.client.post(
+            reverse("new_reply"),
+            {
+                "text": "Following because I have not taken it either.",
+                "question": self.question.id,
+                "parent_answer": self.answer.id,
+                "semester": "",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        reply = Answer.objects.get(text="Following because I have not taken it either.")
+        self.assertIsNone(reply.semester)
+        self.assertEqual(reply.parent_answer, self.answer)
+
     def test_question_detail_renders_nested_replies_with_capped_indent(self):
         """Nested replies render recursively and stop increasing indent after level 3."""
         reply_1 = Answer.objects.create(

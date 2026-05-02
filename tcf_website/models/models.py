@@ -1516,7 +1516,9 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
-    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, default=None)
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, null=True, blank=True, default=None
+    )
     parent_answer = models.ForeignKey(
         "self", null=True, blank=True, on_delete=models.CASCADE, related_name="replies"
     )

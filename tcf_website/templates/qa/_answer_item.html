@@ -4,6 +4,8 @@
             <div class="answer-header-left">
                 {% if answer.semester %}
                 <span class="semester-tag">{{ answer.semester }}</span>
+                {% else %}
+                <span class="semester-tag">Not Taken</span>
                 {% endif %}
                 <span class="post-time">{{ answer.created|timesince }} ago</span>
             </div>
@@ -61,8 +63,9 @@
             <input type="hidden" name="parent_answer" value="{{ answer.id }}">
             <div class="reply-input-wrapper">
                 <div class="reply-form-row mb-2">
-                    <select name="semester" class="form-control semester-select" required>
-                        <option value="">Select semester you took this course...</option>
+                    <select name="semester" class="form-control semester-select">
+                        <option value="">Select a semester</option>
+                        <option value="">Not Taken</option>
                         {% for semester in semesters %}
                         <option value="{{ semester.id }}">{{ semester }}</option>
                         {% endfor %}

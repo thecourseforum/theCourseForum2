@@ -6,7 +6,6 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin  # For class-based views
-from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.postgres.search import TrigramSimilarity
 from django.core.exceptions import PermissionDenied
 from django.db import models
@@ -21,15 +20,6 @@ from django.views import generic
 from ..models import Answer, Course, Department, Instructor, Question, Semester
 
 logger = logging.getLogger(__name__)
-
-
-def _question_target_label(question):
-    """Return user-facing label for what a question is about."""
-    if question.course:
-        return str(question.course)
-    if question.department:
-        return question.department.name
-    return "selected topic"
 
 
 def qa_dashboard(request):
@@ -212,10 +202,6 @@ def create_question(request):
             instance = form.save(commit=False)
             instance.user = request.user
             instance.save()
-            messages.success(
-                request,
-                f"Successfully added a question for {_question_target_label(instance)}!",
-            )
         else:
             messages.error(request, form.errors)
         return redirect("qa")
@@ -362,7 +348,7 @@ class QuestionForm(forms.ModelForm):
         fields = ["title", "text", "course", "department", "instructor"]
 
 
-class DeleteQuestion(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
+class DeleteQuestion(LoginRequiredMixin, generic.DeleteView):
     """Question deletion view."""
 
     model = Question
@@ -378,11 +364,6 @@ class DeleteQuestion(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView
             raise PermissionDenied("You are not allowed to delete this question!")
         return obj
 
-    def get_success_message(self, cleaned_data) -> str:
-        """Overrides SuccessMessageMixin's get_success_message method."""
-        return f"Successfully deleted your question for {_question_target_label(self.object)}!"
-
-
 @login_required
 def new_question(request):
     """Question creation view."""
@@ -396,10 +377,6 @@ def new_question(request):
 
             instance.save()
 
-            messages.success(
-                request,
-                f"Successfully added a question for {_question_target_label(instance)}!",
-            )
             return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
         return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
     return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
@@ -416,10 +393,6 @@ def edit_question(request, question_id):
         form = QuestionForm(request.POST, instance=question)
         if form.is_valid():
             form.save()
-            messages.success(
-                request,
-                f"Successfully updated your question for {_question_target_label(form.instance)}!",
-            )
             question.created = timezone.now()
             question.save()
             return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
@@ -492,7 +465,7 @@ class ReplyForm(forms.ModelForm):
         fields = ["text", "semester", "question", "parent_answer"]
 
 
-class DeleteAnswer(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
+class DeleteAnswer(LoginRequiredMixin, generic.DeleteView):
     """Answer deletion view."""
 
     model = Answer
@@ -508,15 +481,6 @@ class DeleteAnswer(LoginRequiredMixin, SuccessMessageMixin, generic.DeleteView):
             raise PermissionDenied("You are not allowed to delete this answer!")
         return obj
 
-    def get_success_message(self, cleaned_data) -> str:
-        """Overrides SuccessMessageMixin's get_success_message method."""
-        # get the course this review is about
-        question = self.object.question
-
-        # return success message
-        return f"Successfully deleted your answer for {str(question)}!"
-
-
 @login_required
 def new_answer(request):
     """Answer creation view."""
@@ -530,7 +494,6 @@ def new_answer(request):
 
             instance.save()
 
-            messages.success(request, "Successfully added an answer!")
             return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
         messages.error(request, "Invalid Form")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
@@ -548,10 +511,6 @@ def edit_answer(request, answer_id):
         form = AnswerForm(request.POST, instance=answer)
         if form.is_valid():
             form.save()
-            messages.success(
-                request,
-                f"Successfully updated your answer for {form.instance.question}!",
-            )
             answer.created = timezone.now()
             answer.save()
             return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
@@ -571,7 +530,6 @@ def new_reply(request):
             instance.user = request.user
             instance.save()
 
-            messages.success(request, "Successfully added a reply!")
             return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
         messages.error(request, "Invalid Form")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))

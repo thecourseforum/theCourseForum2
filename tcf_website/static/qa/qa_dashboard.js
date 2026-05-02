@@ -980,7 +980,7 @@ function initAnswerActions() {
             const answerId = this.dataset.answerId;
             document.getElementById('editAnswerText').value = this.dataset.text || '';
             const semSelect = document.getElementById('editAnswerSemester');
-            if (semSelect && this.dataset.semester) semSelect.value = this.dataset.semester;
+            if (semSelect) semSelect.value = this.dataset.semester || '';
             const mainForm = document.getElementById('mainAnswerForm');
             const questionId = mainForm ? mainForm.querySelector('[name="question"]').value : '';
             document.getElementById('editAnswerQuestion').value = questionId;

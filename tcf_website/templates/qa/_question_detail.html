@@ -124,14 +124,9 @@
             <input type="hidden" name="question" value="{{ question.id }}">
             <div class="reply-input-wrapper">
                 <div class="reply-form-row mb-2">
-                    <select name="semester" class="form-control semester-select" required>
-                        <option value="">
-                            {% if question.course %}
-                            Select semester you took this course...
-                            {% else %}
-                            Select semester...
-                            {% endif %}
-                        </option>
+                    <select name="semester" class="form-control semester-select">
+                        <option value="">Select a semester</option>
+                        <option value="">Not Taken</option>
                         {% for semester in semesters %}
                         <option value="{{ semester.id }}">{{ semester }}</option>
                         {% endfor %}
