@@ -68,7 +68,7 @@
             {% if question.is_deleted %}
             <p><em>[deleted]</em></p>
             {% else %}
-            <p>{{ question.text|linebreaks }}</p>
+            {{ question.text|linebreaks }}
             {% endif %}
         </div>
 

@@ -27,13 +27,11 @@
             {% endif %}
         </div>
         <div class="post-body">
-            <p>
-                {% if answer.is_deleted_placeholder %}
-                <em>[deleted]</em>
-                {% else %}
-                {{ answer.text|linebreaks }}
-                {% endif %}
-            </p>
+            {% if answer.is_deleted_placeholder %}
+            <p><em>[deleted]</em></p>
+            {% else %}
+            {{ answer.text|linebreaks }}
+            {% endif %}
         </div>
         <div class="post-actions">
             {% if answer.is_deleted_placeholder %}

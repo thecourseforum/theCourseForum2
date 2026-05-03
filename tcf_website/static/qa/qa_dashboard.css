@@ -206,10 +206,15 @@
 }
 
 .post-item {
+  display: block;
+  width: 100%;
   padding: 1rem;
   background: white;
+  border: 0;
   border-bottom: 1px solid #e9ecef;
   cursor: pointer;
+  font: inherit;
+  text-align: left;
   transition: background 0.2s;
 }
 

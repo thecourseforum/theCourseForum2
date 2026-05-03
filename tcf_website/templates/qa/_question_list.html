@@ -1,6 +1,8 @@
 {% for question in questions %}
-<div class="post-item {% if selected_question and selected_question.id == question.id %}active{% endif %}"
-     data-question-id="{{ question.id }}">
+<button type="button"
+        class="post-item {% if selected_question and selected_question.id == question.id %}active{% endif %}"
+        data-question-id="{{ question.id }}"
+        {% if selected_question and selected_question.id == question.id %}aria-current="true"{% else %}aria-current="false"{% endif %}>
     <div class="post-header">
         <span class="post-tag">
             {% if question.course %}
@@ -32,7 +34,7 @@
             <i class="fa fa-thumbs-up"></i> <span class="sidebar-vote-num">{{ question.sum_q_votes|default:0 }}</span>
         </span>
     </div>
-</div>
+</button>
 {% empty %}
 <div class="no-posts">
     <i class="fa fa-comments-o fa-3x mb-3"></i>

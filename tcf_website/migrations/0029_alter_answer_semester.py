@@ -1,4 +1,3 @@
-import django.db.models.deletion
 from django.db import migrations, models
 
 
@@ -16,7 +15,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 default=None,
                 null=True,
-                on_delete=django.db.models.deletion.CASCADE,
+                on_delete=models.SET_NULL,
                 to="tcf_website.semester",
             ),
         ),

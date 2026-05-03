@@ -52,14 +52,8 @@ $(document).ready(function () {
 
   $("#answerForm").submit(function (e) {
     $("#submitBtn").prop("disabled", true);
-    setTimeout(enableButton, 3000);
   });
 });
-
-// Re-enable button
-function enableButton() {
-  $("#submitBtn").prop("disabled", false);
-}
 
 // Clears all dropdown options & adds a disabled default option
 function clearDropdown(id) {

@@ -30,12 +30,19 @@ function showRequestError(message) {
 
 function initQuestionSelection() {
     document.querySelectorAll('.post-item').forEach(item => {
+        if (item.dataset.questionSelectionBound === 'true') return;
+        item.dataset.questionSelectionBound = 'true';
+
         item.addEventListener('click', function () {
             const questionId = this.dataset.questionId;
             loadQuestionDetail(questionId);
 
-            document.querySelectorAll('.post-item').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.post-item').forEach(p => {
+                p.classList.remove('active');
+                p.setAttribute('aria-current', 'false');
+            });
             this.classList.add('active');
+            this.setAttribute('aria-current', 'true');
 
             const url = new URL(window.location);
             url.searchParams.set('question', questionId);
@@ -1007,6 +1014,9 @@ function initAnswerActions() {
 function initReplyForms() {
     // Handle Reply button clicks
     document.querySelectorAll('.reply-btn').forEach(btn => {
+        if (btn.dataset.replyBound === 'true') return;
+        btn.dataset.replyBound = 'true';
+
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             const answerId = this.dataset.answerId;
@@ -1028,6 +1038,9 @@ function initReplyForms() {
 
     // Handle Cancel button clicks
     document.querySelectorAll('.btn-cancel-reply').forEach(btn => {
+        if (btn.dataset.replyCancelBound === 'true') return;
+        btn.dataset.replyCancelBound = 'true';
+
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             const replyForm = this.closest('.reply-form-container');
