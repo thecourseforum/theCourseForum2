@@ -79,3 +79,7 @@ coverage run manage.py test
 ```
 
 GitHub Actions sets `GITHUB_ACTIONS=true` so the same module runs with `DEBUG=False` and without the debug toolbar; see [`.github/workflows/ci.yml`](../.github/workflows/ci.yml).
+
+## Authentication Functionality
+
+Login/Logout/Profile in a dev environment requires additional credentials. If this is needed, consult exec for access.

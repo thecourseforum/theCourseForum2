@@ -52,36 +52,12 @@ $ env $(cat .env.prod | grep -v '^#' | xargs) sh scripts/dump.sh
 
 ## Updating Grades
 
-1. Build the project
+See instructions in [grade-data.md](https://github.com/thecourseforum/theCourseForum2/blob/dev/doc/grade-data.md)
 
-- Switch to master
-- Use production `.env.prod` credentials (consult exec for access)
-- Build normally
 
-2. Retrieve the latest semesterly grade data if required:
+## Fetching and Loading Semester Data
 
-- Fetch the data from Lou's List (specify the year and season accordingly):
-
-```
-$ cd tcf_website/management/commands/semester_data
-$ python fetch_data.py <year> {spring,summer,fall,january}
-$ cd -
-```
-
-- If necessary, move the csv to `tcf_website/management/commands/grade_data/csv/<year>_<season>.csv`.
-
-4. Load the recent data. See [load_grades.py](tcf_website/management/commands/load_grades.py) for info.
-
-A normal update may look like the following:
-
-```console
-$ docker exec -it tcf_django python manage.py load_grades <year>_<season>.csv
-```
-
-5. Commit the semesterly data to the repo
-6. Remove production credentialing (use `.env` credentials like normal)
-
-## [Fetching and Loading Semester Data](https://github.com/thecourseforum/theCourseForum2/blob/dev/doc/semester-data.md)
+See instructions in [semester-data.md](https://github.com/thecourseforum/theCourseForum2/blob/dev/doc/semester-data.md)
 
 ## Fetching Club Data
 
@@ -105,12 +81,10 @@ $ docker exec -it tcf_django python manage.py load_clubs
 
 See [load_clubs.py](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/load_clubs.py) for more information.
 
-## [Requesting Grade Data/FOIA Requests](doc/grade-data.md)
+## Creating Production Database Backup
 
-## Formatting the Codebase
-
-Simply run the format script (a `.bat` file is available for Windows):
-
+A backup of the prod database can be created with a script.
+  - ***NOTE***: The prod_dump part of the .env must first be filled out (consult exec for access)
 ```console
-$ sh scripts/format.sh
+$ scripts/prod_dump.sh
 ```

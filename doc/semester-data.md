@@ -10,7 +10,7 @@ $ docker exec -it tcf_django python manage.py fetch_data <year>_<season>
 
 Saved in `tcf_website/management/commands/semester_data/csv`
 
-See [fetch_data.py](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/fetch_data.py) for more information.
+See [fetch_data.py](../tcf_website/management/commands/fetch_data.py) for more information.
 
 ## Loading Semester Data
 
