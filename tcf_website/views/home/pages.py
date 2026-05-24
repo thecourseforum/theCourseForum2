@@ -1,15 +1,137 @@
 """Views for index and about pages."""
 
 import json
+import logging
+import time
 from pathlib import Path
 
+from boto3.dynamodb.conditions import Attr, Key
+from django.core.cache import cache
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 
+from tcf_website.analytics_utils import get_table
+from tcf_website.models import Course, Instructor
+
 from .landing_spotlight import landing_spotlight_context
+
+logger = logging.getLogger(__name__)
 
 _TCF_WEBSITE_ROOT = Path(__file__).resolve().parent.parent.parent
 _ABOUT_DATA_DIR = _TCF_WEBSITE_ROOT / "data" / "about"
+
+
+def get_top_trending_ids(entity_type: str, count: int = 5) -> list[int]:
+    """
+    Query DynamoDB GSI to retrieve the most viewed entities
+    Given a entity type (course or instructor) to query & the number of views
+    Return the list we will display
+    """
+    table = get_table()
+    if not table:
+        return []
+
+    current_time = int(time.time())
+    scores_by_id: dict[int, int] = {}
+    exclusive_start_key = None
+    pages = 0
+    max_pages = 10
+
+    try:
+        while pages < max_pages:
+            pages += 1
+            query_kwargs = {
+                "IndexName": "EntityIndex",
+                "KeyConditionExpression": Key("entity_type").eq(entity_type),
+                "FilterExpression": Attr("expires_at").gt(current_time),
+                "ProjectionExpression": "pk, expires_at, view_count",
+                "ScanIndexForward": False,
+                "Limit": 20,
+            }
+            if exclusive_start_key:
+                query_kwargs["ExclusiveStartKey"] = exclusive_start_key
+
+            response = table.query(**query_kwargs)
+            items = response.get("Items", [])
+
+            for item in items:
+                pk = item.get("pk", "")
+                if ":" not in pk:
+                    continue
+                try:
+                    _, entity_id_str = pk.split(":", 1)
+                    entity_id = int(entity_id_str)
+                except ValueError as e:
+                    logger.warning(f"Malformed pk in trending data '{pk}': {e}")
+                    continue
+
+                scores_by_id[entity_id] = scores_by_id.get(entity_id, 0) + int(
+                    item.get("view_count", 0)
+                )
+
+            exclusive_start_key = response.get("LastEvaluatedKey")
+            if not exclusive_start_key:
+                break
+
+        logger.debug(
+            f"Retrieved {len(scores_by_id)} trending IDs for {entity_type} in {pages} pages."
+        )
+        return sorted(scores_by_id, key=scores_by_id.get, reverse=True)[:count]
+    except Exception as e:
+        logger.error(f"GSI query failed for {entity_type}: {e}", exc_info=True)
+        return []
+
+
+def get_trending_courses():
+    """Get trending courses based on DynamoDB analytics, with caching."""
+    cached = cache.get("trending_courses")
+    if cached is not None:
+        return cached
+
+    course_ids = get_top_trending_ids("course")
+    if not course_ids:
+        cache.set("trending_courses", [], timeout=5 * 60)  # 5 min cache for empty
+        return []
+
+    # Source of truth lookup
+    courses = list(
+        Course.objects.filter(id__in=course_ids)
+        .select_related("subdepartment")
+        .exclude(subdepartment__mnemonic="")
+        .exclude(number__isnull=True)
+    )
+
+    # preserve ranking order
+    courses.sort(key=lambda c: course_ids.index(c.id))
+
+    # set 24 hour cache
+    cache.set("trending_courses", courses, timeout=24 * 60 * 60)
+    return courses
+
+
+def get_trending_instructors():
+    """Get trending instructors based on DynamoDB analytics, with caching and aggregation."""
+    cached = cache.get("trending_instructors")
+    if cached is not None:
+        return cached
+
+    instructor_ids = get_top_trending_ids("instructor")
+    if not instructor_ids:
+        cache.set("trending_instructors", [], timeout=5 * 60)  # 5 min cache for empty
+        return []
+
+    instructors = list(
+        Instructor.objects.filter(id__in=instructor_ids, hidden=False).exclude(
+            full_name=""
+        )
+    )
+
+    # preserve ranking order
+    instructors.sort(key=lambda i: instructor_ids.index(i.id))
+
+    # set 24 hour cache
+    cache.set("trending_instructors", instructors, timeout=24 * 60 * 60)
+    return instructors
 
 
 def index(request):
@@ -20,15 +142,27 @@ def index(request):
     mode = request.GET.get("mode", "courses")
     is_club = mode == "clubs"
 
-    context = {
-        "executive_team": team_info["executive_team"],
-        "mode": mode,
-        "mode_noun": "club" if is_club else "course",
-        "search_placeholder": (
-            "Search for a club..." if is_club else "Search for a course or professor..."
-        ),
-    }
-    context.update(landing_spotlight_context(mode))
+    # Start with spotlight context
+    context = landing_spotlight_context(mode)
+
+    # Put stats onto dashboard & add to response
+    trending_courses = get_trending_courses()
+    trending_instructors = get_trending_instructors()
+
+    context.update(
+        {
+            "executive_team": team_info["executive_team"],
+            "mode": mode,
+            "mode_noun": "club" if is_club else "course",
+            "search_placeholder": (
+                "Search for a club..."
+                if is_club
+                else "Search for a course or professor..."
+            ),
+            "trending_courses": trending_courses,
+            "trending_instructors": trending_instructors,
+        }
+    )
 
     return render(
         request,

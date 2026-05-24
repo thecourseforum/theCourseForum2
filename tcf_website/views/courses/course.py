@@ -3,6 +3,8 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
+from tcf_website.analytics_utils import record_course_view
+
 from ...models import Course, Section, Semester
 
 
@@ -89,6 +91,9 @@ def course_view(request, mnemonic: str, course_number: int):
         instructor.all_times = all_times_by_instructor.get(instructor.id, {})
 
     dept = course.subdepartment.department
+
+    if request.method == "GET":
+        record_course_view(course.id)
 
     return render(
         request,
