@@ -11,7 +11,7 @@
     {% else %}
         <ul class="autocomplete-list" role="listbox">
             <li class="autocomplete-group-header" role="presentation">
-                Clubs <span class="autocomplete-group-header__hint">Tab to select</span>
+                Clubs <span class="autocomplete-group-header__hint">↑↓ to navigate</span>
             </li>
             {% for club in clubs %}
                 <li class="autocomplete-item" role="option">
@@ -36,7 +36,7 @@
         {% if courses_first %}
             {% if courses %}
                 <li class="autocomplete-group-header" role="presentation">
-                    Courses <span class="autocomplete-group-header__hint">Tab to select</span>
+                    Courses <span class="autocomplete-group-header__hint">↑↓ to navigate</span>
                 </li>
                 {% for course in courses %}
                     <li class="autocomplete-item" role="option">
@@ -72,7 +72,7 @@
         {% else %}
             {% if instructors and not autocomplete_action %}
                 <li class="autocomplete-group-header" role="presentation">
-                    Instructors <span class="autocomplete-group-header__hint">Tab to select</span>
+                    Instructors <span class="autocomplete-group-header__hint">↑↓ to navigate</span>
                 </li>
                 {% for instructor in instructors %}
                     <li class="autocomplete-item" role="option">
