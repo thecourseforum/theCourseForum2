@@ -28,4 +28,6 @@ COPY . /app/
 
 RUN chmod +x /app/scripts/container-startup.sh
 
-ENTRYPOINT ["/app/scripts/container-startup.sh"]
+EXPOSE 80
+
+CMD ["/app/scripts/container-startup.sh"]
