@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from django.db.models import Avg
+from django.db.models import Avg, Q
 from django.shortcuts import get_object_or_404, render
 
 from ...models import Instructor, Semester
@@ -19,11 +19,11 @@ def instructor_view(request, instructor_id):
 
     stats: dict[str, float] = Instructor.objects.filter(pk=instructor.pk).aggregate(
         avg_gpa=Avg("courseinstructorgrade__average"),
-        avg_difficulty=Avg("review__difficulty"),
+        avg_difficulty=Avg("review__difficulty", filter=Q(review__hidden=False)),
         avg_rating=(
-            Avg("review__instructor_rating")
-            + Avg("review__enjoyability")
-            + Avg("review__recommendability")
+            Avg("review__instructor_rating", filter=Q(review__hidden=False))
+            + Avg("review__enjoyability", filter=Q(review__hidden=False))
+            + Avg("review__recommendability", filter=Q(review__hidden=False))
         )
         / 3,
     )

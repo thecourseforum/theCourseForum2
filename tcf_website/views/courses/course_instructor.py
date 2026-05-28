@@ -49,6 +49,7 @@ def _pair_review_counts(course_id, instructor_id):
         instructor=instructor_id,
         course=course_id,
         toxicity_rating__lt=settings.TOXICITY_THRESHOLD,
+        hidden=False,
     ).aggregate(
         num_ratings=Count("id"),
         num_reviews=Count("id", filter=~Q(text="")),
@@ -58,7 +59,7 @@ def _pair_review_counts(course_id, instructor_id):
 
 def _pair_aggregate_chart_data(course, instructor, course_id, instructor_id):
     """Averages and optional grade breakdown for the instructor page JSON blob."""
-    data = Review.objects.filter(course=course_id, instructor=instructor_id).aggregate(
+    data = Review.objects.filter(course=course_id, instructor=instructor_id, hidden=False).aggregate(
         average_rating=(
             Avg("instructor_rating") + Avg("enjoyability") + Avg("recommendability")
         )

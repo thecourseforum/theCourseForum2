@@ -25,6 +25,10 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".grok.io", ".lhr.life"]
 
 DEBUG = not _ci
 
+# Cachalot uses LocMemCache in dev (no Redis), which is per-process — management
+# commands invalidate a different cache instance than the web server sees.
+CACHALOT_ENABLED = False
+
 if not _ci:
     INSTALLED_APPS = INSTALLED_APPS + ["debug_toolbar"]
     MIDDLEWARE = (
