@@ -4,7 +4,12 @@ Usage:
   docker exec -it tcf_django python manage.py list_reviews --url "/course/42/67/"
   docker exec -it tcf_django python manage.py list_reviews --course-id 42 --instructor-id 67
 
+  By default, names and emails are masked. Pass --show-user-info to reveal them.
+
 Outputs one REVIEW| line per review for machine parsing, plus human-readable headers.
+
+WARNING: With --show-user-info, output contains PII (names and email addresses).
+Do not redirect to log files or CI/CD artifacts.
 """
 
 import re
@@ -26,8 +31,29 @@ class Command(BaseCommand):
         )
         parser.add_argument("--course-id", type=int, help="Course ID")
         parser.add_argument("--instructor-id", type=int, help="Instructor ID")
+        parser.add_argument(
+            "--show-user-info",
+            action="store_true",
+            default=False,
+            help="Reveal full names and email addresses (outputs PII — do not log)",
+        )
+        parser.add_argument(
+            "--hidden-only",
+            action="store_true",
+            default=False,
+            help="Show only hidden reviews",
+        )
+        parser.add_argument(
+            "--visible-only",
+            action="store_true",
+            default=False,
+            help="Show only visible (non-hidden) reviews",
+        )
 
     def handle(self, *args, **options):
+        if options["hidden_only"] and options["visible_only"]:
+            raise CommandError("--hidden-only and --visible-only are mutually exclusive")
+
         course_id, instructor_id = self._resolve_ids(options)
 
         try:
@@ -46,43 +72,74 @@ class Command(BaseCommand):
             .order_by("-created")
         )
 
+        if options["hidden_only"]:
+            reviews = reviews.filter(hidden=True)
+        elif options["visible_only"]:
+            reviews = reviews.filter(hidden=False)
+
+        review_list = list(reviews)
+        count = len(review_list)
+        show_user_info = options["show_user_info"]
+
         self.stdout.write(
             f"\nReviews for {course} taught by {instructor} "
-            f"({reviews.count()} total)\n"
+            f"({count} total)\n"
             + "-" * 60
         )
 
-        if not reviews.exists():
+        if not review_list:
             self.stdout.write("No reviews found.")
             return
 
-        for review in reviews:
+        for review in review_list:
             user = review.user
-            display_name = user.get_full_name() or user.username or user.email or "Unknown"
-            email = user.email or ""
+            raw_name = user.get_full_name() or user.username or user.email or "Unknown"
+            raw_email = user.email or ""
             hidden_flag = "[HIDDEN] " if review.hidden else ""
-            excerpt = review.text[:120].replace("\n", " ").replace("|", " ").strip() if review.text else "(no text)"
+            excerpt = self._safe_field(review.text[:120]) if review.text else "(no text)"
+
+            if show_user_info:
+                display_name = self._safe_field(raw_name)
+                display_email = self._safe_field(raw_email)
+            else:
+                display_name = self._mask_name(raw_name)
+                display_email = self._mask_email(raw_email)
 
             self.stdout.write(
-                f"\n{hidden_flag}ID: {review.id} | {display_name} | {email} | {review.created.date()}"
+                f"\n{hidden_flag}ID: {review.id} | {display_name} | {display_email} | {review.created.date()}"
             )
             self.stdout.write(f'  "{excerpt}"')
 
             # Machine-parseable line for hide_review.sh
             # Format: REVIEW|<id>|<display_name>|<email>|<hidden>|<excerpt>
-            safe_name = display_name.replace("|", " ")
-            safe_email = email.replace("|", " ")
             self.stdout.write(
-                f"REVIEW|{review.id}|{safe_name}|{safe_email}|{review.hidden}|{excerpt}"
+                f"REVIEW|{review.id}|{display_name}|{display_email}|{review.hidden}|{excerpt}"
             )
             self.stdout.flush()
 
         self.stdout.write("\n" + "-" * 60)
 
+    def _safe_field(self, value: str) -> str:
+        return value.replace("|", " ").replace("\n", " ").strip()
+
+    def _mask_name(self, name: str) -> str:
+        parts = name.split()
+        if not parts:
+            return "***"
+        if len(parts) == 1:
+            return parts[0][0] + "***" if parts[0] else "***"
+        return parts[0][0] + "*** " + parts[-1][0] + "***"
+
+    def _mask_email(self, email: str) -> str:
+        if not email or "@" not in email:
+            return "***"
+        local, domain = email.split("@", 1)
+        return local[0] + "***@" + domain if local else "***@" + domain
+
     def _resolve_ids(self, options):
         if options.get("url"):
             return self._parse_url(options["url"])
-        if options.get("course_id") and options.get("instructor_id"):
+        if options.get("course_id") is not None and options.get("instructor_id") is not None:
             return options["course_id"], options["instructor_id"]
         raise CommandError("Provide --url or both --course-id and --instructor-id")
 
