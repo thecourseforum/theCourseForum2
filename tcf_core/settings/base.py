@@ -5,6 +5,7 @@ import os
 import environ
 from django.contrib.messages import constants as messages
 from django.urls import reverse_lazy
+from .log_formatter import JsonFormatter
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -56,6 +57,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "tcf_core.request_logging.RequestLoggingMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "tcf_core.cognito_middleware.CognitoAuthMiddleware",
@@ -138,21 +140,50 @@ LOGIN_URL = reverse_lazy("login")
 
 AUTH_USER_MODEL = "tcf_website.User"
 
-# Logging configuration (from https://docs.djangoproject.com/en/3.1/topics/logging/)
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+
+    "formatters": {
+        "json": {
+            "()": JsonFormatter,
+        },
+    },
+
+    "filters": {
+        "request_context": {
+            "()": "tcf_core.request_logging.RequestLoggingFilter",
+        },
+    },
+
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
+            "formatter": "json",
+            "filters": ["request_context"],
         },
     },
+
     "root": {
         "handlers": ["console"],
         "level": "INFO",
     },
+
     "loggers": {
+        # Django request errors (500s, etc.)
+        "django.request": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        # General Django logs
         "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        # tcf
+        "tcf_website": {
             "handlers": ["console"],
             "level": "INFO",
             "propagate": False,
