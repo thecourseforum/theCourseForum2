@@ -1,9 +1,13 @@
 """Tests for Django management commands"""
 
+from io import StringIO
+
 from django.core import management
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 
-from tcf_website.models import CourseGrade, CourseInstructorGrade
+from tcf_website.models import CourseGrade, CourseInstructorGrade, Review
 
 from .test_utils import setup
 
@@ -132,3 +136,234 @@ class LoadGradesMissingDistribution(TestCase):
 
         self.assertEqual(self.cg.total_enrolled, 4)
         self.assertEqual(self.cig.total_enrolled, 4)
+
+
+# ---------------------------------------------------------------------------
+# list_reviews command
+# ---------------------------------------------------------------------------
+
+
+def _run(stdout=None, **kwargs):
+    """Call list_reviews and return captured stdout as a string."""
+    out = stdout or StringIO()
+    call_command("list_reviews", stdout=out, **kwargs)
+    return out.getvalue()
+
+
+class ListReviewsHelperMethodTests(TestCase):
+    """Unit tests for Command helper methods — no DB required."""
+
+    def setUp(self):
+        from tcf_website.management.commands.list_reviews import Command
+
+        self.cmd = Command()
+
+    # _safe_field
+    def test_safe_field_strips_pipe(self):
+        self.assertEqual(self.cmd._safe_field("foo|bar"), "foo bar")
+
+    def test_safe_field_strips_newline(self):
+        self.assertEqual(self.cmd._safe_field("foo\nbar"), "foo bar")
+
+    def test_safe_field_strips_surrounding_whitespace(self):
+        self.assertEqual(self.cmd._safe_field("  hello  "), "hello")
+
+    def test_safe_field_handles_combined(self):
+        self.assertEqual(self.cmd._safe_field("  a|b\nc  "), "a b c")
+
+    # _mask_name
+    def test_mask_name_full_name(self):
+        self.assertEqual(self.cmd._mask_name("Taylor Comb"), "T*** C***")
+
+    def test_mask_name_single_word(self):
+        self.assertEqual(self.cmd._mask_name("Taylor"), "T***")
+
+    def test_mask_name_empty(self):
+        self.assertEqual(self.cmd._mask_name(""), "***")
+
+    def test_mask_name_first_letter_only_preserved(self):
+        result = self.cmd._mask_name("Alice Wonderland")
+        self.assertTrue(result.startswith("A***"))
+        self.assertTrue(result.endswith("W***"))
+
+    # _mask_email
+    def test_mask_email_standard(self):
+        self.assertEqual(self.cmd._mask_email("jack@example.com"), "j***@example.com")
+
+    def test_mask_email_empty(self):
+        self.assertEqual(self.cmd._mask_email(""), "***")
+
+    def test_mask_email_no_at_sign(self):
+        self.assertEqual(self.cmd._mask_email("notanemail"), "***")
+
+    def test_mask_email_preserves_domain(self):
+        result = self.cmd._mask_email("user@virginia.edu")
+        self.assertIn("@virginia.edu", result)
+        self.assertNotIn("user", result)
+
+    # _parse_url
+    def test_parse_url_path_only(self):
+        self.assertEqual(self.cmd._parse_url("/course/42/67/"), (42, 67))
+
+    def test_parse_url_full_url(self):
+        self.assertEqual(
+            self.cmd._parse_url("https://thecourseforum.com/course/10/20/"), (10, 20)
+        )
+
+    def test_parse_url_invalid_raises(self):
+        with self.assertRaises(CommandError):
+            self.cmd._parse_url("/not/a/course/url/")
+
+    # _resolve_ids
+    def test_resolve_ids_via_url(self):
+        self.assertEqual(
+            self.cmd._resolve_ids({"url": "/course/1/2/", "course_id": None, "instructor_id": None}),
+            (1, 2),
+        )
+
+    def test_resolve_ids_via_explicit_ids(self):
+        self.assertEqual(
+            self.cmd._resolve_ids({"url": None, "course_id": 5, "instructor_id": 9}),
+            (5, 9),
+        )
+
+    def test_resolve_ids_zero_course_id_accepted(self):
+        # 0 is a valid (falsy) int — must not fall through to the error branch
+        self.assertEqual(
+            self.cmd._resolve_ids({"url": None, "course_id": 0, "instructor_id": 3}),
+            (0, 3),
+        )
+
+    def test_resolve_ids_missing_both_raises(self):
+        with self.assertRaises(CommandError):
+            self.cmd._resolve_ids({"url": None, "course_id": None, "instructor_id": None})
+
+
+class ListReviewsIntegrationTests(TestCase):
+    """Integration tests that hit the database via call_command."""
+
+    def setUp(self):
+        setup(self)
+        # review1 and review2 are both on self.course + self.instructor (see test_utils)
+
+    # --- basic output --------------------------------------------------
+
+    def test_header_contains_course_and_count(self):
+        out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk)
+        self.assertIn(str(self.course), out)
+        self.assertIn("2 total", out)
+
+    def test_review_ids_appear_in_output(self):
+        out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk)
+        self.assertIn(f"ID: {self.review1.id}", out)
+        self.assertIn(f"ID: {self.review2.id}", out)
+
+    def test_machine_parseable_lines_present(self):
+        out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk)
+        review_lines = [l for l in out.splitlines() if l.startswith("REVIEW|")]
+        self.assertEqual(len(review_lines), 2)
+
+    def test_machine_line_format(self):
+        out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk)
+        review_lines = [l for l in out.splitlines() if l.startswith("REVIEW|")]
+        for line in review_lines:
+            parts = line.split("|")
+            # REVIEW | id | name | email | hidden | excerpt
+            self.assertEqual(len(parts), 6)
+            self.assertTrue(parts[1].isdigit())
+
+    # --- PII masking (default) -----------------------------------------
+
+    def test_email_is_masked_by_default(self):
+        out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk)
+        # user1 email is "tcf2yay@virginia.edu" — should not appear verbatim
+        self.assertNotIn("tcf2yay@virginia.edu", out)
+        self.assertIn("@virginia.edu", out)  # domain still visible
+
+    def test_full_name_is_masked_by_default(self):
+        out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk)
+        # user1 is "Taylor Comb" — full name must not appear
+        self.assertNotIn("Taylor Comb", out)
+
+    # --- --show-user-info flag ----------------------------------------
+
+    def test_show_user_info_reveals_email(self):
+        out = _run(
+            course_id=self.course.pk,
+            instructor_id=self.instructor.pk,
+            show_user_info=True,
+        )
+        self.assertIn("tcf2yay@virginia.edu", out)
+
+    def test_show_user_info_reveals_name(self):
+        out = _run(
+            course_id=self.course.pk,
+            instructor_id=self.instructor.pk,
+            show_user_info=True,
+        )
+        self.assertIn("Taylor Comb", out)
+
+    # --- --hidden-only / --visible-only --------------------------------
+
+    def test_hidden_only_shows_only_hidden(self):
+        self.review1.hidden = True
+        self.review1.save()
+        out = _run(
+            course_id=self.course.pk,
+            instructor_id=self.instructor.pk,
+            hidden_only=True,
+        )
+        self.assertIn(f"ID: {self.review1.id}", out)
+        self.assertNotIn(f"ID: {self.review2.id}", out)
+
+    def test_visible_only_excludes_hidden(self):
+        self.review1.hidden = True
+        self.review1.save()
+        out = _run(
+            course_id=self.course.pk,
+            instructor_id=self.instructor.pk,
+            visible_only=True,
+        )
+        self.assertNotIn(f"ID: {self.review1.id}", out)
+        self.assertIn(f"ID: {self.review2.id}", out)
+
+    def test_hidden_flag_label_appears(self):
+        self.review1.hidden = True
+        self.review1.save()
+        out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk)
+        self.assertIn("[HIDDEN]", out)
+
+    def test_hidden_and_visible_only_together_raises(self):
+        with self.assertRaises(CommandError):
+            _run(
+                course_id=self.course.pk,
+                instructor_id=self.instructor.pk,
+                hidden_only=True,
+                visible_only=True,
+            )
+
+    # --- URL argument -------------------------------------------------
+
+    def test_url_argument_resolves_correctly(self):
+        url = f"/course/{self.course.pk}/{self.instructor.pk}/"
+        out = _run(url=url)
+        self.assertIn("2 total", out)
+
+    # --- error paths --------------------------------------------------
+
+    def test_missing_course_raises(self):
+        with self.assertRaises(CommandError):
+            _run(course_id=99999, instructor_id=self.instructor.pk)
+
+    def test_missing_instructor_raises(self):
+        with self.assertRaises(CommandError):
+            _run(course_id=self.course.pk, instructor_id=99999)
+
+    def test_no_reviews_outputs_message(self):
+        # course2 has reviews but not with instructor2
+        out = _run(course_id=self.course.pk, instructor_id=self.instructor2.pk)
+        self.assertIn("No reviews found", out)
+
+    def test_no_args_raises(self):
+        with self.assertRaises(CommandError):
+            _run()
