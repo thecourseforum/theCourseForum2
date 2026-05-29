@@ -22,6 +22,8 @@ TASK_ARN=""
 CAPTURED_FILE=""
 CAPTURED=""
 
+trap '[[ -n "$CAPTURED_FILE" ]] && rm -f "$CAPTURED_FILE"' EXIT INT TERM
+
 _get_task_arn() {
     aws ecs list-tasks \
         --cluster "$CLUSTER" \
@@ -32,17 +34,28 @@ _get_task_arn() {
         --output text
 }
 
+_ecs_command() {
+    # Build the command locally with bash's printf '%q', then base64-encode it
+    # so the container's /bin/sh can pass it to bash without any quoting issues
+    # (single quotes, double quotes, dollar signs, etc. in argument values are
+    # all safely carried through base64).
+    local inner_cmd b64
+    inner_cmd="python manage.py $(printf '%q ' "$@")"
+    b64="$(printf '%s' "$inner_cmd" | base64 | tr -d '\n')"
+    aws ecs execute-command \
+        --cluster "$CLUSTER" \
+        --task "$TASK_ARN" \
+        --container "$CONTAINER" \
+        --region "$REGION" \
+        --interactive \
+        --command "bash -c \"\$(echo $b64|base64 -d)\""
+}
+
 _run_cmd() {
     if [[ "$USE_DOCKER" == "1" ]]; then
         docker exec -it tcf_django python manage.py "$@"
     else
-        aws ecs execute-command \
-            --cluster "$CLUSTER" \
-            --task "$TASK_ARN" \
-            --container "$CONTAINER" \
-            --region "$REGION" \
-            --interactive \
-            --command "python manage.py $(printf '%q ' "$@")"
+        _ecs_command "$@"
     fi
 }
 
@@ -52,13 +65,7 @@ _run_cmd_capture() {
     if [[ "$USE_DOCKER" == "1" ]]; then
         docker exec tcf_django python manage.py "$@" > "$CAPTURED_FILE" 2>&1
     else
-        aws ecs execute-command \
-            --cluster "$CLUSTER" \
-            --task "$TASK_ARN" \
-            --container "$CONTAINER" \
-            --region "$REGION" \
-            --interactive \
-            --command "python manage.py $(printf '%q ' "$@")" > "$CAPTURED_FILE" 2>&1 || true
+        _ecs_command "$@" > "$CAPTURED_FILE" 2>&1 || true
     fi
     CAPTURED="$(cat "$CAPTURED_FILE")"
 }
@@ -120,6 +127,19 @@ main() {
         fi
         echo "Task: $TASK_ARN"
         echo ""
+
+        # Guard: the --command strings use bash-specific quoting, so the
+        # container must have bash available.
+        if ! aws ecs execute-command \
+                --cluster "$CLUSTER" \
+                --task "$TASK_ARN" \
+                --container "$CONTAINER" \
+                --region "$REGION" \
+                --interactive \
+                --command "bash --version" > /dev/null 2>&1; then
+            echo "ERROR: 'bash' is not available in the container. This script requires bash inside the ECS task."
+            exit 1
+        fi
     fi
 
     # --- Step 1: Get URL ---

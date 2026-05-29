@@ -55,7 +55,7 @@ class Command(BaseCommand):
             return
 
         review.hidden = target_hidden
-        review.save()
+        review.save(update_fields=["hidden"])
 
         ts = datetime.now(timezone.utc).isoformat()
         self.stdout.write(
