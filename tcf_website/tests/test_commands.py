@@ -372,3 +372,125 @@ class ListReviewsIntegrationTests(TestCase):
     def test_no_args_raises(self):
         with self.assertRaises(CommandError):
             _run()
+
+
+# ---------------------------------------------------------------------------
+# hide_review command
+# ---------------------------------------------------------------------------
+
+
+def _hide(stdout=None, **kwargs):
+    """Call hide_review and return captured stdout as a string."""
+    out = stdout or StringIO()
+    call_command("hide_review", stdout=out, **kwargs)
+    return out.getvalue()
+
+
+class HideReviewTests(TestCase):
+    """Tests for the hide_review management command."""
+
+    def setUp(self):
+        setup(self)
+        # review1 starts visible (hidden=False by default)
+
+    # --- --show flag -------------------------------------------------------
+
+    def test_show_prints_review_details(self):
+        out = _hide(id=self.review1.pk, show=True)
+        self.assertIn(str(self.review1.pk), out)
+        self.assertIn(self.review1.course.__str__(), out)
+
+    def test_show_does_not_modify_review(self):
+        _hide(id=self.review1.pk, show=True)
+        self.review1.refresh_from_db()
+        self.assertFalse(self.review1.hidden)
+
+    # --- hide a visible review ---------------------------------------------
+
+    def test_hide_sets_hidden_true(self):
+        _hide(id=self.review1.pk, reason="Test hide")
+        self.review1.refresh_from_db()
+        self.assertTrue(self.review1.hidden)
+
+    def test_hide_output_contains_log_line(self):
+        out = _hide(id=self.review1.pk, reason="Test hide")
+        self.assertIn("[HIDE_REVIEW]", out)
+        self.assertIn(f"id={self.review1.pk}", out)
+        self.assertIn("hidden=True", out)
+
+    def test_hide_output_contains_reason(self):
+        out = _hide(id=self.review1.pk, reason="Violates guidelines")
+        self.assertIn("Violates guidelines", out)
+
+    def test_hide_output_says_done(self):
+        out = _hide(id=self.review1.pk, reason="Test hide")
+        self.assertIn("hidden", out)
+
+    # --- unhide a hidden review --------------------------------------------
+
+    def test_unhide_sets_hidden_false(self):
+        self.review1.hidden = True
+        self.review1.save()
+        _hide(id=self.review1.pk, reason="Mistakenly hidden", unhide=True)
+        self.review1.refresh_from_db()
+        self.assertFalse(self.review1.hidden)
+
+    def test_unhide_output_contains_log_line(self):
+        self.review1.hidden = True
+        self.review1.save()
+        out = _hide(id=self.review1.pk, reason="Mistakenly hidden", unhide=True)
+        self.assertIn("[HIDE_REVIEW]", out)
+        self.assertIn("hidden=False", out)
+        self.assertIn("action=unhide", out)
+
+    # --- already-in-target-state guard ------------------------------------
+
+    def test_hide_already_hidden_no_change(self):
+        self.review1.hidden = True
+        self.review1.save()
+        out = _hide(id=self.review1.pk, reason="Duplicate")
+        self.assertIn("already", out)
+        self.review1.refresh_from_db()
+        self.assertTrue(self.review1.hidden)
+
+    def test_unhide_already_visible_no_change(self):
+        out = _hide(id=self.review1.pk, reason="Duplicate", unhide=True)
+        self.assertIn("already", out)
+        self.review1.refresh_from_db()
+        self.assertFalse(self.review1.hidden)
+
+    # --- error paths -------------------------------------------------------
+
+    def test_missing_reason_raises(self):
+        with self.assertRaises(CommandError):
+            _hide(id=self.review1.pk)
+
+    def test_nonexistent_review_raises(self):
+        with self.assertRaises(CommandError):
+            _hide(id=99999, reason="Whatever")
+
+    # --- _print_review content ---------------------------------------------
+
+    def test_print_review_shows_status_hidden(self):
+        self.review1.hidden = True
+        self.review1.save()
+        out = _hide(id=self.review1.pk, show=True)
+        self.assertIn("HIDDEN", out)
+
+    def test_print_review_shows_status_visible(self):
+        out = _hide(id=self.review1.pk, show=True)
+        self.assertIn("visible", out)
+
+    def test_print_review_shows_user_email(self):
+        out = _hide(id=self.review1.pk, show=True)
+        # review1 belongs to user1 whose email is tcf2yay@virginia.edu
+        self.assertIn("tcf2yay@virginia.edu", out)
+
+    def test_print_review_shows_text(self):
+        out = _hide(id=self.review1.pk, show=True)
+        self.assertIn(self.review1.text[:20], out)
+
+    def test_print_review_no_email_fallback(self):
+        # user2 has no email — should print "(none)"
+        out = _hide(id=self.review2.pk, show=True)
+        self.assertIn("(none)", out)
