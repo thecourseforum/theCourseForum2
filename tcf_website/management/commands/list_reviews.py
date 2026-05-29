@@ -63,13 +63,13 @@ class Command(BaseCommand):
 
         try:
             course = Course.objects.get(pk=course_id)
-        except Course.DoesNotExist:
-            raise CommandError(f"Course {course_id} not found")
+        except Course.DoesNotExist as err:
+            raise CommandError(f"Course {course_id} not found") from err
 
         try:
             instructor = Instructor.objects.get(pk=instructor_id)
-        except Instructor.DoesNotExist:
-            raise CommandError(f"Instructor {instructor_id} not found")
+        except Instructor.DoesNotExist as err:
+            raise CommandError(f"Instructor {instructor_id} not found") from err
 
         reviews = (
             Review.objects.filter(course=course, instructor=instructor)

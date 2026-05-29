@@ -11,7 +11,7 @@ Usage:
   python manage.py hide_review --id 42 --reason "Mistakenly hidden" --unhide
 """
 
-from datetime import datetime, timezone
+import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -35,8 +35,8 @@ class Command(BaseCommand):
 
         try:
             review = Review.objects.select_related("user", "course", "instructor", "semester").get(pk=review_id)
-        except Review.DoesNotExist:
-            raise CommandError(f"Review {review_id} not found")
+        except Review.DoesNotExist as err:
+            raise CommandError(f"Review {review_id} not found") from err
 
         self._print_review(review)
 
@@ -57,7 +57,7 @@ class Command(BaseCommand):
         review.hidden = target_hidden
         review.save(update_fields=["hidden"])
 
-        ts = datetime.now(timezone.utc).isoformat()
+        ts = datetime.datetime.now(datetime.UTC).isoformat()
         self.stdout.write(
             f"\n[HIDE_REVIEW] id={review_id} hidden={target_hidden} "
             f'action={action} reason="{reason}" at={ts}'

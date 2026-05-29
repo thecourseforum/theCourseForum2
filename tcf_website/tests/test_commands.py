@@ -7,7 +7,7 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
-from tcf_website.models import CourseGrade, CourseInstructorGrade, Review
+from tcf_website.models import CourseGrade, CourseInstructorGrade
 
 from .test_utils import setup
 
@@ -260,17 +260,17 @@ class ListReviewsIntegrationTests(TestCase):
 
     def test_no_parseable_lines_by_default(self):
         out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk)
-        review_lines = [l for l in out.splitlines() if l.startswith("REVIEW|")]
+        review_lines = [line for line in out.splitlines() if line.startswith("REVIEW|")]
         self.assertEqual(len(review_lines), 0)
 
     def test_parseable_flag_emits_review_lines(self):
         out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk, parseable=True)
-        review_lines = [l for l in out.splitlines() if l.startswith("REVIEW|")]
+        review_lines = [line for line in out.splitlines() if line.startswith("REVIEW|")]
         self.assertEqual(len(review_lines), 2)
 
     def test_machine_line_format(self):
         out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk, parseable=True)
-        review_lines = [l for l in out.splitlines() if l.startswith("REVIEW|")]
+        review_lines = [line for line in out.splitlines() if line.startswith("REVIEW|")]
         for line in review_lines:
             parts = line.split("|")
             # REVIEW | id | name | email | hidden | excerpt
