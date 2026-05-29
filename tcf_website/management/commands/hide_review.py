@@ -25,7 +25,7 @@ class Command(BaseCommand):
         parser.add_argument("--id", type=int, required=True, help="Review ID")
         parser.add_argument(
             "--reason",
-            nargs="+",
+            type=str,
             help="Reason for hiding/unhiding (required unless --show)",
         )
         parser.add_argument(
@@ -41,8 +41,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         review_id = options["id"]
-        reason_parts = options.get("reason")
-        reason = " ".join(reason_parts) if reason_parts else None
+        reason = options.get("reason")
         show_only = options["show"]
         unhide = options["unhide"]
 

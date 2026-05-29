@@ -35,13 +35,19 @@ _get_task_arn() {
 }
 
 _ecs_command() {
-    # Build the command locally with bash's printf '%q', then base64-encode it
-    # so the container's /bin/sh can pass it to bash without any quoting issues
-    # (single quotes, double quotes, dollar signs, etc. in argument values are
-    # all safely carried through base64).
-    local inner_cmd b64
-    inner_cmd="python manage.py $(printf '%q ' "$@")"
-    b64="$(printf '%s' "$inner_cmd" | base64 | tr -d '\n')"
+    # Encode each argument as its own base64 string so spaces and special
+    # characters survive the ECS/SSM shell dispatch layers unchanged.
+    # The container script iterates over the space-separated base64 tokens
+    # (safe — base64 never contains spaces) and decodes each one into a bash
+    # array before calling manage.py, so word-splitting cannot affect the args.
+    local args_b64=()
+    for arg in "$@"; do
+        args_b64+=("$(printf '%s' "$arg" | base64 | tr -d '\n')")
+    done
+    local b64_list="${args_b64[*]}"
+    local container_script="args=(); for b in $b64_list; do args+=(\"\$(echo \$b|base64 -d)\"); done; python manage.py \"\${args[@]}\""
+    local b64
+    b64="$(printf '%s' "$container_script" | base64 | tr -d '\n')"
     aws ecs execute-command \
         --cluster "$CLUSTER" \
         --task "$TASK_ARN" \
