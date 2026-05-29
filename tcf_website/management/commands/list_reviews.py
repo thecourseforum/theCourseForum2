@@ -57,7 +57,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options["hidden_only"] and options["visible_only"]:
-            raise CommandError("--hidden-only and --visible-only are mutually exclusive")
+            raise CommandError(
+                "--hidden-only and --visible-only are mutually exclusive"
+            )
 
         course_id, instructor_id = self._resolve_ids(options)
 
@@ -89,8 +91,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             f"\nReviews for {course} taught by {instructor} "
-            f"({count} total)\n"
-            + "-" * 60
+            f"({count} total)\n" + "-" * 60
         )
 
         if not review_list:
@@ -102,7 +103,9 @@ class Command(BaseCommand):
             raw_name = user.get_full_name() or user.username or user.email or "Unknown"
             raw_email = user.email or ""
             hidden_flag = "[HIDDEN] " if review.hidden else ""
-            excerpt = self._safe_field(review.text[:120]) if review.text else "(no text)"
+            excerpt = (
+                self._safe_field(review.text[:120]) if review.text else "(no text)"
+            )
 
             if show_user_info:
                 display_name = self._safe_field(raw_name)
@@ -145,7 +148,10 @@ class Command(BaseCommand):
     def _resolve_ids(self, options):
         if options.get("url"):
             return self._parse_url(options["url"])
-        if options.get("course_id") is not None and options.get("instructor_id") is not None:
+        if (
+            options.get("course_id") is not None
+            and options.get("instructor_id") is not None
+        ):
             return options["course_id"], options["instructor_id"]
         raise CommandError("Provide --url or both --course-id and --instructor-id")
 

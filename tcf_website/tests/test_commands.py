@@ -217,7 +217,9 @@ class ListReviewsHelperMethodTests(TestCase):
     # _resolve_ids
     def test_resolve_ids_via_url(self):
         self.assertEqual(
-            self.cmd._resolve_ids({"url": "/course/1/2/", "course_id": None, "instructor_id": None}),
+            self.cmd._resolve_ids(
+                {"url": "/course/1/2/", "course_id": None, "instructor_id": None}
+            ),
             (1, 2),
         )
 
@@ -236,7 +238,9 @@ class ListReviewsHelperMethodTests(TestCase):
 
     def test_resolve_ids_missing_both_raises(self):
         with self.assertRaises(CommandError):
-            self.cmd._resolve_ids({"url": None, "course_id": None, "instructor_id": None})
+            self.cmd._resolve_ids(
+                {"url": None, "course_id": None, "instructor_id": None}
+            )
 
 
 class ListReviewsIntegrationTests(TestCase):
@@ -264,12 +268,16 @@ class ListReviewsIntegrationTests(TestCase):
         self.assertEqual(len(review_lines), 0)
 
     def test_parseable_flag_emits_review_lines(self):
-        out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk, parseable=True)
+        out = _run(
+            course_id=self.course.pk, instructor_id=self.instructor.pk, parseable=True
+        )
         review_lines = [line for line in out.splitlines() if line.startswith("REVIEW|")]
         self.assertEqual(len(review_lines), 2)
 
     def test_machine_line_format(self):
-        out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk, parseable=True)
+        out = _run(
+            course_id=self.course.pk, instructor_id=self.instructor.pk, parseable=True
+        )
         review_lines = [line for line in out.splitlines() if line.startswith("REVIEW|")]
         for line in review_lines:
             parts = line.split("|")

@@ -23,9 +23,21 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--id", type=int, required=True, help="Review ID")
-        parser.add_argument("--reason", type=str, help="Reason for hiding/unhiding (required unless --show)")
-        parser.add_argument("--show", action="store_true", help="Print full review and exit without changes")
-        parser.add_argument("--unhide", action="store_true", help="Unhide the review instead of hiding it")
+        parser.add_argument(
+            "--reason",
+            type=str,
+            help="Reason for hiding/unhiding (required unless --show)",
+        )
+        parser.add_argument(
+            "--show",
+            action="store_true",
+            help="Print full review and exit without changes",
+        )
+        parser.add_argument(
+            "--unhide",
+            action="store_true",
+            help="Unhide the review instead of hiding it",
+        )
 
     def handle(self, *args, **options):
         review_id = options["id"]
@@ -34,7 +46,9 @@ class Command(BaseCommand):
         unhide = options["unhide"]
 
         try:
-            review = Review.objects.select_related("user", "course", "instructor", "semester").get(pk=review_id)
+            review = Review.objects.select_related(
+                "user", "course", "instructor", "semester"
+            ).get(pk=review_id)
         except Review.DoesNotExist as err:
             raise CommandError(f"Review {review_id} not found") from err
 
@@ -44,14 +58,18 @@ class Command(BaseCommand):
             return
 
         if not reason:
-            raise CommandError("--reason is required. State why this review is being hidden/unhidden.")
+            raise CommandError(
+                "--reason is required. State why this review is being hidden/unhidden."
+            )
 
         target_hidden = not unhide
         action = "unhide" if unhide else "hide"
 
         if review.hidden == target_hidden:
             state = "hidden" if review.hidden else "visible"
-            self.stdout.write(f"Review {review_id} is already {state}. No changes made.")
+            self.stdout.write(
+                f"Review {review_id} is already {state}. No changes made."
+            )
             return
 
         review.hidden = target_hidden
@@ -62,7 +80,9 @@ class Command(BaseCommand):
             f"\n[HIDE_REVIEW] id={review_id} hidden={target_hidden} "
             f'action={action} reason="{reason}" at={ts}'
         )
-        self.stdout.write(f"Done. Review {review_id} is now {'hidden' if target_hidden else 'visible'}.")
+        self.stdout.write(
+            f"Done. Review {review_id} is now {'hidden' if target_hidden else 'visible'}."
+        )
 
     def _print_review(self, review):
         user = review.user

@@ -321,7 +321,9 @@ class Instructor(models.Model):
 
         Rating is defined as the average of recommendability,
         instructor rating, and enjoyability."""
-        ratings = Review.objects.filter(course=course, instructor=self, hidden=False).aggregate(
+        ratings = Review.objects.filter(
+            course=course, instructor=self, hidden=False
+        ).aggregate(
             models.Avg("recommendability"),
             models.Avg("instructor_rating"),
             models.Avg("enjoyability"),
@@ -339,57 +341,57 @@ class Instructor(models.Model):
 
     def average_difficulty_for_course(self, course):
         """Compute average difficulty score."""
-        return Review.objects.filter(course=course, instructor=self, hidden=False).aggregate(
-            models.Avg("difficulty")
-        )["difficulty__avg"]
+        return Review.objects.filter(
+            course=course, instructor=self, hidden=False
+        ).aggregate(models.Avg("difficulty"))["difficulty__avg"]
 
     def average_enjoyability_for_course(self, course):
         """Computer average enjoyability"""
-        return Review.objects.filter(course=course, instructor=self, hidden=False).aggregate(
-            models.Avg("enjoyability")
-        )["enjoyability__avg"]
+        return Review.objects.filter(
+            course=course, instructor=self, hidden=False
+        ).aggregate(models.Avg("enjoyability"))["enjoyability__avg"]
 
     def average_instructor_rating_for_course(self, course):
         """Computer average instructor rating"""
-        return Review.objects.filter(course=course, instructor=self, hidden=False).aggregate(
-            models.Avg("instructor_rating")
-        )["instructor_rating__avg"]
+        return Review.objects.filter(
+            course=course, instructor=self, hidden=False
+        ).aggregate(models.Avg("instructor_rating"))["instructor_rating__avg"]
 
     def average_recommendability_for_course(self, course):
         """Computer average recommendability"""
-        return Review.objects.filter(course=course, instructor=self, hidden=False).aggregate(
-            models.Avg("recommendability")
-        )["recommendability__avg"]
+        return Review.objects.filter(
+            course=course, instructor=self, hidden=False
+        ).aggregate(models.Avg("recommendability"))["recommendability__avg"]
 
     def average_hours_for_course(self, course):
         """Compute average hrs/wk."""
-        return Review.objects.filter(course=course, instructor=self, hidden=False).aggregate(
-            models.Avg("hours_per_week")
-        )["hours_per_week__avg"]
+        return Review.objects.filter(
+            course=course, instructor=self, hidden=False
+        ).aggregate(models.Avg("hours_per_week"))["hours_per_week__avg"]
 
     def average_reading_hours_for_course(self, course):
         """Compute average reading hrs/wk."""
-        return Review.objects.filter(course=course, instructor=self, hidden=False).aggregate(
-            models.Avg("amount_reading")
-        )["amount_reading__avg"]
+        return Review.objects.filter(
+            course=course, instructor=self, hidden=False
+        ).aggregate(models.Avg("amount_reading"))["amount_reading__avg"]
 
     def average_writing_hours_for_course(self, course):
         """Compute average writing hrs/wk."""
-        return Review.objects.filter(course=course, instructor=self, hidden=False).aggregate(
-            models.Avg("amount_writing")
-        )["amount_writing__avg"]
+        return Review.objects.filter(
+            course=course, instructor=self, hidden=False
+        ).aggregate(models.Avg("amount_writing"))["amount_writing__avg"]
 
     def average_group_hours_for_course(self, course):
         """Compute average group work hrs/wk."""
-        return Review.objects.filter(course=course, instructor=self, hidden=False).aggregate(
-            models.Avg("amount_group")
-        )["amount_group__avg"]
+        return Review.objects.filter(
+            course=course, instructor=self, hidden=False
+        ).aggregate(models.Avg("amount_group"))["amount_group__avg"]
 
     def average_other_hours_for_course(self, course):
         """Compute average other HW hrs/wk."""
-        return Review.objects.filter(course=course, instructor=self, hidden=False).aggregate(
-            models.Avg("amount_homework")
-        )["amount_homework__avg"]
+        return Review.objects.filter(
+            course=course, instructor=self, hidden=False
+        ).aggregate(models.Avg("amount_homework"))["amount_homework__avg"]
 
     def average_gpa_for_course(self, course):
         """Compute average GPA"""
@@ -729,9 +731,9 @@ class Course(models.Model):
 
     def average_difficulty(self):
         """Compute average difficulty score."""
-        return Review.objects.filter(course=self, hidden=False).aggregate(models.Avg("difficulty"))[
-            "difficulty__avg"
-        ]
+        return Review.objects.filter(course=self, hidden=False).aggregate(
+            models.Avg("difficulty")
+        )["difficulty__avg"]
 
     def average_gpa(self):
         """Compute average GPA."""
@@ -771,7 +773,9 @@ class Course(models.Model):
                 output_field=FloatField(),
                 filter=Q(review__hidden=False),
             ),
-            average_difficulty=Avg("review__difficulty", filter=Q(review__hidden=False)),
+            average_difficulty=Avg(
+                "review__difficulty", filter=Q(review__hidden=False)
+            ),
             average_gpa=avg_gpa_sq,
         )
 
