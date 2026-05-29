@@ -224,10 +224,12 @@ main() {
                 fi
                 echo ""
                 echo "Hiding review $review_id..."
-                _run_cmd hide_review --id "$review_id" --reason "$reason" || {
+                _run_cmd_capture hide_review --id "$review_id" --reason "$reason"
+                if echo "$CAPTURED" | grep -q "error:"; then
                     echo "ERROR: Command failed. Review was NOT hidden."
+                    _display_captured
                     continue
-                }
+                fi
                 REVIEW_LINES[$((selection-1))]="${chosen_line/|False|/|True|}"
                 echo ""
                 echo "Review $review_id is now hidden."
@@ -248,10 +250,12 @@ main() {
                 fi
                 echo ""
                 echo "Unhiding review $review_id..."
-                _run_cmd hide_review --id "$review_id" --reason "$reason" --unhide || {
+                _run_cmd_capture hide_review --id "$review_id" --reason "$reason" --unhide
+                if echo "$CAPTURED" | grep -q "error:"; then
                     echo "ERROR: Command failed. Review was NOT changed."
+                    _display_captured
                     continue
-                }
+                fi
                 REVIEW_LINES[$((selection-1))]="${chosen_line/|True|/|False|}"
                 echo ""
                 echo "Review $review_id is now visible."
