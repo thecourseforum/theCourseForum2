@@ -5,8 +5,7 @@ Usage:
   docker exec -it tcf_django python manage.py list_reviews --course-id 42 --instructor-id 67
 
   By default, names and emails are masked. Pass --show-user-info to reveal them.
-
-Outputs one REVIEW| line per review for machine parsing, plus human-readable headers.
+  Pass --parseable to emit REVIEW| lines for piping into hide_review.sh.
 
 WARNING: With --show-user-info, output contains PII (names and email addresses).
 Do not redirect to log files or CI/CD artifacts.
@@ -49,6 +48,12 @@ class Command(BaseCommand):
             default=False,
             help="Show only visible (non-hidden) reviews",
         )
+        parser.add_argument(
+            "--parseable",
+            action="store_true",
+            default=False,
+            help="Emit REVIEW| lines for piping into hide_review.sh",
+        )
 
     def handle(self, *args, **options):
         if options["hidden_only"] and options["visible_only"]:
@@ -80,6 +85,7 @@ class Command(BaseCommand):
         review_list = list(reviews)
         count = len(review_list)
         show_user_info = options["show_user_info"]
+        parseable = options["parseable"]
 
         self.stdout.write(
             f"\nReviews for {course} taught by {instructor} "
@@ -110,11 +116,11 @@ class Command(BaseCommand):
             )
             self.stdout.write(f'  "{excerpt}"')
 
-            # Machine-parseable line for hide_review.sh
-            # Format: REVIEW|<id>|<display_name>|<email>|<hidden>|<excerpt>
-            self.stdout.write(
-                f"REVIEW|{review.id}|{display_name}|{display_email}|{review.hidden}|{excerpt}"
-            )
+            if parseable:
+                # Format: REVIEW|<id>|<display_name>|<email>|<hidden>|<excerpt>
+                self.stdout.write(
+                    f"REVIEW|{review.id}|{display_name}|{display_email}|{review.hidden}|{excerpt}"
+                )
             self.stdout.flush()
 
         self.stdout.write("\n" + "-" * 60)

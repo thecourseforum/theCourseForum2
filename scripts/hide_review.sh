@@ -33,9 +33,8 @@ _get_task_arn() {
 }
 
 _run_cmd() {
-    local cmd="$1"
     if [[ "$USE_DOCKER" == "1" ]]; then
-        docker exec -it tcf_django python manage.py $cmd
+        docker exec -it tcf_django python manage.py "$@"
     else
         aws ecs execute-command \
             --cluster "$CLUSTER" \
@@ -43,16 +42,15 @@ _run_cmd() {
             --container "$CONTAINER" \
             --region "$REGION" \
             --interactive \
-            --command "python manage.py $cmd"
+            --command "python manage.py $(printf '%q ' "$@")"
     fi
 }
 
 _run_cmd_capture() {
-    local cmd="$1"
     [[ -n "$CAPTURED_FILE" ]] && rm -f "$CAPTURED_FILE"
     CAPTURED_FILE="$(mktemp)"
     if [[ "$USE_DOCKER" == "1" ]]; then
-        docker exec tcf_django python manage.py $cmd > "$CAPTURED_FILE" 2>&1
+        docker exec tcf_django python manage.py "$@" > "$CAPTURED_FILE" 2>&1
     else
         aws ecs execute-command \
             --cluster "$CLUSTER" \
@@ -60,7 +58,7 @@ _run_cmd_capture() {
             --container "$CONTAINER" \
             --region "$REGION" \
             --interactive \
-            --command "python manage.py $cmd" > "$CAPTURED_FILE" 2>&1 || true
+            --command "python manage.py $(printf '%q ' "$@")" > "$CAPTURED_FILE" 2>&1 || true
     fi
     CAPTURED="$(cat "$CAPTURED_FILE")"
 }
@@ -140,8 +138,7 @@ main() {
     echo "Fetching reviews..."
     echo ""
 
-    _run_cmd_capture "list_reviews --url \"$url\""
-    _display_captured
+    _run_cmd_capture list_reviews --url "$url" --parseable
     REVIEW_LINES=()
     while IFS= read -r line; do
         REVIEW_LINES+=("$line")
@@ -188,7 +185,7 @@ main() {
         case "$(echo "$action" | tr '[:upper:]' '[:lower:]')" in
             v)
                 echo ""
-                _run_cmd "hide_review --id $review_id --show" || true
+                _run_cmd hide_review --id "$review_id" --show || true
                 echo ""
                 ;;
             h)
@@ -207,7 +204,7 @@ main() {
                 fi
                 echo ""
                 echo "Hiding review $review_id..."
-                _run_cmd "hide_review --id $review_id --reason \"$reason\"" || {
+                _run_cmd hide_review --id "$review_id" --reason "$reason" || {
                     echo "ERROR: Command failed. Review was NOT hidden."
                     continue
                 }
@@ -231,7 +228,7 @@ main() {
                 fi
                 echo ""
                 echo "Unhiding review $review_id..."
-                _run_cmd "hide_review --id $review_id --reason \"$reason\" --unhide" || {
+                _run_cmd hide_review --id "$review_id" --reason "$reason" --unhide || {
                     echo "ERROR: Command failed. Review was NOT changed."
                     continue
                 }

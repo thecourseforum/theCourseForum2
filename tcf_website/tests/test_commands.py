@@ -258,13 +258,18 @@ class ListReviewsIntegrationTests(TestCase):
         self.assertIn(f"ID: {self.review1.id}", out)
         self.assertIn(f"ID: {self.review2.id}", out)
 
-    def test_machine_parseable_lines_present(self):
+    def test_no_parseable_lines_by_default(self):
         out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk)
+        review_lines = [l for l in out.splitlines() if l.startswith("REVIEW|")]
+        self.assertEqual(len(review_lines), 0)
+
+    def test_parseable_flag_emits_review_lines(self):
+        out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk, parseable=True)
         review_lines = [l for l in out.splitlines() if l.startswith("REVIEW|")]
         self.assertEqual(len(review_lines), 2)
 
     def test_machine_line_format(self):
-        out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk)
+        out = _run(course_id=self.course.pk, instructor_id=self.instructor.pk, parseable=True)
         review_lines = [l for l in out.splitlines() if l.startswith("REVIEW|")]
         for line in review_lines:
             parts = line.split("|")
