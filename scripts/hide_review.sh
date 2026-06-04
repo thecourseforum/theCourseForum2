@@ -113,7 +113,7 @@ print_review_table() {
         local status="visible"
         [[ "$hidden" == "True" ]] && status="HIDDEN"
         name="${name:0:20}"
-        excerpt="${excerpt:0:80}"
+        [[ ${#excerpt} -gt 80 ]] && excerpt="${excerpt:0:70}..." || excerpt="${excerpt:0:80}"
         printf "  %-4s %-20s %-28s %-8s %s\n" "$i" "$name" "$email" "$status" "\"$excerpt\""
         ((i++))
     done
