@@ -73,7 +73,8 @@ _run_cmd_capture() {
     else
         _ecs_command "$@" > "$CAPTURED_FILE" 2>&1 || true
     fi
-    CAPTURED="$(cat "$CAPTURED_FILE")"
+    # Strip \r (SSM PTY uses \r\n line endings) and ANSI escape codes
+    CAPTURED="$(tr -d '\r' < "$CAPTURED_FILE" | sed 's/\x1b\[[0-9;]*[A-Za-z]//g')"
 }
 
 _display_captured() {
@@ -172,6 +173,12 @@ main() {
 
     if [[ ${#REVIEW_LINES[@]} -eq 0 ]]; then
         echo "No reviews found for that URL. Check the URL and try again."
+        if [[ "$USE_DOCKER" != "1" ]]; then
+            echo ""
+            echo "--- Raw ECS output (for debugging) ---"
+            _display_captured
+            echo "--------------------------------------"
+        fi
         exit 0
     fi
 
