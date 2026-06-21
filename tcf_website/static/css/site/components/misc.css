@@ -348,6 +348,8 @@ span.pagination__item {
 
 .leaderboard-ad__label {
   display: inline-block;
+  /* Space is reserved, but the text stays hidden until an ad renders */
+  visibility: hidden;
   margin-bottom: var(--space-2);
   font-size: var(--text-xs);
   color: var(--fg-subtle);
@@ -355,9 +357,26 @@ span.pagination__item {
   text-transform: uppercase;
 }
 
+/* Label text only appears once an ad has rendered */
+.leaderboard-ad:has(.leaderboard-ad__slot[data-ad-status="filled"]) .leaderboard-ad__label {
+  visibility: visible;
+}
+
+/* Full width while empty so AdSense can measure & fill the slot. Height is
+   always reserved (no layout shift), but no border/bg shows until an ad
+   renders. */
 .leaderboard-ad__slot {
   display: block;
-  height: 90px;
+  width: 100%;
+  min-height: 90px;
+  margin: 0 auto;
+}
+
+/* Once an ad renders: hug the creative and paint the box into the reserved
+   space (no reflow, just appears) */
+.leaderboard-ad__slot[data-ad-status="filled"] {
+  width: fit-content;
+  max-width: 100%;
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   background-color: var(--bg-elevated);
