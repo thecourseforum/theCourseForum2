@@ -48,13 +48,21 @@ _ecs_command() {
     local container_script="args=(); for b in $b64_list; do args+=(\"\$(echo \$b|base64 -d)\"); done; python manage.py \"\${args[@]}\""
     local b64
     b64="$(printf '%s' "$container_script" | base64 | tr -d '\n')"
+    # Decode with a plain pipe, NOT command substitution. ECS/SSM passes
+    # --command through multiple shell-evaluation layers; a nested "$(...)"
+    # gets re-evaluated by an intermediate layer, which backslash-escapes the
+    # semicolons in the decoded script so the container's bash reads "args=();"
+    # as a single command word ("args=();: command not found"). A base64 blob
+    # is one contiguous token with no shell-special characters, so piping it
+    # (echo $b64 | base64 -d | bash) survives every layer untouched and only
+    # the final bash interprets the script.
     aws ecs execute-command \
         --cluster "$CLUSTER" \
         --task "$TASK_ARN" \
         --container "$CONTAINER" \
         --region "$REGION" \
         --interactive \
-        --command "bash -c \"\$(echo $b64|base64 -d)\""
+        --command "bash -c 'echo $b64 | base64 -d | bash'"
 }
 
 _run_cmd() {
