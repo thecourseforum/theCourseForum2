@@ -10,9 +10,7 @@
         </ul>
     {% else %}
         <ul class="autocomplete-list" role="listbox">
-            <li class="autocomplete-group-header" role="presentation">
-                Clubs
-            </li>
+            <li class="autocomplete-group-header" role="presentation">Clubs</li>
             {% for club in clubs %}
                 <li class="autocomplete-item" role="option">
                     <a href="{% if autocomplete_action == 'review' %}{% mode_url request 'new_review' mode='clubs' query_club=club.id %}{% else %}{% mode_url request 'club' category_slug=club.category_slug club_id=club.id mode='clubs' %}{% endif %}"
@@ -35,9 +33,7 @@
     <ul class="autocomplete-list" role="listbox">
         {% if courses_first %}
             {% if courses %}
-                <li class="autocomplete-group-header" role="presentation">
-                    Courses
-                </li>
+                <li class="autocomplete-group-header" role="presentation">Courses</li>
                 {% for course in courses %}
                     <li class="autocomplete-item" role="option">
                         {% if autocomplete_action == 'schedule' %}
@@ -71,9 +67,7 @@
             {% endif %}
         {% else %}
             {% if instructors and not autocomplete_action %}
-                <li class="autocomplete-group-header" role="presentation">
-                    Instructors
-                </li>
+                <li class="autocomplete-group-header" role="presentation">Instructors</li>
                 {% for instructor in instructors %}
                     <li class="autocomplete-item" role="option">
                         <a href="{% url 'instructor' instructor_id=instructor.id %}"
