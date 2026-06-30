@@ -10,16 +10,23 @@
     in
     {
       devShells = forAllSystems (pkgs: {
-        default = pkgs.mkShell {
+        default = pkgs.mkShell ({
           nativeBuildInputs = [ 
             pkgs.uv 
             pkgs.python312
             pkgs.nodejs_22
             pkgs.awscli2
+	    # pkgs.chromedriver # used for fetch_grades.py
+	    # pkgs.chromium # used for fetch_grades.py
           ];
 
           UV_PYTHON_DOWNLOADS = "never";
-        };
+	} // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+	  LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+	  pkgs.stdenv.cc.cc.lib
+	  pkgs.zlib
+	  ];
+        });
       });
     };
 }
