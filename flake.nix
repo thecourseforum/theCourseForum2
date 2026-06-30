@@ -1,11 +1,11 @@
 {
   inputs = {
-    nixpkgs.url = "github:Nixos/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:Nixos/nixpkgs/nixos-26.05";
   };
 
   outputs = { self, nixpkgs }:
     let
-      systems = [ "aarch64-darwin" ];
+      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ]; 
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
     in
     {
