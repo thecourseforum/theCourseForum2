@@ -5,21 +5,20 @@
 Instructions below fetch grade data from [IRA Grade Data Distribution](https://ira.virginia.edu/university-data-home/grade-distribution-last-5-years?check_logged_in=1)
 
 ### Before fetching grades
-- `fetch_grades.py` (available in Google Drive `Engineering` folder) must be in *root* of repository
-- Up-to-date semester data csv must be at `tcf_website/management/commands/semester_data/csv/year_season.csv`
+- Requires up-to-date semester data at `tcf_website/management/commands/semester_data/csv/year_season.csv`
 
 ### Fetching Grades
-- Run this command to obtain grades for a semester:
+- Obtain grades for a semester, can be run locally:
 ```console
-$ python fetch_grades.py <year>_<season>
+$ uv run python fetch_grades.py <year>_<season>
 ```
 
 Output saved in `tcf_website/management/commands/grade_data/csv`
 
 ## Loading Grade Data
-- To load grades:
+- To load grades, run _in the docker container_:
 ```console
-$ python3 manage.py load_grades ALL_DANGEROUS
+$ python manage.py load_grades ALL_DANGEROUS
 ```
 ***NOTE***: For loading grades in production, add this command to container-startup.sh and remove after grade data is loaded into prod database
 

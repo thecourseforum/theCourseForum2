@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+echo "Loading grades w/ custom script [DELETE AFTR USE]"
+
+python manage.py load_grades ALL_DANGEROUS
+
 echo "Starting Django Server with Gunicorn..."
 
 # Optimize workers and threads for your container's CPU allocation
