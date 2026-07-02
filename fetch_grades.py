@@ -57,15 +57,32 @@ SEASON_NAMES = {
     "fall": "Fall",
     "spring": "Spring",
     "summer": "Summer",
-    "january": "January"
+    "january": "January",
 }
 
 # Output CSV columns (must match load_grades.py expectations)
 OUTPUT_COLUMNS = [
-    "Term Desc", "Subject", "Catalog Number", "Class Title", "Course ID",
-    "Primary Instructor Name", "Class Section", "Class Num",
-    "Class Academic Group", "Course GPA", "# of Students",
-    "A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "DFW"
+    "Term Desc",
+    "Subject",
+    "Catalog Number",
+    "Class Title",
+    "Course ID",
+    "Primary Instructor Name",
+    "Class Section",
+    "Class Num",
+    "Class Academic Group",
+    "Course GPA",
+    "# of Students",
+    "A+",
+    "A",
+    "A-",
+    "B+",
+    "B",
+    "B-",
+    "C+",
+    "C",
+    "C-",
+    "DFW",
 ]
 
 
@@ -73,11 +90,12 @@ OUTPUT_COLUMNS = [
 # HELPER FUNCTIONS
 # ============================================================================
 
+
 def clean_text(text: str) -> str:
     """Normalize whitespace in text."""
     if not text:
         return ""
-    return re.sub(r'\s+', ' ', text).strip()
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def format_instructor_name(name: str) -> str:
@@ -92,7 +110,7 @@ def format_instructor_name(name: str) -> str:
 
     # 1. Split by comma to handle multiple instructors
     # "First1 Last1, First2 Last2" -> ["First1 Last1", " First2 Last2"]
-    name_parts = str(name).split(',')
+    name_parts = str(name).split(",")
 
     # 2. Take only the first name in the list
     first_instructor = name_parts[0].strip()
@@ -113,11 +131,11 @@ def format_instructor_name(name: str) -> str:
 def init_driver() -> webdriver.Chrome:
     """Initialize a headless Chrome WebDriver."""
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--disable-gpu')
-    options.add_argument('--window-size=1920,1080')
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1920,1080")
 
     driver = webdriver.Chrome(options=options)
     return driver
@@ -152,7 +170,9 @@ def set_filter(driver, btn_selector: str, value: str, use_search: bool = False) 
             time.sleep(1.5)  # Wait for search results
 
         # Click the matching item
-        item_xpath = f"//div[@role='presentation']//span[normalize-space(text())='{value}']"
+        item_xpath = (
+            f"//div[@role='presentation']//span[normalize-space(text())='{value}']"
+        )
         WebDriverWait(driver, 5).until(
             EC.element_to_be_clickable((By.XPATH, item_xpath))
         ).click()
@@ -228,10 +248,16 @@ def scrape_section(driver, term: str, class_num: str, instructor: str) -> dict:
         "Primary Instructor Name": instructor,
         "Course GPA": "",
         "# of Students": "",
-        "A+": 0, "A": 0, "A-": 0,
-        "B+": 0, "B": 0, "B-": 0,
-        "C+": 0, "C": 0, "C-": 0,
-        "DFW": 0
+        "A+": 0,
+        "A": 0,
+        "A-": 0,
+        "B+": 0,
+        "B": 0,
+        "B-": 0,
+        "C+": 0,
+        "C": 0,
+        "C-": 0,
+        "DFW": 0,
     }
 
     try:
@@ -254,7 +280,7 @@ def scrape_section(driver, term: str, class_num: str, instructor: str) -> dict:
             )
             kpi_box = kpi_label.find_element(By.XPATH, "./../../..")
             kpi_text = kpi_box.get_attribute("textContent")
-            match = re.search(r'(\d\.\d{2})', kpi_text)
+            match = re.search(r"(\d\.\d{2})", kpi_text)
             data["Course GPA"] = match.group(1) if match else ""
         except Exception:
             pass
@@ -263,12 +289,16 @@ def scrape_section(driver, term: str, class_num: str, instructor: str) -> dict:
         grades_elements = driver.find_elements(
             By.CSS_SELECTOR, "svg[data-key='bar-axis'] text"
         )
-        grades_list = [clean_text(el.get_attribute("textContent")) for el in grades_elements]
+        grades_list = [
+            clean_text(el.get_attribute("textContent")) for el in grades_elements
+        ]
 
         counts_elements = driver.find_elements(
             By.CSS_SELECTOR, "svg[data-key='bar-labels'] text"
         )
-        counts_list = [clean_text(el.get_attribute("textContent")) for el in counts_elements]
+        counts_list = [
+            clean_text(el.get_attribute("textContent")) for el in counts_elements
+        ]
 
         # Pair grades with counts
         for grade, count in zip(grades_list, counts_list, strict=False):
@@ -288,6 +318,7 @@ def scrape_section(driver, term: str, class_num: str, instructor: str) -> dict:
 # ============================================================================
 # MAIN LOGIC
 # ============================================================================
+
 
 def load_semester_data(semester_csv: str) -> list[dict]:
     """
@@ -334,10 +365,7 @@ def load_semester_data(semester_csv: str) -> list[dict]:
         instructor_raw = row.get("Instructor1", "")
         instructor = format_instructor_name(instructor_raw) if instructor_raw else ""
 
-        sections.append({
-            "class_num": class_num,
-            "instructor": instructor
-        })
+        sections.append({"class_num": class_num, "instructor": instructor})
 
     return sections
 
@@ -347,19 +375,18 @@ def main():
         description="Fetch grade data from UVA FOIA Grade Distribution website"
     )
     parser.add_argument(
-        "semester",
-        help="Semester in format: <year>_<season> (e.g., 2024_fall)"
+        "semester", help="Semester in format: <year>_<season> (e.g., 2024_fall)"
     )
     parser.add_argument(
         "--limit",
         type=int,
         default=None,
-        help="Limit number of sections to scrape (for testing)"
+        help="Limit number of sections to scrape (for testing)",
     )
     parser.add_argument(
         "--resume",
         action="store_true",
-        help="Resume scraping, skipping already-scraped Class Nums"
+        help="Resume scraping, skipping already-scraped Class Nums",
     )
 
     args = parser.parse_args()
@@ -410,7 +437,7 @@ def main():
         sections = [s for s in sections if s["class_num"] not in existing_class_nums]
 
     if args.limit:
-        sections = sections[:args.limit]
+        sections = sections[: args.limit]
         print(f"Limiting to {args.limit} sections")
 
     print(f"{len(sections)} sections to scrape")
@@ -433,7 +460,11 @@ def main():
             class_num = section["class_num"]
             instructor = section["instructor"]
 
-            print(f"[{i+1}/{len(sections)}] Class Num {class_num}...", end=" ", flush=True)
+            print(
+                f"[{i + 1}/{len(sections)}] Class Num {class_num}...",
+                end=" ",
+                flush=True,
+            )
 
             # Reset all filters before each section
             clear_all_filters(driver)
@@ -455,7 +486,9 @@ def main():
 
             if row_data and row_data.get("Subject"):
                 results.append(row_data)
-                print(f"OK - {row_data['Subject']} {row_data['Catalog Number']} (GPA: {row_data['Course GPA']})")
+                print(
+                    f"OK - {row_data['Subject']} {row_data['Catalog Number']} (GPA: {row_data['Course GPA']})"
+                )
             else:
                 print("NO DATA")
 
@@ -482,7 +515,7 @@ def main():
 
         # Write (append if resuming)
         if args.resume and os.path.exists(output_csv):
-            df.to_csv(output_csv, mode='a', header=False, index=False)
+            df.to_csv(output_csv, mode="a", header=False, index=False)
         else:
             df.to_csv(output_csv, index=False)
 
