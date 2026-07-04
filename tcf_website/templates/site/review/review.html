@@ -182,10 +182,12 @@
     textarea.addEventListener('input', function() {
       const text = this.value.trim();
       const characters = text.length;
-      countDisplay.textContent = characters + ' characters';
-      if (characters < 200) {
+      const remainingCharacters = textarea.minLength - characters;
+      if (characters < textarea.minLength) {
+          countDisplay.textContent = remainingCharacters + ' required characters';
           countDisplay.style.color = 'var(--danger)';
       } else {
+          countDisplay.textContent = characters + ' characters';
           countDisplay.style.color = 'var(--fg-muted)';
       }
     });
