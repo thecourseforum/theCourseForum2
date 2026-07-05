@@ -182,9 +182,8 @@
     textarea.addEventListener('input', function() {
       const text = this.value.trim();
       const characters = text.length;
-      const remainingCharacters = textarea.minLength - characters;
       if (characters < textarea.minLength) {
-          countDisplay.textContent = remainingCharacters + ' required characters';
+          countDisplay.textContent = characters + '/' + textarea.minLength + ' required characters';
           countDisplay.style.color = 'var(--danger)';
       } else {
           countDisplay.textContent = characters + ' characters';
