@@ -184,9 +184,7 @@ def forgot_password(request):
     username = account.username
 
     try:
-        client = boto3.client(
-            "cognito-idp", region_name=settings.COGNITO_REGION_NAME
-        )
+        client = boto3.client("cognito-idp", region_name=settings.COGNITO_REGION_NAME)
         params = {
             "ClientId": settings.COGNITO_APP_CLIENT_ID,
             "Username": username,
@@ -206,16 +204,14 @@ def forgot_password(request):
         logger.error("Cognito forgot_password failed: %s", exc)
         messages.error(
             request,
-            "We couldn't start a password reset right now. Please try again "
-            "later.",
+            "We couldn't start a password reset right now. Please try again later.",
         )
         return render(request, "site/auth/forgot_password.html")
     except BotoCoreError as exc:
         logger.exception("Cognito forgot_password client error: %s", exc)
         messages.error(
             request,
-            "We couldn't start a password reset right now. Please try again "
-            "later.",
+            "We couldn't start a password reset right now. Please try again later.",
         )
         return render(request, "site/auth/forgot_password.html")
 
