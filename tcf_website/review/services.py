@@ -72,9 +72,12 @@ def _get_detoxify_model():
     if _detoxify_unavailable:
         return None
     try:
-        from detoxify import Detoxify  # pylint: disable=import-outside-toplevel
+        import importlib  # pylint: disable=import-outside-toplevel
 
-        _detoxify_model = Detoxify("original")
+        # Dynamic import: detoxify is an optional dependency that is intentionally
+        # not installed, so import it via importlib to avoid a hard static import.
+        detoxify = importlib.import_module("detoxify")
+        _detoxify_model = detoxify.Detoxify("original")
     except Exception:  # pylint: disable=broad-except
         # ImportError if not installed, or any model-init/runtime error.
         _detoxify_unavailable = True
