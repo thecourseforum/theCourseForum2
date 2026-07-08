@@ -1,23 +1,35 @@
 """Auth related views."""
 
+import hashlib
+import hmac
 import json
 import logging
 import urllib.parse
 from base64 import b64encode
 
+import boto3
 import requests
+from botocore.exceptions import BotoCoreError, ClientError
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 logger = logging.getLogger(__name__)
+
+# Shown when the submitted email has no local account. Deliberately identical
+# to the message rendered for Cognito's ``UserNotFoundException`` so the two
+# "no account" paths are indistinguishable to the user (see issue #1251).
+NO_ACCOUNT_MESSAGE = (
+    "No account is associated with that email address. "
+    "Sign in with your UVA email to create an account."
+)
 
 
 def login(request):
@@ -123,3 +135,93 @@ def logout(request):
     )
 
     return HttpResponseRedirect(cognito_logout_url)
+
+
+def _cognito_secret_hash(username):
+    """Return the Cognito ``SECRET_HASH`` for ``username``.
+
+    Required only when the app client is configured with a client secret.
+    It is the base64-encoded HMAC-SHA256 of ``username + client_id`` keyed by
+    the client secret, per the AWS Cognito docs.
+    """
+    message = f"{username}{settings.COGNITO_APP_CLIENT_ID}".encode()
+    key = settings.COGNITO_APP_CLIENT_SECRET.encode()
+    digest = hmac.new(key, message, hashlib.sha256).digest()
+    return b64encode(digest).decode()
+
+
+def forgot_password(request):
+    """Custom password-reset entry point.
+
+    Cognito's hosted UI is configured with ``prevent_user_existence_errors``
+    enabled, so a reset request for an unknown email silently no-ops and the
+    user is left with no feedback (issue #1251). This view checks the local
+    account table first: if no account matches the submitted email, it tells
+    the user to sign in with their UVA email to create one; otherwise it asks
+    Cognito to send the reset code and redirects to login.
+    """
+    if request.method != "POST":
+        return render(request, "site/auth/forgot_password.html")
+
+    email = request.POST.get("email", "").strip()
+
+    if not email:
+        messages.error(request, "Please enter your email address.")
+        return render(request, "site/auth/forgot_password.html")
+
+    user_model = get_user_model()
+    # Emails are stored from the Cognito ``email`` claim; match
+    # case-insensitively so casing differences don't hide an account.
+    account = user_model.objects.filter(email__iexact=email).first()
+
+    if account is None:
+        messages.error(request, NO_ACCOUNT_MESSAGE)
+        return render(request, "site/auth/forgot_password.html")
+
+    # Cognito usernames are the local part of the UVA email (see
+    # ``CognitoBackend.authenticate``), and the reset code is delivered to the
+    # address on file, so drive the Cognito call with the stored username.
+    username = account.username
+
+    try:
+        client = boto3.client(
+            "cognito-idp", region_name=settings.COGNITO_REGION_NAME
+        )
+        params = {
+            "ClientId": settings.COGNITO_APP_CLIENT_ID,
+            "Username": username,
+        }
+        if settings.COGNITO_APP_CLIENT_SECRET:
+            params["SecretHash"] = _cognito_secret_hash(username)
+
+        client.forgot_password(**params)
+    except ClientError as exc:
+        error_code = exc.response.get("Error", {}).get("Code", "")
+        if error_code == "UserNotFoundException":
+            # Local account exists but Cognito has no matching user. Treat it
+            # the same as "no account" rather than leaking the discrepancy.
+            messages.error(request, NO_ACCOUNT_MESSAGE)
+            return render(request, "site/auth/forgot_password.html")
+
+        logger.error("Cognito forgot_password failed: %s", exc)
+        messages.error(
+            request,
+            "We couldn't start a password reset right now. Please try again "
+            "later.",
+        )
+        return render(request, "site/auth/forgot_password.html")
+    except BotoCoreError as exc:
+        logger.exception("Cognito forgot_password client error: %s", exc)
+        messages.error(
+            request,
+            "We couldn't start a password reset right now. Please try again "
+            "later.",
+        )
+        return render(request, "site/auth/forgot_password.html")
+
+    messages.success(
+        request,
+        "If an account exists for that email, we've sent a password reset "
+        "link. Check your inbox.",
+    )
+    return redirect("login")
