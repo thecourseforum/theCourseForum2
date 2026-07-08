@@ -1,7 +1,7 @@
 """Review-related queries and small pure helpers."""
 
 from ..models import Instructor
-from ..utils import recent_semesters
+from ..utils import recent_semesters, reviewable_semesters
 
 
 def recent_semester_id_set() -> set[int]:
@@ -10,8 +10,11 @@ def recent_semester_id_set() -> set[int]:
 
 
 def club_semester_choices_payload():
-    """JSON-serializable term rows for club-mode review (inline club pick)."""
-    return [{"id": s.id, "label": str(s)} for s in recent_semesters()]
+    """JSON-serializable term rows for club-mode review (inline club pick).
+
+    Only terms that have already started, so a club cannot be reviewed for a
+    future semester."""
+    return [{"id": s.id, "label": str(s)} for s in reviewable_semesters()]
 
 
 def instructors_for_course_semester(course_id: int, semester_id: int):
