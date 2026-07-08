@@ -314,13 +314,36 @@ class Instructor(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
 
+    def _stats_for_course(self, course):
+        """Stored ``CourseInstructorStats`` row for this (course, instructor), or None.
+
+        Denormalized review aggregates (issue #982). A missing row means either no
+        non-hidden reviews for the pair or the backfill hasn't run; callers fall
+        back to live aggregation.
+        """
+        course_id = course.pk if hasattr(course, "pk") else course
+        return CourseInstructorStats.objects.filter(
+            course_id=course_id, instructor=self
+        ).first()
+
+    def _live_avg_for_course(self, course, review_field):
+        """Live ``Avg`` of ``review_field`` for this (course, instructor) pair."""
+        return Review.objects.filter(
+            course=course, instructor=self, hidden=False
+        ).aggregate(v=models.Avg(review_field))["v"]
+
     # this implementation is the same as average_rating in Course
     # except with an extra
     def average_rating_for_course(self, course):
         """Compute average rating for course.
 
         Rating is defined as the average of recommendability,
-        instructor rating, and enjoyability."""
+        instructor rating, and enjoyability. Reads the denormalized
+        ``CourseInstructorStats`` row (issue #982) with a live fallback."""
+        stats = self._stats_for_course(course)
+        if stats is not None:
+            return stats.average_rating()
+
         ratings = Review.objects.filter(
             course=course, instructor=self, hidden=False
         ).aggregate(
@@ -341,57 +364,66 @@ class Instructor(models.Model):
 
     def average_difficulty_for_course(self, course):
         """Compute average difficulty score."""
-        return Review.objects.filter(
-            course=course, instructor=self, hidden=False
-        ).aggregate(models.Avg("difficulty"))["difficulty__avg"]
+        stats = self._stats_for_course(course)
+        if stats is not None:
+            return stats.average_difficulty
+        return self._live_avg_for_course(course, "difficulty")
 
     def average_enjoyability_for_course(self, course):
         """Computer average enjoyability"""
-        return Review.objects.filter(
-            course=course, instructor=self, hidden=False
-        ).aggregate(models.Avg("enjoyability"))["enjoyability__avg"]
+        stats = self._stats_for_course(course)
+        if stats is not None:
+            return stats.average_enjoyability
+        return self._live_avg_for_course(course, "enjoyability")
 
     def average_instructor_rating_for_course(self, course):
         """Computer average instructor rating"""
-        return Review.objects.filter(
-            course=course, instructor=self, hidden=False
-        ).aggregate(models.Avg("instructor_rating"))["instructor_rating__avg"]
+        stats = self._stats_for_course(course)
+        if stats is not None:
+            return stats.average_instructor_rating
+        return self._live_avg_for_course(course, "instructor_rating")
 
     def average_recommendability_for_course(self, course):
         """Computer average recommendability"""
-        return Review.objects.filter(
-            course=course, instructor=self, hidden=False
-        ).aggregate(models.Avg("recommendability"))["recommendability__avg"]
+        stats = self._stats_for_course(course)
+        if stats is not None:
+            return stats.average_recommendability
+        return self._live_avg_for_course(course, "recommendability")
 
     def average_hours_for_course(self, course):
         """Compute average hrs/wk."""
-        return Review.objects.filter(
-            course=course, instructor=self, hidden=False
-        ).aggregate(models.Avg("hours_per_week"))["hours_per_week__avg"]
+        stats = self._stats_for_course(course)
+        if stats is not None:
+            return stats.average_hours_per_week
+        return self._live_avg_for_course(course, "hours_per_week")
 
     def average_reading_hours_for_course(self, course):
         """Compute average reading hrs/wk."""
-        return Review.objects.filter(
-            course=course, instructor=self, hidden=False
-        ).aggregate(models.Avg("amount_reading"))["amount_reading__avg"]
+        stats = self._stats_for_course(course)
+        if stats is not None:
+            return stats.average_amount_reading
+        return self._live_avg_for_course(course, "amount_reading")
 
     def average_writing_hours_for_course(self, course):
         """Compute average writing hrs/wk."""
-        return Review.objects.filter(
-            course=course, instructor=self, hidden=False
-        ).aggregate(models.Avg("amount_writing"))["amount_writing__avg"]
+        stats = self._stats_for_course(course)
+        if stats is not None:
+            return stats.average_amount_writing
+        return self._live_avg_for_course(course, "amount_writing")
 
     def average_group_hours_for_course(self, course):
         """Compute average group work hrs/wk."""
-        return Review.objects.filter(
-            course=course, instructor=self, hidden=False
-        ).aggregate(models.Avg("amount_group"))["amount_group__avg"]
+        stats = self._stats_for_course(course)
+        if stats is not None:
+            return stats.average_amount_group
+        return self._live_avg_for_course(course, "amount_group")
 
     def average_other_hours_for_course(self, course):
         """Compute average other HW hrs/wk."""
-        return Review.objects.filter(
-            course=course, instructor=self, hidden=False
-        ).aggregate(models.Avg("amount_homework"))["amount_homework__avg"]
+        stats = self._stats_for_course(course)
+        if stats is not None:
+            return stats.average_amount_homework
+        return self._live_avg_for_course(course, "amount_homework")
 
     def average_gpa_for_course(self, course):
         """Compute average GPA"""
@@ -708,11 +740,20 @@ class Course(models.Model):
         """Returns True if course was taught in current semester."""
         return self.semester_last_taught == Semester.latest()
 
-    def average_rating(self):
-        """Compute average rating.
+    def _stats(self):
+        """Return the stored ``CourseStats`` row for this course, or ``None``.
 
-        Rating is defined as the average of recommendability,
-        instructor rating, and enjoyability."""
+        Denormalized review aggregates (issue #982). Missing rows mean either the
+        course has no non-hidden reviews or the backfill hasn't run yet; callers
+        fall back to live aggregation in that case.
+        """
+        try:
+            return self.stats
+        except CourseStats.DoesNotExist:
+            return None
+
+    def _live_average_rating(self):
+        """Aggregate composite rating directly from reviews (fallback path)."""
         ratings = Review.objects.filter(course=self, hidden=False).aggregate(
             models.Avg("recommendability"),
             models.Avg("instructor_rating"),
@@ -729,8 +770,26 @@ class Course(models.Model):
 
         return (recommendability + instructor_rating + enjoyability) / 3
 
+    def average_rating(self):
+        """Average rating (mean of recommendability, instructor rating, enjoyability).
+
+        Reads the denormalized ``CourseStats`` row (issue #982); falls back to live
+        aggregation when no stats row exists (e.g. before the backfill runs).
+        """
+        stats = self._stats()
+        if stats is not None:
+            return stats.average_rating()
+        return self._live_average_rating()
+
     def average_difficulty(self):
-        """Compute average difficulty score."""
+        """Compute average difficulty score.
+
+        Reads the denormalized ``CourseStats`` row (issue #982); falls back to live
+        aggregation when no stats row exists.
+        """
+        stats = self._stats()
+        if stats is not None:
+            return stats.average_difficulty
         return Review.objects.filter(course=self, hidden=False).aggregate(
             models.Avg("difficulty")
         )["difficulty__avg"]
@@ -749,9 +808,14 @@ class Course(models.Model):
     def with_stats(cls):
         """Base queryset annotated with display stats (rating, difficulty, GPA, mnemonic).
 
-        Uses a subquery for GPA to avoid a cartesian product between the review
-        and coursegrade tables (which would cause review rows to be multiplied
-        by the number of grade buckets before GROUP BY reduces them).
+        Rating/difficulty are read from the denormalized ``CourseStats`` table
+        (issue #982) via the OneToOne ``stats`` relation, so browse/search no longer
+        re-aggregate every ``Review`` per request. A ``Coalesce`` fallback to a live
+        per-course review subquery keeps values correct for any course whose stats
+        row is missing (e.g. before the backfill runs).
+
+        GPA still uses a subquery over ``CourseGrade`` (grades are out of scope for
+        #982) to avoid a cartesian product between the review and grade tables.
         """
         avg_gpa_sq = Subquery(
             CourseGrade.objects.filter(course=OuterRef("pk"))
@@ -759,22 +823,45 @@ class Course(models.Model):
             .annotate(v=Avg("average"))
             .values("v")
         )
+        # Live fallbacks, expressed as correlated subqueries so they don't force a
+        # review JOIN on the outer query (only evaluated when the stored value is
+        # NULL, i.e. no CourseStats row yet).
+        live_rating_sq = Subquery(
+            Review.objects.filter(course=OuterRef("pk"), hidden=False)
+            .values("course")
+            .annotate(
+                v=Avg(
+                    (F("instructor_rating") + F("enjoyability") + F("recommendability"))
+                    / Value(3.0),
+                    output_field=FloatField(),
+                )
+            )
+            .values("v")
+        )
+        live_difficulty_sq = Subquery(
+            Review.objects.filter(course=OuterRef("pk"), hidden=False)
+            .values("course")
+            .annotate(v=Avg("difficulty"))
+            .values("v")
+        )
+        # Stored composite rating: mean of the three stored component averages.
+        # NULL if any component is missing (matches average_rating() semantics).
+        stored_rating = (
+            F("stats__average_instructor_rating")
+            + F("stats__average_enjoyability")
+            + F("stats__average_recommendability")
+        ) / Value(3.0)
         return cls.objects.select_related(
-            "subdepartment", "semester_last_taught"
+            "subdepartment", "semester_last_taught", "stats"
         ).annotate(
             mnemonic=F("subdepartment__mnemonic"),
-            average_rating=Avg(
-                (
-                    F("review__instructor_rating")
-                    + F("review__enjoyability")
-                    + F("review__recommendability")
-                )
-                / Value(3.0),
-                output_field=FloatField(),
-                filter=Q(review__hidden=False),
+            average_rating=Coalesce(
+                stored_rating, live_rating_sq, output_field=FloatField()
             ),
-            average_difficulty=Avg(
-                "review__difficulty", filter=Q(review__hidden=False)
+            average_difficulty=Coalesce(
+                F("stats__average_difficulty"),
+                live_difficulty_sq,
+                output_field=FloatField(),
             ),
             average_gpa=avg_gpa_sq,
         )
@@ -814,29 +901,65 @@ class Course(models.Model):
             )
         )
 
+        # Denormalized review stats for this (course, instructor) pair (issue #982).
+        # Read stored rating/difficulty via correlated subqueries; Coalesce to a
+        # live review aggregate so instructors without a stats row (e.g. before the
+        # backfill runs) still show correct numbers.
+        stats_base = CourseInstructorStats.objects.filter(
+            course=self, instructor=OuterRef("pk")
+        )
+        stored_rating_sq = Subquery(
+            stats_base.values(
+                "average_instructor_rating",
+                "average_enjoyability",
+                "average_recommendability",
+            ).values(
+                v=(
+                    F("average_instructor_rating")
+                    + F("average_enjoyability")
+                    + F("average_recommendability")
+                )
+                / Value(3.0)
+            )[:1]
+        )
+        stored_difficulty_sq = Subquery(stats_base.values("average_difficulty")[:1])
+        live_rating_sq = Subquery(
+            Review.objects.filter(course=self, instructor=OuterRef("pk"), hidden=False)
+            .values("instructor")
+            .annotate(
+                v=Avg(
+                    (F("instructor_rating") + F("enjoyability") + F("recommendability"))
+                    / Value(3.0)
+                )
+            )
+            .values("v")
+        )
+        live_difficulty_sq = Subquery(
+            Review.objects.filter(course=self, instructor=OuterRef("pk"), hidden=False)
+            .values("instructor")
+            .annotate(v=Avg("difficulty"))
+            .values("v")
+        )
+
         return (
             Instructor.objects.filter(hidden=False, **base_filter)
             .distinct()
             .annotate(
-                course_reviews=FilteredRelation(
-                    "review", condition=Q(review__course=self, review__hidden=False)
-                ),
                 course_grades=FilteredRelation(
                     "courseinstructorgrade",
                     condition=Q(courseinstructorgrade__course=self),
                 ),
             )
             .annotate(
-                rating=Avg(
-                    (
-                        F("course_reviews__instructor_rating")
-                        + F("course_reviews__enjoyability")
-                        + F("course_reviews__recommendability")
-                    )
-                    / Value(3.0)
+                rating=Coalesce(
+                    stored_rating_sq, live_rating_sq, output_field=FloatField()
                 ),
                 gpa=Avg("course_grades__average"),
-                difficulty=Avg("course_reviews__difficulty"),
+                difficulty=Coalesce(
+                    stored_difficulty_sq,
+                    live_difficulty_sq,
+                    output_field=FloatField(),
+                ),
                 semester_last_taught=semester_last_taught,
             )
         )
@@ -971,6 +1094,102 @@ class CourseInstructorGrade(models.Model):
             models.Index(fields=["instructor", "course"]),
             models.Index(fields=["course"]),
             models.Index(fields=["instructor"]),
+        ]
+
+
+# Review fields whose averages are stored on the denormalized stats models below.
+# Each entry maps a Review field name -> the stats-model column that holds its average.
+# See issue #982: these aggregates used to be recomputed from every Review on each
+# request; they are now maintained incrementally (recompute-from-scratch on each
+# Review change) and read directly by the display/read paths.
+REVIEW_STAT_FIELDS = {
+    "instructor_rating": "average_instructor_rating",
+    "difficulty": "average_difficulty",
+    "recommendability": "average_recommendability",
+    "enjoyability": "average_enjoyability",
+    "hours_per_week": "average_hours_per_week",
+    "amount_reading": "average_amount_reading",
+    "amount_writing": "average_amount_writing",
+    "amount_group": "average_amount_group",
+    "amount_homework": "average_amount_homework",
+}
+
+
+class _BaseReviewStats(models.Model):
+    """Shared denormalized review-average columns (issue #982).
+
+    Stores the average of every Review field that display/read paths aggregate,
+    plus ``review_count`` so an empty aggregate can be told apart from a genuine
+    zero. Composite "rating" is intentionally NOT stored: it is derived from the
+    three rating components via :meth:`average_rating` so there is a single source
+    of truth. Only non-hidden reviews are counted.
+    """
+
+    review_count = models.PositiveIntegerField(default=0)
+    average_instructor_rating = models.FloatField(null=True, blank=True)
+    average_difficulty = models.FloatField(null=True, blank=True)
+    average_recommendability = models.FloatField(null=True, blank=True)
+    average_enjoyability = models.FloatField(null=True, blank=True)
+    average_hours_per_week = models.FloatField(null=True, blank=True)
+    average_amount_reading = models.FloatField(null=True, blank=True)
+    average_amount_writing = models.FloatField(null=True, blank=True)
+    average_amount_group = models.FloatField(null=True, blank=True)
+    average_amount_homework = models.FloatField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+    def average_rating(self):
+        """Composite rating = mean of the three rating components.
+
+        Matches the historic ``Course.average_rating`` / ``Instructor`` logic:
+        returns ``None`` unless all three components are present and non-zero.
+        """
+        recommendability = self.average_recommendability
+        instructor_rating = self.average_instructor_rating
+        enjoyability = self.average_enjoyability
+        if not recommendability or not instructor_rating or not enjoyability:
+            return None
+        return (recommendability + instructor_rating + enjoyability) / 3
+
+
+class CourseStats(_BaseReviewStats):
+    """Course-level rollup of review averages across all instructors (issue #982)."""
+
+    course = models.OneToOneField(
+        Course, on_delete=models.CASCADE, related_name="stats"
+    )
+
+    def __str__(self):
+        return f"Stats for {self.course} ({self.review_count} reviews)"
+
+
+class CourseInstructorStats(_BaseReviewStats):
+    """Per (course, instructor) rollup of review averages (issue #982)."""
+
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, related_name="instructor_stats"
+    )
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, related_name="course_stats"
+    )
+
+    def __str__(self):
+        return (
+            f"Stats for {self.course} / {self.instructor} ({self.review_count} reviews)"
+        )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["course", "instructor"],
+                name="unique_course_instructor_stats",
+            )
+        ]
+        indexes = [
+            models.Index(fields=["course", "instructor"]),
+            models.Index(fields=["instructor", "course"]),
         ]
 
 
