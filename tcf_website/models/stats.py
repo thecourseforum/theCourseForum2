@@ -13,7 +13,7 @@ reviews for a single course (or course+instructor), not the whole table.
 GPA/grade averages are handled separately by ``load_grades`` and are out of scope.
 """
 
-from django.db.models import Avg, Count
+from django.db.models import Aggregate, Avg, Count
 
 # Maps stats-model column -> the Review field it averages.
 _STAT_COLUMN_TO_REVIEW_FIELD = {
@@ -35,7 +35,7 @@ def _aggregate_review_stats(review_qs) -> dict:
     ``review_count`` is the number of (non-hidden) rows; each average column is the
     ``Avg`` of the corresponding Review field, or ``None`` when there are no rows.
     """
-    aggregates = {"review_count": Count("id")}
+    aggregates: dict[str, Aggregate] = {"review_count": Count("id")}
     for column, review_field in _STAT_COLUMN_TO_REVIEW_FIELD.items():
         aggregates[column] = Avg(review_field)
     result = review_qs.aggregate(**aggregates)
@@ -127,7 +127,7 @@ def recompute_all_stats(*, verbose_writer=None) -> dict:
     non_hidden = Review.objects.filter(hidden=False)
 
     # --- Per (course, instructor) pair ---------------------------------------
-    pair_aggregates = {"review_count": Count("id")}
+    pair_aggregates: dict[str, Aggregate] = {"review_count": Count("id")}
     for column, review_field in _STAT_COLUMN_TO_REVIEW_FIELD.items():
         pair_aggregates[column] = Avg(review_field)
 
