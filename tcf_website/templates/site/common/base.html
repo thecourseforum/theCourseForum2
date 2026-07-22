@@ -44,12 +44,15 @@
         <!-- Google Fonts: Inter -->
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
               rel="stylesheet">
-        <!-- Theme initialization (prevent flash) -->
+        <!-- Theme initialization: always follows OS preference (prevent flash) -->
         <script>
     (function() {
-      const saved = localStorage.getItem('theme');
-      const theme = saved || 'light';
-      document.documentElement.setAttribute('data-theme', theme);
+      const media = window.matchMedia('(prefers-color-scheme: dark)');
+      const applyTheme = (isDark) => {
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      };
+      applyTheme(media.matches);
+      media.addEventListener('change', (e) => applyTheme(e.matches));
     })();
         </script>
         <!-- Main CSS -->
@@ -104,7 +107,6 @@
             {% include "site/schedule/modals/_schedule_flow_modal.html" %}
         {% endblock modals %}
         <!-- Core JavaScript -->
-        <script src="{% static 'js/site/lib/theme.js' %}"></script>
         <script src="{% static 'js/site/lib/recent_items.js' %}"></script>
         <script src="{% static 'js/site/lib/modal.js' %}"></script>
         <script src="{% static 'js/site/lib/flash_messages.js' %}"></script>

@@ -226,54 +226,6 @@
   }
 }
 
-/* ===== THEME TOGGLE ===== */
-
-.theme-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 2.25rem;
-  height: 2.25rem;
-
-  color: var(--fg-muted);
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-lg);
-
-  cursor: pointer;
-  transition:
-    color var(--duration-fast) var(--ease-default),
-    background-color var(--duration-fast) var(--ease-default);
-}
-
-.theme-toggle:hover {
-  color: var(--fg);
-  background-color: var(--bg-muted);
-}
-
-.theme-toggle svg {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-/* Hide icons based on theme */
-.theme-toggle__sun {
-  display: none;
-}
-
-.theme-toggle__moon {
-  display: block;
-}
-
-[data-theme="dark"] .theme-toggle__sun {
-  display: block;
-}
-
-[data-theme="dark"] .theme-toggle__moon {
-  display: none;
-}
-
 /* ===== RECENT ITEMS (courses / clubs) ===== */
 
 .recent-items-trigger {
