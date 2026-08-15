@@ -76,6 +76,7 @@ class Command(BaseCommand):
 
         self.course_grades = {}
         self.course_instructor_grades = {}
+        self.course_instructor_semester_grades = {}
 
     def add_arguments(self, parser):
         """Standard Django function implementation - defines command-line parameters"""
