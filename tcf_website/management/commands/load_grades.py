@@ -11,7 +11,7 @@ from cachalot.api import invalidate
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
-from tcf_website.models import Course, CourseGrade, CourseInstructorGrade, CourseInstructorSemesterGrade, Instructor
+from tcf_website.models import Course, CourseGrade, CourseInstructorGrade, CourseInstructorSemesterGrade, Instructor, Semester
 
 # Location of our grade data CSVs
 DATA_DIR = "tcf_website/management/commands/grade_data/csv/"
@@ -66,6 +66,12 @@ class Command(BaseCommand):
         self.courses = {
             (obj["subdepartment__mnemonic"], obj["number"]): obj["id"]
             for obj in Course.objects.values("id", "number", "subdepartment__mnemonic")
+        }
+
+        # Dict mapping semester (year, season) to its ID in our database
+        self.semesters = {
+            (obj["year"], obj["season"]): obj["id"]
+            for obj in Semester.objects.values("id", "year", "season")
         }
 
         # Default level of verbosity
