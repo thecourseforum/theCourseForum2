@@ -11,7 +11,7 @@ from cachalot.api import invalidate
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
-from tcf_website.models import Course, CourseGrade, CourseInstructorGrade, Instructor
+from tcf_website.models import Course, CourseGrade, CourseInstructorGrade, CourseInstructorSemesterGrade, Instructor
 
 # Location of our grade data CSVs
 DATA_DIR = "tcf_website/management/commands/grade_data/csv/"
@@ -118,6 +118,7 @@ class Command(BaseCommand):
             # ALL_DANGEROUS removes all existing data
             CourseGrade.objects.all().delete()
             CourseInstructorGrade.objects.all().delete()
+            CourseInstructorSemesterGrade.objects.all().delete()
 
             # Loads every data CSV file in /grade_data/csv with exceptions
             for file in sorted(os.listdir(DATA_DIR)):
