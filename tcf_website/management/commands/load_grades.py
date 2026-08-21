@@ -310,11 +310,11 @@ class Command(BaseCommand):
         add_entry(self.course_instructor_semester_grades, course_instructor_semester_identifier)
 
     def load_dict_into_models(self):
-        """Converts dictionaries to real instances of CourseGrade and CourseInstructorGrade.
+        """Converts dictionaries to real instances of CourseGrade, CourseInstructorGrade, and CourseInstructorSemesterGrade.
 
-        Given a course or course-instructor pair and its corresponding grade distribution,
+        Given a course, course-instructor or course-instructor-semster pair and its corresponding grade distribution,
         calculates weighted GPA average and total enrolled students and then uses all of those
-        as parameters to create new CourseGrade and CourseInstructorGrade instances.
+        as parameters to create new CourseGrade, CourseInstructorGrade, and CourseInstructorSemesterGrade instances.
         """
         if self.verbosity > 0:
             print("Step 2: Bulk-create CourseGrade instances")
@@ -347,6 +347,24 @@ class Command(BaseCommand):
         invalidate(CourseInstructorGrade)
         if self.verbosity > 0:
             print("Done creating CourseInstructorGrade instances")
+            print("Step 4: Bulk-create CourseInstructorSemesterGrade instances")
+
+        # Load course_instructor_semester_grades data from dicts and create model instances
+        unsaved_cisg_instances = []
+        for row in tqdm(
+            self.course_instructor_semester_grades, disable=self.suppress_tqdm
+        ):
+            course_instructor_semester_grade_params = self.set_grade_params(
+                row, is_instructor_grade=True, is_semester_grade=True
+            )
+            unsaved_cisg_instance = CourseInstructorSemesterGrade(
+                **course_instructor_semester_grade_params
+            )
+            unsaved_cisg_instances.append(unsaved_cisg_instance)
+        CourseInstructorSemesterGrade.objects.bulk_create(unsaved_cisg_instances)
+        invalidate(CourseInstructorSemesterGrade)
+        if self.verbosity > 0:
+            print("Done creating CourseInstructorSemesterGrade instances")
 
     def set_grade_params(self, row, is_instructor_grade):
         """Creates dict of params to be used as parameters
