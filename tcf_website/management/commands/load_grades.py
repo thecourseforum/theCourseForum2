@@ -193,7 +193,7 @@ class Command(BaseCommand):
     def load_row_into_dict(self, row):
         """
         Loads data from a given row into the global dicts
-        course_grades and course_instructor_grades
+        course_grades, course_instructor_grades, and course_instructor_semester_grades
         """
 
         term_year, term_season = row["Term Desc"].split()
