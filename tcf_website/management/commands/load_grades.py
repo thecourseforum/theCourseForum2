@@ -134,6 +134,7 @@ class Command(BaseCommand):
                 if file[0] not in (".", "~") and ".csv" in file:
                     self.load_semester_file(file)
         else:
+            # TODO: Implement semester-specific loading logic for CourseInstructorSemesterGrade
             self.load_semester_file(f"{semester.lower()}.csv")
         self.load_dict_into_models()
 
@@ -194,10 +195,14 @@ class Command(BaseCommand):
         Loads data from a given row into the global dicts
         course_grades and course_instructor_grades
         """
-        # Columns are processed left to right, with one exception
 
-        # 'Term Desc' column is unused because we only care about aggregate across semesters
-        # Might want to display semester-by-semester metrics too? Would have to change this
+        term_year, term_season = row["Term Desc"].split()
+        semester_id = self.semesters.get((int(term_year), term_season.upper()))
+        if semester_id is None:
+            raise ValueError(
+                f"Semester {term_year} {term_season} not found in database. "
+                "Please add it before loading grades."
+            )
 
         subdepartment = row["Subject"]
         # `Catalog Number` is handled with all other numerical data in the try block below
@@ -266,6 +271,13 @@ class Command(BaseCommand):
             first_name,
             last_name,
         )
+        course_instructor_semester_identifier = (
+            subdepartment,
+            number,
+            first_name,
+            last_name,
+            semester_id,
+        )
 
         # Helper function because we basically do the same thing twice
         def add_entry(data_dict, identifier):
@@ -295,6 +307,7 @@ class Command(BaseCommand):
 
         add_entry(self.course_grades, course_identifier)
         add_entry(self.course_instructor_grades, course_instructor_identifier)
+        add_entry(self.course_instructor_semester_grades, course_instructor_semester_identifier)
 
     def load_dict_into_models(self):
         """Converts dictionaries to real instances of CourseGrade and CourseInstructorGrade.
