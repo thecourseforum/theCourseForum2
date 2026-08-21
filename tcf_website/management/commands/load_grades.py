@@ -366,11 +366,13 @@ class Command(BaseCommand):
         if self.verbosity > 0:
             print("Done creating CourseInstructorSemesterGrade instances")
 
-    def set_grade_params(self, row, is_instructor_grade):
+    def set_grade_params(self, row, is_instructor_grade, is_semester_grade=False):
         """Creates dict of params to be used as parameters
-        in creating CourseGrade/CourseInstructorGrade instances.
+        in creating CourseGrade/CourseInstructorGrade/CourseInstructorSemesterGrade instances.
         Helper function for load_dict_into_models()"""
-        if is_instructor_grade:
+        if is_semester_grade:
+            data = self.course_instructor_semester_grades[row]
+        elif is_instructor_grade:
             data = self.course_instructor_grades[row]
         else:
             data = self.course_grades[row]
@@ -404,6 +406,9 @@ class Command(BaseCommand):
             "average": average,
         }
 
-        if is_instructor_grade:
+        if is_semester_grade:
+            course_grade_params["instructor_id"] = self.instructors.get(row[2:4])
+            course_grade_params["semester_id"] = row[4]
+        elif is_instructor_grade:
             course_grade_params["instructor_id"] = self.instructors.get(row[2:])
         return course_grade_params
