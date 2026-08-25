@@ -13,12 +13,19 @@ env:
   DJANGO_SETTINGS_MODULE: tcf_core.settings.dev
   TCF_ENV: ci
   SECRET_KEY: ci-secret-key-not-for-production
-  # CI database (GitHub Actions postgres service)
+  # Compose service connection values used by the Django container.
   DB_NAME: tcf_db
   DB_USER: postgres
   DB_PASSWORD: postgres
-  DB_HOST: localhost
+  DB_HOST: db
   DB_PORT: 5432
+  REDIS_URL: redis://valkey:6379/0
+  MINIO_ENDPOINT: http://minio:9000
+  MINIO_BUCKET: tcf-media
+  MINIO_ACCESS_KEY: minioadmin
+  MINIO_SECRET_KEY: minioadmin
+  STATIC_BUCKET: tcf-static
+  STATIC_CUSTOM_DOMAIN: localhost:8081
 
 jobs:
   ruff:
@@ -79,37 +86,49 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       code-coverage: ${{ steps.coverage.outputs.percentage }}
-    services:
-      postgres:
-        image: postgres:18.1
-        env:
-          POSTGRES_USER: ${{ env.DB_USER }}
-          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
-          POSTGRES_DB: ${{ env.DB_NAME }}
-        ports:
-          - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          python-version: ${{ env.PYTHON_TARGET }}
-          enable-cache: true
+      - name: Create Compose environment
+        run: |
+          cat > .env <<EOF
+          SECRET_KEY=${SECRET_KEY}
+          DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
+          TCF_ENV=${TCF_ENV}
+          DB_NAME=${DB_NAME}
+          DB_USER=${DB_USER}
+          DB_PASSWORD=${DB_PASSWORD}
+          DB_HOST=${DB_HOST}
+          DB_PORT=${DB_PORT}
+          REDIS_URL=${REDIS_URL}
+          MINIO_ENDPOINT=${MINIO_ENDPOINT}
+          MINIO_BUCKET=${MINIO_BUCKET}
+          MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+          MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+          STATIC_BUCKET=${STATIC_BUCKET}
+          STATIC_CUSTOM_DOMAIN=${STATIC_CUSTOM_DOMAIN}
+          EOF
 
-      - name: Install dependencies
-        run: uv sync --frozen --group dev --no-install-project
+      - name: Start Compose backends
+        run: docker compose up -d --wait db valkey minio
+
+      - name: Initialize MinIO buckets
+        run: docker compose run --rm minio-init
 
       - name: Migrations & Tests
         run: |
-          uv run python manage.py migrate
-          uv run coverage run manage.py test
+          docker compose --profile full run --rm --build web sh -c \
+            'uv run --with coverage coverage run manage.py test && \
+             uv run --with coverage coverage report' | tee coverage.txt
 
       - name: Get code coverage
         id: coverage
         run: |
-          echo "percentage=$(uv run coverage report | grep -o '[0-9]\+%' | tail -1)" >> "$GITHUB_OUTPUT"
+          echo "percentage=$(awk '$1 == "TOTAL" {print $NF}' coverage.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Tear down Compose
+        if: always()
+        run: docker compose --profile full down -v
 
   eslint:
     runs-on: ubuntu-latest

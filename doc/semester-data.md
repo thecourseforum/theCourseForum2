@@ -1,4 +1,6 @@
-# Semester Data
+# (Deprecated) Semester Data
+
+> This guide is deprecated for the new compose stack.
 
 ## Fetching Semester Data
 

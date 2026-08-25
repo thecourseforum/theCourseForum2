@@ -12,6 +12,13 @@ if ENVIRONMENT != "prod":
 
 DEBUG = False
 
+DATABASES["default"].update(
+    {
+        "OPTIONS": {"sslmode": "require"},
+        "CONN_MAX_AGE": 60,  # Remove if using RDS proxy
+    }
+)
+
 ALLOWED_HOSTS = [
     "*",
     "thecourseforum.com",
@@ -29,47 +36,16 @@ AWS_S3_CUSTOM_DOMAIN = env.str(
 AWS_DEFAULT_ACL = None
 
 STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.s3.S3Storage",
-        "OPTIONS": {"object_parameters": {"CacheControl": "max-age=86400"}},
-    },
-    "staticfiles": {
-        "BACKEND": "storages.backends.s3.S3ManifestStaticStorage",
-        "OPTIONS": {
-            "object_parameters": {"CacheControl": "public, max-age=31536000, immutable"}
-        },
-    },
+    "default": s3_storage(
+        object_parameters={"CacheControl": "max-age=86400"},
+    ),
+    "staticfiles": s3_storage(
+        backend="storages.backends.s3.S3ManifestStaticStorage",
+        object_parameters={"CacheControl": "public, max-age=31536000, immutable"},
+    ),
 }
 
-# AWS RDS PostgreSQL
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": env.str("AWS_RDS_NAME"),
-        "USER": env.str("AWS_RDS_USER"),
-        "PASSWORD": env.str("AWS_RDS_PASSWORD"),
-        "HOST": env.str("AWS_RDS_HOST"),
-        "PORT": env.int("AWS_RDS_PORT"),
-        "OPTIONS": {"sslmode": "require"},
-        "CONN_MAX_AGE": 60,  # Remove if using RDS proxy
-    }
-}
-
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": env.str("AWS_REDIS_URL"),  # redis://instance-endpoint:6379
-        "KEY_PREFIX": "tcf:prod",
-        "OPTIONS": {
-            "socket_connect_timeout": 5,
-            "socket_timeout": 5,
-            "retry_on_timeout": True,
-        },
-    }
-}
-
-SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
-SESSION_CACHE_ALIAS = "default"
+CACHES = {"default": redis_cache(env.str("AWS_REDIS_URL"), "tcf:prod")}
 
 CACHALOT_TIMEOUT = 60 * 60 * 24 * 7  # 1 week
 

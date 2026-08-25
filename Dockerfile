@@ -1,32 +1,39 @@
-FROM python:3.12-slim-bookworm
+# syntax=docker/dockerfile:1
 
-ARG INSTALL_DEV=false
+FROM python:3.12-slim-bookworm AS base
 
 ENV PYTHONUNBUFFERED=1 \
     UV_PROJECT_ENVIRONMENT=/opt/venv \
+    UV_CACHE_DIR=/root/.cache/uv \
     PATH="/opt/venv/bin:$PATH"
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends libpq-dev build-essential && \
-    if [ "$INSTALL_DEV" = "true" ]; then \
-        apt-get install -y --no-install-recommends nodejs npm; \
-    fi && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY pyproject.toml uv.lock ./
-RUN if [ "$INSTALL_DEV" = "true" ]; then \
-        uv sync --frozen --no-install-project --group dev; \
-    else \
-        uv sync --frozen --no-install-project --no-dev; \
-    fi
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-install-project --no-dev
 
-COPY . /app/
+# Shipped to ECS by the deploy workflow.
+FROM base AS prod
 
-RUN chmod +x /app/scripts/container-startup.sh
+RUN addgroup --system app && \
+    adduser --system --ingroup app --home /home/app app && \
+    mkdir -p /home/app/.cache/uv && \
+    chown -R app:app /opt/venv /home/app
+
+COPY --chown=app:app . /app/
+RUN chown -R app:app /app && \
+    chmod +x /app/scripts/container-startup.sh
+
+ENV HOME=/home/app \
+    UV_CACHE_DIR=/home/app/.cache/uv
+USER app
 
 EXPOSE 80
 
