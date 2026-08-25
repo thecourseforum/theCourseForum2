@@ -2,10 +2,10 @@
 Fetch club data from UVA's Presence API and write to a CSV file.
 
 Usage:
-docker exec -it tcf_django python manage.py fetch_clubs
+docker compose exec devcontainer uv run python manage.py fetch_clubs
 
 Example:
-docker exec -it tcf_django python manage.py fetch_clubs
+docker compose exec devcontainer uv run python manage.py fetch_clubs
 """
 
 import csv

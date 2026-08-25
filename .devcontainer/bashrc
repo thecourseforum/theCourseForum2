@@ -1,0 +1,41 @@
+# Sourced by ~/.bashrc in the devcontainer.
+
+if [ -S /var/run/docker.sock ]; then
+  # Match the compose project that launched us.
+  _proj="$(docker inspect tcf_devcontainer --format '{{index .Config.Labels "com.docker.compose.project"}}' 2>/dev/null)"
+  export COMPOSE_PROJECT_NAME="${_proj:-tcf}"
+
+  # -it only when interactive, so `psql -c` and pipes work.
+  psql() {
+    if [ -t 0 ] && [ -t 1 ]; then
+      docker exec -it tcf_db psql "$@"
+    else
+      docker exec -i tcf_db psql "$@"
+    fi
+  }
+  # pg_restore won't default --dbname from PGDATABASE, unlike psql/pg_dump.
+  alias pgrestore='docker exec tcf_db pg_restore -d tcf_db'
+  alias pgdump='docker exec tcf_db pg_dump'
+
+  cat <<'EOF'
+
+== tCF dev ==============================================================
+  uv run python manage.py runserver 0.0.0.0:8000    # start the app (port forwarded)
+  docker compose up -d                              # start postgres, valkey, minio
+  docker compose --profile full up -d --build web   # bundled prod-style app :8000
+  docker compose logs -f web                        # tail app logs
+  psql                                              # db shell
+
+Load a database dump (download it to db/latest.dump first):
+  docker cp db/latest.dump tcf_db:/tmp/latest.dump
+  psql -c 'CREATE EXTENSION IF NOT EXISTS pg_trgm;'
+  pgrestore --no-owner --clean --if-exists /tmp/latest.dump
+
+Dump your current database:
+  pgdump --format=custom > db/local.dump
+
+Note: full teardown (`docker compose down`) must be run from a HOST terminal,
+never from inside this container.
+=========================================================================
+EOF
+fi

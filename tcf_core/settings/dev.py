@@ -47,4 +47,11 @@ if ENVIRONMENT == "local" and importlib.util.find_spec("debug_toolbar") is not N
         + ["debug_toolbar.middleware.DebugToolbarMiddleware"]
         + MIDDLEWARE[2:]
     )
-    DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda r: True}
+    DEBUG_TOOLBAR_CONFIG = {
+        "SHOW_TOOLBAR_CALLBACK": lambda r: True,
+        # The toolbar's static-files instrumentation instantiates a subclass
+        # without the S3 storage options, which breaks django-storages.
+        "DISABLE_PANELS": [
+            "debug_toolbar.panels.staticfiles.StaticFilesPanel",
+        ],
+    }

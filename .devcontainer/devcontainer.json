@@ -1,0 +1,19 @@
+{
+  "name": "tCF",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "devcontainer",
+  "runServices": ["devcontainer", "db"],
+  "workspaceFolder": "/app",
+  "postCreateCommand": "npm ci",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "astral-sh.ty",
+        "dbaeumer.vscode-eslint",
+        "monosans.djlint"
+      ]
+    }
+  }
+}
