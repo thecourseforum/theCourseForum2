@@ -6,8 +6,11 @@ Install:
 
 - [Git](https://git-scm.com/book/en/Getting-Started-Installing-Git)
 - [Docker Desktop](https://docs.docker.com/get-docker/) with Docker Compose v2
+- [VS Code](https://code.visualstudio.com/) with the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 - [uv](https://docs.astral.sh/uv/) for host-side Python checks
-- Node.js and npm for the JavaScript checks
+- Node.js and npm for JavaScript checks
+
+You also need access to the [tCF Google Drive](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) if you need a database dump.
 
 ## Initial setup
 
@@ -19,13 +22,15 @@ cd theCourseForum2
 cp .env.example .env
 ```
 
-`.env` is local-only and is intentionally ignored by Docker builds. Do not put
+PostgreSQL reads the values in `.env` when its data directory is initialized.
+`.env` is local-only and is excluded from Docker build contexts. Never put
 production credentials in it.
 
 ## Compose architecture
 
-The Compose project is named `tcf`. Services without a profile are always
-available:
+The Compose project is named `tcf`.
+
+Services without a profile provide the shared local infrastructure:
 
 | Service | Purpose | Local address |
 | --- | --- | --- |
@@ -39,78 +44,102 @@ The `full` profile adds the production-shaped application services:
 
 | Service | Purpose |
 | --- | --- |
-| `release` | Runs migrations, collects static files, invalidates Cachalot, and clears sessions |
-| `web` | Runs Django with Gunicorn |
+| `release` | Migrations, static collection, Cachalot invalidation, and session cleanup |
+| `web` | Bundled Django application served by Gunicorn on `localhost:8000` |
 
-The profile name describes the deployment shape, not the Django settings
-module. Local Compose uses `TCF_ENV=local` by default, so debug tools remain
-enabled. Production ECS tasks set `TCF_ENV=prod` and use AWS services instead
-of the local Postgres, Valkey, and MinIO services.
+The `dev` profile adds the VS Code development container:
 
-## Start the local site
+| Service | Purpose |
+| --- | --- |
+| `devcontainer` | Development tools, Node.js, uv, and Docker-outside-of-Docker access |
 
-The plain command starts only the infrastructure and CDN:
+The Compose profile controls which containers run; it does not select Django
+settings. Local containers use `TCF_ENV=local` by default. ECS production tasks
+set `TCF_ENV=prod` and use AWS RDS, ElastiCache, and S3.
+
+## Choose a local workflow
+
+### VS Code devcontainer (recommended for development)
+
+Open the repository in VS Code and run **Dev Containers: Reopen in Container**.
+The devcontainer uses the `dev` profile, bind-mounts the repository at `/app`,
+installs the development dependencies, and forwards port 8000.
+
+Inside the devcontainer terminal:
+
+```bash
+# Start the CDN if it is not already running
+docker compose up -d cdn
+
+# Apply migrations and collect static files
+docker compose --profile full run --rm release
+
+# Start Django with automatic reload
+uv run python manage.py runserver 0.0.0.0:8000
+```
+
+The devcontainer controls sibling Compose services through the mounted Docker
+socket. Do not run a full `docker compose down` from inside the devcontainer;
+run destructive lifecycle commands from a host terminal instead.
+
+### Bundled production-shaped web service
+
+To run the complete local stack with Gunicorn:
+
+```bash
+docker compose --profile full up --build
+```
+
+The `release` task waits for PostgreSQL, Valkey, and MinIO bucket initialization,
+then `web` starts only after `release` succeeds.
+
+The plain command below starts infrastructure/CDN only and does not start
+Django:
 
 ```bash
 docker compose up
 ```
 
-To start Django as well, activate the production-shaped profile:
-
-```bash
-docker compose --profile full up --build
-```
-
-The `release` task runs first. The `web` service starts only after `release`
-finishes successfully.
-
-Once the stack is running:
+Once the full stack is running:
 
 - Website: <http://localhost:8000>
 - Static CDN: <http://localhost:8081>
 - MinIO console: <http://localhost:9001>
 
-Stop the stack while preserving database and object-storage volumes:
+Do not run the devcontainer server and bundled `web` service on port 8000 at
+the same time.
 
-```bash
-docker compose --profile full down
-```
+## Database dumps
 
-To remove all local data as well:
+Download the latest custom-format backup manually from the [database backup
+folder](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) and save
+it as `db/latest.dump`.
 
-```bash
-docker compose --profile full down -v
-```
-
-## Restore the local database
-
-Download the latest database backup manually from the [database backup
-folder](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh)
-and save it as `db/latest.dump`.
-
-Reset the local database and restore the dump with:
+From a host terminal, reset the local database and restore the dump with:
 
 ```bash
 ./scripts/reset-db.sh
 ```
 
-The script stops the Compose services, clears the public database schema,
-restores the custom-format dump through `docker compose exec`, and preserves
-the named volumes for other services. Start the application again afterward:
+The script stops Compose services without deleting named volumes, clears the
+public schema, and restores the dump through `docker compose exec`. Start the
+chosen local workflow again afterward.
 
-```bash
-docker compose --profile full up --build
-```
-
-To create a custom-format backup of the local database:
+Create a custom-format local backup with:
 
 ```bash
 ./scripts/local_dump.sh [filename.dump]
 ```
 
+To remove all local database and object-storage data:
+
+```bash
+docker compose --profile full down -v
+```
+
 ## Run Django management commands
 
-With the `web` service running, use `exec`:
+In the running bundled web service:
 
 ```bash
 docker compose --profile full exec web python manage.py shell
@@ -118,31 +147,33 @@ docker compose --profile full exec web python manage.py fetch_clubs
 docker compose --profile full exec web python manage.py load_grades ALL_DANGEROUS
 ```
 
-For a one-off command, use `run`:
+In the devcontainer:
+
+```bash
+uv run python manage.py shell
+uv run python manage.py fetch_clubs
+uv run python manage.py load_grades ALL_DANGEROUS
+```
+
+For a one-off bundled-container command:
 
 ```bash
 docker compose --profile full run --rm web python manage.py <command>
-```
-
-Enter the application container with:
-
-```bash
-docker compose --profile full exec web bash
 ```
 
 ## Environment modes
 
 `TCF_ENV` selects the Django runtime mode:
 
-- `local` (default for local Compose): debug tools enabled; uses local Postgres, Valkey, and MinIO
+- `local`: local development settings and debug tools; uses Postgres, Valkey, and MinIO
 - `ci`: debug disabled; uses the same Compose-backed services in GitHub Actions
-- `prod`: production settings; uses AWS RDS, ElastiCache, and S3; ECS tasks must set this explicitly
+- `prod`: production settings; uses AWS RDS, ElastiCache, and S3; ECS must set this explicitly
 
 The Compose `full` profile does not automatically set `TCF_ENV=prod`.
 
 ## Local quality checks
 
-Install the locked development dependencies and run the same checks used by CI:
+Run the same host-side checks used by CI:
 
 ```bash
 uv sync --frozen --group dev --no-install-project
@@ -154,19 +185,20 @@ npm ci
 npx eslint -c .config/.eslintrc.yml tcf_website/static/
 ```
 
-The Compose-backed Django test command is:
+Run the Compose-backed Django tests with:
 
 ```bash
 docker compose --profile full run --rm --build web python manage.py test
 ```
 
-GitHub Actions additionally runs the tests with coverage against the same
-Postgres, Valkey, and MinIO services.
+GitHub Actions runs these tests with coverage against the same PostgreSQL,
+Valkey, and MinIO services.
 
-## VS Code
+## Useful documentation
 
-When opening the project, VS Code may prompt you to install the recommended
-extensions. The list is in `.vscode/extensions.json`.
+- [Useful commands](useful-commands.md)
+- [Semester data](semester-data.md)
+- [Grade data](grade-data.md)
 
 ## Authentication
 

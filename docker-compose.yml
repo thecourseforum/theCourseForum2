@@ -133,6 +133,27 @@ services:
       release:
         condition: service_completed_successfully
 
+  devcontainer:
+    profiles: ["dev"]
+    build:
+      context: .
+      target: dev
+    container_name: tcf_devcontainer
+    command: sleep infinity
+    environment:
+      DJANGO_SETTINGS_MODULE: tcf_core.settings.dev
+      TCF_ENV: local
+    volumes:
+      # Docker-outside-of-docker: control sibling services via the host daemon.
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      db:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+
 volumes:
   pgdata:
   minio_data:

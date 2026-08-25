@@ -1,8 +1,8 @@
 """List reviews for a course/instructor page for moderation purposes.
 
 Usage:
-  docker exec -it tcf_django python manage.py list_reviews --url "/course/42/67/"
-  docker exec -it tcf_django python manage.py list_reviews --course-id 42 --instructor-id 67
+  docker compose exec devcontainer uv run python manage.py list_reviews --url "/course/42/67/"
+  docker compose exec devcontainer uv run python manage.py list_reviews --course-id 42 --instructor-id 67
 
   By default, names and emails are masked. Pass --show-user-info to reveal them.
   Pass --parseable to emit REVIEW| lines for piping into hide_review.sh.
