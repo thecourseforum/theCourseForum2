@@ -1,33 +1,47 @@
-#!/bin/bash
-#
-# This script resets the local database by destroying the container and volume,
-# starting a new one, and restoring it from a dump file.
-source .env
+#!/usr/bin/env bash
+# Reset the local Compose database and restore a custom-format dump.
 
-DB_FILE="${1:-latest.dump}"
+set -euo pipefail
 
-if [ ! -f "db/$DB_FILE" ]; then 
-  echo "Database file '$DB_FILE' not found."
-  echo "Ensure the latest dump file is downloaded and located in db/, and provide just the filename."
-  echo 'The latest backup can be found in the Google Drive at "tCF/Engineering/DB/RDS/latest.dump".'
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+if [[ ! -f .env ]]; then
+  echo "Missing .env. Copy .env.example to .env first." >&2
   exit 1
 fi
 
-set -e
+# shellcheck disable=SC1091
+source .env
 
-echo "--- Tearing down existing containers and volumes..."
-docker-compose down -v
+DB_FILE="${1:-latest.dump}"
+DUMP_PATH="db/$DB_FILE"
 
-echo "--- Starting new PostgreSQL container..."
-docker-compose up -d db
+if [[ ! -f "$DUMP_PATH" ]]; then
+  echo "Database file '$DUMP_PATH' not found." >&2
+  echo "Download the backup and place it in db/, or provide its filename." >&2
+  exit 1
+fi
 
-echo "--- Waiting for database to be ready..."
-until docker exec tcf_db pg_isready -U "$DB_USER" -d "$DB_NAME" -q; do
-  echo "Database is unavailable - sleeping"
+echo "--- Stopping Compose services (keeping named volumes)..."
+docker compose --profile full down --remove-orphans
+
+echo "--- Starting PostgreSQL..."
+docker compose up -d db
+
+echo "--- Waiting for PostgreSQL..."
+until docker compose exec -T db pg_isready -U "$DB_USER" -d "$DB_NAME" -q; do
   sleep 1
 done
 
-echo "--- Database is ready! Restoring from dump file..."
-docker exec -i tcf_db pg_restore -U "$DB_USER" -d "$DB_NAME" --no-owner "//app/$DB_FILE"
+echo "--- Clearing the public schema..."
+docker compose exec -T db psql \
+  -U "$DB_USER" -d "$DB_NAME" -v ON_ERROR_STOP=1 <<'SQL'
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+SQL
 
-echo "--- Database restore complete!"
+echo "--- Restoring '$DUMP_PATH'..."
+docker compose exec -T db pg_restore \
+  -U "$DB_USER" -d "$DB_NAME" --no-owner < "$DUMP_PATH"
+
+echo "--- Database restore complete."
