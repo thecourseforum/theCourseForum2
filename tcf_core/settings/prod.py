@@ -1,6 +1,14 @@
 """Django settings for AWS production."""
 
+from django.core.exceptions import ImproperlyConfigured
+
 from .base import *
+
+# ECS sets TCF_ENV=prod (iac/ecs.tf); refuse to boot in any other mode.
+if ENVIRONMENT != "prod":
+    raise ImproperlyConfigured(
+        f"tcf_core.settings.prod requires TCF_ENV=prod; got {ENVIRONMENT!r}"
+    )
 
 DEBUG = False
 
