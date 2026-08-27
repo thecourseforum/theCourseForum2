@@ -15,3 +15,14 @@
         </button>
     </div>
 </section>
+
+<script>
+(function () {
+  var banner = document.getElementById("tcf-interest-meeting");
+  if (!banner) return;
+  var key = "bannerDismissed:" + banner.dataset.bannerId;
+  if (localStorage.getItem(key) === "true") {
+    banner.hidden = true;
+  }
+})();
+</script>
