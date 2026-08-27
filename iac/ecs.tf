@@ -37,6 +37,10 @@ container_definitions = jsonencode([
           value = "tcf_core.settings.prod"
         },
         {
+          name  = "TCF_ENV"
+          value = "prod"
+        },
+        {
           name  = "AWS_STORAGE_BUCKET_NAME"
           value = aws_s3_bucket.static.id
         },
