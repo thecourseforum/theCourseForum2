@@ -518,8 +518,9 @@ span.pagination__item {
   background: none;
   border: none;
   color: var(--accent-fg);
-  font-size: var(--text-lg);
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   padding: var(--space-1);
   opacity: 0.85;
