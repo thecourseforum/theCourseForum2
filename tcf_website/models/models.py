@@ -804,24 +804,15 @@ class Course(models.Model):
                 - CATALOG_YEAR_WINDOW,
             }
 
-        latest_section_taught = Section.objects.filter(
-            course=self, instructors=OuterRef("pk")
-        ).order_by("-semester__number")
-
-        if latest_only:
-            semester_last_taught = Value(
-                latest_semester.pk, output_field=IntegerField()
+        semester_last_taught_number = (
+            Value(latest_semester.number, output_field=IntegerField())
+            if latest_only
+            else Subquery(
+                Section.objects.filter(course=self, instructors=OuterRef("pk"))
+                .order_by("-semester__number")
+                .values("semester__number")[:1]
             )
-            semester_last_taught_number = Value(
-                latest_semester.number, output_field=IntegerField()
-            )
-        else:
-            semester_last_taught = Subquery(
-                latest_section_taught.values("semester__id")[:1]
-            )
-            semester_last_taught_number = Subquery(
-                latest_section_taught.values("semester__number")[:1]
-            )
+        )
 
         return (
             Instructor.objects.filter(hidden=False, **base_filter)
@@ -846,7 +837,6 @@ class Course(models.Model):
                 ),
                 gpa=Avg("course_grades__average"),
                 difficulty=Avg("course_reviews__difficulty"),
-                semester_last_taught=semester_last_taught,
                 semester_last_taught_number=semester_last_taught_number,
             )
         )

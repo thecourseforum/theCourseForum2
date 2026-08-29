@@ -1,6 +1,7 @@
 """Tests for Course model."""
 
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
 
 from ..models import Instructor, Section, Semester
@@ -125,13 +126,29 @@ class CourseInstructorOrderTestCase(TestCase):
             order.index(self.fall_instructor.pk),
         )
 
-    def test_semester_last_taught_is_the_semester_id(self):
-        """The course view resolves this annotation as a Semester primary key."""
+    def test_semester_last_taught_number_is_the_sis_semester_code(self):
+        """The course view resolves this annotation back into a Semester."""
         instructors = {i.pk: i for i in self.sorted_instructors("desc")}
 
         self.assertEqual(
-            self.fall.pk, instructors[self.fall_instructor.pk].semester_last_taught
+            self.fall.number,
+            instructors[self.fall_instructor.pk].semester_last_taught_number,
         )
         self.assertEqual(
-            self.summer.pk, instructors[self.summer_instructor.pk].semester_last_taught
+            self.summer.number,
+            instructors[self.summer_instructor.pk].semester_last_taught_number,
         )
+
+    def test_course_page_labels_each_instructor_with_their_last_semester(self):
+        """The rendered page resolves semester numbers into display names."""
+        url = reverse("course", args=["CS", self.course.number])
+        response = self.client.get(url, {"latest": "false"})
+        rendered = response.content.decode()
+
+        self.assertEqual(200, response.status_code)
+        self.assertLess(
+            rendered.index(str(self.fall)),
+            rendered.index(str(self.summer)),
+            "Fall should be rendered above Summer",
+        )
+        self.assertNotIn("Unknown", rendered)

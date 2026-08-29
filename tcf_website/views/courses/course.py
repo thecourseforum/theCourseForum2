@@ -80,10 +80,14 @@ def course_view(request, mnemonic: str, course_number: int):
         build_section_times_maps_by_instructor(course.id, latest_semester)
     )
 
-    sem_ids = {i.semester_last_taught for i in instructors if i.semester_last_taught}
-    sems = {s.pk: s for s in Semester.objects.filter(pk__in=sem_ids)}
+    sem_numbers = {
+        i.semester_last_taught_number
+        for i in instructors
+        if i.semester_last_taught_number
+    }
+    sems = {s.number: s for s in Semester.objects.filter(number__in=sem_numbers)}
     for instructor in instructors:
-        sem = sems.get(instructor.semester_last_taught)
+        sem = sems.get(instructor.semester_last_taught_number)
         instructor.semester_last_taught = str(sem) if sem else "Unknown"
         instructor.times = lecture_times_by_instructor.get(instructor.id, {})
         instructor.all_times = all_times_by_instructor.get(instructor.id, {})
