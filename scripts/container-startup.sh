@@ -5,6 +5,13 @@ set -e
 #
 # python manage.py load_grades ALL_DANGEROUS
 
+echo "Loading course data w/ custom script [DELETE AFTR USE]"
+
+python manage.py load_semester 2022_january
+python manage.py load_semester 2024_summer
+python manage.py load_semester 2025_january
+python manage.py load_semester 2026_january
+
 echo "Starting Django Server with Gunicorn..."
 
 # Optimize workers and threads for your container's CPU allocation
