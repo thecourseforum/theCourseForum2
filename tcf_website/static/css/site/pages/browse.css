@@ -105,11 +105,17 @@
   margin-bottom: var(--space-8);
 }
 
+.school-header__heading {
+  margin: 0;
+}
+
 .school-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
+
+  width: 100%;
 
   padding: var(--space-3) var(--space-5);
 
@@ -118,6 +124,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
 
+  text-align: left;
   cursor: pointer;
   transition: border-color var(--duration-fast) var(--ease-default);
 }
@@ -136,6 +143,11 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
+}
+
+.school-header__text {
+  display: flex;
+  flex-direction: column;
 }
 
 .school-header__icon {

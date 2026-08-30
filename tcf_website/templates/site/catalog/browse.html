@@ -95,11 +95,14 @@ document.addEventListener('DOMContentLoaded', function() {
   // School accordion toggle
   document.querySelectorAll('.school-header').forEach(header => {
     header.addEventListener('click', function() {
-      const section = this.parentElement;
+      const section = this.closest('.school-section');
       const grid = section.querySelector('.departments-grid');
+      const willExpand = this.getAttribute('aria-expanded') !== 'true';
 
-      this.classList.toggle('is-open');
-      grid.classList.toggle('is-open');
+      this.setAttribute('aria-expanded', String(willExpand));
+      this.classList.toggle('is-open', willExpand);
+      grid.classList.toggle('is-open', willExpand);
+      grid.hidden = !willExpand;
     });
   });
 });
