@@ -11,6 +11,7 @@ on:
 env:
   PYTHON_TARGET: "3.12"
   DJANGO_SETTINGS_MODULE: tcf_core.settings.dev
+  TCF_ENV: ci
   SECRET_KEY: ci-secret-key-not-for-production
   # CI database (GitHub Actions postgres service)
   DB_NAME: tcf_db
@@ -80,7 +81,7 @@ jobs:
       code-coverage: ${{ steps.coverage.outputs.percentage }}
     services:
       postgres:
-        image: postgres:15.4
+        image: postgres:18.1
         env:
           POSTGRES_USER: ${{ env.DB_USER }}
           POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}

@@ -17,6 +17,16 @@ cd theCourseForum2
 cp .env.example .env
 ```
 
+### Environment modes
+
+The `TCF_ENV` variable identifies the runtime mode:
+
+- `local` (the default): local development settings and debug tools
+- `ci`: CI settings with debug disabled
+- `prod`: production settings; ECS task definitions must set `TCF_ENV=prod`
+
+Invalid values cause Django to fail during startup.
+
 3. Build the project
 
 ```bash
@@ -69,16 +79,18 @@ docker exec -it tcf_django /bin/bash
 ## CI checks locally
 
 ```bash
-ruff check .
-ruff format --check .
-djlint tcf_website/templates --check --lint
-ty check
+uv run ruff check .
+uv run ruff format --check .
+uv run djlint tcf_website/templates --check --lint
+uv run ty check
 npm ci && npx eslint -c .config/.eslintrc.yml tcf_website/static/
-python manage.py migrate
-coverage run manage.py test
+uv run python manage.py migrate
+uv run coverage run manage.py test
 ```
 
-GitHub Actions sets `GITHUB_ACTIONS=true` so the same module runs with `DEBUG=False` and without the debug toolbar; see [`.github/workflows/ci.yml`](../.github/workflows/ci.yml).
+GitHub Actions sets `TCF_ENV=ci`, so the same settings module runs with
+`DEBUG=False` and without the debug toolbar; see
+[`.github/workflows/ci.yml`](../.github/workflows/ci.yml).
 
 ## Authentication Functionality
 

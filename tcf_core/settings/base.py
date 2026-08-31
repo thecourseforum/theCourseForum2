@@ -4,18 +4,23 @@ import os
 
 import environ
 from django.contrib.messages import constants as messages
+from django.core.exceptions import ImproperlyConfigured
 from django.urls import reverse_lazy
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Django-environ library imports .env settings
-env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, False),
-)
+env = environ.Env()
 env_file = os.path.join(BASE_DIR, ".env")
 environ.Env.read_env(env_file)
+
+# Runtime mode, set by the launcher: local (default) | ci | prod.
+ENVIRONMENT = env.str("TCF_ENV", default="local")
+if ENVIRONMENT not in ("local", "ci", "prod"):
+    raise ImproperlyConfigured(
+        f"TCF_ENV must be one of 'local', 'ci', 'prod'; got {ENVIRONMENT!r}"
+    )
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env.str("SECRET_KEY")

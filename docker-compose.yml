@@ -20,7 +20,7 @@ services:
     ports:
       - "8000:8000"
     container_name: tcf_django
-    restart: always
+    restart: unless-stopped
     depends_on:
       - db
       # db:

@@ -80,6 +80,8 @@
         title="Google Tag Manager"></iframe></noscript>
         <!-- Skip to main content (accessibility) -->
         <a href="#main-content" class="sr-only">Skip to main content</a>
+        <!-- Interest Meeting Banner -->
+        {% include "site/common/components/_interest_meeting.html" %}
         <!-- Header -->
         {% block header %}
             {% include "site/common/components/_header.html" %}
@@ -105,6 +107,7 @@
         {% endblock modals %}
         <!-- Core JavaScript -->
         <script src="{% static 'js/site/lib/theme.js' %}"></script>
+        <script src="{% static 'js/site/lib/banner.js' %}"></script>
         <script src="{% static 'js/site/lib/recent_items.js' %}"></script>
         <script src="{% static 'js/site/lib/modal.js' %}"></script>
         <script src="{% static 'js/site/lib/flash_messages.js' %}"></script>

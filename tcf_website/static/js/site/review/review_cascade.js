@@ -267,7 +267,7 @@
       );
       const dd = courseLink.closest(".autocomplete-dropdown-container");
       if (dd) {
-        dd.style.display = "none";
+        dd.hidden = true;
         dd.innerHTML = "";
       }
       const input = document.querySelector(
@@ -289,7 +289,7 @@
       clubPicked(bid, titleEl ? titleEl.textContent.trim() : "", "");
       const dd = clubLink.closest(".autocomplete-dropdown-container");
       if (dd) {
-        dd.style.display = "none";
+        dd.hidden = true;
         dd.innerHTML = "";
       }
       const input = document.querySelector("#review-club-picker input[name=q]");
