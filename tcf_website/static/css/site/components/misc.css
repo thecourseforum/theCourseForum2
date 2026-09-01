@@ -475,3 +475,63 @@ span.pagination__item {
 .skeleton--card {
   height: 12rem;
 }
+
+
+
+/*
+ * Interest Meeting Banner
+ * ========================
+ */
+
+.interest-meeting-banner {
+  background-color: var(--accent);
+}
+
+.interest-meeting-banner__inner {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.interest-meeting-banner__text {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--accent-fg);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.interest-meeting-banner__link {
+  color: var(--accent-fg);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: var(--font-medium);
+}
+
+.interest-meeting-banner__close {
+  background: none;
+  border: none;
+  color: var(--accent-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: var(--space-1);
+  opacity: 0.85;
+}
+
+.interest-meeting-banner__close:hover {
+  opacity: 1;
+}
+
+@media (min-width: 640px) {
+  .interest-meeting-banner__inner {
+    padding: var(--space-3) var(--space-6);
+  }
+}

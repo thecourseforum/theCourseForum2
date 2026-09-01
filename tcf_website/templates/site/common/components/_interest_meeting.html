@@ -1,0 +1,36 @@
+<section class="interest-meeting-banner"
+         id="tcf-interest-meeting"
+         data-banner-id="interest-meeting-2026"
+         aria-label="Announcement">
+    <div class="interest-meeting-banner__inner">
+        <p class="interest-meeting-banner__text">
+            Curious about joining theCourseForum? Come to one of our interest meetings! <strong>8/30 @ 2:30PM</strong> in <strong>SHW 100A</strong> or <strong>9/2 @ 6:00PM</strong> in <strong>SHW 101B.</strong>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdYEe758Zzr9IIwiZ81L9gXwJEubzxwFsFBuNkrkbCzE61bpQ/viewform"
+               class="interest-meeting-banner__link">Interest Form</a>
+        </p>
+        <button type="button"
+                class="interest-meeting-banner__close"
+                aria-label="Dismiss announcement"
+                data-banner-dismiss>
+            <svg viewBox="0 0 24 24"
+                 width="16"
+                 height="16"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+</section>
+<script>
+(function () {
+  var banner = document.getElementById("tcf-interest-meeting");
+  if (!banner) return;
+  var key = "bannerDismissed:" + banner.dataset.bannerId;
+  if (localStorage.getItem(key) === "true") {
+    banner.hidden = true;
+  }
+})();
+</script>

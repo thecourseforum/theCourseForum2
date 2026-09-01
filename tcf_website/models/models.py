@@ -891,13 +891,13 @@ class Course(models.Model):
                 - CATALOG_YEAR_WINDOW,
             }
 
-        semester_last_taught = (
-            Value(latest_semester.pk, output_field=IntegerField())
+        semester_last_taught_number = (
+            Value(latest_semester.number, output_field=IntegerField())
             if latest_only
             else Subquery(
                 Section.objects.filter(course=self, instructors=OuterRef("pk"))
                 .order_by("-semester__number")
-                .values("semester__id")[:1]
+                .values("semester__number")[:1]
             )
         )
 
@@ -960,7 +960,7 @@ class Course(models.Model):
                     live_difficulty_sq,
                     output_field=FloatField(),
                 ),
-                semester_last_taught=semester_last_taught,
+                semester_last_taught_number=semester_last_taught_number,
             )
         )
 
@@ -976,16 +976,16 @@ class Course(models.Model):
             "gpa": "gpa",
             "rating": "rating",
             "difficulty": "difficulty",
-            "last_taught": "semester_last_taught",
+            "last_taught": "semester_last_taught_number",
         }
-        sort_field = sort_field_map.get(sortby, "semester_last_taught")
+        sort_field = sort_field_map.get(sortby, "semester_last_taught_number")
         order_expr = (
             F(sort_field).desc(nulls_last=True)
             if order == "desc"
             else F(sort_field).asc(nulls_last=True)
         )
         return self.get_instructors_and_data(latest_semester, latest_only).order_by(
-            order_expr
+            order_expr, "last_name", "first_name"
         )
 
     @classmethod
