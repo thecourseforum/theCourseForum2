@@ -117,19 +117,17 @@ class Department(models.Model):
                 qs = self.fetch_recent_courses(latest_only)
                 return qs[::-1] if reverse else qs
             case "rating":
+                # Sort on the stored-stat annotation with_stats() already displays,
+                # so the sort value and the shown value come from the same source
+                # instead of re-aggregating every Review per request (issue #982).
                 annotation = Coalesce(
-                    (
-                        Avg("review__recommendability")
-                        + Avg("review__instructor_rating")
-                        + Avg("review__enjoyability")
-                    )
-                    / 3,
+                    F("average_rating"),
                     Value(0) if reverse else Value(5.1),
                     output_field=FloatField(),
                 )
             case "difficulty":
                 annotation = Coalesce(
-                    Avg("review__difficulty"),
+                    F("average_difficulty"),
                     Value(0) if reverse else Value(5.1),
                     output_field=FloatField(),
                 )

@@ -121,7 +121,7 @@ class RecomputeReviewStatsCommandTests(TestCase):
 
         # Every course with non-hidden reviews should now have a stats row whose
         # difficulty matches a direct live aggregate.
-        for review in Review.objects.filter(hidden=False):
+        for review in Review.objects.filter(hidden=False).exclude(course__isnull=True):
             stats = CourseStats.objects.get(course=review.course)
             live = Review.objects.filter(
                 course=review.course, hidden=False
