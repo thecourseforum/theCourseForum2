@@ -4,6 +4,8 @@ services:
       context: .
       args:
         INSTALL_DEV: "true"
+    env_file:
+      - .env
     command: >
       bash -c "set -e &&
       python manage.py migrate &&
