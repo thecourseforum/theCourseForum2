@@ -491,19 +491,22 @@ span.pagination__item {
   max-width: var(--size-max);
   margin: 0 auto;
   padding: var(--space-3) var(--space-4);
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-4);
 }
 
 .interest-meeting-banner__text {
+  grid-column: 2;
+  justify-self: center;
   margin: 0;
   font-size: var(--text-sm);
   color: var(--accent-fg);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: var(--space-2);
 }
 
@@ -515,6 +518,8 @@ span.pagination__item {
 }
 
 .interest-meeting-banner__close {
+  grid-column: 3;
+  justify-self: end;
   background: none;
   border: none;
   color: var(--accent-fg);
