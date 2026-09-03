@@ -1,7 +1,7 @@
 """Application views."""
 
 from .account import DeleteProfile, profile, reviews
-from .auth import login, logout
+from .auth import forgot_password, login, logout
 from .catalog import browse, department, search
 from .clubs import club_category, club_view
 from .courses import course_instructor, course_view
