@@ -16,11 +16,15 @@ $ uv run python fetch_grades.py <year>_<season>
 Output saved in `tcf_website/management/commands/grade_data/csv`
 
 ## Loading Grade Data
-- To load grades, run _in the docker container_:
+
+With the local Compose stack running, load grades into PostgreSQL with:
+
 ```console
-$ python manage.py load_grades ALL_DANGEROUS
+$ docker compose --profile full exec web python manage.py load_grades ALL_DANGEROUS
 ```
-***NOTE***: For loading grades in production, add this command to container-startup.sh and remove after grade data is loaded into prod database
+
+For production, run the management command as a one-off ECS task with
+`scripts/ecs-run-command.sh`; do not add it to the web container startup.
 
 
 ## Other useful commands

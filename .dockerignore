@@ -1,9 +1,12 @@
 node_modules/
 *.sql
+*.dump
+db/*.csv
 venv
 .venv
 .ruff_cache
 __pycache__
 *.pyc
 .DS_Store
+.env
 .git

@@ -2,10 +2,10 @@
 Fetch and save data from SIS API for a specified semester into a CSV file.
 
 Usage:
-docker exec -it tcf_django python manage.py fetch_data "<year>_<season>"
+docker compose exec devcontainer uv run python manage.py fetch_data "<year>_<season>"
 
 Example:
-docker exec -it tcf_django python manage.py fetch_data "2023_spring"
+docker compose exec devcontainer uv run python manage.py fetch_data "2023_spring"
 """
 
 # Classes intended stream finds each department, from there make a query to find each class in the department,
