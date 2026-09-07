@@ -21,13 +21,6 @@ about 20 seconds. It needs no credentials, no VPN and no browser. Pass `--min-ro
 in automation so a term that comes back empty fails loudly instead of writing a
 truncated CSV.
 
-The previous Selenium scraper is kept as `old_grades` for use if the engine endpoint
-ever stops serving anonymous sessions. It drives the page in a browser one section at
-a time and takes roughly a day per semester:
-```console
-$ uv run python manage.py old_grades <year>_<season> [--resume]
-```
-
 Output saved in `tcf_website/management/commands/grade_data/csv`
 
 ## Loading Grade Data

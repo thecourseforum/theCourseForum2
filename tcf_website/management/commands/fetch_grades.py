@@ -7,8 +7,6 @@ instead of driving the page in a browser. A whole term is two hypercube
 queries rather than one browser round-trip per section, which takes seconds
 instead of a day and needs no credentials, no VPN and no Chrome.
 
-The Selenium scraper this replaces is kept as the old_grades command.
-
 USAGE:
     python manage.py fetch_grades 2024_fall
     python manage.py fetch_grades 2024_fall --min-rows 500
