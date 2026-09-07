@@ -157,6 +157,28 @@ class QlikEngine:
             "qReturn"
         ]
 
+    def field_values(self, field):
+        """Return every value of a field paired with its selection state."""
+        properties = {
+            "qInfo": {"qType": "tcf-fetch-grades-list"},
+            "qListObjectDef": {
+                "qDef": {"qFieldDefs": [field]},
+                "qInitialDataFetch": [
+                    {"qTop": 0, "qLeft": 0, "qHeight": MAX_CELLS, "qWidth": 1}
+                ],
+            },
+        }
+        handle = self.call(self.doc, "CreateSessionObject", {"qProp": properties})[
+            "qReturn"
+        ]["qHandle"]
+        layout = self.call(handle, "GetLayout", {})["qLayout"]["qListObject"]
+        return [
+            (cell.get("qText"), cell.get("qState"))
+            for page in layout.get("qDataPages", [])
+            for row in page.get("qMatrix", [])
+            for cell in row
+        ]
+
     def hypercube(self, dimensions, measures):
         """Build a session hypercube and page through every row of it."""
         properties = {
@@ -379,9 +401,15 @@ class Command(BaseCommand):
         engine = QlikEngine(app_id)
 
         try:
-            if not engine.select("Term Desc", term):
+            engine.select("Term Desc", term)
+
+            values = engine.field_values("Term Desc")
+            selected = sorted(text for text, state in values if state == "S")
+            if selected != [term]:
+                available = ", ".join(sorted(text for text, _ in values))
                 raise CommandError(
-                    f"Term '{term}' not found in the FOIA app. "
+                    f"Term '{term}' is not available in the FOIA app. "
+                    f"Available terms: {available or '(none)'}. "
                     "Grades for a semester are published some weeks after it ends."
                 )
 
