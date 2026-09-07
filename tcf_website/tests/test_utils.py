@@ -1,6 +1,3 @@
-# pylint: disable=wildcard-import
-# pylint: disable=unused-wildcard-import
-# pylint: disable=duplicate-code
 """Common testing utilities."""
 
 import logging
@@ -19,9 +16,10 @@ def setup(obj):
     obj.subdepartment = Subdepartment.objects.create(
         name="Computer Science", mnemonic="CS", department=obj.department
     )
-    obj.semester = Semester.objects.create(year=2020, season="FALL", number=1208)
-    obj.past_semester = Semester.objects.create(year=2010, season="FALL", number=1108)
-    obj.incomplete_semester = Semester.objects.create(year=2019, number=1198)
+    # Years must fall in browsable window (see utils.min_catalog_semester_year).
+    obj.semester = Semester.objects.create(year=2025, season="FALL", number=1258)
+    obj.past_semester = Semester.objects.create(year=2022, season="FALL", number=1228)
+    obj.incomplete_semester = Semester.objects.create(year=2023, season="", number=1238)
 
     obj.course = Course.objects.create(
         title="Software Testing",
@@ -119,7 +117,12 @@ def setup(obj):
         course=obj.course,
         semester=obj.semester,
         instructor=obj.instructor,
-        text="Class sucks.",
+        text=(
+            "Prof Hamilton dominates every discussion and refuses to consider alternatives. "
+            "The workload is punishing and the grading feels completely arbitrary. "
+            "Hamilton docked points for trivial formatting errors and never explained why. "
+            "I would not recommend this course to anyone."
+        ),
         instructor_rating=1,
         difficulty=5,
         recommendability=1,
@@ -136,7 +139,12 @@ def setup(obj):
         course=obj.course,
         semester=obj.semester,
         instructor=obj.instructor,
-        text="Class rocks.",
+        text=(
+            "Prof Jefferson brings an encyclopedic knowledge to every lecture. "
+            "His Enlightenment-era approach to problem sets is genuinely refreshing. "
+            "Office hours are well worth attending and feedback is always thorough. "
+            "I would highly recommend this course to everyone."
+        ),
         instructor_rating=5,
         difficulty=1,
         recommendability=5,
@@ -153,7 +161,12 @@ def setup(obj):
         course=obj.course2,
         semester=obj.semester,
         instructor=obj.instructor,
-        text="Awesome.",
+        text=(
+            "Mr. Jefferson is an outstanding educator who connects historical context "
+            "to modern applications with ease. Assignments are challenging but fair. "
+            "He clearly loves the subject and the syllabus reflects years of careful thought. "
+            "One of the best courses I have taken."
+        ),
         instructor_rating=4,
         difficulty=4,
         recommendability=5,
@@ -170,7 +183,12 @@ def setup(obj):
         course=obj.course2,
         semester=obj.semester,
         instructor=obj.instructor,
-        text="Brilliant.",
+        text=(
+            "Prof Washington commands the room with quiet authority and genuine warmth. "
+            "Expectations are crystal clear from day one and grading is always fair. "
+            "Washington is approachable after class and responds to emails promptly. "
+            "Highly recommend to any student looking for a well-run course."
+        ),
         instructor_rating=5,
         difficulty=2,
         recommendability=5,
@@ -187,7 +205,12 @@ def setup(obj):
         course=obj.course3,
         semester=obj.semester,
         instructor=obj.instructor,
-        text="Cool.",
+        text=(
+            "Prof Washington keeps lectures engaging and the workload very manageable. "
+            "He is approachable and clearly invested in student success. "
+            "A good option if you want solid instruction without excessive stress. "
+            "Would take another course with Washington without hesitation."
+        ),
         instructor_rating=3,
         difficulty=3,
         recommendability=3,
@@ -204,9 +227,25 @@ def setup(obj):
         course=obj.course4,
         semester=obj.semester,
         instructor=obj.instructor,
-        text="Damn easy.",
+        text=(
+            "Alexander Hamilton's course was one of the most frustrating academic experiences I have had.\n\n"
+            "The syllabus changed three times in the first two weeks with no explanation. "
+            "Readings were assigned the night before they were due, and the reading list itself "
+            "was longer than any other course I have taken. Lectures ran over time every single session "
+            "and covered material that never appeared on any exam or assignment.\n\n"
+            "Grading was completely opaque. Assignments came back with a number and no feedback. "
+            "When I visited office hours to ask about my grade, I was told to re-read the rubric, "
+            "which itself had not been updated since a previous semester. "
+            "Several students submitted regrade requests; none were granted.\n\n"
+            "The group project was worth 40 percent of the final grade but group assignments were "
+            "announced one week before the deadline. There was no scaffolding, no check-ins, "
+            "and no guidance on scope. Half the class ended up doing essentially the same project "
+            "from different angles because the prompt was so vague.\n\n"
+            "I came in genuinely interested in the subject matter and left feeling like I had learned "
+            "very little. I would strongly caution anyone considering this course to look elsewhere."
+        ),
         instructor_rating=2,
-        difficulty=1,
+        difficulty=5,
         recommendability=1,
         enjoyability=4,
         hours_per_week=4,
@@ -254,13 +293,12 @@ def suppress_request_warnings(original_function):
     """
 
     def new_function(*args, **kwargs):
-        # raise logging level to ERROR
         logger = logging.getLogger("django.request")
         previous_logging_level = logger.getEffectiveLevel()
         logger.setLevel(logging.ERROR)
-        # trigger original function that would throw warning
-        original_function(*args, **kwargs)
-        # lower logging level back to previous
-        logger.setLevel(previous_logging_level)
+        try:
+            return original_function(*args, **kwargs)
+        finally:
+            logger.setLevel(previous_logging_level)
 
     return new_function

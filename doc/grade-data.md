@@ -1,19 +1,28 @@
-# Requesting Grades Data
+# Grade Data
 
-The Freedom of Information Act allows us to request records from UVA, which is how we get our grades data. Follow these steps:
+## Fetching Grade Data
 
-1. Go to https://communications.virginia.edu/foia/request-records
-2. Click "Submit a FOIA request," creating an account as necessary.
-3. In "Describe the Record(s) Requested", enter the following:
+Instructions below fetch grade data from [IRA Grade Data Distribution](https://ira.virginia.edu/university-data-home/grade-distribution-last-5-years?check_logged_in=1)
 
-- I am a member of theCourseForum, a student-run team and registered CIO that maintains the top course review site at UVA. I am requesting the grades for all classes at UVA for `(semester here)`. We use these grades to provide a free online outlet for students to get the best information on their classes as they navigate course registration. Let me know if there is anything I need to do to facilitate this process.
+### Before fetching grades
+- Requires up-to-date semester data at `tcf_website/management/commands/semester_data/csv/year_season.csv`
 
-4. Select "Electronic via Records Center" as preferred method and "Status as FOIA requester" to UVA Student
-5. You should receive an email in a few days, or you can check status under "View My Requests"
+### Fetching Grades
+- Obtain grades for a semester, can be run locally:
+```console
+$ uv run python fetch_grades.py <year>_<season>
+```
 
-One note: the data will come with the following redactions:
-![image](https://user-images.githubusercontent.com/55100084/111021403-f777f180-8399-11eb-85cd-d1bbab710438.png)
+Output saved in `tcf_website/management/commands/grade_data/csv`
 
-## Splitting Data
+## Loading Grade Data
+- To load grades, run _in the docker container_:
+```console
+$ python manage.py load_grades ALL_DANGEROUS
+```
+***NOTE***: For loading grades in production, add this command to container-startup.sh and remove after grade data is loaded into prod database
 
-If you request multiple semesters' worth of data in a single request, you can use `tcf_website/management/commands/grade_data/split_data.py` to divide it into individual `.csv` files. The script uses hardcoded files, but it should be pretty straightforward to adapt it to your needs.
+
+## Other useful commands
+
+For other useful commands, see [useful-commands.md](useful-commands.md)

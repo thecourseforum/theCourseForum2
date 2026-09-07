@@ -1,15 +1,18 @@
-version: "3"
-
 services:
   web:
-    build: .
-    command:
-      bash -c "if [ \"${ENVIRONMENT}\" = 'dev' ]; then /wait-for-it.sh tcf_db:${DB_PORT} || exit 1; fi && \
-      python manage.py migrate && \
-      python manage.py collectstatic --noinput && \
-      python manage.py invalidate_cachalot tcf_website && \
-      echo 'Starting Django Server...' && \
-      python manage.py runserver 0.0.0.0:8000"
+    build:
+      context: .
+      args:
+        INSTALL_DEV: "true"
+    command: >
+      bash -c "set -e &&
+      python manage.py migrate &&
+      python manage.py collectstatic --noinput &&
+      python manage.py invalidate_cachalot tcf_website &&
+      echo 'Starting Django Server...' &&
+      exec python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=tcf_core.settings.dev
     volumes:
       - .:/app
       - /app/db/ # exclude the subfolder to prevent potential interference
@@ -17,9 +20,11 @@ services:
     ports:
       - "8000:8000"
     container_name: tcf_django
-    restart: always
+    restart: unless-stopped
     depends_on:
       - db
+      # db:
+      #   condition: service_healthy
   db:
     image: postgres:17.5
     volumes:
@@ -31,5 +36,11 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_PORT: ${DB_PORT}
+    # healthcheck:
+    #   test: ["CMD-SHELL", 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+    #   interval: 1s
+    #   timeout: 2s
+    #   retries: 20
+    #   start_period: 2s
 volumes:
   node_modules:

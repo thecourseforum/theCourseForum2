@@ -1,0 +1,230 @@
+/*
+ * Footer Component
+ * ================
+ */
+
+.footer {
+  background-color: var(--color-neutral-900);
+  color: var(--color-neutral-200);
+  padding: var(--space-12) var(--space-4);
+}
+
+[data-theme="dark"] .footer {
+  background-color: var(--color-neutral-950);
+  border-top: 1px solid var(--color-neutral-800);
+}
+
+@media (min-width: 640px) {
+  .footer {
+    padding: var(--space-16) var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .footer {
+    padding: var(--space-16) var(--space-8);
+  }
+}
+
+
+/* ===== FOOTER CONTAINER ===== */
+
+.footer__inner {
+  max-width: var(--size-max);
+  margin: 0 auto;
+}
+
+
+/* ===== FOOTER TOP ===== */
+
+.footer__top {
+  display: grid;
+  gap: var(--space-8);
+  margin-bottom: var(--space-12);
+}
+
+@media (min-width: 768px) {
+  .footer__top {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: var(--space-12);
+  }
+}
+
+
+/* ===== FOOTER BRAND ===== */
+
+.footer__brand {
+  max-width: 20rem;
+}
+
+.footer__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  
+  text-decoration: none;
+  color: var(--color-white);
+}
+
+.footer__logo:hover {
+  color: var(--color-white);
+  text-decoration: none;
+}
+
+.footer__logo-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.footer__logo-text {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+}
+
+.footer__tagline {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-400);
+  line-height: var(--leading-relaxed);
+}
+
+
+/* ===== FOOTER LINKS ===== */
+
+.footer__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.footer__section-title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer__link {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-400);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-default);
+}
+
+.footer__link:hover {
+  color: var(--color-white);
+  text-decoration: none;
+}
+
+
+/* ===== FOOTER SOCIAL ===== */
+
+.footer__social {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.footer__social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  width: 2.25rem;
+  height: 2.25rem;
+  
+  color: var(--color-neutral-400);
+  background-color: var(--color-neutral-800);
+  border-radius: var(--radius-lg);
+  
+  transition: color var(--duration-fast) var(--ease-default),
+              background-color var(--duration-fast) var(--ease-default);
+}
+
+.footer__social-link:hover {
+  color: var(--color-white);
+  background-color: var(--color-neutral-700);
+}
+
+.footer__social-link svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+
+/* ===== FOOTER BOTTOM ===== */
+
+.footer__bottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-neutral-800);
+}
+
+@media (min-width: 768px) {
+  .footer__bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.footer__copyright {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-500);
+}
+
+.footer__legal {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.footer__legal-link {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-500);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-default);
+}
+
+.footer__legal-link:hover {
+  color: var(--color-neutral-300);
+  text-decoration: none;
+}
+
+
+/* ===== DONATION CTA ===== */
+
+.footer__donate {
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+  
+  background-color: var(--color-neutral-800);
+  border-radius: var(--radius-lg);
+}
+
+.footer__donate-text {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-300);
+  margin-bottom: var(--space-3);
+}
+
+.footer__donate .btn {
+  background-color: var(--accent);
+  color: var(--color-white);
+}
+
+.footer__donate .btn:hover {
+  background-color: var(--accent-hover);
+}

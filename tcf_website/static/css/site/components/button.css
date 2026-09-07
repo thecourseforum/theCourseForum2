@@ -1,0 +1,222 @@
+/*
+ * Button Component
+ * ================
+ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  
+  font-family: var(--font-sans);
+  font-weight: var(--font-medium);
+  text-decoration: none;
+  white-space: nowrap;
+  
+  border-radius: var(--radius-lg);
+  transition: all var(--duration-fast) var(--ease-default);
+  cursor: pointer;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+
+/* ===== SIZES ===== */
+
+.btn--sm {
+  height: 2rem;
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.btn--md {
+  height: 2.5rem;
+  padding: 0 var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.btn--lg {
+  height: 3rem;
+  padding: 0 var(--space-6);
+  font-size: var(--text-base);
+}
+
+.btn--xl {
+  height: 3.5rem;
+  padding: 0 var(--space-8);
+  font-size: var(--text-lg);
+}
+
+
+/* ===== VARIANTS ===== */
+
+/* Primary - main actions */
+.btn--primary {
+  background-color: var(--primary);
+  color: var(--primary-fg);
+  border: 1px solid transparent;
+}
+
+.btn--primary:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Accent - highlighted actions */
+.btn--accent {
+  background-color: var(--accent);
+  color: var(--accent-fg);
+  border: 1px solid transparent;
+}
+
+.btn--accent:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Secondary - outlined style */
+.btn--secondary {
+  background-color: transparent;
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+
+.btn--secondary:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--fg-subtle);
+}
+
+/* Ghost - minimal style */
+.btn--ghost {
+  background-color: transparent;
+  color: var(--fg);
+  border: 1px solid transparent;
+}
+
+.btn--ghost:hover {
+  background-color: var(--bg-hover);
+}
+
+/* Danger - destructive actions */
+.btn--danger {
+  background-color: var(--color-danger-600);
+  color: var(--color-white);
+  border: 1px solid transparent;
+}
+
+.btn--danger:hover {
+  background-color: var(--color-danger-500);
+}
+
+/* Link style - looks like a link */
+.btn--link {
+  background-color: transparent;
+  color: var(--primary);
+  border: none;
+  padding: 0;
+  height: auto;
+}
+
+.btn--link:hover {
+  text-decoration: underline;
+}
+
+
+/* ===== ICON BUTTONS ===== */
+
+.btn--icon {
+  padding: 0;
+  aspect-ratio: 1;
+}
+
+.btn--icon.btn--sm {
+  width: 2rem;
+}
+
+.btn--icon.btn--md {
+  width: 2.5rem;
+}
+
+.btn--icon.btn--lg {
+  width: 3rem;
+}
+
+
+/* ===== FULL WIDTH ===== */
+
+.btn--full {
+  width: 100%;
+}
+
+
+/* ===== LOADING STATE ===== */
+
+.btn--loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn--loading::after {
+  content: '';
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 0.6s linear infinite;
+}
+
+.btn--primary.btn--loading::after,
+.btn--accent.btn--loading::after,
+.btn--danger.btn--loading::after {
+  border-color: var(--color-white);
+  border-right-color: transparent;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ===== BUTTON GROUP ===== */
+
+.btn-group {
+  display: inline-flex;
+}
+
+.btn-group .btn {
+  border-radius: 0;
+}
+
+.btn-group .btn:first-child {
+  border-top-left-radius: var(--radius-lg);
+  border-bottom-left-radius: var(--radius-lg);
+}
+
+.btn-group .btn:last-child {
+  border-top-right-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+
+.btn-group .btn:not(:first-child) {
+  margin-left: -1px;
+}
+
+.btn-group .btn--secondary.active,
+.btn-group .btn--secondary:hover {
+  background-color: var(--bg-muted);
+  border-color: var(--fg-subtle);
+  z-index: 1;
+}

@@ -1,0 +1,4 @@
+{% load custom_tags %}
+<div class="browse-advanced-results" data-browse-total="{{ total }}">
+    {% include "site/catalog/partials/_club_grouped_results.html" with empty_hint="Try adjusting your filters or broadening your search." %}
+</div>

@@ -1,16 +1,14 @@
-# pylint: disable=line-too-long
-
 """TCF Models module."""
 
 # See
 # https://docs.djangoproject.com/en/3.0/topics/db/models/#organizing-models-in-a-package
 
 from .models import (
+    CATALOG_YEAR_WINDOW,
     Answer,
-    Course,
     Club,
     ClubCategory,
-    CourseEnrollment,
+    Course,
     CourseGrade,
     CourseInstructorGrade,
     Department,
@@ -18,11 +16,12 @@ from .models import (
     Instructor,
     Question,
     Review,
+    ReviewLLMSummary,
     Schedule,
+    ScheduleBookmark,
     ScheduledCourse,
     School,
     Section,
-    SectionEnrollment,
     SectionTime,
     Semester,
     Subdepartment,

@@ -1,9 +1,29 @@
 {
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
   "[python]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit"
-    },
+    "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "ms-python.black-formatter"
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "eslint.enable": true,
+  "eslint.format.enable": true,
+  "eslint.options": {
+    "overrideConfigFile": ".config/.eslintrc.yml"
+  },
+  "eslint.validate": ["javascript"],
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": true
+  },
+  "[html]": {
+    "editor.defaultFormatter": "monosans.djlint",
+    "editor.formatOnSave": true
+  },
+  "[django-html]": {
+    "editor.defaultFormatter": "monosans.djlint",
+    "editor.formatOnSave": true
   }
 }

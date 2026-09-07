@@ -1,8 +1,7 @@
-# Based on https://github.com/actions/starter-workflows/blob/main/ci/django.yml
+# AWS ECS Deployment Workflow
 name: AWS Deployment
 
 on:
-  # CI must pass on the master branch
   workflow_run:
     workflows: ["Continuous Integration"]
     branches: [master]
@@ -10,66 +9,21 @@ on:
       - completed
 
 env:
-  PYTHON_TARGET: 3.11
-  # Django
-  DJANGO_SETTINGS_MODULE: tcf_core.settings.prod
-  SECRET_KEY: ${{ secrets.SECRET_KEY }}
-  DEBUG: 0
-  ENVIRONMENT: production
-  # database
-  AWS_RDS_NAME: ${{ secrets.AWS_RDS_NAME }}
-  AWS_RDS_USER: ${{ secrets.AWS_RDS_USER }}
-  AWS_RDS_PASSWORD: ${{ secrets.AWS_DS_PASSWORD }}
-  AWS_RDS_HOST: ${{ secrets.AWS_RDS_HOST }}
-  AWS_RDS_PORT: ${{ secrets.AWS_RDS_PORT }}
-  # AWS Cognito
-  COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
-  COGNITO_APP_CLIENT_ID: ${{ secrets.COGNITO_APP_CLIENT_ID }}
-  COGNITO_APP_CLIENT_SECRET: ${{ secrets.COGNITO_APP_CLIENT_SECRET }}
-  COGNITO_DOMAIN: ${{ secrets.COGNITO_DOMAIN }}
-  COGNITO_REGION_NAME: ${{ secrets.COGNITO_REGION_NAME }}
-  # email for account verification
-  EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
-  EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
-  # review drive account information
-  REVIEW_DRIVE_ID: ${{ secrets.REVIEW_DRIVE_ID }}
-  REVIEW_DRIVE_EMAIL: ${{ secrets.REVIEW_DRIVE_EMAIL }}
-  REVIEW_DRIVE_PASSWORD: ${{ secrets.REVIEW_DRIVE_PASSWORD }}
-  # aws ecs image
   AWS_REGION: us-east-1
   ECS_SERVICE: barrett-fogle-love-v1
   ECS_CLUSTER: tcf-fargate-cluster
   ECR_REPO: tcf/thecourseforum2
   ECR_CONTAINER_NAME: tcf-container
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-  AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
-  AWS_S3_CUSTOM_DOMAIN: ${{ secrets.AWS_S3_CUSTOM_DOMAIN }}
 
 jobs:
   deploy:
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout `master`
+      - name: Checkout master
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
-
-      - name: Set up Python ${{ env.PYTHON_TARGET }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_TARGET }}
-          cache: 'pip'
-
-      - name: Install Python packages
-        run: |
-          python -m pip install --upgrade pip
-          pip install django django-environ django-storages boto3 django-cachalot djangorestframework django-filter psycopg2-binary
-
-      - name: Collect static files
-        run: python manage.py collectstatic --no-input
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -79,38 +33,61 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
-        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{github.sha}}
+          tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ github.sha }}
           cache-from: type=registry,ref=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:buildcache
           cache-to: type=registry,ref=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:buildcache,mode=max
           provenance: false
 
-      - name: Get latest task definition
+      - name: Get current task definition
         run: |
           aws ecs describe-task-definition \
             --task-definition tcf-prod-task \
             --query taskDefinition > task-definition.json
 
-      - name: Add image in ECS task definition
+      - name: Update task definition with new image
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
           container-name: ${{ env.ECR_CONTAINER_NAME }}
-          image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{github.sha}}
+          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ github.sha }}
+          
+      - name: Run Release Tasks (Migrate, Static, Cache)
+        run: |
+          NETWORK_CONFIG=$(aws ecs describe-services --cluster ${{ env.ECS_CLUSTER }} --services ${{ env.ECS_SERVICE }} | jq -c '.services[0].networkConfiguration')
+          TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://${{ steps.task-def.outputs.task-definition }} | jq -r '.taskDefinition.taskDefinitionArn')
+          RELEASE_COMMAND="python manage.py migrate && python manage.py collectstatic --noinput && python manage.py invalidate_cachalot tcf_website && python manage.py clearsessions"
+          
+          TASK_ARN=$(aws ecs run-task \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --task-definition $TASK_DEF_ARN \
+            --launch-type FARGATE \
+            --network-configuration "$NETWORK_CONFIG" \
+            --overrides "{\"containerOverrides\": [{\"name\": \"${{ env.ECR_CONTAINER_NAME }}\", \"command\": [\"bash\", \"-c\", \"$RELEASE_COMMAND\"]}]}" \
+            | jq -r '.tasks[0].taskArn')
+            
+          echo "Waiting for Release Task ($TASK_ARN) to complete..."
+          
+          aws ecs wait tasks-stopped --cluster ${{ env.ECS_CLUSTER }} --tasks $TASK_ARN
+          
+          EXIT_CODE=$(aws ecs describe-tasks --cluster ${{ env.ECS_CLUSTER }} --tasks $TASK_ARN | jq -r '.tasks[0].containers[0].exitCode')
+          if [ "$EXIT_CODE" != "0" ]; then
+            echo "Release task failed! Halting deployment."
+            exit 1
+          fi
 
-      - name: Deploy Amazon ECS task definition
+      - name: Deploy to Amazon ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}

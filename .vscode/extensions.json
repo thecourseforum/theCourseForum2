@@ -1,11 +1,9 @@
 {
   "recommendations": [
-    "ms-python.black-formatter",
-    "ms-python.isort",
-    "ms-python.mypy-type-checker",
-    "ms-python.vscode-pylance",
     "ms-python.python",
+    "charliermarsh.ruff",
+    "astral-sh.ty",
     "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode"
+    "monosans.djlint"
   ]
 }

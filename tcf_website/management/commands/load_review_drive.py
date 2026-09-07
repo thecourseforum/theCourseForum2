@@ -1,7 +1,5 @@
 """Command for uploading CSV review drive files to the database."""
 
-# pylint: disable=no-member, too-many-locals, too-many-branches, too-many-statements
-
 import csv
 import os
 from datetime import datetime
@@ -49,11 +47,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         verbose = options["verbose"]
-        semester: str = options["semester"]
+        semester_arg: str = options["semester"]
 
-        if semester.endswith(".csv"):
-            semester = semester[: -len(".csv")]
-        split = semester.split("_")
+        if semester_arg.endswith(".csv"):
+            semester_arg = semester_arg[: -len(".csv")]
+        split = semester_arg.split("_")
         year, season = int(split[0]), split[1].lower()
 
         # Get semester object from args
@@ -91,7 +89,7 @@ class Command(BaseCommand):
 
 def create_reviews(verbose, filename, semester, dummy_account):
     """Creates reviews based on CSV info."""
-    with open(os.path.join(DATA_DIR, filename), mode="r", encoding="utf-8") as file:
+    with open(os.path.join(DATA_DIR, filename), encoding="utf-8") as file:
         csv_file = csv.reader(file)
 
         for i, line in enumerate(csv_file):

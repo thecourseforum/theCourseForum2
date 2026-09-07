@@ -1,20 +1,8 @@
 # tCF Developer Info
 
-Ensure your system has [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), [git-lfs](https://git-lfs.com/), [Docker](https://docs.docker.com/install/), and [gdown](https://github.com/wkentaro/gdown) installed.
+Ensure your system has [Git](https://git-scm.com/book/en/Getting-Started-Installing-Git) and [Docker](https://docs.docker.com/install/) installed.
 
-## One-Command Setup
-
-Run the following command in a POSIX-compliant shell (i.e. Windows users - use GitBash).
-
-Replace `<install_dir>` with where you'd like to clone the script.
-
-_TODO_: correct branch to main/dev when merged
-
-```console
-curl -fL 'https://raw.githubusercontent.com/thecourseforum/theCourseForum2/refs/heads/master/scripts/setup.sh' | sh -s -- <install_dir>
-```
-
-## Setup (Old)
+## Setup
 
 1. Clone the project:
 
@@ -23,9 +11,21 @@ git clone https://github.com/thecourseforum/theCourseForum2.git
 cd theCourseForum2
 ```
 
-2. Download the `.env` secrets file from the Google Drive /Engineering/ENV [folder](https://drive.google.com/drive/u/0/folders/1ETB7PZDbVC05xgjSAAIFiQ7qbDqIiz21) and place it in the project root.
+2. Setup environment variables
 
-- _**Note**_: the file should be named exactly `.env`, not `.env.txt` or `env.txt` - rename if necessary.
+```bash
+cp .env.example .env
+```
+
+### Environment modes
+
+The `TCF_ENV` variable identifies the runtime mode:
+
+- `local` (the default): local development settings and debug tools
+- `ci`: CI settings with debug disabled
+- `prod`: production settings; ECS task definitions must set `TCF_ENV=prod`
+
+Invalid values cause Django to fail during startup.
 
 3. Build the project
 
@@ -68,3 +68,30 @@ The application stack is listed below. These technologies were chosen because th
 - PostgreSQL
 - Bootstrap 4
 - Javascript (jQuery)
+
+
+## Enter docker container
+
+```bash
+docker exec -it tcf_django /bin/bash
+```
+
+## CI checks locally
+
+```bash
+uv run ruff check .
+uv run ruff format --check .
+uv run djlint tcf_website/templates --check --lint
+uv run ty check
+npm ci && npx eslint -c .config/.eslintrc.yml tcf_website/static/
+uv run python manage.py migrate
+uv run coverage run manage.py test
+```
+
+GitHub Actions sets `TCF_ENV=ci`, so the same settings module runs with
+`DEBUG=False` and without the debug toolbar; see
+[`.github/workflows/ci.yml`](../.github/workflows/ci.yml).
+
+## Authentication Functionality
+
+Login/Logout/Profile in a dev environment requires additional credentials. If this is needed, consult exec for access.

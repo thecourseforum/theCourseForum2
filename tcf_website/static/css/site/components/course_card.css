@@ -1,0 +1,118 @@
+/* ===== COURSE LIST ===== */
+
+.course-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ===== COURSE CARD ===== */
+
+.course-card {
+  display: flex;
+  flex-direction: column;
+
+  padding: var(--space-5);
+
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+
+  text-decoration: none;
+  color: var(--fg);
+
+  transition:
+    border-color var(--duration-fast) var(--ease-default),
+    box-shadow var(--duration-fast) var(--ease-default);
+}
+
+.course-card:hover {
+  border-color: var(--fg-subtle);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+}
+
+@media (min-width: 768px) {
+  .course-card {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-6);
+  }
+}
+
+.course-card__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.course-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+
+  margin-bottom: var(--space-1);
+}
+
+.course-card__code {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--primary);
+}
+
+.course-card__title {
+  font-size: var(--text-base);
+  color: var(--fg);
+}
+
+.course-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+}
+
+.course-card__stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.course-card__stat svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* ===== COURSE CARD RATINGS ===== */
+
+.course-card__ratings {
+  display: flex;
+  gap: var(--space-3);
+
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+@media (min-width: 768px) {
+  .course-card__ratings {
+    margin-top: 0;
+    padding-top: 0;
+    padding-left: var(--space-6);
+    border-top: none;
+    border-left: 1px solid var(--border);
+  }
+}
+
+.course-card__ratings .rating-stat {
+  padding: var(--space-2) var(--space-3);
+  min-width: 5.5rem;
+}
+
+.course-card__ratings .rating-stat__value {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+}

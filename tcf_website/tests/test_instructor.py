@@ -1,11 +1,10 @@
-# pylint: disable=no-member
 """Tests for Instructor model."""
 
 from django.test import TestCase
 from django.urls import reverse
 
 from ..models import Section
-from ..views.browse import safe_round
+from ..utils import safe_round
 from .test_utils import setup
 
 
@@ -223,5 +222,5 @@ class InstructorTestCase(TestCase):
         response = self.client.post(reverse("instructor", args=(self.instructor.id,)))
         difficulty = safe_round(self.instructor.average_difficulty())
         rating = safe_round(self.instructor.average_rating())
-        self.assertEqual(difficulty, response.context[0]["avg_difficulty"])
-        self.assertEqual(rating, response.context[0]["avg_rating"])
+        self.assertEqual(difficulty, response.context["avg_difficulty"])
+        self.assertEqual(rating, response.context["avg_rating"])

@@ -1,0 +1,108 @@
+/*
+ * Club Category Page Styles
+ * =========================
+ */
+
+.club-category-header {
+  padding: var(--space-8) 0 var(--space-6);
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg-muted) 100%);
+}
+
+.club-category-header__inner {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .club-category-header__inner {
+    padding: 0 var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .club-category-header__inner {
+    padding: 0 var(--space-8);
+  }
+}
+
+.club-category-header__title {
+  margin-top: var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-normal);
+}
+
+.club-category-header__description {
+  margin-top: var(--space-3);
+  color: var(--fg-muted);
+  max-width: 70ch;
+}
+
+.club-category-content {
+  max-width: var(--size-max);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-16);
+}
+
+@media (min-width: 640px) {
+  .club-category-content {
+    padding: var(--space-8) var(--space-6) var(--space-16);
+  }
+}
+
+@media (min-width: 1024px) {
+  .club-category-content {
+    padding: var(--space-8) var(--space-8) var(--space-16);
+  }
+}
+
+.club-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.club-list-card {
+  display: block;
+  padding: var(--space-5);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  text-decoration: none;
+  color: var(--fg);
+  transition: border-color var(--duration-fast) var(--ease-default),
+              transform var(--duration-fast) var(--ease-default);
+}
+
+.club-list-card:hover {
+  text-decoration: none;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.club-list-card__title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  color: var(--primary);
+  margin-bottom: var(--space-2);
+}
+
+.club-list-card__description {
+  color: var(--fg-muted);
+  line-height: var(--leading-relaxed);
+}
+
+.club-category-empty {
+  padding: var(--space-10);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.club-category-empty__title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+}

@@ -1,26 +1,81 @@
-# pylint: disable=unused-wildcard-import,wildcard-import
-"""Django settings module for production environment like Google App Engine"""
+"""Django settings for AWS production."""
+
+from django.core.exceptions import ImproperlyConfigured
+
 from .base import *
 
-# The following if statement is needed to prevent overwriting global variables when
-# this settings file is interpreted
-if os.environ.get("DJANGO_SETTINGS_MODULE") == "tcf_core.settings.prod":
-    # SECURITY WARNING: App Engine's security features ensure that it is safe to
-    # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
-    # app not on App Engine, make sure to set an appropriate host here.
-    # See https://docs.djangoproject.com/en/dev/ref/settings/ (from GCP
-    # documentation)
-    # Alex: "When I was trying to do manual GAE deployment when Travis was down,
-    # I had to add thecourseforum.com to ALLOWED_HOSTS or the deployment wouldn't
-    # work (see 40cac033ca14b5c379e5845f9c3870605cdac62d)."
-    ALLOWED_HOSTS = ["*", "thecourseforum.com"]
+# ECS sets TCF_ENV=prod (iac/ecs.tf); refuse to boot in any other mode.
+if ENVIRONMENT != "prod":
+    raise ImproperlyConfigured(
+        f"tcf_core.settings.prod requires TCF_ENV=prod; got {ENVIRONMENT!r}"
+    )
 
-    # CSRF settings to fix form submission issues in production
-    CSRF_TRUSTED_ORIGINS = [
-        "https://thecourseforum.com",
-        "https://thecourseforumtest.com",
-    ]
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+DEBUG = False
 
-    # Use secure connection for database access
-    DATABASES["default"]["OPTIONS"] = {"sslmode": "require"}
+ALLOWED_HOSTS = [
+    "*",
+    "thecourseforum.com",
+    "thecourseforumtest.com",
+    env.str("AWS_ELB_URL"),
+    env.str("AWS_CLOUDFRONT_URL"),
+]
+
+# AWS S3 for static files
+AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = env.str("AWS_S3_REGION_NAME", default="us-east-1")
+AWS_S3_CUSTOM_DOMAIN = env.str(
+    "AWS_S3_CUSTOM_DOMAIN", default=f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+)
+AWS_DEFAULT_ACL = None
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {"object_parameters": {"CacheControl": "max-age=86400"}},
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3ManifestStaticStorage",
+        "OPTIONS": {
+            "object_parameters": {"CacheControl": "public, max-age=31536000, immutable"}
+        },
+    },
+}
+
+# AWS RDS PostgreSQL
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env.str("AWS_RDS_NAME"),
+        "USER": env.str("AWS_RDS_USER"),
+        "PASSWORD": env.str("AWS_RDS_PASSWORD"),
+        "HOST": env.str("AWS_RDS_HOST"),
+        "PORT": env.int("AWS_RDS_PORT"),
+        "OPTIONS": {"sslmode": "require"},
+        "CONN_MAX_AGE": 60,  # Remove if using RDS proxy
+    }
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": env.str("AWS_REDIS_URL"),  # redis://instance-endpoint:6379
+        "KEY_PREFIX": "tcf:prod",
+        "OPTIONS": {
+            "socket_connect_timeout": 5,
+            "socket_timeout": 5,
+            "retry_on_timeout": True,
+        },
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+SESSION_CACHE_ALIAS = "default"
+
+CACHALOT_TIMEOUT = 60 * 60 * 24 * 7  # 1 week
+
+# Security
+CSRF_TRUSTED_ORIGINS = [
+    "https://thecourseforum.com",
+    "https://thecourseforumtest.com",
+]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

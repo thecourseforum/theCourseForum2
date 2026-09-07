@@ -1,0 +1,69 @@
+{# Semester + (course mode only) instructor. Expects: is_club, course, club, form, semesters, prefill_semester, instructors, prefill_instructor #}
+<div class="rating-grid">
+    <div class="rating-field">
+        <label class="rating-field__label" for="semester">
+            {% if is_club %}
+                When did you join?
+            {% else %}
+                When did you take this?
+            {% endif %}
+        </label>
+        {% if is_club %}
+            <select class="instructor-select"
+                    id="semester"
+                    name="semester"
+                    {% if not club %}disabled{% endif %}
+                    {% if club %}required{% endif %}>
+                {% if not club %}
+                    <option value="">Select a club first</option>
+                {% else %}
+                    {% for sem in semesters %}
+                        <option value="{{ sem.id }}"
+                                {% if form and form.data.semester == sem.id|stringformat:"s" %}selected{% elif not form or not form.data.semester %}{% if forloop.first %}selected{% endif %}
+                                {% endif %}>{{ sem.season|title }} {{ sem.year }}</option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+        {% else %}
+            <select class="instructor-select"
+                    id="semester"
+                    name="semester"
+                    {% if not course %}disabled{% endif %}
+                    {% if course %}required{% endif %}>
+                {% if not course %}
+                    <option value="">Select a course first</option>
+                {% else %}
+                    <option value=""
+                            disabled
+                            {% if not form or not form.data.semester %}{% if not prefill_semester %}selected{% endif %}
+                            {% endif %}>Select term…</option>
+                    {% for sem in semesters %}
+                        <option value="{{ sem.id }}"
+                                {% if form and form.data.semester == sem.id|stringformat:"s" %}selected{% elif prefill_semester and prefill_semester.id == sem.id %}selected{% endif %}>
+                            {{ sem.season|title }} {{ sem.year }}
+                        </option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+        {% endif %}
+    </div>
+    {% if not is_club %}
+        <div class="rating-field" id="review-instructor-row">
+            <label class="rating-field__label" for="instructor">Instructor</label>
+            <select class="instructor-select"
+                    id="instructor"
+                    name="instructor"
+                    {% if not course or not instructors %}disabled{% endif %}
+                    {% if course and instructors %}required{% endif %}>
+                <option value="">Select instructor…</option>
+                {% for instr in instructors %}
+                    <option value="{{ instr.id }}"
+                            {% if form and form.data.instructor == instr.id|stringformat:"s" %}selected{% elif prefill_instructor and prefill_instructor.id == instr.id %}selected{% endif %}>
+                        {{ instr.last_name }}, {{ instr.first_name }}
+                    </option>
+                {% endfor %}
+            </select>
+            <p class="review-field-error" id="review-instructor-fetch-error" hidden></p>
+        </div>
+    {% endif %}
+</div>

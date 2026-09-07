@@ -1,10 +1,11 @@
-# pylint: skip-file
+# ruff: noqa
 """
 Legacy models from tCF 1.0.
 
 Only use these for data migration purposes.
 (e.g. tcf_website/management/commands/migrate_*.py)
 """
+
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
