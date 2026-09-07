@@ -4,12 +4,18 @@ Fetch Grade Data from UVA's FOIA Grade Distribution Qlik app.
 The public FOIA page at TARGET_URL is a thin Qlik Sense mashup whose engine
 accepts anonymous WebSocket sessions, so this queries that engine directly
 instead of driving the page in a browser. A whole term is two hypercube
-queries rather than one browser round-trip per section, which takes seconds
-instead of a day and needs no credentials, no VPN and no Chrome.
+queries rather than one browser round-trip per section, and needs no
+credentials, no VPN and no Chrome.
+
+The semester file for the term is optional. When it is present its instructor
+names are preferred, because they match more Instructor rows than the
+registrar's legal names do; without it the command warns and uses the legal
+names. See doc/grade-data.md.
 
 USAGE:
-    python manage.py fetch_grades 2024_fall
-    python manage.py fetch_grades 2024_fall --min-rows 500
+    uv run python manage.py fetch_grades 2024_fall
+    uv run python manage.py fetch_grades 2024_fall --min-rows 500
+    uv run python manage.py fetch_grades 2024_fall --output /tmp/check.csv
 
 OUTPUT:
     Creates: tcf_website/management/commands/grade_data/csv/<year>_<season>.csv

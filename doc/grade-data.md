@@ -5,10 +5,12 @@
 Instructions below fetch grade data from [IRA Grade Data Distribution](https://ira.virginia.edu/university-data-home/grade-distribution-last-5-years?check_logged_in=1)
 
 ### Before fetching grades
-- Requires up-to-date semester data at `tcf_website/management/commands/semester_data/csv/year_season.csv`.
-  The grades themselves come from the FOIA app, but the semester file supplies the
-  instructor names that match our `Instructor` rows; without it the command falls back
-  to the registrar's legal names, which match fewer instructors.
+- Optional but recommended: up-to-date semester data at
+  `tcf_website/management/commands/semester_data/csv/year_season.csv`.
+  The grades themselves come from the FOIA app. When the semester file is present the
+  command prefers its instructor names, which match more of our `Instructor` rows than
+  the registrar's legal names do. Without it the command prints a warning and uses the
+  legal names.
 
 ### Fetching Grades
 - Obtain grades for a semester, can be run locally:
@@ -16,19 +18,18 @@ Instructions below fetch grade data from [IRA Grade Data Distribution](https://i
 $ uv run python manage.py fetch_grades <year>_<season>
 ```
 
-This queries the Qlik engine behind the FOIA page directly, so a full semester takes
-about 20 seconds. It needs no credentials, no VPN and no browser. Pass `--min-rows N`
-in automation so a term that comes back empty fails loudly instead of writing a
-truncated CSV.
+This queries the Qlik engine behind the FOIA page directly. It takes less than 1 minute to run. Pass `--min-rows N` in automation to reject a
+term that comes back with fewer sections than expected. Pass `--output PATH` to
+write somewhere other than the default.
 
-Output saved in `tcf_website/management/commands/grade_data/csv`
+Output saved by default in `tcf_website/management/commands/grade_data/csv`
 
 ## Loading Grade Data
 - To load grades, run _in the docker container_:
 ```console
 $ python manage.py load_grades ALL_DANGEROUS
 ```
-***NOTE***: For loading grades in production, add this command to container-startup.sh and remove after grade data is loaded into prod database
+***NOTE***: For loading grades in production, use this command with ecs-run-command.sh
 
 
 ## Other useful commands
