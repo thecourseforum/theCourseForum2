@@ -11,7 +11,7 @@ from cachalot.api import invalidate
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
-from tcf_website.models import Course, CourseGrade, CourseInstructorGrade, Instructor
+from tcf_website.models import Course, CourseGrade, CourseInstructorGrade, CourseInstructorSemesterGrade, Instructor, Semester
 
 # Location of our grade data CSVs
 DATA_DIR = "tcf_website/management/commands/grade_data/csv/"
@@ -68,6 +68,12 @@ class Command(BaseCommand):
             for obj in Course.objects.values("id", "number", "subdepartment__mnemonic")
         }
 
+        # Dict mapping semester (year, season) to its ID in our database
+        self.semesters = {
+            (obj["year"], obj["season"]): obj["id"]
+            for obj in Semester.objects.values("id", "year", "season")
+        }
+
         # Default level of verbosity
         self.verbosity = 0
 
@@ -76,6 +82,7 @@ class Command(BaseCommand):
 
         self.course_grades = {}
         self.course_instructor_grades = {}
+        self.course_instructor_semester_grades = {}
 
     def add_arguments(self, parser):
         """Standard Django function implementation - defines command-line parameters"""
@@ -117,6 +124,7 @@ class Command(BaseCommand):
             # ALL_DANGEROUS removes all existing data
             CourseGrade.objects.all().delete()
             CourseInstructorGrade.objects.all().delete()
+            CourseInstructorSemesterGrade.objects.all().delete()
 
             # Loads every data CSV file in /grade_data/csv with exceptions
             for file in sorted(os.listdir(DATA_DIR)):
@@ -126,6 +134,7 @@ class Command(BaseCommand):
                 if file[0] not in (".", "~") and ".csv" in file:
                     self.load_semester_file(file)
         else:
+            # TODO: Implement semester-specific loading logic for CourseInstructorSemesterGrade
             self.load_semester_file(f"{semester.lower()}.csv")
         self.load_dict_into_models()
 
@@ -184,12 +193,16 @@ class Command(BaseCommand):
     def load_row_into_dict(self, row):
         """
         Loads data from a given row into the global dicts
-        course_grades and course_instructor_grades
+        course_grades, course_instructor_grades, and course_instructor_semester_grades
         """
-        # Columns are processed left to right, with one exception
 
-        # 'Term Desc' column is unused because we only care about aggregate across semesters
-        # Might want to display semester-by-semester metrics too? Would have to change this
+        term_year, term_season = row["Term Desc"].split()
+        semester_id = self.semesters.get((int(term_year), term_season.upper()))
+        if semester_id is None:
+            raise ValueError(
+                f"Semester {term_year} {term_season} not found in database. "
+                "Please add it before loading grades."
+            )
 
         subdepartment = row["Subject"]
         # `Catalog Number` is handled with all other numerical data in the try block below
@@ -258,6 +271,13 @@ class Command(BaseCommand):
             first_name,
             last_name,
         )
+        course_instructor_semester_identifier = (
+            subdepartment,
+            number,
+            first_name,
+            last_name,
+            semester_id,
+        )
 
         # Helper function because we basically do the same thing twice
         def add_entry(data_dict, identifier):
@@ -287,13 +307,14 @@ class Command(BaseCommand):
 
         add_entry(self.course_grades, course_identifier)
         add_entry(self.course_instructor_grades, course_instructor_identifier)
+        add_entry(self.course_instructor_semester_grades, course_instructor_semester_identifier)
 
     def load_dict_into_models(self):
-        """Converts dictionaries to real instances of CourseGrade and CourseInstructorGrade.
+        """Converts dictionaries to real instances of CourseGrade, CourseInstructorGrade, and CourseInstructorSemesterGrade.
 
-        Given a course or course-instructor pair and its corresponding grade distribution,
+        Given a course, course-instructor or course-instructor-semster pair and its corresponding grade distribution,
         calculates weighted GPA average and total enrolled students and then uses all of those
-        as parameters to create new CourseGrade and CourseInstructorGrade instances.
+        as parameters to create new CourseGrade, CourseInstructorGrade, and CourseInstructorSemesterGrade instances.
         """
         if self.verbosity > 0:
             print("Step 2: Bulk-create CourseGrade instances")
@@ -326,12 +347,32 @@ class Command(BaseCommand):
         invalidate(CourseInstructorGrade)
         if self.verbosity > 0:
             print("Done creating CourseInstructorGrade instances")
+            print("Step 4: Bulk-create CourseInstructorSemesterGrade instances")
 
-    def set_grade_params(self, row, is_instructor_grade):
+        # Load course_instructor_semester_grades data from dicts and create model instances
+        unsaved_cisg_instances = []
+        for row in tqdm(
+            self.course_instructor_semester_grades, disable=self.suppress_tqdm
+        ):
+            course_instructor_semester_grade_params = self.set_grade_params(
+                row, is_instructor_grade=True, is_semester_grade=True
+            )
+            unsaved_cisg_instance = CourseInstructorSemesterGrade(
+                **course_instructor_semester_grade_params
+            )
+            unsaved_cisg_instances.append(unsaved_cisg_instance)
+        CourseInstructorSemesterGrade.objects.bulk_create(unsaved_cisg_instances)
+        invalidate(CourseInstructorSemesterGrade)
+        if self.verbosity > 0:
+            print("Done creating CourseInstructorSemesterGrade instances")
+
+    def set_grade_params(self, row, is_instructor_grade, is_semester_grade=False):
         """Creates dict of params to be used as parameters
-        in creating CourseGrade/CourseInstructorGrade instances.
+        in creating CourseGrade/CourseInstructorGrade/CourseInstructorSemesterGrade instances.
         Helper function for load_dict_into_models()"""
-        if is_instructor_grade:
+        if is_semester_grade:
+            data = self.course_instructor_semester_grades[row]
+        elif is_instructor_grade:
             data = self.course_instructor_grades[row]
         else:
             data = self.course_grades[row]
@@ -365,6 +406,9 @@ class Command(BaseCommand):
             "average": average,
         }
 
-        if is_instructor_grade:
+        if is_semester_grade:
+            course_grade_params["instructor_id"] = self.instructors.get(row[2:4])
+            course_grade_params["semester_id"] = row[4]
+        elif is_instructor_grade:
             course_grade_params["instructor_id"] = self.instructors.get(row[2:])
         return course_grade_params
