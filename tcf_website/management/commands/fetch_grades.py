@@ -254,6 +254,15 @@ def clean_text(text):
     return re.sub(r"\s+", " ", text or "").strip()
 
 
+def is_tba_instructor(name):
+    """True when SIS/FOIA used a placeholder instead of a real instructor.
+
+    Recent term files use "To be Announced" (lowercase b); older files used
+    "To Be Announced". Compare case-insensitively so both are dropped.
+    """
+    return clean_text(name).casefold() == "to be announced"
+
+
 def format_sis_name(name):
     """Convert the semester file's "First Last" to "Last,First".
 
@@ -261,7 +270,7 @@ def format_sis_name(name):
     output keep matching the Instructor rows load_grades looks them up in.
     """
     name = clean_text(name)
-    if not name or name == "To Be Announced":
+    if not name or is_tba_instructor(name):
         return "..."
     parts = name.split(",")[0].strip().split()
     if len(parts) < 2:
@@ -277,7 +286,7 @@ def format_engine_name(name):
     marked "...", so anything not in that shape becomes "...".
     """
     name = clean_text(name)
-    if name.count(",") != 1 or name == "To Be Announced":
+    if name.count(",") != 1 or is_tba_instructor(name):
         return "..."
     return name
 

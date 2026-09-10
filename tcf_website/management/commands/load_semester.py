@@ -251,7 +251,11 @@ class Command(BaseCommand):
                     fixed_instructor_names.append(stripped)
 
         for name in fixed_instructor_names:
-            if name in {"Staff", "Faculty Staff", "Faculty"} or name.isspace():
+            if (
+                name in {"Staff", "Faculty Staff", "Faculty"}
+                or name.isspace()
+                or name.casefold() == "to be announced"
+            ):
                 instructors.add(self.STAFF)
             else:
                 names = name.split()
