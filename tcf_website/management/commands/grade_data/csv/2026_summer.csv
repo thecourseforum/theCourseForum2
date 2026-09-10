@@ -1,0 +1,341 @@
+Term Desc,Subject,Catalog Number,Class Title,Course ID,Primary Instructor Name,Class Section,Class Num,Class Academic Group,Course GPA,# of Students,A+,A,A-,B+,B,B-,C+,C,C-,DFW
+2026 Summer,EDIS,7220,Intro to Gifted,009709,"Pennington,Leighann",500,10566,School of Education and HumanDev,3.96,21,0,18,3,0,0,0,0,0,0,0
+2026 Summer,EDLF,5020,Intro to Applied Dev Science,045537,"Sweeney,Beverly",001,10528,School of Education and HumanDev,3.93,20,0,15,5,0,0,0,0,0,0,0
+2026 Summer,CHEM,2410,Organic Chemistry I,005698,"Heyboer,Ethan",001,10361,College & Graduate Arts & Sci,2.94,68,6,9,6,7,13,9,8,4,1,5
+2026 Summer,EDIS,8082,Advanced Curriculum Seminar,046115,"Kennard,Seth",500,10595,School of Education and HumanDev,3.84,8,0,6,1,0,1,0,0,0,0,0
+2026 Summer,ACCT,5340,Prop & Pers Fin Planning,048598,"Krupka,Joseph",701,12672,Continuing & Prof Studies,3.94,11,1,9,0,1,0,0,0,0,0,0
+2026 Summer,PSPM,5230,Leadership & Proj Team Mgmt,029799,"Powers,Michael",701,12509,Continuing & Prof Studies,3.31,15,2,6,2,1,0,1,1,1,0,1
+2026 Summer,EDIS,6720,Understanding the Code,009524,"Reynolds,Courtney",500,10569,School of Education and HumanDev,3.93,23,0,19,3,1,0,0,0,0,0,0
+2026 Summer,CS,3250,Software Testing,045512,"Praphamontripong,Upsorn",001,12242,Engineering & Applied Science,3.08,17,1,4,3,4,0,1,1,0,1,2
+2026 Summer,EDLF,8820,Fundamentals of Ldshp Theory,044129,"Stacy,Jaime",500,12551,School of Education and HumanDev,3.93,13,5,5,3,0,0,0,0,0,0,0
+2026 Summer,SPAN,1016,Intensive Introductory Spanish,036161,"Moguel,Ana Piriz",001,10034,College & Graduate Arts & Sci,3.78,13,1,6,4,1,1,0,0,0,0,0
+2026 Summer,CHEM,1421,Intro College Chemistry II Lab,005994,"Cunningham,Connell",002,10061,College & Graduate Arts & Sci,4.00,13,11,2,0,0,0,0,0,0,0,0
+2026 Summer,PHYS,2020,Principles of Physics 2,030810,"Sundararajan,Jency",100,10064,College & Graduate Arts & Sci,3.18,25,6,4,4,2,2,2,1,1,1,2
+2026 Summer,GNUR,6121,Diagnostics and Therapeutics,045261,"Brick,Jamie",001,11311,School of Nursing,3.71,7,0,4,1,1,1,0,0,0,0,0
+2026 Summer,EDIS,5040,Assessment Evaluation Spec Ed,009427,"Pollitt,Daniel",500,10548,School of Education and HumanDev,3.82,24,5,12,2,4,1,0,0,0,0,0
+2026 Summer,EVSC,3020,GIS Methods,013919,"Shaban,Mirella",001,12310,College & Graduate Arts & Sci,3.50,17,1,8,5,0,0,1,1,0,0,1
+2026 Summer,NUCO,3310,Pediatric Nursing,043225,"Richardson,Ginger",001,11329,School of Nursing,3.84,29,0,16,11,2,0,0,0,0,0,0
+2026 Summer,FREN,2020,Intermediate French II,014316,"Berr,Chloe Mathilde",501,12143,College & Graduate Arts & Sci,3.95,11,0,9,2,0,0,0,0,0,0,0
+2026 Summer,APMA,3120,Statistics,001154,"Lark,James",001,12227,Engineering & Applied Science,2.76,22,1,1,5,3,3,1,3,1,1,3
+2026 Summer,PLIR,2050,Intro to Political Economy,031800,"Lee,Yunsoo",1,12361,College & Graduate Arts & Sci,3.59,16,0,9,5,0,1,0,0,0,0,1
+2026 Summer,EDIS,5221,Reading & Writing Foundations,009443,"Pearson,Emma",001,10537,School of Education and HumanDev,3.99,21,1,19,1,0,0,0,0,0,0,0
+2026 Summer,ACCT,5210,Introductory Auditing,000190,"Brooks,Gary D",701,12491,Continuing & Prof Studies,3.91,22,0,19,1,1,1,0,0,0,0,0
+2026 Summer,PSYC,2150,Introduction to Cognition,032487,"Teles Santos Golino,Mariana",002,12720,College & Graduate Arts & Sci,3.80,33,1,15,14,2,1,0,0,0,0,0
+2026 Summer,PHYS,1130,Physics of Sports,046086,"Lindgren,Richard",001,10142,College & Graduate Arts & Sci,3.61,12,0,4,3,4,1,0,0,0,0,0
+2026 Summer,DS,6015,DS Capstone,046836,"Brown,Don",004,12369,School of Data Science,4.00,8,2,6,0,0,0,0,0,0,0,0
+2026 Summer,EDIS,5012,Mindfulness for Teachers,044537,"Nicholas-Stokes,Pamela",500,10545,School of Education and HumanDev,3.92,22,7,13,0,1,1,0,0,0,0,0
+2026 Summer,ARAB,2256,Colloquial Arabic I,043090,"Ben-Meir,Yossef",504,12065,College & Graduate Arts & Sci,4.00,12,8,4,0,0,0,0,0,0,0,0
+2026 Summer,SOC,2520,Topics in Death & Dying,035319,"Aviles,Natalie",001,12209,College & Graduate Arts & Sci,3.57,10,0,4,2,2,1,1,0,0,0,0
+2026 Summer,ISSS,3830,American Foreign Policy,041219,"Ronayne,Pete",101,12476,Continuing & Prof Studies,3.71,21,1,16,1,0,1,0,1,0,0,1
+2026 Summer,EDIS,5230,Reading Writing Instr Spec Ed,009444,"Wilburn,Katherine Esmark",501,12554,School of Education and HumanDev,3.82,13,0,10,1,0,2,0,0,0,0,0
+2026 Summer,PSPS,5500,Contemp Issues in Leadership,047811,"McClellan,Sara",580,12533,Continuing & Prof Studies,3.73,7,0,3,3,0,1,0,0,0,0,0
+2026 Summer,PSPS,6030,Dev & Imp Systems of Emer Prep,046292,"Odom,Oscar",580,12536,Continuing & Prof Studies,3.90,34,0,23,11,0,0,0,0,0,0,0
+2026 Summer,EDIS,5423,English Linguistics,043456,"Chang-Bacon,Chris",500,10557,School of Education and HumanDev,3.97,18,0,16,2,0,0,0,0,0,0,0
+2026 Summer,EDIS,5230,Reading Writing Instr Spec Ed,009444,"Collins,Lauren",500,10554,School of Education and HumanDev,3.94,20,0,17,2,1,0,0,0,0,0,0
+2026 Summer,SPAN,2020,Advanced Intermediate Spanish,035854,"Wellbeloved,Elizabeth A.",502,12080,College & Graduate Arts & Sci,3.80,11,0,5,5,1,0,0,0,0,0,0
+2026 Summer,PHIL,1510,Intro Philosophy Seminars,030034,"Harris,Blake",002,12161,College & Graduate Arts & Sci,3.92,11,3,5,3,0,0,0,0,0,0,0
+2026 Summer,EDIS,5770,Soc/Em Issues in Talent Dev,045469,"Dmitrieva,Svetlana",500,10560,School of Education and HumanDev,3.54,9,0,4,0,4,0,1,0,0,0,0
+2026 Summer,EDLF,5160,Life Span Development,043142,"Wood,Kathryn Leigh Keller",501,12827,School of Education and HumanDev,3.64,14,1,7,3,2,0,0,0,0,0,1
+2026 Summer,RELG,2660,Spirituality in America,041858,"Wren,Ame",001,12224,College & Graduate Arts & Sci,3.85,13,0,11,1,0,0,0,1,0,0,0
+2026 Summer,STAT,3120,Intro Mathematical Statistics,040000,"Somal,Harsimran",001,12215,College & Graduate Arts & Sci,3.68,10,1,5,2,0,0,2,0,0,0,0
+2026 Summer,GSGS,2530,ISO: Study Abroad Topics,047105,"Hakala,Ingrid Iksa",502,12140,College & Graduate Arts & Sci,4.00,39,4,35,0,0,0,0,0,0,0,0
+2026 Summer,DS,6015,DS Capstone,046836,"Waggoner,Philip",006,12378,School of Data Science,4.00,30,11,19,0,0,0,0,0,0,0,0
+2026 Summer,SPAN,2010,Intermediate Spanish,035853,"Wellbeloved,Elizabeth A.",501,12095,College & Graduate Arts & Sci,3.71,25,0,8,13,2,2,0,0,0,0,0
+2026 Summer,NUCO,2210,Foundations of Nursing CARE,043099,"Shepherd,Andrea",001,11377,School of Nursing,3.85,24,8,9,6,0,0,0,1,0,0,0
+2026 Summer,PSYC,2200,Survey Neural Basis of Behav,032491,"Clabough,Erin D",002,12749,College & Graduate Arts & Sci,3.53,26,1,10,5,2,5,2,1,0,0,0
+2026 Summer,PSYC,2500,Topics in Psych,042301,"Golino,Hudson",001,12248,College & Graduate Arts & Sci,3.95,23,1,18,4,0,0,0,0,0,0,0
+2026 Summer,EDLF,7808,Strat Align of Plan & Resource,009751,"Thompson,Angela Dawn",500,10578,School of Education and HumanDev,4.00,15,6,9,0,0,0,0,0,0,0,0
+2026 Summer,MAE,3420,Computational Methods in MAE,022586,"Smith,Natasha",001,12260,Engineering & Applied Science,3.68,43,21,9,7,1,0,1,1,2,0,1
+2026 Summer,SPAN,2020,Advanced Intermediate Spanish,035854,"Florez-Murillo,David",002,12355,College & Graduate Arts & Sci,3.15,13,0,1,4,4,1,1,1,0,0,1
+2026 Summer,ENGR,2595,Special Topics in Engineering,038375,"Morris,Diana Dunn",002,12833,Engineering & Applied Science,3.85,39,0,30,3,3,3,0,0,0,0,0
+2026 Summer,MDST,2508,Topics in Media Practice,044925,"Sweeney,Kate",001,12203,College & Graduate Arts & Sci,2.79,11,1,4,0,0,1,1,0,2,0,2
+2026 Summer,ISCP,3991,Capstone Project I,043821,"May,Julia S",101,12461,Continuing & Prof Studies,3.74,15,0,7,5,2,1,0,0,0,0,0
+2026 Summer,CHEM,1421,Intro College Chemistry II Lab,005994,"Mattson,William A",004,10358,College & Graduate Arts & Sci,4.00,12,10,2,0,0,0,0,0,0,0,0
+2026 Summer,DS,5111,Software and Automation Skills,047100,"Kropko,Jonathan",001,12384,School of Data Science,3.95,18,12,3,3,0,0,0,0,0,0,0
+2026 Summer,CHEM,1410,Intro College Chemistry I,005649,"Mattson,William A",002,10013,College & Graduate Arts & Sci,3.79,29,13,9,3,3,0,0,0,0,0,1
+2026 Summer,PSPM,5030,Intro to Project Mgmt,029786,"Kropp,Edward",701,12506,Continuing & Prof Studies,3.94,14,1,10,3,0,0,0,0,0,0,0
+2026 Summer,STAT,1601,Intro Data Science with R,045055,"Roland,Kristen",003,12218,College & Graduate Arts & Sci,3.96,14,3,9,2,0,0,0,0,0,0,0
+2026 Summer,DRAM,2110,Lighting Technology,007209,"Kennedy,R.",1,12301,College & Graduate Arts & Sci,3.54,15,0,7,3,1,2,1,0,1,0,0
+2026 Summer,EVSC,1010,Intro Environmental Sciences,013836,"Morris,David",001,12307,College & Graduate Arts & Sci,3.60,27,1,13,5,4,1,1,0,1,1,0
+2026 Summer,ENGL,3540,Studies in Nineteenth-Century,012784,"Chakravorty,Mrinalini",001,12263,College & Graduate Arts & Sci,3.25,11,0,4,3,1,0,2,0,0,0,1
+2026 Summer,APMA,3100,Probability,001152,"Lark,James",002,11200,Engineering & Applied Science,3.10,21,2,4,4,4,1,0,1,3,1,1
+2026 Summer,ACCT,5480,Corporate Governance & Ethics,045867,"Hood,Michael",701,12494,Continuing & Prof Studies,3.54,5,0,2,1,0,2,0,0,0,0,0
+2026 Summer,EGMT,1540,Ethical Engagement,044515,"Persons,Anne Laura",001,12598,College & Graduate Arts & Sci,3.98,31,1,29,0,1,0,0,0,0,0,0
+2026 Summer,SYS,6043,Applied Optimization,036965,"Riggs,Robert",700,11287,Engineering & Applied Science,3.87,10,0,7,2,1,0,0,0,0,0,0
+2026 Summer,ANTH,2280,Medical Anthropology,000655,"Fraser,Gertrude",001,12568,College & Graduate Arts & Sci,3.91,23,5,14,2,2,0,0,0,0,0,0
+2026 Summer,ECON,3020,Intermediate Macroeconomics,007909,"Young,Eric",001,12194,College & Graduate Arts & Sci,2.89,12,0,4,0,0,3,2,1,0,0,2
+2026 Summer,MDST,2710,Screenwriting,041013,"Marshall,Matthew",001,12197,College & Graduate Arts & Sci,3.52,13,1,7,2,1,1,0,0,0,0,1
+2026 Summer,EDIS,5141,IEP & Transition,040533,"Ruhlman,Bethany Straub",500,10551,School of Education and HumanDev,3.96,21,0,18,3,0,0,0,0,0,0,0
+2026 Summer,ENGL,3991,Culture of London,039963,"O'Brien,John F",501,12038,College & Graduate Arts & Sci,3.86,11,0,6,5,0,0,0,0,0,0,0
+2026 Summer,GCNL,5084,Pathophysiology,048179,"Apple,Ashley",001,11869,School of Nursing,3.96,50,11,32,7,0,0,0,0,0,0,0
+2026 Summer,LPPP,2200,Introduction to Public Policy,042084,"Johannessen,Peter",100,12545,Batten Leadership & Public Pol,3.38,18,1,4,2,5,4,1,1,0,0,0
+2026 Summer,EDLF,8824,Optimizing Human Capital,044149,"Beavers,Michelle Maynes",500,10680,School of Education and HumanDev,3.71,13,0,4,7,1,1,0,0,0,0,0
+2026 Summer,GBAC,7219,Capstone II: Business Impact,045285,"Maxham,James",002,10454,McIntire Darden Grad Business,3.92,12,3,6,3,0,0,0,0,0,0,0
+2026 Summer,CHEM,3420,Phys Chem - Thermodynamics,005732,"Metcalf,Dave",1,12292,College & Graduate Arts & Sci,3.78,41,6,19,10,4,0,0,2,0,0,0
+2026 Summer,PHS,7385,Env Hlth: Epidem Perspectives,042273,"Wells,Kristen",001,11651,Medical School - BIMS/PHS,3.96,7,5,1,1,0,0,0,0,0,0,0
+2026 Summer,MDST,2810,Cinema As An Art Form,023498,"Marshall,Matthew",001,12206,College & Graduate Arts & Sci,3.92,17,0,15,0,2,0,0,0,0,0,0
+2026 Summer,NUCO,2130,Therapeutic Prin of Nrsg Care,029370,"Simmers,Christian",100,11374,School of Nursing,3.93,24,0,20,3,1,0,0,0,0,0,0
+2026 Summer,EDLF,5820,Organization & Management,009796,"Seid,Adam",001,10659,School of Education and HumanDev,3.80,34,0,26,2,1,3,2,0,0,0,0
+2026 Summer,STAT,3220,Intro to Regression Analysis,040001,"Varanyak,Krista",001,12212,College & Graduate Arts & Sci,3.27,24,0,7,7,4,1,1,1,1,0,2
+2026 Summer,APMA,2130,Ordinary Differentl Equations,001145,"Morris,Diana",001,12230,Engineering & Applied Science,3.30,26,1,10,3,3,4,1,0,0,3,1
+2026 Summer,ANTH,5589,Topics in Archaeology,000894,"Romo,Sean",003,10433,College & Graduate Arts & Sci,3.82,9,0,6,2,0,1,0,0,0,0,0
+2026 Summer,GCOM,7840,Innovation and Tech. Mgmt.,015438,"Gray,Peter Horst",001,10436,McIntire School of Commerce,3.59,31,1,8,12,5,3,2,0,0,0,0
+2026 Summer,BIOL,2100,IntroBio w/Lab:Cell & Genetics,003470,"Kittlesen,David",100,10010,College & Graduate Arts & Sci,3.37,12,2,0,3,2,4,1,0,0,0,0
+2026 Summer,CHEM,1420,Intro College Chemistry II,005650,"Mattson,William A",002,10058,College & Graduate Arts & Sci,3.91,27,10,12,3,2,0,0,0,0,0,0
+2026 Summer,APMA,2120,Multivariable Calculus,001144,"Fernando,Nethali",002,12236,Engineering & Applied Science,3.27,23,4,6,0,1,5,4,1,1,1,0
+2026 Summer,PSYC,3006,Res Methods & Data Analysis II,032540,"Schmidt,Karen",100,12239,College & Graduate Arts & Sci,3.52,18,0,4,10,1,2,0,0,0,0,1
+2026 Summer,CS,3140,Software Dev Essentials,046231,"Stone,Derrick",001,11203,Engineering & Applied Science,3.53,13,0,4,7,0,0,1,0,0,0,1
+2026 Summer,PSHM,5300,Population Health,044820,"Hutchinson,Mark",501,12485,Continuing & Prof Studies,3.22,5,0,1,2,0,1,0,0,0,1,0
+2026 Summer,EDIS,6720,Understanding the Code,009524,"Buckrop,Jordan Meredith",501,10692,School of Education and HumanDev,3.78,14,0,7,6,0,0,1,0,0,0,0
+2026 Summer,DS,6021,ML I: Intr Predictive Modeling,047947,"Stewart,Thomas",001,12375,School of Data Science,3.76,45,0,34,0,0,11,0,0,0,0,0
+2026 Summer,EDIS,3020,The Exceptional Learner,009391,"Cook,Lysandra",500,10656,School of Education and HumanDev,3.71,20,1,14,2,0,1,1,0,0,0,1
+2026 Summer,PLCP,3125,Comparative UK-US Politics,044481,"Thomas,Mark",501,12343,College & Graduate Arts & Sci,3.88,12,0,7,5,0,0,0,0,0,0,0
+2026 Summer,CHEM,2311,Org Chem Lab I Non Chem Major,043154,"Chruma,Jason",002,12607,College & Graduate Arts & Sci,3.65,17,0,9,4,2,0,1,0,1,0,0
+2026 Summer,SLAV,2360,Dracula,035128,"Stepanic,Stanley",001,10071,College & Graduate Arts & Sci,3.84,14,0,11,1,0,2,0,0,0,0,0
+2026 Summer,ECON,3720,Introduction to Econometrics,007939,"Mcgee,Christopher",001,10141,College & Graduate Arts & Sci,3.40,17,0,8,3,2,0,3,0,0,0,1
+2026 Summer,ANTH,1010,Introduction to Anthropology,000600,"Farmer,Tessa Rose",002,12719,College & Graduate Arts & Sci,3.41,20,0,6,6,3,2,1,0,1,0,1
+2026 Summer,LPPS,3420,International Law and Policy,044534,"Thomas,Mark",501,12154,Batten Leadership & Public Pol,3.76,11,0,6,3,1,1,0,0,0,0,0
+2026 Summer,MATH,1310,Calculus I,022953,"Wang,Caelan",001,10078,College & Graduate Arts & Sci,2.41,10,1,1,1,1,1,1,0,0,2,2
+2026 Summer,ENWR,1510,Writing and Critical Inquiry,013432,"Goad,Rhiannon",001,10149,College & Graduate Arts & Sci,3.89,11,0,7,4,0,0,0,0,0,0,0
+2026 Summer,PHYS,2030,Princip of Physics 1 Workshop,030811,"Bychkov,Maksim",001,10069,College & Graduate Arts & Sci,3.97,23,9,12,2,0,0,0,0,0,0,0
+2026 Summer,GSGS,3240,Working with/across Cultures,045770,"Tober,Tara Leigh",501,12037,College & Graduate Arts & Sci,3.90,22,0,16,5,1,0,0,0,0,0,0
+2026 Summer,SOC,3020,Introduction to Social Theory,035372,"Mullins,Ian",001,12210,College & Graduate Arts & Sci,3.60,10,1,7,0,0,0,0,0,2,0,0
+2026 Summer,ENCW,2559,New Course in Creative Writing,048312,"Martin-Beecher,Anna",001,12620,College & Graduate Arts & Sci,3.91,10,2,5,3,0,0,0,0,0,0,0
+2026 Summer,EVSC,2050,Introduction to Oceanography,013897,"Macko,Stephen A",002,10153,College & Graduate Arts & Sci,3.96,17,1,15,0,1,0,0,0,0,0,0
+2026 Summer,NESC,8001,Foundations of Neuroscience,047952,"Coutinho-Budd,Jaeda",001,11811,Medical School - BIMS/PHS,3.98,12,5,6,1,0,0,0,0,0,0,0
+2026 Summer,ECON,3010,Intermediate Microeconomics,007908,"Santugini,Marc",001,10017,College & Graduate Arts & Sci,3.57,47,11,16,6,5,3,1,3,1,0,1
+2026 Summer,CHEM,1420,Intro College Chemistry II,005650,"Cunningham,Connell",001,10059,College & Graduate Arts & Sci,2.85,25,2,2,3,4,2,5,2,0,1,4
+2026 Summer,SYS,3054,Systems Case Studies,041810,"Bailey,Robert Reid",501,12016,Engineering & Applied Science,3.87,15,0,11,3,0,1,0,0,0,0,0
+2026 Summer,SLAV,2360,Dracula,035128,"Stepanic,Stanley",002,10072,College & Graduate Arts & Sci,3.10,22,1,5,5,2,2,4,0,0,0,3
+2026 Summer,ISHU,4120,American Short Story,020360,"Horton,David",101,12540,Continuing & Prof Studies,3.94,10,5,3,2,0,0,0,0,0,0,0
+2026 Summer,MATH,1210,A survey of Calculus I,022944,"Sherman,David",001,10077,College & Graduate Arts & Sci,2.38,19,0,1,4,1,2,1,0,5,2,3
+2026 Summer,PSPS,6000,Transform Ldrshp in Chng Times,046466,"Dion,Shannon",580,12529,Continuing & Prof Studies,3.71,34,0,21,9,2,0,0,1,0,0,1
+2026 Summer,ECON,2060,American Economic History,007880,"Thomas,Mark",001,12189,College & Graduate Arts & Sci,3.13,23,0,0,4,6,9,3,1,0,0,0
+2026 Summer,GCNL,5120,Children & Families,015373,"Boitnott,Amy",001,11289,School of Nursing,3.85,58,0,32,25,0,1,0,0,0,0,0
+2026 Summer,APMA,3080,Linear Algebra,001151,"Li,Meiqin",001,12229,Engineering & Applied Science,3.36,13,6,2,0,0,2,1,0,1,0,1
+2026 Summer,HIST,3281,Genocide,019169,"Rossman,Jeffrey J",002,10380,College & Graduate Arts & Sci,3.62,12,1,4,3,1,3,0,0,0,0,0
+2026 Summer,GNUR,8005,Nurse Educator Seminar I,016990,"Craig,Sarah",001,11382,School of Nursing,4.00,45,4,41,0,0,0,0,0,0,0,0
+2026 Summer,NUCO,3110,Adult-Gero Nursing,043224,"Shepherd,Andrea",001,11870,School of Nursing,3.84,28,0,16,10,2,0,0,0,0,0,0
+2026 Summer,STAT,4160,Experimental Design,044445,"Ferrara,Maria",001,12217,College & Graduate Arts & Sci,3.55,13,0,4,7,1,0,0,0,0,0,1
+2026 Summer,GNUR,6640,Sexual & Reproductive Health,044795,"Bourne,Dawn",001,11316,School of Nursing,3.82,33,0,17,14,1,1,0,0,0,0,0
+2026 Summer,DS,2003,Communicating with Data,046060,"Afriyie,Prince",001,12225,School of Data Science,3.83,26,5,17,1,1,0,1,0,1,0,0
+2026 Summer,ENGR,1010,Engineering Foundations 1,046987,"Tian,Jianghong",001,11151,Engineering & Applied Science,3.97,22,0,20,2,0,0,0,0,0,0,0
+2026 Summer,PSPA,5030,Public Budgeting and Fin Mgmt,040510,"Beckett,Corey",701,12517,Continuing & Prof Studies,3.55,11,0,2,5,2,2,0,0,0,0,0
+2026 Summer,GNUR,6251,Bio Basis of Mental Health,017010,"Gomes,Melissa",001,11381,School of Nursing,3.85,19,0,16,1,0,0,2,0,0,0,0
+2026 Summer,GSGS,3240,Working with/across Cultures,045770,"Hakala,Ingrid Iksa",506,12585,College & Graduate Arts & Sci,3.64,11,1,6,0,2,0,2,0,0,0,0
+2026 Summer,SYS,6581,Selected Topics in Sys Engr,036978,"Bolton,Matthew",001,12524,Engineering & Applied Science,3.87,10,2,5,2,1,0,0,0,0,0,0
+2026 Summer,EVSC,5020,GIS Methods,014008,"Shaban,Mirella",001,12572,College & Graduate Arts & Sci,3.83,6,1,3,1,1,0,0,0,0,0,0
+2026 Summer,NUCO,4435,Transition to Practice,046018,"Wiersma,Gretchen",100,11324,School of Nursing,3.81,42,8,25,5,0,0,2,0,2,0,0
+2026 Summer,SLAV,2360,Dracula,035128,"Stepanic,Stanley",003,10073,College & Graduate Arts & Sci,3.68,20,6,6,4,2,1,0,0,0,0,1
+2026 Summer,NUCO,2330,Health Assessment,029379,"Whitlow,Malinda",100,11321,School of Nursing,3.97,24,1,22,0,1,0,0,0,0,0,0
+2026 Summer,GBAC,7219,Capstone II: Business Impact,045285,"Maxham,James",001,10455,McIntire Darden Grad Business,3.74,32,4,9,14,3,2,0,0,0,0,0
+2026 Summer,PSPS,6050,Stewardship PA & Managing HC,046295,"Spence,Deborah",580,12576,Continuing & Prof Studies,3.85,23,0,14,7,2,0,0,0,0,0,0
+2026 Summer,BIMS,8995,Topical Research,042296,"Sun,Shengyi",004,11849,Medical School - BIMS/PHS,4.00,13,5,8,0,0,0,0,0,0,0,0
+2026 Summer,RELB,2054,Tibetan Buddhism Introduction,033840,"Burke,Erin Patricia",001,12222,College & Graduate Arts & Sci,3.62,19,3,8,5,0,1,0,1,0,0,1
+2026 Summer,PSYC,2005,Rsch Methods & Data Analysis I,032539,"Smyth,Frederick",002,12259,College & Graduate Arts & Sci,3.45,53,3,14,11,13,8,2,0,1,0,1
+2026 Summer,GBAC,7218,Capstone I: Solution Design,045286,"Maxham,James",001,10457,McIntire Darden Grad Business,3.41,44,2,6,16,8,5,4,2,1,0,0
+2026 Summer,STS,2600,Engineering Ethics,046988,"Pappas,Jesse",001,12588,Engineering & Applied Science,3.95,17,0,14,3,0,0,0,0,0,0,0
+2026 Summer,EDLF,5011,Adolescent Learning & Develop,039443,"Zhao,Xiangyu",001,10517,School of Education and HumanDev,3.95,28,0,25,2,1,0,0,0,0,0,0
+2026 Summer,SPAN,1016,Intensive Introductory Spanish,036161,"Piriz Moguel,Ana",002,12698,College & Graduate Arts & Sci,3.62,10,1,1,6,1,0,1,0,0,0,0
+2026 Summer,STS,2500,S & T in Soc & Global Context,036734,"Earle,Joshua",002,12587,Engineering & Applied Science,3.18,11,0,7,0,0,2,0,0,0,0,2
+2026 Summer,ENGL,2599,Special Topics,012514,"Fowler,Charity",002,12276,College & Graduate Arts & Sci,3.49,12,6,2,0,1,0,0,2,1,0,0
+2026 Summer,BIOL,3410,Human Anatomy and Physiology I,043173,"Massey,Ann",100,10011,College & Graduate Arts & Sci,3.29,16,1,5,2,2,0,3,2,1,0,0
+2026 Summer,PSYC,3326,Human Social Relationships,047917,"Coan,James",001,12253,College & Graduate Arts & Sci,3.91,18,10,6,1,0,0,1,0,0,0,0
+2026 Summer,PHYS,2040,Princip of Physics 2 Workshop,030812,"Bychkov,Maksim",001,10065,College & Graduate Arts & Sci,4.00,19,17,2,0,0,0,0,0,0,0,0
+2026 Summer,PSYC,2005,Rsch Methods & Data Analysis I,032539,"Smyth,Frederick",001,12243,College & Graduate Arts & Sci,3.50,72,10,23,17,6,7,3,0,3,0,3
+2026 Summer,GNUR,7110,Pediatric Health and Wellness,048134,"Boitnott,Amy",001,11877,School of Nursing,3.79,43,2,19,17,4,1,0,0,0,0,0
+2026 Summer,PSLP,5320,Organizational Leadership,044293,"Allen,Roxann",701,12514,Continuing & Prof Studies,3.30,7,0,1,2,1,1,2,0,0,0,0
+2026 Summer,APMA,3150,From Data to Knowledge,044104,"Chen,Heze",001,12228,Engineering & Applied Science,3.74,19,4,7,3,3,2,0,0,0,0,0
+2026 Summer,CS,4750,Database Systems,006934,"Smith,Mary",001,12250,Engineering & Applied Science,3.97,19,0,17,2,0,0,0,0,0,0,0
+2026 Summer,SYS,6582,Selected Topics in Sys Engr,036979,"Riggs,Robert",600,12528,Engineering & Applied Science,3.94,19,0,15,4,0,0,0,0,0,0,0
+2026 Summer,STAT,2120,Intro to Statistical Analysis,036655,"Ross,Richard",002,10356,College & Graduate Arts & Sci,3.71,14,0,5,7,1,0,1,0,0,0,0
+2026 Summer,ANTH,1010,Introduction to Anthropology,000600,"Farmer,Tessa",001,12567,College & Graduate Arts & Sci,3.13,22,0,6,6,3,1,1,1,1,1,2
+2026 Summer,CHEM,1410,Intro College Chemistry I,005649,"Cunningham,Connell",001,10012,College & Graduate Arts & Sci,3.12,23,4,1,5,3,4,1,0,3,1,1
+2026 Summer,PHIL,1510,Intro Philosophy Seminars,030034,"Jones,Dakota",003,12162,College & Graduate Arts & Sci,3.92,12,4,6,1,1,0,0,0,0,0,0
+2026 Summer,SYS,6581,Selected Topics in Sys Engr,036978,"Bolton,Matthew",600,12526,Engineering & Applied Science,3.93,9,4,3,2,0,0,0,0,0,0,0
+2026 Summer,APMA,2130,Ordinary Differentl Equations,001145,"Morris,Diana Dunn",002,12691,Engineering & Applied Science,3.35,24,1,6,6,5,1,2,0,1,2,0
+2026 Summer,PSLP,5500,Contemp Issues in Leadership,047810,"McClellan,Sara",701,12611,Continuing & Prof Studies,3.73,6,0,2,3,1,0,0,0,0,0,0
+2026 Summer,PLIR,3620,Politics of the EU,044496,"Thomas,Mark",501,12342,College & Graduate Arts & Sci,3.82,12,0,6,5,1,0,0,0,0,0,0
+2026 Summer,STAT,1601,Intro Data Science with R,045055,"Roland,Kristen",002,12216,College & Graduate Arts & Sci,3.52,37,4,20,4,1,2,1,3,0,0,2
+2026 Summer,ARAB,2026,Intensive Intermediate Arabic,040788,"Maanaki,Bilal",001,12180,College & Graduate Arts & Sci,3.94,10,0,8,2,0,0,0,0,0,0,0
+2026 Summer,PC,5010,Procurement Policy & Practices,029784,"Eller,Thomas",701,12523,Continuing & Prof Studies,3.93,9,0,7,2,0,0,0,0,0,0,0
+2026 Summer,GNUR,6060,Culture and Health,016943,"Hinton,Ivora",001,11309,School of Nursing,4.00,55,42,13,0,0,0,0,0,0,0,0
+2026 Summer,PSYC,2150,Introduction to Cognition,032487,"Golino,Mariana",001,12252,College & Graduate Arts & Sci,3.75,33,0,18,9,2,4,0,0,0,0,0
+2026 Summer,CHEM,1421,Intro College Chemistry II Lab,005994,"Cunningham,Connell",001,10060,College & Graduate Arts & Sci,3.95,20,16,3,0,0,1,0,0,0,0,0
+2026 Summer,MDST,2000,Introduction to Media Studies,023487,"Rao,Pallavi",001,12199,College & Graduate Arts & Sci,3.64,51,0,22,17,4,5,1,0,1,1,0
+2026 Summer,ECON,4095,Dynamic Economics,046528,"Santugini,Marc",001,12193,College & Graduate Arts & Sci,3.90,46,10,29,2,4,1,0,0,0,0,0
+2026 Summer,APMA,3100,Probability,001152,"Ryals,Megan",001,12231,Engineering & Applied Science,1.90,10,0,1,0,0,1,2,2,0,0,4
+2026 Summer,PSPM,5200,"Proj Sched, Cost & Budg Contrl",029796,"Smith,Douglass",701,12508,Continuing & Prof Studies,3.27,14,0,6,5,1,0,0,0,0,0,2
+2026 Summer,GBAC,7222,Analytics Project Management,045293,"Cowan,Alexander C",001,12718,McIntire Darden Grad Business,3.46,44,2,6,8,22,6,0,0,0,0,0
+2026 Summer,SYS,6041,Engineering Ethics,043196,"Louis,Garrick E",001,12721,Engineering & Applied Science,3.88,6,2,3,0,1,0,0,0,0,0,0
+2026 Summer,PSPS,6005,Prac Apps of Risk Mgmt in PSO,046661,"Graham,Gordon",580,12534,Continuing & Prof Studies,3.60,5,0,2,1,1,1,0,0,0,0,0
+2026 Summer,PSPS,6010,Constitutional Framework of PS,046293,"Cantil-Sakauye,Tani",580,12535,Continuing & Prof Studies,4.00,31,5,26,0,0,0,0,0,0,0,0
+2026 Summer,EDIS,5080,Differentiating Instruction,045846,"Coyne,Elizabeth",501,12553,School of Education and HumanDev,3.81,18,0,11,5,0,2,0,0,0,0,0
+2026 Summer,MDST,3510,Topics in Media Research,045771,"Nemer,David",001,12198,College & Graduate Arts & Sci,3.20,18,0,1,9,0,2,2,3,1,0,0
+2026 Summer,STAT,1601,Intro Data Science with R,045055,"Roland,Kristen",001,12213,College & Graduate Arts & Sci,3.82,37,7,23,3,0,2,1,0,0,1,0
+2026 Summer,CHEM,1411,Intro College Chem I Lab,005986,"Cunningham,Connell",001,10014,College & Graduate Arts & Sci,3.76,17,12,0,2,2,0,0,0,1,0,0
+2026 Summer,GSGS,2530,ISO: Study Abroad Topics,047105,"Graber,Emily",503,12141,College & Graduate Arts & Sci,3.97,20,0,18,2,0,0,0,0,0,0,0
+2026 Summer,ARAB,2266,Colloquial Arabic II,043091,"Ben-Meir,Yossef",504,12066,College & Graduate Arts & Sci,3.98,12,8,3,1,0,0,0,0,0,0,0
+2026 Summer,MDST,3559,New Course: MDST,039189,"Rao,Pallavi",001,12207,College & Graduate Arts & Sci,3.49,16,4,5,3,1,0,2,0,0,0,1
+2026 Summer,HILA,2559,New Course: HILA,039259,"Sweeney,Lean",001,12321,College & Graduate Arts & Sci,3.63,13,3,2,5,1,0,2,0,0,0,0
+2026 Summer,DS,6015,DS Capstone,046836,"Graham,Daniel",003,12368,School of Data Science,3.68,17,0,14,0,2,0,0,0,0,0,1
+2026 Summer,GSGS,3240,Working with/across Cultures,045770,"Dyer,Adam Lawrence",502,12039,College & Graduate Arts & Sci,4.00,39,2,37,0,0,0,0,0,0,0,0
+2026 Summer,PLCP,3130,Politics Econ of Development,031691,"Chraibi,Ghita",1,12360,College & Graduate Arts & Sci,3.75,10,0,4,5,0,1,0,0,0,0,0
+2026 Summer,DS,6002,Ethics of Big Data I,043459,"Cummings,Renee",001,12450,School of Data Science,3.98,80,37,40,2,0,0,1,0,0,0,0
+2026 Summer,FREN,3034,Adv Oral Expression in French,014360,"Rey,Cecile Helene Christiane",501,12144,College & Graduate Arts & Sci,3.96,14,0,12,2,0,0,0,0,0,0,0
+2026 Summer,MDST,3755,Social Media and Society,044894,"Wade,Ashleigh",001,12201,College & Graduate Arts & Sci,3.81,20,4,11,3,0,1,0,0,1,0,0
+2026 Summer,MDST,3760,Black Digital Culture,044891,"Wade,Ashleigh",001,12204,College & Graduate Arts & Sci,3.32,19,3,6,2,3,1,1,0,2,0,1
+2026 Summer,CHEM,1421,Intro College Chemistry II Lab,005994,"Mattson,William A",003,10230,College & Graduate Arts & Sci,4.00,16,14,2,0,0,0,0,0,0,0,0
+2026 Summer,EDIS,5270,Teaching Read & Write to ELs,043202,"Ford,Karen Lee",501,12555,School of Education and HumanDev,3.90,23,0,20,1,0,2,0,0,0,0,0
+2026 Summer,EDIS,5080,Differentiating Instruction,045846,"Moran,Melinda",503,12757,School of Education and HumanDev,3.69,21,0,9,7,3,1,1,0,0,0,0
+2026 Summer,EDIS,5020,Found of Learning & Teaching,009425,"Pease,Jennifer",001,10505,School of Education and HumanDev,4.00,33,13,20,0,0,0,0,0,0,0,0
+2026 Summer,DRAM,2070,Public Speaking,007205,"Davis,Theresa",001,10381,College & Graduate Arts & Sci,3.46,11,0,1,5,2,3,0,0,0,0,0
+2026 Summer,GBAC,7224,Business Ethics & Digital Age,045271,"Leiner,Ben",001,10458,McIntire Darden Grad Business,3.17,44,1,4,5,13,15,3,0,2,0,1
+2026 Summer,SPAN,2020,Advanced Intermediate Spanish,035854,"Wellbeloved,Elizabeth A.",501,12079,College & Graduate Arts & Sci,3.89,32,2,18,12,0,0,0,0,0,0,0
+2026 Summer,PLAP,3160,Politics of Food,040884,"Freedman,Paul",001,10429,College & Graduate Arts & Sci,3.78,13,0,5,7,1,0,0,0,0,0,0
+2026 Summer,EDIS,5422,Cross-Cultural Education,043455,"Hemmler,Vonna",502,12556,School of Education and HumanDev,3.77,23,0,18,4,0,0,0,0,0,0,1
+2026 Summer,EDIS,5422,Cross-Cultural Education,043455,"Amato,Wendy",501,10606,School of Education and HumanDev,3.92,24,3,17,3,0,1,0,0,0,0,0
+2026 Summer,ANTH,5589,Topics in Archaeology,000894,"Proebsting,Eric",002,10432,College & Graduate Arts & Sci,3.85,11,5,4,0,1,1,0,0,0,0,0
+2026 Summer,GETR,1392,Introduction to Fairy Tales,048488,"Schmid,Marcel",001,12610,College & Graduate Arts & Sci,3.94,10,0,8,2,0,0,0,0,0,0,0
+2026 Summer,GCNL,5150,Community Health Nursing,015376,"Burchfield,Caitlin",001,11303,School of Nursing,4.00,58,2,56,0,0,0,0,0,0,0,0
+2026 Summer,ANTH,5589,Topics in Archaeology,000894,"Neiman,Fraser",001,10431,College & Graduate Arts & Sci,3.64,12,0,5,3,2,2,0,0,0,0,0
+2026 Summer,STS,4600,Engr Ethcs Prof Responsibility,036750,"Davis,William",001,12590,Engineering & Applied Science,1.94,19,0,1,5,0,1,2,0,2,0,8
+2026 Summer,EDLF,7812,Ldshp for Continuous Improve,042238,"Gillespie Jr.,Michael Lawrence",500,10581,School of Education and HumanDev,4.00,12,2,10,0,0,0,0,0,0,0,0
+2026 Summer,PSPA,5010,Public Policy Analysis,040700,"McClellan,Sara",701,12516,Continuing & Prof Studies,3.84,8,0,5,2,1,0,0,0,0,0,0
+2026 Summer,STS,4500,STS and Engineering Practice,036749,"Laugelli,Benjamin",001,12589,Engineering & Applied Science,3.97,21,16,4,0,1,0,0,0,0,0,0
+2026 Summer,PC,5040,Advanced Contract Management,029787,"McCarthy,John",701,12525,Continuing & Prof Studies,3.20,10,7,1,0,0,0,0,0,0,0,2
+2026 Summer,DS,5072,Data Science for Social Impact,048378,"Baker,Leith",001,12456,School of Data Science,3.76,9,0,3,5,1,0,0,0,0,0,0
+2026 Summer,SPAN,1026,Intensive Introductory Spanish,036164,"Piriz Moguel,Ana",002,12699,College & Graduate Arts & Sci,3.62,10,1,1,6,1,0,1,0,0,0,0
+2026 Summer,CS,2130,Computer Systems and Org 1,046226,"Yi,Xinyao",001,12247,Engineering & Applied Science,3.31,16,1,4,2,4,1,1,2,1,0,0
+2026 Summer,PSYC,2500,Topics in Psych,042301,"Golino,Hudson Fernandes",002,12715,College & Graduate Arts & Sci,3.80,23,0,15,6,1,0,0,0,1,0,0
+2026 Summer,EDLF,7807,LEAD I,009747,"Lockhart,Joscelin",500,10577,School of Education and HumanDev,3.94,21,9,10,1,0,1,0,0,0,0,0
+2026 Summer,ECON,3030,Money and Banking,007910,"Doyle,Carter",001,12190,College & Graduate Arts & Sci,3.35,45,1,12,14,7,2,1,4,1,2,1
+2026 Summer,CJ,5750,D&D in the Digital Age,047086,"Lehman,Matthew D",C901,12866,Continuing & Prof Studies,3.88,5,0,3,2,0,0,0,0,0,0,0
+2026 Summer,MDST,3510,Topics in Media Research,045771,"Goin,Keara",002,12205,College & Graduate Arts & Sci,3.59,14,0,7,2,2,2,0,1,0,0,0
+2026 Summer,BME,3080,Biomed IDEAS Lab I,004070,"Allen,Timothy",001,10699,Engineering & Applied Science,3.62,13,2,5,2,1,1,2,0,0,0,0
+2026 Summer,EDIS,7250,Models&Strategies Tchg Gifted,009712,"Adams,Cheryll",500,10567,School of Education and HumanDev,3.92,17,0,15,1,0,1,0,0,0,0,0
+2026 Summer,EDIS,5025,"Curric, Instruct & Assessment",044060,"Baran,John",503,10658,School of Education and HumanDev,3.84,22,0,13,7,2,0,0,0,0,0,0
+2026 Summer,SYS,6045,Applied Probabilistic Models,036966,"Mortveit,Henning Skattkjaer",700,11288,Engineering & Applied Science,3.31,10,0,1,3,2,2,2,0,0,0,0
+2026 Summer,CS,3120,Discrete Math and Theory 2,046229,"Floryan,Mark",001,11198,Engineering & Applied Science,2.65,19,0,6,1,0,2,0,1,4,3,2
+2026 Summer,PSYC,2200,Survey Neural Basis of Behav,032491,"Clabough,Erin",001,12246,College & Graduate Arts & Sci,3.18,24,1,3,4,5,6,1,2,1,1,0
+2026 Summer,PSYC,3240,Animal Minds,032492,"Meliza,Daniel",001,12244,College & Graduate Arts & Sci,3.69,17,0,9,4,1,2,1,0,0,0,0
+2026 Summer,GCOM,7810,Strategic Management of IT,015435,"Gray,Peter Horst",001,10435,McIntire School of Commerce,3.59,31,1,8,12,5,3,2,0,0,0,0
+2026 Summer,PHYS,2620,Modern Physics,030844,"Lindgren,Richard",001,12261,College & Graduate Arts & Sci,3.56,15,0,7,3,1,3,0,0,1,0,0
+2026 Summer,EDIS,7070,Multimedia Learning,009696,"Aziz,Dawn",500,10565,School of Education and HumanDev,3.93,8,0,6,2,0,0,0,0,0,0,0
+2026 Summer,EDIS,6710,Rdng/Wrtng Found Divrse Lrners,009522,"Buckrop,Jordan Meredith",501,10662,School of Education and HumanDev,3.94,19,0,15,4,0,0,0,0,0,0,0
+2026 Summer,SPAN,3010,Finding your Voice in Spanish,035893,"Wellbeloved,Elizabeth A.",501,12099,College & Graduate Arts & Sci,3.98,12,8,3,1,0,0,0,0,0,0,0
+2026 Summer,ISSS,3411,Topics in Personality Psych,041483,"Berube,Clair",101,12472,Continuing & Prof Studies,3.87,20,0,11,9,0,0,0,0,0,0,0
+2026 Summer,EDLF,5810,Intro to Higher Education,009726,"Whitley,Sarah",001,10506,School of Education and HumanDev,3.94,30,4,20,6,0,0,0,0,0,0,0
+2026 Summer,EDLF,7810,Legal & Educ Policy Context,009813,"Roberts,Wendell",500,10579,School of Education and HumanDev,4.00,13,10,3,0,0,0,0,0,0,0,0
+2026 Summer,ISHU,3185,Literature About the Body,042712,"Ach,Jada",101,12463,Continuing & Prof Studies,3.96,26,4,20,1,1,0,0,0,0,0,0
+2026 Summer,PSLP,5300,Foundations of Leadership,044292,"Degner,Kai",701,12513,Continuing & Prof Studies,3.71,14,2,11,0,0,0,0,0,0,0,1
+2026 Summer,AAS,2760,Empowered Women of Africa,046374,"Rotich,Anne",1,12268,College & Graduate Arts & Sci,3.59,16,4,9,1,0,0,0,0,0,1,1
+2026 Summer,PSYC,2600,Intro to Social Psychology,032521,"MacCormack,Jennifer",001,12249,College & Graduate Arts & Sci,3.79,29,10,12,4,0,2,0,0,0,0,1
+2026 Summer,EDIS,6710,Rdng/Wrtng Found Divrse Lrners,009522,"Tatel,Stephanie",500,10568,School of Education and HumanDev,3.86,24,0,13,11,0,0,0,0,0,0,0
+2026 Summer,EVSC,2900,"Beaches, Coasts and Rivers",013896,"Morris,David",01,12308,College & Graduate Arts & Sci,3.68,28,0,18,4,4,1,0,0,0,0,1
+2026 Summer,KINE,5710,Anatomy & Functional KINE,044583,"Higgins,Michael",001,10507,School of Education and HumanDev,3.55,17,0,9,4,2,1,0,0,0,0,1
+2026 Summer,GSGS,2010,Global Commerce in Culture,044177,"Goldblatt,Laura Emily",002,12315,College & Graduate Arts & Sci,3.98,17,5,11,1,0,0,0,0,0,0,0
+2026 Summer,EDIS,3040,Foundations of Early Child Edu,042221,"Neesen,Kathy",500,10642,School of Education and HumanDev,3.80,10,2,5,1,1,1,0,0,0,0,0
+2026 Summer,EDIS,5409,Children's Literature,043575,"Schnoor,Diane",500,10660,School of Education and HumanDev,4.00,20,12,8,0,0,0,0,0,0,0,0
+2026 Summer,ECON,2010,Principles of Econ: Microecon,007876,"Doyle,Carter",001,12192,College & Graduate Arts & Sci,3.16,29,1,5,6,5,7,0,1,2,1,1
+2026 Summer,HIAF,2002,Modern African History,018134,"Syed,Amir",001,12316,College & Graduate Arts & Sci,3.84,20,4,8,6,2,0,0,0,0,0,0
+2026 Summer,ACCT,5120,Intermediate Accounting II,045933,"Lee,Nammy",701,12489,Continuing & Prof Studies,3.46,10,0,3,1,3,3,0,0,0,0,0
+2026 Summer,EDIS,6200,Principles of Curric Design,045847,"Shields,Jane",501,10608,School of Education and HumanDev,3.40,19,0,8,8,0,1,0,0,0,0,2
+2026 Summer,ISHU,3251,Poetry Workshop,041264,"Matthews,Charlotte",101,12532,Continuing & Prof Studies,3.75,12,1,7,2,1,0,0,1,0,0,0
+2026 Summer,EDLF,7813,Leadership for EdTech,042239,"Dinicola,Frank G",500,10582,School of Education and HumanDev,3.89,14,7,4,2,0,1,0,0,0,0,0
+2026 Summer,EDIS,5820,Assessment Of and For Learning,045053,"Fitzpatrick,Mary",500,10561,School of Education and HumanDev,3.92,11,0,8,3,0,0,0,0,0,0,0
+2026 Summer,ARTH,2052,Ancient Egypt,039561,"Dakouri-Hild,Anastasia",1,12271,College & Graduate Arts & Sci,3.79,17,5,5,4,2,1,0,0,0,0,0
+2026 Summer,HR,5020,Staffing and Career Management,019926,"Beckwith,Ronald",701,12498,Continuing & Prof Studies,3.88,5,0,3,2,0,0,0,0,0,0,0
+2026 Summer,ISIN,4520,Sp Tps Conduct Inquiry: HU,043256,"Bhasin,Christine",101,12468,Continuing & Prof Studies,3.66,23,0,8,8,6,0,1,0,0,0,0
+2026 Summer,EDLF,7815,Ldshp Equity Dverse Population,046606,"White,Tinkhani",500,10618,School of Education and HumanDev,3.99,21,8,12,1,0,0,0,0,0,0,0
+2026 Summer,ISIN,4510,Sp Tps Conduct Inquiry: So Sci,043255,"Floyd,Richard",101,12466,Continuing & Prof Studies,3.60,14,0,4,5,4,0,1,0,0,0,0
+2026 Summer,EDIS,5142,IEP Develop & Implementation,045417,"Gentry,Roberta Anne",500,10552,School of Education and HumanDev,3.81,7,2,4,0,0,0,1,0,0,0,0
+2026 Summer,EDLF,5830,College Student Experience,009790,"Thomas,Nicole",001,10677,School of Education and HumanDev,3.87,31,3,18,8,1,1,0,0,0,0,0
+2026 Summer,GCNL,5140,Women & Childbearing Families,015375,"Reyna,Barbara",001,11296,School of Nursing,3.87,58,0,36,20,1,1,0,0,0,0,0
+2026 Summer,SPAN,1026,Intensive Introductory Spanish,036164,"Piriz Moguel,Ana",001,10035,College & Graduate Arts & Sci,3.78,13,1,6,4,1,1,0,0,0,0,0
+2026 Summer,ENGL,2590,Studies in Global Literature,043092,"Hopkins,Stephen",001,10417,College & Graduate Arts & Sci,3.95,11,0,9,2,0,0,0,0,0,0,0
+2026 Summer,GNUR,9027,Practice Change Management,047391,"Degennaro,Regina",001,11379,School of Nursing,3.96,22,0,19,3,0,0,0,0,0,0,0
+2026 Summer,ENTP,3501,Bus Essentials & Virt Intrnshp,047957,"Boler,Brendan",001,10451,McIntire School of Commerce,3.89,18,0,15,1,1,1,0,0,0,0,0
+2026 Summer,CHEM,1411,Intro College Chem I Lab,005986,"Mattson,William A",004,12859,College & Graduate Arts & Sci,3.88,13,4,4,5,0,0,0,0,0,0,0
+2026 Summer,CHEM,1411,Intro College Chem I Lab,005986,"Mattson,William A",003,12858,College & Graduate Arts & Sci,3.98,16,10,5,1,0,0,0,0,0,0,0
+2026 Summer,ISIN,4510,Sp Tps Conduct Inquiry: So Sci,043255,"Floyd,Richard D",FW01,12479,Continuing & Prof Studies,3.68,16,0,6,6,2,2,0,0,0,0,0
+2026 Summer,SPAN,2010,Intermediate Spanish,035853,"Rodriguez,Maria Esparza",001,12348,College & Graduate Arts & Sci,3.49,12,2,4,1,2,1,0,2,0,0,0
+2026 Summer,EDIS,6200,Principles of Curric Design,045847,"McLemore,Katherine James",502,12808,School of Education and HumanDev,3.82,18,0,15,0,0,2,1,0,0,0,0
+2026 Summer,EDIS,7805,Past as Prologue: Innovations,044575,"Wheelock,Matthew",500,10570,School of Education and HumanDev,3.88,29,8,14,4,2,1,0,0,0,0,0
+2026 Summer,ISSS,3720,Witchcraft,041757,"Lloyd,Amanda Renwick",FW01,12475,Continuing & Prof Studies,3.83,15,0,10,4,0,0,1,0,0,0,0
+2026 Summer,ENWR,2520,Special Topics in Writing,013448,"Sullivan,Rory",002,12290,College & Graduate Arts & Sci,3.87,10,0,8,1,0,1,0,0,0,0,0
+2026 Summer,EDIS,6200,Principles of Curric Design,045847,"Woodward,Tyler",500,10562,School of Education and HumanDev,3.97,20,0,18,2,0,0,0,0,0,0,0
+2026 Summer,GSGS,2010,Global Commerce in Culture,044177,"Goldblatt,Laura",001,12314,College & Graduate Arts & Sci,3.97,10,1,8,1,0,0,0,0,0,0,0
+2026 Summer,ISSS,3420,Human Thought and Behavior,020463,"Wallace,Lillian",101,12473,Continuing & Prof Studies,3.79,11,0,9,1,0,0,0,0,1,0,0
+2026 Summer,APMA,2120,Multivariable Calculus,001144,"Mahmood,Asif",001,11199,Engineering & Applied Science,1.31,15,0,1,0,0,1,2,0,2,0,9
+2026 Summer,PSYC,3006,Res Methods & Data Analysis II,032540,"Schmidt,Karen",200,12256,College & Graduate Arts & Sci,3.61,18,2,6,6,1,0,2,0,1,0,0
+2026 Summer,DS,6042,ML Systems & Network Security,048379,"Graham,Daniel",001,12373,School of Data Science,3.65,16,0,8,3,2,2,1,0,0,0,0
+2026 Summer,DS,6051,Decoding Large Language Models,047486,"Agarwal,Chirag",001,12372,School of Data Science,3.86,53,5,26,20,2,0,0,0,0,0,0
+2026 Summer,EDIS,5800,Understanding Ed Contexts,045013,"Hover,Stephanie van",001,10626,School of Education and HumanDev,3.96,54,0,50,2,1,1,0,0,0,0,0
+2026 Summer,ISLS,3190,"Good Cop, Bad Cop",020410,"Rasmussen,Alan",101,12469,Continuing & Prof Studies,3.86,24,14,5,1,3,1,0,0,0,0,0
+2026 Summer,PSHM,4052,Global Health Care,045170,"Erath,Mark",101,12480,Continuing & Prof Studies,3.37,19,10,3,2,0,1,0,0,0,1,2
+2026 Summer,CS,4501,Spec Top: Computer Science,006942,"Orebaugh,Angela",001,12255,Engineering & Applied Science,3.71,17,8,7,0,0,1,0,0,0,0,1
+2026 Summer,KINE,5700,AT Training Skills & EMC,044582,"Moore,Erin",001,10589,School of Education and HumanDev,3.66,17,0,10,6,0,0,0,0,0,0,1
+2026 Summer,EDIS,5710,Rdng/Wrtng Acrss Content Areas,009474,"Austin,Ottilie",500,10661,School of Education and HumanDev,3.97,22,0,20,2,0,0,0,0,0,0,0
+2026 Summer,EDIS,5080,Differentiating Instruction,045846,"Isley,Deanna Rakes",502,10622,School of Education and HumanDev,3.88,16,0,12,2,2,0,0,0,0,0,0
+2026 Summer,EDLF,7811,Ldship for Teaching & Learning,009818,"Nabors,Autumn",500,10580,School of Education and HumanDev,3.80,22,0,12,8,0,2,0,0,0,0,0
+2026 Summer,ISCP,4991,Capstone Project II,020318,"Plunkett,Ann Marie Harkins",101,12462,Continuing & Prof Studies,3.89,14,2,8,3,1,0,0,0,0,0,0
+2026 Summer,CHEM,3410,Phys Chem - Quantum Theory,005731,"Metcalf,Dave",1,12291,College & Graduate Arts & Sci,3.69,48,5,16,18,4,1,3,1,0,0,0
+2026 Summer,EDLF,7806,Family & Community Engagement,009746,"Held,Patrick",500,10576,School of Education and HumanDev,4.00,13,5,8,0,0,0,0,0,0,0,0
+2026 Summer,EDIS,5176,Contemporary Issues Special Ed,047516,"Allison,Rinyka Belle",500,10670,School of Education and HumanDev,3.33,23,0,3,8,3,3,6,0,0,0,0
+2026 Summer,EDIS,5175,Issues in K-12 Education,009699,"Baran,John",500,10553,School of Education and HumanDev,3.81,23,0,21,1,0,0,0,0,0,0,1
+2026 Summer,EDIS,5830,Languages and Literacies,045077,"Heny,Natasha",001,10538,School of Education and HumanDev,3.96,33,0,30,2,1,0,0,0,0,0,0
+2026 Summer,PSPM,5290,Agile Project Management,043656,"Parente,Susan",701,12510,Continuing & Prof Studies,3.93,8,0,6,2,0,0,0,0,0,0,0
+2026 Summer,EDIS,3060,Poverty and the Young Child,045749,"Turnbull,Khara",500,10643,School of Education and HumanDev,3.81,16,9,4,1,0,1,0,1,0,0,0
+2026 Summer,EDIS,5001,Legal Foundations Special Ed,045416,"Kunemund,Rachel",500,10657,School of Education and HumanDev,3.90,23,0,18,3,2,0,0,0,0,0,0
+2026 Summer,DS,5004,Applied Reinforcement Learning,048181,"Tashman,Adam",001,12383,School of Data Science,3.71,7,0,5,0,1,0,1,0,0,0,0
+2026 Summer,EDIS,5025,"Curric, Instruct & Assessment",044060,"Allen,Amanda",500,10682,School of Education and HumanDev,3.66,24,0,15,6,1,0,0,1,0,0,1
+2026 Summer,APMA,1090,Single Variable Calculus I,001138,"Ma,Hui",001,11204,Engineering & Applied Science,3.45,15,8,2,3,0,0,0,0,0,0,2
+2026 Summer,DS,5110,Data Eng II: Big Data Systems,046303,"Fox,Judy",002,12377,School of Data Science,3.76,49,3,33,5,4,1,2,0,0,0,1
+2026 Summer,DS,5012,Computation for Data Science,047945,"Malitsky,Yuri",001,12374,School of Data Science,3.95,48,29,13,5,1,0,0,0,0,0,0
+2026 Summer,DS,6015,DS Capstone,046836,"Wernz,Christian",007,12379,School of Data Science,3.93,17,4,9,4,0,0,0,0,0,0,0
+2026 Summer,DS,5002,How to Train your LLM,047503,"Christ,Bryan",001,12382,School of Data Science,3.99,26,19,6,1,0,0,0,0,0,0,0
+2026 Summer,DS,6030,"ML II: Data Mining, Stat Learn",046346,"Gedeck,Peter",001,12376,School of Data Science,3.90,42,17,15,7,3,0,0,0,0,0,0
+2026 Summer,DS,6015,DS Capstone,046836,"Alvarado,Rafael",008,12380,School of Data Science,3.94,19,2,13,4,0,0,0,0,0,0,0
+2026 Summer,ECE,2200,Applied Physics,046963,"Williams,Keith",001,12347,Engineering & Applied Science,3.91,25,14,8,2,0,0,0,1,0,0,0
+2026 Summer,DS,6015,DS Capstone,046836,"Kupperman,Natalie",005,12370,School of Data Science,4.00,17,5,12,0,0,0,0,0,0,0,0
+2026 Summer,DS,5110,Data Eng II: Big Data Systems,046303,"Cheng,Yue",001,12371,School of Data Science,3.94,84,65,13,0,3,3,0,0,0,0,0
+2026 Summer,PHYS,2010,Principles of Physics 1,030809,"Yoshida,Atsushi",100,10063,College & Graduate Arts & Sci,3.28,29,0,6,4,4,12,1,1,1,0,0
+2026 Summer,WGS,2100,Gender and Sexuality Studies,036786,"Speidel,Lisa",001,10057,College & Graduate Arts & Sci,3.91,19,0,17,0,1,1,0,0,0,0,0
+2026 Summer,NUIP,4300,Informatics in Healthcare,047402,"Craig,Sarah",001,11378,School of Nursing,3.98,43,3,39,0,0,1,0,0,0,0,0
+2026 Summer,EDLF,5160,Life Span Development,043142,"Wood,Katie Keller",500,10573,School of Education and HumanDev,3.81,22,5,10,6,0,0,0,0,0,1,0
+2026 Summer,DRAM,3070,African-American Theatre,007249,"Barbour-Payne,Yunina",001,12297,College & Graduate Arts & Sci,3.63,11,0,6,1,3,0,0,1,0,0,0
+2026 Summer,SPAN,3050,SPAN for Medical Professionals,039916,"Wellbeloved,Elizabeth A.",501,12107,College & Graduate Arts & Sci,3.97,11,8,2,1,0,0,0,0,0,0,0
+2026 Summer,PSPS,6980,MPS Comprehensive Exam,047405,"Gustafson,Bryon Gordon",580,12596,Continuing & Prof Studies,2.51,30,0,1,9,7,5,0,0,0,0,8
+2026 Summer,RELC,2050,Rise of Christianity,033956,"Tite,Philip",001,12344,College & Graduate Arts & Sci,3.19,14,0,5,2,1,1,2,2,0,0,1
+2026 Summer,DS,6015,DS Capstone,046836,"Waggoner,Philip",002,12367,School of Data Science,4.00,7,4,3,0,0,0,0,0,0,0,0
+2026 Summer,BIMS,8995,Topical Research,042296,"Woodfolk,Judith Ann",13,12990,Medical School - BIMS/PHS,4.00,9,5,4,0,0,0,0,0,0,0,0
+2026 Summer,CHEM,2321,Org Lab II Non-Chem Maj/Min,043155,"Chruma,Jason",001,10360,College & Graduate Arts & Sci,3.27,11,0,0,4,3,3,0,1,0,0,0
+2026 Summer,ECON,2020,Principles of Econ: Macroecon,007877,"Doyle,Carter",001,10351,College & Graduate Arts & Sci,3.16,47,0,9,12,5,9,4,3,1,3,1
+2026 Summer,ACCT,5200,Intro to Acct Info Systems,047272,"Evans,Richard",701,12490,Continuing & Prof Studies,3.61,14,0,3,7,2,2,0,0,0,0,0
+2026 Summer,PLAP,1010,Intro to American Politics,031551,"Stiles,Haley",1,12359,College & Graduate Arts & Sci,3.40,21,0,8,1,4,5,2,0,1,0,0
+2026 Summer,ACCT,5110,Intermediate Accounting I,045932,"Hutton,Leon",701,12488,Continuing & Prof Studies,3.69,17,0,13,2,1,0,0,0,0,0,1
+2026 Summer,CHEM,2420,Organic Chemistry II,005699,"Heyboer,Ethan",001,10362,College & Graduate Arts & Sci,2.82,64,4,15,4,4,7,4,11,4,6,5
+2026 Summer,EDIS,5010,Curr Instruc Assess Elementary,009424,"McGraw,Jillian",001,10536,School of Education and HumanDev,3.97,21,1,18,2,0,0,0,0,0,0,0
+2026 Summer,EDIS,5000,The Exceptional Learner,009423,"Sears,Jennifer",502,10605,School of Education and HumanDev,3.92,25,3,17,4,1,0,0,0,0,0,0
+2026 Summer,HIST,2011,History of Human Rights,042049,"Burrill,Emily",001,12324,College & Graduate Arts & Sci,3.52,15,0,4,6,3,0,1,0,1,0,0
+2026 Summer,DRAM,2620,Sound Design,007233,"Rasbury,Michael",1,12303,College & Graduate Arts & Sci,3.64,14,0,4,7,0,3,0,0,0,0,0
+2026 Summer,DRAM,2110,Lighting Technology,007209,"Kennedy,R.",2,12302,College & Graduate Arts & Sci,3.73,12,0,8,2,0,0,2,0,0,0,0
+2026 Summer,EDIS,5025,"Curric, Instruct & Assessment",044060,"Acors,Amy",502,10547,School of Education and HumanDev,3.65,23,0,21,0,0,0,0,0,0,0,2
+2026 Summer,GSGS,3245,"Interning Abroad, Virtually",046083,"Hakala,Ingrid Iksa",501,12103,College & Graduate Arts & Sci,3.90,10,5,3,1,1,0,0,0,0,0,0
+2026 Summer,CHEM,2311,Org Chem Lab I Non Chem Major,043154,"Chruma,Jason",001,10359,College & Graduate Arts & Sci,3.94,17,3,12,1,1,0,0,0,0,0,0
+2026 Summer,EVSC,1300,Earth's Weather and Climate,013862,"Fitzsimmons,Ian",001,12305,College & Graduate Arts & Sci,3.87,18,2,11,3,2,0,0,0,0,0,0
+2026 Summer,PHYS,2720,Problem Solving,046321,"Larson,Elizabeth",001,12267,College & Graduate Arts & Sci,3.87,10,0,8,1,0,1,0,0,0,0,0
+2026 Summer,CHEM,2321,Org Lab II Non-Chem Maj/Min,043155,"Chruma,Jason",002,12608,College & Graduate Arts & Sci,3.55,11,0,6,2,0,1,1,0,1,0,0
+2026 Summer,HIUS,2061,American Economic History,019531,"Thomas,Mark",001,12329,College & Graduate Arts & Sci,2.90,24,0,1,2,4,4,9,3,0,1,0
+2026 Summer,ARAB,2016,Intensive Intermediate Arabic,040787,"Humeidan,Bilal",001,12178,College & Graduate Arts & Sci,3.71,10,0,5,4,0,0,0,1,0,0,0
+2026 Summer,CHEM,2311,Org Chem Lab I Non Chem Major,043154,"Chruma,Jason",003,12650,College & Graduate Arts & Sci,3.74,13,0,5,7,0,0,1,0,0,0,0
+2026 Summer,EDIS,5000,The Exceptional Learner,009423,"Gelman,Jennifer Anne",500,10544,School of Education and HumanDev,3.87,20,0,15,3,1,1,0,0,0,0,0
+2026 Summer,CE,5025,"Constrcn Planng, Sched & Contr",047321,"Duran,Diana Franco",001,12457,Engineering & Applied Science,3.64,10,0,5,3,1,0,0,0,1,0,0
+2026 Summer,PHS,7000,Intro Biostat,030364,"Jones,Marieke",001,12600,Medical School - BIMS/PHS,3.25,15,0,1,5,3,3,2,0,1,0,0
+2026 Summer,PSYC,3490,Infant Development,032576,"Grossmann,Tobias",001,12357,College & Graduate Arts & Sci,3.85,46,11,21,10,1,3,0,0,0,0,0
+2026 Summer,EDIS,5135,Behavioral Intervention,045207,"Metras,Rachel",500,10550,School of Education and HumanDev,3.77,29,0,21,3,2,0,2,1,0,0,0
+2026 Summer,EDIS,5025,"Curric, Instruct & Assessment",044060,"Allen,Amanda",501,10546,School of Education and HumanDev,3.86,22,0,14,7,0,1,0,0,0,0,0
+2026 Summer,PHYS,1655,Python for Scientists,046731,"Group,Robert",001,12265,College & Graduate Arts & Sci,3.97,10,3,6,1,0,0,0,0,0,0,0
+2026 Summer,ANTH,2280,Medical Anthropology,000655,"Marques,Sophia Katharine",002,12804,College & Graduate Arts & Sci,3.32,10,1,1,4,0,1,2,0,1,0,0
+2026 Summer,MDST,3510,Topics in Media Research,045771,"Baiao Nemer,David",003,12961,College & Graduate Arts & Sci,3.44,19,1,3,7,4,1,1,2,0,0,0
