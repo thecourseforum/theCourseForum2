@@ -397,7 +397,7 @@ class Command(BaseCommand):
                 try:
                     days_part, time_part = time_block.strip().split(" ", 1)
                     start_time, end_time = time_part.split(" - ")
-                    
+
                     # CSV casing varies, normalize to lowercase.
                     days_part = days_part.lower()
 
