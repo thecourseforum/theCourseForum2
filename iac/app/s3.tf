@@ -1,7 +1,7 @@
 # S3 Bucket for Static Files
 resource "aws_s3_bucket" "static" {
-  bucket_prefix  = "${local.name_prefix}-static-"
-  force_destroy  = true
+  bucket_prefix = "${local.name_prefix}-static-"
+  force_destroy = true
 
   tags = {
     Name = "${local.name_prefix}-static"
