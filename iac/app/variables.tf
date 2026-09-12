@@ -14,6 +14,21 @@ variable "domain_name" {
   description = "Domain name for the application"
   type        = string
   default     = "thecourseforumtest.com"
+
+  validation {
+    condition     = contains(["thecourseforum.com", "thecourseforumtest.com"], var.domain_name)
+    error_message = "domain_name must be either thecourseforum.com or thecourseforumtest.com."
+  }
+}
+
+variable "dns_role_arn" {
+  description = "ARN of the role Terraform assumes in the separate Route 53 account"
+  type        = string
+
+  validation {
+    condition     = can(regex("^arn:aws:iam::011713309463:role/.+", var.dns_role_arn))
+    error_message = "dns_role_arn must be an IAM role ARN in Route 53 account 011713309463."
+  }
 }
 
 variable "aws_region" {

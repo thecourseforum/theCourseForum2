@@ -1,6 +1,7 @@
 # Import existing Route 53 hosted zone
 data "aws_route53_zone" "main" {
-  name         = var.domain_name
+  provider     = aws.dns
+  zone_id      = local.route53_hosted_zone_ids[var.domain_name]
   private_zone = false
 }
 
