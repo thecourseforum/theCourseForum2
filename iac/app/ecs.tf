@@ -57,6 +57,14 @@ resource "aws_ecs_task_definition" "django" {
           value = "${var.domain_name},${aws_cloudfront_distribution.main.domain_name},${aws_lb.main.dns_name}"
         },
         {
+          name  = "AWS_ELB_URL"
+          value = aws_lb.main.dns_name
+        },
+        {
+          name  = "AWS_CLOUDFRONT_URL"
+          value = aws_cloudfront_distribution.main.domain_name
+        },
+        {
           name  = "CORS_ALLOWED_ORIGINS"
           value = "https://${var.domain_name}"
         },

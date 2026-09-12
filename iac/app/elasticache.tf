@@ -15,7 +15,7 @@ resource "aws_elasticache_replication_group" "valkey" {
   engine                     = "valkey"
   engine_version             = "8.2"
   node_type                  = "cache.t4g.micro"
-  number_cache_clusters      = 1
+  num_cache_clusters         = 1
   port                       = 6379
   automatic_failover_enabled = false
   multi_az_enabled           = false
@@ -27,15 +27,10 @@ resource "aws_elasticache_replication_group" "valkey" {
   auth_token                 = random_password.redis_auth_token.result
 
   log_delivery_configuration {
+    destination      = aws_cloudwatch_log_group.redis.name
     destination_type = "cloudwatch-logs"
     log_format       = "json"
     log_type         = "slow-log"
-
-    destination_details {
-      cloudwatch_logs_details {
-        log_group = aws_cloudwatch_log_group.redis.name
-      }
-    }
   }
 
   tags = {

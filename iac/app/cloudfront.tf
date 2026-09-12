@@ -59,7 +59,9 @@ resource "aws_cloudfront_distribution" "main" {
 
   # ALB Origin for dynamic content
   origin {
-    domain_name = aws_lb.main.dns_name
+    # CloudFront validates the origin certificate against this hostname.
+    # The DNS account creates this alias to the ALB.
+    domain_name = "origin.${var.domain_name}"
     origin_id   = "ALB-${aws_lb.main.name}"
 
     custom_origin_config {
@@ -156,6 +158,8 @@ resource "aws_cloudfront_distribution" "main" {
       restriction_type = "none"
     }
   }
+
+  depends_on = [aws_route53_record.origin]
 
   tags = {
     Name = "${local.name_prefix}-cloudfront"
