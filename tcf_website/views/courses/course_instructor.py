@@ -9,7 +9,14 @@ from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
 
-from ...models import CourseInstructorGrade, Review, ReviewLLMSummary, Section, Semester
+from ...models import (
+    CourseInstructorGrade,
+    CourseInstructorStats,
+    Review,
+    ReviewLLMSummary,
+    Section,
+    Semester,
+)
 from .course import is_lecture_section
 
 _GRADE_BREAKDOWN_FIELDS = (
@@ -57,9 +64,25 @@ def _pair_review_counts(course_id, instructor_id):
     return row["num_reviews"], row["num_ratings"]
 
 
-def _pair_aggregate_chart_data(course, instructor, course_id, instructor_id):
-    """Averages and optional grade breakdown for the instructor page JSON blob."""
-    data = Review.objects.filter(
+def _pair_review_averages_from_stats(stats):
+    """Shape a ``CourseInstructorStats`` row into the JSON-blob average keys."""
+    return {
+        "average_rating": stats.average_rating(),
+        "instructor": stats.average_instructor_rating,
+        "enjoyability": stats.average_enjoyability,
+        "difficulty": stats.average_difficulty,
+        "recommendability": stats.average_recommendability,
+        "hours": stats.average_hours_per_week,
+        "amount_reading": stats.average_amount_reading,
+        "amount_writing": stats.average_amount_writing,
+        "amount_group": stats.average_amount_group,
+        "amount_homework": stats.average_amount_homework,
+    }
+
+
+def _pair_review_averages_live(course_id, instructor_id):
+    """Live per-request aggregate of the pair's review averages (fallback path)."""
+    return Review.objects.filter(
         course=course_id, instructor=instructor_id, hidden=False
     ).aggregate(
         average_rating=(
@@ -76,6 +99,22 @@ def _pair_aggregate_chart_data(course, instructor, course_id, instructor_id):
         amount_group=Avg("amount_group"),
         amount_homework=Avg("amount_homework"),
     )
+
+
+def _pair_aggregate_chart_data(course, instructor, course_id, instructor_id):
+    """Averages and optional grade breakdown for the instructor page JSON blob.
+
+    Review-derived averages are read from the denormalized ``CourseInstructorStats``
+    row (issue #982) when present, falling back to a live aggregate otherwise, so
+    this page no longer re-aggregates every review on each request.
+    """
+    stats = CourseInstructorStats.objects.filter(
+        course_id=course_id, instructor_id=instructor_id
+    ).first()
+    if stats is not None:
+        data = _pair_review_averages_from_stats(stats)
+    else:
+        data = _pair_review_averages_live(course_id, instructor_id)
     # Pass raw floats to JS; each display call (toFixed) rounds to the needed precision.
     # Pre-rounding here would cause double-rounding divergence from Django's floatformat.
 
