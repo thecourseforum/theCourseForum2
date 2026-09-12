@@ -8,6 +8,9 @@ on:
   push:
     branches: [dev, master]
 
+permissions:
+  contents: read
+
 env:
   PYTHON_TARGET: "3.12"
   DJANGO_SETTINGS_MODULE: tcf_core.settings.dev
@@ -25,6 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install uv
         uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
@@ -45,12 +50,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install uv
         uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           python-version: ${{ env.PYTHON_TARGET }}
           enable-cache: true
+          save-cache: false
 
       - name: Install dependencies
         run: uv sync --frozen --group dev --no-install-project
@@ -62,12 +70,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install uv
         uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           python-version: ${{ env.PYTHON_TARGET }}
           enable-cache: true
+          save-cache: false
 
       - name: Install dependencies
         run: uv sync --frozen --group dev --no-install-project
@@ -91,12 +102,15 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install uv
         uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           python-version: ${{ env.PYTHON_TARGET }}
           enable-cache: true
+          save-cache: false
 
       - name: Install dependencies
         run: uv sync --frozen --group dev --no-install-project
@@ -109,12 +123,14 @@ jobs:
       - name: Get code coverage
         id: coverage
         run: |
-          echo "percentage=$(uv run coverage report | grep -o '[0-9]\+%' | tail -1)" >> "$GITHUB_OUTPUT"
+          echo "percentage=$(uv run coverage report --format=total)%" >> "$GITHUB_OUTPUT"
 
   eslint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
