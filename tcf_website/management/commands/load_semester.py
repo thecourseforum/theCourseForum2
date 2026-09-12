@@ -397,14 +397,17 @@ class Command(BaseCommand):
                 try:
                     days_part, time_part = time_block.strip().split(" ", 1)
                     start_time, end_time = time_part.split(" - ")
+                    
+                    # CSV casing varies, normalize to lowercase.
+                    days_part = days_part.lower()
 
                     # Create time block with boolean fields
                     time_data = {
-                        "monday": "Mo" in days_part,
-                        "tuesday": "Tu" in days_part,
-                        "wednesday": "We" in days_part,
-                        "thursday": "Th" in days_part,
-                        "friday": "Fr" in days_part,
+                        "monday": "mo" in days_part,
+                        "tuesday": "tu" in days_part,
+                        "wednesday": "we" in days_part,
+                        "thursday": "th" in days_part,
+                        "friday": "fr" in days_part,
                         "start_time": datetime.strptime(start_time, "%I:%M%p").time(),
                         "end_time": datetime.strptime(end_time, "%I:%M%p").time(),
                     }
