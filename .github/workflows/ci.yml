@@ -123,7 +123,8 @@ jobs:
       - name: Get code coverage
         id: coverage
         run: |
-          echo "percentage=$(uv run coverage report --format=total)%" >> "$GITHUB_OUTPUT"
+          total=$(uv run coverage report --format=total)
+          echo "percentage=${total}%" >> "$GITHUB_OUTPUT"
 
   eslint:
     runs-on: ubuntu-latest
