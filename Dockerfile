@@ -28,6 +28,6 @@ COPY . /app/
 
 RUN chmod +x /app/scripts/container-startup.sh
 
-EXPOSE 80
+EXPOSE 8000
 
 CMD ["/app/scripts/container-startup.sh"]
