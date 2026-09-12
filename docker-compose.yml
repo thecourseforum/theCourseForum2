@@ -1,46 +1,138 @@
+name: tcf
+
 services:
-  web:
+  db:
+    # Postgres 18.1 to match prod RDS.
+    image: postgres:18.1
+    container_name: tcf_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      PGUSER: ${DB_USER}       # client tool defaults so psql/pg_* need no -U/-d
+      PGDATABASE: ${DB_NAME}
+    volumes:
+      # postgres:18 images mount at /var/lib/postgresql, not /data,
+      # so pg_upgrade can see multiple version directories.
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  valkey:
+    # ElastiCache in prod runs Valkey 8.2; no such image on Docker Hub yet.
+    image: valkey/valkey:8.1
+    container_name: tcf_valkey
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  minio:
+    image: minio/minio:latest
+    container_name: tcf-minio
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"   # console UI
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:9000/minio/health/live"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  # Creates buckets and grants anonymous read on the static bucket
+  # (stands in for CloudFront's signed origin access).
+  minio-init:
+    image: minio/mc:latest
+    container_name: tcf-minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    entrypoint: >
+      sh -c '
+      mc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
+      mc mb --ignore-existing local/${MINIO_BUCKET:-tcf-media} local/${STATIC_BUCKET:-tcf-static} &&
+      mc anonymous set download local/${STATIC_BUCKET:-tcf-static} &&
+      echo "buckets ready"'
+    restart: "no"
+
+  # Serves the static bucket on :8081.
+  cdn:
+    image: caddy:2-alpine
+    container_name: tcf-cdn
+    restart: unless-stopped
+    environment:
+      STATIC_BUCKET: ${STATIC_BUCKET:-tcf-static}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    ports:
+      - "8081:80"
+    depends_on:
+      minio:
+        condition: service_healthy
+
+  # One-off job mirroring the ECS release task.
+  release:
+    profiles: ["full"]
     build:
       context: .
-      args:
-        INSTALL_DEV: "true"
+      target: prod
+    container_name: tcf_release
+    env_file: .env
     command: >
       bash -c "set -e &&
       python manage.py migrate &&
       python manage.py collectstatic --noinput &&
       python manage.py invalidate_cachalot tcf_website &&
-      echo 'Starting Django Server...' &&
-      exec python manage.py runserver 0.0.0.0:8000"
+      python manage.py clearsessions"
     environment:
-      - DJANGO_SETTINGS_MODULE=tcf_core.settings.dev
-    volumes:
-      - .:/app
-      - /app/db/ # exclude the subfolder to prevent potential interference
-      - node_modules:/app/node_modules
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-tcf_core.settings.dev}
+      TCF_ENV: ${TCF_ENV:-local}
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+
+  web:
+    profiles: ["full"]
+    build:
+      context: .
+      target: prod
+    container_name: tcf_web
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-tcf_core.settings.dev}
+      TCF_ENV: ${TCF_ENV:-local}
     ports:
-      - "8000:8000"
-    container_name: tcf_django
+      - "8000:80"
     restart: unless-stopped
     depends_on:
-      - db
-      # db:
-      #   condition: service_healthy
-  db:
-    image: postgres:17.5
-    volumes:
-      - ./db:/app
-    restart: always
-    container_name: tcf_db
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_PORT: ${DB_PORT}
-    # healthcheck:
-    #   test: ["CMD-SHELL", 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
-    #   interval: 1s
-    #   timeout: 2s
-    #   retries: 20
-    #   start_period: 2s
+      db:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+      release:
+        condition: service_completed_successfully
+
 volumes:
-  node_modules:
+  pgdata:
+  minio_data:
