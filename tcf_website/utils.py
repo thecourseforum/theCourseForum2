@@ -2,7 +2,7 @@
 
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from django.db.models import Q, QuerySet
+from django.db.models import Case, IntegerField, Q, QuerySet, Value, When
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 
@@ -30,10 +30,33 @@ def recent_semesters() -> QuerySet:
     )
 
 
-def semesters_for_course(course: Course) -> QuerySet:
-    """Recent-catalog semesters in which ``course`` has at least one section, newest first."""
+def reviewable_semesters() -> QuerySet:
+    """Recent-catalog semesters that have already started, so a course can only
+    be reviewed for a term that has actually happened (never a future term that
+    is merely loaded for course registration)."""
+    now = timezone.now()
+    start_month = Case(
+        *[
+            When(season=season, then=Value(month))
+            for season, month in Semester.SEASON_START_MONTH.items()
+        ],
+        default=Value(12),
+        output_field=IntegerField(),
+    )
     return (
-        recent_semesters().filter(section__course=course).distinct().order_by("-number")
+        recent_semesters()
+        .annotate(start_month=start_month)
+        .filter(Q(year__lt=now.year) | Q(year=now.year, start_month__lte=now.month))
+    )
+
+
+def semesters_for_course(course: Course) -> QuerySet:
+    """Started recent-catalog semesters in which ``course`` has at least one section, newest first."""
+    return (
+        reviewable_semesters()
+        .filter(section__course=course)
+        .distinct()
+        .order_by("-number")
     )
 
 
