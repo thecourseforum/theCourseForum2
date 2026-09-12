@@ -151,7 +151,7 @@ def compile_course_data(course_number, sem_code):
         if not m:
             return ""
         meets = m["meets"]
-        return (meets if meets != "-" else "TBA").lower()
+        return meets if meets != "-" else "TBA"
 
     def _meeting_room(m) -> str:
         if not m:
