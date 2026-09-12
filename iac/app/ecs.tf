@@ -17,7 +17,7 @@ resource "aws_ecs_task_definition" "django" {
   execution_role_arn       = aws_iam_role.ecs_task_execution.arn
   task_role_arn            = aws_iam_role.ecs_task.arn
 
-container_definitions = jsonencode([
+  container_definitions = jsonencode([
     {
       name      = "django-app"
       image     = "${aws_ecr_repository.app.repository_url}:${var.ecr_image_tag}"
