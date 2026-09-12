@@ -76,6 +76,21 @@ The application stack is listed below. These technologies were chosen because th
 docker exec -it tcf_django /bin/bash
 ```
 
+## Pre-commit hooks
+
+Install git hooks with [prek](https://prek.j178.dev/) (included in dev dependencies):
+
+```bash
+uv sync --group dev
+uv run prek install
+```
+
+Hooks run automatically on commit. To run manually:
+
+```bash
+uv run prek run --all-files
+```
+
 ## CI checks locally
 
 ```bash
