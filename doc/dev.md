@@ -34,7 +34,7 @@ docker compose build --no-cache
 ```
 
 4. Wait for the Django server to finish building (i.e. ` ✔ Service web  Built` is visible in stdout).
-5. Download and place the [latest database backup](https://drive.google.com/file/d/1kSjSMHUq3jyvt4R-n3dFIQZqzJGUBrLZ/view?usp=sharing) (should be named `latest.dump`) from Google Drive into `db/latest.dump` in your local repo.
+5. Download and place the [latest database backup](https://drive.google.com/file/d/1mUZrhJyd5-bGznlnLIvfYvO2yVFSSqL_/view?usp=drive_link) (should be named `latest.dump`) from Google Drive into `db/latest.dump` in your local repo.
 6. Update the database:
 
 ```bash
