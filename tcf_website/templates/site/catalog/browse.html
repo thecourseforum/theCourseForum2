@@ -92,14 +92,54 @@
     <script src="{% static 'js/site/browse/browse_live_results.js' %}"></script>
     <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // School accordion toggle
+  // School accordion toggle.
+  // The chevron animates with `transition: transform var(--duration-normal)`
+  // (~200ms). Rapid clicks can re-toggle `is-open` before that transition
+  // finishes, leaving the arrow flipped inconsistently relative to its
+  // animation (issue #1012). Guard against re-toggling while the chevron
+  // transition is in flight: ignore clicks until it settles, clearing the
+  // lock on `transitionend` with a time-based fallback in case the event
+  // never fires (e.g. reduced motion, zero-duration, or off-screen).
+  const ANIMATION_FALLBACK_MS = 300; // >= --duration-normal (200ms)
+
   document.querySelectorAll('.school-header').forEach(header => {
+    const chevron = header.querySelector('.school-header__chevron');
+    let animating = false;
+    let fallbackTimer = null;
+
+    function unlock() {
+      animating = false;
+      if (fallbackTimer !== null) {
+        clearTimeout(fallbackTimer);
+        fallbackTimer = null;
+      }
+    }
+
+    // Clear the lock as soon as the chevron transform finishes.
+    if (chevron) {
+      chevron.addEventListener('transitionend', function(e) {
+        if (e.propertyName === 'transform') {
+          unlock();
+        }
+      });
+    }
+
     header.addEventListener('click', function() {
+      // Ignore clicks while the arrow is still mid-animation.
+      if (animating) {
+        return;
+      }
+      animating = true;
+
       const section = this.parentElement;
       const grid = section.querySelector('.departments-grid');
 
       this.classList.toggle('is-open');
       grid.classList.toggle('is-open');
+
+      // Fallback in case `transitionend` never fires (e.g. no chevron,
+      // reduced motion, or a zeroed transition duration).
+      fallbackTimer = setTimeout(unlock, ANIMATION_FALLBACK_MS);
     });
   });
 });
