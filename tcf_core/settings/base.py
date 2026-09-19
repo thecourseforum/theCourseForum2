@@ -22,6 +22,77 @@ if ENVIRONMENT not in ("local", "ci", "prod"):
         f"TCF_ENV must be one of 'local', 'ci', 'prod'; got {ENVIRONMENT!r}"
     )
 
+
+def _database_env(name):
+    prefixes = ("AWS_RDS_", "DB_") if ENVIRONMENT == "prod" else ("DB_", "AWS_RDS_")
+    for prefix in prefixes:
+        value = os.environ.get(f"{prefix}{name}")
+        if value:
+            return value
+    raise ImproperlyConfigured(
+        f"Missing database setting: {prefixes[0]}{name} or {prefixes[1]}{name}"
+    )
+
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": _database_env("NAME"),
+        "USER": _database_env("USER"),
+        "PASSWORD": _database_env("PASSWORD"),
+        "HOST": _database_env("HOST"),
+        "PORT": int(_database_env("PORT")),
+    }
+}
+
+
+def redis_cache(location, key_prefix):
+    return {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": location,
+        "KEY_PREFIX": key_prefix,
+        "OPTIONS": {
+            "socket_connect_timeout": 5,
+            "socket_timeout": 5,
+            "retry_on_timeout": True,
+        },
+    }
+
+
+def s3_storage(
+    *,
+    backend="storages.backends.s3.S3Storage",
+    bucket_name=None,
+    endpoint_url=None,
+    access_key=None,
+    secret_key=None,
+    addressing_style=None,
+    file_overwrite=None,
+    custom_domain=None,
+    url_protocol=None,
+    object_parameters=None,
+):
+    options = {
+        "bucket_name": bucket_name,
+        "endpoint_url": endpoint_url,
+        "access_key": access_key,
+        "secret_key": secret_key,
+        "addressing_style": addressing_style,
+        "file_overwrite": file_overwrite,
+        "custom_domain": custom_domain,
+        "url_protocol": url_protocol,
+        "object_parameters": object_parameters,
+    }
+    return {
+        "BACKEND": backend,
+        "OPTIONS": {key: value for key, value in options.items() if value is not None},
+    }
+
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+SESSION_CACHE_ALIAS = "default"
+CACHALOT_ENABLED = True
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env.str("SECRET_KEY")
 
@@ -46,7 +117,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     # "collectfast",
     "django.contrib.staticfiles",
-    "cachalot",  # TODO: add Redis?
+    "cachalot",
     "storages",
     "rest_framework",
     "django_filters",
