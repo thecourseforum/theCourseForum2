@@ -16,8 +16,6 @@
             pkgs.python312
             pkgs.nodejs_22
             pkgs.awscli2
-	    # pkgs.chromedriver # used for fetch_grades.py
-	    # pkgs.chromium # used for fetch_grades.py
           ];
 
           UV_PYTHON_DOWNLOADS = "never";
