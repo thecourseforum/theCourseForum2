@@ -1,0 +1,22 @@
+{
+  "name": "tCF",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "devcontainer",
+  "runServices": ["devcontainer", "db"],
+  "workspaceFolder": "/app",
+  "postCreateCommand": "npm ci",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/venv/bin/python"
+      },
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "astral-sh.ty",
+        "dbaeumer.vscode-eslint",
+        "monosans.djlint"
+      ]
+    }
+  }
+}
