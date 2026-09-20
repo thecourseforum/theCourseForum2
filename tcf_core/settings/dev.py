@@ -58,3 +58,6 @@ if ENVIRONMENT == "local" and importlib.util.find_spec("debug_toolbar") is not N
             "debug_toolbar.panels.profiling.ProfilingPanel",
         ],
     }
+    STORAGES["staticfiles"]["BACKEND"] = (
+        "tcf_core.settings.toolbar_static_storage.ToolbarS3ManifestStaticStorage"
+    )
