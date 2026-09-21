@@ -106,8 +106,8 @@
                                       id="reviewtext"
                                       name="text"
                                       rows="6"
-                                      placeholder="{% if is_club %}What was the club like? How was the workload? Any tips for future members? (Minimum 200 characters){% else %}What was the course like? How was the workload? Any tips for future students? (Minimum 200 characters){% endif %}"
-                                      required
+                                      placeholder="{% if is_club %}What was the club like? How was the workload? Any tips for future members? (Minimum 200 characters){% else %}Optional, but written reviews help the most. What was the course like? Any tips for future students? (200 characters minimum if you write one){% endif %}"
+                                      {% if is_club %}required{% endif %}
                                       minlength="200"
                                       maxlength="5000">{% if form and form.text.value %}{{ form.text.value }}{% endif %}</textarea>
                             <span class="word-count" id="word-count">0 characters</span>
@@ -182,7 +182,10 @@
     textarea.addEventListener('input', function() {
       const text = this.value.trim();
       const characters = text.length;
-      if (characters < textarea.minLength) {
+      if (characters === 0 && !textarea.required) {
+          countDisplay.textContent = 'Optional';
+          countDisplay.style.color = 'var(--fg-muted)';
+      } else if (characters < textarea.minLength) {
           countDisplay.textContent = characters + '/' + textarea.minLength + ' required characters';
           countDisplay.style.color = 'var(--danger)';
       } else {

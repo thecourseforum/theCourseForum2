@@ -9,7 +9,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from ..models import Review, Section, Semester, Vote
+from ..models import Club, ClubCategory, Review, Section, Semester, Vote
 from ..review.forms import ReviewForm
 from ..utils import semesters_for_course
 from .test_utils import setup, suppress_request_warnings
@@ -43,6 +43,83 @@ class ReviewFormTests(TestCase):
         form.save()
         self.review1.refresh_from_db()
         self.assertEqual(previous_sum - 1, self.review1.hours_per_week)
+
+    def _ratings_only_data(self, **overrides):
+        """Minimal valid POST data for a ratings-only course review."""
+        data = {
+            "course": self.course2.id,
+            "instructor": self.instructor.id,
+            "semester": self.semester.id,
+            "instructor_rating": 4,
+            "difficulty": 3,
+            "recommendability": 5,
+            "enjoyability": 4,
+            "hours_per_week": 6,
+        }
+        data.update(overrides)
+        return data
+
+    def test_ratings_only_review_is_valid(self):
+        """No text and no hours breakdown is a valid review."""
+        form = ReviewForm(self._ratings_only_data())
+        self.assertTrue(form.is_valid(), form.errors)
+        review = form.save(commit=False)
+        self.assertEqual(review.text, "")
+        self.assertEqual(review.hours_per_week, 6)
+        self.assertIsNone(review.amount_reading)
+        self.assertIsNone(review.amount_homework)
+
+    def test_short_text_is_rejected(self):
+        """Text, when present, still needs 200 characters."""
+        form = ReviewForm(self._ratings_only_data(text="Too short to count."))
+        self.assertFalse(form.is_valid())
+        self.assertIn("text", form.errors)
+
+    def test_full_breakdown_overrides_hours_per_week(self):
+        """All four breakdown fields present: hours_per_week is their sum."""
+        form = ReviewForm(
+            self._ratings_only_data(
+                hours_per_week=50,
+                amount_reading=1,
+                amount_writing=2,
+                amount_group=3,
+                amount_homework=4,
+            )
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.save(commit=False).hours_per_week, 10)
+
+    def test_partial_breakdown_is_rejected(self):
+        """Some but not all breakdown fields is an error."""
+        form = ReviewForm(self._ratings_only_data(amount_reading=2))
+        self.assertFalse(form.is_valid())
+        self.assertIn("__all__", form.errors)
+
+    def test_missing_hours_is_rejected(self):
+        """Neither a breakdown nor hours_per_week is an error."""
+        data = self._ratings_only_data()
+        del data["hours_per_week"]
+        form = ReviewForm(data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("__all__", form.errors)
+
+    def test_club_review_still_requires_text(self):
+        """Club reviews are unchanged: text is required."""
+        category = ClubCategory.objects.create(name="Academic", slug="academic")
+        club = Club.objects.create(name="Chess Club", category=category)
+        form = ReviewForm(
+            {
+                "club": club.id,
+                "semester": self.semester.id,
+                "instructor_rating": 4,
+                "difficulty": 3,
+                "recommendability": 5,
+                "enjoyability": 4,
+                "hours_per_week": 2,
+            }
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("__all__", form.errors)
 
 
 class DeleteReviewTests(TestCase):
@@ -308,3 +385,35 @@ class ReviewPreflightJsonTests(TestCase):
         self.assertEqual(response.status_code, 400)
         data = json.loads(response.content)
         self.assertFalse(data.get("ok", True))
+
+
+class RatingsOnlyReviewViewTests(TestCase):
+    """The full review page accepts a review with no text."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_post_without_text_creates_review(self):
+        """POST new_review with ratings and a breakdown but no text."""
+        self.client.force_login(self.user4)
+        response = self.client.post(
+            reverse("new_review"),
+            {
+                "course": self.course2.id,
+                "instructor": self.instructor.id,
+                "semester": self.semester.id,
+                "instructor_rating": 4,
+                "difficulty": 3,
+                "recommendability": 5,
+                "enjoyability": 4,
+                "amount_reading": 1,
+                "amount_writing": 1,
+                "amount_group": 0,
+                "amount_homework": 3,
+                "text": "",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        review = Review.objects.get(user=self.user4, course=self.course2)
+        self.assertEqual(review.text, "")
+        self.assertEqual(review.hours_per_week, 5)

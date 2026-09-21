@@ -1180,30 +1180,26 @@ class Review(models.Model):
     # Review enjoyability. Required.
     enjoyability = models.PositiveSmallIntegerField(choices=RATINGS)
 
-    # Review hours per week. Required.
-    # hours_per_week used to be the only thing, but we also brought back the
-    # subcategories. This is just a sum, but I'm keeping it because other parts
-    # of the codebase depend on this model field existing and I'm not fixing them.
-    # TODO: make validators/tests to ensure hours_per_week is the sum, or just
-    #  remove it entirely from the model and replace w/ function
+    # Review hours per week. Required. Equals the sum of the four amount_* fields
+    # when a breakdown was given; otherwise it is the total the reviewer entered.
     hours_per_week = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(80)]
     )
-    # Review hours of reading per week. Required.
+    # Review hours of reading per week. Optional: quick ratings give only a total.
     amount_reading = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(20)]
+        validators=[MinValueValidator(0), MaxValueValidator(20)], null=True, blank=True
     )
-    # Review hours of writing per week. Required.
+    # Review hours of writing per week. Optional.
     amount_writing = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(20)]
+        validators=[MinValueValidator(0), MaxValueValidator(20)], null=True, blank=True
     )
-    # Review hours of group work per week. Required.
+    # Review hours of group work per week. Optional.
     amount_group = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(20)]
+        validators=[MinValueValidator(0), MaxValueValidator(20)], null=True, blank=True
     )
-    # Review hours of homework per week. Required.
+    # Review hours of homework per week. Optional.
     amount_homework = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(20)]
+        validators=[MinValueValidator(0), MaxValueValidator(20)], null=True, blank=True
     )
 
     # Review created date. Required.
