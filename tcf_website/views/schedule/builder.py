@@ -9,6 +9,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from ...models import Schedule, ScheduleBookmark
+from ...review.quick_rate import candidates_for
 from ...schedule.calendar import (
     build_merged_weekly_calendar,
     build_weekly_calendar,
@@ -180,6 +181,7 @@ def view_schedules(
     schedule_context.update(
         {
             "active_semester": active_semester,
+            "quick_rate_count": len(candidates_for(request.user)),
             "all_semesters": all_semesters,
             "semester_choices": semester_choices,
             "semester_combo_selected": semester_combo_selected,

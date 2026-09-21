@@ -153,6 +153,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "tcf_core.context_processors.base",
+                "tcf_core.context_processors.quick_rate_banner",
             ],
         },
     },
@@ -263,3 +264,6 @@ TOXICITY_THRESHOLD = 74
 
 # Quick-rate: a term's courses become ratable once it started this many days ago.
 QUICK_RATE_MIN_DAYS_INTO_TERM = env.int("QUICK_RATE_MIN_DAYS_INTO_TERM", default=70)
+
+# Months (1-12) when signed-in users with unrated past courses see the banner.
+QUICK_RATE_BANNER_MONTHS = (5, 12)

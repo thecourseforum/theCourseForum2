@@ -231,3 +231,9 @@ class QuickRateViewTests(TestCase):
         self.assertFalse(response.json()["ok"])
 
         self.assertEqual(QuickRateDismissal.objects.filter(user=self.user4).count(), 0)
+
+    def test_schedule_page_reports_quick_rate_count(self):
+        self.client.force_login(self.user4)
+        response = self.client.get(reverse("schedule"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["quick_rate_count"], 1)

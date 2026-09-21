@@ -85,6 +85,7 @@
             {% include "site/common/components/_header.html" %}
         {% endblock header %}
         {% include "site/common/components/_messages.html" %}
+        {% include "site/common/components/_quick_rate_banner.html" %}
         {% if request.resolver_match and request.resolver_match.url_name != "index" %}
             {% include "site/common/components/_leaderboard_ad.html" %}
         {% endif %}

@@ -1,11 +1,16 @@
 """Tests for template context processors."""
 
+from datetime import UTC, datetime
+from unittest.mock import patch
+
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.test import RequestFactory, TestCase
+from django.urls import reverse
 
-from tcf_core.context_processors import base
+from tcf_core.context_processors import base, quick_rate_banner
 
+from ..models import Schedule, ScheduledCourse
 from .test_utils import setup
 
 
@@ -26,3 +31,47 @@ class BaseContextProcessorTestCase(TestCase):
         latest = ctx["LATEST_SEMESTER"]
         self.assertIsNotNone(latest)
         self.assertEqual(latest.pk, self.semester.pk)
+
+
+class QuickRateBannerTests(TestCase):
+    """The post-finals banner count."""
+
+    def setUp(self):
+        setup(self)
+        schedule = Schedule.objects.create(
+            name="Plan", user=self.user4, semester=self.semester
+        )
+        ScheduledCourse.objects.create(
+            schedule=schedule,
+            section=self.section_course2,
+            instructor=self.instructor,
+            time="",
+        )
+        self.factory = RequestFactory()
+
+    def _request(self, user, path="/"):
+        request = self.factory.get(path)
+        request.user = user
+        return request
+
+    @patch("tcf_core.context_processors.timezone.now")
+    def test_counts_candidates_in_a_banner_month(self, mock_now):
+        mock_now.return_value = datetime(2026, 12, 15, tzinfo=UTC)
+        context = quick_rate_banner(self._request(self.user4))
+        self.assertEqual(context, {"quick_rate_banner_count": 1})
+
+    @patch("tcf_core.context_processors.timezone.now")
+    def test_silent_outside_banner_months(self, mock_now):
+        mock_now.return_value = datetime(2026, 10, 15, tzinfo=UTC)
+        self.assertEqual(quick_rate_banner(self._request(self.user4)), {})
+
+    @patch("tcf_core.context_processors.timezone.now")
+    def test_silent_for_anonymous_users(self, mock_now):
+        mock_now.return_value = datetime(2026, 12, 15, tzinfo=UTC)
+        self.assertEqual(quick_rate_banner(self._request(AnonymousUser())), {})
+
+    @patch("tcf_core.context_processors.timezone.now")
+    def test_silent_on_the_quick_rate_page(self, mock_now):
+        mock_now.return_value = datetime(2026, 12, 15, tzinfo=UTC)
+        request = self._request(self.user4, path=reverse("quick_rate"))
+        self.assertEqual(quick_rate_banner(request), {})

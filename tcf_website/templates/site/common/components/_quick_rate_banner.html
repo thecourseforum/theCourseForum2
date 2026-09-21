@@ -1,0 +1,28 @@
+{% if quick_rate_banner_count %}
+    <aside class="quick-rate-prompt quick-rate-prompt--banner"
+           id="quick-rate-banner"
+           hidden>
+        <p class="quick-rate-prompt__text">
+            Finals are over. You have {{ quick_rate_banner_count }} course{{ quick_rate_banner_count|pluralize }} you can rate in about a minute.
+        </p>
+        <a class="btn btn--primary btn--sm" href="{% url 'quick_rate' %}">Rate them</a>
+        <button type="button"
+                class="btn btn--ghost btn--sm"
+                id="quick-rate-banner-close"
+                aria-label="Dismiss">Not now</button>
+    </aside>
+    <script>
+      (function () {
+        const banner = document.getElementById("quick-rate-banner");
+        const key = "tcf:quick-rate-banner-dismissed";
+        if (!banner || sessionStorage.getItem(key)) {
+          return;
+        }
+        banner.hidden = false;
+        document.getElementById("quick-rate-banner-close").addEventListener("click", function () {
+          sessionStorage.setItem(key, "1");
+          banner.hidden = true;
+        });
+      })();
+    </script>
+{% endif %}

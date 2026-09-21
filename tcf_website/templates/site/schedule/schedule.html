@@ -14,6 +14,14 @@
                 <div>
                     <h1 class="schedule-builder__title">Schedule Builder</h1>
                     <p class="schedule-builder__subtitle">Build and compare schedules with a weekly calendar view.</p>
+                    {% if quick_rate_count %}
+                        <aside class="quick-rate-prompt">
+                            <p class="quick-rate-prompt__text">
+                                Planning ahead? You have {{ quick_rate_count }} past course{{ quick_rate_count|pluralize }} you can rate in about a minute. It helps the next student pick.
+                            </p>
+                            <a class="btn btn--primary btn--sm" href="{% url 'quick_rate' %}">Rate them</a>
+                        </aside>
+                    {% endif %}
                     {% if all_semesters %}
                         <form method="get"
                               action="{% url 'schedule' %}"
