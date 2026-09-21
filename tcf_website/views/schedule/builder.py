@@ -181,7 +181,6 @@ def view_schedules(
     schedule_context.update(
         {
             "active_semester": active_semester,
-            "quick_rate_count": len(candidates_for(request.user)),
             "all_semesters": all_semesters,
             "semester_choices": semester_choices,
             "semester_combo_selected": semester_combo_selected,
@@ -229,4 +228,5 @@ def view_schedules(
             schedule_context,
         )
 
+    schedule_context["quick_rate_count"] = len(candidates_for(request.user))
     return render(request, "site/schedule/schedule.html", schedule_context)

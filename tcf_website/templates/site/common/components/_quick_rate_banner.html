@@ -1,7 +1,6 @@
 {% if quick_rate_banner_count %}
     <aside class="quick-rate-prompt quick-rate-prompt--banner"
-           id="quick-rate-banner"
-           hidden>
+           id="quick-rate-banner">
         <p class="quick-rate-prompt__text">
             Finals are over. You have {{ quick_rate_banner_count }} course{{ quick_rate_banner_count|pluralize }} you can rate in about a minute.
         </p>
@@ -15,10 +14,12 @@
       (function () {
         const banner = document.getElementById("quick-rate-banner");
         const key = "tcf:quick-rate-banner-dismissed";
-        if (!banner || sessionStorage.getItem(key)) {
+        if (!banner) {
           return;
         }
-        banner.hidden = false;
+        if (sessionStorage.getItem(key)) {
+          banner.hidden = true;
+        }
         document.getElementById("quick-rate-banner-close").addEventListener("click", function () {
           sessionStorage.setItem(key, "1");
           banner.hidden = true;

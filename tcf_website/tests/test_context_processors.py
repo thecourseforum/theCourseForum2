@@ -75,3 +75,9 @@ class QuickRateBannerTests(TestCase):
         mock_now.return_value = datetime(2026, 12, 15, tzinfo=UTC)
         request = self._request(self.user4, path=reverse("quick_rate"))
         self.assertEqual(quick_rate_banner(request), {})
+
+    @patch("tcf_core.context_processors.timezone.now")
+    def test_silent_on_the_schedule_page(self, mock_now):
+        mock_now.return_value = datetime(2026, 12, 15, tzinfo=UTC)
+        request = self._request(self.user4, path=reverse("schedule"))
+        self.assertEqual(quick_rate_banner(request), {})
