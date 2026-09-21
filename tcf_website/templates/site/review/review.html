@@ -11,6 +11,11 @@
         <header class="review-header">
             <h1 class="review-header__title">Write a Review</h1>
             <p class="review-header__subtitle">Share your experience to help other students.</p>
+            {% if not is_club %}
+                <p class="review-header__subtitle">
+                    Short on time? <a href="{% url 'quick_rate' %}">Rate several courses at once</a> — no writing required.
+                </p>
+            {% endif %}
         </header>
         {# Search bars use their own <form>; must NOT be nested inside #reviewForm (invalid HTML). #}
         {% if is_club %}{{ club_semester_choices|json_script:"review-club-semesters-data" }}{% endif %}

@@ -45,7 +45,7 @@
                                 <span class="autocomplete-item__title">{{ course.title }}</span>
                             </a>
                         {% else %}
-                            <a href="{% if autocomplete_action == 'review' %}{% mode_url request 'new_review' query_course=course.id %}{% else %}{% url 'course' mnemonic=course.mnemonic course_number=course.number %}{% endif %}"
+                            <a href="{% if autocomplete_action == 'review' %}{% mode_url request 'new_review' query_course=course.id %}{% elif autocomplete_action == 'quick_rate' %}{% url 'quick_rate' %}?course={{ course.id }}{% else %}{% url 'course' mnemonic=course.mnemonic course_number=course.number %}{% endif %}"
                                class="autocomplete-item__link">
                                 <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
                                 <span class="autocomplete-item__title">{{ course.title }}</span>
@@ -90,7 +90,7 @@
                                 <span class="autocomplete-item__title">{{ course.title }}</span>
                             </a>
                         {% else %}
-                            <a href="{% if autocomplete_action == 'review' %}{% mode_url request 'new_review' query_course=course.id %}{% else %}{% url 'course' mnemonic=course.mnemonic course_number=course.number %}{% endif %}"
+                            <a href="{% if autocomplete_action == 'review' %}{% mode_url request 'new_review' query_course=course.id %}{% elif autocomplete_action == 'quick_rate' %}{% url 'quick_rate' %}?course={{ course.id }}{% else %}{% url 'course' mnemonic=course.mnemonic course_number=course.number %}{% endif %}"
                                class="autocomplete-item__link">
                                 <span class="autocomplete-item__code">{{ course.mnemonic }} {{ course.number }}</span>
                                 <span class="autocomplete-item__title">{{ course.title }}</span>

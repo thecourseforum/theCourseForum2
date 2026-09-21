@@ -23,6 +23,9 @@ from .review import (
     DeleteReview,
     downvote,
     new_review,
+    quick_rate,
+    quick_rate_dismiss,
+    quick_rate_submit,
     upvote,
     vote_review,
 )

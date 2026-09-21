@@ -3,6 +3,7 @@
 from datetime import UTC, datetime
 
 from django.test import TestCase
+from django.urls import reverse
 
 from ..models import (
     QuickRateDismissal,
@@ -113,3 +114,102 @@ class CandidatesForTests(TestCase):
             Candidate(self.course, self.instructor, self.semester, 5).reason,
             "5 reviews",
         )
+
+
+class QuickRateViewTests(TestCase):
+    """The quick-rate page and its two POST endpoints."""
+
+    def setUp(self):
+        setup(self)
+        schedule_course(self.user4, self.section_course2, self.instructor)
+
+    def _payload(self, **overrides):
+        data = {
+            "course": self.course2.id,
+            "instructor": self.instructor.id,
+            "semester": self.semester.id,
+            "instructor_rating": 4,
+            "difficulty": 3,
+            "recommendability": 5,
+            "enjoyability": 4,
+            "hours_per_week": 6,
+        }
+        data.update(overrides)
+        return data
+
+    def test_page_requires_login(self):
+        response = self.client.get(reverse("quick_rate"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_page_lists_candidates(self):
+        self.client.force_login(self.user4)
+        response = self.client.get(reverse("quick_rate"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [c.course.id for c in response.context["candidates"]], [self.course2.id]
+        )
+        self.assertEqual(response.context["rated_count"], 0)
+
+    def test_adhoc_course_gets_semester_choices(self):
+        self.client.force_login(self.user4)
+        response = self.client.get(reverse("quick_rate"), {"course": self.course.id})
+        self.assertEqual(response.context["adhoc_course"], self.course)
+        self.assertIn(self.semester, list(response.context["adhoc_semesters"]))
+
+    def test_non_numeric_course_is_ignored(self):
+        self.client.force_login(self.user4)
+        response = self.client.get(reverse("quick_rate"), {"course": "abc"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context["adhoc_course"])
+
+    def test_submit_creates_ratings_only_review(self):
+        self.client.force_login(self.user4)
+        response = self.client.post(reverse("quick_rate_submit"), self._payload())
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertTrue(body["ok"])
+        self.assertFalse(body["has_text"])
+        review = Review.objects.get(pk=body["review_id"])
+        self.assertEqual(review.user, self.user4)
+        self.assertEqual(review.text, "")
+        self.assertEqual(review.hours_per_week, 6)
+
+    def test_submit_rejects_duplicate(self):
+        self.client.force_login(self.user4)
+        self.client.post(reverse("quick_rate_submit"), self._payload())
+        response = self.client.post(reverse("quick_rate_submit"), self._payload())
+        self.assertEqual(response.status_code, 409)
+        self.assertEqual(
+            Review.objects.filter(user=self.user4, course=self.course2).count(), 1
+        )
+
+    def test_submit_rejects_invalid(self):
+        self.client.force_login(self.user4)
+        payload = self._payload()
+        del payload["difficulty"]
+        response = self.client.post(reverse("quick_rate_submit"), payload)
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(response.json()["ok"])
+
+    def test_submit_requires_post(self):
+        self.client.force_login(self.user4)
+        response = self.client.get(reverse("quick_rate_submit"))
+        self.assertEqual(response.status_code, 405)
+
+    def test_dismiss_is_idempotent_and_hides_candidate(self):
+        self.client.force_login(self.user4)
+        data = {"course": self.course2.id, "instructor": self.instructor.id}
+        self.assertEqual(
+            self.client.post(reverse("quick_rate_dismiss"), data).status_code, 200
+        )
+        self.assertEqual(
+            self.client.post(reverse("quick_rate_dismiss"), data).status_code, 200
+        )
+        self.assertEqual(QuickRateDismissal.objects.filter(user=self.user4).count(), 1)
+        response = self.client.get(reverse("quick_rate"))
+        self.assertEqual(response.context["candidates"], [])
+
+    def test_dismiss_rejects_bad_input(self):
+        self.client.force_login(self.user4)
+        response = self.client.post(reverse("quick_rate_dismiss"), {"course": "x"})
+        self.assertEqual(response.status_code, 400)

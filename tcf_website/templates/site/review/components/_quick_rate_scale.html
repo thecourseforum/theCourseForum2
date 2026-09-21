@@ -1,0 +1,12 @@
+{# One 1–5 scale. Usage: {% include ... with name="difficulty" label="Difficulty" %} #}
+<fieldset class="quick-rate-scale">
+    <legend class="quick-rate-scale__label">{{ label }}</legend>
+    <div class="quick-rate-scale__options">
+        {% for i in "12345" %}
+            <label class="quick-rate-scale__option">
+                <input type="radio" name="{{ name }}" value="{{ i }}" required>
+                <span>{{ i }}</span>
+            </label>
+        {% endfor %}
+    </div>
+</fieldset>

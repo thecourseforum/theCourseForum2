@@ -47,6 +47,13 @@ urlpatterns = [
         name="instructor",
     ),
     path("reviews/new/", views.new_review, name="new_review"),
+    path("reviews/quick/", views.quick_rate, name="quick_rate"),
+    path("reviews/quick/rate/", views.quick_rate_submit, name="quick_rate_submit"),
+    path(
+        "reviews/quick/dismiss/",
+        views.quick_rate_dismiss,
+        name="quick_rate_dismiss",
+    ),
     path(
         "reviews/<int:pk>/delete/",
         views.DeleteReview.as_view(),

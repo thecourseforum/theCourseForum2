@@ -1,0 +1,71 @@
+{# One ratable course. With `instructor` and `semester`: a suggested row. Without: an ad-hoc row that asks for them (`semesters` required). #}
+<form class="quick-rate-row" data-quick-rate-row>
+    {% csrf_token %}
+    <input type="hidden" name="course" value="{{ course.id }}">
+    <div class="quick-rate-row__head">
+        <div>
+            <span class="quick-rate-row__code">{{ course.code }}</span>
+            <span class="quick-rate-row__title">{{ course.title }}</span>
+            {% if instructor %}<div class="quick-rate-row__meta">{{ instructor.full_name }} · {{ semester }}</div>{% endif %}
+        </div>
+        {% if reason %}<span class="quick-rate-row__reason">{{ reason }}</span>{% endif %}
+    </div>
+    {% if instructor %}
+        <input type="hidden" name="instructor" value="{{ instructor.id }}">
+        <input type="hidden" name="semester" value="{{ semester.id }}">
+    {% else %}
+        <div class="quick-rate-row__pickers">
+            <label>
+                <span class="quick-rate-row__picker-label">Semester</span>
+                <select class="select" name="semester" required data-quick-rate-semester>
+                    <option value="">Choose…</option>
+                    {% for term in semesters %}<option value="{{ term.id }}">{{ term }}</option>{% endfor %}
+                </select>
+            </label>
+            <label>
+                <span class="quick-rate-row__picker-label">Instructor</span>
+                <select class="select"
+                        name="instructor"
+                        required
+                        disabled
+                        data-quick-rate-instructor>
+                    <option value="">Choose a semester first</option>
+                </select>
+            </label>
+        </div>
+    {% endif %}
+    <div class="quick-rate-row__scales">
+        {% include "site/review/components/_quick_rate_scale.html" with name="instructor_rating" label="Instructor" %}
+        {% include "site/review/components/_quick_rate_scale.html" with name="enjoyability" label="Enjoyability" %}
+        {% include "site/review/components/_quick_rate_scale.html" with name="recommendability" label="Recommend" %}
+        {% include "site/review/components/_quick_rate_scale.html" with name="difficulty" label="Difficulty" %}
+    </div>
+    <label class="quick-rate-row__hours">
+        <span>Hours per week outside class</span>
+        <input class="input"
+               type="number"
+               name="hours_per_week"
+               min="0"
+               max="80"
+               step="1"
+               required>
+    </label>
+    <details class="quick-rate-row__text">
+        <summary>Add a few sentences (optional)</summary>
+        <textarea class="review-textarea"
+                  name="text"
+                  rows="4"
+                  minlength="200"
+                  maxlength="5000"
+                  placeholder="What was the course like? Any tips? 200 characters minimum if you write one."
+                  data-quick-rate-text></textarea>
+        <span class="quick-rate-row__charcount" data-quick-rate-charcount>Optional</span>
+    </details>
+    <p class="quick-rate-row__error" data-quick-rate-error hidden></p>
+    <div class="quick-rate-row__actions">
+        <button type="submit" class="btn btn--primary btn--sm">Save rating</button>
+        {% if instructor %}
+            <button type="button" class="btn btn--ghost btn--sm" data-quick-rate-dismiss>Didn't take it</button>
+        {% endif %}
+    </div>
+</form>

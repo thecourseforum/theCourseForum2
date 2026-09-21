@@ -1,0 +1,48 @@
+{% extends "site/common/base.html" %}
+{% load static %}
+{% block title %}
+    Rate your courses | theCourseForum
+{% endblock title %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/site/pages/quick_rate.css' %}">
+    <link rel="stylesheet" href="{% static 'css/site/pages/review.css' %}">
+{% endblock styles %}
+{% block content %}
+    <div class="quick-rate"
+         data-submit-url="{% url 'quick_rate_submit' %}"
+         data-dismiss-url="{% url 'quick_rate_dismiss' %}"
+         data-instructors-url="{% url 'review_instructor_options' %}">
+        <header class="quick-rate__header">
+            <h1 class="quick-rate__title">Rate your courses</h1>
+            <p class="quick-rate__subtitle">
+                Four taps and a number per course. Writing is optional. Courses with the fewest reviews come first, because that is where yours helps most.
+            </p>
+            <p class="quick-rate__count">
+                <span id="quick-rate-count">{{ rated_count }}</span> rated so far
+            </p>
+        </header>
+        {% if adhoc_course %}
+            <section>
+                <h2 class="quick-rate__section-title">Rate {{ adhoc_course.code }}</h2>
+                {% include "site/review/components/_quick_rate_row.html" with course=adhoc_course instructor=None semester=None reason=None semesters=adhoc_semesters %}
+            </section>
+        {% endif %}
+        {% if candidates %}
+            <section>
+                <h2 class="quick-rate__section-title">Did you take these?</h2>
+                {% for candidate in candidates %}
+                    {% include "site/review/components/_quick_rate_row.html" with course=candidate.course instructor=candidate.instructor semester=candidate.semester reason=candidate.reason %}
+                {% endfor %}
+            </section>
+        {% elif not adhoc_course %}
+            <p class="quick-rate__empty">We don't have a past schedule for you, so search for a course you've taken.</p>
+        {% endif %}
+        <section class="quick-rate__search">
+            <h2 class="quick-rate__section-title">Rate another course</h2>
+            {% include "site/common/components/_search_bar.html" with autocomplete_action="quick_rate" search_placeholder="Mnemonic, number, or title…" container_classes="search-bar-container--inline" %}
+        </section>
+    </div>
+{% endblock content %}
+{% block scripts %}
+    <script src="{% static 'js/site/review/quick_rate.js' %}"></script>
+{% endblock scripts %}
