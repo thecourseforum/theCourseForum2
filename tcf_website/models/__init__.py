@@ -15,6 +15,7 @@ from .models import (
     Discipline,
     Instructor,
     Question,
+    QuickRateDismissal,
     Review,
     ReviewLLMSummary,
     Schedule,

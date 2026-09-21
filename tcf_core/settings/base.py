@@ -260,3 +260,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Toxicity threshold for filtering reviews
 TOXICITY_THRESHOLD = 74
+
+# Quick-rate: a term's courses become ratable once it started this many days ago.
+QUICK_RATE_MIN_DAYS_INTO_TERM = env.int("QUICK_RATE_MIN_DAYS_INTO_TERM", default=70)

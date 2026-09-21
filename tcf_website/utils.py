@@ -30,11 +30,12 @@ def recent_semesters() -> QuerySet:
     )
 
 
-def reviewable_semesters() -> QuerySet:
-    """Recent-catalog semesters that have already started, so a course can only
-    be reviewed for a term that has actually happened (never a future term that
-    is merely loaded for course registration)."""
-    now = timezone.now()
+def reviewable_semesters(as_of=None) -> QuerySet:
+    """Recent-catalog semesters that have already started as of ``as_of``
+    (default: now), so a course can only be reviewed for a term that has
+    actually happened (never a future term that is merely loaded for course
+    registration)."""
+    now = as_of or timezone.now()
     start_month = Case(
         *[
             When(season=season, then=Value(month))

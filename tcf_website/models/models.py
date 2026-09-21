@@ -2000,3 +2000,27 @@ class ScheduledCourse(models.Model):
 
     def __str__(self):
         return f"{self.section.course} | {self.instructor}"
+
+
+class QuickRateDismissal(models.Model):
+    """A course–instructor pair the user said they did not take.
+
+    Schedules include drafts, so the quick-rate page asks "Did you take these?"
+    and records a "no" here so the pair is not offered again.
+    """
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} did not take {self.course} with {self.instructor}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "course", "instructor"],
+                name="unique_quick_rate_dismissal",
+            )
+        ]
