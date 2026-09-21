@@ -24,6 +24,6 @@ fi
 
 echo "--- Creating '$dump_path'..."
 docker compose exec -T db pg_dump \
-  -U "$DB_USER" -d "$DB_NAME" --format=custom --clean > "$dump_path"
+  -U "$DB_USER" -d "$DB_NAME" --format=custom --clean --exclude-table-data=django_session > "$dump_path"
 
 echo "--- Database dump written to '$dump_path'."
