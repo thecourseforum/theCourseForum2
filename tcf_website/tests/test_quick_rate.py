@@ -213,3 +213,21 @@ class QuickRateViewTests(TestCase):
         self.client.force_login(self.user4)
         response = self.client.post(reverse("quick_rate_dismiss"), {"course": "x"})
         self.assertEqual(response.status_code, 400)
+
+    def test_dismiss_rejects_nonexistent_ids(self):
+        self.client.force_login(self.user4)
+        response = self.client.post(
+            reverse("quick_rate_dismiss"),
+            {"course": 999999, "instructor": self.instructor.id},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(response.json()["ok"])
+
+        response = self.client.post(
+            reverse("quick_rate_dismiss"),
+            {"course": self.course2.id, "instructor": 999999},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(response.json()["ok"])
+
+        self.assertEqual(QuickRateDismissal.objects.filter(user=self.user4).count(), 0)

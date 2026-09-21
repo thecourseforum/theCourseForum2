@@ -75,8 +75,11 @@ def quick_rate_dismiss(request):
     except (KeyError, ValueError):
         return JsonResponse({"ok": False}, status=400)
 
-    get_object_or_404(Course, id=course_id)
-    get_object_or_404(Instructor, id=instructor_id)
+    if not Course.objects.filter(id=course_id).exists():
+        return JsonResponse({"ok": False}, status=400)
+    if not Instructor.objects.filter(id=instructor_id).exists():
+        return JsonResponse({"ok": False}, status=400)
+
     QuickRateDismissal.objects.get_or_create(
         user=request.user, course_id=course_id, instructor_id=instructor_id
     )
