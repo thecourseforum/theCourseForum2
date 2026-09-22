@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Count, Q
 from django.utils import timezone
@@ -53,7 +54,11 @@ class Command(BaseCommand):
             .distinct()
         )
         well_reviewed = set(
-            Review.objects.filter(hidden=False, course__isnull=False)
+            Review.objects.filter(
+                hidden=False,
+                course__isnull=False,
+                toxicity_rating__lt=settings.TOXICITY_THRESHOLD,
+            )
             .values("course_id", "instructor_id")
             .annotate(n=Count("id"))
             .filter(n__gte=COVERAGE_MIN_REVIEWS)

@@ -417,3 +417,53 @@ class RatingsOnlyReviewViewTests(TestCase):
         review = Review.objects.get(user=self.user4, course=self.course2)
         self.assertEqual(review.text, "")
         self.assertEqual(review.hours_per_week, 5)
+
+    def test_pair_page_header_shows_ratings_count_separately(self):
+        """Ratings-only reviews count toward Ratings but not Reviews in the header."""
+        Review.objects.create(
+            user=self.user4,
+            course=self.course2,
+            instructor=self.instructor,
+            semester=self.semester,
+            text="",
+            instructor_rating=4,
+            difficulty=3,
+            recommendability=5,
+            enjoyability=4,
+            hours_per_week=5,
+        )
+        response = self.client.get(
+            reverse("course_instructor", args=[self.course2.id, self.instructor.id])
+        )
+        self.assertEqual(response.status_code, 200)
+        body = response.content.decode()
+        self.assertIn("2 Reviews · 3 Ratings", body)
+        self.assertEqual(body.count('class="review-card"'), 2)
+
+
+class RatingsOnlyListingTests(TestCase):
+    """The pair page's review list excludes ratings-only reviews."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_get_sorted_reviews_excludes_ratings_only_review(self):
+        """A ratings-only review is not part of the listed (written) reviews."""
+        ratings_only = Review.objects.create(
+            user=self.user4,
+            course=self.course2,
+            instructor=self.instructor,
+            semester=self.semester,
+            text="",
+            instructor_rating=4,
+            difficulty=3,
+            recommendability=5,
+            enjoyability=4,
+            hours_per_week=5,
+        )
+        reviews = list(
+            Review.get_sorted_reviews(self.course2.id, self.instructor.id, self.user4)
+        )
+        self.assertNotIn(ratings_only, reviews)
+        self.assertIn(self.review3, reviews)
+        self.assertIn(self.review4, reviews)

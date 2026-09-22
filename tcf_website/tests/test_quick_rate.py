@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from ..models import (
+    Instructor,
     QuickRateDismissal,
     Review,
     Schedule,
@@ -231,6 +232,29 @@ class QuickRateViewTests(TestCase):
         self.assertFalse(response.json()["ok"])
 
         self.assertEqual(QuickRateDismissal.objects.filter(user=self.user4).count(), 0)
+
+    def test_dismiss_rejects_unrelated_pair(self):
+        """Both ids may exist individually but never share a section."""
+        self.client.force_login(self.user4)
+        unrelated_instructor = Instructor.objects.create(
+            first_name="Un", last_name="Related"
+        )
+        response = self.client.post(
+            reverse("quick_rate_dismiss"),
+            {"course": self.course2.id, "instructor": unrelated_instructor.id},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(response.json()["ok"])
+        self.assertEqual(QuickRateDismissal.objects.filter(user=self.user4).count(), 0)
+
+    def test_saving_a_rating_clears_the_cached_count(self):
+        self.client.force_login(self.user4)
+        session = self.client.session
+        session["quick_rate_banner"] = {"day": "2000-01-01", "count": 9}
+        session.save()
+        response = self.client.post(reverse("quick_rate_submit"), self._payload())
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("quick_rate_banner", self.client.session)
 
     def test_schedule_page_reports_quick_rate_count(self):
         self.client.force_login(self.user4)

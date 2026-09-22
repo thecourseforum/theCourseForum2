@@ -5,9 +5,9 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
 
-from ...models import Course, Instructor, QuickRateDismissal
+from ...models import Course, QuickRateDismissal, Section
 from ...review.forms import ReviewForm
-from ...review.quick_rate import candidates_for
+from ...review.quick_rate import QUICK_RATE_BANNER_SESSION_KEY, candidates_for
 from ...review.services import is_duplicate_review_for_user
 from ...utils import semesters_for_course
 
@@ -60,6 +60,7 @@ def quick_rate_submit(request):
 
     instance.user = request.user
     instance.save()
+    request.session.pop(QUICK_RATE_BANNER_SESSION_KEY, None)
     return JsonResponse(
         {"ok": True, "review_id": instance.id, "has_text": bool(instance.text)}
     )
@@ -75,12 +76,13 @@ def quick_rate_dismiss(request):
     except (KeyError, ValueError):
         return JsonResponse({"ok": False}, status=400)
 
-    if not Course.objects.filter(id=course_id).exists():
-        return JsonResponse({"ok": False}, status=400)
-    if not Instructor.objects.filter(id=instructor_id).exists():
+    if not Section.objects.filter(
+        course_id=course_id, instructors=instructor_id
+    ).exists():
         return JsonResponse({"ok": False}, status=400)
 
     QuickRateDismissal.objects.get_or_create(
         user=request.user, course_id=course_id, instructor_id=instructor_id
     )
+    request.session.pop(QUICK_RATE_BANNER_SESSION_KEY, None)
     return JsonResponse({"ok": True})

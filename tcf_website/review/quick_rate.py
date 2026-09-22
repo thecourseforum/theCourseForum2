@@ -20,6 +20,11 @@ from ..utils import reviewable_semesters
 # Below this many reviews, the row tells the user their rating matters most.
 _SCARCE_REVIEW_COUNT = 5
 
+# Session key under which the post-finals banner caches its candidate count
+# for the day. Shared with tcf_core.context_processors and
+# tcf_website.views.review.quick_rate (tcf_website must not import tcf_core).
+QUICK_RATE_BANNER_SESSION_KEY = "quick_rate_banner"
+
 
 @dataclass(frozen=True)
 class Candidate:
@@ -48,6 +53,7 @@ def _review_counts(pairs) -> dict[tuple[int, int], int]:
     rows = (
         Review.objects.filter(
             hidden=False,
+            toxicity_rating__lt=settings.TOXICITY_THRESHOLD,
             course_id__in={course_id for course_id, _ in pairs},
             instructor_id__in={instructor_id for _, instructor_id in pairs},
         )
@@ -61,7 +67,9 @@ def candidates_for(user, now=None) -> list[Candidate]:
     """Pairs from the user's past schedules they have not reviewed or dismissed.
 
     Ordered by fewest existing reviews, then most recent term. A term counts as
-    past once it started ``QUICK_RATE_MIN_DAYS_INTO_TERM`` days ago.
+    past once it started ``QUICK_RATE_MIN_DAYS_INTO_TERM`` days ago. The
+    threshold is measured from the first day of the term's start month, so it
+    can fire a few weeks earlier than the literal day count.
     """
     now = now or timezone.now()
     cutoff = now - timedelta(days=settings.QUICK_RATE_MIN_DAYS_INTO_TERM)

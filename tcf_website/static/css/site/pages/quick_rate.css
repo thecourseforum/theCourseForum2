@@ -105,6 +105,10 @@
   gap: var(--space-1);
 }
 
+.quick-rate-scale__option {
+  position: relative;
+}
+
 .quick-rate-scale__option input {
   position: absolute;
   opacity: 0;

@@ -1,5 +1,9 @@
 {# One ratable course. With `instructor` and `semester`: a suggested row. Without: an ad-hoc row that asks for them (`semesters` required). #}
-<form class="quick-rate-row" data-quick-rate-row>
+{# `instructor=None` in that second case resolves to an empty value in the template, so the `{% if instructor %}` branches below pick the ad-hoc layout (semester/instructor pickers) instead of the suggested-row layout. #}
+<form class="quick-rate-row"
+      method="post"
+      action="{% url 'quick_rate_submit' %}"
+      data-quick-rate-row>
     {% csrf_token %}
     <input type="hidden" name="course" value="{{ course.id }}">
     <div class="quick-rate-row__head">

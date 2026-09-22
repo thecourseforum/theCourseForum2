@@ -24,5 +24,9 @@
   flex: 1 1 16rem;
   margin: 0;
   font-size: var(--text-sm);
-  color: var(--fg);
+  color: var(--color-primary-700);
+}
+
+.quick-rate-prompt .btn--ghost {
+  color: var(--color-primary-700);
 }

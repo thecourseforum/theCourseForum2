@@ -227,7 +227,9 @@
         {% endif %}
         <section class="reviews-section" id="reviews">
             <div class="reviews-header">
-                <h2 class="reviews-header__title">{{ num_reviews }} Review{{ num_reviews|pluralize }}</h2>
+                {# djlint:off #}
+                <h2 class="reviews-header__title">{{ num_reviews }} Review{{ num_reviews|pluralize }}{% if num_ratings > num_reviews %} · {{ num_ratings }} Rating{{ num_ratings|pluralize }}{% endif %}</h2>
+                {# djlint:on #}
                 <div class="reviews-header__actions">
                     {% if user.is_authenticated %}
                         <a href="{% mode_url request 'new_review' query_course=course.id query_instructor=instructor.id %}"

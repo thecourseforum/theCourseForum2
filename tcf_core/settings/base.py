@@ -266,4 +266,6 @@ TOXICITY_THRESHOLD = 74
 QUICK_RATE_MIN_DAYS_INTO_TERM = env.int("QUICK_RATE_MIN_DAYS_INTO_TERM", default=70)
 
 # Months (1-12) when signed-in users with unrated past courses see the banner.
-QUICK_RATE_BANNER_MONTHS = (5, 12)
+QUICK_RATE_BANNER_MONTHS = tuple(
+    int(m) for m in env.list("QUICK_RATE_BANNER_MONTHS", default=["5", "12"])
+)

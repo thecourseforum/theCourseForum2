@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
@@ -81,3 +82,19 @@ class QuickRateBannerTests(TestCase):
         mock_now.return_value = datetime(2026, 12, 15, tzinfo=UTC)
         request = self._request(self.user4, path=reverse("schedule"))
         self.assertEqual(quick_rate_banner(request), {})
+
+    @patch("tcf_core.context_processors.timezone.now")
+    def test_count_is_cached_in_session_for_the_day(self, mock_now):
+        mock_now.return_value = datetime(2026, 12, 15, tzinfo=UTC)
+        request = self._request(self.user4)
+        SessionMiddleware(lambda r: None).process_request(request)
+        request.session.save()
+
+        first = quick_rate_banner(request)
+        self.assertEqual(first, {"quick_rate_banner_count": 1})
+
+        with patch("tcf_core.context_processors.candidates_for") as mock_candidates:
+            second = quick_rate_banner(request)
+
+        mock_candidates.assert_not_called()
+        self.assertEqual(second, first)

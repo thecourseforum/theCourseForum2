@@ -17,11 +17,21 @@
         if (!banner) {
           return;
         }
-        if (sessionStorage.getItem(key)) {
+        let dismissed = false;
+        try {
+          dismissed = !!sessionStorage.getItem(key);
+        } catch (e) {
+          /* storage unavailable */
+        }
+        if (dismissed) {
           banner.hidden = true;
         }
         document.getElementById("quick-rate-banner-close").addEventListener("click", function () {
-          sessionStorage.setItem(key, "1");
+          try {
+            sessionStorage.setItem(key, "1");
+          } catch (e) {
+            /* storage unavailable */
+          }
           banner.hidden = true;
         });
       })();
