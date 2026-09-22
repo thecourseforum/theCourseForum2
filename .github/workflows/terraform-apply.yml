@@ -1,4 +1,4 @@
-name: Plan test infrastructure (manual apply)
+name: Deploy test infrastructure
 
 on:
   push:
@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   terraform:
-    name: Terraform plan (manual apply only)
+    name: Terraform plan and apply
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/iac'
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -75,6 +75,5 @@ jobs:
         run: terraform plan -input=false -no-color -lock-timeout=5m -out=tfplan
 
       - name: Apply saved plan
-        if: github.event_name == 'workflow_dispatch'
         working-directory: iac/app
         run: terraform apply -input=false -no-color tfplan
