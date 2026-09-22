@@ -5,7 +5,7 @@ output "terraform_deployer_role_arn" {
 
 output "dns_role_arn" {
   description = "DNS-account role ARN passed to iac/app as dns_role_arn"
-  value       = aws_iam_role.dns.arn
+  value       = var.dns_role_arn
 }
 
 output "terraform_state_bucket_name" {

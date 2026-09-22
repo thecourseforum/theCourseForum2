@@ -4,14 +4,20 @@ provider "aws" {
   region  = var.aws_region
 }
 
-provider "aws" {
-  alias   = "dns"
-  profile = var.dns_profile
-  region  = "us-east-1"
-}
-
 data "aws_caller_identity" "app" {
   provider = aws.app
+}
+
+resource "aws_iam_openid_connect_provider" "github_actions" {
+  provider = aws.app
+
+  url            = "https://token.actions.githubusercontent.com"
+  client_id_list = ["sts.amazonaws.com"]
+
+  tags = {
+    Name      = "github-actions"
+    ManagedBy = "bootstrap-terraform"
+  }
 }
 
 resource "aws_iam_role" "terraform_deployer" {
@@ -20,13 +26,28 @@ resource "aws_iam_role" "terraform_deployer" {
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = "sts:AssumeRole"
-      Principal = {
-        AWS = var.deployer_principal_arn
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = "sts:AssumeRole"
+        Principal = {
+          AWS = var.deployer_principal_arn
+        }
+      },
+      {
+        Effect = "Allow"
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Principal = {
+          Federated = aws_iam_openid_connect_provider.github_actions.arn
+        }
+        Condition = {
+          StringEquals = {
+            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+            "token.actions.githubusercontent.com:sub" = "repo:${var.github_repository}:environment:terraform-test"
+          }
+        }
       }
-    }]
+    ]
   })
 
   tags = {
@@ -85,58 +106,7 @@ resource "aws_iam_role_policy" "terraform_deployer_iam" {
       {
         Effect   = "Allow"
         Action   = "sts:AssumeRole"
-        Resource = aws_iam_role.dns.arn
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role" "dns" {
-  provider = aws.dns
-  name     = var.dns_role_name
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = "sts:AssumeRole"
-      Principal = {
-        AWS = aws_iam_role.terraform_deployer.arn
-      }
-    }]
-  })
-
-  tags = {
-    Name      = var.dns_role_name
-    ManagedBy = "bootstrap-terraform"
-  }
-}
-
-resource "aws_iam_role_policy" "dns_route53" {
-  provider = aws.dns
-  name     = "${var.dns_role_name}-route53"
-  role     = aws_iam_role.dns.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "route53:GetHostedZone",
-          "route53:ListResourceRecordSets",
-          "route53:ListTagsForResource",
-          "route53:ChangeResourceRecordSets"
-        ]
-        Resource = [
-          "arn:aws:route53:::hostedzone/Z06158912Y7SI8FYZM5IA",
-          "arn:aws:route53:::hostedzone/Z09238113JE0PLS5VY8RQ"
-        ]
-      },
-      {
-        Effect   = "Allow"
-        Action   = "route53:GetChange"
-        Resource = "arn:aws:route53:::change/*"
+        Resource = var.dns_role_arn
       }
     ]
   })
