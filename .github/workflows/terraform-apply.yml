@@ -2,7 +2,7 @@ name: Plan test infrastructure (manual apply)
 
 on:
   push:
-    branches: [dev]
+    branches: [dev, iac]
   workflow_dispatch:
 
 permissions:
@@ -16,7 +16,7 @@ concurrency:
 jobs:
   terraform:
     name: Terraform plan (manual apply only)
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/iac'
     runs-on: ubuntu-latest
     timeout-minutes: 120
     environment: terraform-test
