@@ -77,34 +77,24 @@ hand-maintained DNS role.
 For production, replace the broad PowerUser attachment with a reviewed
 least-privilege policy.
 
-## Manual test-infrastructure apply in GitHub Actions
+## Test-infrastructure deploys in GitHub Actions
 
-The workflow at `.github/workflows/terraform-apply.yml` runs a Terraform plan
-on every push to `dev`. To apply, a repository admin starts **Actions → Plan
-test infrastructure (manual apply) → Run workflow** from `dev`. That manual
-run makes a fresh plan and applies the saved plan. Both runs use the existing
-S3 state, test domain, and `test` image tag. Neither builds or deploys an
+The workflow at `.github/workflows/terraform-apply.yml` plans and applies
+`iac/app` on every push to `dev` or `iac`. It uses the existing S3 state, the
+test domain, and the `test` image tag, and does not build or deploy an
 application image.
 
-Before the first workflow run:
+Applying without review is a temporary arrangement for iterating on the `iac`
+branch. Restore the `workflow_dispatch` condition on the apply step, so only a
+repository admin can apply, before this reaches `dev`.
 
-1. Use an administrator profile in account `099933383052` to apply the OIDC
-   provider and deployer-role trust change in `iac/bootstrap`. Use the
-   **existing bootstrap state**: it is local and ignored by Git, and is not
-   present in this checkout. Retrieve it from the machine where bootstrap was
-   last applied, or import the existing resources into a new state. Before
-   applying, confirm `terraform state list` contains the existing deployer
-   role, DNS role, and state bucket. The plan should only add the GitHub OIDC
-   provider and update the deployer role's trust policy. If it proposes
-   recreating existing resources, stop and recover the state first.
-2. In GitHub, verify the `terraform-test` environment under **Settings →
-   Environments**. It has already been created with deployment restricted to
-   `dev`. Leave it without required reviewers so plans can run on every push;
-   the apply path separately checks that the person who started it has
-   repository `admin` permission.
-3. Merge the workflow and bootstrap change into the default `dev` branch.
-   The manual **Run workflow** button appears only when the workflow exists on
-   the default branch.
+The `terraform-test` environment under **Settings → Environments** restricts
+deployments to the `dev` and `iac` branches. That restriction is what stops
+other branches from obtaining an OIDC token for the deployer role.
+
+The manual **Run workflow** button appears only once the workflow exists on
+the default branch, so `workflow_dispatch` is unavailable until this merges
+into `dev`.
 
 The workflow requests a GitHub OIDC token and assumes `tcf-terraform-deployer`
 in account `099933383052`. Its trust policy requires audience
