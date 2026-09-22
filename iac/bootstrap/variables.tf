@@ -3,11 +3,6 @@ variable "app_profile" {
   type        = string
 }
 
-variable "dns_profile" {
-  description = "AWS CLI profile with administrator access in the DNS account"
-  type        = string
-}
-
 variable "aws_region" {
   description = "Region for application-account IAM operations"
   type        = string
@@ -19,16 +14,22 @@ variable "deployer_principal_arn" {
   type        = string
 }
 
+variable "github_repository" {
+  description = "GitHub owner/repository permitted to assume the Terraform deployer role from the terraform-test environment"
+  type        = string
+  default     = "thecourseforum/theCourseForum2"
+}
+
 variable "terraform_deployer_role_name" {
   description = "Role created in the application account for Terraform deployments"
   type        = string
   default     = "tcf-terraform-deployer"
 }
 
-variable "dns_role_name" {
-  description = "Role created in the DNS account for Route 53 changes"
+variable "dns_role_arn" {
+  description = "Existing DNS-account role that the deployer may assume for Route 53 changes"
   type        = string
-  default     = "tcf-terraform-dns"
+  default     = "arn:aws:iam::011713309463:role/tcf-terraform-dns"
 }
 
 variable "application_role_prefix" {

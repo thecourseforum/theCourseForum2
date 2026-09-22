@@ -1,0 +1,80 @@
+name: Plan test infrastructure (manual apply)
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: terraform-test-app
+  cancel-in-progress: false
+
+jobs:
+  terraform:
+    name: Terraform plan (manual apply only)
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    environment: terraform-test
+    env:
+      AWS_REGION: us-east-1
+      TF_IN_AUTOMATION: "true"
+      TF_VAR_domain_name: thecourseforumtest.com
+      TF_VAR_dns_role_arn: arn:aws:iam::011713309463:role/tcf-terraform-dns
+      TF_VAR_ecr_image_tag: test
+    steps:
+      - name: Require repository admin
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          permission=$(gh api "repos/${GITHUB_REPOSITORY}/collaborators/${GITHUB_TRIGGERING_ACTOR}/permission" --jq .permission)
+          if [[ "$permission" != "admin" ]]; then
+            echo "Only repository admins may apply test infrastructure."
+            exit 1
+          fi
+
+      - name: Check out selected revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.16.3
+          terraform_wrapper: false
+
+      - name: Assume Terraform deployer role
+        uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
+        with:
+          role-to-assume: arn:aws:iam::099933383052:role/tcf-terraform-deployer
+          aws-region: us-east-1
+
+      - name: Verify AWS account and role
+        run: |
+          account=$(aws sts get-caller-identity --query Account --output text)
+          arn=$(aws sts get-caller-identity --query Arn --output text)
+          if [[ "$account" != "099933383052" || "$arn" != arn:aws:sts::099933383052:assumed-role/tcf-terraform-deployer/* ]]; then
+            echo "Unexpected AWS identity: $arn"
+            exit 1
+          fi
+
+      - name: Initialize Terraform
+        working-directory: iac/app
+        run: terraform init -input=false
+
+      - name: Validate Terraform
+        working-directory: iac/app
+        run: terraform validate -no-color
+
+      - name: Plan infrastructure changes
+        working-directory: iac/app
+        run: terraform plan -input=false -no-color -lock-timeout=5m -out=tfplan
+
+      - name: Apply saved plan
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: iac/app
+        run: terraform apply -input=false -no-color tfplan
