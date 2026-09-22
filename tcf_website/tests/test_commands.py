@@ -534,3 +534,28 @@ class ReviewMetricsCommandTests(TestCase):
         self.assertIn("ratings_only=1", output)
         self.assertIn("coverage:", output)
         self.assertEqual(output.count("text="), 2)
+
+        # Pin the output shape: each weekly line's date/field format, the
+        # coverage line's wording, and the exact per-line counts. Regexes
+        # (not exact dates) so this doesn't flake around midnight.
+        lines = [line for line in output.splitlines() if line]
+        self.assertEqual(len(lines), 3)
+
+        week_line_re = r"^\d{4}-\d{2}-\d{2}  text=\d+  ratings_only=\d+$"
+        self.assertRegex(lines[0], week_line_re)
+        self.assertRegex(lines[1], week_line_re)
+        self.assertRegex(
+            lines[2], r"^coverage: \d+/\d+ pairs offered in .+ have 3\+ reviews$"
+        )
+
+        # The older of the two weeks (--weeks 2's first line) has no reviews
+        # created in it; every fixture review lands in the most recent week
+        # (created defaults to now).
+        self.assertTrue(lines[0].endswith("  text=0  ratings_only=0"))
+
+        expected_text_count = (
+            Review.objects.filter(course__isnull=False).exclude(text="").count()
+        )
+        self.assertTrue(
+            lines[1].endswith(f"  text={expected_text_count}  ratings_only=1")
+        )
