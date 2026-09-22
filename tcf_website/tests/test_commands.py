@@ -7,7 +7,7 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
-from tcf_website.models import CourseGrade, CourseInstructorGrade
+from tcf_website.models import CourseGrade, CourseInstructorGrade, Review
 
 from .test_utils import setup
 
@@ -502,3 +502,35 @@ class HideReviewTests(TestCase):
         # user2 has no email — should print "(none)"
         out = _hide(id=self.review2.pk, show=True)
         self.assertIn("(none)", out)
+
+
+# ---------------------------------------------------------------------------
+# review_metrics command
+# ---------------------------------------------------------------------------
+
+
+class ReviewMetricsCommandTests(TestCase):
+    """review_metrics prints weekly counts and coverage."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_prints_weekly_split_and_coverage(self):
+        Review.objects.create(
+            user=self.user4,
+            course=self.course2,
+            instructor=self.instructor,
+            semester=self.semester,
+            text="",
+            instructor_rating=4,
+            difficulty=3,
+            recommendability=4,
+            enjoyability=4,
+            hours_per_week=5,
+        )
+        out = StringIO()
+        call_command("review_metrics", "--weeks", "2", stdout=out)
+        output = out.getvalue()
+        self.assertIn("ratings_only=1", output)
+        self.assertIn("coverage:", output)
+        self.assertEqual(output.count("text="), 2)
