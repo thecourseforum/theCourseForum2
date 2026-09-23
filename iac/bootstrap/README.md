@@ -11,9 +11,11 @@ maintained by hand in that account and referenced by ARN through the
 `dns_role_arn` variable, so bootstrap needs credentials only for the
 application account.
 
-Bootstrap uses local state on its first run because it creates the state
-bucket. The application stack uses that bucket remotely after bootstrap
-completes.
+Bootstrap used local state on its first run because it creates the state
+bucket. Now that the bucket exists, bootstrap keeps its state there too, under
+`bootstrap/terraform.tfstate`. Export `AWS_PROFILE` for an administrator in the
+application account before running it, since the backend takes no profile of
+its own.
 
 ## Setup
 
@@ -79,22 +81,28 @@ least-privilege policy.
 
 ## Test-infrastructure deploys in GitHub Actions
 
-The workflow at `.github/workflows/terraform-apply.yml` plans and applies
-`iac/app` on every push to `dev` or `iac`. It uses the existing S3 state, the
-test domain, and the `test` image tag, and does not build or deploy an
-application image.
+The workflow at `.github/workflows/terraform-apply.yml` runs on every push to
+`dev` or `iac`, in two jobs. The `plan` job plans `iac/app`, writes the plan to
+the run summary, and uploads it as an artifact. The `apply` job waits for
+approval, then applies that saved plan. Reviewers therefore read the real plan
+before approving, and the applied plan is the one they read. Both jobs use the
+existing S3 state, the test domain, and the `test` image tag, and neither
+builds or deploys an application image.
 
-Applying without review is a temporary arrangement for iterating on the `iac`
-branch. Restore the `workflow_dispatch` condition on the apply step, so only a
-repository admin can apply, before this reaches `dev`.
+Two GitHub environments back this, under **Settings → Environments**:
 
-The `terraform-test` environment under **Settings → Environments** restricts
-deployments to the `dev` and `iac` branches. That restriction is what stops
-other branches from obtaining an OIDC token for the deployer role.
+- `terraform-plan` — no required reviewers, so plans run unattended.
+- `terraform-test` — required reviewers, which is what pauses the apply.
 
-The manual **Run workflow** button appears only once the workflow exists on
-the default branch, so `workflow_dispatch` is unavailable until this merges
-into `dev`.
+Both restrict deployments to the `dev` and `iac` branches. That restriction is
+what stops other branches from obtaining an OIDC token for the deployer role,
+and the deployer's trust policy accepts both environment names.
+
+Approval gating lives in the environment rather than in the workflow file, so
+it applies to pushes on any branch and cannot be removed by editing the
+workflow. The `workflow_dispatch` path additionally checks that the person who
+started the run has repository `admin` permission; that button appears only
+once the workflow exists on the default branch.
 
 The workflow requests a GitHub OIDC token and assumes `tcf-terraform-deployer`
 in account `099933383052`. Its trust policy requires audience
