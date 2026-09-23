@@ -43,7 +43,10 @@ resource "aws_iam_role" "terraform_deployer" {
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-            "token.actions.githubusercontent.com:sub" = "repo:${var.github_repository}:environment:terraform-test"
+            "token.actions.githubusercontent.com:sub" = [
+              for environment in var.github_environments :
+              "repo:${var.github_repository}:environment:${environment}"
+            ]
           }
         }
       }
@@ -91,12 +94,22 @@ resource "aws_iam_role_policy" "terraform_deployer_iam" {
           "iam:GetRolePolicy",
           "iam:ListRolePolicies",
           "iam:ListAttachedRolePolicies",
-          "iam:ListInstanceProfilesForRole",
+          "iam:ListInstanceProfilesForRole"
+        ]
+        Resource = "arn:aws:iam::${data.aws_caller_identity.app.account_id}:role/${var.application_role_prefix}*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
           "iam:GetPolicy",
-          "iam:ListPolicies",
-          "iam:CreateServiceLinkedRole"
+          "iam:ListPolicies"
         ]
         Resource = "*"
+      },
+      {
+        Effect   = "Allow"
+        Action   = "iam:CreateServiceLinkedRole"
+        Resource = "arn:aws:iam::${data.aws_caller_identity.app.account_id}:role/aws-service-role/*"
       },
       {
         Effect   = "Allow"

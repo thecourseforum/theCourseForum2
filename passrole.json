@@ -1,0 +1,13 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Sid": "PassEcsTaskRoles",
+    "Effect": "Allow",
+    "Action": "iam:PassRole",
+    "Resource": [
+      "arn:aws:iam::396913701887:role/tcf-ecs-task-role",
+      "arn:aws:iam::396913701887:role/tcf-ecs-execution-role"
+    ],
+    "Condition": { "StringEquals": { "iam:PassedToService": "ecs-tasks.amazonaws.com" } }
+  }]
+}
