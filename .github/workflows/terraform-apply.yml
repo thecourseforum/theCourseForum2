@@ -13,19 +13,85 @@ concurrency:
   group: terraform-test-app
   cancel-in-progress: false
 
+env:
+  AWS_REGION: us-east-1
+  TF_IN_AUTOMATION: "true"
+  TF_VAR_domain_name: thecourseforumtest.com
+  TF_VAR_dns_role_arn: arn:aws:iam::011713309463:role/tcf-terraform-dns
+  TF_VAR_ecr_image_tag: test
+  TERRAFORM_VERSION: 1.16.3
+  DEPLOYER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-deployer
+  APP_ACCOUNT_ID: "099933383052"
+
 jobs:
-  terraform:
-    name: Terraform plan and apply
+  plan:
+    name: Terraform plan
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/iac'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: terraform-plan
+    steps:
+      - name: Check out selected revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+
+      - name: Assume Terraform deployer role
+        uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
+        with:
+          role-to-assume: ${{ env.DEPLOYER_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Verify AWS account and role
+        run: |
+          account=$(aws sts get-caller-identity --query Account --output text)
+          arn=$(aws sts get-caller-identity --query Arn --output text)
+          if [[ "$account" != "${APP_ACCOUNT_ID}" || "$arn" != arn:aws:sts::${APP_ACCOUNT_ID}:assumed-role/tcf-terraform-deployer/* ]]; then
+            echo "Unexpected AWS identity: $arn"
+            exit 1
+          fi
+
+      - name: Initialize Terraform
+        working-directory: iac/app
+        run: terraform init -input=false
+
+      - name: Validate Terraform
+        working-directory: iac/app
+        run: terraform validate -no-color
+
+      - name: Plan infrastructure changes
+        working-directory: iac/app
+        run: terraform plan -input=false -no-color -lock-timeout=5m -out=tfplan
+
+      - name: Summarize planned changes
+        working-directory: iac/app
+        run: |
+          {
+            echo '## Terraform plan'
+            echo
+            echo '```'
+            terraform show -no-color tfplan
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload saved plan
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: tfplan
+          path: iac/app/tfplan
+          retention-days: 1
+          if-no-files-found: error
+
+  apply:
+    name: Terraform apply
+    needs: plan
     runs-on: ubuntu-latest
     timeout-minutes: 120
     environment: terraform-test
-    env:
-      AWS_REGION: us-east-1
-      TF_IN_AUTOMATION: "true"
-      TF_VAR_domain_name: thecourseforumtest.com
-      TF_VAR_dns_role_arn: arn:aws:iam::011713309463:role/tcf-terraform-dns
-      TF_VAR_ecr_image_tag: test
     steps:
       - name: Require repository admin
         if: github.event_name == 'workflow_dispatch'
@@ -44,36 +110,25 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
         with:
-          terraform_version: 1.16.3
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
           terraform_wrapper: false
 
       - name: Assume Terraform deployer role
         uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
         with:
-          role-to-assume: arn:aws:iam::099933383052:role/tcf-terraform-deployer
-          aws-region: us-east-1
-
-      - name: Verify AWS account and role
-        run: |
-          account=$(aws sts get-caller-identity --query Account --output text)
-          arn=$(aws sts get-caller-identity --query Arn --output text)
-          if [[ "$account" != "099933383052" || "$arn" != arn:aws:sts::099933383052:assumed-role/tcf-terraform-deployer/* ]]; then
-            echo "Unexpected AWS identity: $arn"
-            exit 1
-          fi
+          role-to-assume: ${{ env.DEPLOYER_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Initialize Terraform
         working-directory: iac/app
         run: terraform init -input=false
 
-      - name: Validate Terraform
-        working-directory: iac/app
-        run: terraform validate -no-color
-
-      - name: Plan infrastructure changes
-        working-directory: iac/app
-        run: terraform plan -input=false -no-color -lock-timeout=5m -out=tfplan
+      - name: Download saved plan
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: tfplan
+          path: iac/app
 
       - name: Apply saved plan
         working-directory: iac/app
-        run: terraform apply -input=false -no-color tfplan
+        run: terraform apply -input=false -no-color -lock-timeout=5m tfplan

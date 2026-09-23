@@ -14,6 +14,12 @@ variable "deployer_principal_arn" {
   type        = string
 }
 
+variable "github_environments" {
+  description = "GitHub Actions environments permitted to assume the Terraform deployer role"
+  type        = list(string)
+  default     = ["terraform-plan", "terraform-test"]
+}
+
 variable "github_repository" {
   description = "GitHub owner/repository permitted to assume the Terraform deployer role from the terraform-test environment"
   type        = string
