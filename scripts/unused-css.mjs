@@ -39,3 +39,4 @@ for (const { file, css, rejected } of results) {
   }
 }
 console.log(`\n${total} unused selectors`);
+if (total && !write) process.exitCode = 1;
