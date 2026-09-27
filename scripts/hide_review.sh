@@ -67,7 +67,7 @@ _ecs_command() {
 
 _run_cmd() {
     if [[ "$USE_DOCKER" == "1" ]]; then
-        docker exec -it tcf_django python manage.py "$@"
+        docker compose --profile full exec web python manage.py "$@"
     else
         _ecs_command "$@"
     fi
@@ -77,7 +77,7 @@ _run_cmd_capture() {
     [[ -n "$CAPTURED_FILE" ]] && rm -f "$CAPTURED_FILE"
     CAPTURED_FILE="$(mktemp)"
     if [[ "$USE_DOCKER" == "1" ]]; then
-        docker exec tcf_django python manage.py "$@" > "$CAPTURED_FILE" 2>&1
+        docker compose --profile full exec -T web python manage.py "$@" > "$CAPTURED_FILE" 2>&1
     else
         _ecs_command "$@" > "$CAPTURED_FILE" 2>&1 || true
     fi

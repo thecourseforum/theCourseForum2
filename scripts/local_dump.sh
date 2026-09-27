@@ -1,21 +1,29 @@
-#!/bin/bash
-# This script creates a compressed dump of the local Docker database.
-source .env
+#!/usr/bin/env bash
+# Create a custom-format dump of the local Compose database.
 
-filename="$1"
-filename="${filename:-local.dump}"
+set -euo pipefail
 
-if [ ! -d "$(dirname "db/$filename")" ]; then
-  echo "Database destination 'db/$filename' invalid."
-  echo "Ensure the directory db exists, and provide just the filename."
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+if [[ ! -f .env ]]; then
+  echo "Missing .env. Copy .env.example to .env first." >&2
   exit 1
 fi
 
-set -e
+# shellcheck disable=SC1091
+source .env
 
-echo "--- Creating a dump of the '$DB_NAME' database from container 'tcf_db'..."
+filename="${1:-local.dump}"
+dump_path="db/$filename"
 
+if [[ ! -d "$(dirname "$dump_path")" ]]; then
+  echo "Database destination '$dump_path' invalid." >&2
+  echo "Ensure the directory db exists, and provide just the filename." >&2
+  exit 1
+fi
 
-docker exec tcf_db pg_dump -U "$DB_USER" -d "$DB_NAME" --format=custom --clean > "db/$filename"
+echo "--- Creating '$dump_path'..."
+docker compose exec -T db pg_dump \
+  -U "$DB_USER" -d "$DB_NAME" --format=custom --clean > "$dump_path"
 
-echo "--- ✅ Successfully created database dump at: db/$filename"
+echo "--- Database dump written to '$dump_path'."
