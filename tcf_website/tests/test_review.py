@@ -467,3 +467,25 @@ class RatingsOnlyListingTests(TestCase):
         self.assertNotIn(ratings_only, reviews)
         self.assertIn(self.review3, reviews)
         self.assertIn(self.review4, reviews)
+
+
+class WorkloadSliderTests(TestCase):
+    """The full review form collects weekly hours with draggable sliders."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_weekly_hours_fields_are_range_sliders(self):
+        """Each of the four weekly-hours fields is a 0-20 range input with a readout."""
+        self.client.force_login(self.user4)
+        response = self.client.get(reverse("new_review"), {"course": self.course2.id})
+        self.assertEqual(response.status_code, 200)
+        body = response.content.decode()
+        for name in ReviewForm.BREAKDOWN_FIELDS:
+            self.assertRegex(
+                body,
+                rf'<input type="range"[^>]*name="{name}"[^>]*min="0"[^>]*max="20"[^>]*step="1"',
+            )
+            self.assertRegex(body, rf'<output[^>]*for="workload-{name}"')
+        self.assertEqual(body.count('type="range"'), 4)
+        self.assertNotIn('class="workload-input"', body)

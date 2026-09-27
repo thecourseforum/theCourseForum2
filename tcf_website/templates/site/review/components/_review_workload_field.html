@@ -1,13 +1,17 @@
+{# One weekly-hours slider. Usage: {% include ... with name="amount_reading" label="Reading" %} #}
 <div class="workload-field">
-    <label>{{ label }}</label>
-    <div class="workload-input-wrapper">
-        <input type="number"
-               class="workload-input"
-               name="{{ name }}"
-               value="0"
-               min="0"
-               max="20"
-               step="1">
-        <span class="workload-suffix">hrs</span>
+    <div class="workload-field__head">
+        <label for="workload-{{ name }}">{{ label }}</label>
+        <output class="workload-value" for="workload-{{ name }}">0 hrs</output>
     </div>
+    <input type="range"
+           class="workload-slider"
+           id="workload-{{ name }}"
+           name="{{ name }}"
+           value="0"
+           min="0"
+           max="20"
+           step="1"
+           aria-valuetext="0 hours"
+           data-workload-slider>
 </div>

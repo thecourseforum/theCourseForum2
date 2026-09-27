@@ -200,6 +200,18 @@
     });
   }
 
+  document.querySelectorAll('[data-workload-slider]').forEach(function(slider) {
+    const readout = document.querySelector('output[for="' + slider.id + '"]');
+    function show() {
+      const hours = Number(slider.value);
+      const unit = hours === 1 ? 'hr' : 'hrs';
+      if (readout) readout.textContent = hours + ' ' + unit;
+      slider.setAttribute('aria-valuetext', hours + (hours === 1 ? ' hour' : ' hours'));
+    }
+    slider.addEventListener('input', show);
+    show();
+  });
+
   let zeroHoursWarned = false;
 
   document.getElementById('reviewForm').addEventListener('submit', async function(e) {
