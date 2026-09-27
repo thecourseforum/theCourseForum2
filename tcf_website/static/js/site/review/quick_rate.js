@@ -68,9 +68,6 @@
         if (countEl) {
           countEl.textContent = String(Number(countEl.textContent) + 1);
         }
-        document.dispatchEvent(
-          new CustomEvent("tcf:quick-rate-saved", { detail: payload }),
-        );
         return;
       }
       if (response.status === 409) {
