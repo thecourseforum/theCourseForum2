@@ -160,11 +160,6 @@
   font-weight: var(--font-semibold);
 }
 
-.instructors-header__count {
-  font-size: var(--text-sm);
-  color: var(--fg-muted);
-}
-
 /* ===== INSTRUCTOR LIST ===== */
 
 .instructor-list {
