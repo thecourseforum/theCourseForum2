@@ -1,7 +1,27 @@
 // Report CSS selectors never referenced in templates, JS, or Python.
 // Usage: npm run css:unused [-- --write]  (--write deletes them in place)
-import { writeFileSync } from "node:fs";
+import { randomBytes } from "node:crypto";
+import { renameSync, unlinkSync, writeFileSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 import { PurgeCSS } from "purgecss";
+
+function writeFileAtomic(file, content) {
+  const tmp = join(
+    dirname(file),
+    `.${basename(file)}.${randomBytes(8).toString("hex")}.tmp`,
+  );
+  try {
+    writeFileSync(tmp, content);
+    renameSync(tmp, file);
+  } catch (err) {
+    try {
+      unlinkSync(tmp);
+    } catch {
+      // tmp may not exist if write failed before creation
+    }
+    throw err;
+  }
+}
 
 const results = await new PurgeCSS().purge({
   css: ["tcf_website/static/css/site/**/*.css"],
@@ -32,7 +52,7 @@ for (const { file, css, rejected } of results) {
   // reset.css targets elements/pseudo-classes (:focus-visible) by design.
   if (!rejected.length || file.endsWith("reset.css")) continue;
   total += rejected.length;
-  if (write) writeFileSync(file, css);
+  if (write) writeFileAtomic(file, css);
   console.log(`\n${file.replace(`${process.cwd()}/`, "")}`);
   for (const selector of rejected) {
     console.log(`  ${selector.replace(/\s+/g, " ").trim()}`);
