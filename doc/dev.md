@@ -1,85 +1,236 @@
-# tCF Developer Info
+# tCF Developer Guide
 
-Ensure your system has [Git](https://git-scm.com/book/en/Getting-Started-Installing-Git) and [Docker](https://docs.docker.com/install/) installed.
+## Prerequisites
 
-## Setup
+Install:
 
-1. Clone the project:
+- [Git](https://git-scm.com/book/en/Getting-Started-Installing-Git)
+- [Docker Desktop](https://docs.docker.com/get-docker/) with Docker Compose v2
+- [VS Code](https://code.visualstudio.com/) with the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+- [uv](https://docs.astral.sh/uv/) for host-side Python checks
+- Node.js and npm for JavaScript checks
+
+You also need access to the tCF Google Drive if you need a database dump.
+
+## Initial setup
+
+Clone the repository and create the local environment file:
 
 ```bash
 git clone https://github.com/thecourseforum/theCourseForum2.git
 cd theCourseForum2
-```
-
-2. Setup environment variables
-
-```bash
 cp .env.example .env
 ```
 
-3. Build the project
+PostgreSQL reads the values in `.env` when its data directory is initialized.
+`.env` is local-only and is excluded from Docker build contexts. Never put
+production credentials in it.
+
+## Compose architecture
+
+The Compose project is named `tcf`.
+
+Services without a profile provide the shared local infrastructure:
+
+| Service | Purpose | Local address |
+| --- | --- | --- |
+| `db` | PostgreSQL 18.1 | internal only |
+| `valkey` | Cache, sessions, and Cachalot | internal only |
+| `minio` | S3-compatible media/static storage | API `localhost:9000`, console `localhost:9001` |
+| `minio-init` | Creates the MinIO buckets, then exits | none |
+| `cdn` | Serves the MinIO static bucket through Caddy | `http://localhost:8081` |
+
+The `full` profile adds the production-shaped application services:
+
+| Service | Purpose |
+| --- | --- |
+| `release` | Migrations, static collection, Cachalot invalidation, and session cleanup |
+| `web` | Bundled Django application served by Gunicorn on `localhost:8000` |
+
+The `dev` profile adds the VS Code development container:
+
+| Service | Purpose |
+| --- | --- |
+| `devcontainer` | Development tools, Node.js, uv, and Docker-outside-of-Docker access |
+
+The Compose profile controls which containers run; it does not select Django
+settings. Local containers use `TCF_ENV=local` by default. ECS production tasks
+set `TCF_ENV=prod` and use AWS RDS, ElastiCache, and S3.
+
+## Choose a local workflow
+
+### VS Code devcontainer (recommended for development)
+
+Open the repository in VS Code and run **Dev Containers: Reopen in Container**.
+If the container was previously created, use **Dev Containers: Rebuild and
+Reopen in Container** after changing the Compose or devcontainer setup. The
+devcontainer uses the `dev` profile, bind-mounts the repository at `/app`, and
+installs the development dependencies.
+
+For a first-time setup, restore the database from a host terminal before
+opening or rebuilding the devcontainer:
 
 ```bash
-docker compose build --no-cache
-```
-
-4. Wait for the Django server to finish building (i.e. ` ✔ Service web  Built` is visible in stdout).
-5. Download and place the [latest database backup](https://drive.google.com/drive/u/0/folders/1a7OkHkepOBWKiDou8nEhpAG41IzLi7mh) (should be named `latest.dump`) from Google Drive into `db/latest.dump` in your local repo.
-6. Update the database:
-
-```bash
+cp .env.example .env
+# Copy the private db/latest.dump backup into db/latest.dump first.
 ./scripts/reset-db.sh
 ```
-7. Start the server
+
+The reset script is destructive: use it only for initial setup or when you
+intentionally want to replace the local database. Migrations create the schema
+but do not populate course data. It may stop or remove the existing
+devcontainer, so run it from the host rather than a devcontainer terminal.
+
+Inside the devcontainer terminal, start the infrastructure, apply migrations,
+collect static files, and run Django. The `release` command is a one-off task;
+it does not start the `web` service, so the final command starts Django:
+
+```bash
+docker compose up -d
+docker compose --profile full run --rm release
+uv run python manage.py runserver 0.0.0.0:8000
+```
+
+The devcontainer does not permanently forward port 8000. Use VS Code's Ports
+panel to forward port 8000, then open <http://localhost:8000>.
+
+The devcontainer controls sibling Compose services through the mounted Docker
+socket. Do not run a full `docker compose down` from inside the devcontainer;
+run destructive lifecycle commands from a host terminal instead.
+
+### Bundled production-shaped web service
+
+To run the complete local stack with Gunicorn:
+
+```bash
+docker compose --profile full up --build
+```
+
+The `release` task waits for PostgreSQL, Valkey, and MinIO bucket initialization,
+then `web` starts only after `release` succeeds.
+
+The plain command below starts infrastructure/CDN only and does not start
+Django:
 
 ```bash
 docker compose up
 ```
 
-8. Ensure the website is up, running, and functional at `localhost:8000`.
+Once the full stack is running:
 
-### VSCode Setup
+- Website: <http://localhost:8000>
+- Static CDN: <http://localhost:8081>
+- MinIO console: <http://localhost:9001>
 
-When you open the project, VSCode may prompt you to install the recommended extensions for this project. Click yes and ensure that they are in your extension library. A list of the necessary libraries can be found [here](.././.vscode/extensions.json).
+Do not run the devcontainer server and bundled `web` service on port 8000 at
+the same time.
 
-## [Useful Commands](useful-commands.md)
+## Database dumps
 
-## Common Issues
+Download the latest custom-format backup manually from the database backup
+folder and save it as `db/latest.dump`.
 
-- Docker build error `=> CANCELED [internal] load build context`
-  - This occurs because of a Windows compatibility issue with Docker. As of December 19, 2023, downgrade Docker to [version 4.19](https://docs.docker.com/desktop/release-notes/#4190), then re-build the project.
-
-## Stack
-
-The application stack is listed below. These technologies were chosen because they are robust and align with the stack that UVA students learn in courses.
-
-- Python
-- Django
-- PostgreSQL
-- Bootstrap 4
-- Javascript (jQuery)
-
-
-## Enter docker container
+From a host terminal, reset the local database and restore the dump with:
 
 ```bash
-docker exec -it tcf_django /bin/bash
+./scripts/reset-db.sh
 ```
 
-## CI checks locally
+The script stops Compose services without deleting named volumes, clears the
+public schema, and restores the dump through `docker compose exec`. Start the
+chosen local workflow again afterward.
+
+Create a custom-format local backup with:
 
 ```bash
-ruff check .
-ruff format --check .
-djlint tcf_website/templates --check --lint
-ty check
-npm ci && npx eslint -c .config/.eslintrc.yml tcf_website/static/
-python manage.py migrate
-coverage run manage.py test
+./scripts/local_dump.sh [filename.dump]
 ```
 
-GitHub Actions sets `GITHUB_ACTIONS=true` so the same module runs with `DEBUG=False` and without the debug toolbar; see [`.github/workflows/ci.yml`](../.github/workflows/ci.yml).
+To remove all local database and object-storage data:
 
-## Authentication Functionality
+```bash
+docker compose --profile full down -v
+```
 
-Login/Logout/Profile in a dev environment requires additional credentials. If this is needed, consult exec for access.
+## Run Django management commands
+
+In the running bundled web service:
+
+```bash
+docker compose --profile full exec web python manage.py shell
+docker compose --profile full exec web python manage.py fetch_clubs
+docker compose --profile full exec web python manage.py load_grades ALL_DANGEROUS
+```
+
+In the devcontainer:
+
+```bash
+uv run python manage.py shell
+uv run python manage.py fetch_clubs
+uv run python manage.py load_grades ALL_DANGEROUS
+```
+
+For a one-off bundled-container command:
+
+```bash
+docker compose --profile full run --rm web python manage.py <command>
+```
+
+## Environment modes
+
+`TCF_ENV` selects the Django runtime mode:
+
+- `local`: local development settings and debug tools; uses Postgres, Valkey, and MinIO
+- `ci`: debug disabled; uses the same Compose-backed services in GitHub Actions
+- `prod`: production settings; uses AWS RDS, ElastiCache, and S3; ECS must set this explicitly
+
+The Compose `full` profile does not automatically set `TCF_ENV=prod`.
+
+## Pre-commit hooks
+
+The development dependencies include `prek`, a compatible replacement for
+pre-commit. Inside the devcontainer, install the hooks once per checkout:
+
+```bash
+uv run prek install
+```
+
+The hooks run automatically before commits. Run them manually with:
+
+```bash
+uv run prek run --all-files
+```
+
+## Local quality checks
+
+Run the same host-side checks used by CI:
+
+```bash
+uv sync --frozen --group dev --no-install-project
+uv run ruff check .
+uv run ruff format --check .
+uv run djlint tcf_website/templates --check --lint
+uv run ty check
+npm ci
+npx eslint -c .config/.eslintrc.yml tcf_website/static/
+```
+
+Run the Compose-backed Django tests with:
+
+```bash
+docker compose --profile full run --rm --build web python manage.py test
+```
+
+GitHub Actions runs these tests with coverage against the same PostgreSQL,
+Valkey, and MinIO services.
+
+## Useful documentation
+
+- [Useful commands](useful-commands.md)
+- [Semester data](semester-data.md)
+- [Grade data](grade-data.md)
+
+## Authentication
+
+Login, logout, and profile functionality requires additional Cognito
+credentials. Consult the project maintainers if you need access.
