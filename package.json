@@ -4,8 +4,7 @@
   "description": "[![Build Status](https://github.com/thecourseforum/theCourseForum2/workflows/Continuous%20Integration/badge.svg?branch=master)](https://github.com/thecourseforum/theCourseForum2/actions?query=workflow%3A%22Continuous+Integration%22+branch%3Amaster)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "css:unused": "node scripts/unused-css.mjs"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
