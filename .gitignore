@@ -19,6 +19,7 @@ node_modules/
 # CSV files exported from PostgreSQL
 db/*.csv
 # Data dumps
+tcf_website/management/commands/semester_data/benchmark_data/
 db/*.sql
 db/*.dump
 # IDEs
