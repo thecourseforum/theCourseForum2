@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   workflow_run:
     workflows: ["Continuous Integration"]
-    branches: [master]
+    branches: [oidc-on-dev]
     types:
       - completed
 
