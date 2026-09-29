@@ -2,10 +2,12 @@
 name: AWS Deployment
 
 on:
+  push:
+    branches: [oidc-on-dev]
   workflow_dispatch:
   workflow_run:
     workflows: ["Continuous Integration"]
-    branches: [oidc-on-dev]
+    branches: [master]
     types:
       - completed
 
@@ -22,20 +24,16 @@ env:
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout master
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
           persist-credentials: false
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: arn:aws:iam::978573505384:role/tcf-ecs-deployer
 
