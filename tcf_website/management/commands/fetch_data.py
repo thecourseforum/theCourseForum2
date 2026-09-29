@@ -337,12 +337,10 @@ def fetch_sis_description(session, course, timeout):
         timeout=timeout,
         class_nbr=course["class_nbr"],
     )
-    text = data["section_info"]["catalog_descr"]["crse_catalog_description"]
-    if not text or not text.strip():
-        raise ValueError(
-            f"SIS description is empty for {course['subject']} {course['catalog_nbr']}."
-        )
-    return text
+    section_info = data.get("section_info") or {}
+    catalog_descr = section_info.get("catalog_descr") or {}
+    text = catalog_descr.get("crse_catalog_description")
+    return text if text and text.strip() else ""
 
 
 def fetch_hooslist_description(hoos_session, course, timeout):
