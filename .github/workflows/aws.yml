@@ -8,6 +8,9 @@ on:
     types:
       - completed
 
+permissions:
+  contents: read
+
 env:
   AWS_REGION: us-east-1
   ECS_SERVICE: barrett-fogle-love-v1
