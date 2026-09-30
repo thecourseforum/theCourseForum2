@@ -2,6 +2,9 @@
 name: AWS Deployment
 
 on:
+  push:
+    branches: [oidc-on-dev]
+  workflow_dispatch:
   workflow_run:
     workflows: ["Continuous Integration"]
     branches: [master]
@@ -10,6 +13,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 env:
   AWS_REGION: us-east-1
@@ -20,21 +24,18 @@ env:
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout master
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
           persist-credentials: false
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::978573505384:role/tcf-ecs-deployer
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
@@ -66,13 +67,13 @@ jobs:
           task-definition: task-definition.json
           container-name: ${{ env.ECR_CONTAINER_NAME }}
           image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ github.sha }}
-          
+
       - name: Run Release Tasks (Migrate, Static, Cache)
         run: |
           NETWORK_CONFIG=$(aws ecs describe-services --cluster ${{ env.ECS_CLUSTER }} --services ${{ env.ECS_SERVICE }} | jq -c '.services[0].networkConfiguration')
           TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://${{ steps.task-def.outputs.task-definition }} | jq -r '.taskDefinition.taskDefinitionArn')
           RELEASE_COMMAND="python manage.py migrate && python manage.py collectstatic --noinput && python manage.py invalidate_cachalot tcf_website && python manage.py clearsessions"
-          
+
           TASK_ARN=$(aws ecs run-task \
             --cluster ${{ env.ECS_CLUSTER }} \
             --task-definition $TASK_DEF_ARN \
@@ -80,11 +81,11 @@ jobs:
             --network-configuration "$NETWORK_CONFIG" \
             --overrides "{\"containerOverrides\": [{\"name\": \"${{ env.ECR_CONTAINER_NAME }}\", \"command\": [\"bash\", \"-c\", \"$RELEASE_COMMAND\"]}]}" \
             | jq -r '.tasks[0].taskArn')
-            
+
           echo "Waiting for Release Task ($TASK_ARN) to complete..."
-          
+
           aws ecs wait tasks-stopped --cluster ${{ env.ECS_CLUSTER }} --tasks $TASK_ARN
-          
+
           EXIT_CODE=$(aws ecs describe-tasks --cluster ${{ env.ECS_CLUSTER }} --tasks $TASK_ARN | jq -r '.tasks[0].containers[0].exitCode')
           if [ "$EXIT_CODE" != "0" ]; then
             echo "Release task failed! Halting deployment."
