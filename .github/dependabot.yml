@@ -4,7 +4,6 @@ updates:
     directory: "/"
     schedule:
       interval: monthly
-      day: monday
     open-pull-requests-limit: 5
     cooldown:
       default-days: 3
@@ -20,7 +19,6 @@ updates:
     directory: "/"
     schedule:
       interval: monthly
-      day: monday
     open-pull-requests-limit: 3
     cooldown:
       default-days: 3
