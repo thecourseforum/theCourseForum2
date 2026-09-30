@@ -32,6 +32,10 @@ resource "aws_cognito_user_pool" "main" {
     email_sending_account = "COGNITO_DEFAULT"
   }
 
+  lambda_config {
+    pre_sign_up = aws_lambda_function.require_virginia_email.arn
+  }
+
   tags = {
     Name = "${local.name_prefix}-user-pool"
   }
