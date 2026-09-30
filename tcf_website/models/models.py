@@ -555,6 +555,18 @@ class Semester(models.Model):
         ("SUMMER", "Summer"),
     )
 
+    # First calendar month in which each season's classes begin at UVA. Used to
+    # decide whether a term has actually started (e.g. so a course cannot be
+    # reviewed for a semester that has not happened yet). Unknown/blank seasons
+    # default to a late month so they are treated as not-yet-started within
+    # their own year (conservative — never opens up a future term by mistake).
+    SEASON_START_MONTH = {
+        "JANUARY": 1,
+        "SPRING": 1,
+        "SUMMER": 5,
+        "FALL": 8,
+    }
+
     # Semester year. Required.
     year = models.IntegerField(
         validators=[MinValueValidator(2000), MaxValueValidator(2999)]
@@ -587,6 +599,20 @@ class Semester(models.Model):
     def is_after(self, other_sem):
         """Returns True if semester occurred later than other_semester."""
         return self.number > other_sem.number
+
+    def start_month(self):
+        """First calendar month this term's classes begin (1-12)."""
+        return self.SEASON_START_MONTH.get(self.season, 12)
+
+    def has_started(self, as_of=None):
+        """Return True if this term has begun as of ``as_of`` (default: now).
+
+        Compares by (year, start month) so a semester only becomes reviewable
+        once its classes have actually started, regardless of what future terms
+        happen to be loaded in the database for course registration.
+        """
+        as_of = as_of or timezone.now()
+        return (self.year, self.start_month()) <= (as_of.year, as_of.month)
 
     @staticmethod
     def latest():
