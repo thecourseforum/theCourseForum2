@@ -8,11 +8,9 @@ on:
         required: true
         default: "2026_fall"
         type: string
-  # Edit the cron line to change how often this downloads a snapshot.
-  # Every 2 hours: "0 */2 * * *"
-  # Every 4 hours: "0 */4 * * *"
+  # Edit this cron to change the time. This runs once a day at 07:30 UTC.
   schedule:
-    - cron: "0 */4 * * *"
+    - cron: "30 7 * * *"
 
 permissions:
   contents: read
