@@ -6,6 +6,8 @@ from pathlib import Path
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 
+from tcf_website.utils import sis_term_code
+
 from .landing_spotlight import landing_spotlight_context
 
 _TCF_WEBSITE_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -48,20 +50,17 @@ def terms(request):
 
 
 def data_snapshot(request):
-    """Show the downloaded data-repo snapshot so a local edit is visible."""
-    fetched_dir = _TCF_WEBSITE_ROOT.parent / "fetched"
-    preview_path = fetched_dir / "preview.txt"
-    snapshot_path = fetched_dir / "1268.json"
-    preview = (
-        preview_path.read_text(encoding="utf-8")
-        if preview_path.is_file()
-        else "No snapshot yet. Run: python manage.py fetch_data 2026_fall"
-    )
+    """Show the snapshot fetch_data saved for ?semester=<year>_<season>."""
+    semester = request.GET.get("semester", "")
+    term = sis_term_code(semester) if semester else None
     classes = []
-    if snapshot_path.is_file():
-        classes = json.loads(snapshot_path.read_text(encoding="utf-8")).get(
-            "classes", []
-        )
+    page_count = None
+    if term is not None:
+        snapshot_path = _TCF_WEBSITE_ROOT.parent / "fetched" / f"{term}.json"
+        if snapshot_path.is_file():
+            data = json.loads(snapshot_path.read_text(encoding="utf-8"))
+            classes = data.get("classes") or []
+            page_count = data.get("pageCount")
     try:
         index = int(request.GET.get("n", "0"))
     except ValueError:
@@ -73,7 +72,9 @@ def data_snapshot(request):
         request,
         "site/home/snapshot.html",
         {
-            "preview": preview,
+            "semester": semester,
+            "term": term,
+            "page_count": page_count,
             "section": section,
             "index": index,
             "class_count": len(classes),

@@ -1,59 +1,46 @@
-"""Download the course-data snapshot. This command does not call SIS.
+"""Download one semester snapshot from the course-data repository.
+
+This command does not call SIS.
 
 Usage:
 docker compose exec devcontainer uv run python manage.py fetch_data "<year>_<season>"
 
-The <year>_<season> argument is accepted so existing commands keep working.
-It is unused until the data repo stores one file per semester.
+Set COURSE_DATA_REPO_URL to the course-data repository. The file is
+data/<sis-term>.json on COURSE_DATA_REPO_BRANCH (default master).
 """
 
 import json
+import os
 import subprocess
 from pathlib import Path
 
 from django.core.management.base import BaseCommand
 
-# Personal stand-in used to test the data-repo flow.
-# Replace this URL with the theCourseForum course-data repository when it exists.
-# That repo's two-hour SIS schedule is written and commented out.
-# Uncomment it when the workflow moves to the real theCourseForum data repo.
-# This command only downloads the committed file.
-COURSE_DATA_REPO_URL = "https://github.com/richardhe789/tcf-course-data.git"
-# File the data-repo bot commits. One class-search page, not a load_semester CSV.
-COURSE_DATA_GIT_PATH = "data/1268.json"
+from tcf_website.utils import sis_term_code
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEST_DIR = REPO_ROOT / "fetched"
 
 
 class Command(BaseCommand):
-    """Download the snapshot the data-repo bot committed."""
+    """Download the snapshot the data-repo bot committed for one semester."""
 
     help = (
-        "Download the course-data snapshot. Does not call SIS. "
-        "The <year>_<season> argument is unused until the data repo "
-        "stores one file per semester. load_semester cannot import this JSON."
+        "Download data/<sis-term>.json from the course-data repository. "
+        "Does not call SIS. Set COURSE_DATA_REPO_URL. "
+        "load_semester cannot import this JSON."
     )
 
     def add_arguments(self, parser):
         parser.add_argument(
             "semester",
             type=str,
-            help=(
-                "Semester in format <year>_<season> (e.g. 2024_spring). "
-                "Accepted for compatibility and currently ignored."
-            ),
+            help="Semester in format <year>_<season> (e.g. 2026_fall).",
         )
 
     def handle(self, *args, **options):
-        semester = options["semester"]
-        elements = semester.split("_")
-        if (
-            len(elements) != 2
-            or not elements[0].isdigit()
-            or len(elements[0]) != 4
-            or elements[1].lower() not in {"fall", "spring", "summer", "january"}
-        ):
+        term = sis_term_code(options["semester"])
+        if term is None:
             self.stdout.write(
                 self.style.ERROR(
                     "Argument given in improper format. "
@@ -62,12 +49,20 @@ class Command(BaseCommand):
             )
             return
 
-        self.stdout.write(
-            f"Semester argument {semester} is ignored. "
-            f"Downloading {COURSE_DATA_GIT_PATH} from the data repo."
-        )
+        repo_url = os.environ.get("COURSE_DATA_REPO_URL", "").strip()
+        if not repo_url:
+            self.stdout.write(
+                self.style.ERROR(
+                    "Set COURSE_DATA_REPO_URL to the course-data repository."
+                )
+            )
+            return
+        branch = os.environ.get("COURSE_DATA_REPO_BRANCH", "master").strip() or "master"
+        git_path = f"data/{term}.json"
+
+        self.stdout.write(f"Downloading {git_path} from the course-data repository.")
         fetch = subprocess.run(
-            ["git", "fetch", COURSE_DATA_REPO_URL, "master"],
+            ["git", "fetch", repo_url, branch],
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,
@@ -77,7 +72,7 @@ class Command(BaseCommand):
             return
 
         show = subprocess.run(
-            ["git", "show", f"FETCH_HEAD:{COURSE_DATA_GIT_PATH}"],
+            ["git", "show", f"FETCH_HEAD:{git_path}"],
             cwd=REPO_ROOT,
             capture_output=True,
         )
@@ -88,17 +83,17 @@ class Command(BaseCommand):
             return
 
         DEST_DIR.mkdir(exist_ok=True)
-        dest = DEST_DIR / "1268.json"
+        dest = DEST_DIR / f"{term}.json"
         dest.write_bytes(show.stdout)
-        data = json.loads(dest.read_text(encoding="utf-8"))
-        first = data["classes"][0]
-        preview = (
-            f"term {data['term']}\n"
-            f"classes {len(data['classes'])}\n"
-            f"pages {data['pageCount']}\n"
-            f"first {first['subject']} {first['catalog_nbr']}\n"
-            f"enrollment {first['enrollment_total']}\n"
-        )
-        (DEST_DIR / "preview.txt").write_text(preview, encoding="utf-8", newline="\n")
+        try:
+            data = json.loads(dest.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            self.stdout.write(self.style.ERROR(f"{git_path} is not JSON."))
+            return
+        classes = data.get("classes") or []
         self.stdout.write(self.style.SUCCESS(f"Wrote {dest}"))
-        self.stdout.write(preview)
+        self.stdout.write(
+            f"term {data.get('term', term)}\n"
+            f"classes {len(classes)}\n"
+            f"pages {data.get('pageCount')}\n"
+        )

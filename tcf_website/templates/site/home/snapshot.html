@@ -5,18 +5,25 @@
 {% block content %}
     <main style="max-width: 40rem; margin: 4rem auto; padding: 0 1.5rem; font-family: sans-serif;">
         <h1 style="font-size: 1.5rem;">Data-repo snapshot</h1>
-        <p>This page reads <code>fetched/preview.txt</code> and <code>fetched/1268.json</code> on every refresh.</p>
-        <pre style="font-size: 1.25rem; background: #f4f1ea; padding: 1rem;">{{ preview }}</pre>
-        {% if section %}
+        {% if not semester %}
+            <p>Open this page with <code>?semester=2026_fall</code> after <code>fetch_data</code> has saved that semester.</p>
+        {% elif not term %}
+            <p><code>{{ semester }}</code> is not a <code>&lt;year&gt;_&lt;season&gt;</code> semester.</p>
+        {% elif class_count == 0 %}
+            <p>No <code>fetched/{{ term }}.json</code> yet. Run <code>python manage.py fetch_data {{ semester }}</code>.</p>
+        {% else %}
+            <pre style="font-size: 1.25rem; background: #f4f1ea; padding: 1rem;">term {{ term }}
+classes {{ class_count }}
+pages {{ page_count }}</pre>
             <p style="font-size: 2rem; margin: 0;">{{ section.subject }} {{ section.catalog_nbr }}</p>
             <p style="font-size: 1.25rem;">{{ section.descr }}</p>
             <p style="font-size: 3rem; margin: 0.5rem 0;">{{ section.enrollment_total }} enrolled</p>
             <p>
-                <a href="?n={{ index|add:-1 }}">Previous class</a>
+                <a href="?semester={{ semester }}&amp;n={{ index|add:-1 }}">Previous class</a>
                 ·
                 class {{ index|add:1 }} of {{ class_count }}
                 ·
-                <a href="?n={{ index|add:1 }}">Next class</a>
+                <a href="?semester={{ semester }}&amp;n={{ index|add:1 }}">Next class</a>
             </p>
         {% endif %}
     </main>

@@ -9,6 +9,23 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from .models import CATALOG_YEAR_WINDOW, Course, Semester
 
 
+_SEASON_CODES = {"fall": "8", "summer": "6", "spring": "2", "january": "1"}
+
+
+def sis_term_code(semester: str) -> str | None:
+    """Return the SIS term for ``<year>_<season>``, or None when it is invalid.
+
+    2026_fall is 1268: century digit 1, two-digit year, then the season digit.
+    """
+    year, separator, season = semester.partition("_")
+    code = _SEASON_CODES.get(season.lower())
+    if separator != "_" or len(year) != 4 or not year.isdigit() or code is None:
+        return None
+    if "_" in season:
+        return None
+    return f"1{year[-2:]}{code}"
+
+
 def min_catalog_semester_year() -> int:
     """First calendar year (inclusive) shown in the course catalog."""
     return timezone.now().year - CATALOG_YEAR_WINDOW
