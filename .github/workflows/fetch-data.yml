@@ -1,0 +1,65 @@
+name: Fetch course data
+
+on:
+  workflow_dispatch:
+    inputs:
+      semester:
+        description: "Semester as <year>_<season> (for example 2026_fall)"
+        required: true
+        default: "2026_fall"
+        type: string
+  # Edit the cron line to change how often this downloads a snapshot.
+  # Every 2 hours: "0 */2 * * *"
+  # Every 4 hours: "0 */4 * * *"
+  schedule:
+    - cron: "0 */4 * * *"
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_TARGET: "3.12"
+  DJANGO_SETTINGS_MODULE: tcf_core.settings.dev
+  TCF_ENV: ci
+  SECRET_KEY: ci-secret-key-not-for-production
+  DB_NAME: tcf_db
+  DB_USER: postgres
+  DB_PASSWORD: postgres
+  DB_HOST: db
+  DB_PORT: "5432"
+  COURSE_DATA_REPO_BRANCH: course-data
+  # Semester used when the schedule starts the job. A manual run uses its input instead.
+  SCHEDULED_SEMESTER: "2026_fall"
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          python-version: ${{ env.PYTHON_TARGET }}
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen --group dev --no-install-project
+
+      # TCF_DATA_TOKEN is a repository secret with read access to thecourseforum/tCF-data.
+      - name: Download the semester snapshot
+        env:
+          SEMESTER: ${{ inputs.semester }}
+          COURSE_DATA_REPO_URL: https://x-access-token:${{ secrets.TCF_DATA_TOKEN }}@github.com/thecourseforum/tCF-data.git
+        run: |
+          semester="${SEMESTER:-$SCHEDULED_SEMESTER}"
+          uv run python manage.py fetch_data "$semester"
+
+      - name: Upload snapshot
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: course-snapshot-${{ inputs.semester || env.SCHEDULED_SEMESTER }}
+          path: fetched/*.json
+          if-no-files-found: error
