@@ -5,8 +5,9 @@ This command does not call SIS.
 Usage:
 docker compose exec devcontainer uv run python manage.py fetch_data "<year>_<season>"
 
-Set COURSE_DATA_REPO_URL to the course-data repository. The file is
-data/<sis-term>.json on COURSE_DATA_REPO_BRANCH (default master).
+The snapshot lives in https://github.com/thecourseforum/tCF-data on branch
+course-data, as data/<sis-term>.json. COURSE_DATA_REPO_URL and
+COURSE_DATA_REPO_BRANCH override that.
 """
 
 import json
@@ -18,6 +19,10 @@ from django.core.management.base import BaseCommand
 
 from tcf_website.utils import sis_term_code
 
+# Production course-data repository. Fall 2026 is data/1268.json on this branch.
+COURSE_DATA_REPO_URL = "https://github.com/thecourseforum/tCF-data.git"
+COURSE_DATA_REPO_BRANCH = "course-data"
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEST_DIR = REPO_ROOT / "fetched"
 
@@ -26,8 +31,8 @@ class Command(BaseCommand):
     """Download the snapshot the data-repo bot committed for one semester."""
 
     help = (
-        "Download data/<sis-term>.json from the course-data repository. "
-        "Does not call SIS. Set COURSE_DATA_REPO_URL. "
+        "Download data/<sis-term>.json from thecourseforum/tCF-data "
+        "(branch course-data). Does not call SIS. "
         "load_semester cannot import this JSON."
     )
 
@@ -49,18 +54,13 @@ class Command(BaseCommand):
             )
             return
 
-        repo_url = os.environ.get("COURSE_DATA_REPO_URL", "").strip()
-        if not repo_url:
-            self.stdout.write(
-                self.style.ERROR(
-                    "Set COURSE_DATA_REPO_URL to the course-data repository."
-                )
-            )
-            return
-        branch = os.environ.get("COURSE_DATA_REPO_BRANCH", "master").strip() or "master"
+        repo_url = os.environ.get("COURSE_DATA_REPO_URL", "").strip() or COURSE_DATA_REPO_URL
+        branch = (
+            os.environ.get("COURSE_DATA_REPO_BRANCH", "").strip() or COURSE_DATA_REPO_BRANCH
+        )
         git_path = f"data/{term}.json"
 
-        self.stdout.write(f"Downloading {git_path} from the course-data repository.")
+        self.stdout.write(f"Downloading {git_path} from thecourseforum/tCF-data ({branch}).")
         fetch = subprocess.run(
             ["git", "fetch", repo_url, branch],
             cwd=REPO_ROOT,
