@@ -8,7 +8,6 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 from .models import CATALOG_YEAR_WINDOW, Course, Semester
 
-
 _SEASON_CODES = {"fall": "8", "summer": "6", "spring": "2", "january": "1"}
 
 

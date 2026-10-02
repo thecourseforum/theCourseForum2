@@ -33,21 +33,26 @@ services:
       timeout: 2s
       retries: 30
 
+  # RustFS: S3-compatible stand-in. Community MinIO on Quay is gated (401),
+  # and AIStor images require a paid license.
   minio:
-    image: quay.io/minio/minio:latest
+    image: rustfs/rustfs:latest
     container_name: tcf-minio
-    command: server /data --console-address ":9001"
     restart: unless-stopped
     environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+      RUSTFS_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      RUSTFS_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+      RUSTFS_CONSOLE_ENABLE: "true"
     ports:
       - "127.0.0.1:9000:9000"
       - "127.0.0.1:9001:9001"   # console UI
     volumes:
       - minio_data:/data
+    command: ["/data"]
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://localhost:9000/minio/health/live"]
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:9000/health"]
       interval: 2s
       timeout: 2s
       retries: 30
@@ -55,7 +60,7 @@ services:
   # Creates buckets and grants anonymous read on the static bucket
   # (stands in for CloudFront's signed origin access).
   minio-init:
-    image: quay.io/minio/mc:latest
+    image: rustfs/rc:latest
     container_name: tcf-minio_init
     depends_on:
       minio:
@@ -65,9 +70,10 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
     entrypoint: >
       sh -c '
-      mc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
-      mc mb --ignore-existing local/${MINIO_BUCKET:-tcf-media} local/${STATIC_BUCKET:-tcf-static} &&
-      mc anonymous set download local/${STATIC_BUCKET:-tcf-static} &&
+      rc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
+      rc mb --ignore-existing local/${MINIO_BUCKET:-tcf-media} &&
+      rc mb --ignore-existing local/${STATIC_BUCKET:-tcf-static} &&
+      rc anonymous set download local/${STATIC_BUCKET:-tcf-static} &&
       echo "buckets ready"'
     restart: "no"
 
@@ -77,6 +83,7 @@ services:
       context: .
       dockerfile: Dockerfile.cdn
     image: tcf-cdn:local
+    pull_policy: build
     container_name: tcf-cdn
     restart: unless-stopped
     environment:
