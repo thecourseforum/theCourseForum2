@@ -6,7 +6,7 @@ Usage:
 docker compose exec devcontainer uv run python manage.py fetch_data "<year>_<season>"
 
 The snapshot lives in https://github.com/thecourseforum/tCF-data on branch
-course-data, as data/<sis-term>.json. COURSE_DATA_REPO_URL and
+dev, as data/<sis-term>.json. COURSE_DATA_REPO_URL and
 COURSE_DATA_REPO_BRANCH override that.
 """
 
@@ -19,9 +19,9 @@ from django.core.management.base import BaseCommand
 
 from tcf_website.utils import sis_term_code
 
-# Production course-data repository. Fall 2026 is data/1268.json on this branch.
+# Production course-data repository. Fall 2026 is data/1268.json on branch dev.
 COURSE_DATA_REPO_URL = "https://github.com/thecourseforum/tCF-data.git"
-COURSE_DATA_REPO_BRANCH = "course-data"
+COURSE_DATA_REPO_BRANCH = "dev"
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEST_DIR = REPO_ROOT / "fetched"
@@ -32,7 +32,7 @@ class Command(BaseCommand):
 
     help = (
         "Download data/<sis-term>.json from thecourseforum/tCF-data "
-        "(branch course-data). Does not call SIS. "
+        "(branch dev). Does not call SIS. "
         "load_semester cannot import this JSON."
     )
 

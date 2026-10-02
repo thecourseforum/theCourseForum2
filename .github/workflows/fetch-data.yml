@@ -25,7 +25,7 @@ env:
   DB_PASSWORD: postgres
   DB_HOST: db
   DB_PORT: "5432"
-  COURSE_DATA_REPO_BRANCH: course-data
+  COURSE_DATA_REPO_BRANCH: dev
   # Semester used when the schedule starts the job. A manual run uses its input instead.
   SCHEDULED_SEMESTER: "2026_fall"
 
