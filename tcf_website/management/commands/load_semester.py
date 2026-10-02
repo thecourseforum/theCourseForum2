@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
         parser.add_argument(
             "semester",
-            help='Semester to update (e.g. "2019_FALL").\nIf you wish to reload all semesters (potentially dangerous!) then put "ALL_DANGEROUS" as the value of this argument.\nMake sure that the new semester data is downloaded via `semester_data/fetch_data.py` before running this command.',
+            help='Semester to update (e.g. "2019_FALL").\nIf you wish to reload all semesters (potentially dangerous!) then put "ALL_DANGEROUS" as the value of this argument.\nPlace that semester CSV in semester_data/csv/ before running this command. fetch_data downloads a JSON snapshot and does not write this CSV.',
             type=str,
         )
 

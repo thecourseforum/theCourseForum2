@@ -47,6 +47,40 @@ def terms(request):
     return render(request, "site/home/terms.html")
 
 
+def data_snapshot(request):
+    """Show the downloaded data-repo snapshot so a local edit is visible."""
+    fetched_dir = _TCF_WEBSITE_ROOT.parent / "fetched"
+    preview_path = fetched_dir / "preview.txt"
+    snapshot_path = fetched_dir / "1268.json"
+    preview = (
+        preview_path.read_text(encoding="utf-8")
+        if preview_path.is_file()
+        else "No snapshot yet. Run: python manage.py fetch_data 2026_fall"
+    )
+    classes = []
+    if snapshot_path.is_file():
+        classes = json.loads(snapshot_path.read_text(encoding="utf-8")).get(
+            "classes", []
+        )
+    try:
+        index = int(request.GET.get("n", "0"))
+    except ValueError:
+        index = 0
+    if classes:
+        index = index % len(classes)
+    section = classes[index] if classes else None
+    return render(
+        request,
+        "site/home/snapshot.html",
+        {
+            "preview": preview,
+            "section": section,
+            "index": index,
+            "class_count": len(classes),
+        },
+    )
+
+
 class AboutView(TemplateView):
     """About view."""
 

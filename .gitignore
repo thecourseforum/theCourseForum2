@@ -45,3 +45,5 @@ key/
 .envrc
 # Claude
 CLAUDE.md
+# Snapshot downloaded from the course-data repo
+/fetched/
