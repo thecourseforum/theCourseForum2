@@ -1,0 +1,65 @@
+name: Fetch semester data
+
+on:
+  push:
+    branches: [fetch-grade-action]
+  workflow_dispatch:
+    inputs:
+      semester:
+        description: "Semester, e.g. 2026_fall"
+        required: true
+        default: "2026_fall"
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_TARGET: "3.12"
+  SEMESTER: ${{ inputs.semester || '2026_fall' }}
+  DJANGO_SETTINGS_MODULE: tcf_core.settings.dev
+  TCF_ENV: ci
+  SECRET_KEY: ci-secret-key-not-for-production
+  DB_NAME: tcf_db
+  DB_USER: postgres
+  DB_PASSWORD: postgres
+  DB_HOST: localhost
+  DB_PORT: 5432
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          python-version: ${{ env.PYTHON_TARGET }}
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen --no-dev --no-install-project
+
+      - name: Validate semester
+        run: |
+          if [[ ! "$SEMESTER" =~ ^[0-9]{4}_(spring|summer|fall|january)$ ]]; then
+            echo "::error::Expected YYYY_spring, YYYY_summer, YYYY_fall, or YYYY_january"
+            exit 1
+          fi
+
+      - name: Fetch data
+        run: uv run --no-sync python manage.py fetch_data "$SEMESTER" --skip-checks
+
+      - name: Upload CSV
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: semester-${{ env.SEMESTER }}
+          path: tcf_website/management/commands/semester_data/csv/${{ env.SEMESTER }}.csv
+          if-no-files-found: error
+          retention-days: 30
