@@ -3,7 +3,10 @@
 This command does not call SIS.
 
 Usage:
+docker compose exec devcontainer uv run python manage.py fetch_data
 docker compose exec devcontainer uv run python manage.py fetch_data "<year>_<season>"
+
+With no argument, the semester comes from today's date.
 
 The snapshot lives in https://github.com/thecourseforum/tCF-data on branch
 dev, as data/<sis-term>.json. COURSE_DATA_REPO_URL and
@@ -17,7 +20,7 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand
 
-from tcf_website.utils import sis_term_code
+from tcf_website.utils import current_semester, sis_term_code
 
 # Production course-data repository. Fall 2026 is data/1268.json on branch dev.
 COURSE_DATA_REPO_URL = "https://github.com/thecourseforum/tCF-data.git"
@@ -39,12 +42,17 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "semester",
+            nargs="?",
             type=str,
-            help="Semester in format <year>_<season> (e.g. 2026_fall).",
+            help=(
+                "Semester in format <year>_<season> (e.g. 2026_fall). "
+                "Defaults to the semester for today's date."
+            ),
         )
 
     def handle(self, *args, **options):
-        term = sis_term_code(options["semester"])
+        semester = options["semester"] or current_semester()
+        term = sis_term_code(semester)
         if term is None:
             self.stdout.write(
                 self.style.ERROR(

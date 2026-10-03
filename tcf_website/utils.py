@@ -1,5 +1,6 @@
 """Utility helpers shared across the Django app."""
 
+from datetime import date
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from django.db.models import Q, QuerySet
@@ -23,6 +24,30 @@ def sis_term_code(semester: str) -> str | None:
     if "_" in season:
         return None
     return f"1{year[-2:]}{code}"
+
+
+# ponytail: fixed cutovers, not UVA's published start dates (those move a week
+# or two). Same days as term_for_date in tCF-data/fetch_page.py. Upgrade path:
+# a per-year table of season start dates.
+_JANUARY_TERM_LAST_DAY = 17
+
+
+def current_semester(today: date | None = None) -> str:
+    """Return ``<year>_<season>`` for a calendar date.
+
+    January 1–17 is the January term. January 18 through April is spring.
+    May through July is summer. August through December is fall.
+    """
+    today = date.today() if today is None else today
+    if today.month == 1 and today.day <= _JANUARY_TERM_LAST_DAY:
+        season = "january"
+    elif today.month <= 4:
+        season = "spring"
+    elif today.month <= 7:
+        season = "summer"
+    else:
+        season = "fall"
+    return f"{today.year}_{season}"
 
 
 def min_catalog_semester_year() -> int:

@@ -4,9 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       semester:
-        description: "Semester as <year>_<season> (for example 2026_fall)"
-        required: true
-        default: "2026_fall"
+        description: "Semester as <year>_<season>. Leave blank to use today's date."
+        required: false
         type: string
   # Edit this cron to change the time. This runs once a day at 07:30 UTC.
   schedule:
@@ -26,8 +25,6 @@ env:
   DB_HOST: db
   DB_PORT: "5432"
   COURSE_DATA_REPO_BRANCH: dev
-  # Semester used when the schedule starts the job. A manual run uses its input instead.
-  SCHEDULED_SEMESTER: "2026_fall"
 
 jobs:
   fetch:
@@ -52,12 +49,15 @@ jobs:
           SEMESTER: ${{ inputs.semester }}
           COURSE_DATA_REPO_URL: https://x-access-token:${{ secrets.TCF_DATA_TOKEN }}@github.com/thecourseforum/tCF-data.git
         run: |
-          semester="${SEMESTER:-$SCHEDULED_SEMESTER}"
-          uv run python manage.py fetch_data "$semester"
+          if [ -n "$SEMESTER" ]; then
+            uv run python manage.py fetch_data "$SEMESTER"
+          else
+            uv run python manage.py fetch_data
+          fi
 
       - name: Upload snapshot
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: course-snapshot-${{ inputs.semester || env.SCHEDULED_SEMESTER }}
+          name: course-snapshot${{ inputs.semester && format('-{0}', inputs.semester) || '' }}
           path: fetched/*.json
           if-no-files-found: error
