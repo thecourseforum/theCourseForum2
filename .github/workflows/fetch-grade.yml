@@ -1,8 +1,6 @@
 name: Fetch semester data
 
 on:
-  push:
-    branches: [fetch-grade-action]
   workflow_dispatch:
     inputs:
       semester:
@@ -16,7 +14,7 @@ permissions:
 
 env:
   PYTHON_TARGET: "3.12"
-  SEMESTER: ${{ inputs.semester || '2026_fall' }}
+  SEMESTER: ${{ inputs.semester }}
   DJANGO_SETTINGS_MODULE: tcf_core.settings.dev
   TCF_ENV: ci
   SECRET_KEY: ci-secret-key-not-for-production
