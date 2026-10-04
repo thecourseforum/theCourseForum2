@@ -2,7 +2,7 @@ name: Deploy test infrastructure
 
 on:
   push:
-    branches: [dev, iac]
+    branches: [iac]
   workflow_dispatch:
 
 permissions:
@@ -20,7 +20,7 @@ env:
   TF_VAR_dns_role_arn: arn:aws:iam::011713309463:role/tcf-terraform-dns
   TF_VAR_ecr_image_tag: test
   TERRAFORM_VERSION: 1.16.3
-  DEPLOYER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-deployer
+  DEPLOYER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-github-terraform-deployer
   APP_ACCOUNT_ID: "099933383052"
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           terraform_wrapper: false
 
-      - name: Assume Terraform deployer role
+      - name: Assume GitHub Terraform deployer role
         uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
         with:
           role-to-assume: ${{ env.DEPLOYER_ROLE_ARN }}
@@ -50,7 +50,7 @@ jobs:
         run: |
           account=$(aws sts get-caller-identity --query Account --output text)
           arn=$(aws sts get-caller-identity --query Arn --output text)
-          if [[ "$account" != "${APP_ACCOUNT_ID}" || "$arn" != arn:aws:sts::${APP_ACCOUNT_ID}:assumed-role/tcf-terraform-deployer/* ]]; then
+          if [[ "$account" != "${APP_ACCOUNT_ID}" || "$arn" != arn:aws:sts::${APP_ACCOUNT_ID}:assumed-role/tcf-github-terraform-deployer/* ]]; then
             echo "Unexpected AWS identity: $arn"
             exit 1
           fi
@@ -82,7 +82,10 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: tfplan
-          path: iac/app/tfplan
+          path: |
+            iac/app/tfplan
+            iac/app/.terraform/build/
+          include-hidden-files: true
           retention-days: 1
           if-no-files-found: error
 
@@ -113,7 +116,7 @@ jobs:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           terraform_wrapper: false
 
-      - name: Assume Terraform deployer role
+      - name: Assume GitHub Terraform deployer role
         uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
         with:
           role-to-assume: ${{ env.DEPLOYER_ROLE_ARN }}

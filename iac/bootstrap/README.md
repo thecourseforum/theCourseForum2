@@ -98,9 +98,10 @@ The trust policy of `tcf-terraform-dns` in account `011713309463` must allow
 
 ## Test-infrastructure deploys in GitHub Actions
 
-The workflow at `.github/workflows/terraform-apply.yml` runs on every push to
-`dev` or `iac`, in two jobs. The `plan` job plans `iac/app`, writes the plan to
-the run summary, and uploads it as an artifact. The `apply` job waits for
+The workflow at `.github/workflows/terraform-deploy.yml` runs on every push to
+`iac`, in two jobs. The `plan` job plans `iac/app`, writes the plan to
+the run summary, and uploads it as an artifact along with the Lambda zip that
+`archive_file` builds during the plan. The `apply` job waits for
 approval, then applies that saved plan. Reviewers therefore read the real plan
 before approving, and the applied plan is the one they read. Both jobs use the
 existing S3 state, the test domain, and the `test` image tag, and neither
