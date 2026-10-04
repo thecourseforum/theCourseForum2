@@ -2,7 +2,9 @@
 
 This small Terraform project creates the resources needed by `../app`:
 
-- `tcf-terraform-deployer` in the application account
+- `tcf-terraform-deployer` in the application account, for local applies
+- `tcf-github-terraform-deployer` in the application account, for GitHub Actions
+- `iac-test-role-boundary`, the permissions boundary every application role must carry
 - An encrypted, versioned S3 state bucket in the application account
 - A GitHub Actions OIDC provider in the application account
 
@@ -29,7 +31,8 @@ application_role_prefix = "iac-test-"
 
 `deployer_principal_arn` can also be an existing administrator or CI role.
 The principal must be able to assume the application-account deployer role.
-GitHub Actions uses OIDC separately; it does not need AWS access keys.
+GitHub Actions does not use this role. It assumes
+`tcf-github-terraform-deployer` through OIDC and needs no AWS access keys.
 
 Log in to the SSO profile and verify the account:
 
@@ -72,12 +75,26 @@ NIXPKGS_ALLOW_UNFREE=1 nix run --impure nixpkgs#terraform -- \
   -var='dns_role_arn=<dns_role_arn-output>'
 ```
 
-The application role receives `PowerUserAccess` plus the IAM permissions
+`tcf-terraform-deployer` receives `PowerUserAccess` plus the IAM permissions
 needed by the application stack, including permission to assume the
 hand-maintained DNS role.
 
-For production, replace the broad PowerUser attachment with a reviewed
-least-privilege policy.
+`tcf-github-terraform-deployer` is scoped to the application stack instead:
+
+- read and write only the `app/` prefix of the state bucket
+- the services the stack uses (ACM, CloudFront, Cognito, ECR, ECS, ElastiCache,
+  ELB, Lambda, CloudWatch Logs, RDS), limited to `aws_region`
+- VPC, subnet, route, and security group changes, but no instances
+- only `iac-test/*` secrets and `iac-test-static-*` buckets
+- create and change only `iac-test-*` roles, and only when they carry the
+  `iac-test-role-boundary` permissions boundary, so a role it creates can never
+  exceed what the application needs
+- pass those roles only to ECS tasks and Lambda
+- assume the DNS role
+
+The trust policy of `tcf-terraform-dns` in account `011713309463` must allow
+`arn:aws:iam::099933383052:role/tcf-github-terraform-deployer` to call
+`sts:AssumeRole`. That account is maintained by hand, so update it there.
 
 ## Test-infrastructure deploys in GitHub Actions
 
@@ -96,7 +113,7 @@ Two GitHub environments back this, under **Settings → Environments**:
 
 Both restrict deployments to the `dev` and `iac` branches. That restriction is
 what stops other branches from obtaining an OIDC token for the deployer role,
-and the deployer's trust policy accepts both environment names.
+and the GitHub deployer's trust policy accepts both environment names.
 
 Approval gating lives in the environment rather than in the workflow file, so
 it applies to pushes on any branch and cannot be removed by editing the
@@ -104,11 +121,12 @@ workflow. The `workflow_dispatch` path additionally checks that the person who
 started the run has repository `admin` permission; that button appears only
 once the workflow exists on the default branch.
 
-The workflow requests a GitHub OIDC token and assumes `tcf-terraform-deployer`
-in account `099933383052`. Its trust policy requires audience
-`sts.amazonaws.com` and subject
-`repo:thecourseforum/theCourseForum2:environment:terraform-test`. The deployer
-role then assumes `tcf-terraform-dns` in account `011713309463` for Route 53.
+The workflow requests a GitHub OIDC token and assumes
+`tcf-github-terraform-deployer` in account `099933383052`. Its trust policy
+requires audience `sts.amazonaws.com` and subject
+`repo:thecourseforum/theCourseForum2:environment:terraform-plan` or
+`repo:thecourseforum/theCourseForum2:environment:terraform-test`. The role
+then assumes `tcf-terraform-dns` in account `011713309463` for Route 53.
 The repository's existing AWS access-key secrets remain for the older workflow
 targeting the other account; this test-infrastructure workflow does not use
 them. Protect the `dev` branch and the environment because they control which

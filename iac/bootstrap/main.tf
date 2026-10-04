@@ -33,22 +33,6 @@ resource "aws_iam_role" "terraform_deployer" {
         Principal = {
           AWS = var.deployer_principal_arn
         }
-      },
-      {
-        Effect = "Allow"
-        Action = "sts:AssumeRoleWithWebIdentity"
-        Principal = {
-          Federated = aws_iam_openid_connect_provider.github_actions.arn
-        }
-        Condition = {
-          StringEquals = {
-            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-            "token.actions.githubusercontent.com:sub" = [
-              for environment in var.github_environments :
-              "repo:${var.github_repository}:environment:${environment}"
-            ]
-          }
-        }
       }
     ]
   })
@@ -94,7 +78,8 @@ resource "aws_iam_role_policy" "terraform_deployer_iam" {
           "iam:GetRolePolicy",
           "iam:ListRolePolicies",
           "iam:ListAttachedRolePolicies",
-          "iam:ListInstanceProfilesForRole"
+          "iam:ListInstanceProfilesForRole",
+          "iam:PutRolePermissionsBoundary"
         ]
         Resource = "arn:aws:iam::${data.aws_caller_identity.app.account_id}:role/${var.application_role_prefix}*"
       },
