@@ -15,15 +15,21 @@ variable "deployer_principal_arn" {
 }
 
 variable "github_environments" {
-  description = "GitHub Actions environments permitted to assume the Terraform deployer role"
+  description = "GitHub Actions environments permitted to assume the GitHub deployer role"
   type        = list(string)
   default     = ["terraform-plan", "terraform-test"]
 }
 
 variable "github_repository" {
-  description = "GitHub owner/repository permitted to assume the Terraform deployer role from the terraform-test environment"
+  description = "GitHub owner/repository permitted to assume the GitHub deployer role"
   type        = string
   default     = "thecourseforum/theCourseForum2"
+}
+
+variable "github_deployer_role_name" {
+  description = "Role assumed by GitHub Actions through OIDC for application Terraform deployments"
+  type        = string
+  default     = "tcf-github-terraform-deployer"
 }
 
 variable "terraform_deployer_role_name" {

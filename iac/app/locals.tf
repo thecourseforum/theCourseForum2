@@ -2,6 +2,8 @@ locals {
   # Common name prefix for resources
   name_prefix = "${var.project_name}-${var.environment}"
 
+  role_permissions_boundary_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/${local.name_prefix}-role-boundary"
+
   # Common tags (merged with provider default_tags)
   common_tags = {
     Project     = var.project_name

@@ -5,7 +5,8 @@ data "archive_file" "require_virginia_email" {
 }
 
 resource "aws_iam_role" "require_virginia_email" {
-  name = "${local.name_prefix}-require-virginia-email-role"
+  name                 = "${local.name_prefix}-require-virginia-email-role"
+  permissions_boundary = local.role_permissions_boundary_arn
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
