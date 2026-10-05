@@ -93,7 +93,7 @@ jobs:
         run: |
           NETWORK_CONFIG=$(aws ecs describe-services --cluster ${{ env.ECS_CLUSTER }} --services ${{ env.ECS_SERVICE }} | jq -c '.services[0].networkConfiguration')
           TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://${{ steps.task-def.outputs.task-definition }} | jq -r '.taskDefinition.taskDefinitionArn')
-          RELEASE_COMMAND="python manage.py migrate && python manage.py collectstatic --noinput && python manage.py invalidate_cachalot tcf_website && python manage.py clearsessions"
+          RELEASE_COMMAND="python manage.py migrate && python manage.py collectstatic --noinput && python manage.py clearsessions"
           
           TASK_ARN=$(aws ecs run-task \
             --cluster ${{ env.ECS_CLUSTER }} \
