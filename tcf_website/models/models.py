@@ -973,6 +973,7 @@ class CourseInstructorGrade(models.Model):
             models.Index(fields=["instructor"]),
         ]
 
+
 class CourseInstructorSemesterGrade(models.Model):
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, null=True)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, null=True)
@@ -1001,6 +1002,7 @@ class CourseInstructorSemesterGrade(models.Model):
         indexes = [
             models.Index(fields=["course", "instructor", "semester"]),
         ]
+
 
 class Section(models.Model):
     """Section model.

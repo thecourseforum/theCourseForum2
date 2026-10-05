@@ -11,7 +11,14 @@ from cachalot.api import invalidate
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
-from tcf_website.models import Course, CourseGrade, CourseInstructorGrade, CourseInstructorSemesterGrade, Instructor, Semester
+from tcf_website.models import (
+    Course,
+    CourseGrade,
+    CourseInstructorGrade,
+    CourseInstructorSemesterGrade,
+    Instructor,
+    Semester,
+)
 
 # Location of our grade data CSVs
 DATA_DIR = "tcf_website/management/commands/grade_data/csv/"
@@ -310,7 +317,10 @@ class Command(BaseCommand):
 
         add_entry(self.course_grades, course_identifier)
         add_entry(self.course_instructor_grades, course_instructor_identifier)
-        add_entry(self.course_instructor_semester_grades, course_instructor_semester_identifier)
+        add_entry(
+            self.course_instructor_semester_grades,
+            course_instructor_semester_identifier,
+        )
 
     def load_dict_into_models(self):
         """Converts dictionaries to real instances of CourseGrade, CourseInstructorGrade, and CourseInstructorSemesterGrade.
