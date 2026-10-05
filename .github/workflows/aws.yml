@@ -2,11 +2,8 @@
 name: AWS Deployment
 
 on:
-  workflow_run:
-    workflows: ["Continuous Integration"]
-    branches: [master]
-    types:
-      - completed
+  push:
+    branches: [master, iac]
 
 permissions:
   contents: read
@@ -18,27 +15,32 @@ env:
   ECR_REPO: iac-test-app
   ECR_CONTAINER_NAME: django-app
   ECS_TASK_FAMILY: iac-test-django
-  DEPLOYER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-github-deployer
 
 jobs:
+  ci:
+    name: Continuous Integration
+    uses: ./.github/workflows/ci.yml
+
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
+    needs: ci
     runs-on: ubuntu-latest
-    environment: aws-deploy
+    environment: prod
+    concurrency:
+      group: prod-deploy
+      cancel-in-progress: false
     permissions:
       contents: read
       id-token: write
     steps:
-      - name: Checkout master
+      - name: Check out selected revision
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
           persist-credentials: false
 
       - name: Assume GitHub deployer role
         uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
         with:
-          role-to-assume: ${{ env.DEPLOYER_ROLE_ARN }}
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/tcf-github-deployer
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR

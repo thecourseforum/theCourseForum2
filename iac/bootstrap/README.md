@@ -133,12 +133,14 @@ workflow code can request the OIDC token.
 
 ## Code deploys in GitHub Actions
 
-The workflow at `.github/workflows/aws.yml` builds the application image,
-pushes it to `iac-test-app`, runs the release task, and updates
-`iac-test-django-service`. It runs in the `aws-deploy` environment and assumes
-`tcf-github-deployer` through OIDC with subject
-`repo:thecourseforum/theCourseForum2:environment:aws-deploy`.
+The workflow at `.github/workflows/aws.yml` runs on every push to `master` or
+`iac`. Its `ci` job runs `.github/workflows/ci.yml` against the pushed commit.
+Once CI passes, the `deploy` job waits for approval, then builds the
+application image, pushes it to `iac-test-app`, runs the release task, and
+updates `iac-test-django-service`.
 
-Create the `aws-deploy` environment under **Settings → Environments** and
-restrict it to the default branch, since `workflow_run` jobs run on the default
-branch.
+The `deploy` job runs in the `prod` environment, which requires a reviewer and
+allows deployments only from `master` and `iac`. It assumes
+`tcf-github-deployer` through OIDC with subject
+`repo:thecourseforum/theCourseForum2:environment:prod`. The role's account ID
+comes from the `prod` environment's `AWS_ACCOUNT_ID` variable.
