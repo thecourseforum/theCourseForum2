@@ -5,7 +5,7 @@ This small Terraform project creates the resources needed by `../app`:
 - `tcf-terraform-deployer` in the application account, for local and GitHub Actions Terraform applies
 - `tcf-github-deployer` in the application account, for GitHub Actions code deploys
 - `iac-test-role-boundary`, the permissions boundary every application role must carry
-- An encrypted, versioned S3 state bucket in the application account
+- A KMS-encrypted, versioned S3 state bucket in the application account, which also holds saved plans
 - A GitHub Actions OIDC provider in the application account
 
 `tcf-terraform-dns` in account `011713309463` is not managed here. It is
@@ -66,6 +66,17 @@ The application stack uses that bucket at:
 s3://tcf-terraform-state-099933383052/app/terraform.tfstate
 ```
 
+State and saved plans hold secrets in plaintext, so the bucket:
+
+- encrypts objects by default with the `alias/tcf-terraform-state` KMS key,
+  using S3 Bucket Keys to keep KMS requests low
+- denies any request that does not use TLS
+- expires old versions of `app/` state after 30 days
+- expires saved plans under `plans/` after a day
+
+The backends leave encryption to the bucket default. Setting `encrypt = true`
+without a KMS key would make Terraform write state with SSE-S3 instead.
+
 Pass the bootstrap output to the application stack:
 
 ```bash
@@ -100,9 +111,11 @@ The trust policy of `tcf-terraform-dns` in account `011713309463` must allow
 
 The workflow at `.github/workflows/terraform-deploy.yml` runs on every push to
 `iac`, in two jobs. The `plan` job plans `iac/app`, writes the plan to
-the run summary, and uploads it as an artifact along with the Lambda zip that
-`archive_file` builds during the plan. The `apply` job waits for
-approval, then applies that saved plan. Reviewers therefore read the real plan
+the run summary, and stores it under `plans/<run_id>/` in the state bucket
+along with the Lambda zip that `archive_file` builds during the plan. The plan
+is never uploaded as a GitHub artifact, because it contains every secret in
+state and artifacts on a public repository are readable by anyone. The `apply`
+job waits for approval, applies that saved plan, then deletes it. Reviewers therefore read the real plan
 before approving, and the applied plan is the one they read. Both jobs use the
 existing S3 state, the test domain, and the `test` image tag, and neither
 builds or deploys an application image.
