@@ -55,10 +55,28 @@ variable "ecs_task_memory" {
   default     = 2048
 }
 
-variable "ecs_desired_count" {
-  description = "Desired number of ECS tasks"
+variable "ecs_min_count" {
+  description = "Minimum number of ECS tasks the service scales down to"
   type        = number
   default     = 1
+}
+
+variable "ecs_max_count" {
+  description = "Maximum number of ECS tasks the service scales up to"
+  type        = number
+  default     = 10
+}
+
+variable "ecs_cpu_target" {
+  description = "Average service CPU utilization percentage that autoscaling holds the service at"
+  type        = number
+  default     = 60
+}
+
+variable "ecs_memory_target" {
+  description = "Average service memory utilization percentage that autoscaling holds the service at"
+  type        = number
+  default     = 75
 }
 
 variable "rds_engine_version" {
