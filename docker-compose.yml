@@ -129,7 +129,7 @@ services:
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-tcf_core.settings.dev}
       TCF_ENV: ${TCF_ENV:-local}
     ports:
-      - "8000:80"
+      - "8000:8000"
     restart: unless-stopped
     depends_on:
       db:
