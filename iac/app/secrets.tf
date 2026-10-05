@@ -41,10 +41,12 @@ resource "aws_secretsmanager_secret_version" "db_credentials" {
   secret_string = jsonencode({
     username = var.db_username
     password = random_password.db_password.result
-    host     = aws_db_instance.postgres.address
+    host     = aws_rds_cluster.main.endpoint
     port     = "5432"
     dbname   = var.db_name
   })
+
+  depends_on = [aws_rds_cluster_instance.main]
 }
 
 # Cognito Credentials

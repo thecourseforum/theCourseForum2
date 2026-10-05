@@ -9,8 +9,8 @@ output "alb_dns_name" {
 }
 
 output "rds_endpoint" {
-  description = "RDS PostgreSQL endpoint"
-  value       = aws_db_instance.postgres.endpoint
+  description = "Aurora PostgreSQL writer endpoint"
+  value       = aws_rds_cluster.main.endpoint
   sensitive   = true
 }
 

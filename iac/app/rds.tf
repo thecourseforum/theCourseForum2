@@ -20,31 +20,46 @@ resource "aws_db_subnet_group" "main" {
   }
 }
 
-# RDS PostgreSQL Instance
-resource "aws_db_instance" "postgres" {
-  identifier     = "${local.name_prefix}-postgres"
-  engine         = "postgres"
-  engine_version = var.rds_engine_version
-  instance_class = var.rds_instance_class
+resource "aws_rds_cluster" "main" {
+  cluster_identifier = "${local.name_prefix}-aurora"
+  engine             = "aurora-postgresql"
+  engine_mode        = "provisioned"
+  engine_version     = var.rds_engine_version
+  storage_encrypted  = true
 
-  allocated_storage = var.rds_allocated_storage
-  storage_type      = "gp3"
-  storage_encrypted = true
+  database_name   = var.db_name
+  master_username = var.db_username
+  master_password = random_password.db_password.result
 
-  db_name  = var.db_name
-  username = var.db_username
-  password = random_password.db_password.result
-
-  multi_az               = false
-  publicly_accessible    = false
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.rds.id]
 
+  serverlessv2_scaling_configuration {
+    min_capacity             = var.aurora_min_capacity
+    max_capacity             = var.aurora_max_capacity
+    seconds_until_auto_pause = var.aurora_min_capacity == 0 ? var.aurora_seconds_until_auto_pause : null
+  }
+
   backup_retention_period   = 7
+  copy_tags_to_snapshot     = true
   skip_final_snapshot       = false
-  final_snapshot_identifier = "${local.name_prefix}-final-snapshot-${random_id.db_snapshot.hex}"
+  final_snapshot_identifier = "${local.name_prefix}-aurora-final-snapshot-${random_id.db_snapshot.hex}"
 
   tags = {
-    Name = "${local.name_prefix}-postgres"
+    Name = "${local.name_prefix}-aurora"
+  }
+}
+
+resource "aws_rds_cluster_instance" "main" {
+  identifier           = "${local.name_prefix}-aurora-1"
+  cluster_identifier   = aws_rds_cluster.main.id
+  instance_class       = "db.serverless"
+  engine               = aws_rds_cluster.main.engine
+  engine_version       = aws_rds_cluster.main.engine_version
+  publicly_accessible  = false
+  db_subnet_group_name = aws_db_subnet_group.main.name
+
+  tags = {
+    Name = "${local.name_prefix}-aurora-1"
   }
 }
