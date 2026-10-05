@@ -22,6 +22,12 @@
           "role": "Developer",
           "img_filename": "ENG_Yu_Cao.jpg",
           "github": "YuDavidCao"
+        },
+        {
+          "name": "Brian Tran",
+          "role": "Developer",
+          "img_filename": "ENG_Brian_Tran.jpg",
+          "github": "brianlogic"
         }
       ]
     },
