@@ -132,7 +132,7 @@ jobs:
       - name: Start Compose backends
         run: docker compose up -d --wait db valkey minio
 
-      - name: Initialize MinIO buckets
+      - name: Initialize RustFS buckets
         run: docker compose run --rm minio-init
 
       - name: Migrations & Tests
