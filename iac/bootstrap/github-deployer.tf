@@ -5,6 +5,13 @@ locals {
   application_secret_arns = "arn:aws:secretsmanager:${var.aws_region}:${local.app_account_id}:secret:${local.application_name_prefix}/*"
   application_bucket_arns = "arn:aws:s3:::${local.application_name_prefix}-static-*"
   application_cluster_arn = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:cluster/${local.application_name_prefix}-cluster"
+
+  application_dump_bucket_arns = "arn:aws:s3:::${local.application_name_prefix}-db-dumps-*"
+  application_web_task_family  = "${local.application_name_prefix}-django"
+  application_web_role_arns = [
+    "arn:aws:iam::${local.app_account_id}:role/${var.application_role_prefix}ecs-task-execution-role",
+    "arn:aws:iam::${local.app_account_id}:role/${var.application_role_prefix}ecs-task-role"
+  ]
 }
 
 resource "aws_iam_policy" "application_role_boundary" {
@@ -59,6 +66,37 @@ resource "aws_iam_policy" "application_role_boundary" {
           "s3:DeleteObject"
         ]
         Resource = "${local.application_bucket_arns}/*"
+      },
+      {
+        Sid    = "WriteDatabaseDumps"
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:AbortMultipartUpload"
+        ]
+        Resource = "${local.application_dump_bucket_arns}/*"
+      },
+      {
+        Sid      = "RunApplicationTasks"
+        Effect   = "Allow"
+        Action   = "ecs:RunTask"
+        Resource = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:task-definition/${var.application_role_prefix}*:*"
+        Condition = {
+          ArnEquals = {
+            "ecs:cluster" = local.application_cluster_arn
+          }
+        }
+      },
+      {
+        Sid      = "PassApplicationRolesToTasks"
+        Effect   = "Allow"
+        Action   = "iam:PassRole"
+        Resource = local.application_role_arns
+        Condition = {
+          StringEquals = {
+            "iam:PassedToService" = "ecs-tasks.amazonaws.com"
+          }
+        }
       }
     ]
   })
@@ -148,7 +186,7 @@ resource "aws_iam_role_policy" "github_deployer" {
         Sid      = "RunReleaseTasks"
         Effect   = "Allow"
         Action   = "ecs:RunTask"
-        Resource = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:task-definition/${var.application_role_prefix}*:*"
+        Resource = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:task-definition/${local.application_web_task_family}:*"
         Condition = {
           ArnEquals = {
             "ecs:cluster" = local.application_cluster_arn
@@ -174,7 +212,7 @@ resource "aws_iam_role_policy" "github_deployer" {
         Sid      = "PassApplicationRoles"
         Effect   = "Allow"
         Action   = "iam:PassRole"
-        Resource = local.application_role_arns
+        Resource = local.application_web_role_arns
         Condition = {
           StringEquals = {
             "iam:PassedToService" = "ecs-tasks.amazonaws.com"
