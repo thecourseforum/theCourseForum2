@@ -90,7 +90,7 @@ resource "aws_cognito_managed_login_branding" "main" {
   user_pool_id = aws_cognito_user_pool.main.id
   client_id    = aws_cognito_user_pool_client.main.id
 
-  settings = file("${path.module}/branding-settings.json")
+  settings = jsonencode(jsondecode(file("${path.module}/branding-settings.json")))
 
   asset {
     category   = "FORM_LOGO"
