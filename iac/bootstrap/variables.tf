@@ -23,7 +23,7 @@ variable "terraform_github_environments" {
 variable "code_deploy_github_environments" {
   description = "GitHub Actions environments permitted to assume the GitHub deployer role"
   type        = list(string)
-  default     = ["aws-deploy"]
+  default     = ["prod"]
 }
 
 variable "github_repository" {
