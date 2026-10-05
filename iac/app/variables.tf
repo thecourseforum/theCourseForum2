@@ -1,13 +1,13 @@
 variable "project_name" {
   description = "Project name used in resource naming"
   type        = string
-  default     = "iac"
+  default     = "tcf"
 }
 
 variable "environment" {
   description = "Environment name (test, staging, prod)"
   type        = string
-  default     = "test"
+  default     = "prod"
 }
 
 variable "domain_name" {

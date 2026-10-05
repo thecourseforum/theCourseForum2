@@ -17,7 +17,7 @@ variable "deployer_principal_arn" {
 variable "terraform_github_environments" {
   description = "GitHub Actions environments permitted to assume the Terraform deployer role"
   type        = list(string)
-  default     = ["terraform-plan", "terraform-test"]
+  default     = ["terraform-plan", "terraform-prod"]
 }
 
 variable "code_deploy_github_environments" {
@@ -53,7 +53,7 @@ variable "dns_role_arn" {
 variable "application_role_prefix" {
   description = "Prefix for application resources and IAM roles that the deployers may manage"
   type        = string
-  default     = "iac-test-"
+  default     = "tcf-prod-"
 }
 
 variable "terraform_state_bucket_name" {
