@@ -147,6 +147,9 @@ class Command(BaseCommand):
 
         The only case we drop is when there is no data in any relevant column.
         """
+
+        df.rename(columns={"TermDesc": "Term Desc"}, inplace=True)
+
         df.replace("-", np.NaN, inplace=True)
 
         df.dropna(
