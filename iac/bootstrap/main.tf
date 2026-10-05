@@ -133,7 +133,8 @@ resource "aws_iam_role_policy" "terraform_deployer_iam" {
           StringEquals = {
             "iam:PassedToService" = [
               "ecs-tasks.amazonaws.com",
-              "lambda.amazonaws.com"
+              "lambda.amazonaws.com",
+              "scheduler.amazonaws.com"
             ]
           }
         }

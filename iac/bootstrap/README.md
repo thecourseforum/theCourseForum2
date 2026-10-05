@@ -91,15 +91,17 @@ needed by the application stack, including permission to assume the
 hand-maintained DNS role. It can create and change only `tcf-prod-*` roles,
 and only when they carry the `tcf-prod-role-boundary` permissions boundary, so
 a role it creates can never exceed what the application needs. It can pass
-those roles only to ECS tasks and Lambda, and cannot remove a role's boundary.
+those roles only to ECS tasks, Lambda, and EventBridge Scheduler, and cannot
+remove a role's boundary.
 
 `tcf-github-deployer` is scoped to deploying application code only:
 
 - push and look up images in `tcf-prod-*` ECR repositories
 - describe and register ECS task definitions in `aws_region`
-- run `tcf-prod-*` task definitions on `tcf-prod-cluster` and read those tasks
+- run `tcf-prod-django` task definitions on `tcf-prod-cluster` and read those
+  tasks, so it cannot start the database dump task
 - describe and update `tcf-prod-*` services on `tcf-prod-cluster`
-- pass `tcf-prod-*` roles only to ECS tasks
+- pass only the web task's execution and task roles, and only to ECS tasks
 
 It cannot read Terraform state, change infrastructure, or assume the DNS role.
 

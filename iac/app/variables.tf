@@ -102,3 +102,9 @@ variable "db_username" {
   type        = string
   default     = "tcf_admin"
 }
+
+variable "db_dump_schedule" {
+  description = "EventBridge Scheduler expression for database dumps, in America/New_York time"
+  type        = string
+  default     = "cron(0 4 * * ? *)"
+}
