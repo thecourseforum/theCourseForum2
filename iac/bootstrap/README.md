@@ -84,7 +84,7 @@ those roles only to ECS tasks and Lambda, and cannot remove a role's boundary.
 
 `tcf-github-deployer` is scoped to deploying application code only:
 
-- push images to `iac-test-*` ECR repositories
+- push and look up images in `iac-test-*` ECR repositories
 - describe and register ECS task definitions in `aws_region`
 - run `iac-test-*` task definitions on `iac-test-cluster` and read those tasks
 - describe and update `iac-test-*` services on `iac-test-cluster`
