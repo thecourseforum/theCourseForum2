@@ -191,8 +191,7 @@ resource "aws_ecs_service" "django" {
   }
 
   depends_on = [
-    aws_lb_listener.https,
-    aws_lb_listener.http
+    aws_lb_listener.https
   ]
 
   lifecycle {
