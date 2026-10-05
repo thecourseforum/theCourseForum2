@@ -30,7 +30,7 @@ data "aws_security_group" "cloudfront_vpc_origins" {
 
 resource "aws_vpc_security_group_ingress_rule" "alb_from_cloudfront" {
   security_group_id            = aws_security_group.alb.id
-  description                  = "HTTPS from this account's CloudFront VPC origins"
+  description                  = "HTTPS from CloudFront VPC origins"
   from_port                    = 443
   to_port                      = 443
   ip_protocol                  = "tcp"
