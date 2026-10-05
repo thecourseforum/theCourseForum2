@@ -10,11 +10,11 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
-  ECS_SERVICE: iac-test-django-service
-  ECS_CLUSTER: iac-test-cluster
-  ECR_REPO: iac-test-app
+  ECS_SERVICE: tcf-prod-django-service
+  ECS_CLUSTER: tcf-prod-cluster
+  ECR_REPO: tcf-prod-app
   ECR_CONTAINER_NAME: django-app
-  ECS_TASK_FAMILY: iac-test-django
+  ECS_TASK_FAMILY: tcf-prod-django
 
 jobs:
   ci:

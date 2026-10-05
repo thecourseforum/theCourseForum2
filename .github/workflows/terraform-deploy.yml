@@ -1,4 +1,4 @@
-name: Deploy test infrastructure
+name: Deploy infrastructure
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: terraform-test-app
+  group: terraform-prod-app
   cancel-in-progress: false
 
 env:
@@ -18,7 +18,6 @@ env:
   TF_IN_AUTOMATION: "true"
   TF_VAR_domain_name: thecourseforumtest.com
   TF_VAR_dns_role_arn: arn:aws:iam::011713309463:role/tcf-terraform-dns
-  TF_VAR_ecr_image_tag: test
   TERRAFORM_VERSION: 1.16.3
   DEPLOYER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-deployer
   APP_ACCOUNT_ID: "099933383052"
@@ -90,7 +89,7 @@ jobs:
     needs: plan
     runs-on: ubuntu-latest
     timeout-minutes: 120
-    environment: terraform-test
+    environment: terraform-prod
     steps:
       - name: Require repository admin
         if: github.event_name == 'workflow_dispatch'
@@ -99,7 +98,7 @@ jobs:
         run: |
           permission=$(gh api "repos/${GITHUB_REPOSITORY}/collaborators/${GITHUB_TRIGGERING_ACTOR}/permission" --jq .permission)
           if [[ "$permission" != "admin" ]]; then
-            echo "Only repository admins may apply test infrastructure."
+            echo "Only repository admins may apply infrastructure."
             exit 1
           fi
 
