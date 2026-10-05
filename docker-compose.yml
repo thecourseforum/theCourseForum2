@@ -34,20 +34,20 @@ services:
       retries: 30
 
   minio:
-    image: quay.io/minio/minio:latest
+    image: rustfs/rustfs:1.0.1
     container_name: tcf-minio
-    command: server /data --console-address ":9001"
     restart: unless-stopped
     environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+      RUSTFS_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      RUSTFS_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      RUSTFS_CONSOLE_ENABLE: "true"
     ports:
       - "127.0.0.1:9000:9000"
       - "127.0.0.1:9001:9001"   # console UI
     volumes:
-      - minio_data:/data
+      - rustfs_data:/data
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://localhost:9000/minio/health/live"]
+      test: ["CMD", "curl", "-sf", "http://localhost:9000/health/live"]
       interval: 2s
       timeout: 2s
       retries: 30
@@ -55,20 +55,25 @@ services:
   # Creates buckets and grants anonymous read on the static bucket
   # (stands in for CloudFront's signed origin access).
   minio-init:
-    image: quay.io/minio/mc:latest
+    image: amazon/aws-cli:2.37.9
     container_name: tcf-minio_init
     depends_on:
       minio:
         condition: service_healthy
     environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
-    entrypoint: >
-      sh -c '
-      mc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
-      mc mb --ignore-existing local/${MINIO_BUCKET:-tcf-media} local/${STATIC_BUCKET:-tcf-static} &&
-      mc anonymous set download local/${STATIC_BUCKET:-tcf-static} &&
-      echo "buckets ready"'
+      AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY:-minioadmin}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_ENDPOINT_URL: http://minio:9000
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        set -e
+        for bucket in ${MINIO_BUCKET:-tcf-media} ${STATIC_BUCKET:-tcf-static}; do
+          aws s3api head-bucket --bucket "$$bucket" 2>/dev/null || aws s3api create-bucket --bucket "$$bucket" > /dev/null
+        done
+        aws s3api put-bucket-policy --bucket ${STATIC_BUCKET:-tcf-static} --policy '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":["*"]},"Action":["s3:GetObject"],"Resource":["arn:aws:s3:::${STATIC_BUCKET:-tcf-static}/*"]}]}'
+        echo "buckets ready"
     restart: "no"
 
   # Serves the static bucket on :8081.
@@ -124,7 +129,7 @@ services:
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-tcf_core.settings.dev}
       TCF_ENV: ${TCF_ENV:-local}
     ports:
-      - "8000:80"
+      - "8000:8000"
     restart: unless-stopped
     depends_on:
       db:
@@ -159,4 +164,4 @@ services:
 
 volumes:
   pgdata:
-  minio_data:
+  rustfs_data:

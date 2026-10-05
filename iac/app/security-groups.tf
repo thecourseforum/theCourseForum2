@@ -4,14 +4,6 @@ resource "aws_security_group" "alb" {
   description = "Security group for Application Load Balancer"
   vpc_id      = aws_vpc.main.id
 
-  ingress {
-    description     = "HTTPS from CloudFront"
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
-    prefix_list_ids = [data.aws_ec2_managed_prefix_list.cloudfront.id]
-  }
-
   egress {
     description = "Allow all outbound traffic"
     from_port   = 0
@@ -23,6 +15,26 @@ resource "aws_security_group" "alb" {
   tags = {
     Name = "${local.name_prefix}-alb-sg"
   }
+}
+
+data "aws_security_group" "cloudfront_vpc_origins" {
+  vpc_id = aws_vpc.main.id
+
+  filter {
+    name   = "group-name"
+    values = ["CloudFront-VPCOrigins-Service-SG"]
+  }
+
+  depends_on = [aws_cloudfront_vpc_origin.alb]
+}
+
+resource "aws_vpc_security_group_ingress_rule" "alb_from_cloudfront" {
+  security_group_id            = aws_security_group.alb.id
+  description                  = "HTTPS from CloudFront VPC origins"
+  from_port                    = 443
+  to_port                      = 443
+  ip_protocol                  = "tcp"
+  referenced_security_group_id = data.aws_security_group.cloudfront_vpc_origins.id
 }
 
 # ECS Tasks Security Group

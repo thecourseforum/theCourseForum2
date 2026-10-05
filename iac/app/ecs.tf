@@ -57,6 +57,14 @@ resource "aws_ecs_task_definition" "django" {
           value = "${var.domain_name},${aws_cloudfront_distribution.main.domain_name},${aws_lb.main.dns_name}"
         },
         {
+          name  = "AWS_ELB_URL"
+          value = aws_lb.main.dns_name
+        },
+        {
+          name  = "AWS_CLOUDFRONT_URL"
+          value = aws_cloudfront_distribution.main.domain_name
+        },
+        {
           name  = "CORS_ALLOWED_ORIGINS"
           value = "https://${var.domain_name}"
         },
@@ -156,12 +164,12 @@ resource "aws_ecs_service" "django" {
   name             = "${local.name_prefix}-django-service"
   cluster          = aws_ecs_cluster.main.id
   task_definition  = aws_ecs_task_definition.django.arn
-  desired_count    = var.ecs_desired_count
+  desired_count    = var.ecs_min_count
   launch_type      = "FARGATE"
   platform_version = "1.4.0"
 
   network_configuration {
-    subnets          = [aws_subnet.public[1].id]
+    subnets          = aws_subnet.public[*].id
     security_groups  = [aws_security_group.ecs_tasks.id]
     assign_public_ip = true
   }
@@ -183,11 +191,58 @@ resource "aws_ecs_service" "django" {
   }
 
   depends_on = [
-    aws_lb_listener.https,
-    aws_lb_listener.http
+    aws_lb_listener.https
   ]
+
+  lifecycle {
+    ignore_changes = [task_definition, desired_count]
+  }
 
   tags = {
     Name = "${local.name_prefix}-django-service"
+  }
+}
+
+resource "aws_appautoscaling_target" "django" {
+  service_namespace  = "ecs"
+  resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.django.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  min_capacity       = var.ecs_min_count
+  max_capacity       = var.ecs_max_count
+}
+
+resource "aws_appautoscaling_policy" "django_cpu" {
+  name               = "${local.name_prefix}-django-cpu"
+  policy_type        = "TargetTrackingScaling"
+  service_namespace  = aws_appautoscaling_target.django.service_namespace
+  resource_id        = aws_appautoscaling_target.django.resource_id
+  scalable_dimension = aws_appautoscaling_target.django.scalable_dimension
+
+  target_tracking_scaling_policy_configuration {
+    target_value       = var.ecs_cpu_target
+    scale_out_cooldown = 60
+    scale_in_cooldown  = 300
+
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+  }
+}
+
+resource "aws_appautoscaling_policy" "django_memory" {
+  name               = "${local.name_prefix}-django-memory"
+  policy_type        = "TargetTrackingScaling"
+  service_namespace  = aws_appautoscaling_target.django.service_namespace
+  resource_id        = aws_appautoscaling_target.django.resource_id
+  scalable_dimension = aws_appautoscaling_target.django.scalable_dimension
+
+  target_tracking_scaling_policy_configuration {
+    target_value       = var.ecs_memory_target
+    scale_out_cooldown = 60
+    scale_in_cooldown  = 300
+
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageMemoryUtilization"
+    }
   }
 }

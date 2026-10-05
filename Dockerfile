@@ -60,6 +60,6 @@ ENV HOME=/home/app \
     UV_CACHE_DIR=/home/app/.cache/uv
 USER app
 
-EXPOSE 80
+EXPOSE 8000
 
 CMD ["/app/scripts/container-startup.sh"]

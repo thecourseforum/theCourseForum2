@@ -1,19 +1,34 @@
 variable "project_name" {
   description = "Project name used in resource naming"
   type        = string
-  default     = "iac"
+  default     = "tcf"
 }
 
 variable "environment" {
   description = "Environment name (test, staging, prod)"
   type        = string
-  default     = "test"
+  default     = "prod"
 }
 
 variable "domain_name" {
   description = "Domain name for the application"
   type        = string
   default     = "thecourseforumtest.com"
+
+  validation {
+    condition     = contains(["thecourseforum.com", "thecourseforumtest.com"], var.domain_name)
+    error_message = "domain_name must be either thecourseforum.com or thecourseforumtest.com."
+  }
+}
+
+variable "dns_role_arn" {
+  description = "ARN of the role Terraform assumes in the separate Route 53 account"
+  type        = string
+
+  validation {
+    condition     = can(regex("^arn:aws:iam::011713309463:role/.+", var.dns_role_arn))
+    error_message = "dns_role_arn must be an IAM role ARN in Route 53 account 011713309463."
+  }
 }
 
 variable "aws_region" {
@@ -40,10 +55,28 @@ variable "ecs_task_memory" {
   default     = 2048
 }
 
-variable "ecs_desired_count" {
-  description = "Desired number of ECS tasks"
+variable "ecs_min_count" {
+  description = "Minimum number of ECS tasks the service scales down to"
   type        = number
   default     = 1
+}
+
+variable "ecs_max_count" {
+  description = "Maximum number of ECS tasks the service scales up to"
+  type        = number
+  default     = 10
+}
+
+variable "ecs_cpu_target" {
+  description = "Average service CPU utilization percentage that autoscaling holds the service at"
+  type        = number
+  default     = 60
+}
+
+variable "ecs_memory_target" {
+  description = "Average service memory utilization percentage that autoscaling holds the service at"
+  type        = number
+  default     = 75
 }
 
 variable "rds_instance_class" {
@@ -86,4 +119,10 @@ variable "db_username" {
   description = "Database master username"
   type        = string
   default     = "tcf_admin"
+}
+
+variable "db_dump_schedule" {
+  description = "EventBridge Scheduler expression for database dumps, in America/New_York time"
+  type        = string
+  default     = "cron(0 4 * * ? *)"
 }
