@@ -14,22 +14,28 @@ variable "deployer_principal_arn" {
   type        = string
 }
 
-variable "github_environments" {
-  description = "GitHub Actions environments permitted to assume the GitHub deployer role"
+variable "terraform_github_environments" {
+  description = "GitHub Actions environments permitted to assume the Terraform deployer role"
   type        = list(string)
   default     = ["terraform-plan", "terraform-test"]
 }
 
+variable "code_deploy_github_environments" {
+  description = "GitHub Actions environments permitted to assume the GitHub deployer role"
+  type        = list(string)
+  default     = ["aws-deploy"]
+}
+
 variable "github_repository" {
-  description = "GitHub owner/repository permitted to assume the GitHub deployer role"
+  description = "GitHub owner/repository permitted to assume the deployer roles through OIDC"
   type        = string
   default     = "thecourseforum/theCourseForum2"
 }
 
 variable "github_deployer_role_name" {
-  description = "Role assumed by GitHub Actions through OIDC for application Terraform deployments"
+  description = "Role assumed by GitHub Actions through OIDC for application code deployments"
   type        = string
-  default     = "tcf-github-terraform-deployer"
+  default     = "tcf-github-deployer"
 }
 
 variable "terraform_deployer_role_name" {
@@ -45,7 +51,7 @@ variable "dns_role_arn" {
 }
 
 variable "application_role_prefix" {
-  description = "Prefix for application IAM roles that the deployer may pass to ECS"
+  description = "Prefix for application resources and IAM roles that the deployers may manage"
   type        = string
   default     = "iac-test-"
 }

@@ -33,6 +33,22 @@ resource "aws_iam_role" "terraform_deployer" {
         Principal = {
           AWS = var.deployer_principal_arn
         }
+      },
+      {
+        Effect = "Allow"
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Principal = {
+          Federated = aws_iam_openid_connect_provider.github_actions.arn
+        }
+        Condition = {
+          StringEquals = {
+            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+            "token.actions.githubusercontent.com:sub" = [
+              for environment in var.terraform_github_environments :
+              "repo:${var.github_repository}:environment:${environment}"
+            ]
+          }
+        }
       }
     ]
   })
@@ -62,26 +78,39 @@ resource "aws_iam_role_policy" "terraform_deployer_iam" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid    = "ManageBoundedApplicationRoles"
         Effect = "Allow"
         Action = [
           "iam:CreateRole",
+          "iam:PutRolePermissionsBoundary",
+          "iam:AttachRolePolicy",
+          "iam:DetachRolePolicy",
+          "iam:PutRolePolicy",
+          "iam:DeleteRolePolicy"
+        ]
+        Resource = local.application_role_arns
+        Condition = {
+          StringEquals = {
+            "iam:PermissionsBoundary" = aws_iam_policy.application_role_boundary.arn
+          }
+        }
+      },
+      {
+        Sid    = "ReadAndMaintainApplicationRoles"
+        Effect = "Allow"
+        Action = [
           "iam:DeleteRole",
           "iam:GetRole",
           "iam:UpdateAssumeRolePolicy",
           "iam:TagRole",
           "iam:UntagRole",
           "iam:ListRoleTags",
-          "iam:AttachRolePolicy",
-          "iam:DetachRolePolicy",
-          "iam:PutRolePolicy",
-          "iam:DeleteRolePolicy",
           "iam:GetRolePolicy",
           "iam:ListRolePolicies",
           "iam:ListAttachedRolePolicies",
-          "iam:ListInstanceProfilesForRole",
-          "iam:PutRolePermissionsBoundary"
+          "iam:ListInstanceProfilesForRole"
         ]
-        Resource = "arn:aws:iam::${data.aws_caller_identity.app.account_id}:role/${var.application_role_prefix}*"
+        Resource = local.application_role_arns
       },
       {
         Effect = "Allow"
@@ -99,12 +128,26 @@ resource "aws_iam_role_policy" "terraform_deployer_iam" {
       {
         Effect   = "Allow"
         Action   = "iam:PassRole"
-        Resource = "arn:aws:iam::${data.aws_caller_identity.app.account_id}:role/${var.application_role_prefix}*"
+        Resource = local.application_role_arns
+        Condition = {
+          StringEquals = {
+            "iam:PassedToService" = [
+              "ecs-tasks.amazonaws.com",
+              "lambda.amazonaws.com"
+            ]
+          }
+        }
       },
       {
         Effect   = "Allow"
         Action   = "sts:AssumeRole"
         Resource = var.dns_role_arn
+      },
+      {
+        Sid      = "KeepRoleBoundaries"
+        Effect   = "Deny"
+        Action   = "iam:DeleteRolePermissionsBoundary"
+        Resource = "*"
       }
     ]
   })

@@ -2,8 +2,8 @@
 
 This small Terraform project creates the resources needed by `../app`:
 
-- `tcf-terraform-deployer` in the application account, for local applies
-- `tcf-github-terraform-deployer` in the application account, for GitHub Actions
+- `tcf-terraform-deployer` in the application account, for local and GitHub Actions Terraform applies
+- `tcf-github-deployer` in the application account, for GitHub Actions code deploys
 - `iac-test-role-boundary`, the permissions boundary every application role must carry
 - An encrypted, versioned S3 state bucket in the application account
 - A GitHub Actions OIDC provider in the application account
@@ -31,8 +31,8 @@ application_role_prefix = "iac-test-"
 
 `deployer_principal_arn` can also be an existing administrator or CI role.
 The principal must be able to assume the application-account deployer role.
-GitHub Actions does not use this role. It assumes
-`tcf-github-terraform-deployer` through OIDC and needs no AWS access keys.
+GitHub Actions also assumes this role through OIDC from the `terraform-plan`
+and `terraform-test` environments, and needs no AWS access keys.
 
 Log in to the SSO profile and verify the account:
 
@@ -77,23 +77,23 @@ NIXPKGS_ALLOW_UNFREE=1 nix run --impure nixpkgs#terraform -- \
 
 `tcf-terraform-deployer` receives `PowerUserAccess` plus the IAM permissions
 needed by the application stack, including permission to assume the
-hand-maintained DNS role.
+hand-maintained DNS role. It can create and change only `iac-test-*` roles,
+and only when they carry the `iac-test-role-boundary` permissions boundary, so
+a role it creates can never exceed what the application needs. It can pass
+those roles only to ECS tasks and Lambda, and cannot remove a role's boundary.
 
-`tcf-github-terraform-deployer` is scoped to the application stack instead:
+`tcf-github-deployer` is scoped to deploying application code only:
 
-- read and write only the `app/` prefix of the state bucket
-- the services the stack uses (ACM, CloudFront, Cognito, ECR, ECS, ElastiCache,
-  ELB, Lambda, CloudWatch Logs, RDS), limited to `aws_region`
-- VPC, subnet, route, and security group changes, but no instances
-- only `iac-test/*` secrets and `iac-test-static-*` buckets
-- create and change only `iac-test-*` roles, and only when they carry the
-  `iac-test-role-boundary` permissions boundary, so a role it creates can never
-  exceed what the application needs
-- pass those roles only to ECS tasks and Lambda
-- assume the DNS role
+- push images to `iac-test-*` ECR repositories
+- describe and register ECS task definitions in `aws_region`
+- run `iac-test-*` task definitions on `iac-test-cluster` and read those tasks
+- describe and update `iac-test-*` services on `iac-test-cluster`
+- pass `iac-test-*` roles only to ECS tasks
+
+It cannot read Terraform state, change infrastructure, or assume the DNS role.
 
 The trust policy of `tcf-terraform-dns` in account `011713309463` must allow
-`arn:aws:iam::099933383052:role/tcf-github-terraform-deployer` to call
+`arn:aws:iam::099933383052:role/tcf-terraform-deployer` to call
 `sts:AssumeRole`. That account is maintained by hand, so update it there.
 
 ## Test-infrastructure deploys in GitHub Actions
@@ -114,7 +114,7 @@ Two GitHub environments back this, under **Settings → Environments**:
 
 Both restrict deployments to the `dev` and `iac` branches. That restriction is
 what stops other branches from obtaining an OIDC token for the deployer role,
-and the GitHub deployer's trust policy accepts both environment names.
+and the Terraform deployer's trust policy accepts both environment names.
 
 Approval gating lives in the environment rather than in the workflow file, so
 it applies to pushes on any branch and cannot be removed by editing the
@@ -123,12 +123,22 @@ started the run has repository `admin` permission; that button appears only
 once the workflow exists on the default branch.
 
 The workflow requests a GitHub OIDC token and assumes
-`tcf-github-terraform-deployer` in account `099933383052`. Its trust policy
+`tcf-terraform-deployer` in account `099933383052`. Its OIDC trust statement
 requires audience `sts.amazonaws.com` and subject
 `repo:thecourseforum/theCourseForum2:environment:terraform-plan` or
 `repo:thecourseforum/theCourseForum2:environment:terraform-test`. The role
 then assumes `tcf-terraform-dns` in account `011713309463` for Route 53.
-The repository's existing AWS access-key secrets remain for the older workflow
-targeting the other account; this test-infrastructure workflow does not use
-them. Protect the `dev` branch and the environment because they control which
+Protect the `dev` branch and the environment because they control which
 workflow code can request the OIDC token.
+
+## Code deploys in GitHub Actions
+
+The workflow at `.github/workflows/aws.yml` builds the application image,
+pushes it to `iac-test-app`, runs the release task, and updates
+`iac-test-django-service`. It runs in the `aws-deploy` environment and assumes
+`tcf-github-deployer` through OIDC with subject
+`repo:thecourseforum/theCourseForum2:environment:aws-deploy`.
+
+Create the `aws-deploy` environment under **Settings → Environments** and
+restrict it to the default branch, since `workflow_run` jobs run on the default
+branch.
