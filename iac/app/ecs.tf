@@ -195,6 +195,10 @@ resource "aws_ecs_service" "django" {
     aws_lb_listener.http
   ]
 
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
+
   tags = {
     Name = "${local.name_prefix}-django-service"
   }
