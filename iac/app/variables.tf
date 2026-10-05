@@ -61,22 +61,28 @@ variable "ecs_desired_count" {
   default     = 1
 }
 
-variable "rds_instance_class" {
-  description = "RDS instance class"
-  type        = string
-  default     = "db.t3.micro"
-}
-
-variable "rds_allocated_storage" {
-  description = "RDS allocated storage in GB"
-  type        = number
-  default     = 20
-}
-
 variable "rds_engine_version" {
-  description = "PostgreSQL engine version"
+  description = "Aurora PostgreSQL engine version"
   type        = string
-  default     = "18.1"
+  default     = "18.6"
+}
+
+variable "aurora_min_capacity" {
+  description = "Minimum Aurora Serverless v2 capacity in ACUs; 0 lets the cluster pause when idle"
+  type        = number
+  default     = 0
+}
+
+variable "aurora_max_capacity" {
+  description = "Maximum Aurora Serverless v2 capacity in ACUs"
+  type        = number
+  default     = 16
+}
+
+variable "aurora_seconds_until_auto_pause" {
+  description = "Idle seconds before the cluster pauses when aurora_min_capacity is 0"
+  type        = number
+  default     = 300
 }
 
 variable "ecr_image_tag" {
