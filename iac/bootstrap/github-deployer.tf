@@ -4,6 +4,7 @@ locals {
   application_role_arns   = "arn:aws:iam::${local.app_account_id}:role/${var.application_role_prefix}*"
   application_secret_arns = "arn:aws:secretsmanager:${var.aws_region}:${local.app_account_id}:secret:${local.application_name_prefix}/*"
   application_bucket_arns = "arn:aws:s3:::${local.application_name_prefix}-static-*"
+  application_cluster_arn = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:cluster/${local.application_name_prefix}-cluster"
 }
 
 resource "aws_iam_policy" "application_role_boundary" {
@@ -85,7 +86,7 @@ resource "aws_iam_role" "github_deployer" {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
             "token.actions.githubusercontent.com:sub" = [
-              for environment in var.github_environments :
+              for environment in var.code_deploy_github_environments :
               "repo:${var.github_repository}:environment:${environment}"
             ]
           }
@@ -109,41 +110,31 @@ resource "aws_iam_role_policy" "github_deployer" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid      = "ListStateBucket"
+        Sid      = "LogInToEcr"
         Effect   = "Allow"
-        Action   = "s3:ListBucket"
-        Resource = aws_s3_bucket.terraform_state.arn
+        Action   = "ecr:GetAuthorizationToken"
+        Resource = "*"
       },
       {
-        Sid    = "UseApplicationState"
+        Sid    = "PushApplicationImages"
         Effect = "Allow"
         Action = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:DeleteObject"
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:BatchGetImage",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:PutImage"
         ]
-        Resource = "${aws_s3_bucket.terraform_state.arn}/app/*"
+        Resource = "arn:aws:ecr:${var.aws_region}:${local.app_account_id}:repository/${var.application_role_prefix}*"
       },
       {
-        Sid      = "AssumeDnsRole"
-        Effect   = "Allow"
-        Action   = "sts:AssumeRole"
-        Resource = var.dns_role_arn
-      },
-      {
-        Sid    = "ManageApplicationServices"
+        Sid    = "RegisterTaskDefinitions"
         Effect = "Allow"
         Action = [
-          "acm:*",
-          "cloudfront:*",
-          "cognito-idp:*",
-          "ecr:*",
-          "ecs:*",
-          "elasticache:*",
-          "elasticloadbalancing:*",
-          "lambda:*",
-          "logs:*",
-          "rds:*"
+          "ecs:DescribeTaskDefinition",
+          "ecs:RegisterTaskDefinition"
         ]
         Resource = "*"
         Condition = {
@@ -153,120 +144,30 @@ resource "aws_iam_role_policy" "github_deployer" {
         }
       },
       {
-        Sid    = "ManageNetworking"
-        Effect = "Allow"
-        Action = [
-          "ec2:Describe*",
-          "ec2:GetManagedPrefixListEntries",
-          "ec2:CreateTags",
-          "ec2:DeleteTags",
-          "ec2:CreateVpc",
-          "ec2:DeleteVpc",
-          "ec2:ModifyVpcAttribute",
-          "ec2:CreateSubnet",
-          "ec2:DeleteSubnet",
-          "ec2:ModifySubnetAttribute",
-          "ec2:CreateInternetGateway",
-          "ec2:DeleteInternetGateway",
-          "ec2:AttachInternetGateway",
-          "ec2:DetachInternetGateway",
-          "ec2:CreateRouteTable",
-          "ec2:DeleteRouteTable",
-          "ec2:AssociateRouteTable",
-          "ec2:DisassociateRouteTable",
-          "ec2:ReplaceRouteTableAssociation",
-          "ec2:CreateRoute",
-          "ec2:DeleteRoute",
-          "ec2:ReplaceRoute",
-          "ec2:CreateSecurityGroup",
-          "ec2:DeleteSecurityGroup",
-          "ec2:AuthorizeSecurityGroupIngress",
-          "ec2:AuthorizeSecurityGroupEgress",
-          "ec2:RevokeSecurityGroupIngress",
-          "ec2:RevokeSecurityGroupEgress",
-          "ec2:UpdateSecurityGroupRuleDescriptionsIngress",
-          "ec2:UpdateSecurityGroupRuleDescriptionsEgress",
-          "ec2:ModifySecurityGroupRules",
-          "ec2:DeleteNetworkInterface"
-        ]
-        Resource = "*"
-        Condition = {
-          StringEquals = {
-            "aws:RequestedRegion" = var.aws_region
-          }
-        }
-      },
-      {
-        Sid      = "ManageApplicationSecrets"
+        Sid      = "RunReleaseTasks"
         Effect   = "Allow"
-        Action   = "secretsmanager:*"
-        Resource = local.application_secret_arns
-      },
-      {
-        Sid    = "ManageStaticBucket"
-        Effect = "Allow"
-        Action = "s3:*"
-        Resource = [
-          local.application_bucket_arns,
-          "${local.application_bucket_arns}/*"
-        ]
-      },
-      {
-        Sid    = "UseManagedKeysThroughServices"
-        Effect = "Allow"
-        Action = [
-          "kms:DescribeKey",
-          "kms:CreateGrant",
-          "kms:Decrypt",
-          "kms:GenerateDataKey*"
-        ]
-        Resource = "*"
+        Action   = "ecs:RunTask"
+        Resource = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:task-definition/${var.application_role_prefix}*:*"
         Condition = {
-          StringEquals = {
-            "kms:ViaService" = [
-              "rds.${var.aws_region}.amazonaws.com",
-              "elasticache.${var.aws_region}.amazonaws.com",
-              "secretsmanager.${var.aws_region}.amazonaws.com"
-            ]
+          ArnEquals = {
+            "ecs:cluster" = local.application_cluster_arn
           }
         }
       },
       {
-        Sid    = "ManageBoundedApplicationRoles"
-        Effect = "Allow"
-        Action = [
-          "iam:CreateRole",
-          "iam:PutRolePermissionsBoundary",
-          "iam:PutRolePolicy",
-          "iam:DeleteRolePolicy",
-          "iam:AttachRolePolicy",
-          "iam:DetachRolePolicy"
-        ]
-        Resource = local.application_role_arns
-        Condition = {
-          StringEquals = {
-            "iam:PermissionsBoundary" = aws_iam_policy.application_role_boundary.arn
-          }
-        }
+        Sid      = "ReadReleaseTasks"
+        Effect   = "Allow"
+        Action   = "ecs:DescribeTasks"
+        Resource = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:task/${local.application_name_prefix}-cluster/*"
       },
       {
-        Sid    = "ReadAndMaintainApplicationRoles"
+        Sid    = "DeployApplicationServices"
         Effect = "Allow"
         Action = [
-          "iam:GetRole",
-          "iam:DeleteRole",
-          "iam:UpdateRole",
-          "iam:UpdateRoleDescription",
-          "iam:UpdateAssumeRolePolicy",
-          "iam:TagRole",
-          "iam:UntagRole",
-          "iam:ListRoleTags",
-          "iam:GetRolePolicy",
-          "iam:ListRolePolicies",
-          "iam:ListAttachedRolePolicies",
-          "iam:ListInstanceProfilesForRole"
+          "ecs:DescribeServices",
+          "ecs:UpdateService"
         ]
-        Resource = local.application_role_arns
+        Resource = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:service/${local.application_name_prefix}-cluster/${var.application_role_prefix}*"
       },
       {
         Sid      = "PassApplicationRoles"
@@ -275,34 +176,9 @@ resource "aws_iam_role_policy" "github_deployer" {
         Resource = local.application_role_arns
         Condition = {
           StringEquals = {
-            "iam:PassedToService" = [
-              "ecs-tasks.amazonaws.com",
-              "lambda.amazonaws.com"
-            ]
+            "iam:PassedToService" = "ecs-tasks.amazonaws.com"
           }
         }
-      },
-      {
-        Sid    = "ReadManagedPolicies"
-        Effect = "Allow"
-        Action = [
-          "iam:GetPolicy",
-          "iam:GetPolicyVersion",
-          "iam:ListPolicies"
-        ]
-        Resource = "*"
-      },
-      {
-        Sid      = "CreateServiceLinkedRoles"
-        Effect   = "Allow"
-        Action   = "iam:CreateServiceLinkedRole"
-        Resource = "arn:aws:iam::${local.app_account_id}:role/aws-service-role/*"
-      },
-      {
-        Sid      = "KeepRoleBoundaries"
-        Effect   = "Deny"
-        Action   = "iam:DeleteRolePermissionsBoundary"
-        Resource = "*"
       }
     ]
   })

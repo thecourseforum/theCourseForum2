@@ -4,7 +4,7 @@ output "terraform_deployer_role_arn" {
 }
 
 output "github_deployer_role_arn" {
-  description = "Application-account role assumed by GitHub Actions for Terraform deployments"
+  description = "Application-account role assumed by GitHub Actions for code deployments"
   value       = aws_iam_role.github_deployer.arn
 }
 

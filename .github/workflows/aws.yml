@@ -13,15 +13,21 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
-  ECS_SERVICE: barrett-fogle-love-v1
-  ECS_CLUSTER: tcf-fargate-cluster
-  ECR_REPO: tcf/thecourseforum2
-  ECR_CONTAINER_NAME: tcf-container
+  ECS_SERVICE: iac-test-django-service
+  ECS_CLUSTER: iac-test-cluster
+  ECR_REPO: iac-test-app
+  ECR_CONTAINER_NAME: django-app
+  ECS_TASK_FAMILY: iac-test-django
+  DEPLOYER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-github-deployer
 
 jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
     runs-on: ubuntu-latest
+    environment: aws-deploy
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout master
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -29,14 +35,14 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha }}
           persist-credentials: false
 
-      - name: Configure AWS credentials
+      - name: Assume GitHub deployer role
         uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ env.DEPLOYER_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
 
       - name: Set up Docker Buildx
@@ -48,15 +54,15 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ github.sha }}
-          cache-from: type=registry,ref=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:buildcache
-          cache-to: type=registry,ref=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:buildcache,mode=max
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ github.sha }}
+          cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:buildcache
+          cache-to: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:buildcache,mode=max
           provenance: false
 
       - name: Get current task definition
         run: |
           aws ecs describe-task-definition \
-            --task-definition tcf-prod-task \
+            --task-definition ${{ env.ECS_TASK_FAMILY }} \
             --query taskDefinition > task-definition.json
 
       - name: Update task definition with new image
@@ -65,7 +71,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: ${{ env.ECR_CONTAINER_NAME }}
-          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ github.sha }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ github.sha }}
           
       - name: Run Release Tasks (Migrate, Static, Cache)
         run: |
