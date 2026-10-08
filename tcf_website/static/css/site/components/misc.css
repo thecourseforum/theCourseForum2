@@ -478,6 +478,29 @@ span.pagination__item {
 
 
 
+.schedule-banner {
+  width: 100%;
+  background-color: var(--accent);
+}
+
+.schedule-banner__link {
+  display: block;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  color: var(--accent-fg);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  text-align: center;
+  text-decoration: none;
+}
+
+.schedule-banner__link:hover,
+.schedule-banner__link:focus-visible {
+  color: var(--accent-fg);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 /*
  * Interest Meeting Banner
  * ========================

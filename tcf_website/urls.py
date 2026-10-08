@@ -1,8 +1,14 @@
 """Routes URLs to views"""
 
 from django.urls import path
+from django.views.generic.base import RedirectView
 
 from . import views
+
+spring_27_redirect = RedirectView.as_view(
+    url="https://course.forum",
+    permanent=True,
+)
 
 urlpatterns = [
     path(
@@ -16,6 +22,8 @@ urlpatterns = [
         name="club",
     ),
     path("", views.index, name="index"),
+    path("s27", spring_27_redirect, name="spring_27_redirect"),
+    path("s27/", spring_27_redirect),
     path("about/", views.AboutView.as_view(), name="about"),
     path("privacy/", views.privacy, name="privacy"),
     path("terms/", views.terms, name="terms"),
