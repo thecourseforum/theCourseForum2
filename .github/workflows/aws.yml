@@ -2,11 +2,12 @@
 name: AWS Deployment
 
 on:
-  workflow_run:
-    workflows: ["Continuous Integration"]
+  push:
     branches: [master]
-    types:
-      - completed
+
+permissions:
+  contents: read
+  id-token: write
 
 env:
   AWS_REGION: us-east-1
@@ -16,21 +17,25 @@ env:
   ECR_CONTAINER_NAME: tcf-container
 
 jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
+    needs: ci
     runs-on: ubuntu-latest
+    environment: legacy-prod
     steps:
       - name: Checkout master
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/tcf-ecs-deployer
+          allowed-account-ids: "396913701887"
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
@@ -44,9 +49,9 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ github.sha }}
-          cache-from: type=registry,ref=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:buildcache
-          cache-to: type=registry,ref=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:buildcache,mode=max
+          tags: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ github.sha }}
+          cache-from: type=registry,ref=${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:buildcache
+          cache-to: type=registry,ref=${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:buildcache,mode=max
           provenance: false
 
       - name: Get current task definition
@@ -61,7 +66,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: ${{ env.ECR_CONTAINER_NAME }}
-          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ github.sha }}
+          image: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ github.sha }}
           
       - name: Run Release Tasks (Migrate, Static, Cache)
         run: |
