@@ -11,6 +11,22 @@ from ..utils import safe_next_url
 from .base import TCFDataTestCase
 
 # ---------------------------------------------------------------------------
+# Marketing redirects
+# ---------------------------------------------------------------------------
+
+
+class MarketingRedirectTestCase(TestCase):
+    """Permanent redirects for campaign URLs."""
+
+    def test_spring_27_redirect(self):
+        """The short Spring '27 URL redirects to the new course site."""
+        response = self.client.get("/s27")
+
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response["Location"], "https://course.forum")
+
+
+# ---------------------------------------------------------------------------
 # safe_next_url and open-redirect hardening (RequestFactory + Client)
 # ---------------------------------------------------------------------------
 
