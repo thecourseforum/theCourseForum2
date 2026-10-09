@@ -168,12 +168,49 @@
             </div>
         </form>
     </div>
+    {# Toxicity warning modal: submission is still allowed, review may just be hidden. #}
+    <div class="modal-backdrop"
+         id="toxicityWarningBackdrop"
+         data-modal-close
+         aria-label="Close"></div>
+    <div class="modal"
+         id="toxicityWarning"
+         role="dialog"
+         aria-labelledby="toxicityWarningTitle"
+         aria-modal="true">
+        <div class="modal__dialog modal__dialog--sm">
+            <div class="modal__header">
+                <h2 class="modal__title" id="toxicityWarningTitle">Review may be hidden</h2>
+                <button class="modal__close" data-modal-close aria-label="Close">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal__body">
+                <p>
+                    This review may be hidden because it was flagged as potentially
+                    toxic. It will still be saved if you submit. Would you like to
+                    submit anyway or keep editing?
+                </p>
+            </div>
+            <div class="modal__footer">
+                <button type="button" class="btn btn--secondary" id="toxicityContinueBtn">Continue editing</button>
+                <button type="button" class="btn btn--primary" id="toxicitySubmitAnywayBtn">Submit anyway</button>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
 {% block scripts %}
     <script src="{% static 'js/site/review/review_cascade.js' %}"></script>
     <script>
   const duplicateCheckUrl = "{% url 'check_review_duplicate' %}";
   const zeroHoursCheckUrl = "{% url 'check_zero_hours_per_week' %}";
+  const toxicityCheckUrl = "{% url 'check_review_toxicity' %}";
 
   const textarea = document.getElementById('reviewtext');
   const countDisplay = document.getElementById('word-count');
@@ -193,6 +230,39 @@
   }
 
   let zeroHoursWarned = false;
+
+  // Toxicity warning modal: resolves true to submit anyway, false to keep editing.
+  function confirmToxicitySubmit() {
+    return new Promise((resolve) => {
+      const submitAnyway = document.getElementById('toxicitySubmitAnywayBtn');
+      const continueEditing = document.getElementById('toxicityContinueBtn');
+      const backdrop = document.getElementById('toxicityWarningBackdrop');
+      const closeBtns = document.querySelectorAll('#toxicityWarning [data-modal-close]');
+
+      function cleanup(result) {
+        submitAnyway.removeEventListener('click', onSubmit);
+        continueEditing.removeEventListener('click', onCancel);
+        closeBtns.forEach((btn) => btn.removeEventListener('click', onCancel));
+        if (backdrop) backdrop.removeEventListener('click', onCancel);
+        if (window.modal) window.modal.close();
+        resolve(result);
+      }
+      function onSubmit() { cleanup(true); }
+      function onCancel() { cleanup(false); }
+
+      submitAnyway.addEventListener('click', onSubmit);
+      continueEditing.addEventListener('click', onCancel);
+      closeBtns.forEach((btn) => btn.addEventListener('click', onCancel));
+      if (backdrop) backdrop.addEventListener('click', onCancel);
+
+      if (window.modal) {
+        window.modal.open('toxicityWarning');
+      } else {
+        // Fallback if the modal library is unavailable.
+        resolve(confirm('This review may be hidden because it was flagged as potentially toxic. Submit anyway?'));
+      }
+    });
+  }
 
   document.getElementById('reviewForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -260,6 +330,44 @@
         const confirmZero = confirm('You entered 0 total hours per week. Is this correct?');
         if (confirmZero) {
           zeroHoursWarned = true;
+          await submitAfterToxicityCheck();
+        } else {
+          resetSubmitBtn();
+        }
+      } else {
+        await submitAfterToxicityCheck();
+      }
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred. Please try again.');
+      resetSubmitBtn();
+    }
+
+    // Toxicity is a *display* concern: warn if the review may be hidden, but
+    // never block submission. "Submit anyway" still saves the review.
+    async function submitAfterToxicityCheck() {
+      let toxData;
+      try {
+        const toxRes = await fetch(toxicityCheckUrl, {
+          method: 'POST',
+          body: formData,
+          headers: xhrHeaders,
+        });
+        toxData = await toxRes.json();
+        if (!toxRes.ok) {
+          // Don't block submission on a moderation-check failure.
+          form.submit();
+          return;
+        }
+      } catch {
+        // Scoring unavailable or errored: proceed with submission.
+        form.submit();
+        return;
+      }
+
+      if (toxData.toxic) {
+        const proceed = await confirmToxicitySubmit();
+        if (proceed) {
           form.submit();
         } else {
           resetSubmitBtn();
@@ -267,10 +375,6 @@
       } else {
         form.submit();
       }
-    } catch (err) {
-      console.error(err);
-      alert('An error occurred. Please try again.');
-      resetSubmitBtn();
     }
   });
     </script>
