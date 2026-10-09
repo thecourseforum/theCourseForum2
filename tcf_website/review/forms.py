@@ -37,6 +37,13 @@ class ReviewForm(forms.ModelForm):
         instructor = cleaned_data.get("instructor")
         semester = cleaned_data.get("semester")
 
+        # A course/club can only be reviewed for a term that has actually
+        # started — never a future semester loaded for course registration.
+        if semester and not semester.has_started():
+            raise ValidationError(
+                "You can only review a semester that has already started."
+            )
+
         if club:
             return cleaned_data
 
