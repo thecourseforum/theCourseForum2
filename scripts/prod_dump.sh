@@ -19,6 +19,6 @@ echo "--- Connecting to EC2 instance '$EC2_HOST' to dump database from '$PROD_DB
 
 chmod 400 $PEM_KEY
 
-ssh -i "$PEM_KEY" "$EC2_USER@$EC2_HOST" "PGPASSWORD='$PROD_DB_PASSWORD' pg_dump --host='$PROD_DB_HOST' --username=$PROD_DB_USER --format=custom --clean $PROD_DB_USER" > "db/$filename"
+ssh -i "$PEM_KEY" "$EC2_USER@$EC2_HOST" "PGPASSWORD='$PROD_DB_PASSWORD' pg_dump --host='$PROD_DB_HOST' --username=$PROD_DB_USER --format=custom --clean --exclude-table-data=django_session $PROD_DB_USER" > "db/$filename"
 
 echo "--- ✅ Successfully created remote database dump at: db/$filename"
