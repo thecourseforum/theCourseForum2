@@ -18,7 +18,7 @@ import os
 import subprocess
 from pathlib import Path
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from tcf_website.utils import current_semester, sis_term_code
 
@@ -54,13 +54,10 @@ class Command(BaseCommand):
         semester = options["semester"] or current_semester()
         term = sis_term_code(semester)
         if term is None:
-            self.stdout.write(
-                self.style.ERROR(
-                    "Argument given in improper format. "
-                    "Give an argument in format: <year>_<season>"
-                )
+            raise CommandError(
+                "Argument given in improper format. "
+                "Give an argument in format: <year>_<season>"
             )
-            return
 
         repo_url = (
             os.environ.get("COURSE_DATA_REPO_URL", "").strip() or COURSE_DATA_REPO_URL
@@ -83,10 +80,7 @@ class Command(BaseCommand):
             text=True,
         )
         if fetch.returncode != 0:
-            self.stdout.write(
-                self.style.ERROR(fetch.stderr.strip() or "git fetch failed")
-            )
-            return
+            raise CommandError(fetch.stderr.strip() or "git fetch failed")
 
         show = subprocess.run(
             ["git", "show", f"FETCH_HEAD:{git_path}"],
@@ -94,10 +88,7 @@ class Command(BaseCommand):
             capture_output=True,
         )
         if show.returncode != 0:
-            self.stdout.write(
-                self.style.ERROR(show.stderr.decode().strip() or "git show failed")
-            )
-            return
+            raise CommandError(show.stderr.decode().strip() or "git show failed")
 
         DEST_DIR.mkdir(exist_ok=True)
         dest = DEST_DIR / filename

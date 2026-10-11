@@ -25,10 +25,12 @@ env:
   DB_HOST: db
   DB_PORT: "5432"
   COURSE_DATA_REPO_BRANCH: dev
+  PYTHONUNBUFFERED: "1"
 
 jobs:
   fetch:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -41,7 +43,7 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --frozen --group dev --no-install-project
+        run: uv sync --frozen --no-dev --no-install-project
 
       # TCF_DATA_TOKEN is a repository secret with read access to thecourseforum/tCF-data.
       - name: Download the semester snapshot
@@ -50,9 +52,9 @@ jobs:
           COURSE_DATA_REPO_URL: https://x-access-token:${{ secrets.TCF_DATA_TOKEN }}@github.com/thecourseforum/tCF-data.git
         run: |
           if [ -n "$SEMESTER" ]; then
-            uv run python manage.py fetch_data "$SEMESTER"
+            uv run --no-sync python manage.py fetch_data "$SEMESTER" --skip-checks
           else
-            uv run python manage.py fetch_data
+            uv run --no-sync python manage.py fetch_data --skip-checks
           fi
 
       - name: Upload snapshot
@@ -61,3 +63,4 @@ jobs:
           name: course-snapshot${{ inputs.semester && format('-{0}', inputs.semester) || '' }}
           path: fetched/*.csv
           if-no-files-found: error
+          retention-days: 30

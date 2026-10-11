@@ -2,6 +2,8 @@
 
 from datetime import date
 
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import SimpleTestCase
 
 from tcf_website.utils import current_semester, sis_term_code
@@ -36,3 +38,7 @@ class SisTermCodeTests(SimpleTestCase):
         self.assertEqual(sis_term_code(current_semester(date(2028, 1, 10))), "1281")
         self.assertEqual(current_semester(date(2028, 6, 1)), "2028_summer")
         self.assertEqual(current_semester(date(2031, 1, 2)), "2031_january")
+
+    def test_fetch_data_rejects_a_bad_semester(self):
+        with self.assertRaises(CommandError):
+            call_command("fetch_data", "2026_winter")
