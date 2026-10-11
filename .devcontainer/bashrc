@@ -1,0 +1,35 @@
+# Sourced by ~/.bashrc in the devcontainer.
+
+if [ -S /var/run/docker.sock ]; then
+  # Match the compose project that launched us.
+  _proj="$(docker inspect tcf_devcontainer --format '{{index .Config.Labels "com.docker.compose.project"}}' 2>/dev/null)"
+  export COMPOSE_PROJECT_NAME="${_proj:-tcf}"
+
+  # -it only when interactive, so `psql -c` and pipes work.
+  psql() {
+    if [ -t 0 ] && [ -t 1 ]; then
+      docker exec -it tcf_db psql "$@"
+    else
+      docker exec -i tcf_db psql "$@"
+    fi
+  }
+  # pg_restore won't default --dbname from PGDATABASE, unlike psql/pg_dump.
+  alias pgrestore='docker exec tcf_db pg_restore -d tcf_db'
+  alias pgdump='docker exec tcf_db pg_dump'
+
+  cat <<'EOF'
+
+== tCF dev ==============================================================
+  docker compose up -d
+  docker compose --profile full run --rm --build release
+  uv run python manage.py runserver 0.0.0.0:8000
+
+Open http://localhost:8000.
+Alternative bundled app (instead of runserver):
+  docker compose --profile full up -d --build
+
+  psql                              # database shell
+  pgdump --format=custom > db/local.dump
+=========================================================================
+EOF
+fi

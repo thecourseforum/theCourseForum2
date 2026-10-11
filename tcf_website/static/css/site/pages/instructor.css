@@ -29,7 +29,6 @@
   }
 }
 
-
 /* ===== INSTRUCTOR PROFILE ===== */
 
 .instructor-profile {
@@ -73,28 +72,6 @@
   text-decoration: underline;
 }
 
-.instructor-profile__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  
-  padding: var(--space-2) var(--space-3);
-  
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  
-  background-color: var(--color-warning-100);
-  color: var(--color-warning-600);
-  
-  border-radius: var(--radius-lg);
-}
-
-[data-theme="dark"] .instructor-profile__badge {
-  background-color: rgba(234, 179, 8, 0.15);
-  color: var(--warning);
-}
-
-
 /* ===== CONTENT AREA ===== */
 
 .instructor-content {
@@ -115,7 +92,6 @@
   }
 }
 
-
 /* ===== COURSES SECTION ===== */
 
 .courses-section {
@@ -130,7 +106,6 @@
   padding-bottom: var(--space-2);
   border-bottom: 2px solid var(--primary);
 }
-
 
 /* ===== NOT TEACHING ALERT ===== */
 

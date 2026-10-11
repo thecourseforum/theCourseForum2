@@ -45,3 +45,4 @@ key/
 .envrc
 # Claude
 CLAUDE.md
+.claude/

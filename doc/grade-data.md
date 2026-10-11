@@ -25,9 +25,11 @@ write somewhere other than the default.
 Output saved by default in `tcf_website/management/commands/grade_data/csv`
 
 ## Loading Grade Data
-- To load grades, run _in the docker container_:
+
+With the local Compose stack running, load grades into PostgreSQL with:
+
 ```console
-$ python manage.py load_grades ALL_DANGEROUS
+$ docker compose --profile full exec web python manage.py load_grades ALL_DANGEROUS
 ```
 ***NOTE***: For loading grades in production, use `load_grades` with ecs-run-command.sh
 

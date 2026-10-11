@@ -1,90 +1,116 @@
 # Useful Commands
 
+Choose one local application workflow first:
+
+- Devcontainer: run commands directly with `uv run`.
+- Bundled web service: use `docker compose --profile full exec web`.
+
+Start the bundled service with:
+
+```bash
+docker compose --profile full up --build
+```
+
+## Local Django commands
+
+With the bundled `web` service running:
+
+```bash
+docker compose --profile full exec web python manage.py shell
+docker compose --profile full exec web python manage.py fetch_clubs
+docker compose --profile full exec web python manage.py load_clubs
+docker compose --profile full exec web python manage.py load_grades ALL_DANGEROUS
+```
+
+From the devcontainer:
+
+```bash
+uv run python manage.py shell
+uv run python manage.py fetch_clubs
+uv run python manage.py load_clubs
+uv run python manage.py load_grades ALL_DANGEROUS
+```
+
+For a one-off bundled-container command:
+
+```bash
+docker compose --profile full run --rm web python manage.py <command>
+```
+
 ## Review Drive
 
 Enable the review drive banner by reverting [this commit](https://github.com/thecourseforum/theCourseForum2/commit/c16383ff2b987dbfde127da97f5a280cb6e0a210) to include the HTML banner template.
 
 ## Picking Review Drive Winners
 
-- Use Python via Django's builtin management shell:
-
-```console
-$ docker exec -it tcf_django python manage.py shell
-```
-
-- Select all relevant reviews:
+Use the Django shell and select relevant reviews:
 
 ```python
-from random import sample
-from tcf_website.models import *
+from tcf_website.models import Review
 
-# For example, the review drive tag for the Fall 2023 semester is `tCFF23`
-# Consult marketing for exact semesterly drive tag
-reviews = list(Review.objects.filter(text__icontains='<review drive tag>'))
-
-# However many winners (consult marketing)
+# For example, the review drive tag for the Fall 2023 semester is `tCFF23`.
+reviews = list(Review.objects.filter(text__icontains="<review drive tag>"))
 total_winners = 3
-
-winners = reviews.order_by('?')[:total_winners]
+winners = reviews.order_by("?")[:total_winners]
 ```
 
-- Finally, send all winners to the marketing team.
+Consult marketing for the correct semester tag and number of winners. Send the
+selected winners to the marketing team.
 
-## Inspecting Production
+## Production operations
 
-To alter/inspect the production database directly, first use the production `.env.prod` credentials (consult exec for access). Then, either:
+Production commands run in ECS rather than the local Compose containers. Use
+`scripts/ecs-run-command.sh` for one-off commands after authenticating with AWS
+CLI:
 
-- Use Python via Django's builtin management shell:
-
-```console
-$ docker exec -it tcf_django python manage.py shell
+```bash
+./scripts/ecs-run-command.sh python manage.py <command>
 ```
 
-- Use SQL and production credentials to dump the production database manually wherever desired (`db/prod.sql` is used by default):
+The moderation helper uses the production ECS task by default. To use it with
+the local bundled web service instead:
 
-```console
-$ env $(cat .env.prod | grep -v '^#' | xargs) sh scripts/dump.sh
+```bash
+USE_DOCKER=1 ./scripts/hide_review.sh
 ```
 
-**_NOTE_**: Windows users won't be able to use the above CLI hack - substitute in the environment variables manually.
+## Database dumps
 
-3. Remove production credentialing (use `.env` credentials like normal)
+Create a custom-format dump of the local Compose database:
 
-## Updating Grades
-
-See instructions in [grade-data.md](https://github.com/thecourseforum/theCourseForum2/blob/dev/doc/grade-data.md)
-
-
-## Fetching and Loading Semester Data
-
-See instructions in [semester-data.md](https://github.com/thecourseforum/theCourseForum2/blob/dev/doc/semester-data.md)
-
-## Fetching Club Data
-
-Fetch club data from virginia.presence.io API:
-
-```console
-$ docker exec -it tcf_django python manage.py fetch_clubs
+```bash
+./scripts/local_dump.sh [filename.dump]
 ```
 
-Saved in `tcf_website/management/commands/club_data/csv`
+Restore `db/latest.dump` or another custom-format dump into the local database:
 
-See [fetch_clubs.py](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/fetch_clubs.py) for more information.
-
-## Loading Club Data
-
-Load club data from csv into database:
-
-```console
-$ docker exec -it tcf_django python manage.py load_clubs
+```bash
+./scripts/reset-db.sh [filename.dump]
 ```
 
-See [load_clubs.py](https://github.com/thecourseforum/theCourseForum2/blob/dev/tcf_website/management/commands/load_clubs.py) for more information.
+Create a production dump through the configured EC2 jump host:
 
-## Creating Production Database Backup
-
-A backup of the prod database can be created with a script.
-  - ***NOTE***: The prod_dump part of the .env must first be filled out (consult exec for access)
-```console
-$ scripts/prod_dump.sh
+```bash
+./scripts/prod_dump.sh [filename.dump]
 ```
+
+The production script reads `EC2_HOST`, `EC2_USER`, `PEM_KEY`, `PROD_DB_HOST`,
+`PROD_DB_USER`, and `PROD_DB_PASSWORD` from `.env`. Never commit production
+credentials.
+
+## Data workflows
+
+- [Semester data](semester-data.md)
+- [Grade data](grade-data.md)
+
+Fetched club data is saved in
+`tcf_website/management/commands/club_data/csv`.
+
+## Automation scripts
+
+These scripts are used by CI/deployment automation and generally are not run
+manually:
+
+- `container-startup.sh` — ECS/Gunicorn entrypoint
+- `notify-checks-result.sh` — CI result notification
+- `notify-deployment-result.sh` — deployment result notification
