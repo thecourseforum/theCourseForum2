@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
         parser.add_argument(
             "semester",
-            help='Semester to update (e.g. "2019_FALL").\nIf you wish to reload all semesters (potentially dangerous!) then put "ALL_DANGEROUS" as the value of this argument.\nPlace that semester CSV in semester_data/csv/ before running this command. fetch_data downloads a JSON snapshot and does not write this CSV.',
+            help='Semester to update (e.g. "2019_FALL").\nIf you wish to reload all semesters (potentially dangerous!) then put "ALL_DANGEROUS" as the value of this argument.\nUses fetched/<year>_<season>.csv when fetch_data has downloaded it, otherwise semester_data/csv/.',
             type=str,
         )
 
@@ -80,7 +80,9 @@ class Command(BaseCommand):
 
         print(year, season)
 
-        df = self.clean(pd.read_csv(os.path.join(self.data_dir, file)))
+        fetched = os.path.join("fetched", file)
+        path = fetched if os.path.isfile(fetched) else os.path.join(self.data_dir, file)
+        df = self.clean(pd.read_csv(path))
 
         print(f"{df.size} sections")
 

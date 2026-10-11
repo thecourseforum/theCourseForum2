@@ -1,5 +1,6 @@
 """Views for index and about pages."""
 
+import csv
 import json
 from pathlib import Path
 
@@ -54,13 +55,12 @@ def data_snapshot(request):
     semester = request.GET.get("semester", "")
     term = sis_term_code(semester) if semester else None
     classes = []
-    page_count = None
     if term is not None:
-        snapshot_path = _TCF_WEBSITE_ROOT.parent / "fetched" / f"{term}.json"
+        year, _, season = semester.partition("_")
+        snapshot_path = _TCF_WEBSITE_ROOT.parent / "fetched" / f"{year}_{season.lower()}.csv"
         if snapshot_path.is_file():
-            data = json.loads(snapshot_path.read_text(encoding="utf-8"))
-            classes = data.get("classes") or []
-            page_count = data.get("pageCount")
+            with snapshot_path.open(encoding="utf-8", newline="") as handle:
+                classes = list(csv.DictReader(handle))
     try:
         index = int(request.GET.get("n", "0"))
     except ValueError:
@@ -74,7 +74,6 @@ def data_snapshot(request):
         {
             "semester": semester,
             "term": term,
-            "page_count": page_count,
             "section": section,
             "index": index,
             "class_count": len(classes),

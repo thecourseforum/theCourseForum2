@@ -19,15 +19,14 @@
             </p>
         {% elif class_count == 0 %}
             <p>
-                No <code>fetched/{{ term }}.json</code> yet. Run <code>python manage.py fetch_data {{ semester }}</code>.
+                No <code>fetched/{{ semester }}.csv</code> yet. Run <code>python manage.py fetch_data {{ semester }}</code>.
             </p>
         {% else %}
             <pre>term {{ term }}
-classes {{ class_count }}
-pages {{ page_count }}</pre>
-            <p class="snapshot-code">{{ section.subject }} {{ section.catalog_nbr }}</p>
-            <p class="snapshot-descr">{{ section.descr }}</p>
-            <p class="snapshot-enrollment">{{ section.enrollment_total }} enrolled</p>
+sections {{ class_count }}</pre>
+            <p class="snapshot-code">{{ section.Mnemonic }} {{ section.Number }}</p>
+            <p class="snapshot-descr">{{ section.Title }}</p>
+            <p class="snapshot-enrollment">{{ section.Enrollment }} enrolled</p>
             <p>
                 <a href="?semester={{ semester }}&amp;n={{ index|add:-1 }}">Previous class</a>
                 ·

@@ -9,11 +9,11 @@ docker compose exec devcontainer uv run python manage.py fetch_data "<year>_<sea
 With no argument, the semester comes from today's date.
 
 The snapshot lives in https://github.com/thecourseforum/tCF-data on branch
-dev, as data/<sis-term>.json. COURSE_DATA_REPO_URL and
+dev, as data/<year>_<season>.csv. COURSE_DATA_REPO_URL and
 COURSE_DATA_REPO_BRANCH override that.
 """
 
-import json
+import csv
 import os
 import subprocess
 from pathlib import Path
@@ -22,7 +22,7 @@ from django.core.management.base import BaseCommand
 
 from tcf_website.utils import current_semester, sis_term_code
 
-# Production course-data repository. Fall 2026 is data/1268.json on branch dev.
+# Production course-data repository. Fall 2026 is data/2026_fall.csv on branch dev.
 COURSE_DATA_REPO_URL = "https://github.com/thecourseforum/tCF-data.git"
 COURSE_DATA_REPO_BRANCH = "dev"
 
@@ -34,9 +34,9 @@ class Command(BaseCommand):
     """Download the snapshot the data-repo bot committed for one semester."""
 
     help = (
-        "Download data/<sis-term>.json from thecourseforum/tCF-data "
+        "Download data/<year>_<season>.csv from thecourseforum/tCF-data "
         "(branch dev). Does not call SIS. "
-        "load_semester cannot import this JSON."
+        "load_semester reads this file from fetched/ when it is present."
     )
 
     def add_arguments(self, parser):
@@ -69,7 +69,9 @@ class Command(BaseCommand):
             os.environ.get("COURSE_DATA_REPO_BRANCH", "").strip()
             or COURSE_DATA_REPO_BRANCH
         )
-        git_path = f"data/{term}.json"
+        year, _, season = semester.partition("_")
+        filename = f"{year}_{season.lower()}.csv"
+        git_path = f"data/{filename}"
 
         self.stdout.write(
             f"Downloading {git_path} from thecourseforum/tCF-data ({branch})."
@@ -98,17 +100,9 @@ class Command(BaseCommand):
             return
 
         DEST_DIR.mkdir(exist_ok=True)
-        dest = DEST_DIR / f"{term}.json"
+        dest = DEST_DIR / filename
         dest.write_bytes(show.stdout)
-        try:
-            data = json.loads(dest.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
-            self.stdout.write(self.style.ERROR(f"{git_path} is not JSON."))
-            return
-        classes = data.get("classes") or []
+        with dest.open(encoding="utf-8", newline="") as handle:
+            row_count = sum(1 for _ in csv.DictReader(handle))
         self.stdout.write(self.style.SUCCESS(f"Wrote {dest}"))
-        self.stdout.write(
-            f"term {data.get('term', term)}\n"
-            f"classes {len(classes)}\n"
-            f"pages {data.get('pageCount')}\n"
-        )
+        self.stdout.write(f"term {term}\nsections {row_count}\n")
