@@ -63,13 +63,11 @@ implementation while preserving the semester argument, CSV columns and order,
 output directory, and `<year>_<season>.csv` filename. Fetching still only writes
 files; `load_semester` remains the separate database-loading step.
 
-The original fetcher is retained unchanged in
-[fetch_data_old.py](../tcf_website/management/commands/fetch_data_old.py) for
-benchmarking. Actual runtime depends on the semester and server response times.
-Omitting the semester now defaults to the current semester, with progress bars.
 
 SIS page-based requests supply all course and section fields; SIS attribute codes
-map locally to CSV labels. HoosList is used **only for descriptions**, once per
+map locally to CSV labels. Unknown attribute codes trigger a SIS ClassDetails
+lookup for that section's discipline and cost labels, with a separate section-field
+progress bar. HoosList is used **only for descriptions**, once per
 unique course, with SIS fallback if HoosList fails. Past semesters use SIS
 for descriptions by default because HoosList has no term parameter. HoosList
 wording or spacing may differ from SIS.
@@ -83,54 +81,7 @@ Useful options:
 - `--no-progress` disables progress bars.
 
 There is no persistent cache, warmup, or CourseForum scraping. Requests retry up
-to five times; exhausted SIS requests and unknown attribute codes stop the export.
+to five times; exhausted SIS requests and malformed SIS responses stop the export.
 Progress shows the page total after the first response and counts description
 sources and SIS fallbacks. CSV retains the first four meetings, matching the
 original; optional JSON retains all meetings. Files are written directly.
-
-## Benchmark
-
-Run [benchmark_fetch_data.py](../tcf_website/management/commands/benchmark_fetch_data.py)
-as a standalone script from the project root inside the devcontainer:
-
-```sh
-uv run python tcf_website/management/commands/benchmark_fetch_data.py
-```
-
-Or, with the bundled `web` service running:
-
-```sh
-docker compose --profile full exec web python tcf_website/management/commands/benchmark_fetch_data.py
-```
-
-It compares the original, optimized with HoosList descriptions, and optimized with
-SIS descriptions for Fall 2026, `acad_org=CS`. Each configuration runs once with no
-warmups. Outputs go to the Git-ignored directory
-`tcf_website/management/commands/semester_data/benchmark_data/` as `old.csv`,
-`optimized-hooslist.csv`, and `optimized-sis.csv`; each run replaces these files.
-
-The terminal summary reports timings, request counts excluding retries, and exact
-CSV comparisons against the original, including capitalization and whitespace.
-No comparison JSON is written. Both the fetcher and benchmark report elapsed
-seconds and percentages for descriptions versus everything else, including retries
-and SIS fallbacks. Concurrent durations are not added together. For the original,
-class-detail requests count as description time even though they fetch other
-fields too; overlapping requests count once.
-
-When differences exist, `differences-hooslist.csv` and `differences-sis.csv` contain
-one row per differing field, including missing/extra classes and fields:
-
-- Class number, course, section, `DeviationType` (the field name), and `Change` (changed value or missing/extra class/field).
-- `Difference`: `spacing`, `capitalization`, `spacing&capitalization`, or `other`; classification does not hide mismatches.
-- `true_source`: the actual description provider (`sis` or `hooslist`), including fallbacks; other fields come from SIS.
-- `OriginalHighlighted` and `DeviatedHighlighted`: full text with changed spans inside ⟦brackets⟧.
-- `Original` and `Deviated`: the full, unchanged raw values as the last two columns.
-
-Inside highlighted spans, · means space, ⍽ nonbreaking space, ↵ newline,
-␍ carriage return, and ⇥ tab. Enable **Wrap Text** in Excel to read long cells;
-the CSV uses UTF-8 with a BOM so Excel recognizes these characters.
-
-Actual sources are tracked in memory during the benchmark without changing the
-normal CSV schema. Re-comparing older exports without this metadata shows
-`unknown` for descriptions. Clean comparisons remove stale differences files;
-filenames follow the requested mode, such as `differences-auto.csv` for auto mode.

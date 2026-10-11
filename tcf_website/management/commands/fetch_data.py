@@ -70,7 +70,7 @@ SECTION_MAPPING = {
     "Waitlist": "wait_tot",
     "WaitlistLimit": "wait_cap",
 }
-ATTRIBUTE_MAPPING = {  # Full labels verified against SIS ClassDetails. Unknown codes fail;
+ATTRIBUTE_MAPPING = {  # Verified SIS labels; unknown codes use ClassDetails.
     "ASUD-AIP": "Artistic, Interpretive, & Philosophical Inquiry",
     "ASUD-CMP": "Chemical, Mathematical, and Physical Universe",
     "ASUD-CSW": "Cultures & Societies of the World",
@@ -203,14 +203,12 @@ def fetch_sis_courses(
         }
         subject_seen = set()
         with live_progress(
-            desc=f"SIS pages ({subject or 'all subjects'})",
+            desc=f"SIS pages ({subject})" if subject else "SIS pages",
             unit="page",
             progress=progress,
             progress_file=progress_file,
         ) as bar:
-            bar.set_postfix_str(
-                "waiting for page 1; total unknown until first response"
-            )
+            bar.set_postfix_str("waiting for page 1")
             first = request_sis_json(
                 session, "IScript_ClassSearch", timeout=timeout, page=1, **filters
             )
@@ -239,12 +237,8 @@ def fetch_sis_courses(
                 subject_seen.update(records)
                 courses.update(records)
                 bar.set_postfix_str(
-                    f"{len(courses)} sections received"
-                    + (
-                        f"; waiting for page {page + 1}/{total_pages}"
-                        if page < total_pages
-                        else ""
-                    ),
+                    f"sections={len(courses)}"
+                    + (f", waiting={page + 1}" if page < total_pages else ""),
                     refresh=False,
                 )
                 bar.update(1)
@@ -263,14 +257,26 @@ def format_time(value):
     )
 
 
-def section_to_csv_row(course):
-    """Convert a SIS record locally, without changing its fields."""
-    codes = filter(None, map(str.strip, (course["crse_attr_value"] or "").split(",")))
-    attributes = [
-        (code, ATTRIBUTE_MAPPING[code])
-        for code in codes
-        if code not in IGNORED_ATTRIBUTES
-    ]
+def section_to_csv_row(course, session=None, timeout=TIMEOUT):
+    """Map section fields; resolve unfamiliar attributes from SIS ClassDetails."""
+    codes = list(
+        filter(None, map(str.strip, (course["crse_attr_value"] or "").split(",")))
+    )
+    if set(codes) - ATTRIBUTE_MAPPING.keys() - IGNORED_ATTRIBUTES:
+        data = request_sis_json(
+            session,
+            "IScript_ClassDetails",
+            timeout=timeout,
+            class_nbr=course["class_nbr"],
+        )
+        attributes = data["section_info"]["enrollment_information"][
+            "class_attributes"
+        ].splitlines()
+    else:
+        attributes = [
+            ATTRIBUTE_MAPPING[code] for code in codes if code not in IGNORED_ATTRIBUTES
+        ]
+    attributes = list(filter(None, map(str.strip, attributes)))
     row = (
         dict.fromkeys(FIELDNAMES, "")
         | {column: course[key] for column, key in SECTION_MAPPING.items()}
@@ -280,14 +286,10 @@ def section_to_csv_row(course):
                 i["name"] for i in course["instructors"] if i["name"] not in ("", "-")
             ),
             "Disciplines": "$".join(
-                label for code, label in attributes if not code.startswith("NCLC-")
+                label for label in attributes if "cost" not in label.lower()
             ),
             "Cost": next(
-                (
-                    label
-                    for code, label in reversed(attributes)
-                    if code.startswith("NCLC-")
-                ),
+                (label for label in reversed(attributes) if "cost" in label.lower()),
                 "",
             ),
         }
@@ -539,7 +541,31 @@ class Command(BaseCommand):
                     f"Processing {len(courses):,} sections and "
                     f"{len({course_key(term, c) for c in courses}):,} unique courses."
                 )
-                rows = list(map(section_to_csv_row, courses))
+                with (
+                    ThreadPoolExecutor() as pool,
+                    live_progress(
+                        desc="Section fields (SIS for unknown attributes)",
+                        unit="section",
+                        total=len(courses),
+                        progress=request_options["progress"],
+                        progress_file=request_options["progress_file"],
+                    ) as bar,
+                ):
+                    futures = {
+                        pool.submit(
+                            section_to_csv_row, course, session, options["timeout"]
+                        ): i
+                        for i, course in enumerate(courses)
+                    }
+                    rows = [{} for _ in courses]
+                    try:
+                        for future in as_completed(futures):
+                            rows[futures[future]] = future.result()
+                            bar.update(1)
+                    except BaseException:
+                        for future in futures:
+                            future.cancel()
+                        raise
                 description_start = time.monotonic()
                 descriptions, stats = fetch_descriptions(
                     courses,
