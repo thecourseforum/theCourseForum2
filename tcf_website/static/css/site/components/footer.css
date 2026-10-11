@@ -26,14 +26,12 @@
   }
 }
 
-
 /* ===== FOOTER CONTAINER ===== */
 
 .footer__inner {
   max-width: var(--size-max);
   margin: 0 auto;
 }
-
 
 /* ===== FOOTER TOP ===== */
 
@@ -49,7 +47,6 @@
     gap: var(--space-12);
   }
 }
-
 
 /* ===== FOOTER BRAND ===== */
 
@@ -88,7 +85,6 @@
   line-height: var(--leading-relaxed);
 }
 
-
 /* ===== FOOTER LINKS ===== */
 
 .footer__section {
@@ -126,7 +122,6 @@
   text-decoration: none;
 }
 
-
 /* ===== FOOTER SOCIAL ===== */
 
 .footer__social {
@@ -161,7 +156,6 @@
   height: 1.25rem;
 }
 
-
 /* ===== FOOTER BOTTOM ===== */
 
 .footer__bottom {
@@ -184,47 +178,4 @@
 .footer__copyright {
   font-size: var(--text-sm);
   color: var(--color-neutral-500);
-}
-
-.footer__legal {
-  display: flex;
-  gap: var(--space-6);
-}
-
-.footer__legal-link {
-  font-size: var(--text-sm);
-  color: var(--color-neutral-500);
-  text-decoration: none;
-  transition: color var(--duration-fast) var(--ease-default);
-}
-
-.footer__legal-link:hover {
-  color: var(--color-neutral-300);
-  text-decoration: none;
-}
-
-
-/* ===== DONATION CTA ===== */
-
-.footer__donate {
-  margin-top: var(--space-6);
-  padding: var(--space-4);
-  
-  background-color: var(--color-neutral-800);
-  border-radius: var(--radius-lg);
-}
-
-.footer__donate-text {
-  font-size: var(--text-sm);
-  color: var(--color-neutral-300);
-  margin-bottom: var(--space-3);
-}
-
-.footer__donate .btn {
-  background-color: var(--accent);
-  color: var(--color-white);
-}
-
-.footer__donate .btn:hover {
-  background-color: var(--accent-hover);
 }
