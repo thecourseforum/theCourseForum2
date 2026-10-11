@@ -62,13 +62,18 @@ class Command(BaseCommand):
             )
             return
 
-        repo_url = os.environ.get("COURSE_DATA_REPO_URL", "").strip() or COURSE_DATA_REPO_URL
+        repo_url = (
+            os.environ.get("COURSE_DATA_REPO_URL", "").strip() or COURSE_DATA_REPO_URL
+        )
         branch = (
-            os.environ.get("COURSE_DATA_REPO_BRANCH", "").strip() or COURSE_DATA_REPO_BRANCH
+            os.environ.get("COURSE_DATA_REPO_BRANCH", "").strip()
+            or COURSE_DATA_REPO_BRANCH
         )
         git_path = f"data/{term}.json"
 
-        self.stdout.write(f"Downloading {git_path} from thecourseforum/tCF-data ({branch}).")
+        self.stdout.write(
+            f"Downloading {git_path} from thecourseforum/tCF-data ({branch})."
+        )
         fetch = subprocess.run(
             ["git", "fetch", repo_url, branch],
             cwd=REPO_ROOT,
@@ -76,7 +81,9 @@ class Command(BaseCommand):
             text=True,
         )
         if fetch.returncode != 0:
-            self.stdout.write(self.style.ERROR(fetch.stderr.strip() or "git fetch failed"))
+            self.stdout.write(
+                self.style.ERROR(fetch.stderr.strip() or "git fetch failed")
+            )
             return
 
         show = subprocess.run(

@@ -86,7 +86,8 @@ def current_semester(today: date | None = None) -> str:
         chosen = name
     general = _general_semester(today)
     if chosen is None or (
-        general not in _PUBLISHED_SEMESTERS and _semester_key(general) > _semester_key(chosen)
+        general not in _PUBLISHED_SEMESTERS
+        and _semester_key(general) > _semester_key(chosen)
     ):
         return general
     return chosen
