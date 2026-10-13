@@ -84,8 +84,7 @@
         <div class="modal__container">
             <div class="modal__header">
                 <h2 class="modal__title">Delete Profile</h2>
-                <button type="button"
-                        class="modal__close"
+                <button class="modal__close"
                         data-action="close-modal"
                         aria-label="Close modal">
                     <svg viewBox="0 0 24 24"
@@ -114,7 +113,7 @@
                 <p>Are you sure you want to delete your profile?</p>
             </div>
             <div class="modal__footer">
-                <button type="button" class="btn btn--secondary" data-action="close-modal">Cancel</button>
+                <button class="btn btn--secondary" data-action="close-modal">Cancel</button>
                 <form method="post" action="{% url 'delete_profile' user.id %}">
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{% url 'browse' %}">

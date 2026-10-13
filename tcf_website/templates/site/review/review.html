@@ -85,7 +85,8 @@
                        value="{% if course %}{{ course.id }}{% endif %}"
                        {% if not course %}disabled{% endif %}>
             {% endif %}
-            <section class="review-section {% if is_club %}{% if not club %}review-cascade--locked{% endif %}{% else %}{% if not course %}review-cascade--locked{% endif %}{% endif %}" id="review-logistics-section">
+            <section class="review-section {% if is_club %}{% if not club %}review-cascade--locked{% endif %}{% else %}{% if not course %}review-cascade--locked{% endif %}{% endif %}"
+                     id="review-logistics-section">
                 <h2 class="review-section__title">
                     <span class="review-section__title-icon">🗓️</span> Logistics
                 </h2>
@@ -149,10 +150,7 @@
                 <div class="modal__container" role="dialog" aria-modal="true">
                     <header class="modal__header">
                         <h2 class="modal__title">Duplicate Review</h2>
-                        <button type="button"
-                                class="modal__close"
-                                aria-label="Close modal"
-                                data-modal-close></button>
+                        <button class="modal__close" aria-label="Close modal" data-modal-close></button>
                     </header>
                     <div class="modal__content">
                         <p>
@@ -164,7 +162,7 @@
                         </p>
                     </div>
                     <footer class="modal__footer">
-                        <button type="button" class="btn btn--primary" data-modal-close>Okay</button>
+                        <button class="btn btn--primary" data-modal-close>Okay</button>
                     </footer>
                 </div>
             </div>
