@@ -131,7 +131,7 @@ class ModelReviewTests(TestCase):
         """Test display reviews method"""
         review_queryset = Review.objects.filter(course=self.course)
 
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(
             Review.get_sorted_reviews(self.course, self.instructor, self.user1),
             review_queryset,
             transform=lambda x: x,  # Needed so that the formatting works
