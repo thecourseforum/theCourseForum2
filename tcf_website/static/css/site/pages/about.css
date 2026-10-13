@@ -23,7 +23,6 @@
   }
 }
 
-
 /* ===== HERO SECTION ===== */
 
 .about-hero {
@@ -52,7 +51,6 @@
   color: var(--fg-muted);
 }
 
-
 /* ===== DESCRIPTION ===== */
 
 .about-description {
@@ -68,7 +66,6 @@
 .about-description strong {
   color: var(--fg);
 }
-
 
 /* ===== TABS ===== */
 
@@ -120,7 +117,6 @@
   height: 1.5rem;
 }
 
-
 /* ===== TAB CONTENT ===== */
 
 .about-content {
@@ -130,7 +126,6 @@
 .about-content.is-active {
   display: block;
 }
-
 
 /* ===== CONTENT SECTIONS ===== */
 
@@ -151,7 +146,6 @@
 .about-empty {
   color: var(--fg-muted);
 }
-
 
 /* ===== TEAM GRID ===== */
 
@@ -205,11 +199,9 @@
   font-size: var(--text-xs);
 }
 
-
 .team-grid--compact .member-card__initials {
   font-size: var(--text-3xl);
 }
-
 
 /* ===== MEMBER CARD ===== */
 
@@ -299,29 +291,6 @@
   color: var(--fg-subtle);
 }
 
-
-
-/* ===== HISTORY SECTION ===== */
-
-.history-content {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.history-content h3 {
-  font-size: var(--text-xl);
-  font-weight: var(--font-semibold);
-  margin-bottom: var(--space-4);
-}
-
-.history-content p {
-  font-size: var(--text-base);
-  line-height: var(--leading-relaxed);
-  color: var(--fg-muted);
-  margin-bottom: var(--space-4);
-}
-
-
 /* ===== HISTORY TIMELINE ===== */
 
 .about-history-grid {
@@ -364,7 +333,6 @@
   color: var(--fg-muted);
   line-height: var(--leading-relaxed);
 }
-
 
 /* ===== SPONSORS SECTION ===== */
 
