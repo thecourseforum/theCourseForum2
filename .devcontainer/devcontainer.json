@@ -5,6 +5,7 @@
   "runServices": ["devcontainer", "db"],
   "workspaceFolder": "/app",
   "postCreateCommand": "npm ci",
+  "postStartCommand": "uv run python manage.py collectstatic --noinput",
   "customizations": {
     "vscode": {
       "settings": {

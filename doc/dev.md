@@ -36,9 +36,9 @@ Services without a profile provide the shared local infrastructure:
 | --- | --- | --- |
 | `db` | PostgreSQL 18.1 | internal only |
 | `valkey` | Cache, sessions, and Cachalot | internal only |
-| `minio` | S3-compatible media/static storage | API `localhost:9000`, console `localhost:9001` |
-| `minio-init` | Creates the MinIO buckets, then exits | none |
-| `cdn` | Serves the MinIO static bucket through Caddy | `http://localhost:8081` |
+| `minio` | RustFS, S3-compatible media/static storage | API `localhost:9000`, console `localhost:9001/rustfs/console/` |
+| `minio-init` | Creates the RustFS buckets, then exits | none |
+| `cdn` | Serves the RustFS static bucket through Caddy | `http://localhost:8081` |
 
 The `full` profile adds the production-shaped application services:
 
@@ -106,7 +106,7 @@ To run the complete local stack with Gunicorn:
 docker compose --profile full up --build
 ```
 
-The `release` task waits for PostgreSQL, Valkey, and MinIO bucket initialization,
+The `release` task waits for PostgreSQL, Valkey, and RustFS bucket initialization,
 then `web` starts only after `release` succeeds.
 
 The plain command below starts infrastructure/CDN only and does not start
@@ -120,7 +120,7 @@ Once the full stack is running:
 
 - Website: <http://localhost:8000>
 - Static CDN: <http://localhost:8081>
-- MinIO console: <http://localhost:9001>
+- RustFS console: <http://localhost:9001/rustfs/console/>
 
 Do not run the devcontainer server and bundled `web` service on port 8000 at
 the same time.
@@ -180,7 +180,7 @@ docker compose --profile full run --rm web python manage.py <command>
 
 `TCF_ENV` selects the Django runtime mode:
 
-- `local`: local development settings and debug tools; uses Postgres, Valkey, and MinIO
+- `local`: local development settings and debug tools; uses Postgres, Valkey, and RustFS
 - `ci`: debug disabled; uses the same Compose-backed services in GitHub Actions
 - `prod`: production settings; uses AWS RDS, ElastiCache, and S3; ECS must set this explicitly
 
@@ -222,7 +222,7 @@ docker compose --profile full run --rm --build web python manage.py test
 ```
 
 GitHub Actions runs these tests with coverage against the same PostgreSQL,
-Valkey, and MinIO services.
+Valkey, and RustFS services.
 
 ## Useful documentation
 

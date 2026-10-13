@@ -95,6 +95,8 @@ jobs:
 
   django:
     runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
     outputs:
       code-coverage: ${{ steps.coverage.outputs.percentage }}
     steps:
@@ -132,10 +134,17 @@ jobs:
           STATIC_CUSTOM_DOMAIN=${STATIC_CUSTOM_DOMAIN}
           EOF
 
+      - name: Log in to Docker Hub
+        if: env.DOCKERHUB_USERNAME != ''
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Start Compose backends
         run: docker compose up -d --wait db valkey minio
 
-      - name: Initialize MinIO buckets
+      - name: Initialize RustFS buckets
         run: docker compose run --rm minio-init
 
       - name: Migrations & Tests
