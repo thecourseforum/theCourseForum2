@@ -43,7 +43,7 @@
             </a>
         </nav>
         <!-- Global Search (Hidden on Landing Page) -->
-        {% if request.resolver_match.url_name != "index" %}
+        {% if request.resolver_match.url_name != 'index' %}
             {% include "site/common/components/_search_bar.html" %}
         {% endif %}
         <!-- Actions -->
@@ -81,10 +81,7 @@
                 </div>
             </div>
             <!-- Theme Toggle -->
-            <button type="button"
-                    class="theme-toggle"
-                    data-theme-toggle
-                    aria-label="Toggle dark mode">
+            <button class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
                 <svg class="theme-toggle__moon"
                      viewBox="0 0 24 24"
                      fill="none"
@@ -111,8 +108,7 @@
             <!-- User Menu -->
             {% if user.is_authenticated %}
                 <div class="header__user dropdown" id="userDropdown">
-                    <button type="button"
-                            class="header__user-trigger"
+                    <button class="header__user-trigger"
                             onclick="this.parentElement.classList.toggle('is-open')">
                         <span class="header__user-avatar">
                             {% if user.first_name %}
@@ -172,13 +168,10 @@
                     </div>
                 </div>
             {% else %}
-                <button type="button"
-                        class="btn btn--primary btn--sm"
-                        data-modal-open="loginModal">Sign In</button>
+                <button class="btn btn--primary btn--sm" data-modal-open="loginModal">Sign In</button>
             {% endif %}
             <!-- Mobile Menu Toggle -->
-            <button type="button"
-                    class="header__mobile-trigger"
+            <button class="header__mobile-trigger"
                     id="mobileMenuTrigger"
                     aria-label="Open menu"
                     onclick="document.querySelector('.header').classList.toggle('is-mobile-open')">
