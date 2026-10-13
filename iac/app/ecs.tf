@@ -168,6 +168,8 @@ resource "aws_ecs_service" "django" {
   launch_type      = "FARGATE"
   platform_version = "1.4.0"
 
+  enable_execute_command = true
+
   network_configuration {
     subnets          = aws_subnet.public[*].id
     security_groups  = [aws_security_group.ecs_tasks.id]
