@@ -36,7 +36,7 @@
                 <li class="autocomplete-group-header" role="presentation">Courses</li>
                 {% for course in courses %}
                     <li class="autocomplete-item" role="option">
-                        {% if autocomplete_action == 'schedule' %}
+                        {% if autocomplete_action == "schedule" %}
                             {% url 'schedule_add_course' course_id=course.id as tcf_ac_sched_add %}
                             <a href="{{ tcf_ac_sched_add }}?next={{ schedule_return_url|urlencode }}{% if autocomplete_target %}&amp;schedule={{ autocomplete_target }}{% endif %}"
                                class="autocomplete-item__link"
@@ -81,7 +81,7 @@
                 <li class="autocomplete-group-header" role="presentation">Courses</li>
                 {% for course in courses %}
                     <li class="autocomplete-item" role="option">
-                        {% if autocomplete_action == 'schedule' %}
+                        {% if autocomplete_action == "schedule" %}
                             {% url 'schedule_add_course' course_id=course.id as tcf_ac_sched_add2 %}
                             <a href="{{ tcf_ac_sched_add2 }}?next={{ schedule_return_url|urlencode }}{% if autocomplete_target %}&amp;schedule={{ autocomplete_target }}{% endif %}"
                                class="autocomplete-item__link"

@@ -27,7 +27,7 @@ dev = [
     "django-debug-toolbar>=4.4.0,<5",
     "django-stubs>=4.2.7,<5",
     "djangorestframework-stubs>=3.14.0,<4",
-    "djlint>=1.36.0,<2",
+    "djlint>=1.46.4,<2",
     "prek>=0.5.2",
     "ruff>=0.9.0",
     "ty>=0.0.27",
@@ -76,6 +76,7 @@ exclude = ["**/migrations", "tcf_website/legacy_models.py"]
 profile = "django"
 indent = 4
 max_line_length = 120
+ignore = "H021"
 
 [tool.django-stubs]
 django_settings_module = "tcf_core.settings.dev"
