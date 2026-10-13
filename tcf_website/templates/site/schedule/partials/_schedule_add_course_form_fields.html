@@ -34,7 +34,8 @@
                                             class="select select--sm schedule-add-option__credits-select"
                                             aria-label="Credits">
                                         {% for co in option.credit_options %}
-                                            <option value="{{ co.value }}"{% if co.selected %} selected{% endif %}>{{ co.value }} cr</option>
+                                            <option value="{{ co.value }}"
+                                                    {% if co.selected %} selected{% endif %}>{{ co.value }} cr</option>
                                         {% endfor %}
                                     </select>
                                 {% endif %}
@@ -69,7 +70,8 @@
                                             class="select select--sm schedule-add-option__credits-select"
                                             aria-label="Credits">
                                         {% for co in option.credit_options %}
-                                            <option value="{{ co.value }}"{% if co.selected %} selected{% endif %}>{{ co.value }} cr</option>
+                                            <option value="{{ co.value }}"
+                                                    {% if co.selected %} selected{% endif %}>{{ co.value }} cr</option>
                                         {% endfor %}
                                     </select>
                                 {% endif %}
