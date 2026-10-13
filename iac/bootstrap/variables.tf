@@ -17,7 +17,13 @@ variable "deployer_principal_arn" {
 variable "terraform_github_environments" {
   description = "GitHub Actions environments permitted to assume the Terraform deployer role"
   type        = list(string)
-  default     = ["terraform-plan", "terraform-prod"]
+  default     = ["terraform-prod"]
+}
+
+variable "terraform_plan_github_environments" {
+  description = "GitHub Actions environments permitted to assume the Terraform planner role"
+  type        = list(string)
+  default     = ["terraform-plan"]
 }
 
 variable "code_deploy_github_environments" {
@@ -42,6 +48,12 @@ variable "terraform_deployer_role_name" {
   description = "Role created in the application account for Terraform deployments"
   type        = string
   default     = "tcf-terraform-deployer"
+}
+
+variable "terraform_planner_role_name" {
+  description = "Role created in the application account for GitHub Actions Terraform plans"
+  type        = string
+  default     = "tcf-terraform-planner"
 }
 
 variable "dns_role_arn" {

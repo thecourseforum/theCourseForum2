@@ -3,6 +3,11 @@ output "terraform_deployer_role_arn" {
   value       = aws_iam_role.terraform_deployer.arn
 }
 
+output "terraform_planner_role_arn" {
+  description = "Application-account role assumed by GitHub Actions for Terraform plans"
+  value       = aws_iam_role.terraform_planner.arn
+}
+
 output "github_deployer_role_arn" {
   description = "Application-account role assumed by GitHub Actions for code deployments"
   value       = aws_iam_role.github_deployer.arn
