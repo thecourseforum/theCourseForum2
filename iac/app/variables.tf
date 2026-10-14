@@ -24,6 +24,7 @@ variable "domain_name" {
 variable "dns_role_arn" {
   description = "ARN of the role Terraform assumes in the separate Route 53 account"
   type        = string
+  ephemeral   = true
 
   validation {
     condition     = can(regex("^arn:aws:iam::011713309463:role/.+", var.dns_role_arn))

@@ -9,9 +9,10 @@ This small Terraform project creates the resources needed by `../app`:
 - A KMS-encrypted, versioned S3 state bucket in the application account, which also holds saved plans
 - A GitHub Actions OIDC provider in the application account
 
-`tcf-terraform-dns` in account `011713309463` is not managed here. It is
-maintained by hand in that account and referenced by ARN through the
-`dns_role_arn` variable, so bootstrap needs credentials only for the
+`tcf-terraform-dns` and `tcf-terraform-dns-readonly` in account `011713309463`
+are not managed here. They live in the `dns/` module of `thecourseforum/infra`
+and are referenced by ARN through the `dns_role_arn` and
+`dns_readonly_role_arn` variables, so bootstrap needs credentials only for the
 application account.
 
 Bootstrap used local state on its first run because it creates the state
@@ -87,9 +88,12 @@ NIXPKGS_ALLOW_UNFREE=1 nix run --impure nixpkgs#terraform -- \
   -var='dns_role_arn=<dns_role_arn-output>'
 ```
 
+`dns_role_arn` is ephemeral, so Terraform never stores it in a saved plan or
+in state. Pass it again when applying a saved plan.
+
 `tcf-terraform-deployer` receives `PowerUserAccess` plus the IAM permissions
-needed by the application stack, including permission to assume the
-hand-maintained DNS role. It can create and change only `tcf-prod-*` roles,
+needed by the application stack, including permission to assume
+`tcf-terraform-dns`. It can create and change only `tcf-prod-*` roles,
 and only when they carry the `tcf-prod-role-boundary` permissions boundary, so
 a role it creates can never exceed what the application needs. It can pass
 those roles only to ECS tasks, Lambda, and EventBridge Scheduler, and cannot
@@ -102,7 +106,7 @@ cannot change infrastructure or deploy. It receives `ReadOnlyAccess` plus:
 - write and delete the `app/` state lock file, and write saved plans under
   `plans/`
 - read `tcf-prod/*` secrets, which plan refreshes and which state already holds
-- assume the hand-maintained DNS role
+- assume `tcf-terraform-dns-readonly`, which can only read the Route 53 zones
 
 It is explicitly denied reading objects in the database dump bucket.
 
@@ -115,12 +119,13 @@ It is explicitly denied reading objects in the database dump bucket.
 - describe and update `tcf-prod-*` services on `tcf-prod-cluster`
 - pass only the web task's execution and task roles, and only to ECS tasks
 
-It cannot read Terraform state, change infrastructure, or assume the DNS role.
+It cannot read Terraform state, change infrastructure, or assume either DNS
+role.
 
-The trust policy of `tcf-terraform-dns` in account `011713309463` must allow
-both `arn:aws:iam::099933383052:role/tcf-terraform-deployer` and
-`arn:aws:iam::099933383052:role/tcf-terraform-planner` to call
-`sts:AssumeRole`. That account is maintained by hand, so update it there.
+In account `011713309463`, `tcf-terraform-dns` trusts only
+`tcf-terraform-deployer` and can change records, while
+`tcf-terraform-dns-readonly` trusts only `tcf-terraform-planner` and can only
+read them. Both are managed in `thecourseforum/infra`, so change them there.
 
 ## Deploys in GitHub Actions
 
@@ -161,8 +166,11 @@ Both jobs request a GitHub OIDC token with audience `sts.amazonaws.com`. The
 subject `repo:thecourseforum/theCourseForum2:environment:terraform-plan`. The
 `apply` job assumes `tcf-terraform-deployer`, whose OIDC trust statement
 accepts only `repo:thecourseforum/theCourseForum2:environment:terraform-prod`,
-so write credentials are available only after approval. Both roles then assume
-`tcf-terraform-dns` in account `011713309463` for Route 53.
+so write credentials are available only after approval. For Route 53 in account
+`011713309463`, the `plan` job then assumes `tcf-terraform-dns-readonly` and
+the `apply` job assumes `tcf-terraform-dns`. Each job sets its own
+`TF_VAR_dns_role_arn`, and because the variable is ephemeral the saved plan
+does not carry the read-only role into the apply.
 Protect the `master`, `dev` and `iac` branches and the environments because
 they control which workflow code can request the OIDC token.
 

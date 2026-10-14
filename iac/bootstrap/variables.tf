@@ -62,6 +62,12 @@ variable "dns_role_arn" {
   default     = "arn:aws:iam::011713309463:role/tcf-terraform-dns"
 }
 
+variable "dns_readonly_role_arn" {
+  description = "Existing DNS-account role that the planner may assume to read Route 53"
+  type        = string
+  default     = "arn:aws:iam::011713309463:role/tcf-terraform-dns-readonly"
+}
+
 variable "application_role_prefix" {
   description = "Prefix for application resources and IAM roles that the deployers may manage"
   type        = string

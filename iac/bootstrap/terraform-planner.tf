@@ -69,10 +69,10 @@ resource "aws_iam_role_policy" "terraform_planner" {
         Resource = local.application_secret_arns
       },
       {
-        Sid      = "AssumeDnsRole"
+        Sid      = "AssumeDnsReadOnlyRole"
         Effect   = "Allow"
         Action   = "sts:AssumeRole"
-        Resource = var.dns_role_arn
+        Resource = var.dns_readonly_role_arn
       },
       {
         Sid      = "DenyDatabaseDumps"

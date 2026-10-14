@@ -19,8 +19,13 @@ output "application_role_boundary_arn" {
 }
 
 output "dns_role_arn" {
-  description = "DNS-account role ARN passed to iac/app as dns_role_arn"
+  description = "DNS-account role ARN passed to iac/app as dns_role_arn when applying"
   value       = var.dns_role_arn
+}
+
+output "dns_readonly_role_arn" {
+  description = "DNS-account role ARN passed to iac/app as dns_role_arn when planning in GitHub Actions"
+  value       = var.dns_readonly_role_arn
 }
 
 output "terraform_state_bucket_name" {

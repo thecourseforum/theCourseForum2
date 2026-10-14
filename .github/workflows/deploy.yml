@@ -17,7 +17,6 @@ env:
   AWS_REGION: us-east-1
   TF_IN_AUTOMATION: "true"
   TF_VAR_domain_name: thecourseforumtest.com
-  TF_VAR_dns_role_arn: arn:aws:iam::011713309463:role/tcf-terraform-dns
   TF_VAR_ecr_image_tag: ${{ github.sha }}
   TERRAFORM_VERSION: 1.16.3
   PLANNER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-planner
@@ -42,6 +41,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: terraform-plan
+    env:
+      TF_VAR_dns_role_arn: arn:aws:iam::011713309463:role/tcf-terraform-dns-readonly
     steps:
       - name: Check out selected revision
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -104,6 +105,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     environment: terraform-prod
+    env:
+      TF_VAR_dns_role_arn: arn:aws:iam::011713309463:role/tcf-terraform-dns
     steps:
       - name: Require repository admin
         if: github.event_name == 'workflow_dispatch'
