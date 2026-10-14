@@ -228,13 +228,22 @@ jobs:
             --service "$ECS_SERVICE" \
             --task-definition "$TASK_DEF_ARN" > /dev/null
 
-          for _ in 1 2 3; do
-            aws ecs wait services-stable --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE" && break
+          deadline=$((SECONDS + 600))
+          while true; do
+            primary=$(aws ecs describe-services --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE" \
+              | jq -c '.services[0].deployments[] | select(.status == "PRIMARY") | {taskDefinition, rolloutState}')
+            td=$(jq -r .taskDefinition <<< "$primary")
+            state=$(jq -r .rolloutState <<< "$primary")
+            if [[ "$td" == "$TASK_DEF_ARN" && "$state" == "COMPLETED" ]]; then
+              break
+            fi
+            if [[ "$state" == "FAILED" ]]; then
+              echo "Deployment failed: $primary"
+              exit 1
+            fi
+            if (( SECONDS > deadline )); then
+              echo "Deployment did not complete within timeout: $primary"
+              exit 1
+            fi
+            sleep 15
           done
-
-          primary=$(aws ecs describe-services --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE" \
-            | jq -c '.services[0].deployments[] | select(.status == "PRIMARY") | {taskDefinition, rolloutState}')
-          if [[ "$(jq -r .taskDefinition <<< "$primary")" != "$TASK_DEF_ARN" || "$(jq -r .rolloutState <<< "$primary")" != "COMPLETED" ]]; then
-            echo "Deployment did not complete: $primary"
-            exit 1
-          fi
