@@ -7,9 +7,23 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
-from tcf_website.models import CourseGrade, CourseInstructorGrade
+from tcf_website.models import (
+    CourseGrade,
+    CourseInstructorGrade,
+    CourseInstructorSemesterGrade,
+    Semester,
+)
 
 from .test_utils import setup
+
+
+def create_grade_semesters():
+    """Create the semesters referenced by the test CSVs. load_grades raises if a
+    row's term has no matching Semester."""
+    Semester.objects.create(year=2009, season="FALL", number=1098)
+    Semester.objects.create(year=2023, season="SPRING", number=1232)
+    # 1238 is already taken by setup()'s incomplete_semester, so use a stand-in
+    Semester.objects.create(year=2023, season="FALL", number=12380)
 
 
 class LoadGradesTestCase(TestCase):
@@ -23,18 +37,29 @@ class LoadGradesTestCase(TestCase):
         # Clearing is required to pass tests
         CourseGrade.objects.all().delete()
         CourseInstructorGrade.objects.all().delete()
+        create_grade_semesters()
         management.call_command(
             "load_grades", "test/test_data", "--suppress-tqdm", verbosity=0
         )
         cls.cg = CourseGrade.objects.first()
         cls.cig = CourseInstructorGrade.objects.first()
+        cls.cisg = CourseInstructorSemesterGrade.objects.first()
 
     def test_no_duplicates(self):
-        """Make sure only one instance of CourseGrade and CourseInstructorGrade were created.
+        """Make sure only one instance of CourseGrade, CourseInstructorGrade and
+        CourseInstructorSemesterGrade were created.
         In particular, make sure that the blank row does *not* have an object created for it.
         """
         self.assertEqual(CourseGrade.objects.count(), 1)
         self.assertEqual(CourseInstructorGrade.objects.count(), 1)
+        self.assertEqual(CourseInstructorSemesterGrade.objects.count(), 1)
+
+    def test_correct_semester(self):
+        """Make sure the three sections were combined under 2009 Fall"""
+        self.assertEqual(self.cisg.course, self.cig.course)
+        self.assertEqual(self.cisg.instructor, self.cig.instructor)
+        self.assertEqual(self.cisg.semester.year, 2009)
+        self.assertEqual(self.cisg.semester.season, "FALL")
 
     def test_correct_course(self):
         """Make sure the course for both is CS 1420"""
@@ -48,11 +73,13 @@ class LoadGradesTestCase(TestCase):
         """Check valid total_enrolled"""
         self.assertEqual(self.cg.total_enrolled, 24)
         self.assertEqual(self.cig.total_enrolled, 24)
+        self.assertEqual(self.cisg.total_enrolled, 24)
 
     def test_correct_distribution(self):
         """Make sure both instances match expected values"""
         self.assert_correct_data(self.cg)
         self.assert_correct_data(self.cig)
+        self.assert_correct_data(self.cisg)
 
     def assert_correct_data(self, model):
         """Helper function. Checks model's data against expected values from
@@ -96,6 +123,7 @@ class LoadGradesMissingAggregate(TestCase):
         setup(cls)
         CourseGrade.objects.all().delete()
         CourseInstructorGrade.objects.all().delete()
+        create_grade_semesters()
         management.call_command(
             "load_grades",
             "test/missing_aggregate",
@@ -104,11 +132,13 @@ class LoadGradesMissingAggregate(TestCase):
         )
         cls.cg = CourseGrade.objects.first()
         cls.cig = CourseInstructorGrade.objects.first()
+        cls.cisg = CourseInstructorSemesterGrade.objects.first()
 
     def test_total_students(self):
         """Check valid total_enrolled even when not provided"""
         self.assertEqual(self.cg.total_enrolled, 10)
         self.assertEqual(self.cig.total_enrolled, 10)
+        self.assertEqual(self.cisg.total_enrolled, 10)
 
 
 class LoadGradesMissingDistribution(TestCase):
@@ -120,6 +150,7 @@ class LoadGradesMissingDistribution(TestCase):
         setup(cls)
         CourseGrade.objects.all().delete()
         CourseInstructorGrade.objects.all().delete()
+        create_grade_semesters()
         management.call_command(
             "load_grades",
             "test/missing_distribution",
@@ -128,14 +159,17 @@ class LoadGradesMissingDistribution(TestCase):
         )
         cls.cg = CourseGrade.objects.first()
         cls.cig = CourseInstructorGrade.objects.first()
+        cls.cisg = CourseInstructorSemesterGrade.objects.first()
 
     def test_aggregate_stats(self):
         """Check aggregate stats across sections combined correctly"""
         self.assertEqual(self.cg.average, 3)
         self.assertEqual(self.cig.average, 3)
+        self.assertEqual(self.cisg.average, 3)
 
         self.assertEqual(self.cg.total_enrolled, 4)
         self.assertEqual(self.cig.total_enrolled, 4)
+        self.assertEqual(self.cisg.total_enrolled, 4)
 
 
 # ---------------------------------------------------------------------------
