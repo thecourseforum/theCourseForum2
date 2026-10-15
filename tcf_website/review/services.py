@@ -40,3 +40,10 @@ def is_duplicate_review_for_user(user, instance) -> bool:
             course=instance.course, instructor=instance.instructor
         ).exists()
     )
+
+
+def get_review_text(review):
+    """Return the text of a review, or None if it has no text."""
+    if review.text:
+        return review.text
+    return None

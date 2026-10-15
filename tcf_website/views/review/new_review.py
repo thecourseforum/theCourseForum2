@@ -9,6 +9,7 @@ from ...models import Club, Course, Instructor, Semester
 from ...review.forms import ReviewForm
 from ...review.services import (
     club_semester_choices_payload,
+    get_review_text,
     instructors_for_course_semester,
 )
 from ...utils import parse_mode, recent_semesters, semesters_for_course, with_mode
@@ -24,8 +25,9 @@ def new_review(request):
         if form.is_valid():
             instance = form.save(commit=False)
             instance.user = request.user
+            text = get_review_text(instance)
+            # pass text to moderation pipeline before saving
             instance.save()
-
             if instance.club:
                 messages.success(request, f"Successfully reviewed {instance.club}!")
             else:

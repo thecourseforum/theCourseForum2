@@ -1,6 +1,7 @@
 """Tests for Review model."""
 
 import json
+from unittest import mock
 
 from django.contrib.messages import get_messages
 from django.db import IntegrityError
@@ -8,8 +9,9 @@ from django.forms.models import model_to_dict
 from django.test import TestCase
 from django.urls import reverse
 
-from ..models import Review, Vote
+from ..models import Club, ClubCategory, Review, Vote
 from ..review.forms import ReviewForm
+from ..review.services import get_review_text
 from .test_utils import setup, suppress_request_warnings
 
 
@@ -262,3 +264,65 @@ class ReviewPreflightJsonTests(TestCase):
         self.assertEqual(response.status_code, 400)
         data = json.loads(response.content)
         self.assertFalse(data.get("ok", True))
+
+
+class GetReviewTextTests(TestCase):
+    """Tests for review.services.get_review_text."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_returns_text_for_course_review(self):
+        """A review with text returns exactly that text."""
+        self.assertEqual(get_review_text(self.review1), self.review1.text)
+
+    def test_returns_none_for_empty_text(self):
+        """A rating-only course review returns None."""
+        self.review1.text = ""
+        self.assertIsNone(get_review_text(self.review1))
+
+    def test_club_review_without_text_returns_none(self):
+        """A club review with no text must not return the club's description."""
+        category = ClubCategory.objects.create(name="Test Cat", slug="test-cat")
+        club = Club.objects.create(
+            name="Test Club", category=category, description="We are a club."
+        )
+        review = Review(user=self.user1, club=club, semester=self.semester, text="")
+        self.assertIsNone(get_review_text(review))
+
+    def test_text_of_review_saved_through_form(self):
+        """Text is returned for a review created the way new_review creates it."""
+        data = model_to_dict(self.review1)
+        data["course"] = self.course2.id
+        data["text"] = "x" * 250
+        form = ReviewForm(data)
+        self.assertTrue(form.is_valid(), form.errors)
+        instance = form.save(commit=False)
+        instance.user = self.user2
+        instance.save()
+        self.assertEqual(get_review_text(instance), "x" * 250)
+
+
+class NewReviewModerationHookTests(TestCase):
+    """The new_review view must hand the review text to moderation."""
+
+    def setUp(self):
+        setup(self)
+
+    def test_posting_review_calls_get_review_text(self):
+        """POSTing a valid review calls get_review_text with the new review."""
+        data = model_to_dict(self.review1)
+        data["course"] = self.course2.id
+        data["text"] = "y" * 250
+        data = {k: v for k, v in data.items() if v is not None}
+        self.client.force_login(self.user3)
+
+        with mock.patch(
+            "tcf_website.views.review.new_review.get_review_text",
+            wraps=get_review_text,
+        ) as spy:
+            response = self.client.post(reverse("new_review"), data)
+
+        self.assertEqual(response.status_code, 302)
+        created = Review.objects.get(user=self.user3, course=self.course2)
+        spy.assert_called_once_with(created)
