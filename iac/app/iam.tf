@@ -1,6 +1,7 @@
 # ECS Task Execution Role
 resource "aws_iam_role" "ecs_task_execution" {
-  name = "${local.name_prefix}-ecs-task-execution-role"
+  name                 = "${local.name_prefix}-ecs-task-execution-role"
+  permissions_boundary = local.role_permissions_boundary_arn
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -52,7 +53,8 @@ resource "aws_iam_role_policy" "ecs_task_execution_secrets" {
 
 # ECS Task Role (for application permissions)
 resource "aws_iam_role" "ecs_task" {
-  name = "${local.name_prefix}-ecs-task-role"
+  name                 = "${local.name_prefix}-ecs-task-role"
+  permissions_boundary = local.role_permissions_boundary_arn
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -98,6 +100,27 @@ resource "aws_iam_role_policy" "ecs_task_s3" {
           "s3:HeadObject"
         ]
         Resource = "${aws_s3_bucket.static.arn}/*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "ecs_task_exec" {
+  name = "${local.name_prefix}-ecs-exec-policy"
+  role = aws_iam_role.ecs_task.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel"
+        ]
+        Resource = "*"
       }
     ]
   })

@@ -8,7 +8,18 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.6"
     }
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.7"
+    }
   }
 
   required_version = ">= 1.2"
+
+  backend "s3" {
+    bucket       = "tcf-terraform-state-099933383052"
+    key          = "app/terraform.tfstate"
+    region       = "us-east-1"
+    use_lockfile = true
+  }
 }
