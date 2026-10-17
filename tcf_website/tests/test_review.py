@@ -6,12 +6,12 @@ from unittest import mock
 from django.contrib.messages import get_messages
 from django.db import IntegrityError
 from django.forms.models import model_to_dict
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from ..models import Club, ClubCategory, Review, Vote
 from ..review.forms import ReviewForm
-from ..review.services import get_review_text
+from ..review.services import get_review_text, moderate_review
 from .test_utils import setup, suppress_request_warnings
 
 
@@ -326,3 +326,54 @@ class NewReviewModerationHookTests(TestCase):
         self.assertEqual(response.status_code, 302)
         created = Review.objects.get(user=self.user3, course=self.course2)
         spy.assert_called_once_with(created)
+
+
+class ModerateReviewTests(TestCase):
+    """Tests for the Amazon Nova Micro integration."""
+
+    @mock.patch("tcf_website.review.services.boto3.client")
+    @override_settings(ENABLE_REVIEW_MODERATION=True)
+    def test_returns_nova_micro_response(self, mock_client):
+        """The function sends review text to Bedrock and returns its response."""
+        mock_client.return_value.converse.return_value = {
+            "output": {"message": {"content": [{"text": "Appropriate"}]}}
+        }
+
+        text = "The professor was helpful during office hours."
+        result = moderate_review(text)
+
+        self.assertEqual(result, "Appropriate")
+        mock_client.return_value.converse.assert_called_once()
+
+        call_kwargs = mock_client.return_value.converse.call_args.kwargs
+        self.assertEqual(call_kwargs["modelId"], "amazon.nova-micro-v1:0")
+        self.assertIn(text, call_kwargs["messages"][0]["content"][0]["text"])
+
+    @mock.patch("tcf_website.views.review.new_review.moderate_review")
+    def test_new_review_calls_moderation(self, mock_moderate):
+        """Submitting a valid review passes its text to moderation."""
+        setup(self)
+
+        text = (
+            "The professor explained concepts clearly and provided helpful feedback. "
+            * 4
+        ).strip()
+
+        data = {
+            "text": text,
+            "course": self.course2.pk,
+            "instructor": self.instructor.pk,
+            "semester": self.semester.pk,
+            "instructor_rating": 4,
+            "difficulty": 3,
+            "recommendability": 4,
+            "enjoyability": 4,
+            "amount_reading": 1,
+            "amount_writing": 1,
+            "amount_group": 1,
+            "amount_homework": 1,
+        }
+
+        self.client.force_login(self.user3)
+        response = self.client.post(reverse("new_review"), data)
+        mock_moderate.assert_called_once_with(text)

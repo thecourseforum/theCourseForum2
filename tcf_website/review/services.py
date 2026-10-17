@@ -1,5 +1,11 @@
 """Review-related queries and small pure helpers."""
 
+import logging
+
+import boto3
+from botocore.exceptions import BotoCoreError, ClientError
+from django.conf import settings
+
 from ..models import Instructor
 from ..utils import recent_semesters
 
@@ -47,3 +53,42 @@ def get_review_text(review):
     if review.text:
         return review.text
     return None
+
+
+logger = logging.getLogger(__name__)
+
+
+def moderate_review(text: str) -> str | None:
+    """Send review text to Nova Micro and return its response."""
+    if not text or not getattr(settings, "ENABLE_REVIEW_MODERATION", False):
+        return None
+
+    try:
+        client = boto3.client("bedrock-runtime", region_name="us-east-1")
+
+        response = client.converse(
+            modelId="amazon.nova-micro-v1:0",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "text": (
+                                "Classify this course review as Appropriate or "
+                                "Inappropriate based on whether it contains "
+                                "toxic, abusive, or derogatory language. "
+                                "Respond with only the classification.\n\n"
+                                f"Review: {text}"
+                            )
+                        }
+                    ],
+                }
+            ],
+            inferenceConfig={"maxTokens": 20, "temperature": 0},
+        )
+
+        return response["output"]["message"]["content"][0]["text"]
+
+    except (BotoCoreError, ClientError, OSError):
+        logger.exception("Bedrock review moderation request failed")
+        return None

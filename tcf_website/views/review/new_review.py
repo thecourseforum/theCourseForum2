@@ -11,6 +11,7 @@ from ...review.services import (
     club_semester_choices_payload,
     get_review_text,
     instructors_for_course_semester,
+    moderate_review,
 )
 from ...utils import parse_mode, recent_semesters, semesters_for_course, with_mode
 
@@ -26,7 +27,9 @@ def new_review(request):
             instance = form.save(commit=False)
             instance.user = request.user
             text = get_review_text(instance)
-            # pass text to moderation pipeline before saving
+
+            if text:
+                moderate_review(text)
             instance.save()
             if instance.club:
                 messages.success(request, f"Successfully reviewed {instance.club}!")
