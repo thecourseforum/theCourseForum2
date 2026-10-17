@@ -11,6 +11,7 @@ from ...review.services import (
     instructors_for_course_semester,
     is_duplicate_review_for_user,
     recent_semester_id_set,
+    review_will_be_hidden_for_toxicity,
 )
 from ...utils import semesters_for_course
 
@@ -54,6 +55,23 @@ def check_zero_hours_per_week(request):
         if instance.hours_per_week == 0:
             return JsonResponse({"zero": True})
         return JsonResponse({"zero": False})
+    return _review_preflight_invalid_form_response(request, form)
+
+
+@login_required
+@require_POST
+def check_toxicity(request):
+    """Warn if a review would be hidden by the toxicity display filter.
+
+    This is a *display* concern, not a validation error: the review is still
+    saved on submit, but may be hidden from listings. So we never block
+    submission here -- we only signal so the frontend can warn the user.
+    """
+    form = ReviewForm(request.POST)
+    if form.is_valid():
+        instance = form.save(commit=False)
+        hidden = review_will_be_hidden_for_toxicity(instance.text)
+        return JsonResponse({"toxic": hidden})
     return _review_preflight_invalid_form_response(request, form)
 
 
