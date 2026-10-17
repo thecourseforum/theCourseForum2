@@ -11,7 +11,7 @@ from ...review.services import (
     club_semester_choices_payload,
     instructors_for_course_semester,
 )
-from ...utils import parse_mode, recent_semesters, semesters_for_course, with_mode
+from ...utils import parse_mode, reviewable_semesters, semesters_for_course, with_mode
 
 
 @login_required
@@ -69,7 +69,7 @@ def _handle_course_review_get(request, mode):
                 "club": None,
                 "instructor": None,
                 "instructors": [],
-                "semesters": recent_semesters(),
+                "semesters": reviewable_semesters(),
                 "review_main_unlocked": False,
             },
         )
@@ -112,7 +112,7 @@ def _handle_course_review_get(request, mode):
 def _handle_club_review_get(request, mode):
     """Handle GET for club reviews."""
     club_id = request.GET.get("club")
-    semesters = recent_semesters()
+    semesters = reviewable_semesters()
 
     if not club_id:
         return render(
@@ -149,7 +149,7 @@ def _handle_club_review_get(request, mode):
 def _render_review_form_with_errors(request, form, is_club, mode):
     """Re-render the form with validation errors."""
     context: dict = {"form": form, "is_club": is_club, "mode": mode}
-    base_semesters = recent_semesters()
+    base_semesters = reviewable_semesters()
 
     if is_club:
         club = form.cleaned_data.get("club")
