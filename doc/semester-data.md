@@ -77,11 +77,49 @@ Useful options:
 - `--description-source sis` or `--description-source hooslist` overrides automatic source selection.
 - `--json` also saves raw SIS search records beside the CSV; no JSON is written by default.
 - `--output /tmp/courses.csv` selects another CSV destination.
-- `--acad-org CS` or `--subjects CS` filters by academic organization or subject; filtered exports require `--output`.
+- `--acad-org CS` or `--subjects CS` filters by academic organization or subject; filtered fetches require `--output`.
 - `--no-progress` disables progress bars.
 
 There is no persistent cache, warmup, or CourseForum scraping. Requests retry up
-to five times; exhausted SIS requests and malformed SIS responses stop the export.
+to five times. If a SIS request still fails or SIS returns a malformed response,
+`fetch_data` exits with an error and does not write a CSV.
 Progress shows the page total after the first response and counts description
 sources and SIS fallbacks. CSV retains the first four meetings, matching the
 original; optional JSON retains all meetings. Files are written directly.
+
+## Cloudflare bot protection
+
+HoosList is protected by a Cloudflare managed challenge. A request that fails
+the challenge receives a `403` response with a "Just a moment..." HTML page
+instead of the course description. Whether a request is challenged depends on
+the client and the network it is sent from.
+
+Results observed in October 2026:
+
+| Client                        | On eduroam | Off eduroam |
+| ----------------------------- | ---------- | ----------- |
+| Web browser                   | Passes     | Passes      |
+| `curl` / `python-requests`    | Passes     | Blocked     |
+| Selenium with headless Chrome | Passes     | Blocked     |
+| Selenium with headed Chrome   | Passes     | Passes      |
+
+### Effect on `fetch_data`
+
+When HoosList blocks a request, `fetch_data` falls back to SIS for that
+course's description. `403` responses are not retried, so a blocked run makes
+one HoosList request and one SIS ClassDetails request per course, roughly
+doubling the number of description requests. The summary at the end of the run
+reports these as HoosList fallbacks.
+
+SIS has also returned empty, non-JSON responses on some networks. Unlike a
+HoosList block, this makes `fetch_data` exit with an error without writing a
+CSV. Any existing CSV at the output path is left unchanged.
+
+### Request volume
+
+For Fall 2026 (9,717 sections and 2,971 unique courses), a full fetch makes:
+
+- 98 SIS search requests (100 sections per page)
+- 2,971 HoosList description requests
+- one SIS ClassDetails request for each section with an unmapped attribute code
+  and for each HoosList fallback

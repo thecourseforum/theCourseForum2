@@ -18,9 +18,7 @@
                     <option value="">Select a club first</option>
                 {% else %}
                     {% for sem in semesters %}
-                        <option value="{{ sem.id }}"
-                                {% if form and form.data.semester == sem.id|stringformat:"s" %}selected{% elif not form or not form.data.semester %}{% if forloop.first %}selected{% endif %}
-                                {% endif %}>{{ sem.season|title }} {{ sem.year }}</option>
+                        <option value="{{ sem.id }}" {% if form and form.data.semester == sem.id|stringformat:"s" %}selected{% elif not form or not form.data.semester %}{% if forloop.first %}selected{% endif %} {% endif %}>{{ sem.season|title }} {{ sem.year }}</option>
                     {% endfor %}
                 {% endif %}
             </select>
@@ -33,10 +31,7 @@
                 {% if not course %}
                     <option value="">Select a course first</option>
                 {% else %}
-                    <option value=""
-                            disabled
-                            {% if not form or not form.data.semester %}{% if not prefill_semester %}selected{% endif %}
-                            {% endif %}>Select term…</option>
+                    <option value="" disabled {% if not form or not form.data.semester %}{% if not prefill_semester %}selected{% endif %} {% endif %}>Select term…</option>
                     {% for sem in semesters %}
                         <option value="{{ sem.id }}"
                                 {% if form and form.data.semester == sem.id|stringformat:"s" %}selected{% elif prefill_semester and prefill_semester.id == sem.id %}selected{% endif %}>

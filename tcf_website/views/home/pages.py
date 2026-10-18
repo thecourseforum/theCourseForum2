@@ -102,6 +102,7 @@ class AboutView(TemplateView):
         marketing_team = self._normalize_members(
             self.team_info.get("marketing_team", [])
         )
+        finance_team = self._normalize_members(self.team_info.get("finance_team", []))
 
         contributors = []
         for group in self.alum_info.get("contributors", []):
@@ -116,8 +117,13 @@ class AboutView(TemplateView):
         context["engineering_team"] = engineering_team
         context["design_team"] = design_team
         context["marketing_team"] = marketing_team
+        context["finance_team"] = finance_team
         context["team"] = (
-            executive_team + engineering_team + design_team + marketing_team
+            executive_team
+            + engineering_team
+            + design_team
+            + marketing_team
+            + finance_team
         )
         context["founders"] = self._normalize_members(
             self.alum_info.get("founders", [])
