@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from cachalot.api import invalidate
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from tqdm import tqdm
 
 from tcf_website.models import Course, CourseGrade, CourseInstructorGrade, Instructor
@@ -105,6 +106,7 @@ class Command(BaseCommand):
             help="Create a .txt file with missing instructors",
         )
 
+    @transaction.atomic
     def handle(self, *args, **options):
         """Standard Django function implementation - runs when this command is executed."""
         self.verbosity = options["verbosity"]
@@ -307,7 +309,7 @@ class Command(BaseCommand):
 
         # bulk_create is much more efficient than creating them separately
         CourseGrade.objects.bulk_create(unsaved_cg_instances)
-        invalidate(CourseGrade)
+        transaction.on_commit(lambda: invalidate(CourseGrade))
         if self.verbosity > 0:
             print("Done creating CourseGrade instances")
             print("Step 3: Bulk-create CourseInstructorGrade instances")
@@ -323,7 +325,7 @@ class Command(BaseCommand):
             )
             unsaved_cig_instances.append(unsaved_cig_instance)
         CourseInstructorGrade.objects.bulk_create(unsaved_cig_instances)
-        invalidate(CourseInstructorGrade)
+        transaction.on_commit(lambda: invalidate(CourseInstructorGrade))
         if self.verbosity > 0:
             print("Done creating CourseInstructorGrade instances")
 
