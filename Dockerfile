@@ -35,6 +35,10 @@ RUN apt-get update && \
 COPY --from=docker:cli /usr/local/bin/docker /usr/local/bin/docker
 COPY --from=docker:cli /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
 
+COPY --from=amazon/aws-cli:2.37.9 /usr/local/aws-cli /usr/local/aws-cli
+RUN ln -s /usr/local/aws-cli/v2/current/bin/aws /usr/local/bin/aws && \
+    ln -s /usr/local/aws-cli/v2/current/bin/aws_completer /usr/local/bin/aws_completer
+
 COPY .devcontainer/bashrc /root/tcf-dev-bashrc
 RUN grep -q 'tcf-dev-bashrc' /root/.bashrc || echo '. /root/tcf-dev-bashrc' >> /root/.bashrc
 
