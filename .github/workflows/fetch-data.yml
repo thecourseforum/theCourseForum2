@@ -24,7 +24,7 @@ env:
   DB_PASSWORD: postgres
   DB_HOST: db
   DB_PORT: "5432"
-  COURSE_DATA_REPO_BRANCH: dev
+  COURSE_DATA_REPO_BRANCH: main
   PYTHONUNBUFFERED: "1"
 
 jobs:

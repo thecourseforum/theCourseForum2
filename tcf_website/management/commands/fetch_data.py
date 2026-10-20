@@ -9,7 +9,7 @@ docker compose exec devcontainer uv run python manage.py fetch_data "<year>_<sea
 With no argument, the semester comes from today's date.
 
 The snapshot lives in https://github.com/thecourseforum/tCF-data on branch
-dev, as data/<year>_<season>.csv. COURSE_DATA_REPO_URL and
+main, as data/<year>_<season>.csv. COURSE_DATA_REPO_URL and
 COURSE_DATA_REPO_BRANCH override that.
 """
 
@@ -22,9 +22,9 @@ from django.core.management.base import BaseCommand, CommandError
 
 from tcf_website.utils import current_semester, sis_term_code
 
-# Production course-data repository. Fall 2026 is data/2026_fall.csv on branch dev.
+# Production course-data repository. Fall 2026 is data/2026_fall.csv on branch main.
 COURSE_DATA_REPO_URL = "https://github.com/thecourseforum/tCF-data.git"
-COURSE_DATA_REPO_BRANCH = "dev"
+COURSE_DATA_REPO_BRANCH = "main"
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEST_DIR = REPO_ROOT / "fetched"
@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
     help = (
         "Download data/<year>_<season>.csv from thecourseforum/tCF-data "
-        "(branch dev). Does not call SIS. "
+        "(branch main). Does not call SIS. "
         "load_semester reads this file from fetched/ when it is present."
     )
 
