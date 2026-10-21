@@ -148,6 +148,13 @@
       "github": "Accute9"
     },
     {
+      "name": "Hani Moudarres",
+      "role": "Developer",
+      "class": "2029",
+      "img_filename": "ENG_Hani_Moudarres.jpg",
+      "github": "HaniMoudarres"
+    },
+    {
       "name": "Pelin Sayar",
       "role": "Developer",
       "class": "2029",
@@ -197,12 +204,6 @@
       "img_filename": "Maya_Degafe.png"
     },
     {
-      "name": "Linda Le",
-      "role": "Designer",
-      "class": "2029",
-      "img_filename": "Linda_Le.jpg"
-    },
-    {
       "name": "Sunny Yuan",
       "role": "Designer",
       "class": "2029",
@@ -241,6 +242,12 @@
       "role": "Finance",
       "class": "2029",
       "img_filename": "Shivali_Verma.jpg"
+    },
+    {
+      "name": "Anyi Hu",
+      "role": "Finance",
+      "class": "2030",
+      "img_filename": "Anyi_Hu.jpg"
     }
   ]
 }
