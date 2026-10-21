@@ -234,6 +234,12 @@
       "role": "Finance",
       "class": "2029",
       "img_filename": "Shivali_Verma.jpg"
+    },
+    {
+      "name": "Anyi Hu",
+      "role": "Finance",
+      "class": "2030",
+      "img_filename": "Anyi_Hu.jpg"
     }
   ]
 }
