@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = "==3.12.*"
 
 [[package]]
@@ -673,6 +673,7 @@ dependencies = [
     { name = "redis" },
     { name = "requests" },
     { name = "tqdm" },
+    { name = "urllib3" },
 ]
 
 [package.dev-dependencies]
@@ -708,6 +709,7 @@ requires-dist = [
     { name = "redis", specifier = ">=7.4.0" },
     { name = "requests", specifier = ">=2.31.0,<3" },
     { name = "tqdm", specifier = ">=4.66.1,<5" },
+    { name = "urllib3", specifier = ">=2.0.0,<3" },
 ]
 
 [package.metadata.requires-dev]

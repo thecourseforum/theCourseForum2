@@ -19,6 +19,7 @@ dependencies = [
     "redis>=7.4.0",
     "requests>=2.31.0,<3",
     "tqdm>=4.66.1,<5",
+    "urllib3>=2.0.0,<3",
 ]
 
 [dependency-groups]
