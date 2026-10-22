@@ -5,6 +5,7 @@ from .delete_view import DeleteReview
 from .new_review import new_review
 from .preflight import (
     check_duplicate,
+    check_toxicity,
     check_zero_hours_per_week,
     review_instructor_options,
     review_semester_options,
@@ -15,6 +16,7 @@ __all__ = [
     "DeleteReview",
     "ReviewForm",
     "check_duplicate",
+    "check_toxicity",
     "check_zero_hours_per_week",
     "downvote",
     "new_review",
