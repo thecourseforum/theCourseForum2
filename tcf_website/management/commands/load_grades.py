@@ -138,7 +138,7 @@ class Command(BaseCommand):
 
         The only case we drop is when there is no data in any relevant column.
         """
-        df.replace("-", np.NaN, inplace=True)
+        df.replace("-", np.nan, inplace=True)
 
         df.dropna(
             how="all",
