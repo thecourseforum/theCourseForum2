@@ -209,10 +209,6 @@
   margin-top: var(--space-2);
 }
 
-.word-count--error {
-  color: var(--danger);
-}
-
 /* ===== PICKER HEADING (course / club name in section title) ===== */
 
 .review-entity-heading {

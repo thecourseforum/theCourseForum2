@@ -69,9 +69,7 @@
         {% block head %}
         {% endblock head %}
     </head>
-    <body class="min-h-screen flex flex-col"
-          data-user-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"
-          data-recent-browse-mode="{% if request.resolver_match %}{% if request.GET.mode == 'clubs' or request.resolver_match.url_name == 'club' or request.resolver_match.url_name == 'club_category' %}clubs{% else %}courses{% endif %}{% else %}courses{% endif %}">
+    <body class="min-h-screen flex flex-col" data-user-authenticated="{{ user.is_authenticated|yesno:'true,false' }}" data-recent-browse-mode="{% if request.resolver_match %}{% if request.GET.mode == 'clubs' or request.resolver_match.url_name == 'club' or request.resolver_match.url_name == 'club_category' %}clubs{% else %}courses{% endif %}{% else %}courses{% endif %}">
         <!-- Google Tag Manager (noscript) -->
         <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54T5TXX"
         height="0"
