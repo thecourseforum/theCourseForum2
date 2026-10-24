@@ -23,7 +23,7 @@ from django.core.management.base import BaseCommand, CommandError
 from tqdm import tqdm
 
 from tcf_website.management.http import requests_session_with_pool_and_retries
-from tcf_website.management.sis_schema import validate_sis_courses
+from tcf_website.management.sis_schema import catalog_description, validate_sis_courses
 
 TIMEOUT = 30
 MAX_RETRIES = 5
@@ -230,6 +230,7 @@ def fetch_sis_courses(
             )
             pages = chain([first] if total_pages else [], remaining)
             for page, data in enumerate(pages, 1):
+                validate_sis_courses(data["classes"])
                 records = {str(c["class_nbr"]): c for c in data["classes"]}
                 if not records.keys() - subject_seen:
                     raise ValueError(
@@ -340,10 +341,7 @@ def fetch_sis_description(session, course, timeout):
         timeout=timeout,
         class_nbr=course["class_nbr"],
     )
-    section_info = data.get("section_info") or {}
-    catalog_descr = section_info.get("catalog_descr") or {}
-    text = catalog_descr.get("crse_catalog_description")
-    return text if text and text.strip() else ""
+    return catalog_description(data, course["class_nbr"])
 
 
 def fetch_hooslist_description(hoos_session, course, timeout):
@@ -525,7 +523,6 @@ class Command(BaseCommand):
                     raise CommandError(
                         "SIS returned no sections; existing files were kept."
                     )
-                validate_sis_courses(courses)
                 output.parent.mkdir(parents=True, exist_ok=True)
                 if options.get("json"):
                     output.with_suffix(".json").write_text(
