@@ -23,6 +23,7 @@ from django.core.management.base import BaseCommand, CommandError
 from tqdm import tqdm
 
 from tcf_website.management.http import requests_session_with_pool_and_retries
+from tcf_website.management.sis_schema import validate_sis_courses
 
 TIMEOUT = 30
 MAX_RETRIES = 5
@@ -524,6 +525,7 @@ class Command(BaseCommand):
                     raise CommandError(
                         "SIS returned no sections; existing files were kept."
                     )
+                validate_sis_courses(courses)
                 output.parent.mkdir(parents=True, exist_ok=True)
                 if options.get("json"):
                     output.with_suffix(".json").write_text(
