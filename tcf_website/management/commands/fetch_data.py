@@ -23,7 +23,11 @@ from django.core.management.base import BaseCommand, CommandError
 from tqdm import tqdm
 
 from tcf_website.management.http import requests_session_with_pool_and_retries
-from tcf_website.management.sis_schema import catalog_description, validate_sis_courses
+from tcf_website.management.sis_schema import (
+    catalog_description,
+    class_attributes,
+    validate_sis_courses,
+)
 
 TIMEOUT = 30
 MAX_RETRIES = 5
@@ -271,9 +275,7 @@ def section_to_csv_row(course, session=None, timeout=TIMEOUT):
             timeout=timeout,
             class_nbr=course["class_nbr"],
         )
-        attributes = data["section_info"]["enrollment_information"][
-            "class_attributes"
-        ].splitlines()
+        attributes = class_attributes(data, course["class_nbr"])
     else:
         attributes = [
             ATTRIBUTE_MAPPING[code] for code in codes if code not in IGNORED_ATTRIBUTES

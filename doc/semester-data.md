@@ -83,9 +83,9 @@ Useful options:
 There is no persistent cache, warmup, or CourseForum scraping. Requests retry up
 to five times. If a SIS request still fails or SIS returns a malformed response,
 `fetch_data` exits with an error and does not write a CSV.
-Each SIS search page and SIS description response is also checked for every
-field `fetch_data` reads. If SIS renames or drops one, the run fails with an
-error naming it. The expected fields are listed in
+Each SIS search page and SIS ClassDetails response is also checked for every
+field `fetch_data` reads, and fields it treats as text must be text. If SIS
+renames, drops, or retypes one, the run fails with an error naming it. The expected fields are listed in
 `tcf_website/management/sis_schema.py`; update them alongside `fetch_data.py`.
 Progress shows the page total after the first response and counts description
 sources and SIS fallbacks. CSV retains the first four meetings, matching the
