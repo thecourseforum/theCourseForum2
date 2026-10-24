@@ -1,4 +1,4 @@
-"""Expected structure of SIS ClassSearch records, checked before ``fetch_data`` writes anything."""
+"""Expected structure of the SIS data ``fetch_data`` reads; a mismatch fails the fetch."""
 
 SECTION_FIELDS = frozenset(
     {
@@ -28,6 +28,7 @@ NESTED_FIELDS = {
         {"instructor", "days", "start_time", "end_time", "room", "start_dt", "end_dt"}
     ),
 }
+DESCRIPTION_PATH = ("section_info", "catalog_descr", "crse_catalog_description")
 
 
 def section_errors(course):
@@ -62,3 +63,19 @@ def validate_sis_courses(courses):
             raise ValueError(
                 f"SIS section {class_nbr} has an unexpected structure: {'; '.join(errors)}."
             )
+
+
+def catalog_description(details, class_nbr):
+    """Return the description in a SIS ClassDetails response; empty text is allowed.
+
+    A missing field raises ValueError, so a SIS format change fails the fetch
+    instead of quietly blanking every description.
+    """
+    value = details
+    for key in DESCRIPTION_PATH:
+        if not isinstance(value, dict) or key not in value:
+            raise ValueError(
+                f"SIS details for section {class_nbr} have an unexpected structure: missing {key}."
+            )
+        value = value[key]
+    return value if value and value.strip() else ""

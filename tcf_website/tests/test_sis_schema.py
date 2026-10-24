@@ -1,4 +1,4 @@
-"""Tests for the SIS section structure check that guards fetch_data."""
+"""Tests for the SIS structure checks that guard fetch_data."""
 
 import tempfile
 from io import StringIO
@@ -10,7 +10,11 @@ from django.core.management.base import CommandError
 from django.test import SimpleTestCase
 
 from tcf_website.management.commands.fetch_data import SECTION_MAPPING
-from tcf_website.management.sis_schema import SECTION_FIELDS, validate_sis_courses
+from tcf_website.management.sis_schema import (
+    SECTION_FIELDS,
+    catalog_description,
+    validate_sis_courses,
+)
 
 VALID_SECTION = {
     "class_nbr": 12345,
@@ -42,6 +46,22 @@ VALID_SECTION = {
         }
     ],
 }
+VALID_DETAILS = {
+    "section_info": {
+        "catalog_descr": {"crse_catalog_description": "Lists, trees, and graphs."}
+    }
+}
+
+
+def fake_sis(classes, details=VALID_DETAILS):
+    """Stand in for request_sis_json: one search page, then the given ClassDetails."""
+
+    def respond(session, endpoint, **params):
+        if endpoint == "IScript_ClassSearch":
+            return {"pageCount": 1, "classes": classes}
+        return details
+
+    return respond
 
 
 class ValidateSisCoursesTests(SimpleTestCase):
@@ -54,8 +74,10 @@ class ValidateSisCoursesTests(SimpleTestCase):
         self.assertLessEqual(set(SECTION_MAPPING.values()), SECTION_FIELDS)
 
     def test_missing_section_field_fails(self):
-        section = {k: v for k, v in VALID_SECTION.items() if k != "enrollment_total"}
-        with self.assertRaisesRegex(ValueError, "12345.*missing enrollment_total"):
+        section = {
+            k: v for k, v in VALID_SECTION.items() if k != "enrollment_total"
+        } | {"class_nbr": 67890}
+        with self.assertRaisesRegex(ValueError, "67890.*missing enrollment_total"):
             validate_sis_courses([VALID_SECTION, section])
 
     def test_malformed_meeting_fails(self):
@@ -68,27 +90,63 @@ class ValidateSisCoursesTests(SimpleTestCase):
         with self.assertRaisesRegex(ValueError, "instructors is not a list"):
             validate_sis_courses([section])
 
-    def test_fetch_data_fails_without_writing_csv(self):
-        section = {k: v for k, v in VALID_SECTION.items() if k != "meetings"}
-        with (
-            tempfile.TemporaryDirectory() as tmp,
-            patch(
-                "tcf_website.management.commands.fetch_data.fetch_sis_courses",
-                return_value=[section],
-            ),
+
+class CatalogDescriptionTests(SimpleTestCase):
+    """Structure check for SIS ClassDetails descriptions."""
+
+    def test_returns_description(self):
+        self.assertEqual(
+            catalog_description(VALID_DETAILS, 12345), "Lists, trees, and graphs."
+        )
+
+    def test_blank_description_is_allowed(self):
+        details = {"section_info": {"catalog_descr": {"crse_catalog_description": " "}}}
+        self.assertEqual(catalog_description(details, 12345), "")
+
+    def test_missing_field_fails(self):
+        with self.assertRaisesRegex(ValueError, "12345.*missing catalog_descr"):
+            catalog_description({"section_info": {}}, 12345)
+
+
+class FetchDataStructureTests(SimpleTestCase):
+    """fetch_data stops without writing a CSV when SIS data has the wrong structure."""
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.output = Path(tmp.name) / "courses.csv"
+
+    def fetch(self, sis, *options):
+        with patch(
+            "tcf_website.management.commands.fetch_data.request_sis_json",
+            side_effect=sis,
         ):
-            output = Path(tmp) / "courses.csv"
-            with self.assertRaisesRegex(CommandError, "missing meetings"):
-                call_command(
-                    "fetch_data",
-                    "2026_fall",
-                    "--subjects",
-                    "CS",
-                    "--output",
-                    str(output),
-                    "--json",
-                    "--no-progress",
-                    stdout=StringIO(),
-                )
-            self.assertFalse(output.exists())
-            self.assertFalse(output.with_suffix(".json").exists())
+            call_command(
+                "fetch_data",
+                "2026_fall",
+                "--subjects",
+                "CS",
+                "--output",
+                str(self.output),
+                "--description-source",
+                "sis",
+                "--no-progress",
+                *options,
+                stdout=StringIO(),
+            )
+
+    def test_valid_data_writes_csv(self):
+        self.fetch(fake_sis([VALID_SECTION]))
+        self.assertIn("Lists, trees, and graphs.", self.output.read_text())
+
+    def test_bad_section_fails_before_writing_files(self):
+        section = {k: v for k, v in VALID_SECTION.items() if k != "class_nbr"}
+        with self.assertRaisesRegex(CommandError, "missing class_nbr"):
+            self.fetch(fake_sis([section]), "--json")
+        self.assertFalse(self.output.exists())
+        self.assertFalse(self.output.with_suffix(".json").exists())
+
+    def test_bad_description_fails_without_writing_csv(self):
+        with self.assertRaisesRegex(CommandError, "12345.*missing catalog_descr"):
+            self.fetch(fake_sis([VALID_SECTION], {"section_info": {}}))
+        self.assertFalse(self.output.exists())
