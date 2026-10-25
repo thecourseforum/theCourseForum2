@@ -6,6 +6,7 @@ from datetime import datetime
 import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from tqdm import tqdm
 
 from tcf_website.models import (
@@ -39,6 +40,7 @@ class Command(BaseCommand):
             type=str,
         )
 
+    @transaction.atomic
     def handle(self, *args, **options):
 
         self.verbose = options["verbose"]
