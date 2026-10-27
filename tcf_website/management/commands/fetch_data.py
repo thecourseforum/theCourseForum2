@@ -23,11 +23,6 @@ from django.core.management.base import BaseCommand, CommandError
 from tqdm import tqdm
 
 from tcf_website.management.http import requests_session_with_pool_and_retries
-from tcf_website.management.sis_schema import (
-    catalog_description,
-    class_attributes,
-    validate_sis_courses,
-)
 
 TIMEOUT = 30
 MAX_RETRIES = 5
@@ -234,7 +229,6 @@ def fetch_sis_courses(
             )
             pages = chain([first] if total_pages else [], remaining)
             for page, data in enumerate(pages, 1):
-                validate_sis_courses(data["classes"])
                 records = {str(c["class_nbr"]): c for c in data["classes"]}
                 if not records.keys() - subject_seen:
                     raise ValueError(
@@ -275,7 +269,9 @@ def section_to_csv_row(course, session=None, timeout=TIMEOUT):
             timeout=timeout,
             class_nbr=course["class_nbr"],
         )
-        attributes = class_attributes(data, course["class_nbr"])
+        attributes = data["section_info"]["enrollment_information"][
+            "class_attributes"
+        ].splitlines()
     else:
         attributes = [
             ATTRIBUTE_MAPPING[code] for code in codes if code not in IGNORED_ATTRIBUTES
@@ -315,7 +311,7 @@ def section_to_csv_row(course, session=None, timeout=TIMEOUT):
                     "TBA"
                     if days in ("TBA", "-")
                     else (f"{days} {start} - {end}" if days and start and end else "")
-                ).lower(),
+                ),
             }
         )
     return row
@@ -343,7 +339,10 @@ def fetch_sis_description(session, course, timeout):
         timeout=timeout,
         class_nbr=course["class_nbr"],
     )
-    return catalog_description(data, course["class_nbr"])
+    section_info = data.get("section_info") or {}
+    catalog_descr = section_info.get("catalog_descr") or {}
+    text = catalog_descr.get("crse_catalog_description")
+    return text if text and text.strip() else ""
 
 
 def fetch_hooslist_description(hoos_session, course, timeout):

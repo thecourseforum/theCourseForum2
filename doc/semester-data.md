@@ -83,13 +83,18 @@ Useful options:
 There is no persistent cache, warmup, or CourseForum scraping. Requests retry up
 to five times. If a SIS request still fails or SIS returns a malformed response,
 `fetch_data` exits with an error and does not write a CSV.
-Each SIS search page and SIS ClassDetails response is also checked for every
-field `fetch_data` reads, and fields it treats as text must be text. If SIS
-renames, drops, or retypes one, the run fails with an error naming it. The expected fields are listed in
-`tcf_website/management/sis_schema.py`; update them alongside `fetch_data.py`.
 Progress shows the page total after the first response and counts description
 sources and SIS fallbacks. CSV retains the first four meetings, matching the
 original; optional JSON retains all meetings. Files are written directly.
+
+`load_semester` silently skips values it can't parse, so CI checks every
+semester CSV a PR adds or changes: headers, Days format and SIS casing
+(`MoWeFr 11:00am - 11:50am`), meeting dates, and numeric fields. Run the same
+check after fetching:
+
+```sh
+uv run python -m tcf_website.management.semester_csv tcf_website/management/commands/semester_data/csv/2027_spring.csv
+```
 
 ## Cloudflare bot protection
 

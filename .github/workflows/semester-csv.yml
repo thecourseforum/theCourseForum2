@@ -1,0 +1,39 @@
+# Validate semester CSVs a PR adds or changes, before they're loaded with the ECS task.
+name: Semester CSV check
+
+on:
+  pull_request:
+    paths:
+      - "tcf_website/management/commands/semester_data/csv/**"
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_TARGET: "3.12"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # HEAD is GitHub's PR merge commit; HEAD^1 is the base it merges into.
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          python-version: ${{ env.PYTHON_TARGET }}
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen --group dev --no-install-project
+
+      - name: Validate changed CSVs
+        shell: bash
+        run: |
+          git diff --name-only --diff-filter=d HEAD^1 HEAD -- \
+            'tcf_website/management/commands/semester_data/csv/*.csv' \
+            | xargs -r uv run python -m tcf_website.management.semester_csv
