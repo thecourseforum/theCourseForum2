@@ -3,6 +3,7 @@
 import logging
 
 import boto3
+from botocore.config import Config
 from botocore.exceptions import BotoCoreError, ClientError
 from django.conf import settings
 
@@ -64,7 +65,15 @@ def moderate_review(text: str) -> str | None:
         return None
 
     try:
-        client = boto3.client("bedrock-runtime", region_name="us-east-1")
+        # Moderation runs inside the review POST, so fail fast instead of
+        # letting botocore's 60s defaults and retries block the save.
+        client = boto3.client(
+            "bedrock-runtime",
+            region_name="us-east-1",
+            config=Config(
+                connect_timeout=3, read_timeout=5, retries={"max_attempts": 1}
+            ),
+        )
 
         response = client.converse(
             modelId="amazon.nova-micro-v1:0",

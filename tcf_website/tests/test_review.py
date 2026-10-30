@@ -3,6 +3,7 @@
 import json
 from unittest import mock
 
+from botocore.exceptions import ClientError
 from django.contrib.messages import get_messages
 from django.db import IntegrityError
 from django.forms.models import model_to_dict
@@ -349,7 +350,10 @@ class ModerateReviewTests(TestCase):
         self.assertEqual(call_kwargs["modelId"], "amazon.nova-micro-v1:0")
         self.assertIn(text, call_kwargs["messages"][0]["content"][0]["text"])
 
-    @mock.patch("tcf_website.views.review.new_review.moderate_review")
+    @mock.patch(
+        "tcf_website.views.review.new_review.moderate_review",
+        return_value="appropriate",
+    )
     def test_new_review_calls_moderation(self, mock_moderate):
         """Submitting a valid review passes its text to moderation."""
         setup(self)
@@ -376,4 +380,78 @@ class ModerateReviewTests(TestCase):
 
         self.client.force_login(self.user3)
         response = self.client.post(reverse("new_review"), data)
+        self.assertEqual(response.status_code, 302)
         mock_moderate.assert_called_once_with(text)
+
+    @mock.patch("tcf_website.review.services.boto3.client")
+    @override_settings(ENABLE_REVIEW_MODERATION=False)
+    def test_disabled_makes_no_bedrock_call(self, mock_client):
+        """With moderation disabled, Bedrock is never called."""
+        self.assertIsNone(moderate_review("Some review text."))
+        mock_client.assert_not_called()
+
+    @mock.patch("tcf_website.review.services.boto3.client")
+    @override_settings(ENABLE_REVIEW_MODERATION=True)
+    def test_bedrock_error_returns_none(self, mock_client):
+        """A Bedrock failure is logged and returns None instead of raising."""
+        mock_client.return_value.converse.side_effect = ClientError(
+            {"Error": {"Code": "ThrottlingException", "Message": "slow down"}},
+            "Converse",
+        )
+        with self.assertLogs("tcf_website.review.services", level="ERROR"):
+            self.assertIsNone(moderate_review("Some review text."))
+
+    def _post_review(self):
+        """Post a valid course review as user3."""
+        setup(self)
+        data = {
+            "text": "z" * 250,
+            "course": self.course2.pk,
+            "instructor": self.instructor.pk,
+            "semester": self.semester.pk,
+            "instructor_rating": 4,
+            "difficulty": 3,
+            "recommendability": 4,
+            "enjoyability": 4,
+            "amount_reading": 1,
+            "amount_writing": 1,
+            "amount_group": 1,
+            "amount_homework": 1,
+        }
+        self.client.force_login(self.user3)
+        return self.client.post(reverse("new_review"), data)
+
+    @mock.patch(
+        "tcf_website.views.review.new_review.moderate_review",
+        return_value="appropriate",
+    )
+    def test_appropriate_result_is_saved(self, _mock_moderate):
+        """An 'appropriate' result is stored on the created review."""
+        response = self._post_review()
+
+        self.assertEqual(response.status_code, 302)
+        created = Review.objects.get(user=self.user3, course=self.course2)
+        self.assertEqual(created.nova_micro_review, "appropriate")
+
+    @mock.patch(
+        "tcf_website.views.review.new_review.moderate_review",
+        return_value="inappropriate",
+    )
+    def test_inappropriate_result_is_saved(self, _mock_moderate):
+        """An 'inappropriate' result is stored on the created review."""
+        response = self._post_review()
+
+        self.assertEqual(response.status_code, 302)
+        created = Review.objects.get(user=self.user3, course=self.course2)
+        self.assertEqual(created.nova_micro_review, "inappropriate")
+
+    @mock.patch(
+        "tcf_website.views.review.new_review.moderate_review", return_value=None
+    )
+    def test_review_saves_when_moderation_unavailable(self, _mock_moderate):
+        """If moderation returns None, the review is still created."""
+        response = self._post_review()
+
+        self.assertEqual(response.status_code, 302)
+        created = Review.objects.get(user=self.user3, course=self.course2)
+        self.assertIsNone(created.nova_micro_review)

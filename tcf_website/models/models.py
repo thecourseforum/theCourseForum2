@@ -1132,6 +1132,13 @@ class Review(models.Model):
     # Email of reviewer for Review Drive, should be blank most of the time
     # Only done for reviews without accounts
     email = models.CharField(default="", null=True, blank=True)
+    # AWS NovaMicro Review (Appropriate vs. Inappropriate)
+    nova_micro_review = models.CharField(
+        max_length=20,
+        choices=[("appropriate", "Appropriate"), ("inappropriate", "Inappropriate")],
+        blank=True,
+        null=True,
+    )
     # Toxicity rating of review
     toxicity_rating = models.IntegerField(default=0)
     # Most relevant toxicity category, only exists if review has text

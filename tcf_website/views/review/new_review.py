@@ -27,9 +27,9 @@ def new_review(request):
             instance = form.save(commit=False)
             instance.user = request.user
             text = get_review_text(instance)
-
             if text:
-                moderate_review(text)
+                moderation = moderate_review(text)
+                instance.nova_micro_review = moderation
             instance.save()
             if instance.club:
                 messages.success(request, f"Successfully reviewed {instance.club}!")
