@@ -44,6 +44,10 @@ resource "aws_db_instance" "postgres" {
   skip_final_snapshot       = false
   final_snapshot_identifier = "${local.name_prefix}-final-snapshot-${random_id.db_snapshot.hex}"
 
+  database_insights_mode                = "advanced"
+  performance_insights_enabled          = true
+  performance_insights_retention_period = 465
+
   tags = {
     Name = "${local.name_prefix}-postgres"
   }
