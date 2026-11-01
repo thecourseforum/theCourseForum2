@@ -1,0 +1,32 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    "schedule:weekly"
+  ],
+  "timezone": "America/New_York",
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "osvVulnerabilityAlerts": true,
+  "packageRules": [
+    {
+      "description": "Let fresh registry releases age so compromised versions get yanked first",
+      "matchDatasources": ["npm", "pypi"],
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "description": "pyproject.toml requires Python <3.13",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["python"],
+      "allowedVersions": "<3.13"
+    },
+    {
+      "description": "Local Postgres/Valkey match prod RDS/ElastiCache; bump them together with iac/",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["postgres", "valkey/valkey"],
+      "enabled": false
+    }
+  ]
+}
