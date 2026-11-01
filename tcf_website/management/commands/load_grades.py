@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from cachalot.api import invalidate
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from tqdm import tqdm
 
 from tcf_website.models import (
@@ -130,23 +131,23 @@ class Command(BaseCommand):
         if self.verbosity > 0:
             print("Step 1: Fetch Course and Instructor data for later use")
         semester = options["semester"]
-        if semester == "ALL_DANGEROUS":
-            # ALL_DANGEROUS removes all existing data
-            CourseGrade.objects.all().delete()
-            CourseInstructorGrade.objects.all().delete()
-            CourseInstructorSemesterGrade.objects.all().delete()
+        with transaction.atomic():
+            if semester == "ALL_DANGEROUS":
+                # ALL_DANGEROUS removes all existing data
+                CourseGrade.objects.all().delete()
+                CourseInstructorGrade.objects.all().delete()
+                CourseInstructorSemesterGrade.objects.all().delete()
 
-            # Loads every data CSV file in /grade_data/csv with exceptions
-            for file in sorted(os.listdir(DATA_DIR)):
-                if self.verbosity == 3:
-                    print("Loading data from", file)
-                # Ignore temp files (start with '~' on Windows, '.' otherwise) and test data
-                if file[0] not in (".", "~") and ".csv" in file:
-                    self.load_semester_file(file)
-        else:
-            # TODO: Implement semester-specific loading logic for CourseInstructorSemesterGrade
-            self.load_semester_file(f"{semester.lower()}.csv")
-        self.load_dict_into_models()
+                # Loads every data CSV file in /grade_data/csv with exceptions
+                for file in sorted(os.listdir(DATA_DIR)):
+                    if self.verbosity == 3:
+                        print("Loading data from", file)
+                    # Ignore temp files (start with '~' on Windows, '.' otherwise) and test data
+                    if file[0] not in (".", "~") and ".csv" in file:
+                        self.load_semester_file(file)
+            else:
+                self.load_semester_file(f"{semester.lower()}.csv")
+            self.load_dict_into_models()
 
     def clean(self, df):
         """Cleans data.
