@@ -96,7 +96,10 @@ def moderate_review(text: str) -> str | None:
             inferenceConfig={"maxTokens": 20, "temperature": 0},
         )
 
-        return response["output"]["message"]["content"][0]["text"]
+        raw_output = response["output"]["message"]["content"][0]["text"].strip().lower()
+        if raw_output in {"appropriate", "inappropriate"}:
+            return raw_output
+        return None
 
     except (BotoCoreError, ClientError, OSError):
         logger.exception("Bedrock review moderation request failed")
