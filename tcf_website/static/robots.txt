@@ -1,0 +1,27 @@
+# blocked requests
+User-agent: *
+Disallow: /login/
+Disallow: /admin/
+Disallow: /search
+Disallow: /cognito-callback
+
+# unused SEO tools
+User-agent: AhrefsBot
+User-agent: SemrushBot
+User-agent: DataForSeoBot
+User-agent: DotBot
+User-agent: MJ12bot
+Disallow: /
+
+# AI training crawlers
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: CCBot
+User-agent: Bytespider
+User-agent: Amazonbot
+User-agent: meta-externalagent
+User-agent: PetalBot
+User-agent: Reflectionbot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+Disallow: /
