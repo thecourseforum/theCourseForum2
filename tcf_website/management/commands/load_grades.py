@@ -23,6 +23,9 @@ from tcf_website.models import (
 # Location of our grade data CSVs
 DATA_DIR = "tcf_website/management/commands/grade_data/csv/"
 
+# Rows per INSERT in bulk_create; keeps peak memory well under the 2 GB task limit
+BULK_CREATE_BATCH_SIZE = 1000
+
 # Grade-point weights for computing an approximate average from the breakdown.
 # Used when UVA redacts "Course GPA" but still provides distribution counts.
 #
@@ -340,7 +343,9 @@ class Command(BaseCommand):
             unsaved_cg_instances.append(unsaved_cg_instance)
 
         # bulk_create is much more efficient than creating them separately
-        CourseGrade.objects.bulk_create(unsaved_cg_instances)
+        CourseGrade.objects.bulk_create(
+            unsaved_cg_instances, batch_size=BULK_CREATE_BATCH_SIZE
+        )
         invalidate(CourseGrade)
         if self.verbosity > 0:
             print("Done creating CourseGrade instances")
@@ -356,7 +361,9 @@ class Command(BaseCommand):
                 **course_instructor_grade_params
             )
             unsaved_cig_instances.append(unsaved_cig_instance)
-        CourseInstructorGrade.objects.bulk_create(unsaved_cig_instances)
+        CourseInstructorGrade.objects.bulk_create(
+            unsaved_cig_instances, batch_size=BULK_CREATE_BATCH_SIZE
+        )
         invalidate(CourseInstructorGrade)
         if self.verbosity > 0:
             print("Done creating CourseInstructorGrade instances")
@@ -374,7 +381,9 @@ class Command(BaseCommand):
                 **course_instructor_semester_grade_params
             )
             unsaved_cisg_instances.append(unsaved_cisg_instance)
-        CourseInstructorSemesterGrade.objects.bulk_create(unsaved_cisg_instances)
+        CourseInstructorSemesterGrade.objects.bulk_create(
+            unsaved_cisg_instances, batch_size=BULK_CREATE_BATCH_SIZE
+        )
         invalidate(CourseInstructorSemesterGrade)
         if self.verbosity > 0:
             print("Done creating CourseInstructorSemesterGrade instances")
