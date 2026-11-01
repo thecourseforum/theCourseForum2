@@ -2,6 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
+    "docker:pinDigests",
     "helpers:pinGitHubActionDigests",
     "schedule:weekly"
   ],
@@ -17,15 +18,25 @@
       "minimumReleaseAge": "3 days"
     },
     {
-      "description": "pyproject.toml requires Python <3.13",
-      "matchDatasources": ["docker"],
+      "description": "pyproject.toml requires Python <3.13; applies to Docker tags and requires-python",
       "matchPackageNames": ["python"],
       "allowedVersions": "<3.13"
     },
     {
-      "description": "Local Postgres/Valkey match prod RDS/ElastiCache; bump them together with iac/",
+      "description": "Local Postgres matches prod RDS and Valkey tracks ElastiCache 8.2 as closely as images allow; approve on the dashboard when bumping iac/",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["postgres", "valkey/valkey"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Devcontainer tooling images are bumped by hand; aws-cli is also used by minio-init, so both copies stay in step",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["node", "docker", "amazon/aws-cli"],
+      "enabled": false
+    },
+    {
+      "description": "iac/ is applied by hand and CI does not run Terraform, so its PRs would pass untested",
+      "matchManagers": ["terraform"],
       "enabled": false
     }
   ]
