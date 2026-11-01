@@ -179,6 +179,7 @@ services:
       - .:/app:cached
       # Docker-outside-of-docker: control sibling services via the host daemon.
       - /var/run/docker.sock:/var/run/docker.sock
+      - aws:/root/.aws
     depends_on:
       db:
         condition: service_healthy
@@ -190,3 +191,4 @@ services:
 volumes:
   pgdata:
   rustfs_data:
+  aws:

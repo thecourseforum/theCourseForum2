@@ -181,6 +181,13 @@
       "class": "2029",
       "img_filename": "Arislan_Telek.jpg",
       "github": "ArislanT"
+    },
+    {
+      "name": "Aryan Sajjad",
+      "role": "Developer",
+      "class": "2030",
+      "img_filename": "ENG_Aryan_Sajjad.jpeg",
+      "github": "Aryans3083"
     }
   ],
   "design_team": [
@@ -235,6 +242,12 @@
       "role": "Finance",
       "class": "2029",
       "img_filename": "Shivali_Verma.jpg"
+    },
+    {
+      "name": "Anyi Hu",
+      "role": "Finance",
+      "class": "2030",
+      "img_filename": "Anyi_Hu.jpg"
     }
   ]
 }

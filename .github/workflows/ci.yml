@@ -149,6 +149,7 @@ jobs:
 
       - name: Migrations & Tests
         run: |
+          set -o pipefail
           docker compose --profile full run --rm --build web sh -c \
             'uv run --with coverage coverage run manage.py test && \
              uv run --with coverage coverage report' | tee coverage.txt
