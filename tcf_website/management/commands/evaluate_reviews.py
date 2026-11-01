@@ -51,7 +51,7 @@ class Command(BaseCommand):
         )
 
         response = client.converse(
-            modelId="mistral.voxtral-mini-3b-2507",
+            modelId="amazon.nova-micro-v1:0",
             messages=[
                 {
                     "role": "user",
