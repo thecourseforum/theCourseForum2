@@ -13,6 +13,8 @@
     "units_min",
     "units_max",
     "min_gpa",
+    "min_rating",
+    "max_difficulty",
     "component",
     "club_name",
   ]);

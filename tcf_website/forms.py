@@ -18,6 +18,12 @@ class AdvancedSearchForm(forms.Form):
     min_gpa = forms.FloatField(
         required=False, label="Min GPA", min_value=0, max_value=4
     )
+    min_rating = forms.FloatField(
+        required=False, label="Min Rating", min_value=0, max_value=5
+    )
+    max_difficulty = forms.FloatField(
+        required=False, label="Max Difficulty", min_value=0, max_value=5
+    )
     open_sections = forms.BooleanField(required=False, label="Open sections only")
     sort = forms.ChoiceField(
         required=False,
@@ -27,6 +33,7 @@ class AdvancedSearchForm(forms.Form):
             ("rating_desc", "Rating (High–Low)"),
             ("gpa_desc", "GPA (High–Low)"),
             ("difficulty_asc", "Difficulty (Low–High)"),
+            ("reviews_desc", "Most Reviewed"),
         ],
     )
 
@@ -80,7 +87,7 @@ class AdvancedSearchForm(forms.Form):
         (
             "component",
             "instructor",
-            "sort",
+            "min_gpa",
             "units_min",
             "units_max",
             "days",
@@ -89,6 +96,8 @@ class AdvancedSearchForm(forms.Form):
             "description",
             "open_sections",
             "discipline",
+            "min_rating",
+            "max_difficulty",
         )
     )
 

@@ -25,8 +25,9 @@ def advanced_search_results_payload(request, form: AdvancedSearchForm) -> dict:
     page_obj = paginate(results, request.GET.get("page", 1), per_page=15)
     total = page_obj.paginator.count
     courses = [course_to_row_dict(c) for c in page_obj]
-    grouped = group_by_dept(courses)
+    grouped = None if form.cleaned_data.get("sort") else group_by_dept(courses)
     return {
+        "courses": courses,
         "grouped": grouped,
         "page_obj": page_obj,
         "total": total,

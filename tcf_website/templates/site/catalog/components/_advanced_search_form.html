@@ -6,7 +6,7 @@
       data-browse-base-url="{% mode_url request 'browse' %}"
       data-browse-result-label-singular="course"
       data-browse-result-label-plural="courses">
-    <!-- Row 1: Term, School, Min GPA -->
+    <!-- Row 1: Term, School, Sort By -->
     <div class="advanced-search__grid">
         <div class="advanced-search__field">
             <label>Term</label>
@@ -17,15 +17,8 @@
             {% include "site/common/components/_combo_dropdown.html" with combo_name="school" combo_choices=form.school.field.choices combo_selected=form.school.value combo_aria_label="School" %}
         </div>
         <div class="advanced-search__field">
-            <label for="id_min_gpa">Min GPA</label>
-            <input type="number"
-                   name="min_gpa"
-                   id="id_min_gpa"
-                   value="{{ form.min_gpa.value|default:'' }}"
-                   placeholder="0.0 – 4.0"
-                   min="0"
-                   max="4"
-                   step="0.1">
+            <label>Sort By</label>
+            {% include "site/common/components/_combo_dropdown.html" with combo_name="sort" combo_choices=form.sort.field.choices combo_selected=form.sort.value combo_aria_label="Sort by" %}
         </div>
     </div>
     <!-- Row 2: Subject, Course Number, Title -->
@@ -55,7 +48,7 @@
     <details class="advanced-search__advanced"
              {% if form.has_advanced_params %}open{% endif %}>
         <summary>Advanced</summary>
-        <!-- Row 3: Component, Instructor, Sort By -->
+        <!-- Row 3: Component, Instructor -->
         <div class="advanced-search__grid">
             <div class="advanced-search__field">
                 <label for="id_component">Component</label>
@@ -73,9 +66,40 @@
                        value="{{ form.instructor.value|default:'' }}"
                        placeholder="Instructor name">
             </div>
+        </div>
+        <div class="advanced-search__grid">
             <div class="advanced-search__field">
-                <label>Sort By</label>
-                {% include "site/common/components/_combo_dropdown.html" with combo_name="sort" combo_choices=form.sort.field.choices combo_selected=form.sort.value combo_aria_label="Sort by" %}
+                <label for="id_min_gpa">Min GPA</label>
+                <input type="number"
+                       name="min_gpa"
+                       id="id_min_gpa"
+                       value="{{ form.min_gpa.value|default:'' }}"
+                       placeholder="0.0 – 4.0"
+                       min="0"
+                       max="4"
+                       step="0.1">
+            </div>
+            <div class="advanced-search__field">
+                <label for="id_min_rating">Min Rating</label>
+                <input type="number"
+                       name="min_rating"
+                       id="id_min_rating"
+                       value="{{ form.min_rating.value|default:'' }}"
+                       placeholder="0.0 – 5.0"
+                       min="0"
+                       max="5"
+                       step="0.1">
+            </div>
+            <div class="advanced-search__field">
+                <label for="id_max_difficulty">Max Difficulty</label>
+                <input type="number"
+                       name="max_difficulty"
+                       id="id_max_difficulty"
+                       value="{{ form.max_difficulty.value|default:'' }}"
+                       placeholder="0.0 – 5.0"
+                       min="0"
+                       max="5"
+                       step="0.1">
             </div>
         </div>
         <!-- Row 4: Units, Description, Open Sections -->

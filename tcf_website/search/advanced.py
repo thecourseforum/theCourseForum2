@@ -1,6 +1,6 @@
 """Advanced course search queryset (browse page filters)."""
 
-from django.db.models import Exists, F, OuterRef, Q
+from django.db.models import Count, Exists, F, OuterRef, Q
 
 from ..models import Club, Section, Semester
 from ..pagination import SECTION_DAY_CODE_TO_SECTIONTIME_FIELD
@@ -10,6 +10,7 @@ _SORT_MAP = {
     "rating_desc": F("average_rating").desc(nulls_last=True),
     "gpa_desc": F("average_gpa").desc(nulls_last=True),
     "difficulty_asc": F("average_difficulty").asc(nulls_last=True),
+    "reviews_desc": F("review_count").desc(),
 }
 
 _DEFAULT_ORDER = ("subdepartment__mnemonic", "number")
@@ -20,7 +21,12 @@ def execute_advanced_search(filters):
     qs = browsable_course_queryset()
     qs = _apply_course_filters(qs, filters)
     qs = _apply_section_filters(qs, filters)
-    sort_expr = _SORT_MAP.get(filters.get("sort") or "")
+    sort = filters.get("sort") or ""
+    if sort == "reviews_desc":
+        qs = qs.annotate(
+            review_count=Count("review", filter=Q(review__hidden=False), distinct=True)
+        )
+    sort_expr = _SORT_MAP.get(sort)
     if sort_expr is not None:
         # Primary sort by chosen field; tiebreak by dept/number for stable grouping.
         return qs.order_by(sort_expr, *_DEFAULT_ORDER)
@@ -69,6 +75,12 @@ def _apply_course_filters(qs, filters):
 
     if course_q:
         qs = qs.filter(course_q)
+
+    if min_rating := filters.get("min_rating"):
+        qs = qs.filter(average_rating__gte=min_rating)
+
+    if max_difficulty := filters.get("max_difficulty"):
+        qs = qs.filter(average_difficulty__lte=max_difficulty)
 
     return qs
 
