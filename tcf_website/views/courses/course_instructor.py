@@ -3,7 +3,6 @@
 import json
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg, Count, Q
 from django.http import Http404
 from django.shortcuts import render
@@ -64,11 +63,19 @@ def _pair_review_counts(course_id, instructor_id):
     return row["num_reviews"], row["num_ratings"]
 
 
-def _pair_aggregate_chart_data(course, instructor, course_id, instructor_id):
-    """Averages and optional grade breakdown for the instructor page JSON blob."""
-    data = Review.objects.filter(
+def _pair_aggregate_chart_data(
+    course, instructor, course_id, instructor_id, semester=None
+):
+    """Averages and optional grade breakdown for the instructor page JSON blob.
+
+    With a semester, ratings and grades cover only that semester; otherwise all time.
+    """
+    reviews = Review.objects.filter(
         course=course_id, instructor=instructor_id, hidden=False
-    ).aggregate(
+    )
+    if semester is not None:
+        reviews = reviews.filter(semester=semester)
+    data = reviews.aggregate(
         average_rating=(
             Avg("instructor_rating") + Avg("enjoyability") + Avg("recommendability")
         )
@@ -86,13 +93,16 @@ def _pair_aggregate_chart_data(course, instructor, course_id, instructor_id):
     # Pass raw floats to JS; each display call (toFixed) rounds to the needed precision.
     # Pre-rounding here would cause double-rounding divergence from Django's floatformat.
 
-    try:
-        grades_data = CourseInstructorGrade.objects.get(
+    if semester is None:
+        grades_data = CourseInstructorGrade.objects.filter(
             instructor=instructor, course=course
-        )
-    except ObjectDoesNotExist:
-        pass
+        ).first()
     else:
+        grades_data = CourseInstructorSemesterGrade.objects.filter(
+            instructor=instructor, course=course, semester=semester
+        ).first()
+
+    if grades_data is not None:
         data["average_gpa"] = (
             round(grades_data.average, 2) if grades_data.average else None
         )
@@ -194,7 +204,9 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
     )
 
     breadcrumbs = _course_instructor_breadcrumbs(course, instructor)
-    data = _pair_aggregate_chart_data(course, instructor, course_id, instructor_id)
+    data = _pair_aggregate_chart_data(
+        course, instructor, course_id, instructor_id, selected_semester
+    )
     review_summary = _get_review_summary(course_id, instructor_id)
 
     latest_semester = Semester.latest()
