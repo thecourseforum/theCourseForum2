@@ -9,7 +9,14 @@ from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
 
-from ...models import CourseInstructorGrade, Review, ReviewLLMSummary, Section, Semester
+from ...models import (
+    CourseInstructorGrade,
+    CourseInstructorSemesterGrade,
+    Review,
+    ReviewLLMSummary,
+    Section,
+    Semester,
+)
 from .course import is_lecture_section
 
 _GRADE_BREAKDOWN_FIELDS = (
@@ -147,6 +154,29 @@ def _course_instructor_breadcrumbs(course, instructor):
     ]
 
 
+def _selected_semester(request):
+    """Semester chosen via ?semester=<SIS number>, or None for all semesters."""
+    raw = request.GET.get("semester")
+    try:
+        number = int(raw)
+    except (TypeError, ValueError):
+        return None
+    return Semester.objects.filter(number=number).first()
+
+
+def _pair_semester_options(course_id, instructor_id):
+    """Semesters with grade data or visible reviews for this pair, newest first."""
+    grade_semester_ids = CourseInstructorSemesterGrade.objects.filter(
+        course_id=course_id, instructor_id=instructor_id
+    ).values_list("semester_id", flat=True)
+    review_semester_ids = Review.objects.filter(
+        course_id=course_id, instructor_id=instructor_id, hidden=False
+    ).values_list("semester_id", flat=True)
+    return Semester.objects.filter(
+        Q(id__in=grade_semester_ids) | Q(id__in=review_semester_ids)
+    ).order_by("-number")
+
+
 def course_instructor(request, course_id, instructor_id, method="Default"):
     """Course-instructor view."""
     section_last_taught, course, instructor = _fetch_pair_section_anchor(
@@ -157,6 +187,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
 
     sort_method = request.GET.get("sort", method)
     page_number = request.GET.get("page", 1)
+    selected_semester = _selected_semester(request)
+    semester_options = _pair_semester_options(course_id, instructor_id)
     paginated_reviews = Review.get_paginated_reviews(
         course_id, instructor_id, request.user, page_number, sort_method
     )
