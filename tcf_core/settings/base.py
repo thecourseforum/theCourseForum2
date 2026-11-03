@@ -27,6 +27,8 @@ SECRET_KEY = env.str("SECRET_KEY")
 
 OPENROUTER_API_KEY = env.str("OPENROUTER_API_KEY", default="")
 
+SCRIPT_FETCH_LOGIN = env.str("SCRIPT_FETCH_LOGIN", default="log")
+
 ALLOWED_HOSTS = []
 
 CORS_ALLOWED_ORIGINS = [
@@ -64,6 +66,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "tcf_core.cognito_middleware.CognitoAuthMiddleware",
+    "tcf_core.settings.script_fetch_middleware.ScriptFetchLoginMiddleware",
     "tcf_core.settings.handle_exceptions_middleware.HandleExceptionsMiddleware",
     "tcf_core.settings.record_middleware.RecordMiddleware",
 ]
