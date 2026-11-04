@@ -7,14 +7,13 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import SimpleTestCase, TestCase
 
+from tcf_website.management.commands.sort_team_info import sort_team_info
 from tcf_website.models import (
     CourseGrade,
     CourseInstructorGrade,
     CourseInstructorSemesterGrade,
     Semester,
 )
-from tcf_website.management.commands.sort_team_info import sort_team_info
-from tcf_website.models import CourseGrade, CourseInstructorGrade
 
 from .test_utils import setup
 
