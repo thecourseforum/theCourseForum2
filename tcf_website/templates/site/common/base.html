@@ -5,6 +5,8 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://d3ed103d7a9b.edge.sdk.awswaf.com/d3ed103d7a9b/58f739dcb240/challenge.js"
+                defer></script>
         <meta name="description"
               content="{% block meta_description %}Course reviews, ratings, and schedule tools for UVA students.{% endblock meta_description %}">
         <meta name="keywords"
@@ -82,6 +84,7 @@
         {% block header %}
             {% include "site/common/components/_header.html" %}
         {% endblock header %}
+        {% include "site/common/components/_donation_banner.html" %}
         {% include "site/common/components/_messages.html" %}
         {% if request.resolver_match and request.resolver_match.url_name != "index" %}
             {% include "site/common/components/_leaderboard_ad.html" %}

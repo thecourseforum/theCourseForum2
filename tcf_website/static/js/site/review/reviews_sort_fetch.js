@@ -38,6 +38,11 @@
       }
       url.hash = hash;
 
+      if (document.body.dataset.userAuthenticated !== "true") {
+        window.location.assign(url.toString());
+        return;
+      }
+
       sortSelect.disabled = true;
       try {
         const fetchUrl = url.pathname + url.search;

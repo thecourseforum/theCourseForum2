@@ -11,6 +11,7 @@ echo "Starting Django Server with Gunicorn..."
 exec gunicorn tcf_core.wsgi:application \
     --bind 0.0.0.0:80 \
     --workers 3 \
-    --threads 2 \
+    --threads 4 \
+    --keep-alive 75 \
     --log-level "info" \
     --timeout 120
