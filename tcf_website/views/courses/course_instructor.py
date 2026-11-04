@@ -248,6 +248,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "display_times": latest_semester == section_last_taught.semester,
             "is_current_semester": is_current_semester,
             "sort_method": sort_method,
+            "selected_semester": selected_semester,
+            "semester_options": semester_options,
             "sem_code": section_last_taught.semester.number,
             "course_code": course.code(),
             "course_title": course.title,
