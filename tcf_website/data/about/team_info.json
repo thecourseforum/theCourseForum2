@@ -244,10 +244,28 @@
       "img_filename": "Shivali_Verma.jpg"
     },
     {
+      "name": "Alex Cai",
+      "role": "Finance",
+      "class": "2030",
+      "img_filename": "Alex_Cai.jpg"
+    },
+    {
       "name": "Anyi Hu",
       "role": "Finance",
       "class": "2030",
       "img_filename": "Anyi_Hu.jpg"
+    },
+    {
+      "name": "Rohan Peddireddy",
+      "role": "Finance",
+      "class": "2030",
+      "img_filename": "Rohan_Peddireddy.jpg"
+    },
+    {
+      "name": "Joshua Pun",
+      "role": "Finance",
+      "class": "2030",
+      "img_filename": "Joshua_Pun.jpg"
     }
   ]
 }
