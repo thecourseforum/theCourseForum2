@@ -199,21 +199,22 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
         course_id, instructor_id
     )
 
+    selected_semester = _selected_semester(request)
+    semester_options = _pair_semester_options(course_id, instructor_id)
+
     num_reviews, num_ratings = _pair_review_counts(
         course_id, instructor_id, selected_semester
     )
 
     sort_method = request.GET.get("sort", method)
     page_number = request.GET.get("page", 1)
-    selected_semester = _selected_semester(request)
-    semester_options = _pair_semester_options(course_id, instructor_id)
     paginated_reviews = Review.get_paginated_reviews(
         course_id,
         instructor_id,
         request.user,
         page_number,
         sort_method,
-        selected_semester,
+        semester=selected_semester,
     )
 
     breadcrumbs = _course_instructor_breadcrumbs(course, instructor)
