@@ -1283,7 +1283,7 @@ class Review(models.Model):
         )
 
     @staticmethod
-    def get_sorted_reviews(course_id, instructor_id, user, method=""):
+    def get_sorted_reviews(course_id, instructor_id, user, method="", semester=None):
         """Prepare review list for course-instructor page."""
 
         # Filter out reviews that are hidden, have no text, or are toxic.
@@ -1301,6 +1301,9 @@ class Review(models.Model):
                 ),
             )
         )
+
+        if semester is not None:
+            reviews = reviews.filter(semester=semester)
 
         if user.is_authenticated:
             reviews = reviews.annotate(
@@ -1349,10 +1352,12 @@ class Review(models.Model):
 
     @staticmethod
     def get_paginated_reviews(
-        course_id, instructor_id, user, page_number=1, method=""
+        course_id, instructor_id, user, page_number=1, method="", semester=None
     ) -> "Page[Review]":
         """Generate sorted, paginated reviews"""
-        reviews = Review.get_sorted_reviews(course_id, instructor_id, user, method)
+        reviews = Review.get_sorted_reviews(
+            course_id, instructor_id, user, method, semester
+        )
         return paginate(reviews, page_number)
 
     def __str__(self):
