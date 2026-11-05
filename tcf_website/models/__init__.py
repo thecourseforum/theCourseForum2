@@ -11,6 +11,7 @@ from .models import (
     Course,
     CourseGrade,
     CourseInstructorGrade,
+    CourseInstructorSemesterGrade,
     Department,
     Discipline,
     Instructor,

@@ -54,6 +54,28 @@
                 </div>
                 <div class="instructor-row__meta">
                     <span class="semester-badge">Last taught: {{ semester_last_taught }}</span>
+                    {% if semester_options %}
+                        <form method="get" class="semester-filter">
+                            <label for="semester-select" class="sr-only">Filter by semester</label>
+                            <select name="semester"
+                                    id="semester-select"
+                                    class="select semester-filter__select">
+                                <option value="">All semesters</option>
+                                {% for semester in semester_options %}
+                                    <option value="{{ semester.number }}"
+                                            {% if semester == selected_semester %}selected{% endif %}>
+                                        {{ semester }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if sort_method and sort_method != "Default" %}
+                                <input type="hidden" name="sort" value="{{ sort_method }}">
+                            {% endif %}
+                            <noscript>
+                                <button type="submit" class="btn-sm btn-outline">Apply</button>
+                            </noscript>
+                        </form>
+                    {% endif %}
                     {% if show_schedule_add %}
                         {% include "site/courses/components/_schedule_add_button.html" with course=course button_id="addToScheduleBtn" %}
                     {% endif %}
@@ -399,6 +421,12 @@ if (window.TcfReviewsSortFetch) {
     resultsId: 'reviews-results',
     hash: 'reviews',
   });
+}
+
+// Reload the page for the chosen semester
+const semesterSelect = document.getElementById('semester-select');
+if (semesterSelect) {
+  semesterSelect.addEventListener('change', () => semesterSelect.form.submit());
 }
 
 // Load ratings data and grades
