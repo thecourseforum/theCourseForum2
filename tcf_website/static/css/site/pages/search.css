@@ -199,12 +199,6 @@
   text-decoration: underline;
 }
 
-.search-result-card__code {
-  color: var(--primary);
-  font-size: var(--text-sm);
-  font-weight: var(--font-semibold);
-}
-
 .search-result-card__title {
   color: var(--fg);
   font-size: var(--text-base);

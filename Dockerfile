@@ -9,10 +9,6 @@ ENV PYTHONUNBUFFERED=1 \
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends libpq-dev build-essential && \
-    rm -rf /var/lib/apt/lists/*
-
 WORKDIR /app
 
 COPY pyproject.toml uv.lock ./
@@ -38,6 +34,10 @@ RUN apt-get update && \
 # Docker CLI (no daemon here; talks to the host daemon over the mounted socket).
 COPY --from=docker:cli /usr/local/bin/docker /usr/local/bin/docker
 COPY --from=docker:cli /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
+
+COPY --from=amazon/aws-cli:2.37.9 /usr/local/aws-cli /usr/local/aws-cli
+RUN ln -s /usr/local/aws-cli/v2/current/bin/aws /usr/local/bin/aws && \
+    ln -s /usr/local/aws-cli/v2/current/bin/aws_completer /usr/local/bin/aws_completer
 
 COPY .devcontainer/bashrc /root/tcf-dev-bashrc
 RUN grep -q 'tcf-dev-bashrc' /root/.bashrc || echo '. /root/tcf-dev-bashrc' >> /root/.bashrc

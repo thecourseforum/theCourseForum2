@@ -198,24 +198,6 @@
   padding: var(--space-6);
 }
 
-.ratings-panel__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  margin-bottom: var(--space-4);
-}
-
-.ratings-panel__title {
-  font-size: var(--text-xl);
-  font-weight: var(--font-semibold);
-}
-
-.ratings-panel__count {
-  font-size: var(--text-sm);
-  color: var(--fg-muted);
-}
-
 /* ===== RATING ROW ===== */
 
 .rating-row {
@@ -267,10 +249,6 @@
   background-color: var(--warning);
 }
 
-.rating-row__fill--danger {
-  background-color: var(--danger);
-}
-
 .rating-row__value {
   width: 40px;
   text-align: right;
@@ -298,46 +276,6 @@
 .ratings-panel__divider {
   border-top: 1px solid var(--border);
   margin: var(--space-5) 0 var(--space-3);
-}
-
-.ratings-panel__subheading {
-  margin: 0;
-  font-size: var(--text-xs);
-  font-weight: var(--font-semibold);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--fg-muted);
-}
-
-.ratings-panel__subheading-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin: 0 0 var(--space-3);
-}
-
-.ratings-panel__hours-summary {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-1);
-  padding: 0 var(--space-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background-color: var(--bg);
-}
-
-.ratings-panel__hours-value {
-  font-size: var(--text-base);
-  font-weight: var(--font-semibold);
-  color: var(--fg);
-}
-
-.ratings-panel__hours-unit {
-  font-size: var(--text-xs);
-  font-weight: var(--font-medium);
-  color: var(--fg-muted);
-  text-transform: lowercase;
 }
 
 .rating-row--compact {
@@ -752,12 +690,6 @@
 
 .add-review-btn {
   flex-shrink: 0;
-}
-
-.pagination__status {
-  background-color: var(--bg-muted);
-  color: var(--fg);
-  cursor: default;
 }
 
 /* ===== EMPTY STATE ===== */

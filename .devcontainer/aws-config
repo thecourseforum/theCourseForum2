@@ -1,0 +1,46 @@
+[sso-session tcf]
+sso_start_url = https://ssoins-7223c5bcc22c7971.portal.us-east-1.app.aws
+sso_region = us-east-1
+sso_registration_scopes = sso:account:access
+
+[profile prod-admin]
+sso_session = tcf
+sso_account_id = 099933383052
+sso_role_name = AdministratorAccess
+region = us-east-1
+
+[profile prod-poweruser]
+sso_session = tcf
+sso_account_id = 099933383052
+sso_role_name = PowerUserAccess
+region = us-east-1
+
+[profile prod-readonly]
+sso_session = tcf
+sso_account_id = 099933383052
+sso_role_name = ReadOnlyAccess
+region = us-east-1
+
+[profile dev-admin]
+sso_session = tcf
+sso_account_id = 978573505384
+sso_role_name = AdministratorAccess
+region = us-east-1
+
+[profile dev-poweruser]
+sso_session = tcf
+sso_account_id = 978573505384
+sso_role_name = PowerUserAccess
+region = us-east-1
+
+[profile dev-readonly]
+sso_session = tcf
+sso_account_id = 978573505384
+sso_role_name = ReadOnlyAccess
+region = us-east-1
+
+[profile tcf2-readonly]
+sso_session = tcf
+sso_account_id = 396913701887
+sso_role_name = ReadOnlyAccess
+region = us-east-1

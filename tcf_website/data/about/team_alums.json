@@ -15,13 +15,19 @@
   ],
   "contributors": [
     {
-      "group_name": "Class of 2028",
+      "group_name": "Class of 2029",
       "members": [
         {
-          "name": "Yu Cao",
+          "name": "Himesh Ahuja",
           "role": "Developer",
-          "img_filename": "ENG_Yu_Cao.jpg",
-          "github": "YuDavidCao"
+          "img_filename": "Himesh_Ahuja.jpg",
+          "github": "meshhi13"
+        },
+        {
+          "name": "Shivaths Karne",
+          "role": "Developer",
+          "img_filename": "Shivaths_Karne.jpg",
+          "github": "skarne21"
         }
       ]
     },
@@ -31,30 +37,46 @@
         {
           "name": "Alyssa Zhang",
           "role": "Treasurer | Marketing",
-                    "img_filename": "DM_Alyssa_Zhang.jpg"
+                    "img_filename": "Alyssa_Zhang.jpg"
+        },
+        {
+          "name": "Julie Huang",
+          "role": "VP | Marketing",
+          "img_filename": "Julie_Huang.jpg"
         },
         {
           "name": "Lexie Chen",
           "role": "Developer",
-                    "img_filename": "ENG_Lexie_Chen.jpg",
+                    "img_filename": "Lexie_Chen.jpg",
           "github": "LexieChen1"
         },
         {
           "name": "Namai Kureishi",
           "role": "Developer",
-                    "img_filename": "ENG_Namai_Kureishi.jpg",
+                    "img_filename": "Namai_Kureishi.jpg",
           "github": "namaikureishi"
         },
         {
           "name": "Carissa Chen",
           "role": "Marketing",
-                    "img_filename": "DM_Carissa_Chen.jpg"
+                    "img_filename": "Carissa_Chen.jpg"
         },
         {
           "name": "Yilin Wang",
           "role": "Developer",
-          "img_filename": "ENG_Yilin_Wang.jpg",
+          "img_filename": "Yilin_Wang.jpg",
           "github": "yilinw762"
+        },
+        {
+          "name": "Kelly Yue",
+          "role": "Marketing",
+          "img_filename": "Kelly_Yue.JPG"
+        },
+        {
+          "name": "Ayan Rasulova",
+          "role": "Developer",
+          "img_filename": "Ayan_Rasulova.jpg",
+          "github": "ayanrasulova"
         }
       ]
     },
@@ -64,132 +86,132 @@
         {
           "name": "Jay Lalwani",
           "role": "President",
-                    "img_filename": "ENG_Jay_Lalwani.jpg",
+                    "img_filename": "Jay_Lalwani.jpg",
           "github": "Jay-Lalwani"
         },
         {
           "name": "Barrett Ruth",
           "role": "President",
-                    "img_filename": "ENG_Barrett_Ruth.webp",
+                    "img_filename": "Barrett_Ruth.webp",
           "github": "barrett-ruth"
         },
         {
           "name": "Artie Humphreys",
           "role": "VP | Infrastructure Engineering",
-                    "img_filename": "ENG_Artie_Humphreys.jpg",
+                    "img_filename": "Artie_Humphreys.jpg",
           "github": "artiehumphreys"
         },
         {
           "name": "Blaire Zhao",
           "role": "VP | Product Engineering",
-                    "img_filename": "ENG_Blaire_Zhao.jpg",
+                    "img_filename": "Blaire_Zhao.jpg",
           "github": "blairezh"
         },
         {
           "name": "Brandon Istfan",
           "role": "VP | Product Engineering",
-                    "img_filename": "ENG_Brandon_Istfan.jpg",
+                    "img_filename": "Brandon_Istfan.jpg",
           "github": "brandonistfan"
         },
         {
           "name": "Luke Kohler",
           "role": "VP | Infrastructure Engineering",
-                    "img_filename": "ENG_Luke_Kohler.jpeg",
+                    "img_filename": "Luke_Kohler.jpeg",
           "github": "ldkohler"
         },
         {
           "name": "Alex Yung",
           "role": "VP | Infrastructure Engineering",
-                    "img_filename": "ENG_Alex_Yung.jpg",
+                    "img_filename": "Alex_Yung.jpg",
           "github": "alex-yung-github"
         },
         {
           "name": "Ivan Kisselev",
           "role": "Developer",
-                    "img_filename": "ENG_Ivan_Kisselev.jpg",
+                    "img_filename": "Ivan_Kisselev.jpg",
           "github": "IvanTheEngineer"
         },
         {
           "name": "Emily Zhou",
           "role": "Developer",
-                    "img_filename": "ENG_Emily_Zhou.jpg",
+                    "img_filename": "Emily_Zhou.jpg",
           "github": "emilyzhou"
         },
         {
           "name": "Phong Le",
           "role": "Developer",
-                    "img_filename": "ENG_Phong_Le.jpg",
+                    "img_filename": "Phong_Le.jpg",
           "github": "phongo1"
         },
         {
           "name": "Grace Kang",
           "role": "Developer",
-                    "img_filename": "ENG_Grace_Kang.jpg",
+                    "img_filename": "Grace_Kang.jpg",
           "github": "gckang"
         },
         {
           "name": "Bree Bonner",
           "role": "Designer",
-                    "img_filename": "DM_Bree_Bonner.JPG"
+                    "img_filename": "Bree_Bonner.JPG"
         },
         {
           "name": "Bryan Katuari",
           "role": "Developer",
-                    "img_filename": "ENG_Bryan_Katuari.jpg",
+                    "img_filename": "Bryan_Katuari.jpg",
           "github": "bryankatuari"
         },
         {
           "name": "Michael Barnor",
           "role": "Developer",
-                    "img_filename": "ENG_Michael_Barnor.jpg",
+                    "img_filename": "Michael_Barnor.jpg",
           "github": "MichaelBarnor"
         },
         {
           "name": "Ruiyu Zhang",
           "role": "Developer",
-                    "img_filename": "ENG_Ruiyu_Zhang.jpg",
+                    "img_filename": "Ruiyu_Zhang.jpg",
           "github": "RuiyuZhang69"
         },
         {
           "name": "Tommy Lam",
           "role": "Developer",
-                    "img_filename": "ENG_Tommy_Lam.jpg",
+                    "img_filename": "Tommy_Lam.jpg",
           "github": "t0mmylam"
         },
         {
           "name": "Kingsley Kim",
           "role": "Developer",
-                    "img_filename": "ENG_Kingsley_Kim.jpg",
+                    "img_filename": "Kingsley_Kim.jpg",
           "github": "kingsleykimm"
         },
         {
           "name": "Raffi Khondaker",
           "role": "Developer",
-                    "img_filename": "ENG_Raffi_Khondaker.jpeg",
+                    "img_filename": "Raffi_Khondaker.jpeg",
           "github": "therealraffi"
         },
         {
           "name": "Tino Martella",
           "role": "Developer",
-                    "img_filename": "ENG_Tino_Martella.jpg",
+                    "img_filename": "Tino_Martella.jpg",
           "github": "Tino-Martella"
         },
         {
           "name": "Sebastian Wiktorowicz",
           "role": "Developer",
-                    "img_filename": "ENG_Sebastian_Wiktorowicz.png",
+                    "img_filename": "Sebastian_Wiktorowicz.png",
           "github": "SebastianWikt"
         },
         {
           "name": "Collin Togher",
           "role": "Developer",
-                    "img_filename": "ENG_Collin_Togher.jpg",
+                    "img_filename": "Collin_Togher.jpg",
           "github": "ctogs"
         },
         {
           "name": "Vivian Gao",
           "role": "Developer",
-                    "img_filename": "ENG_Vivian_Gao.jpg"
+                    "img_filename": "Vivian_Gao.jpg"
         }
       ]
     },
@@ -199,46 +221,46 @@
         {
           "name": "AJ Nye",
           "role": "Secretary",
-                    "img_filename": "ENG_AJ_Nye.jpg",
+                    "img_filename": "AJ_Nye.jpg",
           "github": "ajnye"
         },
         {
           "name": "Hari Gajjala",
           "role": "Developer",
-                    "img_filename": "ENG_Hari_Gajjala.JPG",
+                    "img_filename": "Hari_Gajjala.JPG",
           "github": "hari-gajjala"
         },
         {
           "name": "Chai Zhang",
           "role": "Designer",
-                    "img_filename": "DM_Chai_Zhang.JPG"
+                    "img_filename": "Chai_Zhang.JPG"
         },
         {
           "name": "Shruti Bala",
           "role": "Developer",
-                    "img_filename": "ENG_Shruti_Bala.jpg",
+                    "img_filename": "Shruti_Bala.jpg",
           "github": "shrutibala1"
         },
         {
           "name": "Christina Wang",
           "role": "Developer",
-                    "img_filename": "ENG_Christina_Wang.JPG"
+                    "img_filename": "Christina_Wang.JPG"
         },
         {
           "name": "Anoushka Sarkar",
           "role": "Marketing and Design",
-                    "img_filename": "DM_Anoushka_Sarkar.JPG"
+                    "img_filename": "Anoushka_Sarkar.JPG"
         },
         {
           "name": "Riley Fletcher",
           "role": "Developer",
-                    "img_filename": "ENG_Riley_Fletcher.jpg",
+                    "img_filename": "Riley_Fletcher.jpg",
           "github": "nrfletcher"
         },
         {
           "name": "Ananya Raam",
           "role": "Designer",
-                    "img_filename": "DM_Ananya_Raam.jpeg"
+                    "img_filename": "Ananya_Raam.jpeg"
         },
         {
           "name": "Rachita Pathipati",
@@ -248,35 +270,35 @@
         {
           "name": "Vincent Song",
           "role": "Developer",
-                    "img_filename": "ENG_Vincent_Song.jpg",
+                    "img_filename": "Vincent_Song.jpg",
           "github": "vsong15"
         },
         {
           "name": "Zohaib Khalid",
           "role": "Developer",
-                    "img_filename": "ENG_Zohaib_Khalid.jpg",
+                    "img_filename": "Zohaib_Khalid.jpg",
           "github": "zohaibk04"
         },
         {
           "name": "Junho Lee",
           "role": "Developer",
-                    "img_filename": "ENG_Junho_Lee.jpg",
+                    "img_filename": "Junho_Lee.jpg",
           "github": "junholee6a"
         },
         {
           "name": "Ja-Zhua Cheng",
           "role": "Developer",
-                    "img_filename": "ENG_Ja-Zhua_Cheng.jpeg"
+                    "img_filename": "Ja-Zhua_Cheng.jpeg"
         },
         {
           "name": "Justin Park",
           "role": "Developer",
-                    "img_filename": "ENG_Justin_Park.jpg"
+                    "img_filename": "Justin_Park.jpg"
         },
         {
           "name": "Olivia Seto",
           "role": "Developer",
-                    "img_filename": "ENG_Olivia_Seto.jpg",
+                    "img_filename": "Olivia_Seto.jpg",
           "github": "oliviaseto"
         }
       ]
@@ -287,68 +309,68 @@
         {
           "name": "Ann Li",
           "role": "VP Infrastructure Engineering",
-                    "img_filename": "ENG_Ann_Li.jpg",
+                    "img_filename": "Ann_Li.jpg",
           "github": "Ann924"
         },
         {
           "name": "Oliver Song",
           "role": "Treasurer",
-                    "img_filename": "ENG_Oliver_Song.jpg",
+                    "img_filename": "Oliver_Song.jpg",
           "github": "obs4qqf"
         },
         {
           "name": "Lilian Zhang",
           "role": "Developer",
-                    "img_filename": "ENG_Lilian_Zhang.png",
+                    "img_filename": "Lilian_Zhang.png",
           "github": "lilizhhh"
         },
         {
           "name": "Neha Bagalkot",
           "role": "Developer",
-                    "img_filename": "ENG_Neha_Bagalkot.jpg",
+                    "img_filename": "Neha_Bagalkot.jpg",
           "github": "nehagb99"
         },
         {
           "name": "Kyle Durrer",
           "role": "Developer",
-                    "img_filename": "ENG_Kyle_Durrer.jpg",
+                    "img_filename": "Kyle_Durrer.jpg",
           "github": "kmd2zjw"
         },
         {
           "name": "Jasmine Senesombath",
           "role": "Designer",
-                    "img_filename": "DM_Jasmine_Senesombath.jpg"
+                    "img_filename": "Jasmine_Senesombath.jpg"
         },
         {
           "name": "Caesar Ning",
           "role": "Developer",
-                    "img_filename": "ENG_Caesar_Ning.jpg",
+                    "img_filename": "Caesar_Ning.jpg",
           "github": "Caesarsyning"
         },
         {
           "name": "Lilleth Snavely",
           "role": "Marketing and Design",
-                    "img_filename": "DM_Lilleth_Snavely.png"
+                    "img_filename": "Lilleth_Snavely.png"
         },
         {
           "name": "Liza Harold",
           "role": "Marketing and Design",
-                    "img_filename": "DM_Liza_Harold.png"
+                    "img_filename": "Liza_Harold.png"
         },
         {
           "name": "Edmund Chen",
           "role": "Marketing and Design",
-                    "img_filename": "DM_Edmund_Chen.jpg"
+                    "img_filename": "Edmund_Chen.jpg"
         },
         {
           "name": "Sid Tickle",
           "role": "Marketing and Design",
-                    "img_filename": "DM_Sid_Tickle.jpg"
+                    "img_filename": "Sid_Tickle.jpg"
         },
         {
           "name": "Dylan Herbig",
           "role": "Developer",
-                    "img_filename": "ENG_Dylan_Herbig.jpg"
+                    "img_filename": "Dylan_Herbig.jpg"
         },
         {
           "name": "Chase Hildebrand",
@@ -363,33 +385,33 @@
         {
           "name": "Jack Liu",
           "role": "President",
-                    "img_filename": "ENG_Jack_Liu.webp"
+                    "img_filename": "Jack_Liu.webp"
         },
         {
           "name": "Alex Shen",
           "role": "President",
-                    "img_filename": "ENG_Alex_Shen.webp"
+                    "img_filename": "Alex_Shen.webp"
         },
         {
           "name": "Jules Le Menestrel",
           "role": "VP of Product Engineering",
-                    "img_filename": "ENG_Jules_LeMenestrel.webp"
+                    "img_filename": "Jules_LeMenestrel.webp"
         },
         {
           "name": "Khushi Chawla",
           "role": "VP of Product Engineering",
-                    "img_filename": "ENG_Khushi_Chawla.jpg",
+                    "img_filename": "Khushi_Chawla.jpg",
           "github": "khushic"
         },
         {
           "name": "Nikhil Mahajan",
           "role": "Data Manager",
-                    "img_filename": "DM_Nikhil_Mahajan.webp"
+                    "img_filename": "Nikhil_Mahajan.webp"
         },
         {
           "name": "Borja Ingle-Fernandez",
           "role": "VP of Infrastructure Engineering",
-                    "img_filename": "ENG_Borja_Ingle-Fernandez.webp"
+                    "img_filename": "Borja_Ingle-Fernandez.webp"
         },
         {
           "name": "Arjun Kumar",
@@ -422,7 +444,7 @@
         {
           "name": "Zina Lahham",
           "role": "UX Manager",
-                    "img_filename": "DM_Zina_Lahham.webp"
+                    "img_filename": "Zina_Lahham.webp"
         },
         {
           "name": "Dani Szabo",
@@ -437,12 +459,12 @@
         {
           "name": "Andrew Niu",
           "role": "Developer",
-                    "img_filename": "ENG_Andrew_Niu.png"
+                    "img_filename": "Andrew_Niu.png"
         },
         {
           "name": "Josh Dano",
           "role": "Marketing and Design",
-                    "img_filename": "DM_Joshua_Dano.png"
+                    "img_filename": "Joshua_Dano.png"
         }
       ]
     },
@@ -462,12 +484,12 @@
         {
           "name": "Vi Nguyen",
           "role": "Secretary and Operations Lead",
-                    "img_filename": "ENG_Vi_Nguyen.webp"
+                    "img_filename": "Vi_Nguyen.webp"
         },
         {
           "name": "Lauren Kim",
           "role": "Social Media Chair",
-                    "img_filename": "DM_Lauren_Kim.webp"
+                    "img_filename": "Lauren_Kim.webp"
         },
         {
           "name": "Davis DeLozier",
@@ -498,12 +520,12 @@
         {
           "name": "Twindy Pham",
           "role": "Design",
-                    "img_filename": "DM_Twindy_Pham.png"
+                    "img_filename": "Twindy_Pham.png"
         },
         {
           "name": "Austin Houck",
           "role": "Developer",
-                    "img_filename": "ENG_Austin_Houck.jpg"
+                    "img_filename": "Austin_Houck.jpg"
         }
       ]
     },

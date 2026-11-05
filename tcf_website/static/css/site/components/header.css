@@ -444,15 +444,3 @@
     padding-top: var(--space-2);
   }
 }
-
-/* ===== TRANSPARENT HEADER (for landing) ===== */
-
-.header--transparent {
-  background-color: transparent;
-  border-bottom: none;
-}
-
-.header--transparent.is-scrolled {
-  background-color: var(--bg);
-  border-bottom: 1px solid var(--border);
-}

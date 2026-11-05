@@ -30,7 +30,6 @@
   pointer-events: none;
 }
 
-
 /* ===== SIZES ===== */
 
 .btn--sm {
@@ -50,13 +49,6 @@
   padding: 0 var(--space-6);
   font-size: var(--text-base);
 }
-
-.btn--xl {
-  height: 3.5rem;
-  padding: 0 var(--space-8);
-  font-size: var(--text-lg);
-}
-
 
 /* ===== VARIANTS ===== */
 
@@ -116,107 +108,16 @@
   background-color: var(--color-danger-500);
 }
 
-/* Link style - looks like a link */
-.btn--link {
-  background-color: transparent;
-  color: var(--primary);
-  border: none;
-  padding: 0;
-  height: auto;
-}
-
-.btn--link:hover {
-  text-decoration: underline;
-}
-
-
-/* ===== ICON BUTTONS ===== */
-
-.btn--icon {
-  padding: 0;
-  aspect-ratio: 1;
-}
-
-.btn--icon.btn--sm {
-  width: 2rem;
-}
-
-.btn--icon.btn--md {
-  width: 2.5rem;
-}
-
-.btn--icon.btn--lg {
-  width: 3rem;
-}
-
-
 /* ===== FULL WIDTH ===== */
 
 .btn--full {
   width: 100%;
 }
 
-
 /* ===== LOADING STATE ===== */
-
-.btn--loading {
-  position: relative;
-  color: transparent;
-  pointer-events: none;
-}
-
-.btn--loading::after {
-  content: '';
-  position: absolute;
-  width: 1em;
-  height: 1em;
-  border: 2px solid currentColor;
-  border-right-color: transparent;
-  border-radius: 50%;
-  animation: btn-spin 0.6s linear infinite;
-}
-
-.btn--primary.btn--loading::after,
-.btn--accent.btn--loading::after,
-.btn--danger.btn--loading::after {
-  border-color: var(--color-white);
-  border-right-color: transparent;
-}
 
 @keyframes btn-spin {
   to {
     transform: rotate(360deg);
   }
-}
-
-
-/* ===== BUTTON GROUP ===== */
-
-.btn-group {
-  display: inline-flex;
-}
-
-.btn-group .btn {
-  border-radius: 0;
-}
-
-.btn-group .btn:first-child {
-  border-top-left-radius: var(--radius-lg);
-  border-bottom-left-radius: var(--radius-lg);
-}
-
-.btn-group .btn:last-child {
-  border-top-right-radius: var(--radius-lg);
-  border-bottom-right-radius: var(--radius-lg);
-}
-
-.btn-group .btn:not(:first-child) {
-  margin-left: -1px;
-}
-
-.btn-group .btn--secondary.active,
-.btn-group .btn--secondary:hover {
-  background-color: var(--bg-muted);
-  border-color: var(--fg-subtle);
-  z-index: 1;
 }

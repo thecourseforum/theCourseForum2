@@ -29,7 +29,6 @@
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-
 /* ===== MODAL CONTAINER ===== */
 
 .modal {
@@ -54,7 +53,6 @@
   visibility: visible;
 }
 
-
 /* ===== MODAL DIALOG ===== */
 
 .modal__dialog {
@@ -78,7 +76,6 @@
   transform: scale(1) translateY(0);
 }
 
-
 /* ===== SIZE VARIANTS ===== */
 
 .modal__dialog--sm {
@@ -88,16 +85,6 @@
 .modal__dialog--lg {
   max-width: 48rem;
 }
-
-.modal__dialog--xl {
-  max-width: 64rem;
-}
-
-.modal__dialog--full {
-  max-width: calc(100vw - var(--space-8));
-  max-height: calc(100vh - var(--space-8));
-}
-
 
 /* ===== MODAL PARTS ===== */
 
@@ -167,14 +154,12 @@
   flex-shrink: 0;
 }
 
-
 /* ===== CENTERED CONTENT ===== */
 
 .modal__body--centered {
   text-align: center;
   padding: var(--space-8);
 }
-
 
 /* ===== LOGIN MODAL ===== */
 
@@ -187,21 +172,11 @@
   object-fit: contain;
 }
 
-
-/* ===== SCROLLABLE BODY ===== */
-
-.modal__body--scroll {
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
-
 /* ===== PREVENT BODY SCROLL ===== */
 
 body.modal-open {
   overflow: hidden;
 }
-
 
 /* ===== ANIMATIONS ===== */
 
@@ -216,7 +191,6 @@ body.modal-open {
                 opacity var(--duration-normal) var(--ease-out);
   }
 }
-
 
 /* ===== ADBLOCK GATE ===== */
 

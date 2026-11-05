@@ -5,8 +5,9 @@ from io import StringIO
 from django.core import management
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 
+from tcf_website.management.commands.sort_team_info import sort_team_info
 from tcf_website.models import CourseGrade, CourseInstructorGrade
 
 from .test_utils import setup
@@ -502,3 +503,34 @@ class HideReviewTests(TestCase):
         # user2 has no email — should print "(none)"
         out = _hide(id=self.review2.pk, show=True)
         self.assertIn("(none)", out)
+
+
+class SortTeamInfoTestCase(SimpleTestCase):
+    def setUp(self):
+        self.team_info = {
+            "executive_team": [
+                {"name": "Zed Zulu", "role": "President", "class": "2029"},
+                {"name": "Amy Alpha", "role": "VP | Design", "class": "2027"},
+            ],
+            "design_team": [
+                {"name": "Cal Young", "role": "Designer", "class": "2029"},
+                {"name": "Amy Alpha", "role": "VP | Design", "class": "2027"},
+                {"name": "Bea Xu", "role": "Designer", "class": "2029"},
+                {"name": "Zed Zulu", "role": "President", "class": "2029"},
+                {"name": "Dan Moss", "role": "Designer", "class": "2028"},
+            ],
+        }
+
+    def test_exec_section_keeps_order(self):
+        result = sort_team_info(self.team_info)
+        self.assertEqual(result["executive_team"], self.team_info["executive_team"])
+
+    def test_execs_first_then_year_then_last_name(self):
+        result = sort_team_info(self.team_info)
+        self.assertEqual(
+            [member["name"] for member in result["design_team"]],
+            ["Zed Zulu", "Amy Alpha", "Dan Moss", "Bea Xu", "Cal Young"],
+        )
+
+    def test_team_info_file_is_sorted(self):
+        call_command("sort_team_info", "--check", stdout=StringIO())
