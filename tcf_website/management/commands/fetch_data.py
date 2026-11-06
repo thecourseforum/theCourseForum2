@@ -311,7 +311,7 @@ def section_to_csv_row(course, session=None, timeout=TIMEOUT):
                     "TBA"
                     if days in ("TBA", "-")
                     else (f"{days} {start} - {end}" if days and start and end else "")
-                ).lower(),
+                ),
             }
         )
     return row
