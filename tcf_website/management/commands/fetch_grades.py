@@ -31,6 +31,8 @@ import requests
 import websocket
 from django.core.management.base import BaseCommand, CommandError
 
+from tcf_website.utils import is_tba_instructor
+
 HOST = "qlksnpn-apprd01.eservices.virginia.edu"
 TARGET_URL = (
     f"https://{HOST}/extensions/FOIAGradeDistribution/FOIAGradeDistribution.html"
@@ -261,7 +263,7 @@ def format_sis_name(name):
     output keep matching the Instructor rows load_grades looks them up in.
     """
     name = clean_text(name)
-    if not name or name == "To Be Announced":
+    if not name or is_tba_instructor(name):
         return "..."
     parts = name.split(",")[0].strip().split()
     if len(parts) < 2:
@@ -277,7 +279,7 @@ def format_engine_name(name):
     marked "...", so anything not in that shape becomes "...".
     """
     name = clean_text(name)
-    if name.count(",") != 1 or name == "To Be Announced":
+    if name.count(",") != 1 or is_tba_instructor(name):
         return "..."
     return name
 
