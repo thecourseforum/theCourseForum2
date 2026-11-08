@@ -16,6 +16,8 @@ from tcf_website.models import Instructor
 from tcf_website.utils import is_tba_instructor
 from tcf_website.views.catalog.search import fetch_instructors
 
+from .test_utils import setup
+
 hide_tba_instructors = import_module(
     "tcf_website.migrations.0030_hide_tba_instructors"
 ).hide_tba_instructors
@@ -50,9 +52,17 @@ class TBAInstructorTests(TestCase):
         self.assertFalse(Instructor.objects.filter(last_name="Announced").exists())
 
     def test_migration_hides_existing_placeholder_and_search_skips_it(self):
+        setup(self)
         tba = Instructor.objects.create(first_name="To", last_name="Announced")
         real = Instructor.objects.create(first_name="Ann", last_name="Announced")
+        self.section_course.instructors.set([tba])
         hide_tba_instructors(apps, SimpleNamespace(connection=connection))
+        # The section stays addable in the schedule builder under Staff.
+        self.assertTrue(
+            self.section_course.instructors.filter(
+                last_name="Staff", hidden=False
+            ).exists()
+        )
         tba.refresh_from_db()
         real.refresh_from_db()
         self.assertTrue(tba.hidden)
