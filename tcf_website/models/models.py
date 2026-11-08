@@ -230,6 +230,46 @@ class Club(models.Model):
     application_required = models.BooleanField(default=False)
     photo_url = models.CharField(max_length=255, blank=True)
     meeting_time = models.CharField(max_length=255, blank=True)
+    # Additional club membership information
+    sponsor = models.TextField(
+        null=True, blank=True, help_text="Faculty or organizational sponsor."
+    )
+
+    communication_methods = models.TextField(
+        null=True, blank=True, help_text="Communication platforms and channels."
+    )
+
+    time_commitment = models.TextField(
+        null=True, blank=True, help_text="Expected time commitment for members."
+    )
+
+    year_founded = models.PositiveSmallIntegerField(
+        null=True, blank=True, help_text="Year the organization was founded."
+    )
+
+    joining_process = models.TextField(
+        null=True, blank=True, help_text="Requirements and process for joining."
+    )
+
+    selectivity = models.TextField(
+        null=True, blank=True, help_text="Whether membership is open or selective."
+    )
+
+    dues = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Membership dues in USD. Null means unknown; zero means free.",
+    )
+
+    recruitment_cycle = models.TextField(
+        null=True, blank=True, help_text="When and how often the club recruits."
+    )
+
+    recruitment_dates = models.TextField(
+        null=True, blank=True, help_text="Specific recruitment dates or deadlines."
+    )
 
     def save(self, *args, **kwargs):
         # maintain combined_name for trigram search
