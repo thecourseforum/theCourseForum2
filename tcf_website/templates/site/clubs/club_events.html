@@ -1,0 +1,60 @@
+{% extends "site/common/base.html" %}
+{% load static %}
+{% block title %}
+    Club events | theCourseForum
+{% endblock title %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/site/pages/browse.css' %}">
+    <link rel="stylesheet" href="{% static 'css/site/pages/club_events.css' %}">
+{% endblock styles %}
+{% block content %}
+    <div class="browse-header">
+        <div class="browse-header__inner club-events-header">
+            <div>
+                <p class="club-events-header__label">Clubs calendar</p>
+                <h1 class="browse-header__title">Club events</h1>
+                <p class="browse-header__description">
+                    Explore club events, open event details, or create a custom calendar file. All times are Eastern.
+                </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <div class="club-events-views"
+                     role="group"
+                     aria-label="Event view"
+                     id="club-events-views">
+                    <button type="button" class="btn btn--md btn--ghost" aria-pressed="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             aria-hidden="true">
+                            <path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01" />
+                        </svg>
+                        List
+                    </button>
+                    <button type="button" class="btn btn--md btn--ghost" aria-pressed="false">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <rect x="3" y="3" width="7" height="7" rx="1" />
+                            <rect x="14" y="3" width="7" height="7" rx="1" />
+                            <rect x="3" y="14" width="7" height="7" rx="1" />
+                            <rect x="14" y="14" width="7" height="7" rx="1" />
+                        </svg>
+                        Month
+                    </button>
+                </div>
+                {% include "site/clubs/components/_create_ics_button.html" %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block scripts %}
+    <script>
+        const eventViewButtons = document.querySelectorAll('#club-events-views button');
+        eventViewButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                eventViewButtons.forEach(option => {
+                    option.setAttribute('aria-pressed', String(option === button));
+                });
+            });
+        });
+    </script>
+{% endblock scripts %}

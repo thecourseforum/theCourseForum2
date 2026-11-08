@@ -1,4 +1,4 @@
-"""Club category and club detail views."""
+"""Club category, event, and detail views."""
 
 from django.conf import settings
 from django.db.models import Q, Sum, Value
@@ -61,6 +61,11 @@ def _build_club_page_context(request, club: Club, mode: str):
         "course_code": f"{club.category.slug} {club.id}",
         "course_title": club.name,
     }
+
+
+def club_events(request):
+    """Render the club events page."""
+    return render(request, "site/clubs/club_events.html")
 
 
 def club_category(request, category_slug: str):
