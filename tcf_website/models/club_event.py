@@ -57,7 +57,10 @@ class ClubEvent(models.Model):
     @property
     def public_source_url(self):
         """Sample records have no real source page; never render unsafe schemes."""
-        parsed = urlsplit(self.source_url)
+        try:
+            parsed = urlsplit(self.source_url)
+        except ValueError:
+            return ""
         if not self.is_sample and parsed.scheme in ("https", "http") and parsed.netloc:
             return self.source_url
         return ""

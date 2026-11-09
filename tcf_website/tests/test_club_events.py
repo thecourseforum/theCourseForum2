@@ -128,6 +128,7 @@ class ClubEventQueryTests(TestCase):
             {"category": "999999"},
             {"interest": "unrecognized"},
             {"sort": "unsafe"},
+            {"to": "9999-12-31"},
         ]:
             with self.subTest(params=params):
                 form = ClubEventFilterForm(params)
@@ -145,7 +146,7 @@ class ClubEventQueryTests(TestCase):
             self.event.full_clean()
 
     def test_source_link_rejects_unsafe_schemes_and_sample_links(self):
-        for url in ["javascript:alert(1)", "//example.com/event"]:
+        for url in ["javascript:alert(1)", "//example.com/event", "https://[bad"]:
             self.event.source_url = url
             self.assertEqual(self.event.public_source_url, "")
         self.event.source_url = "https://hoosinvolved.virginia.edu/event/123"

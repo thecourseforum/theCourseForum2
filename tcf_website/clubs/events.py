@@ -1,7 +1,7 @@
 """Validated event filters and one reusable query for event occurrences."""
 
 from calendar import monthrange
-from datetime import datetime, time, timedelta
+from datetime import date, datetime, time, timedelta
 
 from django import forms
 from django.db.models import Q
@@ -101,6 +101,8 @@ class ClubEventFilterForm(forms.Form):
         start, end = cleaned.get("from"), cleaned.get("to")
         if start and end and end < start:
             self.add_error("to", "Choose an end date on or after the start date.")
+        if end == date.max:
+            self.add_error("to", "Choose an end date before December 31, 9999.")
         return cleaned
 
 
