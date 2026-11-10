@@ -1,0 +1,15 @@
+{% extends "site/common/base.html" %}
+{% load static %}
+{% block title %}{{ event.title }} | theCourseForum{% endblock title %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/site/pages/browse.css' %}">
+    <link rel="stylesheet" href="{% static 'css/site/pages/club_events.css' %}">
+{% endblock styles %}
+{% block content %}
+    <div class="browse-content club-events event-detail-page">
+        <a href="{% url 'club_events' %}?mode=clubs"
+           class="btn btn--secondary btn--md">Back to club events</a>
+        <h1 class="sr-only">Club event details</h1>
+        {% include "site/clubs/events/_detail.html" %}
+    </div>
+{% endblock content %}

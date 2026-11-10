@@ -18,20 +18,26 @@
                class="header__nav-link {% if request.resolver_match.url_name == 'browse' %}is-active{% endif %}">
                 Browse
             </a>
-            {% if user.is_authenticated %}
+            {% if request.GET.mode == "clubs" %}
+                <a href="{% url 'club_events' %}?mode=clubs"
+                   class="header__nav-link {% if request.resolver_match.url_name == 'club_events' or request.resolver_match.url_name == 'club_event_detail' %}is-active{% endif %}">Events</a>
+            {% elif user.is_authenticated %}
                 <a href="{% url 'schedule' %}"
                    class="header__nav-link {% if request.resolver_match.url_name == 'schedule' %}is-active{% endif %}">
                     Schedule
-                </a>
-                <a href="{% mode_url request 'new_review' %}"
-                   class="header__nav-link {% if request.resolver_match.url_name == 'new_review' %}is-active{% endif %}">
-                    Review
                 </a>
             {% else %}
                 <a href="#"
                    class="header__nav-link"
                    data-modal-open="loginModal"
                    data-login-modal-message="Sign in to access schedules.">Schedule</a>
+            {% endif %}
+            {% if user.is_authenticated %}
+                <a href="{% mode_url request 'new_review' %}"
+                   class="header__nav-link {% if request.resolver_match.url_name == 'new_review' %}is-active{% endif %}">
+                    Review
+                </a>
+            {% else %}
                 <a href="#"
                    class="header__nav-link"
                    data-modal-open="loginModal"

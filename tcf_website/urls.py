@@ -3,8 +3,11 @@
 from django.urls import path
 
 from . import views
+from .views.clubs.events import club_event_detail, club_events
 
 urlpatterns = [
+    path("club-events/", club_events, name="club_events"),
+    path("club-events/<int:event_id>/", club_event_detail, name="club_event_detail"),
     path(
         "club-category/<str:category_slug>/",
         views.club_category,
