@@ -11,6 +11,7 @@ from tcf_website.search.browse_helpers import is_browse_results_partial_request
 
 
 def _club_mode_redirect(request):
+    """Return a clubs-mode redirect preserving query values, or None if canonical."""
     if request.GET.get("mode") != "clubs":
         params = request.GET.copy()
         params["mode"] = "clubs"

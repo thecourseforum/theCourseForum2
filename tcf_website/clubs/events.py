@@ -49,6 +49,11 @@ class ClubEventFilterForm(forms.Form):
     show_cancelled = forms.BooleanField(label="Show canceled events", required=False)
 
     def __init__(self, data=None, *args, **kwargs):
+        """Bind filters with Eastern-month defaults and public-event interests.
+
+        Preserve explicitly blank dates so callers can remove either boundary.
+        Apply the existing site's control styles to the generated widgets.
+        """
         today = timezone.localdate(timezone=EVENT_TIME_ZONE)
         data = data.copy() if data is not None else {}
         data.setdefault("from", today.replace(day=1).isoformat())
@@ -97,6 +102,7 @@ class ClubEventFilterForm(forms.Form):
             )
 
     def clean(self):
+        """Reject reversed ranges and end dates without a representable next day."""
         cleaned = super().clean()
         start, end = cleaned.get("from"), cleaned.get("to")
         if start and end and end < start:

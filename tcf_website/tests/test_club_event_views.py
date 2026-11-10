@@ -90,6 +90,7 @@ class ClubEventViewTests(TestCase):
         self.assertContains(response, "Reset filters")
 
     def test_pagination_retains_filters_and_has_stable_occurrences(self):
+        """Verify page two retains filters and excludes first-page occurrences."""
         for i in range(16):
             event = ClubEvent.objects.create(
                 title=f"Extra {i}",

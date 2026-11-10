@@ -66,6 +66,11 @@ class ClubEvent(models.Model):
         return ""
 
     def clean(self):
+        """Validate interest names and timezone-aware, increasing event bounds.
+
+        All-day bounds must fall at Eastern midnight. Raise ValidationError
+        for malformed interests, naive times, or invalid event boundaries.
+        """
         super().clean()
         if not isinstance(self.interests, list) or any(
             not isinstance(value, str) or not value.strip() for value in self.interests

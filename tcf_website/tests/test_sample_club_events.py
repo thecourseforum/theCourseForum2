@@ -25,6 +25,7 @@ class SampleClubEventTests(TestCase):
         self.assertEqual(Club.objects.count(), 18)
 
     def test_seed_keeps_cohosts_cancelled_and_overnight_records(self):
+        """Verify sample loading retains co-hosts, cancellations, and overnight spans."""
         self.load_samples()
         self.assertTrue(ClubEvent.objects.filter(is_cancelled=True).exists())
         self.assertEqual(

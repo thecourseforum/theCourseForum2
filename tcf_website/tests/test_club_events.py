@@ -29,6 +29,7 @@ class ClubEventQueryTests(TestCase):
 
     @classmethod
     def create_event(cls, title, hosts=None, **kwargs):
+        """Create an occurrence with overridable defaults and optional co-hosts."""
         fields = {
             "title": title,
             "description": "Learn to build things together.",
@@ -57,6 +58,7 @@ class ClubEventQueryTests(TestCase):
         )
 
     def test_keyword_matches_title_description_host_and_location(self):
+        """Verify keyword searches match each supported event or host text field."""
         for keyword in ["kickoff", "build", "Women in CS", "rice"]:
             with self.subTest(keyword=keyword):
                 self.assertEqual(self.results(q=keyword), [self.event])
@@ -121,6 +123,7 @@ class ClubEventQueryTests(TestCase):
         self.assertEqual(self.results(sort="latest"), [later, self.event])
 
     def test_invalid_filters_never_silently_return_all_events(self):
+        """Verify malformed or unknown filters produce errors and no results."""
         for params in [
             {"from": "bad"},
             {"from": "2026-11-30", "to": "2026-11-01"},
@@ -146,6 +149,7 @@ class ClubEventQueryTests(TestCase):
             self.event.full_clean()
 
     def test_source_link_rejects_unsafe_schemes_and_sample_links(self):
+        """Verify unsafe and sample links are hidden while valid source links work."""
         for url in ["javascript:alert(1)", "//example.com/event", "https://[bad"]:
             self.event.source_url = url
             self.assertEqual(self.event.public_source_url, "")
@@ -155,6 +159,7 @@ class ClubEventQueryTests(TestCase):
         self.assertEqual(self.event.public_source_url, "")
 
     def test_interest_data_must_be_a_list_of_nonempty_strings(self):
+        """Reject non-list interests, empty names, and non-string entries."""
         for value in [{"Tech": True}, [""], [1]]:
             self.event.interests = value
             with self.assertRaises(ValidationError):

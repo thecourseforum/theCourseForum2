@@ -22,6 +22,12 @@
     filters.open = !mobile.matches;
   });
 
+  /**
+   * Load filtered results, cancel superseded requests, and update browser history.
+   * Keep prior results on failure and retain the submitted URL for retry.
+   * @param {string} url - List URL with filters and an optional results anchor.
+   * @returns {Promise<void>} Resolves after rendering results or recovery feedback.
+   */
   async function updateList(url) {
     listController?.abort();
     const controller = new AbortController();
@@ -81,6 +87,12 @@
   // Reload the server-rendered form as well as the results when restoring history.
   window.addEventListener("popstate", () => window.location.reload());
 
+  /**
+   * Load the selected event into the modal, canceling any previous detail request.
+   * Offer retry and the normal event page when the request fails or times out.
+   * @param {string} href - Event detail URL, also used for the fallback link.
+   * @returns {Promise<void>} Resolves after rendering details or recovery feedback.
+   */
   async function loadDetails(href) {
     detailController?.abort();
     const controller = new AbortController();

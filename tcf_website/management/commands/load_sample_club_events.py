@@ -18,6 +18,13 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
+        """Upsert design samples atomically in local or test environments.
+
+        Preserve existing club profiles and normalize inclusive all-day dates
+        to exclusive Eastern-midnight boundaries. Raise CommandError outside
+        local/test environments or when a key belongs to a non-sample event;
+        validation failures and key collisions roll back the entire load.
+        """
         if settings.ENVIRONMENT not in ("local", "ci"):
             raise CommandError(
                 "Sample events are for local development and tests only."
