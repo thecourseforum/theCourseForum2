@@ -1,6 +1,7 @@
 """Tests for Review model."""
 
 import json
+from unittest import mock
 
 from django.contrib.messages import get_messages
 from django.db import IntegrityError
@@ -9,6 +10,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from ..models import Review, Vote
+from ..review import services
 from ..review.forms import ReviewForm
 from .test_utils import setup, suppress_request_warnings
 
@@ -262,3 +264,90 @@ class ReviewPreflightJsonTests(TestCase):
         self.assertEqual(response.status_code, 400)
         data = json.loads(response.content)
         self.assertFalse(data.get("ok", True))
+
+    def test_check_toxicity_xhr_invalid_returns_json_400(self):
+        """Invalid XHR to toxicity check returns JSON 400 (never redirects HTML)."""
+        self.client.force_login(self.user1)
+        response = self.client.post(
+            reverse("check_review_toxicity"),
+            {"text": "ab"},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.content)
+        self.assertFalse(data.get("ok", True))
+        self.assertIn("error", data)
+
+    def test_check_toxicity_valid_returns_toxic_flag(self):
+        """Valid POST returns a boolean toxic flag; default (no scorer) is False."""
+        self.client.force_login(self.user1)
+        response = self.client.post(
+            reverse("check_review_toxicity"),
+            _review_post_data(self.course, self.instructor, self.semester),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertIn("toxic", data)
+        # Detoxify is not installed in CI, so scoring is unavailable -> not flagged.
+        self.assertFalse(data["toxic"])
+
+    @mock.patch("tcf_website.review.services._get_detoxify_model")
+    def test_check_toxicity_flags_high_score(self, mock_model):
+        """When the scorer rates above threshold, the endpoint reports toxic."""
+        mock_model.return_value = _FakeDetoxify(toxicity=0.95)
+        self.client.force_login(self.user1)
+        response = self.client.post(
+            reverse("check_review_toxicity"),
+            _review_post_data(self.course, self.instructor, self.semester),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(json.loads(response.content)["toxic"])
+
+
+class _FakeDetoxify:
+    """Stand-in for a Detoxify model returning a fixed toxicity prediction."""
+
+    def __init__(self, toxicity):
+        self._toxicity = toxicity
+
+    def predict(self, _text):
+        return {
+            "toxicity": self._toxicity,
+            "obscene": self._toxicity,
+            "threat": 0.0,
+            "insult": 0.1,
+            "identity_attack": 0.0,
+        }
+
+
+class ReviewToxicityScoringTests(TestCase):
+    """Unit tests for the toxicity scoring service and threshold logic."""
+
+    def test_empty_text_is_not_scored(self):
+        """Blank text short-circuits to (0, '') without needing a model."""
+        self.assertEqual(services.score_review_toxicity(""), (0, ""))
+        self.assertEqual(services.score_review_toxicity("   "), (0, ""))
+
+    @mock.patch("tcf_website.review.services._get_detoxify_model")
+    def test_scoring_scales_to_0_100_and_picks_category(self, mock_model):
+        """Rating is round(100 * toxicity) and category is the max label."""
+        mock_model.return_value = _FakeDetoxify(toxicity=0.9)
+        rating, category = services.score_review_toxicity("some text")
+        self.assertEqual(rating, 90)
+        self.assertEqual(category, "obscene")
+
+    @mock.patch("tcf_website.review.services._get_detoxify_model")
+    def test_will_be_hidden_matches_threshold(self, mock_model):
+        """Hidden iff rating >= TOXICITY_THRESHOLD, matching display filters."""
+        mock_model.return_value = _FakeDetoxify(toxicity=0.74)
+        self.assertTrue(services.review_will_be_hidden_for_toxicity("t"))
+        mock_model.return_value = _FakeDetoxify(toxicity=0.5)
+        self.assertFalse(services.review_will_be_hidden_for_toxicity("t"))
+
+    @mock.patch("tcf_website.review.services._get_detoxify_model", return_value=None)
+    def test_unavailable_scorer_never_flags(self, _mock_model):
+        """When Detoxify is unavailable, reviews are never treated as toxic."""
+        self.assertEqual(services.score_review_toxicity("anything"), (0, ""))
+        self.assertFalse(services.review_will_be_hidden_for_toxicity("anything"))
