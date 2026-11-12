@@ -429,7 +429,7 @@
 .advanced-search__field select:focus {
   border-color: var(--primary);
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-primary-100);
+  box-shadow: 0 0 0 2px var(--ring-glow);
 }
 
 .advanced-search__range {
@@ -454,7 +454,7 @@
 .advanced-search__range input:focus {
   border-color: var(--primary);
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-primary-100);
+  box-shadow: 0 0 0 2px var(--ring-glow);
 }
 
 .advanced-search__range-sep {
