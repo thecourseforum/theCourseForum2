@@ -122,11 +122,12 @@
   transition: border-color var(--duration-fast) var(--ease-default);
 }
 
-.school-header:hover {
+.school-section:hover .school-header,
+.school-section:hover .departments-grid {
   border-color: var(--fg-subtle);
 }
 
-.school-header.is-open {
+.school-section .school-header.is-open {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   border-bottom-color: transparent;
@@ -197,6 +198,8 @@
   border-top: none;
   border-bottom-left-radius: var(--radius-xl);
   border-bottom-right-radius: var(--radius-xl);
+
+  transition: border-color var(--duration-fast) var(--ease-default);
 }
 
 .departments-grid.is-open {
