@@ -7,10 +7,24 @@ from django.db import IntegrityError
 from django.forms.models import model_to_dict
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
-from ..models import Review, Vote
+from ..models import Review, Section, Semester, Vote
 from ..review.forms import ReviewForm
+from ..utils import semesters_for_course
 from .test_utils import setup, suppress_request_warnings
+
+
+def _future_semester_with_section(course, instructor):
+    """Create a not-yet-started Fall term with a matching section for ``course``."""
+    future_year = timezone.now().year + 1
+    number = int(f"1{future_year % 100}8")  # trailing 8 => Fall (starts in August)
+    semester = Semester.objects.create(year=future_year, season="FALL", number=number)
+    section = Section.objects.create(
+        course=course, semester=semester, sis_section_number=999001
+    )
+    section.instructors.set([instructor])
+    return semester
 
 
 class ReviewFormTests(TestCase):
@@ -185,6 +199,21 @@ class ReviewFormSectionValidationTests(TestCase):
         )
         self.assertFalse(form.is_valid())
 
+    def test_rejects_future_semester(self):
+        """A term that has not started yet cannot be reviewed, even with a section."""
+        future = _future_semester_with_section(self.course, self.instructor)
+        form = ReviewForm(_review_post_data(self.course, self.instructor, future))
+        self.assertFalse(form.is_valid())
+        self.assertIn("started", str(form.errors).lower())
+
+    def test_accepts_started_semester(self):
+        """A term that has already started passes clean()."""
+        # self.semester is Fall 2025, which has already started.
+        form = ReviewForm(
+            _review_post_data(self.course, self.instructor, self.semester)
+        )
+        self.assertTrue(form.is_valid())
+
 
 class ReviewCascadeJsonEndpointsTests(TestCase):
     """XHR helpers for the unified review writer."""
@@ -210,6 +239,23 @@ class ReviewCascadeJsonEndpointsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         ids = {row["id"] for row in data["semesters"]}
+        self.assertIn(self.semester.pk, ids)
+
+    def test_semesters_excludes_future_terms(self):
+        """A not-yet-started term is never offered as a review option."""
+        future = _future_semester_with_section(self.course, self.instructor)
+
+        # Direct helper used by both the server render and the XHR endpoint.
+        self.assertNotIn(future, list(semesters_for_course(self.course)))
+
+        self.client.force_login(self.user1)
+        response = self.client.get(
+            reverse("review_semester_options"),
+            {"course": self.course.pk},
+        )
+        data = json.loads(response.content)
+        ids = {row["id"] for row in data["semesters"]}
+        self.assertNotIn(future.pk, ids)
         self.assertIn(self.semester.pk, ids)
 
     def test_instructors_bad_request_without_params(self):

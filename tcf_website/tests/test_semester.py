@@ -1,5 +1,7 @@
 """Tests for Semester model."""
 
+from datetime import datetime
+
 from django.test import TestCase
 
 from ..models import Semester
@@ -52,3 +54,35 @@ class SemesterTestCase(TestCase):
     def test_latest_returns_highest_semester_number(self):
         """``latest()`` picks the term with the greatest SIS number."""
         self.assertEqual(Semester.latest().pk, self.semester.pk)
+
+
+class HasStartedTestCase(TestCase):
+    """Tests for the date-based ``has_started`` gate."""
+
+    # Reference "now": July 8, 2026.
+    AS_OF = datetime(2026, 7, 8)
+
+    def test_past_year_has_started(self):
+        """A term from an earlier year has always started."""
+        sem = Semester(season="FALL", year=2020, number=1208)
+        self.assertTrue(sem.has_started(as_of=self.AS_OF))
+
+    def test_future_year_has_not_started(self):
+        """A term in a later year has not started."""
+        sem = Semester(season="SPRING", year=2030, number=1302)
+        self.assertFalse(sem.has_started(as_of=self.AS_OF))
+
+    def test_fall_this_year_not_started_before_august(self):
+        """Fall 2026 has not started as of July 2026 (classes begin in August)."""
+        sem = Semester(season="FALL", year=2026, number=1268)
+        self.assertFalse(sem.has_started(as_of=self.AS_OF))
+
+    def test_summer_this_year_started_by_july(self):
+        """Summer 2026 has started as of July 2026 (classes begin in May)."""
+        sem = Semester(season="SUMMER", year=2026, number=1266)
+        self.assertTrue(sem.has_started(as_of=self.AS_OF))
+
+    def test_start_month_boundary_is_inclusive(self):
+        """A term is considered started once its start month is reached."""
+        sem = Semester(season="FALL", year=2026, number=1268)
+        self.assertTrue(sem.has_started(as_of=datetime(2026, 8, 1)))
