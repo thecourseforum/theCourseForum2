@@ -55,7 +55,7 @@
 .search-bar__input:focus {
   background-color: var(--bg);
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px var(--color-primary-100);
+  box-shadow: 0 0 0 2px var(--ring-glow);
   -webkit-text-fill-color: var(--fg);
   outline: none;
 }
