@@ -27,31 +27,10 @@
 /* ===== HERO SECTION ===== */
 
 .about-hero {
-  text-align: center;
-  padding: var(--space-12) 0;
-  
+  padding: var(--space-6) 0 var(--space-10);
   border-bottom: 1px solid var(--border);
   margin-bottom: var(--space-10);
 }
-
-.about-hero__logo {
-  width: 120px;
-  height: 120px;
-  margin: 0 auto var(--space-6);
-}
-
-.about-hero__title {
-  font-family: var(--font-display);
-  font-size: var(--text-4xl);
-  font-weight: var(--font-normal);
-  margin-bottom: var(--space-2);
-}
-
-.about-hero__tagline {
-  font-size: var(--text-xl);
-  color: var(--fg-muted);
-}
-
 
 /* ===== DESCRIPTION ===== */
 

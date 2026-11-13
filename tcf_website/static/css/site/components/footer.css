@@ -60,7 +60,7 @@
 .footer__logo {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-1);
   margin-bottom: var(--space-4);
   
   text-decoration: none;
@@ -73,13 +73,16 @@
 }
 
 .footer__logo-icon {
-  width: 2.5rem;
-  height: 2.5rem;
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
 }
 
 .footer__logo-text {
-  font-size: var(--text-xl);
+  font-size: var(--text-lg);
   font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-tight);
 }
 
 .footer__tagline {

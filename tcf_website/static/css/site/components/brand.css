@@ -1,0 +1,75 @@
+/* Optical alignment for the small icon + wordmark in shared navigation. */
+:root {
+  --brand-icon-offset-y: 2px;
+}
+
+.footer__logo-icon {
+  transform: translateY(var(--brand-icon-offset-y));
+}
+
+/* The header wordmark is hidden below this breakpoint. */
+@media (min-width: 640px) {
+  .header__logo-icon {
+    transform: translateY(var(--brand-icon-offset-y));
+  }
+}
+
+/* Shared landing and About brand lockup. */
+:is(.hero__brand, .about-hero) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+:is(.hero__logo, .about-hero__logo) {
+  display: block;
+  width: clamp(80px, 12vw, 144px);
+  height: auto;
+  flex-shrink: 0;
+}
+
+:is(.hero__title, .about-hero__title) {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg);
+  text-align: left;
+}
+
+@media (min-width: 768px) {
+  :is(.hero__title, .about-hero__title) {
+    font-size: var(--text-5xl);
+  }
+}
+
+:is(.hero__tagline, .about-hero__tagline) {
+  font-size: var(--text-lg);
+  color: var(--fg-muted);
+  line-height: var(--leading-relaxed);
+  text-align: left;
+}
+
+@media (min-width: 768px) {
+  :is(.hero__tagline, .about-hero__tagline) {
+    font-size: var(--text-xl);
+  }
+}
+
+@media (max-width: 479px) {
+  :is(.hero__logo, .about-hero__logo) {
+    width: clamp(56px, 14vw, 80px);
+  }
+
+  :is(.hero__title, .about-hero__title) {
+    font-size: var(--text-3xl);
+  }
+
+  :is(.hero__tagline, .about-hero__tagline) {
+    font-size: var(--text-sm);
+  }
+}
+

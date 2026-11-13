@@ -178,12 +178,13 @@
 
 /* ===== LOGIN MODAL ===== */
 
-.login-modal__logo {
+.login-modal__logo,
+.adblock-gate__logo {
   display: block;
-  width: auto;
-  height: 3.25rem;
-  max-width: min(17.5rem, 100%);
-  margin: 0 auto var(--space-6);
+  width: clamp(10rem, 28vw, 12.5rem);
+  height: auto;
+  max-width: 100%;
+  margin: 0 auto var(--space-2);
   object-fit: contain;
 }
 
@@ -252,13 +253,6 @@ body.modal-open {
   border-radius: var(--radius-2xl);
   background-color: var(--bg-elevated);
   box-shadow: var(--shadow-xl);
-}
-
-.adblock-gate__logo {
-  width: auto;
-  max-width: 11rem;
-  max-height: 3.25rem;
-  margin: 0 auto var(--space-4);
 }
 
 .adblock-gate__title {
