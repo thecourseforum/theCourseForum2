@@ -1,0 +1,4 @@
+{% load custom_tags %}
+{% for host in event.hosts.all %}
+    <a href="{% mode_url request 'club' host.category.slug host.pk mode='clubs' %}">{{ host.name }}</a>{% if not forloop.last %} + {% endif %}
+{% endfor %}
