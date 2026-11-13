@@ -85,7 +85,7 @@
 .header__logo {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-1);
 
   text-decoration: none;
   color: var(--fg);
@@ -98,8 +98,10 @@
 }
 
 .header__logo-icon {
+  display: block;
   width: 2rem;
   height: 2rem;
+  flex-shrink: 0;
 }
 
 .header__logo-text {
