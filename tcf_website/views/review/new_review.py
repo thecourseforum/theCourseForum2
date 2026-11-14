@@ -30,6 +30,8 @@ def new_review(request):
             if text:
                 moderation = moderate_review(text)
                 instance.nova_micro_review = moderation
+                if moderation == "inappropriate":
+                    instance.hidden = True
             instance.save()
             if instance.club:
                 messages.success(request, f"Successfully reviewed {instance.club}!")

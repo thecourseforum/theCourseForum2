@@ -329,6 +329,9 @@ class NewReviewModerationHookTests(TestCase):
         spy.assert_called_once_with(created)
 
 
+@override_settings(
+    DEBUG_TOOLBAR_CONFIG={"SHOW_TOOLBAR_CALLBACK": lambda request: False}
+)
 class ModerateReviewTests(TestCase):
     """Tests for the Amazon Nova Micro integration."""
 
@@ -343,7 +346,7 @@ class ModerateReviewTests(TestCase):
         text = "The professor was helpful during office hours."
         result = moderate_review(text)
 
-        self.assertEqual(result, "Appropriate")
+        self.assertEqual(result, "appropriate")
         mock_client.return_value.converse.assert_called_once()
 
         call_kwargs = mock_client.return_value.converse.call_args.kwargs
@@ -432,6 +435,7 @@ class ModerateReviewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         created = Review.objects.get(user=self.user3, course=self.course2)
         self.assertEqual(created.nova_micro_review, "appropriate")
+        self.assertFalse(created.hidden)
 
     @mock.patch(
         "tcf_website.views.review.new_review.moderate_review",
@@ -444,6 +448,7 @@ class ModerateReviewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         created = Review.objects.get(user=self.user3, course=self.course2)
         self.assertEqual(created.nova_micro_review, "inappropriate")
+        self.assertTrue(created.hidden)
 
     @mock.patch(
         "tcf_website.views.review.new_review.moderate_review", return_value=None
@@ -455,3 +460,4 @@ class ModerateReviewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         created = Review.objects.get(user=self.user3, course=self.course2)
         self.assertIsNone(created.nova_micro_review)
+        self.assertFalse(created.hidden)

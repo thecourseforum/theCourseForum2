@@ -83,17 +83,22 @@ def moderate_review(text: str) -> str | None:
                     "content": [
                         {
                             "text": (
-                                "Classify this course review as Appropriate or "
-                                "Inappropriate based on whether it contains "
-                                "toxic, abusive, or derogatory language. "
-                                "Respond with only the classification.\n\n"
+                                "Evaluate this university course review for moderation.\n\n"
+                                "Consider these criteria in order:\n"
+                                "1. Does it contain threats, harassment, or discriminatory language?\n"
+                                "2. Does it personally insult or degrade an individual?\n"
+                                "3. Is the language primarily criticism of academic performance, "
+                                "even if strongly worded or sarcastic?\n\n"
+                                "Base the decision on the overall context. Do not treat negative "
+                                "opinions about a course as inherently toxic.\n\n"
+                                "Respond with only Appropriate or Inappropriate.\n\n"
                                 f"Review: {text}"
                             )
                         }
                     ],
                 }
             ],
-            inferenceConfig={"maxTokens": 20, "temperature": 0},
+            inferenceConfig={"maxTokens": 50, "temperature": 0},
         )
 
         raw_output = response["output"]["message"]["content"][0]["text"].strip().lower()
