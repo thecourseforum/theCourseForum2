@@ -1,7 +1,7 @@
 """Shared event occurrences. Ingestion and calendar export live outside this model."""
 
 import uuid
-from datetime import time, timedelta
+from datetime import UTC, time, timedelta
 from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
 
@@ -81,7 +81,8 @@ class ClubEvent(models.Model):
         if self.starts_at and self.ends_at:
             if timezone.is_naive(self.starts_at) or timezone.is_naive(self.ends_at):
                 raise ValidationError("Event times must include a timezone.")
-            if self.ends_at <= self.starts_at:
+            # Compare instants across the repeated hour when daylight saving ends.
+            if self.ends_at.astimezone(UTC) <= self.starts_at.astimezone(UTC):
                 raise ValidationError({"ends_at": "End must be after start."})
             if self.all_day and any(
                 timezone.localtime(value, EVENT_TIME_ZONE).time() != time.min

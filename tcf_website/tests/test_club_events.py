@@ -1,6 +1,6 @@
 """Event-list contracts: dates, visibility, filtering, and co-host deduplication."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from django.core.exceptions import ValidationError
@@ -114,6 +114,22 @@ class ClubEventQueryTests(TestCase):
         self.assertEqual(
             self.results(**{"from": "2026-11-01", "to": "2026-11-01"}), [event]
         )
+
+    def test_repeated_eastern_hour_accepts_positive_elapsed_duration(self):
+        """Accept equal wall times whose folds are one hour apart in UTC."""
+        self.event.starts_at = local_time(1, 1).replace(minute=30, fold=0)
+        self.event.ends_at = local_time(1, 1).replace(minute=30, fold=1)
+        self.event.full_clean()
+        self.event.save()
+        self.event.refresh_from_db()
+        self.assertEqual(self.event.ends_at - self.event.starts_at, timedelta(hours=1))
+
+    def test_repeated_eastern_hour_rejects_negative_elapsed_duration(self):
+        """Reject later wall times that actually precede the start in UTC."""
+        self.event.starts_at = local_time(1, 1).replace(minute=15, fold=1)
+        self.event.ends_at = local_time(1, 1).replace(minute=45, fold=0)
+        with self.assertRaisesMessage(ValidationError, "End must be after start"):
+            self.event.clean()
 
     def test_stable_order_and_latest_sort(self):
         later = self.create_event(
