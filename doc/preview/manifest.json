@@ -1,0 +1,67 @@
+{
+  "title": "theClubForum design system",
+  "description": "Ten focused cards using the preserved source tokens, font, logo, glyphs, screenshots and sample-data patterns.",
+  "entry": "preview/index.html",
+  "cards": [
+    {
+      "id": "colors-primary",
+      "title": "Color / Light",
+      "path": "preview/colors-primary.html",
+      "description": "Semantic surfaces, actions, status and ink."
+    },
+    {
+      "id": "colors-dark",
+      "title": "Color / Dark",
+      "path": "preview/colors-dark.html",
+      "description": "Independent dark-mode roles and readable pairings."
+    },
+    {
+      "id": "typography-specimens",
+      "title": "Typography",
+      "path": "preview/typography-specimens.html",
+      "description": "The preserved Inter font and full type scale."
+    },
+    {
+      "id": "spacing-tokens",
+      "title": "Spacing",
+      "path": "preview/spacing-tokens.html",
+      "description": "Measured rhythm from 4px through 64px."
+    },
+    {
+      "id": "radius-shadows",
+      "title": "Radius & elevation",
+      "path": "preview/radius-shadows.html",
+      "description": "Source corner geometry and surface hierarchy."
+    },
+    {
+      "id": "components-buttons",
+      "title": "Buttons & feedback",
+      "path": "preview/components-buttons.html",
+      "description": "Primary, secondary, toggle and disabled states."
+    },
+    {
+      "id": "components-forms",
+      "title": "Forms & validation",
+      "path": "preview/components-forms.html",
+      "description": "Working date validation and recovery."
+    },
+    {
+      "id": "components-records",
+      "title": "Club & event records",
+      "path": "preview/components-records.html",
+      "description": "Real source structure, logo and detail dialogs."
+    },
+    {
+      "id": "brand-assets",
+      "title": "Brand assets",
+      "path": "preview/brand-assets.html",
+      "description": "Preserved identity and 22 runtime glyphs."
+    },
+    {
+      "id": "applied-surfaces",
+      "title": "Applied surfaces",
+      "path": "preview/applied-surfaces.html",
+      "description": "Desktop, mobile and dark source examples."
+    }
+  ]
+}

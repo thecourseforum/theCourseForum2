@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Club &amp; event records | theClubForum design system</title><meta name="description" content="Source-specific information patterns with the preserved logo and sample data. Try Follow and open the detail dialogs."><link rel="icon" href="../assets/img/new_logo.svg" type="image/svg+xml"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../assets/css/app.css"><link rel="stylesheet" href="./preview.css"><style>
+/* Review surfaces use the same foundations as the application. */
+:root { --review-max: 1120px; --review-mono: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.review-page { display:block; min-width:0; }
+.review-shell { width:min(var(--review-max),calc(100% - 48px)); margin-inline:auto; }
+.review-header { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:var(--space-4); padding-block:var(--space-6); border-bottom:1px solid var(--border-strong); }
+.review-brand { display:flex; align-items:center; gap:var(--space-3); color:var(--text); font-weight:var(--weight-semibold); }
+.review-brand img { width:32px; height:auto; }
+.review-nav { display:flex; flex-wrap:wrap; align-items:center; gap:var(--space-4); }
+.review-nav a { display:inline-flex; align-items:center; min-height:44px; }
+.review-intro { padding-block:var(--space-12) var(--space-8); display:grid; gap:var(--space-4); }
+.review-kicker { font-size:var(--text-xs); letter-spacing:var(--tracking-caps); text-transform:uppercase; font-weight:var(--weight-semibold); color:var(--text-soft); }
+.review-intro h1 { font-size:clamp(2rem,5vw,var(--text-5xl)); line-height:var(--leading-tight); letter-spacing:var(--tracking-display); max-width:20ch; text-wrap:balance; }
+.review-intro p { max-width:var(--prose-max); color:var(--text-soft); }
+.review-section { padding-block:var(--space-8); border-top:1px solid var(--border); display:grid; gap:var(--space-6); }
+.review-section h2 { font-size:var(--text-2xl); line-height:var(--leading-snug); letter-spacing:var(--tracking-heading); }
+.review-section h3 { font-size:var(--text-lg); line-height:var(--leading-snug); }
+.review-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:var(--space-4); }
+.review-card { display:grid; align-content:start; gap:var(--space-3); padding:var(--space-6); border:1px solid var(--border-strong); border-radius:var(--radius-md); background:var(--surface); min-width:0; }
+a.review-card { color:var(--text); text-decoration:none; transition:border-color var(--duration-fast) var(--ease-out),box-shadow var(--duration-fast) var(--ease-out); }
+a.review-card:hover { border-color:var(--focus); box-shadow:var(--shadow-hover); color:var(--text); }
+.review-card p { font-size:var(--text-sm); color:var(--text-soft); }
+.review-card code,.review-code { font-family:var(--review-mono); font-size:var(--text-sm); overflow-wrap:anywhere; }
+.review-number { color:var(--text-soft); font-family:var(--review-mono); font-size:var(--text-sm); }
+.swatch { min-height:96px; border-radius:var(--radius-sm); border:1px solid var(--border-strong); background:var(--swatch); }
+.token-label { display:grid; gap:var(--space-1); }
+.token-label strong { font-size:var(--text-base); }
+.specimen-row { display:flex; flex-wrap:wrap; align-items:center; gap:var(--space-4); }
+.specimen-stack { display:grid; gap:var(--space-4); }
+.specimen-stage { padding:var(--space-6); border:1px solid var(--border-strong); border-radius:var(--radius-md); background:var(--surface); }
+.specimen-stage .btn { min-height:44px; }
+.specimen-stage .input { min-height:44px; }
+.specimen-stage .field__label { font-size:var(--text-sm); text-transform:none; letter-spacing:normal; color:var(--text); }
+.specimen-stage .field__hint,.specimen-stage .field__error { font-size:var(--text-sm); }
+.specimen-stage .notice { font-size:var(--text-base); }
+.specimen-feedback { min-height:26px; color:var(--text-soft); }
+.specimen-form { display:grid; gap:var(--space-4); max-width:42rem; }
+.specimen-record { display:grid; grid-template-columns:64px minmax(0,1fr); gap:var(--space-4); }
+.specimen-record img { width:64px; height:auto; }
+.specimen-record h3 { margin-bottom:var(--space-2); }
+.specimen-record p { max-width:var(--prose-max); }
+.specimen-record .specimen-actions { grid-column:2; display:flex; flex-wrap:wrap; gap:var(--space-3); }
+.specimen-metadata { display:flex; flex-wrap:wrap; gap:var(--space-2) var(--space-4); font-size:var(--text-sm); color:var(--text-soft); margin-block:var(--space-3); }
+.specimen-dialog { width:min(560px,calc(100% - 32px)); padding:var(--space-6); background:var(--surface); color:var(--text); border:1px solid var(--border-strong); border-radius:var(--radius-lg); box-shadow:var(--shadow-dialog); }
+.specimen-dialog::backdrop { background:rgb(0 0 0 / .5); }
+.specimen-dialog h2,.specimen-dialog p { margin-bottom:var(--space-4); }
+.type-row { display:grid; grid-template-columns:minmax(120px,1fr) minmax(0,3fr); gap:var(--space-6); align-items:baseline; padding-block:var(--space-6); border-bottom:1px solid var(--border); }
+.type-sample { font-size:var(--sample-size); line-height:var(--leading-snug); overflow-wrap:break-word; }
+.spacing-row { display:grid; grid-template-columns:120px minmax(0,1fr) 64px; align-items:center; gap:var(--space-4); }
+.spacing-bar { width:var(--sample-space); height:24px; background:var(--action-bg); border-radius:var(--radius-xs); }
+.geometry-sample { height:112px; border:1px solid var(--border-strong); border-radius:var(--sample-radius,var(--radius-md)); background:var(--surface); box-shadow:var(--sample-shadow,none); }
+.brand-stage { display:flex; flex-wrap:wrap; align-items:center; gap:var(--space-8); padding:var(--space-8); background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius-md); }
+.brand-stage img { width:128px; height:auto; }
+.brand-stage strong { font-size:clamp(1.5rem,5vw,2.25rem); letter-spacing:var(--tracking-display); }
+.icon-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:var(--space-3); }
+.icon-specimen { display:grid; justify-items:center; gap:var(--space-3); padding:var(--space-4); color:var(--text); border:1px solid var(--border-strong); border-radius:var(--radius-sm); }
+.icon-specimen svg { width:24px; height:24px; }
+.icon-specimen span { font-size:var(--text-sm); }
+.reference-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--space-6); align-items:start; }
+.reference-grid figure { display:grid; gap:var(--space-3); }
+.reference-grid img { width:100%; height:auto; border:1px solid var(--border-strong); border-radius:var(--radius-sm); }
+.reference-grid .mobile-reference img { max-width:300px; margin-inline:auto; }
+.reference-grid figcaption { color:var(--text-soft); font-size:var(--text-sm); }
+.review-footer { margin-top:var(--space-8); padding-block:var(--space-6); border-top:1px solid var(--border-strong); display:flex; flex-wrap:wrap; justify-content:space-between; gap:var(--space-4); font-size:var(--text-sm); color:var(--text-soft); }
+.review-page :focus-visible { outline:2px solid var(--focus); outline-offset:3px; }
+.review-page [hidden]:not([hidden="until-found"]) { display:none!important; }
+.review-page dialog:not([open]) { display:none!important; }
+@media(max-width:600px) { .review-shell { width:calc(100% - 32px); } .review-intro { padding-top:var(--space-8); } .reference-grid,.type-row { grid-template-columns:1fr; } .type-row { gap:var(--space-3); } .specimen-stage { padding:var(--space-4); } .specimen-record { grid-template-columns:48px minmax(0,1fr); } .specimen-record img { width:48px; } .specimen-record .specimen-actions { grid-column:1 / -1; } .spacing-row { grid-template-columns:100px minmax(0,1fr) 48px; gap:var(--space-2); } }
+@media(prefers-reduced-motion:reduce) { .review-page *, .review-page *::before,.review-page *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
+
+</style></head>
+<body class="review-page" data-asset-base="../"><a class="skip-link" href="#review-main">Skip to content</a><div class="review-shell">
+<header class="review-header" data-od-id="review-header"><a class="review-brand" href="./index.html" data-od-id="review-home"><img src="../assets/img/new_logo.svg" width="128" height="128" alt=""><span>theClubForum<br><small>Design system</small></span></a><nav class="review-nav" aria-label="Design system" data-od-id="review-navigation"><a href="./index.html">All cards</a><a href="../ui_kits/app/index.html">Applied app</a><button class="btn btn--secondary" type="button" data-theme-toggle data-od-id="theme-toggle">Use dark theme</button></nav></header>
+<main id="review-main" data-od-id="review-main"><div class="review-intro"><span class="review-kicker">Source-derived · November 2026</span><h1 data-od-id="page-title">Club &amp; event records</h1><p>Source-specific information patterns with the preserved logo and sample data. Try Follow and open the detail dialogs.</p></div><section class="review-section" data-od-id="component-specimen"><h2>Interactive specimen</h2><div class="specimen-stage" data-component-demo="records" data-od-id="records-specimen"></div></section><section class="review-section" data-od-id="reuse-notes"><h2>Reuse notes</h2><p>The full kit keeps sign-in gating and shared application state. These isolated specimens demonstrate structure, feedback and accessible dialogs using local state only.</p></section></main>
+<footer class="review-footer" data-od-id="review-footer"><span>theCourseForum · Clubs</span><a href="../DESIGN.md">Design rules</a><span>Local assets · Editable source</span></footer></div><script src="../assets/js/data.js"></script><script src="../ui_kits/app/components.js"></script><script src="./preview.js"></script></body></html>
