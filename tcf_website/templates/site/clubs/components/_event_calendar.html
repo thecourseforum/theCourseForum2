@@ -61,11 +61,36 @@
         </div>
         {% if calendar.selected %}
             <div id="club-calendar-agenda" class="club-calendar__agenda" tabindex="-1">
-                <h3>{{ calendar.selected|date:"l, F j" }}</h3>
+                <div class="club-calendar__agenda-header">
+                    <div>
+                        <h3>{{ calendar.selected|date:"l, F j" }}</h3>
+                        <p>{{ calendar.selected_events|length }} event{{ calendar.selected_events|length|pluralize }} · Eastern Time</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" class="btn btn--md btn--secondary" disabled>
+                            {% include "site/clubs/components/_download_icon.html" %}
+                            Export this day
+                        </button>
+                        <button type="button" class="btn btn--md btn--ghost" data-agenda-list-view>List view</button>
+                    </div>
+                </div>
                 {% for event in calendar.selected_events %}
-                    <p><strong>{{ event.title }}</strong> · {{ event.starts_at|date:"g:i A" }} · {{ event.location }}</p>
+                    <article class="club-calendar__agenda-row">
+                        <div class="club-event__time">
+                            <strong><time datetime="{{ event.starts_at|date:'c' }}">{{ event.starts_at|date:"g:i A" }}</time></strong>
+                            <span>to <time datetime="{{ event.ends_at|date:'c' }}">{{ event.ends_at|date:"g:i A" }}</time></span>
+                        </div>
+                        <div>
+                            <h4>{{ event.title }}</h4>
+                            <div class="club-event__metadata">
+                                <span>{{ event.clubs|join:", " }}</span>
+                                <span>{{ event.location }}</span>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn--md btn--secondary" disabled>Details</button>
+                    </article>
                 {% empty %}
-                    <p>No events on this day.</p>
+                    <p class="club-calendar__agenda-row">No events on this day.</p>
                 {% endfor %}
             </div>
         {% endif %}

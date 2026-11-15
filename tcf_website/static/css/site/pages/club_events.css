@@ -294,8 +294,47 @@
 
 .club-calendar__agenda {
   margin-top: var(--space-4);
-  padding: var(--space-4);
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.club-calendar__agenda-header,
+.club-calendar__agenda-row {
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+}
+
+.club-calendar__agenda-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.club-calendar__agenda-header p {
+  color: var(--fg-muted);
+}
+
+.club-calendar__agenda-row {
+  display: grid;
+  align-items: start;
+  justify-items: start;
+  border-top: 1px solid var(--border);
+}
+
+.club-calendar__agenda-row h4 {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+}
+
+.club-calendar__agenda-row .club-event__time {
+  gap: 0;
+}
+
+@media (min-width: 640px) {
+  .club-calendar__agenda-row {
+    grid-template-columns: 7rem minmax(0, 1fr) auto;
+  }
 }

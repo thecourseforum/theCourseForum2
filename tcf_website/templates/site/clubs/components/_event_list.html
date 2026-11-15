@@ -19,7 +19,7 @@
                     <div>
                         <h3>{{ event.title }}</h3>
                         <div class="club-event__metadata">
-                            <span>{{ event.club }}</span>
+                            <span>{{ event.clubs|join:", " }}</span>
                             <span>{{ event.location }}</span>
                         </div>
                         <span class="club-event__category">{{ event.category }}</span>

@@ -4,11 +4,19 @@
   "events": [
     {
       "title": "theCourseForum Open House",
-      "club": "theCourseForum",
+      "clubs": ["theCourseForum"],
       "location": "New Cabell Hall 389",
       "category": "Academic & Professional",
       "starts_at": "2026-11-03T18:00:00-05:00",
       "ends_at": "2026-11-03T19:30:00-05:00"
+    },
+    {
+      "title": "VEO Fall Pitch Night",
+      "clubs": ["Virginia Entrepreneurship Organization", "HooHacks"],
+      "location": "McIntire Hall 118",
+      "category": "Academic & Professional",
+      "starts_at": "2026-11-05T19:00:00-05:00",
+      "ends_at": "2026-11-05T21:00:00-05:00"
     }
   ]
 }

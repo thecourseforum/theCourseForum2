@@ -65,6 +65,12 @@
         const eventCalendar = document.getElementById('club-events-calendar');
         let calendarRequest;
         eventCalendar.addEventListener('click', async event => {
+            if (event.target.closest('[data-agenda-list-view]')) {
+                const listButton = document.querySelector('#club-events-views [data-view="list"]');
+                listButton.click();
+                listButton.focus();
+                return;
+            }
             const link = event.target.closest('a[href]');
             if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
                 return;
