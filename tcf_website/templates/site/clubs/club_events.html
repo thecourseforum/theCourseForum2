@@ -66,6 +66,19 @@
         const filterView = document.getElementById('event-filter-view');
         const filterDay = document.getElementById('event-filter-day');
         const resetSearch = document.getElementById('event-filter-reset');
+        const fromDate = document.getElementById('event-from');
+        const toDate = document.getElementById('event-to');
+        for (const input of [fromDate, toDate]) {
+            input.addEventListener('click', () => input.showPicker?.());
+            input.addEventListener('input', () => toDate.setCustomValidity(''));
+        }
+        fromDate.form.addEventListener('submit', event => {
+            if (fromDate.value && toDate.value && fromDate.value > toDate.value) {
+                event.preventDefault();
+                toDate.setCustomValidity('To must be on or after From.');
+                toDate.reportValidity();
+            }
+        });
         const updateResetLink = () => {
             const params = new URLSearchParams({mode: 'clubs', view: filterView.value});
             if (filterDay.value) params.set('day', filterDay.value);

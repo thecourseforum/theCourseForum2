@@ -8,11 +8,11 @@
         </div>
         <div class="flex flex-wrap gap-2">
             <a class="btn btn--md btn--secondary" aria-label="Previous month"
-               href="?mode=clubs&amp;view=month&amp;q={{ event_query|urlencode }}{% if selected_category %}&amp;category={{ selected_category|urlencode }}{% endif %}&amp;day={{ calendar.previous_month|date:'Y-m-d' }}">‹</a>
+               href="?{{ calendar_query }}&amp;day={{ calendar.previous_month|date:'Y-m-d' }}">‹</a>
             <a class="btn btn--md btn--secondary"
-               href="?mode=clubs&amp;view=month&amp;q={{ event_query|urlencode }}{% if selected_category %}&amp;category={{ selected_category|urlencode }}{% endif %}&amp;day={{ calendar.today|date:'Y-m-d' }}">Today</a>
+               href="?{{ calendar_query }}&amp;day={{ calendar.today|date:'Y-m-d' }}">Today</a>
             <a class="btn btn--md btn--secondary" aria-label="Next month"
-               href="?mode=clubs&amp;view=month&amp;q={{ event_query|urlencode }}{% if selected_category %}&amp;category={{ selected_category|urlencode }}{% endif %}&amp;day={{ calendar.next_month|date:'Y-m-d' }}">›</a>
+               href="?{{ calendar_query }}&amp;day={{ calendar.next_month|date:'Y-m-d' }}">›</a>
             <button type="button" class="btn btn--md btn--primary" disabled>
                 {% include "site/clubs/components/_download_icon.html" %}
                 Export month
@@ -39,7 +39,7 @@
                             {% for day in week %}
                                 <td{% if day.date.month != calendar.month.month %} class="club-calendar__outside"{% endif %}>
                                     <a class="club-calendar__day"
-                                       href="?mode=clubs&amp;view=month&amp;q={{ event_query|urlencode }}{% if selected_category %}&amp;category={{ selected_category|urlencode }}{% endif %}&amp;day={{ day.date|date:'Y-m-d' }}#club-calendar-agenda"
+                                       href="?{{ calendar_query }}&amp;day={{ day.date|date:'Y-m-d' }}#club-calendar-agenda"
                                        {% if day.date == calendar.selected %}aria-current="date"{% endif %}>
                                         <span class="club-calendar__date">
                                             <time datetime="{{ day.date|date:'Y-m-d' }}" aria-label="{{ day.date|date:'l, F j, Y' }}">{{ day.date.day }}</time>

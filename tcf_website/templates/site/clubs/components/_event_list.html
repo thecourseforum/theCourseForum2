@@ -2,10 +2,11 @@
 <section id="club-events-list" class="club-event-list" aria-label="Events by day"{% if is_month_view %} hidden{% endif %}>
     <p class="club-event-list__summary">
         <strong>{{ event_count }}</strong> event{{ event_count|pluralize }}
-        · {{ start_date|date:"M j" }}–{{ end_date|date:"j, Y" }}
+        · {% if start_date == end_date %}{{ start_date|date:"M j, Y" }}{% elif start_date.year != end_date.year %}{{ start_date|date:"M j, Y" }}–{{ end_date|date:"M j, Y" }}{% elif start_date.month != end_date.month %}{{ start_date|date:"M j" }}–{{ end_date|date:"M j, Y" }}{% else %}{{ start_date|date:"M j" }}–{{ end_date|date:"j, Y" }}{% endif %}
     </p>
     {% timezone "America/New_York" %}
-        {% for day, events in event_days.items %}
+        {% regroup list_events by list_date as event_days %}
+        {% for day, events in event_days %}
             <div class="club-event-list__day">
                 <h2>{{ day|date:"l, F j" }}</h2>
                 <span>{{ events|length }} event{{ events|length|pluralize }}</span>

@@ -11,6 +11,7 @@ from django.db.models import Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.utils.http import urlencode
 
 from ...models import Club, ClubCategory, Review
 from ...pagination import paginate
@@ -107,6 +108,18 @@ def club_events(request):
     sample = json.loads(sample_path.read_text(encoding="utf-8"))
     start_date = date.fromisoformat(sample["start_date"])
     end_date = date.fromisoformat(sample["end_date"])
+    date_error = ""
+    try:
+        requested_start = date.fromisoformat(request.GET.get("from") or start_date.isoformat())
+        requested_end = date.fromisoformat(request.GET.get("to") or end_date.isoformat())
+        if requested_start > requested_end or not (
+            2 <= requested_start.year <= requested_end.year <= 9998
+        ):
+            raise ValueError
+    except ValueError:
+        date_error = "Enter a valid date range with From on or before To."
+    else:
+        start_date, end_date = requested_start, requested_end
     eastern = ZoneInfo("America/New_York")
     event_query = request.GET.get("q", "").strip()
     search_terms = event_query.casefold().split()
@@ -114,12 +127,32 @@ def club_events(request):
     selected_category = request.GET.get("category", "")
     if selected_category not in categories:
         selected_category = ""
-    event_days = {}
+    clubs = {
+        club["slug"]: club["name"]
+        for club in sorted(sample["clubs"], key=lambda club: club["name"].casefold())
+    }
+    selected_club = request.GET.get("club", "")
+    if selected_club not in clubs:
+        selected_club = ""
+    interests = sample["interests"]
+    selected_interest = request.GET.get("interest", "")
+    if selected_interest not in interests:
+        selected_interest = ""
+    sort_options = {"soonest": "Soonest first", "latest": "Latest first", "title": "Title A-Z"}
+    event_sort = request.GET.get("sort", "soonest")
+    if event_sort not in sort_options:
+        event_sort = "soonest"
+    matching_events = []
+    list_events = []
     calendar_days = {}
-    for event in sorted(sample["events"], key=lambda event: event["starts_at"]):
+    for event in sample["events"]:
         if event["cancelled"] or (
             selected_category and event["category"] != categories[selected_category]
         ):
+            continue
+        if selected_club and clubs[selected_club] not in event["clubs"]:
+            continue
+        if selected_interest and selected_interest not in event["interests"]:
             continue
         search_text = " ".join(
             [event["title"], event["location"], event["category"], *event["clubs"], *event["interests"]]
@@ -128,27 +161,51 @@ def club_events(request):
             continue
         for key in ("starts_at", "ends_at"):
             event[key] = datetime.fromisoformat(event[key])
-            if not event.get("all_day"):
+            if event.get("all_day"):
+                event[key] = event[key].replace(tzinfo=eastern)
+            else:
                 event[key] = event[key].astimezone(eastern)
+        matching_events.append(event)
+
+    matching_events.sort(key=lambda event: event["starts_at"], reverse=event_sort == "latest")
+    if event_sort == "title":
+        matching_events.sort(key=lambda event: event["title"].casefold())
+
+    for event in matching_events:
         day = event["starts_at"].date()
-        if start_date <= day <= end_date:
-            event_days.setdefault(day, []).append(event)
         last_day = event["ends_at"].date()
         if not event.get("all_day") and event["ends_at"].time() == datetime.min.time():
             last_day -= timedelta(days=1)
+        day = max(day, start_date)
+        last_day = min(last_day, end_date)
+        if day <= last_day:
+            event["list_date"] = day
+            list_events.append(event)
         while day <= last_day:
             calendar_days.setdefault(day, []).append(event)
             day += timedelta(days=1)
 
     calendar = _event_calendar(request, start_date, calendar_days, eastern)
+    calendar_query = urlencode(
+        {
+            "mode": "clubs",
+            "view": "month",
+            "q": event_query,
+            "category": selected_category,
+            "club": selected_club,
+            "interest": selected_interest,
+            "sort": event_sort,
+            "from": start_date.isoformat(),
+            "to": end_date.isoformat(),
+        }
+    )
     if request.GET.get("partial") == "calendar":
         return render(
             request,
             "site/clubs/components/_event_calendar.html",
             {
                 "calendar": calendar,
-                "event_query": event_query,
-                "selected_category": selected_category,
+                "calendar_query": calendar_query,
                 "is_month_view": True,
             },
         )
@@ -159,12 +216,20 @@ def club_events(request):
         {
             "start_date": start_date,
             "end_date": end_date,
-            "event_days": event_days,
-            "event_count": sum(len(events) for events in event_days.values()),
+            "date_error": date_error,
+            "list_events": list_events,
+            "event_count": len(list_events),
             "calendar": calendar,
+            "calendar_query": calendar_query,
             "event_query": event_query,
             "categories": categories,
             "selected_category": selected_category,
+            "clubs": clubs,
+            "selected_club": selected_club,
+            "interests": interests,
+            "selected_interest": selected_interest,
+            "sort_options": sort_options,
+            "event_sort": event_sort,
             "is_month_view": request.GET.get("view") == "month",
         },
     )

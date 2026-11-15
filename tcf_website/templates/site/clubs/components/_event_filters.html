@@ -18,30 +18,38 @@
         </div>
         <div class="advanced-search__field">
             <label for="event-club">Club</label>
-            <select disabled id="event-club">
-                <option>All clubs</option>
+            <select id="event-club" name="club">
+                <option value="">All clubs</option>
+                {% for slug, name in clubs.items %}
+                    <option value="{{ slug }}"{% if slug == selected_club %} selected{% endif %}>{{ name }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="advanced-search__field">
             <label for="event-sort">Sort by</label>
-            <select disabled id="event-sort">
-                <option>Soonest first</option>
+            <select id="event-sort" name="sort">
+                {% for value, name in sort_options.items %}
+                    <option value="{{ value }}"{% if value == event_sort %} selected{% endif %}>{{ name }}</option>
+                {% endfor %}
             </select>
         </div>
     </div>
     <div class="club-event-filters__row">
         <div class="advanced-search__field">
             <label for="event-from">From</label>
-            <input disabled type="date" id="event-from" value="{{ start_date|date:'Y-m-d' }}">
+            <input type="date" id="event-from" name="from" min="0002-01-01" max="9998-12-31" value="{{ start_date|date:'Y-m-d' }}">
         </div>
         <div class="advanced-search__field">
             <label for="event-to">To</label>
-            <input disabled type="date" id="event-to" value="{{ end_date|date:'Y-m-d' }}">
+            <input type="date" id="event-to" name="to" min="0002-01-01" max="9998-12-31" value="{{ end_date|date:'Y-m-d' }}">
         </div>
         <div class="advanced-search__field">
             <label for="event-interest">Interest</label>
-            <select disabled id="event-interest">
-                <option>All interests</option>
+            <select id="event-interest" name="interest">
+                <option value="">All interests</option>
+                {% for interest in interests %}
+                    <option value="{{ interest }}"{% if interest == selected_interest %} selected{% endif %}>{{ interest }}</option>
+                {% endfor %}
             </select>
         </div>
         <label class="advanced-search__checkbox club-event-filters__canceled">
@@ -49,6 +57,7 @@
             Show canceled events
         </label>
     </div>
+    {% if date_error %}<p role="alert">{{ date_error }}</p>{% endif %}
     <div class="club-event-filters__actions">
         <a class="btn btn--md btn--secondary" id="event-filter-reset" href="?mode=clubs&amp;view={% if is_month_view %}month{% else %}list{% endif %}{% if calendar.selected %}&amp;day={{ calendar.selected|date:'Y-m-d' }}{% endif %}">Reset</a>
         <button type="submit" class="btn btn--md btn--primary">Apply</button>
