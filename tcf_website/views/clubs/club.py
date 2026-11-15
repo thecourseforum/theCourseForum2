@@ -1,5 +1,11 @@
 """Club category, event, and detail views."""
 
+import json
+from calendar import Calendar
+from datetime import date, datetime, timedelta
+from pathlib import Path
+from zoneinfo import ZoneInfo
+
 from django.conf import settings
 from django.db.models import Q, Sum, Value
 from django.db.models.functions import Coalesce
@@ -63,9 +69,78 @@ def _build_club_page_context(request, club: Club, mode: str):
     }
 
 
+def _event_calendar(request, start_date, event_days, eastern):
+    today = datetime.now(eastern).date()
+    month = start_date.replace(day=1)
+    selected = None
+    try:
+        requested = date.fromisoformat(request.GET.get("day", ""))
+    except ValueError:
+        requested = None
+    if requested and 2 <= requested.year <= 9998:
+        month = requested.replace(day=1)
+        selected = requested
+
+    weeks = Calendar(firstweekday=6).monthdatescalendar(month.year, month.month)
+    month_days = [day for week in weeks for day in week if day.month == month.month]
+    return {
+        "month": month,
+        "today": today,
+        "previous_month": (month - timedelta(days=1)).replace(day=1),
+        "next_month": month_days[-1] + timedelta(days=1),
+        "selected": selected,
+        "selected_events": event_days.get(selected, []),
+        "count": sum(len(event_days.get(day, [])) for day in month_days),
+        "weeks": [
+            [
+                {"date": day, "events": event_days.get(day, [])}
+                for day in week
+            ]
+            for week in weeks
+        ],
+    }
+
+
 def club_events(request):
     """Render the club events page."""
-    return render(request, "site/clubs/club_events.html")
+    sample_path = Path(__file__).with_name("data") / "sample_events.json"
+    sample = json.loads(sample_path.read_text(encoding="utf-8"))
+    start_date = date.fromisoformat(sample["start_date"])
+    end_date = date.fromisoformat(sample["end_date"])
+    eastern = ZoneInfo("America/New_York")
+    for event in sample["events"]:
+        event["starts_at"] = datetime.fromisoformat(event["starts_at"]).astimezone(eastern)
+        event["ends_at"] = datetime.fromisoformat(event["ends_at"]).astimezone(eastern)
+
+    event_days = {}
+    for event in sorted(sample["events"], key=lambda event: event["starts_at"]):
+        day = event["starts_at"].date()
+        if start_date <= day <= end_date:
+            event_days.setdefault(day, []).append(event)
+
+    calendar = _event_calendar(request, start_date, event_days, eastern)
+    if request.GET.get("partial") == "calendar":
+        return render(
+            request,
+            "site/clubs/components/_event_calendar.html",
+            {
+                "calendar": calendar,
+                "is_month_view": True,
+            },
+        )
+
+    return render(
+        request,
+        "site/clubs/club_events.html",
+        {
+            "start_date": start_date,
+            "end_date": end_date,
+            "event_days": event_days,
+            "event_count": sum(len(events) for events in event_days.values()),
+            "calendar": calendar,
+            "is_month_view": request.GET.get("view") == "month",
+        },
+    )
 
 
 def club_category(request, category_slug: str):

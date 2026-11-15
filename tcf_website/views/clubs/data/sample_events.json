@@ -1,0 +1,14 @@
+{
+  "start_date": "2026-11-01",
+  "end_date": "2026-11-30",
+  "events": [
+    {
+      "title": "theCourseForum Open House",
+      "club": "theCourseForum",
+      "location": "New Cabell Hall 389",
+      "category": "Academic & Professional",
+      "starts_at": "2026-11-03T18:00:00-05:00",
+      "ends_at": "2026-11-03T19:30:00-05:00"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{% load tz %}
+<section id="club-events-calendar"
+         aria-labelledby="club-calendar-heading"{% if not is_month_view %} hidden{% endif %}>
+    <div class="club-calendar__toolbar">
+        <div>
+            <h2 id="club-calendar-heading" tabindex="-1">{{ calendar.month|date:"F Y" }}</h2>
+            <p>{{ calendar.count }} event{{ calendar.count|pluralize }} this month</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <a class="btn btn--md btn--secondary" aria-label="Previous month"
+               href="?mode=clubs&amp;view=month&amp;day={{ calendar.previous_month|date:'Y-m-d' }}">‹</a>
+            <a class="btn btn--md btn--secondary"
+               href="?mode=clubs&amp;view=month&amp;day={{ calendar.today|date:'Y-m-d' }}">Today</a>
+            <a class="btn btn--md btn--secondary" aria-label="Next month"
+               href="?mode=clubs&amp;view=month&amp;day={{ calendar.next_month|date:'Y-m-d' }}">›</a>
+            <button type="button" class="btn btn--md btn--primary" disabled>
+                {% include "site/clubs/components/_download_icon.html" %}
+                Export month
+            </button>
+        </div>
+    </div>
+    {% timezone "America/New_York" %}
+        <div class="club-calendar__scroll" role="region" aria-label="Calendar grid" tabindex="0">
+            <table class="club-calendar__grid" aria-labelledby="club-calendar-heading">
+                <thead>
+                    <tr>
+                        <th scope="col">Sun</th>
+                        <th scope="col">Mon</th>
+                        <th scope="col">Tue</th>
+                        <th scope="col">Wed</th>
+                        <th scope="col">Thu</th>
+                        <th scope="col">Fri</th>
+                        <th scope="col">Sat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for week in calendar.weeks %}
+                        <tr>
+                            {% for day in week %}
+                                <td{% if day.date.month != calendar.month.month %} class="club-calendar__outside"{% endif %}>
+                                    <a class="club-calendar__day"
+                                       href="?mode=clubs&amp;view=month&amp;day={{ day.date|date:'Y-m-d' }}#club-calendar-agenda"
+                                       {% if day.date == calendar.selected %}aria-current="date"{% endif %}>
+                                        <span class="club-calendar__date">
+                                            <time datetime="{{ day.date|date:'Y-m-d' }}" aria-label="{{ day.date|date:'l, F j, Y' }}">{{ day.date.day }}</time>
+                                            {% if day.events %}<span>{{ day.events|length }}</span>{% endif %}
+                                        </span>
+                                        {% for event in day.events %}
+                                            <span class="club-calendar__event">
+                                                <strong>{{ event.title }}</strong>
+                                                <span>{{ event.starts_at|date:"g:i A" }}</span>
+                                            </span>
+                                        {% endfor %}
+                                    </a>
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if calendar.selected %}
+            <div id="club-calendar-agenda" class="club-calendar__agenda" tabindex="-1">
+                <h3>{{ calendar.selected|date:"l, F j" }}</h3>
+                {% for event in calendar.selected_events %}
+                    <p><strong>{{ event.title }}</strong> · {{ event.starts_at|date:"g:i A" }} · {{ event.location }}</p>
+                {% empty %}
+                    <p>No events on this day.</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endtimezone %}
+</section>

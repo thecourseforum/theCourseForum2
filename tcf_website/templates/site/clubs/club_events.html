@@ -10,11 +10,16 @@
 {% block content %}
     <div class="browse-header">
         <div class="browse-header__inner club-events-header">
-            <div>
+            <div class="club-events-header__copy">
                 <p class="club-events-header__label">Clubs calendar</p>
                 <h1 class="browse-header__title">Club events</h1>
-                <p class="browse-header__description">
-                    Explore club events, open event details, or create a custom calendar file. All times are Eastern.
+                <p class="browse-header__description" id="club-events-description" aria-live="polite">
+                    <span id="club-events-list-description"{% if is_month_view %} hidden{% endif %}>
+                        Explore club events, open event details, or create a custom calendar file. All times are Eastern.
+                    </span>
+                    <span id="club-events-month-description"{% if not is_month_view %} hidden{% endif %}>
+                        Select a day to see its agenda. List and month views share your filters. All times are Eastern.
+                    </span>
                 </p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
@@ -22,7 +27,7 @@
                      role="group"
                      aria-label="Event view"
                      id="club-events-views">
-                    <button type="button" class="btn btn--md btn--ghost" aria-pressed="true">
+                    <button type="button" class="btn btn--md btn--ghost" aria-pressed="{% if is_month_view %}false{% else %}true{% endif %}" data-view="list">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round"
                              aria-hidden="true">
@@ -30,7 +35,7 @@
                         </svg>
                         List
                     </button>
-                    <button type="button" class="btn btn--md btn--ghost" aria-pressed="false">
+                    <button type="button" class="btn btn--md btn--ghost" aria-pressed="{% if is_month_view %}true{% else %}false{% endif %}" data-view="month">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <rect x="3" y="3" width="7" height="7" rx="1" />
@@ -45,12 +50,57 @@
             </div>
         </div>
     </div>
+    <div class="browse-content">
+        {% include "site/clubs/components/_event_filters.html" %}
+        {% include "site/clubs/components/_event_list.html" %}
+        {% include "site/clubs/components/_event_calendar.html" %}
+    </div>
 {% endblock content %}
 {% block scripts %}
     <script>
         const eventViewButtons = document.querySelectorAll('#club-events-views button');
+        const listDescription = document.getElementById('club-events-list-description');
+        const monthDescription = document.getElementById('club-events-month-description');
+        const eventList = document.getElementById('club-events-list');
+        const eventCalendar = document.getElementById('club-events-calendar');
+        let calendarRequest;
+        eventCalendar.addEventListener('click', async event => {
+            const link = event.target.closest('a[href]');
+            if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+                return;
+            }
+            event.preventDefault();
+            calendarRequest?.abort();
+            const request = new AbortController();
+            calendarRequest = request;
+            const url = new URL(link.href);
+            url.searchParams.set('partial', 'calendar');
+            const focusSelector = link.hash || `[href="${CSS.escape(link.getAttribute('href'))}"]`;
+            try {
+                const response = await fetch(url, {signal: request.signal});
+                if (!response.ok) throw new Error('Calendar request failed');
+                const html = await response.text();
+                if (request.signal.aborted) return;
+                const page = new DOMParser().parseFromString(html, 'text/html');
+                const updatedCalendar = page.getElementById(eventCalendar.id);
+                if (!updatedCalendar) throw new Error('Calendar response was missing');
+                const restoreFocus = eventCalendar.contains(document.activeElement);
+                eventCalendar.replaceChildren(...updatedCalendar.childNodes);
+                if (restoreFocus && !eventCalendar.hidden) {
+                    (eventCalendar.querySelector(focusSelector) ||
+                        eventCalendar.querySelector('#club-calendar-heading')).focus();
+                }
+            } catch (error) {
+                if (!request.signal.aborted) window.location.assign(link.href);
+            }
+        });
         eventViewButtons.forEach(button => {
             button.addEventListener('click', () => {
+                const isMonthView = button.dataset.view === 'month';
+                listDescription.hidden = isMonthView;
+                monthDescription.hidden = !isMonthView;
+                eventList.hidden = isMonthView;
+                eventCalendar.hidden = !isMonthView;
                 eventViewButtons.forEach(option => {
                     option.setAttribute('aria-pressed', String(option === button));
                 });

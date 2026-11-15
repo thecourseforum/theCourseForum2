@@ -1,0 +1,41 @@
+{% load tz %}
+<section id="club-events-list" class="club-event-list" aria-label="Events by day"{% if is_month_view %} hidden{% endif %}>
+    <p class="club-event-list__summary">
+        <strong>{{ event_count }}</strong> event{{ event_count|pluralize }}
+        · {{ start_date|date:"M j" }}–{{ end_date|date:"j, Y" }}
+    </p>
+    {% timezone "America/New_York" %}
+        {% for day, events in event_days.items %}
+            <div class="club-event-list__day">
+                <h2>{{ day|date:"l, F j" }}</h2>
+                <span>{{ events|length }} event{{ events|length|pluralize }}</span>
+            </div>
+            {% for event in events %}
+                <article class="club-event">
+                    <div class="club-event__time">
+                        <strong><time datetime="{{ event.starts_at|date:'c' }}">{{ event.starts_at|date:"g:i A" }}</time></strong>
+                        <span>to <time datetime="{{ event.ends_at|date:'c' }}">{{ event.ends_at|date:"g:i A" }}</time></span>
+                    </div>
+                    <div>
+                        <h3>{{ event.title }}</h3>
+                        <div class="club-event__metadata">
+                            <span>{{ event.club }}</span>
+                            <span>{{ event.location }}</span>
+                        </div>
+                        <span class="club-event__category">{{ event.category }}</span>
+                    </div>
+                    <div class="club-event__actions">
+                        <button type="button" class="btn btn--md btn--secondary" disabled>Details</button>
+                        <button type="button" class="btn btn--md btn--ghost" disabled>
+                            {% include "site/clubs/components/_download_icon.html" %}
+                            Add to calendar
+                        </button>
+                        <small>Sample event</small>
+                    </div>
+                </article>
+            {% endfor %}
+        {% empty %}
+            <p>No events in this date range.</p>
+        {% endfor %}
+    {% endtimezone %}
+</section>
