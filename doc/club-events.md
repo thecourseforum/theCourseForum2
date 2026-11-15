@@ -83,7 +83,7 @@ passed. ESLint passed with one pre-existing unused-disable warning in
 
 Tests were written and observed failing before each model/query, page, and
 sample-command implementation. Run the complete suite with `python manage.py
-test`, or the 31 focused tests with:
+test`, or the 33 focused tests with:
 
 ```sh
 python manage.py test tcf_website.tests.test_club_events \
@@ -102,3 +102,11 @@ and browser-history persistence, pagination scroll position, keyboard modal
 behavior, loading/error/retry states, and JavaScript-disabled navigation. Only
 third-party ad/analytics/WAF scripts are stubbed in these local browser checks;
 the Django event pages, queries, static assets, and interactions are real.
+
+For the asynchronous focus regressions, pass `scripts/test_club_events_focus.js`
+as the `filename` to Playwright MCP's `browser_run_code_unsafe` tool with the
+local stack running on port 8000 and November 2026 sample events loaded. The
+checks delay real server responses and verify that a list update waits for an
+open event dialog to close, retry keeps keyboard focus inside that dialog, and
+ordinary list updates still focus the results. The Django tests also cover both
+valid and invalid elapsed durations during Eastern's repeated fall-back hour.

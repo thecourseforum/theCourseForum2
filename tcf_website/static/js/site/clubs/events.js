@@ -23,6 +23,24 @@
   });
 
   /**
+   * Keep the dialog's opener and focus intact until it closes or the request ends.
+   * @param {AbortSignal} signal - Cancels waiting when a newer request takes over.
+   * @returns {Promise<void>} Resolves when results can render or are superseded.
+   */
+  async function waitForDialogClose(signal) {
+    if (!dialog.classList.contains("is-open") || signal.aborted) return;
+    await new Promise((resolve) => {
+      const resume = () => {
+        dialog.removeEventListener("modal:close", resume);
+        signal.removeEventListener("abort", resume);
+        resolve();
+      };
+      dialog.addEventListener("modal:close", resume, { once: true });
+      signal.addEventListener("abort", resume, { once: true });
+    });
+  }
+
+  /**
    * Load filtered results, cancel superseded requests, and update browser history.
    * Keep prior results on failure and retain the submitted URL for retry.
    * @param {string} url - List URL with filters and an optional results anchor.
@@ -46,6 +64,8 @@
       });
       if (!response.ok) throw new Error("Event request failed");
       const html = await response.text();
+      clearTimeout(timeout); // The network deadline must not limit dialog use.
+      await waitForDialogClose(controller.signal);
       if (controller.signal.aborted) return;
       window.TcfPartialHtml.replaceInner(results, html);
       const cleanUrl = new URL(url);
@@ -97,6 +117,10 @@
     detailController?.abort();
     const controller = new AbortController();
     detailController = controller;
+    // Retry removes its own focused button; use the persistent dialog control.
+    if (content.contains(document.activeElement)) {
+      dialog.querySelector("[data-modal-close]").focus({ preventScroll: true });
+    }
     content.innerHTML =
       '<h2 id="clubEventTitle">Event details</h2><p role="status">Loading event…</p>';
     const url = new URL(href);
