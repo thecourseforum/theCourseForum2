@@ -63,6 +63,14 @@
         const monthDescription = document.getElementById('club-events-month-description');
         const eventList = document.getElementById('club-events-list');
         const eventCalendar = document.getElementById('club-events-calendar');
+        const filterView = document.getElementById('event-filter-view');
+        const filterDay = document.getElementById('event-filter-day');
+        const resetSearch = document.getElementById('event-filter-reset');
+        const updateResetLink = () => {
+            const params = new URLSearchParams({mode: 'clubs', view: filterView.value});
+            if (filterDay.value) params.set('day', filterDay.value);
+            resetSearch.href = '?' + params;
+        };
         let calendarRequest;
         eventCalendar.addEventListener('click', async event => {
             if (event.target.closest('[data-agenda-list-view]')) {
@@ -92,6 +100,8 @@
                 if (!updatedCalendar) throw new Error('Calendar response was missing');
                 const restoreFocus = eventCalendar.contains(document.activeElement);
                 eventCalendar.replaceChildren(...updatedCalendar.childNodes);
+                filterDay.value = url.searchParams.get('day') || '';
+                updateResetLink();
                 if (restoreFocus && !eventCalendar.hidden) {
                     (eventCalendar.querySelector(focusSelector) ||
                         eventCalendar.querySelector('#club-calendar-heading')).focus();
@@ -103,6 +113,8 @@
         eventViewButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const isMonthView = button.dataset.view === 'month';
+                filterView.value = button.dataset.view;
+                updateResetLink();
                 listDescription.hidden = isMonthView;
                 monthDescription.hidden = !isMonthView;
                 eventList.hidden = isMonthView;

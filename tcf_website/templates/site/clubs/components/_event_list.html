@@ -13,8 +13,12 @@
             {% for event in events %}
                 <article class="club-event">
                     <div class="club-event__time">
-                        <strong><time datetime="{{ event.starts_at|date:'c' }}">{{ event.starts_at|date:"g:i A" }}</time></strong>
-                        <span>to <time datetime="{{ event.ends_at|date:'c' }}">{{ event.ends_at|date:"g:i A" }}</time></span>
+                        {% if event.all_day %}
+                            <strong>All day</strong>
+                        {% else %}
+                            <strong><time datetime="{{ event.starts_at|date:'c' }}">{{ event.starts_at|date:"g:i A" }}</time></strong>
+                            <span>to <time datetime="{{ event.ends_at|date:'c' }}">{{ event.ends_at|date:"g:i A" }}</time></span>
+                        {% endif %}
                     </div>
                     <div>
                         <h3>{{ event.title }}</h3>

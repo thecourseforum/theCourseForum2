@@ -90,7 +90,7 @@ def _event_calendar(request, start_date, event_days, eastern):
         "next_month": month_days[-1] + timedelta(days=1),
         "selected": selected,
         "selected_events": event_days.get(selected, []),
-        "count": sum(len(event_days.get(day, [])) for day in month_days),
+        "count": len({event["id"] for day in month_days for event in event_days.get(day, [])}),
         "weeks": [
             [
                 {"date": day, "events": event_days.get(day, [])}
@@ -103,28 +103,52 @@ def _event_calendar(request, start_date, event_days, eastern):
 
 def club_events(request):
     """Render the club events page."""
-    sample_path = Path(__file__).with_name("data") / "sample_events.json"
+    sample_path = Path(__file__).with_name("data") / "sample-data.json"
     sample = json.loads(sample_path.read_text(encoding="utf-8"))
     start_date = date.fromisoformat(sample["start_date"])
     end_date = date.fromisoformat(sample["end_date"])
     eastern = ZoneInfo("America/New_York")
-    for event in sample["events"]:
-        event["starts_at"] = datetime.fromisoformat(event["starts_at"]).astimezone(eastern)
-        event["ends_at"] = datetime.fromisoformat(event["ends_at"]).astimezone(eastern)
-
+    event_query = request.GET.get("q", "").strip()
+    search_terms = event_query.casefold().split()
+    categories = {category["slug"]: category["name"] for category in sample["categories"]}
+    selected_category = request.GET.get("category", "")
+    if selected_category not in categories:
+        selected_category = ""
     event_days = {}
+    calendar_days = {}
     for event in sorted(sample["events"], key=lambda event: event["starts_at"]):
+        if event["cancelled"] or (
+            selected_category and event["category"] != categories[selected_category]
+        ):
+            continue
+        search_text = " ".join(
+            [event["title"], event["location"], event["category"], *event["clubs"], *event["interests"]]
+        ).casefold()
+        if not all(term in search_text for term in search_terms):
+            continue
+        for key in ("starts_at", "ends_at"):
+            event[key] = datetime.fromisoformat(event[key])
+            if not event.get("all_day"):
+                event[key] = event[key].astimezone(eastern)
         day = event["starts_at"].date()
         if start_date <= day <= end_date:
             event_days.setdefault(day, []).append(event)
+        last_day = event["ends_at"].date()
+        if not event.get("all_day") and event["ends_at"].time() == datetime.min.time():
+            last_day -= timedelta(days=1)
+        while day <= last_day:
+            calendar_days.setdefault(day, []).append(event)
+            day += timedelta(days=1)
 
-    calendar = _event_calendar(request, start_date, event_days, eastern)
+    calendar = _event_calendar(request, start_date, calendar_days, eastern)
     if request.GET.get("partial") == "calendar":
         return render(
             request,
             "site/clubs/components/_event_calendar.html",
             {
                 "calendar": calendar,
+                "event_query": event_query,
+                "selected_category": selected_category,
                 "is_month_view": True,
             },
         )
@@ -138,6 +162,9 @@ def club_events(request):
             "event_days": event_days,
             "event_count": sum(len(events) for events in event_days.values()),
             "calendar": calendar,
+            "event_query": event_query,
+            "categories": categories,
+            "selected_category": selected_category,
             "is_month_view": request.GET.get("view") == "month",
         },
     )

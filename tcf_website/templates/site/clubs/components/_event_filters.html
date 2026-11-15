@@ -1,24 +1,30 @@
-<fieldset class="advanced-search club-event-filters" aria-label="Event filters" disabled>
+<form method="get" class="advanced-search club-event-filters" aria-label="Event filters">
+    <input type="hidden" name="mode" value="clubs">
+    <input type="hidden" name="view" id="event-filter-view" value="{% if is_month_view %}month{% else %}list{% endif %}">
+    <input type="hidden" name="day" id="event-filter-day" value="{{ calendar.selected|date:'Y-m-d' }}">
     <div class="club-event-filters__row club-event-filters__row--search">
         <div class="advanced-search__field">
             <label for="event-search">Search events</label>
-            <input type="search" id="event-search" placeholder="Event, club, keyword or location">
+            <input type="search" id="event-search" name="q" value="{{ event_query }}" placeholder="Event, club, keyword or location">
         </div>
         <div class="advanced-search__field">
             <label for="event-category">Category</label>
-            <select id="event-category">
-                <option>All categories</option>
+            <select id="event-category" name="category">
+                <option value="">All categories</option>
+                {% for slug, name in categories.items %}
+                    <option value="{{ slug }}"{% if slug == selected_category %} selected{% endif %}>{{ name }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="advanced-search__field">
             <label for="event-club">Club</label>
-            <select id="event-club">
+            <select disabled id="event-club">
                 <option>All clubs</option>
             </select>
         </div>
         <div class="advanced-search__field">
             <label for="event-sort">Sort by</label>
-            <select id="event-sort">
+            <select disabled id="event-sort">
                 <option>Soonest first</option>
             </select>
         </div>
@@ -26,25 +32,25 @@
     <div class="club-event-filters__row">
         <div class="advanced-search__field">
             <label for="event-from">From</label>
-            <input type="date" id="event-from" value="{{ start_date|date:'Y-m-d' }}">
+            <input disabled type="date" id="event-from" value="{{ start_date|date:'Y-m-d' }}">
         </div>
         <div class="advanced-search__field">
             <label for="event-to">To</label>
-            <input type="date" id="event-to" value="{{ end_date|date:'Y-m-d' }}">
+            <input disabled type="date" id="event-to" value="{{ end_date|date:'Y-m-d' }}">
         </div>
         <div class="advanced-search__field">
             <label for="event-interest">Interest</label>
-            <select id="event-interest">
+            <select disabled id="event-interest">
                 <option>All interests</option>
             </select>
         </div>
         <label class="advanced-search__checkbox club-event-filters__canceled">
-            <input type="checkbox">
+            <input disabled type="checkbox">
             Show canceled events
         </label>
     </div>
     <div class="club-event-filters__actions">
-        <button type="button" class="btn btn--md btn--secondary">Reset</button>
-        <button type="button" class="btn btn--md btn--primary">Apply</button>
+        <a class="btn btn--md btn--secondary" id="event-filter-reset" href="?mode=clubs&amp;view={% if is_month_view %}month{% else %}list{% endif %}{% if calendar.selected %}&amp;day={{ calendar.selected|date:'Y-m-d' }}{% endif %}">Reset</a>
+        <button type="submit" class="btn btn--md btn--primary">Apply</button>
     </div>
-</fieldset>
+</form>

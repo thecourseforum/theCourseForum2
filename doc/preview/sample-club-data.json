@@ -1,0 +1,1100 @@
+{
+  "schemaVersion": 1,
+  "_meta": {
+    "title": "theClubForum shared sample club data",
+    "description": "Shared development fixture containing all 18 original sample clubs and every event in the source prototype. Illustrative data only; not verified live organization or event information.",
+    "sourceFile": "assets/js/data.js",
+    "sourceProject": "theclubforum-iteration-one-20261101",
+    "clubCount": 18,
+    "eventCount": 21,
+    "timeZone": "America/New_York",
+    "usage": {
+      "clubs": "Join clubs by their stable slug. Preserve null for unknown values; do not replace unknown dues with zero or unknown application requirements with false.",
+      "events": "Each event appears once in events and references all hosts through clubSlugs. Include an event for a club when clubSlugs contains that club slug. Deduplicate by event id for combined calendars.",
+      "eventIdsByClub": "Derived lookup covering every club, including empty arrays for clubs with no source events. Resolve IDs against events; update this lookup when changing event hosts or adding/removing events.",
+      "dates": "Timed events retain explicit offsets. All-day startDate/endDate are inclusive source dates; convert the end to the following date when serializing exclusive iCalendar DTEND. Demo today is demoState.sampleDate, not the actual current date.",
+      "categories": "Category count values are preserved legacy directory figures, not counts of the 18 sample clubs. Derive sample counts from clubs.",
+      "reviews": "reviewsByClub contains only the reviews supplied by the source; a missing club key means no supplied sample reviews.",
+      "assets": "Club photo paths are relative to the project root.",
+      "adoption": "Import or fetch this JSON as the shared development fixture. Existing prototype JavaScript data files are unchanged; features must explicitly load this file to consume it."
+    }
+  },
+  "categories": [
+    {
+      "slug": "academic-professional",
+      "code": "ACAD",
+      "name": "Academic & Professional",
+      "count": 173
+    },
+    {
+      "slug": "arts-media",
+      "code": "ARTS",
+      "name": "Arts & Media",
+      "count": 80
+    },
+    {
+      "slug": "campus-units",
+      "code": "CAMP",
+      "name": "Campus Units",
+      "count": 98
+    },
+    {
+      "slug": "greek-life",
+      "code": "GREE",
+      "name": "Greek Life",
+      "count": 65
+    },
+    {
+      "slug": "identity-culture",
+      "code": "IDEN",
+      "name": "Identity & Culture",
+      "count": 222
+    },
+    {
+      "slug": "miscellaneous",
+      "code": "MISC",
+      "name": "Miscellaneous",
+      "count": 32
+    },
+    {
+      "slug": "professional-schools",
+      "code": "PROF",
+      "name": "Professional Schools",
+      "count": 91
+    },
+    {
+      "slug": "recreation-social",
+      "code": "RECR",
+      "name": "Recreation & Social",
+      "count": 103
+    },
+    {
+      "slug": "service-advocacy",
+      "code": "SERV",
+      "name": "Service & Advocacy",
+      "count": 292
+    }
+  ],
+  "interests": [
+    "Tech",
+    "Finance",
+    "Entrepreneurship",
+    "Pre-med",
+    "Pre-law",
+    "Arts",
+    "Media",
+    "Service",
+    "Sports & Recreation",
+    "Culture & Identity",
+    "Research",
+    "Sustainability",
+    "Consulting"
+  ],
+  "clubs": [
+    {
+      "slug": "thecourseforum",
+      "name": "theCourseForum",
+      "category": "academic-professional",
+      "interests": [
+        "Tech",
+        "Media",
+        "Research"
+      ],
+      "description": "A student-run product and engineering community building theCourseForum for UVA students. Members contribute to web features, review moderation, and community projects.",
+      "applicationRequired": true,
+      "dues": null,
+      "meetingTime": "Sundays, 3–4 PM",
+      "sponsor": "UVA Student Activities",
+      "communication": {
+        "label": "GroupMe",
+        "url": "https://www.thecourseforum.com/about/"
+      },
+      "hoursMin": 3,
+      "hoursMax": 4,
+      "founded": 2005,
+      "joiningProcess": "Application and interview",
+      "recruitmentCycle": "Fall recruitment",
+      "applicationDates": "Dates not provided",
+      "sourceName": "Hoos Involved + tCF",
+      "sourceUrl": "https://www.thecourseforum.com/about/",
+      "updatedAt": "2026-10-28",
+      "photo": "assets/img/new_logo.svg"
+    },
+    {
+      "slug": "virginia-entrepreneurship-organization",
+      "name": "Virginia Entrepreneurship Organization",
+      "category": "academic-professional",
+      "interests": [
+        "Entrepreneurship",
+        "Finance",
+        "Consulting"
+      ],
+      "description": "A student community for founders, builders, and aspiring investors. VEO hosts pitch nights, founder conversations, and small-group startup projects.",
+      "applicationRequired": true,
+      "dues": {
+        "amount": 30,
+        "currency": "USD",
+        "period": "semester"
+      },
+      "meetingTime": "Thursdays, 7 PM",
+      "sponsor": "McIntire School of Commerce",
+      "communication": {
+        "label": "GroupMe",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 4,
+      "hoursMax": 6,
+      "founded": 2012,
+      "joiningProcess": "Written application and pitch-night interview",
+      "recruitmentCycle": "Fall and spring",
+      "applicationDates": "Fall cohort applications open Sep 1–15",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-27"
+    },
+    {
+      "slug": "hoo-hacks",
+      "name": "Hoo Hacks",
+      "category": "academic-professional",
+      "interests": [
+        "Tech",
+        "Entrepreneurship"
+      ],
+      "description": "UVA's student-run hackathon organization. The team designs workshops, mentorship programs, and a spring hackathon open to students across majors.",
+      "applicationRequired": null,
+      "dues": null,
+      "meetingTime": "Fridays, 6 PM",
+      "sponsor": "UVA School of Engineering",
+      "communication": {
+        "label": "Discord",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 3,
+      "hoursMax": 5,
+      "founded": 2018,
+      "joiningProcess": "Not provided",
+      "recruitmentCycle": "Not provided",
+      "applicationDates": "Not provided",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-28"
+    },
+    {
+      "slug": "uva-club-running",
+      "name": "UVA Club Running",
+      "category": "recreation-social",
+      "interests": [
+        "Sports & Recreation"
+      ],
+      "description": "A welcoming running community with weekly social runs, track workouts, and regional race trips. No tryout is required to join.",
+      "applicationRequired": false,
+      "dues": {
+        "amount": 40,
+        "currency": "USD",
+        "period": "year"
+      },
+      "meetingTime": "Tuesdays and Saturdays",
+      "sponsor": "UVA Student Activities",
+      "communication": {
+        "label": "Instagram",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 2,
+      "hoursMax": 4,
+      "founded": 2009,
+      "joiningProcess": "Open membership",
+      "recruitmentCycle": "Ongoing",
+      "applicationDates": "Not applicable",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-26"
+    },
+    {
+      "slug": "virginia-belles",
+      "name": "Virginia Belles",
+      "category": "arts-media",
+      "interests": [
+        "Arts",
+        "Media"
+      ],
+      "description": "A student a cappella group performing across Grounds and around Charlottesville. Auditions are held at the start of each semester.",
+      "applicationRequired": true,
+      "dues": null,
+      "meetingTime": "Mondays and Thursdays, 6 PM",
+      "sponsor": "UVA Student Activities",
+      "communication": {
+        "label": "Instagram",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 4,
+      "hoursMax": 6,
+      "founded": 1987,
+      "joiningProcess": "Audition",
+      "recruitmentCycle": "Fall and spring auditions",
+      "applicationDates": "Fall audition window Sep 8–10",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-25"
+    },
+    {
+      "slug": "madison-house",
+      "name": "Madison House",
+      "category": "service-advocacy",
+      "interests": [
+        "Service"
+      ],
+      "description": "A student-run community service organization connecting UVA students with local nonprofits, schools, and community partners.",
+      "applicationRequired": true,
+      "dues": null,
+      "meetingTime": "Program-specific",
+      "sponsor": "Madison House",
+      "communication": {
+        "label": "Email",
+        "url": "https://madisonhouse.org/"
+      },
+      "hoursMin": 2,
+      "hoursMax": 5,
+      "founded": 1969,
+      "joiningProcess": "Program application and placement",
+      "recruitmentCycle": "Fall and spring placements",
+      "applicationDates": "Fall placement applications open Aug 25",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-24"
+    },
+    {
+      "slug": "camp-kesem",
+      "name": "Camp Kesem at UVA",
+      "category": "service-advocacy",
+      "interests": [
+        "Service",
+        "Pre-med"
+      ],
+      "description": "A student-run camp for children whose families are affected by cancer. Members plan year-round programming and a week of summer camp.",
+      "applicationRequired": null,
+      "dues": null,
+      "meetingTime": "Every other Wednesday, 7 PM",
+      "sponsor": "Camp Kesem National",
+      "communication": {
+        "label": "GroupMe",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 3,
+      "hoursMax": 6,
+      "founded": 2013,
+      "joiningProcess": "Not provided",
+      "recruitmentCycle": "Not provided",
+      "applicationDates": "Not provided",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-26"
+    },
+    {
+      "slug": "uva-salsa-club",
+      "name": "UVA Salsa Club",
+      "category": "recreation-social",
+      "interests": [
+        "Arts",
+        "Sports & Recreation"
+      ],
+      "description": "Social dance classes and practice nights for beginner and experienced salsa dancers. No partner or prior experience required.",
+      "applicationRequired": false,
+      "dues": {
+        "amount": 20,
+        "currency": "USD",
+        "period": "semester"
+      },
+      "meetingTime": "Thursdays, 7 PM",
+      "sponsor": "UVA Student Activities",
+      "communication": {
+        "label": "Instagram",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 2,
+      "hoursMax": 3,
+      "founded": 2001,
+      "joiningProcess": "Open membership",
+      "recruitmentCycle": "Ongoing",
+      "applicationDates": "Not applicable",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-23"
+    },
+    {
+      "slug": "alpha-phi-omega",
+      "name": "Alpha Phi Omega",
+      "category": "greek-life",
+      "interests": [
+        "Service"
+      ],
+      "description": "A co-ed service fraternity focused on leadership, friendship, and service. Members complete weekly service projects with local partners.",
+      "applicationRequired": null,
+      "dues": null,
+      "meetingTime": "Fridays, 5 PM",
+      "sponsor": "UVA Fraternity and Sorority Life",
+      "communication": {
+        "label": "GroupMe",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 3,
+      "hoursMax": 5,
+      "founded": 1948,
+      "joiningProcess": "Not provided",
+      "recruitmentCycle": "Not provided",
+      "applicationDates": "Not provided",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-22"
+    },
+    {
+      "slug": "virginia-women-in-computer-science",
+      "name": "Virginia Women in Computer Science",
+      "category": "academic-professional",
+      "interests": [
+        "Tech",
+        "Research"
+      ],
+      "description": "A community for women and allies in computing. VWCS hosts technical workshops, mentorship circles, and industry conversations.",
+      "applicationRequired": false,
+      "dues": null,
+      "meetingTime": "Mondays, 6:30 PM",
+      "sponsor": "UVA Department of Computer Science",
+      "communication": {
+        "label": "Slack",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 2,
+      "hoursMax": 4,
+      "founded": 2015,
+      "joiningProcess": "Open membership",
+      "recruitmentCycle": "Ongoing",
+      "applicationDates": "Not applicable",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-27"
+    },
+    {
+      "slug": "mock-trial",
+      "name": "Mock Trial at UVA",
+      "category": "academic-professional",
+      "interests": [
+        "Pre-law",
+        "Research"
+      ],
+      "description": "A competitive mock trial team that practices case analysis, public speaking, and tournament advocacy. Tryouts are held in the fall.",
+      "applicationRequired": true,
+      "dues": null,
+      "meetingTime": "Thursdays, 7 PM",
+      "sponsor": "UVA Student Activities",
+      "communication": {
+        "label": "Email",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 4,
+      "hoursMax": 8,
+      "founded": 1994,
+      "joiningProcess": "Tryout",
+      "recruitmentCycle": "Fall tryouts",
+      "applicationDates": "Fall tryout dates not provided",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-24"
+    },
+    {
+      "slug": "club-tennis",
+      "name": "Club Tennis at UVA",
+      "category": "recreation-social",
+      "interests": [
+        "Sports & Recreation"
+      ],
+      "description": "Competitive and recreational tennis for UVA students, with practices, ladders, and regional club tournaments.",
+      "applicationRequired": false,
+      "dues": {
+        "amount": 75,
+        "currency": "USD",
+        "period": "year"
+      },
+      "meetingTime": "Sundays, 10 AM",
+      "sponsor": "UVA Student Activities",
+      "communication": {
+        "label": "GroupMe",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 3,
+      "hoursMax": 5,
+      "founded": 2006,
+      "joiningProcess": "Open membership; competitive team placement",
+      "recruitmentCycle": "Fall and spring",
+      "applicationDates": "Not applicable",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-25"
+    },
+    {
+      "slug": "best-buddies",
+      "name": "Best Buddies UVA",
+      "category": "service-advocacy",
+      "interests": [
+        "Service",
+        "Culture & Identity"
+      ],
+      "description": "A friendship and inclusion program pairing UVA students with community members with intellectual and developmental disabilities.",
+      "applicationRequired": true,
+      "dues": null,
+      "meetingTime": "Tuesdays, 6 PM",
+      "sponsor": "Best Buddies International",
+      "communication": {
+        "label": "GroupMe",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 2,
+      "hoursMax": 4,
+      "founded": 2010,
+      "joiningProcess": "Application and matching process",
+      "recruitmentCycle": "Fall matching",
+      "applicationDates": "Fall applications close Sep 20",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-26"
+    },
+    {
+      "slug": "habitat-for-humanity",
+      "name": "UVA Habitat for Humanity",
+      "category": "service-advocacy",
+      "interests": [
+        "Service",
+        "Sustainability"
+      ],
+      "description": "Student volunteers build alongside local Habitat affiliates and support housing justice through education and fundraising.",
+      "applicationRequired": false,
+      "dues": null,
+      "meetingTime": "Saturdays, 8 AM",
+      "sponsor": "Habitat for Humanity of Greater Charlottesville",
+      "communication": {
+        "label": "GroupMe",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 3,
+      "hoursMax": 6,
+      "founded": 1991,
+      "joiningProcess": "Open membership; build-day sign-up",
+      "recruitmentCycle": "Ongoing",
+      "applicationDates": "Not applicable",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-21"
+    },
+    {
+      "slug": "engineers-without-borders",
+      "name": "Engineers Without Borders UVA",
+      "category": "academic-professional",
+      "interests": [
+        "Tech",
+        "Sustainability"
+      ],
+      "description": "Student engineering teams partner with community organizations on sustainable infrastructure projects and technical education.",
+      "applicationRequired": true,
+      "dues": null,
+      "meetingTime": "Mondays, 5 PM",
+      "sponsor": "UVA School of Engineering",
+      "communication": {
+        "label": "Slack",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 3,
+      "hoursMax": 6,
+      "founded": 2008,
+      "joiningProcess": "Project team application",
+      "recruitmentCycle": "Fall recruitment",
+      "applicationDates": "Fall project applications open Sep 5",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-28"
+    },
+    {
+      "slug": "phi-delta-epsilon",
+      "name": "Phi Delta Epsilon",
+      "category": "professional-schools",
+      "interests": [
+        "Pre-med",
+        "Service"
+      ],
+      "description": "A co-ed pre-medical fraternity offering peer mentorship, clinical exposure, and service opportunities for students pursuing health careers.",
+      "applicationRequired": true,
+      "dues": {
+        "amount": 95,
+        "currency": "USD",
+        "period": "semester"
+      },
+      "meetingTime": "Wednesdays, 7 PM",
+      "sponsor": "UVA Fraternity and Sorority Life",
+      "communication": {
+        "label": "GroupMe",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 3,
+      "hoursMax": 5,
+      "founded": 2004,
+      "joiningProcess": "Application and interview",
+      "recruitmentCycle": "Fall recruitment",
+      "applicationDates": "Fall applications close Sep 18",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-27"
+    },
+    {
+      "slug": "chinese-student-association",
+      "name": "Chinese Student Association",
+      "category": "identity-culture",
+      "interests": [
+        "Culture & Identity",
+        "Arts"
+      ],
+      "description": "A community for students interested in Chinese culture, with cultural celebrations, food events, and peer support.",
+      "applicationRequired": false,
+      "dues": null,
+      "meetingTime": "Every other Friday, 6 PM",
+      "sponsor": "UVA Student Activities",
+      "communication": {
+        "label": "WeChat",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 2,
+      "hoursMax": 3,
+      "founded": 1998,
+      "joiningProcess": "Open membership",
+      "recruitmentCycle": "Ongoing",
+      "applicationDates": "Not applicable",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-23"
+    },
+    {
+      "slug": "black-student-alliance",
+      "name": "Black Student Alliance",
+      "category": "identity-culture",
+      "interests": [
+        "Culture & Identity",
+        "Service"
+      ],
+      "description": "An advocacy and community organization supporting Black students at UVA through programming, mentorship, and campus partnerships.",
+      "applicationRequired": null,
+      "dues": null,
+      "meetingTime": "Tuesdays, 6:30 PM",
+      "sponsor": "UVA Student Activities",
+      "communication": {
+        "label": "GroupMe",
+        "url": "https://hoosinvolved.virginia.edu/"
+      },
+      "hoursMin": 2,
+      "hoursMax": 4,
+      "founded": 1969,
+      "joiningProcess": "Not provided",
+      "recruitmentCycle": "Not provided",
+      "applicationDates": "Not provided",
+      "sourceName": "Hoos Involved",
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "updatedAt": "2026-10-25"
+    }
+  ],
+  "events": [
+    {
+      "id": "tcf-open-house",
+      "title": "theCourseForum Open House",
+      "clubSlugs": [
+        "thecourseforum"
+      ],
+      "category": "academic-professional",
+      "interests": [
+        "Tech",
+        "Media"
+      ],
+      "start": "2026-11-03T18:00:00-05:00",
+      "end": "2026-11-03T19:30:00-05:00",
+      "location": "New Cabell Hall 389",
+      "online": false,
+      "sourceUrl": "https://www.thecourseforum.com/about/",
+      "description": "Meet current contributors, see how the product is built, and learn about spring project teams. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "tcf-winter-build-night",
+      "title": "theCourseForum winter build night",
+      "clubSlugs": [
+        "thecourseforum"
+      ],
+      "category": "academic-professional",
+      "interests": [
+        "Tech",
+        "Media"
+      ],
+      "start": "2026-11-18T18:30:00-05:00",
+      "end": "2026-11-18T20:00:00-05:00",
+      "location": "New Cabell Hall 389",
+      "online": false,
+      "sourceUrl": "https://www.thecourseforum.com/about/",
+      "description": "An open work session for current and prospective contributors. Bring a laptop, pick a small product or content task, and get feedback from the team. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "veo-pitch-night",
+      "title": "VEO Fall Pitch Night",
+      "clubSlugs": [
+        "virginia-entrepreneurship-organization",
+        "hoo-hacks"
+      ],
+      "category": "academic-professional",
+      "interests": [
+        "Entrepreneurship",
+        "Finance"
+      ],
+      "start": "2026-11-05T19:00:00-05:00",
+      "end": "2026-11-05T21:00:00-05:00",
+      "location": "McIntire Hall 118",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "Student founders pitch early-stage ideas and receive feedback from peers and alumni judges. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "hoo-hacks-kickoff",
+      "title": "Hoo Hacks 2027 Kickoff",
+      "clubSlugs": [
+        "hoo-hacks",
+        "virginia-women-in-computer-science"
+      ],
+      "category": "academic-professional",
+      "interests": [
+        "Tech",
+        "Entrepreneurship"
+      ],
+      "start": "2026-11-06T17:30:00-05:00",
+      "end": "2026-11-06T20:00:00-05:00",
+      "location": "Rice Hall 130",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "An introduction to the 2027 hackathon theme, organizing teams, and ways to get involved. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "hoo-hacks-registration",
+      "title": "Hoo Hacks registration window",
+      "clubSlugs": [
+        "hoo-hacks"
+      ],
+      "category": "academic-professional",
+      "interests": [
+        "Tech"
+      ],
+      "allDay": true,
+      "startDate": "2026-11-06",
+      "endDate": "2026-11-08",
+      "location": "Online",
+      "online": true,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "The sample registration window for the 2027 Hoo Hacks hackathon. All-day, multi-day event.",
+      "cancelled": false
+    },
+    {
+      "id": "hoo-hacks-design-jam",
+      "title": "Hoo Hacks Design Jam",
+      "clubSlugs": [
+        "hoo-hacks"
+      ],
+      "category": "academic-professional",
+      "interests": [
+        "Tech",
+        "Entrepreneurship"
+      ],
+      "start": "2026-11-07T10:00:00-05:00",
+      "end": "2026-11-07T16:00:00-05:00",
+      "location": "Thornton Hall A",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "A one-day design sprint for students interested in product, UX, and front-end development. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "running-sunrise-5k",
+      "title": "Club Running Sunrise 5K",
+      "clubSlugs": [
+        "uva-club-running"
+      ],
+      "category": "recreation-social",
+      "interests": [
+        "Sports & Recreation"
+      ],
+      "start": "2026-11-08T08:00:00-05:00",
+      "end": "2026-11-08T09:30:00-05:00",
+      "location": "Nameless Field",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "A casual campus 5K followed by coffee and bagels. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "belles-auditions",
+      "title": "Virginia Belles auditions",
+      "clubSlugs": [
+        "virginia-belles"
+      ],
+      "category": "arts-media",
+      "interests": [
+        "Arts",
+        "Media"
+      ],
+      "start": "2026-11-09T18:00:00-05:00",
+      "end": "2026-11-09T21:00:00-05:00",
+      "location": "Old Cabell Hall 107",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "A sample audition session for students interested in a cappella. Prepare a short solo; callbacks follow later in the week.",
+      "cancelled": false
+    },
+    {
+      "id": "madison-house-info",
+      "title": "Madison House service info session",
+      "clubSlugs": [
+        "madison-house"
+      ],
+      "category": "service-advocacy",
+      "interests": [
+        "Service"
+      ],
+      "start": "2026-11-10T18:00:00-05:00",
+      "end": "2026-11-10T19:00:00-05:00",
+      "location": "Newcomb Hall 177",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "Learn about fall and spring service placements with local community partners. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "salsa-social",
+      "title": "Salsa Club social night",
+      "clubSlugs": [
+        "uva-salsa-club"
+      ],
+      "category": "recreation-social",
+      "interests": [
+        "Arts",
+        "Sports & Recreation"
+      ],
+      "start": "2026-11-12T19:00:00-05:00",
+      "end": "2026-11-12T21:00:00-05:00",
+      "location": "AFC Studio 3",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "A beginner-friendly social dance night with a short lesson and open dancing. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "apo-service-night",
+      "title": "APO service night",
+      "clubSlugs": [
+        "alpha-phi-omega"
+      ],
+      "category": "greek-life",
+      "interests": [
+        "Service"
+      ],
+      "start": "2026-11-13T17:00:00-05:00",
+      "end": "2026-11-13T19:00:00-05:00",
+      "location": "Clemons Library 201",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "A weekly service project planning meeting with the chapter's community partners. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "hoo-hacks-overnight",
+      "title": "Hoo Hacks overnight build",
+      "clubSlugs": [
+        "hoo-hacks"
+      ],
+      "category": "academic-professional",
+      "interests": [
+        "Tech",
+        "Entrepreneurship"
+      ],
+      "start": "2026-11-14T22:00:00-05:00",
+      "end": "2026-11-15T06:00:00-05:00",
+      "location": "Rice Hall 130",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "An overnight build session for project teams preparing demos. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "vwcs-tech-talk",
+      "title": "VWCS technical interview workshop",
+      "clubSlugs": [
+        "virginia-women-in-computer-science"
+      ],
+      "category": "academic-professional",
+      "interests": [
+        "Tech",
+        "Research"
+      ],
+      "start": "2026-11-16T18:30:00-05:00",
+      "end": "2026-11-16T20:00:00-05:00",
+      "location": "Rice Hall 130",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "Small-group practice and peer feedback for technical interviews. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "best-buddies-friendsgiving",
+      "title": "Best Buddies Friendsgiving",
+      "clubSlugs": [
+        "best-buddies"
+      ],
+      "category": "service-advocacy",
+      "interests": [
+        "Service",
+        "Culture & Identity"
+      ],
+      "start": "2026-11-17T18:00:00-05:00",
+      "end": "2026-11-17T20:00:00-05:00",
+      "location": "Newcomb Hall South Meeting Room",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "A community dinner for members and buddies. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "mock-trial-scrimmage",
+      "title": "Mock Trial practice scrimmage",
+      "clubSlugs": [
+        "mock-trial"
+      ],
+      "category": "academic-professional",
+      "interests": [
+        "Pre-law",
+        "Research"
+      ],
+      "start": "2026-11-19T19:00:00-05:00",
+      "end": "2026-11-19T21:00:00-05:00",
+      "location": "Brown Hall 126",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "An open practice round with feedback from team captains. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "csa-night-market",
+      "title": "CSA Night Market",
+      "clubSlugs": [
+        "chinese-student-association"
+      ],
+      "category": "identity-culture",
+      "interests": [
+        "Culture & Identity",
+        "Arts"
+      ],
+      "start": "2026-11-20T17:00:00-05:00",
+      "end": "2026-11-20T21:00:00-05:00",
+      "location": "McIntire Amphitheater",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "A student-run night market with food, performances, and cultural organizations. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "habitat-build-day",
+      "title": "Habitat build day",
+      "clubSlugs": [
+        "habitat-for-humanity"
+      ],
+      "category": "service-advocacy",
+      "interests": [
+        "Service",
+        "Sustainability"
+      ],
+      "start": "2026-11-21T08:00:00-05:00",
+      "end": "2026-11-21T15:00:00-05:00",
+      "location": "Charlottesville build site",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "A full-day volunteer build with the local Habitat affiliate. Transportation is arranged separately. Sample event.",
+      "cancelled": false
+    },
+    {
+      "id": "ewb-project-review",
+      "title": "EWB project review",
+      "clubSlugs": [
+        "engineers-without-borders"
+      ],
+      "category": "academic-professional",
+      "interests": [
+        "Tech",
+        "Sustainability"
+      ],
+      "start": "2026-11-23T17:00:00-05:00",
+      "end": "2026-11-23T18:30:00-05:00",
+      "location": "Thornton Hall 204",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "Project teams share design updates and prepare for the next community partner review. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "msa-community-dinner",
+      "title": "BSA community dinner",
+      "clubSlugs": [
+        "black-student-alliance"
+      ],
+      "category": "identity-culture",
+      "interests": [
+        "Culture & Identity",
+        "Service"
+      ],
+      "start": "2026-11-24T18:00:00-05:00",
+      "end": "2026-11-24T20:00:00-05:00",
+      "location": "Newcomb Hall Ballroom",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "A sample community dinner that was canceled by the host. Only shown when canceled events are enabled.",
+      "cancelled": true
+    },
+    {
+      "id": "apo-thanksgiving-service",
+      "title": "APO Thanksgiving service morning",
+      "clubSlugs": [
+        "alpha-phi-omega"
+      ],
+      "category": "greek-life",
+      "interests": [
+        "Service"
+      ],
+      "start": "2026-11-25T09:00:00-05:00",
+      "end": "2026-11-25T12:00:00-05:00",
+      "location": "Madison House",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "A morning service shift supporting local food access partners. Sample event for this prototype.",
+      "cancelled": false
+    },
+    {
+      "id": "dance-marathon-info",
+      "title": "UVA Dance Marathon info session",
+      "clubSlugs": [
+        "madison-house"
+      ],
+      "category": "service-advocacy",
+      "interests": [
+        "Service"
+      ],
+      "start": "2026-11-30T19:00:00-05:00",
+      "end": "2026-11-30T20:00:00-05:00",
+      "location": "Newcomb Hall 168",
+      "online": false,
+      "sourceUrl": "https://hoosinvolved.virginia.edu/",
+      "description": "Learn how to join a sample Dance Marathon team and support the hospital's child life programs. Sample event.",
+      "cancelled": false
+    }
+  ],
+  "reviewsByClub": {
+    "thecourseforum": [
+      {
+        "id": "review-tcf-1",
+        "semester": "Fall 2025",
+        "average": 5,
+        "text": "Sample review for this prototype. I joined to work on web features with other students. Weekly meetings were structured, and members were approachable when I needed help. The work was easy to connect back to the public site.",
+        "leadership": 5,
+        "enjoyability": 5,
+        "recommend": 5,
+        "commitment": 5,
+        "hours": 2,
+        "votes": 2,
+        "date": "May 4, 2025"
+      },
+      {
+        "id": "review-tcf-2",
+        "semester": "Spring 2026",
+        "average": 4.5,
+        "text": "Sample review for this prototype. A good fit if you like small teams and iterative work. Some weeks were quiet, but there was always a clear project to pick up.",
+        "leadership": 4.5,
+        "enjoyability": 5,
+        "recommend": 4.5,
+        "commitment": 4,
+        "hours": 3,
+        "votes": 1,
+        "date": "April 12, 2026"
+      }
+    ]
+  },
+  "demoState": {
+    "auth": {
+      "name": "Demo Student",
+      "email": "demo@virginia.edu",
+      "initial": "D"
+    },
+    "sampleMonth": "2026-11",
+    "sampleDate": "2026-11-05",
+    "exportDefaultClubs": [
+      "thecourseforum",
+      "hoo-hacks",
+      "virginia-entrepreneurship-organization"
+    ]
+  },
+  "eventIdsByClub": {
+    "thecourseforum": [
+      "tcf-open-house",
+      "tcf-winter-build-night"
+    ],
+    "virginia-entrepreneurship-organization": [
+      "veo-pitch-night"
+    ],
+    "hoo-hacks": [
+      "veo-pitch-night",
+      "hoo-hacks-kickoff",
+      "hoo-hacks-registration",
+      "hoo-hacks-design-jam",
+      "hoo-hacks-overnight"
+    ],
+    "uva-club-running": [
+      "running-sunrise-5k"
+    ],
+    "virginia-belles": [
+      "belles-auditions"
+    ],
+    "madison-house": [
+      "madison-house-info",
+      "dance-marathon-info"
+    ],
+    "camp-kesem": [],
+    "uva-salsa-club": [
+      "salsa-social"
+    ],
+    "alpha-phi-omega": [
+      "apo-service-night",
+      "apo-thanksgiving-service"
+    ],
+    "virginia-women-in-computer-science": [
+      "hoo-hacks-kickoff",
+      "vwcs-tech-talk"
+    ],
+    "mock-trial": [
+      "mock-trial-scrimmage"
+    ],
+    "club-tennis": [],
+    "best-buddies": [
+      "best-buddies-friendsgiving"
+    ],
+    "habitat-for-humanity": [
+      "habitat-build-day"
+    ],
+    "engineers-without-borders": [
+      "ewb-project-review"
+    ],
+    "phi-delta-epsilon": [],
+    "chinese-student-association": [
+      "csa-night-market"
+    ],
+    "black-student-alliance": [
+      "msa-community-dinner"
+    ]
+  }
+}
