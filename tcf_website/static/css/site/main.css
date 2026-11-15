@@ -11,6 +11,7 @@
 @import url('./utilities.css');
 
 /* Components */
+@import url('./components/brand.css');
 @import url('./components/button.css');
 @import url('./components/input.css');
 @import url('./components/modal.css');
