@@ -90,8 +90,8 @@ if minio_endpoint:
 if ENVIRONMENT == "local" and importlib.util.find_spec("debug_toolbar") is not None:
     INSTALLED_APPS = INSTALLED_APPS + ["debug_toolbar"]
     MIDDLEWARE = (
-        MIDDLEWARE[:2]
+        MIDDLEWARE[:4]
         + ["debug_toolbar.middleware.DebugToolbarMiddleware"]
-        + MIDDLEWARE[2:]
+        + MIDDLEWARE[4:]
     )
     DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda r: True}

@@ -56,10 +56,11 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "tcf_core.settings.health_check_middleware.HealthCheckMiddleware",
+    "tcf_core.settings.request_log_middleware.RequestLogMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "tcf_core.settings.health_check_middleware.HealthCheckMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -150,9 +151,24 @@ AUTH_USER_MODEL = "tcf_website.User"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "filters": {
+        "request_id": {
+            "()": "tcf_core.settings.request_log_middleware.RequestIdFilter",
+        },
+    },
+    "formatters": {
+        "json": {
+            "()": "tcf_core.settings.request_log_middleware.JsonFormatter",
+        },
+        "text": {
+            "()": "tcf_core.settings.request_log_middleware.TextFormatter",
+        },
+    },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
+            "filters": ["request_id"],
+            "formatter": "json" if ENVIRONMENT == "prod" else "text",
         },
     },
     "root": {
@@ -164,6 +180,9 @@ LOGGING = {
             "handlers": ["console"],
             "level": "INFO",
             "propagate": False,
+        },
+        "django.request": {
+            "level": "ERROR",
         },
     },
 }
