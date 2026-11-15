@@ -25,6 +25,7 @@ class HandleExceptionsMiddleware:
             json.dumps(
                 {
                     "level": "ERROR",
+                    "request_id": getattr(request, "request_id", "-"),
                     "path": request.get_full_path(),
                     "method": request.method,
                     "ip": request.META.get(
