@@ -186,6 +186,58 @@ docker compose --profile full run --rm web python manage.py <command>
 
 The Compose `full` profile does not automatically set `TCF_ENV=prod`.
 
+## AI review summaries (Amazon Bedrock)
+
+`generate_ai_summaries` uses Bedrock's Converse API with Amazon Nova Lite
+(`us.amazon.nova-lite-v1:0`) in `us-east-1` by default. Set `BEDROCK_MODEL_ID`
+and `BEDROCK_REGION` in `.env` to change these; `--model` overrides the model
+for a single run. OpenRouter credentials are no longer used.
+
+Use AWS credentials for the tCF account through the normal boto3 credential
+chain: an SSO profile (`AWS_PROFILE`) locally, environment credentials (including
+`AWS_SESSION_TOKEN` for temporary credentials), or an ECS task role. A container
+must have access to that profile/credentials too. No new dependency is needed.
+
+The calling identity needs `bedrock:InvokeModel` on the selected inference
+profile and its foundation model in every destination region. The default US
+Nova Lite profile requires resources matching the following (replace
+`<account-id>` with the tCF account ID):
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": "bedrock:InvokeModel",
+    "Resource": [
+      "arn:aws:bedrock:us-east-1:<account-id>:inference-profile/us.amazon.nova-lite-v1:0",
+      "arn:aws:bedrock:us-*::foundation-model/amazon.nova-lite-v1:0"
+    ]
+  }]
+}
+```
+
+Account policies, permissions boundaries, and SCPs must also allow these calls.
+If changing models or source regions, adjust those permissions accordingly.
+See AWS's [inference profile prerequisites](https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-prereq.html)
+and [Nova Converse examples](https://docs.aws.amazon.com/nova/latest/userguide/using-converse-api.html).
+
+Run from the devcontainer or another configured Django environment:
+
+```bash
+# Preview matching pairs without AWS credentials or API calls.
+uv run python manage.py generate_ai_summaries --limit 5 --missing-only --dry-run
+# Generate and save summaries (requires AWS credentials and Bedrock access).
+uv run python manage.py generate_ai_summaries --limit 5 --missing-only
+# Select another Bedrock model or inference profile.
+uv run python manage.py generate_ai_summaries --model us.amazon.nova-pro-v1:0 --limit 5
+```
+
+Existing pair selection, review filters, and summary records are retained.
+The SDK retries throttling and transient errors. Blocked, truncated, empty, or
+failed responses leave an existing summary intact and count as failures in the
+command's output. Generation remains an explicit management command.
+
 ## Pre-commit hooks
 
 The development dependencies include `prek`, a compatible replacement for
