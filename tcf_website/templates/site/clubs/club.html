@@ -60,6 +60,47 @@
                 </div>
             {% endif %}
         </section>
+        <section class="club-details-card">
+            <h2 class="club-details-card__title">Club Details</h2>
+            <div class="club-details-grid">
+                <div class="club-detail">
+                    <span class="club-detail__label">Faculty / Organizational Sponsor</span>
+                    <span class="club-detail__value">{% if club.sponsor %}{{ club.sponsor|linebreaksbr }}{% else %}Not provided{% endif %}</span>
+                </div>
+                <div class="club-detail">
+                    <span class="club-detail__label">Communication Methods</span>
+                    <span class="club-detail__value">{% if club.communication_methods %}{{ club.communication_methods|linebreaksbr }}{% else %}Not provided{% endif %}</span>
+                </div>
+                <div class="club-detail">
+                    <span class="club-detail__label">Time Commitment</span>
+                    <span class="club-detail__value">{% if club.time_commitment %}{{ club.time_commitment|linebreaksbr }}{% else %}Not provided{% endif %}</span>
+                </div>
+                <div class="club-detail">
+                    <span class="club-detail__label">Year Founded</span>
+                    <span class="club-detail__value">{% if club.year_founded %}{{ club.year_founded }}{% else %}Not provided{% endif %}</span>
+                </div>
+                <div class="club-detail">
+                    <span class="club-detail__label">Joining Process</span>
+                    <span class="club-detail__value">{% if club.joining_process %}{{ club.joining_process|linebreaksbr }}{% else %}Not provided{% endif %}</span>
+                </div>
+                <div class="club-detail">
+                    <span class="club-detail__label">Selectivity</span>
+                    <span class="club-detail__value">{% if club.selectivity %}{{ club.selectivity|linebreaksbr }}{% else %}Not provided{% endif %}</span>
+                </div>
+                <div class="club-detail">
+                    <span class="club-detail__label">Membership Dues</span>
+                    <span class="club-detail__value">{% if club.dues == 0 %}Free{% elif club.dues %}${{ club.dues|floatformat:2 }}{% else %}Not provided{% endif %}</span>
+                </div>
+                <div class="club-detail">
+                    <span class="club-detail__label">Recruitment Cycle</span>
+                    <span class="club-detail__value">{% if club.recruitment_cycle %}{{ club.recruitment_cycle|linebreaksbr }}{% else %}Not provided{% endif %}</span>
+                </div>
+                <div class="club-detail">
+                    <span class="club-detail__label">Recruitment Dates</span>
+                    <span class="club-detail__value">{% if club.recruitment_dates %}{{ club.recruitment_dates|linebreaksbr }}{% else %}Not provided{% endif %}</span>
+                </div>
+            </div>
+        </section>
         <section class="club-reviews" id="reviews">
             <div class="reviews-header">
                 <h2 class="reviews-header__title">{{ num_reviews }} Review{{ num_reviews|pluralize }}</h2>
