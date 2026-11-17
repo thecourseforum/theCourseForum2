@@ -6,7 +6,6 @@ The original implementation is preserved in fetch_data_old for benchmarking.
 
 import csv
 import json
-import logging
 import os
 import re
 import time
@@ -15,6 +14,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import contextmanager
 from datetime import date
 from datetime import time as time_of_day
+from itertools import chain
 from pathlib import Path
 from threading import Event, Thread
 
@@ -23,8 +23,6 @@ from django.core.management.base import BaseCommand, CommandError
 from tqdm import tqdm
 
 from tcf_website.management.http import requests_session_with_pool_and_retries
-
-logger = logging.getLogger(__name__)
 
 TIMEOUT = 30
 MAX_RETRIES = 5
@@ -211,9 +209,6 @@ def fetch_sis_courses(
             progress_file=progress_file,
         ) as bar:
             bar.set_postfix_str("waiting for page 1")
-            logger.info(
-                "SIS class search: requesting page 1 (subject=%s)", subject or "ALL"
-            )
             first = request_sis_json(
                 session, "IScript_ClassSearch", timeout=timeout, page=1, **filters
             )
@@ -222,38 +217,18 @@ def fetch_sis_courses(
             if total_pages < 0 or bool(first["classes"]) != bool(total_pages):
                 raise ValueError("SIS page count does not match its first page.")
             bar.total = total_pages
-            logger.info(
-                "SIS class search: page 1 returned, pageCount=%s, classes=%s",
-                total_pages,
-                len(first["classes"]),
+            remaining = (
+                request_sis_json(
+                    session,
+                    "IScript_ClassSearch",
+                    timeout=timeout,
+                    page=page,
+                    **filters,
+                )
+                for page in range(2, total_pages + 1)
             )
-            fetched = {1: first}
-            with ThreadPoolExecutor() as pool:
-                futures = {
-                    pool.submit(
-                        request_sis_json,
-                        session,
-                        "IScript_ClassSearch",
-                        timeout=timeout,
-                        page=page,
-                        **filters,
-                    ): page
-                    for page in range(2, total_pages + 1)
-                }
-                try:
-                    for done, future in enumerate(as_completed(futures), 2):
-                        fetched[futures[future]] = future.result()
-                        logger.info(
-                            "SIS class search: fetched %s/%s pages",
-                            done,
-                            total_pages,
-                        )
-                except BaseException:
-                    for future in futures:
-                        future.cancel()
-                    raise
-            for page in range(1, total_pages + 1):
-                data = fetched[page]
+            pages = chain([first] if total_pages else [], remaining)
+            for page, data in enumerate(pages, 1):
                 records = {str(c["class_nbr"]): c for c in data["classes"]}
                 if not records.keys() - subject_seen:
                     raise ValueError(
@@ -261,12 +236,6 @@ def fetch_sis_courses(
                     )
                 subject_seen.update(records)
                 courses.update(records)
-                logger.info(
-                    "SIS class search: parsed page %s/%s, sections=%s",
-                    page,
-                    total_pages,
-                    len(courses),
-                )
                 bar.set_postfix_str(
                     f"sections={len(courses)}"
                     + (f", waiting={page + 1}" if page < total_pages else ""),
