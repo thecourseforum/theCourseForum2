@@ -67,6 +67,11 @@ urlpatterns = [
         name="check_zero_hours_per_week",
     ),
     path(
+        "reviews/check_toxicity/",
+        views.review.check_toxicity,
+        name="check_review_toxicity",
+    ),
+    path(
         "reviews/semesters-for-course/",
         views.review.review_semester_options,
         name="review_semester_options",
