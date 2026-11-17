@@ -79,6 +79,10 @@ resource "aws_ecs_task_definition" "django" {
         {
           name  = "AWS_SECRET_ACCESS_KEY"
           value = ""
+        },
+        {
+          name  = "WAF_INTEGRATION_URL"
+          value = aws_wafv2_web_acl.main.application_integration_url
         }
       ]
 
