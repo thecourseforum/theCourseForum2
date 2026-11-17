@@ -20,6 +20,7 @@ jobs:
   fetch-enrollment:
     runs-on: ubuntu-latest
     environment: legacy-prod
+    timeout-minutes: 30
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
@@ -43,7 +44,14 @@ jobs:
             --query 'tasks[0].taskArn' --output text)
 
           echo "Started $TASK_ARN"
-          aws ecs wait tasks-stopped --cluster "$ECS_CLUSTER" --tasks "$TASK_ARN"
+          while true; do
+            STATUS=$(aws ecs describe-tasks \
+              --cluster "$ECS_CLUSTER" --tasks "$TASK_ARN" \
+              --query 'tasks[0].lastStatus' --output text)
+            echo "Task status: $STATUS"
+            [ "$STATUS" = "STOPPED" ] && break
+            sleep 15
+          done
 
           EXIT_CODE=$(aws ecs describe-tasks \
             --cluster "$ECS_CLUSTER" --tasks "$TASK_ARN" \
