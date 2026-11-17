@@ -11,4 +11,5 @@ def base(request):
         "DEBUG": settings.DEBUG,
         "USER": request.user,
         "LATEST_SEMESTER": Semester.latest(),
+        "WAF_INTEGRATION_URL": settings.WAF_INTEGRATION_URL,
     }
