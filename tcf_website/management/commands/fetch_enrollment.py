@@ -74,11 +74,19 @@ class Command(BaseCommand):
             f"Fetching enrollment for {semester} ({len(sections)} sections)"
         )
 
+        fetch_start = time.time()
         try:
             with create_session(term=semester.number) as session:
+                self.stdout.write(
+                    f"Session ready; paging SIS class search for term {semester.number}"
+                )
                 records = fetch_sis_courses(session)
         except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
             raise CommandError(f"SIS fetch failed: {exc}") from exc
+
+        self.stdout.write(
+            f"Fetched {len(records)} SIS records in {time.time() - fetch_start:.1f}s"
+        )
 
         if not records:
             raise CommandError("SIS returned no classes; existing data was kept.")
@@ -90,6 +98,9 @@ class Command(BaseCommand):
             for section in sections
             if str(section.sis_section_number) in by_class_nbr
         ]
+        self.stdout.write(
+            f"Matched {len(updated)}/{len(sections)} sections; writing to database"
+        )
 
         Section.objects.bulk_update(updated, ENROLLMENT_FIELDS, batch_size=500)
         invalidate(Section)

@@ -6,6 +6,7 @@ The original implementation is preserved in fetch_data_old for benchmarking.
 
 import csv
 import json
+import logging
 import os
 import re
 import time
@@ -23,6 +24,8 @@ from django.core.management.base import BaseCommand, CommandError
 from tqdm import tqdm
 
 from tcf_website.management.http import requests_session_with_pool_and_retries
+
+logger = logging.getLogger(__name__)
 
 TIMEOUT = 30
 MAX_RETRIES = 5
@@ -209,6 +212,9 @@ def fetch_sis_courses(
             progress_file=progress_file,
         ) as bar:
             bar.set_postfix_str("waiting for page 1")
+            logger.info(
+                "SIS class search: requesting page 1 (subject=%s)", subject or "ALL"
+            )
             first = request_sis_json(
                 session, "IScript_ClassSearch", timeout=timeout, page=1, **filters
             )
@@ -217,6 +223,11 @@ def fetch_sis_courses(
             if total_pages < 0 or bool(first["classes"]) != bool(total_pages):
                 raise ValueError("SIS page count does not match its first page.")
             bar.total = total_pages
+            logger.info(
+                "SIS class search: page 1 returned, pageCount=%s, classes=%s",
+                total_pages,
+                len(first["classes"]),
+            )
             remaining = (
                 request_sis_json(
                     session,
@@ -236,6 +247,12 @@ def fetch_sis_courses(
                     )
                 subject_seen.update(records)
                 courses.update(records)
+                logger.info(
+                    "SIS class search: parsed page %s/%s, sections=%s",
+                    page,
+                    total_pages,
+                    len(courses),
+                )
                 bar.set_postfix_str(
                     f"sections={len(courses)}"
                     + (f", waiting={page + 1}" if page < total_pages else ""),
