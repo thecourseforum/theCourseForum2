@@ -70,7 +70,8 @@ def fetch_courses(query: str):
 def fetch_instructors(query: str) -> list[dict]:
     """Instructor dicts with similarity scores, capped for autocomplete-scale use upstream."""
     results = (
-        Instructor.objects.only("first_name", "last_name", "email")
+        Instructor.objects.filter(hidden=False)
+        .only("first_name", "last_name", "email")
         .annotate(
             similarity_first=TrigramSimilarity("first_name", query),
             similarity_last=TrigramSimilarity("last_name", query),

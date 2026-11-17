@@ -19,6 +19,7 @@ from tcf_website.models import (
     Semester,
     Subdepartment,
 )
+from tcf_website.utils import is_tba_instructor
 
 
 class Command(BaseCommand):
@@ -251,7 +252,11 @@ class Command(BaseCommand):
                     fixed_instructor_names.append(stripped)
 
         for name in fixed_instructor_names:
-            if name in {"Staff", "Faculty Staff", "Faculty"} or name.isspace():
+            if (
+                name in {"Staff", "Faculty Staff", "Faculty"}
+                or name.isspace()
+                or is_tba_instructor(name)
+            ):
                 instructors.add(self.STAFF)
             else:
                 names = name.split()

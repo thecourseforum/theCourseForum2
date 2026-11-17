@@ -73,6 +73,14 @@ def with_mode(url: str, mode: str | None) -> str:
     return update_query_params(url, mode=mode)
 
 
+def is_tba_instructor(name: str) -> bool:
+    """True for SIS's "To Be Announced" placeholder, whatever its casing or spacing.
+
+    Older semester files say "To Be Announced", newer ones "To be Announced".
+    """
+    return " ".join(name.split()).casefold() == "to be announced"
+
+
 def safe_round(num):
     """Round num to 2 decimal places; returns None when value is missing."""
     if num is not None:
