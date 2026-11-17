@@ -1,10 +1,5 @@
 """
-Fetch enrollment data from UVA SIS.
-
-Pages the term's class search once (sequentially, one page at a time), reusing
-the whole-term paging from fetch_data. Each page already carries enrollment
-counts, so a refresh is a few hundred page reads instead of one request per
-section.
+Fetch enrollment data from UVA SIS API.
 
 Usage:
     python manage.py fetch_enrollment
@@ -12,47 +7,76 @@ Usage:
 """
 
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
 from cachalot.api import invalidate
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
+from tqdm import tqdm
 
-from tcf_website.management.commands.fetch_data import (
-    create_session,
-    fetch_sis_courses,
-)
+from tcf_website.management.http import requests_session_with_pool_and_retries
 from tcf_website.models import Section, Semester
 
+API_URL = (
+    "https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/"
+    "WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch"
+)
+TIMEOUT = 30
+WORKERS = 15
 ENROLLMENT_FIELDS = [
     "enrollment_taken",
     "enrollment_limit",
     "waitlist_taken",
     "waitlist_limit",
 ]
-SIS_FIELD_MAP = {
-    "enrollment_taken": "enrollment_total",
-    "enrollment_limit": "class_capacity",
-    "waitlist_taken": "wait_tot",
-    "waitlist_limit": "wait_cap",
-}
 
 
-def _as_int(value):
+def create_session():
+    """Single retry layer with exponential backoff (1s, 2s, 4s, 8s)."""
+    return requests_session_with_pool_and_retries(
+        workers=WORKERS,
+        status_forcelist=[429, 500, 502, 503, 504],
+    )
+
+
+def fetch_one(session, term, section):
+    """Fetch enrollment for a single section. Returns the section if
+    updated, None otherwise. Never raises."""
     try:
-        return int(value)
-    except (TypeError, ValueError):
-        return 0
+        resp = session.get(
+            API_URL,
+            params={
+                "institution": "UVA01",
+                "term": term,
+                "page": 1,
+                "class_nbr": section.sis_section_number,
+            },
+            timeout=TIMEOUT,
+        )
+        resp.raise_for_status()
 
+        # Server returns HTML login pages under load instead of 429s
+        if "json" not in resp.headers.get("Content-Type", ""):
+            return None
 
-def apply_record(section, record):
-    """Set a section's enrollment fields from a SIS class record; returns the section."""
-    for field, sis_key in SIS_FIELD_MAP.items():
-        setattr(section, field, _as_int(record.get(sis_key)))
-    return section
+        data = resp.json()
+        classes = data.get("classes")
+        if not classes:
+            return None
+
+        cls = classes[0]
+        section.enrollment_taken = cls.get("enrollment_total", 0)
+        section.enrollment_limit = cls.get("class_capacity", 0)
+        section.waitlist_taken = cls.get("wait_tot", 0)
+        section.waitlist_limit = cls.get("wait_cap", 0)
+        return section
+
+    except (requests.RequestException, ValueError, KeyError):
+        return None
 
 
 class Command(BaseCommand):
-    """Management command: refresh SIS enrollment for all sections in a semester."""
+    """Management command: bulk-fetch SIS enrollment for all sections in a semester."""
 
     help = "Fetch current enrollment data for all sections in a semester"
 
@@ -74,39 +98,45 @@ class Command(BaseCommand):
             f"Fetching enrollment for {semester} ({len(sections)} sections)"
         )
 
-        fetch_start = time.time()
-        try:
-            with create_session(term=semester.number) as session:
-                self.stdout.write(
-                    f"Session ready; paging SIS class search for term {semester.number}"
+        session = create_session()
+        term = semester.number
+
+        # ── Fetch all sections concurrently ──
+        def _fetch(section):
+            return fetch_one(session, term, section)
+
+        with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+            results = list(
+                tqdm(
+                    pool.map(_fetch, sections),
+                    total=len(sections),
+                    desc="Fetching",
                 )
-                records = fetch_sis_courses(session)
-        except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
-            raise CommandError(f"SIS fetch failed: {exc}") from exc
+            )
 
-        self.stdout.write(
-            f"Fetched {len(records)} SIS records in {time.time() - fetch_start:.1f}s"
-        )
-
-        if not records:
-            raise CommandError("SIS returned no classes; existing data was kept.")
-
-        by_class_nbr = {str(record["class_nbr"]): record for record in records}
-
-        updated = [
-            apply_record(section, by_class_nbr[str(section.sis_section_number)])
-            for section in sections
-            if str(section.sis_section_number) in by_class_nbr
+        updated = [s for s in results if s is not None]
+        failed_sections = [
+            s for s, r in zip(sections, results, strict=True) if r is None
         ]
-        self.stdout.write(
-            f"Matched {len(updated)}/{len(sections)} sections; writing to database"
-        )
 
+        # ── Retry failures once ──
+        if failed_sections:
+            self.stdout.write(f"Retrying {len(failed_sections)} failed sections...")
+            with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+                retries = list(
+                    tqdm(
+                        pool.map(_fetch, failed_sections),
+                        total=len(failed_sections),
+                        desc="Retrying",
+                    )
+                )
+            updated.extend(s for s in retries if s is not None)
+
+        # ── Single bulk DB write ──
         Section.objects.bulk_update(updated, ENROLLMENT_FIELDS, batch_size=500)
         invalidate(Section)
 
         elapsed = time.time() - start
         self.stdout.write(
-            f"\nUpdated {len(updated)}/{len(sections)} sections "
-            f"from {len(by_class_nbr)} SIS records in {elapsed:.1f}s"
+            f"\nUpdated {len(updated)}/{len(sections)} sections in {elapsed:.1f}s"
         )
