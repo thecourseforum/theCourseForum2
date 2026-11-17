@@ -15,7 +15,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import contextmanager
 from datetime import date
 from datetime import time as time_of_day
-from itertools import chain
 from pathlib import Path
 from threading import Event, Thread
 
@@ -228,18 +227,33 @@ def fetch_sis_courses(
                 total_pages,
                 len(first["classes"]),
             )
-            remaining = (
-                request_sis_json(
-                    session,
-                    "IScript_ClassSearch",
-                    timeout=timeout,
-                    page=page,
-                    **filters,
-                )
-                for page in range(2, total_pages + 1)
-            )
-            pages = chain([first] if total_pages else [], remaining)
-            for page, data in enumerate(pages, 1):
+            fetched = {1: first}
+            with ThreadPoolExecutor() as pool:
+                futures = {
+                    pool.submit(
+                        request_sis_json,
+                        session,
+                        "IScript_ClassSearch",
+                        timeout=timeout,
+                        page=page,
+                        **filters,
+                    ): page
+                    for page in range(2, total_pages + 1)
+                }
+                try:
+                    for done, future in enumerate(as_completed(futures), 2):
+                        fetched[futures[future]] = future.result()
+                        logger.info(
+                            "SIS class search: fetched %s/%s pages",
+                            done,
+                            total_pages,
+                        )
+                except BaseException:
+                    for future in futures:
+                        future.cancel()
+                    raise
+            for page in range(1, total_pages + 1):
+                data = fetched[page]
                 records = {str(c["class_nbr"]): c for c in data["classes"]}
                 if not records.keys() - subject_seen:
                     raise ValueError(
