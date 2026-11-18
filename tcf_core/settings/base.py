@@ -96,7 +96,8 @@ CACHALOT_ENABLED = True
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env.str("SECRET_KEY")
 
-OPENROUTER_API_KEY = env.str("OPENROUTER_API_KEY", default="")
+BEDROCK_REGION = env.str("BEDROCK_REGION", default="us-east-1")
+BEDROCK_MODEL_ID = env.str("BEDROCK_MODEL_ID", default="us.amazon.nova-lite-v1:0")
 
 SCRIPT_FETCH_LOGIN = env.str("SCRIPT_FETCH_LOGIN", default="log")
 

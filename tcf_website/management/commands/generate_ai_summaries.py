@@ -1,17 +1,19 @@
 """
-Generate AI review summaries for course–instructor pairs via OpenRouter.
+Generate AI review summaries for course–instructor pairs via Amazon Bedrock.
 
 Usage:
-    python manage.py generate_ai_summaries --model openai/gpt-4o-mini
-    python manage.py generate_ai_summaries --model ... --semester 2024_spring --dry-run
+    python manage.py generate_ai_summaries --limit 5 --missing-only
+    python manage.py generate_ai_summaries --semester 2024_spring --dry-run
+    python manage.py generate_ai_summaries --model us.amazon.nova-pro-v1:0
 """
 
-import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
-import requests
+import boto3
+from botocore.config import Config
+from botocore.exceptions import BotoCoreError, ClientError
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
@@ -19,42 +21,27 @@ from django.db import DatabaseError
 from django.db.models import Count, Exists, F, OuterRef
 from tqdm import tqdm
 
-from tcf_website.management.http import requests_session_with_pool_and_retries
 from tcf_website.models import Course, Instructor, Review, ReviewLLMSummary, Semester
 
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 TIMEOUT = 60
 MAX_REVIEW_CHARS = 1000
 MIN_REVIEW_COUNT = 5  # minimum number of reviews to create summary
 MAX_REVIEW_COUNT = 50  # maximum number of reviews to include in the prompt
-# OpenRouter ~20 requests/minute (not 20 concurrent): space starts across all threads.
-REQUESTS_PER_MINUTE = 20
-MIN_REQUEST_INTERVAL = 60.0 / REQUESTS_PER_MINUTE
 WORKERS = 20
-
-_OPENROUTER_LOCK = threading.Lock()
-_OPENROUTER_NEXT_SLOT_MONO = [
-    0.0
-]  # next allowed start (list: update without ``global``)
+MAX_SUMMARY_TOKENS = 512
 
 
-def _wait_openrouter_slot():
-    """Block until this thread may start a request (shared across worker threads)."""
-    with _OPENROUTER_LOCK:
-        now = time.monotonic()
-        nxt = _OPENROUTER_NEXT_SLOT_MONO[0]
-        if now < nxt:
-            time.sleep(nxt - now)
-            now = time.monotonic()
-        _OPENROUTER_NEXT_SLOT_MONO[0] = now + MIN_REQUEST_INTERVAL
-
-
-def create_session():
-    """Shared pool and retries for transient 5xx."""
-    return requests_session_with_pool_and_retries(
-        workers=WORKERS,
-        status_forcelist=[500, 502, 503, 504],
-        allowed_methods=frozenset(["POST"]),
+def create_client():
+    """Create before starting workers; use the normal AWS credential chain."""
+    return boto3.client(
+        "bedrock-runtime",
+        region_name=settings.BEDROCK_REGION,
+        config=Config(
+            connect_timeout=TIMEOUT,
+            read_timeout=TIMEOUT,
+            max_pool_connections=WORKERS,
+            retries={"mode": "adaptive", "total_max_attempts": 5},
+        ),
     )
 
 
@@ -88,49 +75,44 @@ def _build_messages(course, instructor, reviews):
             f" {r.instructor_rating}/5 instructor, {r.difficulty}/5 difficulty,"
             f" {r.recommendability}/5 recommend): {text}"
         )
-    return [
+    system = [
         {
-            "role": "system",
-            "content": (
+            "text": (
                 "You summarize university course reviews into clear, honest guidance. "
                 "Write 3-5 sentences. Do not use headings or bullet points. "
                 "Do not restate the course or instructor name. Do not invent details."
                 "Match the tone and style of the reviews. Get straight to the point."
                 f"Today's date is {datetime.now().strftime('%B %d, %Y')}."
             ),
-        },
+        }
+    ]
+    messages = [
         {
             "role": "user",
-            "content": (
-                f"Course: {course.code()} — {course.title}\n"
-                f"Instructor: {instructor.full_name}\n\n"
-                "Summarize these student reviews:\n" + "\n".join(bullets)
-            ),
+            "content": [
+                {
+                    "text": (
+                        f"Course: {course.code()} — {course.title}\n"
+                        f"Instructor: {instructor.full_name}\n\n"
+                        "Summarize these student reviews:\n" + "\n".join(bullets)
+                    )
+                }
+            ],
         },
     ]
+    return system, messages
 
 
-def _summary_text_from_openrouter_response(response):
-    """Parse chat completion body; return stripped summary text or None."""
-    response.raise_for_status()
-    body = response.json()
-    choices = body.get("choices")
-    if not isinstance(choices, list) or not choices:
+def _summary_text_from_bedrock_response(response):
+    """Only persist complete text responses, never blocked or truncated output."""
+    if response.get("stopReason") != "end_turn":
         return None
-    choice0 = choices[0]
-    if not isinstance(choice0, dict):
-        return None
-    message = choice0.get("message")
-    if not isinstance(message, dict):
-        return None
-    raw_content = message.get("content")
-    if not isinstance(raw_content, str):
-        return None
-    text = raw_content.strip()
+    content = response["output"]["message"]["content"]
+    text = "\n".join(block["text"] for block in content if "text" in block).strip()
     return text or None
 
 
-def summarize_one(session, row, model_id, dry_run):
+def summarize_one(client, row, model_id, dry_run):
     """Summarize one pair. Returns (kind, message) or None on failure. Never raises."""
     try:
         course = Course.objects.get(pk=row["course_id"])
@@ -149,19 +131,15 @@ def summarize_one(session, row, model_id, dry_run):
             .filter(hidden=False, toxicity_rating__lt=settings.TOXICITY_THRESHOLD)
             .order_by("-created")[:MAX_REVIEW_COUNT]
         )
-        messages = _build_messages(course, instructor, reviews)
+        system, messages = _build_messages(course, instructor, reviews)
 
-        _wait_openrouter_slot()
-        response = session.post(
-            OPENROUTER_URL,
-            headers={
-                "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
-                "Content-Type": "application/json",
-            },
-            json={"model": model_id, "messages": messages},
-            timeout=TIMEOUT,
+        response = client.converse(
+            modelId=model_id,
+            system=system,
+            messages=messages,
+            inferenceConfig={"maxTokens": MAX_SUMMARY_TOKENS},
         )
-        summary_text = _summary_text_from_openrouter_response(response)
+        summary_text = _summary_text_from_bedrock_response(response)
         if not summary_text:
             return None
 
@@ -180,7 +158,8 @@ def summarize_one(session, row, model_id, dry_run):
             f"Saved: {course.code()} / {instructor.full_name} ({len(reviews)} reviews)",
         )
     except (
-        requests.RequestException,
+        BotoCoreError,
+        ClientError,
         ValueError,
         KeyError,
         TypeError,
@@ -193,12 +172,16 @@ def summarize_one(session, row, model_id, dry_run):
 
 
 class Command(BaseCommand):
-    """Management command: OpenRouter-backed LLM summaries per course–instructor pair."""
+    """Management command: Bedrock-backed LLM summaries per course–instructor pair."""
 
-    help = "Generate AI review summaries via OpenRouter."
+    help = "Generate AI review summaries via Amazon Bedrock (Amazon Nova by default)."
 
     def add_arguments(self, parser):
-        parser.add_argument("--model", help="OpenRouter model ID (required)")
+        parser.add_argument(
+            "--model",
+            default=settings.BEDROCK_MODEL_ID,
+            help="Bedrock model or inference profile ID (default: BEDROCK_MODEL_ID)",
+        )
         parser.add_argument(
             "--limit", type=int, default=500, help="Max pairs to process (default: 500)"
         )
@@ -225,19 +208,23 @@ class Command(BaseCommand):
         )
 
     def _run_summaries_parallel(self, pairs, model_id, dry_run):
-        session = create_session()
+        client = None if dry_run else create_client()
 
         def _summarize(row):
-            return summarize_one(session, row, model_id, dry_run)
+            return summarize_one(client, row, model_id, dry_run)
 
-        with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-            return list(
-                tqdm(
-                    pool.map(_summarize, pairs),
-                    total=len(pairs),
-                    desc="Summaries",
+        try:
+            with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+                return list(
+                    tqdm(
+                        pool.map(_summarize, pairs),
+                        total=len(pairs),
+                        desc="Summaries",
+                    )
                 )
-            )
+        finally:
+            if client is not None:
+                client.close()
 
     def _report_pair_results(self, pairs, results):
         error_count = 0
@@ -264,10 +251,8 @@ class Command(BaseCommand):
         model_id = options["model"]
         if not model_id:
             raise CommandError(
-                "--model is required. Example: --model openai/gpt-4o-mini"
+                "Set BEDROCK_MODEL_ID or pass --model with a Bedrock ID."
             )
-        if not settings.OPENROUTER_API_KEY:
-            raise CommandError("OPENROUTER_API_KEY is not set.")
 
         pairs = self._get_pairs(options)
         if not pairs:
@@ -276,7 +261,10 @@ class Command(BaseCommand):
 
         self.stdout.write(f"Processing {len(pairs)} pair(s)...")
 
-        results = self._run_summaries_parallel(pairs, model_id, options["dry_run"])
+        try:
+            results = self._run_summaries_parallel(pairs, model_id, options["dry_run"])
+        except (BotoCoreError, ClientError) as exc:
+            raise CommandError(f"Could not initialize Amazon Bedrock: {exc}") from exc
         error_count = self._report_pair_results(pairs, results)
 
         elapsed = time.time() - start
