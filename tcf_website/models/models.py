@@ -223,6 +223,13 @@ class Club(models.Model):
     Has many Reviews.
     """
 
+    # All existing Club fields here
+
+    followers = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name="followed_clubs",
+        blank=True,
+    )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     category = models.ForeignKey(ClubCategory, on_delete=models.CASCADE)

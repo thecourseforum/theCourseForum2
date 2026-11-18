@@ -59,7 +59,18 @@ def profile(request):
         return HttpResponseRedirect("/profile")
 
     form = ProfileForm(label_suffix="", instance=request.user)
-    return render(request, "site/account/profile.html", {"form": form})
+    followed_clubs = request.user.followed_clubs.select_related("category").order_by(
+        "name"
+    )
+
+    return render(
+        request,
+        "site/account/profile.html",
+        {
+            "form": form,
+            "followed_clubs": followed_clubs,
+        },
+    )
 
 
 @login_required

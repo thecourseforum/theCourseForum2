@@ -25,6 +25,22 @@
             <div class="club-header__title-row">
                 <h1 class="club-header__title">{{ club.name }}</h1>
                 <span class="club-header__category">{{ club.category.name }}</span>
+                {% if user.is_authenticated %}
+                    <form method="post"
+                          action="{% url 'toggle_club_follow' club.category.slug club.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn--primary btn--md">
+                            {% if is_following %}
+                                Unfollow
+                            {% else %}
+                                Follow
+                            {% endif %}
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}?next={{ request.path|urlencode }}"
+                       class="btn btn--primary btn--md">Log in to Follow</a>
+                {% endif %}
             </div>
         </div>
     </div>

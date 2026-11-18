@@ -15,6 +15,11 @@ urlpatterns = [
         views.club_view,
         name="club",
     ),
+    path(
+        "club/<str:category_slug>/<int:club_id>/follow/",
+        views.toggle_club_follow,
+        name="toggle_club_follow",
+    ),
     path("", views.index, name="index"),
     path("about/", views.AboutView.as_view(), name="about"),
     path("privacy/", views.privacy, name="privacy"),
