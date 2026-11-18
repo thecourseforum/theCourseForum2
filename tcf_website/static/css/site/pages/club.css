@@ -148,3 +148,50 @@
 .club-reviews {
   margin-top: var(--space-2);
 }
+
+/* Club Details Section */
+.club-details-card {
+    padding: var(--space-6);
+    margin-bottom: var(--space-8);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+}
+
+.club-details-card__title {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-5);
+}
+
+.club-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+}
+
+.club-detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+.club-detail__label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--fg-muted);
+}
+
+.club-detail__value {
+    font-size: var(--text-base);
+    color: var(--fg);
+    line-height: var(--leading-relaxed);
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+    .club-details-grid {
+        grid-template-columns: 1fr;
+    }
+}

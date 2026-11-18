@@ -124,7 +124,66 @@ class CourseInstructorGradeAdmin(admin.ModelAdmin):
 
 class ClubAdmin(admin.ModelAdmin):
     ordering = ["name"]
-    search_fields = ["name"]
+
+    list_display = [
+        "name",
+        "category",
+        "year_founded",
+        "dues",
+        "application_required",
+    ]
+
+    list_filter = [
+        "category",
+        "application_required",
+    ]
+
+    search_fields = [
+        "name",
+        "description",
+        "sponsor",
+        "communication_methods",
+        "joining_process",
+    ]
+
+    fieldsets = [
+        (
+            "Basic Information",
+            {
+                "fields": (
+                    "name",
+                    "description",
+                    "category",
+                    "application_required",
+                    "photo_url",
+                    "meeting_time",
+                )
+            },
+        ),
+        (
+            "Club Details",
+            {
+                "fields": (
+                    "sponsor",
+                    "communication_methods",
+                    "time_commitment",
+                    "year_founded",
+                    "joining_process",
+                    "selectivity",
+                    "dues",
+                )
+            },
+        ),
+        (
+            "Recruitment Information",
+            {
+                "fields": (
+                    "recruitment_cycle",
+                    "recruitment_dates",
+                )
+            },
+        ),
+    ]
 
 
 class ClubCategoryAdmin(admin.ModelAdmin):

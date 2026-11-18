@@ -1,11 +1,15 @@
+
 {% extends "site/common/base.html" %}
 {% load static %}
+
 {% block title %}
     My Profile | theCourseForum
 {% endblock title %}
+
 {% block styles %}
     <link rel="stylesheet" href="{% static 'css/site/pages/profile.css' %}">
 {% endblock styles %}
+
 {% block content %}
     <div class="profile-page">
         <h1 class="profile-page__title">My Profile</h1>
@@ -75,9 +79,31 @@
                         </button>
                     </div>
                 </form>
+
+                <section class="form-section form-section--followed-clubs">
+                    <h2 class="form-section__title">Followed Clubs</h2>
+                    {% if followed_clubs %}
+                        <ul>
+                            {% for club in followed_clubs %}
+                                <li>
+                                    <a href="{% url 'club' club.category.slug club.id %}">
+                                        {{ club.name }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>You are not following any clubs yet.</p>
+                        <a href="{% url 'browse' %}?mode=clubs"
+                           class="form-section__link">
+                            Explore clubs
+                        </a>
+                    {% endif %}
+                </section>
             </div>
         </div>
     </div>
+
     <!-- Delete Confirmation Modal -->
     <div class="modal" id="delete-profile-modal">
         <div class="modal__backdrop"></div>
@@ -108,7 +134,8 @@
                         <line x1="12" y1="17" x2="12.01" y2="17"></line>
                     </svg>
                     <div class="delete-warning__text">
-                        <strong>This action cannot be undone.</strong> All of your reviews and data will be permanently deleted.
+                        <strong>This action cannot be undone.</strong>
+                        All of your reviews and data will be permanently deleted.
                     </div>
                 </div>
                 <p>Are you sure you want to delete your profile?</p>
@@ -124,29 +151,30 @@
         </div>
     </div>
 {% endblock content %}
+
 {% block scripts %}
     <script>
-// Delete profile modal
-const deleteBtn = document.querySelector('[data-action="delete-profile"]');
-const deleteModal = document.getElementById('delete-profile-modal');
+        // Delete profile modal
+        const deleteBtn = document.querySelector('[data-action="delete-profile"]');
+        const deleteModal = document.getElementById('delete-profile-modal');
 
-if (deleteBtn && deleteModal) {
-  deleteBtn.addEventListener('click', () => {
-    deleteModal.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
-  });
-  
-  deleteModal.querySelectorAll('[data-action="close-modal"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      deleteModal.classList.remove('is-open');
-      document.body.style.overflow = '';
-    });
-  });
-  
-  deleteModal.querySelector('.modal__backdrop').addEventListener('click', () => {
-    deleteModal.classList.remove('is-open');
-    document.body.style.overflow = '';
-  });
-}
+        if (deleteBtn && deleteModal) {
+            deleteBtn.addEventListener('click', () => {
+                deleteModal.classList.add('is-open');
+                document.body.style.overflow = 'hidden';
+            });
+
+            deleteModal.querySelectorAll('[data-action="close-modal"]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    deleteModal.classList.remove('is-open');
+                    document.body.style.overflow = '';
+                });
+            });
+
+            deleteModal.querySelector('.modal__backdrop').addEventListener('click', () => {
+                deleteModal.classList.remove('is-open');
+                document.body.style.overflow = '';
+            });
+        }
     </script>
 {% endblock scripts %}
