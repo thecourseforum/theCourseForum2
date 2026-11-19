@@ -11,7 +11,13 @@ from cachalot.api import invalidate
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
-from tcf_website.models import Course, CourseGrade, CourseInstructorGrade, Instructor
+from tcf_website.models import (
+    Course,
+    CourseGrade,
+    CourseInstructorGrade,
+    Instructor,
+    InstructorAlias,
+)
 
 # Location of our grade data CSVs
 DATA_DIR = "tcf_website/management/commands/grade_data/csv/"
@@ -61,6 +67,16 @@ class Command(BaseCommand):
             (obj["first_name"], obj["last_name"]): obj["id"]
             for obj in Instructor.objects.values("id", "first_name", "last_name")
         }
+        for obj in Instructor.objects.values("id", "first_name", "full_name"):
+            words = obj["full_name"].split()
+            if obj["first_name"] and len(words) > 2:
+                self.instructors.setdefault((obj["first_name"], words[-1]), obj["id"])
+        for alias in InstructorAlias.objects.values(
+            "instructor_id", "first_name", "last_name"
+        ):
+            self.instructors.setdefault(
+                (alias["first_name"], alias["last_name"]), alias["instructor_id"]
+            )
 
         # Dict mapping course mnemonic in a tuple to its ID in our database
         self.courses = {

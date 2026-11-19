@@ -25,9 +25,10 @@ from django.db.models import (
     Value,
     fields,
 )
-from django.db.models.functions import Abs, Coalesce, Concat, Round
+from django.db.models.functions import Abs, Coalesce, Concat, Lower, Round
 from django.utils import timezone
 
+from tcf_website.management.instructor_names import split_instructor_name
 from tcf_website.pagination import SECTION_DAY_CODE_TO_SECTIONTIME_FIELD, paginate
 
 # Rolling window shared across catalog browse, search, and department pages.
@@ -303,7 +304,7 @@ class Instructor(models.Model):
     # Instructor last_name. Required.
     last_name = models.CharField(max_length=255)
     # Instructor full_name. Auto-populated.
-    full_name = models.CharField(max_length=511, editable=False, blank=True)
+    full_name = models.CharField(max_length=511, blank=True)
     # Instructor email. Optional.
     email = models.EmailField(blank=True)
     # Instructor departments. Optional.
@@ -436,7 +437,8 @@ class Instructor(models.Model):
         )["average__avg"]
 
     def save(self, *args, **kwargs):
-        self.full_name = f"{self.first_name} {self.last_name}".strip()
+        if not self.full_name:
+            self.full_name = f"{self.first_name} {self.last_name}".strip()
         super().save(*args, **kwargs)
 
     def get_course_summaries(self, latest_only: bool = True):
@@ -538,6 +540,116 @@ class Instructor(models.Model):
                 name="full_name_instructor",
             ),
         ]
+        constraints = [
+            models.UniqueConstraint(
+                Lower("email"),
+                condition=~Q(email=""),
+                name="unique_instructor_email",
+            ),
+        ]
+
+    @classmethod
+    def match(cls, full_name, email="", semester_number=None, grade_last_names=None):
+        full_name = " ".join((full_name or "").split())
+        first_name, last_name = split_instructor_name(full_name, grade_last_names)
+        last_word = full_name.split()[-1] if full_name else ""
+        email = (email or "").strip().lower()
+        instructor = None
+        if email:
+            instructor = cls.objects.filter(email__iexact=email).first()
+        if instructor is None:
+            candidates = cls.objects.filter(email="") if email else cls.objects.all()
+            instructor = (
+                candidates.filter(full_name__iexact=full_name).order_by("id").first()
+                or candidates.filter(first_name=first_name, last_name=last_name)
+                .order_by("id")
+                .first()
+                or candidates.filter(first_name=first_name, last_name=last_word)
+                .order_by("id")
+                .first()
+            )
+        if instructor is None:
+            aliases = InstructorAlias.objects.filter(
+                first_name=first_name, last_name__in={last_name, last_word}
+            )
+            if email:
+                aliases = aliases.filter(instructor__email="")
+            alias = aliases.select_related("instructor").order_by("id").first()
+            instructor = alias.instructor if alias else None
+        if instructor is None:
+            return (
+                cls.objects.create(
+                    first_name=first_name,
+                    last_name=last_name,
+                    full_name=full_name,
+                    email=email,
+                ),
+                True,
+            )
+        if email and not instructor.email:
+            instructor.email = email
+            instructor.save()
+        renamed = (instructor.first_name, instructor.last_name) != (
+            first_name,
+            last_name,
+        )
+        if not renamed and instructor.full_name == full_name:
+            return instructor, False
+        is_newest = (
+            semester_number is not None
+            and not instructor.section_set.filter(
+                semester__number__gt=semester_number
+            ).exists()
+        )
+        if is_newest:
+            if renamed:
+                InstructorAlias.objects.get_or_create(
+                    instructor=instructor,
+                    first_name=instructor.first_name,
+                    last_name=instructor.last_name,
+                )
+                InstructorAlias.objects.filter(
+                    instructor=instructor, first_name=first_name, last_name=last_name
+                ).delete()
+            instructor.first_name = first_name
+            instructor.last_name = last_name
+            instructor.full_name = full_name
+            instructor.save()
+        elif renamed:
+            InstructorAlias.objects.get_or_create(
+                instructor=instructor, first_name=first_name, last_name=last_name
+            )
+        return instructor, False
+
+
+class InstructorAlias(models.Model):
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, related_name="aliases"
+    )
+    first_name = models.CharField(max_length=255, blank=True)
+    last_name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} -> {self.instructor_id}"
+
+    class Meta:
+        indexes = [models.Index(fields=["last_name", "first_name"])]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["instructor", "first_name", "last_name"],
+                name="unique_instructor_alias",
+            ),
+        ]
+
+
+class InstructorRedirect(models.Model):
+    old_id = models.IntegerField(primary_key=True)
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, related_name="redirects"
+    )
+
+    def __str__(self):
+        return f"{self.old_id} -> {self.instructor_id}"
 
 
 class Semester(models.Model):

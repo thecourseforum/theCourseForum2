@@ -3,18 +3,26 @@
 from typing import Any
 
 from django.db.models import Avg, Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
 from ...models import Instructor, Semester
 from ...pagination import paginate
 from ...utils import safe_round
+from .redirects import merged_instructor_redirect
 
 _PAGE_SIZE = 20
 
 
 def instructor_view(request, instructor_id):
     """Instructor view."""
-    instructor: Instructor = get_object_or_404(Instructor, pk=instructor_id)
+    try:
+        instructor: Instructor = get_object_or_404(Instructor, pk=instructor_id)
+    except Http404:
+        response = merged_instructor_redirect(request, instructor_id)
+        if response is None:
+            raise
+        return response
     latest_only = request.GET.get("latest", "true") != "false"
 
     stats: dict[str, float] = Instructor.objects.filter(pk=instructor.pk).aggregate(
