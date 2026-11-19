@@ -1,0 +1,63 @@
+name: Fetch Enrollment
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: us-east-1
+  ECS_CLUSTER: tcf-fargate-cluster
+  ECS_SERVICE: barrett-fogle-love-v1
+  ECS_TASK_DEFINITION: tcf-prod-task
+  ECS_CONTAINER_NAME: tcf-container
+
+jobs:
+  fetch-enrollment:
+    runs-on: ubuntu-latest
+    environment: legacy-prod
+    timeout-minutes: 30
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/tcf-ecs-deployer
+          allowed-account-ids: "396913701887"
+
+      - name: Run fetch_enrollment on Fargate
+        run: |
+          NETWORK_CONFIG=$(aws ecs describe-services \
+            --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE" \
+            | jq -c '.services[0].networkConfiguration')
+
+          TASK_ARN=$(aws ecs run-task \
+            --cluster "$ECS_CLUSTER" \
+            --task-definition "$ECS_TASK_DEFINITION" \
+            --launch-type FARGATE \
+            --network-configuration "$NETWORK_CONFIG" \
+            --overrides "{\"containerOverrides\": [{\"name\": \"$ECS_CONTAINER_NAME\", \"command\": [\"python\", \"manage.py\", \"fetch_enrollment\"]}]}" \
+            --query 'tasks[0].taskArn' --output text)
+
+          echo "Started $TASK_ARN"
+          while true; do
+            STATUS=$(aws ecs describe-tasks \
+              --cluster "$ECS_CLUSTER" --tasks "$TASK_ARN" \
+              --query 'tasks[0].lastStatus' --output text)
+            echo "Task status: $STATUS"
+            [ "$STATUS" = "STOPPED" ] && break
+            sleep 15
+          done
+
+          EXIT_CODE=$(aws ecs describe-tasks \
+            --cluster "$ECS_CLUSTER" --tasks "$TASK_ARN" \
+            | jq -r '.tasks[0].containers[0].exitCode')
+          echo "Task exit code: $EXIT_CODE"
+          if [ "$EXIT_CODE" != "0" ]; then
+            echo "fetch_enrollment task failed."
+            exit 1
+          fi
