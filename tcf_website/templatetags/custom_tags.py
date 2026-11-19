@@ -59,6 +59,12 @@ def querystring(request, include="", remove="", **overrides):
 @register.simple_tag
 def mode_toggle_url(request, target_mode):
     """Build a mode-toggle URL while preserving an allowlist of query parameters."""
+    if (
+        target_mode == "courses"
+        and request.resolver_match
+        and request.resolver_match.url_name in ("club_events", "club_event_detail")
+    ):
+        return with_mode(reverse("browse"), target_mode)
     url = update_query_params(request.path, q=request.GET.get("q"))
     return with_mode(url, target_mode)
 
