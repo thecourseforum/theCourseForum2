@@ -3,7 +3,8 @@ resource "aws_cognito_user_pool" "main" {
   name = "${local.name_prefix}-user-pool"
 
   # Allow users to sign in with email
-  username_attributes = ["email"]
+  username_attributes      = ["email"]
+  auto_verified_attributes = ["email"]
 
   # Enable passwordless email OTP and password sign-in
   sign_in_policy {
