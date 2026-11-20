@@ -134,7 +134,8 @@ resource "aws_iam_role_policy" "terraform_deployer_iam" {
             "iam:PassedToService" = [
               "ecs-tasks.amazonaws.com",
               "lambda.amazonaws.com",
-              "scheduler.amazonaws.com"
+              "scheduler.amazonaws.com",
+              "synthetics.amazonaws.com"
             ]
           }
         }
