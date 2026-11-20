@@ -124,7 +124,7 @@ resource "aws_synthetics_canary" "heartbeat" {
 
   run_config {
     timeout_in_seconds = 60
-    memory_in_mb       = 1500
+    memory_in_mb       = 1536
     active_tracing     = false
     ephemeral_storage  = 1024
 
