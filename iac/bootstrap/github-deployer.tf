@@ -6,8 +6,9 @@ locals {
   application_bucket_arns = "arn:aws:s3:::${local.application_name_prefix}-static-*"
   application_cluster_arn = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:cluster/${local.application_name_prefix}-cluster"
 
-  application_dump_bucket_arns = "arn:aws:s3:::${local.application_name_prefix}-db-dumps-*"
-  application_web_task_family  = "${local.application_name_prefix}-django"
+  application_dump_bucket_arns       = "arn:aws:s3:::${local.application_name_prefix}-db-dumps-*"
+  application_synthetics_bucket_arns = "arn:aws:s3:::${local.application_name_prefix}-synthetics-artifacts-*"
+  application_web_task_family        = "${local.application_name_prefix}-django"
   application_web_role_arns = [
     "arn:aws:iam::${local.app_account_id}:role/${var.application_role_prefix}ecs-task-execution-role",
     "arn:aws:iam::${local.app_account_id}:role/${var.application_role_prefix}ecs-task-role"
@@ -44,6 +45,17 @@ resource "aws_iam_policy" "application_role_boundary" {
         Resource = "*"
       },
       {
+        Sid    = "UseEcsExec"
+        Effect = "Allow"
+        Action = [
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel"
+        ]
+        Resource = "*"
+      },
+      {
         Sid      = "ReadApplicationSecrets"
         Effect   = "Allow"
         Action   = "secretsmanager:GetSecretValue"
@@ -75,6 +87,44 @@ resource "aws_iam_policy" "application_role_boundary" {
           "s3:AbortMultipartUpload"
         ]
         Resource = "${local.application_dump_bucket_arns}/*"
+      },
+      {
+        Sid    = "UseSyntheticsArtifacts"
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject"
+        ]
+        Resource = "${local.application_synthetics_bucket_arns}/*"
+      },
+      {
+        Sid      = "LocateSyntheticsBucket"
+        Effect   = "Allow"
+        Action   = "s3:GetBucketLocation"
+        Resource = local.application_synthetics_bucket_arns
+      },
+      {
+        Sid      = "ListBucketsForSynthetics"
+        Effect   = "Allow"
+        Action   = "s3:ListAllMyBuckets"
+        Resource = "*"
+      },
+      {
+        Sid      = "PublishSyntheticsMetrics"
+        Effect   = "Allow"
+        Action   = "cloudwatch:PutMetricData"
+        Resource = "*"
+        Condition = {
+          StringEquals = {
+            "cloudwatch:namespace" = "CloudWatchSynthetics"
+          }
+        }
+      },
+      {
+        Sid      = "PutSyntheticsTraces"
+        Effect   = "Allow"
+        Action   = "xray:PutTraceSegments"
+        Resource = "*"
       },
       {
         Sid      = "RunApplicationTasks"
