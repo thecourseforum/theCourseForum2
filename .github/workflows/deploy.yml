@@ -138,6 +138,20 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
 
+      - name: Initialize Terraform
+        working-directory: iac/app
+        run: terraform init -input=false
+
+      - name: Download saved plan
+        working-directory: iac/app
+        run: |
+          aws s3 cp "${PLAN_S3_PREFIX}/tfplan" tfplan
+          aws s3 cp --recursive "${PLAN_S3_PREFIX}/build" .terraform/build
+
+      - name: Apply saved plan
+        working-directory: iac/app
+        run: terraform apply -input=false -no-color -lock-timeout=5m tfplan
+
       - name: Check for existing image
         id: image
         run: |
@@ -165,20 +179,6 @@ jobs:
           cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:buildcache
           cache-to: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:buildcache,mode=max
           provenance: false
-
-      - name: Initialize Terraform
-        working-directory: iac/app
-        run: terraform init -input=false
-
-      - name: Download saved plan
-        working-directory: iac/app
-        run: |
-          aws s3 cp "${PLAN_S3_PREFIX}/tfplan" tfplan
-          aws s3 cp --recursive "${PLAN_S3_PREFIX}/build" .terraform/build
-
-      - name: Apply saved plan
-        working-directory: iac/app
-        run: terraform apply -input=false -no-color -lock-timeout=5m tfplan
 
       - name: Delete saved plan
         run: aws s3 rm --recursive "${PLAN_S3_PREFIX}"
