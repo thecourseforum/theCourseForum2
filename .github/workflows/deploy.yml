@@ -17,7 +17,6 @@ env:
   AWS_REGION: us-east-1
   TF_IN_AUTOMATION: "true"
   TF_VAR_domain_name: thecourseforumtest.com
-  TF_VAR_ecr_image_tag: ${{ github.sha }}
   TERRAFORM_VERSION: 1.16.3
   PLANNER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-planner
   DEPLOYER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-deployer
@@ -43,9 +42,25 @@ jobs:
     environment: terraform-plan
     env:
       TF_VAR_dns_role_arn: arn:aws:iam::011713309463:role/tcf-terraform-dns-readonly
+    outputs:
+      image_tag: ${{ steps.image-tag.outputs.tag }}
     steps:
       - name: Check out selected revision
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Pick image tag from the last application change
+        id: image-tag
+        run: |
+          tag=$(git log -1 --format=%H -- . ':!iac' ':!.github')
+          if [[ -z "$tag" ]]; then
+            echo "Could not find a commit that changes application code"
+            exit 1
+          fi
+          echo "Image tag: $tag"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "TF_VAR_ecr_image_tag=$tag" >> "$GITHUB_ENV"
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
@@ -86,7 +101,7 @@ jobs:
           {
             echo '## Terraform plan'
             echo
-            echo "Image: \`${ECR_REPO}:${GITHUB_SHA}\`"
+            echo "Image: \`${ECR_REPO}:${TF_VAR_ecr_image_tag}\`"
             echo
             echo '```'
             terraform show -no-color tfplan
@@ -107,6 +122,7 @@ jobs:
     environment: terraform-prod
     env:
       TF_VAR_dns_role_arn: arn:aws:iam::011713309463:role/tcf-terraform-dns
+      IMAGE_TAG: ${{ needs.plan.outputs.image_tag }}
     steps:
       - name: Require repository admin
         if: github.event_name == 'workflow_dispatch'
@@ -155,7 +171,7 @@ jobs:
       - name: Check for existing image
         id: image
         run: |
-          if output=$(aws ecr describe-images --repository-name "$ECR_REPO" --image-ids imageTag="$GITHUB_SHA" 2>&1); then
+          if output=$(aws ecr describe-images --repository-name "$ECR_REPO" --image-ids imageTag="$IMAGE_TAG" 2>&1); then
             echo "exists=true" >> "$GITHUB_OUTPUT"
           elif grep -q ImageNotFoundException <<< "$output"; then
             echo "exists=false" >> "$GITHUB_OUTPUT"
@@ -175,7 +191,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ github.sha }}
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ env.IMAGE_TAG }}
           cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:buildcache
           cache-to: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:buildcache,mode=max
           provenance: false
@@ -188,13 +204,22 @@ jobs:
         run: |
           task_def=$(aws ecs describe-task-definition --task-definition "$ECS_TASK_FAMILY" --query taskDefinition)
           image=$(jq -r --arg name "$ECR_CONTAINER_NAME" '.containerDefinitions[] | select(.name == $name) | .image' <<< "$task_def")
-          if [[ "$image" != *":${GITHUB_SHA}" ]]; then
-            echo "Latest ${ECS_TASK_FAMILY} revision uses $image, expected tag ${GITHUB_SHA}"
+          if [[ "$image" != *":${IMAGE_TAG}" ]]; then
+            echo "Latest ${ECS_TASK_FAMILY} revision uses $image, expected tag ${IMAGE_TAG}"
             exit 1
           fi
-          echo "arn=$(jq -r .taskDefinitionArn <<< "$task_def")" >> "$GITHUB_OUTPUT"
+          arn=$(jq -r .taskDefinitionArn <<< "$task_def")
+          current=$(aws ecs describe-services --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE" --query 'services[0].taskDefinition' --output text)
+          echo "arn=$arn" >> "$GITHUB_OUTPUT"
+          if [[ "$current" == "$arn" ]]; then
+            echo "Service already runs $arn, skipping release and deploy"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Run Release Tasks (Migrate, Static, Cache)
+        if: steps.task-def.outputs.changed == 'true'
         env:
           TASK_DEF_ARN: ${{ steps.task-def.outputs.arn }}
         run: |
@@ -220,6 +245,7 @@ jobs:
           fi
 
       - name: Deploy to Amazon ECS
+        if: steps.task-def.outputs.changed == 'true'
         env:
           TASK_DEF_ARN: ${{ steps.task-def.outputs.arn }}
         run: |
