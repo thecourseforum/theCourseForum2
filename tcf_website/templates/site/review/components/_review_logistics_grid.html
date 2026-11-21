@@ -54,7 +54,7 @@
                 {% for instr in instructors %}
                     <option value="{{ instr.id }}"
                             {% if form and form.data.instructor == instr.id|stringformat:"s" %}selected{% elif prefill_instructor and prefill_instructor.id == instr.id %}selected{% endif %}>
-                        {{ instr.last_name }}, {{ instr.first_name }}
+                        {{ instr.full_name }}
                     </option>
                 {% endfor %}
             </select>

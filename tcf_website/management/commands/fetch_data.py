@@ -53,6 +53,7 @@ FIELDNAMES = [
     "Description",
     "Disciplines",
     "Cost",
+    "InstructorEmails",
 ]
 COMPONENT_MAPPING = {"LEC": "Lecture", "DIS": "Discussion", "LAB": "Laboratory"}
 SECTION_MAPPING = {
@@ -277,6 +278,11 @@ def section_to_csv_row(course, session=None, timeout=TIMEOUT):
             ATTRIBUTE_MAPPING[code] for code in codes if code not in IGNORED_ATTRIBUTES
         ]
     attributes = list(filter(None, map(str.strip, attributes)))
+    instructor_emails = {
+        " ".join(i["name"].split()): i["email"].strip().lower()
+        for i in course["instructors"]
+        if i["name"] not in ("", "-") and (i.get("email") or "").strip()
+    }
     row = (
         dict.fromkeys(FIELDNAMES, "")
         | {column: course[key] for column, key in SECTION_MAPPING.items()}
@@ -292,6 +298,9 @@ def section_to_csv_row(course, session=None, timeout=TIMEOUT):
                 (label for label in reversed(attributes) if "cost" in label.lower()),
                 "",
             ),
+            "InstructorEmails": json.dumps(instructor_emails)
+            if instructor_emails
+            else "",
         }
     )
     for index, meeting in enumerate(course["meetings"][:MAX_MEETINGS], 1):

@@ -1,3 +1,4 @@
+import json
 import math
 import os
 import re
@@ -8,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
+from tcf_website.management.instructor_names import load_grade_last_names
 from tcf_website.models import (
     Course,
     Department,
@@ -48,6 +50,7 @@ class Command(BaseCommand):
             name="Miscellaneous", school=self.UNKNOWN_SCHOOL
         )
         self.STAFF, _ = Instructor.objects.get_or_create(last_name="Staff")
+        self.grade_last_names = load_grade_last_names()
 
         self.data_dir = "tcf_website/management/commands/semester_data/csv/"
 
@@ -137,6 +140,12 @@ class Command(BaseCommand):
                 .dropna()
                 .array
             )
+            instructor_emails = row.get("InstructorEmails")
+            instructor_emails = (
+                json.loads(instructor_emails)
+                if isinstance(instructor_emails, str) and instructor_emails.strip()
+                else {}
+            )
 
             times = row[["Days1", "Days2", "Days3", "Days4"]].dropna().array
 
@@ -153,7 +162,9 @@ class Command(BaseCommand):
         course = self.load_course(
             title, description, disciplines, semester, sd, course_number
         )
-        instructors = self.load_instructors(instructor_names)
+        instructors = self.load_instructors(
+            instructor_names, instructor_emails, semester.number
+        )
         self.load_section(
             sis_number,
             instructors,
@@ -237,7 +248,9 @@ class Command(BaseCommand):
 
         return course
 
-    def load_instructors(self, instructor_names):
+    def load_instructors(
+        self, instructor_names, instructor_emails=None, semester_number=None
+    ):
         if not instructor_names:
             return [self.STAFF]
         instructors = set()
@@ -254,19 +267,15 @@ class Command(BaseCommand):
             if name in {"Staff", "Faculty Staff", "Faculty"} or name.isspace():
                 instructors.add(self.STAFF)
             else:
-                names = name.split()
-                try:
-                    first, last = names[0], names[-1]
-                except IndexError as e:
-                    print(f"Instructor named '{name}'")
-                    print(e)
-                    raise e
+                full_name = " ".join(name.split())
                 if self.verbose:
-                    print(first, last)
+                    print(full_name)
 
-                instructor, created = Instructor.objects.get_or_create(
-                    first_name=first,
-                    last_name=last,
+                instructor, created = Instructor.match(
+                    full_name,
+                    (instructor_emails or {}).get(full_name, ""),
+                    semester_number,
+                    self.grade_last_names,
                 )
                 if self.verbose:
                     if created:

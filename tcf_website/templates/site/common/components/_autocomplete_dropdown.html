@@ -60,7 +60,7 @@
                     <li class="autocomplete-item" role="option">
                         <a href="{% url 'instructor' instructor_id=instructor.id %}"
                            class="autocomplete-item__link">
-                            <span class="autocomplete-item__title">{{ instructor.first_name }} {{ instructor.last_name }}</span>
+                            <span class="autocomplete-item__title">{{ instructor.full_name }}</span>
                         </a>
                     </li>
                 {% endfor %}
@@ -72,7 +72,7 @@
                     <li class="autocomplete-item" role="option">
                         <a href="{% url 'instructor' instructor_id=instructor.id %}"
                            class="autocomplete-item__link">
-                            <span class="autocomplete-item__title">{{ instructor.first_name }} {{ instructor.last_name }}</span>
+                            <span class="autocomplete-item__title">{{ instructor.full_name }}</span>
                         </a>
                     </li>
                 {% endfor %}

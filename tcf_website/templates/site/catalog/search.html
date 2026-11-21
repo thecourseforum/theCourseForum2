@@ -130,9 +130,7 @@
                     <div class="search-simple-list">
                         {% for i in instructors %}
                             <a class="search-simple-item"
-                               href="{% url 'instructor' instructor_id=i.id %}">
-                                {{ i.first_name }} {{ i.last_name }}
-                            </a>
+                               href="{% url 'instructor' instructor_id=i.id %}">{{ i.full_name }}</a>
                         {% endfor %}
                     </div>
                 {% else %}

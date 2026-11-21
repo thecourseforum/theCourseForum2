@@ -211,7 +211,7 @@
       for (const row of data.instructors || []) {
         const o = document.createElement("option");
         o.value = String(row.id);
-        o.textContent = `${row.last_name}, ${row.first_name}`;
+        o.textContent = row.full_name;
         instructorSelect.appendChild(o);
       }
       instructorSelect.disabled = false;

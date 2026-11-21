@@ -85,7 +85,7 @@ def review_instructor_options(request):
     get_object_or_404(Course, id=course_id)
 
     rows = [
-        {"id": i.id, "last_name": i.last_name, "first_name": i.first_name}
+        {"id": i.id, "full_name": i.full_name}
         for i in instructors_for_course_semester(course_id, semester_id)
     ]
     return JsonResponse({"instructors": rows})
