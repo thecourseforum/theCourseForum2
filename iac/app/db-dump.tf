@@ -10,6 +10,18 @@ resource "aws_s3_bucket" "db_dumps" {
   tags = {
     Name = "${local.name_prefix}-db-dumps"
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "aws_s3_bucket_versioning" "db_dumps" {
+  bucket = aws_s3_bucket.db_dumps.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "db_dumps" {
@@ -56,7 +68,13 @@ resource "aws_s3_bucket_lifecycle_configuration" "db_dumps" {
     abort_incomplete_multipart_upload {
       days_after_initiation = 1
     }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 30
+    }
   }
+
+  depends_on = [aws_s3_bucket_versioning.db_dumps]
 }
 
 resource "aws_s3_bucket_policy" "db_dumps" {

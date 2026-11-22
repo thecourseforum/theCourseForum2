@@ -1,6 +1,7 @@
 # Cognito User Pool
 resource "aws_cognito_user_pool" "main" {
-  name = "${local.name_prefix}-user-pool"
+  name                = "${local.name_prefix}-user-pool"
+  deletion_protection = "ACTIVE"
 
   # Allow users to sign in with email
   username_attributes      = ["email"]
@@ -39,6 +40,10 @@ resource "aws_cognito_user_pool" "main" {
 
   tags = {
     Name = "${local.name_prefix}-user-pool"
+  }
+
+  lifecycle {
+    prevent_destroy = true
   }
 }
 
