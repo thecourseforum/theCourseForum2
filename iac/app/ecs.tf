@@ -83,6 +83,10 @@ resource "aws_ecs_task_definition" "django" {
         {
           name  = "WAF_INTEGRATION_URL"
           value = aws_wafv2_web_acl.main.application_integration_url
+        },
+        {
+          name  = "SCRIPT_FETCH_LOGIN"
+          value = "enforce"
         }
       ]
 
