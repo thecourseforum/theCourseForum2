@@ -11,10 +11,12 @@
 @import url('./utilities.css');
 
 /* Components */
+@import url('./components/brand.css');
 @import url('./components/button.css');
 @import url('./components/input.css');
 @import url('./components/modal.css');
 @import url('./components/header.css');
+@import url('./components/donation_banner.css');
 @import url('./components/footer.css');
 @import url('./components/search.css');
 @import url('./components/rating.css');

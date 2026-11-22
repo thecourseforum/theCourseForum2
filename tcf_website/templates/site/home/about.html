@@ -13,23 +13,25 @@
             <img src="{% static 'base/img/new_logo.svg' %}"
                  alt="theCourseForum logo"
                  class="about-hero__logo"
-                 width="120"
-                 height="120">
-            <h1 class="about-hero__title">theCourseForum</h1>
-            <p class="about-hero__tagline">Connecting you to the courses you love.</p>
+                 width="180"
+                 height="180">
+            <div class="about-hero__copy">
+                <h1 class="about-hero__title">theCourseForum</h1>
+                <p class="about-hero__tagline">Connecting you to the courses you love.</p>
+            </div>
         </div>
         <!-- Description -->
         <p class="about-description">
             <strong>theCourseForum</strong> is a place for University of Virginia students to share their academic experiences.
             These are captured in the form of course reviews, which provide insight, advice, and caution to students before course enrollment.
             We believe that reading <em>student</em> reflections is the best way to understand a class and its professor without actually experiencing it.
-            <br>
-            <br>
+        </p>
+        <p class="about-description about-description--tagline">
             <em>Of the students, by the students, for the students...</em>
         </p>
         <!-- Tabs -->
         <div class="about-tabs">
-            <button class="about-tab" data-tab="history">
+            <button type="button" class="about-tab" data-tab="history">
                 <svg class="about-tab__icon"
                      viewBox="0 0 24 24"
                      fill="none"
@@ -40,7 +42,7 @@
                 </svg>
                 History
             </button>
-            <button class="about-tab is-active" data-tab="team">
+            <button type="button" class="about-tab is-active" data-tab="team">
                 <svg class="about-tab__icon"
                      viewBox="0 0 24 24"
                      fill="none"
@@ -53,7 +55,7 @@
                 </svg>
                 Current Team
             </button>
-            <button class="about-tab" data-tab="contributors">
+            <button type="button" class="about-tab" data-tab="contributors">
                 <svg class="about-tab__icon"
                      viewBox="0 0 24 24"
                      fill="none"
@@ -64,7 +66,7 @@
                 </svg>
                 Past Contributors
             </button>
-            <button class="about-tab" data-tab="sponsors">
+            <button type="button" class="about-tab" data-tab="sponsors">
                 <svg class="about-tab__icon"
                      viewBox="0 0 24 24"
                      fill="none"
@@ -137,6 +139,7 @@
             {% include "site/home/components/_about_member_section.html" with title="Engineering Team" members=engineering_team image_dir="about/team-pfps" compact=True %}
             {% include "site/home/components/_about_member_section.html" with title="Design Team" members=design_team image_dir="about/team-pfps" compact=True %}
             {% include "site/home/components/_about_member_section.html" with title="Marketing Team" members=marketing_team image_dir="about/team-pfps" compact=True %}
+            {% include "site/home/components/_about_member_section.html" with title="Finance Team" members=finance_team image_dir="about/team-pfps" compact=True %}
         </div>
         <!-- Tab Content: Past Contributors -->
         <div class="about-content" id="tab-contributors">

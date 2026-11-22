@@ -11,8 +11,8 @@
                     <img src="{% static 'base/img/new_logo.svg' %}"
                          alt="theCourseForum"
                          class="footer__logo-icon"
-                         width="40"
-                         height="40">
+                         width="32"
+                         height="32">
                     <span class="footer__logo-text">theCourseForum</span>
                 </a>
                 <p class="footer__tagline">
@@ -82,6 +82,9 @@
                     </li>
                     <li>
                         <a href="mailto:support@thecourseforum.com" class="footer__link">Contact</a>
+                    </li>
+                    <li>
+                        {% include "site/common/components/_support_link.html" with link_class="footer__link" link_label="Support Us" %}
                     </li>
                 </ul>
             </div>

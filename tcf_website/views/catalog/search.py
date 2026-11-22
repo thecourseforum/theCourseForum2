@@ -37,6 +37,7 @@ _AUTOCOMPLETE_CLUB_LIMIT = 5
 
 _SEARCH_PAGE_SIZE = 15
 _QUERY_DISPLAY_MAX_LEN = 30
+_QUERY_MAX_LEN = 32
 
 
 def normalize_search_query(raw: str) -> str:
@@ -184,7 +185,7 @@ def _truncate_query_display(query: str) -> str:
 
 def search(request):
     """Search results view (full page and XHR autocomplete)."""
-    query = request.GET.get("q", "").strip()
+    query = request.GET.get("q", "").strip()[:_QUERY_MAX_LEN]
     mode, is_club = parse_mode(request)
     is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
 

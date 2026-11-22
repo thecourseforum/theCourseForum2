@@ -120,6 +120,8 @@ services:
       context: .
       target: prod
     container_name: tcf_release
+    mem_limit: 2048m
+    memswap_limit: 2048m
     env_file: .env
     command: >
       bash -c "set -e &&
@@ -145,6 +147,8 @@ services:
       context: .
       target: prod
     container_name: tcf_web
+    mem_limit: 2048m
+    memswap_limit: 2048m
     env_file: .env
     environment:
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-tcf_core.settings.dev}
@@ -175,6 +179,7 @@ services:
       - .:/app:cached
       # Docker-outside-of-docker: control sibling services via the host daemon.
       - /var/run/docker.sock:/var/run/docker.sock
+      - aws:/root/.aws
     depends_on:
       db:
         condition: service_healthy
@@ -186,3 +191,4 @@ services:
 volumes:
   pgdata:
   rustfs_data:
+  aws:

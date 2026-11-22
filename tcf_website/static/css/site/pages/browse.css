@@ -40,7 +40,6 @@
   max-width: 48rem;
 }
 
-
 /* ===== MODE TOGGLE ===== */
 
 .mode-toggle {
@@ -50,33 +49,6 @@
   background-color: var(--bg-muted);
   border-radius: var(--radius-lg);
 }
-
-.mode-toggle__option {
-  padding: var(--space-2) var(--space-4);
-  
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  color: var(--fg-muted);
-  
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-md);
-  
-  cursor: pointer;
-  transition: color var(--duration-fast) var(--ease-default),
-              background-color var(--duration-fast) var(--ease-default);
-}
-
-.mode-toggle__option:hover {
-  color: var(--fg);
-}
-
-.mode-toggle__option.is-active {
-  color: var(--accent-fg);
-  background-color: var(--accent);
-  box-shadow: var(--shadow-sm);
-}
-
 
 /* ===== SCHOOLS CONTAINER ===== */
 
@@ -97,7 +69,6 @@
     padding: 0 var(--space-8) var(--space-16);
   }
 }
-
 
 /* ===== SCHOOL SECTION ===== */
 
@@ -122,11 +93,12 @@
   transition: border-color var(--duration-fast) var(--ease-default);
 }
 
-.school-header:hover {
+.school-section:hover .school-header,
+.school-section:hover .departments-grid {
   border-color: var(--fg-subtle);
 }
 
-.school-header.is-open {
+.school-section .school-header.is-open {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   border-bottom-color: transparent;
@@ -184,7 +156,6 @@
   transform: rotate(180deg);
 }
 
-
 /* ===== DEPARTMENTS GRID ===== */
 
 .departments-grid {
@@ -197,6 +168,8 @@
   border-top: none;
   border-bottom-left-radius: var(--radius-xl);
   border-bottom-right-radius: var(--radius-xl);
+
+  transition: border-color var(--duration-fast) var(--ease-default);
 }
 
 .departments-grid.is-open {
@@ -222,7 +195,6 @@
     grid-template-columns: repeat(4, 1fr);
   }
 }
-
 
 /* ===== DEPARTMENT CARD ===== */
 
@@ -265,7 +237,6 @@
   opacity: 1;
   transform: translateX(4px);
 }
-
 
 /* ===== CLUB CATEGORIES ===== */
 
@@ -322,7 +293,6 @@
   font-size: var(--text-sm);
   color: var(--fg-muted);
 }
-
 
 /* ===== ADVANCED SEARCH FORM ===== */
 
@@ -391,15 +361,6 @@
 }
 
 /* Span 2 columns in the 3-col grid */
-.advanced-search__field--span2 {
-  grid-column: span 2;
-}
-
-@media (max-width: 1023px) {
-  .advanced-search__field--span2 {
-    grid-column: span 1;
-  }
-}
 
 .advanced-search__field label:not(.advanced-search__checkbox) {
   font-size: var(--text-xs);
@@ -426,7 +387,7 @@
 .advanced-search__field select:focus {
   border-color: var(--primary);
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-primary-100);
+  box-shadow: 0 0 0 2px var(--ring-glow);
 }
 
 .advanced-search__range {
@@ -451,7 +412,7 @@
 .advanced-search__range input:focus {
   border-color: var(--primary);
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-primary-100);
+  box-shadow: 0 0 0 2px var(--ring-glow);
 }
 
 .advanced-search__range-sep {
@@ -481,12 +442,6 @@
   cursor: pointer;
   font-size: var(--text-sm);
   color: var(--fg);
-}
-
-/* Divider between basic and advanced fields */
-.advanced-search__divider {
-  border-top: 1px solid var(--border);
-  margin-bottom: var(--space-4);
 }
 
 /* Fieldset (disciplines, days & times) */
