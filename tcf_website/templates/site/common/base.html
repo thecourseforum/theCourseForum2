@@ -6,9 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         {% if WAF_INTEGRATION_URL %}
-            <script type="text/javascript"
-                    src="{{ WAF_INTEGRATION_URL }}challenge.js"
-                    defer></script>
+            <script src="{{ WAF_INTEGRATION_URL }}challenge.js" defer></script>
         {% endif %}
         <meta name="description"
               content="{% block meta_description %}Course reviews, ratings, and schedule tools for UVA students.{% endblock meta_description %}">
