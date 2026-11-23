@@ -4,7 +4,7 @@ This small Terraform project creates the resources needed by `../app`:
 
 - `tcf-terraform-deployer` in the application account, for local and GitHub Actions Terraform applies
 - `tcf-terraform-planner` in the application account, for GitHub Actions Terraform plans
-- `tcf-github-deployer` in the application account, for GitHub Actions code deploys
+- `tcf-github-deployer` in the application account, for the GitHub Actions enrollment fetch
 - `tcf-prod-role-boundary`, the permissions boundary every application role must carry
 - A KMS-encrypted, versioned S3 state bucket in the application account, which also holds saved plans
 - A GitHub Actions OIDC provider in the application account
@@ -110,17 +110,18 @@ cannot change infrastructure or deploy. It receives `ReadOnlyAccess` plus:
 
 It is explicitly denied reading objects in the database dump bucket.
 
-`tcf-github-deployer` is scoped to deploying application code only:
+`tcf-github-deployer` is scoped to running one-off tasks on the existing web
+task definition, which `.github/workflows/fetch-enrollment.yml` uses:
 
-- push and look up images in `tcf-prod-*` ECR repositories
-- describe and register ECS task definitions in `aws_region`
 - run `tcf-prod-django` task definitions on `tcf-prod-cluster` and read those
   tasks, so it cannot start the database dump task
-- describe and update `tcf-prod-*` services on `tcf-prod-cluster`
+- describe `tcf-prod-*` services on `tcf-prod-cluster`, to copy their network
+  configuration
 - pass only the web task's execution and task roles, and only to ECS tasks
 
-It cannot read Terraform state, change infrastructure, or assume either DNS
-role.
+It cannot push images, register task definitions, update services, read
+Terraform state, change infrastructure, or assume either DNS role. GitHub
+Actions assumes it only from the `prod` environment.
 
 In account `011713309463`, `tcf-terraform-dns` trusts only
 `tcf-terraform-deployer` and can change records, while
@@ -174,4 +175,4 @@ does not carry the read-only role into the apply.
 Protect the `master`, `dev` and `iac` branches and the environments because
 they control which workflow code can request the OIDC token.
 
-No workflow assumes `tcf-github-deployer` any more.
+Only `.github/workflows/fetch-enrollment.yml` assumes `tcf-github-deployer`.
