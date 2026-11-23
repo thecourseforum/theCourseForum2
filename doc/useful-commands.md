@@ -88,15 +88,22 @@ Restore `db/latest.dump` or another custom-format dump into the local database:
 ./scripts/reset-db.sh [filename.dump]
 ```
 
-Create a production dump through the configured EC2 jump host:
+The prod database is dumped to the `tcf-prod-db-dumps-<account>` S3 bucket
+every day at 4am Eastern by an EventBridge schedule. `scripts/prod_dump.sh` runs
+that same dump task on demand and downloads the result to `db/`.
+
+The script requires AWS credentials for the `AdministratorAccess` SSO role in
+the production account (consult exec for access). It uses whatever credentials
+the AWS CLI resolves, such as `AWS_PROFILE`, and only administrators can read
+dumps.
 
 ```bash
-./scripts/prod_dump.sh [filename.dump]
+aws sso login --profile <your-prod-admin-profile>
+AWS_PROFILE=<your-prod-admin-profile> ./scripts/prod_dump.sh [filename.dump]
+AWS_PROFILE=<your-prod-admin-profile> ./scripts/prod_dump.sh --latest [filename.dump]
 ```
 
-The production script reads `EC2_HOST`, `EC2_USER`, `PEM_KEY`, `PROD_DB_HOST`,
-`PROD_DB_USER`, and `PROD_DB_PASSWORD` from `.env`. Never commit production
-credentials.
+`--latest` downloads the newest existing dump instead of running a new one.
 
 ## Data workflows
 

@@ -41,6 +41,25 @@ resource "aws_s3_bucket_policy" "static" {
   })
 }
 
+resource "aws_cloudfront_vpc_origin" "alb" {
+  vpc_origin_endpoint_config {
+    name                   = "${local.name_prefix}-alb"
+    arn                    = aws_lb.main.arn
+    http_port              = 80
+    https_port             = 443
+    origin_protocol_policy = "https-only"
+
+    origin_ssl_protocols {
+      items    = ["TLSv1.2"]
+      quantity = 1
+    }
+  }
+
+  tags = {
+    Name = "${local.name_prefix}-alb-vpc-origin"
+  }
+}
+
 # CloudFront Distribution
 resource "aws_cloudfront_distribution" "main" {
   enabled             = true
@@ -49,6 +68,7 @@ resource "aws_cloudfront_distribution" "main" {
   default_root_object = ""
   price_class         = "PriceClass_100"
   aliases             = [var.domain_name]
+  web_acl_id          = aws_wafv2_web_acl.main.arn
 
   # S3 Origin for static files (restricted via OAC)
   origin {
@@ -59,14 +79,13 @@ resource "aws_cloudfront_distribution" "main" {
 
   # ALB Origin for dynamic content
   origin {
-    domain_name = aws_lb.main.dns_name
+    # CloudFront validates the origin certificate against this hostname.
+    # The DNS account creates this alias to the ALB.
+    domain_name = "origin.${var.domain_name}"
     origin_id   = "ALB-${aws_lb.main.name}"
 
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
+    vpc_origin_config {
+      vpc_origin_id = aws_cloudfront_vpc_origin.alb.id
     }
 
     custom_header {
@@ -156,6 +175,8 @@ resource "aws_cloudfront_distribution" "main" {
       restriction_type = "none"
     }
   }
+
+  depends_on = [aws_route53_record.origin]
 
   tags = {
     Name = "${local.name_prefix}-cloudfront"

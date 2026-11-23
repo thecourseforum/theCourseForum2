@@ -42,6 +42,11 @@ key/
 # Nix
 .direnv
 .envrc
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
 # Claude
 CLAUDE.md
 .claude/
