@@ -116,9 +116,57 @@ variable "ecr_image_tag" {
 }
 
 variable "log_retention_days" {
-  description = "CloudWatch log retention in days"
+  description = "Retention in days for extra logs: ALB access, VPC flow, RDS, Redis and Lambda"
   type        = number
   default     = 7
+}
+
+variable "app_logs_retention_days" {
+  description = "Retention in days for the Django app (ECS) logs"
+  type        = number
+  default     = 30
+}
+
+variable "waf_logs_enabled" {
+  description = "Send WAF request logs to CloudWatch Logs"
+  type        = bool
+  default     = true
+}
+
+variable "waf_logs_retention_days" {
+  description = "Retention in days for WAF request logs"
+  type        = number
+  default     = 30
+}
+
+variable "cloudfront_logs_enabled" {
+  description = "Send CloudFront access logs to CloudWatch Logs"
+  type        = bool
+  default     = false
+}
+
+variable "cloudfront_logs_retention_days" {
+  description = "Retention in days for CloudFront access logs"
+  type        = number
+  default     = 30
+}
+
+variable "alb_access_logs_enabled" {
+  description = "Write ALB access logs to the logs bucket"
+  type        = bool
+  default     = false
+}
+
+variable "rds_logs_enabled" {
+  description = "Export PostgreSQL logs to CloudWatch Logs"
+  type        = bool
+  default     = false
+}
+
+variable "vpc_flow_logs_enabled" {
+  description = "Write VPC flow logs to the logs bucket"
+  type        = bool
+  default     = false
 }
 
 variable "db_name" {

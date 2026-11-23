@@ -18,6 +18,11 @@ env:
   TF_IN_AUTOMATION: "true"
   TF_VAR_domain_name: thecourseforum.com
   TF_VAR_waf_mode: "off"
+  TF_VAR_waf_logs_enabled: "true"
+  TF_VAR_cloudfront_logs_enabled: "false"
+  TF_VAR_alb_access_logs_enabled: "false"
+  TF_VAR_rds_logs_enabled: "false"
+  TF_VAR_vpc_flow_logs_enabled: "false"
   TERRAFORM_VERSION: 1.16.3
   PLANNER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-planner
   DEPLOYER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-deployer

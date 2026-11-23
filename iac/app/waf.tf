@@ -18,7 +18,7 @@ resource "aws_wafv2_ip_set" "uva_ranges" {
 resource "aws_cloudwatch_log_group" "waf" {
   provider          = aws.us_east_1
   name              = "aws-waf-logs-tcf"
-  retention_in_days = var.log_retention_days
+  retention_in_days = var.waf_logs_retention_days
 
   tags = {
     Name = "${local.name_prefix}-waf-logs"
@@ -860,6 +860,7 @@ resource "aws_wafv2_web_acl" "main" {
 
 resource "aws_wafv2_web_acl_logging_configuration" "main" {
   provider                = aws.us_east_1
+  count                   = var.waf_logs_enabled ? 1 : 0
   resource_arn            = aws_wafv2_web_acl.main.arn
   log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
 }
@@ -870,6 +871,6 @@ moved {
 }
 
 moved {
-  from = aws_wafv2_web_acl_logging_configuration.main[0]
-  to   = aws_wafv2_web_acl_logging_configuration.main
+  from = aws_wafv2_web_acl_logging_configuration.main
+  to   = aws_wafv2_web_acl_logging_configuration.main[0]
 }

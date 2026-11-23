@@ -50,9 +50,13 @@ resource "aws_db_instance" "postgres" {
   performance_insights_enabled          = true
   performance_insights_retention_period = 465
 
+  enabled_cloudwatch_logs_exports = var.rds_logs_enabled ? ["postgresql"] : []
+
   tags = {
     Name = "${local.name_prefix}-postgres"
   }
+
+  depends_on = [aws_cloudwatch_log_group.rds]
 
   lifecycle {
     prevent_destroy = true
