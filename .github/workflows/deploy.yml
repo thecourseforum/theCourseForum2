@@ -16,7 +16,7 @@ concurrency:
 env:
   AWS_REGION: us-east-1
   TF_IN_AUTOMATION: "true"
-  TF_VAR_domain_name: thecourseforumtest.com
+  TF_VAR_domain_name: thecourseforum.com
   TERRAFORM_VERSION: 1.16.3
   PLANNER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-planner
   DEPLOYER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-deployer
