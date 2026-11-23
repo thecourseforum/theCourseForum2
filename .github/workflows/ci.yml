@@ -8,6 +8,11 @@ on:
   push:
     branches: [dev, master]
   workflow_call:
+    inputs:
+      compare-to-last-deploy:
+        description: Look for application changes since the last successful deploy instead of since the previous push
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -32,6 +37,49 @@ env:
   STATIC_CUSTOM_DOMAIN: localhost:8081
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      app: ${{ steps.diff.outputs.app }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check for application changes
+        id: diff
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          COMPARE_TO_LAST_DEPLOY: ${{ inputs.compare-to-last-deploy }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "$COMPARE_TO_LAST_DEPLOY" == "true" ]]; then
+            BASE_SHA=$(gh run list -R "$GITHUB_REPOSITORY" --workflow deploy.yml --branch "$GITHUB_REF_NAME" \
+              --status success --limit 1 --json headSha --jq '.[0].headSha // ""' || true)
+            echo "Last successful deploy: ${BASE_SHA:-none}"
+          fi
+          if [[ -z "$BASE_SHA" || "$BASE_SHA" =~ ^0+$ ]] || ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+            echo "No usable base commit, running all checks"
+            echo "app=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          changed=$(
+            git diff --name-only "$BASE_SHA" "$GITHUB_SHA" -- . ':!iac' ':!.github'
+            git diff --name-only "$BASE_SHA" "$GITHUB_SHA" -- .github/workflows/ci.yml
+          )
+          if [[ -n "$changed" ]]; then
+            echo "Application files changed since ${BASE_SHA}:"
+            echo "$changed"
+            echo "app=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Only iac/ or .github/ changed since ${BASE_SHA}"
+            echo "app=false" >> "$GITHUB_OUTPUT"
+          fi
+
   ruff:
     runs-on: ubuntu-latest
     steps:
@@ -95,6 +143,8 @@ jobs:
         run: uv run ty check
 
   django:
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
     runs-on: ubuntu-latest
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}

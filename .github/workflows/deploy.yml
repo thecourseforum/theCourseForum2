@@ -39,7 +39,12 @@ jobs:
   ci:
     name: Continuous Integration
     if: github.ref == 'refs/heads/dev'
+    permissions:
+      contents: read
+      actions: read
     uses: ./.github/workflows/ci.yml
+    with:
+      compare-to-last-deploy: true
 
   plan:
     name: Terraform plan
