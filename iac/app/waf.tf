@@ -46,7 +46,6 @@ resource "aws_secretsmanager_secret_version" "waf_canary_header" {
 
 resource "aws_wafv2_web_acl" "main" {
   provider = aws.us_east_1
-  count    = local.waf_enabled ? 1 : 0
   name     = local.waf_acl_name
   scope    = "CLOUDFRONT"
 
@@ -60,755 +59,791 @@ resource "aws_wafv2_web_acl" "main" {
     }
   }
 
-  rule {
-    name     = "allow-canary"
-    priority = 0
+  dynamic "rule" {
+    for_each = local.waf_enabled ? [1] : []
+    content {
+      name     = "allow-canary"
+      priority = 0
 
-    statement {
-      byte_match_statement {
-        search_string = aws_secretsmanager_secret_version.waf_canary_header.secret_string
-        field_to_match {
-          single_header {
-            name = "x-tcf-canary"
+      statement {
+        byte_match_statement {
+          search_string = aws_secretsmanager_secret_version.waf_canary_header.secret_string
+          field_to_match {
+            single_header {
+              name = "x-tcf-canary"
+            }
           }
+          text_transformation {
+            priority = 0
+            type     = "NONE"
+          }
+          positional_constraint = "EXACTLY"
         }
-        text_transformation {
-          priority = 0
-          type     = "NONE"
-        }
-        positional_constraint = "EXACTLY"
       }
-    }
 
-    action {
-      allow {}
-    }
+      action {
+        allow {}
+      }
 
-    visibility_config {
-      sampled_requests_enabled   = true
-      cloudwatch_metrics_enabled = true
-      metric_name                = "allow-canary"
+      visibility_config {
+        sampled_requests_enabled   = true
+        cloudwatch_metrics_enabled = true
+        metric_name                = "allow-canary"
+      }
     }
   }
 
-  rule {
-    name     = "bot-control"
-    priority = 1
+  dynamic "rule" {
+    for_each = local.waf_enabled ? [1] : []
+    content {
+      name     = "bot-control"
+      priority = 1
 
-    statement {
-      managed_rule_group_statement {
-        vendor_name = "AWS"
-        name        = "AWSManagedRulesBotControlRuleSet"
-        version     = "Version_7.0"
+      statement {
+        managed_rule_group_statement {
+          vendor_name = "AWS"
+          name        = "AWSManagedRulesBotControlRuleSet"
+          version     = "Version_7.0"
 
-        scope_down_statement {
-          not_statement {
-            statement {
-              byte_match_statement {
-                search_string = "."
-                field_to_match {
-                  uri_path {}
+          scope_down_statement {
+            not_statement {
+              statement {
+                byte_match_statement {
+                  search_string = "."
+                  field_to_match {
+                    uri_path {}
+                  }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "CONTAINS"
                 }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "CONTAINS"
               }
             }
           }
-        }
 
-        managed_rule_group_configs {
-          aws_managed_rules_bot_control_rule_set {
-            inspection_level        = upper(var.waf_mode)
-            enable_machine_learning = true
-          }
-        }
-      }
-    }
-
-    override_action {
-      count {}
-    }
-
-    visibility_config {
-      sampled_requests_enabled   = true
-      cloudwatch_metrics_enabled = true
-      metric_name                = "bot-control"
-    }
-  }
-
-  rule {
-    name     = "block-token-reuse"
-    priority = 2
-
-    statement {
-      or_statement {
-        statement {
-          label_match_statement {
-            scope = "LABEL"
-            key   = "awswaf:managed:aws:bot-control:targeted:aggregate:volumetric:session:token_reuse:ip:medium"
-          }
-        }
-        statement {
-          label_match_statement {
-            scope = "LABEL"
-            key   = "awswaf:managed:aws:bot-control:targeted:aggregate:volumetric:session:token_reuse:ip:high"
-          }
-        }
-        statement {
-          label_match_statement {
-            scope = "LABEL"
-            key   = "awswaf:managed:aws:bot-control:targeted:aggregate:volumetric:session:token_reuse:asn:medium"
-          }
-        }
-        statement {
-          label_match_statement {
-            scope = "LABEL"
-            key   = "awswaf:managed:aws:bot-control:targeted:aggregate:volumetric:session:token_reuse:asn:high"
-          }
-        }
-      }
-    }
-
-    action {
-      block {}
-    }
-
-    visibility_config {
-      sampled_requests_enabled   = true
-      cloudwatch_metrics_enabled = true
-      metric_name                = "block-token-reuse"
-    }
-  }
-
-  rule {
-    name     = "block-sqli-scanner"
-    priority = 3
-
-    statement {
-      and_statement {
-        statement {
-          byte_match_statement {
-            search_string = "t13d1011h2_61a7ad8aa9b6_"
-            field_to_match {
-              ja4_fingerprint {
-                fallback_behavior = "NO_MATCH"
-              }
-            }
-            text_transformation {
-              priority = 0
-              type     = "NONE"
-            }
-            positional_constraint = "STARTS_WITH"
-          }
-        }
-        statement {
-          or_statement {
-            statement {
-              byte_match_statement {
-                search_string = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15"
-                field_to_match {
-                  single_header {
-                    name = "user-agent"
-                  }
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "EXACTLY"
-              }
-            }
-            statement {
-              byte_match_statement {
-                search_string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                field_to_match {
-                  single_header {
-                    name = "user-agent"
-                  }
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "EXACTLY"
-              }
-            }
-            statement {
-              byte_match_statement {
-                search_string = "Mozilla/5.0 (X11; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0"
-                field_to_match {
-                  single_header {
-                    name = "user-agent"
-                  }
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "EXACTLY"
-              }
-            }
-            statement {
-              byte_match_statement {
-                search_string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
-                field_to_match {
-                  single_header {
-                    name = "user-agent"
-                  }
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "EXACTLY"
-              }
-            }
-            statement {
-              byte_match_statement {
-                search_string = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                field_to_match {
-                  single_header {
-                    name = "user-agent"
-                  }
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "EXACTLY"
-              }
-            }
-            statement {
-              byte_match_statement {
-                search_string = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                field_to_match {
-                  single_header {
-                    name = "user-agent"
-                  }
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "EXACTLY"
-              }
-            }
-            statement {
-              byte_match_statement {
-                search_string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
-                field_to_match {
-                  single_header {
-                    name = "user-agent"
-                  }
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "EXACTLY"
-              }
-            }
-            statement {
-              byte_match_statement {
-                search_string = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0"
-                field_to_match {
-                  single_header {
-                    name = "user-agent"
-                  }
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "EXACTLY"
-              }
+          managed_rule_group_configs {
+            aws_managed_rules_bot_control_rule_set {
+              inspection_level        = upper(var.waf_mode)
+              enable_machine_learning = true
             }
           }
         }
       }
-    }
 
-    action {
-      block {}
-    }
+      override_action {
+        count {}
+      }
 
-    visibility_config {
-      sampled_requests_enabled   = true
-      cloudwatch_metrics_enabled = true
-      metric_name                = "block-sqli-scanner"
-    }
-  }
-
-  rule {
-    name     = "aws-sqli"
-    priority = 4
-
-    statement {
-      managed_rule_group_statement {
-        vendor_name = "AWS"
-        name        = "AWSManagedRulesSQLiRuleSet"
+      visibility_config {
+        sampled_requests_enabled   = true
+        cloudwatch_metrics_enabled = true
+        metric_name                = "bot-control"
       }
     }
+  }
 
-    override_action {
-      none {}
-    }
+  dynamic "rule" {
+    for_each = local.waf_enabled ? [1] : []
+    content {
+      name     = "block-token-reuse"
+      priority = 2
 
-    visibility_config {
-      sampled_requests_enabled   = true
-      cloudwatch_metrics_enabled = true
-      metric_name                = "aws-sqli"
+      statement {
+        or_statement {
+          statement {
+            label_match_statement {
+              scope = "LABEL"
+              key   = "awswaf:managed:aws:bot-control:targeted:aggregate:volumetric:session:token_reuse:ip:medium"
+            }
+          }
+          statement {
+            label_match_statement {
+              scope = "LABEL"
+              key   = "awswaf:managed:aws:bot-control:targeted:aggregate:volumetric:session:token_reuse:ip:high"
+            }
+          }
+          statement {
+            label_match_statement {
+              scope = "LABEL"
+              key   = "awswaf:managed:aws:bot-control:targeted:aggregate:volumetric:session:token_reuse:asn:medium"
+            }
+          }
+          statement {
+            label_match_statement {
+              scope = "LABEL"
+              key   = "awswaf:managed:aws:bot-control:targeted:aggregate:volumetric:session:token_reuse:asn:high"
+            }
+          }
+        }
+      }
+
+      action {
+        block {}
+      }
+
+      visibility_config {
+        sampled_requests_enabled   = true
+        cloudwatch_metrics_enabled = true
+        metric_name                = "block-token-reuse"
+      }
     }
   }
 
-  rule {
-    name     = "aws-anonymous-ip"
-    priority = 5
+  dynamic "rule" {
+    for_each = local.waf_enabled ? [1] : []
+    content {
+      name     = "block-sqli-scanner"
+      priority = 3
 
-    statement {
-      managed_rule_group_statement {
-        vendor_name = "AWS"
-        name        = "AWSManagedRulesAnonymousIpList"
-
-        scope_down_statement {
-          and_statement {
-            statement {
-              not_statement {
-                statement {
-                  label_match_statement {
-                    scope = "LABEL"
-                    key   = "awswaf:managed:aws:bot-control:bot:verified"
-                  }
+      statement {
+        and_statement {
+          statement {
+            byte_match_statement {
+              search_string = "t13d1011h2_61a7ad8aa9b6_"
+              field_to_match {
+                ja4_fingerprint {
+                  fallback_behavior = "NO_MATCH"
                 }
               }
+              text_transformation {
+                priority = 0
+                type     = "NONE"
+              }
+              positional_constraint = "STARTS_WITH"
             }
-            statement {
-              not_statement {
-                statement {
-                  byte_match_statement {
-                    search_string = "."
-                    field_to_match {
-                      uri_path {}
+          }
+          statement {
+            or_statement {
+              statement {
+                byte_match_statement {
+                  search_string = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15"
+                  field_to_match {
+                    single_header {
+                      name = "user-agent"
                     }
-                    text_transformation {
-                      priority = 0
-                      type     = "NONE"
+                  }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "EXACTLY"
+                }
+              }
+              statement {
+                byte_match_statement {
+                  search_string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                  field_to_match {
+                    single_header {
+                      name = "user-agent"
                     }
-                    positional_constraint = "CONTAINS"
                   }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "EXACTLY"
                 }
               }
-            }
-          }
-        }
-
-        rule_action_override {
-          name = "AnonymousIPList"
-          action_to_use {
-            captcha {}
-          }
-        }
-        rule_action_override {
-          name = "HostingProviderIPList"
-          action_to_use {
-            captcha {}
-          }
-        }
-      }
-    }
-
-    override_action {
-      none {}
-    }
-
-    visibility_config {
-      sampled_requests_enabled   = true
-      cloudwatch_metrics_enabled = true
-      metric_name                = "aws-anonymous-ip"
-    }
-  }
-
-  rule {
-    name     = "block-per-session"
-    priority = 6
-
-    statement {
-      rate_based_statement {
-        limit                 = 1000
-        evaluation_window_sec = 300
-        aggregate_key_type    = "CUSTOM_KEYS"
-
-        scope_down_statement {
-          not_statement {
-            statement {
-              byte_match_statement {
-                search_string = "."
-                field_to_match {
-                  uri_path {}
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "CONTAINS"
-              }
-            }
-          }
-        }
-
-        custom_key {
-          label_namespace {
-            namespace = "awswaf:managed:token:id:"
-          }
-        }
-      }
-    }
-
-    action {
-      block {}
-    }
-
-    visibility_config {
-      sampled_requests_enabled   = true
-      cloudwatch_metrics_enabled = true
-      metric_name                = "block-per-session"
-    }
-  }
-
-  rule {
-    name     = "rate-per-session"
-    priority = 7
-
-    statement {
-      rate_based_statement {
-        limit                 = 300
-        evaluation_window_sec = 300
-        aggregate_key_type    = "CUSTOM_KEYS"
-
-        scope_down_statement {
-          not_statement {
-            statement {
-              byte_match_statement {
-                search_string = "."
-                field_to_match {
-                  uri_path {}
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "CONTAINS"
-              }
-            }
-          }
-        }
-
-        custom_key {
-          label_namespace {
-            namespace = "awswaf:managed:token:id:"
-          }
-        }
-      }
-    }
-
-    action {
-      captcha {}
-    }
-
-    visibility_config {
-      sampled_requests_enabled   = true
-      cloudwatch_metrics_enabled = true
-      metric_name                = "rate-per-session"
-    }
-  }
-
-  rule {
-    name     = "rate-per-ip"
-    priority = 8
-
-    statement {
-      rate_based_statement {
-        limit                 = 300
-        evaluation_window_sec = 300
-        aggregate_key_type    = "IP"
-
-        scope_down_statement {
-          and_statement {
-            statement {
-              not_statement {
-                statement {
-                  byte_match_statement {
-                    search_string = "."
-                    field_to_match {
-                      uri_path {}
+              statement {
+                byte_match_statement {
+                  search_string = "Mozilla/5.0 (X11; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0"
+                  field_to_match {
+                    single_header {
+                      name = "user-agent"
                     }
-                    text_transformation {
-                      priority = 0
-                      type     = "NONE"
+                  }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "EXACTLY"
+                }
+              }
+              statement {
+                byte_match_statement {
+                  search_string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
+                  field_to_match {
+                    single_header {
+                      name = "user-agent"
                     }
-                    positional_constraint = "CONTAINS"
                   }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "EXACTLY"
                 }
               }
-            }
-            statement {
-              not_statement {
-                statement {
-                  ip_set_reference_statement {
-                    arn = aws_wafv2_ip_set.uva_ranges.arn
+              statement {
+                byte_match_statement {
+                  search_string = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                  field_to_match {
+                    single_header {
+                      name = "user-agent"
+                    }
                   }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "EXACTLY"
+                }
+              }
+              statement {
+                byte_match_statement {
+                  search_string = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                  field_to_match {
+                    single_header {
+                      name = "user-agent"
+                    }
+                  }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "EXACTLY"
+                }
+              }
+              statement {
+                byte_match_statement {
+                  search_string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
+                  field_to_match {
+                    single_header {
+                      name = "user-agent"
+                    }
+                  }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "EXACTLY"
+                }
+              }
+              statement {
+                byte_match_statement {
+                  search_string = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0"
+                  field_to_match {
+                    single_header {
+                      name = "user-agent"
+                    }
+                  }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "EXACTLY"
                 }
               }
             }
           }
         }
       }
-    }
 
-    action {
-      captcha {}
-    }
+      action {
+        block {}
+      }
 
-    visibility_config {
-      sampled_requests_enabled   = true
-      cloudwatch_metrics_enabled = true
-      metric_name                = "rate-per-ip"
+      visibility_config {
+        sampled_requests_enabled   = true
+        cloudwatch_metrics_enabled = true
+        metric_name                = "block-sqli-scanner"
+      }
     }
   }
 
-  rule {
-    name     = "fetch-without-xrw"
-    priority = 9
+  dynamic "rule" {
+    for_each = local.waf_enabled ? [1] : []
+    content {
+      name     = "aws-sqli"
+      priority = 4
 
-    statement {
-      and_statement {
-        statement {
-          byte_match_statement {
-            search_string = "cors"
-            field_to_match {
-              single_header {
-                name = "sec-fetch-mode"
-              }
-            }
-            text_transformation {
-              priority = 0
-              type     = "LOWERCASE"
-            }
-            positional_constraint = "EXACTLY"
-          }
-        }
-        statement {
-          not_statement {
-            statement {
-              byte_match_statement {
-                search_string = "XMLHttpRequest"
-                field_to_match {
-                  single_header {
-                    name = "x-requested-with"
-                  }
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "EXACTLY"
-              }
-            }
-          }
-        }
-        statement {
-          regex_match_statement {
-            regex_string = "^/(course|department|instructor|search|browse|club-category)/"
-            field_to_match {
-              uri_path {}
-            }
-            text_transformation {
-              priority = 0
-              type     = "NONE"
-            }
-          }
+      statement {
+        managed_rule_group_statement {
+          vendor_name = "AWS"
+          name        = "AWSManagedRulesSQLiRuleSet"
         }
       }
-    }
 
-    action {
-      count {}
-    }
+      override_action {
+        none {}
+      }
 
-    visibility_config {
-      sampled_requests_enabled   = true
-      cloudwatch_metrics_enabled = true
-      metric_name                = "fetch-without-xrw"
+      visibility_config {
+        sampled_requests_enabled   = true
+        cloudwatch_metrics_enabled = true
+        metric_name                = "aws-sqli"
+      }
     }
   }
 
-  rule {
-    name     = "challenge-tokenless"
-    priority = 10
+  dynamic "rule" {
+    for_each = local.waf_enabled ? [1] : []
+    content {
+      name     = "aws-anonymous-ip"
+      priority = 5
 
-    statement {
-      and_statement {
-        statement {
-          label_match_statement {
-            scope = "LABEL"
-            key   = "awswaf:managed:token:absent"
-          }
-        }
-        statement {
-          not_statement {
-            statement {
-              label_match_statement {
-                scope = "LABEL"
-                key   = "awswaf:managed:aws:bot-control:bot:verified"
-              }
-            }
-          }
-        }
-        statement {
-          not_statement {
-            statement {
-              byte_match_statement {
-                search_string = "."
-                field_to_match {
-                  uri_path {}
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "CONTAINS"
-              }
-            }
-          }
-        }
-      }
-    }
+      statement {
+        managed_rule_group_statement {
+          vendor_name = "AWS"
+          name        = "AWSManagedRulesAnonymousIpList"
 
-    action {
-      challenge {}
-    }
-
-    rule_label {
-      name = "tcf:tokenless"
-    }
-
-    challenge_config {
-      immunity_time_property {
-        immunity_time = 3600
-      }
-    }
-
-    visibility_config {
-      sampled_requests_enabled   = true
-      cloudwatch_metrics_enabled = true
-      metric_name                = "challenge-tokenless"
-    }
-  }
-
-  rule {
-    name     = "captcha-ja4-scrapers"
-    priority = 11
-
-    statement {
-      and_statement {
-        statement {
-          or_statement {
-            statement {
-              byte_match_statement {
-                search_string = "t13d1516h2_8daaf6152771_02713d6af862"
-                field_to_match {
-                  ja4_fingerprint {
-                    fallback_behavior = "NO_MATCH"
+          scope_down_statement {
+            and_statement {
+              statement {
+                not_statement {
+                  statement {
+                    label_match_statement {
+                      scope = "LABEL"
+                      key   = "awswaf:managed:aws:bot-control:bot:verified"
+                    }
                   }
                 }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "EXACTLY"
               }
-            }
-            statement {
-              and_statement {
-                statement {
-                  byte_match_statement {
-                    search_string = "t13d1516h2_8daaf6152771_d8a2da3f94cd"
-                    field_to_match {
-                      ja4_fingerprint {
-                        fallback_behavior = "NO_MATCH"
+              statement {
+                not_statement {
+                  statement {
+                    byte_match_statement {
+                      search_string = "."
+                      field_to_match {
+                        uri_path {}
                       }
-                    }
-                    text_transformation {
-                      priority = 0
-                      type     = "NONE"
-                    }
-                    positional_constraint = "EXACTLY"
-                  }
-                }
-                statement {
-                  byte_match_statement {
-                    search_string = "Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146."
-                    field_to_match {
-                      single_header {
-                        name = "user-agent"
+                      text_transformation {
+                        priority = 0
+                        type     = "NONE"
                       }
+                      positional_constraint = "CONTAINS"
                     }
-                    text_transformation {
-                      priority = 0
-                      type     = "NONE"
-                    }
-                    positional_constraint = "CONTAINS"
                   }
                 }
               }
             }
           }
-        }
-        statement {
-          not_statement {
-            statement {
-              byte_match_statement {
-                search_string = "."
-                field_to_match {
-                  uri_path {}
-                }
-                text_transformation {
-                  priority = 0
-                  type     = "NONE"
-                }
-                positional_constraint = "CONTAINS"
-              }
+
+          rule_action_override {
+            name = "AnonymousIPList"
+            action_to_use {
+              captcha {}
+            }
+          }
+          rule_action_override {
+            name = "HostingProviderIPList"
+            action_to_use {
+              captcha {}
             }
           }
         }
-        statement {
-          not_statement {
-            statement {
-              label_match_statement {
-                scope = "LABEL"
-                key   = "awswaf:managed:aws:bot-control:bot:verified"
+      }
+
+      override_action {
+        none {}
+      }
+
+      visibility_config {
+        sampled_requests_enabled   = true
+        cloudwatch_metrics_enabled = true
+        metric_name                = "aws-anonymous-ip"
+      }
+    }
+  }
+
+  dynamic "rule" {
+    for_each = local.waf_enabled ? [1] : []
+    content {
+      name     = "block-per-session"
+      priority = 6
+
+      statement {
+        rate_based_statement {
+          limit                 = 1000
+          evaluation_window_sec = 300
+          aggregate_key_type    = "CUSTOM_KEYS"
+
+          scope_down_statement {
+            not_statement {
+              statement {
+                byte_match_statement {
+                  search_string = "."
+                  field_to_match {
+                    uri_path {}
+                  }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "CONTAINS"
+                }
+              }
+            }
+          }
+
+          custom_key {
+            label_namespace {
+              namespace = "awswaf:managed:token:id:"
+            }
+          }
+        }
+      }
+
+      action {
+        block {}
+      }
+
+      visibility_config {
+        sampled_requests_enabled   = true
+        cloudwatch_metrics_enabled = true
+        metric_name                = "block-per-session"
+      }
+    }
+  }
+
+  dynamic "rule" {
+    for_each = local.waf_enabled ? [1] : []
+    content {
+      name     = "rate-per-session"
+      priority = 7
+
+      statement {
+        rate_based_statement {
+          limit                 = 300
+          evaluation_window_sec = 300
+          aggregate_key_type    = "CUSTOM_KEYS"
+
+          scope_down_statement {
+            not_statement {
+              statement {
+                byte_match_statement {
+                  search_string = "."
+                  field_to_match {
+                    uri_path {}
+                  }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "CONTAINS"
+                }
+              }
+            }
+          }
+
+          custom_key {
+            label_namespace {
+              namespace = "awswaf:managed:token:id:"
+            }
+          }
+        }
+      }
+
+      action {
+        captcha {}
+      }
+
+      visibility_config {
+        sampled_requests_enabled   = true
+        cloudwatch_metrics_enabled = true
+        metric_name                = "rate-per-session"
+      }
+    }
+  }
+
+  dynamic "rule" {
+    for_each = local.waf_enabled ? [1] : []
+    content {
+      name     = "rate-per-ip"
+      priority = 8
+
+      statement {
+        rate_based_statement {
+          limit                 = 300
+          evaluation_window_sec = 300
+          aggregate_key_type    = "IP"
+
+          scope_down_statement {
+            and_statement {
+              statement {
+                not_statement {
+                  statement {
+                    byte_match_statement {
+                      search_string = "."
+                      field_to_match {
+                        uri_path {}
+                      }
+                      text_transformation {
+                        priority = 0
+                        type     = "NONE"
+                      }
+                      positional_constraint = "CONTAINS"
+                    }
+                  }
+                }
+              }
+              statement {
+                not_statement {
+                  statement {
+                    ip_set_reference_statement {
+                      arn = aws_wafv2_ip_set.uva_ranges.arn
+                    }
+                  }
+                }
               }
             }
           }
         }
       }
-    }
 
-    action {
-      captcha {}
-    }
+      action {
+        captcha {}
+      }
 
-    rule_label {
-      name = "tcf:ja4-scraper"
+      visibility_config {
+        sampled_requests_enabled   = true
+        cloudwatch_metrics_enabled = true
+        metric_name                = "rate-per-ip"
+      }
     }
+  }
 
-    visibility_config {
-      sampled_requests_enabled   = true
-      cloudwatch_metrics_enabled = true
-      metric_name                = "captcha-ja4-scrapers"
+  dynamic "rule" {
+    for_each = local.waf_enabled ? [1] : []
+    content {
+      name     = "fetch-without-xrw"
+      priority = 9
+
+      statement {
+        and_statement {
+          statement {
+            byte_match_statement {
+              search_string = "cors"
+              field_to_match {
+                single_header {
+                  name = "sec-fetch-mode"
+                }
+              }
+              text_transformation {
+                priority = 0
+                type     = "LOWERCASE"
+              }
+              positional_constraint = "EXACTLY"
+            }
+          }
+          statement {
+            not_statement {
+              statement {
+                byte_match_statement {
+                  search_string = "XMLHttpRequest"
+                  field_to_match {
+                    single_header {
+                      name = "x-requested-with"
+                    }
+                  }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "EXACTLY"
+                }
+              }
+            }
+          }
+          statement {
+            regex_match_statement {
+              regex_string = "^/(course|department|instructor|search|browse|club-category)/"
+              field_to_match {
+                uri_path {}
+              }
+              text_transformation {
+                priority = 0
+                type     = "NONE"
+              }
+            }
+          }
+        }
+      }
+
+      action {
+        count {}
+      }
+
+      visibility_config {
+        sampled_requests_enabled   = true
+        cloudwatch_metrics_enabled = true
+        metric_name                = "fetch-without-xrw"
+      }
+    }
+  }
+
+  dynamic "rule" {
+    for_each = local.waf_enabled ? [1] : []
+    content {
+      name     = "challenge-tokenless"
+      priority = 10
+
+      statement {
+        and_statement {
+          statement {
+            label_match_statement {
+              scope = "LABEL"
+              key   = "awswaf:managed:token:absent"
+            }
+          }
+          statement {
+            not_statement {
+              statement {
+                label_match_statement {
+                  scope = "LABEL"
+                  key   = "awswaf:managed:aws:bot-control:bot:verified"
+                }
+              }
+            }
+          }
+          statement {
+            not_statement {
+              statement {
+                byte_match_statement {
+                  search_string = "."
+                  field_to_match {
+                    uri_path {}
+                  }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "CONTAINS"
+                }
+              }
+            }
+          }
+        }
+      }
+
+      action {
+        challenge {}
+      }
+
+      rule_label {
+        name = "tcf:tokenless"
+      }
+
+      challenge_config {
+        immunity_time_property {
+          immunity_time = 3600
+        }
+      }
+
+      visibility_config {
+        sampled_requests_enabled   = true
+        cloudwatch_metrics_enabled = true
+        metric_name                = "challenge-tokenless"
+      }
+    }
+  }
+
+  dynamic "rule" {
+    for_each = local.waf_enabled ? [1] : []
+    content {
+      name     = "captcha-ja4-scrapers"
+      priority = 11
+
+      statement {
+        and_statement {
+          statement {
+            or_statement {
+              statement {
+                byte_match_statement {
+                  search_string = "t13d1516h2_8daaf6152771_02713d6af862"
+                  field_to_match {
+                    ja4_fingerprint {
+                      fallback_behavior = "NO_MATCH"
+                    }
+                  }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "EXACTLY"
+                }
+              }
+              statement {
+                and_statement {
+                  statement {
+                    byte_match_statement {
+                      search_string = "t13d1516h2_8daaf6152771_d8a2da3f94cd"
+                      field_to_match {
+                        ja4_fingerprint {
+                          fallback_behavior = "NO_MATCH"
+                        }
+                      }
+                      text_transformation {
+                        priority = 0
+                        type     = "NONE"
+                      }
+                      positional_constraint = "EXACTLY"
+                    }
+                  }
+                  statement {
+                    byte_match_statement {
+                      search_string = "Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146."
+                      field_to_match {
+                        single_header {
+                          name = "user-agent"
+                        }
+                      }
+                      text_transformation {
+                        priority = 0
+                        type     = "NONE"
+                      }
+                      positional_constraint = "CONTAINS"
+                    }
+                  }
+                }
+              }
+            }
+          }
+          statement {
+            not_statement {
+              statement {
+                byte_match_statement {
+                  search_string = "."
+                  field_to_match {
+                    uri_path {}
+                  }
+                  text_transformation {
+                    priority = 0
+                    type     = "NONE"
+                  }
+                  positional_constraint = "CONTAINS"
+                }
+              }
+            }
+          }
+          statement {
+            not_statement {
+              statement {
+                label_match_statement {
+                  scope = "LABEL"
+                  key   = "awswaf:managed:aws:bot-control:bot:verified"
+                }
+              }
+            }
+          }
+        }
+      }
+
+      action {
+        captcha {}
+      }
+
+      rule_label {
+        name = "tcf:ja4-scraper"
+      }
+
+      visibility_config {
+        sampled_requests_enabled   = true
+        cloudwatch_metrics_enabled = true
+        metric_name                = "captcha-ja4-scrapers"
+      }
     }
   }
 
@@ -818,10 +853,6 @@ resource "aws_wafv2_web_acl" "main" {
     metric_name                = "tcf-web-acl"
   }
 
-  lifecycle {
-    create_before_destroy = true
-  }
-
   tags = {
     Name = "${local.name_prefix}-web-acl"
   }
@@ -829,17 +860,16 @@ resource "aws_wafv2_web_acl" "main" {
 
 resource "aws_wafv2_web_acl_logging_configuration" "main" {
   provider                = aws.us_east_1
-  count                   = local.waf_enabled ? 1 : 0
-  resource_arn            = aws_wafv2_web_acl.main[0].arn
+  resource_arn            = aws_wafv2_web_acl.main.arn
   log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
 }
 
 moved {
-  from = aws_wafv2_web_acl.main
-  to   = aws_wafv2_web_acl.main[0]
+  from = aws_wafv2_web_acl.main[0]
+  to   = aws_wafv2_web_acl.main
 }
 
 moved {
-  from = aws_wafv2_web_acl_logging_configuration.main
-  to   = aws_wafv2_web_acl_logging_configuration.main[0]
+  from = aws_wafv2_web_acl_logging_configuration.main[0]
+  to   = aws_wafv2_web_acl_logging_configuration.main
 }
