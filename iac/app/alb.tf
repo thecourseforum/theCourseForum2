@@ -10,7 +10,7 @@ resource "aws_lb" "main" {
   drop_invalid_header_fields = true
 
   dynamic "access_logs" {
-    for_each = var.alb_access_logs_enabled ? [1] : []
+    for_each = local.alb_access_logs_enabled ? [1] : []
     content {
       bucket  = aws_s3_bucket.logs[0].id
       prefix  = "alb"

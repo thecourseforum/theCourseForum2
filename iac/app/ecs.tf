@@ -4,7 +4,7 @@ resource "aws_ecs_cluster" "main" {
 
   setting {
     name  = "containerInsights"
-    value = var.container_insights
+    value = local.container_insights
   }
 
   tags = {

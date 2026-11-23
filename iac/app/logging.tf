@@ -1,5 +1,5 @@
 locals {
-  s3_logs_enabled = var.alb_access_logs_enabled || var.vpc_flow_logs_enabled
+  s3_logs_enabled = local.alb_access_logs_enabled || local.vpc_flow_logs_enabled
 }
 
 resource "aws_cloudwatch_log_group" "cloudfront" {
@@ -14,7 +14,7 @@ resource "aws_cloudwatch_log_group" "cloudfront" {
 
 resource "aws_cloudwatch_log_delivery_source" "cloudfront" {
   provider     = aws.us_east_1
-  count        = var.cloudfront_logs_enabled ? 1 : 0
+  count        = local.cloudfront_logs_enabled ? 1 : 0
   name         = "${local.name_prefix}-cloudfront"
   log_type     = "ACCESS_LOGS"
   resource_arn = aws_cloudfront_distribution.main.arn
@@ -22,7 +22,7 @@ resource "aws_cloudwatch_log_delivery_source" "cloudfront" {
 
 resource "aws_cloudwatch_log_delivery_destination" "cloudfront" {
   provider      = aws.us_east_1
-  count         = var.cloudfront_logs_enabled ? 1 : 0
+  count         = local.cloudfront_logs_enabled ? 1 : 0
   name          = "${local.name_prefix}-cloudfront"
   output_format = "json"
 
@@ -33,7 +33,7 @@ resource "aws_cloudwatch_log_delivery_destination" "cloudfront" {
 
 resource "aws_cloudwatch_log_delivery" "cloudfront" {
   provider                 = aws.us_east_1
-  count                    = var.cloudfront_logs_enabled ? 1 : 0
+  count                    = local.cloudfront_logs_enabled ? 1 : 0
   delivery_source_name     = aws_cloudwatch_log_delivery_source.cloudfront[0].name
   delivery_destination_arn = aws_cloudwatch_log_delivery_destination.cloudfront[0].arn
 }
@@ -175,7 +175,7 @@ resource "aws_s3_bucket_policy" "logs" {
 }
 
 resource "aws_flow_log" "main" {
-  count                    = var.vpc_flow_logs_enabled ? 1 : 0
+  count                    = local.vpc_flow_logs_enabled ? 1 : 0
   vpc_id                   = aws_vpc.main.id
   traffic_type             = "ALL"
   log_destination_type     = "s3"

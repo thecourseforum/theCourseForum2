@@ -16,7 +16,7 @@ locals {
     "thecourseforumtest.com" = "Z09238113JE0PLS5VY8RQ"
   }
 
-  waf_enabled  = var.waf_mode != "off"
+  waf_enabled  = local.waf_mode != "off"
   waf_acl_name = "tcf-web-acl"
 
   certificate_domains = flatten([

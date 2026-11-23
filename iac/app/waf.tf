@@ -125,7 +125,7 @@ resource "aws_wafv2_web_acl" "main" {
 
           managed_rule_group_configs {
             aws_managed_rules_bot_control_rule_set {
-              inspection_level        = upper(var.waf_mode)
+              inspection_level        = upper(local.waf_mode)
               enable_machine_learning = true
             }
           }
@@ -860,7 +860,7 @@ resource "aws_wafv2_web_acl" "main" {
 
 resource "aws_wafv2_web_acl_logging_configuration" "main" {
   provider                = aws.us_east_1
-  count                   = var.waf_logs_enabled ? 1 : 0
+  count                   = local.waf_logs_enabled ? 1 : 0
   resource_arn            = aws_wafv2_web_acl.main.arn
   log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
 }

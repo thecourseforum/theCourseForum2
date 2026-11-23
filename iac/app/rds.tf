@@ -46,11 +46,11 @@ resource "aws_db_instance" "postgres" {
   deletion_protection       = true
   delete_automated_backups  = false
 
-  database_insights_mode                = "advanced"
+  database_insights_mode                = local.database_insights_mode
   performance_insights_enabled          = true
-  performance_insights_retention_period = 465
+  performance_insights_retention_period = local.database_insights_mode == "advanced" ? 465 : 7
 
-  enabled_cloudwatch_logs_exports = var.rds_logs_enabled ? ["postgresql"] : []
+  enabled_cloudwatch_logs_exports = local.rds_logs_enabled ? ["postgresql"] : []
 
   tags = {
     Name = "${local.name_prefix}-postgres"

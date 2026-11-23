@@ -21,13 +21,19 @@ variable "domain_name" {
   }
 }
 
+variable "enrollment_mode" {
+  description = "Use the enrollment-period defaults for WAF, logging, Container Insights and Database Insights instead of the normal ones; settings set explicitly still win"
+  type        = bool
+  default     = false
+}
+
 variable "waf_mode" {
-  description = "WAF protection level: off, common or targeted Bot Control"
+  description = "WAF protection level: off, common or targeted Bot Control; null follows enrollment_mode"
   type        = string
-  default     = "targeted"
+  default     = null
 
   validation {
-    condition     = contains(["off", "common", "targeted"], var.waf_mode)
+    condition     = var.waf_mode == null || contains(["off", "common", "targeted"], var.waf_mode)
     error_message = "waf_mode must be off, common or targeted."
   }
 }
@@ -128,9 +134,9 @@ variable "app_logs_retention_days" {
 }
 
 variable "waf_logs_enabled" {
-  description = "Send WAF request logs to CloudWatch Logs"
+  description = "Send WAF request logs to CloudWatch Logs; null follows enrollment_mode"
   type        = bool
-  default     = true
+  default     = null
 }
 
 variable "waf_logs_retention_days" {
@@ -140,9 +146,9 @@ variable "waf_logs_retention_days" {
 }
 
 variable "cloudfront_logs_enabled" {
-  description = "Send CloudFront access logs to CloudWatch Logs"
+  description = "Send CloudFront access logs to CloudWatch Logs; null follows enrollment_mode"
   type        = bool
-  default     = false
+  default     = null
 }
 
 variable "cloudfront_logs_retention_days" {
@@ -152,31 +158,42 @@ variable "cloudfront_logs_retention_days" {
 }
 
 variable "alb_access_logs_enabled" {
-  description = "Write ALB access logs to the logs bucket"
+  description = "Write ALB access logs to the logs bucket; null follows enrollment_mode"
   type        = bool
-  default     = false
+  default     = null
 }
 
 variable "rds_logs_enabled" {
-  description = "Export PostgreSQL logs to CloudWatch Logs"
+  description = "Export PostgreSQL logs to CloudWatch Logs; null follows enrollment_mode"
   type        = bool
-  default     = false
+  default     = null
 }
 
 variable "vpc_flow_logs_enabled" {
-  description = "Write VPC flow logs to the logs bucket"
+  description = "Write VPC flow logs to the logs bucket; null follows enrollment_mode"
   type        = bool
-  default     = false
+  default     = null
 }
 
 variable "container_insights" {
-  description = "ECS Container Insights level: enhanced, enabled or disabled"
+  description = "ECS Container Insights level: enhanced, enabled or disabled; null follows enrollment_mode"
   type        = string
-  default     = "enabled"
+  default     = null
 
   validation {
-    condition     = contains(["enhanced", "enabled", "disabled"], var.container_insights)
+    condition     = var.container_insights == null || contains(["enhanced", "enabled", "disabled"], var.container_insights)
     error_message = "container_insights must be enhanced, enabled or disabled."
+  }
+}
+
+variable "database_insights_mode" {
+  description = "RDS Database Insights mode: standard (free, 7 days of Performance Insights) or advanced (15 months, billed per vCPU-hour); null follows enrollment_mode"
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.database_insights_mode == null || contains(["standard", "advanced"], var.database_insights_mode)
+    error_message = "database_insights_mode must be standard or advanced."
   }
 }
 
