@@ -169,6 +169,17 @@ variable "vpc_flow_logs_enabled" {
   default     = false
 }
 
+variable "container_insights" {
+  description = "ECS Container Insights level: enhanced, enabled or disabled"
+  type        = string
+  default     = "enabled"
+
+  validation {
+    condition     = contains(["enhanced", "enabled", "disabled"], var.container_insights)
+    error_message = "container_insights must be enhanced, enabled or disabled."
+  }
+}
+
 variable "db_name" {
   description = "Database name"
   type        = string
