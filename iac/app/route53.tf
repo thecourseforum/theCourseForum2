@@ -17,9 +17,10 @@ resource "aws_route53_record" "origin" {
 resource "aws_route53_record" "root" {
   provider = aws.dns
 
-  zone_id = data.aws_route53_zone.main.zone_id
-  name    = var.domain_name
-  type    = "A"
+  zone_id         = data.aws_route53_zone.main.zone_id
+  name            = var.domain_name
+  type            = "A"
+  allow_overwrite = true
 
   alias {
     name                   = aws_cloudfront_distribution.main.domain_name
