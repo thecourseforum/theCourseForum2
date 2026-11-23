@@ -198,41 +198,6 @@ resource "aws_iam_role_policy" "github_deployer" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid      = "LogInToEcr"
-        Effect   = "Allow"
-        Action   = "ecr:GetAuthorizationToken"
-        Resource = "*"
-      },
-      {
-        Sid    = "PushApplicationImages"
-        Effect = "Allow"
-        Action = [
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:BatchGetImage",
-          "ecr:DescribeImages",
-          "ecr:GetDownloadUrlForLayer",
-          "ecr:InitiateLayerUpload",
-          "ecr:UploadLayerPart",
-          "ecr:CompleteLayerUpload",
-          "ecr:PutImage"
-        ]
-        Resource = "arn:aws:ecr:${var.aws_region}:${local.app_account_id}:repository/${var.application_role_prefix}*"
-      },
-      {
-        Sid    = "RegisterTaskDefinitions"
-        Effect = "Allow"
-        Action = [
-          "ecs:DescribeTaskDefinition",
-          "ecs:RegisterTaskDefinition"
-        ]
-        Resource = "*"
-        Condition = {
-          StringEquals = {
-            "aws:RequestedRegion" = var.aws_region
-          }
-        }
-      },
-      {
         Sid      = "RunReleaseTasks"
         Effect   = "Allow"
         Action   = "ecs:RunTask"
@@ -250,12 +215,9 @@ resource "aws_iam_role_policy" "github_deployer" {
         Resource = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:task/${local.application_name_prefix}-cluster/*"
       },
       {
-        Sid    = "DeployApplicationServices"
-        Effect = "Allow"
-        Action = [
-          "ecs:DescribeServices",
-          "ecs:UpdateService"
-        ]
+        Sid      = "ReadApplicationServices"
+        Effect   = "Allow"
+        Action   = "ecs:DescribeServices"
         Resource = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:service/${local.application_name_prefix}-cluster/${var.application_role_prefix}*"
       },
       {
