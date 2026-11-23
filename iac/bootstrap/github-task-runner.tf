@@ -157,9 +157,9 @@ resource "aws_iam_policy" "application_role_boundary" {
   }
 }
 
-resource "aws_iam_role" "github_deployer" {
+resource "aws_iam_role" "github_task_runner" {
   provider = aws.app
-  name     = var.github_deployer_role_name
+  name     = var.github_task_runner_role_name
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -174,7 +174,7 @@ resource "aws_iam_role" "github_deployer" {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
             "token.actions.githubusercontent.com:sub" = [
-              for environment in var.code_deploy_github_environments :
+              for environment in var.task_runner_github_environments :
               "repo:${var.github_repository}:environment:${environment}"
             ]
           }
@@ -184,15 +184,15 @@ resource "aws_iam_role" "github_deployer" {
   })
 
   tags = {
-    Name      = var.github_deployer_role_name
+    Name      = var.github_task_runner_role_name
     ManagedBy = "bootstrap-terraform"
   }
 }
 
-resource "aws_iam_role_policy" "github_deployer" {
+resource "aws_iam_role_policy" "github_task_runner" {
   provider = aws.app
-  name     = "${var.github_deployer_role_name}-policy"
-  role     = aws_iam_role.github_deployer.id
+  name     = "${var.github_task_runner_role_name}-policy"
+  role     = aws_iam_role.github_task_runner.id
 
   policy = jsonencode({
     Version = "2012-10-17"

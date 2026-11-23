@@ -8,9 +8,9 @@ output "terraform_planner_role_arn" {
   value       = aws_iam_role.terraform_planner.arn
 }
 
-output "github_deployer_role_arn" {
-  description = "Application-account role assumed by GitHub Actions for code deployments"
-  value       = aws_iam_role.github_deployer.arn
+output "github_task_runner_role_arn" {
+  description = "Application-account role GitHub Actions assumes to start tasks from existing task definitions"
+  value       = aws_iam_role.github_task_runner.arn
 }
 
 output "application_role_boundary_arn" {

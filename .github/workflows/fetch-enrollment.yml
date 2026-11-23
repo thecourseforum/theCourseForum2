@@ -23,7 +23,7 @@ env:
 jobs:
   fetch-enrollment:
     runs-on: ubuntu-latest
-    environment: prod
+    environment: ecs-tasks
     timeout-minutes: 30
     steps:
       - name: Check out repository
@@ -35,7 +35,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
         with:
           aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: arn:aws:iam::099933383052:role/tcf-github-deployer
+          role-to-assume: arn:aws:iam::099933383052:role/tcf-github-task-runner
           allowed-account-ids: "099933383052"
 
       - name: Run fetch_enrollment on Fargate

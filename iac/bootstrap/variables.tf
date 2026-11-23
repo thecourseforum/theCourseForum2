@@ -26,10 +26,10 @@ variable "terraform_plan_github_environments" {
   default     = ["terraform-plan"]
 }
 
-variable "code_deploy_github_environments" {
-  description = "GitHub Actions environments permitted to assume the GitHub deployer role"
+variable "task_runner_github_environments" {
+  description = "GitHub Actions environments allowed to start tasks from existing tcf-prod-django task definitions; cannot change images, task definitions or services"
   type        = list(string)
-  default     = ["prod"]
+  default     = ["ecs-tasks"]
 }
 
 variable "github_repository" {
@@ -38,10 +38,10 @@ variable "github_repository" {
   default     = "thecourseforum/theCourseForum2"
 }
 
-variable "github_deployer_role_name" {
-  description = "Role assumed by GitHub Actions through OIDC for application code deployments"
+variable "github_task_runner_role_name" {
+  description = "Role GitHub Actions assumes through OIDC to start tasks from existing task definitions"
   type        = string
-  default     = "tcf-github-deployer"
+  default     = "tcf-github-task-runner"
 }
 
 variable "terraform_deployer_role_name" {

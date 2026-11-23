@@ -4,7 +4,7 @@ This small Terraform project creates the resources needed by `../app`:
 
 - `tcf-terraform-deployer` in the application account, for local and GitHub Actions Terraform applies
 - `tcf-terraform-planner` in the application account, for GitHub Actions Terraform plans
-- `tcf-github-deployer` in the application account, for the GitHub Actions enrollment fetch
+- `tcf-github-task-runner` in the application account, for scheduled GitHub Actions jobs that start tasks from existing task definitions
 - `tcf-prod-role-boundary`, the permissions boundary every application role must carry
 - A KMS-encrypted, versioned S3 state bucket in the application account, which also holds saved plans
 - A GitHub Actions OIDC provider in the application account
@@ -110,7 +110,7 @@ cannot change infrastructure or deploy. It receives `ReadOnlyAccess` plus:
 
 It is explicitly denied reading objects in the database dump bucket.
 
-`tcf-github-deployer` is scoped to running one-off tasks on the existing web
+`tcf-github-task-runner` is scoped to running one-off tasks on the existing web
 task definition, which `.github/workflows/fetch-enrollment.yml` uses:
 
 - run `tcf-prod-django` task definitions on `tcf-prod-cluster` and read those
@@ -123,7 +123,8 @@ task definition, which `.github/workflows/fetch-enrollment.yml` uses:
 
 It cannot push images, register task definitions, update services, read
 Terraform state, change infrastructure, or assume either DNS role. GitHub
-Actions assumes it only from the `prod` environment.
+Actions assumes it only from the `ecs-tasks` environment, which allows only
+`dev` and has no required reviewer so scheduled jobs run unattended.
 
 In account `011713309463`, `tcf-terraform-dns` trusts only
 `tcf-terraform-deployer` and can change records, while
@@ -177,4 +178,4 @@ does not carry the read-only role into the apply.
 Protect the `dev` branch and the environments because
 they control which workflow code can request the OIDC token.
 
-Only `.github/workflows/fetch-enrollment.yml` assumes `tcf-github-deployer`.
+Only `.github/workflows/fetch-enrollment.yml` assumes `tcf-github-task-runner`.
