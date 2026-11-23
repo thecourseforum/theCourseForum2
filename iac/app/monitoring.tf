@@ -16,7 +16,7 @@ locals {
     DBInstanceIdentifier = aws_db_instance.postgres.identifier
   }
   waf_dims = {
-    WebACL = aws_wafv2_web_acl.main.name
+    WebACL = local.waf_acl_name
     Rule   = "ALL"
   }
 
@@ -245,7 +245,7 @@ resource "aws_cloudwatch_metric_alarm" "regional" {
 
 resource "aws_cloudwatch_metric_alarm" "edge" {
   provider = aws.us_east_1
-  for_each = local.edge_alarms
+  for_each = local.waf_enabled ? local.edge_alarms : {}
 
   alarm_name          = each.key
   alarm_description   = each.value.description
@@ -500,7 +500,7 @@ resource "aws_cloudwatch_dashboard" "main" {
           period  = 60
           yAxis   = { left = { min = 0 }, right = { min = 0 } }
           metrics = [
-            ["AWS/WAFV2", "AllowedRequests", "WebACL", aws_wafv2_web_acl.main.name, "Rule", "ALL", { stat = "Sum", label = "Allowed", color = "#2ca02c", yAxis = "right" }],
+            ["AWS/WAFV2", "AllowedRequests", "WebACL", local.waf_acl_name, "Rule", "ALL", { stat = "Sum", label = "Allowed", color = "#2ca02c", yAxis = "right" }],
             [".", "BlockedRequests", ".", ".", ".", ".", { stat = "Sum", label = "Blocked (all rules)", color = "#d62728" }],
             [".", "CaptchaRequests", ".", ".", ".", ".", { stat = "Sum", label = "CAPTCHA (all rules)", color = "#ff7f0e" }],
             [".", "ChallengeRequests", ".", ".", ".", ".", { stat = "Sum", label = "Challenge (all rules)", color = "#9467bd" }],
@@ -578,16 +578,16 @@ resource "aws_cloudwatch_dashboard" "main" {
           period  = 60
           yAxis   = { left = { min = 0 } }
           metrics = [
-            ["AWS/WAFV2", "CaptchaRequests", "WebACL", aws_wafv2_web_acl.main.name, "Rule", "aws-anonymous-ip", { stat = "Sum", label = "CAPTCHA: hosting/VPN IPs (aws-anonymous-ip)", color = "#9467bd" }],
-            ["AWS/WAFV2", "CaptchaRequests", "WebACL", aws_wafv2_web_acl.main.name, "Rule", "rate-per-session", { stat = "Sum", label = "CAPTCHA: >300/5min per session", color = "#ffbb78" }],
-            ["AWS/WAFV2", "CaptchaRequests", "WebACL", aws_wafv2_web_acl.main.name, "Rule", "rate-per-ip", { stat = "Sum", label = "CAPTCHA: >300/5min per IP", color = "#e377c2" }],
-            ["AWS/WAFV2", "CaptchaRequests", "WebACL", aws_wafv2_web_acl.main.name, "Rule", "captcha-ja4-scrapers", { stat = "Sum", label = "CAPTCHA: known scraper JA4", color = "#ff7f0e" }],
-            ["AWS/WAFV2", "ChallengeRequests", "WebACL", aws_wafv2_web_acl.main.name, "Rule", "challenge-tokenless", { stat = "Sum", label = "Challenge: tokenless page loads", color = "#17becf" }],
-            ["AWS/WAFV2", "BlockedRequests", "WebACL", aws_wafv2_web_acl.main.name, "Rule", "block-per-session", { stat = "Sum", label = "Block: >1000/5min per session", color = "#d62728" }],
-            ["AWS/WAFV2", "BlockedRequests", "WebACL", aws_wafv2_web_acl.main.name, "Rule", "block-token-reuse", { stat = "Sum", label = "Block: token reuse (medium/high)", color = "#8c564b" }],
-            ["AWS/WAFV2", "BlockedRequests", "WebACL", aws_wafv2_web_acl.main.name, "Rule", "aws-sqli", { stat = "Sum", label = "Block: SQL injection (aws-sqli)", color = "#7f7f7f" }],
-            ["AWS/WAFV2", "BlockedRequests", "WebACL", aws_wafv2_web_acl.main.name, "Rule", "block-sqli-scanner", { stat = "Sum", label = "Block: SQLi scanner", color = "#bcbd22" }],
-            ["AWS/WAFV2", "CountedRequests", "WebACL", aws_wafv2_web_acl.main.name, "Rule", "fetch-without-xrw", { stat = "Sum", label = "Count only: script fetch() (fetch-without-xrw)", color = "#c7c7c7" }],
+            ["AWS/WAFV2", "CaptchaRequests", "WebACL", local.waf_acl_name, "Rule", "aws-anonymous-ip", { stat = "Sum", label = "CAPTCHA: hosting/VPN IPs (aws-anonymous-ip)", color = "#9467bd" }],
+            ["AWS/WAFV2", "CaptchaRequests", "WebACL", local.waf_acl_name, "Rule", "rate-per-session", { stat = "Sum", label = "CAPTCHA: >300/5min per session", color = "#ffbb78" }],
+            ["AWS/WAFV2", "CaptchaRequests", "WebACL", local.waf_acl_name, "Rule", "rate-per-ip", { stat = "Sum", label = "CAPTCHA: >300/5min per IP", color = "#e377c2" }],
+            ["AWS/WAFV2", "CaptchaRequests", "WebACL", local.waf_acl_name, "Rule", "captcha-ja4-scrapers", { stat = "Sum", label = "CAPTCHA: known scraper JA4", color = "#ff7f0e" }],
+            ["AWS/WAFV2", "ChallengeRequests", "WebACL", local.waf_acl_name, "Rule", "challenge-tokenless", { stat = "Sum", label = "Challenge: tokenless page loads", color = "#17becf" }],
+            ["AWS/WAFV2", "BlockedRequests", "WebACL", local.waf_acl_name, "Rule", "block-per-session", { stat = "Sum", label = "Block: >1000/5min per session", color = "#d62728" }],
+            ["AWS/WAFV2", "BlockedRequests", "WebACL", local.waf_acl_name, "Rule", "block-token-reuse", { stat = "Sum", label = "Block: token reuse (medium/high)", color = "#8c564b" }],
+            ["AWS/WAFV2", "BlockedRequests", "WebACL", local.waf_acl_name, "Rule", "aws-sqli", { stat = "Sum", label = "Block: SQL injection (aws-sqli)", color = "#7f7f7f" }],
+            ["AWS/WAFV2", "BlockedRequests", "WebACL", local.waf_acl_name, "Rule", "block-sqli-scanner", { stat = "Sum", label = "Block: SQLi scanner", color = "#bcbd22" }],
+            ["AWS/WAFV2", "CountedRequests", "WebACL", local.waf_acl_name, "Rule", "fetch-without-xrw", { stat = "Sum", label = "Count only: script fetch() (fetch-without-xrw)", color = "#c7c7c7" }],
           ]
         }
       },

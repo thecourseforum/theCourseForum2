@@ -21,6 +21,17 @@ variable "domain_name" {
   }
 }
 
+variable "waf_mode" {
+  description = "WAF protection level: off, common or targeted Bot Control"
+  type        = string
+  default     = "targeted"
+
+  validation {
+    condition     = contains(["off", "common", "targeted"], var.waf_mode)
+    error_message = "waf_mode must be off, common or targeted."
+  }
+}
+
 variable "dns_role_arn" {
   description = "ARN of the role Terraform assumes in the separate Route 53 account"
   type        = string

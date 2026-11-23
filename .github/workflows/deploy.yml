@@ -17,6 +17,7 @@ env:
   AWS_REGION: us-east-1
   TF_IN_AUTOMATION: "true"
   TF_VAR_domain_name: thecourseforum.com
+  TF_VAR_waf_mode: off
   TERRAFORM_VERSION: 1.16.3
   PLANNER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-planner
   DEPLOYER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-deployer

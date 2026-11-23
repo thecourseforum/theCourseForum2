@@ -68,7 +68,7 @@ resource "aws_cloudfront_distribution" "main" {
   default_root_object = ""
   price_class         = "PriceClass_100"
   aliases             = [var.domain_name]
-  web_acl_id          = aws_wafv2_web_acl.main.arn
+  web_acl_id          = local.waf_enabled ? aws_wafv2_web_acl.main[0].arn : null
 
   # S3 Origin for static files (restricted via OAC)
   origin {

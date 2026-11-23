@@ -46,7 +46,8 @@ resource "aws_secretsmanager_secret_version" "waf_canary_header" {
 
 resource "aws_wafv2_web_acl" "main" {
   provider = aws.us_east_1
-  name     = "tcf-web-acl"
+  count    = local.waf_enabled ? 1 : 0
+  name     = local.waf_acl_name
   scope    = "CLOUDFRONT"
 
   default_action {
@@ -120,7 +121,7 @@ resource "aws_wafv2_web_acl" "main" {
 
         managed_rule_group_configs {
           aws_managed_rules_bot_control_rule_set {
-            inspection_level        = "TARGETED"
+            inspection_level        = upper(var.waf_mode)
             enable_machine_learning = true
           }
         }
@@ -824,6 +825,17 @@ resource "aws_wafv2_web_acl" "main" {
 
 resource "aws_wafv2_web_acl_logging_configuration" "main" {
   provider                = aws.us_east_1
-  resource_arn            = aws_wafv2_web_acl.main.arn
+  count                   = local.waf_enabled ? 1 : 0
+  resource_arn            = aws_wafv2_web_acl.main[0].arn
   log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
+}
+
+moved {
+  from = aws_wafv2_web_acl.main
+  to   = aws_wafv2_web_acl.main[0]
+}
+
+moved {
+  from = aws_wafv2_web_acl_logging_configuration.main
+  to   = aws_wafv2_web_acl_logging_configuration.main[0]
 }

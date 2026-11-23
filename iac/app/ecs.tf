@@ -87,7 +87,7 @@ resource "aws_ecs_task_definition" "django" {
         },
         {
           name  = "WAF_INTEGRATION_URL"
-          value = aws_wafv2_web_acl.main.application_integration_url
+          value = local.waf_enabled ? aws_wafv2_web_acl.main[0].application_integration_url : ""
         },
         {
           name  = "SCRIPT_FETCH_LOGIN"
