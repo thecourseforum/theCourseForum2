@@ -2,7 +2,7 @@ locals {
   setting_profiles = {
     normal = {
       waf_mode                = "off"
-      waf_logs_enabled        = true
+      waf_logs_enabled        = false
       cloudfront_logs_enabled = false
       alb_access_logs_enabled = false
       rds_logs_enabled        = false
