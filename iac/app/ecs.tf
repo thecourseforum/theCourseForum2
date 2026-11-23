@@ -2,6 +2,11 @@
 resource "aws_ecs_cluster" "main" {
   name = "${local.name_prefix}-cluster"
 
+  setting {
+    name  = "containerInsights"
+    value = "enhanced"
+  }
+
   tags = {
     Name = "${local.name_prefix}-cluster"
   }
