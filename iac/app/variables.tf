@@ -116,7 +116,7 @@ variable "ecr_image_tag" {
 }
 
 variable "log_retention_days" {
-  description = "Retention in days for extra logs: ALB access, VPC flow, RDS, Redis and Lambda"
+  description = "Retention in days for extra logs: ALB access, VPC flow, RDS, Redis, Lambda and the canary"
   type        = number
   default     = 7
 }

@@ -143,3 +143,21 @@ resource "aws_synthetics_canary" "heartbeat" {
     Name = "${local.name_prefix}-site-heartbeat"
   }
 }
+
+locals {
+  canary_log_group_name = "/aws/lambda/${split(":", aws_synthetics_canary.heartbeat.engine_arn)[6]}"
+}
+
+import {
+  to = aws_cloudwatch_log_group.canary
+  id = local.canary_log_group_name
+}
+
+resource "aws_cloudwatch_log_group" "canary" {
+  name              = local.canary_log_group_name
+  retention_in_days = var.log_retention_days
+
+  tags = {
+    Name = "${local.name_prefix}-canary-logs"
+  }
+}
