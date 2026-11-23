@@ -1,8 +1,8 @@
 # ACM Certificate for CloudFront (must be in us-east-1)
 resource "aws_acm_certificate" "main" {
   provider                  = aws.us_east_1
-  domain_name               = var.domain_name
-  subject_alternative_names = ["origin.${var.domain_name}"]
+  domain_name               = local.certificate_domains[0]
+  subject_alternative_names = slice(local.certificate_domains, 1, length(local.certificate_domains))
   validation_method         = "DNS"
 
   lifecycle {
@@ -23,6 +23,10 @@ resource "aws_route53_record" "cert_validation" {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
+      zone = one([
+        for zone in keys(local.route53_hosted_zone_ids) : zone
+        if dvo.domain_name == zone || endswith(dvo.domain_name, ".${zone}")
+      ])
     }
   }
 
@@ -31,7 +35,7 @@ resource "aws_route53_record" "cert_validation" {
   records         = [each.value.record]
   ttl             = 60
   type            = each.value.type
-  zone_id         = data.aws_route53_zone.main.zone_id
+  zone_id         = local.route53_hosted_zone_ids[each.value.zone]
 }
 
 # Certificate Validation

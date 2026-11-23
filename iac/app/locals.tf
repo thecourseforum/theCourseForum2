@@ -15,4 +15,8 @@ locals {
     "thecourseforum.com"     = "Z06158912Y7SI8FYZM5IA"
     "thecourseforumtest.com" = "Z09238113JE0PLS5VY8RQ"
   }
+
+  certificate_domains = flatten([
+    for zone in sort(keys(local.route53_hosted_zone_ids)) : [zone, "origin.${zone}"]
+  ])
 }
