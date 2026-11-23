@@ -818,6 +818,10 @@ resource "aws_wafv2_web_acl" "main" {
     metric_name                = "tcf-web-acl"
   }
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = {
     Name = "${local.name_prefix}-web-acl"
   }
