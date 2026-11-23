@@ -221,6 +221,12 @@ resource "aws_iam_role_policy" "github_deployer" {
         Resource = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:service/${local.application_name_prefix}-cluster/${var.application_role_prefix}*"
       },
       {
+        Sid      = "ReadReleaseTaskLogs"
+        Effect   = "Allow"
+        Action   = "logs:GetLogEvents"
+        Resource = "arn:aws:logs:${var.aws_region}:${local.app_account_id}:log-group:/ecs/${local.application_web_task_family}:*"
+      },
+      {
         Sid      = "PassApplicationRoles"
         Effect   = "Allow"
         Action   = "iam:PassRole"

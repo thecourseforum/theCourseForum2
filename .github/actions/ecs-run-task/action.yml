@@ -1,0 +1,109 @@
+name: Run ECS task
+description: Run a one-off command on Fargate with the service's network settings, stream its logs, and fail if it fails
+
+inputs:
+  cluster:
+    description: ECS cluster name
+    required: true
+  service:
+    description: ECS service whose task definition and network configuration are used
+    required: true
+  container:
+    description: Container to run the command in
+    required: true
+  command:
+    description: Shell command run with bash -c
+    required: true
+  task-definition:
+    description: Task definition ARN to run instead of the one the service currently runs
+    required: false
+    default: ""
+  log-group:
+    description: CloudWatch log group the container writes to
+    required: true
+  log-stream-prefix:
+    description: awslogs-stream-prefix of the container
+    required: true
+
+outputs:
+  task-arn:
+    description: ARN of the task that ran
+    value: ${{ steps.run.outputs.task-arn }}
+
+runs:
+  using: composite
+  steps:
+    - id: run
+      shell: bash
+      env:
+        CLUSTER: ${{ inputs.cluster }}
+        SERVICE: ${{ inputs.service }}
+        CONTAINER: ${{ inputs.container }}
+        COMMAND: ${{ inputs.command }}
+        TASK_DEFINITION: ${{ inputs.task-definition }}
+        LOG_GROUP: ${{ inputs.log-group }}
+        LOG_STREAM_PREFIX: ${{ inputs.log-stream-prefix }}
+      run: |
+        set -euo pipefail
+
+        service=$(aws ecs describe-services --cluster "$CLUSTER" --services "$SERVICE" --query 'services[0]' --output json)
+        task_def="${TASK_DEFINITION:-$(jq -r .taskDefinition <<< "$service")}"
+        network=$(jq -c .networkConfiguration <<< "$service")
+        overrides=$(jq -cn --arg name "$CONTAINER" --arg cmd "$COMMAND" \
+          '{containerOverrides: [{name: $name, command: ["bash", "-c", $cmd]}]}')
+
+        result=$(aws ecs run-task \
+          --cluster "$CLUSTER" \
+          --task-definition "$task_def" \
+          --launch-type FARGATE \
+          --network-configuration "$network" \
+          --overrides "$overrides" \
+          --started-by "github-${GITHUB_RUN_ID}" \
+          --output json)
+        task_arn=$(jq -r '.tasks[0].taskArn // empty' <<< "$result")
+        if [[ -z "$task_arn" ]]; then
+          echo "::error::Task did not start: $(jq -c .failures <<< "$result")"
+          exit 1
+        fi
+        echo "task-arn=$task_arn" >> "$GITHUB_OUTPUT"
+        echo "Started $task_arn"
+        echo "Task definition: $task_def"
+
+        stream="${LOG_STREAM_PREFIX}/${CONTAINER}/${task_arn##*/}"
+        token=""
+        logs_readable=true
+        print_logs() {
+          $logs_readable || return 0
+          local out next
+          while true; do
+            local args=(--log-group-name "$LOG_GROUP" --log-stream-name "$stream" --start-from-head --output json)
+            [[ -n "$token" ]] && args+=(--next-token "$token")
+            if ! out=$(aws logs get-log-events "${args[@]}" 2>&1); then
+              [[ "$out" == *ResourceNotFoundException* ]] && return 0
+              echo "::warning::Cannot read task logs from ${LOG_GROUP}/${stream}: $out"
+              logs_readable=false
+              return 0
+            fi
+            jq -r '.events[].message' <<< "$out"
+            next=$(jq -r .nextForwardToken <<< "$out")
+            [[ "$next" == "$token" ]] && return 0
+            token="$next"
+          done
+        }
+
+        while true; do
+          status=$(aws ecs describe-tasks --cluster "$CLUSTER" --tasks "$task_arn" --query 'tasks[0].lastStatus' --output text)
+          print_logs
+          [[ "$status" == "STOPPED" ]] && break
+          sleep 10
+        done
+        sleep 5
+        print_logs
+
+        task=$(aws ecs describe-tasks --cluster "$CLUSTER" --tasks "$task_arn" --query 'tasks[0]' --output json)
+        exit_code=$(jq -r --arg name "$CONTAINER" '.containers[] | select(.name == $name) | .exitCode // "none"' <<< "$task")
+        if [[ "$exit_code" != "0" ]]; then
+          echo "::error::Task failed with exit code ${exit_code}: $(jq -r '.stoppedReason // ""' <<< "$task")"
+          exit 1
+        fi
+        echo "Task finished successfully"

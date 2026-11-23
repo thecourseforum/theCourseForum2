@@ -116,7 +116,9 @@ task definition, which `.github/workflows/fetch-enrollment.yml` uses:
 - run `tcf-prod-django` task definitions on `tcf-prod-cluster` and read those
   tasks, so it cannot start the database dump task
 - describe `tcf-prod-*` services on `tcf-prod-cluster`, to copy their network
-  configuration
+  configuration and run the task definition the service currently runs
+- read log events from `/ecs/tcf-prod-django`, to stream the task's output
+  into the job
 - pass only the web task's execution and task roles, and only to ECS tasks
 
 It cannot push images, register task definitions, update services, read

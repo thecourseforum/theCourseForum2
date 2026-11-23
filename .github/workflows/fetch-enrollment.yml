@@ -9,12 +9,16 @@ permissions:
   contents: read
   id-token: write
 
+concurrency:
+  group: fetch-enrollment
+  cancel-in-progress: false
+
 env:
   AWS_REGION: us-east-1
   ECS_CLUSTER: tcf-prod-cluster
   ECS_SERVICE: tcf-prod-django-service
-  ECS_TASK_DEFINITION: tcf-prod-django
   ECS_CONTAINER_NAME: django-app
+  ECS_LOG_GROUP: /ecs/tcf-prod-django
 
 jobs:
   fetch-enrollment:
@@ -22,6 +26,11 @@ jobs:
     environment: prod
     timeout-minutes: 30
     steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: .github/actions
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
         with:
@@ -30,34 +39,11 @@ jobs:
           allowed-account-ids: "099933383052"
 
       - name: Run fetch_enrollment on Fargate
-        run: |
-          NETWORK_CONFIG=$(aws ecs describe-services \
-            --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE" \
-            | jq -c '.services[0].networkConfiguration')
-
-          TASK_ARN=$(aws ecs run-task \
-            --cluster "$ECS_CLUSTER" \
-            --task-definition "$ECS_TASK_DEFINITION" \
-            --launch-type FARGATE \
-            --network-configuration "$NETWORK_CONFIG" \
-            --overrides "{\"containerOverrides\": [{\"name\": \"$ECS_CONTAINER_NAME\", \"command\": [\"python\", \"manage.py\", \"fetch_enrollment\"]}]}" \
-            --query 'tasks[0].taskArn' --output text)
-
-          echo "Started $TASK_ARN"
-          while true; do
-            STATUS=$(aws ecs describe-tasks \
-              --cluster "$ECS_CLUSTER" --tasks "$TASK_ARN" \
-              --query 'tasks[0].lastStatus' --output text)
-            echo "Task status: $STATUS"
-            [ "$STATUS" = "STOPPED" ] && break
-            sleep 15
-          done
-
-          EXIT_CODE=$(aws ecs describe-tasks \
-            --cluster "$ECS_CLUSTER" --tasks "$TASK_ARN" \
-            | jq -r '.tasks[0].containers[0].exitCode')
-          echo "Task exit code: $EXIT_CODE"
-          if [ "$EXIT_CODE" != "0" ]; then
-            echo "fetch_enrollment task failed."
-            exit 1
-          fi
+        uses: ./.github/actions/ecs-run-task
+        with:
+          cluster: ${{ env.ECS_CLUSTER }}
+          service: ${{ env.ECS_SERVICE }}
+          container: ${{ env.ECS_CONTAINER_NAME }}
+          log-group: ${{ env.ECS_LOG_GROUP }}
+          log-stream-prefix: django
+          command: python manage.py fetch_enrollment

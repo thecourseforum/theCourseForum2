@@ -33,7 +33,7 @@ env:
   ECS_CLUSTER: tcf-prod-cluster
   ECR_REPO: tcf-prod-app
   ECR_CONTAINER_NAME: django-app
-  ECS_TASK_FAMILY: tcf-prod-django
+  ECS_LOG_GROUP: /ecs/tcf-prod-django
 
 jobs:
   ci:
@@ -208,14 +208,15 @@ jobs:
 
       - name: Find applied task definition
         id: task-def
+        working-directory: iac/app
         run: |
-          task_def=$(aws ecs describe-task-definition --task-definition "$ECS_TASK_FAMILY" --query taskDefinition)
-          image=$(jq -r --arg name "$ECR_CONTAINER_NAME" '.containerDefinitions[] | select(.name == $name) | .image' <<< "$task_def")
+          arn=$(terraform output -raw task_definition_arn)
+          image=$(aws ecs describe-task-definition --task-definition "$arn" \
+            | jq -r --arg name "$ECR_CONTAINER_NAME" '.taskDefinition.containerDefinitions[] | select(.name == $name) | .image')
           if [[ "$image" != *":${IMAGE_TAG}" ]]; then
-            echo "Latest ${ECS_TASK_FAMILY} revision uses $image, expected tag ${IMAGE_TAG}"
+            echo "Applied task definition $arn uses $image, expected tag ${IMAGE_TAG}"
             exit 1
           fi
-          arn=$(jq -r .taskDefinitionArn <<< "$task_def")
           current=$(aws ecs describe-services --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE" --query 'services[0].taskDefinition' --output text)
           echo "arn=$arn" >> "$GITHUB_OUTPUT"
           if [[ "$current" == "$arn" ]]; then
@@ -227,29 +228,15 @@ jobs:
 
       - name: Run Release Tasks (Migrate, Static, Cache)
         if: steps.task-def.outputs.changed == 'true'
-        env:
-          TASK_DEF_ARN: ${{ steps.task-def.outputs.arn }}
-        run: |
-          NETWORK_CONFIG=$(aws ecs describe-services --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE" | jq -c '.services[0].networkConfiguration')
-          RELEASE_COMMAND="python manage.py migrate && python manage.py collectstatic --noinput && python manage.py clearsessions"
-
-          TASK_ARN=$(aws ecs run-task \
-            --cluster "$ECS_CLUSTER" \
-            --task-definition "$TASK_DEF_ARN" \
-            --launch-type FARGATE \
-            --network-configuration "$NETWORK_CONFIG" \
-            --overrides "{\"containerOverrides\": [{\"name\": \"${ECR_CONTAINER_NAME}\", \"command\": [\"bash\", \"-c\", \"$RELEASE_COMMAND\"]}]}" \
-            | jq -r '.tasks[0].taskArn')
-
-          echo "Waiting for Release Task ($TASK_ARN) to complete..."
-
-          aws ecs wait tasks-stopped --cluster "$ECS_CLUSTER" --tasks "$TASK_ARN"
-
-          EXIT_CODE=$(aws ecs describe-tasks --cluster "$ECS_CLUSTER" --tasks "$TASK_ARN" | jq -r '.tasks[0].containers[0].exitCode')
-          if [ "$EXIT_CODE" != "0" ]; then
-            echo "Release task failed! Halting deployment."
-            exit 1
-          fi
+        uses: ./.github/actions/ecs-run-task
+        with:
+          cluster: ${{ env.ECS_CLUSTER }}
+          service: ${{ env.ECS_SERVICE }}
+          container: ${{ env.ECR_CONTAINER_NAME }}
+          task-definition: ${{ steps.task-def.outputs.arn }}
+          log-group: ${{ env.ECS_LOG_GROUP }}
+          log-stream-prefix: django
+          command: python manage.py migrate && python manage.py collectstatic --noinput && python manage.py clearsessions
 
       - name: Deploy to Amazon ECS
         if: steps.task-def.outputs.changed == 'true'
