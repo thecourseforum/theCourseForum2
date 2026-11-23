@@ -228,7 +228,7 @@ jobs:
           cache: "npm"
 
       - name: Install npm packages
-        run: npm ci
+        run: npm ci --no-audit --no-fund --prefer-offline
 
       - name: Run ESLint
         run: npx eslint tcf_website/static/
