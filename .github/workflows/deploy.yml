@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [dev, iac]
+    branches: [dev]
   workflow_dispatch:
 
 permissions:
@@ -31,7 +31,7 @@ env:
 jobs:
   ci:
     name: Continuous Integration
-    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/iac'
+    if: github.ref == 'refs/heads/dev'
     uses: ./.github/workflows/ci.yml
 
   plan:

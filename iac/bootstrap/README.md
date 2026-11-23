@@ -130,8 +130,8 @@ read them. Both are managed in `thecourseforum/infra`, so change them there.
 
 ## Deploys in GitHub Actions
 
-The workflow at `.github/workflows/deploy.yml` runs on every push to `master`
-or `iac`, in three jobs. The `ci` job runs `.github/workflows/ci.yml` against
+The workflow at `.github/workflows/deploy.yml` runs on every push to `dev`,
+in three jobs. The `ci` job runs `.github/workflows/ci.yml` against
 the pushed commit. Once CI passes, the `plan` job plans `iac/app` with
 `ecr_image_tag` set to the commit SHA, so the plan includes the new web task
 definition. It does not build or push the image. It writes the plan to the run summary and stores it under
@@ -152,9 +152,9 @@ Two GitHub environments back this, under **Settings → Environments**:
 - `terraform-plan` — no required reviewers, so plans run unattended.
 - `terraform-prod` — required reviewers, which is what pauses the apply.
 
-Both restrict deployments to the `master`, `dev` and `iac` branches. That
-restriction is what stops other branches from obtaining an OIDC token for
-either role.
+`terraform-prod` restricts deployments to the `dev` branch. That restriction
+is what stops other branches from obtaining an OIDC token for the deployer
+role.
 
 Approval gating lives in the environment rather than in the workflow file, so
 it applies to pushes on any branch and cannot be removed by editing the
@@ -172,7 +172,7 @@ so write credentials are available only after approval. For Route 53 in account
 the `apply` job assumes `tcf-terraform-dns`. Each job sets its own
 `TF_VAR_dns_role_arn`, and because the variable is ephemeral the saved plan
 does not carry the read-only role into the apply.
-Protect the `master`, `dev` and `iac` branches and the environments because
+Protect the `dev` branch and the environments because
 they control which workflow code can request the OIDC token.
 
 Only `.github/workflows/fetch-enrollment.yml` assumes `tcf-github-deployer`.
