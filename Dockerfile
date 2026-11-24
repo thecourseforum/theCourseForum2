@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED=1 \
     UV_CACHE_DIR=/root/.cache/uv \
     PATH="/opt/venv/bin:$PATH"
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.13.7 /uv /usr/local/bin/uv
 
 WORKDIR /app
 
@@ -50,11 +50,10 @@ FROM base AS prod
 RUN addgroup --system app && \
     adduser --system --ingroup app --home /home/app app && \
     mkdir -p /home/app/.cache/uv && \
-    chown -R app:app /opt/venv /home/app
+    chown -R app:app /opt/venv /home/app && \
+    chown app:app /app
 
 COPY --chown=app:app . /app/
-RUN chown -R app:app /app && \
-    chmod +x /app/scripts/container-startup.sh
 
 ENV HOME=/home/app \
     UV_CACHE_DIR=/home/app/.cache/uv

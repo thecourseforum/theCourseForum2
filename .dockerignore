@@ -10,4 +10,15 @@ __pycache__
 .DS_Store
 .env
 .git
+.jj
 iac/
+.github/
+.devcontainer/*
+!.devcontainer/bashrc
+.vscode/
+doc/
+**/*.md
+.pre-commit-config.yaml
+.prettierignore
+package.json
+package-lock.json
