@@ -13,6 +13,10 @@ on:
         description: Look for application changes since the last successful deploy instead of since the previous push
         type: boolean
         default: false
+      export-image:
+        description: Upload the tested production image as the tcf-web-image artifact so the deploy can push it instead of rebuilding
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -155,16 +159,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
-        with:
-          python-version: ${{ env.PYTHON_TARGET }}
-          enable-cache: true
-          save-cache: false
-
-      - name: Install dependencies
-        run: uv sync --frozen --group dev --no-install-project
-
       - name: Create Compose environment
         run: |
           cat > .env <<EOF
@@ -193,6 +187,27 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Start Compose backends
+        run: docker compose up -d db valkey minio
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+
+      - name: Build production image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: ./Dockerfile
+          target: prod
+          tags: tcf-web:latest
+          outputs: type=docker,dest=${{ runner.temp }}/tcf-web-image.tar
+          cache-from: type=gha,scope=prod-image
+          cache-to: type=gha,scope=prod-image,mode=max
+          provenance: false
+
+      - name: Load production image
+        run: docker load -i "${RUNNER_TEMP}/tcf-web-image.tar"
+
+      - name: Wait for Compose backends
         run: docker compose up -d --wait db valkey minio
 
       - name: Initialize RustFS buckets
@@ -201,7 +216,7 @@ jobs:
       - name: Migrations & Tests
         run: |
           set -o pipefail
-          docker compose --profile full run --rm --build web sh -c \
+          docker compose --profile full run --rm --no-deps web sh -c \
             'uv run --with coverage coverage run manage.py test && \
              uv run --with coverage coverage report' | tee coverage.txt
 
@@ -213,6 +228,17 @@ jobs:
       - name: Tear down Compose
         if: always()
         run: docker compose --profile full down -v
+
+      - name: Upload tested image
+        if: inputs.export-image
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: tcf-web-image
+          path: ${{ runner.temp }}/tcf-web-image.tar
+          retention-days: 1
+          compression-level: 0
+          overwrite: true
+          if-no-files-found: error
 
   eslint:
     runs-on: ubuntu-latest
