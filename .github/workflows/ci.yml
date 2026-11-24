@@ -187,7 +187,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Start Compose backends
-        run: docker compose up -d db valkey minio minio-init
+        run: nohup docker compose up -d db valkey minio minio-init > "${RUNNER_TEMP}/compose-up.log" 2>&1 &
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
@@ -207,12 +207,15 @@ jobs:
       - name: Load production image
         run: docker load -i "${RUNNER_TEMP}/tcf-web-image.tar"
 
-      - name: Wait for Compose backends
-        run: docker compose up -d --wait db valkey minio
-
-      - name: Wait for RustFS buckets
+      - name: Wait for Compose backends and buckets
         run: |
-          code=$(docker wait tcf-minio_init)
+          for _ in $(seq 1 90); do
+            [[ "$(docker inspect -f '{{.State.Status}}' tcf-minio_init 2>/dev/null)" == "exited" ]] && break
+            sleep 2
+          done
+          cat "${RUNNER_TEMP}/compose-up.log"
+          docker compose up -d --wait db valkey minio
+          code=$(docker inspect -f '{{.State.ExitCode}}' tcf-minio_init)
           if [[ "$code" != "0" ]]; then
             docker logs tcf-minio_init
             echo "::error::Bucket setup exited with code $code"
