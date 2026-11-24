@@ -108,7 +108,7 @@ resource "aws_synthetics_canary" "heartbeat" {
   runtime_version      = "syn-nodejs-puppeteer-18.0"
   handler              = "heartbeat.handler"
   zip_file             = data.archive_file.canary_heartbeat.output_path
-  start_canary         = true
+  start_canary         = local.canary_enabled
 
   success_retention_period = 7
   failure_retention_period = 30

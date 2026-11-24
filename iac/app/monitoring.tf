@@ -224,7 +224,7 @@ resource "aws_sns_topic_subscription" "alerts_email" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "regional" {
-  for_each = local.regional_alarms
+  for_each = { for name, alarm in local.regional_alarms : name => alarm if local.canary_enabled || name != "tcf-site-down-external" }
 
   alarm_name          = each.key
   alarm_description   = each.value.description

@@ -71,6 +71,7 @@ collide, and pages rendered by the previous task keep working during a rollout.
 | `vpc_flow_logs_enabled` | `false` | `false` |
 | `container_insights` | `enabled` | `enhanced` |
 | `database_insights_mode` | `standard` | `advanced` |
+| `canary_enabled` | `false` | `true` |
 
 Each setting also has its own variable. Left `null`, it follows the profile;
 set, it wins over the profile.
