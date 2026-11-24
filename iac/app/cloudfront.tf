@@ -116,29 +116,6 @@ resource "aws_cloudfront_distribution" "main" {
     compress               = true
   }
 
-  # Cache behavior for /favicon.ico* (route to ALB - matching production)
-  ordered_cache_behavior {
-    path_pattern     = "/favicon.ico*"
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "ALB-${aws_lb.main.name}"
-
-    forwarded_values {
-      query_string = true
-      headers      = ["*"]
-
-      cookies {
-        forward = "all"
-      }
-    }
-
-    viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 0
-    max_ttl                = 0
-    compress               = true
-  }
-
   # Cache behavior for *.* (any file extension → S3 - matching production)
   ordered_cache_behavior {
     path_pattern     = "*.*"
