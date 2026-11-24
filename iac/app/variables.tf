@@ -22,7 +22,7 @@ variable "domain_name" {
 }
 
 variable "enrollment_mode" {
-  description = "Use the enrollment-period defaults for WAF, logging, Container Insights and Database Insights instead of the normal ones; settings set explicitly still win"
+  description = "Use the enrollment-period defaults for WAF, logging, Container Insights, Database Insights and the canary instead of the normal ones; settings set explicitly still win"
   type        = bool
   default     = false
 }
@@ -195,6 +195,12 @@ variable "database_insights_mode" {
     condition     = var.database_insights_mode == null || contains(["standard", "advanced"], var.database_insights_mode)
     error_message = "database_insights_mode must be standard or advanced."
   }
+}
+
+variable "canary_enabled" {
+  description = "Run the Synthetics heartbeat canary every 5 minutes; null follows enrollment_mode"
+  type        = bool
+  default     = null
 }
 
 variable "db_name" {

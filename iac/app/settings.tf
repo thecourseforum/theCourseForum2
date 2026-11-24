@@ -9,6 +9,7 @@ locals {
       vpc_flow_logs_enabled   = false
       container_insights      = "enabled"
       database_insights_mode  = "standard"
+      canary_enabled          = false
     }
     enrollment = {
       waf_mode                = "targeted"
@@ -19,6 +20,7 @@ locals {
       vpc_flow_logs_enabled   = false
       container_insights      = "enhanced"
       database_insights_mode  = "advanced"
+      canary_enabled          = true
     }
   }
 
@@ -32,4 +34,5 @@ locals {
   vpc_flow_logs_enabled   = var.vpc_flow_logs_enabled != null ? var.vpc_flow_logs_enabled : local.setting_profile.vpc_flow_logs_enabled
   container_insights      = var.container_insights != null ? var.container_insights : local.setting_profile.container_insights
   database_insights_mode  = var.database_insights_mode != null ? var.database_insights_mode : local.setting_profile.database_insights_mode
+  canary_enabled          = var.canary_enabled != null ? var.canary_enabled : local.setting_profile.canary_enabled
 }
