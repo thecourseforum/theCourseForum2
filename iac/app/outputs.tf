@@ -68,7 +68,7 @@ output "task_definition_arn" {
 
 output "waf_integration_url" {
   description = "WAF application integration URL the app loads challenge.js from"
-  value       = aws_wafv2_web_acl.main.application_integration_url
+  value       = one(aws_wafv2_web_acl.main[*].application_integration_url)
 }
 
 output "cognito_user_pool_id" {

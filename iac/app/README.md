@@ -77,11 +77,15 @@ set, it wins over the profile.
 
 ## Quirks
 
-- **The WAF web ACL always exists.** With `waf_mode = "off"` it has no rules
-  and CloudFront is detached from it, but AWS still bills $5 a month for it.
-  Deleting the ACL in the same apply that detaches it fails with
-  `WAFAssociatedItemException` while the detach propagates through CloudFront,
-  so the ACL is kept to make switching modes a single in-place apply.
+- **Turning the WAF off takes about 10 minutes longer than other applies.**
+  With `waf_mode = "off"` the web ACL is deleted, since AWS bills $5 a month
+  for one even with no rules. Deleting it in the same apply that detaches it
+  from CloudFront fails with `WAFAssociatedItemException` while the detach
+  propagates, so CloudFront reads the ACL ARN through `time_sleep.waf_detach`.
+  Terraform then detaches CloudFront, waits 5 minutes, and deletes the ACL,
+  which the AWS provider also retries for up to 5 minutes. If the delete still
+  fails, rerun the deploy: CloudFront is already detached, so the second apply
+  only deletes the ACL. Turning the WAF on is a normal single apply.
 - **`dns_role_arn` is ephemeral.** It is never stored in state or in a saved
   plan, so pass it again when applying a saved plan. Plans use the read-only
   DNS role and applies use the writable one.

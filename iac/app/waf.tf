@@ -46,6 +46,7 @@ resource "aws_secretsmanager_secret_version" "waf_canary_header" {
 
 resource "aws_wafv2_web_acl" "main" {
   provider = aws.us_east_1
+  count    = local.waf_enabled ? 1 : 0
   name     = local.waf_acl_name
   scope    = "CLOUDFRONT"
 
@@ -860,14 +861,23 @@ resource "aws_wafv2_web_acl" "main" {
 
 resource "aws_wafv2_web_acl_logging_configuration" "main" {
   provider                = aws.us_east_1
-  count                   = local.waf_logs_enabled ? 1 : 0
-  resource_arn            = aws_wafv2_web_acl.main.arn
+  count                   = local.waf_enabled && local.waf_logs_enabled ? 1 : 0
+  resource_arn            = aws_wafv2_web_acl.main[0].arn
   log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
 }
 
 moved {
-  from = aws_wafv2_web_acl.main[0]
-  to   = aws_wafv2_web_acl.main
+  from = aws_wafv2_web_acl.main
+  to   = aws_wafv2_web_acl.main[0]
+}
+
+resource "time_sleep" "waf_detach" {
+  count            = local.waf_enabled ? 1 : 0
+  destroy_duration = "5m"
+
+  triggers = {
+    web_acl_arn = aws_wafv2_web_acl.main[0].arn
+  }
 }
 
 moved {
