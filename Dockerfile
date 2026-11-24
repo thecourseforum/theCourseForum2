@@ -19,9 +19,9 @@ FROM base AS dev
 
 ENV UV_PYTHON_DOWNLOADS=never
 
-# Node 20 from the official image (Debian ships an older major).
-COPY --from=node:20-bookworm-slim /usr/local/bin/node /usr/local/bin/node
-COPY --from=node:20-bookworm-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
+# Node 24 from the official image (Debian ships an older major).
+COPY --from=node:24-bookworm-slim /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:24-bookworm-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
 RUN ln -s ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
     ln -s ../lib/node_modules/corepack/dist/corepack.js /usr/local/bin/corepack 2>/dev/null; \
     ln -sf ../lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
