@@ -137,17 +137,18 @@ The workflow at `.github/workflows/deploy.yml` runs on every push to `dev`,
 in three jobs. The `ci` job runs `.github/workflows/ci.yml` against
 the pushed commit. Once CI passes, the `plan` job runs
 `.github/workflows/terraform-plan.yml`, which plans `iac/app` with
-`ecr_image_tag` set to the commit SHA, so the plan includes the new web task
-definition. It does not build or push the image. It writes the plan to the run summary and stores it under
+`ecr_image_tag` set to the last commit that changes application code, so the
+plan includes the new web task definition. It does not build or push the image. It writes the plan to the run summary and stores it under
 `plans/<run_id>/` in the state bucket along with the Lambda zip that
 `archive_file` builds during the plan. The plan is never uploaded as a GitHub
 artifact, because it contains every secret in state and artifacts on a public
 repository are readable by anyone.
 
-The `apply` job waits for approval, builds the application image and pushes it
-to `tcf-prod-app` tagged with the commit SHA, applies the saved plan, then
-deletes it. It then runs the release task on the new task definition and points
-`tcf-prod-django-service` at it. Reviewers therefore read the real plan before
+The `apply` job waits for approval, pushes the image CI built and tested to
+`tcf-prod-app` under that tag, applies the saved plan, then deletes it. It then
+uploads static files, runs the release task on the new task definition and
+points `tcf-prod-django-service` at it. See [`../app`](../app/README.md) for
+the application side of a deploy. Reviewers therefore read the real plan before
 approving, the applied plan is the one they read, and one approval covers both
 the infrastructure change and the code deploy.
 
