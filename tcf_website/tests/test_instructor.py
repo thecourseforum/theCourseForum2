@@ -149,7 +149,7 @@ class InstructorTestCase(TestCase):
         """Test taught courses for a particular section."""
         courses_taught = Section.objects.filter(course__in=[self.course, self.course2])
 
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(
             self.instructor.taught_courses(),
             courses_taught,
             transform=lambda x: x,  # Needed so that the formatting works
