@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 5
 requires-python = "==3.12.*"
 
 [[package]]
@@ -693,6 +693,10 @@ dev = [
     { name = "types-tqdm" },
     { name = "websocket-client" },
 ]
+lint = [
+    { name = "djlint" },
+    { name = "ruff" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -727,6 +731,10 @@ dev = [
     { name = "types-requests", specifier = ">=2.31.0" },
     { name = "types-tqdm", specifier = ">=4.66.0" },
     { name = "websocket-client", specifier = ">=1.9.0,<2" },
+]
+lint = [
+    { name = "djlint", specifier = ">=1.46.4,<2" },
+    { name = "ruff", specifier = ">=0.9.0" },
 ]
 
 [[package]]
