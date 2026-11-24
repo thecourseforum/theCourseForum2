@@ -220,6 +220,9 @@ jobs:
             exit 1
           fi
 
+      - name: Check for missing migrations
+        run: docker compose --profile full run --rm --no-deps web python manage.py makemigrations --check --dry-run
+
       - name: Migrations & Tests
         run: |
           set -o pipefail
