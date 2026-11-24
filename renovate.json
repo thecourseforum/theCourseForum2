@@ -14,17 +14,6 @@
     "automerge": true
   },
   "osvVulnerabilityAlerts": true,
-  "customManagers": [
-    {
-      "customType": "regex",
-      "description": "Terraform CLI version the deploy workflow installs",
-      "managerFilePatterns": ["/^\\.github/workflows/deploy\\.yml$/"],
-      "matchStrings": ["TERRAFORM_VERSION: (?<currentValue>\\d+\\.\\d+\\.\\d+)"],
-      "depNameTemplate": "hashicorp/terraform",
-      "datasourceTemplate": "github-releases",
-      "extractVersionTemplate": "^v(?<version>.+)$"
-    }
-  ],
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"],
@@ -33,9 +22,8 @@
       "automerge": true
     },
     {
-      "description": "Terraform CLI upgrades are not planned until after merge, so they come as their own PRs to merge by hand",
-      "matchManagers": ["custom.regex"],
-      "matchDepNames": ["hashicorp/terraform"],
+      "description": "Terraform CLI upgrades come as their own PRs, merged by hand after reading the reviewed PR plan",
+      "matchManagers": ["terraform-version"],
       "groupName": "Terraform CLI",
       "automerge": false
     },
@@ -57,8 +45,16 @@
       "dependencyDashboardApproval": true
     },
     {
-      "description": "iac/ is applied by hand and CI does not run Terraform, so its PRs would pass untested",
+      "description": "Provider updates are merged by hand after reading the reviewed PR plan",
       "matchManagers": ["terraform"],
+      "matchFileNames": ["iac/app/**"],
+      "groupName": "Terraform providers",
+      "automerge": false
+    },
+    {
+      "description": "iac/bootstrap is applied by hand and has no PR plan, so its providers are updated when bootstrap next runs",
+      "matchManagers": ["terraform"],
+      "matchFileNames": ["iac/bootstrap/**"],
       "enabled": false
     }
   ]
