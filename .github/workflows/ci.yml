@@ -5,9 +5,14 @@ on:
   pull_request:
     branches:
       - "*"
+  merge_group:
   push:
-    branches: [dev, master]
+    branches: [master]
   workflow_call:
+    outputs:
+      succeeded-queue-run-id:
+        description: ID of the merge queue run that already tested this commit; if checks ran here, returns empty
+        value: ${{ jobs.changes.outputs.succeeded-queue-run-id }}
     inputs:
       compare-to-last-deploy:
         description: Look for application changes since the last successful deploy instead of since the previous push
@@ -47,6 +52,7 @@ jobs:
       actions: read
     outputs:
       app: ${{ steps.diff.outputs.app }}
+      succeeded-queue-run-id: ${{ steps.diff.outputs.succeeded-queue-run-id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -56,11 +62,19 @@ jobs:
       - name: Check for application changes
         id: diff
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
           COMPARE_TO_LAST_DEPLOY: ${{ inputs.compare-to-last-deploy }}
           GH_TOKEN: ${{ github.token }}
         run: |
           if [[ "$COMPARE_TO_LAST_DEPLOY" == "true" ]]; then
+            succeeded_queue_run_id=$(gh run list -R "$GITHUB_REPOSITORY" --workflow ci.yml --event merge_group --commit "$GITHUB_SHA" \
+              --status success --limit 1 --json databaseId --jq '.[0].databaseId // ""' || true)
+            if [[ -n "$succeeded_queue_run_id" ]]; then
+              echo "Merge queue run ${succeeded_queue_run_id} already tested ${GITHUB_SHA}, skipping checks"
+              echo "succeeded-queue-run-id=$succeeded_queue_run_id" >> "$GITHUB_OUTPUT"
+              echo "app=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
             BASE_SHA=$(gh run list -R "$GITHUB_REPOSITORY" --workflow deploy.yml --branch "$GITHUB_REF_NAME" \
               --status success --limit 1 --json headSha --jq '.[0].headSha // ""' || true)
             echo "Last successful deploy: ${BASE_SHA:-none}"
@@ -84,6 +98,8 @@ jobs:
           fi
 
   lint:
+    needs: changes
+    if: needs.changes.outputs.succeeded-queue-run-id == ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -110,6 +126,8 @@ jobs:
         run: uv run --no-sync djlint tcf_website/templates --check --lint
 
   ty:
+    needs: changes
+    if: needs.changes.outputs.succeeded-queue-run-id == ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -223,7 +241,7 @@ jobs:
         run: docker compose --profile full down -v
 
       - name: Upload tested image
-        if: inputs.export-image
+        if: inputs.export-image || github.event_name == 'merge_group'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: tcf-web-image
@@ -234,6 +252,8 @@ jobs:
           if-no-files-found: error
 
   eslint:
+    needs: changes
+    if: needs.changes.outputs.succeeded-queue-run-id == ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
