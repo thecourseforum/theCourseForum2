@@ -47,10 +47,15 @@ jobs:
 
   apply:
     name: Build, apply and deploy
-    needs: plan
+    needs: [ci, plan]
     runs-on: ubuntu-latest
     timeout-minutes: 120
     environment: terraform-prod
+    # Replaces the workflow-level permissions for this job to add actions: read
+    permissions:
+      contents: read
+      id-token: write
+      actions: read
     env:
       TF_VAR_dns_role_arn: arn:aws:iam::011713309463:role/tcf-terraform-dns
       IMAGE_TAG: ${{ needs.plan.outputs.image_tag }}
@@ -119,6 +124,8 @@ jobs:
         with:
           name: tcf-web-image
           path: ${{ runner.temp }}
+          run-id: ${{ needs.ci.outputs.succeeded-queue-run-id || github.run_id }}
+          github-token: ${{ github.token }}
 
       - name: Push tested image
         if: steps.image.outputs.exists != 'true' && steps.tested-image.outcome == 'success'
