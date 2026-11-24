@@ -1,0 +1,65 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "docker:pinDigests",
+    "helpers:pinGitHubActionDigests",
+    "group:allNonMajor",
+    "schedule:weekly"
+  ],
+  "timezone": "America/New_York",
+  "rangeStrategy": "bump",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "osvVulnerabilityAlerts": true,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Terraform CLI version the deploy workflow installs",
+      "managerFilePatterns": ["/^\\.github/workflows/deploy\\.yml$/"],
+      "matchStrings": ["TERRAFORM_VERSION: (?<currentValue>\\d+\\.\\d+\\.\\d+)"],
+      "depNameTemplate": "hashicorp/terraform",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.+)$"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "automerge": true
+    },
+    {
+      "description": "Terraform CLI upgrades are not planned until after merge, so they come as their own PRs to merge by hand",
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["hashicorp/terraform"],
+      "groupName": "Terraform CLI",
+      "automerge": false
+    },
+    {
+      "description": "Let fresh registry releases age so compromised versions get yanked first",
+      "matchPackageNames": ["*"],
+      "minimumReleaseAge": "3 days",
+      "minimumReleaseAgeBehaviour": "timestamp-required"
+    },
+    {
+      "description": "pyproject.toml requires Python <3.13; applies to Docker tags and requires-python",
+      "matchPackageNames": ["python"],
+      "allowedVersions": "<3.13"
+    },
+    {
+      "description": "Local Postgres matches prod RDS and Valkey tracks ElastiCache 8.2 as closely as images allow; approve on the dashboard when bumping iac/",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["postgres", "valkey/valkey"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "iac/ is applied by hand and CI does not run Terraform, so its PRs would pass untested",
+      "matchManagers": ["terraform"],
+      "enabled": false
+    }
+  ]
+}
