@@ -23,7 +23,7 @@ variable "terraform_github_environments" {
 variable "terraform_plan_github_environments" {
   description = "GitHub Actions environments permitted to assume the Terraform planner role"
   type        = list(string)
-  default     = ["terraform-plan"]
+  default     = ["terraform-plan", "terraform-pr-plan"]
 }
 
 variable "task_runner_github_environments" {

@@ -135,7 +135,8 @@ read them. Both are managed in `thecourseforum/infra`, so change them there.
 
 The workflow at `.github/workflows/deploy.yml` runs on every push to `dev`,
 in three jobs. The `ci` job runs `.github/workflows/ci.yml` against
-the pushed commit. Once CI passes, the `plan` job plans `iac/app` with
+the pushed commit. Once CI passes, the `plan` job runs
+`.github/workflows/terraform-plan.yml`, which plans `iac/app` with
 `ecr_image_tag` set to the commit SHA, so the plan includes the new web task
 definition. It does not build or push the image. It writes the plan to the run summary and stores it under
 `plans/<run_id>/` in the state bucket along with the Lambda zip that
@@ -150,10 +151,16 @@ deletes it. It then runs the release task on the new task definition and points
 approving, the applied plan is the one they read, and one approval covers both
 the infrastructure change and the code deploy.
 
-Two GitHub environments back this, under **Settings → Environments**:
+Three GitHub environments back this, under **Settings → Environments**:
 
 - `terraform-plan` — no required reviewers, so plans run unattended.
 - `terraform-prod` — required reviewers, which is what pauses the apply.
+- `terraform-pr-plan` — required reviewers, with admin bypass off. Pull requests
+  that touch `iac/` or the plan and deploy workflows run the same plan through
+  `.github/workflows/terraform-pr-plan.yml`, without locking or saving it. The
+  planner role can read every secret in state, so a reviewer must read the pull
+  request's Terraform and workflow changes before approving the run. Pull
+  requests from forks never receive an OIDC token.
 
 `terraform-prod` restricts deployments to the `dev` branch. That restriction
 is what stops other branches from obtaining an OIDC token for the deployer
@@ -167,7 +174,8 @@ once the workflow exists on the default branch.
 
 Both jobs request a GitHub OIDC token with audience `sts.amazonaws.com`. The
 `plan` job assumes `tcf-terraform-planner`, whose trust statement accepts only
-subject `repo:thecourseforum/theCourseForum2:environment:terraform-plan`. The
+the subjects `repo:thecourseforum/theCourseForum2:environment:terraform-plan`
+and `repo:thecourseforum/theCourseForum2:environment:terraform-pr-plan`. The
 `apply` job assumes `tcf-terraform-deployer`, whose OIDC trust statement
 accepts only `repo:thecourseforum/theCourseForum2:environment:terraform-prod`,
 so write credentials are available only after approval. For Route 53 in account

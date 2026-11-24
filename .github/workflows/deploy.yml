@@ -16,10 +16,6 @@ concurrency:
 env:
   AWS_REGION: us-east-1
   TF_IN_AUTOMATION: "true"
-  TF_VAR_domain_name: thecourseforum.com
-  TF_VAR_enrollment_mode: "false"
-  TERRAFORM_VERSION: 1.16.3
-  PLANNER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-planner
   DEPLOYER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-deployer
   APP_ACCOUNT_ID: "099933383052"
   PLAN_S3_PREFIX: s3://tcf-terraform-state-099933383052/plans/${{ github.run_id }}
@@ -42,84 +38,12 @@ jobs:
       export-image: true
 
   plan:
-    name: Terraform plan
+    name: Terraform
     needs: ci
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    environment: terraform-plan
-    env:
-      TF_VAR_dns_role_arn: arn:aws:iam::011713309463:role/tcf-terraform-dns-readonly
-    outputs:
-      image_tag: ${{ steps.image-tag.outputs.tag }}
-    steps:
-      - name: Check out selected revision
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-
-      - name: Pick image tag from the last application change
-        id: image-tag
-        run: |
-          tag=$(git log -1 --format=%H -- . ':!iac' ':!.github')
-          if [[ -z "$tag" ]]; then
-            echo "Could not find a commit that changes application code"
-            exit 1
-          fi
-          echo "Image tag: $tag"
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          echo "TF_VAR_ecr_image_tag=$tag" >> "$GITHUB_ENV"
-
-      - name: Install Terraform
-        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
-        with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-          terraform_wrapper: false
-
-      - name: Assume Terraform planner role
-        uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
-        with:
-          role-to-assume: ${{ env.PLANNER_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Verify AWS account and role
-        run: |
-          account=$(aws sts get-caller-identity --query Account --output text)
-          arn=$(aws sts get-caller-identity --query Arn --output text)
-          if [[ "$account" != "${APP_ACCOUNT_ID}" || "$arn" != arn:aws:sts::${APP_ACCOUNT_ID}:assumed-role/tcf-terraform-planner/* ]]; then
-            echo "Unexpected AWS identity: $arn"
-            exit 1
-          fi
-
-      - name: Initialize Terraform
-        working-directory: iac/app
-        run: terraform init -input=false
-
-      - name: Validate Terraform
-        working-directory: iac/app
-        run: terraform validate -no-color
-
-      - name: Plan infrastructure changes
-        working-directory: iac/app
-        run: terraform plan -input=false -no-color -lock-timeout=5m -out=tfplan
-
-      - name: Summarize planned changes
-        working-directory: iac/app
-        run: |
-          {
-            echo '## Terraform plan'
-            echo
-            echo "Image: \`${ECR_REPO}:${TF_VAR_ecr_image_tag}\`"
-            echo
-            echo '```'
-            terraform show -no-color tfplan
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Store saved plan
-        working-directory: iac/app
-        run: |
-          aws s3 cp tfplan "${PLAN_S3_PREFIX}/tfplan"
-          aws s3 cp --recursive .terraform/build "${PLAN_S3_PREFIX}/build"
+    uses: ./.github/workflows/terraform-plan.yml
+    with:
+      environment: terraform-plan
+      save-plan: true
 
   apply:
     name: Build, apply and deploy
@@ -148,7 +72,7 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
         with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_version: ${{ needs.plan.outputs.terraform_version }}
           terraform_wrapper: false
 
       - name: Assume Terraform deployer role
