@@ -36,15 +36,15 @@ Services without a profile provide the shared local infrastructure:
 | --- | --- | --- |
 | `db` | PostgreSQL 18.1 | internal only |
 | `valkey` | Cache, sessions, and Cachalot | internal only |
-| `minio` | RustFS, S3-compatible media/static storage | API `localhost:9000`, console `localhost:9001/rustfs/console/` |
-| `minio-init` | Creates the RustFS buckets, then exits | none |
-| `cdn` | Serves the RustFS static bucket through Caddy | `http://localhost:8081` |
+| `minio` | RustFS, S3-compatible media storage | API `localhost:9000`, console `localhost:9001/rustfs/console/` |
+| `minio-init` | Creates the RustFS media bucket, then exits | none |
+| `cdn` | Serves the collected static files through Caddy, like CloudFront in production | `http://localhost:8081` |
 
 The `full` profile adds the production-shaped application services:
 
 | Service | Purpose |
 | --- | --- |
-| `release` | Migrations, static collection, Cachalot invalidation, and session cleanup |
+| `release` | Migrations, Cachalot invalidation, and session cleanup |
 | `web` | Bundled Django application served by Gunicorn on `localhost:8000` |
 
 The `dev` profile adds the VS Code development container:
@@ -82,8 +82,10 @@ but do not populate course data. It may stop or remove the existing
 devcontainer, so run it from the host rather than a devcontainer terminal.
 
 Inside the devcontainer terminal, start the infrastructure, apply migrations,
-collect static files, and run Django. The `release` command is a one-off task;
-it does not start the `web` service, so the final command starts Django:
+and run Django. `runserver` serves static files straight from
+`tcf_website/static`, so edits show up without collecting them. The `release`
+command is a one-off task; it does not start the `web` service, so the final
+command starts Django:
 
 ```bash
 docker compose up -d

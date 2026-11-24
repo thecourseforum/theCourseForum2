@@ -37,7 +37,6 @@ env:
   MINIO_BUCKET: tcf-media
   MINIO_ACCESS_KEY: minioadmin
   MINIO_SECRET_KEY: minioadmin
-  STATIC_BUCKET: tcf-static
   STATIC_CUSTOM_DOMAIN: localhost:8081
 
 jobs:
@@ -175,7 +174,6 @@ jobs:
           MINIO_BUCKET=${MINIO_BUCKET}
           MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
           MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
-          STATIC_BUCKET=${STATIC_BUCKET}
           STATIC_CUSTOM_DOMAIN=${STATIC_CUSTOM_DOMAIN}
           EOF
 
@@ -226,8 +224,7 @@ jobs:
         run: |
           set -o pipefail
           docker compose --profile full run --rm --no-deps web sh -c \
-            'python manage.py collectstatic --noinput > /dev/null && \
-             uv run --with coverage coverage run manage.py test && \
+            'uv run --with coverage coverage run manage.py test && \
              uv run --with coverage coverage report' | tee coverage.txt
 
       - name: Get code coverage

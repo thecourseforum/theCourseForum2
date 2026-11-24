@@ -215,6 +215,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
+          target: prod
           push: true
           tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ env.IMAGE_TAG }}
           cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:buildcache
@@ -244,7 +245,42 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Run Release Tasks (Migrate, Static, Cache)
+      - name: Set up Docker Buildx for static files
+        if: steps.task-def.outputs.changed == 'true'
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+
+      - name: Build static files
+        if: steps.task-def.outputs.changed == 'true'
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: ./Dockerfile
+          target: static-files
+          outputs: type=local,dest=${{ runner.temp }}/static-files
+          cache-from: |
+            type=gha,scope=prod-image
+            type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:buildcache
+          provenance: false
+
+      - name: Upload static files
+        if: steps.task-def.outputs.changed == 'true'
+        working-directory: iac/app
+        env:
+          IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ env.IMAGE_TAG }}
+        run: |
+          manifest="${RUNNER_TEMP}/static-files/staticfiles.json"
+          if ! docker run --rm --entrypoint cat "$IMAGE" /app/staticfiles/staticfiles.json | cmp -s - "$manifest"; then
+            echo "::error::Static manifest in $IMAGE does not match the collected static files"
+            exit 1
+          fi
+          bucket=$(terraform output -raw s3_bucket_name)
+          aws s3 sync "${RUNNER_TEMP}/static-files" "s3://${bucket}/" \
+            --exclude staticfiles.json \
+            --cache-control "public, max-age=31536000, immutable" \
+            --only-show-errors
+          echo "Uploaded $(find "${RUNNER_TEMP}/static-files" -type f | wc -l) static files to ${bucket}"
+
+      - name: Run Release Tasks (Migrate, Sessions)
         if: steps.task-def.outputs.changed == 'true'
         uses: ./.github/actions/ecs-run-task
         with:
@@ -254,7 +290,7 @@ jobs:
           task-definition: ${{ steps.task-def.outputs.arn }}
           log-group: ${{ env.ECS_LOG_GROUP }}
           log-stream-prefix: django
-          command: python manage.py migrate && python manage.py collectstatic --noinput && python manage.py clearsessions
+          command: python manage.py migrate && python manage.py clearsessions
 
       - name: Deploy to Amazon ECS
         if: steps.task-def.outputs.changed == 'true'

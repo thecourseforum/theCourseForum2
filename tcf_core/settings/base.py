@@ -89,6 +89,11 @@ def s3_storage(
     }
 
 
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+MANIFEST_STATIC_STORAGE = {
+    "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+}
+
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
 CACHALOT_ENABLED = True

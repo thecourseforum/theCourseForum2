@@ -22,3 +22,4 @@ doc/
 .prettierignore
 package.json
 package-lock.json
+staticfiles/

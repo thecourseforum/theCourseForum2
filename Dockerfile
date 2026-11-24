@@ -44,6 +44,24 @@ RUN grep -q 'tcf-dev-bashrc' /root/.bashrc || echo '. /root/tcf-dev-bashrc' >> /
 
 # Source code comes from the devcontainer.json bind mount, not baked in.
 
+FROM base AS static-build
+
+COPY manage.py ./
+COPY tcf_core ./tcf_core
+COPY tcf_website ./tcf_website
+RUN DJANGO_SETTINGS_MODULE=tcf_core.settings.dev TCF_ENV=ci STATIC_MANIFEST=true \
+    SECRET_KEY=collectstatic DB_NAME=x DB_USER=x DB_PASSWORD=x DB_HOST=x DB_PORT=5432 \
+    python manage.py collectstatic --noinput
+
+FROM scratch AS static-files
+
+COPY --from=static-build /app/staticfiles/ /
+
+FROM caddy:2-alpine AS cdn
+
+COPY Caddyfile /etc/caddy/Caddyfile
+COPY --from=static-build /app/staticfiles/ /srv/
+
 # Shipped to ECS by the deploy workflow.
 FROM base AS prod
 
@@ -53,7 +71,8 @@ RUN addgroup --system app && \
     chown -R app:app /opt/venv /home/app && \
     chown app:app /app
 
-COPY --chown=app:app . /app/
+COPY --chown=app:app --exclude=tcf_website/static . /app/
+COPY --chown=app:app --from=static-build /app/staticfiles/staticfiles.json /app/staticfiles/
 
 ENV HOME=/home/app \
     UV_CACHE_DIR=/home/app/.cache/uv

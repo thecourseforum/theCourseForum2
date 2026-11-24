@@ -1,7 +1,4 @@
-# Serves the static bucket on :8081.
-# {$STATIC_BUCKET} comes from the container environment.
-
 :80 {
-	rewrite * /{$STATIC_BUCKET}{uri}
-	reverse_proxy minio:9000
+	root * /srv
+	file_server
 }
