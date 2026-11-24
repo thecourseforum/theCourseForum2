@@ -210,8 +210,8 @@ jobs:
         run: |
           set -o pipefail
           docker compose --profile full run --rm --no-deps web sh -c \
-            'uv run --no-sync --with coverage coverage run manage.py test && \
-             uv run --no-sync --with coverage coverage report' | tee coverage.txt
+            'uv run --no-sync --with coverage==7.13.5 coverage run manage.py test && \
+             uv run --no-sync --with coverage==7.13.5 coverage report' | tee coverage.txt
 
       - name: Get code coverage
         id: coverage
