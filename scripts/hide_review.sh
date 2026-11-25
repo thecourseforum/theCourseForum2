@@ -118,7 +118,7 @@ print_review_table() {
     printf "  %-4s %-20s %-28s %-8s %s\n" "----" "--------------------" "----------------------------" "--------" "------------------------"
     local i=1
     for line in "${REVIEW_LINES[@]}"; do
-        IFS='|' read -r _ rid name email hidden excerpt <<< "$line"
+        IFS='|' read -r _ _ name email hidden excerpt <<< "$line"
         local status="visible"
         [[ "$hidden" == "True" ]] && status="HIDDEN"
         name="${name:0:20}"

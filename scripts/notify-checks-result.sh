@@ -51,9 +51,9 @@ ruff_formatted="$(get_emoji $RUFF_RESULT) **Ruff**"
 ty_formatted="$(get_emoji $TY_RESULT) **ty**"
 django_formatted="$(get_emoji $DJANGO_RESULT) **Django** (code coverage: ${DJANGO_COVERAGE:-unknown})"
 eslint_formatted="$(get_emoji $ESLINT_RESULT) **ESLint**"
-commit_message_quoted_wrapped="$(git log -1 --pretty=format:"%s" $(get_last_commit) | jq -R)"
+commit_message_quoted_wrapped="$(git log -1 --pretty=format:"%s" "$(get_last_commit)" | jq -R)"
 commit_message_formatted="Last commit message: ${commit_message_quoted_wrapped:1:-1}"
-body=$(cat  << EOF
+cat << EOF
 {
   "content": "$(get_content) ($commit_message_formatted). See more about the result [here]($run_link).",
   "embeds": [
@@ -64,4 +64,3 @@ body=$(cat  << EOF
   ]
 }
 EOF
-)
