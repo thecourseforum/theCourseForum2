@@ -87,6 +87,15 @@ Progress shows the page total after the first response and counts description
 sources and SIS fallbacks. CSV retains the first four meetings, matching the
 original; optional JSON retains all meetings. Files are written directly.
 
+`load_semester` silently skips values it can't parse, so CI checks every
+semester CSV a PR adds or changes: headers, Days format and SIS casing
+(`MoWeFr 11:00am - 11:50am`), meeting dates, and numeric fields. Run the same
+check after fetching:
+
+```sh
+uv run python -m tcf_website.management.semester_csv tcf_website/management/commands/semester_data/csv/2027_spring.csv
+```
+
 ## Cloudflare bot protection
 
 HoosList is protected by a Cloudflare managed challenge. A request that fails
