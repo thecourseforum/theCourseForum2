@@ -370,27 +370,15 @@ jobs:
     if: needs.changes.outputs.workflows == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    env:
-      ACTIONLINT_VERSION: 1.7.12
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Install actionlint
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p "$RUNNER_TEMP/actionlint" "$RUNNER_TEMP/bin"
-          cd "$RUNNER_TEMP/actionlint"
-          gh release download "v${ACTIONLINT_VERSION}" -R rhysd/actionlint \
-            -p "actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" -p "actionlint_${ACTIONLINT_VERSION}_checksums.txt"
-          sha256sum --ignore-missing -c "actionlint_${ACTIONLINT_VERSION}_checksums.txt"
-          tar -xzf "actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" -C "$RUNNER_TEMP/bin" actionlint
-          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
-
       - name: Run actionlint
-        run: actionlint -color
+        uses: docker://rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+        with:
+          args: -color
 
   shellcheck:
     needs: changes
