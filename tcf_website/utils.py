@@ -21,8 +21,6 @@ def sis_term_code(semester: str) -> str | None:
     code = _SEASON_CODES.get(season.lower())
     if separator != "_" or len(year) != 4 or not year.isdigit() or code is None:
         return None
-    if "_" in season:
-        return None
     return f"1{year[-2:]}{code}"
 
 

@@ -7,7 +7,7 @@ root, replacing `2026_fall` with the desired `<year>_<season>`.
 ## Fetching Semester Data
 
 Download one semester CSV from thecourseforum/tCF-data on branch main. This does
-not call SIS:
+not call SIS.
 
 With the bundled `web` service running:
 

@@ -67,9 +67,9 @@ CLI:
 ./scripts/ecs-run-command.sh python manage.py <command>
 ```
 
-To download the semester CSV from public thecourseforum/tCF-data and load it
-into the prod database (same path as the daily Load course data Action). This
-uses a separate ECS task family `tcf-prod-load-course-data`, not `ecs-run-command.sh`:
+Download the semester CSV from public thecourseforum/tCF-data and load it into
+the prod database (same path as the daily Load course data Action). This uses a
+separate ECS task family `tcf-prod-load-course-data`, not `ecs-run-command.sh`:
 
 ```bash
 ./scripts/ecs-load-course-data.sh

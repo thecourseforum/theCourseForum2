@@ -13,7 +13,7 @@
 #   ./scripts/ecs-load-course-data.sh 2026_fall
 #
 # With no argument, the task uses the same "today" semester as fetch_data.
-# Refuses ALL_DANGEROUS.
+# Refuses ALL_DANGEROUS and FIX_LAST_TAUGHT_SEMESTERS.
 #
 # Env: AWS_REGION, ECS_CLUSTER, ECS_SERVICE, ECS_CONTAINER_NAME,
 #      ECS_LOAD_TASK_FAMILY, ECS_LOG_STREAM_PREFIX

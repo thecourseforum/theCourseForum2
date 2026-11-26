@@ -19,7 +19,7 @@
             </p>
         {% elif class_count == 0 %}
             <p>
-                No <code>fetched/{{ semester }}.csv</code> yet. Run <code>python manage.py fetch_data {{ semester }}</code>.
+                No <code>fetched/{{ semester|lower }}.csv</code> yet. Run <code>python manage.py fetch_data {{ semester }}</code>.
             </p>
         {% else %}
             <pre>term {{ term }}
