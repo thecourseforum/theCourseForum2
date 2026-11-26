@@ -67,6 +67,16 @@ CLI:
 ./scripts/ecs-run-command.sh python manage.py <command>
 ```
 
+Download the semester CSV from public thecourseforum/tCF-data and load it into
+the prod database (same path as the daily Load course data Action). This runs
+the Terraform-managed ECS task family `tcf-prod-load-course-data`, not
+`ecs-run-command.sh`. Manual GitHub Action runs require confirm=`LOAD`:
+
+```bash
+./scripts/ecs-load-course-data.sh
+./scripts/ecs-load-course-data.sh 2026_fall
+```
+
 The moderation helper uses the production ECS task by default. To use it with
 the local bundled web service instead:
 

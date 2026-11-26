@@ -9,6 +9,7 @@ locals {
   application_dump_bucket_arns       = "arn:aws:s3:::${local.application_name_prefix}-db-dumps-*"
   application_synthetics_bucket_arns = "arn:aws:s3:::${local.application_name_prefix}-synthetics-artifacts-*"
   application_web_task_family        = "${local.application_name_prefix}-django"
+  application_load_task_family       = "${local.application_name_prefix}-load-course-data"
   application_web_role_arns = [
     "arn:aws:iam::${local.app_account_id}:role/${var.application_role_prefix}ecs-task-execution-role",
     "arn:aws:iam::${local.app_account_id}:role/${var.application_role_prefix}ecs-task-role"
@@ -201,7 +202,10 @@ resource "aws_iam_role_policy" "github_task_runner" {
         Sid      = "RunReleaseTasks"
         Effect   = "Allow"
         Action   = "ecs:RunTask"
-        Resource = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:task-definition/${local.application_web_task_family}:*"
+        Resource = [
+          "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:task-definition/${local.application_web_task_family}:*",
+          "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:task-definition/${local.application_load_task_family}:*"
+        ]
         Condition = {
           ArnEquals = {
             "ecs:cluster" = local.application_cluster_arn
@@ -209,9 +213,21 @@ resource "aws_iam_role_policy" "github_task_runner" {
         }
       },
       {
+        Sid      = "ListClusterTasks"
+        Effect   = "Allow"
+        Action   = "ecs:ListTasks"
+        Resource = local.application_cluster_arn
+      },
+      {
         Sid      = "ReadReleaseTasks"
         Effect   = "Allow"
         Action   = "ecs:DescribeTasks"
+        Resource = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:task/${local.application_name_prefix}-cluster/*"
+      },
+      {
+        Sid      = "StopLoadCourseDataTasks"
+        Effect   = "Allow"
+        Action   = "ecs:StopTask"
         Resource = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:task/${local.application_name_prefix}-cluster/*"
       },
       {
@@ -221,9 +237,13 @@ resource "aws_iam_role_policy" "github_task_runner" {
         Resource = "arn:aws:ecs:${var.aws_region}:${local.app_account_id}:service/${local.application_name_prefix}-cluster/${var.application_role_prefix}*"
       },
       {
-        Sid      = "ReadReleaseTaskLogs"
-        Effect   = "Allow"
-        Action   = "logs:GetLogEvents"
+        Sid    = "ReadReleaseTaskLogs"
+        Effect = "Allow"
+        Action = [
+          "logs:GetLogEvents",
+          "logs:FilterLogEvents",
+          "logs:DescribeLogStreams"
+        ]
         Resource = "arn:aws:logs:${var.aws_region}:${local.app_account_id}:log-group:/ecs/${local.application_web_task_family}:*"
       },
       {

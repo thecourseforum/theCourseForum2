@@ -1,0 +1,35 @@
+/*
+ * Data-repo snapshot page
+ * =======================
+ */
+
+.snapshot-page {
+  max-width: 40rem;
+  margin: 4rem auto;
+  padding: 0 1.5rem;
+  font-family: sans-serif;
+}
+
+.snapshot-page h1 {
+  font-size: 1.5rem;
+}
+
+.snapshot-page pre {
+  font-size: 1.25rem;
+  background: #f4f1ea;
+  padding: 1rem;
+}
+
+.snapshot-page .snapshot-code {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.snapshot-page .snapshot-descr {
+  font-size: 1.25rem;
+}
+
+.snapshot-page .snapshot-enrollment {
+  font-size: 3rem;
+  margin: 0.5rem 0;
+}

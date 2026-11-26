@@ -1,0 +1,77 @@
+# Download the semester CSV from public thecourseforum/tCF-data and load it
+# into the prod DB on ECS. Replaces the old fetch-data artifact workflow.
+#
+# Cron is 08:15 UTC so it usually starts after tCF-data's 07:30 UTC SIS job
+# (~26 minutes on a normal day). Does not invalidate cachalot.
+# Manual runs must set confirm=LOAD (prod DB reload).
+name: Load course data
+
+on:
+  workflow_dispatch:
+    inputs:
+      semester:
+        description: "Semester as <year>_<season>. Leave blank to use today's date."
+        required: false
+        type: string
+      confirm:
+        description: "Type LOAD to confirm a manual prod semester reload."
+        required: true
+        type: string
+  schedule:
+    - cron: "15 8 * * *"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: load-course-data
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  ECS_CLUSTER: tcf-prod-cluster
+  ECS_SERVICE: tcf-prod-django-service
+  ECS_CONTAINER_NAME: django-app
+  ECS_LOAD_TASK_FAMILY: tcf-prod-load-course-data
+  ECS_LOG_GROUP: /ecs/tcf-prod-django
+  ECS_LOG_STREAM_PREFIX: django
+
+jobs:
+  load:
+    runs-on: ubuntu-latest
+    environment: ecs-tasks
+    timeout-minutes: 60
+    steps:
+      - name: Confirm manual reload
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "LOAD" ]; then
+            echo "Manual runs require confirm=LOAD" >&2
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::099933383052:role/tcf-github-task-runner
+          allowed-account-ids: "099933383052"
+
+      - name: Fetch CSV and load semester on ECS
+        env:
+          SEMESTER: ${{ inputs.semester }}
+        run: |
+          chmod +x scripts/ecs-load-course-data.sh
+          if [ -n "$SEMESTER" ]; then
+            ./scripts/ecs-load-course-data.sh "$SEMESTER"
+          else
+            ./scripts/ecs-load-course-data.sh
+          fi

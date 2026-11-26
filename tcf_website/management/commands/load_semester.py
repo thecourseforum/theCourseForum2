@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
         parser.add_argument(
             "semester",
-            help='Semester to update (e.g. "2019_FALL").\nIf you wish to reload all semesters (potentially dangerous!) then put "ALL_DANGEROUS" as the value of this argument.\nMake sure that the new semester data is downloaded via `semester_data/fetch_data.py` before running this command.',
+            help='Semester to update (e.g. "2019_FALL").\nIf you wish to reload all semesters (potentially dangerous!) then put "ALL_DANGEROUS" as the value of this argument.\nUses fetched/<year>_<season>.csv when fetch_data has downloaded it, otherwise semester_data/csv/.',
             type=str,
         )
 
@@ -54,7 +54,17 @@ class Command(BaseCommand):
         semester = options["semester"]
 
         if semester == "ALL_DANGEROUS":
-            for file in sorted(os.listdir(self.data_dir)):
+            # Union of legacy csv/ and fetched/; load_semester_file prefers fetched/.
+            names = set()
+            if os.path.isdir(self.data_dir):
+                names.update(
+                    name for name in os.listdir(self.data_dir) if name.endswith(".csv")
+                )
+            if os.path.isdir("fetched"):
+                names.update(
+                    name for name in os.listdir("fetched") if name.endswith(".csv")
+                )
+            for file in sorted(names):
                 self.load_semester_file(file)
         elif semester == "FIX_LAST_TAUGHT_SEMESTERS":
             # This should be done automatically when loading a semester,
@@ -80,7 +90,9 @@ class Command(BaseCommand):
 
         print(year, season)
 
-        df = self.clean(pd.read_csv(os.path.join(self.data_dir, file)))
+        fetched = os.path.join("fetched", file)
+        path = fetched if os.path.isfile(fetched) else os.path.join(self.data_dir, file)
+        df = self.clean(pd.read_csv(path))
 
         print(f"{df.size} sections")
 

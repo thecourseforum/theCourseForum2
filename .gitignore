@@ -51,3 +51,5 @@ key/
 # Claude
 CLAUDE.md
 .claude/
+# Snapshot downloaded from the course-data repo
+/fetched/

@@ -172,6 +172,183 @@ resource "aws_ecs_task_definition" "django" {
   }
 }
 
+# One-off course-data load (fetch_data + load_semester). Image tracks ecr_image_tag
+# with the web task; CI runs this family with env overrides only (no RegisterTaskDefinition).
+locals {
+  load_course_data_command = <<-EOT
+    set -euo pipefail
+    if [ -n "$${COURSE_DATA_SEMESTER:-}" ]; then
+      python manage.py fetch_data "$${COURSE_DATA_SEMESTER}"
+      python manage.py load_semester "$${COURSE_DATA_SEMESTER}"
+    else
+      python manage.py fetch_data
+      shopt -s nullglob
+      csv=(fetched/*.csv)
+      if [[ $${#csv[@]} -ne 1 ]]; then
+        echo "expected exactly one csv in fetched/, got $${#csv[@]}" >&2
+        exit 1
+      fi
+      python manage.py load_semester "$$(basename "$${csv[0]}" .csv)"
+    fi
+  EOT
+}
+
+resource "aws_ecs_task_definition" "load_course_data" {
+  family                   = "${local.name_prefix}-load-course-data"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = var.ecs_task_cpu
+  memory                   = var.ecs_task_memory
+  execution_role_arn       = aws_iam_role.ecs_task_execution.arn
+  task_role_arn            = aws_iam_role.ecs_task.arn
+
+  container_definitions = jsonencode([
+    {
+      name      = "django-app"
+      image     = "${aws_ecr_repository.app.repository_url}:${var.ecr_image_tag}"
+      command   = ["bash", "-c", local.load_course_data_command]
+      essential = true
+
+      environment = [
+        {
+          name  = "DJANGO_SETTINGS_MODULE"
+          value = "tcf_core.settings.prod"
+        },
+        {
+          name  = "TCF_ENV"
+          value = "prod"
+        },
+        {
+          name  = "COURSE_DATA_REPO_BRANCH"
+          value = "main"
+        },
+        {
+          name  = "AWS_STORAGE_BUCKET_NAME"
+          value = aws_s3_bucket.static.id
+        },
+        {
+          name  = "AWS_S3_REGION_NAME"
+          value = var.aws_region
+        },
+        {
+          name  = "AWS_S3_CUSTOM_DOMAIN"
+          value = aws_cloudfront_distribution.main.domain_name
+        },
+        {
+          name  = "ALLOWED_HOSTS"
+          value = "${var.domain_name},${aws_cloudfront_distribution.main.domain_name},${aws_lb.main.dns_name}"
+        },
+        {
+          name  = "AWS_ELB_URL"
+          value = aws_lb.main.dns_name
+        },
+        {
+          name  = "AWS_CLOUDFRONT_URL"
+          value = aws_cloudfront_distribution.main.domain_name
+        },
+        {
+          name  = "CORS_ALLOWED_ORIGINS"
+          value = "https://${var.domain_name}"
+        },
+        {
+          name  = "AWS_LOG_LEVEL"
+          value = "DEBUG"
+        },
+        {
+          name  = "AWS_ACCESS_KEY_ID"
+          value = ""
+        },
+        {
+          name  = "AWS_SECRET_ACCESS_KEY"
+          value = ""
+        },
+        {
+          name  = "WAF_INTEGRATION_URL"
+          value = local.waf_enabled ? aws_wafv2_web_acl.main[0].application_integration_url : ""
+        },
+        {
+          name  = "SCRIPT_FETCH_LOGIN"
+          value = "enforce"
+        }
+      ]
+
+      secrets = [
+        {
+          name      = "SECRET_KEY"
+          valueFrom = aws_secretsmanager_secret.django_secret_key.arn
+        },
+        {
+          name      = "AWS_RDS_HOST"
+          valueFrom = "${aws_secretsmanager_secret.db_credentials.arn}:host::"
+        },
+        {
+          name      = "AWS_RDS_PORT"
+          valueFrom = "${aws_secretsmanager_secret.db_credentials.arn}:port::"
+        },
+        {
+          name      = "AWS_RDS_NAME"
+          valueFrom = "${aws_secretsmanager_secret.db_credentials.arn}:dbname::"
+        },
+        {
+          name      = "AWS_RDS_USER"
+          valueFrom = "${aws_secretsmanager_secret.db_credentials.arn}:username::"
+        },
+        {
+          name      = "AWS_RDS_PASSWORD"
+          valueFrom = "${aws_secretsmanager_secret.db_credentials.arn}:password::"
+        },
+        {
+          name      = "COGNITO_USER_POOL_ID"
+          valueFrom = "${aws_secretsmanager_secret.cognito_credentials.arn}:user_pool_id::"
+        },
+        {
+          name      = "COGNITO_APP_CLIENT_ID"
+          valueFrom = "${aws_secretsmanager_secret.cognito_credentials.arn}:app_client_id::"
+        },
+        {
+          name      = "COGNITO_APP_CLIENT_SECRET"
+          valueFrom = "${aws_secretsmanager_secret.cognito_credentials.arn}:app_client_secret::"
+        },
+        {
+          name      = "COGNITO_DOMAIN"
+          valueFrom = "${aws_secretsmanager_secret.cognito_credentials.arn}:domain::"
+        },
+        {
+          name      = "COGNITO_REGION_NAME"
+          valueFrom = "${aws_secretsmanager_secret.cognito_credentials.arn}:region::"
+        },
+        {
+          name      = "AWS_REDIS_URL"
+          valueFrom = aws_secretsmanager_secret.redis_url.arn
+        }
+      ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
+          "awslogs-region"        = var.aws_region
+          "awslogs-stream-prefix" = "django"
+        }
+      }
+    }
+  ])
+
+  depends_on = [
+    aws_secretsmanager_secret_version.django_secret_key,
+    aws_secretsmanager_secret_version.db_credentials,
+    aws_secretsmanager_secret_version.cognito_credentials,
+    aws_secretsmanager_secret_version.redis_auth_token,
+    aws_secretsmanager_secret_version.redis_url,
+    aws_iam_role_policy.ecs_task_execution_secrets,
+    aws_iam_role_policy_attachment.ecs_task_execution
+  ]
+
+  tags = {
+    Name = "${local.name_prefix}-load-course-data-task"
+  }
+}
+
 # ECS Service
 resource "aws_ecs_service" "django" {
   name             = "${local.name_prefix}-django-service"

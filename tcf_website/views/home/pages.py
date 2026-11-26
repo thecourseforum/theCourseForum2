@@ -1,10 +1,13 @@
 """Views for index and about pages."""
 
+import csv
 import json
 from pathlib import Path
 
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
+
+from tcf_website.utils import sis_term_code
 
 from .landing_spotlight import landing_spotlight_context
 
@@ -45,6 +48,39 @@ def privacy(request):
 def terms(request):
     """Terms view."""
     return render(request, "site/home/terms.html")
+
+
+def data_snapshot(request):
+    """Show the snapshot fetch_data saved for ?semester=<year>_<season>."""
+    semester = request.GET.get("semester", "")
+    term = sis_term_code(semester) if semester else None
+    classes = []
+    if term is not None:
+        year, _, season = semester.partition("_")
+        snapshot_path = (
+            _TCF_WEBSITE_ROOT.parent / "fetched" / f"{year}_{season.lower()}.csv"
+        )
+        if snapshot_path.is_file():
+            with snapshot_path.open(encoding="utf-8", newline="") as handle:
+                classes = list(csv.DictReader(handle))
+    try:
+        index = int(request.GET.get("n", "0"))
+    except ValueError:
+        index = 0
+    if classes:
+        index = index % len(classes)
+    section = classes[index] if classes else None
+    return render(
+        request,
+        "site/home/snapshot.html",
+        {
+            "semester": semester,
+            "term": term,
+            "section": section,
+            "index": index,
+            "class_count": len(classes),
+        },
+    )
 
 
 class AboutView(TemplateView):

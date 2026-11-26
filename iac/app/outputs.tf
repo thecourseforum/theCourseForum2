@@ -66,6 +66,11 @@ output "task_definition_arn" {
   value       = aws_ecs_task_definition.django.arn
 }
 
+output "load_course_data_task_definition_arn" {
+  description = "Course-data load task definition (fetch_data + load_semester)"
+  value       = aws_ecs_task_definition.load_course_data.arn
+}
+
 output "waf_integration_url" {
   description = "WAF application integration URL the app loads challenge.js from"
   value       = one(aws_wafv2_web_acl.main[*].application_integration_url)

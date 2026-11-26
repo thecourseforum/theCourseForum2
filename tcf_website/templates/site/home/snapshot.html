@@ -1,0 +1,39 @@
+{% extends "site/common/base.html" %}
+{% load static %}
+{% block title %}
+    Data snapshot | theCourseForum
+{% endblock title %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/site/pages/snapshot.css' %}">
+{% endblock styles %}
+{% block content %}
+    <main class="snapshot-page">
+        <h1>Data-repo snapshot</h1>
+        {% if not semester %}
+            <p>
+                Open this page with <code>?semester=2026_fall</code> after <code>fetch_data</code> has saved that semester.
+            </p>
+        {% elif not term %}
+            <p>
+                <code>{{ semester }}</code> is not a <code>&lt;year&gt;_&lt;season&gt;</code> semester.
+            </p>
+        {% elif class_count == 0 %}
+            <p>
+                No <code>fetched/{{ semester|lower }}.csv</code> yet. Run <code>python manage.py fetch_data {{ semester }}</code>.
+            </p>
+        {% else %}
+            <pre>term {{ term }}
+sections {{ class_count }}</pre>
+            <p class="snapshot-code">{{ section.Mnemonic }} {{ section.Number }}</p>
+            <p class="snapshot-descr">{{ section.Title }}</p>
+            <p class="snapshot-enrollment">{{ section.Enrollment }} enrolled</p>
+            <p>
+                <a href="?semester={{ semester }}&amp;n={{ index|add:-1 }}">Previous class</a>
+                ·
+                class {{ index|add:1 }} of {{ class_count }}
+                ·
+                <a href="?semester={{ semester }}&amp;n={{ index|add:1 }}">Next class</a>
+            </p>
+        {% endif %}
+    </main>
+{% endblock content %}
