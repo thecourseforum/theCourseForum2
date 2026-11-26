@@ -1,0 +1,55 @@
+# Download the semester CSV from public thecourseforum/tCF-data and load it
+# into the prod DB on ECS. Replaces the old fetch-data artifact workflow.
+#
+# Cron is 08:15 UTC so it usually starts after tCF-data's 07:30 UTC SIS job
+# (~26 minutes on a normal day). Does not invalidate cachalot.
+name: Load course data
+
+on:
+  workflow_dispatch:
+    inputs:
+      semester:
+        description: "Semester as <year>_<season>. Leave blank to use today's date."
+        required: false
+        type: string
+  schedule:
+    - cron: "15 8 * * *"
+
+permissions:
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  ECS_CLUSTER: tcf-fargate-cluster
+  ECS_SERVICE: barrett-fogle-love-v1
+  ECS_CONTAINER_NAME: tcf-container
+  ECS_LOAD_TASK_FAMILY: tcf-load-course-data
+  ECS_LOG_STREAM_PREFIX: tcf-logs
+
+jobs:
+  load:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Fetch CSV and load semester on ECS
+        env:
+          SEMESTER: ${{ inputs.semester }}
+        run: |
+          chmod +x scripts/ecs-load-course-data.sh
+          if [ -n "$SEMESTER" ]; then
+            ./scripts/ecs-load-course-data.sh "$SEMESTER"
+          else
+            ./scripts/ecs-load-course-data.sh
+          fi

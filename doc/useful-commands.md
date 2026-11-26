@@ -67,6 +67,15 @@ CLI:
 ./scripts/ecs-run-command.sh python manage.py <command>
 ```
 
+To download the semester CSV from public thecourseforum/tCF-data and load it
+into the prod database (same path as the daily Load course data Action). This
+uses a separate ECS task family `tcf-load-course-data`, not `ecs-run-command.sh`:
+
+```bash
+./scripts/ecs-load-course-data.sh
+./scripts/ecs-load-course-data.sh 2026_fall
+```
+
 The moderation helper uses the production ECS task by default. To use it with
 the local bundled web service instead:
 
