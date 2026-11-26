@@ -45,7 +45,7 @@ uv run python manage.py load_semester 2026_fall
 ```
 
 In production, the daily Load course data Action (08:15 UTC) runs fetch then load
-on a dedicated ECS task family `tcf-load-course-data`. Manually:
+on a dedicated ECS task family `tcf-prod-load-course-data`. Manually:
 
 ```bash
 ./scripts/ecs-load-course-data.sh

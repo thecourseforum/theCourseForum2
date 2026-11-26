@@ -69,7 +69,7 @@ CLI:
 
 To download the semester CSV from public thecourseforum/tCF-data and load it
 into the prod database (same path as the daily Load course data Action). This
-uses a separate ECS task family `tcf-load-course-data`, not `ecs-run-command.sh`:
+uses a separate ECS task family `tcf-prod-load-course-data`, not `ecs-run-command.sh`:
 
 ```bash
 ./scripts/ecs-load-course-data.sh

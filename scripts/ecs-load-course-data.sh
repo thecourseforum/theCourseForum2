@@ -3,7 +3,7 @@
 # thecourseforum/tCF-data and loads it into the prod DB.
 #
 # Separate from ecs-run-command.sh: registers (or revises) task family
-# tcf-load-course-data from the live service's task definition, with a
+# tcf-prod-load-course-data from the live service's task definition, with a
 # fixed fetch_data + load_semester command. Network matches the live service.
 #
 # Needs python3 + aws CLIv2 (authenticate with 'aws configure').
@@ -22,11 +22,11 @@ set -euo pipefail
 
 REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-us-east-1}}"
 export AWS_REGION="$REGION"
-CLUSTER="${ECS_CLUSTER:-tcf-fargate-cluster}"
-SERVICE="${ECS_SERVICE:-barrett-fogle-love-v1}"
-CONTAINER="${ECS_CONTAINER_NAME:-tcf-container}"
-FAMILY="${ECS_LOAD_TASK_FAMILY:-tcf-load-course-data}"
-STREAM_PREFIX="${ECS_LOG_STREAM_PREFIX:-tcf-logs}"
+CLUSTER="${ECS_CLUSTER:-tcf-prod-cluster}"
+SERVICE="${ECS_SERVICE:-tcf-prod-django-service}"
+CONTAINER="${ECS_CONTAINER_NAME:-django-app}"
+FAMILY="${ECS_LOAD_TASK_FAMILY:-tcf-prod-load-course-data}"
+STREAM_PREFIX="${ECS_LOG_STREAM_PREFIX:-django}"
 
 if [[ $# -gt 1 ]]; then
   echo "usage: $0 [year_season]" >&2
@@ -74,7 +74,7 @@ else
 fi
 '
 
-# Clone the live task def into family tcf-load-course-data with the load command.
+# Clone the live task def into family tcf-prod-load-course-data with the load command.
 register_json="$(
   ECS_LOAD_TASK_FAMILY="$FAMILY" ECS_CONTAINER_NAME="$CONTAINER" \
   python3 - "$source_task_def" "$LOAD_COMMAND" <<'PY'
@@ -140,7 +140,7 @@ echo "task definition $load_task_def_arn" >&2
 LOG_GROUP="$(aws ecs describe-task-definition --task-definition "$load_task_def_arn" --region "$REGION" \
   --query "taskDefinition.containerDefinitions[?name=='${CONTAINER}'].logConfiguration.options.\"awslogs-group\" | [0]" \
   --output text | tr -d '\r\n')"
-[[ -z "$LOG_GROUP" || "$LOG_GROUP" == "None" ]] && LOG_GROUP="/ecs/tcf-prod-task"
+[[ -z "$LOG_GROUP" || "$LOG_GROUP" == "None" ]] && LOG_GROUP="/ecs/tcf-prod-django"
 
 run_task_json="$(
   ECS_CLUSTER="$CLUSTER" ECS_CONTAINER_NAME="$CONTAINER" \
