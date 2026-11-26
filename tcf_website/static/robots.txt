@@ -1,0 +1,14 @@
+# blocked requests
+User-agent: *
+Disallow: /login/
+Disallow: /admin/
+Disallow: /search
+Disallow: /cognito-callback
+
+# unused SEO tools
+User-agent: AhrefsBot
+User-agent: SemrushBot
+User-agent: DataForSeoBot
+User-agent: DotBot
+User-agent: MJ12bot
+Disallow: /

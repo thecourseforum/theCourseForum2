@@ -39,11 +39,9 @@ STORAGES = {
     "default": s3_storage(
         object_parameters={"CacheControl": "max-age=86400"},
     ),
-    "staticfiles": s3_storage(
-        backend="storages.backends.s3.S3ManifestStaticStorage",
-        object_parameters={"CacheControl": "public, max-age=31536000, immutable"},
-    ),
+    "staticfiles": MANIFEST_STATIC_STORAGE,
 }
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
 CACHES = {"default": redis_cache(env.str("AWS_REDIS_URL"), "tcf:prod")}
 

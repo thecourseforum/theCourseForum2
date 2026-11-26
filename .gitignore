@@ -14,11 +14,11 @@ __pycache__/*
 !.config/.env.example
 # Static files collected by Django
 /static/
+/staticfiles/
 # npm packages
 node_modules/
 # CSV files exported from PostgreSQL
 db/*.csv
-# Data dumps
 db/*.sql
 db/*.dump
 # IDEs
@@ -43,7 +43,13 @@ key/
 # Nix
 .direnv
 .envrc
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
 # Claude
 CLAUDE.md
+.claude/
 # Snapshot downloaded from the course-data repo
 /fetched/

@@ -1,9 +1,11 @@
 # Cognito User Pool
 resource "aws_cognito_user_pool" "main" {
-  name = "${local.name_prefix}-user-pool"
+  name                = "${local.name_prefix}-user-pool"
+  deletion_protection = "ACTIVE"
 
   # Allow users to sign in with email
-  username_attributes = ["email"]
+  username_attributes      = ["email"]
+  auto_verified_attributes = ["email"]
 
   # Enable passwordless email OTP and password sign-in
   sign_in_policy {
@@ -32,8 +34,16 @@ resource "aws_cognito_user_pool" "main" {
     email_sending_account = "COGNITO_DEFAULT"
   }
 
+  lambda_config {
+    pre_sign_up = aws_lambda_function.require_virginia_email.arn
+  }
+
   tags = {
     Name = "${local.name_prefix}-user-pool"
+  }
+
+  lifecycle {
+    prevent_destroy = true
   }
 }
 
@@ -48,7 +58,7 @@ resource "aws_cognito_user_pool_client" "main" {
   allowed_oauth_flows                  = ["code", "implicit"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
   callback_urls                        = ["https://${var.domain_name}/cognito-callback"]
-  logout_urls                          = ["https://${var.domain_name}/"]
+  logout_urls                          = ["https://${var.domain_name}"]
   supported_identity_providers         = ["COGNITO"]
 
   # Token validity
@@ -86,7 +96,7 @@ resource "aws_cognito_managed_login_branding" "main" {
   user_pool_id = aws_cognito_user_pool.main.id
   client_id    = aws_cognito_user_pool_client.main.id
 
-  settings = file("${path.module}/branding-settings.json")
+  settings = jsonencode(jsondecode(file("${path.module}/branding-settings.json")))
 
   asset {
     category   = "FORM_LOGO"

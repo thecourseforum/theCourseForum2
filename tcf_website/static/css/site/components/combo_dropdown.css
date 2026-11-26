@@ -31,7 +31,7 @@
 .combo__input:focus {
   border-color: var(--primary);
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-primary-100);
+  box-shadow: 0 0 0 2px var(--ring-glow);
 }
 
 .combo__list {

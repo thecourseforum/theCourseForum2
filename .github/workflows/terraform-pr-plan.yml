@@ -1,0 +1,26 @@
+name: Terraform PR plan
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - "iac/**"
+      - ".github/workflows/terraform-plan.yml"
+      - ".github/workflows/terraform-pr-plan.yml"
+      - ".github/workflows/deploy.yml"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: terraform-pr-plan-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  plan:
+    name: Terraform
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    uses: ./.github/workflows/terraform-plan.yml
+    with:
+      environment: terraform-pr-plan

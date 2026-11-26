@@ -6,7 +6,7 @@
 .review-container {
   /* Form controls + dimmed “locked” UI */
   --review-input-transition: border-color var(--duration-fast) var(--ease-default);
-  --review-focus-ring: 0 0 0 2px var(--color-primary-100);
+  --review-focus-ring: 0 0 0 2px var(--ring-glow);
   --review-locked-opacity: 0.55;
 
   max-width: 48rem; /* ~768px */
@@ -207,10 +207,6 @@
   font-size: var(--text-xs);
   color: var(--fg-muted);
   margin-top: var(--space-2);
-}
-
-.word-count--error {
-  color: var(--danger);
 }
 
 /* ===== PICKER HEADING (course / club name in section title) ===== */

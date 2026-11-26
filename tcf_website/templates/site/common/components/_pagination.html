@@ -1,6 +1,6 @@
 {% load custom_tags %}
 {% if paginated_items.has_other_pages %}
-    {% with a=anchor|default:'' %}
+    {% with a=anchor|default:"" %}
         <nav class="pagination {% if extra_classes %}{{ extra_classes }}{% else %}search-pagination{% endif %}"
              aria-label="{{ aria_label|default:'Pagination' }}">
             {% if paginated_items.has_previous %}
@@ -18,7 +18,7 @@
             {% if paginated_items.number > 4 %}<span class="pagination__ellipsis">...</span>{% endif %}
             {% for page_num in paginated_items.paginator.page_range %}
                 {% if page_num > 1 and page_num < paginated_items.paginator.num_pages %}
-                    {% if page_num >= paginated_items.number|add:'-2' and page_num <= paginated_items.number|add:'2' %}
+                    {% if page_num >= paginated_items.number|add:"-2" and page_num <= paginated_items.number|add:"2" %}
                         {% if page_num == paginated_items.number %}
                             <span class="pagination__item is-active">{{ page_num }}</span>
                         {% else %}
@@ -28,7 +28,7 @@
                     {% endif %}
                 {% endif %}
             {% endfor %}
-            {% if paginated_items.number < paginated_items.paginator.num_pages|add:'-3' %}
+            {% if paginated_items.number < paginated_items.paginator.num_pages|add:"-3" %}
                 <span class="pagination__ellipsis">...</span>
             {% endif %}
             {% if paginated_items.paginator.num_pages > 1 %}

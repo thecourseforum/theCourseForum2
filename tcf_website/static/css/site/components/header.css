@@ -85,7 +85,7 @@
 .header__logo {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-1);
 
   text-decoration: none;
   color: var(--fg);
@@ -98,8 +98,10 @@
 }
 
 .header__logo-icon {
+  display: block;
   width: 2rem;
   height: 2rem;
+  flex-shrink: 0;
 }
 
 .header__logo-text {
@@ -443,16 +445,4 @@
     border-top: 1px solid var(--border);
     padding-top: var(--space-2);
   }
-}
-
-/* ===== TRANSPARENT HEADER (for landing) ===== */
-
-.header--transparent {
-  background-color: transparent;
-  border-bottom: none;
-}
-
-.header--transparent.is-scrolled {
-  background-color: var(--bg);
-  border-bottom: 1px solid var(--border);
 }

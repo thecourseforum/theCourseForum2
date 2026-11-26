@@ -7,11 +7,7 @@ ENV PYTHONUNBUFFERED=1 \
     UV_CACHE_DIR=/root/.cache/uv \
     PATH="/opt/venv/bin:$PATH"
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends libpq-dev build-essential && \
-    rm -rf /var/lib/apt/lists/*
+COPY --from=ghcr.io/astral-sh/uv:0.13.7 /uv /usr/local/bin/uv
 
 WORKDIR /app
 
@@ -23,9 +19,9 @@ FROM base AS dev
 
 ENV UV_PYTHON_DOWNLOADS=never
 
-# Node 20 from the official image (Debian ships an older major).
-COPY --from=node:20-bookworm-slim /usr/local/bin/node /usr/local/bin/node
-COPY --from=node:20-bookworm-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
+# Node 24 from the official image (Debian ships an older major).
+COPY --from=node:24-bookworm-slim /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:24-bookworm-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
 RUN ln -s ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
     ln -s ../lib/node_modules/corepack/dist/corepack.js /usr/local/bin/corepack 2>/dev/null; \
     ln -sf ../lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
@@ -39,10 +35,32 @@ RUN apt-get update && \
 COPY --from=docker:cli /usr/local/bin/docker /usr/local/bin/docker
 COPY --from=docker:cli /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
 
+COPY --from=amazon/aws-cli:2.37.9 /usr/local/aws-cli /usr/local/aws-cli
+RUN ln -s /usr/local/aws-cli/v2/current/bin/aws /usr/local/bin/aws && \
+    ln -s /usr/local/aws-cli/v2/current/bin/aws_completer /usr/local/bin/aws_completer
+
 COPY .devcontainer/bashrc /root/tcf-dev-bashrc
 RUN grep -q 'tcf-dev-bashrc' /root/.bashrc || echo '. /root/tcf-dev-bashrc' >> /root/.bashrc
 
 # Source code comes from the devcontainer.json bind mount, not baked in.
+
+FROM base AS static-build
+
+COPY manage.py ./
+COPY tcf_core ./tcf_core
+COPY tcf_website ./tcf_website
+RUN DJANGO_SETTINGS_MODULE=tcf_core.settings.dev TCF_ENV=ci STATIC_MANIFEST=true \
+    SECRET_KEY=collectstatic DB_NAME=x DB_USER=x DB_PASSWORD=x DB_HOST=x DB_PORT=5432 \
+    python manage.py collectstatic --noinput
+
+FROM scratch AS static-files
+
+COPY --from=static-build /app/staticfiles/ /
+
+FROM caddy:2-alpine AS cdn
+
+COPY Caddyfile /etc/caddy/Caddyfile
+COPY --from=static-build /app/staticfiles/ /srv/
 
 # Shipped to ECS by the deploy workflow.
 FROM base AS prod
@@ -50,16 +68,16 @@ FROM base AS prod
 RUN addgroup --system app && \
     adduser --system --ingroup app --home /home/app app && \
     mkdir -p /home/app/.cache/uv && \
-    chown -R app:app /opt/venv /home/app
+    chown -R app:app /opt/venv /home/app && \
+    chown app:app /app
 
-COPY --chown=app:app . /app/
-RUN chown -R app:app /app && \
-    chmod +x /app/scripts/container-startup.sh
+COPY --chown=app:app --exclude=tcf_website/static . /app/
+COPY --chown=app:app --from=static-build /app/staticfiles/staticfiles.json /app/staticfiles/
 
 ENV HOME=/home/app \
     UV_CACHE_DIR=/home/app/.cache/uv
 USER app
 
-EXPOSE 80
+EXPOSE 8000
 
 CMD ["/app/scripts/container-startup.sh"]

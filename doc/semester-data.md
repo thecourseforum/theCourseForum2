@@ -1,16 +1,30 @@
-# (Deprecated) Semester Data
+# Semester Data
 
-> This guide is deprecated for the new compose stack.
+Use the workflow configured in the [developer guide](dev.md): the running bundled
+Compose `web` service or the VS Code devcontainer. Run commands from the project
+root, replacing `2026_fall` with the desired `<year>_<season>`.
 
 ## Fetching Semester Data
 
-Download one semester CSV from thecourseforum/tCF-data on branch main. This does not call SIS:
+Download one semester CSV from thecourseforum/tCF-data on branch main. This does
+not call SIS:
 
-```console
-$ docker exec -it tcf_django python manage.py fetch_data <year>_<season>
+With the bundled `web` service running:
+
+```sh
+docker compose --profile full exec web python manage.py fetch_data 2026_fall
+```
+
+Inside the devcontainer:
+
+```sh
+uv run python manage.py fetch_data 2026_fall
 ```
 
 Saved in `fetched/`.
+
+Use the same environment for fetching and loading. The bundled `web` service
+stores the CSV inside its container; the devcontainer writes to the mounted checkout.
 
 See [fetch_data.py](../tcf_website/management/commands/fetch_data.py) for more information.
 
@@ -18,8 +32,16 @@ See [fetch_data.py](../tcf_website/management/commands/fetch_data.py) for more i
 
 Delete existing semester data (if exists) and load new data from csv into database:
 
-```console
-$ docker exec -it tcf_django python manage.py load_semester <year>_<season>
+With the bundled `web` service running:
+
+```sh
+docker compose --profile full exec web python manage.py load_semester 2026_fall
+```
+
+Inside the devcontainer:
+
+```sh
+uv run python manage.py load_semester 2026_fall
 ```
 
 In production, the daily Load course data Action (08:15 UTC) runs fetch then load

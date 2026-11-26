@@ -5,8 +5,23 @@ on:
   pull_request:
     branches:
       - "*"
+  merge_group:
   push:
-    branches: [dev, master]
+    branches: [master]
+  workflow_call:
+    outputs:
+      succeeded-queue-run-id:
+        description: ID of the merge queue run that already tested this commit; if checks ran here, returns empty
+        value: ${{ jobs.changes.outputs.succeeded-queue-run-id }}
+    inputs:
+      compare-to-last-deploy:
+        description: Look for application changes since the last successful deploy instead of since the previous push
+        type: boolean
+        default: false
+      export-image:
+        description: Upload the tested production image as the tcf-web-image artifact so the deploy can push it instead of rebuilding
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -27,11 +42,64 @@ env:
   MINIO_BUCKET: tcf-media
   MINIO_ACCESS_KEY: minioadmin
   MINIO_SECRET_KEY: minioadmin
-  STATIC_BUCKET: tcf-static
   STATIC_CUSTOM_DOMAIN: localhost:8081
 
 jobs:
-  ruff:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      app: ${{ steps.diff.outputs.app }}
+      succeeded-queue-run-id: ${{ steps.diff.outputs.succeeded-queue-run-id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check for application changes
+        id: diff
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
+          COMPARE_TO_LAST_DEPLOY: ${{ inputs.compare-to-last-deploy }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "$COMPARE_TO_LAST_DEPLOY" == "true" ]]; then
+            succeeded_queue_run_id=$(gh run list -R "$GITHUB_REPOSITORY" --workflow ci.yml --event merge_group --commit "$GITHUB_SHA" \
+              --status success --limit 1 --json databaseId --jq '.[0].databaseId // ""' || true)
+            if [[ -n "$succeeded_queue_run_id" ]]; then
+              echo "Merge queue run ${succeeded_queue_run_id} already tested ${GITHUB_SHA}, skipping checks"
+              echo "succeeded-queue-run-id=$succeeded_queue_run_id" >> "$GITHUB_OUTPUT"
+              echo "app=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            BASE_SHA=$(gh run list -R "$GITHUB_REPOSITORY" --workflow deploy.yml --branch "$GITHUB_REF_NAME" \
+              --status success --limit 1 --json headSha --jq '.[0].headSha // ""' || true)
+            echo "Last successful deploy: ${BASE_SHA:-none}"
+          fi
+          if [[ -z "$BASE_SHA" || "$BASE_SHA" =~ ^0+$ ]] || ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+            echo "No usable base commit, running all checks"
+            echo "app=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          changed=$(
+            git diff --name-only "$BASE_SHA" "$GITHUB_SHA" -- . ':!iac' ':!.github'
+            git diff --name-only "$BASE_SHA" "$GITHUB_SHA" -- .github/workflows/ci.yml
+          )
+          if [[ -n "$changed" ]]; then
+            echo "Application files changed since ${BASE_SHA}:"
+            echo "$changed"
+            echo "app=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Only iac/ or .github/ changed since ${BASE_SHA}"
+            echo "app=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  lint:
+    needs: changes
+    if: needs.changes.outputs.succeeded-queue-run-id == ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -43,36 +111,23 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_TARGET }}
           enable-cache: true
+          save-cache: false
 
-      - name: Install dependencies
-        run: uv sync --frozen --group dev --no-install-project
+      - name: Install lint tools
+        run: uv sync --frozen --only-group lint --no-install-project
 
       - name: Ruff check
-        run: uv run ruff check .
+        run: uv run --no-sync ruff check .
 
       - name: Ruff format
-        run: uv run ruff format --check .
-
-  djlint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
-        with:
-          python-version: ${{ env.PYTHON_TARGET }}
-          enable-cache: true
-
-      - name: Install dependencies
-        run: uv sync --frozen --group dev --no-install-project
+        run: uv run --no-sync ruff format --check .
 
       - name: djLint templates
-        run: uv run djlint tcf_website/templates --check --lint
+        run: uv run --no-sync djlint tcf_website/templates --check --lint
 
   ty:
+    needs: changes
+    if: needs.changes.outputs.succeeded-queue-run-id == ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -92,22 +147,17 @@ jobs:
         run: uv run ty check
 
   django:
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
     runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
     outputs:
       code-coverage: ${{ steps.coverage.outputs.percentage }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
-        with:
-          python-version: ${{ env.PYTHON_TARGET }}
-          enable-cache: true
-
-      - name: Install dependencies
-        run: uv sync --frozen --group dev --no-install-project
 
       - name: Create Compose environment
         run: |
@@ -125,21 +175,61 @@ jobs:
           MINIO_BUCKET=${MINIO_BUCKET}
           MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
           MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
-          STATIC_BUCKET=${STATIC_BUCKET}
           STATIC_CUSTOM_DOMAIN=${STATIC_CUSTOM_DOMAIN}
           EOF
 
-      - name: Start Compose backends
-        run: docker compose up -d --wait db valkey minio
+      - name: Log in to Docker Hub
+        if: env.DOCKERHUB_USERNAME != ''
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Initialize MinIO buckets
-        run: docker compose run --rm minio-init
+      - name: Start Compose backends
+        run: nohup docker compose up -d db valkey minio minio-init > "${RUNNER_TEMP}/compose-up.log" 2>&1 &
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+
+      - name: Build production image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: ./Dockerfile
+          target: prod
+          tags: tcf-web:latest
+          outputs: type=docker,dest=${{ runner.temp }}/tcf-web-image.tar
+          cache-from: type=gha,scope=prod-image
+          cache-to: type=gha,scope=prod-image,mode=max
+          provenance: false
+
+      - name: Load production image
+        run: docker load -i "${RUNNER_TEMP}/tcf-web-image.tar"
+
+      - name: Wait for Compose backends and buckets
+        run: |
+          for _ in $(seq 1 90); do
+            [[ "$(docker inspect -f '{{.State.Status}}' tcf-minio_init 2>/dev/null)" == "exited" ]] && break
+            sleep 2
+          done
+          cat "${RUNNER_TEMP}/compose-up.log"
+          docker compose up -d --wait db valkey minio
+          code=$(docker inspect -f '{{.State.ExitCode}}' tcf-minio_init)
+          if [[ "$code" != "0" ]]; then
+            docker logs tcf-minio_init
+            echo "::error::Bucket setup exited with code $code"
+            exit 1
+          fi
+
+      - name: Check for missing migrations
+        run: docker compose --profile full run --rm --no-deps web python manage.py makemigrations --check --dry-run
 
       - name: Migrations & Tests
         run: |
-          docker compose --profile full run --rm --build web sh -c \
-            'uv run --with coverage coverage run manage.py test && \
-             uv run --with coverage coverage report' | tee coverage.txt
+          set -o pipefail
+          docker compose --profile full run --rm --no-deps web sh -c \
+            'uv run --no-sync --with coverage==7.13.5 coverage run manage.py test && \
+             uv run --no-sync --with coverage==7.13.5 coverage report' | tee coverage.txt
 
       - name: Get code coverage
         id: coverage
@@ -150,7 +240,20 @@ jobs:
         if: always()
         run: docker compose --profile full down -v
 
+      - name: Upload tested image
+        if: inputs.export-image || github.event_name == 'merge_group'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: tcf-web-image
+          path: ${{ runner.temp }}/tcf-web-image.tar
+          retention-days: 1
+          compression-level: 0
+          overwrite: true
+          if-no-files-found: error
+
   eslint:
+    needs: changes
+    if: needs.changes.outputs.succeeded-queue-run-id == ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -164,7 +267,7 @@ jobs:
           cache: "npm"
 
       - name: Install npm packages
-        run: npm ci
+        run: npm ci --no-audit --no-fund --prefer-offline
 
       - name: Run ESLint
-        run: npx eslint -c .config/.eslintrc.yml tcf_website/static/
+        run: npx eslint tcf_website/static/

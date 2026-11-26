@@ -1,0 +1,254 @@
+name: Deploy
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: terraform-prod-app
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  TF_IN_AUTOMATION: "true"
+  DEPLOYER_ROLE_ARN: arn:aws:iam::099933383052:role/tcf-terraform-deployer
+  APP_ACCOUNT_ID: "099933383052"
+  PLAN_S3_PREFIX: s3://tcf-terraform-state-099933383052/plans/${{ github.run_id }}
+  ECS_SERVICE: tcf-prod-django-service
+  ECS_CLUSTER: tcf-prod-cluster
+  ECR_REPO: tcf-prod-app
+  ECR_CONTAINER_NAME: django-app
+  ECS_LOG_GROUP: /ecs/tcf-prod-django
+
+jobs:
+  ci:
+    name: Continuous Integration
+    if: github.ref == 'refs/heads/dev'
+    permissions:
+      contents: read
+      actions: read
+    uses: ./.github/workflows/ci.yml
+    with:
+      compare-to-last-deploy: true
+      export-image: true
+
+  plan:
+    name: Terraform
+    needs: ci
+    uses: ./.github/workflows/terraform-plan.yml
+    with:
+      environment: terraform-plan
+      save-plan: true
+
+  apply:
+    name: Build, apply and deploy
+    needs: [ci, plan]
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    environment: terraform-prod
+    # Replaces the workflow-level permissions for this job to add actions: read
+    permissions:
+      contents: read
+      id-token: write
+      actions: read
+    env:
+      TF_VAR_dns_role_arn: arn:aws:iam::011713309463:role/tcf-terraform-dns
+      IMAGE_TAG: ${{ needs.plan.outputs.image_tag }}
+    steps:
+      - name: Require repository admin
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          permission=$(gh api "repos/${GITHUB_REPOSITORY}/collaborators/${GITHUB_TRIGGERING_ACTOR}/permission" --jq .permission)
+          if [[ "$permission" != "admin" ]]; then
+            echo "Only repository admins may apply infrastructure."
+            exit 1
+          fi
+
+      - name: Check out selected revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ${{ needs.plan.outputs.terraform_version }}
+          terraform_wrapper: false
+
+      - name: Assume Terraform deployer role
+        uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
+        with:
+          role-to-assume: ${{ env.DEPLOYER_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
+
+      - name: Initialize Terraform
+        working-directory: iac/app
+        run: terraform init -input=false
+
+      - name: Download saved plan
+        working-directory: iac/app
+        run: |
+          aws s3 cp "${PLAN_S3_PREFIX}/tfplan" tfplan
+          aws s3 cp --recursive "${PLAN_S3_PREFIX}/build" .terraform/build
+
+      - name: Apply saved plan
+        working-directory: iac/app
+        run: terraform apply -input=false -no-color -lock-timeout=5m tfplan
+
+      - name: Check for existing image
+        id: image
+        run: |
+          if output=$(aws ecr describe-images --repository-name "$ECR_REPO" --image-ids imageTag="$IMAGE_TAG" 2>&1); then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          elif grep -q ImageNotFoundException <<< "$output"; then
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "$output"
+            exit 1
+          fi
+
+      - name: Download tested image
+        id: tested-image
+        if: steps.image.outputs.exists != 'true'
+        continue-on-error: true
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: tcf-web-image
+          path: ${{ runner.temp }}
+          run-id: ${{ needs.ci.outputs.succeeded-queue-run-id || github.run_id }}
+          github-token: ${{ github.token }}
+
+      - name: Push tested image
+        if: steps.image.outputs.exists != 'true' && steps.tested-image.outcome == 'success'
+        env:
+          TARGET: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ env.IMAGE_TAG }}
+        run: |
+          docker load -i "${RUNNER_TEMP}/tcf-web-image.tar"
+          docker tag tcf-web:latest "$TARGET"
+          docker push "$TARGET"
+
+      - name: Set up Docker Buildx
+        if: steps.image.outputs.exists != 'true' && steps.tested-image.outcome != 'success'
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+
+      - name: Build and push Docker image
+        if: steps.image.outputs.exists != 'true' && steps.tested-image.outcome != 'success'
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: ./Dockerfile
+          target: prod
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ env.IMAGE_TAG }}
+          cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:buildcache
+          cache-to: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:buildcache,mode=max
+          provenance: false
+
+      - name: Delete saved plan
+        run: aws s3 rm --recursive "${PLAN_S3_PREFIX}"
+
+      - name: Find applied task definition
+        id: task-def
+        working-directory: iac/app
+        run: |
+          arn=$(terraform output -raw task_definition_arn)
+          image=$(aws ecs describe-task-definition --task-definition "$arn" \
+            | jq -r --arg name "$ECR_CONTAINER_NAME" '.taskDefinition.containerDefinitions[] | select(.name == $name) | .image')
+          if [[ "$image" != *":${IMAGE_TAG}" ]]; then
+            echo "Applied task definition $arn uses $image, expected tag ${IMAGE_TAG}"
+            exit 1
+          fi
+          current=$(aws ecs describe-services --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE" --query 'services[0].taskDefinition' --output text)
+          echo "arn=$arn" >> "$GITHUB_OUTPUT"
+          if [[ "$current" == "$arn" ]]; then
+            echo "Service already runs $arn, skipping release and deploy"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Docker Buildx for static files
+        if: steps.task-def.outputs.changed == 'true'
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+
+      - name: Build static files
+        if: steps.task-def.outputs.changed == 'true'
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: ./Dockerfile
+          target: static-files
+          outputs: type=local,dest=${{ runner.temp }}/static-files
+          cache-from: |
+            type=gha,scope=prod-image
+            type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:buildcache
+          provenance: false
+
+      - name: Upload static files
+        if: steps.task-def.outputs.changed == 'true'
+        working-directory: iac/app
+        env:
+          IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ env.IMAGE_TAG }}
+        run: |
+          manifest="${RUNNER_TEMP}/static-files/staticfiles.json"
+          if ! docker run --rm --entrypoint cat "$IMAGE" /app/staticfiles/staticfiles.json | cmp -s - "$manifest"; then
+            echo "::error::Static manifest in $IMAGE does not match the collected static files"
+            exit 1
+          fi
+          bucket=$(terraform output -raw s3_bucket_name)
+          aws s3 sync "${RUNNER_TEMP}/static-files" "s3://${bucket}/" \
+            --exclude staticfiles.json \
+            --cache-control "public, max-age=31536000, immutable" \
+            --only-show-errors
+          echo "Uploaded $(find "${RUNNER_TEMP}/static-files" -type f | wc -l) static files to ${bucket}"
+
+      - name: Run Release Tasks (Migrate, Sessions)
+        if: steps.task-def.outputs.changed == 'true'
+        uses: ./.github/actions/ecs-run-task
+        with:
+          cluster: ${{ env.ECS_CLUSTER }}
+          service: ${{ env.ECS_SERVICE }}
+          container: ${{ env.ECR_CONTAINER_NAME }}
+          task-definition: ${{ steps.task-def.outputs.arn }}
+          log-group: ${{ env.ECS_LOG_GROUP }}
+          log-stream-prefix: django
+          command: python manage.py migrate && python manage.py clearsessions
+
+      - name: Deploy to Amazon ECS
+        if: steps.task-def.outputs.changed == 'true'
+        env:
+          TASK_DEF_ARN: ${{ steps.task-def.outputs.arn }}
+        run: |
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service "$ECS_SERVICE" \
+            --task-definition "$TASK_DEF_ARN" > /dev/null
+
+          deadline=$((SECONDS + 600))
+          while true; do
+            primary=$(aws ecs describe-services --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE" \
+              | jq -c '.services[0].deployments[] | select(.status == "PRIMARY") | {taskDefinition, rolloutState}')
+            td=$(jq -r .taskDefinition <<< "$primary")
+            state=$(jq -r .rolloutState <<< "$primary")
+            if [[ "$td" == "$TASK_DEF_ARN" && "$state" == "COMPLETED" ]]; then
+              break
+            fi
+            if [[ "$state" == "FAILED" ]]; then
+              echo "Deployment failed: $primary"
+              exit 1
+            fi
+            if (( SECONDS > deadline )); then
+              echo "Deployment did not complete within timeout: $primary"
+              exit 1
+            fi
+            sleep 15
+          done

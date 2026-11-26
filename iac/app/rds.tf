@@ -43,8 +43,22 @@ resource "aws_db_instance" "postgres" {
   backup_retention_period   = 7
   skip_final_snapshot       = false
   final_snapshot_identifier = "${local.name_prefix}-final-snapshot-${random_id.db_snapshot.hex}"
+  deletion_protection       = true
+  delete_automated_backups  = false
+
+  database_insights_mode                = local.database_insights_mode
+  performance_insights_enabled          = true
+  performance_insights_retention_period = local.database_insights_mode == "advanced" ? 465 : 7
+
+  enabled_cloudwatch_logs_exports = local.rds_logs_enabled ? ["postgresql"] : []
 
   tags = {
     Name = "${local.name_prefix}-postgres"
+  }
+
+  depends_on = [aws_cloudwatch_log_group.rds]
+
+  lifecycle {
+    prevent_destroy = true
   }
 }

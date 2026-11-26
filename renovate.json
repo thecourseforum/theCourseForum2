@@ -1,0 +1,61 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "docker:pinDigests",
+    "helpers:pinGitHubActionDigests",
+    "group:allNonMajor",
+    "schedule:weekly"
+  ],
+  "timezone": "America/New_York",
+  "rangeStrategy": "bump",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "osvVulnerabilityAlerts": true,
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "automerge": true
+    },
+    {
+      "description": "Terraform CLI upgrades come as their own PRs, merged by hand after reading the reviewed PR plan",
+      "matchManagers": ["terraform-version"],
+      "groupName": "Terraform CLI",
+      "automerge": false
+    },
+    {
+      "description": "Let fresh registry releases age so compromised versions get yanked first",
+      "matchPackageNames": ["*"],
+      "minimumReleaseAge": "3 days",
+      "minimumReleaseAgeBehaviour": "timestamp-required"
+    },
+    {
+      "description": "pyproject.toml requires Python <3.13; applies to Docker tags and requires-python",
+      "matchPackageNames": ["python"],
+      "allowedVersions": "<3.13"
+    },
+    {
+      "description": "Local Postgres matches prod RDS and Valkey tracks ElastiCache 8.2 as closely as images allow; approve on the dashboard when bumping iac/",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["postgres", "valkey/valkey"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Provider updates are merged by hand after reading the reviewed PR plan",
+      "matchManagers": ["terraform"],
+      "matchFileNames": ["iac/app/**"],
+      "groupName": "Terraform providers",
+      "automerge": false
+    },
+    {
+      "description": "iac/bootstrap is applied by hand and has no PR plan, so its providers are updated when bootstrap next runs",
+      "matchManagers": ["terraform"],
+      "matchFileNames": ["iac/bootstrap/**"],
+      "enabled": false
+    }
+  ]
+}

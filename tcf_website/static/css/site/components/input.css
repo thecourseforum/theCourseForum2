@@ -43,7 +43,6 @@
   color: var(--fg-subtle);
 }
 
-
 /* ===== INPUT SIZES ===== */
 
 .input--sm {
@@ -51,29 +50,6 @@
   padding: 0 var(--space-2-5);
   font-size: var(--text-xs);
 }
-
-.input--lg {
-  height: 3rem;
-  padding: 0 var(--space-4);
-  font-size: var(--text-base);
-}
-
-
-/* ===== INPUT STATES ===== */
-
-.input--error {
-  border-color: var(--color-danger-500);
-}
-
-.input--error:focus {
-  border-color: var(--color-danger-500);
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
-}
-
-.input--success {
-  border-color: var(--color-success-500);
-}
-
 
 /* ===== TEXTAREA ===== */
 
@@ -106,7 +82,6 @@
   border-color: var(--ring);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
-
 
 /* ===== SELECT ===== */
 
@@ -145,7 +120,6 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
-
 /* ===== CHECKBOX ===== */
 
 .checkbox {
@@ -179,7 +153,6 @@
   outline-offset: 2px;
 }
 
-
 /* ===== RADIO ===== */
 
 .radio {
@@ -209,7 +182,6 @@
   outline-offset: 2px;
 }
 
-
 /* ===== LABEL ===== */
 
 .label {
@@ -220,92 +192,11 @@
   margin-bottom: var(--space-1-5);
 }
 
-.label--required::after {
-  content: ' *';
-  color: var(--color-danger-500);
-}
-
-
 /* ===== FORM GROUP ===== */
 
 .form-group {
   margin-bottom: var(--space-4);
 }
-
-.form-group--inline {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.form-group--inline .label {
-  margin-bottom: 0;
-}
-
-
-/* ===== HELP TEXT ===== */
-
-.help-text {
-  font-size: var(--text-xs);
-  color: var(--fg-muted);
-  margin-top: var(--space-1);
-}
-
-.help-text--error {
-  color: var(--color-danger-500);
-}
-
-
-/* ===== INPUT GROUP ===== */
-
-.input-group {
-  display: flex;
-  align-items: stretch;
-}
-
-.input-group .input {
-  border-radius: 0;
-}
-
-.input-group .input:first-child {
-  border-top-left-radius: var(--radius-lg);
-  border-bottom-left-radius: var(--radius-lg);
-}
-
-.input-group .input:last-child {
-  border-top-right-radius: var(--radius-lg);
-  border-bottom-right-radius: var(--radius-lg);
-}
-
-.input-group__addon {
-  display: flex;
-  align-items: center;
-  padding: 0 var(--space-3);
-  
-  font-size: var(--text-sm);
-  color: var(--fg-muted);
-  
-  background-color: var(--bg-muted);
-  border: 1px solid var(--border);
-}
-
-.input-group__addon:first-child {
-  border-right: none;
-  border-top-left-radius: var(--radius-lg);
-  border-bottom-left-radius: var(--radius-lg);
-}
-
-.input-group__addon:last-child {
-  border-left: none;
-  border-top-right-radius: var(--radius-lg);
-  border-bottom-right-radius: var(--radius-lg);
-}
-
-.input-group .btn {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
 
 /* ===== RANGE SLIDER ===== */
 

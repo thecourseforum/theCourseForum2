@@ -3,14 +3,14 @@ name = "thecourseforum"
 version = "2.0.0"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "Django>=4.2.8,<5",
+    "Django>=5.2.17,<6",
     "backoff>=2.2.1,<3",
     "boto3>=1.37.4,<2",
     "django-cachalot>=2.6.1,<3",
-    "django-environ>=0.11.2,<0.12",
-    "django-filter>=23.5,<24",
+    "django-environ>=0.12.0,<0.13",
+    "django-filter>=25.1,<26",
     "django-storages>=1.14.5,<2",
-    "djangorestframework>=3.14.0,<3.15",
+    "djangorestframework>=3.18.2,<3.19",
     "gunicorn>=21.2.0,<23",
     "numpy>=1.26.2,<2",
     "pandas>=2.1.4,<3",
@@ -24,21 +24,26 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    { include-group = "lint" },
     "coverage[toml]>=7.3.3",
-    "django-debug-toolbar>=4.4.0,<5",
-    "django-stubs>=4.2.7,<5",
-    "djangorestframework-stubs>=3.14.0,<4",
-    "djlint>=1.36.0,<2",
+    "django-debug-toolbar>=5.2.0,<7",
+    "django-stubs>=5.2.0,<6",
+    "djangorestframework-stubs>=3.16.0,<4",
     "prek>=0.5.2",
-    "ruff>=0.9.0",
     "ty>=0.0.27",
     "types-requests>=2.31.0",
     "types-tqdm>=4.66.0",
     "websocket-client>=1.9.0,<2",
 ]
+lint = [
+    "djlint>=1.46.4,<2",
+    "ruff>=0.9.0",
+]
 
 [tool.uv]
 package = false
+# Renovate's lock file maintenance has no cooldown of its own for uv.
+exclude-newer = "3 days"
 
 [tool.ruff]
 target-version = "py312"
@@ -77,6 +82,7 @@ exclude = ["**/migrations", "tcf_website/legacy_models.py"]
 profile = "django"
 indent = 4
 max_line_length = 120
+ignore = "H021"
 
 [tool.django-stubs]
 django_settings_module = "tcf_core.settings.dev"

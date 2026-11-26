@@ -61,6 +61,16 @@ output "cloudwatch_log_group" {
   value       = aws_cloudwatch_log_group.ecs.name
 }
 
+output "task_definition_arn" {
+  description = "Web task definition revision the ECS service is configured to run"
+  value       = aws_ecs_task_definition.django.arn
+}
+
+output "waf_integration_url" {
+  description = "WAF application integration URL the app loads challenge.js from"
+  value       = one(aws_wafv2_web_acl.main[*].application_integration_url)
+}
+
 output "cognito_user_pool_id" {
   description = "Cognito User Pool ID"
   value       = aws_cognito_user_pool.main.id

@@ -89,6 +89,11 @@ def s3_storage(
     }
 
 
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+MANIFEST_STATIC_STORAGE = {
+    "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+}
+
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
 CACHALOT_ENABLED = True
@@ -97,6 +102,10 @@ CACHALOT_ENABLED = True
 SECRET_KEY = env.str("SECRET_KEY")
 
 OPENROUTER_API_KEY = env.str("OPENROUTER_API_KEY", default="")
+
+WAF_INTEGRATION_URL = env.str("WAF_INTEGRATION_URL", default="")
+
+SCRIPT_FETCH_LOGIN = env.str("SCRIPT_FETCH_LOGIN", default="log")
 
 ALLOWED_HOSTS = []
 
@@ -125,16 +134,18 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "tcf_core.settings.health_check_middleware.HealthCheckMiddleware",
+    "tcf_core.settings.request_log_middleware.RequestLogMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "tcf_core.settings.health_check_middleware.HealthCheckMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "tcf_core.cognito_middleware.CognitoAuthMiddleware",
+    "tcf_core.settings.script_fetch_middleware.ScriptFetchLoginMiddleware",
     "tcf_core.settings.handle_exceptions_middleware.HandleExceptionsMiddleware",
     "tcf_core.settings.record_middleware.RecordMiddleware",
 ]
@@ -189,8 +200,6 @@ TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 
@@ -218,9 +227,24 @@ AUTH_USER_MODEL = "tcf_website.User"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "filters": {
+        "request_id": {
+            "()": "tcf_core.settings.request_log_middleware.RequestIdFilter",
+        },
+    },
+    "formatters": {
+        "json": {
+            "()": "tcf_core.settings.request_log_middleware.JsonFormatter",
+        },
+        "text": {
+            "()": "tcf_core.settings.request_log_middleware.TextFormatter",
+        },
+    },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
+            "filters": ["request_id"],
+            "formatter": "json" if ENVIRONMENT == "prod" else "text",
         },
     },
     "root": {
@@ -232,6 +256,9 @@ LOGGING = {
             "handlers": ["console"],
             "level": "INFO",
             "propagate": False,
+        },
+        "django.request": {
+            "level": "ERROR",
         },
     },
 }

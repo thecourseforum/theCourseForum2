@@ -5,7 +5,9 @@
   "runServices": ["devcontainer", "db"],
   "workspaceFolder": "/app",
   "postCreateCommand": "npm ci",
-  "postStartCommand": "uv run python manage.py collectstatic --noinput",
+  "postStartCommand": {
+    "aws-profiles": "python3 .devcontainer/aws_profiles.py"
+  },
   "customizations": {
     "vscode": {
       "settings": {

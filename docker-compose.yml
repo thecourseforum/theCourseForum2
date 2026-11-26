@@ -33,66 +33,59 @@ services:
       timeout: 2s
       retries: 30
 
-  # RustFS: S3-compatible stand-in. Community MinIO on Quay is gated (401),
-  # and AIStor images require a paid license.
   minio:
-    image: rustfs/rustfs:latest
+    image: rustfs/rustfs:1.0.1
     container_name: tcf-minio
     restart: unless-stopped
     environment:
       RUSTFS_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
       RUSTFS_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
-      RUSTFS_ADDRESS: ":9000"
-      RUSTFS_CONSOLE_ADDRESS: ":9001"
       RUSTFS_CONSOLE_ENABLE: "true"
     ports:
       - "127.0.0.1:9000:9000"
       - "127.0.0.1:9001:9001"   # console UI
     volumes:
-      - minio_data:/data
-    command: ["/data"]
+      - rustfs_data:/data
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://127.0.0.1:9000/health"]
+      test: ["CMD", "curl", "-sf", "http://localhost:9000/health/live"]
       interval: 2s
       timeout: 2s
       retries: 30
 
-  # Creates buckets and grants anonymous read on the static bucket
-  # (stands in for CloudFront's signed origin access).
   minio-init:
-    image: rustfs/rc:latest
+    image: amazon/aws-cli:2.37.9
     container_name: tcf-minio_init
     depends_on:
       minio:
         condition: service_healthy
     environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
-    entrypoint: >
-      sh -c '
-      rc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
-      rc mb --ignore-existing local/${MINIO_BUCKET:-tcf-media} &&
-      rc mb --ignore-existing local/${STATIC_BUCKET:-tcf-static} &&
-      rc anonymous set download local/${STATIC_BUCKET:-tcf-static} &&
-      echo "buckets ready"'
+      AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY:-minioadmin}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_ENDPOINT_URL: http://minio:9000
+      MEDIA_BUCKET: ${MINIO_BUCKET:-tcf-media}
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        set -e
+
+        if ! aws s3api head-bucket --bucket "$$MEDIA_BUCKET" 2>/dev/null; then
+          aws s3api create-bucket --bucket "$$MEDIA_BUCKET" > /dev/null
+        fi
+
+        echo "buckets ready"
     restart: "no"
 
-  # Serves the static bucket on :8081.
+  # breaks prod parity because prod serves static files from S3, not from this image
   cdn:
     build:
       context: .
-      dockerfile: Dockerfile.cdn
+      target: cdn
     image: tcf-cdn:local
-    pull_policy: build
     container_name: tcf-cdn
     restart: unless-stopped
-    environment:
-      STATIC_BUCKET: ${STATIC_BUCKET:-tcf-static}
     ports:
       - "8081:80"
-    depends_on:
-      minio:
-        condition: service_healthy
 
   # One-off job mirroring the ECS release task.
   release:
@@ -101,16 +94,18 @@ services:
       context: .
       target: prod
     container_name: tcf_release
+    mem_limit: 2048m
+    memswap_limit: 2048m
     env_file: .env
     command: >
       bash -c "set -e &&
       python manage.py migrate &&
-      python manage.py collectstatic --noinput &&
       python manage.py invalidate_cachalot tcf_website &&
       python manage.py clearsessions"
     environment:
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-tcf_core.settings.dev}
       TCF_ENV: ${TCF_ENV:-local}
+      STATIC_MANIFEST: "true"
     restart: "no"
     depends_on:
       db:
@@ -126,12 +121,15 @@ services:
       context: .
       target: prod
     container_name: tcf_web
+    mem_limit: 2048m
+    memswap_limit: 2048m
     env_file: .env
     environment:
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-tcf_core.settings.dev}
       TCF_ENV: ${TCF_ENV:-local}
+      STATIC_MANIFEST: "true"
     ports:
-      - "8000:80"
+      - "8000:8000"
     restart: unless-stopped
     depends_on:
       db:
@@ -156,6 +154,7 @@ services:
       - .:/app:cached
       # Docker-outside-of-docker: control sibling services via the host daemon.
       - /var/run/docker.sock:/var/run/docker.sock
+      - aws:/root/.aws
     depends_on:
       db:
         condition: service_healthy
@@ -166,4 +165,5 @@ services:
 
 volumes:
   pgdata:
-  minio_data:
+  rustfs_data:
+  aws:
