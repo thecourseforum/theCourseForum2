@@ -2,11 +2,11 @@
 # One-off Fargate task that downloads a semester CSV from public
 # thecourseforum/tCF-data and loads it into the prod DB.
 #
-# Separate from ecs-run-command.sh: registers (or revises) task family
-# tcf-prod-load-course-data from the live service's task definition, with a
-# fixed fetch_data + load_semester command. Network matches the live service.
+# Separate from ecs-run-command.sh. Runs the Terraform-managed task family
+# tcf-prod-load-course-data (fixed fetch_data + load_semester command). Does
+# not register task definitions. Network matches the live web service.
 #
-# Needs python3 + aws CLIv2 (authenticate with 'aws configure').
+# Needs python3 + aws CLIv2 (authenticate with 'aws configure' or OIDC).
 #
 # Usage:
 #   ./scripts/ecs-load-course-data.sh
@@ -16,7 +16,7 @@
 # Refuses ALL_DANGEROUS and FIX_LAST_TAUGHT_SEMESTERS.
 #
 # Env: AWS_REGION, ECS_CLUSTER, ECS_SERVICE, ECS_CONTAINER_NAME,
-#      ECS_LOAD_TASK_FAMILY, ECS_LOG_STREAM_PREFIX
+#      ECS_LOAD_TASK_FAMILY, ECS_LOG_GROUP, ECS_LOG_STREAM_PREFIX
 
 set -euo pipefail
 
@@ -26,6 +26,7 @@ CLUSTER="${ECS_CLUSTER:-tcf-prod-cluster}"
 SERVICE="${ECS_SERVICE:-tcf-prod-django-service}"
 CONTAINER="${ECS_CONTAINER_NAME:-django-app}"
 FAMILY="${ECS_LOAD_TASK_FAMILY:-tcf-prod-load-course-data}"
+LOG_GROUP="${ECS_LOG_GROUP:-/ecs/tcf-prod-django}"
 STREAM_PREFIX="${ECS_LOG_STREAM_PREFIX:-django}"
 
 if [[ $# -gt 1 ]]; then
@@ -48,111 +49,43 @@ fi
 
 describe_json="$(aws ecs describe-services \
   --cluster "$CLUSTER" --services "$SERVICE" --region "$REGION" \
-  --query 'services[0].{taskDefinition:taskDefinition,networkConfiguration:networkConfiguration,platformVersion:platformVersion}' \
+  --query 'services[0].{networkConfiguration:networkConfiguration,platformVersion:platformVersion}' \
   --output json)"
 
-source_task_def="$(printf '%s' "$describe_json" | python3 -c 'import json,sys; print(json.load(sys.stdin)["taskDefinition"])')"
-[[ -n "$source_task_def" && "$source_task_def" != "None" ]] || {
-  echo "describe-services: missing taskDefinition" >&2
-  exit 1
-}
-
-# Fixed entrypoint for this family. SEMESTER is injected as an env override.
-LOAD_COMMAND='set -euo pipefail
-if [ -n "${COURSE_DATA_SEMESTER:-}" ]; then
-  python manage.py fetch_data "$COURSE_DATA_SEMESTER"
-  python manage.py load_semester "$COURSE_DATA_SEMESTER"
-else
-  python manage.py fetch_data
-  shopt -s nullglob
-  csv=(fetched/*.csv)
-  if [[ ${#csv[@]} -ne 1 ]]; then
-    echo "expected exactly one csv in fetched/, got ${#csv[@]}" >&2
-    exit 1
-  fi
-  python manage.py load_semester "$(basename "${csv[0]}" .csv)"
-fi
-'
-
-# Clone the live task def into family tcf-prod-load-course-data with the load command.
-register_json="$(
-  ECS_LOAD_TASK_FAMILY="$FAMILY" ECS_CONTAINER_NAME="$CONTAINER" \
-  python3 - "$source_task_def" "$LOAD_COMMAND" <<'PY'
-import json, os, sys, subprocess
-
-source = sys.argv[1]
-load_command = sys.argv[2]
-family = os.environ["ECS_LOAD_TASK_FAMILY"]
-container = os.environ["ECS_CONTAINER_NAME"]
-
-raw = subprocess.check_output(
-    [
-        "aws", "ecs", "describe-task-definition",
-        "--task-definition", source,
-        "--region", os.environ.get("AWS_REGION", os.environ.get("AWS_DEFAULT_REGION", "us-east-1")),
-        "--query", "taskDefinition",
-        "--output", "json",
-    ],
-    text=True,
-)
-td = json.loads(raw)
-drop = {
-    "taskDefinitionArn", "revision", "status", "requiresAttributes",
-    "compatibilities", "registeredAt", "registeredBy", "deregisteredAt",
-}
-for k in list(td):
-    if k in drop:
-        del td[k]
-
-td["family"] = family
-found = False
-for c in td["containerDefinitions"]:
-    if c.get("name") == container:
-        c["command"] = ["bash", "-c", load_command]
-        found = True
-        break
-if not found:
-    sys.exit(f"container {container!r} not in task definition")
-
-print(json.dumps(td))
-PY
-)"
-
-tmp_reg="$(mktemp)"
 tmp_run="$(mktemp)"
 TAIL_PID=""
+task_arn=""
 cleanup() {
   [[ -n "$TAIL_PID" ]] && kill "$TAIL_PID" 2>/dev/null || true
-  rm -f "$tmp_reg" "$tmp_run"
+  if [[ -n "$task_arn" ]]; then
+    status="$(aws ecs describe-tasks --cluster "$CLUSTER" --tasks "$task_arn" --region "$REGION" \
+      --query 'tasks[0].lastStatus' --output text 2>/dev/null | tr -d '\r\n' || true)"
+    if [[ -n "$status" && "$status" != "None" && "$status" != "STOPPED" ]]; then
+      aws ecs stop-task --cluster "$CLUSTER" --task "$task_arn" --region "$REGION" \
+        --reason "ecs-load-course-data script cleanup" >/dev/null 2>&1 || true
+    fi
+  fi
+  rm -f "$tmp_run"
 }
 trap cleanup EXIT
 
-printf '%s\n' "$register_json" >"$tmp_reg"
-load_task_def_arn="$(aws ecs register-task-definition --region "$REGION" \
-  --cli-input-json "file://${tmp_reg}" \
-  --query 'taskDefinition.taskDefinitionArn' --output text | tr -d '\r\n')"
-[[ -n "$load_task_def_arn" && "$load_task_def_arn" != "None" ]] || {
-  echo "register-task-definition failed" >&2
+running="$(aws ecs list-tasks --cluster "$CLUSTER" --family "$FAMILY" \
+  --desired-status RUNNING --region "$REGION" \
+  --query 'taskArns' --output text | tr -d '\r\n')"
+if [[ -n "$running" && "$running" != "None" ]]; then
+  echo "load task already running in family ${FAMILY}: ${running}" >&2
   exit 1
-}
-echo "task definition $load_task_def_arn" >&2
-
-LOG_GROUP="$(aws ecs describe-task-definition --task-definition "$load_task_def_arn" --region "$REGION" \
-  --query "taskDefinition.containerDefinitions[?name=='${CONTAINER}'].logConfiguration.options.\"awslogs-group\" | [0]" \
-  --output text | tr -d '\r\n')"
-[[ -z "$LOG_GROUP" || "$LOG_GROUP" == "None" ]] && LOG_GROUP="/ecs/tcf-prod-django"
+fi
 
 run_task_json="$(
   ECS_CLUSTER="$CLUSTER" ECS_CONTAINER_NAME="$CONTAINER" \
-  COURSE_DATA_SEMESTER="$SEMESTER" \
-  python3 - "$describe_json" "$load_task_def_arn" <<'PY'
+  ECS_LOAD_TASK_FAMILY="$FAMILY" COURSE_DATA_SEMESTER="$SEMESTER" \
+  python3 - "$describe_json" <<'PY'
 import json, os, sys
 
 info = json.loads(sys.argv[1])
-task_def = sys.argv[2]
-for k in ("networkConfiguration",):
-    if not info.get(k):
-        sys.exit(f"describe-services: missing {k}")
+if not info.get("networkConfiguration"):
+    sys.exit("describe-services: missing networkConfiguration")
 
 override = {"name": os.environ["ECS_CONTAINER_NAME"]}
 semester = os.environ.get("COURSE_DATA_SEMESTER", "")
@@ -161,7 +94,7 @@ if semester:
 
 body = {
     "cluster": os.environ["ECS_CLUSTER"],
-    "taskDefinition": task_def,
+    "taskDefinition": os.environ["ECS_LOAD_TASK_FAMILY"],
     "launchType": "FARGATE",
     "networkConfiguration": info["networkConfiguration"],
     "overrides": {"containerOverrides": [override]},

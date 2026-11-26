@@ -54,7 +54,17 @@ class Command(BaseCommand):
         semester = options["semester"]
 
         if semester == "ALL_DANGEROUS":
-            for file in sorted(os.listdir(self.data_dir)):
+            # Union of legacy csv/ and fetched/; load_semester_file prefers fetched/.
+            names = set()
+            if os.path.isdir(self.data_dir):
+                names.update(
+                    name for name in os.listdir(self.data_dir) if name.endswith(".csv")
+                )
+            if os.path.isdir("fetched"):
+                names.update(
+                    name for name in os.listdir("fetched") if name.endswith(".csv")
+                )
+            for file in sorted(names):
                 self.load_semester_file(file)
         elif semester == "FIX_LAST_TAUGHT_SEMESTERS":
             # This should be done automatically when loading a semester,

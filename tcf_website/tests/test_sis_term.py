@@ -1,11 +1,14 @@
 """SIS term codes derived from a <year>_<season> argument."""
 
 from datetime import date
+from pathlib import Path
+from unittest.mock import patch
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import SimpleTestCase
 
+from tcf_website.management.commands import fetch_data as fetch_data_mod
 from tcf_website.utils import current_semester, sis_term_code
 
 
@@ -42,3 +45,31 @@ class SisTermCodeTests(SimpleTestCase):
     def test_fetch_data_rejects_a_bad_semester(self):
         with self.assertRaises(CommandError):
             call_command("fetch_data", "2026_winter")
+
+    def test_fetch_data_rejects_disallowed_branch(self):
+        with (
+            patch.dict("os.environ", {"COURSE_DATA_REPO_BRANCH": "evil"}, clear=False),
+            self.assertRaises(CommandError),
+        ):
+            call_command("fetch_data", "2026_fall")
+
+    def test_fetch_data_rejects_header_only_csv_and_keeps_existing(self):
+        import tempfile
+
+        header_only = b"Mnemonic,Number\n"
+        with tempfile.TemporaryDirectory() as tmp:
+            dest_dir = Path(tmp) / "fetched"
+            dest_dir.mkdir()
+            dest = dest_dir / "2026_fall.csv"
+            dest.write_text("Mnemonic,Number\nCS,1110\n", encoding="utf-8")
+
+            with (
+                patch.object(fetch_data_mod, "DEST_DIR", dest_dir),
+                patch.object(fetch_data_mod, "_raw_download", return_value=header_only),
+                self.assertRaises(CommandError),
+            ):
+                call_command("fetch_data", "2026_fall")
+
+            self.assertEqual(
+                dest.read_text(encoding="utf-8"), "Mnemonic,Number\nCS,1110\n"
+            )

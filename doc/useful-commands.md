@@ -68,8 +68,9 @@ CLI:
 ```
 
 Download the semester CSV from public thecourseforum/tCF-data and load it into
-the prod database (same path as the daily Load course data Action). This uses a
-separate ECS task family `tcf-prod-load-course-data`, not `ecs-run-command.sh`:
+the prod database (same path as the daily Load course data Action). This runs
+the Terraform-managed ECS task family `tcf-prod-load-course-data`, not
+`ecs-run-command.sh`. Manual GitHub Action runs require confirm=`LOAD`:
 
 ```bash
 ./scripts/ecs-load-course-data.sh

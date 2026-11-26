@@ -110,21 +110,27 @@ cannot change infrastructure or deploy. It receives `ReadOnlyAccess` plus:
 
 It is explicitly denied reading objects in the database dump bucket.
 
-`tcf-github-task-runner` is scoped to running one-off tasks on the existing web
-task definition, which `.github/workflows/fetch-enrollment.yml` uses:
+`tcf-github-task-runner` is scoped to running one-off tasks on the web cluster,
+which `.github/workflows/fetch-enrollment.yml` and
+`.github/workflows/load-course-data.yml` use:
 
-- run `tcf-prod-django` task definitions on `tcf-prod-cluster` and read those
-  tasks, so it cannot start the database dump task
+- run `tcf-prod-django` (enrollment) and `tcf-prod-load-course-data` (course
+  CSV load) task definitions on `tcf-prod-cluster` and read those tasks, so it
+  cannot start the database dump task
 - describe `tcf-prod-*` services on `tcf-prod-cluster`, to copy their network
-  configuration and run the task definition the service currently runs
+  configuration
+- list and stop tasks on that cluster so a cancelled load job does not leave a
+  Fargate task running
 - read log events from `/ecs/tcf-prod-django`, to stream the task's output
   into the job
 - pass only the web task's execution and task roles, and only to ECS tasks
 
-It cannot push images, register task definitions, update services, read
-Terraform state, change infrastructure, or assume either DNS role. GitHub
-Actions assumes it only from the `ecs-tasks` environment, which allows only
-`dev` and has no required reviewer so scheduled jobs run unattended.
+It cannot register task definitions, push images, update services, read
+Terraform state, change infrastructure, or assume either DNS role. The load
+task family is defined in the app Terraform stack. GitHub Actions assumes this
+role only from the `ecs-tasks` environment, which allows only `dev` and has no
+required reviewer so scheduled jobs run unattended. Manual Load course data
+runs require typing `LOAD` as confirmation.
 
 In account `011713309463`, `tcf-terraform-dns` trusts only
 `tcf-terraform-deployer` and can change records, while

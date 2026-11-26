@@ -3,6 +3,7 @@
 #
 # Cron is 08:15 UTC so it usually starts after tCF-data's 07:30 UTC SIS job
 # (~26 minutes on a normal day). Does not invalidate cachalot.
+# Manual runs must set confirm=LOAD (prod DB reload).
 name: Load course data
 
 on:
@@ -11,6 +12,10 @@ on:
       semester:
         description: "Semester as <year>_<season>. Leave blank to use today's date."
         required: false
+        type: string
+      confirm:
+        description: "Type LOAD to confirm a manual prod semester reload."
+        required: true
         type: string
   schedule:
     - cron: "15 8 * * *"
@@ -29,6 +34,7 @@ env:
   ECS_SERVICE: tcf-prod-django-service
   ECS_CONTAINER_NAME: django-app
   ECS_LOAD_TASK_FAMILY: tcf-prod-load-course-data
+  ECS_LOG_GROUP: /ecs/tcf-prod-django
   ECS_LOG_STREAM_PREFIX: django
 
 jobs:
@@ -37,6 +43,16 @@ jobs:
     environment: ecs-tasks
     timeout-minutes: 60
     steps:
+      - name: Confirm manual reload
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "LOAD" ]; then
+            echo "Manual runs require confirm=LOAD" >&2
+            exit 1
+          fi
+
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

@@ -45,7 +45,8 @@ uv run python manage.py load_semester 2026_fall
 ```
 
 In production, the daily Load course data Action (08:15 UTC) runs fetch then load
-on a dedicated ECS task family `tcf-prod-load-course-data`. Manually:
+on the Terraform-managed ECS task family `tcf-prod-load-course-data`. Manual
+Action runs require confirm=`LOAD`. From a laptop:
 
 ```bash
 ./scripts/ecs-load-course-data.sh
