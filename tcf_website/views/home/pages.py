@@ -57,7 +57,9 @@ def data_snapshot(request):
     classes = []
     if term is not None:
         year, _, season = semester.partition("_")
-        snapshot_path = _TCF_WEBSITE_ROOT.parent / "fetched" / f"{year}_{season.lower()}.csv"
+        snapshot_path = (
+            _TCF_WEBSITE_ROOT.parent / "fetched" / f"{year}_{season.lower()}.csv"
+        )
         if snapshot_path.is_file():
             with snapshot_path.open(encoding="utf-8", newline="") as handle:
                 classes = list(csv.DictReader(handle))
