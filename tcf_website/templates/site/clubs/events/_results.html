@@ -1,0 +1,36 @@
+{% load custom_tags %}
+{% if form.errors %}
+    <div class="event-notice" role="alert">
+        <h2 class="event-section-title">Check your filters</h2>
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}<li><a href="#{{ field.id_for_label }}">{{ field.label }}: {{ error }}</a></li>{% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+{% else %}
+    <p class="event-results-count">
+        <strong>{{ page_obj.paginator.count }}</strong> event{{ page_obj.paginator.count|pluralize }}
+        {% if form.cleaned_data.from %}· From {{ form.cleaned_data.from|date:"M j, Y" }}{% endif %}
+        {% if form.cleaned_data.to %}through {{ form.cleaned_data.to|date:"M j, Y" }}{% endif %}
+    </p>
+    {% for day, events in event_groups %}
+        <section class="event-day" aria-labelledby="event-day-{{ day|date:'Y-m-d' }}">
+            <div class="event-day__heading">
+                <h2 id="event-day-{{ day|date:'Y-m-d' }}">{{ day|date:"l, F j" }}</h2>
+                <span>{{ events|length }} event{{ events|length|pluralize }} on this page</span>
+            </div>
+            {% for event in events %}
+                {% include "site/clubs/events/_row.html" %}
+            {% endfor %}
+        </section>
+    {% empty %}
+        <div class="event-empty">
+            <h2 class="event-section-title">No events match your filters</h2>
+            <p>Try another date range, club, or interest.</p>
+            <a href="{% url 'club_events' %}?mode=clubs"
+               class="btn btn--secondary btn--md">Reset filters</a>
+        </div>
+    {% endfor %}
+    {% include "site/common/components/_pagination.html" with paginated_items=page_obj anchor="eventResults" aria_label="Event pages" %}
+{% endif %}

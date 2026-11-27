@@ -1,0 +1,1 @@
+"""Shared club-domain queries."""

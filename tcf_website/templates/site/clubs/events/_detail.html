@@ -1,0 +1,37 @@
+{% load tz %}
+{% timezone "America/New_York" %}
+    <div class="event-detail">
+        <h2 id="clubEventTitle">{{ event.title }}</h2>
+        <p class="event-detail__hosts">Hosted by {% include "site/clubs/events/_hosts.html" %}</p>
+        <div class="event-badges">
+            <span class="event-badge">{{ event.category.name }}</span>
+            {% if event.is_cancelled %}<span class="event-badge event-badge--cancelled">Canceled</span>{% endif %}
+            {% if event.is_sample %}<span class="event-badge">Sample event</span>{% endif %}
+        </div>
+        {% if event.is_sample %}<p class="event-notice">Illustrative sample data for theClubForum. This is not a verified upcoming event.</p>{% endif %}
+        {% if event.is_cancelled %}<p class="event-notice">This event has been canceled.</p>{% endif %}
+        <dl class="event-detail__facts">
+            <dt>When</dt>
+            <dd>
+                {{ event.starts_at|date:"l, F j, Y" }}
+                {% if event.all_day %}
+                    · All day{% if event.local_start.date != event.display_end.date %} through {{ event.display_end|date:"F j, Y" }}{% endif %}
+                {% else %}
+                    · {{ event.starts_at|date:"g:i A" }} to
+                    {% if event.local_start.date != event.display_end.date %}{{ event.ends_at|date:"F j, Y" }},{% endif %}
+                    {{ event.ends_at|date:"g:i A" }} Eastern
+                {% endif %}
+            </dd>
+            <dt>Where</dt><dd>{{ event.location|default:"Location to be announced" }}{% if event.online and event.location|lower != "online" %} · Online{% endif %}</dd>
+            {% if event.interests %}<dt>Interests</dt><dd>{{ event.interests|join:", " }}</dd>{% endif %}
+        </dl>
+        <div class="event-detail__description">{{ event.description|default:"More details will be shared by the club."|linebreaks }}</div>
+        {% if event.public_source_url %}
+            <a href="{{ event.public_source_url }}"
+               class="btn btn--secondary btn--md"
+               target="_blank"
+               rel="noopener noreferrer">View source event<span class="sr-only"> (opens in a new tab)</span></a>
+        {% endif %}
+        <button type="button" class="btn btn--primary btn--md" disabled>Add to calendar · Coming soon</button>
+    </div>
+{% endtimezone %}

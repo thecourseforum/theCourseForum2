@@ -1,0 +1,64 @@
+{% load custom_tags tz %}
+{% timezone "America/New_York" %}
+    <article class="event-row{% if event.is_cancelled %} event-row--cancelled{% endif %}"
+             data-event-id="{{ event.pk }}">
+        <div class="event-row__time">
+            {% if event.all_day %}
+                <strong>All day</strong>
+                {% if event.local_start.date != event.display_end.date %}<span>Through {{ event.display_end|date:"M j" }}</span>{% endif %}
+            {% else %}
+                <time datetime="{{ event.starts_at|date:'c' }}">{{ event.starts_at|date:"g:i A" }}</time>
+                <span>to {% if event.local_start.date != event.display_end.date %}{{ event.display_end|date:"M j" }}, {% endif %}{{ event.ends_at|date:"g:i A" }}</span>
+            {% endif %}
+        </div>
+        <div class="event-row__body">
+            <h3>
+                <a href="{% mode_url request 'club_event_detail' event.pk %}"
+                   data-event-detail>{{ event.title }}</a>
+            </h3>
+            <div class="event-row__meta">
+                <span>
+                    <svg class="event-icon"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.6"
+                         aria-hidden="true">
+                        <circle cx="9" cy="7" r="3"></circle>
+                        <path d="M3 21v-3a6 6 0 0 1 12 0v3M16 4a3 3 0 0 1 0 6M21 21v-3a6 6 0 0 0-4-5"></path>
+                    </svg>
+                    {% include "site/clubs/events/_hosts.html" %}
+                </span>
+                <span>
+                    <svg class="event-icon"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.6"
+                         aria-hidden="true">
+                        <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"></path>
+                        <circle cx="12" cy="10" r="2.5"></circle>
+                    </svg>
+                    {{ event.location|default:"Location to be announced" }}
+                </span>
+            </div>
+            <div class="event-badges">
+                <span class="event-badge">{{ event.category.name }}</span>
+                {% if event.local_start.date != event.display_end.date %}<span class="event-badge">Multi-day</span>{% endif %}
+                {% if event.online %}<span class="event-badge">Online</span>{% endif %}
+                {% if event.is_cancelled %}<span class="event-badge event-badge--cancelled">Canceled</span>{% endif %}
+            </div>
+        </div>
+        <div class="event-row__actions">
+            <a href="{% mode_url request 'club_event_detail' event.pk %}"
+               class="btn btn--secondary btn--md"
+               data-event-detail
+               aria-label="Details for {{ event.title }}">Details</a>
+            <button type="button"
+                    class="btn btn--ghost btn--sm"
+                    disabled
+                    aria-label="Add to calendar — coming soon">Add to calendar · Coming soon</button>
+            {% if event.is_sample %}<span class="event-muted">Sample event</span>{% endif %}
+        </div>
+    </article>
+{% endtimezone %}

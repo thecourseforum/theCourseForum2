@@ -1,0 +1,93 @@
+{% extends "site/common/base.html" %}
+{% load static custom_tags %}
+{% block title %}Club events | theCourseForum{% endblock title %}
+{% block meta_description %}Explore upcoming club events at UVA. Search by club, interest, location, and date.{% endblock meta_description %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/site/pages/browse.css' %}">
+    <link rel="stylesheet" href="{% static 'css/site/pages/club_events.css' %}">
+{% endblock styles %}
+{% block content %}
+    <div class="club-events">
+        <header class="browse-header">
+            <div class="browse-header__inner event-heading">
+                <div>
+                    <p class="event-eyebrow">Clubs calendar</p>
+                    <h1 class="browse-header__title">Club events</h1>
+                    <p class="browse-header__description">Explore club events and find something for you. All times are Eastern.</p>
+                </div>
+                <div class="event-heading__actions">
+                    <div class="event-view-controls" aria-label="Event views">
+                        <span class="btn btn--secondary btn--md" aria-current="page">List</span>
+                        <button type="button"
+                                class="btn btn--secondary btn--md"
+                                disabled
+                                aria-describedby="event-coming-soon">Month</button>
+                        <button type="button"
+                                class="btn btn--primary btn--md"
+                                disabled
+                                aria-describedby="event-coming-soon">Create .ics</button>
+                    </div>
+                    <p id="event-coming-soon" class="event-muted">Coming soon: month view and calendar downloads</p>
+                </div>
+            </div>
+        </header>
+        <div class="browse-content">
+            <details class="event-filters" open>
+                <summary>Filter events</summary>
+                <form method="get"
+                      action="{% url 'club_events' %}"
+                      id="eventFilters"
+                      class="event-filter-grid">
+                    <input type="hidden" name="mode" value="clubs">
+                    {% for field in form %}
+                        {% if field.name != "show_cancelled" %}
+                            <div class="event-field event-field--{{ field.name }}">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <label class="event-check"
+                           for="{{ form.show_cancelled.id_for_label }}">{{ form.show_cancelled }} {{ form.show_cancelled.label }}</label>
+                    <div class="event-filter-actions">
+                        <a href="{% url 'club_events' %}?mode=clubs"
+                           class="btn btn--secondary btn--md">Reset</a>
+                        <button type="submit" class="btn btn--primary btn--md">Apply</button>
+                    </div>
+                </form>
+            </details>
+            <p id="eventLoadStatus" role="status" aria-live="polite"></p>
+            <div id="eventLoadError" class="event-notice" role="alert" hidden>
+                <p>Couldn’t update events. Your filters are saved; previous results remain below.</p>
+                <button type="button" class="btn btn--secondary btn--md" id="eventRetry">Try again</button>
+            </div>
+            <section id="eventResults" aria-label="Event results" tabindex="-1">
+                {% include "site/clubs/events/_results.html" %}
+            </section>
+        </div>
+    </div>
+{% endblock content %}
+{% block modals %}
+    {{ block.super }}
+    <div class="modal-backdrop"
+         data-modal-close
+         aria-label="Close event details"></div>
+    <div class="modal club-events"
+         id="clubEventModal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="clubEventTitle">
+        <div class="modal__dialog">
+            <div class="event-modal-toolbar">
+                <button type="button"
+                        class="btn btn--secondary btn--md"
+                        data-modal-close
+                        aria-label="Close event details">Close</button>
+            </div>
+            <div class="modal__body" id="clubEventContent"></div>
+        </div>
+    </div>
+{% endblock modals %}
+{% block scripts %}
+    <script src="{% static 'js/site/clubs/events.js' %}"></script>
+{% endblock scripts %}

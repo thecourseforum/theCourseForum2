@@ -3,6 +3,7 @@
 # See
 # https://docs.djangoproject.com/en/3.0/topics/db/models/#organizing-models-in-a-package
 
+from .club_event import ClubEvent
 from .models import (
     CATALOG_YEAR_WINDOW,
     Answer,
