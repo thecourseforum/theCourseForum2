@@ -974,6 +974,36 @@ class CourseInstructorGrade(models.Model):
         ]
 
 
+class CourseInstructorSemesterGrade(models.Model):
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, null=True)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, null=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    average = models.FloatField(default=0.0, null=True)
+    a_plus = models.IntegerField(default=0)
+    a = models.IntegerField(default=0)
+    a_minus = models.IntegerField(default=0)
+    b_plus = models.IntegerField(default=0)
+    b = models.IntegerField(default=0)
+    b_minus = models.IntegerField(default=0)
+    c_plus = models.IntegerField(default=0)
+    c = models.IntegerField(default=0)
+    c_minus = models.IntegerField(default=0)
+    dfw = models.IntegerField(default=0)
+    total_enrolled = models.IntegerField(default=0)
+
+    def __str__(self):
+        return (
+            f"{self.instructor.first_name} {self.instructor.last_name} "
+            f"{self.course.subdepartment.mnemonic} {self.course.number} {self.average}"
+            f" {self.semester.year} {self.semester.season}"
+        )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["course", "instructor", "semester"]),
+        ]
+
+
 class Section(models.Model):
     """Section model.
 
@@ -1253,7 +1283,7 @@ class Review(models.Model):
         )
 
     @staticmethod
-    def get_sorted_reviews(course_id, instructor_id, user, method=""):
+    def get_sorted_reviews(course_id, instructor_id, user, method="", semester=None):
         """Prepare review list for course-instructor page."""
 
         # Filter out reviews that are hidden, have no text, or are toxic.
@@ -1271,6 +1301,9 @@ class Review(models.Model):
                 ),
             )
         )
+
+        if semester is not None:
+            reviews = reviews.filter(semester=semester)
 
         if user.is_authenticated:
             reviews = reviews.annotate(
@@ -1319,10 +1352,12 @@ class Review(models.Model):
 
     @staticmethod
     def get_paginated_reviews(
-        course_id, instructor_id, user, page_number=1, method=""
+        course_id, instructor_id, user, page_number=1, method="", semester=None
     ) -> "Page[Review]":
         """Generate sorted, paginated reviews"""
-        reviews = Review.get_sorted_reviews(course_id, instructor_id, user, method)
+        reviews = Review.get_sorted_reviews(
+            course_id, instructor_id, user, method, semester
+        )
         return paginate(reviews, page_number)
 
     def __str__(self):

@@ -3,13 +3,19 @@
 import json
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg, Count, Q
 from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
 
-from ...models import CourseInstructorGrade, Review, ReviewLLMSummary, Section, Semester
+from ...models import (
+    CourseInstructorGrade,
+    CourseInstructorSemesterGrade,
+    Review,
+    ReviewLLMSummary,
+    Section,
+    Semester,
+)
 from .course import is_lecture_section
 
 _GRADE_BREAKDOWN_FIELDS = (
@@ -43,25 +49,39 @@ def _fetch_pair_section_anchor(course_id, instructor_id):
     return section_last_taught, course, instructor
 
 
-def _pair_review_counts(course_id, instructor_id):
-    """Counts for ratings vs written reviews (toxicity filter matches main queryset)."""
-    row = Review.objects.filter(
+def _pair_review_counts(course_id, instructor_id, semester=None):
+    """Counts for ratings vs written reviews (toxicity filter matches main queryset).
+
+    With a semester, counts cover only that semester; otherwise all time.
+    """
+    reviews = Review.objects.filter(
         instructor=instructor_id,
         course=course_id,
         toxicity_rating__lt=settings.TOXICITY_THRESHOLD,
         hidden=False,
-    ).aggregate(
+    )
+    if semester is not None:
+        reviews = reviews.filter(semester=semester)
+    row = reviews.aggregate(
         num_ratings=Count("id"),
         num_reviews=Count("id", filter=~Q(text="")),
     )
     return row["num_reviews"], row["num_ratings"]
 
 
-def _pair_aggregate_chart_data(course, instructor, course_id, instructor_id):
-    """Averages and optional grade breakdown for the instructor page JSON blob."""
-    data = Review.objects.filter(
+def _pair_aggregate_chart_data(
+    course, instructor, course_id, instructor_id, semester=None
+):
+    """Averages and optional grade breakdown for the instructor page JSON blob.
+
+    With a semester, ratings and grades cover only that semester; otherwise all time.
+    """
+    reviews = Review.objects.filter(
         course=course_id, instructor=instructor_id, hidden=False
-    ).aggregate(
+    )
+    if semester is not None:
+        reviews = reviews.filter(semester=semester)
+    data = reviews.aggregate(
         average_rating=(
             Avg("instructor_rating") + Avg("enjoyability") + Avg("recommendability")
         )
@@ -79,13 +99,16 @@ def _pair_aggregate_chart_data(course, instructor, course_id, instructor_id):
     # Pass raw floats to JS; each display call (toFixed) rounds to the needed precision.
     # Pre-rounding here would cause double-rounding divergence from Django's floatformat.
 
-    try:
-        grades_data = CourseInstructorGrade.objects.get(
+    if semester is None:
+        grades_data = CourseInstructorGrade.objects.filter(
             instructor=instructor, course=course
-        )
-    except ObjectDoesNotExist:
-        pass
+        ).first()
     else:
+        grades_data = CourseInstructorSemesterGrade.objects.filter(
+            instructor=instructor, course=course, semester=semester
+        ).first()
+
+    if grades_data is not None:
         data["average_gpa"] = (
             round(grades_data.average, 2) if grades_data.average else None
         )
@@ -147,22 +170,57 @@ def _course_instructor_breadcrumbs(course, instructor):
     ]
 
 
+def _selected_semester(request):
+    """Semester chosen via ?semester=<SIS number>, or None for all semesters."""
+    raw = request.GET.get("semester")
+    try:
+        number = int(raw)
+    except (TypeError, ValueError):
+        return None
+    return Semester.objects.filter(number=number).first()
+
+
+def _pair_semester_options(course_id, instructor_id):
+    """Semesters with grade data or visible reviews for this pair, newest first."""
+    grade_semester_ids = CourseInstructorSemesterGrade.objects.filter(
+        course_id=course_id, instructor_id=instructor_id
+    ).values_list("semester_id", flat=True)
+    review_semester_ids = Review.objects.filter(
+        course_id=course_id, instructor_id=instructor_id, hidden=False
+    ).values_list("semester_id", flat=True)
+    return Semester.objects.filter(
+        Q(id__in=grade_semester_ids) | Q(id__in=review_semester_ids)
+    ).order_by("-number")
+
+
 def course_instructor(request, course_id, instructor_id, method="Default"):
     """Course-instructor view."""
     section_last_taught, course, instructor = _fetch_pair_section_anchor(
         course_id, instructor_id
     )
 
-    num_reviews, num_ratings = _pair_review_counts(course_id, instructor_id)
+    selected_semester = _selected_semester(request)
+    semester_options = _pair_semester_options(course_id, instructor_id)
+
+    num_reviews, num_ratings = _pair_review_counts(
+        course_id, instructor_id, selected_semester
+    )
 
     sort_method = request.GET.get("sort", method)
     page_number = request.GET.get("page", 1)
     paginated_reviews = Review.get_paginated_reviews(
-        course_id, instructor_id, request.user, page_number, sort_method
+        course_id,
+        instructor_id,
+        request.user,
+        page_number,
+        sort_method,
+        semester=selected_semester,
     )
 
     breadcrumbs = _course_instructor_breadcrumbs(course, instructor)
-    data = _pair_aggregate_chart_data(course, instructor, course_id, instructor_id)
+    data = _pair_aggregate_chart_data(
+        course, instructor, course_id, instructor_id, selected_semester
+    )
     review_summary = _get_review_summary(course_id, instructor_id)
 
     latest_semester = Semester.latest()
@@ -191,6 +249,8 @@ def course_instructor(request, course_id, instructor_id, method="Default"):
             "display_times": latest_semester == section_last_taught.semester,
             "is_current_semester": is_current_semester,
             "sort_method": sort_method,
+            "selected_semester": selected_semester,
+            "semester_options": semester_options,
             "sem_code": section_last_taught.semester.number,
             "course_code": course.code(),
             "course_title": course.title,
