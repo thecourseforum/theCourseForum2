@@ -1,10 +1,13 @@
 """Club category and club detail views."""
 
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Sum, Value
 from django.db.models.functions import Coalesce
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from ...models import Club, ClubCategory, Review
 from ...pagination import paginate
@@ -50,10 +53,16 @@ def _build_club_page_context(request, club: Club, mode: str):
         (club.name, None, True),
     ]
 
+    is_following = (
+        request.user.is_authenticated
+        and club.followers.filter(pk=request.user.pk).exists()
+    )
+
     return {
         "is_club": True,
         "mode": mode,
         "club": club,
+        "is_following": is_following,
         "paginated_reviews": paginated_reviews,
         "num_reviews": paginated_reviews.paginator.count,
         "sort_method": sort_method,
@@ -97,4 +106,28 @@ def club_view(request, category_slug: str, club_id: int):
         request,
         "site/clubs/club.html",
         _build_club_page_context(request, club, mode),
+    )
+
+
+@login_required
+@require_POST
+def toggle_club_follow(request, category_slug: str, club_id: int):
+    """Follow or unfollow a club."""
+    club = get_object_or_404(
+        Club,
+        id=club_id,
+        category__slug=category_slug.upper(),
+    )
+
+    if club.followers.filter(pk=request.user.pk).exists():
+        club.followers.remove(request.user)
+        messages.success(request, f"You unfollowed {club.name}.")
+    else:
+        club.followers.add(request.user)
+        messages.success(request, f"You are now following {club.name}.")
+
+    return redirect(
+        "club",
+        category_slug=category_slug,
+        club_id=club_id,
     )
