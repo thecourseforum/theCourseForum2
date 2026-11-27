@@ -14,6 +14,8 @@ from .models import (
     Department,
     Discipline,
     Instructor,
+    InstructorAlias,
+    InstructorRedirect,
     Question,
     Review,
     ReviewLLMSummary,

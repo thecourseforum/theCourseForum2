@@ -10,6 +10,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from ...models import CourseInstructorGrade, Review, ReviewLLMSummary, Section, Semester
+from ..instructors.redirects import merged_instructor_redirect
 from .course import is_lecture_section
 
 _GRADE_BREAKDOWN_FIELDS = (
@@ -149,9 +150,15 @@ def _course_instructor_breadcrumbs(course, instructor):
 
 def course_instructor(request, course_id, instructor_id, method="Default"):
     """Course-instructor view."""
-    section_last_taught, course, instructor = _fetch_pair_section_anchor(
-        course_id, instructor_id
-    )
+    try:
+        section_last_taught, course, instructor = _fetch_pair_section_anchor(
+            course_id, instructor_id
+        )
+    except Http404:
+        response = merged_instructor_redirect(request, instructor_id)
+        if response is None:
+            raise
+        return response
 
     num_reviews, num_ratings = _pair_review_counts(course_id, instructor_id)
 

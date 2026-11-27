@@ -228,7 +228,7 @@ class ReviewCascadeJsonEndpointsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertTrue(
-            any(row["last_name"] == "Jefferson" for row in data["instructors"])
+            any(row["full_name"] == "Tom Jefferson" for row in data["instructors"])
         )
 
 
